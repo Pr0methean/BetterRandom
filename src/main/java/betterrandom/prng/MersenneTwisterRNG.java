@@ -16,6 +16,8 @@
 package betterrandom.prng;
 
 import betterrandom.seed.DefaultSeedGenerator;
+import betterrandom.seed.SeedException;
+import betterrandom.seed.SeedGenerator;
 import betterrandom.util.BinaryUtils;
 import java.util.Arrays;
 import java.util.Random;
@@ -73,8 +75,8 @@ public class MersenneTwisterRNG extends BaseRNG implements RepeatableRNG {
   /**
    * Creates a new RNG and seeds it using the default seeding strategy.
    */
-  public MersenneTwisterRNG() {
-    this(DefaultSeedGenerator.getInstance().generateSeed(SEED_SIZE_BYTES));
+  public MersenneTwisterRNG() throws SeedException {
+    this(DefaultSeedGenerator.getInstance());
   }
 
   /**
@@ -86,6 +88,10 @@ public class MersenneTwisterRNG extends BaseRNG implements RepeatableRNG {
     super(seed);
     setSeed(seed);
     initTransientFields();
+  }
+
+  public MersenneTwisterRNG(SeedGenerator seedGenerator) throws SeedException {
+    this(seedGenerator.generateSeed(SEED_SIZE_BYTES));
   }
 
   @Override

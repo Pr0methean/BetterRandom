@@ -15,6 +15,9 @@
 // ============================================================================
 package betterrandom.prng;
 
+import betterrandom.seed.DefaultSeedGenerator;
+import betterrandom.seed.SeedException;
+import betterrandom.seed.SeedGenerator;
 import betterrandom.util.BinaryUtils;
 import java.util.Arrays;
 import java.util.Random;
@@ -57,6 +60,14 @@ public class XORShiftRNG extends BaseRNG implements RepeatableRNG {
     if (seed == null || seed.length != SEED_SIZE_BYTES) {
       throw new IllegalArgumentException("XOR shift RNG requires 160 bits of seed data.");
     }
+  }
+
+  public XORShiftRNG() throws SeedException {
+    this(DefaultSeedGenerator.getInstance());
+  }
+
+  public XORShiftRNG(SeedGenerator seedGenerator) throws SeedException {
+    this(seedGenerator.generateSeed(SEED_SIZE_BYTES));
   }
 
   @Override
