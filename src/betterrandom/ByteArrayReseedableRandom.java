@@ -1,11 +1,14 @@
 package betterrandom;
 
 /**
- * A {@link java.util.Random} that can be reseeded using a byte array instead of
- * using {@link java.util.Random#setSeed(long)} (although that may also be supported).
+ * A {@link java.util.Random} that can be reseeded using a byte array instead of using {@link
+ * java.util.Random#setSeed(long)} (although that may also be supported).
  */
 public interface ByteArrayReseedableRandom {
-  /** Reseed this PRNG. */
+
+  /**
+   * Reseed this PRNG.
+   */
   public void setSeed(byte[] seed);
 
   /**

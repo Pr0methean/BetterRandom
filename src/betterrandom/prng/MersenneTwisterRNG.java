@@ -16,15 +16,9 @@
 package betterrandom.prng;
 
 import betterrandom.seed.DefaultSeedGenerator;
-import betterrandom.seed.SeedException;
-import betterrandom.seed.SeedGenerator;
 import betterrandom.util.BinaryUtils;
-import java.io.IOException;
-import java.io.ObjectInputStream;
 import java.util.Arrays;
 import java.util.Random;
-import java.util.concurrent.locks.Lock;
-import java.util.concurrent.locks.ReentrantLock;
 
 /**
  * <p>Random number generator based on the <a href="http://www.math.sci.hiroshima-u.ac.jp/~m-mat/MT/emt.html"
@@ -74,6 +68,7 @@ public class MersenneTwisterRNG extends BaseRNG implements RepeatableRNG {
 
   private final int[] mt = new int[N]; // State vector.
   private int mtIndex = 0; // Index into state vector.
+  private int entropyBytes;
 
   /**
    * Creates a new RNG and seeds it using the default seeding strategy.
@@ -98,41 +93,47 @@ public class MersenneTwisterRNG extends BaseRNG implements RepeatableRNG {
     if (seed == null || seed.length != SEED_SIZE_BYTES) {
       throw new IllegalArgumentException("Mersenne Twister RNG requires a 128-bit (16-byte) seed.");
     }
-    super.setSeed(seed);
-    int[] seedInts = BinaryUtils.convertBytesToInts(this.seed);
+    lock.lock();
+    try {
+      super.setSeed(seed);
+      int[] seedInts = BinaryUtils.convertBytesToInts(this.seed);
 
-    // This section is translated from the init_genrand code in the C version.
-    mt[0] = BOOTSTRAP_SEED;
-    for (mtIndex = 1; mtIndex < N; mtIndex++) {
-      mt[mtIndex] = (BOOTSTRAP_FACTOR
-          * (mt[mtIndex - 1] ^ (mt[mtIndex - 1] >>> 30))
-          + mtIndex);
-    }
+      // This section is translated from the init_genrand code in the C version.
+      mt[0] = BOOTSTRAP_SEED;
+      for (mtIndex = 1; mtIndex < N; mtIndex++) {
+        mt[mtIndex] = (BOOTSTRAP_FACTOR
+            * (mt[mtIndex - 1] ^ (mt[mtIndex - 1] >>> 30))
+            + mtIndex);
+      }
 
-    // This section is translated from the init_by_array code in the C version.
-    int i = 1;
-    int j = 0;
-    for (int k = Math.max(N, seedInts.length); k > 0; k--) {
-      mt[i] = (mt[i] ^ ((mt[i - 1] ^ (mt[i - 1] >>> 30)) * SEED_FACTOR1)) + seedInts[j] + j;
-      i++;
-      j++;
-      if (i >= N) {
-        mt[0] = mt[N - 1];
-        i = 1;
+      // This section is translated from the init_by_array code in the C version.
+      int i = 1;
+      int j = 0;
+      for (int k = Math.max(N, seedInts.length); k > 0; k--) {
+        mt[i] = (mt[i] ^ ((mt[i - 1] ^ (mt[i - 1] >>> 30)) * SEED_FACTOR1)) + seedInts[j] + j;
+        i++;
+        j++;
+        if (i >= N) {
+          mt[0] = mt[N - 1];
+          i = 1;
+        }
+        if (j >= seedInts.length) {
+          j = 0;
+        }
       }
-      if (j >= seedInts.length) {
-        j = 0;
+      for (int k = N - 1; k > 0; k--) {
+        mt[i] = (mt[i] ^ ((mt[i - 1] ^ (mt[i - 1] >>> 30)) * SEED_FACTOR2)) - i;
+        i++;
+        if (i >= N) {
+          mt[0] = mt[N - 1];
+          i = 1;
+        }
       }
+      mt[0] = UPPER_MASK; // Most significant bit is 1 - guarantees non-zero initial array.
+      entropyBytes = SEED_SIZE_BYTES;
+    } finally {
+      lock.unlock();
     }
-    for (int k = N - 1; k > 0; k--) {
-      mt[i] = (mt[i] ^ ((mt[i - 1] ^ (mt[i - 1] >>> 30)) * SEED_FACTOR2)) - i;
-      i++;
-      if (i >= N) {
-        mt[0] = mt[N - 1];
-        i = 1;
-      }
-    }
-    mt[0] = UPPER_MASK; // Most significant bit is 1 - guarantees non-zero initial array.
   }
 
 
@@ -180,6 +181,7 @@ public class MersenneTwisterRNG extends BaseRNG implements RepeatableRNG {
     y ^= (y << 15) & GENERATE_MASK2;
     y ^= (y >>> 18);
 
+    entropyBytes -= (bits + 7) / 8;
     return y >>> (32 - bits);
   }
 
@@ -201,6 +203,6 @@ public class MersenneTwisterRNG extends BaseRNG implements RepeatableRNG {
 
   @Override
   public int entropyOctets() {
-    return 0;
+    return entropyBytes;
   }
 }
