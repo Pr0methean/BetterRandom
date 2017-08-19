@@ -2,27 +2,19 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="8d34e3fe-111b-4f5b-b1bf-5875a1f8c255" name="Default" comment="">
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/.idea/compiler.xml" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/.idea/dictionaries/chris.xml" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/.idea/libraries/org_objenesis_objenesis_2_6.xml" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/.idea/uiDesigner.xml" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/pom.xml" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/betterrandom/ByteArrayReseedableRandom.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/betterrandom/EntropyCountingRandom.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/betterrandom/prng/AESCounterRNG.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/betterrandom/prng/BaseRNG.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/betterrandom/prng/CMWC4096RNG.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/betterrandom/prng/CellularAutomatonRNG.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/betterrandom/prng/JavaRNG.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/betterrandom/prng/MersenneTwisterRNG.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/betterrandom/prng/RepeatableRNG.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/betterrandom/prng/XORShiftRNG.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/betterrandom/seed/DefaultSeedGenerator.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/betterrandom/seed/RandomSeederThread.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/betterrandom/util/BinaryUtils.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/betterrandom/util/BitString.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/betterrandom/util/WeakReferenceWithEquals.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.gitignore" afterPath="$PROJECT_DIR$/.gitignore" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/betterrandom/ByteArrayReseedableRandom.java" afterPath="$PROJECT_DIR$/src/betterrandom/ByteArrayReseedableRandom.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/betterrandom/EntropyCountingRandom.java" afterPath="$PROJECT_DIR$/src/betterrandom/EntropyCountingRandom.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/betterrandom/prng/AESCounterRNG.java" afterPath="$PROJECT_DIR$/src/betterrandom/prng/AESCounterRNG.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/betterrandom/prng/BaseRNG.java" afterPath="$PROJECT_DIR$/src/betterrandom/prng/BaseRNG.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/betterrandom/prng/CMWC4096RNG.java" afterPath="$PROJECT_DIR$/src/betterrandom/prng/CMWC4096RNG.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/betterrandom/prng/CellularAutomatonRNG.java" afterPath="$PROJECT_DIR$/src/betterrandom/prng/CellularAutomatonRNG.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/betterrandom/prng/MersenneTwisterRNG.java" afterPath="$PROJECT_DIR$/src/betterrandom/prng/MersenneTwisterRNG.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/betterrandom/prng/XORShiftRNG.java" afterPath="$PROJECT_DIR$/src/betterrandom/prng/XORShiftRNG.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/betterrandom/seed/DevRandomSeedGenerator.java" afterPath="$PROJECT_DIR$/src/betterrandom/seed/DevRandomSeedGenerator.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/betterrandom/seed/RandomSeederThread.java" afterPath="$PROJECT_DIR$/src/betterrandom/seed/RandomSeederThread.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/betterrandom/util/BinaryUtils.java" afterPath="$PROJECT_DIR$/src/betterrandom/util/BinaryUtils.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/betterrandom/util/BitString.java" afterPath="$PROJECT_DIR$/src/betterrandom/util/BitString.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/betterrandom/util/WeakReferenceWithEquals.java" afterPath="$PROJECT_DIR$/src/betterrandom/util/WeakReferenceWithEquals.java" />
     </list>
     <ignored path="$PROJECT_DIR$/out/" />
     <ignored path="$PROJECT_DIR$/target/" />
@@ -35,118 +27,14 @@
   </component>
   <component name="FileEditorManager">
     <leaf>
-      <file leaf-file-name="BaseRNG.java" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/betterrandom/prng/BaseRNG.java">
+      <file leaf-file-name="RandomSeederThread.java" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/src/betterrandom/seed/RandomSeederThread.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="114">
-              <caret line="55" column="9" lean-forward="false" selection-start-line="55" selection-start-column="9" selection-end-line="55" selection-end-column="9" />
-              <folding>
-                <element signature="imports" expanded="true" />
-                <element signature="e#1650#1651#0" expanded="true" />
-                <element signature="e#1684#1685#0" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name=".gitignore" pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/.gitignore">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="460">
-              <caret line="52" column="0" lean-forward="true" selection-start-line="52" selection-start-column="0" selection-end-line="52" selection-end-column="0" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="pom.xml" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/pom.xml">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="160">
-              <caret line="8" column="17" lean-forward="false" selection-start-line="8" selection-start-column="17" selection-end-line="8" selection-end-column="17" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="XORShiftRNG.java" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/betterrandom/prng/XORShiftRNG.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="274">
-              <caret line="124" column="20" lean-forward="false" selection-start-line="124" selection-start-column="20" selection-end-line="124" selection-end-column="20" />
+            <state relative-caret-position="280">
+              <caret line="63" column="13" lean-forward="true" selection-start-line="63" selection-start-column="13" selection-end-line="63" selection-end-column="13" />
               <folding>
                 <element signature="imports" expanded="true" />
               </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="BinaryUtils.java" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/betterrandom/util/BinaryUtils.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="117">
-              <caret line="143" column="24" lean-forward="false" selection-start-line="143" selection-start-column="24" selection-end-line="143" selection-end-column="24" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="BitString.java" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/betterrandom/util/BitString.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-60">
-              <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="MersenneTwisterRNG.java" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/betterrandom/prng/MersenneTwisterRNG.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="312">
-              <caret line="100" column="11" lean-forward="false" selection-start-line="100" selection-start-column="11" selection-end-line="100" selection-end-column="11" />
-              <folding>
-                <element signature="imports" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="CellularAutomatonRNG.java" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/betterrandom/prng/CellularAutomatonRNG.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="94">
-              <caret line="123" column="25" lean-forward="false" selection-start-line="123" selection-start-column="25" selection-end-line="123" selection-end-column="25" />
-              <folding>
-                <element signature="imports" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="AESCounterRNG.java" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/betterrandom/prng/AESCounterRNG.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="184">
-              <caret line="118" column="33" lean-forward="false" selection-start-line="118" selection-start-column="33" selection-end-line="118" selection-end-column="33" />
-              <folding>
-                <element signature="imports" expanded="true" />
-                <element signature="e#11072#11073#0" expanded="true" />
-                <element signature="e#11109#11110#0" expanded="true" />
-                <element signature="e#11153#11154#0" expanded="true" />
-                <element signature="e#11182#11183#0" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="SecretKeySpec.class" pinned="false" current-in-tab="false">
-        <entry file="jrt://C:/Program Files/Java/jdk-9!/java.base/javax/crypto/spec/SecretKeySpec.class">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="117">
-              <caret line="17" column="9" lean-forward="false" selection-start-line="17" selection-start-column="9" selection-end-line="17" selection-end-column="9" />
-              <folding />
             </state>
           </provider>
         </entry>
@@ -164,6 +52,7 @@
   <component name="FindInProjectRecents">
     <findStrings>
       <find>readob</find>
+      <find>setseed</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -190,17 +79,17 @@
         <option value="$PROJECT_DIR$/src/betterrandom/EntropyTracking.java" />
         <option value="$PROJECT_DIR$/src/betterrandom/EntropyCountingRandom.java" />
         <option value="$PROJECT_DIR$/src/betterrandom/prng/JavaRNG.java" />
-        <option value="$PROJECT_DIR$/src/betterrandom/prng/CMWC4096RNG.java" />
         <option value="$PROJECT_DIR$/src/betterrandom/seed/RandomDotOrgSeedGenerator.java" />
-        <option value="$PROJECT_DIR$/src/betterrandom/seed/RandomSeederThread.java" />
         <option value="$PROJECT_DIR$/src/betterrandom/util/BitString.java" />
         <option value="$PROJECT_DIR$/pom.xml" />
-        <option value="$PROJECT_DIR$/src/betterrandom/prng/CellularAutomatonRNG.java" />
-        <option value="$PROJECT_DIR$/src/betterrandom/prng/AESCounterRNG.java" />
-        <option value="$PROJECT_DIR$/src/betterrandom/prng/MersenneTwisterRNG.java" />
-        <option value="$PROJECT_DIR$/src/betterrandom/prng/XORShiftRNG.java" />
         <option value="$PROJECT_DIR$/src/betterrandom/prng/BaseRNG.java" />
         <option value="$PROJECT_DIR$/.gitignore" />
+        <option value="$PROJECT_DIR$/src/betterrandom/prng/AESCounterRNG.java" />
+        <option value="$PROJECT_DIR$/src/betterrandom/prng/CellularAutomatonRNG.java" />
+        <option value="$PROJECT_DIR$/src/betterrandom/prng/MersenneTwisterRNG.java" />
+        <option value="$PROJECT_DIR$/src/betterrandom/prng/XORShiftRNG.java" />
+        <option value="$PROJECT_DIR$/src/betterrandom/prng/CMWC4096RNG.java" />
+        <option value="$PROJECT_DIR$/src/betterrandom/seed/RandomSeederThread.java" />
       </list>
     </option>
   </component>
@@ -540,8 +429,8 @@
         <state relative-caret-position="350">
           <caret line="37" column="20" lean-forward="false" selection-start-line="37" selection-start-column="20" selection-end-line="37" selection-end-column="20" />
           <folding>
-            <element signature="e#1488#1489#0" expanded="false" />
-            <element signature="e#1513#1514#0" expanded="false" />
+            <element signature="e#1499#1500#0" expanded="false" />
+            <element signature="e#1524#1525#0" expanded="false" />
           </folding>
         </state>
       </provider>
@@ -551,30 +440,6 @@
         <state relative-caret-position="-508">
           <caret line="38" column="42" lean-forward="false" selection-start-line="38" selection-start-column="42" selection-end-line="38" selection-end-column="42" />
           <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/betterrandom/prng/CMWC4096RNG.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="357">
-          <caret line="108" column="18" lean-forward="false" selection-start-line="108" selection-start-column="18" selection-end-line="108" selection-end-column="18" />
-          <folding>
-            <element signature="imports" expanded="false" />
-            <element signature="e#3104#3105#0" expanded="false" />
-            <element signature="e#3184#3185#0" expanded="false" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/betterrandom/prng/JavaRNG.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="560">
-          <caret line="62" column="28" lean-forward="false" selection-start-line="62" selection-start-column="28" selection-end-line="62" selection-end-column="28" />
-          <folding>
-            <element signature="imports" expanded="false" />
-            <element signature="e#1935#1936#0" expanded="false" />
-            <element signature="e#2015#2016#0" expanded="false" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -595,16 +460,6 @@
         <state relative-caret-position="140">
           <caret line="7" column="38" lean-forward="false" selection-start-line="7" selection-start-column="38" selection-end-line="7" selection-end-column="38" />
           <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/betterrandom/seed/RandomSeederThread.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-46">
-          <caret line="70" column="85" lean-forward="false" selection-start-line="70" selection-start-column="85" selection-end-line="70" selection-end-column="85" />
-          <folding>
-            <element signature="imports" expanded="true" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -632,16 +487,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/betterrandom/prng/CellularAutomatonRNG.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="94">
-          <caret line="123" column="25" lean-forward="false" selection-start-line="123" selection-start-column="25" selection-end-line="123" selection-end-column="25" />
-          <folding>
-            <element signature="imports" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/betterrandom/util/BitString.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="-60">
@@ -658,48 +503,14 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/betterrandom/prng/AESCounterRNG.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="184">
-          <caret line="118" column="33" lean-forward="false" selection-start-line="118" selection-start-column="33" selection-end-line="118" selection-end-column="33" />
-          <folding>
-            <element signature="imports" expanded="true" />
-            <element signature="e#11072#11073#0" expanded="true" />
-            <element signature="e#11109#11110#0" expanded="true" />
-            <element signature="e#11153#11154#0" expanded="true" />
-            <element signature="e#11182#11183#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/betterrandom/prng/MersenneTwisterRNG.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="312">
-          <caret line="100" column="11" lean-forward="false" selection-start-line="100" selection-start-column="11" selection-end-line="100" selection-end-column="11" />
-          <folding>
-            <element signature="imports" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/betterrandom/prng/XORShiftRNG.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="274">
-          <caret line="124" column="20" lean-forward="false" selection-start-line="124" selection-start-column="20" selection-end-line="124" selection-end-column="20" />
-          <folding>
-            <element signature="imports" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/betterrandom/prng/BaseRNG.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="114">
           <caret line="55" column="9" lean-forward="false" selection-start-line="55" selection-start-column="9" selection-end-line="55" selection-end-column="9" />
           <folding>
-            <element signature="imports" expanded="true" />
-            <element signature="e#1650#1651#0" expanded="true" />
-            <element signature="e#1684#1685#0" expanded="true" />
+            <element signature="imports" expanded="false" />
+            <element signature="e#1615#1616#0" expanded="true" />
+            <element signature="e#1649#1650#0" expanded="true" />
           </folding>
         </state>
       </provider>
@@ -709,6 +520,81 @@
         <state relative-caret-position="460">
           <caret line="52" column="0" lean-forward="true" selection-start-line="52" selection-start-column="0" selection-end-line="52" selection-end-column="0" />
           <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/betterrandom/prng/AESCounterRNG.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="4004">
+          <caret line="228" column="31" lean-forward="false" selection-start-line="228" selection-start-column="31" selection-end-line="228" selection-end-column="31" />
+          <folding>
+            <element signature="imports" expanded="false" />
+            <element signature="e#11075#11076#0" expanded="true" />
+            <element signature="e#11112#11113#0" expanded="true" />
+            <element signature="e#11156#11157#0" expanded="true" />
+            <element signature="e#11185#11186#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/betterrandom/prng/CellularAutomatonRNG.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="214">
+          <caret line="159" column="6" lean-forward="false" selection-start-line="159" selection-start-column="6" selection-end-line="159" selection-end-column="35" />
+          <folding>
+            <element signature="imports" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/betterrandom/prng/MersenneTwisterRNG.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="170">
+          <caret line="189" column="0" lean-forward="false" selection-start-line="189" selection-start-column="0" selection-end-line="189" selection-end-column="33" />
+          <folding>
+            <element signature="imports" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/betterrandom/prng/XORShiftRNG.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="370">
+          <caret line="81" column="20" lean-forward="true" selection-start-line="81" selection-start-column="20" selection-end-line="81" selection-end-column="20" />
+          <folding>
+            <element signature="imports" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/betterrandom/prng/CMWC4096RNG.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="14">
+          <caret line="46" column="40" lean-forward="false" selection-start-line="46" selection-start-column="33" selection-end-line="46" selection-end-column="40" />
+          <folding>
+            <element signature="e#4295#4296#0" expanded="true" />
+            <element signature="e#4327#4328#0" expanded="true" />
+            <element signature="e#4371#4372#0" expanded="true" />
+            <element signature="e#4400#4401#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/betterrandom/prng/JavaRNG.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="300">
+          <caret line="34" column="2" lean-forward="true" selection-start-line="34" selection-start-column="2" selection-end-line="34" selection-end-column="2" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/betterrandom/seed/RandomSeederThread.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="280">
+          <caret line="63" column="13" lean-forward="true" selection-start-line="63" selection-start-column="13" selection-end-line="63" selection-end-column="13" />
+          <folding>
+            <element signature="imports" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>

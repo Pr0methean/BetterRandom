@@ -4,8 +4,8 @@ import java.lang.ref.WeakReference;
 import java.util.Objects;
 
 /**
- * A {@link WeakReference}&lt;T&gt; that compares the object it refers to when implementing
- * {@link Object#equals(Object)} and {@link Object#hashCode()}.
+ * A {@link WeakReference}&lt;T&gt; that compares the object it refers to when implementing {@link
+ * Object#equals(Object)} and {@link Object#hashCode()}.
  *
  * @param <T> The type of object referred to.
  */

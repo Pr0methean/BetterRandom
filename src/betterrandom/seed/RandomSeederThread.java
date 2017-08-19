@@ -1,6 +1,7 @@
 package betterrandom.seed;
 
 import betterrandom.ByteArrayReseedableRandom;
+import betterrandom.EntropyCountingRandom;
 import betterrandom.util.WeakReferenceWithEquals;
 import java.lang.ref.WeakReference;
 import java.nio.ByteBuffer;
@@ -57,6 +58,10 @@ public final class RandomSeederThread extends Thread {
             // Don't keep iterating over a cleared reference
             prngs.remove(randomRef);
           } else {
+            if (random instanceof EntropyCountingRandom
+                && ((EntropyCountingRandom) random).entropyOctets() > 0) {
+              continue;
+            }
             try {
               if (random instanceof ByteArrayReseedableRandom) {
                 ByteArrayReseedableRandom reseedable = (ByteArrayReseedableRandom) random;

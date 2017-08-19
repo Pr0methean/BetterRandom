@@ -31,8 +31,11 @@ public class DevRandomSeedGenerator implements SeedGenerator {
   private static final DevRandomSeedGenerator INSTANCE = new DevRandomSeedGenerator();
   private static final File DEV_RANDOM = new File("/dev/random");
 
-  /** Singleton unless subclassed. */
-  protected DevRandomSeedGenerator() {}
+  /**
+   * Singleton unless subclassed.
+   */
+  protected DevRandomSeedGenerator() {
+  }
 
   public static DevRandomSeedGenerator getInstance() {
     return INSTANCE;

@@ -7,7 +7,6 @@ import betterrandom.seed.SeedException;
 import betterrandom.seed.SeedGenerator;
 import java.io.IOException;
 import java.io.ObjectInputStream;
-import java.lang.reflect.Modifier;
 import java.util.HashMap;
 import java.util.Random;
 import java.util.concurrent.locks.Lock;

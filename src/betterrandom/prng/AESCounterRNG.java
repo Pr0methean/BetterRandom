@@ -19,8 +19,6 @@ import betterrandom.seed.DefaultSeedGenerator;
 import betterrandom.seed.SeedException;
 import betterrandom.seed.SeedGenerator;
 import betterrandom.util.BinaryUtils;
-import java.io.IOException;
-import java.io.ObjectInputStream;
 import java.nio.ByteBuffer;
 import java.security.GeneralSecurityException;
 import java.security.InvalidKeyException;
@@ -223,8 +221,10 @@ public class AESCounterRNG extends BaseRNG implements RepeatableRNG {
       incrementCounter();
       System.arraycopy(counter, 0, counterInput, i * COUNTER_SIZE_BYTES, COUNTER_SIZE_BYTES);
     }
+    int totalBytes = COUNTER_SIZE_BYTES * BLOCKS_AT_ONCE;
     System.arraycopy(cipher.doFinal(counterInput), 0, currentBlock, 0,
-        COUNTER_SIZE_BYTES * BLOCKS_AT_ONCE);
+        totalBytes);
+    entropyBytes -= totalBytes;
   }
 
   /**

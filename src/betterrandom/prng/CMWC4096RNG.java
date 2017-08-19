@@ -19,12 +19,9 @@ import betterrandom.seed.DefaultSeedGenerator;
 import betterrandom.seed.SeedException;
 import betterrandom.seed.SeedGenerator;
 import betterrandom.util.BinaryUtils;
-import java.io.IOException;
-import java.io.ObjectInputStream;
 import java.util.Arrays;
 import java.util.Random;
 import java.util.concurrent.locks.Lock;
-import java.util.concurrent.locks.ReentrantLock;
 
 /**
  * <p>A Java version of George Marsaglia's <a href="http://school.anhb.uwa.edu.au/personalpages/kwessen/shared/Marsaglia03.html">Complementary
@@ -44,30 +41,20 @@ import java.util.concurrent.locks.ReentrantLock;
  * @author Daniel Dyer
  * @since 1.2
  */
-public class CMWC4096RNG extends Random implements RepeatableRNG {
+public class CMWC4096RNG extends BaseRNG implements RepeatableRNG {
 
   private static final int SEED_SIZE_BYTES = 16384; // Needs 4,096 32-bit integers.
 
   private static final long A = 18782L;
   private static final long serialVersionUID = 1731465909906078875L;
 
-  private final byte[] seed;
-  private final int[] state;
+  private int[] state;
   private int carry = 362436; // TO DO: This should be randomly generated.
   private int index = 4095;
 
   // Lock to prevent concurrent modification of the RNG's internal state.
   private transient Lock lock;
-
-  private void readObject(ObjectInputStream in) throws IOException,
-      ClassNotFoundException {
-    in.defaultReadObject();
-    initTransientFields();
-  }
-
-  protected void initTransientFields() {
-    lock = new ReentrantLock();
-  }
+  private int entropyBytes;
 
   /**
    * Creates a new RNG and seeds it using the default seeding strategy.
@@ -95,12 +82,8 @@ public class CMWC4096RNG extends Random implements RepeatableRNG {
    * @param seed The seed data used to initialise the RNG.
    */
   public CMWC4096RNG(byte[] seed) {
-    if (seed == null || seed.length != SEED_SIZE_BYTES) {
-      throw new IllegalArgumentException("CMWC RNG requires 16kb of seed data.");
-    }
-    this.seed = seed.clone();
-    state = BinaryUtils.convertBytesToInts(seed);
-    initTransientFields();
+    super(seed);
+    setSeed(seed);
   }
 
 
@@ -128,6 +111,7 @@ public class CMWC4096RNG extends Random implements RepeatableRNG {
         carry++;
       }
       state[index] = 0xFFFFFFFE - x;
+      entropyBytes -= (bits + 7) / 8;
       return state[index] >>> (32 - bits);
     } finally {
       lock.unlock();
@@ -143,5 +127,25 @@ public class CMWC4096RNG extends Random implements RepeatableRNG {
   @Override
   public int hashCode() {
     return Arrays.hashCode(seed);
+  }
+
+  @Override
+  public int getNewSeedLength() {
+    return SEED_SIZE_BYTES;
+  }
+
+  @Override
+  public int entropyOctets() {
+    return entropyBytes;
+  }
+
+  @Override
+  public void setSeed(byte[] seed) {
+    if (seed == null || seed.length != SEED_SIZE_BYTES) {
+      throw new IllegalArgumentException("CMWC RNG requires 16kb of seed data.");
+    }
+    state = BinaryUtils.convertBytesToInts(seed);
+    initTransientFields();
+    entropyBytes = SEED_SIZE_BYTES;
   }
 }

@@ -15,16 +15,9 @@
 // ============================================================================
 package betterrandom.prng;
 
-import betterrandom.seed.DefaultSeedGenerator;
-import betterrandom.seed.SeedException;
-import betterrandom.seed.SeedGenerator;
 import betterrandom.util.BinaryUtils;
-import java.io.IOException;
-import java.io.ObjectInputStream;
 import java.util.Arrays;
 import java.util.Random;
-import java.util.concurrent.locks.Lock;
-import java.util.concurrent.locks.ReentrantLock;
 
 /**
  * <p>Very fast pseudo random number generator.  See <a href="http://school.anhb.uwa.edu.au/personalpages/kwessen/shared/Marsaglia03.html">this
@@ -52,6 +45,7 @@ public class XORShiftRNG extends BaseRNG implements RepeatableRNG {
   private int state5;
 
   private byte[] seed;
+  private int entropyBytes;
 
   /**
    * Creates an RNG and seeds it with the specified seed data.
@@ -68,12 +62,18 @@ public class XORShiftRNG extends BaseRNG implements RepeatableRNG {
   @Override
   protected void initTransientFields() {
     super.initTransientFields();
-    int[] state = BinaryUtils.convertBytesToInts(seed);
-    state1 = state[0];
-    state2 = state[1];
-    state3 = state[2];
-    state4 = state[3];
-    state5 = state[4];
+    lock.lock();
+    try {
+      int[] state = BinaryUtils.convertBytesToInts(seed);
+      state1 = state[0];
+      state2 = state[1];
+      state3 = state[2];
+      state4 = state[3];
+      state5 = state[4];
+      entropyBytes = SEED_SIZE_BYTES;
+    } finally {
+      lock.unlock();
+    }
   }
 
   /**
@@ -98,6 +98,7 @@ public class XORShiftRNG extends BaseRNG implements RepeatableRNG {
       state4 = state5;
       state5 = (state5 ^ (state5 << 6)) ^ (t ^ (t << 13));
       int value = (state2 + state2 + 1) * state5;
+      entropyBytes -= (bits + 7) / 8;
       return value >>> (32 - bits);
     } finally {
       lock.unlock();

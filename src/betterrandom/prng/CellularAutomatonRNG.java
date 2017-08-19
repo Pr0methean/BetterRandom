@@ -15,16 +15,11 @@
 // ============================================================================
 package betterrandom.prng;
 
-import betterrandom.seed.DefaultSeedGenerator;
-import betterrandom.seed.SeedException;
-import betterrandom.seed.SeedGenerator;
 import betterrandom.util.BinaryUtils;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.util.Arrays;
 import java.util.Random;
-import java.util.concurrent.locks.Lock;
-import java.util.concurrent.locks.ReentrantLock;
 
 /**
  * <p>Java port of the <a href="http://home.southernct.edu/~pasqualonia1/ca/report.html"
@@ -157,7 +152,7 @@ public class CellularAutomatonRNG extends BaseRNG implements RepeatableRNG {
         currentCellIndex -= 4;
       }
       result = convertCellsToInt(cells, cellA);
-      entropyBytes = Math.min((bits + 7)/8, 0);
+      entropyBytes -= (bits + 7) / 8;
     } finally {
       lock.unlock();
     }
