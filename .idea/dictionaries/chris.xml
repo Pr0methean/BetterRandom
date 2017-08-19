@@ -1,10 +1,13 @@
 <component name="ProjectDictionaryState">
   <dictionary name="chris">
     <words>
+      <w>deserialised</w>
       <w>forkers</w>
+      <w>mersenne</w>
       <w>prng</w>
       <w>reseedable</w>
       <w>rijndael</w>
+      <w>rngs</w>
     </words>
   </dictionary>
 </component>

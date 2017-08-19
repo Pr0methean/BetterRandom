@@ -15,6 +15,9 @@
 // ============================================================================
 package betterrandom.prng;
 
+import betterrandom.seed.DefaultSeedGenerator;
+import betterrandom.seed.SeedException;
+import betterrandom.seed.SeedGenerator;
 import betterrandom.util.BinaryUtils;
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -80,6 +83,14 @@ public class CellularAutomatonRNG extends BaseRNG implements RepeatableRNG {
   private final int[] cells = new int[AUTOMATON_LENGTH];
 
   private int currentCellIndex = AUTOMATON_LENGTH - 1;
+
+  public CellularAutomatonRNG() throws SeedException {
+    this(DefaultSeedGenerator.getInstance());
+  }
+
+  public CellularAutomatonRNG(SeedGenerator seedGenerator) throws SeedException {
+    this(seedGenerator.generateSeed(SEED_SIZE_BYTES));
+  }
 
   protected void copySeedToCellsAndPreEvolve() {
     // Set initial cell states using seed.

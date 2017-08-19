@@ -11,8 +11,6 @@ import java.util.HashMap;
 import java.util.Random;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
-import org.objenesis.Objenesis;
-import org.objenesis.ObjenesisStd;
 
 public abstract class BaseRNG extends Random implements ByteArrayReseedableRandom,
     EntropyCountingRandom {
@@ -21,9 +19,6 @@ public abstract class BaseRNG extends Random implements ByteArrayReseedableRando
   // Lock to prevent concurrent modification of the RNG's internal state.
   protected transient Lock lock;
   protected transient boolean superConstructorFinished = false;
-
-  private static final HashMap<Class<? extends BaseRNG>, Integer> seedLengthsForClass = new HashMap<>();
-  private static final Objenesis objenesis = new ObjenesisStd();
 
   /**
    * Creates a new RNG and seeds it using the default seeding strategy.
