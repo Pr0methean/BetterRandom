@@ -47,6 +47,7 @@ public class DevRandomSeedGenerator implements SeedGenerator {
    * @return The requested number of random bytes, read directly from {@literal /dev/random}.
    * @throws SeedException If {@literal /dev/random} does not exist or is not accessible
    */
+  @SuppressWarnings("IOResourceOpenedButNotSafelyClosed")
   public byte[] generateSeed(int length) throws SeedException {
     FileInputStream file = null;
     try {

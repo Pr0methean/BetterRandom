@@ -54,6 +54,7 @@ public class DefaultSeedGeneratorTest
      * explicitly blocked.  These operations are accessing /dev/random and opening
      * a socket connection.
      */
+    @SuppressWarnings("CustomSecurityManager")
     private static final class RestrictedSecurityManager extends SecurityManager
     {
         @Override
