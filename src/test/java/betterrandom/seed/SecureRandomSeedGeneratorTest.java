@@ -24,7 +24,7 @@ import org.testng.annotations.Test;
  */
 public class SecureRandomSeedGeneratorTest
 {
-    @Test
+    @Test(timeOut = 15000)
     public void testGenerator() throws SeedException
     {
         SeedGenerator generator = new SecureRandomSeedGenerator();

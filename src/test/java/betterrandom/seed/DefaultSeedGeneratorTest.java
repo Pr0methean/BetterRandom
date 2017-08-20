@@ -29,7 +29,7 @@ public class DefaultSeedGeneratorTest
      * back to an alternative generation strategy when the security
      * manager prevents it from using its first choice.
      */
-    @Test
+    @Test(timeOut = 15000)
     public void testRestrictedEnvironment()
     {
         SecurityManager securityManager = System.getSecurityManager();

@@ -40,7 +40,7 @@ public class CMWC4096RNGTest {
   /**
    * Test to ensure that two distinct RNGs with the same seed return the same sequence of numbers.
    */
-  @Test
+  @Test(timeOut = 15000)
   public void testRepeatability() throws SeedException {
     CMWC4096RNG rng = new CMWC4096RNG(seedGenerator);
     // Create second RNG using same seed.
@@ -55,7 +55,7 @@ public class CMWC4096RNGTest {
    * subtle statistical anomalies that would be picked up by Diehard, but it provides a simple check
    * for major problems with the output.
    */
-  @Test(groups = "non-deterministic",
+  @Test(timeOut = 15000, groups = "non-deterministic",
       dependsOnMethods = "testRepeatability")
   public void testDistribution() throws SeedException {
     CMWC4096RNG rng = new CMWC4096RNG(seedGenerator);
@@ -70,7 +70,7 @@ public class CMWC4096RNGTest {
    * subtle statistical anomalies that would be picked up by Diehard, but it provides a simple check
    * for major problems with the output.
    */
-  @Test(groups = "non-deterministic",
+  @Test(timeOut = 15000, groups = "non-deterministic",
       dependsOnMethods = "testRepeatability")
   public void testStandardDeviation() throws SeedException {
     CMWC4096RNG rng = new CMWC4096RNG(seedGenerator);
@@ -89,7 +89,7 @@ public class CMWC4096RNGTest {
    * Make sure that the RNG does not accept seeds that are too small since this could affect the
    * distribution of the output.
    */
-  @Test(expectedExceptions = IllegalArgumentException.class)
+  @Test(timeOut = 15000, expectedExceptions = IllegalArgumentException.class)
   public void testInvalidSeedSize() {
     new CMWC4096RNG(
         new byte[]{1, 2, 3}); // Not enough bytes, should cause an IllegalArgumentException.
@@ -99,14 +99,14 @@ public class CMWC4096RNGTest {
   /**
    * RNG must not accept a null seed otherwise it will not be properly initialised.
    */
-  @Test(expectedExceptions = IllegalArgumentException.class)
+  @Test(timeOut = 15000, expectedExceptions = IllegalArgumentException.class)
   public void testNullSeed() {
     new CMWC4096RNG((byte[]) null);
   }
 
 
   @SuppressWarnings("resource")
-  @Test
+  @Test(timeOut = 15000)
   public void testSerializable() throws IOException, ClassNotFoundException {
     // Serialise an RNG.
     CMWC4096RNG rng = new CMWC4096RNG();
@@ -124,12 +124,12 @@ public class CMWC4096RNGTest {
     assert RNGTestUtils.testEquivalence(rng, rng2, 20) : "Output mismatch after serialisation.";
   }
 
-  @Test
+  @Test(timeOut = 15000)
   public void testEquals() throws ReflectiveOperationException {
     RNGTestUtils.doEqualsSanityChecks(CMWC4096RNG.class.getConstructor());
   }
 
-  @Test
+  @Test(timeOut = 15000)
   public void testHashCode() throws Exception {
     assert RNGTestUtils.testHashCodeDistribution(CMWC4096RNG.class.getConstructor())
         : "Too many hashCode collisions";

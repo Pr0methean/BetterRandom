@@ -93,10 +93,8 @@ public class AESCounterRNG extends BaseRNG implements RepeatableRNG {
   private final byte[] counter = new byte[COUNTER_SIZE_BYTES];
   private boolean counterInitialized = false;
   private transient byte[] counterInput;
-  private boolean seeded = false;
+  private transient boolean seeded = false;
 
-  // Ignore setSeed calls from super constructor
-  private transient boolean superConstructorFinished = false;
   private int entropyBytes;
 
   /**
@@ -104,7 +102,7 @@ public class AESCounterRNG extends BaseRNG implements RepeatableRNG {
    */
   @Override
   protected void initTransientFields() {
-    LOG.fine("initTransientFields starting");
+    LOG.info("initTransientFields starting");
     super.initTransientFields();
     counterInput = new byte[COUNTER_SIZE_BYTES * BLOCKS_AT_ONCE];
     try {
@@ -113,7 +111,7 @@ public class AESCounterRNG extends BaseRNG implements RepeatableRNG {
       throw new RuntimeException("JVM doesn't provide AES/ECB/NoPadding", e);
     }
     setSeed(seed);
-    LOG.fine("initTransientFields done");
+    LOG.info("initTransientFields done");
   }
 
   private final byte[] currentBlock = new byte[COUNTER_SIZE_BYTES * BLOCKS_AT_ONCE];
@@ -168,19 +166,6 @@ public class AESCounterRNG extends BaseRNG implements RepeatableRNG {
    */
   public AESCounterRNG(byte[] seed) {
     super(seed);
-  }
-
-  /**
-   * {@inheritDoc}
-   */
-  @Override
-  public byte[] getSeed() {
-    lock.lock();
-    try {
-      return seed.clone();
-    } finally {
-      lock.unlock();
-    }
   }
 
   private void incrementCounter() {
@@ -268,7 +253,7 @@ public class AESCounterRNG extends BaseRNG implements RepeatableRNG {
   @Override
   public void setSeed(byte[] seed) {
     if (!superConstructorFinished) {
-      LOG.fine("Skipping setSeed: still in super constructor");
+      LOG.info("Skipping setSeed: still in super constructor");
       // setSeed can't work until seed array allocated
       return;
     }
@@ -279,33 +264,36 @@ public class AESCounterRNG extends BaseRNG implements RepeatableRNG {
     try {
       byte[] key;
       if (seed.length == MAX_KEY_LENGTH_BYTES) {
-        LOG.fine("setSeed: using full seed as key");
+        LOG.info("setSeed: using full seed as key");
         key = seed;
+        this.seed = seed;
       } else {
         if (!seeded) {
           if (seed.length < 16) {
-            throw new IllegalArgumentException("Seed too short: need at least 16 bytes");
+            throw new IllegalArgumentException("Seed only "+seed.length+" bytes long; need at least 16");
           } else {
             if (seed.length > MAX_KEY_LENGTH_BYTES) {
-              // part of the seed goes to key; rest goes to counter
+              LOG.info("setSeed: using seed for both key and counter");
+              // part of the seed goes to key
               key = Arrays.copyOfRange(seed, 0, seed.length - COUNTER_SIZE_BYTES);
         
-              // copy to counter only if counter hasn't already been deserialized
-              if (!counterInitialized) {
-                System.arraycopy(seed, seed.length - COUNTER_SIZE_BYTES, counter, 0, COUNTER_SIZE_BYTES);
-                counterInitialized = true;
-              }
+              // rest goes to counter
+              System.arraycopy(seed, seed.length - COUNTER_SIZE_BYTES, counter, 0, COUNTER_SIZE_BYTES);
+              counterInitialized = true;
             } else {
+              LOG.info("setSeed: first call; using whole seed as key");
               key = seed;
             }
           }
           this.seed = seed;
         } else {
+          LOG.info("setSeed: extending existing key");
           // Extend the key
           byte[] newSeed = new byte[this.seed.length + seed.length];
           System.arraycopy(this.seed, 0, newSeed, 0, this.seed.length);
           System.arraycopy(seed, 0, newSeed, this.seed.length, seed.length);
           if (newSeed.length > MAX_KEY_LENGTH_BYTES) {
+            LOG.info("setSeed: digesting key");
             int keyBytes = newSeed.length - COUNTER_SIZE_BYTES;
             key = new byte[keyBytes];
             MessageDigest md = MessageDigest.getInstance("SHA-256");
@@ -315,10 +303,10 @@ public class AESCounterRNG extends BaseRNG implements RepeatableRNG {
             key = newSeed;
           }
           // copy to counter only if counter hasn't already been deserialized
-          if (!counterInitialized) {
+          /* if (!counterInitialized) {
             System.arraycopy(seed, seed.length - COUNTER_SIZE_BYTES, counter, 0, COUNTER_SIZE_BYTES);
             counterInitialized = true;
-          }
+          } */
           this.seed = newSeed;
         }
       }
@@ -331,6 +319,7 @@ public class AESCounterRNG extends BaseRNG implements RepeatableRNG {
     } finally {
       lock.unlock();
     }
+    LOG.info("setSeed done");
   }
 
   @Override

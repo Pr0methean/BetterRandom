@@ -38,7 +38,7 @@ public class CellularAutomatonRNGTest {
   /**
    * Test to ensure that two distinct RNGs with the same seed return the same sequence of numbers.
    */
-  @Test
+  @Test(timeOut = 15000)
   public void testRepeatability() throws SeedException {
     CellularAutomatonRNG rng = new CellularAutomatonRNG();
     // Create second RNG using same seed.
@@ -53,7 +53,7 @@ public class CellularAutomatonRNGTest {
    * subtle statistical anomalies that would be picked up by Diehard, but it provides a simple check
    * for major problems with the output.
    */
-  @Test(groups = "non-deterministic",
+  @Test(timeOut = 15000, groups = "non-deterministic",
       dependsOnMethods = "testRepeatability")
   public void testDistribution() throws SeedException {
     CellularAutomatonRNG rng = new CellularAutomatonRNG(DefaultSeedGenerator.getInstance());
@@ -69,7 +69,7 @@ public class CellularAutomatonRNGTest {
    * subtle statistical anomalies that would be picked up by Diehard, but it provides a simple check
    * for major problems with the output.
    */
-  @Test(groups = "non-deterministic",
+  @Test(timeOut = 15000, groups = "non-deterministic",
       dependsOnMethods = "testRepeatability")
   public void testStandardDeviation() throws SeedException {
     CellularAutomatonRNG rng = new CellularAutomatonRNG();
@@ -88,7 +88,7 @@ public class CellularAutomatonRNGTest {
    * Make sure that the RNG does not accept seeds that are too small since this could affect the
    * distribution of the output.
    */
-  @Test(expectedExceptions = IllegalArgumentException.class)
+  @Test(timeOut = 15000, expectedExceptions = IllegalArgumentException.class)
   public void testInvalidSeedSize() {
     new CellularAutomatonRNG(
         new byte[]{1, 2, 3}); // One byte too few, should cause an IllegalArgumentException.
@@ -98,13 +98,13 @@ public class CellularAutomatonRNGTest {
   /**
    * RNG must not accept a null seed otherwise it will not be properly initialised.
    */
-  @Test(expectedExceptions = IllegalArgumentException.class)
+  @Test(timeOut = 15000, expectedExceptions = IllegalArgumentException.class)
   public void testNullSeed() {
     new CellularAutomatonRNG((byte[]) null);
   }
 
 
-  @Test
+  @Test(timeOut = 15000)
   public void testSerializable() throws IOException, ClassNotFoundException, SeedException {
     // Serialise an RNG.
     CellularAutomatonRNG rng = new CellularAutomatonRNG();
@@ -122,7 +122,7 @@ public class CellularAutomatonRNGTest {
     assert RNGTestUtils.testEquivalence(rng, rng2, 20) : "Output mismatch after serialisation.";
   }
 
-  @Test
+  @Test(timeOut = 15000)
   public void testSetSeed() throws SeedException {
     long seed = new Random().nextLong();
     CellularAutomatonRNG rng = new CellularAutomatonRNG();
@@ -134,12 +134,12 @@ public class CellularAutomatonRNGTest {
         .testEquivalence(rng, rng2, 20) : "Output mismatch after reseeding with same seed";
   }
 
-  @Test
+  @Test(timeOut = 15000)
   public void testEquals() throws ReflectiveOperationException {
     RNGTestUtils.doEqualsSanityChecks(CellularAutomatonRNG.class.getConstructor());
   }
 
-  @Test
+  @Test(timeOut = 15000)
   public void testHashCode() throws Exception {
     assert RNGTestUtils.testHashCodeDistribution(CellularAutomatonRNG.class.getConstructor())
         : "Too many hashCode collisions";

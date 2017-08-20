@@ -26,8 +26,13 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.security.GeneralSecurityException;
 import java.security.InvalidKeyException;
+import java.util.logging.FileHandler;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.Random;
 import org.testng.Reporter;
+import org.testng.annotations.AfterSuite;
+import org.testng.annotations.BeforeSuite;
 import org.testng.annotations.Test;
 
 /**
@@ -37,7 +42,20 @@ import org.testng.annotations.Test;
  */
 public class AESCounterRNGTest {
 
-  @Test
+  private FileHandler logHandler;
+
+  @BeforeSuite
+  public void setUp() throws IOException {
+    logHandler = new FileHandler("%h/javalog/log%u.%g.txt", 1_000_000, 10);
+    Logger.getGlobal().addHandler(logHandler);
+  }
+  
+  @AfterSuite
+  public void tearDown() {
+    logHandler.close();
+  }
+
+  @Test(timeOut = 15000)
   public void testMaxSeedLengthOk() {
     assert AESCounterRNG.MAX_KEY_LENGTH_BYTES >= 16 :
         "Should allow a 16-byte key";
@@ -46,7 +64,7 @@ public class AESCounterRNGTest {
   }
 
 
-  @Test
+  @Test(timeOut = 15000)
   public void testSerializableWithoutSeedInCounter()
       throws GeneralSecurityException, IOException, ClassNotFoundException {
     // Serialise an RNG.
@@ -66,7 +84,7 @@ public class AESCounterRNGTest {
   }
 
 
-  @Test
+  @Test(timeOut = 15000)
   public void testSerializableWithSeedInCounter()
       throws GeneralSecurityException, IOException, ClassNotFoundException {
     // Serialise an RNG.
@@ -89,7 +107,7 @@ public class AESCounterRNGTest {
   /**
    * Test to ensure that two distinct RNGs with the same seed return the same sequence of numbers.
    */
-  @Test
+  @Test(timeOut = 15000)
   public void testRepeatability() throws GeneralSecurityException {
     AESCounterRNG rng = new AESCounterRNG(48);
     // Create second RNG using same seed.
@@ -105,7 +123,7 @@ public class AESCounterRNGTest {
    * subtle statistical anomalies that would be picked up by Diehard, but it provides a simple check
    * for major problems with the output.
    */
-  @Test(groups = "non-deterministic",
+  @Test(timeOut = 15000, groups = "non-deterministic",
       dependsOnMethods = "testRepeatability")
   public void testDistribution() throws GeneralSecurityException, SeedException {
     AESCounterRNG rng = new AESCounterRNG(DefaultSeedGenerator.getInstance());
@@ -121,7 +139,7 @@ public class AESCounterRNGTest {
    * subtle statistical anomalies that would be picked up by Diehard, but it provides a simple check
    * for major problems with the output.
    */
-  @Test(groups = "non-deterministic",
+  @Test(timeOut = 15000, groups = "non-deterministic",
       dependsOnMethods = "testRepeatability")
   public void testStandardDeviation() throws GeneralSecurityException {
     AESCounterRNG rng = new AESCounterRNG();
@@ -136,13 +154,13 @@ public class AESCounterRNGTest {
   }
 
 
-  @Test(expectedExceptions = IllegalArgumentException.class)
+  @Test(timeOut = 15000, expectedExceptions = IllegalArgumentException.class)
   public void testSeedTooShort() throws GeneralSecurityException {
     new AESCounterRNG(new byte[]{1, 2, 3}); // Should throw an exception.
   }
 
 
-  @Test(expectedExceptions = IllegalArgumentException.class)
+  @Test(timeOut = 15000, expectedExceptions = IllegalArgumentException.class)
   public void testSeedTooLong() throws GeneralSecurityException {
     new AESCounterRNG(49); // Should throw an exception.
   }
@@ -151,13 +169,13 @@ public class AESCounterRNGTest {
   /**
    * RNG must not accept a null seed otherwise it will not be properly initialised.
    */
-  @Test(expectedExceptions = IllegalArgumentException.class)
+  @Test(timeOut = 15000, expectedExceptions = IllegalArgumentException.class)
   public void testNullSeed() throws GeneralSecurityException {
     new AESCounterRNG((byte[]) null); // Should throw an exception.
   }
 
 
-  @Test
+  @Test(timeOut = 15000)
   public void testSetSeed() throws GeneralSecurityException {
     // can't use a real SeedGenerator since we need longs, so use a Random
     Random masterRNG = new Random();
@@ -183,13 +201,13 @@ public class AESCounterRNGTest {
   }
 
 
-  @Test
+  @Test(timeOut = 30000)
   public void testEquals() throws GeneralSecurityException, ReflectiveOperationException {
     RNGTestUtils.doEqualsSanityChecks(AESCounterRNG.class.getConstructor());
   }
 
 
-  @Test
+  @Test(timeOut = 15000)
   public void testHashCode() throws Exception {
     assert RNGTestUtils.testHashCodeDistribution(AESCounterRNG.class.getConstructor())
         : "Too many hashCode collisions";

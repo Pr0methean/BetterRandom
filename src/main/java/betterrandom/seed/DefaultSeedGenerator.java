@@ -16,6 +16,7 @@
 package betterrandom.seed;
 
 import betterrandom.util.BinaryUtils;
+import java.util.logging.Logger;
 
 /**
  * Seed generator that maintains multiple strategies for seed generation and will delegate to the
@@ -26,6 +27,7 @@ import betterrandom.util.BinaryUtils;
 public final class DefaultSeedGenerator implements SeedGenerator {
 
   private static final String DEBUG_PROPERTY = "org.uncommons.maths.random.debug";
+  private static final Logger LOG = Logger.getLogger(DefaultSeedGenerator.class.getName());
 
   /**
    * Singleton instance.
@@ -66,6 +68,7 @@ public final class DefaultSeedGenerator implements SeedGenerator {
   public byte[] generateSeed(int length) {
     for (SeedGenerator generator : GENERATORS) {
       try {
+        LOG.info(String.format("Trying to generate a %d-byte seed using %s", length, generator));
         byte[] seed = generator.generateSeed(length);
         try {
           boolean debug = "true".equals(System.getProperty(DEBUG_PROPERTY, "false"));

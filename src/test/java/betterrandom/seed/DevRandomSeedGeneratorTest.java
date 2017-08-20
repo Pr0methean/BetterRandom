@@ -26,7 +26,7 @@ import org.testng.annotations.Test;
  */
 public class DevRandomSeedGeneratorTest
 {
-    @Test
+    @Test(timeOut = 15000)
     public void testGenerator()
     {
         SeedGenerator generator = new DevRandomSeedGenerator();

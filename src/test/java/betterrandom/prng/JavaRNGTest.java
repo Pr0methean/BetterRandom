@@ -29,7 +29,7 @@ public class JavaRNGTest {
   /**
    * Test to ensure that two distinct RNGs with the same seed return the same sequence of numbers.
    */
-  @Test
+  @Test(timeOut = 15000)
   public void testRepeatability() {
     // Create an RNG using the default seeding strategy.
     JavaRNG rng = new JavaRNG();
@@ -44,7 +44,7 @@ public class JavaRNGTest {
    * Make sure that the RNG does not accept seeds that are too small since this could affect the
    * distribution of the output.
    */
-  @Test(expectedExceptions = IllegalArgumentException.class)
+  @Test(timeOut = 15000, expectedExceptions = IllegalArgumentException.class)
   public void testInvalidSeedSize() {
     new JavaRNG(new byte[]{1, 2, 3, 4, 5, 6,
         7}); // One byte too few, should cause an IllegalArgumentException.
@@ -54,7 +54,7 @@ public class JavaRNGTest {
   /**
    * RNG must not accept a null seed otherwise it will not be properly initialised.
    */
-  @Test(expectedExceptions = IllegalArgumentException.class)
+  @Test(timeOut = 15000, expectedExceptions = IllegalArgumentException.class)
   public void testNullSeed() throws SeedException {
     new JavaRNG(new SeedGenerator() {
       public byte[] generateSeed(int length) {
@@ -63,12 +63,12 @@ public class JavaRNGTest {
     });
   }
 
-  @Test
+  @Test(timeOut = 15000)
   public void testEquals() throws ReflectiveOperationException {
     RNGTestUtils.doEqualsSanityChecks(JavaRNG.class.getConstructor());
   }
 
-  @Test
+  @Test(timeOut = 15000)
   public void testHashCode() throws Exception {
     assert RNGTestUtils.testHashCodeDistribution(JavaRNG.class.getConstructor())
         : "Too many hashCode collisions";

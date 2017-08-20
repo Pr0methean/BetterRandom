@@ -34,7 +34,7 @@ public class BitStringTest
      * Check that a bit string is constructed correctly, with
      * the correct length and all bits initially set to zero.
      */
-    @Test
+    @Test(timeOut = 15000)
     public void testCreateBitString()
     {
         BitString bitString = new BitString(100);
@@ -49,7 +49,7 @@ public class BitStringTest
     /**
      * Check that a random bit string of the correct length is constructed.
      */
-    @Test(dependsOnMethods = "testCreateBitString")
+    @Test(timeOut = 15000, dependsOnMethods = "testCreateBitString")
     public void testCreateRandomBitString()
     {
         BitString bitString = new BitString(100, new Random());
@@ -60,7 +60,7 @@ public class BitStringTest
     /**
      * Make sure that bits are set correctly.
      */
-    @Test(dependsOnMethods = "testCreateBitString")
+    @Test(timeOut = 15000, dependsOnMethods = "testCreateBitString")
     public void testSetBits()
     {
         BitString bitString = new BitString(5);
@@ -82,7 +82,7 @@ public class BitStringTest
     /**
      * Make sure bit-flipping works as expected.
      */
-    @Test(dependsOnMethods = "testCreateBitString")
+    @Test(timeOut = 15000, dependsOnMethods = "testCreateBitString")
     public void testFlipBits()
     {
         BitString bitString = new BitString(5);
@@ -96,7 +96,7 @@ public class BitStringTest
     /**
      * Checks that string representations are correctly generated.
      */
-    @Test(dependsOnMethods = "testSetBits")
+    @Test(timeOut = 15000, dependsOnMethods = "testSetBits")
     public void testToString()
     {
         BitString bitString = new BitString(10);
@@ -112,7 +112,7 @@ public class BitStringTest
     /**
      * Checks that the String-parsing constructor works correctly.
      */
-    @Test(dependsOnMethods = "testToString")
+    @Test(timeOut = 15000, dependsOnMethods = "testToString")
     public void testParsing()
     {
         // Use a 33-bit string to check that word boundaries are dealt with correctly.
@@ -126,7 +126,7 @@ public class BitStringTest
     /**
      * Checks that integer conversion is correct.
      */
-    @Test(dependsOnMethods = "testSetBits")
+    @Test(timeOut = 15000, dependsOnMethods = "testSetBits")
     public void testToNumber()
     {
         BitString bitString = new BitString(10);
@@ -140,7 +140,7 @@ public class BitStringTest
     /**
      * Checks that the bit string can correctly count its number of set bits.
      */
-    @Test(dependsOnMethods = "testSetBits")
+    @Test(timeOut = 15000, dependsOnMethods = "testSetBits")
     public void testCountSetBits()
     {
         BitString bitString = new BitString(64);
@@ -159,7 +159,7 @@ public class BitStringTest
     /**
      * Checks that the bit string can correctly count its number of unset bits.
      */
-    @Test(dependsOnMethods = "testSetBits")
+    @Test(timeOut = 15000, dependsOnMethods = "testSetBits")
     public void testCountUnsetBits()
     {
         BitString bitString = new BitString(12);
@@ -174,7 +174,7 @@ public class BitStringTest
     }
 
 
-    @Test(dependsOnMethods = {"testSetBits", "testFlipBits"})
+    @Test(timeOut = 15000, dependsOnMethods = {"testSetBits", "testFlipBits"})
     public void testClone()
     {
         BitString bitString = new BitString(10);
@@ -196,7 +196,7 @@ public class BitStringTest
 
 
     @SuppressWarnings({"EqualsWithItself", "ObjectEqualsNull"})
-    @Test(dependsOnMethods = "testClone")
+    @Test(timeOut = 15000, dependsOnMethods = "testClone")
     public void testEquals()
     {
         BitString bitString = new BitString(10);
@@ -229,7 +229,7 @@ public class BitStringTest
      * to create a bit string with a negative length, an appropriate exception
      * must be thrown.
      */
-    @Test(expectedExceptions = IllegalArgumentException.class)
+    @Test(timeOut = 15000, expectedExceptions = IllegalArgumentException.class)
     public void testInvalidLength()
     {
         new BitString(-1);
@@ -242,7 +242,7 @@ public class BitStringTest
      * exception is an error since bugs in programs that use bit strings will
      * be hard to detect.
      */
-    @Test(expectedExceptions = IllegalArgumentException.class)
+    @Test(timeOut = 15000, expectedExceptions = IllegalArgumentException.class)
     public void testInvalidChars()
     {
         new BitString("0010201"); // Invalid.
@@ -253,7 +253,7 @@ public class BitStringTest
      * The index of an individual bit must be non-negative.  If an attempt is made
      * to set a negative bit position, an appropriate exception must be thrown.
      */
-    @Test(expectedExceptions = IndexOutOfBoundsException.class)
+    @Test(timeOut = 15000, expectedExceptions = IndexOutOfBoundsException.class)
     public void testNegativeIndex()
     {
         BitString bitString = new BitString(1);
@@ -266,7 +266,7 @@ public class BitStringTest
      * If an attempt is made to set a negative bit position, an appropriate
      * exception must be thrown.
      */
-    @Test(expectedExceptions = IndexOutOfBoundsException.class)
+    @Test(timeOut = 15000, expectedExceptions = IndexOutOfBoundsException.class)
     public void testIndexTooHigh()
     {
         BitString bitString = new BitString(1);
@@ -274,7 +274,7 @@ public class BitStringTest
     }
 
 
-    @Test(dependsOnMethods = "testEquals")
+    @Test(timeOut = 15000, dependsOnMethods = "testEquals")
     public void testSerialisation() throws IOException, ClassNotFoundException
     {
         BitString bitString = new BitString("0101010");
@@ -289,7 +289,7 @@ public class BitStringTest
     }
 
 
-    @Test
+    @Test(timeOut = 15000)
     public void testSwapSubstringWordAligned()
     {
         // Bit indices are little-endian, so position 0 is the rightmost bit.
@@ -305,7 +305,7 @@ public class BitStringTest
     }
 
 
-    @Test
+    @Test(timeOut = 15000)
     public void testSwapSubstringNonAlignedStart()
     {
         // Bit indices are little-endian, so position 0 is the rightmost bit.
@@ -317,7 +317,7 @@ public class BitStringTest
     }
 
 
-    @Test
+    @Test(timeOut = 15000)
     public void testSwapSubstringNonAlignedEnd()
     {
         // Bit indices are little-endian, so position 0 is the rightmost bit.
