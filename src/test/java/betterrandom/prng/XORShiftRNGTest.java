@@ -39,7 +39,7 @@ public class XORShiftRNGTest {
    * This method must be run before any of the other tests otherwise the state of the RNG will not
    * be the same in the duplicate RNG.
    */
-  @Test
+  @Test(timeOut = 15000)
   public void testRepeatability() throws SeedException {
     XORShiftRNG rng = new XORShiftRNG();
     // Create second RNG using same seed.
@@ -54,7 +54,7 @@ public class XORShiftRNGTest {
    * subtle statistical anomalies that would be picked up by Diehard, but it provides a simple check
    * for major problems with the output.
    */
-  @Test(groups = "non-deterministic",
+  @Test(timeOut = 15000, groups = "non-deterministic",
       dependsOnMethods = "testRepeatability")
   public void testDistribution() throws SeedException {
     XORShiftRNG rng = new XORShiftRNG(DefaultSeedGenerator.getInstance());
@@ -69,7 +69,7 @@ public class XORShiftRNGTest {
    * subtle statistical anomalies that would be picked up by Diehard, but it provides a simple check
    * for major problems with the output.
    */
-  @Test(groups = "non-deterministic",
+  @Test(timeOut = 15000, groups = "non-deterministic",
       dependsOnMethods = "testRepeatability")
   public void testStandardDeviation() throws SeedException {
     XORShiftRNG rng = new XORShiftRNG();
@@ -88,7 +88,7 @@ public class XORShiftRNGTest {
    * Make sure that the RNG does not accept seeds that are too small since this could affect the
    * distribution of the output.
    */
-  @Test(expectedExceptions = IllegalArgumentException.class)
+  @Test(timeOut = 15000, expectedExceptions = IllegalArgumentException.class)
   public void testInvalidSeedSize() {
     new XORShiftRNG(
         new byte[]{1, 2, 3}); // Not enough bytes, should cause an IllegalArgumentException.
@@ -98,13 +98,13 @@ public class XORShiftRNGTest {
   /**
    * RNG must not accept a null seed otherwise it will not be properly initialised.
    */
-  @Test(expectedExceptions = IllegalArgumentException.class)
+  @Test(timeOut = 15000, expectedExceptions = IllegalArgumentException.class)
   public void testNullSeed() {
     new XORShiftRNG((byte[]) null);
   }
 
 
-  @Test
+  @Test(timeOut = 15000)
   public void testSerializable() throws IOException, ClassNotFoundException, SeedException {
     // Serialise an RNG.
     XORShiftRNG rng = new XORShiftRNG();
@@ -122,12 +122,12 @@ public class XORShiftRNGTest {
     assert RNGTestUtils.testEquivalence(rng, rng2, 20) : "Output mismatch after serialisation.";
   }
 
-  @Test
+  @Test(timeOut = 15000)
   public void testEquals() throws ReflectiveOperationException {
     RNGTestUtils.doEqualsSanityChecks(XORShiftRNG.class.getConstructor());
   }
 
-  @Test
+  @Test(timeOut = 15000)
   public void testHashCode() throws Exception {
     assert RNGTestUtils.testHashCodeDistribution(XORShiftRNG.class.getConstructor())
         : "Too many hashCode collisions";

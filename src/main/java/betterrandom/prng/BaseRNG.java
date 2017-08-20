@@ -12,13 +12,32 @@ import java.util.HashMap;
 import java.util.Random;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
+import java.util.logging.Logger;
 
 public abstract class BaseRNG extends Random implements ByteArrayReseedableRandom,
-    EntropyCountingRandom {
+    EntropyCountingRandom, RepeatableRNG {
+
+  private static final Logger LOG = Logger.getLogger(BaseRNG.class.getName());
 
   protected byte[] seed;
   // Lock to prevent concurrent modification of the RNG's internal state.
   protected transient Lock lock;
+
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public byte[] getSeed() {
+    lock.lock();
+    LOG.info("Returning our "+seed.length+"-byte seed.");
+    try {
+      return seed.clone();
+    } finally {
+      lock.unlock();
+    }
+  }
+
+  /** Use this if necessary to ignore setSeed(long) calls from super constructor */
   protected transient boolean superConstructorFinished = false;
 
   /**
@@ -40,14 +59,16 @@ public abstract class BaseRNG extends Random implements ByteArrayReseedableRando
   }
 
   public BaseRNG(byte[] seed) {
+    LOG.info("BaseRNG.<init>(byte[]) starting");
     if (seed == null) {
       throw new IllegalArgumentException("Seed must not be null");
     }
     this.seed = seed;
     initTransientFields();
+    LOG.info("BaseRNG.<init>(byte[]) done");
   }
 
-  protected synchronized void initTransientFields() {
+  protected void initTransientFields() {
     if (lock == null) {
       lock = new ReentrantLock(); 
     }

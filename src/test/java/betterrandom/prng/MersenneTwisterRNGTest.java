@@ -37,7 +37,7 @@ public class MersenneTwisterRNGTest {
   /**
    * Test to ensure that two distinct RNGs with the same seed return the same sequence of numbers.
    */
-  @Test
+  @Test(timeOut = 15000)
   public void testRepeatability() throws SeedException {
     MersenneTwisterRNG rng = new MersenneTwisterRNG();
     // Create second RNG using same seed.
@@ -52,7 +52,7 @@ public class MersenneTwisterRNGTest {
    * subtle statistical anomalies that would be picked up by Diehard, but it provides a simple check
    * for major problems with the output.
    */
-  @Test(groups = "non-deterministic",
+  @Test(timeOut = 15000, groups = "non-deterministic",
       dependsOnMethods = "testRepeatability")
   public void testDistribution() throws SeedException {
     MersenneTwisterRNG rng = new MersenneTwisterRNG(DefaultSeedGenerator.getInstance());
@@ -67,7 +67,7 @@ public class MersenneTwisterRNGTest {
    * subtle statistical anomalies that would be picked up by Diehard, but it provides a simple check
    * for major problems with the output.
    */
-  @Test(groups = "non-deterministic",
+  @Test(timeOut = 15000, groups = "non-deterministic",
       dependsOnMethods = "testRepeatability")
   public void testStandardDeviation() throws SeedException {
     MersenneTwisterRNG rng = new MersenneTwisterRNG();
@@ -86,7 +86,7 @@ public class MersenneTwisterRNGTest {
    * Make sure that the RNG does not accept seeds that are too small since this could affect the
    * distribution of the output.
    */
-  @Test(expectedExceptions = IllegalArgumentException.class)
+  @Test(timeOut = 15000, expectedExceptions = IllegalArgumentException.class)
   public void testInvalidSeedSize() {
     new MersenneTwisterRNG(new byte[]{1, 2, 3, 4, 5, 6, 7,
         8}); // Need 16 bytes, should cause an IllegalArgumentException.
@@ -96,13 +96,13 @@ public class MersenneTwisterRNGTest {
   /**
    * RNG must not accept a null seed otherwise it will not be properly initialised.
    */
-  @Test(expectedExceptions = IllegalArgumentException.class)
+  @Test(timeOut = 15000, expectedExceptions = IllegalArgumentException.class)
   public void testNullSeed() {
     new MersenneTwisterRNG((byte[]) null);
   }
 
 
-  @Test
+  @Test(timeOut = 15000)
   public void testSerializable() throws IOException, ClassNotFoundException, SeedException {
     // Serialise an RNG.
     MersenneTwisterRNG rng = new MersenneTwisterRNG();
@@ -120,12 +120,12 @@ public class MersenneTwisterRNGTest {
     assert RNGTestUtils.testEquivalence(rng, rng2, 20) : "Output mismatch after serialisation.";
   }
 
-  @Test
+  @Test(timeOut = 15000)
   public void testEquals() throws ReflectiveOperationException {
     RNGTestUtils.doEqualsSanityChecks(MersenneTwisterRNG.class.getConstructor());
   }
 
-  @Test
+  @Test(timeOut = 15000)
   public void testHashCode() throws Exception {
     assert RNGTestUtils.testHashCodeDistribution(MersenneTwisterRNG.class.getConstructor())
         : "Too many hashCode collisions";

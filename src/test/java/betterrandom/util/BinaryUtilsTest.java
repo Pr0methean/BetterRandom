@@ -24,7 +24,7 @@ import org.testng.annotations.Test;
  */
 public class BinaryUtilsTest
 {
-    @Test
+    @Test(timeOut = 15000)
     public void testBytesToHexString()
     {
         byte[] seed = {124, 11, 0, -76, -3, 127, -128, -1};
@@ -34,7 +34,7 @@ public class BinaryUtilsTest
     }
 
 
-    @Test
+    @Test(timeOut = 15000)
     public void testHexStringToBytes()
     {
         String hex = "7C0B00B4FD7F80FF";
@@ -44,7 +44,7 @@ public class BinaryUtilsTest
     }
 
 
-    @Test(expectedExceptions = IllegalArgumentException.class)
+    @Test(timeOut = 15000, expectedExceptions = IllegalArgumentException.class)
     public void testInvalidHexStringLength()
     {
         // Hex string should have even number of characters (2 per byte), so
@@ -57,7 +57,7 @@ public class BinaryUtilsTest
      * Make sure that the conversion method correctly converts 4 bytes to an
      * integer assuming big-endian convention.
      */
-    @Test
+    @Test(timeOut = 15000)
     public void testConvertBytesToInt()
     {
         byte[] bytes = {8, 4, 2, 1};
@@ -71,7 +71,7 @@ public class BinaryUtilsTest
      * Make sure that the conversion method correctly converts multiples of 4 bytes to an
      * array of integers assuming big-endian convention.
      */
-    @Test
+    @Test(timeOut = 15000)
     public void testConvertBytesToInts()
     {
         byte[] bytes = {0, 0, 0, 16, 8, 4, 2, 1};
@@ -87,7 +87,7 @@ public class BinaryUtilsTest
      * Make sure that the conversion method throws an exception if the number of bytes is
      * not a multiple of 4.
      */
-    @Test(expectedExceptions = IllegalArgumentException.class)
+    @Test(timeOut = 15000, expectedExceptions = IllegalArgumentException.class)
     public void testConvertWrongNumberOfBytesToInts()
     {
         byte[] bytes = {0, 0, 16, 8, 4, 2, 1};
@@ -99,7 +99,7 @@ public class BinaryUtilsTest
      * Make sure that the conversion method correctly converts 8 bytes to a
      * long assuming big-endian convention.
      */
-    @Test
+    @Test(timeOut = 15000)
     public void testConvertBytesToLong()
     {
         byte[] bytes = {0, 0, 0, 16, 8, 4, 2, 1};
@@ -112,7 +112,7 @@ public class BinaryUtilsTest
     /**
      * Regression test for failure to correctly convert values that contain negative bytes.
      */
-    @Test
+    @Test(timeOut = 15000)
     public void testConvertNegativeBytesToLong()
     {
         byte[] bytes = {-121, 30, 107, -100, -76, -8, 53, 81};
@@ -122,7 +122,7 @@ public class BinaryUtilsTest
     }
 
 
-    @Test
+    @Test(timeOut = 15000)
     public void testConvertFixedPoint()
     {
         final double value = 0.6875d;
@@ -135,7 +135,7 @@ public class BinaryUtilsTest
      * Makes sure that zero is dealt with correctly by the fixed point conversion
      * method.
      */
-    @Test(dependsOnMethods = "testConvertFixedPoint")
+    @Test(timeOut = 15000, dependsOnMethods = "testConvertFixedPoint")
     public void testConvertFixedPointZero()
     {
         BitString bits = BinaryUtils.convertDoubleToFixedPointBits(0d);
@@ -149,7 +149,7 @@ public class BinaryUtilsTest
      * (which has no places to the left of the decimal point).  Not throwing an
      * exception would be a bug.
      */
-    @Test(dependsOnMethods = "testConvertFixedPoint",
+    @Test(timeOut = 15000, dependsOnMethods = "testConvertFixedPoint",
           expectedExceptions = IllegalArgumentException.class)
     public void testConvertFixedPointTooHigh()
     {
@@ -162,7 +162,7 @@ public class BinaryUtilsTest
      * since there is no way to represent these values in our fixed point scheme
      * (there is no sign bit).  Not throwing an exception would be a bug.
      */
-    @Test(dependsOnMethods = "testConvertFixedPoint",
+    @Test(timeOut = 15000, dependsOnMethods = "testConvertFixedPoint",
           expectedExceptions = IllegalArgumentException.class)
     public void testConvertFixedPointNegative()
     {
