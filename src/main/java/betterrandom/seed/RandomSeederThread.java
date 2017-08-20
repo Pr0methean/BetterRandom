@@ -19,7 +19,7 @@ public final class RandomSeederThread extends Thread {
       new ConcurrentHashMap<>();
   private final SeedGenerator seedGenerator;
   private final Set<WeakReferenceWithEquals<Random>> prngs = Collections.newSetFromMap(
-      new ConcurrentHashMap<>());
+      new ConcurrentHashMap<WeakReferenceWithEquals<Random>, Boolean>());
   private final ByteBuffer seedBuffer = ByteBuffer.allocate(8);
   private final byte[] seedArray = seedBuffer.array();
 
