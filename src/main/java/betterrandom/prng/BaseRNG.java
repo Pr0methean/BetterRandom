@@ -11,12 +11,9 @@ import java.nio.ByteBuffer;
 import java.util.Random;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
-import java.util.logging.Logger;
 
 public abstract class BaseRNG extends Random implements ByteArrayReseedableRandom,
     EntropyCountingRandom, RepeatableRNG {
-
-  private static final Logger LOG = Logger.getLogger(BaseRNG.class.getName());
 
   protected byte[] seed;
   // Lock to prevent concurrent modification of the RNG's internal state.
@@ -28,7 +25,6 @@ public abstract class BaseRNG extends Random implements ByteArrayReseedableRando
   @Override
   public byte[] getSeed() {
     lock.lock();
-    LOG.info("Returning our " + seed.length + "-byte seed.");
     try {
       return seed.clone();
     } finally {
@@ -61,13 +57,11 @@ public abstract class BaseRNG extends Random implements ByteArrayReseedableRando
 
   @SuppressWarnings("OverriddenMethodCallDuringObjectConstruction")
   public BaseRNG(byte[] seed) {
-    LOG.info("BaseRNG.<init>(byte[]) starting");
     if (seed == null) {
       throw new IllegalArgumentException("Seed must not be null");
     }
     this.seed = seed.clone();
     initTransientFields();
-    LOG.info("BaseRNG.<init>(byte[]) done");
   }
 
   protected void initTransientFields() {
