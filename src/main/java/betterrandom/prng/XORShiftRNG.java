@@ -56,7 +56,7 @@ public class XORShiftRNG extends BaseRNG implements RepeatableRNG {
    */
   public XORShiftRNG(byte[] seed) {
     super(seed);
-    if (seed == null || seed.length != SEED_SIZE_BYTES) {
+    if (seed.length != SEED_SIZE_BYTES) {
       throw new IllegalArgumentException("XOR shift RNG requires 160 bits of seed data.");
     }
   }

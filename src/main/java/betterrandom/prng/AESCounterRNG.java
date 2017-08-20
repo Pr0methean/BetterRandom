@@ -102,6 +102,11 @@ public class AESCounterRNG extends BaseRNG implements RepeatableRNG {
   protected void initTransientFields() {
     super.initTransientFields();
     counterInput = new byte[COUNTER_SIZE_BYTES * BLOCKS_AT_ONCE];
+    try {
+      cipher = Cipher.getInstance("AES/ECB/NoPadding");
+    } catch (NoSuchAlgorithmException | NoSuchPaddingException e) {
+      throw new RuntimeException("JVM doesn't provide AES/ECB/NoPadding", e);
+    }
     setSeed(seed);
   }
 
@@ -154,7 +159,6 @@ public class AESCounterRNG extends BaseRNG implements RepeatableRNG {
    * Creates an RNG and seeds it with the specified seed data.
    *
    * @param seed The seed data used to initialise the RNG.
-   * @throws GeneralSecurityException If there is a problem initialising the AES cipher.
    */
   public AESCounterRNG(byte[] seed) {
     super(seed);
