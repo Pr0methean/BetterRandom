@@ -30,7 +30,7 @@ public class DefaultSeedGeneratorTest {
    * strategy when the security manager prevents it from using its first choice.
    */
   @SuppressWarnings("CallToSystemSetSecurityManager")
-  @Test(timeOut = 15000)
+  @Test(timeOut = 120000)
   public void testRestrictedEnvironment() {
     SecurityManager securityManager = System.getSecurityManager();
     try {

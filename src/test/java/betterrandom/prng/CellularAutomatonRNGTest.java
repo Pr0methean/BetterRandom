@@ -79,7 +79,7 @@ public class CellularAutomatonRNGTest {
     double observedSD = RNGTestUtils.calculateSampleStandardDeviation(rng, n, 10000);
     double expectedSD = n / Math.sqrt(12);
     Reporter.log("Expected SD: " + expectedSD + ", observed SD: " + observedSD);
-    assertEquals(observedSD, expectedSD, 0.02,
+    assertEquals(observedSD, expectedSD, 0.02 * expectedSD,
         "Standard deviation is outside acceptable range: " + observedSD);
   }
 

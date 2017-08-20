@@ -78,9 +78,9 @@ public class CellularAutomatonRNG extends BaseRNG implements RepeatableRNG {
           240, 160, 142, 119, 73, 103, 166, 33, 148, 9, 111, 136, 168, 150, 82
       };
 
-  private transient int[] cells = new int[AUTOMATON_LENGTH];
+  private transient int[] cells;
 
-  private transient int currentCellIndex = AUTOMATON_LENGTH - 1;
+  private transient int currentCellIndex;
 
   public CellularAutomatonRNG() throws SeedException {
     this(DefaultSeedGenerator.getInstance());
@@ -117,9 +117,12 @@ public class CellularAutomatonRNG extends BaseRNG implements RepeatableRNG {
 
   @Override
   protected void initTransientFields() {
+    cells = new int[AUTOMATON_LENGTH];
+    currentCellIndex = AUTOMATON_LENGTH - 1;
     super.initTransientFields();
     lock.lock();
     try {
+      setSeed(seed);
       copySeedToCellsAndPreEvolve();
     } finally {
       lock.unlock();
@@ -132,10 +135,7 @@ public class CellularAutomatonRNG extends BaseRNG implements RepeatableRNG {
    * @param seed The seed data used to initialise the RNG.
    */
   public CellularAutomatonRNG(byte[] seed) {
-    super(SEED_SIZE_BYTES);
-    if (seed.length != SEED_SIZE_BYTES) {
-      throw new IllegalArgumentException("Cellular Automaton RNG requires a 32-bit (4-byte) seed.");
-    }
+    super(seed);
   }
 
 
@@ -171,19 +171,6 @@ public class CellularAutomatonRNG extends BaseRNG implements RepeatableRNG {
       lock.unlock();
     }
     return result >>> (32 - bits);
-  }
-
-
-  /**
-   * {@inheritDoc}
-   */
-  public byte[] getSeed() {
-    lock.lock();
-    try {
-      return seed.clone();
-    } finally {
-      lock.unlock();
-    }
   }
 
   @Override
@@ -225,6 +212,9 @@ public class CellularAutomatonRNG extends BaseRNG implements RepeatableRNG {
 
   @Override
   public void setSeed(byte[] seed) {
+    if (seed.length != SEED_SIZE_BYTES) {
+      throw new IllegalArgumentException("Cellular Automaton RNG requires a 32-bit (4-byte) seed.");
+    }
     lock.lock();
     try {
       System.arraycopy(seed, 0, this.seed, 0, 4);

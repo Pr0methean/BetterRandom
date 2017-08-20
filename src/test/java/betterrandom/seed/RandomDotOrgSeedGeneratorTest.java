@@ -24,7 +24,7 @@ import org.testng.annotations.Test;
  */
 public class RandomDotOrgSeedGeneratorTest {
 
-  @Test(timeOut = 60000)
+  @Test(timeOut = 120000)
   public void testGenerator() throws SeedException {
     SeedGenerator generator = new RandomDotOrgSeedGenerator();
     byte[] seed = generator.generateSeed(32);
@@ -36,7 +36,7 @@ public class RandomDotOrgSeedGeneratorTest {
    * Try to acquire a large number of bytes, more than are cached internally by the seed generator
    * implementation.
    */
-  @Test(timeOut = 60000)
+  @Test(timeOut = 120000)
   public void testLargeRequest() throws SeedException {
     SeedGenerator generator = new RandomDotOrgSeedGenerator();
     // 1024 bytes are cached internally, so request more than that.
