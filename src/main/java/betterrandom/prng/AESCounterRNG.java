@@ -95,6 +95,7 @@ public class AESCounterRNG extends BaseRNG implements RepeatableRNG {
   /**
    * Called in constructor and readObject to initialize transient fields.
    */
+  @Override
   protected void initTransientFields() {
     super.initTransientFields();
     byte[] key;
@@ -104,7 +105,7 @@ public class AESCounterRNG extends BaseRNG implements RepeatableRNG {
 
       // copy to counter only if counter hasn't already been deserialized
       if (!counterInitialized) {
-        System.arraycopy(seed, MAX_KEY_LENGTH_BYTES, counter, 0, COUNTER_SIZE_BYTES);
+        System.arraycopy(seed, seed.length - COUNTER_SIZE_BYTES, counter, 0, COUNTER_SIZE_BYTES);
         counterInitialized = true;
       }
     } else {
@@ -150,7 +151,7 @@ public class AESCounterRNG extends BaseRNG implements RepeatableRNG {
    */
   public AESCounterRNG(SeedGenerator seedGenerator) throws SeedException,
       GeneralSecurityException {
-    super(seedGenerator.generateSeed(DEFAULT_SEED_SIZE_BYTES));
+    this(seedGenerator.generateSeed(DEFAULT_SEED_SIZE_BYTES));
   }
 
 

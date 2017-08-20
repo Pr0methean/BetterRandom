@@ -40,14 +40,21 @@ public abstract class BaseRNG extends Random implements ByteArrayReseedableRando
 
   public BaseRNG(byte[] seed) {
     this.seed = seed.clone();
+    initTransientFields();
   }
 
-  protected void initTransientFields() {
+  protected synchronized void initTransientFields() {
+    if (seed == null) {
+      throw new IllegalArgumentException("null seed");
+    }
+    if (lock != null) {
+      lock.lock();
+    }
     lock = new ReentrantLock();
     superConstructorFinished = true;
   }
 
-  protected void readObject(ObjectInputStream in) throws IOException,
+  private void readObject(ObjectInputStream in) throws IOException,
       ClassNotFoundException {
     in.defaultReadObject();
     initTransientFields();

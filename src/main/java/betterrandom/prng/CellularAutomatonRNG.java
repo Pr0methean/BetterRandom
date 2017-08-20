@@ -80,9 +80,9 @@ public class CellularAutomatonRNG extends BaseRNG implements RepeatableRNG {
           240, 160, 142, 119, 73, 103, 166, 33, 148, 9, 111, 136, 168, 150, 82
       };
 
-  private final int[] cells = new int[AUTOMATON_LENGTH];
+  private transient int[] cells = new int[AUTOMATON_LENGTH];
 
-  private int currentCellIndex = AUTOMATON_LENGTH - 1;
+  private transient int currentCellIndex = AUTOMATON_LENGTH - 1;
 
   public CellularAutomatonRNG() throws SeedException {
     this(DefaultSeedGenerator.getInstance());
@@ -93,11 +93,13 @@ public class CellularAutomatonRNG extends BaseRNG implements RepeatableRNG {
   }
 
   protected void copySeedToCellsAndPreEvolve() {
+    cells = new int[AUTOMATON_LENGTH];
     // Set initial cell states using seed.
     cells[AUTOMATON_LENGTH - 1] = seed[0] + 128;
     cells[AUTOMATON_LENGTH - 2] = seed[1] + 128;
     cells[AUTOMATON_LENGTH - 3] = seed[2] + 128;
     cells[AUTOMATON_LENGTH - 4] = seed[3] + 128;
+    currentCellIndex = AUTOMATON_LENGTH - 1;
 
     int seedAsInt = BinaryUtils.convertBytesToInt(seed, 0);
     if (seedAsInt != 0xFFFFFFFF) {
@@ -116,9 +118,14 @@ public class CellularAutomatonRNG extends BaseRNG implements RepeatableRNG {
   }
 
   @Override
-  protected void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
-    super.readObject(in);
-    copySeedToCellsAndPreEvolve();
+  protected void initTransientFields() {
+    super.initTransientFields();
+    lock.lock();
+    try {
+      copySeedToCellsAndPreEvolve();
+    } finally {
+      lock.unlock();
+    }
   }
 
   /**
@@ -132,7 +139,6 @@ public class CellularAutomatonRNG extends BaseRNG implements RepeatableRNG {
       throw new IllegalArgumentException("Cellular Automaton RNG requires a 32-bit (4-byte) seed.");
     }
     initTransientFields();
-    copySeedToCellsAndPreEvolve();
   }
 
 
@@ -175,7 +181,14 @@ public class CellularAutomatonRNG extends BaseRNG implements RepeatableRNG {
    * {@inheritDoc}
    */
   public byte[] getSeed() {
-    return seed.clone();
+    lock.lock();
+    try {
+      /** Necessary for repeatability */
+      currentCellIndex = AUTOMATON_LENGTH - 1;
+      return seed.clone();
+    } finally {
+      lock.unlock();
+    }
   }
 
   @Override
