@@ -19,7 +19,8 @@ import betterrandom.seed.DefaultSeedGenerator;
 import betterrandom.seed.SeedException;
 import betterrandom.seed.SeedGenerator;
 import betterrandom.util.BinaryUtils;
-import java.nio.ByteBuffer;
+import java.io.IOException;
+import java.io.ObjectInputStream;
 import java.security.GeneralSecurityException;
 import java.security.InvalidKeyException;
 import java.security.MessageDigest;
@@ -74,14 +75,16 @@ public class AESCounterRNG extends BaseRNG implements RepeatableRNG {
    * its initialization.
    */
   static final int MAX_KEY_LENGTH_BYTES;
-
+  
   static {
     try {
-      MAX_KEY_LENGTH_BYTES = Math.min(Cipher.getMaxAllowedKeyLength("AES"), 32);
+      MAX_KEY_LENGTH_BYTES = Math.min(Cipher.getMaxAllowedKeyLength("AES/ECB/NoPadding"), 32);
     } catch (GeneralSecurityException e) {
       throw new RuntimeException(e);
     }
   }
+  
+  static final int MAX_TOTAL_SEED_LENGTH_BYTES = MAX_KEY_LENGTH_BYTES + COUNTER_SIZE_BYTES;
 
   private transient Cipher cipher;
   private final byte[] counter = new byte[COUNTER_SIZE_BYTES];
@@ -98,28 +101,8 @@ public class AESCounterRNG extends BaseRNG implements RepeatableRNG {
   @Override
   protected void initTransientFields() {
     super.initTransientFields();
-    byte[] key;
-    if (seed.length > MAX_KEY_LENGTH_BYTES) {
-      // part of the seed goes to key; rest goes to counter
-      key = Arrays.copyOfRange(seed, 0, seed.length - COUNTER_SIZE_BYTES);
-
-      // copy to counter only if counter hasn't already been deserialized
-      if (!counterInitialized) {
-        System.arraycopy(seed, seed.length - COUNTER_SIZE_BYTES, counter, 0, COUNTER_SIZE_BYTES);
-        counterInitialized = true;
-      }
-    } else {
-      key = seed;
-    }
-    try {
-      cipher = Cipher.getInstance("AES/ECB/NoPadding");
-      cipher.init(Cipher.ENCRYPT_MODE, new SecretKeySpec(key, "AES"));
-    } catch (InvalidKeyException | NoSuchPaddingException | NoSuchAlgorithmException e) {
-      throw new RuntimeException(e);
-    }
     counterInput = new byte[COUNTER_SIZE_BYTES * BLOCKS_AT_ONCE];
-    entropyBytes = seed.length;
-    superConstructorFinished = true;
+    setSeed(seed);
   }
 
   private final byte[] currentBlock = new byte[COUNTER_SIZE_BYTES * BLOCKS_AT_ONCE];
@@ -129,7 +112,7 @@ public class AESCounterRNG extends BaseRNG implements RepeatableRNG {
 
 
   /**
-   * Creates a new RNG and seeds it using 128 bits from the default seeding strategy.
+   * Creates a new RNG and seeds it using 256 bits from the default seeding strategy.
    *
    * @throws GeneralSecurityException If there is a problem initialising the AES cipher.
    */
@@ -175,13 +158,7 @@ public class AESCounterRNG extends BaseRNG implements RepeatableRNG {
    */
   public AESCounterRNG(byte[] seed) {
     super(seed);
-    if (seed == null) {
-      throw new IllegalArgumentException(
-          "AES RNG requires a 128-bit, 192-bit, 256-bit, 320-bit or 384-bit seed.");
-    }
-    initTransientFields();
   }
-
 
   /**
    * {@inheritDoc}
@@ -236,25 +213,7 @@ public class AESCounterRNG extends BaseRNG implements RepeatableRNG {
       // setSeed is called by super() but won't work yet
       return;
     }
-    lock.lock();
-    try {
-      if (this.seed.length < MAX_KEY_LENGTH_BYTES) {
-        // Extend the key
-        byte[] newSeed = new byte[this.seed.length + 8];
-        System.arraycopy(this.seed, 0, newSeed, 0, this.seed.length);
-        ByteBuffer.wrap(newSeed, this.seed.length, 8).putLong(seed);
-        this.seed = newSeed;
-      } else {
-        byte[] seedBytes = new byte[8];
-        ByteBuffer.wrap(seedBytes).putLong(seed);
-        setSeed(seedBytes);
-      }
-      cipher.init(Cipher.ENCRYPT_MODE, new SecretKeySpec(this.seed, "AES"));
-    } catch (GeneralSecurityException e) {
-      throw new RuntimeException(e);
-    } finally {
-      lock.unlock();
-    }
+    super.setSeed(seed);
   }
 
   /**
@@ -298,20 +257,62 @@ public class AESCounterRNG extends BaseRNG implements RepeatableRNG {
 
   @Override
   public void setSeed(byte[] seed) {
+    if (!superConstructorFinished) {
+      // setSeed can't work until seed array allocated
+      return;
+    }
+    if (seed.length > MAX_TOTAL_SEED_LENGTH_BYTES) {
+      throw new IllegalArgumentException("Seed too long: maximum " + MAX_TOTAL_SEED_LENGTH_BYTES + " bytes");
+    }
     lock.lock();
     try {
+      byte[] key;
       if (seed.length == MAX_KEY_LENGTH_BYTES) {
-        cipher.init(Cipher.ENCRYPT_MODE, new SecretKeySpec(seed, "AES"));
+        key = seed;
       } else {
-        MessageDigest md = MessageDigest.getInstance("SHA-256");
-        if (seed.length < MAX_KEY_LENGTH_BYTES) {
-          md.update(this.seed);
+        if (cipher == null) {
+          if (seed.length < 16) {
+            throw new IllegalArgumentException("Seed too short: need at least 16 bytes");
+          } else {
+            if (seed.length > MAX_KEY_LENGTH_BYTES) {
+              // part of the seed goes to key; rest goes to counter
+              key = Arrays.copyOfRange(seed, 0, seed.length - COUNTER_SIZE_BYTES);
+        
+              // copy to counter only if counter hasn't already been deserialized
+              if (!counterInitialized) {
+                System.arraycopy(seed, seed.length - COUNTER_SIZE_BYTES, counter, 0, COUNTER_SIZE_BYTES);
+                counterInitialized = true;
+              }
+            } else {
+              key = seed;
+            }
+          }
+          this.seed = seed;
+        } else {
+          // Extend the key
+          byte[] newSeed = new byte[this.seed.length + seed.length];
+          System.arraycopy(this.seed, 0, newSeed, 0, this.seed.length);
+          System.arraycopy(seed, 0, newSeed, this.seed.length, seed.length);
+          if (newSeed.length > MAX_KEY_LENGTH_BYTES) {
+            int keyBytes = newSeed.length - COUNTER_SIZE_BYTES;
+            key = new byte[keyBytes];
+            MessageDigest md = MessageDigest.getInstance("SHA-256");
+            md.update(newSeed);
+            System.arraycopy(md.digest(), 0, key, 0, keyBytes);
+          } else {
+            key = newSeed;
+          }
+          // copy to counter only if counter hasn't already been deserialized
+          if (!counterInitialized) {
+            System.arraycopy(seed, seed.length - COUNTER_SIZE_BYTES, counter, 0, COUNTER_SIZE_BYTES);
+            counterInitialized = true;
+          }
+          this.seed = newSeed;
         }
-        md.update(seed);
-        System.arraycopy(md.digest(), 0, this.seed, 0, this.seed.length);
       }
+      cipher.init(Cipher.ENCRYPT_MODE, new SecretKeySpec(key, "AES"));
       entropyBytes = Math.max(seed.length + entropyBytes,
-          MAX_KEY_LENGTH_BYTES + COUNTER_SIZE_BYTES);
+          MAX_TOTAL_SEED_LENGTH_BYTES);
     } catch (NoSuchAlgorithmException | InvalidKeyException e) {
       throw new RuntimeException(e);
     } finally {
@@ -329,3 +330,32 @@ public class AESCounterRNG extends BaseRNG implements RepeatableRNG {
     return entropyBytes;
   }
 }
+/*
+    lock.lock();
+    try {
+      super.setSeed(seed);
+      byte[] key;
+      if (seed.length > MAX_KEY_LENGTH_BYTES) {
+        // part of the seed goes to key; rest goes to counter
+        key = Arrays.copyOfRange(seed, 0, seed.length - COUNTER_SIZE_BYTES);
+  
+        // copy to counter only if counter hasn't already been deserialized
+        if (!counterInitialized) {
+          System.arraycopy(seed, seed.length - COUNTER_SIZE_BYTES, counter, 0, COUNTER_SIZE_BYTES);
+          counterInitialized = true;
+        }
+      } else {
+        key = seed;
+      }
+      try {
+        cipher = Cipher.getInstance("AES/ECB/NoPadding");
+        cipher.init(Cipher.ENCRYPT_MODE, new SecretKeySpec(key, "AES"));
+      } catch (InvalidKeyException | NoSuchPaddingException | NoSuchAlgorithmException e) {
+        throw new RuntimeException(e);
+      }
+      counterInput = new byte[COUNTER_SIZE_BYTES * BLOCKS_AT_ONCE];
+      entropyBytes = seed.length;
+    } finally {
+      lock.unlock();
+    }
+    */

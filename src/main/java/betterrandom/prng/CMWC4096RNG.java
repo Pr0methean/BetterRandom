@@ -139,6 +139,10 @@ public class CMWC4096RNG extends BaseRNG implements RepeatableRNG {
 
   @Override
   public void setSeed(byte[] seed) {
+    if (!superConstructorFinished) {
+      // setSeed can't work until seed array allocated
+      return;
+    }
     if (seed == null || seed.length != SEED_SIZE_BYTES) {
       throw new IllegalArgumentException("CMWC RNG requires 16kb of seed data.");
     }

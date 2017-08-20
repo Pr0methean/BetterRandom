@@ -85,7 +85,6 @@ public class MersenneTwisterRNG extends BaseRNG implements RepeatableRNG {
   public MersenneTwisterRNG(byte[] seed) {
     super(seed);
     setSeed(seed);
-    initTransientFields();
   }
 
   public MersenneTwisterRNG(SeedGenerator seedGenerator) throws SeedException {
@@ -94,6 +93,10 @@ public class MersenneTwisterRNG extends BaseRNG implements RepeatableRNG {
 
   @Override
   public void setSeed(byte[] seed) {
+    if (!superConstructorFinished) {
+      // setSeed can't work until seed array allocated
+      return;
+    }
     if (seed == null || seed.length != SEED_SIZE_BYTES) {
       throw new IllegalArgumentException("Mersenne Twister RNG requires a 128-bit (16-byte) seed.");
     }

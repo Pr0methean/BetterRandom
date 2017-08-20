@@ -7,6 +7,7 @@ import betterrandom.seed.SeedException;
 import betterrandom.seed.SeedGenerator;
 import java.io.IOException;
 import java.io.ObjectInputStream;
+import java.nio.ByteBuffer;
 import java.util.HashMap;
 import java.util.Random;
 import java.util.concurrent.locks.Lock;
@@ -39,18 +40,17 @@ public abstract class BaseRNG extends Random implements ByteArrayReseedableRando
   }
 
   public BaseRNG(byte[] seed) {
-    this.seed = seed.clone();
+    if (seed == null) {
+      throw new IllegalArgumentException("Seed must not be null");
+    }
+    this.seed = seed;
     initTransientFields();
   }
 
   protected synchronized void initTransientFields() {
-    if (seed == null) {
-      throw new IllegalArgumentException("null seed");
+    if (lock == null) {
+      lock = new ReentrantLock(); 
     }
-    if (lock != null) {
-      lock.lock();
-    }
-    lock = new ReentrantLock();
     superConstructorFinished = true;
   }
 
@@ -58,6 +58,13 @@ public abstract class BaseRNG extends Random implements ByteArrayReseedableRando
       ClassNotFoundException {
     in.defaultReadObject();
     initTransientFields();
+  }
+
+  @Override
+  public void setSeed(long seed) {
+    ByteBuffer buffer = ByteBuffer.allocate(8);
+    buffer.putLong(seed);
+    setSeed(buffer.array());
   }
 
   @Override

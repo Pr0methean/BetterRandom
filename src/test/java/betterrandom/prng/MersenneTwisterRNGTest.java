@@ -58,7 +58,7 @@ public class MersenneTwisterRNGTest {
     MersenneTwisterRNG rng = new MersenneTwisterRNG(DefaultSeedGenerator.getInstance());
     double pi = RNGTestUtils.calculateMonteCarloValueForPi(rng, 100000);
     Reporter.log("Monte Carlo value for Pi: " + pi);
-    assertEquals(pi, Math.PI, 0.01, "Monte Carlo value for Pi is outside acceptable range: " + pi);
+    assertEquals(pi, Math.PI, 0.01 * Math.PI, "Monte Carlo value for Pi is outside acceptable range: " + pi);
   }
 
 
@@ -77,7 +77,7 @@ public class MersenneTwisterRNGTest {
     double observedSD = RNGTestUtils.calculateSampleStandardDeviation(rng, n, 10000);
     double expectedSD = 100 / Math.sqrt(12);
     Reporter.log("Expected SD: " + expectedSD + ", observed SD: " + observedSD);
-    assertEquals(observedSD, expectedSD, 0.02,
+    assertEquals(observedSD, expectedSD, 0.02 * expectedSD,
         "Standard deviation is outside acceptable range: " + observedSD);
   }
 

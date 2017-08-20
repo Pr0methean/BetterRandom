@@ -135,10 +135,9 @@ public class CellularAutomatonRNG extends BaseRNG implements RepeatableRNG {
    */
   public CellularAutomatonRNG(byte[] seed) {
     super(SEED_SIZE_BYTES);
-    if (seed == null || seed.length != SEED_SIZE_BYTES) {
+    if (seed.length != SEED_SIZE_BYTES) {
       throw new IllegalArgumentException("Cellular Automaton RNG requires a 32-bit (4-byte) seed.");
     }
-    initTransientFields();
   }
 
 
@@ -183,8 +182,6 @@ public class CellularAutomatonRNG extends BaseRNG implements RepeatableRNG {
   public byte[] getSeed() {
     lock.lock();
     try {
-      /** Necessary for repeatability */
-      currentCellIndex = AUTOMATON_LENGTH - 1;
       return seed.clone();
     } finally {
       lock.unlock();
