@@ -11,5 +11,5 @@ public interface EntropyCountingRandom {
    * @return The current amount of entropy (bytes seeded with or bytes of internal state, whichever
    * was greater at the time, minus bytes returned).
    */
-  public int entropyOctets();
+  int entropyOctets();
 }

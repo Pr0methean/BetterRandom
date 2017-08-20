@@ -131,7 +131,7 @@ public class XORShiftRNG extends BaseRNG implements RepeatableRNG {
   public void setSeed(byte[] seed) {
     lock.lock();
     try {
-      this.seed = seed;
+      this.seed = seed.clone();
       initTransientFields();
     } finally {
       lock.unlock();

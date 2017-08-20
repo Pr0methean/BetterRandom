@@ -52,7 +52,7 @@ public final class RandomSeederThread extends Thread {
         while (prngs.isEmpty()) {
           wait();
         }
-        for (WeakReference<Random> randomRef : prngs) {
+        for (WeakReferenceWithEquals<Random> randomRef : prngs) {
           Random random = randomRef.get();
           if (random == null) {
             // Don't keep iterating over a cleared reference

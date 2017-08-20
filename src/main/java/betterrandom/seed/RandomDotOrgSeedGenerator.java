@@ -76,6 +76,7 @@ public class RandomDotOrgSeedGenerator implements SeedGenerator {
   /**
    * {@inheritDoc}
    */
+  @SuppressWarnings("AssignmentToStaticFieldFromInstanceMethod")
   public byte[] generateSeed(int length) throws SeedException {
     byte[] seedData = new byte[length];
     boolean succeeded = false;

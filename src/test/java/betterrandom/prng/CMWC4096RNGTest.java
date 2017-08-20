@@ -105,6 +105,7 @@ public class CMWC4096RNGTest {
   }
 
 
+  @SuppressWarnings("resource")
   @Test
   public void testSerializable() throws IOException, ClassNotFoundException {
     // Serialise an RNG.
