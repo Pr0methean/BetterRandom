@@ -57,7 +57,7 @@ final class RNGTestUtils {
    */
   public static boolean testHashCodeDistribution(Constructor<? extends Random> ctor) {
     try {
-      HashSet<Integer> uniqueHashCodes = new HashSet<Integer>();
+      HashSet<Integer> uniqueHashCodes = new HashSet<>();
       for (int i = 0; i < 100; i++) {
         uniqueHashCodes.add(ctor.newInstance().hashCode());
       }

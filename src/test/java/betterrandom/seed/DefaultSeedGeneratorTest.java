@@ -20,64 +20,56 @@ import org.testng.annotations.Test;
 
 /**
  * Unit test for {@link DefaultSeedGenerator}.
+ *
  * @author Daniel Dyer
  */
-public class DefaultSeedGeneratorTest
-{
-    /**
-     * Check that the default seed generator gracefully falls
-     * back to an alternative generation strategy when the security
-     * manager prevents it from using its first choice.
-     */
-    @Test(timeOut = 15000)
-    public void testRestrictedEnvironment()
-    {
-        SecurityManager securityManager = System.getSecurityManager();
-        try
-        {
-            // Don't allow file system or network access.
-            System.setSecurityManager(new RestrictedSecurityManager());
-            DefaultSeedGenerator.getInstance().generateSeed(4);
-            // Should get to here without exceptions.
-        }
-        finally
-        {
-            // Restore the original security manager so that we don't
-            // interfere with the running of other tests.
-            System.setSecurityManager(securityManager);
-        }
+public class DefaultSeedGeneratorTest {
+
+  /**
+   * Check that the default seed generator gracefully falls back to an alternative generation
+   * strategy when the security manager prevents it from using its first choice.
+   */
+  @SuppressWarnings("CallToSystemSetSecurityManager")
+  @Test(timeOut = 15000)
+  public void testRestrictedEnvironment() {
+    SecurityManager securityManager = System.getSecurityManager();
+    try {
+      // Don't allow file system or network access.
+      System.setSecurityManager(new RestrictedSecurityManager());
+      DefaultSeedGenerator.getInstance().generateSeed(4);
+      // Should get to here without exceptions.
+    } finally {
+      // Restore the original security manager so that we don't
+      // interfere with the running of other tests.
+      System.setSecurityManager(securityManager);
+    }
+  }
+
+
+  /**
+   * This security manager allows everything except for some operations that are explicitly blocked.
+   * These operations are accessing /dev/random and opening a socket connection.
+   */
+  @SuppressWarnings("CustomSecurityManager")
+  private static final class RestrictedSecurityManager extends SecurityManager {
+
+    @Override
+    public void checkRead(String file) {
+      if ("/dev/random".equals(file)) {
+        throw new SecurityException("Test not permitted to access /dev/random");
+      }
     }
 
 
-    /**
-     * This security manager allows everything except for some operations that are
-     * explicitly blocked.  These operations are accessing /dev/random and opening
-     * a socket connection.
-     */
-    @SuppressWarnings("CustomSecurityManager")
-    private static final class RestrictedSecurityManager extends SecurityManager
-    {
-        @Override
-        public void checkRead(String file)
-        {
-            if ("/dev/random".equals(file))
-            {
-                throw new SecurityException("Test not permitted to access /dev/random");
-            }
-        }
-
-
-        @Override
-        public void checkConnect(String host, int port)
-        {
-            throw new SecurityException("Test not permitted to connect to " + host + ":" + port);
-        }
-
-
-        @Override
-        public void checkPermission(Permission permission)
-        {
-            // Allow everything.
-        }
+    @Override
+    public void checkConnect(String host, int port) {
+      throw new SecurityException("Test not permitted to connect to " + host + ":" + port);
     }
+
+
+    @Override
+    public void checkPermission(Permission permission) {
+      // Allow everything.
+    }
+  }
 }

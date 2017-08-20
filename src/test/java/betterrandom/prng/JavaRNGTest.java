@@ -16,7 +16,6 @@
 package betterrandom.prng;
 
 import betterrandom.seed.SeedException;
-import betterrandom.seed.SeedGenerator;
 import org.testng.annotations.Test;
 
 /**
@@ -56,11 +55,7 @@ public class JavaRNGTest {
    */
   @Test(timeOut = 15000, expectedExceptions = IllegalArgumentException.class)
   public void testNullSeed() throws SeedException {
-    new JavaRNG(new SeedGenerator() {
-      public byte[] generateSeed(int length) {
-        return null;
-      }
-    });
+    new JavaRNG(length -> null);
   }
 
   @Test(timeOut = 15000)

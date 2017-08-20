@@ -58,7 +58,8 @@ public class MersenneTwisterRNGTest {
     MersenneTwisterRNG rng = new MersenneTwisterRNG(DefaultSeedGenerator.getInstance());
     double pi = RNGTestUtils.calculateMonteCarloValueForPi(rng, 100000);
     Reporter.log("Monte Carlo value for Pi: " + pi);
-    assertEquals(pi, Math.PI, 0.01 * Math.PI, "Monte Carlo value for Pi is outside acceptable range: " + pi);
+    assertEquals(pi, Math.PI, 0.01 * Math.PI,
+        "Monte Carlo value for Pi is outside acceptable range: " + pi);
   }
 
 

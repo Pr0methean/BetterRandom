@@ -8,7 +8,6 @@ import betterrandom.seed.SeedGenerator;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.nio.ByteBuffer;
-import java.util.HashMap;
 import java.util.Random;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
@@ -29,7 +28,7 @@ public abstract class BaseRNG extends Random implements ByteArrayReseedableRando
   @Override
   public byte[] getSeed() {
     lock.lock();
-    LOG.info("Returning our "+seed.length+"-byte seed.");
+    LOG.info("Returning our " + seed.length + "-byte seed.");
     try {
       return seed.clone();
     } finally {
@@ -37,7 +36,9 @@ public abstract class BaseRNG extends Random implements ByteArrayReseedableRando
     }
   }
 
-  /** Use this if necessary to ignore setSeed(long) calls from super constructor */
+  /**
+   * Use this if necessary to ignore setSeed(long) calls from super constructor
+   */
   protected transient boolean superConstructorFinished = false;
 
   /**
@@ -58,19 +59,20 @@ public abstract class BaseRNG extends Random implements ByteArrayReseedableRando
     this(seedGenerator.generateSeed(seedLength));
   }
 
+  @SuppressWarnings("OverriddenMethodCallDuringObjectConstruction")
   public BaseRNG(byte[] seed) {
     LOG.info("BaseRNG.<init>(byte[]) starting");
     if (seed == null) {
       throw new IllegalArgumentException("Seed must not be null");
     }
-    this.seed = seed;
+    this.seed = seed.clone();
     initTransientFields();
     LOG.info("BaseRNG.<init>(byte[]) done");
   }
 
   protected void initTransientFields() {
     if (lock == null) {
-      lock = new ReentrantLock(); 
+      lock = new ReentrantLock();
     }
     superConstructorFinished = true;
   }
@@ -78,6 +80,7 @@ public abstract class BaseRNG extends Random implements ByteArrayReseedableRando
   private void readObject(ObjectInputStream in) throws IOException,
       ClassNotFoundException {
     in.defaultReadObject();
+    //noinspection OverriddenMethodCallDuringObjectConstruction
     initTransientFields();
   }
 

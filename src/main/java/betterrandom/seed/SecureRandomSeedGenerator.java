@@ -26,7 +26,7 @@ import java.security.SecureRandom;
  *
  * <p>This is the only seeding strategy that is guaranteed to work on all platforms and therefore is
  * provided as a fall-back option should none of the other provided {@link SeedGenerator}
- * implementations be useable.</p>
+ * implementations be usable.</p>
  *
  * @author Daniel Dyer
  */

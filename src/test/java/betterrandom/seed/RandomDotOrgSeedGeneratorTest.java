@@ -18,31 +18,29 @@ package betterrandom.seed;
 import org.testng.annotations.Test;
 
 /**
- * Unit test for the seed generator that connects to random.org to get seed
- * data.
+ * Unit test for the seed generator that connects to random.org to get seed data.
+ *
  * @author Daniel Dyer
  */
-public class RandomDotOrgSeedGeneratorTest
-{
-    @Test(timeOut = 60000)
-    public void testGenerator() throws SeedException
-    {
-        SeedGenerator generator = new RandomDotOrgSeedGenerator();
-        byte[] seed = generator.generateSeed(32);
-        assert seed.length == 32 : "Failed to generate seed of correct length";
-    }
+public class RandomDotOrgSeedGeneratorTest {
+
+  @Test(timeOut = 60000)
+  public void testGenerator() throws SeedException {
+    SeedGenerator generator = new RandomDotOrgSeedGenerator();
+    byte[] seed = generator.generateSeed(32);
+    assert seed.length == 32 : "Failed to generate seed of correct length";
+  }
 
 
-    /**
-     * Try to acquire a large number of bytes, more than are cached internally
-     * by the seed generator implementation.
-     */
-    @Test(timeOut = 60000)
-    public void testLargeRequest() throws SeedException
-    {
-        SeedGenerator generator = new RandomDotOrgSeedGenerator();
-        // 1024 bytes are cached internally, so request more than that.
-        byte[] seed = generator.generateSeed(1025);
-        assert seed.length == 1025 : "Failed to generate seed of correct length";        
-    }
+  /**
+   * Try to acquire a large number of bytes, more than are cached internally by the seed generator
+   * implementation.
+   */
+  @Test(timeOut = 60000)
+  public void testLargeRequest() throws SeedException {
+    SeedGenerator generator = new RandomDotOrgSeedGenerator();
+    // 1024 bytes are cached internally, so request more than that.
+    byte[] seed = generator.generateSeed(1025);
+    assert seed.length == 1025 : "Failed to generate seed of correct length";
+  }
 }

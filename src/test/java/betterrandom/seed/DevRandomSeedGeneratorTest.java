@@ -20,27 +20,25 @@ import org.testng.Reporter;
 import org.testng.annotations.Test;
 
 /**
- * Unit test for the seed generator that reads data from /dev/random (on
- * platforms that provide it).
+ * Unit test for the seed generator that reads data from /dev/random (on platforms that provide
+ * it).
+ *
  * @author Daniel Dyer
  */
-public class DevRandomSeedGeneratorTest
-{
-    @Test(timeOut = 15000)
-    public void testGenerator()
-    {
-        SeedGenerator generator = new DevRandomSeedGenerator();
-        try
-        {
-            byte[] seed = generator.generateSeed(32);
-            assert seed.length == 32 : "Failed to generate seed of correct length";
-        }
-        catch (SeedException ex)
-        {
-            // This exception is OK, but only if we are running on a platform that
-            // does not provide /dev/random.
-            assert !new File("/dev/random").exists() : "Seed generator failed even though /dev/random exists.";
-            Reporter.log("/dev/random does not exist on this platform.");
-        }
+public class DevRandomSeedGeneratorTest {
+
+  @Test(timeOut = 15000)
+  public void testGenerator() {
+    SeedGenerator generator = new DevRandomSeedGenerator();
+    try {
+      byte[] seed = generator.generateSeed(32);
+      assert seed.length == 32 : "Failed to generate seed of correct length";
+    } catch (SeedException ex) {
+      // This exception is OK, but only if we are running on a platform that
+      // does not provide /dev/random.
+      assert !new File("/dev/random")
+          .exists() : "Seed generator failed even though /dev/random exists.";
+      Reporter.log("/dev/random does not exist on this platform.");
     }
+  }
 }
