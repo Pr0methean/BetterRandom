@@ -136,13 +136,13 @@ public class AESCounterRNGTest {
   }
 
 
-  @Test(expectedExceptions = InvalidKeyException.class)
+  @Test(expectedExceptions = IllegalArgumentException.class)
   public void testSeedTooShort() throws GeneralSecurityException {
     new AESCounterRNG(new byte[]{1, 2, 3}); // Should throw an exception.
   }
 
 
-  @Test(expectedExceptions = InvalidKeyException.class)
+  @Test(expectedExceptions = IllegalArgumentException.class)
   public void testSeedTooLong() throws GeneralSecurityException {
     new AESCounterRNG(49); // Should throw an exception.
   }
@@ -151,7 +151,7 @@ public class AESCounterRNGTest {
   /**
    * RNG must not accept a null seed otherwise it will not be properly initialised.
    */
-  @Test(expectedExceptions = NullPointerException.class)
+  @Test(expectedExceptions = IllegalArgumentException.class)
   public void testNullSeed() throws GeneralSecurityException {
     new AESCounterRNG((byte[]) null); // Should throw an exception.
   }

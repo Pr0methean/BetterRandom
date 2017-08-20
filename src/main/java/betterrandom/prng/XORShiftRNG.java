@@ -47,7 +47,6 @@ public class XORShiftRNG extends BaseRNG implements RepeatableRNG {
   private int state4;
   private int state5;
 
-  private byte[] seed;
   private int entropyBytes;
 
   /**
@@ -129,6 +128,10 @@ public class XORShiftRNG extends BaseRNG implements RepeatableRNG {
 
   @Override
   public void setSeed(byte[] seed) {
+    if (!superConstructorFinished) {
+      // setSeed can't work until seed array allocated
+      return;
+    }
     lock.lock();
     try {
       this.seed = seed.clone();

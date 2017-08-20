@@ -37,16 +37,18 @@ final class RNGTestUtils {
    */
   @SuppressWarnings({"EqualsWithItself", "ObjectEqualsNull"})
   public static void doEqualsSanityChecks(Constructor<? extends Random> ctor) {
+    Random rng;
+    Random rng2;
     try {
-      Random rng = ctor.newInstance();
-      Random rng2 = ctor.newInstance();
-      assert !(rng.equals(rng2));
-      assert rng.equals(rng) : "RNG doesn't compare equal to itself";
-      assert !(rng.equals(null)) : "RNG compares equal to null";
-      assert !(rng.equals(new Random())) : "RNG compares equal to new Random()";
+      rng = ctor.newInstance();
+      rng2 = ctor.newInstance();
     } catch (ReflectiveOperationException e) {
       throw new RuntimeException(e);
     }
+    assert !(rng.equals(rng2));
+    assert rng.equals(rng) : "RNG doesn't compare equal to itself";
+    assert !(rng.equals(null)) : "RNG compares equal to null";
+    assert !(rng.equals(new Random())) : "RNG compares equal to new Random()";
   }
 
   /**
