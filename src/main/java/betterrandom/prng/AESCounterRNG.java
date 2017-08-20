@@ -28,6 +28,7 @@ import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
 import java.util.Random;
 import java.util.concurrent.locks.ReentrantLock;
+import java.util.logging.Logger;
 import javax.crypto.Cipher;
 import javax.crypto.NoSuchPaddingException;
 import javax.crypto.spec.SecretKeySpec;
@@ -52,6 +53,8 @@ import javax.crypto.spec.SecretKeySpec;
 public class AESCounterRNG extends BaseRNG implements RepeatableRNG {
 
   private static final long serialVersionUID = 5949778642428995210L;
+
+  private static final Logger LOG = Logger.getLogger(AESCounterRNG.class.getName());
 
   private static final int DEFAULT_SEED_SIZE_BYTES = 32;
 
@@ -90,6 +93,7 @@ public class AESCounterRNG extends BaseRNG implements RepeatableRNG {
   private final byte[] counter = new byte[COUNTER_SIZE_BYTES];
   private boolean counterInitialized = false;
   private transient byte[] counterInput;
+  private boolean seeded = false;
 
   // Ignore setSeed calls from super constructor
   private transient boolean superConstructorFinished = false;
@@ -100,6 +104,7 @@ public class AESCounterRNG extends BaseRNG implements RepeatableRNG {
    */
   @Override
   protected void initTransientFields() {
+    LOG.fine("initTransientFields starting");
     super.initTransientFields();
     counterInput = new byte[COUNTER_SIZE_BYTES * BLOCKS_AT_ONCE];
     try {
@@ -108,6 +113,7 @@ public class AESCounterRNG extends BaseRNG implements RepeatableRNG {
       throw new RuntimeException("JVM doesn't provide AES/ECB/NoPadding", e);
     }
     setSeed(seed);
+    LOG.fine("initTransientFields done");
   }
 
   private final byte[] currentBlock = new byte[COUNTER_SIZE_BYTES * BLOCKS_AT_ONCE];
@@ -262,6 +268,7 @@ public class AESCounterRNG extends BaseRNG implements RepeatableRNG {
   @Override
   public void setSeed(byte[] seed) {
     if (!superConstructorFinished) {
+      LOG.fine("Skipping setSeed: still in super constructor");
       // setSeed can't work until seed array allocated
       return;
     }
@@ -272,9 +279,10 @@ public class AESCounterRNG extends BaseRNG implements RepeatableRNG {
     try {
       byte[] key;
       if (seed.length == MAX_KEY_LENGTH_BYTES) {
+        LOG.fine("setSeed: using full seed as key");
         key = seed;
       } else {
-        if (cipher == null) {
+        if (!seeded) {
           if (seed.length < 16) {
             throw new IllegalArgumentException("Seed too short: need at least 16 bytes");
           } else {
@@ -317,6 +325,7 @@ public class AESCounterRNG extends BaseRNG implements RepeatableRNG {
       cipher.init(Cipher.ENCRYPT_MODE, new SecretKeySpec(key, "AES"));
       entropyBytes = Math.max(seed.length + entropyBytes,
           MAX_TOTAL_SEED_LENGTH_BYTES);
+      seeded = true;
     } catch (NoSuchAlgorithmException | InvalidKeyException e) {
       throw new RuntimeException(e);
     } finally {

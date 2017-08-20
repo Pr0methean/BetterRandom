@@ -65,9 +65,9 @@ public class RandomDotOrgSeedGenerator implements SeedGenerator {
   private static final int MAX_REQUEST_SIZE = 10000;
 
   /**
-   *
+   * Delay before retrying in the event of a 503 error.
    */
-  private static final int DELAY_BETWEEN_RETRIES_MS = 10 * 60 * 1000;
+  private static final int DELAY_BETWEEN_RETRIES_MS = 10 * 1000;
 
   private static final Lock cacheLock = new ReentrantLock();
   private static byte[] cache = new byte[1024];
