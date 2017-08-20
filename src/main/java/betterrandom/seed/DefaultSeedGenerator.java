@@ -26,7 +26,7 @@ import java.util.logging.Logger;
  */
 public final class DefaultSeedGenerator implements SeedGenerator {
 
-  private static final String DEBUG_PROPERTY = "org.uncommons.maths.random.debug";
+  private static final String DEBUG_PROPERTY = "betterrandom.debug";
   private static final Logger LOG = Logger.getLogger(DefaultSeedGenerator.class.getName());
 
   /**
@@ -65,6 +65,7 @@ public final class DefaultSeedGenerator implements SeedGenerator {
    * @param length The length (in bytes) of the seed.
    * @return A random seed of the requested length.
    */
+  @SuppressWarnings("AccessOfSystemProperties")
   public byte[] generateSeed(int length) {
     for (SeedGenerator generator : GENERATORS) {
       try {

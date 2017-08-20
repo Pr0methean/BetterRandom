@@ -51,6 +51,7 @@ public class RandomDotOrgSeedGenerator implements SeedGenerator {
   /**
    * The URL from which the random bytes are retrieved.
    */
+  @SuppressWarnings("HardcodedFileSeparator")
   private static final String RANDOM_URL =
       BASE_URL + "/integers/?num={0,number,0}&min=0&max=255&col=1&base=16&format=plain&rnd=new";
 
@@ -134,9 +135,9 @@ public class RandomDotOrgSeedGenerator implements SeedGenerator {
     URL url = new URL(MessageFormat.format(RANDOM_URL, numberOfBytes));
     URLConnection connection = url.openConnection();
     connection.setRequestProperty("User-Agent", USER_AGENT);
-    BufferedReader reader = new BufferedReader(new InputStreamReader(connection.getInputStream()));
 
-    try {
+    try (BufferedReader reader = new BufferedReader(
+        new InputStreamReader(connection.getInputStream()))) {
       int index = -1;
       for (String line = reader.readLine(); line != null; line = reader.readLine()) {
         ++index;
@@ -146,8 +147,6 @@ public class RandomDotOrgSeedGenerator implements SeedGenerator {
         throw new IOException("Insufficient data received.");
       }
       cacheOffset = 0;
-    } finally {
-      reader.close();
     }
   }
 

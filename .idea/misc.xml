@@ -4,6 +4,7 @@
     <pattern value="betterrandom.seed.RandomSeederThread" method="add" />
     <pattern value="betterrandom.seed.RandomSeederThread" method="getInstance" />
     <pattern value="betterrandom.seed.RandomSeederThread" />
+    <pattern value="betterrandom.prng.RepeatableRNG" method="getSeed" />
   </component>
   <component name="MavenProjectsManager">
     <option name="originalFiles">

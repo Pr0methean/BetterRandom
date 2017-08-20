@@ -25,11 +25,9 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.security.GeneralSecurityException;
-import java.security.InvalidKeyException;
-import java.util.logging.FileHandler;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import java.util.Random;
+import java.util.logging.FileHandler;
+import java.util.logging.Logger;
 import org.testng.Reporter;
 import org.testng.annotations.AfterSuite;
 import org.testng.annotations.BeforeSuite;
@@ -49,7 +47,7 @@ public class AESCounterRNGTest {
     logHandler = new FileHandler("%h/javalog/log%u.%g.txt", 1_000_000, 10);
     Logger.getGlobal().addHandler(logHandler);
   }
-  
+
   @AfterSuite
   public void tearDown() {
     logHandler.close();

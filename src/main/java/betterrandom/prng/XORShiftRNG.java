@@ -56,9 +56,6 @@ public class XORShiftRNG extends BaseRNG implements RepeatableRNG {
    */
   public XORShiftRNG(byte[] seed) {
     super(seed);
-    if (seed.length != SEED_SIZE_BYTES) {
-      throw new IllegalArgumentException("XOR shift RNG requires 160 bits of seed data.");
-    }
   }
 
   public XORShiftRNG() throws SeedException {
@@ -71,6 +68,9 @@ public class XORShiftRNG extends BaseRNG implements RepeatableRNG {
 
   @Override
   protected void initTransientFields() {
+    if (seed.length != SEED_SIZE_BYTES) {
+      throw new IllegalArgumentException("XOR shift RNG requires a seed of exactly 20 bytes.");
+    }
     super.initTransientFields();
     lock.lock();
     try {

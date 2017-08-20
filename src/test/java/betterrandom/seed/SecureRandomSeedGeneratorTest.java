@@ -18,17 +18,17 @@ package betterrandom.seed;
 import org.testng.annotations.Test;
 
 /**
- * Unit test for the seed generator that uses {@link java.security.SecureRandom}
- * to produce seed data.
+ * Unit test for the seed generator that uses {@link java.security.SecureRandom} to produce seed
+ * data.
+ *
  * @author Daniel Dyer
  */
-public class SecureRandomSeedGeneratorTest
-{
-    @Test(timeOut = 15000)
-    public void testGenerator() throws SeedException
-    {
-        SeedGenerator generator = new SecureRandomSeedGenerator();
-        byte[] seed = generator.generateSeed(32);
-        assert seed.length == 32 : "Failed to generate seed of correct length";
-    }
+public class SecureRandomSeedGeneratorTest {
+
+  @Test(timeOut = 15000)
+  public void testGenerator() throws SeedException {
+    SeedGenerator generator = new SecureRandomSeedGenerator();
+    byte[] seed = generator.generateSeed(32);
+    assert seed.length == 32 : "Failed to generate seed of correct length";
+  }
 }

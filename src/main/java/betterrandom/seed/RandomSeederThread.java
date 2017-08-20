@@ -3,7 +3,6 @@ package betterrandom.seed;
 import betterrandom.ByteArrayReseedableRandom;
 import betterrandom.EntropyCountingRandom;
 import betterrandom.util.WeakReferenceWithEquals;
-import java.lang.ref.WeakReference;
 import java.nio.ByteBuffer;
 import java.util.Collections;
 import java.util.Map;
@@ -36,12 +35,7 @@ public final class RandomSeederThread extends Thread {
    * Obtain the instance for the given {@link SeedGenerator}, creating it if it doesn't exist.
    */
   public static RandomSeederThread getInstance(SeedGenerator seedGenerator) {
-    RandomSeederThread thread = INSTANCES.get(seedGenerator);
-    if (thread == null) {
-      thread = new RandomSeederThread(seedGenerator);
-      INSTANCES.put(seedGenerator, thread);
-    }
-    return thread;
+    return INSTANCES.computeIfAbsent(seedGenerator, RandomSeederThread::new);
   }
 
   @SuppressWarnings("InfiniteLoopStatement")
