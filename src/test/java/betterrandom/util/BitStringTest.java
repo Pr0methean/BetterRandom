@@ -195,6 +195,7 @@ public class BitStringTest
     }
 
 
+    @SuppressWarnings({"EqualsWithItself", "ObjectEqualsNull"})
     @Test(dependsOnMethods = "testClone")
     public void testEquals()
     {
@@ -205,7 +206,7 @@ public class BitStringTest
         assert bitString.equals(bitString) : "Object should always equal itself.";
         assert !bitString.equals(null) : "Object should never equal null.";
         assert !bitString.equals(new Object()) : "BitString should not equal object of different type.";
-        
+
         BitString clone = bitString.clone();
         assert clone.equals(bitString) : "Equals comparison failed on equivalent bit strings.";
         // Equivalent objects must have the same hash code.

@@ -35,6 +35,7 @@ final class RNGTestUtils {
    * Test that the given parameterless constructor, called twice, doesn't produce RNGs that compare
    * as equal. Also checks for compliance with basic parts of the Object.equals() contract.
    */
+  @SuppressWarnings({"EqualsWithItself", "ObjectEqualsNull"})
   public static void doEqualsSanityChecks(Constructor<? extends Random> ctor) {
     try {
       Random rng = ctor.newInstance();

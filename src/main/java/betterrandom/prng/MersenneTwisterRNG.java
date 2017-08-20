@@ -66,8 +66,6 @@ public class MersenneTwisterRNG extends BaseRNG implements RepeatableRNG {
   private static final int GENERATE_MASK1 = 0x9d2c5680;
   private static final int GENERATE_MASK2 = 0xefc60000;
 
-  private byte[] seed;
-
   private final int[] mt = new int[N]; // State vector.
   private int mtIndex = 0; // Index into state vector.
   private int entropyBytes;

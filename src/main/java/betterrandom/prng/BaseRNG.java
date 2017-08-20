@@ -63,7 +63,10 @@ public abstract class BaseRNG extends Random implements ByteArrayReseedableRando
   @Override
   public void setSeed(byte[] seed) {
     lock.lock();
-    this.seed = seed;
-    lock.unlock();
+    try {
+      this.seed = seed.clone();
+    } finally {
+      lock.unlock();
+    }
   }
 }

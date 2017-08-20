@@ -230,9 +230,12 @@ public class CellularAutomatonRNG extends BaseRNG implements RepeatableRNG {
 
   @Override
   public void setSeed(byte[] seed) {
-    synchronized (lock) {
+    lock.lock();
+    try {
       System.arraycopy(seed, 0, this.seed, 0, 4);
       copySeedToCellsAndPreEvolve();
+    } finally {
+      lock.unlock();
     }
   }
 

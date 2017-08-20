@@ -52,8 +52,6 @@ public class CMWC4096RNG extends BaseRNG implements RepeatableRNG {
   private int carry = 362436; // TO DO: This should be randomly generated.
   private int index = 4095;
 
-  // Lock to prevent concurrent modification of the RNG's internal state.
-  private transient Lock lock;
   private int entropyBytes;
 
   /**

@@ -122,9 +122,6 @@ public class AESCounterRNG extends BaseRNG implements RepeatableRNG {
     superConstructorFinished = true;
   }
 
-  // Lock to prevent concurrent modification of the RNG's internal state.
-  private transient ReentrantLock lock;
-
   private final byte[] currentBlock = new byte[COUNTER_SIZE_BYTES * BLOCKS_AT_ONCE];
 
   // force generation of first block on demand
@@ -176,13 +173,12 @@ public class AESCounterRNG extends BaseRNG implements RepeatableRNG {
    * @param seed The seed data used to initialise the RNG.
    * @throws GeneralSecurityException If there is a problem initialising the AES cipher.
    */
-  public AESCounterRNG(byte[] seed) throws GeneralSecurityException {
+  public AESCounterRNG(byte[] seed) {
     super(seed);
     if (seed == null) {
       throw new IllegalArgumentException(
           "AES RNG requires a 128-bit, 192-bit, 256-bit, 320-bit or 384-bit seed.");
     }
-    this.seed = seed.clone();
     initTransientFields();
   }
 
