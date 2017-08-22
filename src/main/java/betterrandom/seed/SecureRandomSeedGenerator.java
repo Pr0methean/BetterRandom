@@ -34,6 +34,7 @@ public class SecureRandomSeedGenerator implements SeedGenerator {
 
   private static final SecureRandomSeedGenerator INSTANCE = new SecureRandomSeedGenerator();
   private static final long serialVersionUID = 5489634991236222389L;
+  private static final SecureRandom SOURCE = new SecureRandom();
 
   /**
    * Singleton unless subclassed.
@@ -44,8 +45,6 @@ public class SecureRandomSeedGenerator implements SeedGenerator {
   public static SecureRandomSeedGenerator getInstance() {
     return INSTANCE;
   }
-
-  private static final SecureRandom SOURCE = new SecureRandom();
 
   /**
    * {@inheritDoc}

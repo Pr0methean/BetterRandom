@@ -36,7 +36,28 @@ public class RandomDotOrgSeedGenerator implements SeedGenerator {
 
   private static final RandomDotOrgSeedGenerator INSTANCE = new RandomDotOrgSeedGenerator();
   private static final long serialVersionUID = -7400544219489418741L;
-
+  private static final String BASE_URL = "https://www.random.org";
+  /**
+   * The URL from which the random bytes are retrieved.
+   */
+  @SuppressWarnings("HardcodedFileSeparator")
+  private static final String RANDOM_URL =
+      BASE_URL + "/integers/?num={0,number,0}&min=0&max=255&col=1&base=16&format=plain&rnd=new";
+  /**
+   * Used to identify the client to the random.org service.
+   */
+  private static final String USER_AGENT = RandomDotOrgSeedGenerator.class.getName();
+  /**
+   * Random.org does not allow requests for more than 10k integers at once.
+   */
+  private static final int MAX_REQUEST_SIZE = 10000;
+  /**
+   * Delay before retrying in the event of a 503 error.
+   */
+  private static final int DELAY_BETWEEN_RETRIES_MS = 10 * 1000;
+  private static final Lock cacheLock = new ReentrantLock();
+  private static byte[] cache = new byte[1024];
+  private static int cacheOffset = cache.length;
   /**
    * Singleton unless subclassed.
    */
@@ -47,33 +68,38 @@ public class RandomDotOrgSeedGenerator implements SeedGenerator {
     return INSTANCE;
   }
 
-  private static final String BASE_URL = "https://www.random.org";
-
   /**
-   * The URL from which the random bytes are retrieved.
+   * @param requiredBytes The preferred number of bytes to request from random.org. The
+   * implementation may request more and cache the excess (to avoid making lots of small requests).
+   * Alternatively, it may request fewer if the required number is greater than that permitted by
+   * random.org for a single request.
+   * @throws IOException If there is a problem downloading the random bits.
    */
-  @SuppressWarnings("HardcodedFileSeparator")
-  private static final String RANDOM_URL =
-      BASE_URL + "/integers/?num={0,number,0}&min=0&max=255&col=1&base=16&format=plain&rnd=new";
 
-  /**
-   * Used to identify the client to the random.org service.
-   */
-  private static final String USER_AGENT = RandomDotOrgSeedGenerator.class.getName();
+  private static synchronized void refreshCache(int requiredBytes) throws IOException {
+    int numberOfBytes = Math.max(requiredBytes, cache.length);
+    numberOfBytes = Math.min(numberOfBytes, MAX_REQUEST_SIZE);
+    if (numberOfBytes != cache.length) {
+      cache = new byte[numberOfBytes];
+      cacheOffset = numberOfBytes;
+    }
+    URL url = new URL(MessageFormat.format(RANDOM_URL, numberOfBytes));
+    URLConnection connection = url.openConnection();
+    connection.setRequestProperty("User-Agent", USER_AGENT);
 
-  /**
-   * Random.org does not allow requests for more than 10k integers at once.
-   */
-  private static final int MAX_REQUEST_SIZE = 10000;
-
-  /**
-   * Delay before retrying in the event of a 503 error.
-   */
-  private static final int DELAY_BETWEEN_RETRIES_MS = 10 * 1000;
-
-  private static final Lock cacheLock = new ReentrantLock();
-  private static byte[] cache = new byte[1024];
-  private static int cacheOffset = cache.length;
+    try (BufferedReader reader = new BufferedReader(
+        new InputStreamReader(connection.getInputStream()))) {
+      int index = -1;
+      for (String line = reader.readLine(); line != null; line = reader.readLine()) {
+        ++index;
+        cache[index] = (byte) Integer.parseInt(line, 16);
+      }
+      if (index < cache.length - 1) {
+        throw new IOException("Insufficient data received.");
+      }
+      cacheOffset = 0;
+    }
+  }
 
   /**
    * {@inheritDoc}
@@ -116,39 +142,6 @@ public class RandomDotOrgSeedGenerator implements SeedGenerator {
       }
     }
     return seedData;
-  }
-
-  /**
-   * @param requiredBytes The preferred number of bytes to request from random.org. The
-   * implementation may request more and cache the excess (to avoid making lots of small requests).
-   * Alternatively, it may request fewer if the required number is greater than that permitted by
-   * random.org for a single request.
-   * @throws IOException If there is a problem downloading the random bits.
-   */
-
-  private static synchronized void refreshCache(int requiredBytes) throws IOException {
-    int numberOfBytes = Math.max(requiredBytes, cache.length);
-    numberOfBytes = Math.min(numberOfBytes, MAX_REQUEST_SIZE);
-    if (numberOfBytes != cache.length) {
-      cache = new byte[numberOfBytes];
-      cacheOffset = numberOfBytes;
-    }
-    URL url = new URL(MessageFormat.format(RANDOM_URL, numberOfBytes));
-    URLConnection connection = url.openConnection();
-    connection.setRequestProperty("User-Agent", USER_AGENT);
-
-    try (BufferedReader reader = new BufferedReader(
-        new InputStreamReader(connection.getInputStream()))) {
-      int index = -1;
-      for (String line = reader.readLine(); line != null; line = reader.readLine()) {
-        ++index;
-        cache[index] = (byte) Integer.parseInt(line, 16);
-      }
-      if (index < cache.length - 1) {
-        throw new IOException("Insufficient data received.");
-      }
-      cacheOffset = 0;
-    }
   }
 
   @Override

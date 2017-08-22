@@ -29,8 +29,7 @@ public class SplittableRandomAdapter extends SingleThreadSplittableRandomAdapter
   }
 
   /**
-   * {@inheritDoc}
-   * Applies only to the calling thread.
+   * {@inheritDoc} Applies only to the calling thread.
    */
   @Override
   public synchronized void setSeed(long seed) {

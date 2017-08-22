@@ -52,22 +52,23 @@ import javax.crypto.spec.SecretKeySpec;
 public class AesCounterRandom extends BaseRandom implements RepeatableRandom,
     EntropyCountingRandom {
 
+  /**
+   * If the seed is longer than this, part of it becomes the counter's initial value. Otherwise, the
+   * full seed becomes the AES key and the counter is initially zero. Package-visible for testing of
+   * its initialization.
+   */
+  static final int MAX_KEY_LENGTH_BYTES;
   private static final long serialVersionUID = 5949778642428995210L;
-
   private static final Logger LOG = Logger.getLogger(AesCounterRandom.class.getName());
-
   private static final int DEFAULT_SEED_SIZE_BYTES = 32;
-
   private static final String ALGORITHM = "AES";
   @SuppressWarnings("HardcodedFileSeparator")
   private static final String ALGORITHM_MODE = ALGORITHM + "/ECB/NoPadding";
-
   /**
    * 128-bit counter. Note to forkers: when running a cipher in ECB mode, this counter's length
    * should equal the cipher's block size.
    */
   private static final int COUNTER_SIZE_BYTES = 16;
-
   /**
    * Number of blocks to encrypt at once, to construct/GC fewer arrays. This takes advantage of the
    * fact that in ECB mode, concatenating and then encrypting gives the same output as encrypting
@@ -75,14 +76,8 @@ public class AesCounterRandom extends BaseRandom implements RepeatableRandom,
    * size is 128 bits at all key lengths.)
    */
   private static final int BLOCKS_AT_ONCE = 16;
-
-  /**
-   * If the seed is longer than this, part of it becomes the counter's initial value. Otherwise, the
-   * full seed becomes the AES key and the counter is initially zero. Package-visible for testing of
-   * its initialization.
-   */
-  static final int MAX_KEY_LENGTH_BYTES;
   private static final String HASH_ALGORITHM = "SHA-256";
+  private static final int MAX_TOTAL_SEED_LENGTH_BYTES = MAX_KEY_LENGTH_BYTES + COUNTER_SIZE_BYTES;
 
   static {
     try {
@@ -94,39 +89,15 @@ public class AesCounterRandom extends BaseRandom implements RepeatableRandom,
     }
   }
 
-  private static final int MAX_TOTAL_SEED_LENGTH_BYTES = MAX_KEY_LENGTH_BYTES + COUNTER_SIZE_BYTES;
-
+  private final byte[] currentBlock = new byte[COUNTER_SIZE_BYTES * BLOCKS_AT_ONCE];
   // WARNING: Don't initialize any instance fields at declaration; they may be initialized too late!
   private transient Cipher cipher;
   private byte[] counter;
   private transient byte[] counterInput;
   private transient boolean seeded;
-
   private long entropyBytes;
-
-  /**
-   * Called in constructor and readObject to initialize transient fields.
-   */
-  @Override
-  protected void initTransientFields() {
-    super.initTransientFields();
-    if (counter == null) {
-      counter = new byte[COUNTER_SIZE_BYTES];
-    }
-    counterInput = new byte[COUNTER_SIZE_BYTES * BLOCKS_AT_ONCE];
-    try {
-      cipher = Cipher.getInstance(ALGORITHM_MODE);
-    } catch (NoSuchAlgorithmException | NoSuchPaddingException e) {
-      throw new RuntimeException("JVM doesn't provide " + ALGORITHM_MODE, e);
-    }
-    setSeed(seed);
-  }
-
-  private final byte[] currentBlock = new byte[COUNTER_SIZE_BYTES * BLOCKS_AT_ONCE];
-
   // force generation of first block on demand
   private int index = currentBlock.length;
-
 
   /**
    * Creates a new RNG and seeds it using 256 bits from the default seeding strategy.
@@ -169,6 +140,24 @@ public class AesCounterRandom extends BaseRandom implements RepeatableRandom,
    */
   public AesCounterRandom(byte[] seed) {
     super(seed);
+  }
+
+  /**
+   * Called in constructor and readObject to initialize transient fields.
+   */
+  @Override
+  protected void initTransientFields() {
+    super.initTransientFields();
+    if (counter == null) {
+      counter = new byte[COUNTER_SIZE_BYTES];
+    }
+    counterInput = new byte[COUNTER_SIZE_BYTES * BLOCKS_AT_ONCE];
+    try {
+      cipher = Cipher.getInstance(ALGORITHM_MODE);
+    } catch (NoSuchAlgorithmException | NoSuchPaddingException e) {
+      throw new RuntimeException("JVM doesn't provide " + ALGORITHM_MODE, e);
+    }
+    setSeed(seed);
   }
 
   private void incrementCounter() {
@@ -252,8 +241,10 @@ public class AesCounterRandom extends BaseRandom implements RepeatableRandom,
   public int hashCode() {
     return Arrays.hashCode(seed);
   }
-  
-  /** For debugging. Should always be true. */
+
+  /**
+   * For debugging. Should always be true.
+   */
   public boolean isSeeded() {
     return seeded;
   }

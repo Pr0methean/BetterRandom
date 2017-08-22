@@ -1,36 +1,44 @@
 package betterrandom.prng.adapter;
 
+import betterrandom.seed.DefaultSeedGenerator;
 import betterrandom.seed.RandomSeederThread;
 import betterrandom.seed.SeedException;
 import betterrandom.seed.SeedGenerator;
 import java.util.SplittableRandom;
 import java.util.WeakHashMap;
-import java.util.function.Supplier;
 
 /**
  * A version of {@link SplittableRandomAdapter} that uses a {@link RandomSeederThread} to replace
- * each thread's {@link SplittableRandom} with a reseeded one as frequently as possible, but not more
- * frequently than it is being used.
+ * each thread's {@link SplittableRandom} with a reseeded one as frequently as possible, but not
+ * more frequently than it is being used.
  */
 public class ReseedingSplittableRandomAdapter extends SplittableRandomAdapter {
 
   private static final long serialVersionUID = 6301096404034224037L;
+  private static final WeakHashMap<SeedGenerator, ReseedingSplittableRandomAdapter> INSTANCES = new WeakHashMap<>();
+  private static ReseedingSplittableRandomAdapter defaultInstance;
+  protected final SeedGenerator seedGenerator;
+  private final RandomSeederThread seederThread;
+  private transient ThreadLocal<SingleThreadSplittableRandomAdapter> threadLocal;
 
-  /** Single instance per SeedGenerator.
-   * @param seedGenerator The seed generator this adapter will use. */
+  /**
+   * Single instance per SeedGenerator.
+   *
+   * @param seedGenerator The seed generator this adapter will use.
+   */
   private ReseedingSplittableRandomAdapter(SeedGenerator seedGenerator) throws SeedException {
     super(seedGenerator);
     this.seedGenerator = seedGenerator;
     seederThread = RandomSeederThread.getInstance(seedGenerator);
   }
 
-  protected final SeedGenerator seedGenerator;
-
-  private final RandomSeederThread seederThread;
-
-  private static final WeakHashMap<SeedGenerator, ReseedingSplittableRandomAdapter> INSTANCES = new WeakHashMap<>();
-
-  private transient ThreadLocal<SingleThreadSplittableRandomAdapter> threadLocal;
+  public static synchronized ReseedingSplittableRandomAdapter getDefaultInstance()
+      throws SeedException {
+    if (defaultInstance == null) {
+      defaultInstance = new ReseedingSplittableRandomAdapter(DefaultSeedGenerator.getInstance());
+    }
+    return defaultInstance;
+  }
 
   @Override
   protected void initTransientFields() {
@@ -44,7 +52,8 @@ public class ReseedingSplittableRandomAdapter extends SplittableRandomAdapter {
     });
   }
 
-  public ReseedingSplittableRandomAdapter getInstance(SeedGenerator seedGenerator) throws SeedException {
+  public ReseedingSplittableRandomAdapter getInstance(SeedGenerator seedGenerator)
+      throws SeedException {
     try {
       return INSTANCES.computeIfAbsent(seedGenerator, seedGenerator1 -> {
         try {

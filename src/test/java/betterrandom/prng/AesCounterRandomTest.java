@@ -41,8 +41,8 @@ import org.testng.annotations.Test;
  */
 public class AesCounterRandomTest {
 
-  private FileHandler logHandler;
   private static final Logger LOG = Logger.getLogger(AesCounterRandomTest.class.getName());
+  private FileHandler logHandler;
 
   @BeforeSuite
   public void setUp() throws IOException {
