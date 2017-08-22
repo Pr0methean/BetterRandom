@@ -1,7 +1,6 @@
 package betterrandom.prng;
 
 import betterrandom.ByteArrayReseedableRandom;
-import betterrandom.EntropyCountingRandom;
 import betterrandom.RepeatableRandom;
 import betterrandom.seed.DefaultSeedGenerator;
 import betterrandom.seed.SeedException;
@@ -25,20 +24,6 @@ public abstract class BaseRandom extends Random implements ByteArrayReseedableRa
   // Lock to prevent concurrent modification of the RNG's internal state.
   @SuppressWarnings("InstanceVariableMayNotBeInitializedByReadObject")
   protected transient Lock lock;
-
-  /**
-   * {@inheritDoc}
-   */
-  @Override
-  public byte[] getSeed() {
-    lock.lock();
-    try {
-      return seed.clone();
-    } finally {
-      lock.unlock();
-    }
-  }
-
   /**
    * Use this if necessary to ignore setSeed(long) calls from super constructor
    */
@@ -71,6 +56,29 @@ public abstract class BaseRandom extends Random implements ByteArrayReseedableRa
     initTransientFields();
   }
 
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public byte[] getSeed() {
+    lock.lock();
+    try {
+      return seed.clone();
+    } finally {
+      lock.unlock();
+    }
+  }
+
+  @Override
+  public void setSeed(byte[] seed) {
+    lock.lock();
+    try {
+      this.seed = seed.clone();
+    } finally {
+      lock.unlock();
+    }
+  }
+
   protected void initTransientFields() {
     if (lock == null) {
       lock = new ReentrantLock();
@@ -96,15 +104,5 @@ public abstract class BaseRandom extends Random implements ByteArrayReseedableRa
     ByteBuffer buffer = ByteBuffer.allocate(8);
     buffer.putLong(seed);
     setSeed(buffer.array());
-  }
-
-  @Override
-  public void setSeed(byte[] seed) {
-    lock.lock();
-    try {
-      this.seed = seed.clone();
-    } finally {
-      lock.unlock();
-    }
   }
 }

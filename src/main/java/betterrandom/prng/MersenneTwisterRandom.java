@@ -94,6 +94,13 @@ public class MersenneTwisterRandom extends BaseRandom implements RepeatableRando
     this(seedGenerator.generateSeed(SEED_SIZE_BYTES));
   }
 
+  /**
+   * {@inheritDoc}
+   */
+  public byte[] getSeed() {
+    return seed.clone();
+  }
+
   @Override
   public void setSeed(byte[] seed) {
     if (!superConstructorFinished) {
@@ -145,15 +152,6 @@ public class MersenneTwisterRandom extends BaseRandom implements RepeatableRando
       lock.unlock();
     }
   }
-
-
-  /**
-   * {@inheritDoc}
-   */
-  public byte[] getSeed() {
-    return seed.clone();
-  }
-
 
   /**
    * {@inheritDoc}

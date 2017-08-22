@@ -27,8 +27,8 @@ import java.util.Random;
 /**
  * <p>A Java version of George Marsaglia's <a href="http://school.anhb.uwa.edu.au/personalpages/kwessen/shared/Marsaglia03.html">Complementary
  * Multiply With Carry (CMWC) RNG</a>. This is a very fast PRNG with an extremely long period
- * (2^131104).  It should be used in preference to the {@link MersenneTwisterRandom} when a very long
- * period is required.</p>
+ * (2^131104).  It should be used in preference to the {@link MersenneTwisterRandom} when a very
+ * long period is required.</p>
  *
  * <p>One potential drawback of this RNG is that it requires significantly more seed data than the
  * other RNGs provided by Uncommons Maths.  It requires just over 16 kilobytes, which may be a
@@ -93,6 +93,19 @@ public class Cmwc4096Random extends BaseRandom implements RepeatableRandom, Entr
     return seed.clone();
   }
 
+  @Override
+  public void setSeed(byte[] seed) {
+    if (!superConstructorFinished) {
+      // setSeed can't work until seed array allocated
+      return;
+    }
+    if (seed == null || seed.length != SEED_SIZE_BYTES) {
+      throw new IllegalArgumentException("CMWC RNG requires 16kb of seed data.");
+    }
+    state = BinaryUtils.convertBytesToInts(seed);
+    initTransientFields();
+    entropyBytes = SEED_SIZE_BYTES;
+  }
 
   /**
    * {@inheritDoc}
@@ -136,19 +149,5 @@ public class Cmwc4096Random extends BaseRandom implements RepeatableRandom, Entr
   @Override
   public long entropyOctets() {
     return entropyBytes;
-  }
-
-  @Override
-  public void setSeed(byte[] seed) {
-    if (!superConstructorFinished) {
-      // setSeed can't work until seed array allocated
-      return;
-    }
-    if (seed == null || seed.length != SEED_SIZE_BYTES) {
-      throw new IllegalArgumentException("CMWC RNG requires 16kb of seed data.");
-    }
-    state = BinaryUtils.convertBytesToInts(seed);
-    initTransientFields();
-    entropyBytes = SEED_SIZE_BYTES;
   }
 }

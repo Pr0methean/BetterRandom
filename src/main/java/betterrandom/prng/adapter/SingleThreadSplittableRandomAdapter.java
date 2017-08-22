@@ -1,6 +1,5 @@
 package betterrandom.prng.adapter;
 
-import betterrandom.EntropyCountingRandom;
 import betterrandom.prng.BaseRandom;
 import betterrandom.seed.SeedException;
 import betterrandom.seed.SeedGenerator;
@@ -16,14 +15,13 @@ public class SingleThreadSplittableRandomAdapter extends BaseRandom {
 
   public static final int SEED_LENGTH_BYTES = 8;
   private static final long serialVersionUID = -1125374167384636394L;
+  protected transient SplittableRandom underlying; // a SplittableRandom is not Serializable
 
   public SingleThreadSplittableRandomAdapter(SeedGenerator seedGenerator) throws SeedException {
     super(seedGenerator.generateSeed(SEED_LENGTH_BYTES));
     underlying = new SplittableRandom(
         BinaryUtils.convertBytesToLong(seed, 0));
   }
-
-  protected transient SplittableRandom underlying; // a SplittableRandom is not Serializable
 
   // Overridden in the subclass
   protected SplittableRandom getSplittableRandom() {
@@ -61,7 +59,7 @@ public class SingleThreadSplittableRandomAdapter extends BaseRandom {
   @Override
   public void nextBytes(byte[] bytes) {
     SplittableRandom local = getSplittableRandom();
-    for (int i=0; i<bytes.length; i++) {
+    for (int i = 0; i < bytes.length; i++) {
       bytes[i] = (byte) (local.nextInt(256));
     }
   }

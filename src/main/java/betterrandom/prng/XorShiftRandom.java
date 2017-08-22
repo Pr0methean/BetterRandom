@@ -95,6 +95,20 @@ public class XorShiftRandom extends BaseRandom implements RepeatableRandom, Entr
     return seed.clone();
   }
 
+  @Override
+  public void setSeed(byte[] seed) {
+    if (!superConstructorFinished) {
+      // setSeed can't work until seed array allocated
+      return;
+    }
+    lock.lock();
+    try {
+      this.seed = seed.clone();
+      initTransientFields();
+    } finally {
+      lock.unlock();
+    }
+  }
 
   /**
    * {@inheritDoc}
@@ -126,21 +140,6 @@ public class XorShiftRandom extends BaseRandom implements RepeatableRandom, Entr
   @Override
   public int hashCode() {
     return Arrays.hashCode(seed);
-  }
-
-  @Override
-  public void setSeed(byte[] seed) {
-    if (!superConstructorFinished) {
-      // setSeed can't work until seed array allocated
-      return;
-    }
-    lock.lock();
-    try {
-      this.seed = seed.clone();
-      initTransientFields();
-    } finally {
-      lock.unlock();
-    }
   }
 
   @Override

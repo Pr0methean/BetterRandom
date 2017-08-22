@@ -3,7 +3,6 @@ package betterrandom.seed;
 import betterrandom.ByteArrayReseedableRandom;
 import betterrandom.EntropyCountingRandom;
 import betterrandom.util.SerializableWeakReference;
-import betterrandom.util.WeakReferenceWithEquals;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.Serializable;
@@ -33,12 +32,6 @@ public final class RandomSeederThread extends Thread implements Serializable {
   private final byte[] seedArray = new byte[8];
   private transient ByteBuffer seedBuffer;
 
-  private void initTransientState() {
-    seedBuffer = ByteBuffer.wrap(seedArray);
-    setDaemon(true);
-    start();
-  }
-
   /**
    * Private constructor because only one instance per seed source.
    */
@@ -47,16 +40,22 @@ public final class RandomSeederThread extends Thread implements Serializable {
     initTransientState();
   }
 
-  private void readObject(ObjectInputStream ois) throws IOException, ClassNotFoundException {
-    ois.defaultReadObject();
-    initTransientState();
-  }
-
   /**
    * Obtain the instance for the given {@link SeedGenerator}, creating it if it doesn't exist.
    */
   public static RandomSeederThread getInstance(SeedGenerator seedGenerator) {
     return INSTANCES.computeIfAbsent(seedGenerator, RandomSeederThread::new);
+  }
+
+  private void initTransientState() {
+    seedBuffer = ByteBuffer.wrap(seedArray);
+    setDaemon(true);
+    start();
+  }
+
+  private void readObject(ObjectInputStream ois) throws IOException, ClassNotFoundException {
+    ois.defaultReadObject();
+    initTransientState();
   }
 
   @SuppressWarnings("InfiniteLoopStatement")

@@ -42,10 +42,6 @@ public class CellularAutomatonRandom extends BaseRandom implements RepeatableRan
   private static final long serialVersionUID = 5959251752288589909L;
   private static final int SEED_SIZE_BYTES = 4;
   private static final int AUTOMATON_LENGTH = 2056;
-
-  @SuppressWarnings("TransientFieldNotInitialized")
-  private transient long entropyBytes = SEED_SIZE_BYTES;
-
   private static final int[] RNG_RULE =
       {
           100, 75, 16, 3, 229, 51, 197, 118, 24, 62, 198, 11, 141, 152, 241, 188,
@@ -81,7 +77,8 @@ public class CellularAutomatonRandom extends BaseRandom implements RepeatableRan
           130, 97, 91, 227, 146, 4, 31, 120, 211, 38, 22, 138, 140, 237, 238, 251,
           240, 160, 142, 119, 73, 103, 166, 33, 148, 9, 111, 136, 168, 150, 82
       };
-
+  @SuppressWarnings("TransientFieldNotInitialized")
+  private transient long entropyBytes = SEED_SIZE_BYTES;
   private transient int[] cells;
 
   private transient int currentCellIndex;
@@ -92,6 +89,22 @@ public class CellularAutomatonRandom extends BaseRandom implements RepeatableRan
 
   public CellularAutomatonRandom(SeedGenerator seedGenerator) throws SeedException {
     this(seedGenerator.generateSeed(SEED_SIZE_BYTES));
+  }
+
+  /**
+   * Creates an RNG and seeds it with the specified seed data.
+   *
+   * @param seed The seed data used to initialise the RNG.
+   */
+  public CellularAutomatonRandom(byte[] seed) {
+    super(seed);
+  }
+
+  private static int convertCellsToInt(int[] cells, int offset) {
+    return cells[offset]
+        + (cells[offset + 1] << 8)
+        + (cells[offset + 2] << 16)
+        + (cells[offset + 3] << 24);
   }
 
   protected void copySeedToCellsAndPreEvolve() {
@@ -133,16 +146,6 @@ public class CellularAutomatonRandom extends BaseRandom implements RepeatableRan
       lock.unlock();
     }
   }
-
-  /**
-   * Creates an RNG and seeds it with the specified seed data.
-   *
-   * @param seed The seed data used to initialise the RNG.
-   */
-  public CellularAutomatonRandom(byte[] seed) {
-    super(seed);
-  }
-
 
   /**
    * {@inheritDoc}
@@ -206,13 +209,6 @@ public class CellularAutomatonRandom extends BaseRandom implements RepeatableRan
     } finally {
       lock.unlock();
     }
-  }
-
-  private static int convertCellsToInt(int[] cells, int offset) {
-    return cells[offset]
-        + (cells[offset + 1] << 8)
-        + (cells[offset + 2] << 16)
-        + (cells[offset + 3] << 24);
   }
 
   @Override
