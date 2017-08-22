@@ -15,6 +15,7 @@
 // ============================================================================
 package betterrandom.prng;
 
+import betterrandom.RepeatableRandom;
 import betterrandom.seed.DefaultSeedGenerator;
 import betterrandom.seed.SeedException;
 import betterrandom.seed.SeedGenerator;
@@ -34,7 +35,7 @@ import java.util.Random;
  * @author Tony Pasqualoni (original C version)
  * @author Daniel Dyer (Java port)
  */
-public class CellularAutomatonRNG extends BaseRNG implements RepeatableRNG {
+public class CellularAutomatonRandom extends BaseRandom implements RepeatableRandom {
 
   private static final long serialVersionUID = 5959251752288589909L;
   private static final int SEED_SIZE_BYTES = 4;
@@ -82,11 +83,11 @@ public class CellularAutomatonRNG extends BaseRNG implements RepeatableRNG {
 
   private transient int currentCellIndex;
 
-  public CellularAutomatonRNG() throws SeedException {
+  public CellularAutomatonRandom() throws SeedException {
     this(DefaultSeedGenerator.getInstance());
   }
 
-  public CellularAutomatonRNG(SeedGenerator seedGenerator) throws SeedException {
+  public CellularAutomatonRandom(SeedGenerator seedGenerator) throws SeedException {
     this(seedGenerator.generateSeed(SEED_SIZE_BYTES));
   }
 
@@ -134,7 +135,7 @@ public class CellularAutomatonRNG extends BaseRNG implements RepeatableRNG {
    *
    * @param seed The seed data used to initialise the RNG.
    */
-  public CellularAutomatonRNG(byte[] seed) {
+  public CellularAutomatonRandom(byte[] seed) {
     super(seed);
   }
 
@@ -175,8 +176,8 @@ public class CellularAutomatonRNG extends BaseRNG implements RepeatableRNG {
 
   @Override
   public boolean equals(Object o) {
-    return o instanceof CellularAutomatonRNG
-        && Arrays.equals(seed, ((CellularAutomatonRNG) o).seed);
+    return o instanceof CellularAutomatonRandom
+        && Arrays.equals(seed, ((CellularAutomatonRandom) o).seed);
   }
 
   @Override

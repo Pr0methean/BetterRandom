@@ -15,6 +15,7 @@
 // ============================================================================
 package betterrandom.prng;
 
+import betterrandom.RepeatableRandom;
 import betterrandom.seed.DefaultSeedGenerator;
 import betterrandom.seed.SeedException;
 import betterrandom.seed.SeedGenerator;
@@ -47,11 +48,11 @@ import javax.crypto.spec.SecretKeySpec;
  *
  * @author Daniel Dyer
  */
-public class AESCounterRNG extends BaseRNG implements RepeatableRNG {
+public class AesCounterRandom extends BaseRandom implements RepeatableRandom {
 
   private static final long serialVersionUID = 5949778642428995210L;
 
-  private static final Logger LOG = Logger.getLogger(AESCounterRNG.class.getName());
+  private static final Logger LOG = Logger.getLogger(AesCounterRandom.class.getName());
 
   private static final int DEFAULT_SEED_SIZE_BYTES = 32;
 
@@ -128,7 +129,7 @@ public class AESCounterRNG extends BaseRNG implements RepeatableRNG {
   /**
    * Creates a new RNG and seeds it using 256 bits from the default seeding strategy.
    */
-  public AESCounterRNG() {
+  public AesCounterRandom() {
     this(DEFAULT_SEED_SIZE_BYTES);
   }
 
@@ -140,7 +141,7 @@ public class AESCounterRNG extends BaseRNG implements RepeatableRNG {
    * RNG.
    * @throws SeedException If there is a problem generating a seed.
    */
-  public AESCounterRNG(SeedGenerator seedGenerator) throws SeedException {
+  public AesCounterRandom(SeedGenerator seedGenerator) throws SeedException {
     this(seedGenerator.generateSeed(DEFAULT_SEED_SIZE_BYTES));
   }
 
@@ -154,7 +155,7 @@ public class AESCounterRNG extends BaseRNG implements RepeatableRNG {
    * implementation.
    * @since 1.0.2
    */
-  public AESCounterRNG(int seedSizeBytes) {
+  public AesCounterRandom(int seedSizeBytes) {
     this(DefaultSeedGenerator.getInstance().generateSeed(seedSizeBytes));
   }
 
@@ -164,7 +165,7 @@ public class AESCounterRNG extends BaseRNG implements RepeatableRNG {
    *
    * @param seed The seed data used to initialise the RNG.
    */
-  public AESCounterRNG(byte[] seed) {
+  public AesCounterRandom(byte[] seed) {
     super(seed);
   }
 
@@ -240,8 +241,8 @@ public class AESCounterRNG extends BaseRNG implements RepeatableRNG {
   @SuppressWarnings("NonFinalFieldReferenceInEquals")
   @Override
   public boolean equals(Object other) {
-    return other instanceof AESCounterRNG
-        && Arrays.equals(seed, ((AESCounterRNG) other).seed);
+    return other instanceof AesCounterRandom
+        && Arrays.equals(seed, ((AesCounterRandom) other).seed);
   }
 
   @SuppressWarnings("NonFinalFieldReferencedInHashCode")

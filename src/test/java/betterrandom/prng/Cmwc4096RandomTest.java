@@ -33,7 +33,7 @@ import org.testng.annotations.Test;
  *
  * @author Daniel Dyer
  */
-public class CMWC4096RNGTest {
+public class Cmwc4096RandomTest {
 
   private final SeedGenerator seedGenerator = DefaultSeedGenerator.getInstance();
 
@@ -42,10 +42,10 @@ public class CMWC4096RNGTest {
    */
   @Test(timeOut = 15000)
   public void testRepeatability() throws SeedException {
-    CMWC4096RNG rng = new CMWC4096RNG(seedGenerator);
+    Cmwc4096Random rng = new Cmwc4096Random(seedGenerator);
     // Create second RNG using same seed.
-    CMWC4096RNG duplicateRNG = new CMWC4096RNG(rng.getSeed());
-    assert RNGTestUtils
+    Cmwc4096Random duplicateRNG = new Cmwc4096Random(rng.getSeed());
+    assert RandomTestUtils
         .testEquivalence(rng, duplicateRNG, 1000) : "Generated sequences do not match.";
   }
 
@@ -58,8 +58,8 @@ public class CMWC4096RNGTest {
   @Test(timeOut = 15000, groups = "non-deterministic",
       dependsOnMethods = "testRepeatability")
   public void testDistribution() throws SeedException {
-    CMWC4096RNG rng = new CMWC4096RNG(seedGenerator);
-    double pi = RNGTestUtils.calculateMonteCarloValueForPi(rng, 100000);
+    Cmwc4096Random rng = new Cmwc4096Random(seedGenerator);
+    double pi = RandomTestUtils.calculateMonteCarloValueForPi(rng, 100000);
     Reporter.log("Monte Carlo value for Pi: " + pi);
     assertEquals(pi, Math.PI, 0.01, "Monte Carlo value for Pi is outside acceptable range:" + pi);
   }
@@ -73,11 +73,11 @@ public class CMWC4096RNGTest {
   @Test(timeOut = 15000, groups = "non-deterministic",
       dependsOnMethods = "testRepeatability")
   public void testStandardDeviation() throws SeedException {
-    CMWC4096RNG rng = new CMWC4096RNG(seedGenerator);
+    Cmwc4096Random rng = new Cmwc4096Random(seedGenerator);
     // Expected standard deviation for a uniformly distributed population of values in the range 0..n
     // approaches n/sqrt(12).
     int n = 100;
-    double observedSD = RNGTestUtils.calculateSampleStandardDeviation(rng, n, 10000);
+    double observedSD = RandomTestUtils.calculateSampleStandardDeviation(rng, n, 10000);
     double expectedSD = n / Math.sqrt(12);
     Reporter.log("Expected SD: " + expectedSD + ", observed SD: " + observedSD);
     assertEquals(observedSD, expectedSD, 0.02 * expectedSD,
@@ -91,7 +91,7 @@ public class CMWC4096RNGTest {
    */
   @Test(timeOut = 15000, expectedExceptions = IllegalArgumentException.class)
   public void testInvalidSeedSize() {
-    new CMWC4096RNG(
+    new Cmwc4096Random(
         new byte[]{1, 2, 3}); // Not enough bytes, should cause an IllegalArgumentException.
   }
 
@@ -101,7 +101,7 @@ public class CMWC4096RNGTest {
    */
   @Test(timeOut = 15000, expectedExceptions = IllegalArgumentException.class)
   public void testNullSeed() {
-    new CMWC4096RNG((byte[]) null);
+    new Cmwc4096Random((byte[]) null);
   }
 
 
@@ -109,7 +109,7 @@ public class CMWC4096RNGTest {
   @Test(timeOut = 15000)
   public void testSerializable() throws IOException, ClassNotFoundException {
     // Serialise an RNG.
-    CMWC4096RNG rng = new CMWC4096RNG();
+    Cmwc4096Random rng = new Cmwc4096Random();
     ByteArrayOutputStream byteOutStream = new ByteArrayOutputStream();
     ObjectOutputStream objectOutStream = new ObjectOutputStream(byteOutStream);
     objectOutStream.writeObject(rng);
@@ -117,21 +117,21 @@ public class CMWC4096RNGTest {
     // Read the RNG back-in.
     ObjectInputStream objectInStream = new ObjectInputStream(
         new ByteArrayInputStream(byteOutStream.toByteArray()));
-    CMWC4096RNG rng2 = (CMWC4096RNG) objectInStream.readObject();
+    Cmwc4096Random rng2 = (Cmwc4096Random) objectInStream.readObject();
     assert rng != rng2 : "Deserialised RNG should be distinct object.";
 
     // Both RNGs should generate the same sequence.
-    assert RNGTestUtils.testEquivalence(rng, rng2, 20) : "Output mismatch after serialisation.";
+    assert RandomTestUtils.testEquivalence(rng, rng2, 20) : "Output mismatch after serialisation.";
   }
 
   @Test(timeOut = 15000)
   public void testEquals() throws ReflectiveOperationException {
-    RNGTestUtils.doEqualsSanityChecks(CMWC4096RNG.class.getConstructor());
+    RandomTestUtils.doEqualsSanityChecks(Cmwc4096Random.class.getConstructor());
   }
 
   @Test(timeOut = 15000)
   public void testHashCode() throws Exception {
-    assert RNGTestUtils.testHashCodeDistribution(CMWC4096RNG.class.getConstructor())
+    assert RandomTestUtils.testHashCodeDistribution(Cmwc4096Random.class.getConstructor())
         : "Too many hashCode collisions";
   }
 }

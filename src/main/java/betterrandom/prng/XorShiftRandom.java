@@ -15,6 +15,7 @@
 // ============================================================================
 package betterrandom.prng;
 
+import betterrandom.RepeatableRandom;
 import betterrandom.seed.DefaultSeedGenerator;
 import betterrandom.seed.SeedException;
 import betterrandom.seed.SeedGenerator;
@@ -25,7 +26,7 @@ import java.util.Random;
 /**
  * <p>Very fast pseudo random number generator.  See <a href="http://school.anhb.uwa.edu.au/personalpages/kwessen/shared/Marsaglia03.html">this
  * page</a> for a description.  This RNG has a period of about 2^160, which is not as long as the
- * {@link MersenneTwisterRNG} but it is faster.</p>
+ * {@link MersenneTwisterRandom} but it is faster.</p>
  *
  * <p><em>NOTE: Because instances of this class require 160-bit seeds, it is not possible to seed
  * this RNG using the {@link #setSeed(long)} method inherited from {@link Random}.  Calls to this
@@ -34,7 +35,7 @@ import java.util.Random;
  * @author Daniel Dyer
  * @since 1.2
  */
-public class XORShiftRNG extends BaseRNG implements RepeatableRNG {
+public class XorShiftRandom extends BaseRandom implements RepeatableRandom {
 
   private static final long serialVersionUID = 952521144304194886L;
   private static final int SEED_SIZE_BYTES = 20; // Needs 5 32-bit integers.
@@ -54,15 +55,15 @@ public class XORShiftRNG extends BaseRNG implements RepeatableRNG {
    *
    * @param seed The seed data used to initialise the RNG.
    */
-  public XORShiftRNG(byte[] seed) {
+  public XorShiftRandom(byte[] seed) {
     super(seed);
   }
 
-  public XORShiftRNG() throws SeedException {
+  public XorShiftRandom() throws SeedException {
     this(DefaultSeedGenerator.getInstance());
   }
 
-  public XORShiftRNG(SeedGenerator seedGenerator) throws SeedException {
+  public XorShiftRandom(SeedGenerator seedGenerator) throws SeedException {
     this(seedGenerator.generateSeed(SEED_SIZE_BYTES));
   }
 
@@ -117,8 +118,8 @@ public class XORShiftRNG extends BaseRNG implements RepeatableRNG {
 
   @Override
   public boolean equals(Object other) {
-    return other instanceof XORShiftRNG
-        && Arrays.equals(seed, ((XORShiftRNG) other).seed);
+    return other instanceof XorShiftRandom
+        && Arrays.equals(seed, ((XorShiftRandom) other).seed);
   }
 
   @Override
