@@ -25,9 +25,9 @@ import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
  *
  * @author Daniel Dyer
  */
-final class RNGTestUtils {
+final class RandomTestUtils {
 
-  private RNGTestUtils() {
+  private RandomTestUtils() {
     // Prevents instantiation of utility class.
   }
 

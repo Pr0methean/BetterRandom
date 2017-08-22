@@ -15,6 +15,7 @@
 // ============================================================================
 package betterrandom.prng;
 
+import betterrandom.RepeatableRandom;
 import betterrandom.seed.DefaultSeedGenerator;
 import betterrandom.seed.SeedException;
 import betterrandom.seed.SeedGenerator;
@@ -29,7 +30,7 @@ import java.util.Random;
  *
  * <p>This is a very fast random number generator with good statistical properties (it passes the
  * full DIEHARD suite).  This is the best RNG for most experiments.  If a non-linear generator is
- * required, use the slower {@link AESCounterRNG} RNG.</p>
+ * required, use the slower {@link AesCounterRandom} RNG.</p>
  *
  * <p>This PRNG is deterministic, which can be advantageous for testing purposes since the output is
  * repeatable.  If multiple instances of this class are created with the same seed they will all
@@ -46,7 +47,7 @@ import java.util.Random;
  * @author Makoto Matsumoto and Takuji Nishimura (original C version)
  * @author Daniel Dyer (Java port)
  */
-public class MersenneTwisterRNG extends BaseRNG implements RepeatableRNG {
+public class MersenneTwisterRandom extends BaseRandom implements RepeatableRandom {
 
   private static final long serialVersionUID = -4856906677508460512L;
 
@@ -73,7 +74,7 @@ public class MersenneTwisterRNG extends BaseRNG implements RepeatableRNG {
   /**
    * Creates a new RNG and seeds it using the default seeding strategy.
    */
-  public MersenneTwisterRNG() throws SeedException {
+  public MersenneTwisterRandom() throws SeedException {
     this(DefaultSeedGenerator.getInstance());
   }
 
@@ -82,12 +83,12 @@ public class MersenneTwisterRNG extends BaseRNG implements RepeatableRNG {
    *
    * @param seed The seed data used to initialise the RNG.
    */
-  public MersenneTwisterRNG(byte[] seed) {
+  public MersenneTwisterRandom(byte[] seed) {
     super(seed);
     setSeed(seed);
   }
 
-  public MersenneTwisterRNG(SeedGenerator seedGenerator) throws SeedException {
+  public MersenneTwisterRandom(SeedGenerator seedGenerator) throws SeedException {
     this(seedGenerator.generateSeed(SEED_SIZE_BYTES));
   }
 
@@ -194,8 +195,8 @@ public class MersenneTwisterRNG extends BaseRNG implements RepeatableRNG {
 
   @Override
   public boolean equals(Object other) {
-    return other instanceof MersenneTwisterRNG
-        && Arrays.equals(seed, ((MersenneTwisterRNG) other).seed);
+    return other instanceof MersenneTwisterRandom
+        && Arrays.equals(seed, ((MersenneTwisterRandom) other).seed);
   }
 
   @Override

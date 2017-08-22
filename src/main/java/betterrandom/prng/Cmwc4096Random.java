@@ -15,6 +15,7 @@
 // ============================================================================
 package betterrandom.prng;
 
+import betterrandom.RepeatableRandom;
 import betterrandom.seed.DefaultSeedGenerator;
 import betterrandom.seed.SeedException;
 import betterrandom.seed.SeedGenerator;
@@ -25,7 +26,7 @@ import java.util.Random;
 /**
  * <p>A Java version of George Marsaglia's <a href="http://school.anhb.uwa.edu.au/personalpages/kwessen/shared/Marsaglia03.html">Complementary
  * Multiply With Carry (CMWC) RNG</a>. This is a very fast PRNG with an extremely long period
- * (2^131104).  It should be used in preference to the {@link MersenneTwisterRNG} when a very long
+ * (2^131104).  It should be used in preference to the {@link MersenneTwisterRandom} when a very long
  * period is required.</p>
  *
  * <p>One potential drawback of this RNG is that it requires significantly more seed data than the
@@ -40,7 +41,7 @@ import java.util.Random;
  * @author Daniel Dyer
  * @since 1.2
  */
-public class CMWC4096RNG extends BaseRNG implements RepeatableRNG {
+public class Cmwc4096Random extends BaseRandom implements RepeatableRandom {
 
   private static final int SEED_SIZE_BYTES = 16384; // Needs 4,096 32-bit integers.
 
@@ -56,7 +57,7 @@ public class CMWC4096RNG extends BaseRNG implements RepeatableRNG {
   /**
    * Creates a new RNG and seeds it using the default seeding strategy.
    */
-  public CMWC4096RNG() {
+  public Cmwc4096Random() {
     this(DefaultSeedGenerator.getInstance().generateSeed(SEED_SIZE_BYTES));
   }
 
@@ -68,7 +69,7 @@ public class CMWC4096RNG extends BaseRNG implements RepeatableRNG {
    * RNG.
    * @throws SeedException If there is a problem generating a seed.
    */
-  public CMWC4096RNG(SeedGenerator seedGenerator) throws SeedException {
+  public Cmwc4096Random(SeedGenerator seedGenerator) throws SeedException {
     this(seedGenerator.generateSeed(SEED_SIZE_BYTES));
   }
 
@@ -78,7 +79,7 @@ public class CMWC4096RNG extends BaseRNG implements RepeatableRNG {
    *
    * @param seed The seed data used to initialise the RNG.
    */
-  public CMWC4096RNG(byte[] seed) {
+  public Cmwc4096Random(byte[] seed) {
     super(seed);
     setSeed(seed);
   }
@@ -117,8 +118,8 @@ public class CMWC4096RNG extends BaseRNG implements RepeatableRNG {
 
   @Override
   public boolean equals(Object other) {
-    return other instanceof CMWC4096RNG
-        && Arrays.equals(seed, ((CMWC4096RNG) other).seed);
+    return other instanceof Cmwc4096Random
+        && Arrays.equals(seed, ((Cmwc4096Random) other).seed);
   }
 
   @Override

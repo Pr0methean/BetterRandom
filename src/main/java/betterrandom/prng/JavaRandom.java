@@ -15,6 +15,7 @@
 // ============================================================================
 package betterrandom.prng;
 
+import betterrandom.RepeatableRandom;
 import betterrandom.seed.DefaultSeedGenerator;
 import betterrandom.seed.SeedException;
 import betterrandom.seed.SeedGenerator;
@@ -23,10 +24,10 @@ import java.util.Arrays;
 import java.util.Random;
 
 /**
- * <p>This is the default {@link Random JDK RNG} extended to implement the {@link RepeatableRNG}
+ * <p>This is the default {@link Random JDK RNG} extended to implement the {@link RepeatableRandom}
  * interface (for consistency with the other RNGs in this package).</p>
  *
- * <p>The {@link MersenneTwisterRNG} should be used in preference to this class because it is
+ * <p>The {@link MersenneTwisterRandom} should be used in preference to this class because it is
  * statistically more random and performs slightly better.</p>
  *
  * <p><em>NOTE: Instances of this class do not use the seeding mechanism inherited from {@link
@@ -35,7 +36,7 @@ import java.util.Random;
  *
  * @author Daniel Dyer
  */
-public class JavaRNG extends Random implements RepeatableRNG {
+public class JavaRandom extends Random implements RepeatableRandom {
 
   private static final long serialVersionUID = -6526304552538799385L;
   private static final int SEED_SIZE_BYTES = 8;
@@ -46,7 +47,7 @@ public class JavaRNG extends Random implements RepeatableRNG {
   /**
    * Creates a new RNG and seeds it using the default seeding strategy.
    */
-  public JavaRNG() {
+  public JavaRandom() {
     this(DefaultSeedGenerator.getInstance().generateSeed(SEED_SIZE_BYTES));
   }
 
@@ -58,7 +59,7 @@ public class JavaRNG extends Random implements RepeatableRNG {
    * RNG.
    * @throws SeedException If there is a problem generating a seed.
    */
-  public JavaRNG(SeedGenerator seedGenerator) throws SeedException {
+  public JavaRandom(SeedGenerator seedGenerator) throws SeedException {
     this(seedGenerator.generateSeed(SEED_SIZE_BYTES));
   }
 
@@ -68,7 +69,7 @@ public class JavaRNG extends Random implements RepeatableRNG {
    *
    * @param seed The seed data used to initialise the RNG.
    */
-  public JavaRNG(byte[] seed) {
+  public JavaRandom(byte[] seed) {
     super(createLongSeed(seed));
     this.seed = seed.clone();
   }
@@ -94,8 +95,8 @@ public class JavaRNG extends Random implements RepeatableRNG {
 
   @Override
   public boolean equals(Object other) {
-    return other instanceof JavaRNG
-        && Arrays.equals(seed, ((JavaRNG) other).seed);
+    return other instanceof JavaRandom
+        && Arrays.equals(seed, ((JavaRandom) other).seed);
   }
 
   @Override

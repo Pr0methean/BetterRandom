@@ -24,7 +24,6 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.util.Random;
 import org.testng.Reporter;
 import org.testng.annotations.Test;
 
@@ -33,17 +32,19 @@ import org.testng.annotations.Test;
  *
  * @author Daniel Dyer
  */
-public class CellularAutomatonRNGTest {
+public class XorShiftRandomTest {
 
   /**
    * Test to ensure that two distinct RNGs with the same seed return the same sequence of numbers.
+   * This method must be run before any of the other tests otherwise the state of the RNG will not
+   * be the same in the duplicate RNG.
    */
   @Test(timeOut = 15000)
   public void testRepeatability() throws SeedException {
-    CellularAutomatonRNG rng = new CellularAutomatonRNG();
+    XorShiftRandom rng = new XorShiftRandom();
     // Create second RNG using same seed.
-    CellularAutomatonRNG duplicateRNG = new CellularAutomatonRNG(rng.getSeed());
-    assert RNGTestUtils
+    XorShiftRandom duplicateRNG = new XorShiftRandom(rng.getSeed());
+    assert RandomTestUtils
         .testEquivalence(rng, duplicateRNG, 1000) : "Generated sequences do not match.";
   }
 
@@ -56,10 +57,10 @@ public class CellularAutomatonRNGTest {
   @Test(timeOut = 15000, groups = "non-deterministic",
       dependsOnMethods = "testRepeatability")
   public void testDistribution() throws SeedException {
-    CellularAutomatonRNG rng = new CellularAutomatonRNG(DefaultSeedGenerator.getInstance());
-    double pi = RNGTestUtils.calculateMonteCarloValueForPi(rng, 100000);
+    XorShiftRandom rng = new XorShiftRandom(DefaultSeedGenerator.getInstance());
+    double pi = RandomTestUtils.calculateMonteCarloValueForPi(rng, 100000);
     Reporter.log("Monte Carlo value for Pi: " + pi);
-    assertEquals(pi, Math.PI, 0.01,
+    assertEquals(pi, Math.PI, 0.01 * Math.PI,
         "Monte Carlo value for Pi is outside acceptable range:" + pi);
   }
 
@@ -72,11 +73,11 @@ public class CellularAutomatonRNGTest {
   @Test(timeOut = 15000, groups = "non-deterministic",
       dependsOnMethods = "testRepeatability")
   public void testStandardDeviation() throws SeedException {
-    CellularAutomatonRNG rng = new CellularAutomatonRNG();
+    XorShiftRandom rng = new XorShiftRandom();
     // Expected standard deviation for a uniformly distributed population of values in the range 0..n
     // approaches n/sqrt(12).
     int n = 100;
-    double observedSD = RNGTestUtils.calculateSampleStandardDeviation(rng, n, 10000);
+    double observedSD = RandomTestUtils.calculateSampleStandardDeviation(rng, n, 10000);
     double expectedSD = n / Math.sqrt(12);
     Reporter.log("Expected SD: " + expectedSD + ", observed SD: " + observedSD);
     assertEquals(observedSD, expectedSD, 0.02 * expectedSD,
@@ -90,8 +91,8 @@ public class CellularAutomatonRNGTest {
    */
   @Test(timeOut = 15000, expectedExceptions = IllegalArgumentException.class)
   public void testInvalidSeedSize() {
-    new CellularAutomatonRNG(
-        new byte[]{1, 2, 3}); // One byte too few, should cause an IllegalArgumentException.
+    new XorShiftRandom(
+        new byte[]{1, 2, 3}); // Not enough bytes, should cause an IllegalArgumentException.
   }
 
 
@@ -100,14 +101,14 @@ public class CellularAutomatonRNGTest {
    */
   @Test(timeOut = 15000, expectedExceptions = IllegalArgumentException.class)
   public void testNullSeed() {
-    new CellularAutomatonRNG((byte[]) null);
+    new XorShiftRandom((byte[]) null);
   }
 
 
   @Test(timeOut = 15000)
   public void testSerializable() throws IOException, ClassNotFoundException, SeedException {
     // Serialise an RNG.
-    CellularAutomatonRNG rng = new CellularAutomatonRNG();
+    XorShiftRandom rng = new XorShiftRandom();
     ByteArrayOutputStream byteOutStream = new ByteArrayOutputStream();
     ObjectOutputStream objectOutStream = new ObjectOutputStream(byteOutStream);
     objectOutStream.writeObject(rng);
@@ -115,33 +116,21 @@ public class CellularAutomatonRNGTest {
     // Read the RNG back-in.
     ObjectInputStream objectInStream = new ObjectInputStream(
         new ByteArrayInputStream(byteOutStream.toByteArray()));
-    CellularAutomatonRNG rng2 = (CellularAutomatonRNG) objectInStream.readObject();
+    XorShiftRandom rng2 = (XorShiftRandom) objectInStream.readObject();
     assert rng != rng2 : "Deserialised RNG should be distinct object.";
 
     // Both RNGs should generate the same sequence.
-    assert RNGTestUtils.testEquivalence(rng, rng2, 20) : "Output mismatch after serialisation.";
-  }
-
-  @Test(timeOut = 15000)
-  public void testSetSeed() throws SeedException {
-    long seed = new Random().nextLong();
-    CellularAutomatonRNG rng = new CellularAutomatonRNG();
-    CellularAutomatonRNG rng2 = new CellularAutomatonRNG();
-    rng.nextLong(); // ensure they won't both be in initial state before reseeding
-    rng.setSeed(seed);
-    rng2.setSeed(seed);
-    assert RNGTestUtils
-        .testEquivalence(rng, rng2, 20) : "Output mismatch after reseeding with same seed";
+    assert RandomTestUtils.testEquivalence(rng, rng2, 20) : "Output mismatch after serialisation.";
   }
 
   @Test(timeOut = 15000)
   public void testEquals() throws ReflectiveOperationException {
-    RNGTestUtils.doEqualsSanityChecks(CellularAutomatonRNG.class.getConstructor());
+    RandomTestUtils.doEqualsSanityChecks(XorShiftRandom.class.getConstructor());
   }
 
   @Test(timeOut = 15000)
   public void testHashCode() throws Exception {
-    assert RNGTestUtils.testHashCodeDistribution(CellularAutomatonRNG.class.getConstructor())
+    assert RandomTestUtils.testHashCodeDistribution(XorShiftRandom.class.getConstructor())
         : "Too many hashCode collisions";
   }
 }

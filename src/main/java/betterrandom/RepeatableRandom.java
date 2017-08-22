@@ -13,7 +13,7 @@
 //   See the License for the specific language governing permissions and
 //   limitations under the License.
 // ============================================================================
-package betterrandom.prng;
+package betterrandom;
 
 /**
  * Deterministic random number generators are repeatable, which can prove useful for testing and
@@ -22,7 +22,7 @@ package betterrandom.prng;
  *
  * @author Daniel Dyer
  */
-public interface RepeatableRNG {
+public interface RepeatableRandom {
 
   /**
    * @return The seed data used to initialise this pseudo-random number generator.

@@ -23,7 +23,7 @@ import org.testng.annotations.Test;
  *
  * @author Daniel Dyer
  */
-public class JavaRNGTest {
+public class JavaRandomTest {
 
   /**
    * Test to ensure that two distinct RNGs with the same seed return the same sequence of numbers.
@@ -31,10 +31,10 @@ public class JavaRNGTest {
   @Test(timeOut = 15000)
   public void testRepeatability() {
     // Create an RNG using the default seeding strategy.
-    JavaRNG rng = new JavaRNG();
+    JavaRandom rng = new JavaRandom();
     // Create second RNG using same seed.
-    JavaRNG duplicateRNG = new JavaRNG(rng.getSeed());
-    assert RNGTestUtils
+    JavaRandom duplicateRNG = new JavaRandom(rng.getSeed());
+    assert RandomTestUtils
         .testEquivalence(rng, duplicateRNG, 1000) : "Generated sequences do not match.";
   }
 
@@ -45,7 +45,7 @@ public class JavaRNGTest {
    */
   @Test(timeOut = 15000, expectedExceptions = IllegalArgumentException.class)
   public void testInvalidSeedSize() {
-    new JavaRNG(new byte[]{1, 2, 3, 4, 5, 6,
+    new JavaRandom(new byte[]{1, 2, 3, 4, 5, 6,
         7}); // One byte too few, should cause an IllegalArgumentException.
   }
 
@@ -55,17 +55,17 @@ public class JavaRNGTest {
    */
   @Test(timeOut = 15000, expectedExceptions = IllegalArgumentException.class)
   public void testNullSeed() throws SeedException {
-    new JavaRNG(length -> null);
+    new JavaRandom(length -> null);
   }
 
   @Test(timeOut = 15000)
   public void testEquals() throws ReflectiveOperationException {
-    RNGTestUtils.doEqualsSanityChecks(JavaRNG.class.getConstructor());
+    RandomTestUtils.doEqualsSanityChecks(JavaRandom.class.getConstructor());
   }
 
   @Test(timeOut = 15000)
   public void testHashCode() throws Exception {
-    assert RNGTestUtils.testHashCodeDistribution(JavaRNG.class.getConstructor())
+    assert RandomTestUtils.testHashCodeDistribution(JavaRandom.class.getConstructor())
         : "Too many hashCode collisions";
   }
 

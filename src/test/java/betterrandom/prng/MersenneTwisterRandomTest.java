@@ -32,19 +32,17 @@ import org.testng.annotations.Test;
  *
  * @author Daniel Dyer
  */
-public class XORShiftRNGTest {
+public class MersenneTwisterRandomTest {
 
   /**
    * Test to ensure that two distinct RNGs with the same seed return the same sequence of numbers.
-   * This method must be run before any of the other tests otherwise the state of the RNG will not
-   * be the same in the duplicate RNG.
    */
   @Test(timeOut = 15000)
   public void testRepeatability() throws SeedException {
-    XORShiftRNG rng = new XORShiftRNG();
+    MersenneTwisterRandom rng = new MersenneTwisterRandom();
     // Create second RNG using same seed.
-    XORShiftRNG duplicateRNG = new XORShiftRNG(rng.getSeed());
-    assert RNGTestUtils
+    MersenneTwisterRandom duplicateRNG = new MersenneTwisterRandom(rng.getSeed());
+    assert RandomTestUtils
         .testEquivalence(rng, duplicateRNG, 1000) : "Generated sequences do not match.";
   }
 
@@ -57,11 +55,11 @@ public class XORShiftRNGTest {
   @Test(timeOut = 15000, groups = "non-deterministic",
       dependsOnMethods = "testRepeatability")
   public void testDistribution() throws SeedException {
-    XORShiftRNG rng = new XORShiftRNG(DefaultSeedGenerator.getInstance());
-    double pi = RNGTestUtils.calculateMonteCarloValueForPi(rng, 100000);
+    MersenneTwisterRandom rng = new MersenneTwisterRandom(DefaultSeedGenerator.getInstance());
+    double pi = RandomTestUtils.calculateMonteCarloValueForPi(rng, 100000);
     Reporter.log("Monte Carlo value for Pi: " + pi);
     assertEquals(pi, Math.PI, 0.01 * Math.PI,
-        "Monte Carlo value for Pi is outside acceptable range:" + pi);
+        "Monte Carlo value for Pi is outside acceptable range: " + pi);
   }
 
 
@@ -73,12 +71,12 @@ public class XORShiftRNGTest {
   @Test(timeOut = 15000, groups = "non-deterministic",
       dependsOnMethods = "testRepeatability")
   public void testStandardDeviation() throws SeedException {
-    XORShiftRNG rng = new XORShiftRNG();
+    MersenneTwisterRandom rng = new MersenneTwisterRandom();
     // Expected standard deviation for a uniformly distributed population of values in the range 0..n
     // approaches n/sqrt(12).
     int n = 100;
-    double observedSD = RNGTestUtils.calculateSampleStandardDeviation(rng, n, 10000);
-    double expectedSD = n / Math.sqrt(12);
+    double observedSD = RandomTestUtils.calculateSampleStandardDeviation(rng, n, 10000);
+    double expectedSD = 100 / Math.sqrt(12);
     Reporter.log("Expected SD: " + expectedSD + ", observed SD: " + observedSD);
     assertEquals(observedSD, expectedSD, 0.02 * expectedSD,
         "Standard deviation is outside acceptable range: " + observedSD);
@@ -91,8 +89,8 @@ public class XORShiftRNGTest {
    */
   @Test(timeOut = 15000, expectedExceptions = IllegalArgumentException.class)
   public void testInvalidSeedSize() {
-    new XORShiftRNG(
-        new byte[]{1, 2, 3}); // Not enough bytes, should cause an IllegalArgumentException.
+    new MersenneTwisterRandom(new byte[]{1, 2, 3, 4, 5, 6, 7,
+        8}); // Need 16 bytes, should cause an IllegalArgumentException.
   }
 
 
@@ -101,14 +99,14 @@ public class XORShiftRNGTest {
    */
   @Test(timeOut = 15000, expectedExceptions = IllegalArgumentException.class)
   public void testNullSeed() {
-    new XORShiftRNG((byte[]) null);
+    new MersenneTwisterRandom((byte[]) null);
   }
 
 
   @Test(timeOut = 15000)
   public void testSerializable() throws IOException, ClassNotFoundException, SeedException {
     // Serialise an RNG.
-    XORShiftRNG rng = new XORShiftRNG();
+    MersenneTwisterRandom rng = new MersenneTwisterRandom();
     ByteArrayOutputStream byteOutStream = new ByteArrayOutputStream();
     ObjectOutputStream objectOutStream = new ObjectOutputStream(byteOutStream);
     objectOutStream.writeObject(rng);
@@ -116,21 +114,21 @@ public class XORShiftRNGTest {
     // Read the RNG back-in.
     ObjectInputStream objectInStream = new ObjectInputStream(
         new ByteArrayInputStream(byteOutStream.toByteArray()));
-    XORShiftRNG rng2 = (XORShiftRNG) objectInStream.readObject();
+    MersenneTwisterRandom rng2 = (MersenneTwisterRandom) objectInStream.readObject();
     assert rng != rng2 : "Deserialised RNG should be distinct object.";
 
     // Both RNGs should generate the same sequence.
-    assert RNGTestUtils.testEquivalence(rng, rng2, 20) : "Output mismatch after serialisation.";
+    assert RandomTestUtils.testEquivalence(rng, rng2, 20) : "Output mismatch after serialisation.";
   }
 
   @Test(timeOut = 15000)
   public void testEquals() throws ReflectiveOperationException {
-    RNGTestUtils.doEqualsSanityChecks(XORShiftRNG.class.getConstructor());
+    RandomTestUtils.doEqualsSanityChecks(MersenneTwisterRandom.class.getConstructor());
   }
 
   @Test(timeOut = 15000)
   public void testHashCode() throws Exception {
-    assert RNGTestUtils.testHashCodeDistribution(XORShiftRNG.class.getConstructor())
+    assert RandomTestUtils.testHashCodeDistribution(MersenneTwisterRandom.class.getConstructor())
         : "Too many hashCode collisions";
   }
 }

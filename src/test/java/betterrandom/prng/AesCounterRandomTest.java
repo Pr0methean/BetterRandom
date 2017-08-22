@@ -39,10 +39,10 @@ import org.testng.annotations.Test;
  *
  * @author Daniel Dyer
  */
-public class AESCounterRNGTest {
+public class AesCounterRandomTest {
 
   private FileHandler logHandler;
-  private static final Logger LOG = Logger.getLogger(AESCounterRNGTest.class.getName());
+  private static final Logger LOG = Logger.getLogger(AesCounterRandomTest.class.getName());
 
   @BeforeSuite
   public void setUp() throws IOException {
@@ -57,9 +57,9 @@ public class AESCounterRNGTest {
 
   @Test(timeOut = 15000)
   public void testMaxSeedLengthOk() {
-    assert AESCounterRNG.MAX_KEY_LENGTH_BYTES >= 16 :
+    assert AesCounterRandom.MAX_KEY_LENGTH_BYTES >= 16 :
         "Should allow a 16-byte key";
-    assert AESCounterRNG.MAX_KEY_LENGTH_BYTES <= 32 :
+    assert AesCounterRandom.MAX_KEY_LENGTH_BYTES <= 32 :
         "Shouldn't allow a key longer than 32 bytes";
   }
 
@@ -68,7 +68,7 @@ public class AESCounterRNGTest {
   public void testSerializableWithoutSeedInCounter()
       throws GeneralSecurityException, IOException, ClassNotFoundException {
     // Serialise an RNG.
-    AESCounterRNG rng = new AESCounterRNG(16);
+    AesCounterRandom rng = new AesCounterRandom(16);
     ByteArrayOutputStream byteOutStream = new ByteArrayOutputStream();
     ObjectOutputStream objectOutStream = new ObjectOutputStream(byteOutStream);
     objectOutStream.writeObject(rng);
@@ -76,11 +76,11 @@ public class AESCounterRNGTest {
     // Read the RNG back-in.
     ObjectInputStream objectInStream = new ObjectInputStream(
         new ByteArrayInputStream(byteOutStream.toByteArray()));
-    AESCounterRNG rng2 = (AESCounterRNG) objectInStream.readObject();
+    AesCounterRandom rng2 = (AesCounterRandom) objectInStream.readObject();
     assert rng != rng2 : "Deserialised RNG should be distinct object.";
 
     // Both RNGs should generate the same sequence.
-    assert RNGTestUtils.testEquivalence(rng, rng2, 20) : "Output mismatch after serialisation.";
+    assert RandomTestUtils.testEquivalence(rng, rng2, 20) : "Output mismatch after serialisation.";
   }
 
 
@@ -88,7 +88,7 @@ public class AESCounterRNGTest {
   public void testSerializableWithSeedInCounter()
       throws GeneralSecurityException, IOException, ClassNotFoundException {
     // Serialise an RNG.
-    AESCounterRNG rng = new AESCounterRNG(48);
+    AesCounterRandom rng = new AesCounterRandom(48);
     ByteArrayOutputStream byteOutStream = new ByteArrayOutputStream();
     ObjectOutputStream objectOutStream = new ObjectOutputStream(byteOutStream);
     objectOutStream.writeObject(rng);
@@ -96,11 +96,11 @@ public class AESCounterRNGTest {
     // Read the RNG back-in.
     ObjectInputStream objectInStream = new ObjectInputStream(
         new ByteArrayInputStream(byteOutStream.toByteArray()));
-    AESCounterRNG rng2 = (AESCounterRNG) objectInStream.readObject();
+    AesCounterRandom rng2 = (AesCounterRandom) objectInStream.readObject();
     assert rng != rng2 : "Deserialised RNG should be distinct object.";
 
     // Both RNGs should generate the same sequence.
-    assert RNGTestUtils.testEquivalence(rng, rng2, 20) : "Output mismatch after serialisation.";
+    assert RandomTestUtils.testEquivalence(rng, rng2, 20) : "Output mismatch after serialisation.";
   }
 
 
@@ -109,11 +109,11 @@ public class AESCounterRNGTest {
    */
   @Test(timeOut = 15000)
   public void testRepeatability() throws GeneralSecurityException {
-    AESCounterRNG rng = new AESCounterRNG(48);
+    AesCounterRandom rng = new AesCounterRandom(48);
     // Create second RNG using same seed.
-    AESCounterRNG duplicateRNG = new AESCounterRNG(rng.getSeed());
+    AesCounterRandom duplicateRNG = new AesCounterRandom(rng.getSeed());
     assert rng.equals(duplicateRNG);
-    assert RNGTestUtils
+    assert RandomTestUtils
         .testEquivalence(rng, duplicateRNG, 1000) : "Generated sequences do not match.";
   }
 
@@ -126,8 +126,8 @@ public class AESCounterRNGTest {
   @Test(timeOut = 15000, groups = "non-deterministic",
       dependsOnMethods = "testRepeatability")
   public void testDistribution() throws GeneralSecurityException, SeedException {
-    AESCounterRNG rng = new AESCounterRNG(DefaultSeedGenerator.getInstance());
-    double pi = RNGTestUtils.calculateMonteCarloValueForPi(rng, 100000);
+    AesCounterRandom rng = new AesCounterRandom(DefaultSeedGenerator.getInstance());
+    double pi = RandomTestUtils.calculateMonteCarloValueForPi(rng, 100000);
     Reporter.log("Monte Carlo value for Pi: " + pi);
     assertEquals(pi, Math.PI, 0.01,
         "Monte Carlo value for Pi is outside acceptable range:" + pi);
@@ -142,11 +142,11 @@ public class AESCounterRNGTest {
   @Test(timeOut = 15000, groups = "non-deterministic",
       dependsOnMethods = "testRepeatability")
   public void testStandardDeviation() throws GeneralSecurityException {
-    AESCounterRNG rng = new AESCounterRNG();
+    AesCounterRandom rng = new AesCounterRandom();
     // Expected standard deviation for a uniformly distributed population of values in the range 0..n
     // approaches n/sqrt(12).
     int n = 100;
-    double observedSD = RNGTestUtils.calculateSampleStandardDeviation(rng, n, 10000);
+    double observedSD = RandomTestUtils.calculateSampleStandardDeviation(rng, n, 10000);
     double expectedSD = 100 / Math.sqrt(12);
     Reporter.log("Expected SD: " + expectedSD + ", observed SD: " + observedSD);
     assertEquals(observedSD, expectedSD, 0.02 * expectedSD,
@@ -156,13 +156,13 @@ public class AESCounterRNGTest {
 
   @Test(timeOut = 15000, expectedExceptions = IllegalArgumentException.class)
   public void testSeedTooShort() throws GeneralSecurityException {
-    new AESCounterRNG(new byte[]{1, 2, 3}); // Should throw an exception.
+    new AesCounterRandom(new byte[]{1, 2, 3}); // Should throw an exception.
   }
 
 
   @Test(timeOut = 15000, expectedExceptions = IllegalArgumentException.class)
   public void testSeedTooLong() throws GeneralSecurityException {
-    new AESCounterRNG(49); // Should throw an exception.
+    new AesCounterRandom(49); // Should throw an exception.
   }
 
 
@@ -171,7 +171,7 @@ public class AESCounterRNGTest {
    */
   @Test(timeOut = 15000, expectedExceptions = IllegalArgumentException.class)
   public void testNullSeed() throws GeneralSecurityException {
-    new AESCounterRNG((byte[]) null); // Should throw an exception.
+    new AesCounterRandom((byte[]) null); // Should throw an exception.
   }
 
 
@@ -182,13 +182,13 @@ public class AESCounterRNGTest {
     long[] seeds = {masterRNG.nextLong(), masterRNG.nextLong(),
         masterRNG.nextLong(), masterRNG.nextLong()};
     long otherSeed = masterRNG.nextLong();
-    AESCounterRNG[] rngs = {new AESCounterRNG(16), new AESCounterRNG(16)};
+    AesCounterRandom[] rngs = {new AesCounterRandom(16), new AesCounterRandom(16)};
     for (int i = 0; i < 2; i++) {
       for (long seed : seeds) {
-        AESCounterRNG rngReseeded = new AESCounterRNG(rngs[i].getSeed());
+        AesCounterRandom rngReseeded = new AesCounterRandom(rngs[i].getSeed());
         LOG.info("rngReseeded == " + rngReseeded);
         assertTrue(rngReseeded.isSeeded());
-        AESCounterRNG rngReseededOther = new AESCounterRNG(rngs[i].getSeed());
+        AesCounterRandom rngReseededOther = new AesCounterRandom(rngs[i].getSeed());
         rngReseeded.setSeed(seed);
         rngReseededOther.setSeed(otherSeed);
         assert !(rngs[i].equals(rngReseeded));
@@ -205,13 +205,13 @@ public class AESCounterRNGTest {
 
   @Test(timeOut = 30000)
   public void testEquals() throws GeneralSecurityException, ReflectiveOperationException {
-    RNGTestUtils.doEqualsSanityChecks(AESCounterRNG.class.getConstructor());
+    RandomTestUtils.doEqualsSanityChecks(AesCounterRandom.class.getConstructor());
   }
 
 
   @Test(timeOut = 15000)
   public void testHashCode() throws Exception {
-    assert RNGTestUtils.testHashCodeDistribution(AESCounterRNG.class.getConstructor())
+    assert RandomTestUtils.testHashCodeDistribution(AesCounterRandom.class.getConstructor())
         : "Too many hashCode collisions";
   }
 }

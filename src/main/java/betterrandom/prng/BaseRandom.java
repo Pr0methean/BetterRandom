@@ -2,6 +2,7 @@ package betterrandom.prng;
 
 import betterrandom.ByteArrayReseedableRandom;
 import betterrandom.EntropyCountingRandom;
+import betterrandom.RepeatableRandom;
 import betterrandom.seed.DefaultSeedGenerator;
 import betterrandom.seed.SeedException;
 import betterrandom.seed.SeedGenerator;
@@ -12,8 +13,8 @@ import java.util.Random;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
-public abstract class BaseRNG extends Random implements ByteArrayReseedableRandom,
-    EntropyCountingRandom, RepeatableRNG {
+public abstract class BaseRandom extends Random implements ByteArrayReseedableRandom,
+    EntropyCountingRandom, RepeatableRandom {
 
   protected byte[] seed;
   // Lock to prevent concurrent modification of the RNG's internal state.
@@ -40,7 +41,7 @@ public abstract class BaseRNG extends Random implements ByteArrayReseedableRando
   /**
    * Creates a new RNG and seeds it using the default seeding strategy.
    */
-  public BaseRNG(int seedLength) {
+  public BaseRandom(int seedLength) {
     this(DefaultSeedGenerator.getInstance().generateSeed(seedLength));
   }
 
@@ -51,12 +52,12 @@ public abstract class BaseRNG extends Random implements ByteArrayReseedableRando
    * RNG.
    * @throws SeedException If there is a problem generating a seed.
    */
-  public BaseRNG(SeedGenerator seedGenerator, int seedLength) throws SeedException {
+  public BaseRandom(SeedGenerator seedGenerator, int seedLength) throws SeedException {
     this(seedGenerator.generateSeed(seedLength));
   }
 
   @SuppressWarnings("OverriddenMethodCallDuringObjectConstruction")
-  public BaseRNG(byte[] seed) {
+  public BaseRandom(byte[] seed) {
     if (seed == null) {
       throw new IllegalArgumentException("Seed must not be null");
     }
