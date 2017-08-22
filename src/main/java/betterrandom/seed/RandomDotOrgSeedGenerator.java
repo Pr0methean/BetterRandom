@@ -35,6 +35,7 @@ import java.util.concurrent.locks.ReentrantLock;
 public class RandomDotOrgSeedGenerator implements SeedGenerator {
 
   private static final RandomDotOrgSeedGenerator INSTANCE = new RandomDotOrgSeedGenerator();
+  private static final long serialVersionUID = -7400544219489418741L;
 
   /**
    * Singleton unless subclassed.

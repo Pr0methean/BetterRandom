@@ -15,6 +15,7 @@
 // ============================================================================
 package betterrandom.prng;
 
+import betterrandom.EntropyCountingRandom;
 import betterrandom.RepeatableRandom;
 import betterrandom.seed.DefaultSeedGenerator;
 import betterrandom.seed.SeedException;
@@ -41,7 +42,7 @@ import java.util.Random;
  * @author Daniel Dyer
  * @since 1.2
  */
-public class Cmwc4096Random extends BaseRandom implements RepeatableRandom {
+public class Cmwc4096Random extends BaseRandom implements RepeatableRandom, EntropyCountingRandom {
 
   private static final int SEED_SIZE_BYTES = 16384; // Needs 4,096 32-bit integers.
 
@@ -52,7 +53,7 @@ public class Cmwc4096Random extends BaseRandom implements RepeatableRandom {
   private int carry = 362436; // TO DO: This should be randomly generated.
   private int index = 4095;
 
-  private int entropyBytes;
+  private long entropyBytes;
 
   /**
    * Creates a new RNG and seeds it using the default seeding strategy.
@@ -133,7 +134,7 @@ public class Cmwc4096Random extends BaseRandom implements RepeatableRandom {
   }
 
   @Override
-  public int entropyOctets() {
+  public long entropyOctets() {
     return entropyBytes;
   }
 

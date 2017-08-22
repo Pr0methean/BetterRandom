@@ -33,6 +33,7 @@ import java.security.SecureRandom;
 public class SecureRandomSeedGenerator implements SeedGenerator {
 
   private static final SecureRandomSeedGenerator INSTANCE = new SecureRandomSeedGenerator();
+  private static final long serialVersionUID = 5489634991236222389L;
 
   /**
    * Singleton unless subclassed.

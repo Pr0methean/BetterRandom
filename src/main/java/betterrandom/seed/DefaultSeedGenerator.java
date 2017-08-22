@@ -42,6 +42,7 @@ public final class DefaultSeedGenerator implements SeedGenerator {
       RandomDotOrgSeedGenerator.getInstance(),
       SecureRandomSeedGenerator.getInstance()
   };
+  private static final long serialVersionUID = -755783059285108828L;
 
 
   private DefaultSeedGenerator() {

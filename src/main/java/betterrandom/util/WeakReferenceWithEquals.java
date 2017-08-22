@@ -18,11 +18,20 @@ public class WeakReferenceWithEquals<T> extends WeakReference<T> {
     hashCode = target.hashCode();
   }
 
+  /**
+   * {@inheritDoc}
+   * Returns the hash code that the target had when this WeakReferenceWithEquals was created. Will not
+   * change, even when this reference is cleared or {@code get().hashCode()} changes.
+   */
   @Override
   public int hashCode() {
     return hashCode;
   }
 
+  /**
+   * {@inheritDoc}
+   * All cleared instances of WeakReferenceWithEquals compare as equal.
+   */
   @Override
   public boolean equals(Object o) {
     return (this == o) || (o instanceof WeakReferenceWithEquals

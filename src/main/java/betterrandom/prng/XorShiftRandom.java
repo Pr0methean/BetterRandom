@@ -15,6 +15,7 @@
 // ============================================================================
 package betterrandom.prng;
 
+import betterrandom.EntropyCountingRandom;
 import betterrandom.RepeatableRandom;
 import betterrandom.seed.DefaultSeedGenerator;
 import betterrandom.seed.SeedException;
@@ -35,7 +36,7 @@ import java.util.Random;
  * @author Daniel Dyer
  * @since 1.2
  */
-public class XorShiftRandom extends BaseRandom implements RepeatableRandom {
+public class XorShiftRandom extends BaseRandom implements RepeatableRandom, EntropyCountingRandom {
 
   private static final long serialVersionUID = 952521144304194886L;
   private static final int SEED_SIZE_BYTES = 20; // Needs 5 32-bit integers.
@@ -48,7 +49,7 @@ public class XorShiftRandom extends BaseRandom implements RepeatableRandom {
   private int state4;
   private int state5;
 
-  private int entropyBytes;
+  private long entropyBytes;
 
   /**
    * Creates an RNG and seeds it with the specified seed data.
@@ -144,11 +145,11 @@ public class XorShiftRandom extends BaseRandom implements RepeatableRandom {
 
   @Override
   public int getNewSeedLength() {
-    return 0;
+    return SEED_SIZE_BYTES;
   }
 
   @Override
-  public int entropyOctets() {
-    return 0;
+  public long entropyOctets() {
+    return entropyBytes;
   }
 }

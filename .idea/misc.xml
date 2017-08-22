@@ -5,6 +5,15 @@
     <pattern value="betterrandom.seed.RandomSeederThread" method="getInstance" />
     <pattern value="betterrandom.seed.RandomSeederThread" />
     <pattern value="betterrandom.prng.RepeatableRNG" method="getSeed" />
+    <pattern value="betterrandom.prng.BaseRandom" method="readObjectNoData" />
+    <pattern value="betterrandom.prng.adapter.ReseedingSplittableRandomAdapter" method="getSplittableRandom" />
+    <pattern value="betterrandom.prng.adapter.ReseedingSplittableRandomAdapter" method="getInstance" />
+    <pattern value="betterrandom.prng.adapter.ReseedingSplittableRandomAdapter" method="initTransientFields" />
+    <pattern value="betterrandom.prng.adapter.ReseedingSplittableRandomAdapter" />
+    <pattern value="betterrandom.prng.adapter.SingleThreadSplittableRandomAdapter" method="nextDouble" />
+    <pattern value="betterrandom.prng.adapter.SingleThreadSplittableRandomAdapter" method="nextLong" />
+    <pattern value="betterrandom.prng.adapter.SingleThreadSplittableRandomAdapter" method="nextInt" />
+    <pattern value="betterrandom.prng.adapter.SingleThreadSplittableRandomAdapter" />
   </component>
   <component name="MavenProjectsManager">
     <option name="originalFiles">

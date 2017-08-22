@@ -12,12 +12,18 @@ import java.nio.ByteBuffer;
 import java.util.Random;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
+import java.util.logging.Logger;
 
+@SuppressWarnings("OverriddenMethodCallDuringObjectConstruction")
 public abstract class BaseRandom extends Random implements ByteArrayReseedableRandom,
-    EntropyCountingRandom, RepeatableRandom {
+    RepeatableRandom {
+
+  private static final Logger LOG = Logger.getLogger(BaseRandom.class.getName());
+  private static final long serialVersionUID = -1556392727255964947L;
 
   protected byte[] seed;
   // Lock to prevent concurrent modification of the RNG's internal state.
+  @SuppressWarnings("InstanceVariableMayNotBeInitializedByReadObject")
   protected transient Lock lock;
 
   /**
@@ -36,6 +42,7 @@ public abstract class BaseRandom extends Random implements ByteArrayReseedableRa
   /**
    * Use this if necessary to ignore setSeed(long) calls from super constructor
    */
+  @SuppressWarnings("InstanceVariableMayNotBeInitializedByReadObject")
   protected transient boolean superConstructorFinished = false;
 
   /**
@@ -56,7 +63,6 @@ public abstract class BaseRandom extends Random implements ByteArrayReseedableRa
     this(seedGenerator.generateSeed(seedLength));
   }
 
-  @SuppressWarnings("OverriddenMethodCallDuringObjectConstruction")
   public BaseRandom(byte[] seed) {
     if (seed == null) {
       throw new IllegalArgumentException("Seed must not be null");
@@ -75,7 +81,13 @@ public abstract class BaseRandom extends Random implements ByteArrayReseedableRa
   private void readObject(ObjectInputStream in) throws IOException,
       ClassNotFoundException {
     in.defaultReadObject();
-    //noinspection OverriddenMethodCallDuringObjectConstruction
+    initTransientFields();
+  }
+
+  @SuppressWarnings({"unused", "OverriddenMethodCallDuringObjectConstruction"})
+  private void readObjectNoData() {
+    LOG.warning("BaseRandom.readObjectNoData() invoked; using DefaultSeedGenerator");
+    setSeed(DefaultSeedGenerator.getInstance().generateSeed(getNewSeedLength()));
     initTransientFields();
   }
 

@@ -15,6 +15,7 @@
 // ============================================================================
 package betterrandom.prng;
 
+import betterrandom.EntropyCountingRandom;
 import betterrandom.RepeatableRandom;
 import betterrandom.seed.DefaultSeedGenerator;
 import betterrandom.seed.SeedException;
@@ -48,7 +49,8 @@ import javax.crypto.spec.SecretKeySpec;
  *
  * @author Daniel Dyer
  */
-public class AesCounterRandom extends BaseRandom implements RepeatableRandom {
+public class AesCounterRandom extends BaseRandom implements RepeatableRandom,
+    EntropyCountingRandom {
 
   private static final long serialVersionUID = 5949778642428995210L;
 
@@ -100,7 +102,7 @@ public class AesCounterRandom extends BaseRandom implements RepeatableRandom {
   private transient byte[] counterInput;
   private transient boolean seeded;
 
-  private int entropyBytes;
+  private long entropyBytes;
 
   /**
    * Called in constructor and readObject to initialize transient fields.
@@ -324,7 +326,7 @@ public class AesCounterRandom extends BaseRandom implements RepeatableRandom {
   }
 
   @Override
-  public int entropyOctets() {
+  public long entropyOctets() {
     return entropyBytes;
   }
 }

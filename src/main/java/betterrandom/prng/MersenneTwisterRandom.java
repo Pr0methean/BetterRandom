@@ -15,6 +15,7 @@
 // ============================================================================
 package betterrandom.prng;
 
+import betterrandom.EntropyCountingRandom;
 import betterrandom.RepeatableRandom;
 import betterrandom.seed.DefaultSeedGenerator;
 import betterrandom.seed.SeedException;
@@ -47,7 +48,8 @@ import java.util.Random;
  * @author Makoto Matsumoto and Takuji Nishimura (original C version)
  * @author Daniel Dyer (Java port)
  */
-public class MersenneTwisterRandom extends BaseRandom implements RepeatableRandom {
+public class MersenneTwisterRandom extends BaseRandom implements RepeatableRandom,
+    EntropyCountingRandom {
 
   private static final long serialVersionUID = -4856906677508460512L;
 
@@ -69,7 +71,7 @@ public class MersenneTwisterRandom extends BaseRandom implements RepeatableRando
 
   private final int[] mt = new int[N]; // State vector.
   private int mtIndex = 0; // Index into state vector.
-  private int entropyBytes;
+  private long entropyBytes;
 
   /**
    * Creates a new RNG and seeds it using the default seeding strategy.
@@ -210,7 +212,7 @@ public class MersenneTwisterRandom extends BaseRandom implements RepeatableRando
   }
 
   @Override
-  public int entropyOctets() {
+  public long entropyOctets() {
     return entropyBytes;
   }
 }
