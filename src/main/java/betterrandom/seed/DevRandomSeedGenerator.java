@@ -30,6 +30,7 @@ public class DevRandomSeedGenerator implements SeedGenerator {
 
   private static final DevRandomSeedGenerator INSTANCE = new DevRandomSeedGenerator();
   private static final File DEV_RANDOM = new File("/dev/random");
+  private static final long serialVersionUID = -83227910342399339L;
 
   /**
    * Singleton unless subclassed.

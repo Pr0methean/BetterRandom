@@ -15,12 +15,14 @@
 // ============================================================================
 package betterrandom.seed;
 
+import java.io.Serializable;
+
 /**
  * Strategy interface for seeding random number generators.
  *
  * @author Daniel Dyer
  */
-public interface SeedGenerator {
+public interface SeedGenerator extends Serializable {
 
   /**
    * Generate a seed value for a random number generator.

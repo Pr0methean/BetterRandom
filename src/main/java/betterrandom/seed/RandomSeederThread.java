@@ -2,7 +2,11 @@ package betterrandom.seed;
 
 import betterrandom.ByteArrayReseedableRandom;
 import betterrandom.EntropyCountingRandom;
+import betterrandom.util.SerializableWeakReference;
 import betterrandom.util.WeakReferenceWithEquals;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.Serializable;
 import java.nio.ByteBuffer;
 import java.util.Collections;
 import java.util.Map;
@@ -11,24 +15,41 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Logger;
 
-public final class RandomSeederThread extends Thread {
+public final class RandomSeederThread extends Thread implements Serializable {
 
   private static final Logger LOG = Logger.getLogger(RandomSeederThread.class.getName());
   private static final Map<SeedGenerator, RandomSeederThread> INSTANCES =
       new ConcurrentHashMap<>();
+  /**
+   * Used to avoid full spin-locking when every {@link Random} to be reseeded is an {@link
+   * EntropyCountingRandom} and none has spent its entropy.
+   */
+  private static final long ENTROPY_POLL_INTERVAL_MS = 10;
+  private static final long serialVersionUID = -2858126391794302039L;
   private final SeedGenerator seedGenerator;
-  private final Set<WeakReferenceWithEquals<Random>> prngs = Collections.newSetFromMap(
-      new ConcurrentHashMap<WeakReferenceWithEquals<Random>, Boolean>());
-  private final ByteBuffer seedBuffer = ByteBuffer.allocate(8);
-  private final byte[] seedArray = seedBuffer.array();
+  @SuppressWarnings("NonSerializableFieldInSerializableClass")
+  private final Set<SerializableWeakReference<Random>> prngs = Collections.newSetFromMap(
+      new ConcurrentHashMap<SerializableWeakReference<Random>, Boolean>());
+  private final byte[] seedArray = new byte[8];
+  private transient ByteBuffer seedBuffer;
+
+  private void initTransientState() {
+    seedBuffer = ByteBuffer.wrap(seedArray);
+    setDaemon(true);
+    start();
+  }
 
   /**
    * Private constructor because only one instance per seed source.
    */
   private RandomSeederThread(SeedGenerator seedGenerator) {
-    setDaemon(true);
     this.seedGenerator = seedGenerator;
-    start();
+    initTransientState();
+  }
+
+  private void readObject(ObjectInputStream ois) throws IOException, ClassNotFoundException {
+    ois.defaultReadObject();
+    initTransientState();
   }
 
   /**
@@ -43,10 +64,11 @@ public final class RandomSeederThread extends Thread {
   public void run() {
     try {
       while (true) {
-        while (prngs.isEmpty()) {
+        while (isEmpty()) {
           wait();
         }
-        for (WeakReferenceWithEquals<Random> randomRef : prngs) {
+        boolean entropyConsumed = false;
+        for (SerializableWeakReference<Random> randomRef : prngs) {
           Random random = randomRef.get();
           if (random == null) {
             // Don't keep iterating over a cleared reference
@@ -57,13 +79,17 @@ public final class RandomSeederThread extends Thread {
               continue;
             }
             try {
-              if (random instanceof ByteArrayReseedableRandom) {
-                ByteArrayReseedableRandom reseedable = (ByteArrayReseedableRandom) random;
-                reseedable.setSeed(seedGenerator.generateSeed(reseedable.getNewSeedLength()));
-              } else {
-                synchronized (this) {
-                  System.arraycopy(seedGenerator.generateSeed(8), 0, seedArray, 0, 8);
-                  random.setSeed(seedBuffer.getLong(0));
+              if (!(random instanceof EntropyCountingRandom)
+                  || ((EntropyCountingRandom) random).entropyOctets() > 0) {
+                entropyConsumed = true;
+                if (random instanceof ByteArrayReseedableRandom) {
+                  ByteArrayReseedableRandom reseedable = (ByteArrayReseedableRandom) random;
+                  reseedable.setSeed(seedGenerator.generateSeed(reseedable.getNewSeedLength()));
+                } else {
+                  synchronized (this) {
+                    System.arraycopy(seedGenerator.generateSeed(8), 0, seedArray, 0, 8);
+                    random.setSeed(seedBuffer.getLong(0));
+                  }
                 }
               }
             } catch (SeedException e) {
@@ -72,19 +98,35 @@ public final class RandomSeederThread extends Thread {
             }
           }
         }
+        if (!entropyConsumed) {
+          Thread.sleep(ENTROPY_POLL_INTERVAL_MS);
+        }
       }
     } catch (InterruptedException e) {
       INSTANCES.remove(seedGenerator);
     }
   }
 
+  public synchronized boolean isEmpty() {
+    return prngs.isEmpty();
+  }
+
   /**
    * Add one or more {@link Random} instances.
    */
-  public void add(Random... randoms) {
+  public synchronized void add(Random... randoms) {
+    if (!isAlive()) {
+      throw new IllegalStateException("Already shut down");
+    }
     for (Random random : randoms) {
-      prngs.add(new WeakReferenceWithEquals<>(random));
+      prngs.add(new SerializableWeakReference<>(random));
     }
     notifyAll();
+  }
+
+  public void stopIfEmpty() {
+    if (isEmpty()) {
+      interrupt();
+    }
   }
 }

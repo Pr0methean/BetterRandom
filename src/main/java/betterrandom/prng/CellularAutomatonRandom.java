@@ -15,6 +15,7 @@
 // ============================================================================
 package betterrandom.prng;
 
+import betterrandom.EntropyCountingRandom;
 import betterrandom.RepeatableRandom;
 import betterrandom.seed.DefaultSeedGenerator;
 import betterrandom.seed.SeedException;
@@ -35,13 +36,15 @@ import java.util.Random;
  * @author Tony Pasqualoni (original C version)
  * @author Daniel Dyer (Java port)
  */
-public class CellularAutomatonRandom extends BaseRandom implements RepeatableRandom {
+public class CellularAutomatonRandom extends BaseRandom implements RepeatableRandom,
+    EntropyCountingRandom {
 
   private static final long serialVersionUID = 5959251752288589909L;
   private static final int SEED_SIZE_BYTES = 4;
   private static final int AUTOMATON_LENGTH = 2056;
 
-  private transient int entropyBytes = SEED_SIZE_BYTES;
+  @SuppressWarnings("TransientFieldNotInitialized")
+  private transient long entropyBytes = SEED_SIZE_BYTES;
 
   private static final int[] RNG_RULE =
       {
@@ -113,13 +116,14 @@ public class CellularAutomatonRandom extends BaseRandom implements RepeatableRan
       next(32);
     }
 
-    entropyBytes = 4;
+    entropyBytes = SEED_SIZE_BYTES;
   }
 
   @Override
   protected void initTransientFields() {
     cells = new int[AUTOMATON_LENGTH];
     currentCellIndex = AUTOMATON_LENGTH - 1;
+    entropyBytes = SEED_SIZE_BYTES;
     super.initTransientFields();
     lock.lock();
     try {
@@ -231,7 +235,7 @@ public class CellularAutomatonRandom extends BaseRandom implements RepeatableRan
   }
 
   @Override
-  public int entropyOctets() {
+  public long entropyOctets() {
     return entropyBytes;
   }
 }
