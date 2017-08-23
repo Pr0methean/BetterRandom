@@ -47,7 +47,6 @@ public class SingleThreadSplittableRandomAdapter extends BaseRandom {
 
   @Override
   public synchronized void setSeed(byte[] seed) {
-    super.setSeed(seed);
     setSeed(BinaryUtils.convertBytesToLong(seed, 0));
   }
 
