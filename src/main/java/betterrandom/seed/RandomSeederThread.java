@@ -51,6 +51,11 @@ public final class RandomSeederThread extends Thread implements Serializable {
     return INSTANCES.computeIfAbsent(seedGenerator, RandomSeederThread::new);
   }
 
+  /** Ensure one instance per SeedGenerator even after deserialization. */  
+  private RandomSeederThread readResolve() {
+    return getInstance(seedGenerator);
+  }
+
   private void initTransientState() {
     prngs = Collections.newSetFromMap(
       Collections.synchronizedMap(new WeakHashMap<>()));
