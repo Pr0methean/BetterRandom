@@ -83,4 +83,16 @@ public class ReseedingSplittableRandomAdapter extends SplittableRandomAdapter {
   protected void finalize() {
     seederThread.stopIfEmpty();
   }
+
+  @Override
+  public boolean equals(Object o) {
+    return this == o
+        || (o instanceof ReseedingSplittableRandomAdapter
+        && seedGenerator.equals(((ReseedingSplittableRandomAdapter) o).seedGenerator));
+  }
+
+  @Override
+  public int hashCode() {
+    return seedGenerator.hashCode() + 1;
+  }
 }

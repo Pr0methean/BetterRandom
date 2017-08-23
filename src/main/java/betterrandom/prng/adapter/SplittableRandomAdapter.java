@@ -36,4 +36,15 @@ public class SplittableRandomAdapter extends SingleThreadSplittableRandomAdapter
     threadLocal.set(new SplittableRandom(seed));
   }
 
+  @Override
+  public boolean equals(Object o) {
+    return this == o
+        || (o instanceof SplittableRandomAdapter
+        && super.equals(o));
+  }
+
+  @Override
+  public int hashCode() {
+    return super.hashCode() + 1;
+  }
 }

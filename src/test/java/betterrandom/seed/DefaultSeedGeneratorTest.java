@@ -55,6 +55,7 @@ public class DefaultSeedGeneratorTest {
   private static final class RestrictedSecurityManager extends SecurityManager {
 
     private final Thread affectedThread;
+
     private RestrictedSecurityManager(Thread affectedThread) {
       this.affectedThread = affectedThread;
     }

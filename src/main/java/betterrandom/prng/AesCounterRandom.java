@@ -52,13 +52,6 @@ import javax.crypto.spec.SecretKeySpec;
 public class AesCounterRandom extends BaseRandom implements RepeatableRandom,
     EntropyCountingRandom {
 
-  /**
-   * If the seed is longer than this, part of it becomes the counter's initial value. Otherwise, the
-   * full seed becomes the AES key and the counter is initially zero. Package-visible for testing of
-   * its initialization. Cannot be final due to a false "may not have been initialized" error.
-   */
-  static int MAX_KEY_LENGTH_BYTES = 0;
-
   private static final long serialVersionUID = 5949778642428995210L;
   private static final Logger LOG = Logger.getLogger(AesCounterRandom.class.getName());
   private static final int DEFAULT_SEED_SIZE_BYTES = 32;
@@ -79,6 +72,12 @@ public class AesCounterRandom extends BaseRandom implements RepeatableRandom,
   private static final int BLOCKS_AT_ONCE = 16;
   private static final String HASH_ALGORITHM = "SHA-256";
   private static final int MAX_TOTAL_SEED_LENGTH_BYTES;
+  /**
+   * If the seed is longer than this, part of it becomes the counter's initial value. Otherwise, the
+   * full seed becomes the AES key and the counter is initially zero. Package-visible for testing of
+   * its initialization. Cannot be final due to a false "may not have been initialized" error.
+   */
+  static int MAX_KEY_LENGTH_BYTES = 0;
 
   static {
     try {

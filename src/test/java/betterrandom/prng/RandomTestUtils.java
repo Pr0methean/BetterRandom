@@ -15,6 +15,11 @@
 // ============================================================================
 package betterrandom.prng;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.lang.reflect.Constructor;
 import java.util.HashSet;
 import java.util.Random;
@@ -25,7 +30,7 @@ import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
  *
  * @author Daniel Dyer
  */
-final class RandomTestUtils {
+public final class RandomTestUtils {
 
   private RandomTestUtils() {
     // Prevents instantiation of utility class.
@@ -158,5 +163,22 @@ final class RandomTestUtils {
       stats.addValue(rng.nextInt(maxValue));
     }
     return stats.getStandardDeviation();
+  }
+
+  @SuppressWarnings("unchecked")
+  public static <T extends Random> void assertEquivalentWhenSerializedAndDeserialized(T rng)
+      throws IOException, ClassNotFoundException {
+    ByteArrayOutputStream byteOutStream = new ByteArrayOutputStream();
+    ObjectOutputStream objectOutStream = new ObjectOutputStream(byteOutStream);
+    objectOutStream.writeObject(rng);
+
+    // Read the RNG back-in.
+    ObjectInputStream objectInStream = new ObjectInputStream(
+        new ByteArrayInputStream(byteOutStream.toByteArray()));
+    T rng2 = (T) (objectInStream.readObject());
+    assert rng != rng2 : "Deserialised RNG should be distinct object.";
+
+    // Both RNGs should generate the same sequence.
+    assert testEquivalence(rng, rng2, 20) : "Output mismatch after serialisation.";
   }
 }

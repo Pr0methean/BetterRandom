@@ -15,16 +15,13 @@
 // ============================================================================
 package betterrandom.prng;
 
+import static betterrandom.prng.RandomTestUtils.assertEquivalentWhenSerializedAndDeserialized;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertTrue;
 
 import betterrandom.seed.DefaultSeedGenerator;
 import betterrandom.seed.SeedException;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
 import java.security.GeneralSecurityException;
 import java.util.Random;
 import java.util.logging.FileHandler;
@@ -68,18 +65,7 @@ public class AesCounterRandomTest {
       throws GeneralSecurityException, IOException, ClassNotFoundException, SeedException {
     // Serialise an RNG.
     AesCounterRandom rng = new AesCounterRandom(16);
-    ByteArrayOutputStream byteOutStream = new ByteArrayOutputStream();
-    ObjectOutputStream objectOutStream = new ObjectOutputStream(byteOutStream);
-    objectOutStream.writeObject(rng);
-
-    // Read the RNG back-in.
-    ObjectInputStream objectInStream = new ObjectInputStream(
-        new ByteArrayInputStream(byteOutStream.toByteArray()));
-    AesCounterRandom rng2 = (AesCounterRandom) objectInStream.readObject();
-    assert rng != rng2 : "Deserialised RNG should be distinct object.";
-
-    // Both RNGs should generate the same sequence.
-    assert RandomTestUtils.testEquivalence(rng, rng2, 20) : "Output mismatch after serialisation.";
+    assertEquivalentWhenSerializedAndDeserialized(rng);
   }
 
 
@@ -88,18 +74,7 @@ public class AesCounterRandomTest {
       throws GeneralSecurityException, IOException, ClassNotFoundException, SeedException {
     // Serialise an RNG.
     AesCounterRandom rng = new AesCounterRandom(48);
-    ByteArrayOutputStream byteOutStream = new ByteArrayOutputStream();
-    ObjectOutputStream objectOutStream = new ObjectOutputStream(byteOutStream);
-    objectOutStream.writeObject(rng);
-
-    // Read the RNG back-in.
-    ObjectInputStream objectInStream = new ObjectInputStream(
-        new ByteArrayInputStream(byteOutStream.toByteArray()));
-    AesCounterRandom rng2 = (AesCounterRandom) objectInStream.readObject();
-    assert rng != rng2 : "Deserialised RNG should be distinct object.";
-
-    // Both RNGs should generate the same sequence.
-    assert RandomTestUtils.testEquivalence(rng, rng2, 20) : "Output mismatch after serialisation.";
+    assertEquivalentWhenSerializedAndDeserialized(rng);
   }
 
 

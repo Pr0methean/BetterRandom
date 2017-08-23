@@ -34,6 +34,7 @@ import java.util.logging.Logger;
  * @author Daniel Dyer
  */
 public class RandomDotOrgSeedGenerator implements SeedGenerator {
+
   private static final Logger LOG = Logger.getLogger(RandomDotOrgSeedGenerator.class.getName());
   private static final RandomDotOrgSeedGenerator INSTANCE = new RandomDotOrgSeedGenerator();
   private static final long serialVersionUID = -7400544219489418741L;
@@ -57,10 +58,11 @@ public class RandomDotOrgSeedGenerator implements SeedGenerator {
    */
   private static final int DELAY_BETWEEN_RETRIES_MS = 10 * 1000;
   private static final int MAX_RETRIES = 1200;
-  private transient int retriesSoFar = 0;
   private static final Lock cacheLock = new ReentrantLock();
   private static byte[] cache = new byte[1024];
   private static int cacheOffset = cache.length;
+  private transient int retriesSoFar = 0;
+
   /**
    * Singleton unless subclassed.
    */

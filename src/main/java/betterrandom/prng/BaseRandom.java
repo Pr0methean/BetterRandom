@@ -71,6 +71,13 @@ public abstract class BaseRandom extends Random implements ByteArrayReseedableRa
   }
 
   @Override
+  public void setSeed(long seed) {
+    ByteBuffer buffer = ByteBuffer.allocate(8);
+    buffer.putLong(seed);
+    setSeed(buffer.array());
+  }
+
+  @Override
   public void setSeed(byte[] seed) {
     lock.lock();
     try {
@@ -101,15 +108,8 @@ public abstract class BaseRandom extends Random implements ByteArrayReseedableRa
     } catch (SeedException e) {
       throw (InvalidObjectException)
           (new InvalidObjectException("Unable to deserialize or generate a seed this RNG")
-          .initCause(e));
+              .initCause(e));
     }
     initTransientFields();
-  }
-
-  @Override
-  public void setSeed(long seed) {
-    ByteBuffer buffer = ByteBuffer.allocate(8);
-    buffer.putLong(seed);
-    setSeed(buffer.array());
   }
 }

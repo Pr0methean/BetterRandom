@@ -176,4 +176,16 @@ public class SingleThreadSplittableRandomAdapter extends BaseRandom {
   public int getNewSeedLength() {
     return SEED_LENGTH_BYTES;
   }
+
+  @Override
+  public boolean equals(Object o) {
+    return this == o
+        || (o instanceof SingleThreadSplittableRandomAdapter
+        && underlying.equals(((SingleThreadSplittableRandomAdapter) o).underlying));
+  }
+
+  @Override
+  public int hashCode() {
+    return underlying.hashCode() + 1;
+  }
 }
