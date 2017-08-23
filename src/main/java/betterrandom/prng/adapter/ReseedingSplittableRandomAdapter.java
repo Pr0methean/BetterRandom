@@ -7,8 +7,10 @@ import betterrandom.seed.SeedGenerator;
 import java.util.SplittableRandom;
 import java.util.WeakHashMap;
 import org.checkerframework.checker.initialization.qual.UnderInitialization;
+import org.checkerframework.checker.initialization.qual.UnknownInitialization;
 import org.checkerframework.checker.nullness.qual.EnsuresNonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
+import org.checkerframework.checker.nullness.qual.RequiresNonNull;
 
 /**
  * A version of {@link SplittableRandomAdapter} that uses a {@link RandomSeederThread} to replace
@@ -20,9 +22,15 @@ public class ReseedingSplittableRandomAdapter extends SplittableRandomAdapter {
   private static final long serialVersionUID = 6301096404034224037L;
   private static final WeakHashMap<SeedGenerator, ReseedingSplittableRandomAdapter> INSTANCES = new WeakHashMap<>();
   @Nullable private static ReseedingSplittableRandomAdapter defaultInstance;
-  protected final SeedGenerator seedGenerator;
   private transient RandomSeederThread seederThread; // Transient to work around Oracle bug 9050586
   private transient ThreadLocal<SingleThreadSplittableRandomAdapter> threadLocal;
+  protected final SeedGenerator seedGenerator; // to initialize it early for a subclass
+
+  @Override
+  protected final boolean letSubclassInitTransientFields(
+      @UnderInitialization ReseedingSplittableRandomAdapter this) {
+    return true;
+  }
 
   /**
    * Single instance per SeedGenerator.
@@ -43,21 +51,21 @@ public class ReseedingSplittableRandomAdapter extends SplittableRandomAdapter {
     return defaultInstance;
   }
 
-  @EnsuresNonNull("threadLocal")
+  @EnsuresNonNull({"threadLocal", "seederThread", "underlying", "lock"})
+  @RequiresNonNull("seedGenerator")
   @Override
   protected void initTransientFields(
-      @UnderInitialization(ReseedingSplittableRandomAdapter.class)ReseedingSplittableRandomAdapter this) {
-    if (!superConstructorFinished) {
-      return;
+      @UnknownInitialization ReseedingSplittableRandomAdapter this) {
+    if (threadLocal == null) {
+      threadLocal = ThreadLocal.withInitial(() -> {
+        try {
+          return new SingleThreadSplittableRandomAdapter(seedGenerator);
+        } catch (SeedException e) {
+          throw new RuntimeException(e);
+        }
+      });
     }
     seederThread = RandomSeederThread.getInstance(seedGenerator);
-    threadLocal = ThreadLocal.withInitial(() -> {
-      try {
-        return new SingleThreadSplittableRandomAdapter(seedGenerator);
-      } catch (SeedException e) {
-        throw new RuntimeException(e);
-      }
-    });
     super.initTransientFields();
   }
 

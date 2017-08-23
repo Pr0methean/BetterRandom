@@ -31,7 +31,7 @@ import java.util.logging.Logger;
 import javax.crypto.Cipher;
 import javax.crypto.NoSuchPaddingException;
 import javax.crypto.spec.SecretKeySpec;
-import org.checkerframework.checker.initialization.qual.UnderInitialization;
+import org.checkerframework.checker.initialization.qual.UnknownInitialization;
 import org.checkerframework.checker.nullness.qual.EnsuresNonNull;
 
 /**
@@ -93,7 +93,7 @@ public class AesCounterRandom extends BaseRandom implements RepeatableRandom,
     MAX_TOTAL_SEED_LENGTH_BYTES = MAX_KEY_LENGTH_BYTES + COUNTER_SIZE_BYTES;
   }
 
-  private final byte[] currentBlock = new byte[COUNTER_SIZE_BYTES * BLOCKS_AT_ONCE];
+  private final byte[] currentBlock;
   // WARNING: Don't initialize any instance fields at declaration; they may be initialized too late!
   private transient Cipher cipher;
   private byte[] counter;
@@ -101,7 +101,7 @@ public class AesCounterRandom extends BaseRandom implements RepeatableRandom,
   private transient boolean seeded;
   private long entropyBytes;
   // force generation of first block on demand
-  private int index = currentBlock.length;
+  private int index;
 
   /**
    * Creates a new RNG and seeds it using 256 bits from the default seeding strategy.
@@ -144,15 +144,17 @@ public class AesCounterRandom extends BaseRandom implements RepeatableRandom,
    */
   public AesCounterRandom(byte[] seed) {
     super(seed);
+    currentBlock = new byte[COUNTER_SIZE_BYTES * BLOCKS_AT_ONCE];
+    index = currentBlock.length;
   }
 
   /**
    * Called in constructor and readObject to initialize transient fields.
    */
-  @EnsuresNonNull({"counter", "counterInput", "cipher"})
+  @EnsuresNonNull({"counter", "counterInput", "cipher", "lock"})
   @Override
   protected void initTransientFields(
-      @UnderInitialization(AesCounterRandom.class) AesCounterRandom this) {
+      @UnknownInitialization AesCounterRandom this) {
     super.initTransientFields();
     if (counter == null) {
       counter = new byte[COUNTER_SIZE_BYTES];
