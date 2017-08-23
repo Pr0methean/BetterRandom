@@ -21,7 +21,6 @@ import static org.testng.Assert.assertEquals;
 import betterrandom.seed.DefaultSeedGenerator;
 import betterrandom.seed.SeedException;
 import java.io.IOException;
-import org.testng.Reporter;
 import org.testng.annotations.Test;
 
 /**
@@ -55,10 +54,7 @@ public class XorShiftRandomTest {
       dependsOnMethods = "testRepeatability")
   public void testDistribution() throws SeedException {
     XorShiftRandom rng = new XorShiftRandom(DefaultSeedGenerator.getInstance());
-    double pi = RandomTestUtils.calculateMonteCarloValueForPi(rng, 100000);
-    Reporter.log("Monte Carlo value for Pi: " + pi);
-    assertEquals(pi, Math.PI, 0.01 * Math.PI,
-        "Monte Carlo value for Pi is outside acceptable range:" + pi);
+    RandomTestUtils.assertMonteCarloPiEstimateSane(rng);
   }
 
 
@@ -71,14 +67,7 @@ public class XorShiftRandomTest {
       dependsOnMethods = "testRepeatability")
   public void testStandardDeviation() throws SeedException {
     XorShiftRandom rng = new XorShiftRandom();
-    // Expected standard deviation for a uniformly distributed population of values in the range 0..n
-    // approaches n/sqrt(12).
-    int n = 100;
-    double observedSD = RandomTestUtils.calculateSampleStandardDeviation(rng, n, 10000);
-    double expectedSD = n / Math.sqrt(12);
-    Reporter.log("Expected SD: " + expectedSD + ", observed SD: " + observedSD);
-    assertEquals(observedSD, expectedSD, 0.02 * expectedSD,
-        "Standard deviation is outside acceptable range: " + observedSD);
+    RandomTestUtils.assertStandardDeviationSane(rng);
   }
 
 

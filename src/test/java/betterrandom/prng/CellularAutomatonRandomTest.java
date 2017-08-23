@@ -15,6 +15,8 @@
 // ============================================================================
 package betterrandom.prng;
 
+import static betterrandom.prng.RandomTestUtils.assertMonteCarloPiEstimateSane;
+import static betterrandom.prng.RandomTestUtils.assertStandardDeviationSane;
 import static org.testng.Assert.assertEquals;
 
 import betterrandom.seed.DefaultSeedGenerator;
@@ -53,10 +55,7 @@ public class CellularAutomatonRandomTest {
       dependsOnMethods = "testRepeatability")
   public void testDistribution() throws SeedException {
     CellularAutomatonRandom rng = new CellularAutomatonRandom(DefaultSeedGenerator.getInstance());
-    double pi = RandomTestUtils.calculateMonteCarloValueForPi(rng, 100000);
-    Reporter.log("Monte Carlo value for Pi: " + pi);
-    assertEquals(pi, Math.PI, 0.01 * Math.PI,
-        "Monte Carlo value for Pi is outside acceptable range:" + pi);
+    assertMonteCarloPiEstimateSane(rng);
   }
 
 
@@ -71,12 +70,7 @@ public class CellularAutomatonRandomTest {
     CellularAutomatonRandom rng = new CellularAutomatonRandom();
     // Expected standard deviation for a uniformly distributed population of values in the range 0..n
     // approaches n/sqrt(12).
-    int n = 100;
-    double observedSD = RandomTestUtils.calculateSampleStandardDeviation(rng, n, 10000);
-    double expectedSD = n / Math.sqrt(12);
-    Reporter.log("Expected SD: " + expectedSD + ", observed SD: " + observedSD);
-    assertEquals(observedSD, expectedSD, 0.02 * expectedSD,
-        "Standard deviation is outside acceptable range: " + observedSD);
+    assertStandardDeviationSane(rng);
   }
 
 
