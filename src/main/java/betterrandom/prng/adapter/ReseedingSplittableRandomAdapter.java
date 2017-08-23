@@ -6,7 +6,6 @@ import betterrandom.seed.SeedException;
 import betterrandom.seed.SeedGenerator;
 import java.util.SplittableRandom;
 import java.util.WeakHashMap;
-import org.checkerframework.checker.initialization.qual.UnderInitialization;
 import org.checkerframework.checker.initialization.qual.UnknownInitialization;
 import org.checkerframework.checker.nullness.qual.EnsuresNonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
@@ -17,7 +16,7 @@ import org.checkerframework.checker.nullness.qual.RequiresNonNull;
  * each thread's {@link SplittableRandom} with a reseeded one as frequently as possible, but not
  * more frequently than it is being used.
  */
-public class ReseedingSplittableRandomAdapter extends SplittableRandomAdapter {
+public class ReseedingSplittableRandomAdapter extends BaseSplittableRandomAdapter {
 
   private static final long serialVersionUID = 6301096404034224037L;
   private static final WeakHashMap<SeedGenerator, ReseedingSplittableRandomAdapter> INSTANCES = new WeakHashMap<>();
@@ -32,7 +31,7 @@ public class ReseedingSplittableRandomAdapter extends SplittableRandomAdapter {
    * @param seedGenerator The seed generator this adapter will use.
    */
   private ReseedingSplittableRandomAdapter(SeedGenerator seedGenerator) throws SeedException {
-    super(seedGenerator);
+    super(seedGenerator.generateSeed(SEED_LENGTH_BYTES));
     this.seedGenerator = seedGenerator;
     initSubclassTransientFields();
   }
