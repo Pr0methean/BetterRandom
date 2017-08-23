@@ -103,7 +103,7 @@ public class AesCounterRandomTest {
     AesCounterRandom rng = new AesCounterRandom(DefaultSeedGenerator.getInstance());
     double pi = RandomTestUtils.calculateMonteCarloValueForPi(rng, 100000);
     Reporter.log("Monte Carlo value for Pi: " + pi);
-    assertEquals(pi, Math.PI, 0.01,
+    assertEquals(pi, Math.PI, 0.01 * Math.PI,
         "Monte Carlo value for Pi is outside acceptable range:" + pi);
   }
 
