@@ -23,7 +23,7 @@ import betterrandom.seed.SeedGenerator;
 import betterrandom.util.BinaryUtils;
 import java.util.Arrays;
 import java.util.Random;
-import org.checkerframework.checker.initialization.qual.UnderInitialization;
+import org.checkerframework.checker.initialization.qual.UnknownInitialization;
 import org.checkerframework.checker.nullness.qual.EnsuresNonNull;
 
 /**
@@ -135,9 +135,10 @@ public class CellularAutomatonRandom extends BaseRandom implements RepeatableRan
     entropyBytes = SEED_SIZE_BYTES;
   }
 
+  @EnsuresNonNull({"cells", "lock"})
   @Override
   protected void initTransientFields(
-      @UnderInitialization(CellularAutomatonRandom.class) CellularAutomatonRandom this) {
+      @UnknownInitialization CellularAutomatonRandom this) {
     cells = new int[AUTOMATON_LENGTH];
     currentCellIndex = AUTOMATON_LENGTH - 1;
     entropyBytes = SEED_SIZE_BYTES;

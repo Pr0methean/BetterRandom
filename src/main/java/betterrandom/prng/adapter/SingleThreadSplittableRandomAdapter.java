@@ -10,7 +10,7 @@ import java.util.SplittableRandom;
 import java.util.stream.DoubleStream;
 import java.util.stream.IntStream;
 import java.util.stream.LongStream;
-import org.checkerframework.checker.initialization.qual.UnderInitialization;
+import org.checkerframework.checker.initialization.qual.UnknownInitialization;
 import org.checkerframework.checker.nullness.qual.EnsuresNonNull;
 
 public class SingleThreadSplittableRandomAdapter extends BaseRandom {
@@ -35,8 +35,7 @@ public class SingleThreadSplittableRandomAdapter extends BaseRandom {
   @EnsuresNonNull("underlying")
   @Override
   protected void initTransientFields(
-      @UnderInitialization(SingleThreadSplittableRandomAdapter.class)
-      SingleThreadSplittableRandomAdapter this) {
+      @UnknownInitialization SingleThreadSplittableRandomAdapter this) {
     super.initTransientFields();
     setSeed(seed);
   }

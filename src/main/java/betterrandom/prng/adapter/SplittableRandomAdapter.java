@@ -3,7 +3,7 @@ package betterrandom.prng.adapter;
 import betterrandom.seed.SeedException;
 import betterrandom.seed.SeedGenerator;
 import java.util.SplittableRandom;
-import org.checkerframework.checker.initialization.qual.UnderInitialization;
+import org.checkerframework.checker.initialization.qual.UnknownInitialization;
 import org.checkerframework.checker.nullness.qual.EnsuresNonNull;
 
 /**
@@ -12,16 +12,16 @@ import org.checkerframework.checker.nullness.qual.EnsuresNonNull;
 public class SplittableRandomAdapter extends SingleThreadSplittableRandomAdapter {
 
   private static final long serialVersionUID = 2190439512972880590L;
-
   private transient ThreadLocal<SplittableRandom> threadLocal;
 
   public SplittableRandomAdapter(SeedGenerator seedGenerator) throws SeedException {
     super(seedGenerator);
   }
 
-  @EnsuresNonNull("threadLocal")
+  @EnsuresNonNull({"threadLocal", "underlying"})
   @Override
-  protected void initTransientFields(@UnderInitialization(SplittableRandomAdapter.class) this) {
+  protected void initTransientFields(
+      @UnknownInitialization SplittableRandomAdapter this) {
     super.initTransientFields();
     threadLocal = ThreadLocal.withInitial(underlying::split);
   }
