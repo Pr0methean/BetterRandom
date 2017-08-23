@@ -45,7 +45,6 @@ public class ReseedingSplittableRandomAdapter extends SplittableRandomAdapter {
     if (!superConstructorFinished) {
       return;
     }
-    super.initTransientFields();
     seederThread = RandomSeederThread.getInstance(seedGenerator);
     threadLocal = ThreadLocal.withInitial(() -> {
       try {
@@ -54,6 +53,7 @@ public class ReseedingSplittableRandomAdapter extends SplittableRandomAdapter {
         throw new RuntimeException(e);
       }
     });
+    super.initTransientFields();
   }
 
   public ReseedingSplittableRandomAdapter getInstance(SeedGenerator seedGenerator)
