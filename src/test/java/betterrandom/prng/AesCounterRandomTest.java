@@ -112,7 +112,7 @@ public class AesCounterRandomTest {
    * subtle statistical anomalies that would be picked up by Diehard, but it provides a simple check
    * for major problems with the output.
    */
-  @Test(timeOut = 15000, groups = "non-deterministic",
+  @Test(timeOut = 30000, groups = "non-deterministic",
       dependsOnMethods = "testRepeatability")
   public void testStandardDeviation() throws GeneralSecurityException, SeedException {
     AesCounterRandom rng = new AesCounterRandom();
@@ -170,13 +170,13 @@ public class AesCounterRandomTest {
   }
 
 
-  @Test(timeOut = 30000)
+  @Test(timeOut = 60000)
   public void testEquals() throws GeneralSecurityException, ReflectiveOperationException {
     RandomTestUtils.doEqualsSanityChecks(AesCounterRandom.class.getConstructor());
   }
 
 
-  @Test(timeOut = 15000)
+  @Test(timeOut = 30000)
   public void testHashCode() throws Exception {
     assert RandomTestUtils.testHashCodeDistribution(AesCounterRandom.class.getConstructor())
         : "Too many hashCode collisions";
