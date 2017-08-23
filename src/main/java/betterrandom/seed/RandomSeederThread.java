@@ -129,7 +129,7 @@ public final class RandomSeederThread extends Thread implements Serializable {
       throw new IllegalStateException("Already shut down");
     }
     for (Random random : randoms) {
-      prngs.add(new WeakReferenceWithEquals<>(random));
+      prngs.add(random);
     }
     notifyAll();
   }
