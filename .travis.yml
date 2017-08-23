@@ -8,7 +8,8 @@ jdk:
   - openjdk8
 matrix:
   allow_failures:
-    -oraclejdk9
+    jdk:
+      - oraclejdk9 # Currently doesn't set JAVA_HOME correctly for Maven
 script:
   - mkdir /home/travis/javalog
   - mvn test

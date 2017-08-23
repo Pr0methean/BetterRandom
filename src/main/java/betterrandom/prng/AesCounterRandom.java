@@ -78,7 +78,7 @@ public class AesCounterRandom extends BaseRandom implements RepeatableRandom,
    */
   private static final int BLOCKS_AT_ONCE = 16;
   private static final String HASH_ALGORITHM = "SHA-256";
-  private static final int MAX_TOTAL_SEED_LENGTH_BYTES = MAX_KEY_LENGTH_BYTES + COUNTER_SIZE_BYTES;
+  private static final int MAX_TOTAL_SEED_LENGTH_BYTES;
 
   static {
     try {
@@ -88,6 +88,7 @@ public class AesCounterRandom extends BaseRandom implements RepeatableRandom,
     }
     LOG.info("Maximum allowed key length for AES is " + MAX_KEY_LENGTH_BYTES);
     MAX_KEY_LENGTH_BYTES = Math.min(MAX_KEY_LENGTH_BYTES, 32);
+    MAX_TOTAL_SEED_LENGTH_BYTES = MAX_KEY_LENGTH_BYTES + COUNTER_SIZE_BYTES;
   }
 
   private final byte[] currentBlock = new byte[COUNTER_SIZE_BYTES * BLOCKS_AT_ONCE];
