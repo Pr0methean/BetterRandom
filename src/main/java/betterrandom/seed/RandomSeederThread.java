@@ -49,8 +49,7 @@ public final class RandomSeederThread extends Thread implements Serializable {
    * Obtain the instance for the given {@link SeedGenerator}, creating it if it doesn't exist.
    */
   public static RandomSeederThread getInstance(SeedGenerator seedGenerator) {
-    RandomSeederThread thread = INSTANCES.computeIfAbsent(
-        Objects.requireNonNull(seedGenerator, "seedGenerator must not be null"),
+    RandomSeederThread thread = INSTANCES.computeIfAbsent(seedGenerator,
         RandomSeederThread::new);
     thread.setDaemon(true);
     thread.start();
