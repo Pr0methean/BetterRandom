@@ -19,11 +19,7 @@ import static org.testng.Assert.assertEquals;
 
 import betterrandom.seed.DefaultSeedGenerator;
 import betterrandom.seed.SeedException;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
 import java.util.Random;
 import org.testng.Reporter;
 import org.testng.annotations.Test;
@@ -108,18 +104,7 @@ public class CellularAutomatonRandomTest {
   public void testSerializable() throws IOException, ClassNotFoundException, SeedException {
     // Serialise an RNG.
     CellularAutomatonRandom rng = new CellularAutomatonRandom();
-    ByteArrayOutputStream byteOutStream = new ByteArrayOutputStream();
-    ObjectOutputStream objectOutStream = new ObjectOutputStream(byteOutStream);
-    objectOutStream.writeObject(rng);
-
-    // Read the RNG back-in.
-    ObjectInputStream objectInStream = new ObjectInputStream(
-        new ByteArrayInputStream(byteOutStream.toByteArray()));
-    CellularAutomatonRandom rng2 = (CellularAutomatonRandom) objectInStream.readObject();
-    assert rng != rng2 : "Deserialised RNG should be distinct object.";
-
-    // Both RNGs should generate the same sequence.
-    assert RandomTestUtils.testEquivalence(rng, rng2, 20) : "Output mismatch after serialisation.";
+    RandomTestUtils.assertEquivalentWhenSerializedAndDeserialized(rng);
   }
 
   @Test(timeOut = 15000)

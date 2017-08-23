@@ -15,8 +15,6 @@
 // ============================================================================
 package betterrandom.seed;
 
-import betterrandom.util.BinaryUtils;
-
 /**
  * Seed generator that maintains multiple strategies for seed generation and will delegate to the
  * best one available for the current operating environment.
