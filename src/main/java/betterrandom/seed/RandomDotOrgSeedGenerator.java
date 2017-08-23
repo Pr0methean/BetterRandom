@@ -71,7 +71,7 @@ public class RandomDotOrgSeedGenerator implements SeedGenerator {
   }
 
   @SuppressWarnings("unused")
-  private void readObject(ObjectInputStream ois) {
+  private void readObject(ObjectInputStream ois) throws IOException, ClassNotFoundException {
     ois.defaultReadObject();
     retriesSoFar = 0;
   }
