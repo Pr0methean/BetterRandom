@@ -16,6 +16,8 @@
 package betterrandom.prng;
 
 import static betterrandom.prng.RandomTestUtils.assertEquivalentWhenSerializedAndDeserialized;
+import static betterrandom.prng.RandomTestUtils.assertMonteCarloPiEstimateSane;
+import static betterrandom.prng.RandomTestUtils.assertStandardDeviationSane;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertTrue;
 
@@ -101,10 +103,7 @@ public class AesCounterRandomTest {
       dependsOnMethods = "testRepeatability")
   public void testDistribution() throws GeneralSecurityException, SeedException {
     AesCounterRandom rng = new AesCounterRandom(DefaultSeedGenerator.getInstance());
-    double pi = RandomTestUtils.calculateMonteCarloValueForPi(rng, 100000);
-    Reporter.log("Monte Carlo value for Pi: " + pi);
-    assertEquals(pi, Math.PI, 0.01 * Math.PI,
-        "Monte Carlo value for Pi is outside acceptable range:" + pi);
+    assertMonteCarloPiEstimateSane(rng);
   }
 
 
@@ -119,12 +118,7 @@ public class AesCounterRandomTest {
     AesCounterRandom rng = new AesCounterRandom();
     // Expected standard deviation for a uniformly distributed population of values in the range 0..n
     // approaches n/sqrt(12).
-    int n = 100;
-    double observedSD = RandomTestUtils.calculateSampleStandardDeviation(rng, n, 10000);
-    double expectedSD = 100 / Math.sqrt(12);
-    Reporter.log("Expected SD: " + expectedSD + ", observed SD: " + observedSD);
-    assertEquals(observedSD, expectedSD, 0.02 * expectedSD,
-        "Standard deviation is outside acceptable range: " + observedSD);
+    assertStandardDeviationSane(rng);
   }
 
 

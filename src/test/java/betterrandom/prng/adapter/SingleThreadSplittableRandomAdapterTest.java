@@ -1,13 +1,22 @@
 package betterrandom.prng.adapter;
 
 import static betterrandom.prng.RandomTestUtils.assertEquivalentWhenSerializedAndDeserialized;
+import static betterrandom.prng.RandomTestUtils.assertMonteCarloPiEstimateSane;
+import static betterrandom.prng.RandomTestUtils.assertStandardDeviationSane;
 import static betterrandom.prng.RandomTestUtils.serializeAndDeserialize;
 import static betterrandom.prng.RandomTestUtils.testEquivalence;
 
 import betterrandom.seed.DefaultSeedGenerator;
+import betterrandom.seed.SeedException;
 import org.testng.annotations.Test;
 
 public class SingleThreadSplittableRandomAdapterTest {
+
+  /** Overridden in subclasses, so that subclassing the test can test the subclasses. */
+  protected SingleThreadSplittableRandomAdapter createAdapter() throws SeedException {
+    return new SingleThreadSplittableRandomAdapter(
+        DefaultSeedGenerator.getInstance());
+  }
 
   @Test
   public void testGetSplittableRandom() throws Exception {
@@ -16,8 +25,7 @@ public class SingleThreadSplittableRandomAdapterTest {
 
   @Test
   public void testSerialization() throws Exception {
-    SingleThreadSplittableRandomAdapter adapter = new SingleThreadSplittableRandomAdapter(
-        DefaultSeedGenerator.getInstance());
+    SingleThreadSplittableRandomAdapter adapter = createAdapter();
     // May change when serialized and deserialized, but deserializing twice should yield same object
     // and deserialization should be idempotent
     SingleThreadSplittableRandomAdapter adapter2 = serializeAndDeserialize(adapter);
@@ -25,6 +33,16 @@ public class SingleThreadSplittableRandomAdapterTest {
     SingleThreadSplittableRandomAdapter adapter4 = serializeAndDeserialize(adapter2);
     testEquivalence(adapter2, adapter3, 20);
     testEquivalence(adapter2, adapter4, 20);
+  }
+
+  @Test
+  public void testStandardDeviation() throws Exception {
+    assertStandardDeviationSane(createAdapter());
+  }
+
+  @Test
+  public void testMonteCarloPi() throws Exception {
+    assertMonteCarloPiEstimateSane(createAdapter());
   }
 
   @Test
