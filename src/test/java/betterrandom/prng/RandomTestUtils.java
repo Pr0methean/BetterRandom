@@ -20,6 +20,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.io.Serializable;
 import java.lang.reflect.Constructor;
 import java.util.HashSet;
 import java.util.Random;
@@ -165,17 +166,21 @@ public final class RandomTestUtils {
     return stats.getStandardDeviation();
   }
 
-  @SuppressWarnings("unchecked")
-  public static <T extends Random> void assertEquivalentWhenSerializedAndDeserialized(T rng)
-      throws IOException, ClassNotFoundException {
+  public static <T extends Serializable> T serializeAndDeserialize(T object) {
     ByteArrayOutputStream byteOutStream = new ByteArrayOutputStream();
     ObjectOutputStream objectOutStream = new ObjectOutputStream(byteOutStream);
     objectOutStream.writeObject(rng);
 
-    // Read the RNG back-in.
+    // Read the object back-in.
     ObjectInputStream objectInStream = new ObjectInputStream(
         new ByteArrayInputStream(byteOutStream.toByteArray()));
-    T rng2 = (T) (objectInStream.readObject());
+    return (T) (objectInStream.readObject());    
+  }
+
+  @SuppressWarnings("unchecked")
+  public static <T extends Random> void assertEquivalentWhenSerializedAndDeserialized(T rng)
+      throws IOException, ClassNotFoundException {
+    T rng2 = serializeAndDeserialize(rng);
     assert rng != rng2 : "Deserialised RNG should be distinct object.";
 
     // Both RNGs should generate the same sequence.
