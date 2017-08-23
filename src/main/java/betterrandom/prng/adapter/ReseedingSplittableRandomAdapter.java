@@ -45,7 +45,8 @@ public class ReseedingSplittableRandomAdapter extends SplittableRandomAdapter {
     return defaultInstance;
   }
 
-  @EnsuresNonNull({"threadLocal", "seederThread", "underlying", "lock"})
+  @SuppressWarnings("contracts.postcondition.override.invalid")
+  @EnsuresNonNull({"threadLocal", "seederThread"})
   @RequiresNonNull("seedGenerator")
   @Override
   protected void initSubclassTransientFields(

@@ -33,6 +33,7 @@ import javax.crypto.NoSuchPaddingException;
 import javax.crypto.spec.SecretKeySpec;
 import org.checkerframework.checker.initialization.qual.UnknownInitialization;
 import org.checkerframework.checker.nullness.qual.EnsuresNonNull;
+import org.checkerframework.checker.nullness.qual.RequiresNonNull;
 
 /**
  * <p>Non-linear random number generator based on the AES block cipher in counter mode. Uses the
@@ -152,7 +153,8 @@ public class AesCounterRandom extends BaseRandom implements RepeatableRandom,
   /**
    * Called in constructor and readObject to initialize transient fields.
    */
-  @EnsuresNonNull({"counter", "counterInput", "cipher", "lock"})
+  @RequiresNonNull({"seed", "lock"})
+  @EnsuresNonNull({"counter", "counterInput", "cipher"})
   @Override
   protected void initSubclassTransientFields(
       @UnknownInitialization AesCounterRandom this) {
@@ -194,21 +196,6 @@ public class AesCounterRandom extends BaseRandom implements RepeatableRandom,
     System.arraycopy(cipher.doFinal(counterInput), 0, currentBlock, 0,
         totalBytes);
     entropyBytes -= totalBytes;
-  }
-
-  /**
-   * {@inheritDoc}
-   *
-   * The given seed is combined with the existing seed. Thus, this method is guaranteed not to
-   * reduce randomness.
-   */
-  @Override
-  public void setSeed(long seed) {
-    if (!superConstructorFinished) {
-      // setSeed is called by super() but won't work yet
-      return;
-    }
-    super.setSeed(seed);
   }
 
   /**
@@ -258,11 +245,9 @@ public class AesCounterRandom extends BaseRandom implements RepeatableRandom,
   }
 
   @Override
-  public void setSeed(byte[] seed) {
-    if (!superConstructorFinished) {
-      // setSeed can't work until seed array allocated
-      return;
-    }
+  @RequiresNonNull({"lock", "this.seed", "cipher", "counter"})
+  @SuppressWarnings({"contracts.precondition.override.invalid"})
+  public void setSeed(@UnknownInitialization AesCounterRandom this, byte[] seed) {
     if (seed.length > MAX_TOTAL_SEED_LENGTH_BYTES) {
       throw new IllegalArgumentException(
           "Seed too long: maximum " + MAX_TOTAL_SEED_LENGTH_BYTES + " bytes");
@@ -283,7 +268,7 @@ public class AesCounterRandom extends BaseRandom implements RepeatableRandom,
             if (seed.length > MAX_KEY_LENGTH_BYTES) {
               // part of the seed goes to key
               key = Arrays.copyOfRange(seed, 0, seed.length - COUNTER_SIZE_BYTES);
-              // rest goes to counter
+              // rest goes to counter (explicit casts needed for checker framework)
               System.arraycopy(seed, seed.length - COUNTER_SIZE_BYTES, counter, 0,
                   COUNTER_SIZE_BYTES);
             } else {

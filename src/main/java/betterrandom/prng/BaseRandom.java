@@ -32,7 +32,7 @@ public abstract class BaseRandom extends Random implements ByteArrayReseedableRa
   @SuppressWarnings("InstanceVariableMayNotBeInitializedByReadObject")
   protected transient Lock lock;
   /**
-   * Use this if necessary to ignore setSeed(long) calls from super constructor
+   * Use this to ignore setSeed(long) calls from super constructor
    */
   @SuppressWarnings("InstanceVariableMayNotBeInitializedByReadObject")
   protected transient boolean superConstructorFinished = false;
@@ -77,15 +77,22 @@ public abstract class BaseRandom extends Random implements ByteArrayReseedableRa
     }
   }
 
-  @EnsuresNonNull("this.seed")
+  @SuppressWarnings("contracts.precondition.not.satisfied")
   @Override
   public void setSeed(@UnknownInitialization BaseRandom this, long seed) {
-    ByteBuffer buffer = ByteBuffer.allocate(8);
-    buffer.putLong(seed);
-    setSeed(buffer.array());
+    if (superConstructorFinished) {
+      // setSeed can't work until seed array allocated
+      ByteBuffer buffer = ByteBuffer.allocate(8);
+      buffer.putLong(seed);
+      setSeed(buffer.array());
+    }
   }
 
+  // Checker Framework doesn't recognize that the @UnknownInitialization weakens the precondition
+  // even with the @RequiresNonNull
+  @SuppressWarnings("contracts.precondition.override.invalid")
   @EnsuresNonNull("this.seed")
+  @RequiresNonNull({"lock", "this.seed"})
   @Override
   public void setSeed(@UnknownInitialization BaseRandom this, byte[] seed) {
     lock.lock();
@@ -113,6 +120,7 @@ public abstract class BaseRandom extends Random implements ByteArrayReseedableRa
   protected void initSubclassTransientFields(@UnknownInitialization BaseRandom this) {
   }
 
+  @EnsuresNonNull({"lock", "seed"})
   private void readObject(ObjectInputStream in) throws IOException,
       ClassNotFoundException {
     in.defaultReadObject();
