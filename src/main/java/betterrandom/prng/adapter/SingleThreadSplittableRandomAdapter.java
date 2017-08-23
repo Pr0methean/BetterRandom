@@ -33,7 +33,6 @@ public class SingleThreadSplittableRandomAdapter extends BaseRandom {
   @Override
   protected void initTransientFields() {
     super.initTransientFields();
-    superConstructorFinished = true;
     setSeed(seed);
   }
 

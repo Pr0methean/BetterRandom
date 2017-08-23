@@ -13,6 +13,8 @@ import java.util.Random;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 import java.util.logging.Logger;
+import org.checkerframework.checker.initialization.qual.UnderInitialization;
+import org.checkerframework.checker.nullness.qual.EnsuresNonNull;
 
 @SuppressWarnings("OverriddenMethodCallDuringObjectConstruction")
 public abstract class BaseRandom extends Random implements ByteArrayReseedableRandom,
@@ -87,7 +89,8 @@ public abstract class BaseRandom extends Random implements ByteArrayReseedableRa
     }
   }
 
-  protected void initTransientFields() {
+  @EnsuresNonNull("lock")
+  protected void initTransientFields(@UnderInitialization(BaseRandom.class) BaseRandom this) {
     if (lock == null) {
       lock = new ReentrantLock();
     }
