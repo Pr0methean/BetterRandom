@@ -31,9 +31,10 @@ public final class RandomSeederThread extends Thread implements Serializable {
   private static final long ENTROPY_POLL_INTERVAL_MS = 10;
   private static final long serialVersionUID = -2858126391794302039L;
   private final SeedGenerator seedGenerator;
-  @SuppressWarnings({"NonSerializableFieldInSerializableClass", "InstanceVariableMayNotBeInitializedByReadObject"})
-  private transient Set<Random> prngs;
   private final byte[] seedArray = new byte[8];
+  @SuppressWarnings({"NonSerializableFieldInSerializableClass",
+      "InstanceVariableMayNotBeInitializedByReadObject"})
+  private transient Set<Random> prngs;
   @SuppressWarnings("InstanceVariableMayNotBeInitializedByReadObject")
   private transient ByteBuffer seedBuffer;
 
@@ -46,7 +47,8 @@ public final class RandomSeederThread extends Thread implements Serializable {
   }
 
   /**
-   * Obtain the instance for the given {@link SeedGenerator}, creating it if it doesn't exist.
+   * Obtain the instance for the given {@link SeedGenerator}, creating and starting it if it doesn't
+   * exist.
    */
   public static RandomSeederThread getInstance(SeedGenerator seedGenerator) {
     RandomSeederThread thread = INSTANCES.computeIfAbsent(seedGenerator,
@@ -56,7 +58,9 @@ public final class RandomSeederThread extends Thread implements Serializable {
     return thread;
   }
 
-  /** Ensure one instance per SeedGenerator even after deserialization. */  
+  /**
+   * Ensure one instance per SeedGenerator even after deserialization.
+   */
   @SuppressWarnings("unused")
   private RandomSeederThread readResolve() {
     return getInstance(seedGenerator);
@@ -65,7 +69,7 @@ public final class RandomSeederThread extends Thread implements Serializable {
   @EnsuresNonNull({"seedBuffer", "prngs"})
   private void initTransientState(@UnderInitialization RandomSeederThread this) {
     prngs = Collections.newSetFromMap(
-      Collections.synchronizedMap(new WeakHashMap<>()));
+        Collections.synchronizedMap(new WeakHashMap<>()));
     seedBuffer = ByteBuffer.wrap(seedArray);
   }
 
@@ -142,5 +146,10 @@ public final class RandomSeederThread extends Thread implements Serializable {
     if (isEmpty()) {
       interrupt();
     }
+  }
+
+  @Override
+  public String toString() {
+    return "RandomSeederThread for " + seedGenerator;
   }
 }

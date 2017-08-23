@@ -9,6 +9,7 @@ import java.util.stream.LongStream;
 public abstract class BaseSplittableRandomAdapter extends BaseRandom {
 
   public static final int SEED_LENGTH_BYTES = 8;
+  private static final long serialVersionUID = 4273652147052638879L;
   @SuppressWarnings("InstanceVariableMayNotBeInitializedByReadObject")
   protected boolean deserializedAndNotUsedSince = false;
 
