@@ -81,7 +81,7 @@ public final class DefaultSeedGenerator implements SeedGenerator {
   }
   
   @Override
-  public int HashCode() {
+  public int hashCode() {
     return -775963758;
   }
 }

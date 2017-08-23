@@ -63,7 +63,7 @@ public class SecureRandomSeedGenerator implements SeedGenerator {
   }
   
   @Override
-  public int HashCode() {
+  public int hashCode() {
     return -261707500;
   }
 }

@@ -8,8 +8,8 @@ import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.lang.ref.Reference;
 import java.nio.ByteBuffer;
+import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
 import java.util.Set;
@@ -66,15 +66,12 @@ public final class RandomSeederThread extends Thread implements Serializable {
 
   private void writeObject(ObjectOutputStream oos) throws IOException {
     oos.defaultWriteObject();
-    oos.writeObject(new HashMap<>(
-        prngs.stream().collect(Collectors.toMap(Function.identity(), prng -> true))));
+    oos.writeObject(new ArrayList(prngs));
   }
 
   @SuppressWarnings("unchecked")
   private void readObject(ObjectInputStream ois) throws IOException, ClassNotFoundException {
-    ois.defaultReadObject();
-    initTransientState();
-    prngs.addAll(((Map<Random,?>) ois.readObject()).keySet());
+    getInstance(seedGenerator).prngs.addAll((ArrayList<Random>) (ois.readObject()));
   }
 
   @SuppressWarnings("InfiniteLoopStatement")
