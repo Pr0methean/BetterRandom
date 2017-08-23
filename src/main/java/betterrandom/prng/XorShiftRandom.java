@@ -73,7 +73,7 @@ public class XorShiftRandom extends BaseRandom implements RepeatableRandom, Entr
 
   @Override
   @RequiresNonNull("seed")
-  protected void initTransientFields(@UnknownInitialization XorShiftRandom this)
+  protected void initSubclassTransientFields(@UnknownInitialization XorShiftRandom this)
   {
     if (seed.length != SEED_SIZE_BYTES) {
       throw new IllegalArgumentException("XOR shift RNG requires a seed of exactly 20 bytes.");

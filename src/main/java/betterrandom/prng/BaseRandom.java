@@ -17,6 +17,7 @@ import org.checkerframework.checker.initialization.qual.UnderInitialization;
 import org.checkerframework.checker.initialization.qual.UnknownInitialization;
 import org.checkerframework.checker.nullness.qual.EnsuresNonNull;
 import org.checkerframework.checker.nullness.qual.EnsuresNonNullIf;
+import org.checkerframework.checker.nullness.qual.RequiresNonNull;
 
 @SuppressWarnings("OverriddenMethodCallDuringObjectConstruction")
 public abstract class BaseRandom extends Random implements ByteArrayReseedableRandom,
@@ -26,23 +27,6 @@ public abstract class BaseRandom extends Random implements ByteArrayReseedableRa
   private static final long serialVersionUID = -1556392727255964947L;
 
   protected byte[] seed;
-
-  /**
-   * Override this if initTransientFields has been overridden to depend on subclasses' serial
-   * fields. If doing so, you must call initTransientFields from the subclass constructor.
-   */
-  protected boolean letSubclassInitTransientFields(@UnderInitialization BaseRandom this) {
-    return false;
-  }
-  
-  @EnsuresNonNullIf(expression = "this.lock", result = false)
-  private boolean maybeInitTransientFields() {
-    boolean shouldInit = !letSubclassInitTransientFields();
-    if (shouldInit) {
-      initTransientFields();
-    }
-    return shouldInit;
-  }  
 
   // Lock to prevent concurrent modification of the RNG's internal state.
   @SuppressWarnings("InstanceVariableMayNotBeInitializedByReadObject")
@@ -77,7 +61,7 @@ public abstract class BaseRandom extends Random implements ByteArrayReseedableRa
       throw new IllegalArgumentException("Seed must not be null");
     }
     this.seed = seed.clone();
-    maybeInitTransientFields();
+    initTransientFields();
   }
 
   /**
@@ -120,10 +104,20 @@ public abstract class BaseRandom extends Random implements ByteArrayReseedableRa
     superConstructorFinished = true;
   }
 
+  /**
+   * No-op by default. Override to initialize transient fields that depend on the subclass's serial
+   * fields (and thus can't be called from the BaseRandom constructor). If you do so, you MUST call
+   * this method from the subclass constructor.
+   */
+  @RequiresNonNull({"seed", "lock"})
+  protected void initSubclassTransientFields(@UnknownInitialization BaseRandom this) {
+  }
+
   private void readObject(ObjectInputStream in) throws IOException,
       ClassNotFoundException {
     in.defaultReadObject();
     initTransientFields();
+    initSubclassTransientFields();
   }
 
   @EnsuresNonNull({"lock", "seed"})

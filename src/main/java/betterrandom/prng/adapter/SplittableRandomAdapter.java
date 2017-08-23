@@ -16,13 +16,13 @@ public class SplittableRandomAdapter extends SingleThreadSplittableRandomAdapter
 
   public SplittableRandomAdapter(SeedGenerator seedGenerator) throws SeedException {
     super(seedGenerator);
+    initSubclassTransientFields();
   }
 
   @EnsuresNonNull({"threadLocal", "underlying"})
   @Override
-  protected void initTransientFields(
+  protected void initSubclassTransientFields(
       @UnknownInitialization SplittableRandomAdapter this) {
-    super.initTransientFields();
     threadLocal = ThreadLocal.withInitial(underlying::split);
   }
 

@@ -26,12 +26,6 @@ public class ReseedingSplittableRandomAdapter extends SplittableRandomAdapter {
   private transient ThreadLocal<SingleThreadSplittableRandomAdapter> threadLocal;
   protected final SeedGenerator seedGenerator; // to initialize it early for a subclass
 
-  @Override
-  protected final boolean letSubclassInitTransientFields(
-      @UnderInitialization ReseedingSplittableRandomAdapter this) {
-    return true;
-  }
-
   /**
    * Single instance per SeedGenerator.
    *
@@ -40,7 +34,7 @@ public class ReseedingSplittableRandomAdapter extends SplittableRandomAdapter {
   private ReseedingSplittableRandomAdapter(SeedGenerator seedGenerator) throws SeedException {
     super(seedGenerator);
     this.seedGenerator = seedGenerator;
-    initTransientFields();
+    initSubclassTransientFields();
   }
 
   public static synchronized ReseedingSplittableRandomAdapter getDefaultInstance()
@@ -54,7 +48,7 @@ public class ReseedingSplittableRandomAdapter extends SplittableRandomAdapter {
   @EnsuresNonNull({"threadLocal", "seederThread", "underlying", "lock"})
   @RequiresNonNull("seedGenerator")
   @Override
-  protected void initTransientFields(
+  protected void initSubclassTransientFields(
       @UnknownInitialization ReseedingSplittableRandomAdapter this) {
     if (threadLocal == null) {
       threadLocal = ThreadLocal.withInitial(() -> {
@@ -66,7 +60,6 @@ public class ReseedingSplittableRandomAdapter extends SplittableRandomAdapter {
       });
     }
     seederThread = RandomSeederThread.getInstance(seedGenerator);
-    super.initTransientFields();
   }
 
   public ReseedingSplittableRandomAdapter getInstance(SeedGenerator seedGenerator)
