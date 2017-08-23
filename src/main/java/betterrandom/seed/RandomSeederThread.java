@@ -5,14 +5,19 @@ import betterrandom.EntropyCountingRandom;
 import betterrandom.util.SerializableWeakReference;
 import java.io.IOException;
 import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.io.Serializable;
+import java.lang.ref.Reference;
 import java.nio.ByteBuffer;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
 import java.util.Set;
+import java.util.WeakHashMap;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 
 public final class RandomSeederThread extends Thread implements Serializable {
 
@@ -27,8 +32,8 @@ public final class RandomSeederThread extends Thread implements Serializable {
   private static final long serialVersionUID = -2858126391794302039L;
   private final SeedGenerator seedGenerator;
   @SuppressWarnings("NonSerializableFieldInSerializableClass")
-  private final Set<SerializableWeakReference<Random>> prngs = Collections.newSetFromMap(
-      new ConcurrentHashMap<SerializableWeakReference<Random>, Boolean>());
+  private transient Set<Random> prngs = Collections.newSetFromMap(
+      Collections.synchronizedMap(new WeakHashMap<>()));
   private final byte[] seedArray = new byte[8];
   private transient ByteBuffer seedBuffer;
 
@@ -53,9 +58,18 @@ public final class RandomSeederThread extends Thread implements Serializable {
     start();
   }
 
+  private void writeObject(ObjectOutputStream oos) throws IOException {
+    oos.defaultWriteObject();
+    oos.writeObject(new HashMap<Random, Boolean>(
+        prngs.stream().collect(Collectors.toMap(prng -> true))));
+  }
+
+  @SuppressWarnings("unchecked")
   private void readObject(ObjectInputStream ois) throws IOException, ClassNotFoundException {
     ois.defaultReadObject();
     initTransientState();
+    prngs = Collections.newSetFromMap(
+        Collections.synchronizedMap(new WeakHashMap<>((Map<Random, Boolean>) ois.readObject())));
   }
 
   @SuppressWarnings("InfiniteLoopStatement")
