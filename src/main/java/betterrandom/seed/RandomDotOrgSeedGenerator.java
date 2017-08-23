@@ -18,6 +18,7 @@ package betterrandom.seed;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.ObjectInputStream;
 import java.net.URL;
 import java.net.URLConnection;
 import java.text.MessageFormat;
@@ -67,6 +68,12 @@ public class RandomDotOrgSeedGenerator implements SeedGenerator {
    * Singleton unless subclassed.
    */
   protected RandomDotOrgSeedGenerator() {
+  }
+
+  @SuppressWarnings("unused")
+  private void readObject(ObjectInputStream ois) {
+    ois.defaultReadObject();
+    retriesSoFar = 0;
   }
 
   public static RandomDotOrgSeedGenerator getInstance() {
@@ -130,7 +137,8 @@ public class RandomDotOrgSeedGenerator implements SeedGenerator {
           succeeded = true;
         }
       } catch (IOException ex) {
-        if (ex.getMessage().contains("HTTP response code: 503")) {
+        if (ex.getMessage().contains("HTTP response code: 503")
+            && retriesSoFar < MAX_RETRIES) {
           retriesSoFar++;
           LOG.severe(String.format("%s (retrying in %d ms)",
               ex.getMessage(), DELAY_BETWEEN_RETRIES_MS));

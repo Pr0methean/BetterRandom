@@ -14,6 +14,7 @@
     <pattern value="betterrandom.prng.adapter.SingleThreadSplittableRandomAdapter" method="nextLong" />
     <pattern value="betterrandom.prng.adapter.SingleThreadSplittableRandomAdapter" method="nextInt" />
     <pattern value="betterrandom.prng.adapter.SingleThreadSplittableRandomAdapter" />
+    <pattern value="betterrandom.RepeatableRandom" method="getSeed" />
   </component>
   <component name="MavenProjectsManager">
     <option name="originalFiles">

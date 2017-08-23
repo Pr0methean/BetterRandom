@@ -77,6 +77,7 @@ public class AesCounterRandom extends BaseRandom implements RepeatableRandom,
    * full seed becomes the AES key and the counter is initially zero. Package-visible for testing of
    * its initialization. Cannot be final due to a false "may not have been initialized" error.
    */
+  @SuppressWarnings("CanBeFinal")
   static int MAX_KEY_LENGTH_BYTES = 0;
 
   static {

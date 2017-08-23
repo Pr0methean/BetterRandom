@@ -6,7 +6,6 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
-import java.lang.ref.Reference;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -16,9 +15,7 @@ import java.util.Random;
 import java.util.Set;
 import java.util.WeakHashMap;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.function.Function;
 import java.util.logging.Logger;
-import java.util.stream.Collectors;
 
 public final class RandomSeederThread extends Thread implements Serializable {
 
@@ -32,9 +29,10 @@ public final class RandomSeederThread extends Thread implements Serializable {
   private static final long ENTROPY_POLL_INTERVAL_MS = 10;
   private static final long serialVersionUID = -2858126391794302039L;
   private final SeedGenerator seedGenerator;
-  @SuppressWarnings("NonSerializableFieldInSerializableClass")
+  @SuppressWarnings({"NonSerializableFieldInSerializableClass", "InstanceVariableMayNotBeInitializedByReadObject"})
   private transient Set<Random> prngs;
   private final byte[] seedArray = new byte[8];
+  @SuppressWarnings("InstanceVariableMayNotBeInitializedByReadObject")
   private transient ByteBuffer seedBuffer;
 
   /**
@@ -55,6 +53,7 @@ public final class RandomSeederThread extends Thread implements Serializable {
   }
 
   /** Ensure one instance per SeedGenerator even after deserialization. */  
+  @SuppressWarnings("unused")
   private RandomSeederThread readResolve() {
     return getInstance(seedGenerator);
   }
@@ -69,11 +68,12 @@ public final class RandomSeederThread extends Thread implements Serializable {
 
   private void writeObject(ObjectOutputStream oos) throws IOException {
     oos.defaultWriteObject();
-    oos.writeObject(new ArrayList(prngs));
+    oos.writeObject(new ArrayList<>(prngs));
   }
 
   @SuppressWarnings("unchecked")
   private void readObject(ObjectInputStream ois) throws IOException, ClassNotFoundException {
+    ois.defaultReadObject();
     getInstance(seedGenerator).prngs.addAll((ArrayList<Random>) (ois.readObject()));
   }
 
@@ -131,9 +131,7 @@ public final class RandomSeederThread extends Thread implements Serializable {
     if (isInterrupted()) {
       throw new IllegalStateException("Already shut down");
     }
-    for (Random random : randoms) {
-      prngs.add(random);
-    }
+    Collections.addAll(prngs, randoms);
     notifyAll();
   }
 

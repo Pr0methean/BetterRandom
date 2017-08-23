@@ -185,8 +185,7 @@ public final class RandomTestUtils {
   }
 
   @SuppressWarnings("unchecked")
-  public static <T extends Random> void assertEquivalentWhenSerializedAndDeserialized(T rng)
-      throws IOException, ClassNotFoundException {
+  public static <T extends Random> void assertEquivalentWhenSerializedAndDeserialized(T rng) {
     T rng2 = serializeAndDeserialize(rng);
     assert rng != rng2 : "Deserialised RNG should be distinct object.";
 
