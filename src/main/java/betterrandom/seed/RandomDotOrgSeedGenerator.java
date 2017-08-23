@@ -163,7 +163,7 @@ public class RandomDotOrgSeedGenerator implements SeedGenerator {
   }
   
   @Override
-  public int HashCode() {
+  public int hashCode() {
     return 1247952755;
   }
 }

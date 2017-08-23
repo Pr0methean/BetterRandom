@@ -91,7 +91,7 @@ public class DevRandomSeedGenerator implements SeedGenerator {
   }
   
   @Override
-  public int HashCode() {
+  public int hashCode() {
     return -2131802346;
   }
 }
