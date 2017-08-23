@@ -53,7 +53,6 @@
           <configuration>
             <trimStackTrace>false</trimStackTrace>
             <parallel>methods</parallel>
-            <forkedProcessExitTimeoutInSeconds>15</forkedProcessExitTimeoutInSeconds>
             <forkedProcessTimeoutInSeconds>300</forkedProcessTimeoutInSeconds>
           </configuration>
         </plugin>
@@ -86,8 +85,6 @@
             <version>3.6.1</version>
             <configuration>
               <!-- Change source and target to 1.7 if using Java 7 -->
-              <source>1.8</source>
-              <target>1.8</target>
               <fork>true</fork>
               <compilerArguments>
                 <Xmaxerrs>10000</Xmaxerrs>

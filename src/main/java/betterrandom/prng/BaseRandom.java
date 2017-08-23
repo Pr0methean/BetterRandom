@@ -13,10 +13,8 @@ import java.util.Random;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 import java.util.logging.Logger;
-import org.checkerframework.checker.initialization.qual.UnderInitialization;
 import org.checkerframework.checker.initialization.qual.UnknownInitialization;
 import org.checkerframework.checker.nullness.qual.EnsuresNonNull;
-import org.checkerframework.checker.nullness.qual.EnsuresNonNullIf;
 import org.checkerframework.checker.nullness.qual.RequiresNonNull;
 
 @SuppressWarnings("OverriddenMethodCallDuringObjectConstruction")
@@ -77,17 +75,6 @@ public abstract class BaseRandom extends Random implements ByteArrayReseedableRa
     }
   }
 
-  @SuppressWarnings("contracts.precondition.not.satisfied")
-  @Override
-  public void setSeed(@UnknownInitialization BaseRandom this, long seed) {
-    if (superConstructorFinished) {
-      // setSeed can't work until seed array allocated
-      ByteBuffer buffer = ByteBuffer.allocate(8);
-      buffer.putLong(seed);
-      setSeed(buffer.array());
-    }
-  }
-
   // Checker Framework doesn't recognize that the @UnknownInitialization weakens the precondition
   // even with the @RequiresNonNull
   @SuppressWarnings("contracts.precondition.override.invalid")
@@ -100,6 +87,17 @@ public abstract class BaseRandom extends Random implements ByteArrayReseedableRa
       this.seed = seed.clone();
     } finally {
       lock.unlock();
+    }
+  }
+
+  @SuppressWarnings("contracts.precondition.not.satisfied")
+  @Override
+  public void setSeed(@UnknownInitialization BaseRandom this, long seed) {
+    if (superConstructorFinished) {
+      // setSeed can't work until seed array allocated
+      ByteBuffer buffer = ByteBuffer.allocate(8);
+      buffer.putLong(seed);
+      setSeed(buffer.array());
     }
   }
 
