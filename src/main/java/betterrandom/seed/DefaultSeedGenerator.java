@@ -16,7 +16,6 @@
 package betterrandom.seed;
 
 import betterrandom.util.BinaryUtils;
-import java.util.logging.Logger;
 
 /**
  * Seed generator that maintains multiple strategies for seed generation and will delegate to the
@@ -25,9 +24,6 @@ import java.util.logging.Logger;
  * @author Daniel Dyer
  */
 public final class DefaultSeedGenerator implements SeedGenerator {
-
-  private static final String DEBUG_PROPERTY = "betterrandom.debug";
-  private static final Logger LOG = Logger.getLogger(DefaultSeedGenerator.class.getName());
 
   /**
    * Singleton instance.
@@ -66,24 +62,11 @@ public final class DefaultSeedGenerator implements SeedGenerator {
    * @param length The length (in bytes) of the seed.
    * @return A random seed of the requested length.
    */
-  @SuppressWarnings("AccessOfSystemProperties")
-  public byte[] generateSeed(int length) {
+  @Override
+  public byte[] generateSeed(int length) throws SeedException {
     for (SeedGenerator generator : GENERATORS) {
       try {
-        LOG.info(String.format("Trying to generate a %d-byte seed using %s", length, generator));
         byte[] seed = generator.generateSeed(length);
-        try {
-          boolean debug = "true".equals(System.getProperty(DEBUG_PROPERTY, "false"));
-          if (debug) {
-            String seedString = BinaryUtils.convertBytesToHexString(seed);
-            System.out
-                .println(seed.length + " bytes of seed data acquired from " + generator + ":");
-            System.out.println("  " + seedString);
-          }
-        } catch (SecurityException ex) {
-          // Ignore, means we can't read the property so just default to false.
-        }
-
         return seed;
       } catch (SeedException ex) {
         // Ignore and try the next generator...
@@ -91,6 +74,6 @@ public final class DefaultSeedGenerator implements SeedGenerator {
     }
     // This shouldn't happen as at least one the generators should be
     // able to generate a seed.
-    throw new IllegalStateException("All available seed generation strategies failed.");
+    throw new SeedException("All available seed generation strategies failed.");
   }
 }

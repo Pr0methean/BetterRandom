@@ -58,7 +58,7 @@ public class Cmwc4096Random extends BaseRandom implements RepeatableRandom, Entr
   /**
    * Creates a new RNG and seeds it using the default seeding strategy.
    */
-  public Cmwc4096Random() {
+  public Cmwc4096Random() throws SeedException {
     this(DefaultSeedGenerator.getInstance().generateSeed(SEED_SIZE_BYTES));
   }
 

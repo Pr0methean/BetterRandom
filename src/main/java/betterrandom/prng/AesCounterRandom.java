@@ -55,9 +55,10 @@ public class AesCounterRandom extends BaseRandom implements RepeatableRandom,
   /**
    * If the seed is longer than this, part of it becomes the counter's initial value. Otherwise, the
    * full seed becomes the AES key and the counter is initially zero. Package-visible for testing of
-   * its initialization.
+   * its initialization. Cannot be final due to a false "may not have been initialized" error.
    */
-  static final int MAX_KEY_LENGTH_BYTES;
+  static int MAX_KEY_LENGTH_BYTES = 0;
+
   private static final long serialVersionUID = 5949778642428995210L;
   private static final Logger LOG = Logger.getLogger(AesCounterRandom.class.getName());
   private static final int DEFAULT_SEED_SIZE_BYTES = 32;
@@ -81,12 +82,12 @@ public class AesCounterRandom extends BaseRandom implements RepeatableRandom,
 
   static {
     try {
-      int allowedKeyLength = Cipher.getMaxAllowedKeyLength(ALGORITHM_MODE);
-      LOG.info("Maximum allowed key length for AES is " + allowedKeyLength);
-      MAX_KEY_LENGTH_BYTES = Math.min(allowedKeyLength, 32);
+      MAX_KEY_LENGTH_BYTES = Cipher.getMaxAllowedKeyLength(ALGORITHM_MODE);
     } catch (GeneralSecurityException e) {
       throw new RuntimeException(e);
     }
+    LOG.info("Maximum allowed key length for AES is " + MAX_KEY_LENGTH_BYTES);
+    MAX_KEY_LENGTH_BYTES = Math.min(MAX_KEY_LENGTH_BYTES, 32);
   }
 
   private final byte[] currentBlock = new byte[COUNTER_SIZE_BYTES * BLOCKS_AT_ONCE];
@@ -102,7 +103,7 @@ public class AesCounterRandom extends BaseRandom implements RepeatableRandom,
   /**
    * Creates a new RNG and seeds it using 256 bits from the default seeding strategy.
    */
-  public AesCounterRandom() {
+  public AesCounterRandom() throws SeedException {
     this(DEFAULT_SEED_SIZE_BYTES);
   }
 
@@ -128,7 +129,7 @@ public class AesCounterRandom extends BaseRandom implements RepeatableRandom,
    * implementation.
    * @since 1.0.2
    */
-  public AesCounterRandom(int seedSizeBytes) {
+  public AesCounterRandom(int seedSizeBytes) throws SeedException {
     this(DefaultSeedGenerator.getInstance().generateSeed(seedSizeBytes));
   }
 

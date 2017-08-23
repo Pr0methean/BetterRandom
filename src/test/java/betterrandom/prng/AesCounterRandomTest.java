@@ -41,7 +41,6 @@ import org.testng.annotations.Test;
  */
 public class AesCounterRandomTest {
 
-  private static final Logger LOG = Logger.getLogger(AesCounterRandomTest.class.getName());
   private FileHandler logHandler;
 
   @BeforeSuite
@@ -66,7 +65,7 @@ public class AesCounterRandomTest {
 
   @Test(timeOut = 15000)
   public void testSerializableWithoutSeedInCounter()
-      throws GeneralSecurityException, IOException, ClassNotFoundException {
+      throws GeneralSecurityException, IOException, ClassNotFoundException, SeedException {
     // Serialise an RNG.
     AesCounterRandom rng = new AesCounterRandom(16);
     ByteArrayOutputStream byteOutStream = new ByteArrayOutputStream();
@@ -86,7 +85,7 @@ public class AesCounterRandomTest {
 
   @Test(timeOut = 15000)
   public void testSerializableWithSeedInCounter()
-      throws GeneralSecurityException, IOException, ClassNotFoundException {
+      throws GeneralSecurityException, IOException, ClassNotFoundException, SeedException {
     // Serialise an RNG.
     AesCounterRandom rng = new AesCounterRandom(48);
     ByteArrayOutputStream byteOutStream = new ByteArrayOutputStream();
@@ -108,7 +107,7 @@ public class AesCounterRandomTest {
    * Test to ensure that two distinct RNGs with the same seed return the same sequence of numbers.
    */
   @Test(timeOut = 15000)
-  public void testRepeatability() throws GeneralSecurityException {
+  public void testRepeatability() throws GeneralSecurityException, SeedException {
     AesCounterRandom rng = new AesCounterRandom(48);
     // Create second RNG using same seed.
     AesCounterRandom duplicateRNG = new AesCounterRandom(rng.getSeed());
@@ -141,7 +140,7 @@ public class AesCounterRandomTest {
    */
   @Test(timeOut = 15000, groups = "non-deterministic",
       dependsOnMethods = "testRepeatability")
-  public void testStandardDeviation() throws GeneralSecurityException {
+  public void testStandardDeviation() throws GeneralSecurityException, SeedException {
     AesCounterRandom rng = new AesCounterRandom();
     // Expected standard deviation for a uniformly distributed population of values in the range 0..n
     // approaches n/sqrt(12).
@@ -161,7 +160,7 @@ public class AesCounterRandomTest {
 
 
   @Test(timeOut = 15000, expectedExceptions = IllegalArgumentException.class)
-  public void testSeedTooLong() throws GeneralSecurityException {
+  public void testSeedTooLong() throws GeneralSecurityException, SeedException {
     new AesCounterRandom(49); // Should throw an exception.
   }
 
@@ -176,7 +175,7 @@ public class AesCounterRandomTest {
 
 
   @Test//(timeOut = 15000)
-  public void testSetSeed() throws GeneralSecurityException {
+  public void testSetSeed() throws GeneralSecurityException, SeedException {
     // can't use a real SeedGenerator since we need longs, so use a Random
     Random masterRNG = new Random();
     long[] seeds = {masterRNG.nextLong(), masterRNG.nextLong(),
@@ -186,7 +185,6 @@ public class AesCounterRandomTest {
     for (int i = 0; i < 2; i++) {
       for (long seed : seeds) {
         AesCounterRandom rngReseeded = new AesCounterRandom(rngs[i].getSeed());
-        LOG.info("rngReseeded == " + rngReseeded);
         assertTrue(rngReseeded.isSeeded());
         AesCounterRandom rngReseededOther = new AesCounterRandom(rngs[i].getSeed());
         rngReseeded.setSeed(seed);

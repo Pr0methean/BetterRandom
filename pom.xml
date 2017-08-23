@@ -38,6 +38,8 @@
           <configuration>
             <trimStackTrace>false</trimStackTrace>
             <parallel>methods</parallel>
+            <forkedProcessExitTimeoutInSeconds>15</forkedProcessExitTimeoutInSeconds>
+            <forkedProcessTimeoutInSeconds>300</forkedProcessTimeoutInSeconds>
          </configuration>
         </plugin>
         <plugin>
