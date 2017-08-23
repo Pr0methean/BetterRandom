@@ -19,7 +19,7 @@ public class SplittableRandomAdapter extends SingleThreadSplittableRandomAdapter
     initSubclassTransientFields();
   }
 
-  @EnsuresNonNull({"threadLocal", "underlying"})
+  @EnsuresNonNull({"threadLocal"})
   @Override
   protected void initSubclassTransientFields(
       @UnknownInitialization SplittableRandomAdapter this) {

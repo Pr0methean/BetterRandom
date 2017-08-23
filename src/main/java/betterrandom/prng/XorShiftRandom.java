@@ -100,6 +100,7 @@ public class XorShiftRandom extends BaseRandom implements RepeatableRandom, Entr
     return seed.clone();
   }
 
+  @SuppressWarnings("contracts.postcondition.not.satisfied")
   @Override
   public void setSeed(byte[] seed) {
     if (!superConstructorFinished) {
