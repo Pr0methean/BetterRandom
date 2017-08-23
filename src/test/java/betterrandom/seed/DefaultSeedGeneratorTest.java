@@ -31,7 +31,7 @@ public class DefaultSeedGeneratorTest {
    */
   @SuppressWarnings("CallToSystemSetSecurityManager")
   @Test(timeOut = 120000)
-  public void testRestrictedEnvironment() {
+  public void testRestrictedEnvironment() throws SeedException {
     SecurityManager securityManager = System.getSecurityManager();
     try {
       // Don't allow file system or network access.

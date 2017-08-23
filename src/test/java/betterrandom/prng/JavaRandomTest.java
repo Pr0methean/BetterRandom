@@ -29,7 +29,7 @@ public class JavaRandomTest {
    * Test to ensure that two distinct RNGs with the same seed return the same sequence of numbers.
    */
   @Test(timeOut = 15000)
-  public void testRepeatability() {
+  public void testRepeatability() throws SeedException {
     // Create an RNG using the default seeding strategy.
     JavaRandom rng = new JavaRandom();
     // Create second RNG using same seed.

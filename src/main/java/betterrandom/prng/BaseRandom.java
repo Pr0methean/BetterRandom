@@ -6,6 +6,7 @@ import betterrandom.seed.DefaultSeedGenerator;
 import betterrandom.seed.SeedException;
 import betterrandom.seed.SeedGenerator;
 import java.io.IOException;
+import java.io.InvalidObjectException;
 import java.io.ObjectInputStream;
 import java.nio.ByteBuffer;
 import java.util.Random;
@@ -33,7 +34,7 @@ public abstract class BaseRandom extends Random implements ByteArrayReseedableRa
   /**
    * Creates a new RNG and seeds it using the default seeding strategy.
    */
-  public BaseRandom(int seedLength) {
+  public BaseRandom(int seedLength) throws SeedException {
     this(DefaultSeedGenerator.getInstance().generateSeed(seedLength));
   }
 
@@ -93,9 +94,15 @@ public abstract class BaseRandom extends Random implements ByteArrayReseedableRa
   }
 
   @SuppressWarnings({"unused", "OverriddenMethodCallDuringObjectConstruction"})
-  private void readObjectNoData() {
+  private void readObjectNoData() throws InvalidObjectException {
     LOG.warning("BaseRandom.readObjectNoData() invoked; using DefaultSeedGenerator");
-    setSeed(DefaultSeedGenerator.getInstance().generateSeed(getNewSeedLength()));
+    try {
+      setSeed(DefaultSeedGenerator.getInstance().generateSeed(getNewSeedLength()));
+    } catch (SeedException e) {
+      throw (InvalidObjectException)
+          (new InvalidObjectException("Unable to deserialize or generate a seed this RNG")
+          .initCause(e));
+    }
     initTransientFields();
   }
 

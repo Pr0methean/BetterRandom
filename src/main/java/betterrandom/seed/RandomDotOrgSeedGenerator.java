@@ -23,6 +23,7 @@ import java.net.URLConnection;
 import java.text.MessageFormat;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
+import java.util.logging.Logger;
 
 /**
  * Connects to the <a href="http://www.random.org" target="_top">random.org</a> website (via HTTPS)
@@ -33,7 +34,7 @@ import java.util.concurrent.locks.ReentrantLock;
  * @author Daniel Dyer
  */
 public class RandomDotOrgSeedGenerator implements SeedGenerator {
-
+  private static final Logger LOG = Logger.getLogger(RandomDotOrgSeedGenerator.class.getName());
   private static final RandomDotOrgSeedGenerator INSTANCE = new RandomDotOrgSeedGenerator();
   private static final long serialVersionUID = -7400544219489418741L;
   private static final String BASE_URL = "https://www.random.org";
@@ -55,6 +56,8 @@ public class RandomDotOrgSeedGenerator implements SeedGenerator {
    * Delay before retrying in the event of a 503 error.
    */
   private static final int DELAY_BETWEEN_RETRIES_MS = 10 * 1000;
+  private static final int MAX_RETRIES = 1200;
+  private transient int retriesSoFar = 0;
   private static final Lock cacheLock = new ReentrantLock();
   private static byte[] cache = new byte[1024];
   private static int cacheOffset = cache.length;
@@ -120,11 +123,15 @@ public class RandomDotOrgSeedGenerator implements SeedGenerator {
             cacheOffset += numberOfBytes;
           } else {
             refreshCache(length - count);
+            retriesSoFar = 0;
           }
           succeeded = true;
         }
       } catch (IOException ex) {
-        if (ex.getMessage().contains("503")) {
+        if (ex.getMessage().contains("HTTP response code: 503")) {
+          retriesSoFar++;
+          LOG.severe(String.format("%s (retrying in %d ms)",
+              ex.getMessage(), DELAY_BETWEEN_RETRIES_MS));
           try {
             Thread.sleep(DELAY_BETWEEN_RETRIES_MS);
           } catch (InterruptedException e) {

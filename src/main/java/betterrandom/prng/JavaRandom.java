@@ -47,7 +47,7 @@ public class JavaRandom extends Random implements RepeatableRandom {
   /**
    * Creates a new RNG and seeds it using the default seeding strategy.
    */
-  public JavaRandom() {
+  public JavaRandom() throws SeedException {
     this(DefaultSeedGenerator.getInstance().generateSeed(SEED_SIZE_BYTES));
   }
 

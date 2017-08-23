@@ -107,7 +107,7 @@ public class Cmwc4096RandomTest {
 
   @SuppressWarnings("resource")
   @Test(timeOut = 15000)
-  public void testSerializable() throws IOException, ClassNotFoundException {
+  public void testSerializable() throws IOException, ClassNotFoundException, SeedException {
     // Serialise an RNG.
     Cmwc4096Random rng = new Cmwc4096Random();
     ByteArrayOutputStream byteOutStream = new ByteArrayOutputStream();
