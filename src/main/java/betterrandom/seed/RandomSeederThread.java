@@ -110,6 +110,7 @@ public final class RandomSeederThread extends Thread implements Serializable {
         }
       }
     } catch (InterruptedException e) {
+      interrupt();
       INSTANCES.remove(seedGenerator);
     }
   }
@@ -122,7 +123,7 @@ public final class RandomSeederThread extends Thread implements Serializable {
    * Add one or more {@link Random} instances.
    */
   public synchronized void add(Random... randoms) {
-    if (!isAlive()) {
+    if (isInterrupted()) {
       throw new IllegalStateException("Already shut down");
     }
     for (Random random : randoms) {
