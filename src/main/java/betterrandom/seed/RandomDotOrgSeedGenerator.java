@@ -157,4 +157,13 @@ public class RandomDotOrgSeedGenerator implements SeedGenerator {
   public String toString() {
     return BASE_URL;
   }
+  
+  public boolean equals(Object o) {
+    return o != null && getClass() == o.getClass();
+  }
+  
+  @Override
+  public int HashCode() {
+    return 1247952755;
+  }
 }

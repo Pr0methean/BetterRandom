@@ -85,4 +85,13 @@ public class DevRandomSeedGenerator implements SeedGenerator {
   public String toString() {
     return "/dev/random";
   }
+  
+  public boolean equals(Object o) {
+    return o != null && getClass() == o.getClass();
+  }
+  
+  @Override
+  public int HashCode() {
+    return -2131802346;
+  }
 }

@@ -53,9 +53,17 @@ public class SecureRandomSeedGenerator implements SeedGenerator {
     return SOURCE.generateSeed(length);
   }
 
-
   @Override
   public String toString() {
     return "java.security.SecureRandom";
+  }
+  
+  public boolean equals(Object o) {
+    return o != null && getClass() == o.getClass();
+  }
+  
+  @Override
+  public int HashCode() {
+    return -261707500;
   }
 }
