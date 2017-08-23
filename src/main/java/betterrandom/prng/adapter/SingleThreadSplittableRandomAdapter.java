@@ -15,7 +15,6 @@ public class SingleThreadSplittableRandomAdapter extends BaseRandom {
 
   public static final int SEED_LENGTH_BYTES = 8;
   private static final long serialVersionUID = -1125374167384636394L;
-  @SuppressWarnings("InstanceVariableMayNotBeInitializedByReadObject")
   protected transient SplittableRandom underlying; // a SplittableRandom is not Serializable
   protected boolean deserializedAndNotUsedSince = false;
 
