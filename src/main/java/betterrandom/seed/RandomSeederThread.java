@@ -2,7 +2,6 @@ package betterrandom.seed;
 
 import betterrandom.ByteArrayReseedableRandom;
 import betterrandom.EntropyCountingRandom;
-import betterrandom.util.SerializableWeakReference;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -33,8 +32,7 @@ public final class RandomSeederThread extends Thread implements Serializable {
   private static final long serialVersionUID = -2858126391794302039L;
   private final SeedGenerator seedGenerator;
   @SuppressWarnings("NonSerializableFieldInSerializableClass")
-  private transient Set<Random> prngs = Collections.newSetFromMap(
-      Collections.synchronizedMap(new WeakHashMap<>()));
+  private transient Set<Random> prngs;
   private final byte[] seedArray = new byte[8];
   private transient ByteBuffer seedBuffer;
 
@@ -54,6 +52,8 @@ public final class RandomSeederThread extends Thread implements Serializable {
   }
 
   private void initTransientState() {
+    prngs = Collections.newSetFromMap(
+      Collections.synchronizedMap(new WeakHashMap<>()));
     seedBuffer = ByteBuffer.wrap(seedArray);
     setDaemon(true);
     start();
@@ -69,8 +69,7 @@ public final class RandomSeederThread extends Thread implements Serializable {
   private void readObject(ObjectInputStream ois) throws IOException, ClassNotFoundException {
     ois.defaultReadObject();
     initTransientState();
-    prngs = Collections.newSetFromMap(
-        Collections.synchronizedMap(new WeakHashMap<>((Map<Random, Boolean>) ois.readObject())));
+    prngs.addAll(((Map<Random,?>) ois.readObject()).keySet());
   }
 
   @SuppressWarnings("InfiniteLoopStatement")
