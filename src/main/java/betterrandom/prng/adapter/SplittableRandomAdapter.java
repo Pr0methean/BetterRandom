@@ -33,6 +33,9 @@ public class SplittableRandomAdapter extends SingleThreadSplittableRandomAdapter
    */
   @Override
   public synchronized void setSeed(long seed) {
+    if (!superConstructorFinished) {
+      return;
+    }
     threadLocal.set(new SplittableRandom(seed));
   }
 
