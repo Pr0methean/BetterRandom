@@ -24,7 +24,6 @@ import betterrandom.util.BinaryUtils;
 import java.util.Arrays;
 import java.util.Random;
 import org.checkerframework.checker.initialization.qual.UnknownInitialization;
-import org.checkerframework.checker.nullness.qual.EnsuresNonNull;
 import org.checkerframework.checker.nullness.qual.RequiresNonNull;
 
 /**
@@ -73,8 +72,7 @@ public class XorShiftRandom extends BaseRandom implements RepeatableRandom, Entr
 
   @Override
   @RequiresNonNull("seed")
-  protected void initSubclassTransientFields(@UnknownInitialization XorShiftRandom this)
-  {
+  protected void initSubclassTransientFields(@UnknownInitialization XorShiftRandom this) {
     if (seed.length != SEED_SIZE_BYTES) {
       throw new IllegalArgumentException("XOR shift RNG requires a seed of exactly 20 bytes.");
     }
