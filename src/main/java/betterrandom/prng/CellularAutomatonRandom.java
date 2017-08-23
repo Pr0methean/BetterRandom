@@ -100,6 +100,7 @@ public class CellularAutomatonRandom extends BaseRandom implements RepeatableRan
    */
   public CellularAutomatonRandom(byte[] seed) {
     super(seed);
+    initSubclassTransientFields();
   }
 
   private static int convertCellsToInt(int[] cells, int offset) {
@@ -137,12 +138,11 @@ public class CellularAutomatonRandom extends BaseRandom implements RepeatableRan
 
   @EnsuresNonNull({"cells", "lock"})
   @Override
-  protected void initTransientFields(
+  protected void initSubclassTransientFields(
       @UnknownInitialization CellularAutomatonRandom this) {
     cells = new int[AUTOMATON_LENGTH];
     currentCellIndex = AUTOMATON_LENGTH - 1;
     entropyBytes = SEED_SIZE_BYTES;
-    super.initTransientFields();
     lock.lock();
     try {
       setSeed(seed);

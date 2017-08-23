@@ -146,6 +146,7 @@ public class AesCounterRandom extends BaseRandom implements RepeatableRandom,
     super(seed);
     currentBlock = new byte[COUNTER_SIZE_BYTES * BLOCKS_AT_ONCE];
     index = currentBlock.length;
+    initSubclassTransientFields();
   }
 
   /**
@@ -153,9 +154,8 @@ public class AesCounterRandom extends BaseRandom implements RepeatableRandom,
    */
   @EnsuresNonNull({"counter", "counterInput", "cipher", "lock"})
   @Override
-  protected void initTransientFields(
+  protected void initSubclassTransientFields(
       @UnknownInitialization AesCounterRandom this) {
-    super.initTransientFields();
     if (counter == null) {
       counter = new byte[COUNTER_SIZE_BYTES];
     }

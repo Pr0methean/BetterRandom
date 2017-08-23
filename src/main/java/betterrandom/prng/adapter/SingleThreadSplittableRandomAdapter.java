@@ -25,6 +25,7 @@ public class SingleThreadSplittableRandomAdapter extends BaseRandom {
     super(seedGenerator.generateSeed(SEED_LENGTH_BYTES));
     underlying = new SplittableRandom(
         BinaryUtils.convertBytesToLong(seed, 0));
+    initSubclassTransientFields();
   }
 
   // Overridden in the subclass
@@ -34,15 +35,15 @@ public class SingleThreadSplittableRandomAdapter extends BaseRandom {
 
   @EnsuresNonNull("underlying")
   @Override
-  protected void initTransientFields(
+  protected void initSubclassTransientFields(
       @UnknownInitialization SingleThreadSplittableRandomAdapter this) {
-    super.initTransientFields();
     setSeed(seed);
   }
 
   private void readObject(ObjectInputStream ois) throws IOException, ClassNotFoundException {
     ois.defaultReadObject();
     initTransientFields();
+    initSubclassTransientFields();
     if (!deserializedAndNotUsedSince) {
       underlying = underlying.split(); // Ensures we aren't rewinding
     }
