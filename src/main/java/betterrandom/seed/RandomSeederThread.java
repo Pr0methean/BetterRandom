@@ -2,12 +2,11 @@ package betterrandom.seed;
 
 import betterrandom.ByteArrayReseedableRandom;
 import betterrandom.EntropyCountingRandom;
-import betterrandom.util.SerializableWeakReference;
+import betterrandom.util.WeakReferenceWithEquals;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
-import java.lang.ref.Reference;
 import java.nio.ByteBuffer;
 import java.util.Collections;
 import java.util.HashMap;
@@ -23,19 +22,18 @@ import java.util.stream.Collectors;
 public final class RandomSeederThread extends Thread implements Serializable {
 
   private static final Logger LOG = Logger.getLogger(RandomSeederThread.class.getName());
-  private static final Map<SeedGenerator, RandomSeederThread> INSTANCES =
-      new ConcurrentHashMap<>();
   /**
    * Used to avoid full spin-locking when every {@link Random} to be reseeded is an {@link
    * EntropyCountingRandom} and none has spent its entropy.
    */
   private static final long ENTROPY_POLL_INTERVAL_MS = 10;
   private static final long serialVersionUID = -2858126391794302039L;
+  private static final Map<SeedGenerator, RandomSeederThread> INSTANCES =
+      new ConcurrentHashMap<>();
   private final SeedGenerator seedGenerator;
-  @SuppressWarnings("NonSerializableFieldInSerializableClass")
-  private transient Set<Random> prngs = Collections.newSetFromMap(
-      Collections.synchronizedMap(new WeakHashMap<>()));
   private final byte[] seedArray = new byte[8];
+  private final Set<WeakReferenceWithEquals<Random>> prngs = Collections.newSetFromMap(
+      new ConcurrentHashMap<WeakReferenceWithEquals<Random>, Boolean>());
   private transient ByteBuffer seedBuffer;
 
   /**
@@ -69,8 +67,7 @@ public final class RandomSeederThread extends Thread implements Serializable {
   private void readObject(ObjectInputStream ois) throws IOException, ClassNotFoundException {
     ois.defaultReadObject();
     initTransientState();
-    prngs = Collections.newSetFromMap(
-        Collections.synchronizedMap(new WeakHashMap<>((Map<Random, Boolean>) ois.readObject())));
+    INSTANCES.put(seedGenerator, this);
   }
 
   @SuppressWarnings("InfiniteLoopStatement")
@@ -82,7 +79,12 @@ public final class RandomSeederThread extends Thread implements Serializable {
           wait();
         }
         boolean entropyConsumed = false;
-        for (Random random : prngs) {
+        for (WeakReferenceWithEquals<Random> randomRef : prngs) {
+          Random random = randomRef.get();
+          if (random == null) {
+            prngs.remove(randomRef);
+            continue;
+          }
           if (random instanceof EntropyCountingRandom
               && ((EntropyCountingRandom) random).entropyOctets() > 0) {
             continue;

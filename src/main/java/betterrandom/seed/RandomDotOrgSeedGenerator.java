@@ -18,6 +18,7 @@ package betterrandom.seed;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.ObjectInputStream;
 import java.net.URL;
 import java.net.URLConnection;
 import java.text.MessageFormat;
@@ -61,12 +62,22 @@ public class RandomDotOrgSeedGenerator implements SeedGenerator {
   private static final Lock cacheLock = new ReentrantLock();
   private static byte[] cache = new byte[1024];
   private static int cacheOffset = cache.length;
-  private transient int retriesSoFar = 0;
+  private transient int retriesSoFar;
+
+  private void initTransientFields() {
+    retriesSoFar = 0;
+  }
 
   /**
    * Singleton unless subclassed.
    */
   protected RandomDotOrgSeedGenerator() {
+    initTransientFields();
+  }
+
+  private void readObject(ObjectInputStream ois) throws IOException, ClassNotFoundException {
+    ois.defaultReadObject();
+    initTransientFields();
   }
 
   public static RandomDotOrgSeedGenerator getInstance() {
