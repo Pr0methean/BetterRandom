@@ -20,6 +20,12 @@ public class WeakReferenceWithEquals<T extends Serializable> extends WeakReferen
   private static final long serialVersionUID = -4285013075064416407L;
   private final int hashCode;
 
+  /** Needed to satisfy ObjectStreamClass.checkDeserialize. */
+  private WeakReferenceWithEquals() {
+    super(null);
+    hashCode = 0;
+  }
+
   public WeakReferenceWithEquals(T target) {
     super(target);
     hashCode = target.hashCode();
