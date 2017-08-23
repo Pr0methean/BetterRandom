@@ -15,6 +15,8 @@
 // ============================================================================
 package betterrandom.util;
 
+import java.nio.ByteBuffer;
+
 /**
  * Utility methods for working with binary and hex data.
  *
@@ -151,5 +153,12 @@ public final class BinaryUtils {
       bitValue /= 2;
     }
     return new BitString(bits.toString());
+  }
+  
+  public static byte[] convertLongToBytes(long input) {
+    byte[] array = new byte[Long.BYTES];
+    ByteBuffer buffer = ByteBuffer.wrap(array);
+    buffer.putLong(input);
+    return array;
   }
 }
