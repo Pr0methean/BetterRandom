@@ -11,6 +11,7 @@ import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Random;
 import java.util.Set;
 import java.util.WeakHashMap;
@@ -48,7 +49,9 @@ public final class RandomSeederThread extends Thread implements Serializable {
    * Obtain the instance for the given {@link SeedGenerator}, creating it if it doesn't exist.
    */
   public static RandomSeederThread getInstance(SeedGenerator seedGenerator) {
-    return INSTANCES.computeIfAbsent(seedGenerator, RandomSeederThread::new);
+    return INSTANCES.computeIfAbsent(
+        Objects.requireNonNull(seedGenerator, "seedGenerator must not be null"),
+        RandomSeederThread::new);
   }
 
   /** Ensure one instance per SeedGenerator even after deserialization. */  
