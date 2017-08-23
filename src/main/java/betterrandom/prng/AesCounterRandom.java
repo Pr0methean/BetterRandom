@@ -31,6 +31,8 @@ import java.util.logging.Logger;
 import javax.crypto.Cipher;
 import javax.crypto.NoSuchPaddingException;
 import javax.crypto.spec.SecretKeySpec;
+import org.checkerframework.checker.initialization.qual.UnderInitialization;
+import org.checkerframework.checker.nullness.qual.EnsuresNonNull;
 
 /**
  * <p>Non-linear random number generator based on the AES block cipher in counter mode. Uses the
@@ -147,8 +149,10 @@ public class AesCounterRandom extends BaseRandom implements RepeatableRandom,
   /**
    * Called in constructor and readObject to initialize transient fields.
    */
+  @EnsuresNonNull({"counter", "counterInput", "cipher"})
   @Override
-  protected void initTransientFields() {
+  protected void initTransientFields(
+      @UnderInitialization(AesCounterRandom.class) AesCounterRandom this) {
     super.initTransientFields();
     if (counter == null) {
       counter = new byte[COUNTER_SIZE_BYTES];

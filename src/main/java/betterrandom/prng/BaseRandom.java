@@ -72,6 +72,7 @@ public abstract class BaseRandom extends Random implements ByteArrayReseedableRa
     }
   }
 
+  @EnsuresNonNull("seed")
   @Override
   public void setSeed(long seed) {
     ByteBuffer buffer = ByteBuffer.allocate(8);
@@ -79,6 +80,7 @@ public abstract class BaseRandom extends Random implements ByteArrayReseedableRa
     setSeed(buffer.array());
   }
 
+  @EnsuresNonNull("seed")
   @Override
   public void setSeed(byte[] seed) {
     lock.lock();

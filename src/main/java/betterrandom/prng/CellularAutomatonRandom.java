@@ -23,6 +23,8 @@ import betterrandom.seed.SeedGenerator;
 import betterrandom.util.BinaryUtils;
 import java.util.Arrays;
 import java.util.Random;
+import org.checkerframework.checker.initialization.qual.UnderInitialization;
+import org.checkerframework.checker.nullness.qual.EnsuresNonNull;
 
 /**
  * <p>Java port of the <a href="http://home.southernct.edu/~pasqualonia1/ca/report.html"
@@ -107,6 +109,7 @@ public class CellularAutomatonRandom extends BaseRandom implements RepeatableRan
         + (cells[offset + 3] << 24);
   }
 
+  @EnsuresNonNull("cells")
   protected void copySeedToCellsAndPreEvolve() {
     cells = new int[AUTOMATON_LENGTH];
     // Set initial cell states using seed.
@@ -133,7 +136,8 @@ public class CellularAutomatonRandom extends BaseRandom implements RepeatableRan
   }
 
   @Override
-  protected void initTransientFields() {
+  protected void initTransientFields(
+      @UnderInitialization(CellularAutomatonRandom.class) CellularAutomatonRandom this) {
     cells = new int[AUTOMATON_LENGTH];
     currentCellIndex = AUTOMATON_LENGTH - 1;
     entropyBytes = SEED_SIZE_BYTES;
