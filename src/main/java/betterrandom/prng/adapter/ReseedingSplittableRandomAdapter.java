@@ -55,9 +55,9 @@ public class ReseedingSplittableRandomAdapter extends SplittableRandomAdapter {
   public ReseedingSplittableRandomAdapter getInstance(SeedGenerator seedGenerator)
       throws SeedException {
     try {
-      return INSTANCES.computeIfAbsent(seedGenerator, seedGenerator1 -> {
+      return INSTANCES.computeIfAbsent(seedGenerator, seedGenerator_ -> {
         try {
-          return new ReseedingSplittableRandomAdapter(seedGenerator);
+          return new ReseedingSplittableRandomAdapter(seedGenerator_);
         } catch (SeedException e) {
           throw new RuntimeException(e);
         }
