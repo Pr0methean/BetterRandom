@@ -2,6 +2,7 @@ package betterrandom.util;
 
 import java.lang.ref.WeakReference;
 import java.util.Objects;
+import org.checkerframework.checker.nullness.qual.Nullable;
 
 /**
  * A {@link WeakReference}&lt;T&gt; that compares the object it refers to when implementing {@link
@@ -13,7 +14,7 @@ public class WeakReferenceWithEquals<T> extends WeakReference<T> {
 
   private final int hashCode;
 
-  public WeakReferenceWithEquals(T target) {
+  public WeakReferenceWithEquals(@Nullable T target) {
     super(target);
     hashCode = target.hashCode();
   }
@@ -32,7 +33,7 @@ public class WeakReferenceWithEquals<T> extends WeakReference<T> {
    * {@inheritDoc} All cleared instances of WeakReferenceWithEquals compare as equal.
    */
   @Override
-  public boolean equals(Object o) {
+  public boolean equals(@Nullable Object o) {
     return (this == o) || (o instanceof WeakReferenceWithEquals
         && Objects.equals(((WeakReferenceWithEquals) o).get(), get()));
   }

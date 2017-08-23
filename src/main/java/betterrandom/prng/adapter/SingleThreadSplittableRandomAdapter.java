@@ -10,6 +10,8 @@ import java.util.SplittableRandom;
 import java.util.stream.DoubleStream;
 import java.util.stream.IntStream;
 import java.util.stream.LongStream;
+import org.checkerframework.checker.initialization.qual.UnderInitialization;
+import org.checkerframework.checker.nullness.qual.EnsuresNonNull;
 
 public class SingleThreadSplittableRandomAdapter extends BaseRandom {
 
@@ -30,8 +32,11 @@ public class SingleThreadSplittableRandomAdapter extends BaseRandom {
     return underlying;
   }
 
+  @EnsuresNonNull("underlying")
   @Override
-  protected void initTransientFields() {
+  protected void initTransientFields(
+      @UnderInitialization(SingleThreadSplittableRandomAdapter.class)
+      SingleThreadSplittableRandomAdapter this) {
     super.initTransientFields();
     setSeed(seed);
   }
@@ -145,7 +150,7 @@ public class SingleThreadSplittableRandomAdapter extends BaseRandom {
   @Override
   public IntStream ints(long streamSize, int randomNumberOrigin,
       int randomNumberBound) {
-            deserializedAndNotUsedSince = false;
+    deserializedAndNotUsedSince = false;
     return getSplittableRandom().ints(streamSize, randomNumberOrigin, randomNumberBound);
   }
 
@@ -182,26 +187,26 @@ public class SingleThreadSplittableRandomAdapter extends BaseRandom {
 
   @Override
   public DoubleStream doubles(long streamSize) {
-        deserializedAndNotUsedSince = false;
+    deserializedAndNotUsedSince = false;
     return getSplittableRandom().doubles(streamSize);
   }
 
   @Override
   public DoubleStream doubles() {
-        deserializedAndNotUsedSince = false;
+    deserializedAndNotUsedSince = false;
     return getSplittableRandom().doubles();
   }
 
   @Override
   public DoubleStream doubles(long streamSize, double randomNumberOrigin,
       double randomNumberBound) {
-            deserializedAndNotUsedSince = false;
+    deserializedAndNotUsedSince = false;
     return getSplittableRandom().doubles(streamSize, randomNumberOrigin, randomNumberBound);
   }
 
   @Override
   public DoubleStream doubles(double randomNumberOrigin, double randomNumberBound) {
-        deserializedAndNotUsedSince = false;
+    deserializedAndNotUsedSince = false;
     return getSplittableRandom().doubles(randomNumberOrigin, randomNumberBound);
   }
 

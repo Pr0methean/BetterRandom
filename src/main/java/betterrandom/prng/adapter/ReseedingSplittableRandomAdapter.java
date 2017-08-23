@@ -6,6 +6,9 @@ import betterrandom.seed.SeedException;
 import betterrandom.seed.SeedGenerator;
 import java.util.SplittableRandom;
 import java.util.WeakHashMap;
+import org.checkerframework.checker.initialization.qual.UnderInitialization;
+import org.checkerframework.checker.nullness.qual.EnsuresNonNull;
+import org.checkerframework.checker.nullness.qual.Nullable;
 
 /**
  * A version of {@link SplittableRandomAdapter} that uses a {@link RandomSeederThread} to replace
@@ -16,7 +19,7 @@ public class ReseedingSplittableRandomAdapter extends SplittableRandomAdapter {
 
   private static final long serialVersionUID = 6301096404034224037L;
   private static final WeakHashMap<SeedGenerator, ReseedingSplittableRandomAdapter> INSTANCES = new WeakHashMap<>();
-  private static ReseedingSplittableRandomAdapter defaultInstance;
+  @Nullable private static ReseedingSplittableRandomAdapter defaultInstance;
   protected final SeedGenerator seedGenerator;
   private transient RandomSeederThread seederThread; // Transient to work around Oracle bug 9050586
   private transient ThreadLocal<SingleThreadSplittableRandomAdapter> threadLocal;
@@ -40,8 +43,10 @@ public class ReseedingSplittableRandomAdapter extends SplittableRandomAdapter {
     return defaultInstance;
   }
 
+  @EnsuresNonNull("threadLocal")
   @Override
-  protected void initTransientFields() {
+  protected void initTransientFields(
+      @UnderInitialization(ReseedingSplittableRandomAdapter.class)ReseedingSplittableRandomAdapter this) {
     if (!superConstructorFinished) {
       return;
     }

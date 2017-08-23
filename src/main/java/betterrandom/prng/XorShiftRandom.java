@@ -23,6 +23,8 @@ import betterrandom.seed.SeedGenerator;
 import betterrandom.util.BinaryUtils;
 import java.util.Arrays;
 import java.util.Random;
+import org.checkerframework.checker.initialization.qual.UnderInitialization;
+import org.checkerframework.checker.nullness.qual.EnsuresNonNull;
 
 /**
  * <p>Very fast pseudo random number generator.  See <a href="http://school.anhb.uwa.edu.au/personalpages/kwessen/shared/Marsaglia03.html">this
@@ -69,7 +71,8 @@ public class XorShiftRandom extends BaseRandom implements RepeatableRandom, Entr
   }
 
   @Override
-  protected void initTransientFields() {
+  protected void initTransientFields(@UnderInitialization(XorShiftRandom.class) XorShiftRandom this)
+  {
     if (seed.length != SEED_SIZE_BYTES) {
       throw new IllegalArgumentException("XOR shift RNG requires a seed of exactly 20 bytes.");
     }

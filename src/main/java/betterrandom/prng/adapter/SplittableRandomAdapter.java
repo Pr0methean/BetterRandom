@@ -3,6 +3,8 @@ package betterrandom.prng.adapter;
 import betterrandom.seed.SeedException;
 import betterrandom.seed.SeedGenerator;
 import java.util.SplittableRandom;
+import org.checkerframework.checker.initialization.qual.UnderInitialization;
+import org.checkerframework.checker.nullness.qual.EnsuresNonNull;
 
 /**
  * Thread-safe version of {@link SingleThreadSplittableRandomAdapter}.
@@ -17,8 +19,9 @@ public class SplittableRandomAdapter extends SingleThreadSplittableRandomAdapter
     super(seedGenerator);
   }
 
+  @EnsuresNonNull("threadLocal")
   @Override
-  protected void initTransientFields() {
+  protected void initTransientFields(@UnderInitialization(SplittableRandomAdapter.class) this) {
     super.initTransientFields();
     threadLocal = ThreadLocal.withInitial(underlying::split);
   }
