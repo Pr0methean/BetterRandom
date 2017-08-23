@@ -12,7 +12,7 @@ import org.testng.annotations.Test;
 public class SingleThreadSplittableRandomAdapterTest {
 
   /** Overridden in subclasses, so that subclassing the test can test the subclasses. */
-  protected SingleThreadSplittableRandomAdapter createAdapter() throws SeedException {
+  protected BaseSplittableRandomAdapter createAdapter() throws SeedException {
     return new SingleThreadSplittableRandomAdapter(
         DefaultSeedGenerator.getInstance());
   }
@@ -24,12 +24,12 @@ public class SingleThreadSplittableRandomAdapterTest {
 
   @Test
   public void testSerialization() throws Exception {
-    SingleThreadSplittableRandomAdapter adapter = createAdapter();
+    BaseSplittableRandomAdapter adapter = createAdapter();
     // May change when serialized and deserialized, but deserializing twice should yield same object
     // and deserialization should be idempotent
-    SingleThreadSplittableRandomAdapter adapter2 = serializeAndDeserialize(adapter);
-    SingleThreadSplittableRandomAdapter adapter3 = serializeAndDeserialize(adapter);
-    SingleThreadSplittableRandomAdapter adapter4 = serializeAndDeserialize(adapter2);
+    BaseSplittableRandomAdapter adapter2 = serializeAndDeserialize(adapter);
+    BaseSplittableRandomAdapter adapter3 = serializeAndDeserialize(adapter);
+    BaseSplittableRandomAdapter adapter4 = serializeAndDeserialize(adapter2);
     testEquivalence(adapter2, adapter3, 20);
     testEquivalence(adapter2, adapter4, 20);
   }

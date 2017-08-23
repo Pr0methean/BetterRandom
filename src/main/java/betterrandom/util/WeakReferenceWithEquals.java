@@ -14,9 +14,13 @@ public class WeakReferenceWithEquals<T> extends WeakReference<T> {
 
   private final int hashCode;
 
-  public WeakReferenceWithEquals(@Nullable T target) {
+  public WeakReferenceWithEquals(T target) {
     super(target);
-    hashCode = target.hashCode();
+    if (target == null) {
+      hashCode = 0;
+    } else {
+      hashCode = target.hashCode();
+    }
   }
 
   /**
@@ -32,6 +36,7 @@ public class WeakReferenceWithEquals<T> extends WeakReference<T> {
   /**
    * {@inheritDoc} All cleared instances of WeakReferenceWithEquals compare as equal.
    */
+  @SuppressWarnings("argument.type.incompatible") // Objects.equals handles nulls
   @Override
   public boolean equals(@Nullable Object o) {
     return (this == o) || (o instanceof WeakReferenceWithEquals

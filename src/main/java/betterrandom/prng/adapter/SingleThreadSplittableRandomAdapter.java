@@ -6,6 +6,7 @@ import betterrandom.util.BinaryUtils;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.util.SplittableRandom;
+import org.checkerframework.checker.initialization.qual.UnknownInitialization;
 
 public class SingleThreadSplittableRandomAdapter extends DirectSplittableRandomAdapter {
 
@@ -30,6 +31,7 @@ public class SingleThreadSplittableRandomAdapter extends DirectSplittableRandomA
   private void readObject(ObjectInputStream ois) throws IOException, ClassNotFoundException {
     ois.defaultReadObject();
     initTransientFields();
+    setSeed(seed);
     initSubclassTransientFields();
     if (!deserializedAndNotUsedSince) {
       underlying = underlying.split(); // Ensures we aren't rewinding
@@ -38,18 +40,17 @@ public class SingleThreadSplittableRandomAdapter extends DirectSplittableRandomA
   }
 
   @Override
-  public synchronized void setSeed(long seed) {
-    if (!superConstructorFinished) {
-      return; // Cannot work when called from Random.<init>
-    }
+  public void setSeed(@UnknownInitialization SingleThreadSplittableRandomAdapter this,
+      long seed) {
     underlying = new SplittableRandom(seed);
-    super.setSeed(BinaryUtils.convertLongToBytes(seed));
+    this.seed = BinaryUtils.convertLongToBytes(seed);
   }
 
   @Override
-  public synchronized void setSeed(byte[] seed) {
+  public void setSeed(@UnknownInitialization SingleThreadSplittableRandomAdapter this,
+      byte[] seed) {
     underlying = new SplittableRandom(BinaryUtils.convertBytesToLong(seed, 0));
-    super.setSeed(seed);
+    this.seed = seed;
   }
 
   @Override

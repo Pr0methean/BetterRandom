@@ -27,10 +27,10 @@ import java.security.GeneralSecurityException;
 import java.util.Random;
 import java.util.logging.FileHandler;
 import java.util.logging.Logger;
+import org.checkerframework.checker.nullness.qual.Nullable;
 import org.testng.annotations.AfterSuite;
 import org.testng.annotations.BeforeSuite;
 import org.testng.annotations.Test;
-
 /**
  * Unit test for the AES RNG.
  *
@@ -38,7 +38,7 @@ import org.testng.annotations.Test;
  */
 public class AesCounterRandomTest {
 
-  private FileHandler logHandler;
+  @Nullable private FileHandler logHandler;
 
   @BeforeSuite
   public void setUp() throws IOException {
@@ -48,7 +48,9 @@ public class AesCounterRandomTest {
 
   @AfterSuite
   public void tearDown() {
-    logHandler.close();
+    if (logHandler != null) {
+      logHandler.close();
+    }
   }
 
   @Test(timeOut = 15000)
@@ -135,6 +137,7 @@ public class AesCounterRandomTest {
   /**
    * RNG must not accept a null seed otherwise it will not be properly initialised.
    */
+  @SuppressWarnings("argument.type.incompatible")
   @Test(timeOut = 15000, expectedExceptions = IllegalArgumentException.class)
   public void testNullSeed() throws GeneralSecurityException {
     new AesCounterRandom((byte[]) null); // Should throw an exception.

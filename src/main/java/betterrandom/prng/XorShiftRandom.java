@@ -100,17 +100,18 @@ public class XorShiftRandom extends BaseRandom implements RepeatableRandom, Entr
     return seed.clone();
   }
 
-  @SuppressWarnings("contracts.postcondition.not.satisfied")
+  @SuppressWarnings({"contracts.postcondition.not.satisfied",
+      "contracts.precondition.override.invalid"})
   @Override
-  public void setSeed(byte[] seed) {
-    if (!superConstructorFinished) {
-      // setSeed can't work until seed array allocated
+  public void setSeed(@UnknownInitialization XorShiftRandom this, byte[] seed) {
+    if (lock == null) {
+      // setSeed can't work until lock is initialized
       return;
     }
     lock.lock();
     try {
       this.seed = seed.clone();
-      initTransientFields();
+      initSubclassTransientFields();
     } finally {
       lock.unlock();
     }

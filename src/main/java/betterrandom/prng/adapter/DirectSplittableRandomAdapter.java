@@ -13,10 +13,11 @@ public abstract class DirectSplittableRandomAdapter extends BaseSplittableRandom
 
   public DirectSplittableRandomAdapter(byte[] seed) {
     super(seed);
+    initSubclassTransientFields();
   }
 
   @EnsuresNonNull("underlying")
-  @RequiresNonNull("seed")
+  @RequiresNonNull({"seed", "lock"})
   @Override
   protected void initSubclassTransientFields(
       @UnknownInitialization DirectSplittableRandomAdapter this) {

@@ -84,6 +84,7 @@ public class XorShiftRandomTest {
   /**
    * RNG must not accept a null seed otherwise it will not be properly initialised.
    */
+  @SuppressWarnings("argument.type.incompatible")
   @Test(timeOut = 15000, expectedExceptions = IllegalArgumentException.class)
   public void testNullSeed() {
     new XorShiftRandom((byte[]) null);

@@ -44,7 +44,7 @@ public class ReseedingSplittableRandomAdapter extends BaseSplittableRandomAdapte
     return defaultInstance;
   }
 
-  @SuppressWarnings("contracts.postcondition.override.invalid")
+  @SuppressWarnings("contracts.precondition.override.invalid")
   @EnsuresNonNull({"threadLocal", "seederThread"})
   @RequiresNonNull("seedGenerator")
   @Override
