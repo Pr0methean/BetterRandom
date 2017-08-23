@@ -18,7 +18,7 @@ public class ReseedingSplittableRandomAdapter extends SplittableRandomAdapter {
   private static final WeakHashMap<SeedGenerator, ReseedingSplittableRandomAdapter> INSTANCES = new WeakHashMap<>();
   private static ReseedingSplittableRandomAdapter defaultInstance;
   protected final SeedGenerator seedGenerator;
-  private final RandomSeederThread seederThread;
+  private transient RandomSeederThread seederThread; // Transient to work around Oracle bug 9050586
   private transient ThreadLocal<SingleThreadSplittableRandomAdapter> threadLocal;
 
   /**
@@ -29,7 +29,6 @@ public class ReseedingSplittableRandomAdapter extends SplittableRandomAdapter {
   private ReseedingSplittableRandomAdapter(SeedGenerator seedGenerator) throws SeedException {
     super(seedGenerator);
     this.seedGenerator = seedGenerator;
-    seederThread = RandomSeederThread.getInstance(seedGenerator);
   }
 
   public static synchronized ReseedingSplittableRandomAdapter getDefaultInstance()
@@ -43,6 +42,7 @@ public class ReseedingSplittableRandomAdapter extends SplittableRandomAdapter {
   @Override
   protected void initTransientFields() {
     super.initTransientFields();
+    seederThread = RandomSeederThread.getInstance(seedGenerator);
     threadLocal = ThreadLocal.withInitial(() -> {
       try {
         return new SingleThreadSplittableRandomAdapter(seedGenerator);
