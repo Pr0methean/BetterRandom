@@ -1,6 +1,5 @@
 package betterrandom.prng.adapter;
 
-import static betterrandom.prng.RandomTestUtils.assertEquivalentWhenSerializedAndDeserialized;
 import static betterrandom.prng.RandomTestUtils.assertMonteCarloPiEstimateSane;
 import static betterrandom.prng.RandomTestUtils.assertStandardDeviationSane;
 import static betterrandom.prng.RandomTestUtils.serializeAndDeserialize;

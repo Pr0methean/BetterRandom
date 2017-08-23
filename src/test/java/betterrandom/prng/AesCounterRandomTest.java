@@ -18,7 +18,6 @@ package betterrandom.prng;
 import static betterrandom.prng.RandomTestUtils.assertEquivalentWhenSerializedAndDeserialized;
 import static betterrandom.prng.RandomTestUtils.assertMonteCarloPiEstimateSane;
 import static betterrandom.prng.RandomTestUtils.assertStandardDeviationSane;
-import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertTrue;
 
 import betterrandom.seed.DefaultSeedGenerator;
@@ -28,7 +27,6 @@ import java.security.GeneralSecurityException;
 import java.util.Random;
 import java.util.logging.FileHandler;
 import java.util.logging.Logger;
-import org.testng.Reporter;
 import org.testng.annotations.AfterSuite;
 import org.testng.annotations.BeforeSuite;
 import org.testng.annotations.Test;

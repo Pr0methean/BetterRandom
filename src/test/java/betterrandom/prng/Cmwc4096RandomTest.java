@@ -18,13 +18,11 @@ package betterrandom.prng;
 import static betterrandom.prng.RandomTestUtils.assertEquivalentWhenSerializedAndDeserialized;
 import static betterrandom.prng.RandomTestUtils.assertMonteCarloPiEstimateSane;
 import static betterrandom.prng.RandomTestUtils.assertStandardDeviationSane;
-import static org.testng.Assert.assertEquals;
 
 import betterrandom.seed.DefaultSeedGenerator;
 import betterrandom.seed.SeedException;
 import betterrandom.seed.SeedGenerator;
 import java.io.IOException;
-import org.testng.Reporter;
 import org.testng.annotations.Test;
 
 /**

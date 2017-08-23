@@ -16,7 +16,6 @@
 package betterrandom.prng;
 
 import static betterrandom.prng.RandomTestUtils.assertEquivalentWhenSerializedAndDeserialized;
-import static org.testng.Assert.assertEquals;
 
 import betterrandom.seed.DefaultSeedGenerator;
 import betterrandom.seed.SeedException;

@@ -64,8 +64,7 @@ public final class DefaultSeedGenerator implements SeedGenerator {
   public byte[] generateSeed(int length) throws SeedException {
     for (SeedGenerator generator : GENERATORS) {
       try {
-        byte[] seed = generator.generateSeed(length);
-        return seed;
+        return generator.generateSeed(length);
       } catch (SeedException ex) {
         // Ignore and try the next generator...
       }
