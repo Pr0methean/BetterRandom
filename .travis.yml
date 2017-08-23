@@ -6,3 +6,9 @@ jdk:
   - oraclejdk9
   - oraclejdk8
   - openjdk8
+matrix:
+  allow_failures:
+    -oraclejdk9
+script:
+  - mkdir /home/travis/javalog
+  - mvn test
