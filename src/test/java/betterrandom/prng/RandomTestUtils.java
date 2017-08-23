@@ -167,14 +167,18 @@ public final class RandomTestUtils {
   }
 
   public static <T extends Serializable> T serializeAndDeserialize(T object) {
-    ByteArrayOutputStream byteOutStream = new ByteArrayOutputStream();
-    ObjectOutputStream objectOutStream = new ObjectOutputStream(byteOutStream);
-    objectOutStream.writeObject(rng);
-
-    // Read the object back-in.
-    ObjectInputStream objectInStream = new ObjectInputStream(
-        new ByteArrayInputStream(byteOutStream.toByteArray()));
-    return (T) (objectInStream.readObject());    
+    try {
+      ByteArrayOutputStream byteOutStream = new ByteArrayOutputStream();
+      ObjectOutputStream objectOutStream = new ObjectOutputStream(byteOutStream);
+      objectOutStream.writeObject(object);
+  
+      // Read the object back-in.
+      ObjectInputStream objectInStream = new ObjectInputStream(
+          new ByteArrayInputStream(byteOutStream.toByteArray()));
+      return (T) (objectInStream.readObject());    
+    } catch (IOException | ClassNotFoundException e) {
+      throw new RuntimeException(e);
+    }
   }
 
   @SuppressWarnings("unchecked")
