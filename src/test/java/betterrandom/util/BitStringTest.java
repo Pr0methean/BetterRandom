@@ -190,7 +190,7 @@ public class BitStringTest {
   }
 
 
-  @SuppressWarnings({"EqualsWithItself", "ObjectEqualsNull"})
+  @SuppressWarnings({"EqualsWithItself", "ObjectEqualsNull", "argument.type.incompatible"})
   @Test(timeOut = 15000, dependsOnMethods = "testClone")
   public void testEquals() {
     BitString bitString = new BitString(10);

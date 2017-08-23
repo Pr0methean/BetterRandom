@@ -25,6 +25,7 @@ import java.util.Arrays;
 import java.util.Random;
 import org.checkerframework.checker.initialization.qual.UnknownInitialization;
 import org.checkerframework.checker.nullness.qual.EnsuresNonNull;
+import org.checkerframework.checker.nullness.qual.RequiresNonNull;
 
 /**
  * <p>Java port of the <a href="http://home.southernct.edu/~pasqualonia1/ca/report.html"
@@ -111,32 +112,39 @@ public class CellularAutomatonRandom extends BaseRandom implements RepeatableRan
   }
 
   @EnsuresNonNull("cells")
-  protected void copySeedToCellsAndPreEvolve() {
-    cells = new int[AUTOMATON_LENGTH];
-    // Set initial cell states using seed.
-    cells[AUTOMATON_LENGTH - 1] = seed[0] + 128;
-    cells[AUTOMATON_LENGTH - 2] = seed[1] + 128;
-    cells[AUTOMATON_LENGTH - 3] = seed[2] + 128;
-    cells[AUTOMATON_LENGTH - 4] = seed[3] + 128;
-    currentCellIndex = AUTOMATON_LENGTH - 1;
-
-    int seedAsInt = BinaryUtils.convertBytesToInt(seed, 0);
-    if (seedAsInt != 0xFFFFFFFF) {
-      seedAsInt++;
+  @RequiresNonNull({"seed", "lock"})
+  protected void copySeedToCellsAndPreEvolve(@UnknownInitialization CellularAutomatonRandom this) {
+    lock.lock();
+    try {
+      cells = new int[AUTOMATON_LENGTH];
+      // Set initial cell states using seed.
+      cells[AUTOMATON_LENGTH - 1] = seed[0] + 128;
+      cells[AUTOMATON_LENGTH - 2] = seed[1] + 128;
+      cells[AUTOMATON_LENGTH - 3] = seed[2] + 128;
+      cells[AUTOMATON_LENGTH - 4] = seed[3] + 128;
+      currentCellIndex = AUTOMATON_LENGTH - 1;
+  
+      int seedAsInt = BinaryUtils.convertBytesToInt(seed, 0);
+      if (seedAsInt != 0xFFFFFFFF) {
+        seedAsInt++;
+      }
+      for (int i = 0; i < AUTOMATON_LENGTH - 4; i++) {
+        cells[i] = 0x000000FF & (seedAsInt >> (i % 32));
+      }
+  
+      // Evolve automaton before returning integers.
+      for (int i = 0; i < AUTOMATON_LENGTH * AUTOMATON_LENGTH / 4; i++) {
+        next(32);
+      }
+  
+      entropyBytes = SEED_SIZE_BYTES;
+    } finally {
+      lock.unlock();
     }
-    for (int i = 0; i < AUTOMATON_LENGTH - 4; i++) {
-      cells[i] = 0x000000FF & (seedAsInt >> (i % 32));
-    }
-
-    // Evolve automaton before returning integers.
-    for (int i = 0; i < AUTOMATON_LENGTH * AUTOMATON_LENGTH / 4; i++) {
-      next(32);
-    }
-
-    entropyBytes = SEED_SIZE_BYTES;
   }
 
-  @EnsuresNonNull({"cells", "lock"})
+  @EnsuresNonNull("cells")
+  @RequiresNonNull({"lock", "seed"})
   @Override
   protected void initSubclassTransientFields(
       @UnknownInitialization CellularAutomatonRandom this) {
@@ -156,7 +164,9 @@ public class CellularAutomatonRandom extends BaseRandom implements RepeatableRan
    * {@inheritDoc}
    */
   @Override
-  public int next(int bits) {
+  @SuppressWarnings("contracts.precondition.override.invalid")
+  @RequiresNonNull({"lock", "cells"})
+  public int next(@UnknownInitialization CellularAutomatonRandom this, int bits) {
     int result;
     lock.lock();
     try {
@@ -198,9 +208,9 @@ public class CellularAutomatonRandom extends BaseRandom implements RepeatableRan
   }
 
   @Override
-  public void setSeed(long seed) {
-    if (!superConstructorFinished) {
-      // setSeed can't work until seed array allocated
+  public void setSeed(@UnknownInitialization CellularAutomatonRandom this, long seed) {
+    if (lock == null || this.seed == null) {
+      // setSeed can't work until seed array and lock are allocated
       return;
     }
     lock.lock();
@@ -217,12 +227,17 @@ public class CellularAutomatonRandom extends BaseRandom implements RepeatableRan
   }
 
   @Override
-  public void setSeed(byte[] seed) {
+  @RequiresNonNull("lock")
+  @SuppressWarnings("contracts.precondition.override.invalid")
+  public void setSeed(@UnknownInitialization CellularAutomatonRandom this, byte[] seed) {
     if (seed.length != SEED_SIZE_BYTES) {
       throw new IllegalArgumentException("Cellular Automaton RNG requires a 32-bit (4-byte) seed.");
     }
     lock.lock();
     try {
+      if (this.seed == null) {
+        this.seed = new byte[SEED_SIZE_BYTES];
+      }
       System.arraycopy(seed, 0, this.seed, 0, 4);
       copySeedToCellsAndPreEvolve();
     } finally {

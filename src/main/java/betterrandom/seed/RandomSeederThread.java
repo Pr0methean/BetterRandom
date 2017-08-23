@@ -16,6 +16,8 @@ import java.util.Set;
 import java.util.WeakHashMap;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Logger;
+import org.checkerframework.checker.initialization.qual.UnderInitialization;
+import org.checkerframework.checker.nullness.qual.EnsuresNonNull;
 
 public final class RandomSeederThread extends Thread implements Serializable {
 
@@ -47,9 +49,12 @@ public final class RandomSeederThread extends Thread implements Serializable {
    * Obtain the instance for the given {@link SeedGenerator}, creating it if it doesn't exist.
    */
   public static RandomSeederThread getInstance(SeedGenerator seedGenerator) {
-    return INSTANCES.computeIfAbsent(
+    RandomSeederThread thread = INSTANCES.computeIfAbsent(
         Objects.requireNonNull(seedGenerator, "seedGenerator must not be null"),
         RandomSeederThread::new);
+    thread.setDaemon(true);
+    thread.start();
+    return thread;
   }
 
   /** Ensure one instance per SeedGenerator even after deserialization. */  
@@ -58,12 +63,11 @@ public final class RandomSeederThread extends Thread implements Serializable {
     return getInstance(seedGenerator);
   }
 
-  private void initTransientState() {
+  @EnsuresNonNull({"seedBuffer", "prngs"})
+  private void initTransientState(@UnderInitialization RandomSeederThread this) {
     prngs = Collections.newSetFromMap(
       Collections.synchronizedMap(new WeakHashMap<>()));
     seedBuffer = ByteBuffer.wrap(seedArray);
-    setDaemon(true);
-    start();
   }
 
   private void writeObject(ObjectOutputStream oos) throws IOException {

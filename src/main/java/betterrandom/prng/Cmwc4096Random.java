@@ -23,6 +23,8 @@ import betterrandom.seed.SeedGenerator;
 import betterrandom.util.BinaryUtils;
 import java.util.Arrays;
 import java.util.Random;
+import org.checkerframework.checker.initialization.qual.UnknownInitialization;
+import org.checkerframework.checker.nullness.qual.EnsuresNonNull;
 
 /**
  * <p>A Java version of George Marsaglia's <a href="http://school.anhb.uwa.edu.au/personalpages/kwessen/shared/Marsaglia03.html">Complementary
@@ -93,16 +95,13 @@ public class Cmwc4096Random extends BaseRandom implements RepeatableRandom, Entr
     return seed.clone();
   }
 
-  @SuppressWarnings("contracts.postcondition.not.satisfied")
+  @EnsuresNonNull({"this.seed", "state"})
   @Override
-  public void setSeed(byte[] seed) {
-    if (!superConstructorFinished) {
-      // setSeed can't work until seed array allocated
-      return;
-    }
+  public void setSeed(@UnknownInitialization Cmwc4096Random this, byte[] seed) {
     if (seed == null || seed.length != SEED_SIZE_BYTES) {
       throw new IllegalArgumentException("CMWC RNG requires 16kb of seed data.");
     }
+    this.seed = seed;
     state = BinaryUtils.convertBytesToInts(seed);
     initTransientFields();
     entropyBytes = SEED_SIZE_BYTES;

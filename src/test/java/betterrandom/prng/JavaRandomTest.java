@@ -53,6 +53,7 @@ public class JavaRandomTest {
   /**
    * RNG must not accept a null seed otherwise it will not be properly initialised.
    */
+  @SuppressWarnings({"argument.type.incompatible", "return.type.incompatible"})
   @Test(timeOut = 15000, expectedExceptions = IllegalArgumentException.class)
   public void testNullSeed() throws SeedException {
     new JavaRandom(length -> null);

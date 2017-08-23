@@ -21,7 +21,7 @@ public class SplittableRandomAdapter extends DirectSplittableRandomAdapter {
   }
 
   @EnsuresNonNull({"threadLocal", "underlying"})
-  @RequiresNonNull("seed")
+  @RequiresNonNull({"seed", "lock"})
   @Override
   protected void initSubclassTransientFields(
       @UnknownInitialization SplittableRandomAdapter this) {
@@ -38,11 +38,10 @@ public class SplittableRandomAdapter extends DirectSplittableRandomAdapter {
    * {@inheritDoc} Applies only to the calling thread.
    */
   @Override
-  public synchronized void setSeed(long seed) {
-    if (!superConstructorFinished) {
-      return;
+  public synchronized void setSeed(@UnknownInitialization SplittableRandomAdapter this, long seed) {
+    if (superConstructorFinished && threadLocal != null) {
+      threadLocal.set(new SplittableRandom(seed));
     }
-    threadLocal.set(new SplittableRandom(seed));
   }
 
   @Override

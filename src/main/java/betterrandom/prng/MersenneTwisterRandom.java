@@ -23,6 +23,8 @@ import betterrandom.seed.SeedGenerator;
 import betterrandom.util.BinaryUtils;
 import java.util.Arrays;
 import java.util.Random;
+import org.checkerframework.checker.initialization.qual.UnknownInitialization;
+import org.checkerframework.checker.nullness.qual.RequiresNonNull;
 
 /**
  * <p>Random number generator based on the <a href="http://www.math.sci.hiroshima-u.ac.jp/~m-mat/MT/emt.html"
@@ -102,17 +104,15 @@ public class MersenneTwisterRandom extends BaseRandom implements RepeatableRando
   }
 
   @Override
-  public void setSeed(byte[] seed) {
-    if (!superConstructorFinished) {
-      // setSeed can't work until seed array allocated
-      return;
-    }
+  @RequiresNonNull("lock")
+  @SuppressWarnings("contracts.precondition.override.invalid")
+  public void setSeed(@UnknownInitialization MersenneTwisterRandom this, byte[] seed) {
     if (seed == null || seed.length != SEED_SIZE_BYTES) {
       throw new IllegalArgumentException("Mersenne Twister RNG requires a 128-bit (16-byte) seed.");
     }
     lock.lock();
     try {
-      super.setSeed(seed);
+      this.seed = seed;
       int[] seedInts = BinaryUtils.convertBytesToInts(this.seed);
 
       // This section is translated from the init_genrand code in the C version.
