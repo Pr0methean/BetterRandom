@@ -21,6 +21,8 @@ import betterrandom.seed.DefaultSeedGenerator;
 import betterrandom.seed.SeedException;
 import betterrandom.seed.SeedGenerator;
 import betterrandom.util.BinaryUtils;
+import java.io.IOException;
+import java.io.ObjectInputStream;
 import java.util.Arrays;
 import java.util.Random;
 import org.checkerframework.checker.initialization.qual.UnknownInitialization;
@@ -60,6 +62,7 @@ public class XorShiftRandom extends BaseRandom implements RepeatableRandom, Entr
    */
   public XorShiftRandom(byte[] seed) {
     super(seed);
+    setSeed(seed);
   }
 
   public XorShiftRandom() throws SeedException {
@@ -71,12 +74,8 @@ public class XorShiftRandom extends BaseRandom implements RepeatableRandom, Entr
   }
 
   @Override
-  @RequiresNonNull("seed")
+  @RequiresNonNull({"lock", "seed"})
   protected void initSubclassTransientFields(@UnknownInitialization XorShiftRandom this) {
-    if (seed.length != SEED_SIZE_BYTES) {
-      throw new IllegalArgumentException("XOR shift RNG requires a seed of exactly 20 bytes.");
-    }
-    super.initTransientFields();
     lock.lock();
     try {
       int[] state = BinaryUtils.convertBytesToInts(seed);
@@ -91,6 +90,12 @@ public class XorShiftRandom extends BaseRandom implements RepeatableRandom, Entr
     }
   }
 
+  private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
+    in.defaultReadObject();
+    initTransientFields();
+    setSeed(seed);
+  }
+
   /**
    * {@inheritDoc}
    */
@@ -102,6 +107,9 @@ public class XorShiftRandom extends BaseRandom implements RepeatableRandom, Entr
       "contracts.precondition.override.invalid"})
   @Override
   public void setSeed(@UnknownInitialization XorShiftRandom this, byte[] seed) {
+    if (seed.length != SEED_SIZE_BYTES) {
+      throw new IllegalArgumentException("XOR shift RNG requires a seed of exactly 20 bytes.");
+    }
     if (lock == null) {
       // setSeed can't work until lock is initialized
       return;

@@ -30,17 +30,11 @@ import java.security.SecureRandom;
  *
  * @author Daniel Dyer
  */
-public class SecureRandomSeedGenerator implements SeedGenerator {
+public enum SecureRandomSeedGenerator implements SeedGenerator {
 
-  private static final SecureRandomSeedGenerator INSTANCE = new SecureRandomSeedGenerator();
-  private static final long serialVersionUID = 5489634991236222389L;
+  INSTANCE;
+
   private static final SecureRandom SOURCE = new SecureRandom();
-
-  /**
-   * Singleton unless subclassed.
-   */
-  protected SecureRandomSeedGenerator() {
-  }
 
   public static SecureRandomSeedGenerator getInstance() {
     return INSTANCE;
@@ -56,14 +50,5 @@ public class SecureRandomSeedGenerator implements SeedGenerator {
   @Override
   public String toString() {
     return "java.security.SecureRandom";
-  }
-
-  public boolean equals(Object o) {
-    return o != null && getClass() == o.getClass();
-  }
-
-  @Override
-  public int hashCode() {
-    return -261707500;
   }
 }

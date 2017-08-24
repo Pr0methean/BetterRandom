@@ -39,12 +39,14 @@ public final class RandomSeederThread extends Thread {
    * exist.
    */
   public static RandomSeederThread getInstance(SeedGenerator seedGenerator) {
-    RandomSeederThread thread = INSTANCES.computeIfAbsent(seedGenerator,
-        RandomSeederThread::new);
-    thread.setName("RandomSeederThread for " + seedGenerator);
-    thread.setDaemon(true);
-    thread.start();
-    return thread;
+    return INSTANCES.computeIfAbsent(seedGenerator,
+        seedGen -> {
+      RandomSeederThread thread = new RandomSeederThread(seedGen);
+      thread.setName("RandomSeederThread for " + seedGen);
+      thread.setDaemon(true);
+      thread.start();
+      return thread;
+    });
   }
 
   @SuppressWarnings("InfiniteLoopStatement")

@@ -34,11 +34,11 @@ import java.util.logging.Logger;
  *
  * @author Daniel Dyer
  */
-public class RandomDotOrgSeedGenerator implements SeedGenerator {
+public enum RandomDotOrgSeedGenerator implements SeedGenerator {
+
+  INSTANCE;
 
   private static final Logger LOG = Logger.getLogger(RandomDotOrgSeedGenerator.class.getName());
-  private static final RandomDotOrgSeedGenerator INSTANCE = new RandomDotOrgSeedGenerator();
-  private static final long serialVersionUID = -7400544219489418741L;
   private static final String BASE_URL = "https://www.random.org";
   /**
    * The URL from which the random bytes are retrieved.
@@ -63,12 +63,6 @@ public class RandomDotOrgSeedGenerator implements SeedGenerator {
   private static byte[] cache = new byte[1024];
   private static int cacheOffset = cache.length;
   private transient int retriesSoFar = 0;
-
-  /**
-   * Singleton unless subclassed.
-   */
-  protected RandomDotOrgSeedGenerator() {
-  }
 
   public static RandomDotOrgSeedGenerator getInstance() {
     return INSTANCE;
@@ -164,14 +158,5 @@ public class RandomDotOrgSeedGenerator implements SeedGenerator {
   @Override
   public String toString() {
     return BASE_URL;
-  }
-
-  public boolean equals(Object o) {
-    return o != null && getClass() == o.getClass();
-  }
-
-  @Override
-  public int hashCode() {
-    return 1247952755;
   }
 }
