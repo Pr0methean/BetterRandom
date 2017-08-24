@@ -26,7 +26,7 @@ public class RandomDotOrgSeedGeneratorTest {
 
   @Test(timeOut = 120000)
   public void testGenerator() throws SeedException {
-    SeedGenerator generator = new RandomDotOrgSeedGenerator();
+    SeedGenerator generator = RandomDotOrgSeedGenerator.INSTANCE;
     byte[] seed = generator.generateSeed(32);
     assert seed.length == 32 : "Failed to generate seed of correct length";
   }
@@ -38,7 +38,7 @@ public class RandomDotOrgSeedGeneratorTest {
    */
   @Test(timeOut = 120000)
   public void testLargeRequest() throws SeedException {
-    SeedGenerator generator = new RandomDotOrgSeedGenerator();
+    SeedGenerator generator = RandomDotOrgSeedGenerator.INSTANCE;
     // 1024 bytes are cached internally, so request more than that.
     byte[] seed = generator.generateSeed(1025);
     assert seed.length == 1025 : "Failed to generate seed of correct length";
