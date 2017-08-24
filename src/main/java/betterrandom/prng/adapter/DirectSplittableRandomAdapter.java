@@ -11,7 +11,6 @@ public abstract class DirectSplittableRandomAdapter extends BaseSplittableRandom
   private static final long serialVersionUID = 4273652147052638879L;
   protected transient SplittableRandom underlying; // a SplittableRandom is not Serializable
 
-  @SuppressWarnings("OverriddenMethodCallDuringObjectConstruction")
   public DirectSplittableRandomAdapter(byte[] seed) {
     super(seed);
     initSubclassTransientFields();
@@ -19,8 +18,7 @@ public abstract class DirectSplittableRandomAdapter extends BaseSplittableRandom
 
   @EnsuresNonNull("underlying")
   @RequiresNonNull({"seed", "lock"})
-  @Override
-  protected void initSubclassTransientFields(
+  private void initSubclassTransientFields(
       @UnknownInitialization DirectSplittableRandomAdapter this) {
     underlying = new SplittableRandom(
         BinaryUtils.convertBytesToLong(seed, 0));

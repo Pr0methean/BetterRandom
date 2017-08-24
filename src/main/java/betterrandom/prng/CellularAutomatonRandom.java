@@ -105,6 +105,8 @@ public class CellularAutomatonRandom extends BaseEntropyCountingRandom implement
 
   private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
     in.defaultReadObject();
+    assert lock != null : "@AssumeAssertion(nullness)";
+    assert seed != null : "@AssumeAssertion(nullness)";
     initSubclassTransientFields();
   }
 

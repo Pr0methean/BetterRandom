@@ -171,17 +171,4 @@ public abstract class BaseSplittableRandomAdapter extends BaseRandom {
   public int getNewSeedLength() {
     return SEED_LENGTH_BYTES;
   }
-
-  @RequiresNonNull({"seed", "lock"})
-  protected void initSubclassTransientFields(@UnknownInitialization BaseRandom this) {
-  }
-
-  @Override
-  @SuppressWarnings("OverriddenMethodCallDuringObjectConstruction")
-  @EnsuresNonNull({"lock", "seed"})
-  protected void readObject(ObjectInputStream in) throws IOException,
-      ClassNotFoundException {
-    in.defaultReadObject();
-    initSubclassTransientFields();
-  }
 }
