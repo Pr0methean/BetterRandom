@@ -43,14 +43,12 @@ public class JavaRandom extends Random implements RepeatableRandom {
 
   private final byte[] seed;
 
-
   /**
    * Creates a new RNG and seeds it using the default seeding strategy.
    */
   public JavaRandom() throws SeedException {
-    this(DefaultSeedGenerator.INSTANCE.generateSeed(SEED_SIZE_BYTES));
+    this(DefaultSeedGenerator.DEFAULT_SEED_GENERATOR.generateSeed(SEED_SIZE_BYTES));
   }
-
 
   /**
    * Seed the RNG using the provided seed generation strategy.
@@ -63,7 +61,6 @@ public class JavaRandom extends Random implements RepeatableRandom {
     this(seedGenerator.generateSeed(SEED_SIZE_BYTES));
   }
 
-
   /**
    * Creates an RNG and seeds it with the specified seed data.
    *
@@ -74,7 +71,6 @@ public class JavaRandom extends Random implements RepeatableRandom {
     this.seed = seed.clone();
   }
 
-
   /**
    * Helper method to convert seed bytes into the long value required by the super class.
    */
@@ -84,7 +80,6 @@ public class JavaRandom extends Random implements RepeatableRandom {
     }
     return BinaryUtils.convertBytesToLong(seed, 0);
   }
-
 
   /**
    * {@inheritDoc}

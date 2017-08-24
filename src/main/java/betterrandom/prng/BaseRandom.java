@@ -39,7 +39,7 @@ public abstract class BaseRandom extends Random implements ByteArrayReseedableRa
    * Creates a new RNG and seeds it using the default seeding strategy.
    */
   public BaseRandom(int seedLength) throws SeedException {
-    this(DefaultSeedGenerator.INSTANCE.generateSeed(seedLength));
+    this(DefaultSeedGenerator.DEFAULT_SEED_GENERATOR.generateSeed(seedLength));
   }
 
   /**
@@ -124,7 +124,7 @@ public abstract class BaseRandom extends Random implements ByteArrayReseedableRa
   private void readObjectNoData() throws InvalidObjectException {
     LOG.warning("BaseRandom.readObjectNoData() invoked; using DefaultSeedGenerator");
     try {
-      setSeed(DefaultSeedGenerator.INSTANCE.generateSeed(getNewSeedLength()));
+      setSeed(DefaultSeedGenerator.DEFAULT_SEED_GENERATOR.generateSeed(getNewSeedLength()));
     } catch (SeedException e) {
       throw (InvalidObjectException)
           (new InvalidObjectException("Unable to deserialize or generate a seed this RNG")

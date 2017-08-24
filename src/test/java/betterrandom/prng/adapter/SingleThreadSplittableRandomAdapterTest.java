@@ -16,7 +16,7 @@ public class SingleThreadSplittableRandomAdapterTest {
    */
   protected BaseSplittableRandomAdapter createAdapter() throws SeedException {
     return new SingleThreadSplittableRandomAdapter(
-        DefaultSeedGenerator.INSTANCE);
+        DefaultSeedGenerator.DEFAULT_SEED_GENERATOR);
   }
 
   @Test
@@ -175,5 +175,4 @@ public class SingleThreadSplittableRandomAdapterTest {
   public void testDoubles3() throws Exception {
     // TODO
   }
-
 }

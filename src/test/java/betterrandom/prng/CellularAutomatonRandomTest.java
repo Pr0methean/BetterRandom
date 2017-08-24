@@ -15,12 +15,15 @@
 // ============================================================================
 package betterrandom.prng;
 
+import static betterrandom.prng.RandomTestUtils.DEFAULT_SEEDER_SUPPLIER;
 import static betterrandom.prng.RandomTestUtils.assertMonteCarloPiEstimateSane;
 import static betterrandom.prng.RandomTestUtils.assertStandardDeviationSane;
+import static org.testng.Assert.assertFalse;
 
 import betterrandom.seed.DefaultSeedGenerator;
 import betterrandom.seed.SeedException;
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.Random;
 import org.testng.annotations.Test;
 
@@ -43,7 +46,6 @@ public class CellularAutomatonRandomTest {
         .testEquivalence(rng, duplicateRNG, 1000) : "Generated sequences do not match.";
   }
 
-
   /**
    * Test to ensure that the output from the RNG is broadly as expected.  This will not detect the
    * subtle statistical anomalies that would be picked up by Diehard, but it provides a simple check
@@ -52,10 +54,10 @@ public class CellularAutomatonRandomTest {
   @Test(timeOut = 15000, groups = "non-deterministic",
       dependsOnMethods = "testRepeatability")
   public void testDistribution() throws SeedException {
-    CellularAutomatonRandom rng = new CellularAutomatonRandom(DefaultSeedGenerator.INSTANCE);
+    CellularAutomatonRandom rng = new CellularAutomatonRandom(
+        DefaultSeedGenerator.DEFAULT_SEED_GENERATOR);
     assertMonteCarloPiEstimateSane(rng);
   }
-
 
   /**
    * Test to ensure that the output from the RNG is broadly as expected.  This will not detect the
@@ -71,7 +73,6 @@ public class CellularAutomatonRandomTest {
     assertStandardDeviationSane(rng);
   }
 
-
   /**
    * Make sure that the RNG does not accept seeds that are too small since this could affect the
    * distribution of the output.
@@ -82,7 +83,6 @@ public class CellularAutomatonRandomTest {
         new byte[]{1, 2, 3}); // One byte too few, should cause an IllegalArgumentException.
   }
 
-
   /**
    * RNG must not accept a null seed otherwise it will not be properly initialised.
    */
@@ -91,7 +91,6 @@ public class CellularAutomatonRandomTest {
   public void testNullSeed() {
     new CellularAutomatonRandom((byte[]) null);
   }
-
 
   @Test(timeOut = 15000)
   public void testSerializable() throws IOException, ClassNotFoundException, SeedException {
@@ -121,5 +120,16 @@ public class CellularAutomatonRandomTest {
   public void testHashCode() throws Exception {
     assert RandomTestUtils.testHashCodeDistribution(CellularAutomatonRandom.class.getConstructor())
         : "Too many hashCode collisions";
+  }
+
+  @Test(timeOut = 15000)
+  public void testReseeding() throws Exception {
+    BaseEntropyCountingRandom rng = new CellularAutomatonRandom();
+    byte[] oldSeed = rng.getSeed();
+    rng.setSeederThreadSupplier(DEFAULT_SEEDER_SUPPLIER);
+    rng.nextBytes(new byte[20000]);
+    Thread.sleep(10);
+    byte[] newSeed = rng.getSeed();
+    assertFalse(Arrays.equals(oldSeed, newSeed));
   }
 }

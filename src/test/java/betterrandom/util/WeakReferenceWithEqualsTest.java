@@ -29,5 +29,4 @@ public class WeakReferenceWithEqualsTest {
     assertNotEquals(ref1S1, refS2);
     assertNotEquals(ref2S1, refS2);
   }
-
 }

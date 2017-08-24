@@ -2,8 +2,6 @@ package betterrandom.seed;
 
 import betterrandom.ByteArrayReseedableRandom;
 import betterrandom.EntropyCountingRandom;
-import betterrandom.util.WeakReferenceWithEquals;
-import java.lang.ref.WeakReference;
 import java.nio.ByteBuffer;
 import java.util.Collections;
 import java.util.Map;
@@ -11,7 +9,6 @@ import java.util.Objects;
 import java.util.Random;
 import java.util.Set;
 import java.util.WeakHashMap;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.ReentrantLock;
@@ -23,8 +20,6 @@ public final class RandomSeederThread extends Thread {
   private static final Logger LOG = Logger.getLogger(RandomSeederThread.class.getName());
   private static final Map<SeedGenerator, RandomSeederThread> INSTANCES =
       Collections.synchronizedMap(new WeakHashMap<>());
-  private static final Map<EntropyCountingRandom, WeakReference<RandomSeederThread>>
-      REVERSE_LOOKUP_TABLE = Collections.synchronizedMap(new WeakHashMap<>());
   /**
    * Used to avoid full spin-locking when every {@link Random} to be reseeded is an {@link
    * EntropyCountingRandom} and none has spent its entropy.
@@ -54,12 +49,29 @@ public final class RandomSeederThread extends Thread {
         "Trying to get RandomSeederThread for null SeedGenerator");
     return INSTANCES.computeIfAbsent(seedGenerator,
         seedGen -> {
-      RandomSeederThread thread = new RandomSeederThread(seedGen);
-      thread.setName("RandomSeederThread for " + seedGen);
-      thread.setDaemon(true);
-      thread.start();
-      return thread;
-    });
+          RandomSeederThread thread = new RandomSeederThread(seedGen);
+          thread.setName("RandomSeederThread for " + seedGen);
+          thread.setDaemon(true);
+          thread.start();
+          return thread;
+        });
+  }
+
+  /**
+   * Asynchronously triggers reseeding of the given {@link EntropyCountingRandom} if it is
+   * associated with a live RandomSeederThread.
+   *
+   * @return Whether or not the reseed was successfully scheduled.
+   */
+  public boolean asyncReseed(EntropyCountingRandom random) {
+    synchronized (prngs) {
+      if (prngs.contains(random)) {
+        waitForEntropyDrain.signalAll();
+        return true;
+      } else {
+        return false;
+      }
+    }
   }
 
   @SuppressWarnings("InfiniteLoopStatement")
@@ -98,7 +110,6 @@ public final class RandomSeederThread extends Thread {
         if (!entropyConsumed) {
           waitForEntropyDrain.await(ENTROPY_POLL_INTERVAL_MS, TimeUnit.MILLISECONDS);
         }
-
       }
     } catch (InterruptedException e) {
       interrupt();
@@ -120,33 +131,8 @@ public final class RandomSeederThread extends Thread {
       throw new IllegalStateException("Already shut down");
     }
     Collections.addAll(prngs, randoms);
-    for (Random random : randoms) {
-      if (random instanceof EntropyCountingRandom) {
-        REVERSE_LOOKUP_TABLE.put((EntropyCountingRandom) random, new WeakReference<>(this));
-      }
-    }
     waitForEntropyDrain.signalAll();
     waitWhileEmpty.signalAll();
-  }
-
-  /**
-   * Asynchronously triggers reseeding of the given {@link EntropyCountingRandom} if it is
-   * associated with a live RandomSeederThread.
-   *
-   * @return Whether or not the reseed was successfully scheduled.
-   */
-  @SuppressWarnings("SynchronizationOnStaticField")
-  public static boolean asyncReseed(EntropyCountingRandom random) {
-    synchronized (REVERSE_LOOKUP_TABLE) {
-      RandomSeederThread thread = REVERSE_LOOKUP_TABLE.get(random).get();
-      if (thread == null || thread.isInterrupted()) {
-        REVERSE_LOOKUP_TABLE.remove(random);
-        return false;
-      } else {
-        thread.waitForEntropyDrain.signalAll();
-        return true;
-      }
-    }
   }
 
   public void stopIfEmpty() {

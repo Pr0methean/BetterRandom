@@ -15,7 +15,6 @@
 // ============================================================================
 package betterrandom.prng;
 
-import betterrandom.EntropyCountingRandom;
 import betterrandom.RepeatableRandom;
 import betterrandom.seed.DefaultSeedGenerator;
 import betterrandom.seed.SeedException;
@@ -105,7 +104,6 @@ public class AesCounterRandom extends BaseEntropyCountingRandom implements Repea
     this(DEFAULT_SEED_SIZE_BYTES);
   }
 
-
   /**
    * Seed the RNG using the provided seed generation strategy to create a 128-bit seed.
    *
@@ -117,7 +115,6 @@ public class AesCounterRandom extends BaseEntropyCountingRandom implements Repea
     this(seedGenerator.generateSeed(DEFAULT_SEED_SIZE_BYTES));
   }
 
-
   /**
    * Seed the RNG using the default seed generation strategy to create a seed of the specified
    * size.
@@ -128,9 +125,8 @@ public class AesCounterRandom extends BaseEntropyCountingRandom implements Repea
    * @since 1.0.2
    */
   public AesCounterRandom(int seedSizeBytes) throws SeedException {
-    this(DefaultSeedGenerator.INSTANCE.generateSeed(seedSizeBytes));
+    this(DefaultSeedGenerator.DEFAULT_SEED_GENERATOR.generateSeed(seedSizeBytes));
   }
-
 
   /**
    * Creates an RNG and seeds it with the specified seed data.
@@ -189,7 +185,6 @@ public class AesCounterRandom extends BaseEntropyCountingRandom implements Repea
       }
     }
   }
-
 
   /**
    * Generates BLOCKS_AT_ONCE 128-bit (16-byte) blocks. Copies them to currentBlock.

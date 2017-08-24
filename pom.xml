@@ -42,6 +42,12 @@
       <artifactId>jdk8</artifactId>
       <version>2.1.14</version>
     </dependency>
+    <!-- https://mvnrepository.com/artifact/com.google.dagger/dagger -->
+    <dependency>
+      <groupId>com.google.dagger</groupId>
+      <artifactId>dagger</artifactId>
+      <version>2.0</version>
+    </dependency>
   </dependencies>
   <build>
     <pluginManagement>

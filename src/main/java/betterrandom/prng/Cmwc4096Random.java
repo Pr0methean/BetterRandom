@@ -15,7 +15,6 @@
 // ============================================================================
 package betterrandom.prng;
 
-import betterrandom.EntropyCountingRandom;
 import betterrandom.RepeatableRandom;
 import betterrandom.seed.DefaultSeedGenerator;
 import betterrandom.seed.SeedException;
@@ -25,7 +24,6 @@ import java.util.Arrays;
 import java.util.Random;
 import org.checkerframework.checker.initialization.qual.UnknownInitialization;
 import org.checkerframework.checker.nullness.qual.EnsuresNonNull;
-import org.checkerframework.checker.nullness.qual.RequiresNonNull;
 
 /**
  * <p>A Java version of George Marsaglia's <a href="http://school.anhb.uwa.edu.au/personalpages/kwessen/shared/Marsaglia03.html">Complementary
@@ -60,9 +58,8 @@ public class Cmwc4096Random extends BaseEntropyCountingRandom implements Repeata
    * Creates a new RNG and seeds it using the default seeding strategy.
    */
   public Cmwc4096Random() throws SeedException {
-    this(DefaultSeedGenerator.INSTANCE.generateSeed(SEED_SIZE_BYTES));
+    this(DefaultSeedGenerator.DEFAULT_SEED_GENERATOR.generateSeed(SEED_SIZE_BYTES));
   }
-
 
   /**
    * Seed the RNG using the provided seed generation strategy.
@@ -75,7 +72,6 @@ public class Cmwc4096Random extends BaseEntropyCountingRandom implements Repeata
     this(seedGenerator.generateSeed(SEED_SIZE_BYTES));
   }
 
-
   /**
    * Creates an RNG and seeds it with the specified seed data.
    *
@@ -85,7 +81,6 @@ public class Cmwc4096Random extends BaseEntropyCountingRandom implements Repeata
     super(seed);
     setSeed(seed);
   }
-
 
   /**
    * {@inheritDoc}

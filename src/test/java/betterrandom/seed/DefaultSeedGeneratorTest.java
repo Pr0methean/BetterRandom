@@ -37,7 +37,7 @@ public class DefaultSeedGeneratorTest {
     try {
       // Don't allow file system or network access.
       System.setSecurityManager(new RestrictedSecurityManager(affectedThread));
-      DefaultSeedGenerator.INSTANCE.generateSeed(4);
+      DefaultSeedGenerator.DEFAULT_SEED_GENERATOR.generateSeed(4);
       // Should get to here without exceptions.
     } finally {
       // Restore the original security manager so that we don't
@@ -45,7 +45,6 @@ public class DefaultSeedGeneratorTest {
       System.setSecurityManager(securityManager);
     }
   }
-
 
   /**
    * This security manager allows everything except for some operations that are explicitly blocked.
@@ -68,7 +67,6 @@ public class DefaultSeedGeneratorTest {
       }
     }
 
-
     @SuppressWarnings("ObjectEquality")
     @Override
     public void checkConnect(String host, int port) {
@@ -76,7 +74,6 @@ public class DefaultSeedGeneratorTest {
         throw new SecurityException("Test not permitted to connect to " + host + ":" + port);
       }
     }
-
 
     @Override
     public void checkPermission(Permission permission) {

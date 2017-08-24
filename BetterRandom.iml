@@ -20,5 +20,7 @@
     <orderEntry type="library" name="Maven: org.checkerframework:checker-qual:2.1.14" level="project" />
     <orderEntry type="library" name="Maven: org.checkerframework:checker:2.1.14" level="project" />
     <orderEntry type="library" name="Maven: org.checkerframework:jdk8:2.1.14" level="project" />
+    <orderEntry type="library" name="Maven: com.google.dagger:dagger:2.0" level="project" />
+    <orderEntry type="library" name="Maven: javax.inject:javax.inject:1" level="project" />
   </component>
 </module>

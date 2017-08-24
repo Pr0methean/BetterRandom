@@ -36,7 +36,7 @@ import java.util.logging.Logger;
  */
 public enum RandomDotOrgSeedGenerator implements SeedGenerator {
 
-  INSTANCE;
+  RANDOM_DOT_ORG_SEED_GENERATOR;
 
   private static final Logger LOG = Logger.getLogger(RandomDotOrgSeedGenerator.class.getName());
   private static final String BASE_URL = "https://www.random.org";

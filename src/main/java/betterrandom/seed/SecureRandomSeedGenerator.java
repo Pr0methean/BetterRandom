@@ -32,7 +32,7 @@ import java.security.SecureRandom;
  */
 public enum SecureRandomSeedGenerator implements SeedGenerator {
 
-  INSTANCE;
+  SECURE_RANDOM_SEED_GENERATOR;
 
   private static final SecureRandom SOURCE = new SecureRandom();
 

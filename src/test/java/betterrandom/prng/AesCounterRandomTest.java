@@ -15,15 +15,18 @@
 // ============================================================================
 package betterrandom.prng;
 
+import static betterrandom.prng.RandomTestUtils.DEFAULT_SEEDER_SUPPLIER;
 import static betterrandom.prng.RandomTestUtils.assertEquivalentWhenSerializedAndDeserialized;
 import static betterrandom.prng.RandomTestUtils.assertMonteCarloPiEstimateSane;
 import static betterrandom.prng.RandomTestUtils.assertStandardDeviationSane;
+import static org.testng.Assert.assertFalse;
 import static org.testng.Assert.assertTrue;
 
 import betterrandom.seed.DefaultSeedGenerator;
 import betterrandom.seed.SeedException;
 import java.io.IOException;
 import java.security.GeneralSecurityException;
+import java.util.Arrays;
 import java.util.Random;
 import java.util.logging.FileHandler;
 import java.util.logging.Logger;
@@ -63,7 +66,6 @@ public class AesCounterRandomTest {
         "Shouldn't allow a key longer than 32 bytes";
   }
 
-
   @Test(timeOut = 15000)
   public void testSerializableWithoutSeedInCounter()
       throws GeneralSecurityException, IOException, ClassNotFoundException, SeedException {
@@ -72,7 +74,6 @@ public class AesCounterRandomTest {
     assertEquivalentWhenSerializedAndDeserialized(rng);
   }
 
-
   @Test(timeOut = 15000)
   public void testSerializableWithSeedInCounter()
       throws GeneralSecurityException, IOException, ClassNotFoundException, SeedException {
@@ -80,7 +81,6 @@ public class AesCounterRandomTest {
     AesCounterRandom rng = new AesCounterRandom(48);
     assertEquivalentWhenSerializedAndDeserialized(rng);
   }
-
 
   /**
    * Test to ensure that two distinct RNGs with the same seed return the same sequence of numbers.
@@ -95,7 +95,6 @@ public class AesCounterRandomTest {
         .testEquivalence(rng, duplicateRNG, 1000) : "Generated sequences do not match.";
   }
 
-
   /**
    * Test to ensure that the output from the RNG is broadly as expected.  This will not detect the
    * subtle statistical anomalies that would be picked up by Diehard, but it provides a simple check
@@ -104,10 +103,9 @@ public class AesCounterRandomTest {
   @Test(timeOut = 15000, groups = "non-deterministic",
       dependsOnMethods = "testRepeatability")
   public void testDistribution() throws GeneralSecurityException, SeedException {
-    AesCounterRandom rng = new AesCounterRandom(DefaultSeedGenerator.INSTANCE);
+    AesCounterRandom rng = new AesCounterRandom(DefaultSeedGenerator.DEFAULT_SEED_GENERATOR);
     assertMonteCarloPiEstimateSane(rng);
   }
-
 
   /**
    * Test to ensure that the output from the RNG is broadly as expected.  This will not detect the
@@ -123,18 +121,15 @@ public class AesCounterRandomTest {
     assertStandardDeviationSane(rng);
   }
 
-
   @Test(timeOut = 15000, expectedExceptions = IllegalArgumentException.class)
   public void testSeedTooShort() throws GeneralSecurityException {
     new AesCounterRandom(new byte[]{1, 2, 3}); // Should throw an exception.
   }
 
-
   @Test(timeOut = 15000, expectedExceptions = IllegalArgumentException.class)
   public void testSeedTooLong() throws GeneralSecurityException, SeedException {
     new AesCounterRandom(49); // Should throw an exception.
   }
-
 
   /**
    * RNG must not accept a null seed otherwise it will not be properly initialised.
@@ -144,7 +139,6 @@ public class AesCounterRandomTest {
   public void testNullSeed() throws GeneralSecurityException {
     new AesCounterRandom((byte[]) null); // Should throw an exception.
   }
-
 
   @Test//(timeOut = 15000)
   public void testSetSeed() throws GeneralSecurityException, SeedException {
@@ -172,16 +166,25 @@ public class AesCounterRandomTest {
         : "RNGs converged after 4 setSeed calls";
   }
 
-
   @Test(timeOut = 60000)
   public void testEquals() throws GeneralSecurityException, ReflectiveOperationException {
     RandomTestUtils.doEqualsSanityChecks(AesCounterRandom.class.getConstructor());
   }
 
-
   @Test(timeOut = 30000)
   public void testHashCode() throws Exception {
     assert RandomTestUtils.testHashCodeDistribution(AesCounterRandom.class.getConstructor())
         : "Too many hashCode collisions";
+  }
+
+  @Test(timeOut = 15000)
+  public void testReseeding() throws Exception {
+    BaseEntropyCountingRandom rng = new AesCounterRandom();
+    byte[] oldSeed = rng.getSeed();
+    rng.setSeederThreadSupplier(DEFAULT_SEEDER_SUPPLIER);
+    rng.nextBytes(new byte[20000]);
+    Thread.sleep(10);
+    byte[] newSeed = rng.getSeed();
+    assertFalse(Arrays.equals(oldSeed, newSeed));
   }
 }
