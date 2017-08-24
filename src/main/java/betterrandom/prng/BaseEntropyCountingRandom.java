@@ -4,6 +4,8 @@ import betterrandom.EntropyCountingRandom;
 import betterrandom.seed.RandomSeederThread;
 import betterrandom.seed.SeedException;
 import betterrandom.seed.SeedGenerator;
+import java.io.IOException;
+import java.io.ObjectInputStream;
 import java.util.concurrent.atomic.AtomicLong;
 import org.checkerframework.checker.initialization.qual.UnknownInitialization;
 import org.checkerframework.checker.nullness.qual.EnsuresNonNull;

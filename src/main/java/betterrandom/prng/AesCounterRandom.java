@@ -21,6 +21,8 @@ import betterrandom.seed.DefaultSeedGenerator;
 import betterrandom.seed.SeedException;
 import betterrandom.seed.SeedGenerator;
 import betterrandom.util.BinaryUtils;
+import java.io.IOException;
+import java.io.ObjectInputStream;
 import java.security.GeneralSecurityException;
 import java.security.InvalidKeyException;
 import java.security.MessageDigest;
@@ -151,13 +153,17 @@ public class AesCounterRandom extends BaseEntropyCountingRandom implements Repea
     return MAX_KEY_LENGTH_BYTES;
   }
 
+  private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
+    in.defaultReadObject();
+    initSubclassTransientFields();
+  }
+
   /**
    * Called in constructor and readObject to initialize transient fields.
    */
   @RequiresNonNull({"seed", "lock", "entropyBits"})
   @EnsuresNonNull({"counter", "counterInput", "cipher"})
-  @Override
-  protected void initSubclassTransientFields(
+  private void initSubclassTransientFields(
       @UnknownInitialization AesCounterRandom this) {
     if (counter == null) {
       counter = new byte[COUNTER_SIZE_BYTES];

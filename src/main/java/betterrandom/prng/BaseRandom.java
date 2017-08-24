@@ -102,29 +102,18 @@ public abstract class BaseRandom extends Random implements ByteArrayReseedableRa
   }
 
   @EnsuresNonNull("lock")
-  protected void initTransientFields(@UnknownInitialization BaseRandom this) {
+  private void initTransientFields(@UnknownInitialization BaseRandom this) {
     if (lock == null) {
       lock = new ReentrantLock();
     }
     superConstructorFinished = true;
   }
 
-  /**
-   * No-op by default. Override to initialize transient fields that depend on the subclass's serial
-   * fields (and thus can't be called from the BaseRandom constructor). If you do so, you MUST call
-   * this method from the subclass constructor.
-   */
-  @RequiresNonNull({"seed", "lock"})
-  protected void initSubclassTransientFields(@UnknownInitialization BaseRandom this) {
-  }
-
-  @SuppressWarnings("OverriddenMethodCallDuringObjectConstruction")
   @EnsuresNonNull({"lock", "seed"})
   private void readObject(ObjectInputStream in) throws IOException,
       ClassNotFoundException {
     in.defaultReadObject();
     initTransientFields();
-    initSubclassTransientFields();
   }
 
   @EnsuresNonNull({"lock", "seed"})
