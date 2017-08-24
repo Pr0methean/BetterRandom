@@ -4,6 +4,7 @@ import betterrandom.seed.DefaultSeedGenerator;
 import betterrandom.seed.RandomSeederThread;
 import betterrandom.seed.SeedException;
 import betterrandom.seed.SeedGenerator;
+import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.util.SplittableRandom;
 import java.util.WeakHashMap;
@@ -27,7 +28,7 @@ public class ReseedingSplittableRandomAdapter extends BaseSplittableRandomAdapte
   private transient RandomSeederThread seederThread;
   private transient ThreadLocal<SingleThreadSplittableRandomAdapter> threadLocal;
 
-  private void readObject(ObjectInputStream in) {
+  private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
     in.defaultReadObject();
     initTransientFields();
     initSubclassTransientFields();
