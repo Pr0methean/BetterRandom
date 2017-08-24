@@ -214,7 +214,7 @@ public class CellularAutomatonRandom extends BaseEntropyCountingRandom implement
     return Arrays.hashCode(seed);
   }
 
-  @SuppressWarnings("NonSynchronizedMethodOverridesSynchronizedMethod")
+  @SuppressWarnings({"contracts.postcondition.not.satisfied", "NonSynchronizedMethodOverridesSynchronizedMethod"})
   @Override
   public void setSeed(@UnknownInitialization CellularAutomatonRandom this, long seed) {
     if (lock == null || this.seed == null) {

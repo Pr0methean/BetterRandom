@@ -23,8 +23,8 @@ public final class RandomSeederThread extends Thread {
   private static final Logger LOG = Logger.getLogger(RandomSeederThread.class.getName());
   private static final Map<SeedGenerator, RandomSeederThread> INSTANCES =
       Collections.synchronizedMap(new WeakHashMap<>());
-  private static final Map<EntropyCountingRandom, WeakReference<RandomSeederThread>> REVERSE_LOOKUP_TABLE =
-      Collections.synchronizedMap(new WeakHashMap<>());
+  private static final Map<EntropyCountingRandom, WeakReference<RandomSeederThread>>
+      REVERSE_LOOKUP_TABLE = Collections.synchronizedMap(new WeakHashMap<>());
   /**
    * Used to avoid full spin-locking when every {@link Random} to be reseeded is an {@link
    * EntropyCountingRandom} and none has spent its entropy.
