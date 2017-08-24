@@ -79,7 +79,7 @@ public abstract class BaseRandom extends Random implements ByteArrayReseedableRa
   // even with the @RequiresNonNull
   @SuppressWarnings("contracts.precondition.override.invalid")
   @EnsuresNonNull("this.seed")
-  @RequiresNonNull({"lock", "this.seed"})
+  @RequiresNonNull({"lock"})
   @Override
   public void setSeed(@UnknownInitialization BaseRandom this, byte[] seed) {
     lock.lock();
@@ -88,12 +88,15 @@ public abstract class BaseRandom extends Random implements ByteArrayReseedableRa
     } finally {
       lock.unlock();
     }
+    assert this.seed != null : "@AssumeAssertion(nullness)";
   }
 
-  @SuppressWarnings("contracts.precondition.not.satisfied")
+  @SuppressWarnings("contracts.postcondition.not.satisfied")
+  @EnsuresNonNull("this.seed")
   @Override
   public synchronized void setSeed(@UnknownInitialization BaseRandom this, long seed) {
     if (superConstructorFinished) {
+      assert lock != null : "@AssumeAssertion(nullness)";
       // setSeed can't work until seed array allocated
       ByteBuffer buffer = ByteBuffer.allocate(8);
       buffer.putLong(seed);

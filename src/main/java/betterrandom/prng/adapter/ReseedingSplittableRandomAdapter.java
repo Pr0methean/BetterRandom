@@ -40,8 +40,7 @@ public class ReseedingSplittableRandomAdapter extends BaseSplittableRandomAdapte
 
   private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
     in.defaultReadObject();
-    initTransientFields();
-    Objects.requireNonNull(seedGenerator, "Deserialized object has null SeedGenerator");
+    assert seedGenerator != null : "@AssumeAssertion(nullness)";
     initSubclassTransientFields();
   }
   
@@ -78,11 +77,9 @@ public class ReseedingSplittableRandomAdapter extends BaseSplittableRandomAdapte
     }
   }
 
-  @SuppressWarnings("contracts.precondition.override.invalid")
   @EnsuresNonNull({"threadLocal", "seederThread"})
   @RequiresNonNull("seedGenerator")
-  @Override
-  protected void initSubclassTransientFields(
+  private void initSubclassTransientFields(
       @UnknownInitialization ReseedingSplittableRandomAdapter this) {
     Objects.requireNonNull(seedGenerator, "SeedGenerator is null");
     if (threadLocal == null) {

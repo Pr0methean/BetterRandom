@@ -2,6 +2,9 @@ package betterrandom.prng.adapter;
 
 import betterrandom.seed.SeedException;
 import betterrandom.seed.SeedGenerator;
+import betterrandom.util.BinaryUtils;
+import java.io.IOException;
+import java.io.ObjectInputStream;
 import java.util.SplittableRandom;
 import org.checkerframework.checker.initialization.qual.UnknownInitialization;
 import org.checkerframework.checker.nullness.qual.EnsuresNonNull;
@@ -21,19 +24,25 @@ public class SplittableRandomAdapter extends DirectSplittableRandomAdapter {
     initSubclassTransientFields();
   }
 
-  @SuppressWarnings("contracts.postcondition.not.satisfied") // WTF?!
-  @EnsuresNonNull({"threadLocal", "underlying"})
-  @RequiresNonNull({"seed", "lock"})
-  @Override
-  protected void initSubclassTransientFields(
+  private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
+    in.defaultReadObject();
+    assert lock != null : "@AssumeAssertion(nullness)";
+    assert seed != null : "@AssumeAssertion(nullness)";
+    assert underlying != null : "@AssumeAssertion(nullness)";
+    initSubclassTransientFields();
+  }
+
+  @EnsuresNonNull({"threadLocal"})
+  @RequiresNonNull({"lock", "underlying"})
+  private void initSubclassTransientFields(
       @UnknownInitialization SplittableRandomAdapter this) {
     lock.lock();
     try {
-      super.initSubclassTransientFields();
       threadLocal = ThreadLocal.withInitial(underlying::split);
     } finally {
       lock.unlock();
     }
+    assert threadLocal != null : "@AssumeAssertion(nullness)";
   }
 
   @Override
@@ -47,6 +56,7 @@ public class SplittableRandomAdapter extends DirectSplittableRandomAdapter {
   @SuppressWarnings("NonSynchronizedMethodOverridesSynchronizedMethod")
   @Override
   public void setSeed(@UnknownInitialization SplittableRandomAdapter this, long seed) {
+    this.seed = BinaryUtils.convertLongToBytes(seed);
     if (superConstructorFinished && threadLocal != null) {
       threadLocal.set(new SplittableRandom(seed));
     }

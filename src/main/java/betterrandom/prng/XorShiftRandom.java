@@ -71,9 +71,8 @@ public class XorShiftRandom extends BaseEntropyCountingRandom implements Repeata
     this(seedGenerator.generateSeed(SEED_SIZE_BYTES));
   }
 
-  @Override
   @RequiresNonNull({"lock", "seed"})
-  protected void initSubclassTransientFields(@UnknownInitialization XorShiftRandom this) {
+  private void initSubclassTransientFields(@UnknownInitialization XorShiftRandom this) {
     lock.lock();
     try {
       int[] state = BinaryUtils.convertBytesToInts(seed);
@@ -89,7 +88,9 @@ public class XorShiftRandom extends BaseEntropyCountingRandom implements Repeata
 
   private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
     in.defaultReadObject();
-    initTransientFields();
+    assert entropyBits != null : "@AssumeAssertion(nullness)";
+    assert lock != null : "@AssumeAssertion(nullness)";
+    assert seed != null : "@AssumeAssertion(nullness)";
     setSeed(seed);
   }
 
@@ -100,17 +101,12 @@ public class XorShiftRandom extends BaseEntropyCountingRandom implements Repeata
     return seed.clone();
   }
 
-  @SuppressWarnings({"contracts.postcondition.not.satisfied",
-      "contracts.precondition.override.invalid"})
-  @RequiresNonNull("entropyBits")
+  @SuppressWarnings("contracts.precondition.override.invalid")
+  @RequiresNonNull({"entropyBits", "lock"})
   @Override
   public void setSeed(@UnknownInitialization XorShiftRandom this, byte[] seed) {
     if (seed.length != SEED_SIZE_BYTES) {
       throw new IllegalArgumentException("XOR shift RNG requires a seed of exactly 20 bytes.");
-    }
-    if (lock == null) {
-      // setSeed can't work until lock is initialized
-      return;
     }
     lock.lock();
     try {
@@ -120,6 +116,7 @@ public class XorShiftRandom extends BaseEntropyCountingRandom implements Repeata
     } finally {
       lock.unlock();
     }
+    assert this.seed != null : "@AssumeAssertion(nullness)";
   }
 
   /**

@@ -149,6 +149,7 @@ public class MersenneTwisterRandom extends BaseEntropyCountingRandom implements 
     } finally {
       lock.unlock();
     }
+    assert this.seed != null : "@AssumeAssertion(nullness)";
   }
 
   /**

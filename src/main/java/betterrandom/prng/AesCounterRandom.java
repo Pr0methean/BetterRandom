@@ -155,6 +155,9 @@ public class AesCounterRandom extends BaseEntropyCountingRandom implements Repea
 
   private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
     in.defaultReadObject();
+    assert entropyBits != null : "@AssumeAssertion(nullness)";
+    assert lock != null : "@AssumeAssertion(nullness)";
+    assert seed != null : "@AssumeAssertion(nullness)";
     initSubclassTransientFields();
   }
 

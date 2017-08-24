@@ -18,7 +18,6 @@ public class SingleThreadSplittableRandomAdapter extends DirectSplittableRandomA
 
   public SingleThreadSplittableRandomAdapter(byte[] seed) {
     super(seed);
-    initSubclassTransientFields();
   }
 
   @Override
@@ -29,9 +28,8 @@ public class SingleThreadSplittableRandomAdapter extends DirectSplittableRandomA
 
   private void readObject(ObjectInputStream ois) throws IOException, ClassNotFoundException {
     ois.defaultReadObject();
-    initTransientFields();
+    assert underlying != null : "@AssumeAssertion(nullness)";
     setSeed(seed);
-    initSubclassTransientFields();
     if (!deserializedAndNotUsedSince) {
       underlying = underlying.split(); // Ensures we aren't rewinding
     }
