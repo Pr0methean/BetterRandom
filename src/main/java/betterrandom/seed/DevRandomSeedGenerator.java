@@ -26,17 +26,11 @@ import java.io.IOException;
  *
  * @author Daniel Dyer
  */
-public class DevRandomSeedGenerator implements SeedGenerator {
+public enum DevRandomSeedGenerator implements SeedGenerator {
 
-  private static final DevRandomSeedGenerator INSTANCE = new DevRandomSeedGenerator();
+  INSTANCE;
+
   private static final File DEV_RANDOM = new File("/dev/random");
-  private static final long serialVersionUID = -83227910342399339L;
-
-  /**
-   * Singleton unless subclassed.
-   */
-  protected DevRandomSeedGenerator() {
-  }
 
   public static DevRandomSeedGenerator getInstance() {
     return INSTANCE;
@@ -80,18 +74,8 @@ public class DevRandomSeedGenerator implements SeedGenerator {
     }
   }
 
-
   @Override
   public String toString() {
     return "/dev/random";
-  }
-
-  public boolean equals(Object o) {
-    return o != null && getClass() == o.getClass();
-  }
-
-  @Override
-  public int hashCode() {
-    return -2131802346;
   }
 }

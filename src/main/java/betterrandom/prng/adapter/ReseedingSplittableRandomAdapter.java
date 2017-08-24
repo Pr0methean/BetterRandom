@@ -117,4 +117,9 @@ public class ReseedingSplittableRandomAdapter extends BaseSplittableRandomAdapte
   public int hashCode() {
     return seedGenerator.hashCode() + 1;
   }
+  
+  @Override
+  public String toString() {
+    return "ReseedingSplittableRandomAdapter using " + seedGenerator;
+  }
 }

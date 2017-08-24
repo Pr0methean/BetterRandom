@@ -21,12 +21,12 @@ package betterrandom.seed;
  *
  * @author Daniel Dyer
  */
-public final class DefaultSeedGenerator implements SeedGenerator {
+public enum DefaultSeedGenerator implements SeedGenerator {
 
   /**
    * Singleton instance.
    */
-  private static final DefaultSeedGenerator INSTANCE = new DefaultSeedGenerator();
+  INSTANCE;
 
   /**
    * Delegate generators.
@@ -36,13 +36,6 @@ public final class DefaultSeedGenerator implements SeedGenerator {
       RandomDotOrgSeedGenerator.getInstance(),
       SecureRandomSeedGenerator.getInstance()
   };
-  private static final long serialVersionUID = -755783059285108828L;
-
-
-  private DefaultSeedGenerator() {
-    // Private constructor prevents external instantiation.
-  }
-
 
   /**
    * @return The singleton instance of this class.
@@ -72,15 +65,5 @@ public final class DefaultSeedGenerator implements SeedGenerator {
     // This shouldn't happen as at least one the generators should be
     // able to generate a seed.
     throw new SeedException("All available seed generation strategies failed.");
-  }
-
-  @Override
-  public boolean equals(Object o) {
-    return o != null && getClass() == o.getClass();
-  }
-
-  @Override
-  public int hashCode() {
-    return -775963758;
   }
 }
