@@ -11,7 +11,7 @@ import org.checkerframework.checker.initialization.qual.UnknownInitialization;
 public class SingleThreadSplittableRandomAdapter extends DirectSplittableRandomAdapter {
 
   private static final long serialVersionUID = -1125374167384636394L;
-
+  protected boolean deserializedAndNotUsedSince = false;
   public SingleThreadSplittableRandomAdapter(SeedGenerator seedGenerator) throws SeedException {
     this(seedGenerator.generateSeed(SEED_LENGTH_BYTES));
   }
@@ -21,10 +21,9 @@ public class SingleThreadSplittableRandomAdapter extends DirectSplittableRandomA
     initSubclassTransientFields();
   }
 
-
-  // Overridden in the subclass
   @Override
   protected SplittableRandom getSplittableRandom() {
+    deserializedAndNotUsedSince = false;
     return underlying;
   }
 
@@ -40,7 +39,7 @@ public class SingleThreadSplittableRandomAdapter extends DirectSplittableRandomA
   }
 
   @Override
-  public void setSeed(@UnknownInitialization SingleThreadSplittableRandomAdapter this,
+  public synchronized void setSeed(@UnknownInitialization SingleThreadSplittableRandomAdapter this,
       long seed) {
     underlying = new SplittableRandom(seed);
     this.seed = BinaryUtils.convertLongToBytes(seed);
@@ -50,18 +49,6 @@ public class SingleThreadSplittableRandomAdapter extends DirectSplittableRandomA
   public void setSeed(@UnknownInitialization SingleThreadSplittableRandomAdapter this,
       byte[] seed) {
     underlying = new SplittableRandom(BinaryUtils.convertBytesToLong(seed, 0));
-    this.seed = seed;
-  }
-
-  @Override
-  public boolean equals(Object o) {
-    return this == o
-        || (o instanceof SingleThreadSplittableRandomAdapter
-        && underlying.equals(((SingleThreadSplittableRandomAdapter) o).underlying));
-  }
-
-  @Override
-  public int hashCode() {
-    return underlying.hashCode() + 1;
+    this.seed = seed.clone();
   }
 }

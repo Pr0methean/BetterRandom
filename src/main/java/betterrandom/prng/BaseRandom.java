@@ -17,7 +17,6 @@ import org.checkerframework.checker.initialization.qual.UnknownInitialization;
 import org.checkerframework.checker.nullness.qual.EnsuresNonNull;
 import org.checkerframework.checker.nullness.qual.RequiresNonNull;
 
-@SuppressWarnings("OverriddenMethodCallDuringObjectConstruction")
 public abstract class BaseRandom extends Random implements ByteArrayReseedableRandom,
     RepeatableRandom {
 
@@ -32,14 +31,15 @@ public abstract class BaseRandom extends Random implements ByteArrayReseedableRa
   /**
    * Use this to ignore setSeed(long) calls from super constructor
    */
-  @SuppressWarnings("InstanceVariableMayNotBeInitializedByReadObject")
+  @SuppressWarnings({"InstanceVariableMayNotBeInitializedByReadObject",
+      "FieldAccessedSynchronizedAndUnsynchronized"})
   protected transient boolean superConstructorFinished = false;
 
   /**
    * Creates a new RNG and seeds it using the default seeding strategy.
    */
   public BaseRandom(int seedLength) throws SeedException {
-    this(DefaultSeedGenerator.getInstance().generateSeed(seedLength));
+    this(DefaultSeedGenerator.INSTANCE.generateSeed(seedLength));
   }
 
   /**
@@ -92,7 +92,7 @@ public abstract class BaseRandom extends Random implements ByteArrayReseedableRa
 
   @SuppressWarnings("contracts.precondition.not.satisfied")
   @Override
-  public void setSeed(@UnknownInitialization BaseRandom this, long seed) {
+  public synchronized void setSeed(@UnknownInitialization BaseRandom this, long seed) {
     if (superConstructorFinished) {
       // setSeed can't work until seed array allocated
       ByteBuffer buffer = ByteBuffer.allocate(8);
@@ -118,6 +118,7 @@ public abstract class BaseRandom extends Random implements ByteArrayReseedableRa
   protected void initSubclassTransientFields(@UnknownInitialization BaseRandom this) {
   }
 
+  @SuppressWarnings("OverriddenMethodCallDuringObjectConstruction")
   @EnsuresNonNull({"lock", "seed"})
   private void readObject(ObjectInputStream in) throws IOException,
       ClassNotFoundException {
@@ -131,7 +132,7 @@ public abstract class BaseRandom extends Random implements ByteArrayReseedableRa
   private void readObjectNoData() throws InvalidObjectException {
     LOG.warning("BaseRandom.readObjectNoData() invoked; using DefaultSeedGenerator");
     try {
-      setSeed(DefaultSeedGenerator.getInstance().generateSeed(getNewSeedLength()));
+      setSeed(DefaultSeedGenerator.INSTANCE.generateSeed(getNewSeedLength()));
     } catch (SeedException e) {
       throw (InvalidObjectException)
           (new InvalidObjectException("Unable to deserialize or generate a seed this RNG")

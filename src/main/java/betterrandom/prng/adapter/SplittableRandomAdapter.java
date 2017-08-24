@@ -13,6 +13,7 @@ import org.checkerframework.checker.nullness.qual.RequiresNonNull;
 public class SplittableRandomAdapter extends DirectSplittableRandomAdapter {
 
   private static final long serialVersionUID = 2190439512972880590L;
+  @SuppressWarnings("ThreadLocalNotStaticFinal")
   private transient ThreadLocal<SplittableRandom> threadLocal;
 
   public SplittableRandomAdapter(SeedGenerator seedGenerator) throws SeedException {
@@ -25,8 +26,13 @@ public class SplittableRandomAdapter extends DirectSplittableRandomAdapter {
   @Override
   protected void initSubclassTransientFields(
       @UnknownInitialization SplittableRandomAdapter this) {
-    super.initSubclassTransientFields();
-    threadLocal = ThreadLocal.withInitial(underlying::split);
+    lock.lock();
+    try {
+      super.initSubclassTransientFields();
+      threadLocal = ThreadLocal.withInitial(underlying::split);
+    } finally {
+      lock.unlock();
+    }
   }
 
   @Override
@@ -37,8 +43,9 @@ public class SplittableRandomAdapter extends DirectSplittableRandomAdapter {
   /**
    * {@inheritDoc} Applies only to the calling thread.
    */
+  @SuppressWarnings("NonSynchronizedMethodOverridesSynchronizedMethod")
   @Override
-  public synchronized void setSeed(@UnknownInitialization SplittableRandomAdapter this, long seed) {
+  public void setSeed(@UnknownInitialization SplittableRandomAdapter this, long seed) {
     if (superConstructorFinished && threadLocal != null) {
       threadLocal.set(new SplittableRandom(seed));
     }

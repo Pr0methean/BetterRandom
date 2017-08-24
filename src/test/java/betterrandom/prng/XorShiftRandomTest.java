@@ -52,7 +52,7 @@ public class XorShiftRandomTest {
   @Test(timeOut = 15000, groups = "non-deterministic",
       dependsOnMethods = "testRepeatability")
   public void testDistribution() throws SeedException {
-    XorShiftRandom rng = new XorShiftRandom(DefaultSeedGenerator.getInstance());
+    XorShiftRandom rng = new XorShiftRandom(DefaultSeedGenerator.INSTANCE);
     RandomTestUtils.assertMonteCarloPiEstimateSane(rng);
   }
 

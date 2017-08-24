@@ -169,6 +169,7 @@ public class BitStringTest {
   }
 
 
+  @SuppressWarnings("ObjectEquality")
   @Test(timeOut = 15000, dependsOnMethods = {"testSetBits", "testFlipBits"})
   public void testClone() {
     BitString bitString = new BitString(10);
@@ -266,13 +267,16 @@ public class BitStringTest {
   public void testSerialisation() throws IOException, ClassNotFoundException {
     BitString bitString = new BitString("0101010");
     ByteArrayOutputStream byteStream = new ByteArrayOutputStream();
-    ObjectOutputStream objectStream = new ObjectOutputStream(byteStream);
-    objectStream.writeObject(bitString);
-    objectStream.flush();
-    byte[] bytes = byteStream.toByteArray();
-    ObjectInputStream inputStream = new ObjectInputStream(new ByteArrayInputStream(bytes));
-    BitString bitString2 = (BitString) inputStream.readObject();
-    assert bitString2.equals(bitString) : "Deserialized object is not the same as original.";
+    byte[] bytes;
+    try (ObjectOutputStream objectStream = new ObjectOutputStream(byteStream)) {
+      objectStream.writeObject(bitString);
+      objectStream.flush();
+    }
+    bytes = byteStream.toByteArray();
+    try (ObjectInputStream inputStream = new ObjectInputStream(new ByteArrayInputStream(bytes))) {
+      BitString bitString2 = (BitString) inputStream.readObject();
+      assert bitString2.equals(bitString) : "Deserialized object is not the same as original.";
+    }
   }
 
 

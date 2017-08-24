@@ -44,7 +44,7 @@ import org.checkerframework.checker.nullness.qual.EnsuresNonNull;
  * @author Daniel Dyer
  * @since 1.2
  */
-public class Cmwc4096Random extends BaseRandom implements RepeatableRandom, EntropyCountingRandom {
+public class Cmwc4096Random extends BaseEntropyCountingRandom implements RepeatableRandom {
 
   private static final int SEED_SIZE_BYTES = 16384; // Needs 4,096 32-bit integers.
 
@@ -61,7 +61,7 @@ public class Cmwc4096Random extends BaseRandom implements RepeatableRandom, Entr
    * Creates a new RNG and seeds it using the default seeding strategy.
    */
   public Cmwc4096Random() throws SeedException {
-    this(DefaultSeedGenerator.getInstance().generateSeed(SEED_SIZE_BYTES));
+    this(DefaultSeedGenerator.INSTANCE.generateSeed(SEED_SIZE_BYTES));
   }
 
 
@@ -101,10 +101,10 @@ public class Cmwc4096Random extends BaseRandom implements RepeatableRandom, Entr
     if (seed == null || seed.length != SEED_SIZE_BYTES) {
       throw new IllegalArgumentException("CMWC RNG requires 16kb of seed data.");
     }
-    this.seed = seed;
+    this.seed = seed.clone();
     state = BinaryUtils.convertBytesToInts(seed);
     initTransientFields();
-    entropyBytes = SEED_SIZE_BYTES;
+    entropyBits.set(SEED_SIZE_BYTES * 8);
   }
 
   /**
@@ -112,8 +112,8 @@ public class Cmwc4096Random extends BaseRandom implements RepeatableRandom, Entr
    */
   @Override
   protected int next(int bits) {
+    lock.lock();
     try {
-      lock.lock();
       index = (index + 1) & 4095;
       long t = A * (state[index] & 0xFFFFFFFFL) + carry;
       carry = (int) (t >> 32);
@@ -123,19 +123,21 @@ public class Cmwc4096Random extends BaseRandom implements RepeatableRandom, Entr
         carry++;
       }
       state[index] = 0xFFFFFFFE - x;
-      entropyBytes -= (bits + 7) / 8;
+      recordEntropySpent(bits);
       return state[index] >>> (32 - bits);
     } finally {
       lock.unlock();
     }
   }
 
+  @SuppressWarnings("NonFinalFieldReferenceInEquals")
   @Override
   public boolean equals(Object other) {
     return other instanceof Cmwc4096Random
         && Arrays.equals(seed, ((Cmwc4096Random) other).seed);
   }
 
+  @SuppressWarnings("NonFinalFieldReferencedInHashCode")
   @Override
   public int hashCode() {
     return Arrays.hashCode(seed);
@@ -144,10 +146,5 @@ public class Cmwc4096Random extends BaseRandom implements RepeatableRandom, Entr
   @Override
   public int getNewSeedLength() {
     return SEED_SIZE_BYTES;
-  }
-
-  @Override
-  public long entropyOctets() {
-    return entropyBytes;
   }
 }

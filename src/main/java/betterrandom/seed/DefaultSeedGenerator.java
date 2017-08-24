@@ -32,18 +32,10 @@ public enum DefaultSeedGenerator implements SeedGenerator {
    * Delegate generators.
    */
   private static final SeedGenerator[] GENERATORS = {
-      DevRandomSeedGenerator.getInstance(),
-      RandomDotOrgSeedGenerator.getInstance(),
-      SecureRandomSeedGenerator.getInstance()
+      DevRandomSeedGenerator.INSTANCE,
+      RandomDotOrgSeedGenerator.INSTANCE,
+      SecureRandomSeedGenerator.INSTANCE
   };
-
-  /**
-   * @return The singleton instance of this class.
-   */
-  public static DefaultSeedGenerator getInstance() {
-    return INSTANCE;
-  }
-
 
   /**
    * Generates a seed by trying each of the available strategies in turn until one succeeds.  Tries

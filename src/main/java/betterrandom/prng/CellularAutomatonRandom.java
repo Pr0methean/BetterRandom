@@ -39,8 +39,7 @@ import org.checkerframework.checker.nullness.qual.RequiresNonNull;
  * @author Tony Pasqualoni (original C version)
  * @author Daniel Dyer (Java port)
  */
-public class CellularAutomatonRandom extends BaseRandom implements RepeatableRandom,
-    EntropyCountingRandom {
+public class CellularAutomatonRandom extends BaseEntropyCountingRandom implements RepeatableRandom {
 
   private static final long serialVersionUID = 5959251752288589909L;
   private static final int SEED_SIZE_BYTES = 4;
@@ -80,14 +79,12 @@ public class CellularAutomatonRandom extends BaseRandom implements RepeatableRan
           130, 97, 91, 227, 146, 4, 31, 120, 211, 38, 22, 138, 140, 237, 238, 251,
           240, 160, 142, 119, 73, 103, 166, 33, 148, 9, 111, 136, 168, 150, 82
       };
-  @SuppressWarnings("TransientFieldNotInitialized")
-  private transient long entropyBytes = SEED_SIZE_BYTES;
   private transient int[] cells;
 
   private transient int currentCellIndex;
 
   public CellularAutomatonRandom() throws SeedException {
-    this(DefaultSeedGenerator.getInstance());
+    this(DefaultSeedGenerator.INSTANCE);
   }
 
   public CellularAutomatonRandom(SeedGenerator seedGenerator) throws SeedException {
@@ -136,8 +133,6 @@ public class CellularAutomatonRandom extends BaseRandom implements RepeatableRan
       for (int i = 0; i < AUTOMATON_LENGTH * AUTOMATON_LENGTH / 4; i++) {
         next(32);
       }
-
-      entropyBytes = SEED_SIZE_BYTES;
     } finally {
       lock.unlock();
     }
@@ -150,7 +145,6 @@ public class CellularAutomatonRandom extends BaseRandom implements RepeatableRan
       @UnknownInitialization CellularAutomatonRandom this) {
     cells = new int[AUTOMATON_LENGTH];
     currentCellIndex = AUTOMATON_LENGTH - 1;
-    entropyBytes = SEED_SIZE_BYTES;
     lock.lock();
     try {
       setSeed(seed);
@@ -189,24 +183,27 @@ public class CellularAutomatonRandom extends BaseRandom implements RepeatableRan
         currentCellIndex -= 4;
       }
       result = convertCellsToInt(cells, cellA);
-      entropyBytes -= (bits + 7) / 8;
+      recordEntropySpent(bits);
     } finally {
       lock.unlock();
     }
     return result >>> (32 - bits);
   }
 
+  @SuppressWarnings("NonFinalFieldReferenceInEquals")
   @Override
   public boolean equals(Object o) {
     return o instanceof CellularAutomatonRandom
         && Arrays.equals(seed, ((CellularAutomatonRandom) o).seed);
   }
 
+  @SuppressWarnings("NonFinalFieldReferencedInHashCode")
   @Override
   public int hashCode() {
     return Arrays.hashCode(seed);
   }
 
+  @SuppressWarnings("NonSynchronizedMethodOverridesSynchronizedMethod")
   @Override
   public void setSeed(@UnknownInitialization CellularAutomatonRandom this, long seed) {
     if (lock == null || this.seed == null) {
@@ -248,10 +245,5 @@ public class CellularAutomatonRandom extends BaseRandom implements RepeatableRan
   @Override
   public int getNewSeedLength() {
     return SEED_SIZE_BYTES;
-  }
-
-  @Override
-  public long entropyOctets() {
-    return entropyBytes;
   }
 }

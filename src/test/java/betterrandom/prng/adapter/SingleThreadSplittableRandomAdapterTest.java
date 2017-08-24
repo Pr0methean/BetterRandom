@@ -16,7 +16,7 @@ public class SingleThreadSplittableRandomAdapterTest {
    */
   protected BaseSplittableRandomAdapter createAdapter() throws SeedException {
     return new SingleThreadSplittableRandomAdapter(
-        DefaultSeedGenerator.getInstance());
+        DefaultSeedGenerator.INSTANCE);
   }
 
   @Test

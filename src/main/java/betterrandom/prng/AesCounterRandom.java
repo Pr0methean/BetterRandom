@@ -52,8 +52,7 @@ import org.checkerframework.checker.nullness.qual.RequiresNonNull;
  *
  * @author Daniel Dyer
  */
-public class AesCounterRandom extends BaseRandom implements RepeatableRandom,
-    EntropyCountingRandom {
+public class AesCounterRandom extends BaseEntropyCountingRandom implements RepeatableRandom {
 
   private static final long serialVersionUID = 5949778642428995210L;
   private static final Logger LOG = Logger.getLogger(AesCounterRandom.class.getName());
@@ -75,13 +74,8 @@ public class AesCounterRandom extends BaseRandom implements RepeatableRandom,
   private static final int BLOCKS_AT_ONCE = 16;
   private static final String HASH_ALGORITHM = "SHA-256";
   private static final int MAX_TOTAL_SEED_LENGTH_BYTES;
-  /**
-   * If the seed is longer than this, part of it becomes the counter's initial value. Otherwise, the
-   * full seed becomes the AES key and the counter is initially zero. Package-visible for testing of
-   * its initialization. Cannot be final due to a false "may not have been initialized" error.
-   */
   @SuppressWarnings("CanBeFinal")
-  static int MAX_KEY_LENGTH_BYTES = 0;
+  private static int MAX_KEY_LENGTH_BYTES = 0;
 
   static {
     try {
@@ -100,8 +94,6 @@ public class AesCounterRandom extends BaseRandom implements RepeatableRandom,
   private byte[] counter;
   private transient byte[] counterInput;
   private transient boolean seeded;
-  private long entropyBytes;
-  // force generation of first block on demand
   private int index;
 
   /**
@@ -134,7 +126,7 @@ public class AesCounterRandom extends BaseRandom implements RepeatableRandom,
    * @since 1.0.2
    */
   public AesCounterRandom(int seedSizeBytes) throws SeedException {
-    this(DefaultSeedGenerator.getInstance().generateSeed(seedSizeBytes));
+    this(DefaultSeedGenerator.INSTANCE.generateSeed(seedSizeBytes));
   }
 
 
@@ -146,8 +138,17 @@ public class AesCounterRandom extends BaseRandom implements RepeatableRandom,
   public AesCounterRandom(byte[] seed) {
     super(seed);
     currentBlock = new byte[COUNTER_SIZE_BYTES * BLOCKS_AT_ONCE];
-    index = currentBlock.length;
+    index = currentBlock.length; // force generation of first block on demand
     initSubclassTransientFields();
+  }
+
+  /**
+   * If the seed is longer than this, part of it becomes the counter's initial value. Otherwise, the
+   * full seed becomes the AES key and the counter is initially zero. Package-visible for testing of
+   * its initialization. Cannot be final due to a false "may not have been initialized" error.
+   */
+  public static int getMaxKeyLengthBytes() {
+    return MAX_KEY_LENGTH_BYTES;
   }
 
   /**
@@ -195,7 +196,6 @@ public class AesCounterRandom extends BaseRandom implements RepeatableRandom,
     int totalBytes = COUNTER_SIZE_BYTES * BLOCKS_AT_ONCE;
     System.arraycopy(cipher.doFinal(counterInput), 0, currentBlock, 0,
         totalBytes);
-    entropyBytes -= totalBytes;
   }
 
   /**
@@ -221,6 +221,7 @@ public class AesCounterRandom extends BaseRandom implements RepeatableRandom,
     } finally {
       lock.unlock();
     }
+    recordEntropySpent(bits);
     return result >>> (32 - bits);
   }
 
@@ -252,35 +253,35 @@ public class AesCounterRandom extends BaseRandom implements RepeatableRandom,
       throw new IllegalArgumentException(
           "Seed too long: maximum " + MAX_TOTAL_SEED_LENGTH_BYTES + " bytes");
     }
-    seed = seed.clone();
+    byte[] input = seed.clone();
     lock.lock();
     try {
       byte[] key;
-      if (seed.length == MAX_KEY_LENGTH_BYTES) {
-        key = seed;
-        super.setSeed(seed);
+      if (input.length == MAX_KEY_LENGTH_BYTES) {
+        key = input;
+        super.setSeed(input);
       } else {
         if (!seeded) {
-          if (seed.length < 16) {
+          if (input.length < 16) {
             throw new IllegalArgumentException(
-                "Seed only " + seed.length + " bytes long; need at least 16");
+                "Seed only " + input.length + " bytes long; need at least 16");
           } else {
-            if (seed.length > MAX_KEY_LENGTH_BYTES) {
+            if (input.length > MAX_KEY_LENGTH_BYTES) {
               // part of the seed goes to key
-              key = Arrays.copyOfRange(seed, 0, seed.length - COUNTER_SIZE_BYTES);
+              key = Arrays.copyOfRange(input, 0, input.length - COUNTER_SIZE_BYTES);
               // rest goes to counter (explicit casts needed for checker framework)
-              System.arraycopy(seed, seed.length - COUNTER_SIZE_BYTES, counter, 0,
+              System.arraycopy(input, input.length - COUNTER_SIZE_BYTES, counter, 0,
                   COUNTER_SIZE_BYTES);
             } else {
-              key = seed;
+              key = input;
             }
           }
-          super.setSeed(seed);
+          super.setSeed(input);
         } else {
           // Extend the key
-          byte[] newSeed = new byte[this.seed.length + seed.length];
+          byte[] newSeed = new byte[this.seed.length + input.length];
           System.arraycopy(this.seed, 0, newSeed, 0, this.seed.length);
-          System.arraycopy(seed, 0, newSeed, this.seed.length, seed.length);
+          System.arraycopy(input, 0, newSeed, this.seed.length, input.length);
           if (newSeed.length > MAX_KEY_LENGTH_BYTES) {
             int keyBytes = newSeed.length - COUNTER_SIZE_BYTES;
             key = new byte[keyBytes];
@@ -294,8 +295,8 @@ public class AesCounterRandom extends BaseRandom implements RepeatableRandom,
         }
       }
       cipher.init(Cipher.ENCRYPT_MODE, new SecretKeySpec(key, ALGORITHM));
-      entropyBytes = Math.max(seed.length + entropyBytes,
-          MAX_TOTAL_SEED_LENGTH_BYTES);
+      entropyBits.updateAndGet(oldCount -> Math.min(oldCount + 8 * input.length,
+          8 * MAX_TOTAL_SEED_LENGTH_BYTES));
       seeded = true;
     } catch (NoSuchAlgorithmException | InvalidKeyException e) {
       throw new RuntimeException(e);
@@ -308,38 +309,4 @@ public class AesCounterRandom extends BaseRandom implements RepeatableRandom,
   public int getNewSeedLength() {
     return MAX_KEY_LENGTH_BYTES;
   }
-
-  @Override
-  public long entropyOctets() {
-    return entropyBytes;
-  }
 }
-/*
-    lock.lock();
-    try {
-      super.setSeed(seed);
-      byte[] key;
-      if (seed.length > MAX_KEY_LENGTH_BYTES) {
-        // part of the seed goes to key; rest goes to counter
-        key = Arrays.copyOfRange(seed, 0, seed.length - COUNTER_SIZE_BYTES);
-  
-        // copy to counter only if counter hasn't already been deserialized
-        if (!counterInitialized) {
-          System.arraycopy(seed, seed.length - COUNTER_SIZE_BYTES, counter, 0, COUNTER_SIZE_BYTES);
-          counterInitialized = true;
-        }
-      } else {
-        key = seed;
-      }
-      try {
-        cipher = Cipher.getInstance("AES/ECB/NoPadding");
-        cipher.init(Cipher.ENCRYPT_MODE, new SecretKeySpec(key, "AES"));
-      } catch (InvalidKeyException | NoSuchPaddingException | NoSuchAlgorithmException e) {
-        throw new RuntimeException(e);
-      }
-      counterInput = new byte[COUNTER_SIZE_BYTES * BLOCKS_AT_ONCE];
-      entropyBytes = seed.length;
-    } finally {
-      lock.unlock();
-    }
-    */

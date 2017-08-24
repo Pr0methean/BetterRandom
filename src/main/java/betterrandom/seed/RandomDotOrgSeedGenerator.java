@@ -64,10 +64,6 @@ public enum RandomDotOrgSeedGenerator implements SeedGenerator {
   private static int cacheOffset = cache.length;
   private transient int retriesSoFar = 0;
 
-  public static RandomDotOrgSeedGenerator getInstance() {
-    return INSTANCE;
-  }
-
   /**
    * @param requiredBytes The preferred number of bytes to request from random.org. The
    * implementation may request more and cache the excess (to avoid making lots of small requests).
@@ -76,28 +72,33 @@ public enum RandomDotOrgSeedGenerator implements SeedGenerator {
    * @throws IOException If there is a problem downloading the random bits.
    */
 
-  private static synchronized void refreshCache(int requiredBytes) throws IOException {
-    int numberOfBytes = Math.max(requiredBytes, cache.length);
-    numberOfBytes = Math.min(numberOfBytes, MAX_REQUEST_SIZE);
-    if (numberOfBytes != cache.length) {
-      cache = new byte[numberOfBytes];
-      cacheOffset = numberOfBytes;
-    }
-    URL url = new URL(MessageFormat.format(RANDOM_URL, numberOfBytes));
-    URLConnection connection = url.openConnection();
-    connection.setRequestProperty("User-Agent", USER_AGENT);
+  private static void refreshCache(int requiredBytes) throws IOException {
+    cacheLock.lock();
+    try {
+      int numberOfBytes = Math.max(requiredBytes, cache.length);
+      numberOfBytes = Math.min(numberOfBytes, MAX_REQUEST_SIZE);
+      if (numberOfBytes != cache.length) {
+        cache = new byte[numberOfBytes];
+        cacheOffset = numberOfBytes;
+      }
+      URL url = new URL(MessageFormat.format(RANDOM_URL, numberOfBytes));
+      URLConnection connection = url.openConnection();
+      connection.setRequestProperty("User-Agent", USER_AGENT);
 
-    try (BufferedReader reader = new BufferedReader(
-        new InputStreamReader(connection.getInputStream()))) {
-      int index = -1;
-      for (String line = reader.readLine(); line != null; line = reader.readLine()) {
-        ++index;
-        cache[index] = (byte) Integer.parseInt(line, 16);
+      try (BufferedReader reader = new BufferedReader(
+          new InputStreamReader(connection.getInputStream()))) {
+        int index = -1;
+        for (String line = reader.readLine(); line != null; line = reader.readLine()) {
+          ++index;
+          cache[index] = (byte) Integer.parseInt(line, 16);
+        }
+        if (index < cache.length - 1) {
+          throw new IOException("Insufficient data received.");
+        }
+        cacheOffset = 0;
       }
-      if (index < cache.length - 1) {
-        throw new IOException("Insufficient data received.");
-      }
-      cacheOffset = 0;
+    } finally {
+      cacheLock.unlock();
     }
   }
 
@@ -110,13 +111,13 @@ public enum RandomDotOrgSeedGenerator implements SeedGenerator {
   /**
    * {@inheritDoc}
    */
-  @SuppressWarnings("AssignmentToStaticFieldFromInstanceMethod")
+  @SuppressWarnings({"AssignmentToStaticFieldFromInstanceMethod", "BusyWait"})
   public byte[] generateSeed(int length) throws SeedException {
     byte[] seedData = new byte[length];
     boolean succeeded = false;
     while (!succeeded) {
+      cacheLock.lock();
       try {
-        cacheLock.lock();
         int count = 0;
         while (count < length) {
           if (cacheOffset < cache.length) {

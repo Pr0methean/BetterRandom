@@ -2,6 +2,8 @@ package betterrandom.seed;
 
 import betterrandom.ByteArrayReseedableRandom;
 import betterrandom.EntropyCountingRandom;
+import betterrandom.util.WeakReferenceWithEquals;
+import java.lang.ref.WeakReference;
 import java.nio.ByteBuffer;
 import java.util.Collections;
 import java.util.Map;
@@ -10,32 +12,37 @@ import java.util.Random;
 import java.util.Set;
 import java.util.WeakHashMap;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.locks.Condition;
+import java.util.concurrent.locks.ReentrantLock;
 import java.util.logging.Logger;
 
+@SuppressWarnings("ClassExplicitlyExtendsThread")
 public final class RandomSeederThread extends Thread {
 
   private static final Logger LOG = Logger.getLogger(RandomSeederThread.class.getName());
-  private static final Map<SeedGenerator, RandomSeederThread> INSTANCES;
+  private static final Map<SeedGenerator, RandomSeederThread> INSTANCES =
+      Collections.synchronizedMap(new WeakHashMap<>());
+  private static final Map<EntropyCountingRandom, WeakReference<RandomSeederThread>> REVERSE_LOOKUP_TABLE =
+      Collections.synchronizedMap(new WeakHashMap<>());
   /**
    * Used to avoid full spin-locking when every {@link Random} to be reseeded is an {@link
    * EntropyCountingRandom} and none has spent its entropy.
    */
-  private static final long ENTROPY_POLL_INTERVAL_MS = 10;
+  private static final long ENTROPY_POLL_INTERVAL_MS = 1000;
   private final SeedGenerator seedGenerator;
   private final byte[] seedArray = new byte[8];
   private final Set<Random> prngs = Collections.synchronizedSet(
       Collections.newSetFromMap(new WeakHashMap<>()));
-  private ByteBuffer seedBuffer = ByteBuffer.wrap(seedArray);
+  private final ByteBuffer seedBuffer = ByteBuffer.wrap(seedArray);
+  private final Condition waitWhileEmpty = new ReentrantLock().newCondition();
+  private final Condition waitForEntropyDrain = new ReentrantLock().newCondition();
 
   /**
    * Private constructor because only one instance per seed source.
    */
   private RandomSeederThread(SeedGenerator seedGenerator) {
     this.seedGenerator = seedGenerator;
-  }
-  
-  static {
-    INSTANCES = new ConcurrentHashMap<>();
   }
 
   /**
@@ -61,9 +68,7 @@ public final class RandomSeederThread extends Thread {
     try {
       while (true) {
         while (isEmpty()) {
-          synchronized (this) {
-            wait();
-          }
+          waitWhileEmpty.await();
         }
         boolean entropyConsumed = false;
         synchronized (prngs) {
@@ -71,31 +76,29 @@ public final class RandomSeederThread extends Thread {
             if (random instanceof EntropyCountingRandom
                 && ((EntropyCountingRandom) random).entropyOctets() > 0) {
               continue;
+            } else {
+              entropyConsumed = true;
             }
             try {
-              if (!(random instanceof EntropyCountingRandom)
-                  || ((EntropyCountingRandom) random).entropyOctets() > 0) {
-                entropyConsumed = true;
-                if (random instanceof ByteArrayReseedableRandom) {
-                  ByteArrayReseedableRandom reseedable = (ByteArrayReseedableRandom) random;
-                  reseedable.setSeed(seedGenerator.generateSeed(reseedable.getNewSeedLength()));
-                } else {
-                  synchronized (this) {
-                    System.arraycopy(seedGenerator.generateSeed(8), 0, seedArray, 0, 8);
-                    random.setSeed(seedBuffer.getLong(0));
-                  }
-                }
+              if (random instanceof ByteArrayReseedableRandom) {
+                ByteArrayReseedableRandom reseedable = (ByteArrayReseedableRandom) random;
+                reseedable.setSeed(seedGenerator.generateSeed(reseedable.getNewSeedLength()));
+              } else {
+                //noinspection CallToNativeMethodWhileLocked
+                System.arraycopy(seedGenerator.generateSeed(8), 0, seedArray, 0, 8);
+                random.setSeed(seedBuffer.getLong(0));
               }
             } catch (SeedException e) {
+              //noinspection AccessToStaticFieldLockedOnInstance
               LOG.severe(String.format("%s gave SeedException %s", seedGenerator, e));
               interrupt();
             }
           }
         }
         if (!entropyConsumed) {
-          Thread.sleep(ENTROPY_POLL_INTERVAL_MS);
+          waitForEntropyDrain.await(ENTROPY_POLL_INTERVAL_MS, TimeUnit.MILLISECONDS);
         }
-        
+
       }
     } catch (InterruptedException e) {
       interrupt();
@@ -112,12 +115,38 @@ public final class RandomSeederThread extends Thread {
   /**
    * Add one or more {@link Random} instances.
    */
-  public synchronized void add(Random... randoms) {
+  public void add(Random... randoms) {
     if (isInterrupted()) {
       throw new IllegalStateException("Already shut down");
     }
     Collections.addAll(prngs, randoms);
-    notifyAll();
+    for (Random random : randoms) {
+      if (random instanceof EntropyCountingRandom) {
+        REVERSE_LOOKUP_TABLE.put((EntropyCountingRandom) random, new WeakReference<>(this));
+      }
+    }
+    waitForEntropyDrain.signalAll();
+    waitWhileEmpty.signalAll();
+  }
+
+  /**
+   * Asynchronously triggers reseeding of the given {@link EntropyCountingRandom} if it is
+   * associated with a live RandomSeederThread.
+   *
+   * @return Whether or not the reseed was successfully scheduled.
+   */
+  @SuppressWarnings("SynchronizationOnStaticField")
+  public static boolean asyncReseed(EntropyCountingRandom random) {
+    synchronized (REVERSE_LOOKUP_TABLE) {
+      RandomSeederThread thread = REVERSE_LOOKUP_TABLE.get(random).get();
+      if (thread == null || thread.isInterrupted()) {
+        REVERSE_LOOKUP_TABLE.remove(random);
+        return false;
+      } else {
+        thread.waitForEntropyDrain.signalAll();
+        return true;
+      }
+    }
   }
 
   public void stopIfEmpty() {

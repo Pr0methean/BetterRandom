@@ -50,8 +50,7 @@ import org.checkerframework.checker.nullness.qual.RequiresNonNull;
  * @author Makoto Matsumoto and Takuji Nishimura (original C version)
  * @author Daniel Dyer (Java port)
  */
-public class MersenneTwisterRandom extends BaseRandom implements RepeatableRandom,
-    EntropyCountingRandom {
+public class MersenneTwisterRandom extends BaseEntropyCountingRandom implements RepeatableRandom {
 
   private static final long serialVersionUID = -4856906677508460512L;
 
@@ -73,13 +72,12 @@ public class MersenneTwisterRandom extends BaseRandom implements RepeatableRando
 
   private final int[] mt = new int[N]; // State vector.
   private int mtIndex = 0; // Index into state vector.
-  private long entropyBytes;
 
   /**
    * Creates a new RNG and seeds it using the default seeding strategy.
    */
   public MersenneTwisterRandom() throws SeedException {
-    this(DefaultSeedGenerator.getInstance());
+    this(DefaultSeedGenerator.INSTANCE);
   }
 
   /**
@@ -112,7 +110,7 @@ public class MersenneTwisterRandom extends BaseRandom implements RepeatableRando
     }
     lock.lock();
     try {
-      this.seed = seed;
+      this.seed = seed.clone();
       int[] seedInts = BinaryUtils.convertBytesToInts(this.seed);
 
       // This section is translated from the init_genrand code in the C version.
@@ -147,7 +145,7 @@ public class MersenneTwisterRandom extends BaseRandom implements RepeatableRando
         }
       }
       mt[0] = UPPER_MASK; // Most significant bit is 1 - guarantees non-zero initial array.
-      entropyBytes = SEED_SIZE_BYTES;
+      entropyBits.set(SEED_SIZE_BYTES);
     } finally {
       lock.unlock();
     }
@@ -159,8 +157,8 @@ public class MersenneTwisterRandom extends BaseRandom implements RepeatableRando
   @Override
   protected final int next(int bits) {
     int y;
+    lock.lock();
     try {
-      lock.lock();
       if (mtIndex >= N) // Generate N ints at a time.
       {
         int kk;
@@ -189,16 +187,18 @@ public class MersenneTwisterRandom extends BaseRandom implements RepeatableRando
     y ^= (y << 15) & GENERATE_MASK2;
     y ^= (y >>> 18);
 
-    entropyBytes -= (bits + 7) / 8;
+    recordEntropySpent(bits);
     return y >>> (32 - bits);
   }
 
+  @SuppressWarnings("NonFinalFieldReferenceInEquals")
   @Override
   public boolean equals(Object other) {
     return other instanceof MersenneTwisterRandom
         && Arrays.equals(seed, ((MersenneTwisterRandom) other).seed);
   }
 
+  @SuppressWarnings("NonFinalFieldReferencedInHashCode")
   @Override
   public int hashCode() {
     return Arrays.hashCode(seed);
@@ -207,10 +207,5 @@ public class MersenneTwisterRandom extends BaseRandom implements RepeatableRando
   @Override
   public int getNewSeedLength() {
     return SEED_SIZE_BYTES;
-  }
-
-  @Override
-  public long entropyOctets() {
-    return entropyBytes;
   }
 }

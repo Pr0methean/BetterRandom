@@ -7,7 +7,7 @@ public class SplittableRandomAdapterTest extends SingleThreadSplittableRandomAda
 
   @Override
   protected SplittableRandomAdapter createAdapter() throws SeedException {
-    return new SplittableRandomAdapter(DefaultSeedGenerator.getInstance());
+    return new SplittableRandomAdapter(DefaultSeedGenerator.INSTANCE);
   }
 
   // TODO: Override or add tests for thread-safety.

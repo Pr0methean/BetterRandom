@@ -17,7 +17,6 @@ package betterrandom.prng;
 
 import static org.testng.Assert.assertEquals;
 
-import betterrandom.util.BinaryUtils;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -27,7 +26,6 @@ import java.io.Serializable;
 import java.lang.reflect.Constructor;
 import java.util.HashSet;
 import java.util.Random;
-import java.util.logging.Logger;
 import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
 import org.testng.Reporter;
 
@@ -37,8 +35,6 @@ import org.testng.Reporter;
  * @author Daniel Dyer
  */
 public final class RandomTestUtils {
-
-  private static final Logger LOG = Logger.getLogger(RandomTestUtils.class.getName());
 
   private RandomTestUtils() {
     // Prevents instantiation of utility class.
@@ -175,23 +171,24 @@ public final class RandomTestUtils {
 
   @SuppressWarnings("unchecked")
   public static <T extends Serializable> T serializeAndDeserialize(T object) {
-    try {
-      ByteArrayOutputStream byteOutStream = new ByteArrayOutputStream();
-      ObjectOutputStream objectOutStream = new ObjectOutputStream(byteOutStream);
+    try (
+        ByteArrayOutputStream byteOutStream = new ByteArrayOutputStream();
+        ObjectOutputStream objectOutStream = new ObjectOutputStream(byteOutStream)) {
       objectOutStream.writeObject(object);
       byte[] serialCopy = byteOutStream.toByteArray();
 /*      LOG.info("Serialized form of " + object + " is "
           + BinaryUtils.convertBytesToHexString(serialCopy));*/
       // Read the object back-in.
-      ObjectInputStream objectInStream = new ObjectInputStream(
-          new ByteArrayInputStream(serialCopy));
-      return (T) (objectInStream.readObject());
+      try (ObjectInputStream objectInStream = new ObjectInputStream(
+          new ByteArrayInputStream(serialCopy))) {
+        return (T) (objectInStream.readObject());
+      }
     } catch (IOException | ClassNotFoundException e) {
       throw new RuntimeException(e);
     }
   }
 
-  @SuppressWarnings("unchecked")
+  @SuppressWarnings({"unchecked", "ObjectEquality"})
   public static <T extends Random> void assertEquivalentWhenSerializedAndDeserialized(T rng) {
     T rng2 = serializeAndDeserialize(rng);
     assert rng != rng2 : "Deserialised RNG should be distinct object.";

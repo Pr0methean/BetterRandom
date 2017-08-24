@@ -37,7 +37,7 @@ public class DefaultSeedGeneratorTest {
     try {
       // Don't allow file system or network access.
       System.setSecurityManager(new RestrictedSecurityManager(affectedThread));
-      DefaultSeedGenerator.getInstance().generateSeed(4);
+      DefaultSeedGenerator.INSTANCE.generateSeed(4);
       // Should get to here without exceptions.
     } finally {
       // Restore the original security manager so that we don't
@@ -60,6 +60,7 @@ public class DefaultSeedGeneratorTest {
       this.affectedThread = affectedThread;
     }
 
+    @SuppressWarnings("ObjectEquality")
     @Override
     public void checkRead(String file) {
       if (Thread.currentThread() == affectedThread && "/dev/random".equals(file)) {
@@ -68,6 +69,7 @@ public class DefaultSeedGeneratorTest {
     }
 
 
+    @SuppressWarnings("ObjectEquality")
     @Override
     public void checkConnect(String host, int port) {
       if (Thread.currentThread() == affectedThread) {
