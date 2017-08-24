@@ -32,7 +32,6 @@ public class SeedException extends Exception {
     super(message);
   }
 
-
   /**
    * @param message Details of the problem.
    * @param cause The root cause of the problem.

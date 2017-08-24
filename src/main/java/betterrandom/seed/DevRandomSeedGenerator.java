@@ -28,7 +28,7 @@ import java.io.IOException;
  */
 public enum DevRandomSeedGenerator implements SeedGenerator {
 
-  INSTANCE;
+  DEV_RANDOM_SEED_GENERATOR;
 
   private static final File DEV_RANDOM = new File("/dev/random");
 

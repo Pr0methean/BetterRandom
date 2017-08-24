@@ -15,14 +15,17 @@
 // ============================================================================
 package betterrandom.prng;
 
+import static betterrandom.prng.RandomTestUtils.DEFAULT_SEEDER_SUPPLIER;
 import static betterrandom.prng.RandomTestUtils.assertEquivalentWhenSerializedAndDeserialized;
 import static betterrandom.prng.RandomTestUtils.assertMonteCarloPiEstimateSane;
 import static betterrandom.prng.RandomTestUtils.assertStandardDeviationSane;
+import static org.testng.Assert.assertFalse;
 
 import betterrandom.seed.DefaultSeedGenerator;
 import betterrandom.seed.SeedException;
 import betterrandom.seed.SeedGenerator;
 import java.io.IOException;
+import java.util.Arrays;
 import org.testng.annotations.Test;
 
 /**
@@ -32,7 +35,7 @@ import org.testng.annotations.Test;
  */
 public class Cmwc4096RandomTest {
 
-  private final SeedGenerator seedGenerator = DefaultSeedGenerator.INSTANCE;
+  private final SeedGenerator seedGenerator = DefaultSeedGenerator.DEFAULT_SEED_GENERATOR;
 
   /**
    * Test to ensure that two distinct RNGs with the same seed return the same sequence of numbers.
@@ -46,7 +49,6 @@ public class Cmwc4096RandomTest {
         .testEquivalence(rng, duplicateRNG, 1000) : "Generated sequences do not match.";
   }
 
-
   /**
    * Test to ensure that the output from the RNG is broadly as expected.  This will not detect the
    * subtle statistical anomalies that would be picked up by Diehard, but it provides a simple check
@@ -58,7 +60,6 @@ public class Cmwc4096RandomTest {
     Cmwc4096Random rng = new Cmwc4096Random(seedGenerator);
     assertMonteCarloPiEstimateSane(rng);
   }
-
 
   /**
    * Test to ensure that the output from the RNG is broadly as expected.  This will not detect the
@@ -74,7 +75,6 @@ public class Cmwc4096RandomTest {
     assertStandardDeviationSane(rng);
   }
 
-
   /**
    * Make sure that the RNG does not accept seeds that are too small since this could affect the
    * distribution of the output.
@@ -85,7 +85,6 @@ public class Cmwc4096RandomTest {
         new byte[]{1, 2, 3}); // Not enough bytes, should cause an IllegalArgumentException.
   }
 
-
   /**
    * RNG must not accept a null seed otherwise it will not be properly initialised.
    */
@@ -94,7 +93,6 @@ public class Cmwc4096RandomTest {
   public void testNullSeed() {
     new Cmwc4096Random((byte[]) null);
   }
-
 
   @SuppressWarnings("resource")
   @Test(timeOut = 15000)
@@ -113,5 +111,16 @@ public class Cmwc4096RandomTest {
   public void testHashCode() throws Exception {
     assert RandomTestUtils.testHashCodeDistribution(Cmwc4096Random.class.getConstructor())
         : "Too many hashCode collisions";
+  }
+
+  @Test(timeOut = 15000)
+  public void testReseeding() throws Exception {
+    BaseEntropyCountingRandom rng = new Cmwc4096Random();
+    byte[] oldSeed = rng.getSeed();
+    rng.setSeederThreadSupplier(DEFAULT_SEEDER_SUPPLIER);
+    rng.nextBytes(new byte[20000]);
+    Thread.sleep(10);
+    byte[] newSeed = rng.getSeed();
+    assertFalse(Arrays.equals(oldSeed, newSeed));
   }
 }

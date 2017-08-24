@@ -15,11 +15,14 @@
 // ============================================================================
 package betterrandom.prng;
 
+import static betterrandom.prng.RandomTestUtils.DEFAULT_SEEDER_SUPPLIER;
 import static betterrandom.prng.RandomTestUtils.assertEquivalentWhenSerializedAndDeserialized;
+import static org.testng.Assert.assertFalse;
 
 import betterrandom.seed.DefaultSeedGenerator;
 import betterrandom.seed.SeedException;
 import java.io.IOException;
+import java.util.Arrays;
 import org.testng.annotations.Test;
 
 /**
@@ -41,7 +44,6 @@ public class MersenneTwisterRandomTest {
         .testEquivalence(rng, duplicateRNG, 1000) : "Generated sequences do not match.";
   }
 
-
   /**
    * Test to ensure that the output from the RNG is broadly as expected.  This will not detect the
    * subtle statistical anomalies that would be picked up by Diehard, but it provides a simple check
@@ -50,10 +52,10 @@ public class MersenneTwisterRandomTest {
   @Test(timeOut = 15000, groups = "non-deterministic",
       dependsOnMethods = "testRepeatability")
   public void testDistribution() throws SeedException {
-    MersenneTwisterRandom rng = new MersenneTwisterRandom(DefaultSeedGenerator.INSTANCE);
+    MersenneTwisterRandom rng = new MersenneTwisterRandom(
+        DefaultSeedGenerator.DEFAULT_SEED_GENERATOR);
     RandomTestUtils.assertMonteCarloPiEstimateSane(rng);
   }
-
 
   /**
    * Test to ensure that the output from the RNG is broadly as expected.  This will not detect the
@@ -67,7 +69,6 @@ public class MersenneTwisterRandomTest {
     RandomTestUtils.assertStandardDeviationSane(rng);
   }
 
-
   /**
    * Make sure that the RNG does not accept seeds that are too small since this could affect the
    * distribution of the output.
@@ -78,7 +79,6 @@ public class MersenneTwisterRandomTest {
         8}); // Need 16 bytes, should cause an IllegalArgumentException.
   }
 
-
   /**
    * RNG must not accept a null seed otherwise it will not be properly initialised.
    */
@@ -87,7 +87,6 @@ public class MersenneTwisterRandomTest {
   public void testNullSeed() {
     new MersenneTwisterRandom((byte[]) null);
   }
-
 
   @Test(timeOut = 15000)
   public void testSerializable() throws IOException, ClassNotFoundException, SeedException {
@@ -105,5 +104,16 @@ public class MersenneTwisterRandomTest {
   public void testHashCode() throws Exception {
     assert RandomTestUtils.testHashCodeDistribution(MersenneTwisterRandom.class.getConstructor())
         : "Too many hashCode collisions";
+  }
+
+  @Test(timeOut = 15000)
+  public void testReseeding() throws Exception {
+    BaseEntropyCountingRandom rng = new MersenneTwisterRandom();
+    byte[] oldSeed = rng.getSeed();
+    rng.setSeederThreadSupplier(DEFAULT_SEEDER_SUPPLIER);
+    rng.nextBytes(new byte[20000]);
+    Thread.sleep(10);
+    byte[] newSeed = rng.getSeed();
+    assertFalse(Arrays.equals(oldSeed, newSeed));
   }
 }

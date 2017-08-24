@@ -38,7 +38,6 @@ public class JavaRandomTest {
         .testEquivalence(rng, duplicateRNG, 1000) : "Generated sequences do not match.";
   }
 
-
   /**
    * Make sure that the RNG does not accept seeds that are too small since this could affect the
    * distribution of the output.
@@ -48,7 +47,6 @@ public class JavaRandomTest {
     new JavaRandom(new byte[]{1, 2, 3, 4, 5, 6,
         7}); // One byte too few, should cause an IllegalArgumentException.
   }
-
 
   /**
    * RNG must not accept a null seed otherwise it will not be properly initialised.

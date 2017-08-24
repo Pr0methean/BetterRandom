@@ -26,15 +26,15 @@ public enum DefaultSeedGenerator implements SeedGenerator {
   /**
    * Singleton instance.
    */
-  INSTANCE;
+  DEFAULT_SEED_GENERATOR;
 
   /**
    * Delegate generators.
    */
   private static final SeedGenerator[] GENERATORS = {
-      DevRandomSeedGenerator.INSTANCE,
-      RandomDotOrgSeedGenerator.INSTANCE,
-      SecureRandomSeedGenerator.INSTANCE
+      DevRandomSeedGenerator.DEV_RANDOM_SEED_GENERATOR,
+      RandomDotOrgSeedGenerator.RANDOM_DOT_ORG_SEED_GENERATOR,
+      SecureRandomSeedGenerator.SECURE_RANDOM_SEED_GENERATOR
   };
 
   /**

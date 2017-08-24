@@ -15,7 +15,6 @@
 // ============================================================================
 package betterrandom.prng;
 
-import betterrandom.EntropyCountingRandom;
 import betterrandom.RepeatableRandom;
 import betterrandom.seed.DefaultSeedGenerator;
 import betterrandom.seed.SeedException;
@@ -77,7 +76,7 @@ public class MersenneTwisterRandom extends BaseEntropyCountingRandom implements 
    * Creates a new RNG and seeds it using the default seeding strategy.
    */
   public MersenneTwisterRandom() throws SeedException {
-    this(DefaultSeedGenerator.INSTANCE);
+    this(DefaultSeedGenerator.DEFAULT_SEED_GENERATOR);
   }
 
   /**

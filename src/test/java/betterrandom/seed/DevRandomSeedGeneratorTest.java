@@ -29,7 +29,7 @@ public class DevRandomSeedGeneratorTest {
 
   @Test(timeOut = 15000)
   public void testGenerator() {
-    SeedGenerator generator = DevRandomSeedGenerator.INSTANCE;
+    SeedGenerator generator = DevRandomSeedGenerator.DEV_RANDOM_SEED_GENERATOR;
     try {
       byte[] seed = generator.generateSeed(32);
       assert seed.length == 32 : "Failed to generate seed of correct length";

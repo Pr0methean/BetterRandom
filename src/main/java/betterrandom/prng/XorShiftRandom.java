@@ -15,7 +15,6 @@
 // ============================================================================
 package betterrandom.prng;
 
-import betterrandom.EntropyCountingRandom;
 import betterrandom.RepeatableRandom;
 import betterrandom.seed.DefaultSeedGenerator;
 import betterrandom.seed.SeedException;
@@ -64,7 +63,7 @@ public class XorShiftRandom extends BaseEntropyCountingRandom implements Repeata
   }
 
   public XorShiftRandom() throws SeedException {
-    this(DefaultSeedGenerator.INSTANCE);
+    this(DefaultSeedGenerator.DEFAULT_SEED_GENERATOR);
   }
 
   public XorShiftRandom(SeedGenerator seedGenerator) throws SeedException {

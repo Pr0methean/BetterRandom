@@ -33,7 +33,6 @@ public class BinaryUtilsTest {
     assert generatedHex.equals(expectedHex) : "Wrong hex string: " + generatedHex;
   }
 
-
   @Test(timeOut = 15000)
   public void testHexStringToBytes() {
     String hex = "7C0B00B4FD7F80FF";
@@ -43,14 +42,12 @@ public class BinaryUtilsTest {
         "Wrong byte array: " + Arrays.toString(generatedData);
   }
 
-
   @Test(timeOut = 15000, expectedExceptions = IllegalArgumentException.class)
   public void testInvalidHexStringLength() {
     // Hex string should have even number of characters (2 per byte), so
     // this should throw an exception.
     BinaryUtils.convertHexStringToBytes("F2C");
   }
-
 
   /**
    * Make sure that the conversion method correctly converts 4 bytes to an integer assuming
@@ -63,7 +60,6 @@ public class BinaryUtilsTest {
     int result = BinaryUtils.convertBytesToInt(bytes, 0);
     assert expected == result : "Expected " + expected + ", was " + result;
   }
-
 
   /**
    * Make sure that the conversion method correctly converts multiples of 4 bytes to an array of
@@ -79,7 +75,6 @@ public class BinaryUtilsTest {
     assert expected2 == result[1] : "Expected second int to be " + expected2 + ", was " + result[1];
   }
 
-
   /**
    * Make sure that the conversion method throws an exception if the number of bytes is not a
    * multiple of 4.
@@ -89,7 +84,6 @@ public class BinaryUtilsTest {
     byte[] bytes = {0, 0, 16, 8, 4, 2, 1};
     BinaryUtils.convertBytesToInts(bytes);
   }
-
 
   /**
    * Make sure that the conversion method correctly converts 8 bytes to a long assuming big-endian
@@ -103,7 +97,6 @@ public class BinaryUtilsTest {
     assert expected == result : "Expected " + expected + ", was " + result;
   }
 
-
   /**
    * Regression test for failure to correctly convert values that contain negative bytes.
    */
@@ -115,14 +108,12 @@ public class BinaryUtilsTest {
     assert expected == result : "Expected " + expected + ", was " + result;
   }
 
-
   @Test(timeOut = 15000)
   public void testConvertFixedPoint() {
     final double value = 0.6875d;
     BitString bits = BinaryUtils.convertDoubleToFixedPointBits(value);
     assert "1011".equals(bits.toString()) : "Binary representation should be 1011, is " + bits;
   }
-
 
   /**
    * Makes sure that zero is dealt with correctly by the fixed point conversion method.
@@ -132,7 +123,6 @@ public class BinaryUtilsTest {
     BitString bits = BinaryUtils.convertDoubleToFixedPointBits(0d);
     assert bits.countSetBits() == 0 : "Binary representation should be 0";
   }
-
 
   /**
    * An attempt to convert a value of 1 or greater should result in an exception since there is no
@@ -144,7 +134,6 @@ public class BinaryUtilsTest {
   public void testConvertFixedPointTooHigh() {
     BinaryUtils.convertDoubleToFixedPointBits(1d);
   }
-
 
   /**
    * An attempt to convert a negative value should result in an exception since there is no way to

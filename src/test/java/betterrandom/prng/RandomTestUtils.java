@@ -17,6 +17,8 @@ package betterrandom.prng;
 
 import static org.testng.Assert.assertEquals;
 
+import betterrandom.seed.DefaultSeedGenerator;
+import betterrandom.seed.RandomSeederThread;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -26,6 +28,7 @@ import java.io.Serializable;
 import java.lang.reflect.Constructor;
 import java.util.HashSet;
 import java.util.Random;
+import java.util.function.Supplier;
 import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
 import org.testng.Reporter;
 
@@ -35,6 +38,9 @@ import org.testng.Reporter;
  * @author Daniel Dyer
  */
 public final class RandomTestUtils {
+
+  public static final Supplier<RandomSeederThread> DEFAULT_SEEDER_SUPPLIER = () ->
+      RandomSeederThread.getInstance(DefaultSeedGenerator.DEFAULT_SEED_GENERATOR);
 
   private RandomTestUtils() {
     // Prevents instantiation of utility class.
@@ -99,7 +105,6 @@ public final class RandomTestUtils {
     return true;
   }
 
-
   /**
    * This is a rudimentary check to ensure that the output of a given RNG is approximately uniformly
    * distributed.  If the RNG output is not uniformly distributed, this method will return a poor
@@ -133,7 +138,6 @@ public final class RandomTestUtils {
     return 4 * ((double) totalInsideQuadrant / iterations);
   }
 
-
   /**
    * Uses Pythagoras' theorem to determine whether the specified coordinates fall within the area of
    * the quadrant of a circle of radius 1 that is centered on the origin.
@@ -146,7 +150,6 @@ public final class RandomTestUtils {
     double distance = Math.sqrt((x * x) + (y * y));
     return distance <= 1;
   }
-
 
   /**
    * Generates a sequence of values from a given random number generator and then calculates the

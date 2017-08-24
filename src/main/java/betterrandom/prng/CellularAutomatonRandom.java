@@ -15,7 +15,6 @@
 // ============================================================================
 package betterrandom.prng;
 
-import betterrandom.EntropyCountingRandom;
 import betterrandom.RepeatableRandom;
 import betterrandom.seed.DefaultSeedGenerator;
 import betterrandom.seed.SeedException;
@@ -86,7 +85,7 @@ public class CellularAutomatonRandom extends BaseEntropyCountingRandom implement
   private transient int currentCellIndex;
 
   public CellularAutomatonRandom() throws SeedException {
-    this(DefaultSeedGenerator.INSTANCE);
+    this(DefaultSeedGenerator.DEFAULT_SEED_GENERATOR);
   }
 
   public CellularAutomatonRandom(SeedGenerator seedGenerator) throws SeedException {
@@ -103,18 +102,18 @@ public class CellularAutomatonRandom extends BaseEntropyCountingRandom implement
     initSubclassTransientFields();
   }
 
-  private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
-    in.defaultReadObject();
-    assert lock != null : "@AssumeAssertion(nullness)";
-    assert seed != null : "@AssumeAssertion(nullness)";
-    initSubclassTransientFields();
-  }
-
   private static int convertCellsToInt(int[] cells, int offset) {
     return cells[offset]
         + (cells[offset + 1] << 8)
         + (cells[offset + 2] << 16)
         + (cells[offset + 3] << 24);
+  }
+
+  private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
+    in.defaultReadObject();
+    assert lock != null : "@AssumeAssertion(nullness)";
+    assert seed != null : "@AssumeAssertion(nullness)";
+    initSubclassTransientFields();
   }
 
   @EnsuresNonNull("cells")
@@ -214,7 +213,8 @@ public class CellularAutomatonRandom extends BaseEntropyCountingRandom implement
     return Arrays.hashCode(seed);
   }
 
-  @SuppressWarnings({"contracts.postcondition.not.satisfied", "NonSynchronizedMethodOverridesSynchronizedMethod"})
+  @SuppressWarnings({"contracts.postcondition.not.satisfied",
+      "NonSynchronizedMethodOverridesSynchronizedMethod"})
   @Override
   public void setSeed(@UnknownInitialization CellularAutomatonRandom this, long seed) {
     if (lock == null || this.seed == null) {

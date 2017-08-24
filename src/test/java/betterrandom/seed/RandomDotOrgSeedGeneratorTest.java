@@ -26,11 +26,10 @@ public class RandomDotOrgSeedGeneratorTest {
 
   @Test(timeOut = 120000)
   public void testGenerator() throws SeedException {
-    SeedGenerator generator = RandomDotOrgSeedGenerator.INSTANCE;
+    SeedGenerator generator = RandomDotOrgSeedGenerator.RANDOM_DOT_ORG_SEED_GENERATOR;
     byte[] seed = generator.generateSeed(32);
     assert seed.length == 32 : "Failed to generate seed of correct length";
   }
-
 
   /**
    * Try to acquire a large number of bytes, more than are cached internally by the seed generator
@@ -38,7 +37,7 @@ public class RandomDotOrgSeedGeneratorTest {
    */
   @Test(timeOut = 120000)
   public void testLargeRequest() throws SeedException {
-    SeedGenerator generator = RandomDotOrgSeedGenerator.INSTANCE;
+    SeedGenerator generator = RandomDotOrgSeedGenerator.RANDOM_DOT_ORG_SEED_GENERATOR;
     // 1024 bytes are cached internally, so request more than that.
     byte[] seed = generator.generateSeed(1025);
     assert seed.length == 1025 : "Failed to generate seed of correct length";

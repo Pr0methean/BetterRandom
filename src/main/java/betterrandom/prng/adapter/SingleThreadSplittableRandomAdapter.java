@@ -12,6 +12,7 @@ public class SingleThreadSplittableRandomAdapter extends DirectSplittableRandomA
 
   private static final long serialVersionUID = -1125374167384636394L;
   protected boolean deserializedAndNotUsedSince = false;
+
   public SingleThreadSplittableRandomAdapter(SeedGenerator seedGenerator) throws SeedException {
     this(seedGenerator.generateSeed(SEED_LENGTH_BYTES));
   }

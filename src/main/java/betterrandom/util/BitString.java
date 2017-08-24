@@ -42,7 +42,6 @@ public final class BitString implements Cloneable, Serializable {
    */
   private int[] data;
 
-
   /**
    * Creates a bit string of the specified length with all bits initially set to zero (off).
    *
@@ -55,7 +54,6 @@ public final class BitString implements Cloneable, Serializable {
     this.length = length;
     data = new int[(length + WORD_LENGTH - 1) / WORD_LENGTH];
   }
-
 
   /**
    * Creates a bit string of the specified length with each bit set randomly (the distribution of
@@ -84,7 +82,6 @@ public final class BitString implements Cloneable, Serializable {
     }
   }
 
-
   /**
    * Initialises the bit string from a character string of 1s and 0s in big-endian order.
    *
@@ -101,14 +98,12 @@ public final class BitString implements Cloneable, Serializable {
     }
   }
 
-
   /**
    * @return The length of this bit string.
    */
   public int getLength() {
     return length;
   }
-
 
   /**
    * Returns the bit at the specified index.
@@ -124,7 +119,6 @@ public final class BitString implements Cloneable, Serializable {
     int offset = index % WORD_LENGTH;
     return (data[word] & (1 << offset)) != 0;
   }
-
 
   /**
    * Sets the bit at the specified index.
@@ -146,7 +140,6 @@ public final class BitString implements Cloneable, Serializable {
     }
   }
 
-
   /**
    * Inverts the value of the bit at the specified index.
    *
@@ -161,7 +154,6 @@ public final class BitString implements Cloneable, Serializable {
     data[word] ^= (1 << offset);
   }
 
-
   /**
    * Helper method to check whether a bit index is valid or not.
    *
@@ -173,7 +165,6 @@ public final class BitString implements Cloneable, Serializable {
       throw new IndexOutOfBoundsException("Invalid index: " + index + " (length: " + length + ")");
     }
   }
-
 
   /**
    * @return The number of bits that are 1s rather than 0s.
@@ -189,14 +180,12 @@ public final class BitString implements Cloneable, Serializable {
     return count;
   }
 
-
   /**
    * @return The number of bits that are 0s rather than 1s.
    */
   public int countUnsetBits() {
     return length - countSetBits();
   }
-
 
   /**
    * Interprets this bit string as being a binary numeric value and returns the integer that it
@@ -207,7 +196,6 @@ public final class BitString implements Cloneable, Serializable {
   public BigInteger toNumber() {
     return (new BigInteger(toString(), 2));
   }
-
 
   /**
    * An efficient method for exchanging data between two bit strings.  Both bit strings must be long
@@ -245,7 +233,6 @@ public final class BitString implements Cloneable, Serializable {
     }
   }
 
-
   /**
    * @param other The BitString to exchange bits with.
    * @param word The word index of the word that will be swapped between the two bit strings.
@@ -262,7 +249,6 @@ public final class BitString implements Cloneable, Serializable {
     other.data[word] = preservedThat | swapThis;
   }
 
-
   /**
    * Creates a textual representation of this bit string in big-endian order (index 0 is the
    * right-most bit).
@@ -278,7 +264,6 @@ public final class BitString implements Cloneable, Serializable {
     return buffer.toString();
   }
 
-
   /**
    * @return An identical copy of this bit string.
    */
@@ -293,7 +278,6 @@ public final class BitString implements Cloneable, Serializable {
       throw new InternalError("Cloning failed.", ex);
     }
   }
-
 
   /**
    * @return True if the argument is a BitString instance and both bit strings are the same length
@@ -313,7 +297,6 @@ public final class BitString implements Cloneable, Serializable {
 
     return length == bitString.length && Arrays.equals(data, bitString.data);
   }
-
 
   /**
    * Over-ridden to be consistent with {@link #equals(Object)}.

@@ -46,7 +46,6 @@ public class BitStringTest {
     }
   }
 
-
   /**
    * Check that a random bit string of the correct length is constructed.
    */
@@ -57,7 +56,6 @@ public class BitStringTest {
         bitString.getLength() == 100 :
         "BitString created with wrong length: " + bitString.getLength();
   }
-
 
   /**
    * Make sure that bits are set correctly.
@@ -79,7 +77,6 @@ public class BitStringTest {
     assert !bitString.getBit(4) : "Bit 4 should be unset.";
   }
 
-
   /**
    * Make sure bit-flipping works as expected.
    */
@@ -91,7 +88,6 @@ public class BitStringTest {
     bitString.flipBit(2);
     assert !bitString.getBit(2) : "Flipping set bit failed.";
   }
-
 
   /**
    * Checks that string representations are correctly generated.
@@ -107,7 +103,6 @@ public class BitStringTest {
     assert "0110001000".equals(string) : "Incorrect string representation: " + string;
   }
 
-
   /**
    * Checks that the String-parsing constructor works correctly.
    */
@@ -120,7 +115,6 @@ public class BitStringTest {
     assert toString.equals(fromString) : "Failed parsing: String representations do not match.";
   }
 
-
   /**
    * Checks that integer conversion is correct.
    */
@@ -132,7 +126,6 @@ public class BitStringTest {
     BigInteger number = bitString.toNumber();
     assert number.intValue() == 513 : "Incorrect number conversion: " + number.intValue();
   }
-
 
   /**
    * Checks that the bit string can correctly count its number of set bits.
@@ -151,7 +144,6 @@ public class BitStringTest {
     assert setBits == 5 : "No. set bits should be 5, is " + setBits;
   }
 
-
   /**
    * Checks that the bit string can correctly count its number of unset bits.
    */
@@ -167,7 +159,6 @@ public class BitStringTest {
     int setBits = bitString.countUnsetBits();
     assert setBits == 7 : "No. set bits should be 7, is " + setBits;
   }
-
 
   @SuppressWarnings("ObjectEquality")
   @Test(timeOut = 15000, dependsOnMethods = {"testSetBits", "testFlipBits"})
@@ -189,7 +180,6 @@ public class BitStringTest {
     bitString.flipBit(2);
     assert !clone.getBit(2) : "Clone is not independent from original.";
   }
-
 
   @SuppressWarnings({"EqualsWithItself", "ObjectEqualsNull", "argument.type.incompatible"})
   @Test(timeOut = 15000, dependsOnMethods = "testClone")
@@ -219,7 +209,6 @@ public class BitStringTest {
         .equals(bitString) : "Equals comparison failed on different length bit strings.";
   }
 
-
   /**
    * The length of a bit string must be non-negative.  If an attempt is made to create a bit string
    * with a negative length, an appropriate exception must be thrown.
@@ -228,7 +217,6 @@ public class BitStringTest {
   public void testInvalidLength() {
     new BitString(-1);
   }
-
 
   /**
    * Checks to ensure that invalid characters in a String used to construct the bit string results
@@ -240,7 +228,6 @@ public class BitStringTest {
     new BitString("0010201"); // Invalid.
   }
 
-
   /**
    * The index of an individual bit must be non-negative.  If an attempt is made to set a negative
    * bit position, an appropriate exception must be thrown.
@@ -251,7 +238,6 @@ public class BitStringTest {
     bitString.setBit(-1, false);
   }
 
-
   /**
    * The index of an individual bit must be within the range 0 to length-1. If an attempt is made to
    * set a negative bit position, an appropriate exception must be thrown.
@@ -261,7 +247,6 @@ public class BitStringTest {
     BitString bitString = new BitString(1);
     bitString.setBit(1, false);
   }
-
 
   @Test(timeOut = 15000, dependsOnMethods = "testEquals")
   public void testSerialisation() throws IOException, ClassNotFoundException {
@@ -279,7 +264,6 @@ public class BitStringTest {
     }
   }
 
-
   @Test(timeOut = 15000)
   public void testSwapSubstringWordAligned() {
     // Bit indices are little-endian, so position 0 is the rightmost bit.
@@ -296,7 +280,6 @@ public class BitStringTest {
         : "Substring swap failed: " + zeros;
   }
 
-
   @Test(timeOut = 15000)
   public void testSwapSubstringNonAlignedStart() {
     // Bit indices are little-endian, so position 0 is the rightmost bit.
@@ -308,7 +291,6 @@ public class BitStringTest {
     assert "0000000011111111111111111111111111111100".equals(zeros.toString()) :
         "Substring swap failed: " + zeros;
   }
-
 
   @Test(timeOut = 15000)
   public void testSwapSubstringNonAlignedEnd() {
