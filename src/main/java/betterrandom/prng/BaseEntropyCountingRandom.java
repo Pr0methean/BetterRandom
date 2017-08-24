@@ -5,6 +5,8 @@ import betterrandom.seed.RandomSeederThread;
 import betterrandom.seed.SeedException;
 import betterrandom.seed.SeedGenerator;
 import java.util.concurrent.atomic.AtomicLong;
+import org.checkerframework.checker.initialization.qual.UnknownInitialization;
+import org.checkerframework.checker.nullness.qual.RequiresNonNull;
 
 public abstract class BaseEntropyCountingRandom extends BaseRandom implements
     EntropyCountingRandom {
@@ -25,8 +27,10 @@ public abstract class BaseEntropyCountingRandom extends BaseRandom implements
     super(seed);
   }
 
+  @SuppressWarnings("contracts.precondition.override.invalid")
   @Override
-  public void setSeed(byte[] seed) {
+  @RequiresNonNull("entropyBits")
+  public void setSeed(@UnknownInitialization BaseEntropyCountingRandom this, byte[] seed) {
     super.setSeed(seed);
     entropyBits.updateAndGet(oldCount -> Math.max(oldCount, seed.length * 8));
   }
