@@ -4,6 +4,7 @@ import betterrandom.seed.DefaultSeedGenerator;
 import betterrandom.seed.RandomSeederThread;
 import betterrandom.seed.SeedException;
 import betterrandom.seed.SeedGenerator;
+import java.io.ObjectInputStream;
 import java.util.SplittableRandom;
 import java.util.WeakHashMap;
 import org.checkerframework.checker.initialization.qual.UnknownInitialization;
@@ -22,9 +23,15 @@ public class ReseedingSplittableRandomAdapter extends BaseSplittableRandomAdapte
   private static final WeakHashMap<SeedGenerator, ReseedingSplittableRandomAdapter> INSTANCES = new WeakHashMap<>();
   @Nullable
   private static ReseedingSplittableRandomAdapter defaultInstance;
-  protected final SeedGenerator seedGenerator; // to initialize it early for a subclass
+  protected final SeedGenerator seedGenerator;
   private transient RandomSeederThread seederThread;
   private transient ThreadLocal<SingleThreadSplittableRandomAdapter> threadLocal;
+
+  private void readObject(ObjectInputStream in) {
+    in.defaultReadObject();
+    initTransientFields();
+    initSubclassTransientFields();
+  }
 
   /**
    * Single instance per SeedGenerator.
