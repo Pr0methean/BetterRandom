@@ -70,12 +70,6 @@ public class RandomDotOrgSeedGenerator implements SeedGenerator {
   protected RandomDotOrgSeedGenerator() {
   }
 
-  @SuppressWarnings("unused")
-  private void readObject(ObjectInputStream ois) throws IOException, ClassNotFoundException {
-    ois.defaultReadObject();
-    retriesSoFar = 0;
-  }
-
   public static RandomDotOrgSeedGenerator getInstance() {
     return INSTANCE;
   }
@@ -111,6 +105,12 @@ public class RandomDotOrgSeedGenerator implements SeedGenerator {
       }
       cacheOffset = 0;
     }
+  }
+
+  @SuppressWarnings("unused")
+  private void readObject(ObjectInputStream ois) throws IOException, ClassNotFoundException {
+    ois.defaultReadObject();
+    retriesSoFar = 0;
   }
 
   /**
@@ -165,11 +165,11 @@ public class RandomDotOrgSeedGenerator implements SeedGenerator {
   public String toString() {
     return BASE_URL;
   }
-  
+
   public boolean equals(Object o) {
     return o != null && getClass() == o.getClass();
   }
-  
+
   @Override
   public int hashCode() {
     return 1247952755;

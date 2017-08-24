@@ -31,6 +31,7 @@ import org.checkerframework.checker.nullness.qual.Nullable;
 import org.testng.annotations.AfterSuite;
 import org.testng.annotations.BeforeSuite;
 import org.testng.annotations.Test;
+
 /**
  * Unit test for the AES RNG.
  *
@@ -38,7 +39,8 @@ import org.testng.annotations.Test;
  */
 public class AesCounterRandomTest {
 
-  @Nullable private FileHandler logHandler;
+  @Nullable
+  private FileHandler logHandler;
 
   @BeforeSuite
   public void setUp() throws IOException {

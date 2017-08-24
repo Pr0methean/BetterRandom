@@ -2,24 +2,16 @@ package betterrandom.seed;
 
 import betterrandom.ByteArrayReseedableRandom;
 import betterrandom.EntropyCountingRandom;
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-import java.io.Serializable;
 import java.nio.ByteBuffer;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Random;
 import java.util.Set;
 import java.util.WeakHashMap;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Logger;
-import org.checkerframework.checker.initialization.qual.UnderInitialization;
-import org.checkerframework.checker.nullness.qual.EnsuresNonNull;
 
-public final class RandomSeederThread extends Thread implements Serializable {
+public final class RandomSeederThread extends Thread {
 
   private static final Logger LOG = Logger.getLogger(RandomSeederThread.class.getName());
   private static final Map<SeedGenerator, RandomSeederThread> INSTANCES =
@@ -29,21 +21,17 @@ public final class RandomSeederThread extends Thread implements Serializable {
    * EntropyCountingRandom} and none has spent its entropy.
    */
   private static final long ENTROPY_POLL_INTERVAL_MS = 10;
-  private static final long serialVersionUID = -2858126391794302039L;
   private final SeedGenerator seedGenerator;
   private final byte[] seedArray = new byte[8];
-  @SuppressWarnings({"NonSerializableFieldInSerializableClass",
-      "InstanceVariableMayNotBeInitializedByReadObject"})
-  private transient Set<Random> prngs;
-  @SuppressWarnings("InstanceVariableMayNotBeInitializedByReadObject")
-  private transient ByteBuffer seedBuffer;
+  private final Set<Random> prngs = Collections.newSetFromMap(
+      Collections.synchronizedMap(new WeakHashMap<>()));
+  private ByteBuffer seedBuffer = ByteBuffer.wrap(seedArray);
 
   /**
    * Private constructor because only one instance per seed source.
    */
   private RandomSeederThread(SeedGenerator seedGenerator) {
     this.seedGenerator = seedGenerator;
-    initTransientState();
   }
 
   /**
@@ -56,32 +44,6 @@ public final class RandomSeederThread extends Thread implements Serializable {
     thread.setDaemon(true);
     thread.start();
     return thread;
-  }
-
-  /**
-   * Ensure one instance per SeedGenerator even after deserialization.
-   */
-  @SuppressWarnings("unused")
-  private RandomSeederThread readResolve() {
-    return getInstance(seedGenerator);
-  }
-
-  @EnsuresNonNull({"seedBuffer", "prngs"})
-  private void initTransientState(@UnderInitialization RandomSeederThread this) {
-    prngs = Collections.newSetFromMap(
-        Collections.synchronizedMap(new WeakHashMap<>()));
-    seedBuffer = ByteBuffer.wrap(seedArray);
-  }
-
-  private void writeObject(ObjectOutputStream oos) throws IOException {
-    oos.defaultWriteObject();
-    oos.writeObject(new ArrayList<>(prngs));
-  }
-
-  @SuppressWarnings("unchecked")
-  private void readObject(ObjectInputStream ois) throws IOException, ClassNotFoundException {
-    ois.defaultReadObject();
-    getInstance(seedGenerator).prngs.addAll((ArrayList<Random>) (ois.readObject()));
   }
 
   @SuppressWarnings("InfiniteLoopStatement")

@@ -36,7 +36,6 @@
       <artifactId>checker</artifactId>
       <version>2.1.14</version>
     </dependency>
-    <!-- The annotated JDK to use (change to jdk7 if using Java 7). -->
     <dependency>
       <groupId>org.checkerframework</groupId>
       <artifactId>jdk8</artifactId>
