@@ -19,6 +19,7 @@
     <pattern value="betterrandom.prng.adapter.BaseSplittableRandomAdapter" method="nextLong" />
     <pattern value="betterrandom.prng.adapter.BaseSplittableRandomAdapter" method="nextInt" />
     <pattern value="betterrandom.prng.adapter.BaseSplittableRandomAdapter" />
+    <pattern value="betterrandom.prng.adapter.ReseedingSplittableRandomAdapter" method="readResolve" />
   </component>
   <component name="MavenProjectsManager">
     <option name="originalFiles">

@@ -11,6 +11,8 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.SplittableRandom;
 import java.util.WeakHashMap;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 import org.checkerframework.checker.initialization.qual.UnknownInitialization;
 import org.checkerframework.checker.nullness.qual.EnsuresNonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
@@ -26,10 +28,14 @@ public class ReseedingSplittableRandomAdapter extends BaseSplittableRandomAdapte
   private static final long serialVersionUID = 6301096404034224037L;
   private static final Map<SeedGenerator, ReseedingSplittableRandomAdapter> INSTANCES =
       Collections.synchronizedMap(new WeakHashMap<>());
+  private static final Lock defaultInstanceLock = new ReentrantLock();
   @Nullable
   private static ReseedingSplittableRandomAdapter defaultInstance;
   protected final SeedGenerator seedGenerator;
+  @SuppressWarnings("InstanceVariableMayNotBeInitializedByReadObject")
   private transient RandomSeederThread seederThread;
+  @SuppressWarnings({"ThreadLocalNotStaticFinal",
+      "InstanceVariableMayNotBeInitializedByReadObject"})
   private transient ThreadLocal<SingleThreadSplittableRandomAdapter> threadLocal;
 
   private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
@@ -58,12 +64,18 @@ public class ReseedingSplittableRandomAdapter extends BaseSplittableRandomAdapte
     initSubclassTransientFields();
   }
 
-  public static synchronized ReseedingSplittableRandomAdapter getDefaultInstance()
+  @SuppressWarnings("NonThreadSafeLazyInitialization")
+  public static ReseedingSplittableRandomAdapter getDefaultInstance()
       throws SeedException {
-    if (defaultInstance == null) {
-      defaultInstance = new ReseedingSplittableRandomAdapter(DefaultSeedGenerator.getInstance());
+    defaultInstanceLock.lock();
+    try {
+      if (defaultInstance == null) {
+        defaultInstance = new ReseedingSplittableRandomAdapter(DefaultSeedGenerator.INSTANCE);
+      }
+      return defaultInstance;
+    } finally {
+      defaultInstanceLock.unlock();
     }
-    return defaultInstance;
   }
 
   @SuppressWarnings("contracts.precondition.override.invalid")
@@ -85,9 +97,10 @@ public class ReseedingSplittableRandomAdapter extends BaseSplittableRandomAdapte
     seederThread = RandomSeederThread.getInstance(seedGenerator);
   }
 
+  @SuppressWarnings("SynchronizationOnStaticField")
   public static ReseedingSplittableRandomAdapter getInstance(SeedGenerator seedGenerator)
       throws SeedException {
-    if (seedGenerator.equals(DefaultSeedGenerator.getInstance())) {
+    if (seedGenerator.equals(DefaultSeedGenerator.INSTANCE)) {
       return getDefaultInstance();
     }
     synchronized (INSTANCES) {

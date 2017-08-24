@@ -32,7 +32,7 @@ import org.testng.annotations.Test;
  */
 public class Cmwc4096RandomTest {
 
-  private final SeedGenerator seedGenerator = DefaultSeedGenerator.getInstance();
+  private final SeedGenerator seedGenerator = DefaultSeedGenerator.INSTANCE;
 
   /**
    * Test to ensure that two distinct RNGs with the same seed return the same sequence of numbers.

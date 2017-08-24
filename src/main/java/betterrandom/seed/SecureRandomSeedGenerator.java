@@ -36,10 +36,6 @@ public enum SecureRandomSeedGenerator implements SeedGenerator {
 
   private static final SecureRandom SOURCE = new SecureRandom();
 
-  public static SecureRandomSeedGenerator getInstance() {
-    return INSTANCE;
-  }
-
   /**
    * {@inheritDoc}
    */

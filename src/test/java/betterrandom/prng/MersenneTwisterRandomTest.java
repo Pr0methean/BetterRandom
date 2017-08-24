@@ -50,7 +50,7 @@ public class MersenneTwisterRandomTest {
   @Test(timeOut = 15000, groups = "non-deterministic",
       dependsOnMethods = "testRepeatability")
   public void testDistribution() throws SeedException {
-    MersenneTwisterRandom rng = new MersenneTwisterRandom(DefaultSeedGenerator.getInstance());
+    MersenneTwisterRandom rng = new MersenneTwisterRandom(DefaultSeedGenerator.INSTANCE);
     RandomTestUtils.assertMonteCarloPiEstimateSane(rng);
   }
 

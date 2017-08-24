@@ -52,7 +52,7 @@ public class CellularAutomatonRandomTest {
   @Test(timeOut = 15000, groups = "non-deterministic",
       dependsOnMethods = "testRepeatability")
   public void testDistribution() throws SeedException {
-    CellularAutomatonRandom rng = new CellularAutomatonRandom(DefaultSeedGenerator.getInstance());
+    CellularAutomatonRandom rng = new CellularAutomatonRandom(DefaultSeedGenerator.INSTANCE);
     assertMonteCarloPiEstimateSane(rng);
   }
 

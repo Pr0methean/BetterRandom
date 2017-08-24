@@ -40,7 +40,7 @@ import org.checkerframework.checker.nullness.qual.RequiresNonNull;
  * @author Daniel Dyer
  * @since 1.2
  */
-public class XorShiftRandom extends BaseRandom implements RepeatableRandom, EntropyCountingRandom {
+public class XorShiftRandom extends BaseEntropyCountingRandom implements RepeatableRandom {
 
   private static final long serialVersionUID = 952521144304194886L;
   private static final int SEED_SIZE_BYTES = 20; // Needs 5 32-bit integers.
@@ -53,8 +53,6 @@ public class XorShiftRandom extends BaseRandom implements RepeatableRandom, Entr
   private int state4;
   private int state5;
 
-  private long entropyBytes;
-
   /**
    * Creates an RNG and seeds it with the specified seed data.
    *
@@ -66,7 +64,7 @@ public class XorShiftRandom extends BaseRandom implements RepeatableRandom, Entr
   }
 
   public XorShiftRandom() throws SeedException {
-    this(DefaultSeedGenerator.getInstance());
+    this(DefaultSeedGenerator.INSTANCE);
   }
 
   public XorShiftRandom(SeedGenerator seedGenerator) throws SeedException {
@@ -84,7 +82,6 @@ public class XorShiftRandom extends BaseRandom implements RepeatableRandom, Entr
       state3 = state[2];
       state4 = state[3];
       state5 = state[4];
-      entropyBytes = SEED_SIZE_BYTES;
     } finally {
       lock.unlock();
     }
@@ -117,6 +114,7 @@ public class XorShiftRandom extends BaseRandom implements RepeatableRandom, Entr
     lock.lock();
     try {
       this.seed = seed.clone();
+      entropyBits.set(8 * SEED_SIZE_BYTES);
       initSubclassTransientFields();
     } finally {
       lock.unlock();
@@ -128,8 +126,8 @@ public class XorShiftRandom extends BaseRandom implements RepeatableRandom, Entr
    */
   @Override
   protected int next(int bits) {
+    lock.lock();
     try {
-      lock.lock();
       int t = (state1 ^ (state1 >> 7));
       state1 = state2;
       state2 = state3;
@@ -137,19 +135,21 @@ public class XorShiftRandom extends BaseRandom implements RepeatableRandom, Entr
       state4 = state5;
       state5 = (state5 ^ (state5 << 6)) ^ (t ^ (t << 13));
       int value = (state2 + state2 + 1) * state5;
-      entropyBytes -= (bits + 7) / 8;
+      recordEntropySpent(bits);
       return value >>> (32 - bits);
     } finally {
       lock.unlock();
     }
   }
 
+  @SuppressWarnings("NonFinalFieldReferenceInEquals")
   @Override
   public boolean equals(Object other) {
     return other instanceof XorShiftRandom
         && Arrays.equals(seed, ((XorShiftRandom) other).seed);
   }
 
+  @SuppressWarnings("NonFinalFieldReferencedInHashCode")
   @Override
   public int hashCode() {
     return Arrays.hashCode(seed);
@@ -158,10 +158,5 @@ public class XorShiftRandom extends BaseRandom implements RepeatableRandom, Entr
   @Override
   public int getNewSeedLength() {
     return SEED_SIZE_BYTES;
-  }
-
-  @Override
-  public long entropyOctets() {
-    return entropyBytes;
   }
 }

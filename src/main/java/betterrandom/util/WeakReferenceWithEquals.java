@@ -39,7 +39,7 @@ public class WeakReferenceWithEquals<T> extends WeakReference<T> {
   @SuppressWarnings("argument.type.incompatible") // Objects.equals handles nulls
   @Override
   public boolean equals(@Nullable Object o) {
-    return (this == o) || (o instanceof WeakReferenceWithEquals
-        && Objects.equals(((WeakReferenceWithEquals) o).get(), get()));
+    return (this == o) || (o instanceof WeakReferenceWithEquals<?>
+        && Objects.equals(((WeakReferenceWithEquals<?>) o).get(), get()));
   }
 }

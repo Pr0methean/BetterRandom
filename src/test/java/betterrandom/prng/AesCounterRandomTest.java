@@ -57,9 +57,9 @@ public class AesCounterRandomTest {
 
   @Test(timeOut = 15000)
   public void testMaxSeedLengthOk() {
-    assert AesCounterRandom.MAX_KEY_LENGTH_BYTES >= 16 :
+    assert AesCounterRandom.getMaxKeyLengthBytes() >= 16 :
         "Should allow a 16-byte key";
-    assert AesCounterRandom.MAX_KEY_LENGTH_BYTES <= 32 :
+    assert AesCounterRandom.getMaxKeyLengthBytes() <= 32 :
         "Shouldn't allow a key longer than 32 bytes";
   }
 
@@ -104,7 +104,7 @@ public class AesCounterRandomTest {
   @Test(timeOut = 15000, groups = "non-deterministic",
       dependsOnMethods = "testRepeatability")
   public void testDistribution() throws GeneralSecurityException, SeedException {
-    AesCounterRandom rng = new AesCounterRandom(DefaultSeedGenerator.getInstance());
+    AesCounterRandom rng = new AesCounterRandom(DefaultSeedGenerator.INSTANCE);
     assertMonteCarloPiEstimateSane(rng);
   }
 
