@@ -5,6 +5,7 @@ import betterrandom.EntropyCountingRandom;
 import java.nio.ByteBuffer;
 import java.util.Collections;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Random;
 import java.util.Set;
 import java.util.WeakHashMap;
@@ -14,8 +15,7 @@ import java.util.logging.Logger;
 public final class RandomSeederThread extends Thread {
 
   private static final Logger LOG = Logger.getLogger(RandomSeederThread.class.getName());
-  private static final Map<SeedGenerator, RandomSeederThread> INSTANCES =
-      new ConcurrentHashMap<>();
+  private static final Map<SeedGenerator, RandomSeederThread> INSTANCES;
   /**
    * Used to avoid full spin-locking when every {@link Random} to be reseeded is an {@link
    * EntropyCountingRandom} and none has spent its entropy.
@@ -33,12 +33,18 @@ public final class RandomSeederThread extends Thread {
   private RandomSeederThread(SeedGenerator seedGenerator) {
     this.seedGenerator = seedGenerator;
   }
+  
+  static {
+    INSTANCES = new ConcurrentHashMap<>();
+  }
 
   /**
    * Obtain the instance for the given {@link SeedGenerator}, creating and starting it if it doesn't
    * exist.
    */
   public static RandomSeederThread getInstance(SeedGenerator seedGenerator) {
+    Objects.requireNonNull(seedGenerator,
+        "Trying to get RandomSeederThread for null SeedGenerator");
     return INSTANCES.computeIfAbsent(seedGenerator,
         seedGen -> {
       RandomSeederThread thread = new RandomSeederThread(seedGen);

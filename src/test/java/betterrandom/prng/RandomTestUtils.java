@@ -180,8 +180,8 @@ public final class RandomTestUtils {
       ObjectOutputStream objectOutStream = new ObjectOutputStream(byteOutStream);
       objectOutStream.writeObject(object);
       byte[] serialCopy = byteOutStream.toByteArray();
-      LOG.info("Serialized form of " + object + " is "
-          + BinaryUtils.convertBytesToHexString(serialCopy));
+/*      LOG.info("Serialized form of " + object + " is "
+          + BinaryUtils.convertBytesToHexString(serialCopy));*/
       // Read the object back-in.
       ObjectInputStream objectInStream = new ObjectInputStream(
           new ByteArrayInputStream(serialCopy));
