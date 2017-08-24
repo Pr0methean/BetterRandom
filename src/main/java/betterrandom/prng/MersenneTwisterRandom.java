@@ -101,9 +101,9 @@ public class MersenneTwisterRandom extends BaseEntropyCountingRandom implements 
     return seed.clone();
   }
 
-  @Override
-  @RequiresNonNull("lock")
   @SuppressWarnings("contracts.precondition.override.invalid")
+  @RequiresNonNull({"lock", "entropyBits"})
+  @Override
   public void setSeed(@UnknownInitialization MersenneTwisterRandom this, byte[] seed) {
     if (seed == null || seed.length != SEED_SIZE_BYTES) {
       throw new IllegalArgumentException("Mersenne Twister RNG requires a 128-bit (16-byte) seed.");

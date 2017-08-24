@@ -21,6 +21,7 @@ public class SplittableRandomAdapter extends DirectSplittableRandomAdapter {
     initSubclassTransientFields();
   }
 
+  @SuppressWarnings("contracts.postcondition.not.satisfied") // WTF?!
   @EnsuresNonNull({"threadLocal", "underlying"})
   @RequiresNonNull({"seed", "lock"})
   @Override
