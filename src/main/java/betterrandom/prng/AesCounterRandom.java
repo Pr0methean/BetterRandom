@@ -154,7 +154,7 @@ public class AesCounterRandom extends BaseEntropyCountingRandom implements Repea
   /**
    * Called in constructor and readObject to initialize transient fields.
    */
-  @RequiresNonNull({"seed", "lock"})
+  @RequiresNonNull({"seed", "lock", "entropyBits"})
   @EnsuresNonNull({"counter", "counterInput", "cipher"})
   @Override
   protected void initSubclassTransientFields(
@@ -246,7 +246,7 @@ public class AesCounterRandom extends BaseEntropyCountingRandom implements Repea
   }
 
   @Override
-  @RequiresNonNull({"lock", "this.seed", "cipher", "counter"})
+  @RequiresNonNull({"lock", "this.seed", "cipher", "counter", "entropyBits"})
   @SuppressWarnings({"contracts.precondition.override.invalid"})
   public void setSeed(@UnknownInitialization AesCounterRandom this, byte[] seed) {
     if (seed.length > MAX_TOTAL_SEED_LENGTH_BYTES) {

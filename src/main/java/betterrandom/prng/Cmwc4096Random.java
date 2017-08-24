@@ -25,6 +25,7 @@ import java.util.Arrays;
 import java.util.Random;
 import org.checkerframework.checker.initialization.qual.UnknownInitialization;
 import org.checkerframework.checker.nullness.qual.EnsuresNonNull;
+import org.checkerframework.checker.nullness.qual.RequiresNonNull;
 
 /**
  * <p>A Java version of George Marsaglia's <a href="http://school.anhb.uwa.edu.au/personalpages/kwessen/shared/Marsaglia03.html">Complementary
@@ -54,8 +55,6 @@ public class Cmwc4096Random extends BaseEntropyCountingRandom implements Repeata
   private int[] state;
   private int carry = 362436; // TO DO: This should be randomly generated.
   private int index = 4095;
-
-  private long entropyBytes;
 
   /**
    * Creates a new RNG and seeds it using the default seeding strategy.
@@ -96,6 +95,7 @@ public class Cmwc4096Random extends BaseEntropyCountingRandom implements Repeata
   }
 
   @EnsuresNonNull({"this.seed", "state"})
+  @RequiresNonNull("entropyBits")
   @Override
   public void setSeed(@UnknownInitialization Cmwc4096Random this, byte[] seed) {
     if (seed == null || seed.length != SEED_SIZE_BYTES) {

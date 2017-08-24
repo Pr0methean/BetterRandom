@@ -102,6 +102,7 @@ public class XorShiftRandom extends BaseEntropyCountingRandom implements Repeata
 
   @SuppressWarnings({"contracts.postcondition.not.satisfied",
       "contracts.precondition.override.invalid"})
+  @RequiresNonNull("entropyBits")
   @Override
   public void setSeed(@UnknownInitialization XorShiftRandom this, byte[] seed) {
     if (seed.length != SEED_SIZE_BYTES) {

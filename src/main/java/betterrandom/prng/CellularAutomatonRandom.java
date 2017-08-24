@@ -131,7 +131,7 @@ public class CellularAutomatonRandom extends BaseEntropyCountingRandom implement
 
       // Evolve automaton before returning integers.
       for (int i = 0; i < AUTOMATON_LENGTH * AUTOMATON_LENGTH / 4; i++) {
-        next(32);
+        internalNext(32);
       }
     } finally {
       lock.unlock();
@@ -154,40 +154,43 @@ public class CellularAutomatonRandom extends BaseEntropyCountingRandom implement
     }
   }
 
+  @RequiresNonNull("cells")
+  private int internalNext(@UnknownInitialization CellularAutomatonRandom this, int bits) {
+    int result;
+    // Set cell addresses using address of current cell.
+    int cellC = currentCellIndex - 1;
+    int cellB = cellC - 1;
+
+    // Update cell states using rule table.
+    cells[currentCellIndex] = RNG_RULE[cells[cellC] + cells[currentCellIndex]];
+    cells[cellC] = RNG_RULE[cells[cellB] + cells[cellC]];
+    int cellA = cellB - 1;
+    cells[cellB] = RNG_RULE[cells[cellA] + cells[cellB]];
+
+    // Update the state of cellA and shift current cell to the left by 4 bytes.
+    if (cellA == 0) {
+      cells[0] = RNG_RULE[cells[0]];
+      currentCellIndex = AUTOMATON_LENGTH - 1;
+    } else {
+      cells[cellA] = RNG_RULE[cells[cellA - 1] + cells[cellA]];
+      currentCellIndex -= 4;
+    }
+    result = convertCellsToInt(cells, cellA);
+    return result >>> (32 - bits);
+  }
+
   /**
    * {@inheritDoc}
    */
   @Override
-  @SuppressWarnings("contracts.precondition.override.invalid")
-  @RequiresNonNull({"lock", "cells"})
-  public int next(@UnknownInitialization CellularAutomatonRandom this, int bits) {
-    int result;
+  public int next(int bits) {
     lock.lock();
     try {
-      // Set cell addresses using address of current cell.
-      int cellC = currentCellIndex - 1;
-      int cellB = cellC - 1;
-
-      // Update cell states using rule table.
-      cells[currentCellIndex] = RNG_RULE[cells[cellC] + cells[currentCellIndex]];
-      cells[cellC] = RNG_RULE[cells[cellB] + cells[cellC]];
-      int cellA = cellB - 1;
-      cells[cellB] = RNG_RULE[cells[cellA] + cells[cellB]];
-
-      // Update the state of cellA and shift current cell to the left by 4 bytes.
-      if (cellA == 0) {
-        cells[0] = RNG_RULE[cells[0]];
-        currentCellIndex = AUTOMATON_LENGTH - 1;
-      } else {
-        cells[cellA] = RNG_RULE[cells[cellA - 1] + cells[cellA]];
-        currentCellIndex -= 4;
-      }
-      result = convertCellsToInt(cells, cellA);
-      recordEntropySpent(bits);
+      return internalNext(bits);
     } finally {
+      recordEntropySpent(bits);
       lock.unlock();
     }
-    return result >>> (32 - bits);
   }
 
   @SuppressWarnings("NonFinalFieldReferenceInEquals")
