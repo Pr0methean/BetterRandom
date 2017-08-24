@@ -57,11 +57,11 @@ public class SecureRandomSeedGenerator implements SeedGenerator {
   public String toString() {
     return "java.security.SecureRandom";
   }
-  
+
   public boolean equals(Object o) {
     return o != null && getClass() == o.getClass();
   }
-  
+
   @Override
   public int hashCode() {
     return -261707500;

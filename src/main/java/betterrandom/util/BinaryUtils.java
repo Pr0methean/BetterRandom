@@ -154,7 +154,7 @@ public final class BinaryUtils {
     }
     return new BitString(bits.toString());
   }
-  
+
   public static byte[] convertLongToBytes(long input) {
     byte[] array = new byte[Long.BYTES];
     ByteBuffer buffer = ByteBuffer.wrap(array);

@@ -73,12 +73,12 @@ public final class DefaultSeedGenerator implements SeedGenerator {
     // able to generate a seed.
     throw new SeedException("All available seed generation strategies failed.");
   }
-  
+
   @Override
   public boolean equals(Object o) {
     return o != null && getClass() == o.getClass();
   }
-  
+
   @Override
   public int hashCode() {
     return -775963758;

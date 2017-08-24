@@ -11,7 +11,9 @@ import org.testng.annotations.Test;
 
 public class SingleThreadSplittableRandomAdapterTest {
 
-  /** Overridden in subclasses, so that subclassing the test can test the subclasses. */
+  /**
+   * Overridden in subclasses, so that subclassing the test can test the subclasses.
+   */
   protected BaseSplittableRandomAdapter createAdapter() throws SeedException {
     return new SingleThreadSplittableRandomAdapter(
         DefaultSeedGenerator.getInstance());

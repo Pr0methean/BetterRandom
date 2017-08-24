@@ -123,7 +123,7 @@ public class CellularAutomatonRandom extends BaseRandom implements RepeatableRan
       cells[AUTOMATON_LENGTH - 3] = seed[2] + 128;
       cells[AUTOMATON_LENGTH - 4] = seed[3] + 128;
       currentCellIndex = AUTOMATON_LENGTH - 1;
-  
+
       int seedAsInt = BinaryUtils.convertBytesToInt(seed, 0);
       if (seedAsInt != 0xFFFFFFFF) {
         seedAsInt++;
@@ -131,12 +131,12 @@ public class CellularAutomatonRandom extends BaseRandom implements RepeatableRan
       for (int i = 0; i < AUTOMATON_LENGTH - 4; i++) {
         cells[i] = 0x000000FF & (seedAsInt >> (i % 32));
       }
-  
+
       // Evolve automaton before returning integers.
       for (int i = 0; i < AUTOMATON_LENGTH * AUTOMATON_LENGTH / 4; i++) {
         next(32);
       }
-  
+
       entropyBytes = SEED_SIZE_BYTES;
     } finally {
       lock.unlock();

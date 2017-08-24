@@ -20,10 +20,11 @@ public class ReseedingSplittableRandomAdapter extends BaseSplittableRandomAdapte
 
   private static final long serialVersionUID = 6301096404034224037L;
   private static final WeakHashMap<SeedGenerator, ReseedingSplittableRandomAdapter> INSTANCES = new WeakHashMap<>();
-  @Nullable private static ReseedingSplittableRandomAdapter defaultInstance;
-  private transient RandomSeederThread seederThread; // Transient to work around Oracle bug 9050586
-  private transient ThreadLocal<SingleThreadSplittableRandomAdapter> threadLocal;
+  @Nullable
+  private static ReseedingSplittableRandomAdapter defaultInstance;
   protected final SeedGenerator seedGenerator; // to initialize it early for a subclass
+  private transient RandomSeederThread seederThread;
+  private transient ThreadLocal<SingleThreadSplittableRandomAdapter> threadLocal;
 
   /**
    * Single instance per SeedGenerator.
