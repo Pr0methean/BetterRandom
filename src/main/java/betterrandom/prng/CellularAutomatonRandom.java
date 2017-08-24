@@ -21,6 +21,8 @@ import betterrandom.seed.DefaultSeedGenerator;
 import betterrandom.seed.SeedException;
 import betterrandom.seed.SeedGenerator;
 import betterrandom.util.BinaryUtils;
+import java.io.IOException;
+import java.io.ObjectInputStream;
 import java.util.Arrays;
 import java.util.Random;
 import org.checkerframework.checker.initialization.qual.UnknownInitialization;
@@ -101,6 +103,11 @@ public class CellularAutomatonRandom extends BaseEntropyCountingRandom implement
     initSubclassTransientFields();
   }
 
+  private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
+    in.defaultReadObject();
+    initSubclassTransientFields();
+  }
+
   private static int convertCellsToInt(int[] cells, int offset) {
     return cells[offset]
         + (cells[offset + 1] << 8)
@@ -140,8 +147,7 @@ public class CellularAutomatonRandom extends BaseEntropyCountingRandom implement
 
   @EnsuresNonNull("cells")
   @RequiresNonNull({"lock", "seed"})
-  @Override
-  protected void initSubclassTransientFields(
+  private void initSubclassTransientFields(
       @UnknownInitialization CellularAutomatonRandom this) {
     cells = new int[AUTOMATON_LENGTH];
     currentCellIndex = AUTOMATON_LENGTH - 1;

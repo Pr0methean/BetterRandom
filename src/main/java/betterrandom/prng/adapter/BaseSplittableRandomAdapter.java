@@ -1,10 +1,15 @@
 package betterrandom.prng.adapter;
 
 import betterrandom.prng.BaseRandom;
+import java.io.IOException;
+import java.io.ObjectInputStream;
 import java.util.SplittableRandom;
 import java.util.stream.DoubleStream;
 import java.util.stream.IntStream;
 import java.util.stream.LongStream;
+import org.checkerframework.checker.initialization.qual.UnknownInitialization;
+import org.checkerframework.checker.nullness.qual.EnsuresNonNull;
+import org.checkerframework.checker.nullness.qual.RequiresNonNull;
 
 public abstract class BaseSplittableRandomAdapter extends BaseRandom {
 
@@ -165,5 +170,18 @@ public abstract class BaseSplittableRandomAdapter extends BaseRandom {
   @Override
   public int getNewSeedLength() {
     return SEED_LENGTH_BYTES;
+  }
+
+  @RequiresNonNull({"seed", "lock"})
+  protected void initSubclassTransientFields(@UnknownInitialization BaseRandom this) {
+  }
+
+  @Override
+  @SuppressWarnings("OverriddenMethodCallDuringObjectConstruction")
+  @EnsuresNonNull({"lock", "seed"})
+  protected void readObject(ObjectInputStream in) throws IOException,
+      ClassNotFoundException {
+    in.defaultReadObject();
+    initSubclassTransientFields();
   }
 }
