@@ -23,8 +23,8 @@ public final class RandomSeederThread extends Thread {
   private static final long ENTROPY_POLL_INTERVAL_MS = 10;
   private final SeedGenerator seedGenerator;
   private final byte[] seedArray = new byte[8];
-  private final Set<Random> prngs = Collections.newSetFromMap(
-      Collections.synchronizedMap(new WeakHashMap<>()));
+  private final Set<Random> prngs = Collections.synchronizedSet(
+      Collections.newSetFromMap(new WeakHashMap<>()));
   private ByteBuffer seedBuffer = ByteBuffer.wrap(seedArray);
 
   /**
@@ -41,6 +41,7 @@ public final class RandomSeederThread extends Thread {
   public static RandomSeederThread getInstance(SeedGenerator seedGenerator) {
     RandomSeederThread thread = INSTANCES.computeIfAbsent(seedGenerator,
         RandomSeederThread::new);
+    thread.setName("RandomSeederThread for " + seedGenerator);
     thread.setDaemon(true);
     thread.start();
     return thread;
@@ -52,36 +53,41 @@ public final class RandomSeederThread extends Thread {
     try {
       while (true) {
         while (isEmpty()) {
-          wait();
+          synchronized (this) {
+            wait();
+          }
         }
         boolean entropyConsumed = false;
-        for (Random random : prngs) {
-          if (random instanceof EntropyCountingRandom
-              && ((EntropyCountingRandom) random).entropyOctets() > 0) {
-            continue;
-          }
-          try {
-            if (!(random instanceof EntropyCountingRandom)
-                || ((EntropyCountingRandom) random).entropyOctets() > 0) {
-              entropyConsumed = true;
-              if (random instanceof ByteArrayReseedableRandom) {
-                ByteArrayReseedableRandom reseedable = (ByteArrayReseedableRandom) random;
-                reseedable.setSeed(seedGenerator.generateSeed(reseedable.getNewSeedLength()));
-              } else {
-                synchronized (this) {
-                  System.arraycopy(seedGenerator.generateSeed(8), 0, seedArray, 0, 8);
-                  random.setSeed(seedBuffer.getLong(0));
+        synchronized (prngs) {
+          for (Random random : prngs) {
+            if (random instanceof EntropyCountingRandom
+                && ((EntropyCountingRandom) random).entropyOctets() > 0) {
+              continue;
+            }
+            try {
+              if (!(random instanceof EntropyCountingRandom)
+                  || ((EntropyCountingRandom) random).entropyOctets() > 0) {
+                entropyConsumed = true;
+                if (random instanceof ByteArrayReseedableRandom) {
+                  ByteArrayReseedableRandom reseedable = (ByteArrayReseedableRandom) random;
+                  reseedable.setSeed(seedGenerator.generateSeed(reseedable.getNewSeedLength()));
+                } else {
+                  synchronized (this) {
+                    System.arraycopy(seedGenerator.generateSeed(8), 0, seedArray, 0, 8);
+                    random.setSeed(seedBuffer.getLong(0));
+                  }
                 }
               }
+            } catch (SeedException e) {
+              LOG.severe(String.format("%s gave SeedException %s", seedGenerator, e));
+              interrupt();
             }
-          } catch (SeedException e) {
-            LOG.severe(String.format("%s gave SeedException %s", seedGenerator, e));
-            interrupt();
           }
         }
         if (!entropyConsumed) {
           Thread.sleep(ENTROPY_POLL_INTERVAL_MS);
         }
+        
       }
     } catch (InterruptedException e) {
       interrupt();
@@ -89,8 +95,10 @@ public final class RandomSeederThread extends Thread {
     }
   }
 
-  public synchronized boolean isEmpty() {
-    return prngs.isEmpty();
+  public boolean isEmpty() {
+    synchronized (prngs) {
+      return prngs.isEmpty();
+    }
   }
 
   /**
@@ -108,10 +116,5 @@ public final class RandomSeederThread extends Thread {
     if (isEmpty()) {
       interrupt();
     }
-  }
-
-  @Override
-  public String toString() {
-    return "RandomSeederThread for " + seedGenerator;
   }
 }
