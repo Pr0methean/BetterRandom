@@ -17,7 +17,7 @@ public abstract class BaseEntropyCountingRandom extends BaseRandom implements
   private static final long serialVersionUID = 1838766748070164286L;
   protected AtomicLong entropyBits = new AtomicLong(0);
   @Nullable
-  private transient Supplier<RandomSeederThread> threadSupplier;
+  private RandomSeederThread thread;
 
   @EnsuresNonNull("entropyBits")
   public BaseEntropyCountingRandom(int seedLength) throws SeedException {
@@ -35,10 +35,12 @@ public abstract class BaseEntropyCountingRandom extends BaseRandom implements
     super(seed);
   }
 
-  public void setSeederThreadSupplier(
-      Supplier<RandomSeederThread> threadSupplier) {
-    this.threadSupplier = threadSupplier;
-    threadSupplier.get().add(this);
+  public synchronized void setSeederThread(RandomSeederThread thread) {
+    if (this.thread != null) {
+      this.thread.remove(this);
+    }
+    this.thread = thread;
+    thread.add(this);
   }
 
   @SuppressWarnings("contracts.precondition.override.invalid")
@@ -56,8 +58,8 @@ public abstract class BaseEntropyCountingRandom extends BaseRandom implements
 
   protected final void recordEntropySpent(long bits) {
     if (entropyBits.updateAndGet(oldCount -> Math.max(oldCount - bits, 0)) == 0
-        && threadSupplier != null) {
-      threadSupplier.get().asyncReseed(this);
+        && thread != null) {
+      thread.asyncReseed(this);
     }
   }
 }
