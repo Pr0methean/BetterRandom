@@ -1,6 +1,8 @@
 package betterrandom.prng.adapter;
 
 import betterrandom.util.BinaryUtils;
+import java.io.IOException;
+import java.io.ObjectInputStream;
 import java.util.SplittableRandom;
 import org.checkerframework.checker.initialization.qual.UnknownInitialization;
 import org.checkerframework.checker.nullness.qual.EnsuresNonNull;
@@ -13,6 +15,13 @@ public abstract class DirectSplittableRandomAdapter extends BaseSplittableRandom
 
   public DirectSplittableRandomAdapter(byte[] seed) {
     super(seed);
+    initSubclassTransientFields();
+  }
+
+  private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
+    in.defaultReadObject();
+    assert seed != null : "@AssumeAssertion(nullness)";
+    assert lock != null : "@AssumeAssertion(nullness)";
     initSubclassTransientFields();
   }
 
