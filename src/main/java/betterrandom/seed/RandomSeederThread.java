@@ -2,6 +2,7 @@ package betterrandom.seed;
 
 import betterrandom.ByteArrayReseedableRandom;
 import betterrandom.EntropyCountingRandom;
+import betterrandom.util.LogPreFormatter;
 import java.nio.ByteBuffer;
 import java.util.Arrays;
 import java.util.Collections;
@@ -19,7 +20,8 @@ import java.util.logging.Logger;
 @SuppressWarnings("ClassExplicitlyExtendsThread")
 public final class RandomSeederThread extends Thread {
 
-  private static final Logger LOG = Logger.getLogger(RandomSeederThread.class.getName());
+  private static final LogPreFormatter LOG
+      = new LogPreFormatter(Logger.getLogger(RandomSeederThread.class.getName()));
   private static final Map<SeedGenerator, RandomSeederThread> INSTANCES =
       Collections.synchronizedMap(new WeakHashMap<>());
   /**
@@ -52,7 +54,7 @@ public final class RandomSeederThread extends Thread {
         "Trying to get RandomSeederThread for null SeedGenerator");
     return INSTANCES.computeIfAbsent(seedGenerator,
         seedGen -> {
-          LOG.info("Creating a RandomSeederThread for " + seedGen);
+          LOG.info("Creating a RandomSeederThread for %s", seedGen);
           RandomSeederThread thread = new RandomSeederThread(seedGen);
           thread.setName("RandomSeederThread for " + seedGen);
           thread.setDaemon(true);
@@ -118,7 +120,7 @@ public final class RandomSeederThread extends Thread {
               }
             } catch (SeedException e) {
               //noinspection AccessToStaticFieldLockedOnInstance
-              LOG.severe(String.format("%s gave SeedException %s", seedGenerator, e));
+              LOG.error("%s gave SeedException %s", seedGenerator, e);
               interrupt();
             }
           }
@@ -133,7 +135,7 @@ public final class RandomSeederThread extends Thread {
         }
       }
     } catch (InterruptedException e) {
-      LOG.warning(getName() + " interrupted");
+      LOG.warn("%s interrupted", this);
       interrupt();
       INSTANCES.remove(seedGenerator);
     }
@@ -160,7 +162,10 @@ public final class RandomSeederThread extends Thread {
     } finally {
       lock.unlock();
     }
-    LOG.info("Registered " + Arrays.toString(randoms));
+  }
+
+  public void remove(Random... randoms) {
+    prngs.removeAll(Arrays.asList(randoms));
   }
 
   public void stopIfEmpty() {

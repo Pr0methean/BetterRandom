@@ -20,6 +20,7 @@ import betterrandom.seed.DefaultSeedGenerator;
 import betterrandom.seed.SeedException;
 import betterrandom.seed.SeedGenerator;
 import betterrandom.util.BinaryUtils;
+import betterrandom.util.LogPreFormatter;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.security.GeneralSecurityException;
@@ -56,7 +57,8 @@ import org.checkerframework.checker.nullness.qual.RequiresNonNull;
 public class AesCounterRandom extends BaseEntropyCountingRandom implements RepeatableRandom {
 
   private static final long serialVersionUID = 5949778642428995210L;
-  private static final Logger LOG = Logger.getLogger(AesCounterRandom.class.getName());
+  private static final LogPreFormatter LOG = new LogPreFormatter(
+      Logger.getLogger(AesCounterRandom.class.getName()));
   private static final int DEFAULT_SEED_SIZE_BYTES = 32;
   /**
    * Theoretically, the Rijndael algorithm supports key sizes and block sizes of 16, 20, 24, 28 & 32
@@ -90,7 +92,7 @@ public class AesCounterRandom extends BaseEntropyCountingRandom implements Repea
     } catch (GeneralSecurityException e) {
       throw new RuntimeException(e);
     }
-    LOG.info("Maximum allowed key length for AES is " + MAX_KEY_LENGTH_BYTES);
+    LOG.info("Maximum allowed key length for AES is %d bytes", MAX_KEY_LENGTH_BYTES);
     MAX_KEY_LENGTH_BYTES = Math.min(MAX_KEY_LENGTH_BYTES, 32);
     MAX_TOTAL_SEED_LENGTH_BYTES = MAX_KEY_LENGTH_BYTES + COUNTER_SIZE_BYTES;
   }
