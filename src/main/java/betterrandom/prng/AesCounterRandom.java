@@ -88,7 +88,7 @@ public class AesCounterRandom extends BaseEntropyCountingRandom implements Repea
 
   static {
     try {
-      MAX_KEY_LENGTH_BYTES = Cipher.getMaxAllowedKeyLength(ALGORITHM_MODE);
+      MAX_KEY_LENGTH_BYTES = Cipher.getMaxAllowedKeyLength(ALGORITHM_MODE) / 8;
     } catch (GeneralSecurityException e) {
       throw new RuntimeException(e);
     }
