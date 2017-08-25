@@ -38,6 +38,7 @@ public abstract class BaseEntropyCountingRandom extends BaseRandom implements
   public void setSeederThreadSupplier(
       Supplier<RandomSeederThread> threadSupplier) {
     this.threadSupplier = threadSupplier;
+    threadSupplier.get().add(this);
   }
 
   @SuppressWarnings("contracts.precondition.override.invalid")

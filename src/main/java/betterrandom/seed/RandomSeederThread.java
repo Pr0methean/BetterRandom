@@ -3,6 +3,7 @@ package betterrandom.seed;
 import betterrandom.ByteArrayReseedableRandom;
 import betterrandom.EntropyCountingRandom;
 import java.nio.ByteBuffer;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Map;
 import java.util.Objects;
@@ -25,7 +26,7 @@ public final class RandomSeederThread extends Thread {
    * Used to avoid full spin-locking when every {@link Random} to be reseeded is an {@link
    * EntropyCountingRandom} and none has spent its entropy.
    */
-  private static final long ENTROPY_POLL_INTERVAL_MS = 1000;
+  private static final long POLL_INTERVAL_MS = 1000;
   private final SeedGenerator seedGenerator;
   private final byte[] seedArray = new byte[8];
   private final Set<Random> prngs = Collections.synchronizedSet(
@@ -51,6 +52,7 @@ public final class RandomSeederThread extends Thread {
         "Trying to get RandomSeederThread for null SeedGenerator");
     return INSTANCES.computeIfAbsent(seedGenerator,
         seedGen -> {
+          LOG.info("Creating a RandomSeederThread for " + seedGen);
           RandomSeederThread thread = new RandomSeederThread(seedGen);
           thread.setName("RandomSeederThread for " + seedGen);
           thread.setDaemon(true);
@@ -124,13 +126,14 @@ public final class RandomSeederThread extends Thread {
         if (!entropyConsumed) {
           lock.lock();
           try {
-            waitForEntropyDrain.await(ENTROPY_POLL_INTERVAL_MS, TimeUnit.MILLISECONDS);
+            waitForEntropyDrain.await(POLL_INTERVAL_MS, TimeUnit.MILLISECONDS);
           } finally {
             lock.unlock();
           }
         }
       }
     } catch (InterruptedException e) {
+      LOG.warning(getName() + " interrupted");
       interrupt();
       INSTANCES.remove(seedGenerator);
     }
@@ -157,6 +160,7 @@ public final class RandomSeederThread extends Thread {
     } finally {
       lock.unlock();
     }
+    LOG.info("Registered " + Arrays.toString(randoms));
   }
 
   public void stopIfEmpty() {
