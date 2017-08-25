@@ -8,6 +8,8 @@ import org.testng.log4testng.Logger;
 
 public class TestNgLogAdapter extends Handler {
 
+  public static void ensureClassLoaded() {}
+
   private static final WeakHashMap<Class<?>, TestNgLogAdapter> INSTANCES = new WeakHashMap<>();
 
   private final Logger testNgLogger;
