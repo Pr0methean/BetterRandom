@@ -58,6 +58,12 @@ public class AesCounterRandom extends BaseEntropyCountingRandom implements Repea
   private static final long serialVersionUID = 5949778642428995210L;
   private static final Logger LOG = Logger.getLogger(AesCounterRandom.class.getName());
   private static final int DEFAULT_SEED_SIZE_BYTES = 32;
+  /**
+   * Theoretically, the Rijndael algorithm supports key sizes and block sizes of 16, 20, 24, 28 & 32
+   * bytes. Thus, if Java contained a full implementation of Rijndael, specifying it would let us
+   * support seeds of 16 to 32 and 36, 40, 44, 48, 52, 56, 60 & 64 bytes. However, neither Oracle
+   * Java nor OpenJDK provides any implementation of the part of Rijndael that isn't AES.
+   */
   private static final String ALGORITHM = "AES";
   @SuppressWarnings("HardcodedFileSeparator")
   private static final String ALGORITHM_MODE = ALGORITHM + "/ECB/NoPadding";
@@ -270,15 +276,12 @@ public class AesCounterRandom extends BaseEntropyCountingRandom implements Repea
             throw new IllegalArgumentException(
                 "Seed only " + input.length + " bytes long; need at least 16");
           } else {
-            if (input.length > MAX_KEY_LENGTH_BYTES) {
-              // part of the seed goes to key
-              key = Arrays.copyOfRange(input, 0, input.length - COUNTER_SIZE_BYTES);
-              // rest goes to counter (explicit casts needed for checker framework)
-              System.arraycopy(input, input.length - COUNTER_SIZE_BYTES, counter, 0,
-                  COUNTER_SIZE_BYTES);
-            } else {
-              key = input;
-            }
+            // determine how much of seed can go to key
+            int keyLength = input.length > MAX_KEY_LENGTH_BYTES ? MAX_KEY_LENGTH_BYTES
+                : input.length >= 24 ? 24 : 16;
+            key = Arrays.copyOfRange(input, 0, keyLength);
+            // rest goes to counter
+            System.arraycopy(input, keyLength, counter, 0, input.length - keyLength);
           }
           super.setSeed(input);
         } else {
