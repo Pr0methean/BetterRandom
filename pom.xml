@@ -57,6 +57,9 @@
           <artifactId>maven-surefire-plugin</artifactId>
           <version>2.14.1</version>
           <configuration>
+            <systemPropertyVariables>
+              <java.util.logging.manager>betterrandom.TestNgLogAdapterManager</java.util.logging.manager>
+            </systemPropertyVariables>
             <trimStackTrace>false</trimStackTrace>
             <parallel>methods</parallel>
             <forkedProcessTimeoutInSeconds>300</forkedProcessTimeoutInSeconds>
