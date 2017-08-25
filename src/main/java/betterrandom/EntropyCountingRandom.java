@@ -8,8 +8,8 @@ package betterrandom;
 public interface EntropyCountingRandom {
 
   /**
-   * @return The current amount of entropy (bytes seeded with or bytes of internal state, whichever
-   * was greater at the time, minus bytes returned).
+   * @return The current amount of entropy (bits seeded with or bits of internal state, whichever
+   * was less at the time, minus bits returned).
    */
-  long entropyOctets();
+  long entropyBits();
 }

@@ -11,6 +11,7 @@ import java.util.Set;
 import java.util.WeakHashMap;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.Condition;
+import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 import java.util.logging.Logger;
 
@@ -30,8 +31,9 @@ public final class RandomSeederThread extends Thread {
   private final Set<Random> prngs = Collections.synchronizedSet(
       Collections.newSetFromMap(new WeakHashMap<>()));
   private final ByteBuffer seedBuffer = ByteBuffer.wrap(seedArray);
-  private final Condition waitWhileEmpty = new ReentrantLock().newCondition();
-  private final Condition waitForEntropyDrain = new ReentrantLock().newCondition();
+  private final Lock lock = new ReentrantLock();
+  private final Condition waitWhileEmpty = lock.newCondition();
+  private final Condition waitForEntropyDrain = lock.newCondition();
 
   /**
    * Private constructor because only one instance per seed source.
@@ -64,13 +66,20 @@ public final class RandomSeederThread extends Thread {
    * @return Whether or not the reseed was successfully scheduled.
    */
   public boolean asyncReseed(EntropyCountingRandom random) {
+    boolean eligible;
     synchronized (prngs) {
-      if (prngs.contains(random)) {
+      eligible = prngs.contains(random);
+    }
+    if (eligible) {
+      lock.lock();
+      try {
         waitForEntropyDrain.signalAll();
-        return true;
-      } else {
-        return false;
+      } finally {
+        lock.unlock();
       }
+      return true;
+    } else {
+      return false;
     }
   }
 
@@ -80,13 +89,18 @@ public final class RandomSeederThread extends Thread {
     try {
       while (true) {
         while (isEmpty()) {
-          waitWhileEmpty.await();
+          lock.lock();
+          try {
+            waitWhileEmpty.await();
+          } finally {
+            lock.unlock();
+          }
         }
         boolean entropyConsumed = false;
         synchronized (prngs) {
           for (Random random : prngs) {
             if (random instanceof EntropyCountingRandom
-                && ((EntropyCountingRandom) random).entropyOctets() > 0) {
+                && ((EntropyCountingRandom) random).entropyBits() > 0) {
               continue;
             } else {
               entropyConsumed = true;
@@ -108,7 +122,12 @@ public final class RandomSeederThread extends Thread {
           }
         }
         if (!entropyConsumed) {
-          waitForEntropyDrain.await(ENTROPY_POLL_INTERVAL_MS, TimeUnit.MILLISECONDS);
+          lock.lock();
+          try {
+            waitForEntropyDrain.await(ENTROPY_POLL_INTERVAL_MS, TimeUnit.MILLISECONDS);
+          } finally {
+            lock.unlock();
+          }
         }
       }
     } catch (InterruptedException e) {
@@ -131,8 +150,13 @@ public final class RandomSeederThread extends Thread {
       throw new IllegalStateException("Already shut down");
     }
     Collections.addAll(prngs, randoms);
-    waitForEntropyDrain.signalAll();
-    waitWhileEmpty.signalAll();
+    lock.lock();
+    try {
+      waitForEntropyDrain.signalAll();
+      waitWhileEmpty.signalAll();
+    } finally {
+      lock.unlock();
+    }
   }
 
   public void stopIfEmpty() {

@@ -49,12 +49,13 @@ public abstract class BaseEntropyCountingRandom extends BaseRandom implements
   }
 
   @Override
-  public long entropyOctets() {
+  public long entropyBits() {
     return entropyBits.get();
   }
 
   protected final void recordEntropySpent(long bits) {
-    if (entropyBits.addAndGet(-bits) <= 0 && threadSupplier != null) {
+    if (entropyBits.updateAndGet(oldCount -> Math.max(oldCount - bits, 0)) == 0
+        && threadSupplier != null) {
       threadSupplier.get().asyncReseed(this);
     }
   }

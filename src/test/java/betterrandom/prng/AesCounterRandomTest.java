@@ -42,6 +42,8 @@ import org.testng.annotations.Test;
  */
 public class AesCounterRandomTest {
 
+  private static final Logger LOG = Logger.getLogger(AesCounterRandomTest.class.getName());
+
   @Nullable
   private FileHandler logHandler;
 
@@ -181,9 +183,12 @@ public class AesCounterRandomTest {
   public void testReseeding() throws Exception {
     BaseEntropyCountingRandom rng = new AesCounterRandom();
     byte[] oldSeed = rng.getSeed();
+    LOG.info("Initial entropy is " + rng.entropyBits());
     rng.setSeederThreadSupplier(DEFAULT_SEEDER_SUPPLIER);
     rng.nextBytes(new byte[20000]);
-    Thread.sleep(10);
+    LOG.info("Entropy after reading 20,000 bytes is " + rng.entropyBits());
+    Thread.sleep(1500);
+    LOG.info("Entropy after 1500 ms wait is " + rng.entropyBits());
     byte[] newSeed = rng.getSeed();
     assertFalse(Arrays.equals(oldSeed, newSeed));
   }
