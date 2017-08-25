@@ -15,7 +15,7 @@
 // ============================================================================
 package betterrandom.prng;
 
-import static betterrandom.prng.RandomTestUtils.DEFAULT_SEEDER_SUPPLIER;
+import static betterrandom.prng.RandomTestUtils.DEFAULT_SEEDER;
 import static betterrandom.prng.RandomTestUtils.assertEquivalentWhenSerializedAndDeserialized;
 import static betterrandom.prng.RandomTestUtils.assertMonteCarloPiEstimateSane;
 import static betterrandom.prng.RandomTestUtils.assertStandardDeviationSane;
@@ -183,7 +183,7 @@ public class AesCounterRandomTest {
   public void testReseeding() throws Exception {
     BaseEntropyCountingRandom rng = new AesCounterRandom();
     byte[] oldSeed = rng.getSeed();
-    rng.setSeederThreadSupplier(DEFAULT_SEEDER_SUPPLIER);
+    rng.setSeederThread(DEFAULT_SEEDER);
     rng.nextBytes(new byte[20000]);
     Thread.sleep(1500);
     byte[] newSeed = rng.getSeed();

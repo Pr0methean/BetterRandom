@@ -75,6 +75,19 @@ public abstract class BaseRandom extends Random implements ByteArrayReseedableRa
     }
   }
 
+  @SuppressWarnings("contracts.postcondition.not.satisfied")
+  @EnsuresNonNull("this.seed")
+  @Override
+  public synchronized void setSeed(@UnknownInitialization BaseRandom this, long seed) {
+    if (superConstructorFinished) {
+      assert lock != null : "@AssumeAssertion(nullness)";
+      // setSeed can't work until seed array allocated
+      ByteBuffer buffer = ByteBuffer.allocate(8);
+      buffer.putLong(seed);
+      setSeed(buffer.array());
+    }
+  }
+
   // Checker Framework doesn't recognize that the @UnknownInitialization weakens the precondition
   // even with the @RequiresNonNull
   @SuppressWarnings("contracts.precondition.override.invalid")
@@ -89,19 +102,6 @@ public abstract class BaseRandom extends Random implements ByteArrayReseedableRa
       lock.unlock();
     }
     assert this.seed != null : "@AssumeAssertion(nullness)";
-  }
-
-  @SuppressWarnings("contracts.postcondition.not.satisfied")
-  @EnsuresNonNull("this.seed")
-  @Override
-  public synchronized void setSeed(@UnknownInitialization BaseRandom this, long seed) {
-    if (superConstructorFinished) {
-      assert lock != null : "@AssumeAssertion(nullness)";
-      // setSeed can't work until seed array allocated
-      ByteBuffer buffer = ByteBuffer.allocate(8);
-      buffer.putLong(seed);
-      setSeed(buffer.array());
-    }
   }
 
   @EnsuresNonNull("lock")

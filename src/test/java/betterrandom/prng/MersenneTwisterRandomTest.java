@@ -15,7 +15,7 @@
 // ============================================================================
 package betterrandom.prng;
 
-import static betterrandom.prng.RandomTestUtils.DEFAULT_SEEDER_SUPPLIER;
+import static betterrandom.prng.RandomTestUtils.DEFAULT_SEEDER;
 import static betterrandom.prng.RandomTestUtils.assertEquivalentWhenSerializedAndDeserialized;
 import static org.testng.Assert.assertFalse;
 
@@ -110,7 +110,7 @@ public class MersenneTwisterRandomTest {
   public void testReseeding() throws Exception {
     BaseEntropyCountingRandom rng = new MersenneTwisterRandom();
     byte[] oldSeed = rng.getSeed();
-    rng.setSeederThreadSupplier(DEFAULT_SEEDER_SUPPLIER);
+    rng.setSeederThread(DEFAULT_SEEDER);
     rng.nextBytes(new byte[20000]);
     Thread.sleep(10);
     byte[] newSeed = rng.getSeed();

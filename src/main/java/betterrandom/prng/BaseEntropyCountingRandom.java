@@ -5,7 +5,6 @@ import betterrandom.seed.RandomSeederThread;
 import betterrandom.seed.SeedException;
 import betterrandom.seed.SeedGenerator;
 import java.util.concurrent.atomic.AtomicLong;
-import java.util.function.Supplier;
 import org.checkerframework.checker.initialization.qual.UnknownInitialization;
 import org.checkerframework.checker.nullness.qual.EnsuresNonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
