@@ -4,6 +4,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public class LogPreFormatter {
+
   private final Logger logger;
 
   public LogPreFormatter(Logger logger) {

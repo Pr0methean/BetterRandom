@@ -15,7 +15,7 @@
 // ============================================================================
 package betterrandom.prng;
 
-import static betterrandom.prng.RandomTestUtils.DEFAULT_SEEDER_SUPPLIER;
+import static betterrandom.prng.RandomTestUtils.DEFAULT_SEEDER;
 import static betterrandom.prng.RandomTestUtils.assertMonteCarloPiEstimateSane;
 import static betterrandom.prng.RandomTestUtils.assertStandardDeviationSane;
 import static org.testng.Assert.assertFalse;
@@ -126,7 +126,7 @@ public class CellularAutomatonRandomTest {
   public void testReseeding() throws Exception {
     BaseEntropyCountingRandom rng = new CellularAutomatonRandom();
     byte[] oldSeed = rng.getSeed();
-    rng.setSeederThreadSupplier(DEFAULT_SEEDER_SUPPLIER);
+    rng.setSeederThread(DEFAULT_SEEDER);
     rng.nextBytes(new byte[20000]);
     Thread.sleep(10);
     byte[] newSeed = rng.getSeed();

@@ -28,7 +28,6 @@ import java.io.Serializable;
 import java.lang.reflect.Constructor;
 import java.util.HashSet;
 import java.util.Random;
-import java.util.function.Supplier;
 import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
 import org.testng.Reporter;
 
@@ -39,7 +38,7 @@ import org.testng.Reporter;
  */
 public final class RandomTestUtils {
 
-  public static final Supplier<RandomSeederThread> DEFAULT_SEEDER_SUPPLIER = () ->
+  public static final RandomSeederThread DEFAULT_SEEDER =
       RandomSeederThread.getInstance(DefaultSeedGenerator.DEFAULT_SEED_GENERATOR);
 
   private RandomTestUtils() {
