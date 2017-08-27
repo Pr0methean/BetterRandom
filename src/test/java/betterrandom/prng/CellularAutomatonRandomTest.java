@@ -20,11 +20,10 @@ import static betterrandom.prng.RandomTestUtils.assertMonteCarloPiEstimateSane;
 import static betterrandom.prng.RandomTestUtils.assertStandardDeviationSane;
 import static org.testng.Assert.assertFalse;
 
-import betterrandom.AllThreadsStackDumperThread;
+import betterrandom.DeadlockWatchdogThread;
 import betterrandom.seed.DefaultSeedGenerator;
 import betterrandom.seed.SeedException;
 import java.io.IOException;
-import java.lang.Thread.State;
 import java.util.Arrays;
 import java.util.Random;
 import org.testng.annotations.BeforeClass;
@@ -39,9 +38,7 @@ public class CellularAutomatonRandomTest {
 
   @BeforeClass
   public void setUp() {
-    if (AllThreadsStackDumperThread.INSTANCE.getState() == State.NEW) {
-      AllThreadsStackDumperThread.INSTANCE.start();
-    }
+    DeadlockWatchdogThread.ensureStarted();
   }
 
   /**
