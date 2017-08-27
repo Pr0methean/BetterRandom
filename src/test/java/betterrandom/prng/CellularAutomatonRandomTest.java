@@ -20,11 +20,14 @@ import static betterrandom.prng.RandomTestUtils.assertMonteCarloPiEstimateSane;
 import static betterrandom.prng.RandomTestUtils.assertStandardDeviationSane;
 import static org.testng.Assert.assertFalse;
 
+import betterrandom.AllThreadsStackDumperThread;
 import betterrandom.seed.DefaultSeedGenerator;
 import betterrandom.seed.SeedException;
 import java.io.IOException;
+import java.lang.Thread.State;
 import java.util.Arrays;
 import java.util.Random;
+import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
 /**
@@ -33,6 +36,13 @@ import org.testng.annotations.Test;
  * @author Daniel Dyer
  */
 public class CellularAutomatonRandomTest {
+
+  @BeforeClass
+  public void setUp() {
+    if (AllThreadsStackDumperThread.INSTANCE.getState() == State.NEW) {
+      AllThreadsStackDumperThread.INSTANCE.start();
+    }
+  }
 
   /**
    * Test to ensure that two distinct RNGs with the same seed return the same sequence of numbers.

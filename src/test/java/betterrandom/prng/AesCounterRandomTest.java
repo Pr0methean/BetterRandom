@@ -26,6 +26,7 @@ import betterrandom.AllThreadsStackDumperThread;
 import betterrandom.seed.DefaultSeedGenerator;
 import betterrandom.seed.SeedException;
 import java.io.IOException;
+import java.lang.Thread.State;
 import java.security.GeneralSecurityException;
 import java.util.Arrays;
 import java.util.Random;
@@ -52,7 +53,9 @@ public class AesCounterRandomTest {
   public void setUp() throws IOException {
     logHandler = new FileHandler("%h/javalog/log%u.%g.txt", 1_000_000, 10);
     Logger.getGlobal().addHandler(logHandler);
-    AllThreadsStackDumperThread.INSTANCE.start();
+    if (AllThreadsStackDumperThread.INSTANCE.getState() == State.NEW) {
+      AllThreadsStackDumperThread.INSTANCE.start();
+    }
   }
 
   @AfterSuite
