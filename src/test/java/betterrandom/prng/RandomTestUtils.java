@@ -173,6 +173,9 @@ public final class RandomTestUtils {
 
   @SuppressWarnings("unchecked")
   public static <T extends Serializable> T serializeAndDeserialize(T object) {
+    if (object instanceof BaseEntropyCountingRandom) {
+      ((BaseEntropyCountingRandom) object).setSeederThread(DEFAULT_SEEDER);
+    }
     try (
         ByteArrayOutputStream byteOutStream = new ByteArrayOutputStream();
         ObjectOutputStream objectOutStream = new ObjectOutputStream(byteOutStream)) {

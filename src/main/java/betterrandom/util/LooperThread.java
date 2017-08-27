@@ -113,6 +113,14 @@ public class LooperThread extends Thread implements Serializable, Cloneable {
   }
 
   /**
+   * Used only to prepare subclasses before readResolve.
+   */
+  private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
+    in.defaultReadObject();
+    lock = new ReentrantLock();
+  }
+
+  /**
    * Use readResolve rather than readObject, because stack size and thread group can only be
    * restored in Thread constructors.
    */
