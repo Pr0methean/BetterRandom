@@ -68,7 +68,6 @@ public abstract class BaseRandom extends Random implements ByteArrayReseedableRa
       ObjectInputStream in) throws IOException, ClassNotFoundException {
     in.defaultReadObject();
     assert seed != null : "@AssumeAssertion(nullness)";
-    seed = seed.clone(); // Defensive copy in case of deduplication
     initTransientFields();
   }
 
