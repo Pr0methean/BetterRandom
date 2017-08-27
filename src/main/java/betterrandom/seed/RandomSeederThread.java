@@ -24,6 +24,7 @@ import java.util.logging.Logger;
 import org.checkerframework.checker.initialization.qual.UnderInitialization;
 import org.checkerframework.checker.nullness.qual.EnsuresNonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
+import org.checkerframework.checker.nullness.qual.RequiresNonNull;
 
 @SuppressWarnings("ClassExplicitlyExtendsThread")
 public final class RandomSeederThread extends LooperThread {
@@ -41,28 +42,33 @@ public final class RandomSeederThread extends LooperThread {
   private final byte[] seedArray = new byte[8];
   private transient Set<Random> prngs;
   private @Nullable Set<Random> prngsSerial;
-  private final ByteBuffer seedBuffer = ByteBuffer.wrap(seedArray);
-  private final Condition waitWhileEmpty = lock.newCondition();
-  private final Condition waitForEntropyDrain = lock.newCondition();
+  private transient ByteBuffer seedBuffer;
+  private transient Condition waitWhileEmpty;
+  private transient Condition waitForEntropyDrain;
 
   /**
    * Private constructor because only one instance per seed source.
    */
   private RandomSeederThread(SeedGenerator seedGenerator) {
     this.seedGenerator = seedGenerator;
-    initPrngs();
+    initTransientFields();
   }
 
-  @EnsuresNonNull("prngs")
-  private void initPrngs(@UnderInitialization RandomSeederThread this) {
+  @EnsuresNonNull({"prngs", "seedBuffer", "waitWhileEmpty", "waitForEntropyDrain"})
+  @RequiresNonNull("lock")
+  private void initTransientFields(@UnderInitialization RandomSeederThread this) {
     prngs = Collections.synchronizedSet(
         Collections.newSetFromMap(new WeakHashMap<>()));
+    seedBuffer = ByteBuffer.wrap(seedArray);
+    waitWhileEmpty = lock.newCondition();
+    waitForEntropyDrain = lock.newCondition();
   }
 
   private void readObject(@UnderInitialization RandomSeederThread this,
       ObjectInputStream in) throws IOException, ClassNotFoundException {
     in.defaultReadObject();
-    initPrngs();
+    assert lock != null : "@AssumeAssertion(nullness)";
+    initTransientFields();
     if (prngsSerial != null) {
       prngs.addAll(prngsSerial);
     }
