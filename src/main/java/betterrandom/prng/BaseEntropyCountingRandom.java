@@ -6,6 +6,7 @@ import betterrandom.seed.SeedException;
 import betterrandom.seed.SeedGenerator;
 import java.io.IOException;
 import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.util.concurrent.atomic.AtomicLong;
 import org.checkerframework.checker.initialization.qual.UnknownInitialization;
 import org.checkerframework.checker.nullness.qual.EnsuresNonNull;
@@ -73,7 +74,12 @@ public abstract class BaseEntropyCountingRandom extends BaseRandom implements
     super.checkedReadObject(in);
     assert entropyBits != null : "@AssumeAssertion(nullness)";
   }
-
+  
+  private void writeObject(ObjectOutputStream out) throws IOException {
+    assert entropyBits != null : "Attempting to serialize an uninitialized object";
+    out.defaultWriteObject();
+  }
+  
   @Override
   public long entropyBits() {
     return entropyBits.get();
