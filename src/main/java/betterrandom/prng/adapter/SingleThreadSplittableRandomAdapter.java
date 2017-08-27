@@ -28,8 +28,7 @@ public class SingleThreadSplittableRandomAdapter extends DirectSplittableRandomA
   }
 
   private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
-    in.defaultReadObject();
-    checkReadObject(in);
+    super.checkedReadObject(in);
     assert underlying != null : "@AssumeAssertion(nullness)";
     setSeed(seed);
     if (!deserializedAndNotUsedSince) {
