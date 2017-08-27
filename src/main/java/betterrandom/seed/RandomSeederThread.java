@@ -167,7 +167,10 @@ public final class RandomSeederThread extends LooperThread {
   }
 
   /**
-   * Add one or more {@link Random} instances.
+   * Add one or more {@link Random} instances. The caller must not hold locks on any of these
+   * instances that are also acquired during {@link Random#setSeed(long)} or {@link
+   * ByteArrayReseedableRandom#setSeed(byte[])}, as one of those methods may be called immediately
+   * and this would cause a circular deadlock.
    */
   public void add(Random... randoms) {
     if (isInterrupted()) {
