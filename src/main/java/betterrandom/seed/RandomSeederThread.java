@@ -125,7 +125,6 @@ public final class RandomSeederThread extends LooperThread {
   @SuppressWarnings("InfiniteLoopStatement")
   @Override
   public void iterate() throws InterruptedException {
-    prngsCopy.clear();
     while (isEmpty()) {
       waitWhileEmpty.await();
     }
@@ -165,6 +164,7 @@ public final class RandomSeederThread extends LooperThread {
         interrupt();
       }
     }
+    prngsCopy.clear();
     if (!entropyConsumed) {
       waitForEntropyDrain.await(POLL_INTERVAL_MS, TimeUnit.MILLISECONDS);
     }
