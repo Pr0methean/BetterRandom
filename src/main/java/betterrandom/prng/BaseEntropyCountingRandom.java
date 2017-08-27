@@ -46,6 +46,7 @@ public abstract class BaseEntropyCountingRandom extends BaseRandom implements
   }
 
   public void setSeederThread(RandomSeederThread thread) {
+    thread.add(this);
     lock.lock();
     try {
       if (this.thread == thread) {
@@ -55,7 +56,6 @@ public abstract class BaseEntropyCountingRandom extends BaseRandom implements
         this.thread.remove(this);
       }
       this.thread = thread;
-      thread.add(this);
     } finally {
       lock.unlock();
     }
