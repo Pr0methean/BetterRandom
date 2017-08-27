@@ -270,7 +270,14 @@ public class AesCounterRandom extends BaseEntropyCountingRandom implements Repea
         key = input;
         super.setSeed(input);
       } else {
-        if (!seeded) {
+        boolean weAreSeeded;
+        lock.lock();
+        try {
+          weAreSeeded = seeded;
+        } finally {
+          lock.unlock();
+        }
+        if (!weAreSeeded) {
           if (input.length < 16) {
             throw new IllegalArgumentException(
                 "Seed only " + input.length + " bytes long; need at least 16");

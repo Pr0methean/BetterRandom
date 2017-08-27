@@ -16,19 +16,19 @@ import java.util.Objects;
 import java.util.Random;
 import java.util.Set;
 import java.util.WeakHashMap;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.Condition;
-import java.util.concurrent.locks.Lock;
-import java.util.concurrent.locks.ReentrantLock;
 import java.util.logging.Logger;
 import org.checkerframework.checker.initialization.qual.UnderInitialization;
 import org.checkerframework.checker.nullness.qual.EnsuresNonNull;
-import org.checkerframework.checker.nullness.qual.Nullable;
 import org.checkerframework.checker.nullness.qual.RequiresNonNull;
 
 @SuppressWarnings("ClassExplicitlyExtendsThread")
 public final class RandomSeederThread extends LooperThread {
 
+  private static final ExecutorService WAKER_UPPER = Executors.newSingleThreadExecutor();
   private static final LogPreFormatter LOG
       = new LogPreFormatter(Logger.getLogger(RandomSeederThread.class.getName()));
   private static final Map<SeedGenerator, RandomSeederThread> INSTANCES =
@@ -110,12 +110,14 @@ public final class RandomSeederThread extends LooperThread {
       eligible = prngs.contains(random);
     }
     if (eligible) {
-      lock.lock();
-      try {
-        waitForEntropyDrain.signalAll();
-      } finally {
-        lock.unlock();
-      }
+      WAKER_UPPER.submit(() -> {
+        lock.lock();
+        try {
+          waitForEntropyDrain.signalAll();
+        } finally {
+          lock.unlock();
+        }
+      });
       return true;
     } else {
       return false;
