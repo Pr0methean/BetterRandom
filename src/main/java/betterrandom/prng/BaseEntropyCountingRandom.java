@@ -16,7 +16,7 @@ public abstract class BaseEntropyCountingRandom extends BaseRandom implements
     EntropyCountingRandom {
 
   private static final long serialVersionUID = 1838766748070164286L;
-  protected AtomicLong entropyBits = new AtomicLong(0);
+  protected final AtomicLong entropyBits = new AtomicLong(0);
   @Nullable
   private RandomSeederThread thread;
 

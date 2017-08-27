@@ -41,7 +41,7 @@ public final class RandomSeederThread extends LooperThread {
   private final SeedGenerator seedGenerator;
   private final byte[] seedArray = new byte[8];
   private transient Set<Random> prngs;
-  private @Nullable Set<Random> prngsSerial;
+  private final Set<Random> prngsCopy = new HashSet<>(); // For serialization and to shorten lock duration
   private transient ByteBuffer seedBuffer;
   private transient Condition waitWhileEmpty;
   private transient Condition waitForEntropyDrain;
@@ -68,18 +68,16 @@ public final class RandomSeederThread extends LooperThread {
       ObjectInputStream in) throws IOException, ClassNotFoundException {
     in.defaultReadObject();
     assert lock != null : "@AssumeAssertion(nullness)";
+    assert prngsCopy != null : "@AssumeAssertion(nullness)";
     initTransientFields();
-    if (prngsSerial != null) {
-      prngs.addAll(prngsSerial);
-    }
-    prngsSerial = null;
+    prngs.addAll(prngsCopy);
+    prngsCopy.clear();
   }
 
   private void writeObject(ObjectOutputStream out) throws IOException {
-    prngsSerial = new HashSet<>();
-    prngsSerial.addAll(prngs);
+    prngsCopy.addAll(prngs);
     out.defaultWriteObject();
-    prngsSerial = null;
+    prngsCopy.clear();
   }
 
   /**
@@ -131,28 +129,40 @@ public final class RandomSeederThread extends LooperThread {
       waitWhileEmpty.await();
     }
     boolean entropyConsumed = false;
+    prngsCopy.clear();
     synchronized (prngs) {
-      for (Random random : prngs) {
-        if (random instanceof EntropyCountingRandom
-            && ((EntropyCountingRandom) random).entropyBits() > 0) {
-          continue;
-        } else {
-          entropyConsumed = true;
-        }
-        try {
-          if (random instanceof ByteArrayReseedableRandom) {
-            ByteArrayReseedableRandom reseedable = (ByteArrayReseedableRandom) random;
+      prngsCopy.addAll(prngs);
+    }
+    for (Random random : prngsCopy) {
+      if (random instanceof EntropyCountingRandom
+          && ((EntropyCountingRandom) random).entropyBits() > 0) {
+        continue;
+      } else {
+        entropyConsumed = true;
+      }
+      try {
+        if (random instanceof ByteArrayReseedableRandom) {
+          ByteArrayReseedableRandom reseedable = (ByteArrayReseedableRandom) random;
+          lock.unlock();
+          try {
             reseedable.setSeed(seedGenerator.generateSeed(reseedable.getNewSeedLength()));
-          } else {
-            //noinspection CallToNativeMethodWhileLocked
-            System.arraycopy(seedGenerator.generateSeed(8), 0, seedArray, 0, 8);
-            random.setSeed(seedBuffer.getLong(0));
+          } finally {
+            lock.lock();
           }
-        } catch (SeedException e) {
-          //noinspection AccessToStaticFieldLockedOnInstance
-          LOG.error("%s gave SeedException %s", seedGenerator, e);
-          interrupt();
+        } else {
+          //noinspection CallToNativeMethodWhileLocked
+          System.arraycopy(seedGenerator.generateSeed(8), 0, seedArray, 0, 8);
+          lock.unlock();
+          try {
+            random.setSeed(seedBuffer.getLong(0));
+          } finally {
+            lock.lock();
+          }
         }
+      } catch (SeedException e) {
+        //noinspection AccessToStaticFieldLockedOnInstance
+        LOG.error("%s gave SeedException %s", seedGenerator, e);
+        interrupt();
       }
     }
     if (!entropyConsumed) {
