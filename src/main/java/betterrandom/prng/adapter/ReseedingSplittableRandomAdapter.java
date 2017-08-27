@@ -32,7 +32,7 @@ public class ReseedingSplittableRandomAdapter extends BaseSplittableRandomAdapte
   private static ReseedingSplittableRandomAdapter defaultInstance;
   protected final SeedGenerator seedGenerator;
   @SuppressWarnings("InstanceVariableMayNotBeInitializedByReadObject")
-  private transient RandomSeederThread seederThread;
+  private RandomSeederThread seederThread;
   @SuppressWarnings({"ThreadLocalNotStaticFinal",
       "InstanceVariableMayNotBeInitializedByReadObject"})
   private transient ThreadLocal<SingleThreadSplittableRandomAdapter> threadLocal;
