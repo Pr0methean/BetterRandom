@@ -277,7 +277,22 @@ public class AesCounterRandom extends BaseEntropyCountingRandom implements Repea
         } finally {
           lock.unlock();
         }
-        if (!weAreSeeded) {
+        if (weAreSeeded) {
+          // Extend the key
+          byte[] newSeed = new byte[this.seed.length + input.length];
+          System.arraycopy(this.seed, 0, newSeed, 0, this.seed.length);
+          System.arraycopy(input, 0, newSeed, this.seed.length, input.length);
+          if (newSeed.length > MAX_KEY_LENGTH_BYTES) {
+            int keyBytes = newSeed.length - COUNTER_SIZE_BYTES;
+            key = new byte[keyBytes];
+            MessageDigest md = MessageDigest.getInstance(HASH_ALGORITHM);
+            md.update(newSeed);
+            System.arraycopy(md.digest(), 0, key, 0, keyBytes);
+          } else {
+            key = newSeed;
+          }
+          super.setSeed(key);
+        } else {
           if (input.length < 16) {
             throw new IllegalArgumentException(
                 "Seed only " + input.length + " bytes long; need at least 16");
@@ -295,21 +310,6 @@ public class AesCounterRandom extends BaseEntropyCountingRandom implements Repea
             }
           }
           super.setSeed(input);
-        } else {
-          // Extend the key
-          byte[] newSeed = new byte[this.seed.length + input.length];
-          System.arraycopy(this.seed, 0, newSeed, 0, this.seed.length);
-          System.arraycopy(input, 0, newSeed, this.seed.length, input.length);
-          if (newSeed.length > MAX_KEY_LENGTH_BYTES) {
-            int keyBytes = newSeed.length - COUNTER_SIZE_BYTES;
-            key = new byte[keyBytes];
-            MessageDigest md = MessageDigest.getInstance(HASH_ALGORITHM);
-            md.update(newSeed);
-            System.arraycopy(md.digest(), 0, key, 0, keyBytes);
-          } else {
-            key = newSeed;
-          }
-          super.setSeed(newSeed);
         }
       }
       lock.lock();
