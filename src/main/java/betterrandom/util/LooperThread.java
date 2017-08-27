@@ -41,6 +41,7 @@ public class LooperThread extends Thread implements Serializable, Cloneable {
     @Nullable
     private UncaughtExceptionHandler wrapped = null;
 
+    @SuppressWarnings("deprecation")
     @Override
     public void uncaughtException(Thread t, Throwable e) {
       if (!(e instanceof ThreadDeathAlreadyHandled)) {
@@ -117,11 +118,25 @@ public class LooperThread extends Thread implements Serializable, Cloneable {
    */
   @SuppressWarnings("deprecation")
   private Object readResolve() {
-    LooperThread t = new LooperThread(group, name);
+    LooperThread t;
+    if (group != null) {
+      assert name != null : "@AssumeAssertion(nullness)";
+      t = new LooperThread(group, name);
+    } else {
+      if (name == null) {
+        t = new LooperThread();
+      } else {
+        t = new LooperThread(name);
+      }
+    }
     t.setDaemon(daemon);
-    t.setName(name);
+    if (name != null) {
+      t.setName(name);
+    }
     t.setPriority(priority);
-    t.setUncaughtExceptionHandler(uncaughtExceptionHandler.wrapped);
+    if (uncaughtExceptionHandler.wrapped != null) {
+      t.setUncaughtExceptionHandler(uncaughtExceptionHandler.wrapped);
+    }
     if (contextClassLoader != null) {
       t.setContextClassLoader(contextClassLoader);
     }
@@ -174,8 +189,10 @@ public class LooperThread extends Thread implements Serializable, Cloneable {
     super.setUncaughtExceptionHandler(uncaughtExceptionHandler);
   }
 
+  @SuppressWarnings("override.return.invalid")
+  @Nullable
   @Override
-  public Thread.UncaughtExceptionHandler getUncaughtExceptionHandler() {
+  public UncaughtExceptionHandler getUncaughtExceptionHandler() {
     return uncaughtExceptionHandler.wrapped;
   }
 
