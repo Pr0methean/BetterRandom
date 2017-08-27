@@ -13,6 +13,7 @@ import java.util.Random;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 import java.util.logging.Logger;
+import org.checkerframework.checker.initialization.qual.UnderInitialization;
 import org.checkerframework.checker.initialization.qual.UnknownInitialization;
 import org.checkerframework.checker.nullness.qual.EnsuresNonNull;
 import org.checkerframework.checker.nullness.qual.RequiresNonNull;
@@ -62,6 +63,15 @@ public abstract class BaseRandom extends Random implements ByteArrayReseedableRa
     initTransientFields();
   }
 
+  @EnsuresNonNull({"seed", "lock"})
+  protected void checkedReadObject(@UnknownInitialization BaseRandom this,
+      ObjectInputStream in) throws IOException, ClassNotFoundException {
+    in.defaultReadObject();
+    assert seed != null : "@AssumeAssertion(nullness)";
+    seed = seed.clone(); // Defensive copy in case of deduplication
+    initTransientFields();
+  }
+
   /**
    * {@inheritDoc}
    */
@@ -78,10 +88,10 @@ public abstract class BaseRandom extends Random implements ByteArrayReseedableRa
   @SuppressWarnings("contracts.postcondition.not.satisfied")
   @EnsuresNonNull("this.seed")
   @Override
-  public synchronized void setSeed(@UnknownInitialization BaseRandom this, long seed) {
+  public synchronized void setSeed(@UnknownInitialization(BaseRandom.class)BaseRandom this,
+      long seed) {
     if (superConstructorFinished) {
       assert lock != null : "@AssumeAssertion(nullness)";
-      // setSeed can't work until seed array allocated
       ByteBuffer buffer = ByteBuffer.allocate(8);
       buffer.putLong(seed);
       setSeed(buffer.array());
@@ -94,7 +104,7 @@ public abstract class BaseRandom extends Random implements ByteArrayReseedableRa
   @EnsuresNonNull("this.seed")
   @RequiresNonNull({"lock"})
   @Override
-  public void setSeed(@UnknownInitialization BaseRandom this, byte[] seed) {
+  public void setSeed(@UnknownInitialization(BaseRandom.class)BaseRandom this, byte[] seed) {
     lock.lock();
     try {
       this.seed = seed.clone();
@@ -113,14 +123,14 @@ public abstract class BaseRandom extends Random implements ByteArrayReseedableRa
   }
 
   @EnsuresNonNull({"lock", "seed"})
-  private void readObject(ObjectInputStream in) throws IOException,
-      ClassNotFoundException {
-    in.defaultReadObject();
+  private void readObject(@UnderInitialization(BaseRandom.class)BaseRandom this,
+      ObjectInputStream in) throws IOException, ClassNotFoundException {
+    checkedReadObject(in);
     initTransientFields();
   }
 
   @EnsuresNonNull({"lock", "seed"})
-  @SuppressWarnings({"unused", "OverriddenMethodCallDuringObjectConstruction"})
+  @SuppressWarnings({"OverriddenMethodCallDuringObjectConstruction"})
   private void readObjectNoData() throws InvalidObjectException {
     LOG.warning("BaseRandom.readObjectNoData() invoked; using DefaultSeedGenerator");
     try {

@@ -15,6 +15,7 @@ public class TestNgLogAdapter extends Handler {
     testNgLogger = Logger.getLogger(clazz);
   }
 
+  @SuppressWarnings("EmptyMethod")
   public static void ensureClassLoaded() {
   }
 

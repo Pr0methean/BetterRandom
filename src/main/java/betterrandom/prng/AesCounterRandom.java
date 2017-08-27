@@ -158,10 +158,7 @@ public class AesCounterRandom extends BaseEntropyCountingRandom implements Repea
   }
 
   private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
-    in.defaultReadObject();
-    assert entropyBits != null : "@AssumeAssertion(nullness)";
-    assert lock != null : "@AssumeAssertion(nullness)";
-    assert seed != null : "@AssumeAssertion(nullness)";
+    super.checkedReadObject(in);
     initSubclassTransientFields();
   }
 
@@ -171,7 +168,7 @@ public class AesCounterRandom extends BaseEntropyCountingRandom implements Repea
   @RequiresNonNull({"seed", "lock", "entropyBits"})
   @EnsuresNonNull({"counter", "counterInput", "cipher"})
   private void initSubclassTransientFields(
-      @UnknownInitialization AesCounterRandom this) {
+      @UnknownInitialization(BaseEntropyCountingRandom.class)AesCounterRandom this) {
     if (counter == null) {
       counter = new byte[COUNTER_SIZE_BYTES];
     }
@@ -258,9 +255,10 @@ public class AesCounterRandom extends BaseEntropyCountingRandom implements Repea
   }
 
   @Override
-  @RequiresNonNull({"lock", "this.seed", "cipher", "counter", "entropyBits"})
-  @SuppressWarnings({"contracts.precondition.override.invalid"})
-  public void setSeed(@UnknownInitialization AesCounterRandom this, byte[] seed) {
+  public void setSeed(@UnknownInitialization(BaseRandom.class)AesCounterRandom this, byte[] seed) {
+    assert cipher != null : "@AssumeAssertion(nullness)";
+    assert counter != null : "@AssumeAssertion(nullness)";
+    assert entropyBits != null : "@AssumeAssertion(nullness)";
     if (seed.length > MAX_TOTAL_SEED_LENGTH_BYTES) {
       throw new IllegalArgumentException(
           "Seed too long: maximum " + MAX_TOTAL_SEED_LENGTH_BYTES + " bytes");
@@ -312,6 +310,7 @@ public class AesCounterRandom extends BaseEntropyCountingRandom implements Repea
     } finally {
       lock.unlock();
     }
+    assert this.seed != null : "@AssumeAssertion(nullness)";
   }
 
   @Override

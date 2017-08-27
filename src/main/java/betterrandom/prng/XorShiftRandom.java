@@ -20,12 +20,9 @@ import betterrandom.seed.DefaultSeedGenerator;
 import betterrandom.seed.SeedException;
 import betterrandom.seed.SeedGenerator;
 import betterrandom.util.BinaryUtils;
-import java.io.IOException;
-import java.io.ObjectInputStream;
 import java.util.Arrays;
 import java.util.Random;
 import org.checkerframework.checker.initialization.qual.UnknownInitialization;
-import org.checkerframework.checker.nullness.qual.RequiresNonNull;
 
 /**
  * <p>Very fast pseudo random number generator.  See <a href="http://school.anhb.uwa.edu.au/personalpages/kwessen/shared/Marsaglia03.html">this
@@ -70,8 +67,8 @@ public class XorShiftRandom extends BaseEntropyCountingRandom implements Repeata
     this(seedGenerator.generateSeed(SEED_SIZE_BYTES));
   }
 
-  @RequiresNonNull({"lock", "seed"})
-  private void initSubclassTransientFields(@UnknownInitialization XorShiftRandom this) {
+  private void initSubclassTransientFields(
+      @UnknownInitialization(BaseRandom.class)XorShiftRandom this) {
     lock.lock();
     try {
       int[] state = BinaryUtils.convertBytesToInts(seed);
@@ -85,14 +82,6 @@ public class XorShiftRandom extends BaseEntropyCountingRandom implements Repeata
     }
   }
 
-  private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
-    in.defaultReadObject();
-    assert entropyBits != null : "@AssumeAssertion(nullness)";
-    assert lock != null : "@AssumeAssertion(nullness)";
-    assert seed != null : "@AssumeAssertion(nullness)";
-    setSeed(seed);
-  }
-
   /**
    * {@inheritDoc}
    */
@@ -100,10 +89,10 @@ public class XorShiftRandom extends BaseEntropyCountingRandom implements Repeata
     return seed.clone();
   }
 
-  @SuppressWarnings("contracts.precondition.override.invalid")
-  @RequiresNonNull({"entropyBits", "lock"})
   @Override
-  public void setSeed(@UnknownInitialization XorShiftRandom this, byte[] seed) {
+  public void setSeed(@UnknownInitialization(BaseRandom.class)XorShiftRandom this,
+      byte[] seed) {
+    assert entropyBits != null : "@AssumeAssertion(nullness)";
     if (seed.length != SEED_SIZE_BYTES) {
       throw new IllegalArgumentException("XOR shift RNG requires a seed of exactly 20 bytes.");
     }

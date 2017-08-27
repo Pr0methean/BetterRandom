@@ -11,7 +11,7 @@ import org.checkerframework.checker.initialization.qual.UnknownInitialization;
 public class SingleThreadSplittableRandomAdapter extends DirectSplittableRandomAdapter {
 
   private static final long serialVersionUID = -1125374167384636394L;
-  protected boolean deserializedAndNotUsedSince = false;
+  private boolean deserializedAndNotUsedSince = false;
 
   public SingleThreadSplittableRandomAdapter(SeedGenerator seedGenerator) throws SeedException {
     this(seedGenerator.generateSeed(SEED_LENGTH_BYTES));
@@ -27,14 +27,14 @@ public class SingleThreadSplittableRandomAdapter extends DirectSplittableRandomA
     return underlying;
   }
 
-  private void readObject(ObjectInputStream ois) throws IOException, ClassNotFoundException {
-    ois.defaultReadObject();
+  private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
+    super.checkedReadObject(in);
     assert underlying != null : "@AssumeAssertion(nullness)";
     setSeed(seed);
     if (!deserializedAndNotUsedSince) {
       underlying = underlying.split(); // Ensures we aren't rewinding
+      deserializedAndNotUsedSince = true; // Ensures serializing and deserializing is idempotent
     }
-    deserializedAndNotUsedSince = true; // Ensures serializing and deserializing is idempotent
   }
 
   @Override
