@@ -90,8 +90,7 @@ public class ReseedingSplittableRandomAdapter extends BaseSplittableRandomAdapte
   }
 
   private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
-    in.defaultReadObject();
-    checkReadObject(in);
+    super.checkedReadObject(in);
     assert seedGenerator != null : "@AssumeAssertion(nullness)";
     initSubclassTransientFields();
   }

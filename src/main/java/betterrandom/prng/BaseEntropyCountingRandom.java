@@ -6,6 +6,7 @@ import betterrandom.seed.SeedException;
 import betterrandom.seed.SeedGenerator;
 import java.io.IOException;
 import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.util.concurrent.atomic.AtomicLong;
 import org.checkerframework.checker.initialization.qual.UnknownInitialization;
 import org.checkerframework.checker.nullness.qual.EnsuresNonNull;
@@ -37,10 +38,10 @@ public abstract class BaseEntropyCountingRandom extends BaseRandom implements
 
   @EnsuresNonNull({"seed", "lock", "entropyBits"})
   @Override
-  protected void checkReadObject(@UnknownInitialization BaseEntropyCountingRandom this,
+  protected void checkedReadObject(@UnknownInitialization BaseEntropyCountingRandom this,
       ObjectInputStream in)
       throws IOException, ClassNotFoundException {
-    super.checkReadObject(in);
+    super.checkedReadObject(in);
     assert entropyBits != null : "@AssumeAssertion(nullness)";
   }
 
@@ -70,11 +71,10 @@ public abstract class BaseEntropyCountingRandom extends BaseRandom implements
   }
 
   private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
-    in.defaultReadObject();
-    checkReadObject(in);
+    super.checkedReadObject(in);
     assert entropyBits != null : "@AssumeAssertion(nullness)";
   }
-
+  
   @Override
   public long entropyBits() {
     return entropyBits.get();
