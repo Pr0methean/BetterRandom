@@ -264,7 +264,6 @@ public class AesCounterRandom extends BaseEntropyCountingRandom implements Repea
           "Seed too long: maximum " + MAX_TOTAL_SEED_LENGTH_BYTES + " bytes");
     }
     byte[] input = seed.clone();
-    lock.lock();
     try {
       byte[] key;
       if (input.length == MAX_KEY_LENGTH_BYTES) {
@@ -281,7 +280,12 @@ public class AesCounterRandom extends BaseEntropyCountingRandom implements Repea
                 : input.length >= 24 ? 24 : 16;
             key = Arrays.copyOfRange(input, 0, keyLength);
             // rest goes to counter
-            System.arraycopy(input, keyLength, counter, 0, input.length - keyLength);
+            lock.lock();
+            try {
+              System.arraycopy(input, keyLength, counter, 0, input.length - keyLength);
+            } finally {
+              lock.unlock();
+            }
           }
           super.setSeed(input);
         } else {
@@ -301,14 +305,17 @@ public class AesCounterRandom extends BaseEntropyCountingRandom implements Repea
           super.setSeed(newSeed);
         }
       }
-      cipher.init(Cipher.ENCRYPT_MODE, new SecretKeySpec(key, ALGORITHM));
-      entropyBits.updateAndGet(oldCount -> Math.min(oldCount + 8 * input.length,
-          8 * MAX_TOTAL_SEED_LENGTH_BYTES));
-      seeded = true;
+      lock.lock();
+      try {
+        cipher.init(Cipher.ENCRYPT_MODE, new SecretKeySpec(key, ALGORITHM));
+        entropyBits.updateAndGet(oldCount -> Math.min(oldCount + 8 * input.length,
+            8 * MAX_TOTAL_SEED_LENGTH_BYTES));
+        seeded = true;
+      } finally {
+        lock.unlock();
+      }
     } catch (NoSuchAlgorithmException | InvalidKeyException e) {
       throw new RuntimeException(e);
-    } finally {
-      lock.unlock();
     }
     assert this.seed != null : "@AssumeAssertion(nullness)";
   }

@@ -142,21 +142,11 @@ public final class RandomSeederThread extends LooperThread {
       try {
         if (random instanceof ByteArrayReseedableRandom) {
           ByteArrayReseedableRandom reseedable = (ByteArrayReseedableRandom) random;
-          lock.unlock();
-          try {
-            reseedable.setSeed(seedGenerator.generateSeed(reseedable.getNewSeedLength()));
-          } finally {
-            lock.lock();
-          }
+          reseedable.setSeed(seedGenerator.generateSeed(reseedable.getNewSeedLength()));
         } else {
           //noinspection CallToNativeMethodWhileLocked
           System.arraycopy(seedGenerator.generateSeed(8), 0, seedArray, 0, 8);
-          lock.unlock();
-          try {
-            random.setSeed(seedBuffer.getLong(0));
-          } finally {
-            lock.lock();
-          }
+          random.setSeed(seedBuffer.getLong(0));
         }
       } catch (SeedException e) {
         //noinspection AccessToStaticFieldLockedOnInstance
