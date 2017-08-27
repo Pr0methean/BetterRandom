@@ -25,8 +25,7 @@ public class SplittableRandomAdapter extends DirectSplittableRandomAdapter {
   }
 
   private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
-    in.defaultReadObject();
-    checkReadObject(in);
+    super.checkedReadObject(in);
     assert underlying != null : "@AssumeAssertion(nullness)";
     initSubclassTransientFields();
   }
