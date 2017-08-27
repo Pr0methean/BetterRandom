@@ -37,10 +37,10 @@ public abstract class BaseEntropyCountingRandom extends BaseRandom implements
 
   @EnsuresNonNull({"seed", "lock", "entropyBits"})
   @Override
-  protected void checkedReadObject(@UnknownInitialization BaseEntropyCountingRandom this,
+  protected void checkReadObject(@UnknownInitialization BaseEntropyCountingRandom this,
       ObjectInputStream in)
       throws IOException, ClassNotFoundException {
-    super.checkedReadObject(in);
+    super.checkReadObject(in);
     assert entropyBits != null : "@AssumeAssertion(nullness)";
   }
 
@@ -70,7 +70,8 @@ public abstract class BaseEntropyCountingRandom extends BaseRandom implements
   }
 
   private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
-    super.checkedReadObject(in);
+    in.defaultReadObject();
+    checkReadObject(in);
     assert entropyBits != null : "@AssumeAssertion(nullness)";
   }
 

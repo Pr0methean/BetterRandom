@@ -158,7 +158,8 @@ public class AesCounterRandom extends BaseEntropyCountingRandom implements Repea
   }
 
   private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
-    super.checkedReadObject(in);
+    in.defaultReadObject();
+    checkReadObject(in);
     initSubclassTransientFields();
   }
 
