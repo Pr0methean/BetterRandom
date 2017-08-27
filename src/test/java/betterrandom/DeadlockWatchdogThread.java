@@ -5,11 +5,14 @@ import betterrandom.util.LooperThread;
 import java.lang.management.ManagementFactory;
 import java.lang.management.ThreadInfo;
 import java.lang.management.ThreadMXBean;
+import java.util.Map;
 import java.util.logging.Logger;
 
 public class DeadlockWatchdogThread extends LooperThread {
   private static final LogPreFormatter LOG = new LogPreFormatter(
       Logger.getLogger(DeadlockWatchdogThread.class.getName()));
+
+  private static final int MAX_STACK_DEPTH = 20;
 
   public static final DeadlockWatchdogThread INSTANCE = new DeadlockWatchdogThread();
   public static final ThreadMXBean THREAD_MX_BEAN = ManagementFactory.getThreadMXBean();
@@ -25,20 +28,23 @@ public class DeadlockWatchdogThread extends LooperThread {
       INSTANCE.start();
     }
   }
+  
+  private boolean deadlockFound = false;
 
   @Override
   public void iterate() throws InterruptedException {
     sleep(30_000);
-    long[] deadlockedThreadIds = THREAD_MX_BEAN.findDeadlockedThreads();
-    for (long id : deadlockedThreadIds) {
-      ThreadInfo threadInfo = THREAD_MX_BEAN.getThreadInfo(id);
-      StringBuilder stackTraceBuilder = new StringBuilder();
-      for (StackTraceElement element : threadInfo.getStackTrace()) {
-        stackTraceBuilder.append(element);
-        stackTraceBuilder.append('\n');
+    if (!deadlockFound) {
+      long[] deadlockedThreadIds = THREAD_MX_BEAN.findDeadlockedThreads();
+      for (long id : deadlockedThreadIds) {
+        ThreadInfo threadInfo = THREAD_MX_BEAN.getThreadInfo(id, MAX_STACK_DEPTH);
+        LOG.error("Deadlocked thread: %s",
+            threadInfo.getThreadName());
+        StackTraceElement[] stackTrace = threadInfo.getStackTrace();
+        for (StackTraceElement element : stackTrace) {
+          LOG.error("  " + element);
+        }
       }
-      LOG.error("\nDeadlocked thread: %s\n\n%s",
-          threadInfo.getThreadName(), stackTraceBuilder);
     }
   }
 }
