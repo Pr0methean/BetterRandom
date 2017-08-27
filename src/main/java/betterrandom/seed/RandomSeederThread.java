@@ -22,6 +22,7 @@ import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 import java.util.logging.Logger;
 import org.checkerframework.checker.initialization.qual.UnderInitialization;
+import org.checkerframework.checker.nullness.qual.EnsuresNonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 
 @SuppressWarnings("ClassExplicitlyExtendsThread")
@@ -52,12 +53,14 @@ public final class RandomSeederThread extends LooperThread {
     initPrngs();
   }
 
+  @EnsuresNonNull("prngs")
   private void initPrngs(@UnderInitialization RandomSeederThread this) {
     prngs = Collections.synchronizedSet(
         Collections.newSetFromMap(new WeakHashMap<>()));
   }
 
-  private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
+  private void readObject(@UnderInitialization RandomSeederThread this,
+      ObjectInputStream in) throws IOException, ClassNotFoundException {
     in.defaultReadObject();
     initPrngs();
     if (prngsSerial != null) {
