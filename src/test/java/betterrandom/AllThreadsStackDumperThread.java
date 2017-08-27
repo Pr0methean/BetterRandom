@@ -1,11 +1,15 @@
 package betterrandom;
 
 import betterrandom.util.LooperThread;
-import java.util.Map;
-import java.util.concurrent.locks.Condition;
 
 public class AllThreadsStackDumperThread extends LooperThread {
   public static final AllThreadsStackDumperThread INSTANCE = new AllThreadsStackDumperThread();
+
+  static {
+    INSTANCE.setDaemon(true);
+  }
+
+  private AllThreadsStackDumperThread() {}
 
   @Override
   public void iterate() throws InterruptedException {

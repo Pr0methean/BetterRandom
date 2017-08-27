@@ -22,6 +22,7 @@ import static betterrandom.prng.RandomTestUtils.assertStandardDeviationSane;
 import static org.testng.Assert.assertFalse;
 import static org.testng.Assert.assertTrue;
 
+import betterrandom.AllThreadsStackDumperThread;
 import betterrandom.seed.DefaultSeedGenerator;
 import betterrandom.seed.SeedException;
 import java.io.IOException;
@@ -51,6 +52,7 @@ public class AesCounterRandomTest {
   public void setUp() throws IOException {
     logHandler = new FileHandler("%h/javalog/log%u.%g.txt", 1_000_000, 10);
     Logger.getGlobal().addHandler(logHandler);
+    AllThreadsStackDumperThread.INSTANCE.start();
   }
 
   @AfterSuite
