@@ -3,9 +3,14 @@ package betterrandom.seed;
 import betterrandom.ByteArrayReseedableRandom;
 import betterrandom.EntropyCountingRandom;
 import betterrandom.util.LogPreFormatter;
+import betterrandom.util.LooperThread;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.nio.ByteBuffer;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Random;
@@ -16,9 +21,11 @@ import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 import java.util.logging.Logger;
+import org.checkerframework.checker.initialization.qual.UnderInitialization;
+import org.checkerframework.checker.nullness.qual.Nullable;
 
 @SuppressWarnings("ClassExplicitlyExtendsThread")
-public final class RandomSeederThread extends Thread {
+public final class RandomSeederThread extends LooperThread {
 
   private static final LogPreFormatter LOG
       = new LogPreFormatter(Logger.getLogger(RandomSeederThread.class.getName()));
@@ -31,10 +38,9 @@ public final class RandomSeederThread extends Thread {
   private static final long POLL_INTERVAL_MS = 1000;
   private final SeedGenerator seedGenerator;
   private final byte[] seedArray = new byte[8];
-  private final Set<Random> prngs = Collections.synchronizedSet(
-      Collections.newSetFromMap(new WeakHashMap<>()));
+  private transient Set<Random> prngs;
+  private @Nullable Set<Random> prngsSerial;
   private final ByteBuffer seedBuffer = ByteBuffer.wrap(seedArray);
-  private final Lock lock = new ReentrantLock();
   private final Condition waitWhileEmpty = lock.newCondition();
   private final Condition waitForEntropyDrain = lock.newCondition();
 
@@ -43,6 +49,28 @@ public final class RandomSeederThread extends Thread {
    */
   private RandomSeederThread(SeedGenerator seedGenerator) {
     this.seedGenerator = seedGenerator;
+    initPrngs();
+  }
+
+  private void initPrngs(@UnderInitialization RandomSeederThread this) {
+    prngs = Collections.synchronizedSet(
+        Collections.newSetFromMap(new WeakHashMap<>()));
+  }
+
+  private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
+    in.defaultReadObject();
+    initPrngs();
+    if (prngsSerial != null) {
+      prngs.addAll(prngsSerial);
+    }
+    prngsSerial = null;
+  }
+
+  private void writeObject(ObjectOutputStream out) throws IOException {
+    prngsSerial = new HashSet<>();
+    prngsSerial.addAll(prngs);
+    out.defaultWriteObject();
+    prngsSerial = null;
   }
 
   /**
@@ -89,55 +117,37 @@ public final class RandomSeederThread extends Thread {
 
   @SuppressWarnings("InfiniteLoopStatement")
   @Override
-  public void run() {
-    try {
-      while (true) {
-        while (isEmpty()) {
-          lock.lock();
-          try {
-            waitWhileEmpty.await();
-          } finally {
-            lock.unlock();
-          }
+  public void iterate() throws InterruptedException {
+    while (isEmpty()) {
+      waitWhileEmpty.await();
+    }
+    boolean entropyConsumed = false;
+    synchronized (prngs) {
+      for (Random random : prngs) {
+        if (random instanceof EntropyCountingRandom
+            && ((EntropyCountingRandom) random).entropyBits() > 0) {
+          continue;
+        } else {
+          entropyConsumed = true;
         }
-        boolean entropyConsumed = false;
-        synchronized (prngs) {
-          for (Random random : prngs) {
-            if (random instanceof EntropyCountingRandom
-                && ((EntropyCountingRandom) random).entropyBits() > 0) {
-              continue;
-            } else {
-              entropyConsumed = true;
-            }
-            try {
-              if (random instanceof ByteArrayReseedableRandom) {
-                ByteArrayReseedableRandom reseedable = (ByteArrayReseedableRandom) random;
-                reseedable.setSeed(seedGenerator.generateSeed(reseedable.getNewSeedLength()));
-              } else {
-                //noinspection CallToNativeMethodWhileLocked
-                System.arraycopy(seedGenerator.generateSeed(8), 0, seedArray, 0, 8);
-                random.setSeed(seedBuffer.getLong(0));
-              }
-            } catch (SeedException e) {
-              //noinspection AccessToStaticFieldLockedOnInstance
-              LOG.error("%s gave SeedException %s", seedGenerator, e);
-              interrupt();
-            }
+        try {
+          if (random instanceof ByteArrayReseedableRandom) {
+            ByteArrayReseedableRandom reseedable = (ByteArrayReseedableRandom) random;
+            reseedable.setSeed(seedGenerator.generateSeed(reseedable.getNewSeedLength()));
+          } else {
+            //noinspection CallToNativeMethodWhileLocked
+            System.arraycopy(seedGenerator.generateSeed(8), 0, seedArray, 0, 8);
+            random.setSeed(seedBuffer.getLong(0));
           }
-        }
-        if (!entropyConsumed) {
-          lock.lock();
-          try {
-            waitForEntropyDrain.await(POLL_INTERVAL_MS, TimeUnit.MILLISECONDS);
-          } finally {
-            lock.unlock();
-          }
+        } catch (SeedException e) {
+          //noinspection AccessToStaticFieldLockedOnInstance
+          LOG.error("%s gave SeedException %s", seedGenerator, e);
+          interrupt();
         }
       }
-    } catch (InterruptedException e) {
-      LOG.warn("%s interrupted", this);
-      interrupt();
-      INSTANCES.remove(seedGenerator);
+    }
+    if (!entropyConsumed) {
+      waitForEntropyDrain.await(POLL_INTERVAL_MS, TimeUnit.MILLISECONDS);
     }
   }
 

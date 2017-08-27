@@ -18,7 +18,8 @@ package betterrandom.seed;
 import java.io.Serializable;
 
 /**
- * Strategy interface for seeding random number generators.
+ * Strategy interface for seeding random number generators. Any implementations that are not enums
+ * should implement {@link #equals(Object)} and {@link #hashCode()}.
  *
  * @author Daniel Dyer
  */
