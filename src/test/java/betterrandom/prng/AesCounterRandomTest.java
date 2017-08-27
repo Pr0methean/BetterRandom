@@ -83,7 +83,7 @@ public class AesCounterRandomTest {
   public void testSerializableWithSeedInCounter()
       throws GeneralSecurityException, IOException, ClassNotFoundException, SeedException {
     // Serialise an RNG.
-    AesCounterRandom rng = new AesCounterRandom(48);
+    AesCounterRandom rng = new AesCounterRandom(32);
     assertEquivalentWhenSerializedAndDeserialized(rng);
   }
 
@@ -92,7 +92,7 @@ public class AesCounterRandomTest {
    */
   @Test(timeOut = 15000)
   public void testRepeatability() throws GeneralSecurityException, SeedException {
-    AesCounterRandom rng = new AesCounterRandom(48);
+    AesCounterRandom rng = new AesCounterRandom(32);
     // Create second RNG using same seed.
     AesCounterRandom duplicateRNG = new AesCounterRandom(rng.getSeed());
     assert rng.equals(duplicateRNG);
@@ -155,9 +155,11 @@ public class AesCounterRandomTest {
     AesCounterRandom[] rngs = {new AesCounterRandom(16), new AesCounterRandom(16)};
     for (int i = 0; i < 2; i++) {
       for (long seed : seeds) {
-        AesCounterRandom rngReseeded = new AesCounterRandom(rngs[i].getSeed());
+        byte[] originalSeed = rngs[i].getSeed();
+        assertTrue(originalSeed.length >= 16);
+        AesCounterRandom rngReseeded = new AesCounterRandom(originalSeed);
         assertTrue(rngReseeded.isSeeded());
-        AesCounterRandom rngReseededOther = new AesCounterRandom(rngs[i].getSeed());
+        AesCounterRandom rngReseededOther = new AesCounterRandom(originalSeed);
         rngReseeded.setSeed(seed);
         rngReseededOther.setSeed(otherSeed);
         assert !(rngs[i].equals(rngReseeded));
