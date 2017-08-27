@@ -75,11 +75,6 @@ public abstract class BaseEntropyCountingRandom extends BaseRandom implements
     assert entropyBits != null : "@AssumeAssertion(nullness)";
   }
   
-  private void writeObject(ObjectOutputStream out) throws IOException {
-    assert entropyBits != null : "Attempting to serialize an uninitialized object";
-    out.defaultWriteObject();
-  }
-  
   @Override
   public long entropyBits() {
     return entropyBits.get();
