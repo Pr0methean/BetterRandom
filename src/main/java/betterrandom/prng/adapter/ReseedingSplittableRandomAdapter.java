@@ -8,7 +8,6 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.util.Collections;
 import java.util.Map;
-import java.util.Objects;
 import java.util.SplittableRandom;
 import java.util.WeakHashMap;
 import java.util.concurrent.locks.Lock;
@@ -91,7 +90,7 @@ public class ReseedingSplittableRandomAdapter extends BaseSplittableRandomAdapte
   }
 
   private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
-    in.defaultReadObject();
+    super.checkedReadObject(in);
     assert seedGenerator != null : "@AssumeAssertion(nullness)";
     initSubclassTransientFields();
   }
@@ -107,8 +106,7 @@ public class ReseedingSplittableRandomAdapter extends BaseSplittableRandomAdapte
   @EnsuresNonNull({"threadLocal", "seederThread"})
   @RequiresNonNull("seedGenerator")
   private void initSubclassTransientFields(
-      @UnknownInitialization ReseedingSplittableRandomAdapter this) {
-    Objects.requireNonNull(seedGenerator, "SeedGenerator is null");
+      @UnknownInitialization(BaseSplittableRandomAdapter.class)ReseedingSplittableRandomAdapter this) {
     if (threadLocal == null) {
       threadLocal = ThreadLocal.withInitial(() -> {
         try {

@@ -25,9 +25,7 @@ public class SplittableRandomAdapter extends DirectSplittableRandomAdapter {
   }
 
   private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
-    in.defaultReadObject();
-    assert lock != null : "@AssumeAssertion(nullness)";
-    assert seed != null : "@AssumeAssertion(nullness)";
+    super.checkedReadObject(in);
     assert underlying != null : "@AssumeAssertion(nullness)";
     initSubclassTransientFields();
   }
@@ -35,7 +33,7 @@ public class SplittableRandomAdapter extends DirectSplittableRandomAdapter {
   @EnsuresNonNull({"threadLocal"})
   @RequiresNonNull({"lock", "underlying"})
   private void initSubclassTransientFields(
-      @UnknownInitialization SplittableRandomAdapter this) {
+      @UnknownInitialization(BaseSplittableRandomAdapter.class)SplittableRandomAdapter this) {
     lock.lock();
     try {
       threadLocal = ThreadLocal.withInitial(underlying::split);

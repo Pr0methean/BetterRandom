@@ -4,11 +4,12 @@ import betterrandom.EntropyCountingRandom;
 import betterrandom.seed.RandomSeederThread;
 import betterrandom.seed.SeedException;
 import betterrandom.seed.SeedGenerator;
+import java.io.IOException;
+import java.io.ObjectInputStream;
 import java.util.concurrent.atomic.AtomicLong;
 import org.checkerframework.checker.initialization.qual.UnknownInitialization;
 import org.checkerframework.checker.nullness.qual.EnsuresNonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
-import org.checkerframework.checker.nullness.qual.RequiresNonNull;
 
 public abstract class BaseEntropyCountingRandom extends BaseRandom implements
     EntropyCountingRandom {
@@ -16,7 +17,7 @@ public abstract class BaseEntropyCountingRandom extends BaseRandom implements
   private static final long serialVersionUID = 1838766748070164286L;
   protected AtomicLong entropyBits = new AtomicLong(0);
   @Nullable
-  private RandomSeederThread thread;
+  private transient RandomSeederThread thread;
 
   @EnsuresNonNull("entropyBits")
   public BaseEntropyCountingRandom(int seedLength) throws SeedException {
@@ -34,20 +35,43 @@ public abstract class BaseEntropyCountingRandom extends BaseRandom implements
     super(seed);
   }
 
-  public synchronized void setSeederThread(RandomSeederThread thread) {
-    if (this.thread != null) {
-      this.thread.remove(this);
-    }
-    this.thread = thread;
-    thread.add(this);
+  @EnsuresNonNull({"seed", "lock", "entropyBits"})
+  @Override
+  protected void checkedReadObject(@UnknownInitialization BaseEntropyCountingRandom this,
+      ObjectInputStream in)
+      throws IOException, ClassNotFoundException {
+    super.checkedReadObject(in);
+    assert entropyBits != null : "@AssumeAssertion(nullness)";
   }
 
-  @SuppressWarnings("contracts.precondition.override.invalid")
+  public void setSeederThread(RandomSeederThread thread) {
+    lock.lock();
+    try {
+      if (this.thread == thread) {
+        return;
+      }
+      if (this.thread != null) {
+        this.thread.remove(this);
+      }
+      this.thread = thread;
+      thread.add(this);
+    } finally {
+      lock.unlock();
+    }
+  }
+
   @Override
-  @RequiresNonNull({"entropyBits", "lock", "this.seed"})
-  public void setSeed(@UnknownInitialization BaseEntropyCountingRandom this, byte[] seed) {
+  public void setSeed(@UnknownInitialization(BaseRandom.class)BaseEntropyCountingRandom this,
+      byte[] seed) {
+    assert lock != null : "@AssumeAssertion(nullness)";
+    assert entropyBits != null : "@AssumeAssertion(nullness)";
     super.setSeed(seed);
     entropyBits.updateAndGet(oldCount -> Math.max(oldCount, seed.length * 8));
+  }
+
+  private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
+    super.checkedReadObject(in);
+    assert entropyBits != null : "@AssumeAssertion(nullness)";
   }
 
   @Override

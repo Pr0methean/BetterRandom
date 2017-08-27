@@ -110,15 +110,13 @@ public class CellularAutomatonRandom extends BaseEntropyCountingRandom implement
   }
 
   private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
-    in.defaultReadObject();
-    assert lock != null : "@AssumeAssertion(nullness)";
-    assert seed != null : "@AssumeAssertion(nullness)";
+    checkedReadObject(in);
     initSubclassTransientFields();
   }
 
   @EnsuresNonNull("cells")
   @RequiresNonNull({"seed", "lock"})
-  protected void copySeedToCellsAndPreEvolve(@UnknownInitialization CellularAutomatonRandom this) {
+  private void copySeedToCellsAndPreEvolve(@UnknownInitialization CellularAutomatonRandom this) {
     lock.lock();
     try {
       cells = new int[AUTOMATON_LENGTH];
@@ -149,7 +147,7 @@ public class CellularAutomatonRandom extends BaseEntropyCountingRandom implement
   @EnsuresNonNull("cells")
   @RequiresNonNull({"lock", "seed"})
   private void initSubclassTransientFields(
-      @UnknownInitialization CellularAutomatonRandom this) {
+      @UnknownInitialization(BaseEntropyCountingRandom.class)CellularAutomatonRandom this) {
     cells = new int[AUTOMATON_LENGTH];
     currentCellIndex = AUTOMATON_LENGTH - 1;
     lock.lock();
@@ -235,9 +233,8 @@ public class CellularAutomatonRandom extends BaseEntropyCountingRandom implement
   }
 
   @Override
-  @RequiresNonNull("lock")
-  @SuppressWarnings("contracts.precondition.override.invalid")
-  public void setSeed(@UnknownInitialization CellularAutomatonRandom this, byte[] seed) {
+  public void setSeed(@UnknownInitialization(BaseRandom.class)CellularAutomatonRandom this,
+      byte[] seed) {
     if (seed.length != SEED_SIZE_BYTES) {
       throw new IllegalArgumentException("Cellular Automaton RNG requires a 32-bit (4-byte) seed.");
     }

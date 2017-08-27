@@ -23,7 +23,6 @@ import betterrandom.util.BinaryUtils;
 import java.util.Arrays;
 import java.util.Random;
 import org.checkerframework.checker.initialization.qual.UnknownInitialization;
-import org.checkerframework.checker.nullness.qual.RequiresNonNull;
 
 /**
  * <p>Random number generator based on the <a href="http://www.math.sci.hiroshima-u.ac.jp/~m-mat/MT/emt.html"
@@ -100,13 +99,13 @@ public class MersenneTwisterRandom extends BaseEntropyCountingRandom implements 
     return seed.clone();
   }
 
-  @SuppressWarnings("contracts.precondition.override.invalid")
-  @RequiresNonNull({"lock", "entropyBits"})
   @Override
-  public void setSeed(@UnknownInitialization MersenneTwisterRandom this, byte[] seed) {
+  public void setSeed(
+      @UnknownInitialization(BaseRandom.class)MersenneTwisterRandom this, byte[] seed) {
     if (seed == null || seed.length != SEED_SIZE_BYTES) {
       throw new IllegalArgumentException("Mersenne Twister RNG requires a 128-bit (16-byte) seed.");
     }
+    assert entropyBits != null : "@AssumeAssertion(nullness)";
     lock.lock();
     try {
       this.seed = seed.clone();

@@ -18,7 +18,6 @@ package betterrandom.seed;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.io.ObjectInputStream;
 import java.net.URL;
 import java.net.URLConnection;
 import java.text.MessageFormat;
@@ -62,7 +61,7 @@ public enum RandomDotOrgSeedGenerator implements SeedGenerator {
   private static final Lock cacheLock = new ReentrantLock();
   private static byte[] cache = new byte[1024];
   private static int cacheOffset = cache.length;
-  private transient int retriesSoFar = 0;
+  private static int retriesSoFar = 0;
 
   /**
    * @param requiredBytes The preferred number of bytes to request from random.org. The
@@ -100,12 +99,6 @@ public enum RandomDotOrgSeedGenerator implements SeedGenerator {
     } finally {
       cacheLock.unlock();
     }
-  }
-
-  @SuppressWarnings("unused")
-  private void readObject(ObjectInputStream ois) throws IOException, ClassNotFoundException {
-    ois.defaultReadObject();
-    retriesSoFar = 0;
   }
 
   /**
