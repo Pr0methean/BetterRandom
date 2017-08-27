@@ -125,11 +125,11 @@ public final class RandomSeederThread extends LooperThread {
   @SuppressWarnings("InfiniteLoopStatement")
   @Override
   public void iterate() throws InterruptedException {
+    prngsCopy.clear();
     while (isEmpty()) {
       waitWhileEmpty.await();
     }
     boolean entropyConsumed = false;
-    prngsCopy.clear();
     synchronized (prngs) {
       prngsCopy.addAll(prngs);
     }
