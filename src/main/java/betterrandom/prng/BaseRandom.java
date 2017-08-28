@@ -1,14 +1,10 @@
 package betterrandom.prng;
 
-import betterrandom.ByteArrayReseedableRandom;
-import betterrandom.RepeatableRandom;
-import betterrandom.seed.DefaultSeedGenerator;
-import betterrandom.seed.SeedException;
-import betterrandom.seed.SeedGenerator;
 import java.io.IOException;
 import java.io.InvalidObjectException;
 import java.io.ObjectInputStream;
 import java.nio.ByteBuffer;
+import java.security.SecureRandom;
 import java.util.Random;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
@@ -18,11 +14,11 @@ import org.checkerframework.checker.initialization.qual.UnknownInitialization;
 import org.checkerframework.checker.nullness.qual.EnsuresNonNull;
 import org.checkerframework.checker.nullness.qual.RequiresNonNull;
 
-public abstract class BaseRandom extends Random implements ByteArrayReseedableRandom,
-    RepeatableRandom {
+public abstract class BaseRandom extends Random {
 
   private static final Logger LOG = Logger.getLogger(BaseRandom.class.getName());
   private static final long serialVersionUID = -1556392727255964947L;
+  protected static final SecureRandom SECURE_RANDOM = new SecureRandom();
 
   protected byte[] seed;
 
@@ -39,19 +35,8 @@ public abstract class BaseRandom extends Random implements ByteArrayReseedableRa
   /**
    * Creates a new RNG and seeds it using the default seeding strategy.
    */
-  public BaseRandom(int seedLength) throws SeedException {
-    this(DefaultSeedGenerator.DEFAULT_SEED_GENERATOR.generateSeed(seedLength));
-  }
-
-  /**
-   * Seed the RNG using the provided seed generation strategy.
-   *
-   * @param seedGenerator The seed generation strategy that will provide the seed value for this
-   * RNG.
-   * @throws SeedException If there is a problem generating a seed.
-   */
-  public BaseRandom(SeedGenerator seedGenerator, int seedLength) throws SeedException {
-    this(seedGenerator.generateSeed(seedLength));
+  public BaseRandom(int seedLength) {
+    this(SECURE_RANDOM.generateSeed(seedLength));
   }
 
   @EnsuresNonNull("this.seed")
@@ -69,19 +54,6 @@ public abstract class BaseRandom extends Random implements ByteArrayReseedableRa
     in.defaultReadObject();
     assert seed != null : "@AssumeAssertion(nullness)";
     initTransientFields();
-  }
-
-  /**
-   * {@inheritDoc}
-   */
-  @Override
-  public byte[] getSeed() {
-    lock.lock();
-    try {
-      return seed.clone();
-    } finally {
-      lock.unlock();
-    }
   }
 
   @SuppressWarnings("contracts.postcondition.not.satisfied")
@@ -102,7 +74,6 @@ public abstract class BaseRandom extends Random implements ByteArrayReseedableRa
   @SuppressWarnings("contracts.precondition.override.invalid")
   @EnsuresNonNull("this.seed")
   @RequiresNonNull({"lock"})
-  @Override
   public void setSeed(@UnknownInitialization(BaseRandom.class)BaseRandom this, byte[] seed) {
     lock.lock();
     try {
@@ -131,14 +102,9 @@ public abstract class BaseRandom extends Random implements ByteArrayReseedableRa
   @EnsuresNonNull({"lock", "seed"})
   @SuppressWarnings({"OverriddenMethodCallDuringObjectConstruction"})
   private void readObjectNoData() throws InvalidObjectException {
-    LOG.warning("BaseRandom.readObjectNoData() invoked; using DefaultSeedGenerator");
-    try {
-      setSeed(DefaultSeedGenerator.DEFAULT_SEED_GENERATOR.generateSeed(getNewSeedLength()));
-    } catch (SeedException e) {
-      throw (InvalidObjectException)
-          (new InvalidObjectException("Unable to deserialize or generate a seed this RNG")
-              .initCause(e));
-    }
+    this.seed = SECURE_RANDOM.generateSeed(getNewSeedLength());
     initTransientFields();
   }
+
+  protected abstract int getNewSeedLength();
 }
