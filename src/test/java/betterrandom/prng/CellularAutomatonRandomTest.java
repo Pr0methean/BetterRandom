@@ -15,6 +15,7 @@
 // ============================================================================
 package betterrandom.prng;
 
+import betterrandom.prng.BaseRandom.CellularAutomatonRandom;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -30,22 +31,6 @@ import org.testng.annotations.Test;
 public class CellularAutomatonRandomTest {
   @Test(timeOut = 15000)
   public void testSerializable() throws IOException, ClassNotFoundException {
-    // Serialise an RNG.
-    CellularAutomatonRandom rng = new CellularAutomatonRandom();
-    CellularAutomatonRandom result;
-    try (
-        ByteArrayOutputStream byteOutStream = new ByteArrayOutputStream();
-        ObjectOutputStream objectOutStream = new ObjectOutputStream(byteOutStream)) {
-      objectOutStream.writeObject(rng);
-      byte[] serialCopy = byteOutStream.toByteArray();
-      // Read the object back in.
-      try (ObjectInputStream objectInStream = new ObjectInputStream(
-          new ByteArrayInputStream(serialCopy))) {
-        result = (CellularAutomatonRandom) (objectInStream.readObject());
-      }
-    } catch (IOException | ClassNotFoundException e) {
-      throw new RuntimeException(e);
-    }
-    result.nextLong();
+    CellularAutomatonRandom.test();
   }
 }

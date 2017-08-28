@@ -8,7 +8,6 @@
     <prefix/>
     <maven.compiler.source>1.8</maven.compiler.source>
     <maven.compiler.target>1.8</maven.compiler.target>
-    <annotatedJdk>${org.checkerframework:jdk8:jar}</annotatedJdk>
   </properties>
   <groupId>groupId</groupId>
   <artifactId>BetterRandom</artifactId>
@@ -26,21 +25,6 @@
       <artifactId>commons-math3</artifactId>
       <version>3.6.1</version>
       <scope>test</scope>
-    </dependency>
-        <dependency>
-      <groupId>org.checkerframework</groupId>
-      <artifactId>checker-qual</artifactId>
-      <version>2.1.14</version>
-    </dependency>
-    <dependency>
-      <groupId>org.checkerframework</groupId>
-      <artifactId>checker</artifactId>
-      <version>2.1.14</version>
-    </dependency>
-    <dependency>
-      <groupId>org.checkerframework</groupId>
-      <artifactId>jdk8</artifactId>
-      <version>2.1.14</version>
     </dependency>
     <!-- https://mvnrepository.com/artifact/com.google.dagger/dagger -->
     <dependency>
@@ -96,10 +80,6 @@
                 <Xmaxerrs>10000</Xmaxerrs>
                 <Xmaxwarns>10000</Xmaxwarns>
               </compilerArguments>
-              <annotationProcessors>
-                <!-- Add all the checkers you want to enable here -->
-                <annotationProcessor>org.checkerframework.checker.nullness.NullnessChecker</annotationProcessor>
-              </annotationProcessors>
               <compilerArgs>
                 <!-- location of the annotated JDK, which comes from a Maven dependency -->
                 <arg>-Xbootclasspath/p:${annotatedJdk}</arg>
