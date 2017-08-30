@@ -23,7 +23,9 @@ import betterrandom.util.BinaryUtils;
 import java.util.Arrays;
 import java.util.Random;
 import org.checkerframework.checker.initialization.qual.UnknownInitialization;
+import org.checkerframework.checker.nullness.qual.EnsuresNonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
+import org.checkerframework.checker.nullness.qual.RequiresNonNull;
 
 /**
  * <p>Random number generator based on the <a href="http://www.math.sci.hiroshima-u.ac.jp/~m-mat/MT/emt.html"
@@ -69,7 +71,7 @@ public class MersenneTwisterRandom extends BaseEntropyCountingRandom implements 
   private static final int GENERATE_MASK1 = 0x9d2c5680;
   private static final int GENERATE_MASK2 = 0xefc60000;
 
-  private final int[] mt = new int[N]; // State vector.
+  private int[] mt; // State vector.
   private int mtIndex = 0; // Index into state vector.
 
   /**
@@ -86,6 +88,7 @@ public class MersenneTwisterRandom extends BaseEntropyCountingRandom implements 
    */
   public MersenneTwisterRandom(byte[] seed) {
     super(seed);
+    assert mt != null : "@AssumeAssertion(nullness)";
     setSeed(seed);
   }
 
@@ -101,12 +104,23 @@ public class MersenneTwisterRandom extends BaseEntropyCountingRandom implements 
   }
 
   @Override
+
+  @EnsuresNonNull({"lock", "entropyBits", "mt"})
+  protected void initTransientFields(@UnknownInitialization MersenneTwisterRandom this) {
+    super.initTransientFields();
+    if (mt == null) {
+      mt = new int[N];
+    }
+  }
+
+  @Override
   public void setSeed(
       @UnknownInitialization(BaseRandom.class)MersenneTwisterRandom this, byte[] seed) {
     if (seed == null || seed.length != SEED_SIZE_BYTES) {
       throw new IllegalArgumentException("Mersenne Twister RNG requires a 128-bit (16-byte) seed.");
     }
     assert entropyBits != null : "@AssumeAssertion(nullness)";
+    assert mt != null : "@AssumeAssertion(nullness)";
     lock.lock();
     try {
       super.setSeed(seed);

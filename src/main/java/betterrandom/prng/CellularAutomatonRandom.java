@@ -22,7 +22,6 @@ import betterrandom.seed.SeedGenerator;
 import betterrandom.util.BinaryUtils;
 import java.io.IOException;
 import java.io.ObjectInputStream;
-import java.util.Arrays;
 import java.util.Random;
 import org.checkerframework.checker.initialization.qual.UnknownInitialization;
 import org.checkerframework.checker.nullness.qual.EnsuresNonNull;
@@ -99,7 +98,6 @@ public class CellularAutomatonRandom extends BaseEntropyCountingRandom implement
    */
   public CellularAutomatonRandom(byte[] seed) {
     super(seed);
-    initSubclassTransientFields();
     copySeedToCellsAndPreEvolve();
   }
 
@@ -115,7 +113,6 @@ public class CellularAutomatonRandom extends BaseEntropyCountingRandom implement
     assert seed != null : "@AssumeAssertion(nullness)";
     assert lock != null : "@AssumeAssertion(nullness)";
     assert entropyBits != null : "@AssumeAssertion(nullness)";
-    initSubclassTransientFields();
   }
 
   @EnsuresNonNull("cells")
@@ -143,20 +140,6 @@ public class CellularAutomatonRandom extends BaseEntropyCountingRandom implement
       for (int i = 0; i < AUTOMATON_LENGTH * AUTOMATON_LENGTH / 4; i++) {
         internalNext(32);
       }
-    } finally {
-      lock.unlock();
-    }
-  }
-
-  @EnsuresNonNull("cells")
-  @RequiresNonNull({"lock", "seed"})
-  private void initSubclassTransientFields(
-      @UnknownInitialization(BaseEntropyCountingRandom.class)CellularAutomatonRandom this) {
-    cells = new int[AUTOMATON_LENGTH];
-    currentCellIndex = AUTOMATON_LENGTH - 1;
-    lock.lock();
-    try {
-      setSeed(seed);
     } finally {
       lock.unlock();
     }

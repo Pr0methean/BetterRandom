@@ -100,7 +100,7 @@ public class MersenneTwisterRandomTest {
     RandomTestUtils.doEqualsSanityChecks(MersenneTwisterRandom.class.getConstructor());
   }
 
-  @Test(timeOut = 15000)
+  @Test(timeOut = 30000)
   public void testHashCode() throws Exception {
     assert RandomTestUtils.testHashCodeDistribution(MersenneTwisterRandom.class.getConstructor())
         : "Too many hashCode collisions";

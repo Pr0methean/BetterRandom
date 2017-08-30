@@ -123,7 +123,7 @@ public class CellularAutomatonRandomTest {
     RandomTestUtils.doEqualsSanityChecks(CellularAutomatonRandom.class.getConstructor());
   }
 
-  @Test(timeOut = 15000)
+  @Test(timeOut = 30000)
   public void testHashCode() throws Exception {
     assert RandomTestUtils.testHashCodeDistribution(CellularAutomatonRandom.class.getConstructor())
         : "Too many hashCode collisions";
