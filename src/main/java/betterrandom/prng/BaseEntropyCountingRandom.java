@@ -52,7 +52,7 @@ public abstract class BaseEntropyCountingRandom extends BaseRandom implements
   }
 
   @Override
-  public void setSeed(@UnknownInitialization(BaseRandom.class)BaseEntropyCountingRandom this,
+  public void setSeed(@UnknownInitialization(BaseRandom.class) BaseEntropyCountingRandom this,
       byte[] seed) {
     assert lock != null : "@AssumeAssertion(nullness)";
     assert entropyBits != null : "@AssumeAssertion(nullness)";

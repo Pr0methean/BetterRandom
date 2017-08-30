@@ -132,7 +132,7 @@ public class ReseedingSplittableRandomAdapter extends BaseSplittableRandomAdapte
   }
 
   @Override
-  public boolean equals(Object o) {
+  public boolean equals(@Nullable Object o) {
     return this == o
         || (o instanceof ReseedingSplittableRandomAdapter
         && seedGenerator.equals(((ReseedingSplittableRandomAdapter) o).seedGenerator));

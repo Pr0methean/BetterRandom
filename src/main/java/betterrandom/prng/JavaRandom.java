@@ -93,9 +93,4 @@ public class JavaRandom extends Random implements RepeatableRandom {
     return other instanceof JavaRandom
         && Arrays.equals(seed, ((JavaRandom) other).seed);
   }
-
-  @Override
-  public int hashCode() {
-    return Arrays.hashCode(seed);
-  }
 }

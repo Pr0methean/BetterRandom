@@ -8,6 +8,7 @@ import java.io.ObjectInputStream;
 import java.util.SplittableRandom;
 import org.checkerframework.checker.initialization.qual.UnknownInitialization;
 import org.checkerframework.checker.nullness.qual.EnsuresNonNull;
+import org.checkerframework.checker.nullness.qual.Nullable;
 import org.checkerframework.checker.nullness.qual.RequiresNonNull;
 
 /**
@@ -60,17 +61,5 @@ public class SplittableRandomAdapter extends DirectSplittableRandomAdapter {
     if (superConstructorFinished && threadLocal != null) {
       threadLocal.set(new SplittableRandom(seed));
     }
-  }
-
-  @Override
-  public boolean equals(Object o) {
-    return this == o
-        || (o instanceof SplittableRandomAdapter
-        && super.equals(o));
-  }
-
-  @Override
-  public int hashCode() {
-    return super.hashCode() + 1;
   }
 }
