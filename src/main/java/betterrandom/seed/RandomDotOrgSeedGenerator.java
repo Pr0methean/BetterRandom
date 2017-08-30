@@ -53,15 +53,9 @@ public enum RandomDotOrgSeedGenerator implements SeedGenerator {
    * Random.org does not allow requests for more than 10k integers at once.
    */
   private static final int MAX_REQUEST_SIZE = 10000;
-  /**
-   * Delay before retrying in the event of a 503 error.
-   */
-  private static final int DELAY_BETWEEN_RETRIES_MS = 10 * 1000;
-  private static final int MAX_RETRIES = 1200;
   private static final Lock cacheLock = new ReentrantLock();
   private static byte[] cache = new byte[1024];
   private static int cacheOffset = cache.length;
-  private static int retriesSoFar = 0;
 
   /**
    * @param requiredBytes The preferred number of bytes to request from random.org. The
@@ -120,25 +114,11 @@ public enum RandomDotOrgSeedGenerator implements SeedGenerator {
             cacheOffset += numberOfBytes;
           } else {
             refreshCache(length - count);
-            retriesSoFar = 0;
           }
           succeeded = true;
         }
       } catch (IOException ex) {
-        if (ex.getMessage().contains("HTTP response code: 503")
-            && retriesSoFar < MAX_RETRIES) {
-          retriesSoFar++;
-          LOG.severe(String.format("%s (retrying in %d ms)",
-              ex.getMessage(), DELAY_BETWEEN_RETRIES_MS));
-          try {
-            Thread.sleep(DELAY_BETWEEN_RETRIES_MS);
-          } catch (InterruptedException e) {
-            throw new SeedException("Interrupted while waiting to retry download from " + BASE_URL,
-                e);
-          }
-        } else {
-          throw new SeedException("Failed downloading bytes from " + BASE_URL, ex);
-        }
+        throw new SeedException("Failed downloading bytes from " + BASE_URL, ex);
       } catch (SecurityException ex) {
         // Might be thrown if resource access is restricted (such as in an applet sandbox).
         throw new SeedException("SecurityManager prevented access to " + BASE_URL, ex);

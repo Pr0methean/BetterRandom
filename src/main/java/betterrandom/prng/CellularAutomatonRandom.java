@@ -80,9 +80,9 @@ public class CellularAutomatonRandom extends BaseEntropyCountingRandom implement
           130, 97, 91, 227, 146, 4, 31, 120, 211, 38, 22, 138, 140, 237, 238, 251,
           240, 160, 142, 119, 73, 103, 166, 33, 148, 9, 111, 136, 168, 150, 82
       };
-  private transient int[] cells;
+  private int[] cells;
 
-  private transient int currentCellIndex;
+  private int currentCellIndex;
 
   public CellularAutomatonRandom() throws SeedException {
     this(DefaultSeedGenerator.DEFAULT_SEED_GENERATOR);
@@ -100,6 +100,7 @@ public class CellularAutomatonRandom extends BaseEntropyCountingRandom implement
   public CellularAutomatonRandom(byte[] seed) {
     super(seed);
     initSubclassTransientFields();
+    copySeedToCellsAndPreEvolve();
   }
 
   private static int convertCellsToInt(int[] cells, int offset) {
@@ -156,7 +157,6 @@ public class CellularAutomatonRandom extends BaseEntropyCountingRandom implement
     lock.lock();
     try {
       setSeed(seed);
-      copySeedToCellsAndPreEvolve();
     } finally {
       lock.unlock();
     }
