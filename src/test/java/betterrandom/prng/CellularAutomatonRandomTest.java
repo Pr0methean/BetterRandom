@@ -16,21 +16,12 @@
 package betterrandom.prng;
 
 import betterrandom.prng.BaseRandom.CellularAutomatonRandom;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
 import org.testng.annotations.Test;
 
-/**
- * Unit test for the cellular automaton RNG.
- *
- * @author Daniel Dyer
- */
 public class CellularAutomatonRandomTest {
   @Test(timeOut = 15000)
   public void testSerializable() throws IOException, ClassNotFoundException {
-    CellularAutomatonRandom.test();
+    CellularAutomatonRandom.main(new String[]{});
   }
 }
