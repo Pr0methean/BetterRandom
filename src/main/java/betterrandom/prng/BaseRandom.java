@@ -56,18 +56,11 @@ public abstract class BaseRandom extends Random implements ByteArrayReseedableRa
 
   @EnsuresNonNull("this.seed")
   public BaseRandom(byte[] seed) {
+    superConstructorFinished = true;
     if (seed == null) {
       throw new IllegalArgumentException("Seed must not be null");
     }
     this.seed = seed.clone();
-    initTransientFields();
-  }
-
-  @EnsuresNonNull({"seed", "lock"})
-  protected void checkedReadObject(@UnknownInitialization BaseRandom this,
-      ObjectInputStream in) throws IOException, ClassNotFoundException {
-    in.defaultReadObject();
-    assert seed != null : "@AssumeAssertion(nullness)";
     initTransientFields();
   }
 
@@ -118,13 +111,13 @@ public abstract class BaseRandom extends Random implements ByteArrayReseedableRa
     if (lock == null) {
       lock = new ReentrantLock();
     }
-    superConstructorFinished = true;
   }
 
   @EnsuresNonNull({"lock", "seed"})
   private void readObject(@UnderInitialization(BaseRandom.class)BaseRandom this,
       ObjectInputStream in) throws IOException, ClassNotFoundException {
-    checkedReadObject(in);
+    in.defaultReadObject();
+    assert seed != null : "@AssumeAssertion(nullness)";
     initTransientFields();
   }
 
