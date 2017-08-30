@@ -15,24 +15,34 @@ public abstract class BaseEntropyCountingRandom extends BaseRandom implements
     EntropyCountingRandom {
 
   private static final long serialVersionUID = 1838766748070164286L;
-  protected final AtomicLong entropyBits = new AtomicLong(0);
+  protected AtomicLong entropyBits;
   @Nullable
   private RandomSeederThread thread;
 
   @EnsuresNonNull("entropyBits")
   public BaseEntropyCountingRandom(int seedLength) throws SeedException {
     super(seedLength);
+    assert entropyBits != null : "@AssumeAssertion(nullness)";
   }
 
   @EnsuresNonNull("entropyBits")
   public BaseEntropyCountingRandom(SeedGenerator seedGenerator, int seedLength)
       throws SeedException {
     super(seedGenerator, seedLength);
+    assert entropyBits != null : "@AssumeAssertion(nullness)";
   }
 
   @EnsuresNonNull("entropyBits")
   public BaseEntropyCountingRandom(byte[] seed) {
     super(seed);
+    assert entropyBits != null : "@AssumeAssertion(nullness)";
+  }
+
+  @EnsuresNonNull({"lock", "entropyBits"})
+  @Override
+  protected void initTransientFields(@UnknownInitialization BaseEntropyCountingRandom this) {
+    super.initTransientFields();
+    entropyBits = new AtomicLong(0);
   }
 
   public void setSeederThread(RandomSeederThread thread) {

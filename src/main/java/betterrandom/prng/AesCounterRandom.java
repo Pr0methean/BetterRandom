@@ -29,15 +29,11 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
 import java.util.Random;
-import java.util.logging.Logger;
 import javax.crypto.Cipher;
 import javax.crypto.NoSuchPaddingException;
 import javax.crypto.spec.SecretKeySpec;
 import org.checkerframework.checker.initialization.qual.UnknownInitialization;
 import org.checkerframework.checker.nullness.qual.EnsuresNonNull;
-import org.checkerframework.checker.nullness.qual.MonotonicNonNull;
-import org.checkerframework.checker.nullness.qual.Nullable;
-import org.checkerframework.checker.nullness.qual.RequiresNonNull;
 
 /**
  * <p>Non-linear random number generator based on the AES block cipher in counter mode. Uses the
@@ -144,7 +140,7 @@ public class AesCounterRandom extends BaseEntropyCountingRandom implements Repea
     super(seed);
     currentBlock = new byte[COUNTER_SIZE_BYTES * BLOCKS_AT_ONCE];
     index = currentBlock.length; // force generation of first block on demand
-    initSubclassTransientFields();
+    initTransientFields();
   }
 
   /**
@@ -161,16 +157,17 @@ public class AesCounterRandom extends BaseEntropyCountingRandom implements Repea
     assert seed != null : "@AssumeAssertion(nullness)";
     assert lock != null : "@AssumeAssertion(nullness)";
     assert entropyBits != null : "@AssumeAssertion(nullness)";
-    initSubclassTransientFields();
+    initTransientFields();
   }
 
   /**
    * Called in constructor and readObject to initialize transient fields.
    */
-  @RequiresNonNull({"seed", "lock", "entropyBits"})
-  @EnsuresNonNull({"counter", "counterInput", "cipher"})
-  private void initSubclassTransientFields(
-      @UnknownInitialization(BaseEntropyCountingRandom.class)AesCounterRandom this) {
+  @EnsuresNonNull({"counter", "counterInput", "cipher", "lock", "entropyBits"})
+  @Override
+  protected void initTransientFields(
+      @UnknownInitialization AesCounterRandom this) {
+    super.initTransientFields();
     if (counter == null) {
       counter = new byte[COUNTER_SIZE_BYTES];
     }
@@ -180,7 +177,6 @@ public class AesCounterRandom extends BaseEntropyCountingRandom implements Repea
     } catch (NoSuchAlgorithmException | NoSuchPaddingException e) {
       throw new RuntimeException("JVM doesn't provide " + ALGORITHM_MODE, e);
     }
-    setSeed(seed);
   }
 
   private void incrementCounter() {
