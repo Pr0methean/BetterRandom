@@ -29,8 +29,7 @@ import org.checkerframework.checker.nullness.qual.RequiresNonNull;
 public final class RandomSeederThread extends LooperThread {
 
   private static final ExecutorService WAKER_UPPER = Executors.newSingleThreadExecutor();
-  private static final LogPreFormatter LOG
-      = new LogPreFormatter(Logger.getLogger(RandomSeederThread.class.getName()));
+  private static final LogPreFormatter LOG = new LogPreFormatter(RandomSeederThread.class);
   private static final Map<SeedGenerator, RandomSeederThread> INSTANCES =
       Collections.synchronizedMap(new WeakHashMap<>());
   /**
@@ -142,6 +141,7 @@ public final class RandomSeederThread extends LooperThread {
         entropyConsumed = true;
       }
       try {
+        LOG.info("Reseeding %s using %s", random, seedGenerator);
         if (random instanceof ByteArrayReseedableRandom) {
           ByteArrayReseedableRandom reseedable = (ByteArrayReseedableRandom) random;
           reseedable.setSeed(seedGenerator.generateSeed(reseedable.getNewSeedLength()));
@@ -150,6 +150,7 @@ public final class RandomSeederThread extends LooperThread {
           System.arraycopy(seedGenerator.generateSeed(8), 0, seedArray, 0, 8);
           random.setSeed(seedBuffer.getLong(0));
         }
+        LOG.info("Done reseeding %s using %s", random, seedGenerator);
       } catch (SeedException e) {
         //noinspection AccessToStaticFieldLockedOnInstance
         LOG.error("%s gave SeedException %s", seedGenerator, e);

@@ -11,6 +11,10 @@ public class LogPreFormatter {
     this.logger = logger;
   }
 
+  public LogPreFormatter(Class<?> clazz) {
+    this.logger = Logger.getLogger(clazz.getName());
+  }
+
   public void format(Level level, String formatString, Object... args) {
     if (logger.isLoggable(level)) {
       logger.log(level, String.format(formatString, (Object[]) args));

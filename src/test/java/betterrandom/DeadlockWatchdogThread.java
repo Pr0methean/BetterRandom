@@ -9,8 +9,7 @@ import java.util.Map;
 import java.util.logging.Logger;
 
 public class DeadlockWatchdogThread extends LooperThread {
-  private static final LogPreFormatter LOG = new LogPreFormatter(
-      Logger.getLogger(DeadlockWatchdogThread.class.getName()));
+  private static final LogPreFormatter LOG = new LogPreFormatter(DeadlockWatchdogThread.class);
 
   private static final int MAX_STACK_DEPTH = 20;
 

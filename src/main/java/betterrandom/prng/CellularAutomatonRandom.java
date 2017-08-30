@@ -201,18 +201,6 @@ public class CellularAutomatonRandom extends BaseEntropyCountingRandom implement
     }
   }
 
-  @SuppressWarnings("NonFinalFieldReferenceInEquals")
-  @Override
-  public boolean equals(Object o) {
-    return o instanceof CellularAutomatonRandom
-        && Arrays.equals(seed, ((CellularAutomatonRandom) o).seed);
-  }
-
-  @SuppressWarnings("NonFinalFieldReferencedInHashCode")
-  @Override
-  public int hashCode() {
-    return Arrays.hashCode(seed);
-  }
 
   @SuppressWarnings({"contracts.postcondition.not.satisfied",
       "NonSynchronizedMethodOverridesSynchronizedMethod"})
@@ -243,14 +231,13 @@ public class CellularAutomatonRandom extends BaseEntropyCountingRandom implement
     }
     lock.lock();
     try {
-      if (this.seed == null) {
-        this.seed = new byte[SEED_SIZE_BYTES];
-      }
-      System.arraycopy(seed, 0, this.seed, 0, 4);
+      super.setSeed(seed);
       copySeedToCellsAndPreEvolve();
     } finally {
       lock.unlock();
     }
+    assert hashCode != null : "@AssumeAssertion(nullness)";
+    assert this.seed != null : "@AssumeAssertion(nullness)";
   }
 
   @Override

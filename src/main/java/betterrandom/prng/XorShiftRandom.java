@@ -98,13 +98,14 @@ public class XorShiftRandom extends BaseEntropyCountingRandom implements Repeata
     }
     lock.lock();
     try {
-      this.seed = seed.clone();
+      super.setSeed(seed);
       entropyBits.set(8 * SEED_SIZE_BYTES);
       initSubclassTransientFields();
     } finally {
       lock.unlock();
     }
     assert this.seed != null : "@AssumeAssertion(nullness)";
+    assert hashCode != null : "@AssumeAssertion(nullness)";
   }
 
   /**
@@ -126,19 +127,6 @@ public class XorShiftRandom extends BaseEntropyCountingRandom implements Repeata
     } finally {
       lock.unlock();
     }
-  }
-
-  @SuppressWarnings("NonFinalFieldReferenceInEquals")
-  @Override
-  public boolean equals(Object other) {
-    return other instanceof XorShiftRandom
-        && Arrays.equals(seed, ((XorShiftRandom) other).seed);
-  }
-
-  @SuppressWarnings("NonFinalFieldReferencedInHashCode")
-  @Override
-  public int hashCode() {
-    return Arrays.hashCode(seed);
   }
 
   @Override

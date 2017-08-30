@@ -23,6 +23,7 @@ import betterrandom.util.BinaryUtils;
 import java.util.Arrays;
 import java.util.Random;
 import org.checkerframework.checker.initialization.qual.UnknownInitialization;
+import org.checkerframework.checker.nullness.qual.Nullable;
 
 /**
  * <p>Random number generator based on the <a href="http://www.math.sci.hiroshima-u.ac.jp/~m-mat/MT/emt.html"
@@ -108,7 +109,7 @@ public class MersenneTwisterRandom extends BaseEntropyCountingRandom implements 
     assert entropyBits != null : "@AssumeAssertion(nullness)";
     lock.lock();
     try {
-      this.seed = seed.clone();
+      super.setSeed(seed);
       int[] seedInts = BinaryUtils.convertBytesToInts(this.seed);
 
       // This section is translated from the init_genrand code in the C version.
@@ -147,6 +148,7 @@ public class MersenneTwisterRandom extends BaseEntropyCountingRandom implements 
     } finally {
       lock.unlock();
     }
+    assert hashCode != null : "@AssumeAssertion(nullness)";
     assert this.seed != null : "@AssumeAssertion(nullness)";
   }
 
@@ -188,19 +190,6 @@ public class MersenneTwisterRandom extends BaseEntropyCountingRandom implements 
 
     recordEntropySpent(bits);
     return y >>> (32 - bits);
-  }
-
-  @SuppressWarnings("NonFinalFieldReferenceInEquals")
-  @Override
-  public boolean equals(Object other) {
-    return other instanceof MersenneTwisterRandom
-        && Arrays.equals(seed, ((MersenneTwisterRandom) other).seed);
-  }
-
-  @SuppressWarnings("NonFinalFieldReferencedInHashCode")
-  @Override
-  public int hashCode() {
-    return Arrays.hashCode(seed);
   }
 
   @Override

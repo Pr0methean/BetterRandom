@@ -89,14 +89,14 @@ public class Cmwc4096Random extends BaseEntropyCountingRandom implements Repeata
     return seed.clone();
   }
 
-  @EnsuresNonNull({"this.seed", "state"})
+  @EnsuresNonNull({"this.seed", "state", "hashCode"})
   @Override
   public void setSeed(@UnknownInitialization Cmwc4096Random this, byte[] seed) {
     assert entropyBits != null : "@AssumeAssertion(nullness)";
     if (seed == null || seed.length != SEED_SIZE_BYTES) {
       throw new IllegalArgumentException("CMWC RNG requires 16kb of seed data.");
     }
-    this.seed = seed.clone();
+    super.setSeed(seed);
     state = BinaryUtils.convertBytesToInts(seed);
     entropyBits.set(SEED_SIZE_BYTES * 8);
   }
@@ -122,19 +122,6 @@ public class Cmwc4096Random extends BaseEntropyCountingRandom implements Repeata
     } finally {
       lock.unlock();
     }
-  }
-
-  @SuppressWarnings("NonFinalFieldReferenceInEquals")
-  @Override
-  public boolean equals(Object other) {
-    return other instanceof Cmwc4096Random
-        && Arrays.equals(seed, ((Cmwc4096Random) other).seed);
-  }
-
-  @SuppressWarnings("NonFinalFieldReferencedInHashCode")
-  @Override
-  public int hashCode() {
-    return Arrays.hashCode(seed);
   }
 
   @Override

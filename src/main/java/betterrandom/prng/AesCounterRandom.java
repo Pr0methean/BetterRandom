@@ -35,6 +35,8 @@ import javax.crypto.NoSuchPaddingException;
 import javax.crypto.spec.SecretKeySpec;
 import org.checkerframework.checker.initialization.qual.UnknownInitialization;
 import org.checkerframework.checker.nullness.qual.EnsuresNonNull;
+import org.checkerframework.checker.nullness.qual.MonotonicNonNull;
+import org.checkerframework.checker.nullness.qual.Nullable;
 import org.checkerframework.checker.nullness.qual.RequiresNonNull;
 
 /**
@@ -55,8 +57,7 @@ import org.checkerframework.checker.nullness.qual.RequiresNonNull;
 public class AesCounterRandom extends BaseEntropyCountingRandom implements RepeatableRandom {
 
   private static final long serialVersionUID = 5949778642428995210L;
-  private static final LogPreFormatter LOG = new LogPreFormatter(
-      Logger.getLogger(AesCounterRandom.class.getName()));
+  private static final LogPreFormatter LOG = new LogPreFormatter(AesCounterRandom.class);
   private static final int DEFAULT_SEED_SIZE_BYTES = 32;
   /**
    * Theoretically, the Rijndael algorithm supports key sizes and block sizes of 16, 20, 24, 28 & 32
@@ -233,19 +234,6 @@ public class AesCounterRandom extends BaseEntropyCountingRandom implements Repea
     }
     recordEntropySpent(bits);
     return result >>> (32 - bits);
-  }
-
-  @SuppressWarnings("NonFinalFieldReferenceInEquals")
-  @Override
-  public boolean equals(Object other) {
-    return other instanceof AesCounterRandom
-        && Arrays.equals(seed, ((AesCounterRandom) other).seed);
-  }
-
-  @SuppressWarnings("NonFinalFieldReferencedInHashCode")
-  @Override
-  public int hashCode() {
-    return Arrays.hashCode(seed);
   }
 
   /**

@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.util.SplittableRandom;
 import org.checkerframework.checker.initialization.qual.UnknownInitialization;
+import org.checkerframework.checker.nullness.qual.RequiresNonNull;
 
 public class SingleThreadSplittableRandomAdapter extends DirectSplittableRandomAdapter {
 
@@ -30,6 +31,7 @@ public class SingleThreadSplittableRandomAdapter extends DirectSplittableRandomA
   private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
     in.defaultReadObject();
     assert underlying != null : "@AssumeAssertion(nullness)";
+    assert lock != null : "@AssumeAssertion(nullness)";
     setSeed(seed);
     if (!deserializedAndNotUsedSince) {
       underlying = underlying.split(); // Ensures we aren't rewinding
@@ -47,7 +49,8 @@ public class SingleThreadSplittableRandomAdapter extends DirectSplittableRandomA
   @Override
   public void setSeed(@UnknownInitialization SingleThreadSplittableRandomAdapter this,
       byte[] seed) {
+    assert lock != null : "@AssumeAssertion(nullness)";
     underlying = new SplittableRandom(BinaryUtils.convertBytesToLong(seed, 0));
-    this.seed = seed.clone();
+    super.setSeed(seed);
   }
 }
