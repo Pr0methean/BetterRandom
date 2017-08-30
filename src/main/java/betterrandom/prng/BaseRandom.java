@@ -116,7 +116,7 @@ public abstract class BaseRandom extends Random implements ByteArrayReseedableRa
   }
 
   @EnsuresNonNull("lock")
-  private void initTransientFields(@UnknownInitialization BaseRandom this) {
+  protected void initTransientFields(@UnknownInitialization BaseRandom this) {
     if (lock == null) {
       lock = new ReentrantLock();
     }

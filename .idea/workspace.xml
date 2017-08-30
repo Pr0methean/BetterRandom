@@ -5,7 +5,9 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="8d34e3fe-111b-4f5b-b1bf-5875a1f8c255" name="Default" comment="">
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/betterrandom/seed/RandomSeederThread.java" afterPath="$PROJECT_DIR$/src/main/java/betterrandom/seed/RandomSeederThread.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/betterrandom/prng/AesCounterRandom.java" afterPath="$PROJECT_DIR$/src/main/java/betterrandom/prng/AesCounterRandom.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/betterrandom/prng/BaseEntropyCountingRandom.java" afterPath="$PROJECT_DIR$/src/main/java/betterrandom/prng/BaseEntropyCountingRandom.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/betterrandom/prng/BaseRandom.java" afterPath="$PROJECT_DIR$/src/main/java/betterrandom/prng/BaseRandom.java" />
     </list>
     <ignored path="$PROJECT_DIR$/out/" />
     <ignored path="$PROJECT_DIR$/target/" />
@@ -27,33 +29,41 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="375">
-      <file leaf-file-name="RandomSeederThread.java" pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/src/main/java/betterrandom/seed/RandomSeederThread.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="236">
-              <caret line="151" column="0" lean-forward="false" selection-start-line="151" selection-start-column="0" selection-end-line="151" selection-end-column="0" />
-              <folding>
-                <element signature="imports" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
       <file leaf-file-name="BaseRandom.java" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/main/java/betterrandom/prng/BaseRandom.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="40">
-              <caret line="158" column="11" lean-forward="true" selection-start-line="158" selection-start-column="11" selection-end-line="158" selection-end-column="11" />
+            <state relative-caret-position="-102">
+              <caret line="117" column="0" lean-forward="false" selection-start-line="117" selection-start-column="0" selection-end-line="117" selection-end-column="25" />
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="SecureRandomSeedGenerator.java" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/main/java/betterrandom/seed/SecureRandomSeedGenerator.java">
+      <file leaf-file-name="AesCounterRandom.java" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/main/java/betterrandom/prng/AesCounterRandom.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="42">
-              <caret line="30" column="22" lean-forward="true" selection-start-line="30" selection-start-column="22" selection-end-line="30" selection-end-column="22" />
+            <state relative-caret-position="138">
+              <caret line="169" column="29" lean-forward="false" selection-start-line="169" selection-start-column="29" selection-end-line="169" selection-end-column="29" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="BaseEntropyCountingRandom.java" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/src/main/java/betterrandom/prng/BaseEntropyCountingRandom.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="98">
+              <caret line="42" column="91" lean-forward="false" selection-start-line="42" selection-start-column="91" selection-end-line="42" selection-end-column="91" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="CellularAutomatonRandom.java" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/main/java/betterrandom/prng/CellularAutomatonRandom.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="238">
+              <caret line="239" column="60" lean-forward="false" selection-start-line="239" selection-start-column="60" selection-end-line="239" selection-end-column="60" />
               <folding />
             </state>
           </provider>
@@ -146,17 +156,17 @@
         <option value="$PROJECT_DIR$/src/main/java/betterrandom/util/LogPreFormatter.java" />
         <option value="$PROJECT_DIR$/src/test/java/betterrandom/DeadlockWatchdogThread.java" />
         <option value="$PROJECT_DIR$/src/main/java/betterrandom/prng/JavaRandom.java" />
-        <option value="$PROJECT_DIR$/src/main/java/betterrandom/prng/AesCounterRandom.java" />
         <option value="$PROJECT_DIR$/src/main/java/betterrandom/prng/XorShiftRandom.java" />
         <option value="$PROJECT_DIR$/src/main/java/betterrandom/prng/adapter/ReseedingSplittableRandomAdapter.java" />
-        <option value="$PROJECT_DIR$/src/main/java/betterrandom/prng/BaseRandom.java" />
         <option value="$PROJECT_DIR$/src/main/java/betterrandom/prng/adapter/SplittableRandomAdapter.java" />
         <option value="$PROJECT_DIR$/src/main/java/betterrandom/prng/Cmwc4096Random.java" />
         <option value="$PROJECT_DIR$/src/main/java/betterrandom/prng/adapter/SingleThreadSplittableRandomAdapter.java" />
         <option value="$PROJECT_DIR$/src/main/java/betterrandom/prng/MersenneTwisterRandom.java" />
-        <option value="$PROJECT_DIR$/src/main/java/betterrandom/prng/BaseEntropyCountingRandom.java" />
         <option value="$PROJECT_DIR$/src/main/java/betterrandom/prng/CellularAutomatonRandom.java" />
         <option value="$PROJECT_DIR$/src/main/java/betterrandom/seed/RandomSeederThread.java" />
+        <option value="$PROJECT_DIR$/src/main/java/betterrandom/prng/BaseRandom.java" />
+        <option value="$PROJECT_DIR$/src/main/java/betterrandom/prng/AesCounterRandom.java" />
+        <option value="$PROJECT_DIR$/src/main/java/betterrandom/prng/BaseEntropyCountingRandom.java" />
       </list>
     </option>
   </component>
@@ -803,7 +813,7 @@
       <breakpoints>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/src/main/java/betterrandom/prng/AesCounterRandom.java</url>
-          <line>147</line>
+          <line>143</line>
           <properties />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
@@ -814,7 +824,7 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-method">
           <url>file://$PROJECT_DIR$/src/main/java/betterrandom/prng/BaseEntropyCountingRandom.java</url>
-          <line>53</line>
+          <line>63</line>
           <properties class="betterrandom.prng.BaseEntropyCountingRandom" method="setSeed">
             <option name="EMULATED" value="true" />
           </properties>
@@ -1146,14 +1156,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/betterrandom/prng/AesCounterRandom.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="28">
-          <caret line="236" column="3" lean-forward="false" selection-start-line="236" selection-start-column="3" selection-end-line="236" selection-end-column="3" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/main/java/betterrandom/prng/XorShiftRandom.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="218">
@@ -1190,14 +1192,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/betterrandom/prng/BaseEntropyCountingRandom.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="108">
-          <caret line="54" column="63" lean-forward="false" selection-start-line="54" selection-start-column="63" selection-end-line="54" selection-end-column="63" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/main/java/betterrandom/prng/MersenneTwisterRandom.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="274">
@@ -1209,14 +1203,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/betterrandom/prng/CellularAutomatonRandom.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="238">
-          <caret line="239" column="60" lean-forward="false" selection-start-line="239" selection-start-column="60" selection-end-line="239" selection-end-column="60" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/main/java/betterrandom/prng/adapter/ReseedingSplittableRandomAdapter.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="108">
@@ -1225,14 +1211,6 @@
             <element signature="e#5029#5030#0" expanded="true" />
             <element signature="e#5074#5075#0" expanded="true" />
           </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/betterrandom/prng/BaseRandom.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="40">
-          <caret line="158" column="11" lean-forward="true" selection-start-line="158" selection-start-column="11" selection-end-line="158" selection-end-column="11" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -1251,6 +1229,38 @@
           <folding>
             <element signature="imports" expanded="true" />
           </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/betterrandom/prng/CellularAutomatonRandom.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="238">
+          <caret line="239" column="60" lean-forward="false" selection-start-line="239" selection-start-column="60" selection-end-line="239" selection-end-column="60" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/betterrandom/prng/BaseRandom.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-102">
+          <caret line="117" column="0" lean-forward="false" selection-start-line="117" selection-start-column="0" selection-end-line="117" selection-end-column="25" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/betterrandom/prng/AesCounterRandom.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="138">
+          <caret line="169" column="29" lean-forward="false" selection-start-line="169" selection-start-column="29" selection-end-line="169" selection-end-column="29" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/betterrandom/prng/BaseEntropyCountingRandom.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="98">
+          <caret line="42" column="91" lean-forward="false" selection-start-line="42" selection-start-column="91" selection-end-line="42" selection-end-column="91" />
+          <folding />
         </state>
       </provider>
     </entry>
