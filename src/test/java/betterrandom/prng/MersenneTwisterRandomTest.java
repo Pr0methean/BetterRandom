@@ -112,7 +112,7 @@ public class MersenneTwisterRandomTest {
     byte[] oldSeed = rng.getSeed();
     rng.setSeederThread(DEFAULT_SEEDER);
     rng.nextBytes(new byte[20000]);
-    Thread.sleep(10);
+    Thread.sleep(2000);
     byte[] newSeed = rng.getSeed();
     assertFalse(Arrays.equals(oldSeed, newSeed));
   }
