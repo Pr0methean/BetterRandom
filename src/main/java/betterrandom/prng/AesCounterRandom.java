@@ -34,6 +34,7 @@ import javax.crypto.NoSuchPaddingException;
 import javax.crypto.spec.SecretKeySpec;
 import org.checkerframework.checker.initialization.qual.UnknownInitialization;
 import org.checkerframework.checker.nullness.qual.EnsuresNonNull;
+import org.checkerframework.checker.nullness.qual.RequiresNonNull;
 
 /**
  * <p>Non-linear random number generator based on the AES block cipher in counter mode. Uses the
@@ -174,8 +175,18 @@ public class AesCounterRandom extends BaseEntropyCountingRandom implements Repea
     counterInput = new byte[COUNTER_SIZE_BYTES * BLOCKS_AT_ONCE];
     try {
       cipher = Cipher.getInstance(ALGORITHM_MODE);
+      setSeed(seed);
     } catch (NoSuchAlgorithmException | NoSuchPaddingException e) {
       throw new RuntimeException("JVM doesn't provide " + ALGORITHM_MODE, e);
+    }
+  }
+
+  @RequiresNonNull({"cipher", "seed"})
+  private void initCipher(@UnknownInitialization AesCounterRandom this, byte[] key) {
+    try {
+      cipher.init(Cipher.ENCRYPT_MODE, new SecretKeySpec(key, ALGORITHM));
+    } catch (InvalidKeyException e) {
+      throw new RuntimeException("Invalid key: " + Arrays.toString(key), e);
     }
   }
 
@@ -299,14 +310,14 @@ public class AesCounterRandom extends BaseEntropyCountingRandom implements Repea
       }
       lock.lock();
       try {
-        cipher.init(Cipher.ENCRYPT_MODE, new SecretKeySpec(key, ALGORITHM));
+        initCipher(key);
         entropyBits.updateAndGet(oldCount -> Math.min(oldCount + 8 * input.length,
             8 * MAX_TOTAL_SEED_LENGTH_BYTES));
         seeded = true;
       } finally {
         lock.unlock();
       }
-    } catch (NoSuchAlgorithmException | InvalidKeyException e) {
+    } catch (NoSuchAlgorithmException e) {
       throw new RuntimeException(e);
     }
     assert this.seed != null : "@AssumeAssertion(nullness)";
