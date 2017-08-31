@@ -22,6 +22,8 @@ import betterrandom.seed.SeedGenerator;
 import betterrandom.util.BinaryUtils;
 import java.util.Arrays;
 import java.util.Random;
+import org.checkerframework.checker.initialization.qual.Initialized;
+import org.checkerframework.checker.initialization.qual.UnderInitialization;
 import org.checkerframework.checker.initialization.qual.UnknownInitialization;
 import org.checkerframework.checker.nullness.qual.EnsuresNonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
@@ -115,16 +117,18 @@ public class MersenneTwisterRandom extends BaseEntropyCountingRandom implements 
 
   @Override
   public void setSeed(
-      @UnknownInitialization(BaseRandom.class)MersenneTwisterRandom this, byte[] seed) {
+      @UnknownInitialization(Random.class)MersenneTwisterRandom this,
+      @UnknownInitialization byte[] seed) {
     if (seed == null || seed.length != SEED_SIZE_BYTES) {
       throw new IllegalArgumentException("Mersenne Twister RNG requires a 128-bit (16-byte) seed.");
     }
     assert entropyBits != null : "@AssumeAssertion(nullness)";
     assert mt != null : "@AssumeAssertion(nullness)";
+    assert lock != null : "@AssumeAssertion(nullness)";
     lock.lock();
     try {
       super.setSeed(seed);
-      int[] seedInts = BinaryUtils.convertBytesToInts(this.seed);
+      int[] seedInts = BinaryUtils.convertBytesToInts((@Initialized byte[]) this.seed);
 
       // This section is translated from the init_genrand code in the C version.
       mt[0] = BOOTSTRAP_SEED;

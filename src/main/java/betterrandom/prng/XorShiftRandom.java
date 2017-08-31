@@ -23,6 +23,7 @@ import betterrandom.util.BinaryUtils;
 import java.util.Arrays;
 import java.util.Random;
 import org.checkerframework.checker.initialization.qual.UnknownInitialization;
+import org.checkerframework.checker.nullness.qual.RequiresNonNull;
 
 /**
  * <p>Very fast pseudo random number generator.  See <a href="http://school.anhb.uwa.edu.au/personalpages/kwessen/shared/Marsaglia03.html">this
@@ -67,8 +68,9 @@ public class XorShiftRandom extends BaseEntropyCountingRandom implements Repeata
     this(seedGenerator.generateSeed(SEED_SIZE_BYTES));
   }
 
+  @RequiresNonNull({"lock", "seed"})
   private void initSubclassTransientFields(
-      @UnknownInitialization(BaseRandom.class)XorShiftRandom this) {
+      @UnknownInitialization(Random.class) XorShiftRandom this) {
     lock.lock();
     try {
       int[] state = BinaryUtils.convertBytesToInts(seed);
@@ -90,12 +92,13 @@ public class XorShiftRandom extends BaseEntropyCountingRandom implements Repeata
   }
 
   @Override
-  public void setSeed(@UnknownInitialization(BaseRandom.class)XorShiftRandom this,
-      byte[] seed) {
+  public void setSeed(@UnknownInitialization(Random.class) XorShiftRandom this,
+      @UnknownInitialization byte[] seed) {
     assert entropyBits != null : "@AssumeAssertion(nullness)";
     if (seed.length != SEED_SIZE_BYTES) {
       throw new IllegalArgumentException("XOR shift RNG requires a seed of exactly 20 bytes.");
     }
+    assert lock != null : "@AssumeAssertion(nullness)";
     lock.lock();
     try {
       super.setSeed(seed);

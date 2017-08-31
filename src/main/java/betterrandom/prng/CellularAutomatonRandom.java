@@ -207,11 +207,12 @@ public class CellularAutomatonRandom extends BaseEntropyCountingRandom implement
   }
 
   @Override
-  public void setSeed(@UnknownInitialization(BaseRandom.class)CellularAutomatonRandom this,
-      byte[] seed) {
+  public void setSeed(@UnknownInitialization(Random.class) CellularAutomatonRandom this,
+      @UnknownInitialization byte[] seed) {
     if (seed.length != SEED_SIZE_BYTES) {
       throw new IllegalArgumentException("Cellular Automaton RNG requires a 32-bit (4-byte) seed.");
     }
+    assert lock != null : "@AssumeAssertion(nullness)";
     lock.lock();
     try {
       super.setSeed(seed);
