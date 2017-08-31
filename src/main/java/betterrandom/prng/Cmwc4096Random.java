@@ -22,6 +22,7 @@ import betterrandom.seed.SeedGenerator;
 import betterrandom.util.BinaryUtils;
 import java.util.Arrays;
 import java.util.Random;
+import org.checkerframework.checker.initialization.qual.Initialized;
 import org.checkerframework.checker.initialization.qual.UnknownInitialization;
 import org.checkerframework.checker.nullness.qual.EnsuresNonNull;
 
@@ -91,13 +92,14 @@ public class Cmwc4096Random extends BaseEntropyCountingRandom implements Repeata
 
   @EnsuresNonNull({"this.seed", "state", "hashCode"})
   @Override
-  public void setSeed(@UnknownInitialization Cmwc4096Random this, byte[] seed) {
+  public void setSeed(@UnknownInitialization Cmwc4096Random this,
+      @UnknownInitialization byte[] seed) {
     assert entropyBits != null : "@AssumeAssertion(nullness)";
     if (seed == null || seed.length != SEED_SIZE_BYTES) {
       throw new IllegalArgumentException("CMWC RNG requires 16kb of seed data.");
     }
     super.setSeed(seed);
-    state = BinaryUtils.convertBytesToInts(seed);
+    state = BinaryUtils.convertBytesToInts((@Initialized byte[])seed);
     entropyBits.set(SEED_SIZE_BYTES * 8);
   }
 
