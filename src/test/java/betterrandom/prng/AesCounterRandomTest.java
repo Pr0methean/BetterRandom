@@ -178,7 +178,7 @@ public class AesCounterRandomTest {
     RandomTestUtils.doEqualsSanityChecks(AesCounterRandom.class.getConstructor());
   }
 
-  @Test(timeOut = 30000)
+  @Test(timeOut = 60000)
   public void testHashCode() throws Exception {
     assert RandomTestUtils.testHashCodeDistribution(AesCounterRandom.class.getConstructor())
         : "Too many hashCode collisions";

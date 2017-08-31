@@ -101,7 +101,7 @@ public class XorShiftRandomTest {
     RandomTestUtils.doEqualsSanityChecks(XorShiftRandom.class.getConstructor());
   }
 
-  @Test(timeOut = 15000)
+  @Test(timeOut = 60000)
   public void testHashCode() throws Exception {
     assert RandomTestUtils.testHashCodeDistribution(XorShiftRandom.class.getConstructor())
         : "Too many hashCode collisions";

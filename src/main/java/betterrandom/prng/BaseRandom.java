@@ -15,9 +15,11 @@ import java.util.Random;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 import java.util.logging.Logger;
+import org.checkerframework.checker.initialization.qual.Initialized;
 import org.checkerframework.checker.initialization.qual.UnderInitialization;
 import org.checkerframework.checker.initialization.qual.UnknownInitialization;
 import org.checkerframework.checker.nullness.qual.EnsuresNonNull;
+import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.checkerframework.checker.nullness.qual.RequiresNonNull;
 
@@ -59,7 +61,6 @@ public abstract class BaseRandom extends Random implements ByteArrayReseedableRa
   }
 
   @EnsuresNonNull("this.seed")
-  @SuppressWarnings("method.invocation.invalid")
   public BaseRandom(byte[] seed) {
     superConstructorFinished = true;
     if (seed == null) {
@@ -101,12 +102,14 @@ public abstract class BaseRandom extends Random implements ByteArrayReseedableRa
   @EnsuresNonNull({"this.seed", "hashCode"})
   @RequiresNonNull({"lock"})
   @Override
-  public void setSeed(@UnknownInitialization(BaseRandom.class)BaseRandom this, byte[] seed) {
+  public void setSeed(@UnknownInitialization(Random.class) BaseRandom this,
+      @UnknownInitialization byte[] seed) {
+    byte[] seed_ = (@Initialized byte[]) seed;
     lock.lock();
     try {
-      this.seed = seed.clone();
+      this.seed = seed_.clone();
       if (hashCode == null) {
-        hashCode = Arrays.hashCode(seed);
+        hashCode = Arrays.hashCode(seed_);
       }
     } finally {
       lock.unlock();

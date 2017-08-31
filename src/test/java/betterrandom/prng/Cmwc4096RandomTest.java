@@ -107,7 +107,7 @@ public class Cmwc4096RandomTest {
     RandomTestUtils.doEqualsSanityChecks(Cmwc4096Random.class.getConstructor());
   }
 
-  @Test(timeOut = 15000)
+  @Test(timeOut = 60000)
   public void testHashCode() throws Exception {
     assert RandomTestUtils.testHashCodeDistribution(Cmwc4096Random.class.getConstructor())
         : "Too many hashCode collisions";

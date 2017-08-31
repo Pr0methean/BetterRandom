@@ -62,7 +62,7 @@ public class JavaRandomTest {
     RandomTestUtils.doEqualsSanityChecks(JavaRandom.class.getConstructor());
   }
 
-  @Test(timeOut = 15000)
+  @Test(timeOut = 60000)
   public void testHashCode() throws Exception {
     assert RandomTestUtils.testHashCodeDistribution(JavaRandom.class.getConstructor())
         : "Too many hashCode collisions";

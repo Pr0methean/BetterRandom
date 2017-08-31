@@ -6,6 +6,7 @@ import betterrandom.util.BinaryUtils;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.util.SplittableRandom;
+import org.checkerframework.checker.initialization.qual.Initialized;
 import org.checkerframework.checker.initialization.qual.UnknownInitialization;
 import org.checkerframework.checker.nullness.qual.RequiresNonNull;
 
@@ -48,9 +49,9 @@ public class SingleThreadSplittableRandomAdapter extends DirectSplittableRandomA
 
   @Override
   public void setSeed(@UnknownInitialization SingleThreadSplittableRandomAdapter this,
-      byte[] seed) {
+      @UnknownInitialization byte[] seed) {
     assert lock != null : "@AssumeAssertion(nullness)";
-    underlying = new SplittableRandom(BinaryUtils.convertBytesToLong(seed, 0));
+    underlying = new SplittableRandom(BinaryUtils.convertBytesToLong((@Initialized byte[]) seed, 0));
     super.setSeed(seed);
   }
 }
