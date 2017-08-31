@@ -6,10 +6,12 @@ import betterrandom.seed.SeedException;
 import betterrandom.seed.SeedGenerator;
 import java.io.IOException;
 import java.io.ObjectInputStream;
+import java.util.Random;
 import java.util.concurrent.atomic.AtomicLong;
 import org.checkerframework.checker.initialization.qual.UnknownInitialization;
 import org.checkerframework.checker.nullness.qual.EnsuresNonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
+import org.checkerframework.checker.nullness.qual.RequiresNonNull;
 
 public abstract class BaseEntropyCountingRandom extends BaseRandom implements
     EntropyCountingRandom {
@@ -62,8 +64,8 @@ public abstract class BaseEntropyCountingRandom extends BaseRandom implements
   }
 
   @Override
-  public void setSeed(@UnknownInitialization(BaseRandom.class) BaseEntropyCountingRandom this,
-      byte[] seed) {
+  public void setSeed(@UnknownInitialization(Random.class) BaseEntropyCountingRandom this,
+      @UnknownInitialization byte[] seed) {
     assert lock != null : "@AssumeAssertion(nullness)";
     assert entropyBits != null : "@AssumeAssertion(nullness)";
     super.setSeed(seed);
