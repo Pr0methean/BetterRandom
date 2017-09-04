@@ -72,8 +72,6 @@ public class AesCounterRandomTest {
     // Create second RNG using same seed.
     byte[] seed = rng.getSeed();
     AesCounterRandom duplicateRng = new AesCounterRandom(seed);
-    LOG.info("rng.getSeed() == %s; duplicateRng.getSeed() == %s",
-        Arrays.toString(seed), Arrays.toString(duplicateRng.getSeed()));
     assert RandomTestUtils
         .testEquivalence(rng, duplicateRng, 1000) : "Generated sequences do not match.";
   }
@@ -87,8 +85,6 @@ public class AesCounterRandomTest {
     // Create second RNG using same seed.
     byte[] seed = rng.getSeed();
     AesCounterRandom duplicateRNG = new AesCounterRandom(seed);
-    LOG.info("rng.getSeed() == %s; duplicateRNG.getSeed() == %s",
-        Arrays.toString(seed), Arrays.toString(duplicateRNG.getSeed()));
     assert RandomTestUtils
         .testEquivalence(rng, duplicateRNG, 1000) : "Generated sequences do not match.";
   }

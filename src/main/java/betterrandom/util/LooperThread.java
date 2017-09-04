@@ -31,6 +31,8 @@ import org.checkerframework.checker.nullness.qual.Nullable;
  */
 public class LooperThread extends Thread implements Serializable, Cloneable {
 
+  private static final LogPreFormatter LOG = new LogPreFormatter(LooperThread.class);
+
   private static class ThreadDeathAlreadyHandled extends ThreadDeath {
 
   }
@@ -45,6 +47,7 @@ public class LooperThread extends Thread implements Serializable, Cloneable {
     @Override
     public void uncaughtException(Thread t, Throwable e) {
       if (!(e instanceof ThreadDeathAlreadyHandled)) {
+        LOG.error("Uncaught exception: %s", e);
         if (wrapped != null) {
           wrapped.uncaughtException(t, e);
         } else {
@@ -187,6 +190,7 @@ public class LooperThread extends Thread implements Serializable, Cloneable {
           lock.unlock();
         }
       } catch (InterruptedException e) {
+        LOG.error("Interrupted: %s", e);
         interrupt();
         break;
       }

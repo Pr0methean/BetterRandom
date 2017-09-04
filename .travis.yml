@@ -10,5 +10,4 @@ matrix:
   allow_failures:
     - jdk: oraclejdk9 # Currently doesn't set JAVA_HOME correctly for Maven
 script:
-  - mkdir /home/travis/javalog
-  - mvn test
+  - mvn jacoco:prepare-agent test jacoco:report coveralls:report
