@@ -18,18 +18,18 @@ public class DeadlockWatchdogThread extends LooperThread {
   public static final ThreadMXBean THREAD_MX_BEAN = ManagementFactory.getThreadMXBean();
 
   static {
-    INSTANCE.setDaemon(true);
   }
 
   private DeadlockWatchdogThread() {}
 
   public static void ensureStarted() {
     if (INSTANCE.getState() == State.NEW) {
+      INSTANCE.setDaemon(true);
+      INSTANCE.setPriority(Thread.MAX_PRIORITY);
+      INSTANCE.setName("DeadlockWatchdogThread");
       INSTANCE.start();
     }
   }
-  
-  private boolean deadlockFound = false;
 
   @Override
   public void iterate() throws InterruptedException {
