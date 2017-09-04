@@ -1,6 +1,16 @@
 [![Build Status](https://travis-ci.org/Pr0methean/BetterRandom.svg?branch=serialmcve)](https://travis-ci.org/Pr0methean/BetterRandom)
 [![Coverage Status](https://coveralls.io/repos/github/Pr0methean/BetterRandom/badge.svg?branch=master)](https://coveralls.io/github/Pr0methean/BetterRandom?branch=master)
 
+BetterRandom is a library designed to help improve the quality and performance of random-number
+generation on Java.
+
+# Design philosophy: don't take chances on randomness
+
+Many standard tests of randomness amount to Monte Carlo simulations. And since widespread
+pseudorandom number generators (PRNGs) pass most but not all such tests in standard suites such as
+BigCrush and Dieharder, this suggests that *any* Monte Carlo simulation may turn out to be a test of
+randomness, and to give misleading results because of an unfortunate choice
+
 # Alternative random number generators
 
 BetterRandom provides several pseudorandom number generators that are intended as drop-in
@@ -60,6 +70,9 @@ adapters are available:
 * `SingleThreadSplittableRandomAdapter`: Simple and fast, but not thread-safe.
 * `SplittableRandomAdapter`: Backed by a `ThreadLocal<SplittableRandom>`, whose instances of
   `SplittableRandom` are all split from a single master.
+* `ReseedingSplittableRandomAdapter`: Also backed by a `ThreadLocal<SplittableRandom>`, this
+  registers each thread's `SplittableRandom` instance with a `RandomSeederThread` (see below). This
+  is probably the best PRNG implementation that allows concurrent access from multiple threads.
 
 # Reseeding
 
@@ -72,13 +85,18 @@ the seed sources cannot be parallelized. They include:
   from `/dev/random`.
 * `RandomDotOrgSeedGenerator.RANDOM_DOT_ORG_SEED_GENERATOR`: Uses the
   [random.org old API](https://www.random.org/clients/http/) to retrieve random numbers over HTTPS.
-  random.org collects randomness from atmospheric noise using 9 radios, located at undisclosed
-  addresses in Dublin and Copenhagen and tuned to undisclosed AM/FM frequencies. Note that
-  random.org limits the supply of random numbers to any one IP address; if you operate from a fixed
-  IPv4 address, you can [check your quota and buy more](https://www.random.org/quota/).
+  Random.org collects randomness from atmospheric noise using 9 radios, located at undisclosed
+  addresses in Dublin and Copenhagen and tuned to undisclosed AM/FM frequencies. (The secrecy is
+  intended to help prevent tampering with the output using a well-placed radio transmitter, and the
+  use of AM/FM helps ensure that any such tampering would cause illegal interference with broadcasts
+  and quickly attract regulatory attention.) Note that random.org limits the supply of free random
+  numbers to any one IP address; if you operate from a fixed address (at least if you use IPv4), you
+  can [check your quota and buy more](https://www.random.org/quota/).
 * `SecureRandomSeedGenerator.SECURE_RANDOM_SEED_GENERATOR`: Uses
   `java.security.SecureRandom.generateSeed`. On Oracle and OpenJDK, this in turn uses
-  `sun.security.provider.SeedGenerator`.
+  `sun.security.provider.SeedGenerator`; when `/dev/random` isn't available, that in turn uses the
+  timing of newly-launched threads as a source of randomness, relying on the unpredictable
+  interactions between different configurations of hardware and software and their workloads.
 * `DefaultSeedGenerator.DEFAULT_SEED_GENERATOR`: Uses the best of the above three that is currently
   available.
 
