@@ -25,6 +25,7 @@ import static org.testng.Assert.assertTrue;
 import betterrandom.DeadlockWatchdogThread;
 import betterrandom.seed.DefaultSeedGenerator;
 import betterrandom.seed.SeedException;
+import betterrandom.util.LogPreFormatter;
 import java.io.IOException;
 import java.lang.Thread.State;
 import java.security.GeneralSecurityException;
@@ -44,7 +45,7 @@ import org.testng.annotations.Test;
  */
 public class AesCounterRandomTest {
 
-  private static final Logger LOG = Logger.getLogger(AesCounterRandomTest.class.getName());
+  private static final LogPreFormatter LOG = new LogPreFormatter(AesCounterRandomTest.class);
 
   @Nullable
   private FileHandler logHandler;
@@ -91,11 +92,28 @@ public class AesCounterRandomTest {
    * Test to ensure that two distinct RNGs with the same seed return the same sequence of numbers.
    */
   @Test(timeOut = 15000)
-  public void testRepeatability() throws GeneralSecurityException, SeedException {
-    AesCounterRandom rng = new AesCounterRandom(32);
+  public void testRepeatability16() throws GeneralSecurityException, SeedException {
+    AesCounterRandom rng = new AesCounterRandom(16);
     // Create second RNG using same seed.
-    AesCounterRandom duplicateRNG = new AesCounterRandom(rng.getSeed());
-    assert rng.equals(duplicateRNG);
+    byte[] seed = rng.getSeed();
+    AesCounterRandom duplicateRng = new AesCounterRandom(seed);
+    LOG.info("rng.getSeed() == %s; duplicateRng.getSeed() == %s",
+        Arrays.toString(seed), Arrays.toString(duplicateRng.getSeed()));
+    assert RandomTestUtils
+        .testEquivalence(rng, duplicateRng, 1000) : "Generated sequences do not match.";
+  }
+
+  /**
+   * Test to ensure that two distinct RNGs with the same seed return the same sequence of numbers.
+   */
+  @Test(timeOut = 15000)
+  public void testRepeatability32() throws GeneralSecurityException, SeedException {
+    AesCounterRandom rng = new AesCounterRandom(16);
+    // Create second RNG using same seed.
+    byte[] seed = rng.getSeed();
+    AesCounterRandom duplicateRNG = new AesCounterRandom(seed);
+    LOG.info("rng.getSeed() == %s; duplicateRNG.getSeed() == %s",
+        Arrays.toString(seed), Arrays.toString(duplicateRNG.getSeed()));
     assert RandomTestUtils
         .testEquivalence(rng, duplicateRNG, 1000) : "Generated sequences do not match.";
   }
@@ -106,9 +124,9 @@ public class AesCounterRandomTest {
    * for major problems with the output.
    */
   @Test(timeOut = 15000, groups = "non-deterministic",
-      dependsOnMethods = "testRepeatability")
+      dependsOnMethods = "testRepeatability16")
   public void testDistribution() throws GeneralSecurityException, SeedException {
-    AesCounterRandom rng = new AesCounterRandom(DefaultSeedGenerator.DEFAULT_SEED_GENERATOR);
+    AesCounterRandom rng = new AesCounterRandom(16);
     assertMonteCarloPiEstimateSane(rng);
   }
 
@@ -118,9 +136,9 @@ public class AesCounterRandomTest {
    * for major problems with the output.
    */
   @Test(timeOut = 30000, groups = "non-deterministic",
-      dependsOnMethods = "testRepeatability")
+      dependsOnMethods = "testRepeatability16")
   public void testStandardDeviation() throws GeneralSecurityException, SeedException {
-    AesCounterRandom rng = new AesCounterRandom();
+    AesCounterRandom rng = new AesCounterRandom(16);
     // Expected standard deviation for a uniformly distributed population of values in the range 0..n
     // approaches n/sqrt(12).
     assertStandardDeviationSane(rng);

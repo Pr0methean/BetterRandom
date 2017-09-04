@@ -3,6 +3,7 @@ package betterrandom.prng.adapter;
 import betterrandom.seed.SeedException;
 import betterrandom.seed.SeedGenerator;
 import betterrandom.util.BinaryUtils;
+import com.google.common.base.MoreObjects.ToStringHelper;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.util.SplittableRandom;
@@ -17,6 +18,12 @@ public class SingleThreadSplittableRandomAdapter extends DirectSplittableRandomA
 
   public SingleThreadSplittableRandomAdapter(SeedGenerator seedGenerator) throws SeedException {
     this(seedGenerator.generateSeed(SEED_LENGTH_BYTES));
+  }
+
+  @Override
+  public ToStringHelper addSubclassFields(ToStringHelper original) {
+    return original
+        .add("underlying", underlying);
   }
 
   public SingleThreadSplittableRandomAdapter(byte[] seed) {
@@ -48,10 +55,9 @@ public class SingleThreadSplittableRandomAdapter extends DirectSplittableRandomA
   }
 
   @Override
-  public void setSeed(@UnknownInitialization SingleThreadSplittableRandomAdapter this,
-      @UnknownInitialization byte[] seed) {
+  public void setSeed(byte[] seed) {
     assert lock != null : "@AssumeAssertion(nullness)";
-    underlying = new SplittableRandom(BinaryUtils.convertBytesToLong((@Initialized byte[]) seed, 0));
+    underlying = new SplittableRandom(BinaryUtils.convertBytesToLong(seed, 0));
     super.setSeed(seed);
   }
 }

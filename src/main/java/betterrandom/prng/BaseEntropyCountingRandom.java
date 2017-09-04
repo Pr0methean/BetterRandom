@@ -4,7 +4,10 @@ import betterrandom.EntropyCountingRandom;
 import betterrandom.seed.RandomSeederThread;
 import betterrandom.seed.SeedException;
 import betterrandom.seed.SeedGenerator;
+import betterrandom.util.LogPreFormatter;
+import com.google.common.base.MoreObjects.ToStringHelper;
 import java.io.IOException;
+import java.io.InvalidObjectException;
 import java.io.ObjectInputStream;
 import java.util.Random;
 import java.util.concurrent.atomic.AtomicLong;
@@ -17,9 +20,19 @@ public abstract class BaseEntropyCountingRandom extends BaseRandom implements
     EntropyCountingRandom {
 
   private static final long serialVersionUID = 1838766748070164286L;
+  private static final LogPreFormatter LOG = new LogPreFormatter(BaseEntropyCountingRandom.class);
   protected AtomicLong entropyBits;
   @Nullable
   private RandomSeederThread thread;
+
+  @Override
+  public ToStringHelper addSubclassFields(ToStringHelper original) {
+    return addSubSubclassFields(original
+        .add("entropyBits", entropyBits.get())
+        .add("thread", thread));
+  }
+
+  protected abstract ToStringHelper addSubSubclassFields(ToStringHelper original);
 
   @EnsuresNonNull("entropyBits")
   public BaseEntropyCountingRandom(int seedLength) throws SeedException {
@@ -40,13 +53,6 @@ public abstract class BaseEntropyCountingRandom extends BaseRandom implements
     assert entropyBits != null : "@AssumeAssertion(nullness)";
   }
 
-  @EnsuresNonNull({"lock", "entropyBits"})
-  @Override
-  protected void initTransientFields(@UnknownInitialization BaseEntropyCountingRandom this) {
-    super.initTransientFields();
-    entropyBits = new AtomicLong(0);
-  }
-
   public void setSeederThread(RandomSeederThread thread) {
     thread.add(this);
     lock.lock();
@@ -64,12 +70,15 @@ public abstract class BaseEntropyCountingRandom extends BaseRandom implements
   }
 
   @Override
-  public void setSeed(@UnknownInitialization(Random.class) BaseEntropyCountingRandom this,
-      @UnknownInitialization byte[] seed) {
-    assert lock != null : "@AssumeAssertion(nullness)";
-    assert entropyBits != null : "@AssumeAssertion(nullness)";
+  public void setSeed(byte[] seed) {
     super.setSeed(seed);
     entropyBits.updateAndGet(oldCount -> Math.max(oldCount, seed.length * 8));
+  }
+
+  @Override
+  public void setSeedInitial(@UnknownInitialization(Random.class) BaseEntropyCountingRandom this, byte[] seed) {
+    super.setSeedInitial(seed);
+    entropyBits = new AtomicLong(seed.length * 8);
   }
 
   private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
@@ -87,5 +96,12 @@ public abstract class BaseEntropyCountingRandom extends BaseRandom implements
         && thread != null) {
       thread.asyncReseed(this);
     }
+  }
+
+  @Override
+  protected void readObjectNoData() throws InvalidObjectException {
+    LOG.warn("readObjectNoData() invoked; assuming initial entropy is equal to seed length!");
+    super.readObjectNoData(); // TODO: Is this call redundant?
+    entropyBits = new AtomicLong(seed.length * 8);
   }
 }

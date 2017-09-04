@@ -20,6 +20,7 @@ import betterrandom.seed.DefaultSeedGenerator;
 import betterrandom.seed.SeedException;
 import betterrandom.seed.SeedGenerator;
 import betterrandom.util.BinaryUtils;
+import com.google.common.base.MoreObjects.ToStringHelper;
 import java.util.Arrays;
 import java.util.Random;
 import org.checkerframework.checker.initialization.qual.Initialized;
@@ -73,6 +74,12 @@ public class Cmwc4096Random extends BaseEntropyCountingRandom implements Repeata
     this(seedGenerator.generateSeed(SEED_SIZE_BYTES));
   }
 
+  @Override
+  protected ToStringHelper addSubSubclassFields(ToStringHelper original) {
+    return original
+        .add("state", Arrays.toString(state));
+  }
+
   /**
    * Creates an RNG and seeds it with the specified seed data.
    *
@@ -80,7 +87,7 @@ public class Cmwc4096Random extends BaseEntropyCountingRandom implements Repeata
    */
   public Cmwc4096Random(byte[] seed) {
     super(seed);
-    setSeed(seed);
+    assert state != null : "@AssumeAssertion(nullness)";
   }
 
   /**
@@ -90,17 +97,22 @@ public class Cmwc4096Random extends BaseEntropyCountingRandom implements Repeata
     return seed.clone();
   }
 
-  @EnsuresNonNull({"this.seed", "state", "hashCode"})
+  @SuppressWarnings("contracts.postcondition.not.satisfied")
   @Override
-  public void setSeed(@UnknownInitialization Cmwc4096Random this,
-      @UnknownInitialization byte[] seed) {
-    assert entropyBits != null : "@AssumeAssertion(nullness)";
+  public void setSeed(@UnknownInitialization(Random.class) Cmwc4096Random this, long seed) {
+    if (superConstructorFinished) {
+      super.setSeed(seed);
+    } // Otherwise ignore; it's Random.<init> calling us without a full-size seed
+  }
+
+  @EnsuresNonNull({"this.seed", "state"})
+  @Override
+  public void setSeedInitial(@UnknownInitialization(Random.class) Cmwc4096Random this, byte[] seed) {
     if (seed == null || seed.length != SEED_SIZE_BYTES) {
       throw new IllegalArgumentException("CMWC RNG requires 16kb of seed data.");
     }
-    super.setSeed(seed);
+    super.setSeedInitial(seed);
     state = BinaryUtils.convertBytesToInts((@Initialized byte[])seed);
-    entropyBits.set(SEED_SIZE_BYTES * 8);
   }
 
   /**

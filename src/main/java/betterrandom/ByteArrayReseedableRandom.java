@@ -15,7 +15,7 @@ public interface ByteArrayReseedableRandom /* extends BaseRandom */ {
    * Reseed this PRNG. When Checker Framework is used, this can only non-nullably refer to a field
    * called "lock".
    */
-  void setSeed(@UnknownInitialization(BaseRandom.class) byte[] seed);
+  void setSeed(byte[] seed);
 
   /**
    * Returns the supported length of a new byte-array seed, or the shortest optimal length if

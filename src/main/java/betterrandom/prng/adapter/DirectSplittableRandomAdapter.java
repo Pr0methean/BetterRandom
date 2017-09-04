@@ -3,6 +3,7 @@ package betterrandom.prng.adapter;
 import betterrandom.util.BinaryUtils;
 import java.io.IOException;
 import java.io.ObjectInputStream;
+import java.util.Random;
 import java.util.SplittableRandom;
 import org.checkerframework.checker.initialization.qual.UnknownInitialization;
 import org.checkerframework.checker.nullness.qual.EnsuresNonNull;
@@ -15,22 +16,22 @@ public abstract class DirectSplittableRandomAdapter extends BaseSplittableRandom
 
   public DirectSplittableRandomAdapter(byte[] seed) {
     super(seed);
-    initSubclassTransientFields();
+    assert underlying != null : "@AssumeAssertion(nullness)";
   }
 
   private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
     in.defaultReadObject();
     assert seed != null : "@AssumeAssertion(nullness)";
     assert lock != null : "@AssumeAssertion(nullness)";
-    initSubclassTransientFields();
+    setSeedInitial(seed);
   }
 
-  @EnsuresNonNull("underlying")
-  @RequiresNonNull({"seed", "lock"})
-  private void initSubclassTransientFields(
-      @UnknownInitialization(BaseSplittableRandomAdapter.class)DirectSplittableRandomAdapter this) {
+  @EnsuresNonNull({"this.seed", "underlying"})
+  @Override
+  public void setSeedInitial(@UnknownInitialization(Random.class) DirectSplittableRandomAdapter this,
+      byte[] seed) {
+    super.setSeedInitial(seed);
     underlying = new SplittableRandom(
         BinaryUtils.convertBytesToLong(seed, 0));
-    setSeed(seed);
   }
 }
