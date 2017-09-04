@@ -9,7 +9,13 @@ generation on Java.
 Many standard tests of randomness amount to Monte Carlo simulations. And since widespread
 pseudorandom number generators (PRNGs) pass most but not all such tests in standard suites such as
 BigCrush and Dieharder, this suggests that *any* Monte Carlo simulation may turn out to be a test of
-randomness, and to give misleading results because of an unfortunate choice
+randomness, and to give misleading or untrustworthy results because of an unfortunate choice of
+PRNG. ([It's happened to scientists before.](http://physics.ucsc.edu/~peter/115/randu.pdf)) There
+are two ways to minimize this risk, both of which BetterRandom can help with:
+
+* Have several different PRNG algorithms available, all with the same interfaces.
+* Reseed PRNGs as often as possible, ideally with a seed source that continues to receive entropy
+  in parallel with your simulation.
 
 # Alternative random number generators
 
