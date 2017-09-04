@@ -22,20 +22,12 @@ import static betterrandom.prng.RandomTestUtils.assertStandardDeviationSane;
 import static org.testng.Assert.assertFalse;
 import static org.testng.Assert.assertTrue;
 
-import betterrandom.DeadlockWatchdogThread;
-import betterrandom.seed.DefaultSeedGenerator;
 import betterrandom.seed.SeedException;
 import betterrandom.util.LogPreFormatter;
 import java.io.IOException;
-import java.lang.Thread.State;
 import java.security.GeneralSecurityException;
 import java.util.Arrays;
 import java.util.Random;
-import java.util.logging.FileHandler;
-import java.util.logging.Logger;
-import org.checkerframework.checker.nullness.qual.Nullable;
-import org.testng.annotations.AfterSuite;
-import org.testng.annotations.BeforeSuite;
 import org.testng.annotations.Test;
 
 /**
@@ -46,23 +38,6 @@ import org.testng.annotations.Test;
 public class AesCounterRandomTest {
 
   private static final LogPreFormatter LOG = new LogPreFormatter(AesCounterRandomTest.class);
-
-  @Nullable
-  private FileHandler logHandler;
-
-  @BeforeSuite
-  public void setUp() throws IOException {
-    logHandler = new FileHandler("%h/javalog/log%u.%g.txt", 1_000_000, 10);
-    Logger.getGlobal().addHandler(logHandler);
-    DeadlockWatchdogThread.ensureStarted();
-  }
-
-  @AfterSuite
-  public void tearDown() {
-    if (logHandler != null) {
-      logHandler.close();
-    }
-  }
 
   @Test(timeOut = 15000)
   public void testMaxSeedLengthOk() {
