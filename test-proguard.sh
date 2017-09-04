@@ -1,2 +1,2 @@
 #!/bin/sh
-mvn clean build proguard:proguard test
+mvn clean package proguard:proguard test
