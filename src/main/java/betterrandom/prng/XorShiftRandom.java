@@ -20,10 +20,9 @@ import betterrandom.seed.DefaultSeedGenerator;
 import betterrandom.seed.SeedException;
 import betterrandom.seed.SeedGenerator;
 import betterrandom.util.BinaryUtils;
-import java.util.Arrays;
+import com.google.common.base.MoreObjects.ToStringHelper;
 import java.util.Random;
 import org.checkerframework.checker.initialization.qual.UnknownInitialization;
-import org.checkerframework.checker.nullness.qual.RequiresNonNull;
 
 /**
  * <p>Very fast pseudo random number generator.  See <a href="http://school.anhb.uwa.edu.au/personalpages/kwessen/shared/Marsaglia03.html">this
@@ -50,6 +49,16 @@ public class XorShiftRandom extends BaseEntropyCountingRandom implements Repeata
   private int state4;
   private int state5;
 
+  @Override
+  protected ToStringHelper addSubSubclassFields(ToStringHelper original) {
+    return original
+        .add("state1",state1)
+        .add("state2",state2)
+        .add("state3",state3)
+        .add("state4",state4)
+        .add("state5",state5);
+  }
+
   /**
    * Creates an RNG and seeds it with the specified seed data.
    *
@@ -57,7 +66,6 @@ public class XorShiftRandom extends BaseEntropyCountingRandom implements Repeata
    */
   public XorShiftRandom(byte[] seed) {
     super(seed);
-    setSeed(seed);
   }
 
   public XorShiftRandom() throws SeedException {
@@ -68,22 +76,6 @@ public class XorShiftRandom extends BaseEntropyCountingRandom implements Repeata
     this(seedGenerator.generateSeed(SEED_SIZE_BYTES));
   }
 
-  @RequiresNonNull({"lock", "seed"})
-  private void initSubclassTransientFields(
-      @UnknownInitialization(Random.class) XorShiftRandom this) {
-    lock.lock();
-    try {
-      int[] state = BinaryUtils.convertBytesToInts(seed);
-      state1 = state[0];
-      state2 = state[1];
-      state3 = state[2];
-      state4 = state[3];
-      state5 = state[4];
-    } finally {
-      lock.unlock();
-    }
-  }
-
   /**
    * {@inheritDoc}
    */
@@ -91,24 +83,23 @@ public class XorShiftRandom extends BaseEntropyCountingRandom implements Repeata
     return seed.clone();
   }
 
+  @SuppressWarnings("contracts.postcondition.not.satisfied")
   @Override
-  public void setSeed(@UnknownInitialization(Random.class) XorShiftRandom this,
-      @UnknownInitialization byte[] seed) {
-    assert entropyBits != null : "@AssumeAssertion(nullness)";
-    if (seed.length != SEED_SIZE_BYTES) {
-      throw new IllegalArgumentException("XOR shift RNG requires a seed of exactly 20 bytes.");
-    }
-    assert lock != null : "@AssumeAssertion(nullness)";
-    lock.lock();
-    try {
+  public void setSeed(@UnknownInitialization(Random.class) XorShiftRandom this, long seed) {
+    if (superConstructorFinished) {
       super.setSeed(seed);
-      entropyBits.set(8 * SEED_SIZE_BYTES);
-      initSubclassTransientFields();
-    } finally {
-      lock.unlock();
-    }
-    assert this.seed != null : "@AssumeAssertion(nullness)";
-    assert hashCode != null : "@AssumeAssertion(nullness)";
+    } // Otherwise ignore; it's Random.<init> calling us without a full-size seed
+  }
+
+  @Override
+  public void setSeedInitial(@UnknownInitialization(Random.class) XorShiftRandom this, byte[] seed) {
+    super.setSeedInitial(seed);
+    int[] state = BinaryUtils.convertBytesToInts(this.seed);
+    state1 = state[0];
+    state2 = state[1];
+    state3 = state[2];
+    state4 = state[3];
+    state5 = state[4];
   }
 
   /**

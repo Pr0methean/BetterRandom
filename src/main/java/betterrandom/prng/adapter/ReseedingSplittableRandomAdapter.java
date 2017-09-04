@@ -4,6 +4,7 @@ import betterrandom.seed.DefaultSeedGenerator;
 import betterrandom.seed.RandomSeederThread;
 import betterrandom.seed.SeedException;
 import betterrandom.seed.SeedGenerator;
+import com.google.common.base.MoreObjects.ToStringHelper;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.util.Collections;
@@ -27,9 +28,6 @@ public class ReseedingSplittableRandomAdapter extends BaseSplittableRandomAdapte
   private static final long serialVersionUID = 6301096404034224037L;
   private static final Map<SeedGenerator, ReseedingSplittableRandomAdapter> INSTANCES =
       Collections.synchronizedMap(new WeakHashMap<>());
-  private static final Lock defaultInstanceLock = new ReentrantLock();
-  @Nullable
-  private static ReseedingSplittableRandomAdapter defaultInstance;
   protected final SeedGenerator seedGenerator;
   @SuppressWarnings("InstanceVariableMayNotBeInitializedByReadObject")
   private RandomSeederThread seederThread;
@@ -51,29 +49,17 @@ public class ReseedingSplittableRandomAdapter extends BaseSplittableRandomAdapte
   @SuppressWarnings("NonThreadSafeLazyInitialization")
   public static ReseedingSplittableRandomAdapter getDefaultInstance()
       throws SeedException {
-    defaultInstanceLock.lock();
-    try {
-      if (defaultInstance == null) {
-        defaultInstance = new ReseedingSplittableRandomAdapter(
-            DefaultSeedGenerator.DEFAULT_SEED_GENERATOR);
-      }
-      return defaultInstance;
-    } finally {
-      defaultInstanceLock.unlock();
-    }
+    return getInstance(DefaultSeedGenerator.DEFAULT_SEED_GENERATOR);
   }
 
   @SuppressWarnings("SynchronizationOnStaticField")
   public static ReseedingSplittableRandomAdapter getInstance(SeedGenerator seedGenerator)
       throws SeedException {
-    if (seedGenerator.equals(DefaultSeedGenerator.DEFAULT_SEED_GENERATOR)) {
-      return getDefaultInstance();
-    }
     synchronized (INSTANCES) {
       try {
-        return INSTANCES.computeIfAbsent(seedGenerator, seedGenerator1 -> {
+        return INSTANCES.computeIfAbsent(seedGenerator, seedGen -> {
           try {
-            return new ReseedingSplittableRandomAdapter(seedGenerator);
+            return new ReseedingSplittableRandomAdapter(seedGen);
           } catch (SeedException e) {
             throw new RuntimeException(e);
           }
@@ -87,6 +73,13 @@ public class ReseedingSplittableRandomAdapter extends BaseSplittableRandomAdapte
         }
       }
     }
+  }
+
+  @Override
+  public ToStringHelper addSubclassFields(ToStringHelper original) {
+    return original
+        .add("threadLocal", threadLocal)
+        .add("seederThread", seederThread);
   }
 
   private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {

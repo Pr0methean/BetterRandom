@@ -5,7 +5,11 @@ import betterrandom.RepeatableRandom;
 import betterrandom.seed.DefaultSeedGenerator;
 import betterrandom.seed.SeedException;
 import betterrandom.seed.SeedGenerator;
+import betterrandom.util.BinaryUtils;
+import betterrandom.util.Dumpable;
 import betterrandom.util.LogPreFormatter;
+import com.google.common.base.MoreObjects;
+import com.google.common.base.MoreObjects.ToStringHelper;
 import java.io.IOException;
 import java.io.InvalidObjectException;
 import java.io.ObjectInputStream;
@@ -24,13 +28,25 @@ import org.checkerframework.checker.nullness.qual.Nullable;
 import org.checkerframework.checker.nullness.qual.RequiresNonNull;
 
 public abstract class BaseRandom extends Random implements ByteArrayReseedableRandom,
-    RepeatableRandom {
+    RepeatableRandom, Dumpable {
+
+  public abstract ToStringHelper addSubclassFields(ToStringHelper original);
+
+  public String dump() {
+    lock.lock();
+    try {
+      return addSubclassFields(MoreObjects.toStringHelper(this)
+          .add("seed", BinaryUtils.convertBytesToHexString(seed)))
+          .toString();
+    } finally {
+      lock.unlock();
+    }
+  }
 
   private static final LogPreFormatter LOG = new LogPreFormatter(BaseRandom.class);
   private static final long serialVersionUID = -1556392727255964947L;
 
   protected byte[] seed;
-  protected Integer hashCode;
 
   // Lock to prevent concurrent modification of the RNG's internal state.
   @SuppressWarnings("InstanceVariableMayNotBeInitializedByReadObject")
@@ -67,7 +83,7 @@ public abstract class BaseRandom extends Random implements ByteArrayReseedableRa
       throw new IllegalArgumentException("Seed must not be null");
     }
     initTransientFields();
-    setSeed(seed);
+    setSeedInitial(seed);
   }
 
   /**
@@ -83,39 +99,41 @@ public abstract class BaseRandom extends Random implements ByteArrayReseedableRa
     }
   }
 
-  @SuppressWarnings("contracts.postcondition.not.satisfied")
   @EnsuresNonNull("this.seed")
   @Override
-  public synchronized void setSeed(@UnknownInitialization(BaseRandom.class)BaseRandom this,
+  public synchronized void setSeed(@UnknownInitialization(Random.class) BaseRandom this,
       long seed) {
+    ByteBuffer buffer = ByteBuffer.allocate(8);
+    buffer.putLong(seed);
+    byte[] array = buffer.array();
+    setSeedMaybeInitial(array);
+  }
+
+  @SuppressWarnings("method.invocation.invalid")
+  @EnsuresNonNull("this.seed")
+  protected void setSeedMaybeInitial(@UnknownInitialization(Random.class)BaseRandom this,
+      byte[] seed) {
     if (superConstructorFinished) {
-      assert lock != null : "@AssumeAssertion(nullness)";
-      ByteBuffer buffer = ByteBuffer.allocate(8);
-      buffer.putLong(seed);
-      setSeed(buffer.array());
+      setSeed(seed);
+    } else {
+      setSeedInitial(seed);
     }
   }
 
-  // Checker Framework doesn't recognize that the @UnknownInitialization weakens the precondition
-  // even with the @RequiresNonNull
-  @SuppressWarnings("contracts.precondition.override.invalid")
-  @EnsuresNonNull({"this.seed", "hashCode"})
-  @RequiresNonNull({"lock"})
+  @EnsuresNonNull("this.seed")
   @Override
-  public void setSeed(@UnknownInitialization(Random.class) BaseRandom this,
-      @UnknownInitialization byte[] seed) {
-    byte[] seed_ = (@Initialized byte[]) seed;
+  public void setSeed(byte[] seed) {
     lock.lock();
     try {
-      this.seed = seed_.clone();
-      if (hashCode == null) {
-        hashCode = Arrays.hashCode(seed_);
-      }
+      setSeedInitial(seed);
     } finally {
       lock.unlock();
     }
-    assert this.seed != null : "@AssumeAssertion(nullness)";
-    assert hashCode != null : "@AssumeAssertion(nullness)";
+  }
+
+  @EnsuresNonNull("this.seed")
+  public void setSeedInitial(@UnknownInitialization(Random.class) BaseRandom this, byte[] seed) {
+    this.seed = seed.clone();
   }
 
   @EnsuresNonNull("lock")
@@ -123,6 +141,7 @@ public abstract class BaseRandom extends Random implements ByteArrayReseedableRa
     if (lock == null) {
       lock = new ReentrantLock();
     }
+    superConstructorFinished = true;
   }
 
   @EnsuresNonNull({"lock", "seed"})
@@ -131,11 +150,12 @@ public abstract class BaseRandom extends Random implements ByteArrayReseedableRa
     in.defaultReadObject();
     assert seed != null : "@AssumeAssertion(nullness)";
     initTransientFields();
+    setSeedInitial(seed);
   }
 
   @EnsuresNonNull({"lock", "seed"})
   @SuppressWarnings({"OverriddenMethodCallDuringObjectConstruction"})
-  private void readObjectNoData() throws InvalidObjectException {
+  protected void readObjectNoData() throws InvalidObjectException {
     LOG.warn("BaseRandom.readObjectNoData() invoked; using DefaultSeedGenerator");
     try {
       setSeed(DefaultSeedGenerator.DEFAULT_SEED_GENERATOR.generateSeed(getNewSeedLength()));
@@ -145,27 +165,5 @@ public abstract class BaseRandom extends Random implements ByteArrayReseedableRa
               .initCause(e));
     }
     initTransientFields();
-  }
-
-  @Override
-  public boolean equals(@Nullable Object o) {
-    lock.lock();
-    try {
-      return o != null
-          && getClass().equals(o.getClass())
-          && Arrays.equals(seed, ((BaseRandom) o).seed);
-    } finally {
-      lock.unlock();
-    }
-  }
-
-  @Override
-  public int hashCode() {
-    if (hashCode == null) {
-      LOG.warn("hashCode() called prematurely on %s", this);
-      return 0;
-    } else {
-      return hashCode;
-    }
   }
 }

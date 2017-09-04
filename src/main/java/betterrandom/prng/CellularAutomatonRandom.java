@@ -20,8 +20,10 @@ import betterrandom.seed.DefaultSeedGenerator;
 import betterrandom.seed.SeedException;
 import betterrandom.seed.SeedGenerator;
 import betterrandom.util.BinaryUtils;
+import com.google.common.base.MoreObjects.ToStringHelper;
 import java.io.IOException;
 import java.io.ObjectInputStream;
+import java.util.Arrays;
 import java.util.Random;
 import org.checkerframework.checker.initialization.qual.UnknownInitialization;
 import org.checkerframework.checker.nullness.qual.EnsuresNonNull;
@@ -91,6 +93,13 @@ public class CellularAutomatonRandom extends BaseEntropyCountingRandom implement
     this(seedGenerator.generateSeed(SEED_SIZE_BYTES));
   }
 
+  @Override
+  protected ToStringHelper addSubSubclassFields(ToStringHelper original) {
+    return original
+        .add("cells", Arrays.toString(cells))
+        .add("currentCellIndex", currentCellIndex);
+  }
+
   /**
    * Creates an RNG and seeds it with the specified seed data.
    *
@@ -116,10 +125,8 @@ public class CellularAutomatonRandom extends BaseEntropyCountingRandom implement
   }
 
   @EnsuresNonNull("cells")
-  @RequiresNonNull({"seed", "lock"})
+  @RequiresNonNull({"seed"})
   private void copySeedToCellsAndPreEvolve(@UnknownInitialization CellularAutomatonRandom this) {
-    lock.lock();
-    try {
       cells = new int[AUTOMATON_LENGTH];
       // Set initial cell states using seed.
       cells[AUTOMATON_LENGTH - 1] = seed[0] + 128;
@@ -140,9 +147,6 @@ public class CellularAutomatonRandom extends BaseEntropyCountingRandom implement
       for (int i = 0; i < AUTOMATON_LENGTH * AUTOMATON_LENGTH / 4; i++) {
         internalNext(32);
       }
-    } finally {
-      lock.unlock();
-    }
   }
 
   @RequiresNonNull("cells")
@@ -184,44 +188,20 @@ public class CellularAutomatonRandom extends BaseEntropyCountingRandom implement
     }
   }
 
-
-  @SuppressWarnings({"contracts.postcondition.not.satisfied",
-      "NonSynchronizedMethodOverridesSynchronizedMethod"})
   @Override
-  public void setSeed(@UnknownInitialization CellularAutomatonRandom this, long seed) {
-    if (lock == null || this.seed == null) {
-      // setSeed can't work until seed array and lock are allocated
-      return;
-    }
-    lock.lock();
-    try {
-      this.seed[0] = (byte) (seed);
-      this.seed[1] = (byte) (seed >> 8);
-      this.seed[2] = (byte) (seed >> 16);
-      this.seed[3] = (byte) (seed >> 24);
-      currentCellIndex = AUTOMATON_LENGTH - 1;
-      copySeedToCellsAndPreEvolve();
-    } finally {
-      lock.unlock();
-    }
+  public void setSeed(@UnknownInitialization(Random.class) CellularAutomatonRandom this, long seed) {
+    setSeedMaybeInitial(BinaryUtils.convertIntToBytes(((Long) seed).hashCode()));
   }
 
   @Override
-  public void setSeed(@UnknownInitialization(Random.class) CellularAutomatonRandom this,
-      @UnknownInitialization byte[] seed) {
+  public void setSeedInitial(@UnknownInitialization(Random.class) CellularAutomatonRandom this,
+      byte[] seed) {
     if (seed.length != SEED_SIZE_BYTES) {
       throw new IllegalArgumentException("Cellular Automaton RNG requires a 32-bit (4-byte) seed.");
     }
-    assert lock != null : "@AssumeAssertion(nullness)";
-    lock.lock();
-    try {
-      super.setSeed(seed);
-      copySeedToCellsAndPreEvolve();
-    } finally {
-      lock.unlock();
-    }
-    assert hashCode != null : "@AssumeAssertion(nullness)";
-    assert this.seed != null : "@AssumeAssertion(nullness)";
+    super.setSeedInitial(seed);
+    currentCellIndex = AUTOMATON_LENGTH - 1;
+    copySeedToCellsAndPreEvolve();
   }
 
   @Override

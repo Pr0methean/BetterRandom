@@ -3,6 +3,7 @@ package betterrandom.prng.adapter;
 import betterrandom.seed.SeedException;
 import betterrandom.seed.SeedGenerator;
 import betterrandom.util.BinaryUtils;
+import com.google.common.base.MoreObjects.ToStringHelper;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.util.SplittableRandom;
@@ -49,6 +50,13 @@ public class SplittableRandomAdapter extends DirectSplittableRandomAdapter {
   @Override
   protected SplittableRandom getSplittableRandom() {
     return threadLocal.get();
+  }
+
+  @Override
+  public ToStringHelper addSubclassFields(ToStringHelper original) {
+    return original
+        .add("threadLocal", threadLocal)
+        .add("underlying", underlying);
   }
 
   /**

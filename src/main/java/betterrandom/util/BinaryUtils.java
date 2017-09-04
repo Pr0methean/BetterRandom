@@ -154,4 +154,11 @@ public final class BinaryUtils {
     buffer.putLong(input);
     return array;
   }
+
+  public static byte[] convertIntToBytes(int input) {
+    byte[] array = new byte[Integer.BYTES];
+    ByteBuffer buffer = ByteBuffer.wrap(array);
+    buffer.putInt(input);
+    return array;
+  }
 }

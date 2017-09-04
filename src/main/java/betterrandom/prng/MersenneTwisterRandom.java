@@ -20,6 +20,7 @@ import betterrandom.seed.DefaultSeedGenerator;
 import betterrandom.seed.SeedException;
 import betterrandom.seed.SeedGenerator;
 import betterrandom.util.BinaryUtils;
+import com.google.common.base.MoreObjects.ToStringHelper;
 import java.util.Arrays;
 import java.util.Random;
 import org.checkerframework.checker.initialization.qual.Initialized;
@@ -83,6 +84,13 @@ public class MersenneTwisterRandom extends BaseEntropyCountingRandom implements 
     this(DefaultSeedGenerator.DEFAULT_SEED_GENERATOR);
   }
 
+  @Override
+  protected ToStringHelper addSubSubclassFields(ToStringHelper original) {
+    return original
+        .add("mt", Arrays.toString(mt))
+        .add("mtIndex", mtIndex);
+  }
+
   /**
    * Creates an RNG and seeds it with the specified seed data.
    *
@@ -91,7 +99,6 @@ public class MersenneTwisterRandom extends BaseEntropyCountingRandom implements 
   public MersenneTwisterRandom(byte[] seed) {
     super(seed);
     assert mt != null : "@AssumeAssertion(nullness)";
-    setSeed(seed);
   }
 
   public MersenneTwisterRandom(SeedGenerator seedGenerator) throws SeedException {
@@ -107,7 +114,7 @@ public class MersenneTwisterRandom extends BaseEntropyCountingRandom implements 
 
   @Override
 
-  @EnsuresNonNull({"lock", "entropyBits", "mt"})
+  @EnsuresNonNull({"lock", "mt"})
   protected void initTransientFields(@UnknownInitialization MersenneTwisterRandom this) {
     super.initTransientFields();
     if (mt == null) {
@@ -115,59 +122,56 @@ public class MersenneTwisterRandom extends BaseEntropyCountingRandom implements 
     }
   }
 
+  @SuppressWarnings("contracts.postcondition.not.satisfied")
   @Override
-  public void setSeed(
-      @UnknownInitialization(Random.class)MersenneTwisterRandom this,
-      @UnknownInitialization byte[] seed) {
+  public void setSeed(@UnknownInitialization(Random.class) MersenneTwisterRandom this, long seed) {
+    if (superConstructorFinished) {
+      super.setSeed(seed);
+    } // Otherwise ignore; it's Random.<init> calling us without a full-size seed
+  }
+
+  @Override
+  public void setSeedInitial(
+      @UnknownInitialization(Random.class)MersenneTwisterRandom this, byte[] seed) {
     if (seed == null || seed.length != SEED_SIZE_BYTES) {
       throw new IllegalArgumentException("Mersenne Twister RNG requires a 128-bit (16-byte) seed.");
     }
-    assert entropyBits != null : "@AssumeAssertion(nullness)";
     assert mt != null : "@AssumeAssertion(nullness)";
-    assert lock != null : "@AssumeAssertion(nullness)";
-    lock.lock();
-    try {
-      super.setSeed(seed);
-      int[] seedInts = BinaryUtils.convertBytesToInts((@Initialized byte[]) this.seed);
+    super.setSeedInitial(seed);
+    int[] seedInts = BinaryUtils.convertBytesToInts(seed);
 
-      // This section is translated from the init_genrand code in the C version.
-      mt[0] = BOOTSTRAP_SEED;
-      for (mtIndex = 1; mtIndex < N; mtIndex++) {
-        mt[mtIndex] = (BOOTSTRAP_FACTOR
-            * (mt[mtIndex - 1] ^ (mt[mtIndex - 1] >>> 30))
-            + mtIndex);
-      }
-
-      // This section is translated from the init_by_array code in the C version.
-      int i = 1;
-      int j = 0;
-      for (int k = Math.max(N, seedInts.length); k > 0; k--) {
-        mt[i] = (mt[i] ^ ((mt[i - 1] ^ (mt[i - 1] >>> 30)) * SEED_FACTOR1)) + seedInts[j] + j;
-        i++;
-        j++;
-        if (i >= N) {
-          mt[0] = mt[N - 1];
-          i = 1;
-        }
-        if (j >= seedInts.length) {
-          j = 0;
-        }
-      }
-      for (int k = N - 1; k > 0; k--) {
-        mt[i] = (mt[i] ^ ((mt[i - 1] ^ (mt[i - 1] >>> 30)) * SEED_FACTOR2)) - i;
-        i++;
-        if (i >= N) {
-          mt[0] = mt[N - 1];
-          i = 1;
-        }
-      }
-      mt[0] = UPPER_MASK; // Most significant bit is 1 - guarantees non-zero initial array.
-      entropyBits.set(SEED_SIZE_BYTES);
-    } finally {
-      lock.unlock();
+    // This section is translated from the init_genrand code in the C version.
+    mt[0] = BOOTSTRAP_SEED;
+    for (mtIndex = 1; mtIndex < N; mtIndex++) {
+      mt[mtIndex] = (BOOTSTRAP_FACTOR
+          * (mt[mtIndex - 1] ^ (mt[mtIndex - 1] >>> 30))
+          + mtIndex);
     }
-    assert hashCode != null : "@AssumeAssertion(nullness)";
-    assert this.seed != null : "@AssumeAssertion(nullness)";
+
+    // This section is translated from the init_by_array code in the C version.
+    int i = 1;
+    int j = 0;
+    for (int k = Math.max(N, seedInts.length); k > 0; k--) {
+      mt[i] = (mt[i] ^ ((mt[i - 1] ^ (mt[i - 1] >>> 30)) * SEED_FACTOR1)) + seedInts[j] + j;
+      i++;
+      j++;
+      if (i >= N) {
+        mt[0] = mt[N - 1];
+        i = 1;
+      }
+      if (j >= seedInts.length) {
+        j = 0;
+      }
+    }
+    for (int k = N - 1; k > 0; k--) {
+      mt[i] = (mt[i] ^ ((mt[i - 1] ^ (mt[i - 1] >>> 30)) * SEED_FACTOR2)) - i;
+      i++;
+      if (i >= N) {
+        mt[0] = mt[N - 1];
+        i = 1;
+      }
+    }
+    mt[0] = UPPER_MASK; // Most significant bit is 1 - guarantees non-zero initial array.
   }
 
   /**

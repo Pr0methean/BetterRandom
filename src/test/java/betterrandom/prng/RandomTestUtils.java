@@ -19,6 +19,8 @@ import static org.testng.Assert.assertEquals;
 
 import betterrandom.seed.DefaultSeedGenerator;
 import betterrandom.seed.RandomSeederThread;
+import betterrandom.util.Dumpable;
+import betterrandom.util.LogPreFormatter;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -40,6 +42,7 @@ public final class RandomTestUtils {
 
   public static final RandomSeederThread DEFAULT_SEEDER =
       RandomSeederThread.getInstance(DefaultSeedGenerator.DEFAULT_SEED_GENERATOR);
+  private static final LogPreFormatter LOG = new LogPreFormatter(RandomTestUtils.class);
 
   private RandomTestUtils() {
     // Prevents instantiation of utility class.
@@ -72,10 +75,10 @@ public final class RandomTestUtils {
   public static boolean testHashCodeDistribution(Constructor<? extends Random> ctor) {
     try {
       HashSet<Integer> uniqueHashCodes = new HashSet<>();
-      for (int i = 0; i < 100; i++) {
+      for (int i = 0; i < 25; i++) {
         uniqueHashCodes.add(ctor.newInstance().hashCode());
       }
-      return uniqueHashCodes.size() >= 90;
+      return uniqueHashCodes.size() >= 20;
     } catch (ReflectiveOperationException e) {
       throw new RuntimeException(e);
     }
@@ -93,9 +96,6 @@ public final class RandomTestUtils {
   public static boolean testEquivalence(Random rng1,
       Random rng2,
       int iterations) {
-    if (!rng1.equals(rng2)) {
-      return false;
-    }
     for (int i = 0; i < iterations; i++) {
       if (rng1.nextInt() != rng2.nextInt()) {
         return false;
@@ -173,9 +173,9 @@ public final class RandomTestUtils {
 
   @SuppressWarnings("unchecked")
   public static <T extends Serializable> T serializeAndDeserialize(T object) {
-    if (object instanceof BaseEntropyCountingRandom) {
+    /* if (object instanceof BaseEntropyCountingRandom) {
       ((BaseEntropyCountingRandom) object).setSeederThread(DEFAULT_SEEDER);
-    }
+    } */
     try (
         ByteArrayOutputStream byteOutStream = new ByteArrayOutputStream();
         ObjectOutputStream objectOutStream = new ObjectOutputStream(byteOutStream)) {
@@ -197,7 +197,6 @@ public final class RandomTestUtils {
   public static <T extends Random> void assertEquivalentWhenSerializedAndDeserialized(T rng) {
     T rng2 = serializeAndDeserialize(rng);
     assert rng != rng2 : "Deserialised RNG should be distinct object.";
-
     // Both RNGs should generate the same sequence.
     assert testEquivalence(rng, rng2, 20) : "Output mismatch after serialisation.";
   }
@@ -214,7 +213,12 @@ public final class RandomTestUtils {
   }
 
   public static void assertMonteCarloPiEstimateSane(Random rng) {
-    double pi = calculateMonteCarloValueForPi(rng, 100000);
+    assertMonteCarloPiEstimateSane(rng, 100000);
+  }
+
+  public static void assertMonteCarloPiEstimateSane(
+      Random rng, int iterations) {
+    double pi = calculateMonteCarloValueForPi(rng, iterations);
     Reporter.log("Monte Carlo value for Pi: " + pi);
     assertEquals(pi, Math.PI, 0.01 * Math.PI,
         "Monte Carlo value for Pi is outside acceptable range:" + pi);

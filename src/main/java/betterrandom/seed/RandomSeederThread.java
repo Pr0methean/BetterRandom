@@ -20,10 +20,10 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.Condition;
-import java.util.logging.Logger;
 import org.checkerframework.checker.initialization.qual.UnderInitialization;
 import org.checkerframework.checker.nullness.qual.EnsuresNonNull;
 import org.checkerframework.checker.nullness.qual.RequiresNonNull;
+import org.jetbrains.annotations.NotNull;
 
 @SuppressWarnings("ClassExplicitlyExtendsThread")
 public final class RandomSeederThread extends LooperThread {
@@ -40,7 +40,8 @@ public final class RandomSeederThread extends LooperThread {
   private final SeedGenerator seedGenerator;
   private final byte[] seedArray = new byte[8];
   private transient Set<Random> prngs;
-  private final Set<Random> prngsCopy = new HashSet<>(); // For serialization and to shorten lock duration
+  // WeakHashMap-based Set can't be serialized, so read & write this copy instead
+  private final Set<Random> prngsSerial = new HashSet<>();
   private transient ByteBuffer seedBuffer;
   private transient Condition waitWhileEmpty;
   private transient Condition waitForEntropyDrain;
@@ -63,20 +64,36 @@ public final class RandomSeederThread extends LooperThread {
     waitForEntropyDrain = lock.newCondition();
   }
 
+  private Object readResolve() {
+    return getInstance(seedGenerator);
+  }
+
   private void readObject(@UnderInitialization RandomSeederThread this,
       ObjectInputStream in) throws IOException, ClassNotFoundException {
     in.defaultReadObject();
     assert lock != null : "@AssumeAssertion(nullness)";
-    assert prngsCopy != null : "@AssumeAssertion(nullness)";
+    assert prngsSerial != null : "@AssumeAssertion(nullness)";
     initTransientFields();
-    prngs.addAll(prngsCopy);
-    prngsCopy.clear();
+    if (!prngsSerial.isEmpty()) {
+      synchronized (prngs) {
+        prngs.addAll(prngsSerial);
+      }
+      lock.lock();
+      try {
+        waitWhileEmpty.signalAll();
+      } finally {
+        lock.unlock();
+      }
+      prngsSerial.clear();
+    }
   }
 
   private void writeObject(ObjectOutputStream out) throws IOException {
-    prngsCopy.addAll(prngs);
+    synchronized (prngs) {
+      prngsSerial.addAll(prngs);
+    }
     out.defaultWriteObject();
-    prngsCopy.clear();
+    prngsSerial.clear();
   }
 
   /**
@@ -126,14 +143,19 @@ public final class RandomSeederThread extends LooperThread {
   @SuppressWarnings("InfiniteLoopStatement")
   @Override
   public void iterate() throws InterruptedException {
-    while (isEmpty()) {
-      waitWhileEmpty.await();
-    }
     boolean entropyConsumed = false;
-    synchronized (prngs) {
-      prngsCopy.addAll(prngs);
+    HashSet<Random> prngsThisIteration = new HashSet<>();
+    while (true) {
+      synchronized (prngs) {
+        prngsThisIteration.addAll(prngs);
+      }
+      if (prngsThisIteration.isEmpty()) {
+        waitWhileEmpty.await();
+      } else {
+        break;
+      }
     }
-    for (Random random : prngsCopy) {
+    for (Random random : prngsThisIteration) {
       if (random instanceof EntropyCountingRandom
           && ((EntropyCountingRandom) random).entropyBits() > 0) {
         continue;
@@ -145,17 +167,14 @@ public final class RandomSeederThread extends LooperThread {
           ByteArrayReseedableRandom reseedable = (ByteArrayReseedableRandom) random;
           reseedable.setSeed(seedGenerator.generateSeed(reseedable.getNewSeedLength()));
         } else {
-          //noinspection CallToNativeMethodWhileLocked
           System.arraycopy(seedGenerator.generateSeed(8), 0, seedArray, 0, 8);
           random.setSeed(seedBuffer.getLong(0));
         }
       } catch (SeedException e) {
-        //noinspection AccessToStaticFieldLockedOnInstance
         LOG.error("%s gave SeedException %s", seedGenerator, e);
         interrupt();
       }
     }
-    prngsCopy.clear();
     if (!entropyConsumed) {
       waitForEntropyDrain.await(POLL_INTERVAL_MS, TimeUnit.MILLISECONDS);
     }

@@ -43,7 +43,7 @@ public class SingleThreadSplittableRandomAdapterTest {
 
   @Test
   public void testMonteCarloPi() throws Exception {
-    assertMonteCarloPiEstimateSane(createAdapter());
+    assertMonteCarloPiEstimateSane(createAdapter(), 1000);
   }
 
   @Test
