@@ -157,9 +157,9 @@ public class AesCounterRandom extends BaseEntropyCountingRandom implements Repea
   }
 
   /**
-   * If the seed is longer than this, part of it becomes the counter's initial value. Otherwise, the
-   * full seed becomes the AES key and the counter is initially zero. Package-visible for testing of
-   * its initialization. Cannot be final due to a false "may not have been initialized" error.
+   * @return If the seed is longer than this, part of it becomes the counter's initial value.
+   * Otherwise, the full seed becomes the AES key and the counter is initially zero. Public for
+   * testing of its initialization.
    */
   public static int getMaxKeyLengthBytes() {
     return MAX_KEY_LENGTH_BYTES;

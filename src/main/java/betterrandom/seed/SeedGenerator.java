@@ -19,7 +19,7 @@ import java.io.Serializable;
 
 /**
  * Strategy interface for seeding random number generators. Any implementations that are not enums
- * should implement {@link #equals(Object)} and {@link #hashCode()}.
+ * should implement {@link Object#equals(Object)} and {@link Object#hashCode()}.
  *
  * @author Daniel Dyer
  */

@@ -126,6 +126,8 @@ public class LooperThread extends Thread implements Serializable, Cloneable {
   /**
    * Use readResolve rather than readObject, because stack size and thread group can only be
    * restored in Thread constructors.
+   *
+   * @return A LooperThread that will replace this one during deserialization.
    */
   @SuppressWarnings("deprecation")
   private Object readResolve() {
