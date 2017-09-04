@@ -14,11 +14,11 @@ matrix:
     - jdk: oraclejdk9 # Currently doesn't set JAVA_HOME correctly for Maven
 script:
   # Test AesCounterRandom with limited-strength crypto on Oracle
-  - rm -f $JAVA_HOME/jre/lib/security/local_policy.jar
-  - rm -f $JAVA_HOME/jre/lib/security/US_export_policy.jar
+  - sudo rm -f $JAVA_HOME/jre/lib/security/local_policy.jar
+  - sudo rm -f $JAVA_HOME/jre/lib/security/US_export_policy.jar
 
   - if [MODE = "coverage"]; then
-      mvn jacoco:prepare-agent test jacoco:report coveralls:report
-    else
-      mvn proguard:proguard test
-    fi
+  -   mvn jacoco:prepare-agent test jacoco:report coveralls:report
+  - else
+  -   mvn proguard:proguard test
+  - fi
