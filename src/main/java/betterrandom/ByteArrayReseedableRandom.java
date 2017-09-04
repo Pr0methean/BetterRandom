@@ -12,14 +12,15 @@ import org.checkerframework.checker.nullness.qual.RequiresNonNull;
 public interface ByteArrayReseedableRandom /* extends BaseRandom */ {
 
   /**
-   * Reseed this PRNG. When Checker Framework is used, this can only non-nullably refer to a field
-   * called "lock".
+   * Reseed this PRNG.
+   *
+   * @param seed The PRNG's new seed.
    */
   void setSeed(byte[] seed);
 
   /**
-   * Returns the supported length of a new byte-array seed, or the shortest optimal length if
-   * multiple lengths are supported.
+   * @return The supported length of a new byte-array seed, or the optimal length if multiple
+   * lengths are supported.
    */
   int getNewSeedLength();
 }
