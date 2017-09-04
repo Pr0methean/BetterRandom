@@ -124,6 +124,12 @@ if (myRandom instanceof EntropyCountingRandom) {
 seederThread.add(myRandom);
 ```
 
+# Build scripts
+
+* `coverage.sh`: Run tests and generate coverage reports. Upload them to Coveralls if running in
+  Travis-CI.
+* `test-proguard.sh`: Run tests against Proguarded jar.
+
 # Credits
 
 The following classes are forked from [Uncommons Maths](https://github.com/dwdyer/uncommons-maths/):
