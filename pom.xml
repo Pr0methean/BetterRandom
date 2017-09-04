@@ -9,6 +9,7 @@
     <maven.compiler.source>1.8</maven.compiler.source>
     <maven.compiler.target>1.8</maven.compiler.target>
     <annotatedJdk>${org.checkerframework:jdk8:jar}</annotatedJdk>
+    <github.global.server>github</github.global.server>
   </properties>
   <groupId>groupId</groupId>
   <artifactId>BetterRandom</artifactId>
@@ -193,6 +194,28 @@
               <lib>${java.home}/lib/jce.jar</lib>
             </libs>
           </configuration>
+        </plugin>
+        <plugin>
+          <!-- Required for com.github.github:site-maven-plugin -->
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-project-info-reports-plugin</artifactId>
+          <version>2.9</version>
+        </plugin>
+        <plugin>
+          <groupId>com.github.github</groupId>
+          <artifactId>site-maven-plugin</artifactId>
+          <version>0.12</version>
+          <configuration>
+            <message>Creating site for ${project.version}</message>
+          </configuration>
+          <executions>
+            <execution>
+              <goals>
+                <goal>site</goal>
+              </goals>
+              <phase>site</phase>
+            </execution>
+          </executions>
         </plugin>
       </plugins>
     </pluginManagement>
