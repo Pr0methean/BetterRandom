@@ -11,7 +11,7 @@
     <annotatedJdk>${org.checkerframework:jdk8:jar}</annotatedJdk>
     <github.global.server>github</github.global.server>
   </properties>
-  <groupId>groupId</groupId>
+  <groupId>io.github.pr0methean.betterrandom</groupId>
   <artifactId>BetterRandom</artifactId>
   <version>0.9.1-SNAPSHOT</version>
   <name>BetterRandom</name>
@@ -96,7 +96,7 @@
           <configuration>
             <!-- <argLine>${surefireArgLine}</argLine> -->
             <systemPropertyVariables>
-              <java.util.logging.manager>betterrandom.TestNgLogAdapterManager</java.util.logging.manager>
+              <java.util.logging.manager>TestNgLogAdapterManager</java.util.logging.manager>
             </systemPropertyVariables>
             <trimStackTrace>false</trimStackTrace>
             <parallel>methods</parallel>
