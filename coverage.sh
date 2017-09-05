@@ -1,5 +1,5 @@
 #!/bin/sh
 mvn jacoco:prepare-agent test jacoco:report
-if $TRAVIS; then
+if [ "$TRAVIS" = "true" ]; then
   mvn coveralls:report
 fi
