@@ -2,6 +2,7 @@ package betterrandom.prng;
 
 import static betterrandom.prng.RandomTestUtils.assertMonteCarloPiEstimateSane;
 import static betterrandom.prng.RandomTestUtils.assertStandardDeviationSane;
+import static org.testng.Assert.assertNotEquals;
 
 import betterrandom.seed.DefaultSeedGenerator;
 import betterrandom.seed.SeedException;
@@ -116,5 +117,14 @@ public abstract class BaseRandomTest {
   public void testHashCode() throws Exception {
     assert RandomTestUtils.testHashCodeDistribution(this::createRng)
         : "Too many hashCode collisions";
+  }
+
+  /**
+   * dump() doesn't have much of a contract, but we should at least expect it to output enough state
+   * for two independently-generated instances to give unequal dumps.
+   */
+  @Test(timeOut = 15000)
+  public void testDump() {
+    assertNotEquals(createRng().dump(), createRng().dump());
   }
 }
