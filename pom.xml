@@ -13,7 +13,7 @@
   </properties>
   <groupId>groupId</groupId>
   <artifactId>BetterRandom</artifactId>
-  <version>0.9</version>
+  <version>0.9.1</version>
   <name>BetterRandom</name>
   <description>BetterRandom is a library designed to help improve the quality and performance of random-number generation on Java.</description>
   <url>https://github.com/Pr0methean/BetterRandom</url>
