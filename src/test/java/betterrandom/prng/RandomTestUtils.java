@@ -29,6 +29,7 @@ import java.io.Serializable;
 import java.lang.reflect.Constructor;
 import java.util.HashSet;
 import java.util.Random;
+import java.util.function.Supplier;
 import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
 import org.testng.Reporter;
 
@@ -52,15 +53,11 @@ public final class RandomTestUtils {
    * as equal. Also checks for compliance with basic parts of the Object.equals() contract.
    */
   @SuppressWarnings({"EqualsWithItself", "ObjectEqualsNull", "argument.type.incompatible"})
-  public static void doEqualsSanityChecks(Constructor<? extends Random> ctor) {
+  public static void doEqualsSanityChecks(Supplier<? extends Random> ctor) {
     Random rng;
     Random rng2;
-    try {
-      rng = ctor.newInstance();
-      rng2 = ctor.newInstance();
-    } catch (ReflectiveOperationException e) {
-      throw new RuntimeException(e);
-    }
+    rng = ctor.get();
+    rng2 = ctor.get();
     assert !(rng.equals(rng2));
     assert rng.equals(rng) : "RNG doesn't compare equal to itself";
     assert !(rng.equals(null)) : "RNG compares equal to null";

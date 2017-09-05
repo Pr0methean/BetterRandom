@@ -5,18 +5,28 @@ import static betterrandom.prng.RandomTestUtils.assertStandardDeviationSane;
 import static betterrandom.prng.RandomTestUtils.serializeAndDeserialize;
 import static betterrandom.prng.RandomTestUtils.testEquivalence;
 
+import betterrandom.prng.BaseRandom;
+import betterrandom.prng.BaseRandomTest;
 import betterrandom.seed.DefaultSeedGenerator;
 import betterrandom.seed.SeedException;
+import org.checkerframework.checker.nullness.qual.Nullable;
 import org.testng.annotations.Test;
 
-public class SingleThreadSplittableRandomAdapterTest {
+public class SingleThreadSplittableRandomAdapterTest extends BaseRandomTest {
 
   /**
    * Overridden in subclasses, so that subclassing the test can test the subclasses.
    */
-  protected BaseSplittableRandomAdapter createAdapter() throws SeedException {
+  protected BaseSplittableRandomAdapter tryCreateRng() throws SeedException {
     return new SingleThreadSplittableRandomAdapter(
         DefaultSeedGenerator.DEFAULT_SEED_GENERATOR);
+  }
+
+  @Override
+  protected BaseRandom createRng(byte[] seed) throws SeedException {
+    BaseSplittableRandomAdapter adapter = tryCreateRng();
+    adapter.setSeed(seed);
+    return adapter;
   }
 
   @Test
@@ -26,7 +36,7 @@ public class SingleThreadSplittableRandomAdapterTest {
 
   @Test
   public void testSerialization() throws Exception {
-    BaseSplittableRandomAdapter adapter = createAdapter();
+    BaseSplittableRandomAdapter adapter = tryCreateRng();
     // May change when serialized and deserialized, but deserializing twice should yield same object
     // and deserialization should be idempotent
     BaseSplittableRandomAdapter adapter2 = serializeAndDeserialize(adapter);
@@ -37,18 +47,8 @@ public class SingleThreadSplittableRandomAdapterTest {
   }
 
   @Test
-  public void testStandardDeviation() throws Exception {
-    assertStandardDeviationSane(createAdapter());
-  }
-
-  @Test
   public void testMonteCarloPi() throws Exception {
-    assertMonteCarloPiEstimateSane(createAdapter());
-  }
-
-  @Test
-  public void testSetSeed() throws Exception {
-    // TODO
+    assertMonteCarloPiEstimateSane(tryCreateRng());
   }
 
   @Test

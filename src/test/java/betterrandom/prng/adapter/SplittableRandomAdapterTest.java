@@ -6,7 +6,7 @@ import betterrandom.seed.SeedException;
 public class SplittableRandomAdapterTest extends SingleThreadSplittableRandomAdapterTest {
 
   @Override
-  protected SplittableRandomAdapter createAdapter() throws SeedException {
+  protected SplittableRandomAdapter tryCreateRng() throws SeedException {
     return new SplittableRandomAdapter(DefaultSeedGenerator.DEFAULT_SEED_GENERATOR);
   }
 

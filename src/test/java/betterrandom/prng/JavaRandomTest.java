@@ -59,7 +59,13 @@ public class JavaRandomTest {
 
   @Test(timeOut = 15000)
   public void testEquals() throws ReflectiveOperationException {
-    RandomTestUtils.doEqualsSanityChecks(JavaRandom.class.getConstructor());
+    RandomTestUtils.doEqualsSanityChecks(() -> {
+      try {
+        return new JavaRandom();
+      } catch (SeedException e) {
+        throw new RuntimeException(e);
+      }
+    });
   }
 
   @Test(timeOut = 60000)
