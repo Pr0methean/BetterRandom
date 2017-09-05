@@ -19,7 +19,6 @@ import static org.testng.Assert.assertEquals;
 
 import betterrandom.seed.DefaultSeedGenerator;
 import betterrandom.seed.RandomSeederThread;
-import betterrandom.util.Dumpable;
 import betterrandom.util.LogPreFormatter;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;

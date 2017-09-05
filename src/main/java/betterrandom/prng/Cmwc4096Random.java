@@ -97,7 +97,6 @@ public class Cmwc4096Random extends BaseEntropyCountingRandom implements Repeata
     return seed.clone();
   }
 
-  @SuppressWarnings("contracts.postcondition.not.satisfied")
   @Override
   public void setSeed(@UnknownInitialization(Random.class) Cmwc4096Random this, long seed) {
     if (superConstructorFinished) {
@@ -112,7 +111,7 @@ public class Cmwc4096Random extends BaseEntropyCountingRandom implements Repeata
       throw new IllegalArgumentException("CMWC RNG requires 16kb of seed data.");
     }
     super.setSeedInitial(seed);
-    state = BinaryUtils.convertBytesToInts((@Initialized byte[])seed);
+    state = BinaryUtils.convertBytesToInts(seed);
   }
 
   /**

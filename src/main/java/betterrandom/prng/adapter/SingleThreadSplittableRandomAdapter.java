@@ -8,10 +8,8 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.util.Random;
 import java.util.SplittableRandom;
-import org.checkerframework.checker.initialization.qual.Initialized;
 import org.checkerframework.checker.initialization.qual.UnknownInitialization;
 import org.checkerframework.checker.nullness.qual.EnsuresNonNull;
-import org.checkerframework.checker.nullness.qual.RequiresNonNull;
 
 public class SingleThreadSplittableRandomAdapter extends DirectSplittableRandomAdapter {
 

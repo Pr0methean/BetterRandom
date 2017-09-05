@@ -83,7 +83,6 @@ public class XorShiftRandom extends BaseEntropyCountingRandom implements Repeata
     return seed.clone();
   }
 
-  @SuppressWarnings("contracts.postcondition.not.satisfied")
   @Override
   public void setSeed(@UnknownInitialization(Random.class) XorShiftRandom this, long seed) {
     if (superConstructorFinished) {

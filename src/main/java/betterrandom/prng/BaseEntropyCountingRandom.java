@@ -14,7 +14,6 @@ import java.util.concurrent.atomic.AtomicLong;
 import org.checkerframework.checker.initialization.qual.UnknownInitialization;
 import org.checkerframework.checker.nullness.qual.EnsuresNonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
-import org.checkerframework.checker.nullness.qual.RequiresNonNull;
 
 public abstract class BaseEntropyCountingRandom extends BaseRandom implements
     EntropyCountingRandom {
@@ -53,6 +52,7 @@ public abstract class BaseEntropyCountingRandom extends BaseRandom implements
     assert entropyBits != null : "@AssumeAssertion(nullness)";
   }
 
+  @SuppressWarnings("ObjectEquality")
   public void setSeederThread(RandomSeederThread thread) {
     thread.add(this);
     lock.lock();

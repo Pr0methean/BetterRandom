@@ -9,7 +9,6 @@ import java.io.ObjectInputStream;
 import java.util.SplittableRandom;
 import org.checkerframework.checker.initialization.qual.UnknownInitialization;
 import org.checkerframework.checker.nullness.qual.EnsuresNonNull;
-import org.checkerframework.checker.nullness.qual.Nullable;
 import org.checkerframework.checker.nullness.qual.RequiresNonNull;
 
 /**
@@ -62,7 +61,6 @@ public class SplittableRandomAdapter extends DirectSplittableRandomAdapter {
   /**
    * {@inheritDoc} Applies only to the calling thread.
    */
-  @SuppressWarnings("NonSynchronizedMethodOverridesSynchronizedMethod")
   @Override
   public void setSeed(@UnknownInitialization SplittableRandomAdapter this, long seed) {
     this.seed = BinaryUtils.convertLongToBytes(seed);

@@ -213,7 +213,8 @@
             </goals>
             <!-- select the Maven phase in which the plugin will be executed -->
             <phase>site-deploy</phase>
-            <configuration>
+            <!--suppress MavenModelInspection -->
+          <configuration>
                 <!-- Plugin configuration ges here -->
 
                 <server>github</server>

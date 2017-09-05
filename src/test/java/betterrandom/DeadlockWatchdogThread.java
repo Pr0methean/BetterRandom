@@ -5,9 +5,7 @@ import betterrandom.util.LooperThread;
 import java.lang.management.ManagementFactory;
 import java.lang.management.ThreadInfo;
 import java.lang.management.ThreadMXBean;
-import java.util.Map;
 import java.util.logging.Level;
-import java.util.logging.Logger;
 
 public class DeadlockWatchdogThread extends LooperThread {
   private static final LogPreFormatter LOG = new LogPreFormatter(DeadlockWatchdogThread.class);
@@ -16,9 +14,7 @@ public class DeadlockWatchdogThread extends LooperThread {
 
   public static final DeadlockWatchdogThread INSTANCE = new DeadlockWatchdogThread();
   public static final ThreadMXBean THREAD_MX_BEAN = ManagementFactory.getThreadMXBean();
-
-  static {
-  }
+  private static final long serialVersionUID = 9118178318042580320L;
 
   private DeadlockWatchdogThread() {}
 
