@@ -68,16 +68,12 @@ public final class RandomTestUtils {
    * Test that in a sample of 100 RNGs from the given parameterless constructor, there are at least
    * 90 unique hash codes.
    */
-  public static boolean testHashCodeDistribution(Constructor<? extends Random> ctor) {
-    try {
-      HashSet<Integer> uniqueHashCodes = new HashSet<>();
-      for (int i = 0; i < 25; i++) {
-        uniqueHashCodes.add(ctor.newInstance().hashCode());
-      }
-      return uniqueHashCodes.size() >= 20;
-    } catch (ReflectiveOperationException e) {
-      throw new RuntimeException(e);
+  public static boolean testHashCodeDistribution(Supplier<? extends Random> ctor) {
+    HashSet<Integer> uniqueHashCodes = new HashSet<>();
+    for (int i = 0; i < 25; i++) {
+      uniqueHashCodes.add(ctor.get().hashCode());
     }
+    return uniqueHashCodes.size() >= 20;
   }
 
   /**
