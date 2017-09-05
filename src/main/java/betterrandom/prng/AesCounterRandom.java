@@ -335,6 +335,6 @@ public class AesCounterRandom extends BaseEntropyCountingRandom implements Repea
 
   @Override
   public int getNewSeedLength() {
-    return MAX_KEY_LENGTH_BYTES;
+    return MAX_TOTAL_SEED_LENGTH_BYTES;
   }
 }

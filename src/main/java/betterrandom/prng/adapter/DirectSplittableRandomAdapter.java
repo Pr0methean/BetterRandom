@@ -29,6 +29,9 @@ public abstract class DirectSplittableRandomAdapter extends BaseSplittableRandom
   @Override
   public void setSeedInitial(@UnknownInitialization(Random.class) DirectSplittableRandomAdapter this,
       byte[] seed) {
+    if (seed.length != 8) {
+      throw new IllegalArgumentException("DirectSplittableRandomAdapter requires an 8-byte seed");
+    }
     super.setSeedInitial(seed);
     underlying = new SplittableRandom(
         BinaryUtils.convertBytesToLong(seed, 0));

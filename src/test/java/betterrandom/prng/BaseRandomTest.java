@@ -6,6 +6,7 @@ import static betterrandom.prng.RandomTestUtils.assertStandardDeviationSane;
 import betterrandom.seed.DefaultSeedGenerator;
 import betterrandom.seed.SeedException;
 import java.io.IOException;
+import java.security.GeneralSecurityException;
 import org.testng.annotations.Test;
 
 public abstract class BaseRandomTest {
@@ -30,6 +31,12 @@ public abstract class BaseRandomTest {
     }
   }
 
+  @Test(timeOut = 15000, expectedExceptions = IllegalArgumentException.class)
+  public void testSeedTooLong() throws GeneralSecurityException, SeedException {
+    createRng(
+        DefaultSeedGenerator.DEFAULT_SEED_GENERATOR.generateSeed(createRng().getNewSeedLength() + 1)); // Should throw an exception.
+  }
+
   protected abstract BaseRandom tryCreateRng() throws SeedException;
 
   protected abstract BaseRandom createRng(byte[] seed) throws SeedException;
@@ -39,7 +46,7 @@ public abstract class BaseRandomTest {
    * subtle statistical anomalies that would be picked up by Diehard, but it provides a simple check
    * for major problems with the output.
    */
-  @Test(timeOut = 30000, groups = "non-deterministic",
+  @Test(timeOut = 15000, groups = "non-deterministic",
       dependsOnMethods = "testRepeatability")
   public void testDistribution() throws SeedException {
     BaseRandom rng = createRng();
@@ -51,7 +58,7 @@ public abstract class BaseRandomTest {
    * subtle statistical anomalies that would be picked up by Diehard, but it provides a simple check
    * for major problems with the output.
    */
-  @Test(timeOut = 30000, groups = "non-deterministic",
+  @Test(timeOut = 15000, groups = "non-deterministic",
       dependsOnMethods = "testRepeatability")
   public void testStandardDeviation() throws SeedException {
     BaseRandom rng = createRng();
