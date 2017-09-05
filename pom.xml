@@ -28,7 +28,23 @@
 
   <scm>
     <url>https://github.com/Pr0methean/BetterRandom</url>
+    <connection>scm:git:git://github.com/Pr0methean/BetterRandom.git</connection>
+    <developerConnection>scm:git:git@github.com:Pr0methean/BetterRandom.git</developerConnection>
+    <tag>HEAD</tag>
   </scm>
+
+  <distributionManagement>
+    <snapshotRepository>
+      <id>sonatype-nexus-snapshots</id>
+      <name>Sonatype Nexus snapshot repository</name>
+      <url>https://oss.sonatype.org/content/repositories/snapshots</url>
+    </snapshotRepository>
+    <repository>
+      <id>sonatype-nexus-staging</id>
+      <name>Sonatype Nexus release repository</name>
+      <url>https://oss.sonatype.org/service/local/staging/deploy/maven2</url>
+    </repository>
+  </distributionManagement>
 
   <dependencies>
     <dependency>
@@ -61,6 +77,16 @@
     </dependency>
   </dependencies>
   <build>
+    <resources>
+      <resource>
+        <directory>${project.basedir}</directory>
+        <includes>
+          <include>README*</include>
+          <include>NOTICE*</include>
+          <include>LICENCE*</include>
+        </includes>
+      </resource>
+    </resources>
     <pluginManagement>
       <plugins>
         <plugin>
@@ -81,10 +107,48 @@
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-jar-plugin</artifactId>
           <version>3.0.2</version>
+          <configuration>
+            <archive>
+              <manifest>
+                <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
+                <addDefaultSpecificationEntries>true</addDefaultSpecificationEntries>
+              </manifest>
+            </archive>
+          </configuration>
           <executions>
             <execution>
               <goals>
                 <goal>test-jar</goal>
+              </goals>
+            </execution>
+          </executions>
+        </plugin>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-source-plugin</artifactId>
+          <version>2.2.1</version>
+          <executions>
+            <execution>
+              <id>attach-sources</id>
+              <phase>verify</phase>
+              <goals>
+                <goal>jar-no-fork</goal>
+              </goals>
+            </execution>
+          </executions>
+        </plugin>
+
+        <!-- Required: javadoc JAR -->
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-javadoc-plugin</artifactId>
+          <version>2.9.1</version>
+          <executions>
+            <execution>
+              <id>attach-javadoc</id>
+              <phase>verify</phase>
+              <goals>
+                <goal>jar</goal>
               </goals>
             </execution>
           </executions>
@@ -201,20 +265,20 @@
           <artifactId>maven-project-info-reports-plugin</artifactId>
           <version>2.9</version>
         </plugin>
-<plugin>
-    <!-- Deploy the web site -->
-    <groupId>com.github.github</groupId>
-    <artifactId>site-maven-plugin</artifactId>
-    <version>0.9</version>
-    <executions>
-        <execution>
-            <goals>
+        <plugin>
+          <!-- Deploy the web site -->
+          <groupId>com.github.github</groupId>
+          <artifactId>site-maven-plugin</artifactId>
+          <version>0.9</version>
+          <executions>
+            <execution>
+              <goals>
                 <goal>site</goal>
-            </goals>
-            <!-- select the Maven phase in which the plugin will be executed -->
-            <phase>site-deploy</phase>
-            <!--suppress MavenModelInspection -->
-          <configuration>
+              </goals>
+              <!-- select the Maven phase in which the plugin will be executed -->
+              <phase>site-deploy</phase>
+              <!--suppress MavenModelInspection -->
+              <configuration>
                 <!-- Plugin configuration ges here -->
 
                 <server>github</server>
@@ -225,13 +289,79 @@
                 <path>${site.path}</path>
                 <!-- Use merge or override the content -->
                 <merge>true</merge>
-            </configuration>
-        </execution>
-    </executions>
-</plugin>
+              </configuration>
+            </execution>
+          </executions>
+        </plugin>
+        <!-- Release configuration: -->
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-release-plugin</artifactId>
+          <version>2.5</version>
+
+          <configuration>
+            <mavenExecutorId>forked-path</mavenExecutorId>
+
+          </configuration>
+        </plugin>
+
+        <!-- Deployment -->
+        <plugin>
+          <groupId>org.sonatype.plugins</groupId>
+          <artifactId>nexus-staging-maven-plugin</artifactId>
+          <version>1.6.4</version>
+          <extensions>true</extensions>
+          <configuration>
+            <serverId>sonatype-nexus-staging</serverId>
+            <nexusUrl>https://oss.sonatype.org/</nexusUrl>
+            <autoReleaseAfterClose>true</autoReleaseAfterClose>
+          </configuration>
+        </plugin>
       </plugins>
     </pluginManagement>
   </build>
+  	<profiles>
+
+		<!-- GPG Signature on release -->
+		<profile>
+			<id>release-sign-artifacts</id>
+			<activation>
+				<property>
+					<name>performRelease</name>
+					<value>true</value>
+				</property>
+			</activation>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-gpg-plugin</artifactId>
+						<version>1.4</version>
+						<executions>
+							<execution>
+								<id>sign-artifacts</id>
+								<phase>verify</phase>
+								<goals>
+									<goal>sign</goal>
+								</goals>
+							</execution>
+						</executions>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+
+	</profiles>
+
+	<!-- Required: developer information: -->
+	<developers>
+		<developer>
+			<id>Pr0methean</id>
+			<name>Chris Hennick</name>
+			<email>chrishennick1@gmail.com</email>
+			<url>https://github.com/Pr0methean</url>
+		</developer>
+	</developers>
   <reporting>
     <plugins>
       <plugin>
