@@ -2,7 +2,19 @@
 [![Coverage Status](https://coveralls.io/repos/github/Pr0methean/BetterRandom/badge.svg?branch=master)](https://coveralls.io/github/Pr0methean/BetterRandom?branch=master)
 
 BetterRandom is a library designed to help improve the quality and performance of random-number
-generation on Java.
+generation on Java. It includes:
+
+* Improved versions of the PRNGs from [Uncommons Maths](https://github.com/dwdyer/uncommons-maths/)
+  that support seeding with byte arrays, seed dumping, serialization, and entropy counting.
+* The SeedGenerator interface and its implementations from Uncommons Math, with the implementations
+  now singletons.
+* A RandomSeederThread class that reseeds registered Random instances as frequently as its
+  SeedGenerator will allow, but also taking into account the entropy count where available.
+* Single-thread and multithread adapter classes that wrap a SplittableRandom as a Random, so that it
+  can be used in legacy methods such as
+  [Collections.shuffle(List<>,Random)](https://docs.oracle.com/javase/8/docs/api/java/util/Collections.html#shuffle-java.util.List-java.util.Random-)
+  that don't have overloads to use with a SplittableRandom. They can be reseeded (this is
+  implemented by replacing the SplittableRandom).
 
 # Design philosophy: don't take chances on randomness
 
