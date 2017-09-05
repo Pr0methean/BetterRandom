@@ -3,6 +3,7 @@ package betterrandom.prng.adapter;
 import betterrandom.util.BinaryUtils;
 import java.io.IOException;
 import java.io.ObjectInputStream;
+import java.util.Arrays;
 import java.util.Random;
 import java.util.SplittableRandom;
 import org.checkerframework.checker.initialization.qual.UnknownInitialization;
@@ -31,5 +32,13 @@ public abstract class DirectSplittableRandomAdapter extends BaseSplittableRandom
     super.setSeedInitial(seed);
     underlying = new SplittableRandom(
         BinaryUtils.convertBytesToLong(seed, 0));
+  }
+
+  @Override
+  public boolean equals(Object o) {
+    return this == o
+        || (o != null
+            && getClass() == o.getClass()
+            && Arrays.equals(getSeed(), ((SplittableRandomAdapter) o).getSeed()));
   }
 }

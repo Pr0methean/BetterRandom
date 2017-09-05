@@ -107,7 +107,7 @@ public abstract class BaseRandomTest {
 
   @Test(timeOut = 60000)
   public void testHashCode() throws Exception {
-    assert RandomTestUtils.testHashCodeDistribution(CellularAutomatonRandom.class.getConstructor())
+    assert RandomTestUtils.testHashCodeDistribution(this::createRng)
         : "Too many hashCode collisions";
   }
 }

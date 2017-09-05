@@ -35,8 +35,9 @@ public class SingleThreadSplittableRandomAdapterTest extends BaseRandomTest {
     // TODO
   }
 
+  @Override
   @Test
-  public void testSerialization() throws Exception {
+  public void testSerializable() throws SeedException {
     BaseSplittableRandomAdapter adapter = tryCreateRng();
     // May change when serialized and deserialized, but deserializing twice should yield same object
     // and deserialization should be idempotent
@@ -184,8 +185,7 @@ public class SingleThreadSplittableRandomAdapterTest extends BaseRandomTest {
   }
 
   @Override
-  public void testSerializable() throws SeedException {
-    BaseSplittableRandomAdapter adapter = tryCreateRng();
-    assertEquals(adapter, serializeAndDeserialize(adapter));
+  public void testHashCode() {
+    // No-op.
   }
 }

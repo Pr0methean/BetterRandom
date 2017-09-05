@@ -19,4 +19,15 @@ public class ReseedingSplittableRandomAdapterTest extends SingleThreadSplittable
   protected ReseedingSplittableRandomAdapter tryCreateRng() throws SeedException {
     return ReseedingSplittableRandomAdapter.getDefaultInstance();
   }
+
+  @Override
+  public void testSerializable() throws SeedException {
+    BaseSplittableRandomAdapter adapter = tryCreateRng();
+    assertEquals(adapter, serializeAndDeserialize(adapter));
+  }
+
+  @Override
+  public void testSetSeed() {
+    // No-op.
+  }
 }
