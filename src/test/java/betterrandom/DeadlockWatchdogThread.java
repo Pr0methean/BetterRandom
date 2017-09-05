@@ -8,15 +8,15 @@ import java.lang.management.ThreadMXBean;
 import java.util.logging.Level;
 
 public class DeadlockWatchdogThread extends LooperThread {
-  private static final LogPreFormatter LOG = new LogPreFormatter(DeadlockWatchdogThread.class);
-
-  private static final int MAX_STACK_DEPTH = 20;
 
   public static final DeadlockWatchdogThread INSTANCE = new DeadlockWatchdogThread();
   public static final ThreadMXBean THREAD_MX_BEAN = ManagementFactory.getThreadMXBean();
+  private static final LogPreFormatter LOG = new LogPreFormatter(DeadlockWatchdogThread.class);
+  private static final int MAX_STACK_DEPTH = 20;
   private static final long serialVersionUID = 9118178318042580320L;
 
-  private DeadlockWatchdogThread() {}
+  private DeadlockWatchdogThread() {
+  }
 
   public static void ensureStarted() {
     if (INSTANCE.getState() == State.NEW) {

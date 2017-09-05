@@ -15,7 +15,7 @@ public interface ByteArrayReseedableRandom /* extends BaseRandom */ {
 
   /**
    * @return The supported length of a new byte-array seed, or the optimal length if multiple
-   * lengths are supported.
+   *     lengths are supported.
    */
   int getNewSeedLength();
 }

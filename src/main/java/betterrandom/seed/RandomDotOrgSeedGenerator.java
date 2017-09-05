@@ -59,9 +59,9 @@ public enum RandomDotOrgSeedGenerator implements SeedGenerator {
 
   /**
    * @param requiredBytes The preferred number of bytes to request from random.org. The
-   * implementation may request more and cache the excess (to avoid making lots of small requests).
-   * Alternatively, it may request fewer if the required number is greater than that permitted by
-   * random.org for a single request.
+   *     implementation may request more and cache the excess (to avoid making lots of small
+   *     requests). Alternatively, it may request fewer if the required number is greater than that
+   *     permitted by random.org for a single request.
    * @throws IOException If there is a problem downloading the random bits.
    */
 

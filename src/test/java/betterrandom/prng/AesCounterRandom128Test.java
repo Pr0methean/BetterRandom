@@ -19,9 +19,7 @@ import static org.testng.Assert.assertTrue;
 
 import betterrandom.seed.SeedException;
 import betterrandom.util.LogPreFormatter;
-import java.security.GeneralSecurityException;
 import java.util.Random;
-import org.checkerframework.checker.nullness.qual.Nullable;
 import org.testng.annotations.Test;
 
 /**
@@ -29,9 +27,9 @@ import org.testng.annotations.Test;
  *
  * @author Daniel Dyer
  */
-public class AesCounterRandomTest128 extends BaseEntropyCountingRandomTest {
+public class AesCounterRandom128Test extends BaseEntropyCountingRandomTest {
 
-  private static final LogPreFormatter LOG = new LogPreFormatter(AesCounterRandomTest128.class);
+  private static final LogPreFormatter LOG = new LogPreFormatter(AesCounterRandom128Test.class);
 
   @Override
   @Test(timeOut = 15000)
@@ -68,11 +66,6 @@ public class AesCounterRandomTest128 extends BaseEntropyCountingRandomTest {
         "Should allow a 16-byte key";
     assert AesCounterRandom.getMaxKeyLengthBytes() <= 32 :
         "Shouldn't allow a key longer than 32 bytes";
-  }
-
-  @Test(timeOut = 15000, expectedExceptions = IllegalArgumentException.class)
-  public void testSeedTooLong() throws GeneralSecurityException, SeedException {
-    new AesCounterRandom(49); // Should throw an exception.
   }
 
   @Override

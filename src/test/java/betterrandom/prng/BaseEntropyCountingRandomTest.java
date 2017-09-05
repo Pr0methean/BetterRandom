@@ -1,7 +1,6 @@
 package betterrandom.prng;
 
 import static betterrandom.prng.RandomTestUtils.DEFAULT_SEEDER;
-import static betterrandom.prng.RandomTestUtils.assertMonteCarloPiEstimateSane;
 import static org.testng.Assert.assertFalse;
 
 import betterrandom.seed.SeedException;

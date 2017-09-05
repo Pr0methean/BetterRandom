@@ -23,7 +23,6 @@ import betterrandom.util.BinaryUtils;
 import com.google.common.base.MoreObjects.ToStringHelper;
 import java.util.Arrays;
 import java.util.Random;
-import org.checkerframework.checker.initialization.qual.Initialized;
 import org.checkerframework.checker.initialization.qual.UnknownInitialization;
 import org.checkerframework.checker.nullness.qual.EnsuresNonNull;
 
@@ -31,13 +30,10 @@ import org.checkerframework.checker.nullness.qual.EnsuresNonNull;
  * <p>A Java version of George Marsaglia's <a href="http://school.anhb.uwa.edu.au/personalpages/kwessen/shared/Marsaglia03.html">Complementary
  * Multiply With Carry (CMWC) RNG</a>. This is a very fast PRNG with an extremely long period
  * (2^131104).  It should be used in preference to the {@link MersenneTwisterRandom} when a very
- * long period is required.</p>
- *
- * <p>One potential drawback of this RNG is that it requires significantly more seed data than the
- * other RNGs provided by Uncommons Maths.  It requires just over 16 kilobytes, which may be a
- * problem if your are obtaining seed data from a slow or limited entropy source. In contrast, the
- * Mersenne Twister requires only 128 bits of seed data.</p>
- *
+ * long period is required.</p> <p> <p>One potential drawback of this RNG is that it requires
+ * significantly more seed data than the other RNGs provided by Uncommons Maths.  It requires just
+ * over 16 kilobytes, which may be a problem if your are obtaining seed data from a slow or limited
+ * entropy source. In contrast, the Mersenne Twister requires only 128 bits of seed data.</p> <p>
  * <p><em>NOTE: Because instances of this class require 16-kilobyte seeds, it is not possible to
  * seed this RNG using the {@link #setSeed(long)} method inherited from {@link Random}.  Calls to
  * this method will have no effect. Instead the seed must be set by a constructor.</em></p>
@@ -67,17 +63,11 @@ public class Cmwc4096Random extends BaseEntropyCountingRandom implements Repeata
    * Seed the RNG using the provided seed generation strategy.
    *
    * @param seedGenerator The seed generation strategy that will provide the seed value for this
-   * RNG.
+   *     RNG.
    * @throws SeedException If there is a problem generating a seed.
    */
   public Cmwc4096Random(SeedGenerator seedGenerator) throws SeedException {
     this(seedGenerator.generateSeed(SEED_SIZE_BYTES));
-  }
-
-  @Override
-  protected ToStringHelper addSubSubclassFields(ToStringHelper original) {
-    return original
-        .add("state", Arrays.toString(state));
   }
 
   /**
@@ -90,6 +80,12 @@ public class Cmwc4096Random extends BaseEntropyCountingRandom implements Repeata
     assert state != null : "@AssumeAssertion(nullness)";
   }
 
+  @Override
+  protected ToStringHelper addSubSubclassFields(ToStringHelper original) {
+    return original
+        .add("state", Arrays.toString(state));
+  }
+
   /**
    * {@inheritDoc}
    */
@@ -98,7 +94,7 @@ public class Cmwc4096Random extends BaseEntropyCountingRandom implements Repeata
   }
 
   @Override
-  public void setSeed(@UnknownInitialization(Random.class) Cmwc4096Random this, long seed) {
+  public void setSeed(@UnknownInitialization(Random.class)Cmwc4096Random this, long seed) {
     if (superConstructorFinished) {
       super.setSeed(seed);
     } // Otherwise ignore; it's Random.<init> calling us without a full-size seed
@@ -106,7 +102,7 @@ public class Cmwc4096Random extends BaseEntropyCountingRandom implements Repeata
 
   @EnsuresNonNull({"this.seed", "state"})
   @Override
-  public void setSeedInitial(@UnknownInitialization(Random.class) Cmwc4096Random this, byte[] seed) {
+  public void setSeedInitial(@UnknownInitialization(Random.class)Cmwc4096Random this, byte[] seed) {
     if (seed == null || seed.length != SEED_SIZE_BYTES) {
       throw new IllegalArgumentException("CMWC RNG requires 16kb of seed data.");
     }
