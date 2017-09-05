@@ -43,6 +43,7 @@ public class SplittableRandomAdapter extends DirectSplittableRandomAdapter {
     } finally {
       lock.unlock();
     }
+    // WTF Checker Framework? Why is this needed?
     assert threadLocal != null : "@AssumeAssertion(nullness)";
   }
 
