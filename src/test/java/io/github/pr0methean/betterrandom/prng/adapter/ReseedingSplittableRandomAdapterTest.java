@@ -5,11 +5,9 @@ import static io.github.pr0methean.betterrandom.seed.RandomDotOrgSeedGenerator.R
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotEquals;
 
-import io.github.pr0methean.betterrandom.DeadlockWatchdogThread;
 import io.github.pr0methean.betterrandom.seed.DevRandomSeedGenerator;
 import io.github.pr0methean.betterrandom.seed.SecureRandomSeedGenerator;
 import io.github.pr0methean.betterrandom.seed.SeedException;
-import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
 public class ReseedingSplittableRandomAdapterTest extends SingleThreadSplittableRandomAdapterTest {
