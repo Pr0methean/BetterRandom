@@ -14,11 +14,6 @@ import org.testng.annotations.Test;
 
 public class ReseedingSplittableRandomAdapterTest extends SingleThreadSplittableRandomAdapterTest {
 
-  @BeforeClass
-  public static void setUp() {
-    DeadlockWatchdogThread.ensureStarted();
-  }
-
   @Override
   protected ReseedingSplittableRandomAdapter tryCreateRng() throws SeedException {
     return ReseedingSplittableRandomAdapter.getDefaultInstance();
