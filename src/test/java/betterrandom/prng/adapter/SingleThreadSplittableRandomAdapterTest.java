@@ -4,6 +4,7 @@ import static betterrandom.prng.RandomTestUtils.assertMonteCarloPiEstimateSane;
 import static betterrandom.prng.RandomTestUtils.assertStandardDeviationSane;
 import static betterrandom.prng.RandomTestUtils.serializeAndDeserialize;
 import static betterrandom.prng.RandomTestUtils.testEquivalence;
+import static org.testng.Assert.assertEquals;
 
 import betterrandom.prng.BaseRandom;
 import betterrandom.prng.BaseRandomTest;
@@ -164,5 +165,32 @@ public class SingleThreadSplittableRandomAdapterTest extends BaseRandomTest {
   @Test
   public void testDoubles3() throws Exception {
     // TODO
+  }
+
+  @Override
+  @Test
+  public void testNullSeed() {
+    // No-op.
+  }
+
+  @Override
+  public void testSetSeed() {
+    // No-op.
+  }
+
+  @Override
+  public void testEquals() {
+    // No-op.
+  }
+
+  @Override
+  public void testRepeatability() {
+    // No-op.
+  }
+
+  @Override
+  public void testSerializable() throws SeedException {
+    BaseSplittableRandomAdapter adapter = tryCreateRng();
+    assertEquals(adapter, serializeAndDeserialize(adapter));
   }
 }
