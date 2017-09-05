@@ -29,16 +29,56 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package org.sample;
+package io.github.pr0methean.betterrandom.benchmark;
 
+import io.github.pr0methean.betterrandom.seed.DefaultSeedGenerator;
+import io.github.pr0methean.betterrandom.seed.RandomSeederThread;
+import io.github.pr0methean.betterrandom.seed.SeedException;
+import java.util.Random;
+import java.util.concurrent.ScheduledThreadPoolExecutor;
 import org.openjdk.jmh.annotations.Benchmark;
 
-public class MyBenchmark {
+public abstract class AbstractRandomBenchmark {
+    protected final RandomSeederThread seederThread = RandomSeederThread.getInstance(
+        DefaultSeedGenerator.DEFAULT_SEED_GENERATOR);
+    protected final byte[][] lotsOfBytes = new byte[10][1_000_000];
 
-    @Benchmark
-    public void testMethod() {
-        // This is a demo/sample template for building your JMH benchmarks. Edit as needed.
-        // Put your benchmark code here.
+    protected AbstractRandomBenchmark() {
+        try {
+            prng = createPrng();
+        } catch (SeedException e) {
+            throw new RuntimeException(e);
+        }
     }
 
+    protected abstract Random createPrng() throws SeedException;
+    protected final ScheduledThreadPoolExecutor executor = new ScheduledThreadPoolExecutor(10);
+    protected final Random prng;
+    @Benchmark
+    public void testBytesSequential() {
+        for (byte[] bytes : lotsOfBytes) {
+            prng.nextBytes(bytes);
+        }
+    }
+
+    @Benchmark
+    public void testBytesSequentialReseeding() {
+        seederThread.add(prng);
+        testBytesSequential();
+        seederThread.remove(prng);
+    }
+
+    @Benchmark
+    public void testBytesParallel() {
+        for (byte[] bytes : lotsOfBytes) {
+            executor.execute(() -> prng.nextBytes(bytes));
+        }
+    }
+
+    @Benchmark
+    public void testBytesParallelReseeding() {
+        seederThread.add(prng);
+        testBytesParallel();
+        seederThread.remove(prng);
+    }
 }
