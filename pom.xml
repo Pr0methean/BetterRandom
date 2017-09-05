@@ -101,9 +101,6 @@
           <version>2.14.1</version>
           <configuration>
             <!-- <argLine>${surefireArgLine}</argLine> -->
-            <systemPropertyVariables>
-              <java.util.logging.manager>TestNgLogAdapterManager</java.util.logging.manager>
-            </systemPropertyVariables>
             <trimStackTrace>false</trimStackTrace>
             <parallel>methods</parallel>
             <forkedProcessTimeoutInSeconds>300</forkedProcessTimeoutInSeconds>
