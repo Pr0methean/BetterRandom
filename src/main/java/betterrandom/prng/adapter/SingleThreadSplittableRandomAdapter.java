@@ -20,14 +20,14 @@ public class SingleThreadSplittableRandomAdapter extends DirectSplittableRandomA
     this(seedGenerator.generateSeed(SEED_LENGTH_BYTES));
   }
 
+  public SingleThreadSplittableRandomAdapter(byte[] seed) {
+    super(seed);
+  }
+
   @Override
   public ToStringHelper addSubclassFields(ToStringHelper original) {
     return original
         .add("underlying", underlying);
-  }
-
-  public SingleThreadSplittableRandomAdapter(byte[] seed) {
-    super(seed);
   }
 
   @Override
@@ -45,6 +45,7 @@ public class SingleThreadSplittableRandomAdapter extends DirectSplittableRandomA
     }
   }
 
+  @EnsuresNonNull({"this.seed", "underlying"})
   @Override
   public synchronized void setSeed(@UnknownInitialization SingleThreadSplittableRandomAdapter this,
       long seed) {
@@ -52,11 +53,14 @@ public class SingleThreadSplittableRandomAdapter extends DirectSplittableRandomA
     this.seed = BinaryUtils.convertLongToBytes(seed);
   }
 
-  @EnsuresNonNull({"underlying", "this.seed"})
+  @EnsuresNonNull({"this.seed", "underlying"})
   @Override
   public void setSeedInitial(
-      @UnknownInitialization(Random.class) SingleThreadSplittableRandomAdapter this, byte[] seed) {
-    underlying = new SplittableRandom(BinaryUtils.convertBytesToLong(seed, 0));
-    super.setSeedInitial(seed);
+      @UnknownInitialization(Random.class)SingleThreadSplittableRandomAdapter this,
+      byte[] seed) {
+    if (seed.length != 8) {
+      throw new IllegalArgumentException("DirectSplittableRandomAdapter requires an 8-byte seed");
+    }
+    setSeed(BinaryUtils.convertBytesToLong(seed, 0));
   }
 }

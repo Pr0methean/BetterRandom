@@ -26,7 +26,6 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
-import java.lang.reflect.Constructor;
 import java.util.HashSet;
 import java.util.Random;
 import java.util.function.Supplier;
@@ -103,9 +102,9 @@ public final class RandomTestUtils {
    *
    * @param rng The RNG to test.
    * @param iterations The number of random points to generate for use in the calculation.  This
-   * value needs to be sufficiently large in order to produce a reasonably accurate result (assuming
-   * the RNG is uniform). Less than 10,000 is not particularly useful.  100,000 should be
-   * sufficient.
+   *     value needs to be sufficiently large in order to produce a reasonably accurate result
+   *     (assuming the RNG is uniform). Less than 10,000 is not particularly useful.  100,000 should
+   *     be sufficient.
    * @return An approximation of pi generated using the provided RNG.
    */
   public static double calculateMonteCarloValueForPi(Random rng,
@@ -148,9 +147,9 @@ public final class RandomTestUtils {
    *
    * @param rng The RNG to use.
    * @param maxValue The maximum value for generated integers (values will be in the range [0,
-   * maxValue)).
+   *     maxValue)).
    * @param iterations The number of values to generate and use in the standard deviation
-   * calculation.
+   *     calculation.
    * @return The standard deviation of the generated sample.
    */
   public static double calculateSampleStandardDeviation(Random rng,

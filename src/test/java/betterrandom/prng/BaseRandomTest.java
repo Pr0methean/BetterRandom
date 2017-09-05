@@ -34,7 +34,8 @@ public abstract class BaseRandomTest {
   @Test(timeOut = 15000, expectedExceptions = IllegalArgumentException.class)
   public void testSeedTooLong() throws GeneralSecurityException, SeedException {
     createRng(
-        DefaultSeedGenerator.DEFAULT_SEED_GENERATOR.generateSeed(createRng().getNewSeedLength() + 1)); // Should throw an exception.
+        DefaultSeedGenerator.DEFAULT_SEED_GENERATOR
+            .generateSeed(createRng().getNewSeedLength() + 1)); // Should throw an exception.
   }
 
   protected abstract BaseRandom tryCreateRng() throws SeedException;
@@ -95,7 +96,8 @@ public abstract class BaseRandomTest {
 
   @Test(timeOut = 15000)
   public void testSetSeed() throws SeedException {
-    byte[] seed = DefaultSeedGenerator.DEFAULT_SEED_GENERATOR.generateSeed(createRng().getNewSeedLength());
+    byte[] seed = DefaultSeedGenerator.DEFAULT_SEED_GENERATOR
+        .generateSeed(createRng().getNewSeedLength());
     BaseRandom rng = createRng();
     BaseRandom rng2 = createRng();
     rng.nextLong(); // ensure they won't both be in initial state before reseeding

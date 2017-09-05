@@ -27,7 +27,7 @@ public abstract class DirectSplittableRandomAdapter extends BaseSplittableRandom
 
   @EnsuresNonNull({"this.seed", "underlying"})
   @Override
-  public void setSeedInitial(@UnknownInitialization(Random.class) DirectSplittableRandomAdapter this,
+  public void setSeedInitial(@UnknownInitialization(Random.class)DirectSplittableRandomAdapter this,
       byte[] seed) {
     if (seed.length != 8) {
       throw new IllegalArgumentException("DirectSplittableRandomAdapter requires an 8-byte seed");
@@ -41,7 +41,7 @@ public abstract class DirectSplittableRandomAdapter extends BaseSplittableRandom
   public boolean equals(Object o) {
     return this == o
         || (o != null
-            && getClass() == o.getClass()
-            && Arrays.equals(getSeed(), ((SplittableRandomAdapter) o).getSeed()));
+        && getClass() == o.getClass()
+        && Arrays.equals(getSeed(), ((SplittableRandomAdapter) o).getSeed()));
   }
 }

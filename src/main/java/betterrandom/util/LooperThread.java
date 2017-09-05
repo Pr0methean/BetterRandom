@@ -34,50 +34,13 @@ public class LooperThread extends Thread implements Serializable, Cloneable {
 
   private static final LogPreFormatter LOG = new LogPreFormatter(LooperThread.class);
   private static final long serialVersionUID = -4387051967625864310L;
-
-  private static class ThreadDeathAlreadyHandled extends ThreadDeath {
-
-    private static final long serialVersionUID = 1433257085225877245L;
-  }
-
-  private static class UncaughtExceptionHandlerWrapper
-      implements UncaughtExceptionHandler, Serializable {
-
-    private static final long serialVersionUID = -132520277274461153L;
-    @Nullable
-    private UncaughtExceptionHandler wrapped = null;
-
-    @SuppressWarnings("deprecation")
-    @Override
-    public void uncaughtException(Thread t, Throwable e) {
-      if (!(e instanceof ThreadDeathAlreadyHandled)) {
-        LOG.error("Uncaught exception: %s", e);
-        if (wrapped != null) {
-          wrapped.uncaughtException(t, e);
-        } else {
-          UncaughtExceptionHandler defaultHandler = getDefaultUncaughtExceptionHandler();
-          if (defaultHandler == null) {
-            e.printStackTrace();
-            t.stop(e); // necessary so that join() (which is final) will return
-          } else {
-            defaultHandler.uncaughtException(t, e);
-          }
-        }
-      }
-    }
-
-    private void writeObject(ObjectOutputStream out) throws IOException {
-      wrapped = serializableOrNull(wrapped);
-      out.defaultWriteObject();
-    }
-  }
-
+  private final UncaughtExceptionHandlerWrapper uncaughtExceptionHandler =
+      new UncaughtExceptionHandlerWrapper();
   /**
-   * The thread holds this lock whenever it is being serialized or cloned or is running
-   * {@link #iterate()} called by {@link #run()}.
+   * The thread holds this lock whenever it is being serialized or cloned or is running {@link
+   * #iterate()} called by {@link #run()}.
    */
   protected transient Lock lock = new ReentrantLock();
-
   @SuppressWarnings("InstanceVariableMayNotBeInitializedByReadObject")
   private transient boolean alreadyTerminatedWhenDeserialized = false;
   private boolean interrupted = false;
@@ -86,23 +49,13 @@ public class LooperThread extends Thread implements Serializable, Cloneable {
   private State state = State.NEW;
   @Nullable
   private ThreadGroup group;
-  private final UncaughtExceptionHandlerWrapper uncaughtExceptionHandler =
-      new UncaughtExceptionHandlerWrapper();
   @Nullable
   private ClassLoader contextClassLoader = null;
   @MonotonicNonNull
   private String name = null;
-
-  private void setGroup(@UnderInitialization LooperThread this, @org.jetbrains.annotations.Nullable ThreadGroup group) {
-    if (uncaughtExceptionHandler.wrapped == null) {
-      uncaughtExceptionHandler.wrapped = group;
-    }
-  }
-
   public LooperThread() {
     super();
   }
-
   public LooperThread(String name) {
     super(name);
   }
@@ -118,6 +71,13 @@ public class LooperThread extends Thread implements Serializable, Cloneable {
       return null;
     }
     return object;
+  }
+
+  private void setGroup(@UnderInitialization LooperThread this,
+      @org.jetbrains.annotations.Nullable ThreadGroup group) {
+    if (uncaughtExceptionHandler.wrapped == null) {
+      uncaughtExceptionHandler.wrapped = group;
+    }
   }
 
   /**
@@ -207,17 +167,17 @@ public class LooperThread extends Thread implements Serializable, Cloneable {
     }
   }
 
-  @Override
-  public void setUncaughtExceptionHandler(UncaughtExceptionHandler handler) {
-    uncaughtExceptionHandler.wrapped = handler;
-    super.setUncaughtExceptionHandler(uncaughtExceptionHandler);
-  }
-
   @SuppressWarnings("override.return.invalid")
   @Nullable
   @Override
   public UncaughtExceptionHandler getUncaughtExceptionHandler() {
     return uncaughtExceptionHandler.wrapped;
+  }
+
+  @Override
+  public void setUncaughtExceptionHandler(UncaughtExceptionHandler handler) {
+    uncaughtExceptionHandler.wrapped = handler;
+    super.setUncaughtExceptionHandler(uncaughtExceptionHandler);
   }
 
   @Override
@@ -271,6 +231,43 @@ public class LooperThread extends Thread implements Serializable, Cloneable {
       throw new InternalError(e);
     } finally {
       lock.unlock();
+    }
+  }
+
+  private static class ThreadDeathAlreadyHandled extends ThreadDeath {
+
+    private static final long serialVersionUID = 1433257085225877245L;
+  }
+
+  private static class UncaughtExceptionHandlerWrapper
+      implements UncaughtExceptionHandler, Serializable {
+
+    private static final long serialVersionUID = -132520277274461153L;
+    @Nullable
+    private UncaughtExceptionHandler wrapped = null;
+
+    @SuppressWarnings("deprecation")
+    @Override
+    public void uncaughtException(Thread t, Throwable e) {
+      if (!(e instanceof ThreadDeathAlreadyHandled)) {
+        LOG.error("Uncaught exception: %s", e);
+        if (wrapped != null) {
+          wrapped.uncaughtException(t, e);
+        } else {
+          UncaughtExceptionHandler defaultHandler = getDefaultUncaughtExceptionHandler();
+          if (defaultHandler == null) {
+            e.printStackTrace();
+            t.stop(e); // necessary so that join() (which is final) will return
+          } else {
+            defaultHandler.uncaughtException(t, e);
+          }
+        }
+      }
+    }
+
+    private void writeObject(ObjectOutputStream out) throws IOException {
+      wrapped = serializableOrNull(wrapped);
+      out.defaultWriteObject();
     }
   }
 }

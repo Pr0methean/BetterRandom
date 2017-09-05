@@ -24,24 +24,9 @@ import org.checkerframework.checker.nullness.qual.EnsuresNonNull;
 public abstract class BaseRandom extends Random implements ByteArrayReseedableRandom,
     RepeatableRandom, Dumpable {
 
-  public abstract ToStringHelper addSubclassFields(ToStringHelper original);
-
-  public String dump() {
-    lock.lock();
-    try {
-      return addSubclassFields(MoreObjects.toStringHelper(this)
-          .add("seed", BinaryUtils.convertBytesToHexString(seed)))
-          .toString();
-    } finally {
-      lock.unlock();
-    }
-  }
-
   private static final LogPreFormatter LOG = new LogPreFormatter(BaseRandom.class);
   private static final long serialVersionUID = -1556392727255964947L;
-
   protected byte[] seed;
-
   // Lock to prevent concurrent modification of the RNG's internal state.
   @SuppressWarnings("InstanceVariableMayNotBeInitializedByReadObject")
   protected transient Lock lock;
@@ -58,12 +43,11 @@ public abstract class BaseRandom extends Random implements ByteArrayReseedableRa
   public BaseRandom(int seedLength) throws SeedException {
     this(DefaultSeedGenerator.DEFAULT_SEED_GENERATOR.generateSeed(seedLength));
   }
-
   /**
    * Seed the RNG using the provided seed generation strategy.
    *
    * @param seedGenerator The seed generation strategy that will provide the seed value for this
-   * RNG.
+   *     RNG.
    * @throws SeedException If there is a problem generating a seed.
    */
   public BaseRandom(SeedGenerator seedGenerator, int seedLength) throws SeedException {
@@ -80,6 +64,19 @@ public abstract class BaseRandom extends Random implements ByteArrayReseedableRa
     setSeedInitial(seed);
   }
 
+  public abstract ToStringHelper addSubclassFields(ToStringHelper original);
+
+  public String dump() {
+    lock.lock();
+    try {
+      return addSubclassFields(MoreObjects.toStringHelper(this)
+          .add("seed", BinaryUtils.convertBytesToHexString(seed)))
+          .toString();
+    } finally {
+      lock.unlock();
+    }
+  }
+
   /**
    * {@inheritDoc}
    */
@@ -93,8 +90,19 @@ public abstract class BaseRandom extends Random implements ByteArrayReseedableRa
     }
   }
 
+  @EnsuresNonNull("this.seed")
   @Override
-  public synchronized void setSeed(@UnknownInitialization(Random.class) BaseRandom this,
+  public void setSeed(byte[] seed) {
+    lock.lock();
+    try {
+      setSeedInitial(seed);
+    } finally {
+      lock.unlock();
+    }
+  }
+
+  @Override
+  public synchronized void setSeed(@UnknownInitialization(Random.class)BaseRandom this,
       long seed) {
     ByteBuffer buffer = ByteBuffer.allocate(8);
     buffer.putLong(seed);
@@ -114,18 +122,7 @@ public abstract class BaseRandom extends Random implements ByteArrayReseedableRa
   }
 
   @EnsuresNonNull("this.seed")
-  @Override
-  public void setSeed(byte[] seed) {
-    lock.lock();
-    try {
-      setSeedInitial(seed);
-    } finally {
-      lock.unlock();
-    }
-  }
-
-  @EnsuresNonNull("this.seed")
-  public void setSeedInitial(@UnknownInitialization(Random.class) BaseRandom this, byte[] seed) {
+  public void setSeedInitial(@UnknownInitialization(Random.class)BaseRandom this, byte[] seed) {
     this.seed = seed.clone();
   }
 

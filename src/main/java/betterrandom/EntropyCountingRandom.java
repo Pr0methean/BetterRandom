@@ -9,7 +9,7 @@ public interface EntropyCountingRandom {
 
   /**
    * @return The current amount of entropy (bits seeded with or bits of internal state, whichever
-   * was less at the time, minus bits returned).
+   *     was less at the time, minus bits returned).
    */
   long entropyBits();
 }
