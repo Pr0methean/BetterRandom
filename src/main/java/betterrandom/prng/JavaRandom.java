@@ -24,14 +24,11 @@ import java.util.Random;
 
 /**
  * <p>This is the default {@link Random JDK RNG} extended to implement the {@link RepeatableRandom}
- * interface (for consistency with the other RNGs in this package).</p>
- * <p>
- * <p>The {@link MersenneTwisterRandom} should be used in preference to this class because it is
- * statistically more random and performs slightly better.</p>
- * <p>
- * <p><em>NOTE: Instances of this class do not use the seeding mechanism inherited from {@link
- * Random}.  Calls to the {@link #setSeed(long)} method will have no effect.  Instead the seed must
- * be set by a constructor.</em></p>
+ * interface (for consistency with the other RNGs in this package).</p> <p> <p>The {@link
+ * MersenneTwisterRandom} should be used in preference to this class because it is statistically
+ * more random and performs slightly better.</p> <p> <p><em>NOTE: Instances of this class do not use
+ * the seeding mechanism inherited from {@link Random}.  Calls to the {@link #setSeed(long)} method
+ * will have no effect.  Instead the seed must be set by a constructor.</em></p>
  *
  * @author Daniel Dyer
  */

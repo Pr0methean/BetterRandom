@@ -53,9 +53,11 @@ public class LooperThread extends Thread implements Serializable, Cloneable {
   private ClassLoader contextClassLoader = null;
   @MonotonicNonNull
   private String name = null;
+
   public LooperThread() {
     super();
   }
+
   public LooperThread(String name) {
     super(name);
   }
