@@ -6,8 +6,6 @@ import static betterrandom.prng.RandomTestUtils.assertStandardDeviationSane;
 import betterrandom.seed.DefaultSeedGenerator;
 import betterrandom.seed.SeedException;
 import java.io.IOException;
-import java.util.Random;
-import org.checkerframework.checker.nullness.qual.Nullable;
 import org.testng.annotations.Test;
 
 public abstract class BaseRandomTest {
@@ -67,8 +65,8 @@ public abstract class BaseRandomTest {
    * distribution of the output.
    */
   @Test(timeOut = 15000, expectedExceptions = IllegalArgumentException.class)
-  public void testSeedTooShort() {
-    new CellularAutomatonRandom(
+  public void testSeedTooShort() throws SeedException {
+    createRng(
         new byte[]{1, 2, 3}); // One byte too few, should cause an IllegalArgumentException.
   }
 
