@@ -120,7 +120,11 @@ public final class RandomSeederThread extends LooperThread {
    *
    * @return Whether or not the reseed was successfully scheduled.
    */
-  public boolean asyncReseed(EntropyCountingRandom random) {
+  public boolean asyncReseed(Random random) {
+    if (!(random instanceof EntropyCountingRandom)) {
+      // Reseed of non-entropy-counting Random happens every iteration anyway
+      return prngs.contains(random);
+    }
     boolean eligible;
     synchronized (prngs) {
       eligible = prngs.contains(random);
