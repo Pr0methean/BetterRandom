@@ -381,7 +381,9 @@
       </plugin>
     </plugins>
   </reporting>
+  <!--
   <modules>
     <module>benchmark</module>
   </modules>
+  -->
 </project>
