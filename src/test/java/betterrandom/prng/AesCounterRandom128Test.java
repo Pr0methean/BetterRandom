@@ -27,9 +27,9 @@ import org.testng.annotations.Test;
  *
  * @author Daniel Dyer
  */
-public class AesCounterRandomTest128 extends BaseEntropyCountingRandomTest {
+public class AesCounterRandom128Test extends BaseEntropyCountingRandomTest {
 
-  private static final LogPreFormatter LOG = new LogPreFormatter(AesCounterRandomTest128.class);
+  private static final LogPreFormatter LOG = new LogPreFormatter(AesCounterRandom128Test.class);
 
   @Override
   @Test(timeOut = 15000)
