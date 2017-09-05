@@ -12,7 +12,7 @@ public class ReseedingSplittableRandomAdapterTest extends SingleThreadSplittable
   }
 
   @Override
-  protected ReseedingSplittableRandomAdapter createAdapter() throws SeedException {
+  protected ReseedingSplittableRandomAdapter tryCreateRng() throws SeedException {
     return ReseedingSplittableRandomAdapter.getDefaultInstance();
   }
 }

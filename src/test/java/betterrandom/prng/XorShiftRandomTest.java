@@ -23,6 +23,7 @@ import betterrandom.seed.DefaultSeedGenerator;
 import betterrandom.seed.SeedException;
 import java.io.IOException;
 import java.util.Arrays;
+import org.checkerframework.checker.nullness.qual.Nullable;
 import org.testng.annotations.Test;
 
 /**
@@ -30,91 +31,15 @@ import org.testng.annotations.Test;
  *
  * @author Daniel Dyer
  */
-public class XorShiftRandomTest {
+public class XorShiftRandomTest extends BaseEntropyCountingRandomTest {
 
-  /**
-   * Test to ensure that two distinct RNGs with the same seed return the same sequence of numbers.
-   * This method must be run before any of the other tests otherwise the state of the RNG will not
-   * be the same in the duplicate RNG.
-   */
-  @Test(timeOut = 15000)
-  public void testRepeatability() throws SeedException {
-    XorShiftRandom rng = new XorShiftRandom();
-    // Create second RNG using same seed.
-    XorShiftRandom duplicateRNG = new XorShiftRandom(rng.getSeed());
-    assert RandomTestUtils
-        .testEquivalence(rng, duplicateRNG, 1000) : "Generated sequences do not match.";
+  @Override
+  protected BaseEntropyCountingRandom tryCreateRng() throws SeedException {
+    return new XorShiftRandom();
   }
 
-  /**
-   * Test to ensure that the output from the RNG is broadly as expected.  This will not detect the
-   * subtle statistical anomalies that would be picked up by Diehard, but it provides a simple check
-   * for major problems with the output.
-   */
-  @Test(timeOut = 15000, groups = "non-deterministic",
-      dependsOnMethods = "testRepeatability")
-  public void testDistribution() throws SeedException {
-    XorShiftRandom rng = new XorShiftRandom(DefaultSeedGenerator.DEFAULT_SEED_GENERATOR);
-    RandomTestUtils.assertMonteCarloPiEstimateSane(rng);
-  }
-
-  /**
-   * Test to ensure that the output from the RNG is broadly as expected.  This will not detect the
-   * subtle statistical anomalies that would be picked up by Diehard, but it provides a simple check
-   * for major problems with the output.
-   */
-  @Test(timeOut = 15000, groups = "non-deterministic",
-      dependsOnMethods = "testRepeatability")
-  public void testStandardDeviation() throws SeedException {
-    XorShiftRandom rng = new XorShiftRandom();
-    RandomTestUtils.assertStandardDeviationSane(rng);
-  }
-
-  /**
-   * Make sure that the RNG does not accept seeds that are too small since this could affect the
-   * distribution of the output.
-   */
-  @Test(timeOut = 15000, expectedExceptions = IllegalArgumentException.class)
-  public void testInvalidSeedSize() {
-    new XorShiftRandom(
-        new byte[]{1, 2, 3}); // Not enough bytes, should cause an IllegalArgumentException.
-  }
-
-  /**
-   * RNG must not accept a null seed otherwise it will not be properly initialised.
-   */
-  @SuppressWarnings("argument.type.incompatible")
-  @Test(timeOut = 15000, expectedExceptions = IllegalArgumentException.class)
-  public void testNullSeed() {
-    new XorShiftRandom((byte[]) null);
-  }
-
-  @Test(timeOut = 15000)
-  public void testSerializable() throws IOException, ClassNotFoundException, SeedException {
-    // Serialise an RNG.
-    XorShiftRandom rng = new XorShiftRandom();
-    assertEquivalentWhenSerializedAndDeserialized(rng);
-  }
-
-  @Test(timeOut = 15000)
-  public void testEquals() throws ReflectiveOperationException {
-    RandomTestUtils.doEqualsSanityChecks(XorShiftRandom.class.getConstructor());
-  }
-
-  @Test(timeOut = 60000)
-  public void testHashCode() throws Exception {
-    assert RandomTestUtils.testHashCodeDistribution(XorShiftRandom.class.getConstructor())
-        : "Too many hashCode collisions";
-  }
-
-  @Test(timeOut = 15000)
-  public void testReseeding() throws Exception {
-    BaseEntropyCountingRandom rng = new XorShiftRandom();
-    byte[] oldSeed = rng.getSeed();
-    rng.setSeederThread(DEFAULT_SEEDER);
-    rng.nextBytes(new byte[20000]);
-    Thread.sleep(2000);
-    byte[] newSeed = rng.getSeed();
-    assertFalse(Arrays.equals(oldSeed, newSeed));
+  @Override
+  protected BaseRandom createRng(byte[] seed) throws SeedException {
+    return new XorShiftRandom(seed);
   }
 }
