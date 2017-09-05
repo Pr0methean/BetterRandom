@@ -36,49 +36,53 @@ import io.github.pr0methean.betterrandom.seed.RandomSeederThread;
 import io.github.pr0methean.betterrandom.seed.SeedException;
 import java.util.Random;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
+import org.checkerframework.checker.initialization.qual.UnknownInitialization;
 import org.openjdk.jmh.annotations.Benchmark;
 
 public abstract class AbstractRandomBenchmark {
-    protected final RandomSeederThread seederThread = RandomSeederThread.getInstance(
-        DefaultSeedGenerator.DEFAULT_SEED_GENERATOR);
-    protected final byte[][] lotsOfBytes = new byte[10][1_000_000];
 
-    protected AbstractRandomBenchmark() {
-        try {
-            prng = createPrng();
-        } catch (SeedException e) {
-            throw new RuntimeException(e);
-        }
-    }
+  protected final RandomSeederThread seederThread = RandomSeederThread.getInstance(
+      DefaultSeedGenerator.DEFAULT_SEED_GENERATOR);
+  protected final byte[][] lotsOfBytes = new byte[10][1_000_000];
+  protected final ScheduledThreadPoolExecutor executor = new ScheduledThreadPoolExecutor(10);
+  protected final Random prng;
 
-    protected abstract Random createPrng() throws SeedException;
-    protected final ScheduledThreadPoolExecutor executor = new ScheduledThreadPoolExecutor(10);
-    protected final Random prng;
-    @Benchmark
-    public void testBytesSequential() {
-        for (byte[] bytes : lotsOfBytes) {
-            prng.nextBytes(bytes);
-        }
+  protected AbstractRandomBenchmark() {
+    try {
+      prng = createPrng();
+    } catch (SeedException e) {
+      throw new RuntimeException(e);
     }
+  }
 
-    @Benchmark
-    public void testBytesSequentialReseeding() {
-        seederThread.add(prng);
-        testBytesSequential();
-        seederThread.remove(prng);
-    }
+  protected abstract Random createPrng(@UnknownInitialization AbstractRandomBenchmark this)
+      throws SeedException;
 
-    @Benchmark
-    public void testBytesParallel() {
-        for (byte[] bytes : lotsOfBytes) {
-            executor.execute(() -> prng.nextBytes(bytes));
-        }
+  @Benchmark
+  public void testBytesSequential() {
+    for (byte[] bytes : lotsOfBytes) {
+      prng.nextBytes(bytes);
     }
+  }
 
-    @Benchmark
-    public void testBytesParallelReseeding() {
-        seederThread.add(prng);
-        testBytesParallel();
-        seederThread.remove(prng);
+  @Benchmark
+  public void testBytesSequentialReseeding() {
+    seederThread.add(prng);
+    testBytesSequential();
+    seederThread.remove(prng);
+  }
+
+  @Benchmark
+  public void testBytesParallel() {
+    for (byte[] bytes : lotsOfBytes) {
+      executor.execute(() -> prng.nextBytes(bytes));
     }
+  }
+
+  @Benchmark
+  public void testBytesParallelReseeding() {
+    seederThread.add(prng);
+    testBytesParallel();
+    seederThread.remove(prng);
+  }
 }
