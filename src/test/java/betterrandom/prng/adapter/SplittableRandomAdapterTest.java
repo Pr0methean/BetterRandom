@@ -10,5 +10,9 @@ public class SplittableRandomAdapterTest extends SingleThreadSplittableRandomAda
     return new SplittableRandomAdapter(DefaultSeedGenerator.DEFAULT_SEED_GENERATOR);
   }
 
+  @Override
+  public void testSetSeed() {
+    // No-op.
+  }
   // TODO: Override or add tests for thread-safety.
 }
