@@ -124,7 +124,7 @@ public abstract class BaseRandomTest {
    * for two independently-generated instances to give unequal dumps.
    */
   @Test(timeOut = 15000)
-  public void testDump() {
+  public void testDump() throws SeedException {
     assertNotEquals(createRng().dump(), createRng().dump());
   }
 }
