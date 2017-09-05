@@ -34,9 +34,16 @@ THE POSSIBILITY OF SUCH DAMAGE.
     <artifactId>BetterRandom</artifactId>
     <groupId>io.github.pr0methean.betterrandom</groupId>
     <version>0.9.1.2-SNAPSHOT</version>
+    <relativePath>..</relativePath>
   </parent>
+  <repositories>
+      <repository>
+        <id>parent-dir</id>
+        <url>file://${basedir}/..</url>
+      </repository>
+  </repositories>
 
-    <groupId>org.sample</groupId>
+    <groupId>io.github.pr0methean.betterrandom</groupId>
     <artifactId>benchmark</artifactId>
     <version>1.0</version>
     <packaging>jar</packaging>
@@ -61,14 +68,9 @@ THE POSSIBILITY OF SUCH DAMAGE.
             <scope>provided</scope>
         </dependency>
         <dependency>
-            <groupId>io.github.pr0methean.betterrandom</groupId>
-            <artifactId>BetterRandom</artifactId>
-            <version>0.9.1.2-SNAPSHOT</version>
-        </dependency>
-        <dependency>
-            <groupId>io.github.pr0methean.betterrandom</groupId>
-            <artifactId>BetterRandom</artifactId>
-            <version>0.9.1.2-SNAPSHOT</version>
+                <artifactId>BetterRandom</artifactId>
+    <groupId>io.github.pr0methean.betterrandom</groupId>
+    <version>0.9.1.2-SNAPSHOT</version>
         </dependency>
     </dependencies>
 
