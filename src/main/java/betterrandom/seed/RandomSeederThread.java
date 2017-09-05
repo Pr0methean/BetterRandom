@@ -39,9 +39,9 @@ public final class RandomSeederThread extends LooperThread {
   private static final long serialVersionUID = 5229976461051217528L;
   private final SeedGenerator seedGenerator;
   private final byte[] seedArray = new byte[8];
-  private transient Set<Random> prngs;
   // WeakHashMap-based Set can't be serialized, so read & write this copy instead
   private final Set<Random> prngsSerial = new HashSet<>();
+  private transient Set<Random> prngs;
   private transient ByteBuffer seedBuffer;
   private transient Condition waitWhileEmpty;
   private transient Condition waitForEntropyDrain;
@@ -52,6 +52,24 @@ public final class RandomSeederThread extends LooperThread {
   private RandomSeederThread(SeedGenerator seedGenerator) {
     this.seedGenerator = seedGenerator;
     initTransientFields();
+  }
+
+  /**
+   * Obtain the instance for the given {@link SeedGenerator}, creating and starting it if it doesn't
+   * exist.
+   */
+  public static RandomSeederThread getInstance(SeedGenerator seedGenerator) {
+    Objects.requireNonNull(seedGenerator,
+        "Trying to get RandomSeederThread for null SeedGenerator");
+    return INSTANCES.computeIfAbsent(seedGenerator,
+        seedGen -> {
+          LOG.info("Creating a RandomSeederThread for %s", seedGen);
+          RandomSeederThread thread = new RandomSeederThread(seedGen);
+          thread.setName("RandomSeederThread for " + seedGen);
+          thread.setDaemon(true);
+          thread.start();
+          return thread;
+        });
   }
 
   @EnsuresNonNull({"prngs", "seedBuffer", "waitWhileEmpty", "waitForEntropyDrain"})
@@ -97,30 +115,16 @@ public final class RandomSeederThread extends LooperThread {
   }
 
   /**
-   * Obtain the instance for the given {@link SeedGenerator}, creating and starting it if it doesn't
-   * exist.
-   */
-  public static RandomSeederThread getInstance(SeedGenerator seedGenerator) {
-    Objects.requireNonNull(seedGenerator,
-        "Trying to get RandomSeederThread for null SeedGenerator");
-    return INSTANCES.computeIfAbsent(seedGenerator,
-        seedGen -> {
-          LOG.info("Creating a RandomSeederThread for %s", seedGen);
-          RandomSeederThread thread = new RandomSeederThread(seedGen);
-          thread.setName("RandomSeederThread for " + seedGen);
-          thread.setDaemon(true);
-          thread.start();
-          return thread;
-        });
-  }
-
-  /**
    * Asynchronously triggers reseeding of the given {@link EntropyCountingRandom} if it is
    * associated with a live RandomSeederThread.
    *
    * @return Whether or not the reseed was successfully scheduled.
    */
-  public boolean asyncReseed(EntropyCountingRandom random) {
+  public boolean asyncReseed(Random random) {
+    if (!(random instanceof EntropyCountingRandom)) {
+      // Reseed of non-entropy-counting Random happens every iteration anyway
+      return prngs.contains(random);
+    }
     boolean eligible;
     synchronized (prngs) {
       eligible = prngs.contains(random);

@@ -15,11 +15,7 @@
 // ============================================================================
 package betterrandom.prng;
 
-import static betterrandom.prng.RandomTestUtils.assertMonteCarloPiEstimateSane;
-import static org.testng.Assert.assertFalse;
-
 import betterrandom.seed.SeedException;
-import org.checkerframework.checker.nullness.qual.Nullable;
 
 /**
  * Unit test for the Complementary Multiply With Carry (CMWC) RNG.
@@ -27,6 +23,7 @@ import org.checkerframework.checker.nullness.qual.Nullable;
  * @author Daniel Dyer
  */
 public class Cmwc4096RandomTest extends BaseEntropyCountingRandomTest {
+
   @Override
   protected BaseEntropyCountingRandom tryCreateRng() throws SeedException {
     return new Cmwc4096Random();

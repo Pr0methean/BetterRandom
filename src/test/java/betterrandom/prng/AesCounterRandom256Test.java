@@ -2,7 +2,8 @@ package betterrandom.prng;
 
 import betterrandom.seed.SeedException;
 
-public class AesCounterRandomTest256 extends AesCounterRandomTest128 {
+public class AesCounterRandom256Test extends AesCounterRandom128Test {
+
   @Override
   public BaseEntropyCountingRandom createRng() {
     try {

@@ -15,16 +15,7 @@
 // ============================================================================
 package betterrandom.prng;
 
-import static betterrandom.prng.RandomTestUtils.DEFAULT_SEEDER;
-import static betterrandom.prng.RandomTestUtils.assertEquivalentWhenSerializedAndDeserialized;
-import static org.testng.Assert.assertFalse;
-
-import betterrandom.seed.DefaultSeedGenerator;
 import betterrandom.seed.SeedException;
-import java.io.IOException;
-import java.util.Arrays;
-import org.checkerframework.checker.nullness.qual.Nullable;
-import org.testng.annotations.Test;
 
 /**
  * Unit test for the cellular automaton RNG.

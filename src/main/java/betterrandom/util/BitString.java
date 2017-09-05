@@ -111,7 +111,7 @@ public final class BitString implements Cloneable, Serializable {
    * @param index The index of the bit to look-up (0 is the least-significant bit).
    * @return A boolean indicating whether the bit is set or not.
    * @throws IndexOutOfBoundsException If the specified index is not a bit position in this bit
-   * string.
+   *     string.
    */
   public boolean getBit(int index) {
     assertValidIndex(index);
@@ -126,7 +126,7 @@ public final class BitString implements Cloneable, Serializable {
    * @param index The index of the bit to set (0 is the least-significant bit).
    * @param set A boolean indicating whether the bit should be set or not.
    * @throws IndexOutOfBoundsException If the specified index is not a bit position in this bit
-   * string.
+   *     string.
    */
   public void setBit(int index, boolean set) {
     assertValidIndex(index);
@@ -145,7 +145,7 @@ public final class BitString implements Cloneable, Serializable {
    *
    * @param index The bit to flip (0 is the least-significant bit).
    * @throws IndexOutOfBoundsException If the specified index is not a bit position in this bit
-   * string.
+   *     string.
    */
   public void flipBit(int index) {
     assertValidIndex(index);
@@ -203,7 +203,7 @@ public final class BitString implements Cloneable, Serializable {
    *
    * @param other The bitstring with which this bitstring should swap bits.
    * @param start The start position for the substrings to be exchanged.  All bit indices are
-   * big-endian, which means position 0 is the rightmost bit.
+   *     big-endian, which means position 0 is the rightmost bit.
    * @param length The number of contiguous bits to swap.
    */
   @SuppressWarnings("AccessingNonPublicFieldOfAnotherObject")
@@ -281,7 +281,7 @@ public final class BitString implements Cloneable, Serializable {
 
   /**
    * @return True if the argument is a BitString instance and both bit strings are the same length
-   * with identical bits set/unset.
+   *     with identical bits set/unset.
    */
   @SuppressWarnings("NonFinalFieldReferenceInEquals")
   @Override

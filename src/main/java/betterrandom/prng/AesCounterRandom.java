@@ -33,22 +33,18 @@ import java.util.Random;
 import javax.crypto.Cipher;
 import javax.crypto.NoSuchPaddingException;
 import javax.crypto.spec.SecretKeySpec;
-import org.checkerframework.checker.initialization.qual.Initialized;
 import org.checkerframework.checker.initialization.qual.UnknownInitialization;
 import org.checkerframework.checker.nullness.qual.EnsuresNonNull;
 
 /**
  * <p>Non-linear random number generator based on the AES block cipher in counter mode. Uses the
- * seed as a key to encrypt a 128-bit counter using AES(Rijndael).</p>
- *
- * <p>By default, we only use a 128-bit key for the cipher because any larger key requires the
- * inconvenience of installing the unlimited strength cryptography policy files for the Java
- * platform.  Larger keys may be used (192 or 256 bits) but if the cryptography policy files are not
- * installed, a {@link GeneralSecurityException} will be thrown.</p>
- *
- * <p><em>NOTE: Because instances of this class require 128-bit seeds, it is not possible to seed
- * this RNG using the {@link #setSeed(long)} method inherited from {@link Random} until the seed
- * array has been set.</em></p>
+ * seed as a key to encrypt a 128-bit counter using AES(Rijndael).</p> <p> <p>By default, we only
+ * use a 128-bit key for the cipher because any larger key requires the inconvenience of installing
+ * the unlimited strength cryptography policy files for the Java platform.  Larger keys may be used
+ * (192 or 256 bits) but if the cryptography policy files are not installed, a {@link
+ * GeneralSecurityException} will be thrown.</p> <p> <p><em>NOTE: Because instances of this class
+ * require 128-bit seeds, it is not possible to seed this RNG using the {@link #setSeed(long)}
+ * method inherited from {@link Random} until the seed array has been set.</em></p>
  *
  * @author Daniel Dyer
  */
@@ -114,27 +110,20 @@ public class AesCounterRandom extends BaseEntropyCountingRandom implements Repea
    * Seed the RNG using the provided seed generation strategy to create a 128-bit seed.
    *
    * @param seedGenerator The seed generation strategy that will provide the seed value for this
-   * RNG.
+   *     RNG.
    * @throws SeedException If there is a problem generating a seed.
    */
   public AesCounterRandom(SeedGenerator seedGenerator) throws SeedException {
     this(seedGenerator.generateSeed(DEFAULT_SEED_SIZE_BYTES));
   }
 
-  @Override
-  public ToStringHelper addSubSubclassFields(ToStringHelper original) {
-    return original
-        .add("counter", BinaryUtils.convertBytesToHexString(counter))
-        .add("cipher", cipher);
-  }
-
   /**
    * Seed the RNG using the default seed generation strategy to create a seed of the specified
    * size.
    *
-   * @param seedSizeBytes The number of bytes to use for seed data.  Valid values are 16 (128 bits),
-   * 24 (192 bits) and 32 (256 bits).  Any other values will result in an exception from the AES
-   * implementation.
+   * @param seedSizeBytes The number of bytes to use for seed data.  Valid values are 16 (128
+   *     bits), 24 (192 bits) and 32 (256 bits).  Any other values will result in an exception from
+   *     the AES implementation.
    * @since 1.0.2
    */
   public AesCounterRandom(int seedSizeBytes) throws SeedException {
@@ -156,11 +145,23 @@ public class AesCounterRandom extends BaseEntropyCountingRandom implements Repea
 
   /**
    * @return If the seed is longer than this, part of it becomes the counter's initial value.
-   * Otherwise, the full seed becomes the AES key and the counter is initially zero. Public for
-   * testing of its initialization.
+   *     Otherwise, the full seed becomes the AES key and the counter is initially zero. Public for
+   *     testing of its initialization.
    */
   public static int getMaxKeyLengthBytes() {
     return MAX_KEY_LENGTH_BYTES;
+  }
+
+  private static int getKeyLength(byte[] input) {
+    return input.length > MAX_KEY_LENGTH_BYTES ? MAX_KEY_LENGTH_BYTES
+        : input.length >= 24 ? 24 : 16;
+  }
+
+  @Override
+  public ToStringHelper addSubSubclassFields(ToStringHelper original) {
+    return original
+        .add("counter", BinaryUtils.convertBytesToHexString(counter))
+        .add("cipher", cipher);
   }
 
   private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
@@ -203,7 +204,7 @@ public class AesCounterRandom extends BaseEntropyCountingRandom implements Repea
    * Generates BLOCKS_AT_ONCE 128-bit (16-byte) blocks. Copies them to currentBlock.
    *
    * @throws GeneralSecurityException If there is a problem with the cipher that generates the
-   * random data.
+   *     random data.
    */
   private void nextBlock() throws GeneralSecurityException {
     for (int i = 0; i < BLOCKS_AT_ONCE; i++) {
@@ -297,7 +298,7 @@ public class AesCounterRandom extends BaseEntropyCountingRandom implements Repea
   }
 
   @Override
-  public void setSeed(@UnknownInitialization(Random.class) AesCounterRandom this, long seed) {
+  public void setSeed(@UnknownInitialization(Random.class)AesCounterRandom this, long seed) {
     if (superConstructorFinished) {
       super.setSeed(seed);
     } // Otherwise ignore; it's Random.<init> calling us without a full-size seed
@@ -305,7 +306,8 @@ public class AesCounterRandom extends BaseEntropyCountingRandom implements Repea
 
   @EnsuresNonNull({"counter", "this.seed"})
   @Override
-  public void setSeedInitial(@UnknownInitialization(Random.class) AesCounterRandom this, byte[] seed) {
+  public void setSeedInitial(@UnknownInitialization(Random.class)AesCounterRandom this,
+      byte[] seed) {
     super.setSeedInitial(seed);
 
     int seedLength = seed.length;
@@ -328,13 +330,8 @@ public class AesCounterRandom extends BaseEntropyCountingRandom implements Repea
     seeded = true;
   }
 
-  private static int getKeyLength(byte[] input) {
-    return input.length > MAX_KEY_LENGTH_BYTES ? MAX_KEY_LENGTH_BYTES
-        : input.length >= 24 ? 24 : 16;
-  }
-
   @Override
   public int getNewSeedLength() {
-    return MAX_KEY_LENGTH_BYTES;
+    return MAX_TOTAL_SEED_LENGTH_BYTES;
   }
 }

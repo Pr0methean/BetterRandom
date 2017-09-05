@@ -24,15 +24,6 @@ public abstract class BaseEntropyCountingRandom extends BaseRandom implements
   @Nullable
   private RandomSeederThread thread;
 
-  @Override
-  public ToStringHelper addSubclassFields(ToStringHelper original) {
-    return addSubSubclassFields(original
-        .add("entropyBits", entropyBits.get())
-        .add("thread", thread));
-  }
-
-  protected abstract ToStringHelper addSubSubclassFields(ToStringHelper original);
-
   @EnsuresNonNull("entropyBits")
   public BaseEntropyCountingRandom(int seedLength) throws SeedException {
     super(seedLength);
@@ -51,6 +42,15 @@ public abstract class BaseEntropyCountingRandom extends BaseRandom implements
     super(seed);
     assert entropyBits != null : "@AssumeAssertion(nullness)";
   }
+
+  @Override
+  public ToStringHelper addSubclassFields(ToStringHelper original) {
+    return addSubSubclassFields(original
+        .add("entropyBits", entropyBits.get())
+        .add("thread", thread));
+  }
+
+  protected abstract ToStringHelper addSubSubclassFields(ToStringHelper original);
 
   @SuppressWarnings("ObjectEquality")
   public void setSeederThread(RandomSeederThread thread) {
@@ -76,7 +76,8 @@ public abstract class BaseEntropyCountingRandom extends BaseRandom implements
   }
 
   @Override
-  public void setSeedInitial(@UnknownInitialization(Random.class) BaseEntropyCountingRandom this, byte[] seed) {
+  public void setSeedInitial(@UnknownInitialization(Random.class)BaseEntropyCountingRandom this,
+      byte[] seed) {
     super.setSeedInitial(seed);
     entropyBits = new AtomicLong(seed.length * 8);
   }
@@ -85,7 +86,7 @@ public abstract class BaseEntropyCountingRandom extends BaseRandom implements
     in.defaultReadObject();
     assert entropyBits != null : "@AssumeAssertion(nullness)";
   }
-  
+
   @Override
   public long entropyBits() {
     return entropyBits.get();

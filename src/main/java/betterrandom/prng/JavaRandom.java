@@ -20,19 +20,15 @@ import betterrandom.seed.DefaultSeedGenerator;
 import betterrandom.seed.SeedException;
 import betterrandom.seed.SeedGenerator;
 import betterrandom.util.BinaryUtils;
-import java.util.Arrays;
 import java.util.Random;
 
 /**
  * <p>This is the default {@link Random JDK RNG} extended to implement the {@link RepeatableRandom}
- * interface (for consistency with the other RNGs in this package).</p>
- *
- * <p>The {@link MersenneTwisterRandom} should be used in preference to this class because it is
- * statistically more random and performs slightly better.</p>
- *
- * <p><em>NOTE: Instances of this class do not use the seeding mechanism inherited from {@link
- * Random}.  Calls to the {@link #setSeed(long)} method will have no effect.  Instead the seed must
- * be set by a constructor.</em></p>
+ * interface (for consistency with the other RNGs in this package).</p> <p> <p>The {@link
+ * MersenneTwisterRandom} should be used in preference to this class because it is statistically
+ * more random and performs slightly better.</p> <p> <p><em>NOTE: Instances of this class do not use
+ * the seeding mechanism inherited from {@link Random}.  Calls to the {@link #setSeed(long)} method
+ * will have no effect.  Instead the seed must be set by a constructor.</em></p>
  *
  * @author Daniel Dyer
  */
@@ -54,7 +50,7 @@ public class JavaRandom extends Random implements RepeatableRandom {
    * Seed the RNG using the provided seed generation strategy.
    *
    * @param seedGenerator The seed generation strategy that will provide the seed value for this
-   * RNG.
+   *     RNG.
    * @throws SeedException If there is a problem generating a seed.
    */
   public JavaRandom(SeedGenerator seedGenerator) throws SeedException {
