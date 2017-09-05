@@ -117,13 +117,6 @@ public class CellularAutomatonRandom extends BaseEntropyCountingRandom implement
         + (cells[offset + 3] << 24);
   }
 
-  private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
-    in.defaultReadObject();
-    assert seed != null : "@AssumeAssertion(nullness)";
-    assert lock != null : "@AssumeAssertion(nullness)";
-    assert entropyBits != null : "@AssumeAssertion(nullness)";
-  }
-
   @EnsuresNonNull("cells")
   @RequiresNonNull({"seed"})
   private void copySeedToCellsAndPreEvolve(@UnknownInitialization CellularAutomatonRandom this) {
