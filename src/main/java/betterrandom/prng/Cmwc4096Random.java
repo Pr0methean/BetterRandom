@@ -53,8 +53,8 @@ public class Cmwc4096Random extends BaseEntropyCountingRandom implements Repeata
   private static final long serialVersionUID = 1731465909906078875L;
 
   private int[] state;
-  private int carry = 362436; // TO DO: This should be randomly generated.
-  private int index = 4095;
+  private int carry;
+  private int index;
 
   /**
    * Creates a new RNG and seeds it using the default seeding strategy.
@@ -112,6 +112,8 @@ public class Cmwc4096Random extends BaseEntropyCountingRandom implements Repeata
     }
     super.setSeedInitial(seed);
     state = BinaryUtils.convertBytesToInts(seed);
+    carry = 362436; // TODO: This should be randomly generated.
+    index = 4095;
   }
 
   /**

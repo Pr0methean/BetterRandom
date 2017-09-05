@@ -1,8 +1,12 @@
 package betterrandom.prng.adapter;
 
+import static betterrandom.prng.RandomTestUtils.serializeAndDeserialize;
+import static org.testng.Assert.assertEquals;
+
 import betterrandom.DeadlockWatchdogThread;
 import betterrandom.seed.SeedException;
 import org.testng.annotations.BeforeClass;
+import org.testng.annotations.Test;
 
 public class ReseedingSplittableRandomAdapterTest extends SingleThreadSplittableRandomAdapterTest {
 
@@ -14,5 +18,32 @@ public class ReseedingSplittableRandomAdapterTest extends SingleThreadSplittable
   @Override
   protected ReseedingSplittableRandomAdapter tryCreateRng() throws SeedException {
     return ReseedingSplittableRandomAdapter.getDefaultInstance();
+  }
+
+  @Override
+  @Test
+  public void testNullSeed() {
+    // No-op.
+  }
+
+  @Override
+  public void testSetSeed() {
+    // No-op.
+  }
+
+  @Override
+  public void testEquals() {
+    // No-op.
+  }
+
+  @Override
+  public void testRepeatability() {
+    // No-op.
+  }
+
+  @Override
+  public void testSerializable() throws SeedException {
+    ReseedingSplittableRandomAdapter adapter = tryCreateRng();
+    assertEquals(adapter, serializeAndDeserialize(adapter));
   }
 }
