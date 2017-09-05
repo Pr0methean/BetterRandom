@@ -4,7 +4,7 @@ import betterrandom.seed.SeedException;
 import java.security.NoSuchAlgorithmException;
 import javax.crypto.Cipher;
 
-public class AesCounterRandomTest384 extends AesCounterRandomTest256 {
+public class AesCounterRandom384Test extends AesCounterRandom256Test {
 
   private static final boolean UNLIMITED_STRENGTH_CRYPTO;
 

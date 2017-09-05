@@ -5,20 +5,10 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="8d34e3fe-111b-4f5b-b1bf-5875a1f8c255" name="Default" comment="">
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/pom.xml" afterPath="$PROJECT_DIR$/pom.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/betterrandom/prng/AesCounterRandom.java" afterPath="$PROJECT_DIR$/src/main/java/betterrandom/prng/AesCounterRandom.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/betterrandom/prng/BaseRandom.java" afterPath="$PROJECT_DIR$/src/main/java/betterrandom/prng/BaseRandom.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/betterrandom/prng/CellularAutomatonRandom.java" afterPath="$PROJECT_DIR$/src/main/java/betterrandom/prng/CellularAutomatonRandom.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/betterrandom/prng/Cmwc4096Random.java" afterPath="$PROJECT_DIR$/src/main/java/betterrandom/prng/Cmwc4096Random.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/betterrandom/prng/JavaRandom.java" afterPath="$PROJECT_DIR$/src/main/java/betterrandom/prng/JavaRandom.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/betterrandom/prng/MersenneTwisterRandom.java" afterPath="$PROJECT_DIR$/src/main/java/betterrandom/prng/MersenneTwisterRandom.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/betterrandom/prng/XorShiftRandom.java" afterPath="$PROJECT_DIR$/src/main/java/betterrandom/prng/XorShiftRandom.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/betterrandom/seed/SecureRandomSeedGenerator.java" afterPath="$PROJECT_DIR$/src/main/java/betterrandom/seed/SecureRandomSeedGenerator.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/betterrandom/util/LooperThread.java" afterPath="$PROJECT_DIR$/src/main/java/betterrandom/util/LooperThread.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/test/java/betterrandom/prng/AesCounterRandomTest160.java" afterPath="$PROJECT_DIR$/src/test/java/betterrandom/prng/AesCounterRandomTest160.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/test/java/betterrandom/prng/AesCounterRandomTest384.java" afterPath="$PROJECT_DIR$/src/test/java/betterrandom/prng/AesCounterRandomTest384.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/test/java/betterrandom/prng/adapter/ReseedingSplittableRandomAdapterTest.java" afterPath="$PROJECT_DIR$/src/test/java/betterrandom/prng/adapter/ReseedingSplittableRandomAdapterTest.java" />
+      <change type="MOVED" beforePath="$PROJECT_DIR$/src/test/java/betterrandom/prng/AesCounterRandomTest128.java" afterPath="$PROJECT_DIR$/src/test/java/betterrandom/prng/AesCounterRandom128Test.java" />
+      <change type="MOVED" beforePath="$PROJECT_DIR$/src/test/java/betterrandom/prng/AesCounterRandomTest160.java" afterPath="$PROJECT_DIR$/src/test/java/betterrandom/prng/AesCounterRandom160Test.java" />
+      <change type="MOVED" beforePath="$PROJECT_DIR$/src/test/java/betterrandom/prng/AesCounterRandomTest256.java" afterPath="$PROJECT_DIR$/src/test/java/betterrandom/prng/AesCounterRandom256Test.java" />
+      <change type="MOVED" beforePath="$PROJECT_DIR$/src/test/java/betterrandom/prng/AesCounterRandomTest384.java" afterPath="$PROJECT_DIR$/src/test/java/betterrandom/prng/AesCounterRandom384Test.java" />
     </list>
     <ignored path="$PROJECT_DIR$/out/" />
     <ignored path="$PROJECT_DIR$/target/" />
@@ -104,8 +94,8 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="AesCounterRandomTest128.java" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/test/java/betterrandom/prng/AesCounterRandomTest128.java">
+      <file leaf-file-name="AesCounterRandom128Test.java" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/test/java/betterrandom/prng/AesCounterRandom128Test.java">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="-92">
               <caret line="70" column="2" lean-forward="false" selection-start-line="70" selection-start-column="2" selection-end-line="70" selection-end-column="2" />
@@ -116,8 +106,8 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="AesCounterRandomTest256.java" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/test/java/betterrandom/prng/AesCounterRandomTest256.java">
+      <file leaf-file-name="AesCounterRandom256Test.java" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/test/java/betterrandom/prng/AesCounterRandom256Test.java">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="46">
               <caret line="6" column="0" lean-forward="false" selection-start-line="6" selection-start-column="0" selection-end-line="13" selection-end-column="3" />
@@ -126,8 +116,8 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="AesCounterRandomTest160.java" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/test/java/betterrandom/prng/AesCounterRandomTest160.java">
+      <file leaf-file-name="AesCounterRandom160Test.java" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/test/java/betterrandom/prng/AesCounterRandom160Test.java">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="160">
               <caret line="9" column="36" lean-forward="false" selection-start-line="9" selection-start-column="36" selection-end-line="9" selection-end-column="36" />
@@ -136,8 +126,8 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="AesCounterRandomTest384.java" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/test/java/betterrandom/prng/AesCounterRandomTest384.java">
+      <file leaf-file-name="AesCounterRandom384Test.java" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/test/java/betterrandom/prng/AesCounterRandom384Test.java">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="160">
               <caret line="14" column="36" lean-forward="false" selection-start-line="14" selection-start-column="36" selection-end-line="14" selection-end-column="36" />
@@ -336,6 +326,41 @@
               <item name="BetterRandom" type="b2602c69:ProjectViewProjectNode" />
               <item name="BetterRandom" type="462c0819:PsiDirectoryNode" />
             </path>
+            <path>
+              <item name="BetterRandom" type="b2602c69:ProjectViewProjectNode" />
+              <item name="BetterRandom" type="462c0819:PsiDirectoryNode" />
+              <item name="src" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="BetterRandom" type="b2602c69:ProjectViewProjectNode" />
+              <item name="BetterRandom" type="462c0819:PsiDirectoryNode" />
+              <item name="src" type="462c0819:PsiDirectoryNode" />
+              <item name="test" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="BetterRandom" type="b2602c69:ProjectViewProjectNode" />
+              <item name="BetterRandom" type="462c0819:PsiDirectoryNode" />
+              <item name="src" type="462c0819:PsiDirectoryNode" />
+              <item name="test" type="462c0819:PsiDirectoryNode" />
+              <item name="java" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="BetterRandom" type="b2602c69:ProjectViewProjectNode" />
+              <item name="BetterRandom" type="462c0819:PsiDirectoryNode" />
+              <item name="src" type="462c0819:PsiDirectoryNode" />
+              <item name="test" type="462c0819:PsiDirectoryNode" />
+              <item name="java" type="462c0819:PsiDirectoryNode" />
+              <item name="betterrandom" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="BetterRandom" type="b2602c69:ProjectViewProjectNode" />
+              <item name="BetterRandom" type="462c0819:PsiDirectoryNode" />
+              <item name="src" type="462c0819:PsiDirectoryNode" />
+              <item name="test" type="462c0819:PsiDirectoryNode" />
+              <item name="java" type="462c0819:PsiDirectoryNode" />
+              <item name="betterrandom" type="462c0819:PsiDirectoryNode" />
+              <item name="prng" type="462c0819:PsiDirectoryNode" />
+            </path>
           </expand>
           <select />
         </subPane>
@@ -405,8 +430,8 @@
       </list>
     </option>
   </component>
-  <component name="RunManager" selected="TestNG.AesCounterRandomTest160">
-    <configuration name="AesCounterRandomTest160" type="TestNG" factoryName="TestNG" temporary="true" nameIsGenerated="true">
+  <component name="RunManager" selected="TestNG.AesCounterRandom160Test">
+    <configuration name="AesCounterRandom160Test" type="TestNG" factoryName="TestNG" temporary="true" nameIsGenerated="true">
       <extension name="coverage" enabled="false" merge="false" sample_coverage="true" runner="idea">
         <pattern>
           <option name="PATTERN" value="betterrandom.prng.*" />
@@ -418,7 +443,7 @@
       <option name="ALTERNATIVE_JRE_PATH" />
       <option name="SUITE_NAME" />
       <option name="PACKAGE_NAME" value="betterrandom.prng" />
-      <option name="MAIN_CLASS_NAME" value="betterrandom.prng.AesCounterRandomTest160" />
+      <option name="MAIN_CLASS_NAME" value="betterrandom.prng.AesCounterRandom160Test" />
       <option name="METHOD_NAME" />
       <option name="GROUP_NAME" />
       <option name="TEST_OBJECT" value="CLASS" />
@@ -647,11 +672,11 @@
       <item index="1" class="java.lang.String" itemvalue="TestNG.betterrandom.prng.adapter" />
       <item index="2" class="java.lang.String" itemvalue="TestNG.SingleThreadSplittableRandomAdapterTest" />
       <item index="3" class="java.lang.String" itemvalue="TestNG.AesCounterRandomTest384 and 1 more" />
-      <item index="4" class="java.lang.String" itemvalue="TestNG.AesCounterRandomTest160" />
+      <item index="4" class="java.lang.String" itemvalue="TestNG.AesCounterRandom160Test" />
     </list>
     <recent_temporary>
       <list size="5">
-        <item index="0" class="java.lang.String" itemvalue="TestNG.AesCounterRandomTest160" />
+        <item index="0" class="java.lang.String" itemvalue="TestNG.AesCounterRandom160Test" />
         <item index="1" class="java.lang.String" itemvalue="TestNG.AesCounterRandomTest384 and 1 more" />
         <item index="2" class="java.lang.String" itemvalue="TestNG.SingleThreadSplittableRandomAdapterTest" />
         <item index="3" class="java.lang.String" itemvalue="TestNG.betterrandom.prng" />
@@ -1180,7 +1205,7 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/test/java/betterrandom/prng/AesCounterRandomTest128.java">
+    <entry file="file://$PROJECT_DIR$/src/test/java/betterrandom/prng/AesCounterRandom128Test.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="-92">
           <caret line="70" column="2" lean-forward="false" selection-start-line="70" selection-start-column="2" selection-end-line="70" selection-end-column="2" />
@@ -1190,7 +1215,7 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/test/java/betterrandom/prng/AesCounterRandomTest256.java">
+    <entry file="file://$PROJECT_DIR$/src/test/java/betterrandom/prng/AesCounterRandom256Test.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="46">
           <caret line="6" column="0" lean-forward="false" selection-start-line="6" selection-start-column="0" selection-end-line="13" selection-end-column="3" />
@@ -1198,7 +1223,7 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/test/java/betterrandom/prng/AesCounterRandomTest384.java">
+    <entry file="file://$PROJECT_DIR$/src/test/java/betterrandom/prng/AesCounterRandom384Test.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="160">
           <caret line="14" column="36" lean-forward="false" selection-start-line="14" selection-start-column="36" selection-end-line="14" selection-end-column="36" />
@@ -1208,7 +1233,7 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/test/java/betterrandom/prng/AesCounterRandomTest160.java">
+    <entry file="file://$PROJECT_DIR$/src/test/java/betterrandom/prng/AesCounterRandom160Test.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="160">
           <caret line="9" column="36" lean-forward="false" selection-start-line="9" selection-start-column="36" selection-end-line="9" selection-end-column="36" />
