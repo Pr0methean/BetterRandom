@@ -6,9 +6,11 @@ import betterrandom.util.BinaryUtils;
 import com.google.common.base.MoreObjects.ToStringHelper;
 import java.io.IOException;
 import java.io.ObjectInputStream;
+import java.util.Random;
 import java.util.SplittableRandom;
 import org.checkerframework.checker.initialization.qual.Initialized;
 import org.checkerframework.checker.initialization.qual.UnknownInitialization;
+import org.checkerframework.checker.nullness.qual.EnsuresNonNull;
 import org.checkerframework.checker.nullness.qual.RequiresNonNull;
 
 public class SingleThreadSplittableRandomAdapter extends DirectSplittableRandomAdapter {
@@ -38,8 +40,6 @@ public class SingleThreadSplittableRandomAdapter extends DirectSplittableRandomA
 
   private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
     in.defaultReadObject();
-    assert underlying != null : "@AssumeAssertion(nullness)";
-    assert lock != null : "@AssumeAssertion(nullness)";
     setSeed(seed);
     if (!deserializedAndNotUsedSince) {
       underlying = underlying.split(); // Ensures we aren't rewinding
@@ -54,10 +54,11 @@ public class SingleThreadSplittableRandomAdapter extends DirectSplittableRandomA
     this.seed = BinaryUtils.convertLongToBytes(seed);
   }
 
+  @EnsuresNonNull({"underlying", "this.seed"})
   @Override
-  public void setSeed(byte[] seed) {
-    assert lock != null : "@AssumeAssertion(nullness)";
+  public void setSeedInitial(
+      @UnknownInitialization(Random.class) SingleThreadSplittableRandomAdapter this, byte[] seed) {
     underlying = new SplittableRandom(BinaryUtils.convertBytesToLong(seed, 0));
-    super.setSeed(seed);
+    super.setSeedInitial(seed);
   }
 }
