@@ -70,11 +70,6 @@ public class AesCounterRandomTest128 extends BaseEntropyCountingRandomTest {
         "Shouldn't allow a key longer than 32 bytes";
   }
 
-  @Test(timeOut = 15000, expectedExceptions = IllegalArgumentException.class)
-  public void testSeedTooLong() throws GeneralSecurityException, SeedException {
-    new AesCounterRandom(49); // Should throw an exception.
-  }
-
   @Override
   protected BaseEntropyCountingRandom tryCreateRng() throws SeedException {
     return new AesCounterRandom(16);
