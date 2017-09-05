@@ -19,9 +19,7 @@ import static org.testng.Assert.assertTrue;
 
 import betterrandom.seed.SeedException;
 import betterrandom.util.LogPreFormatter;
-import java.security.GeneralSecurityException;
 import java.util.Random;
-import org.checkerframework.checker.nullness.qual.Nullable;
 import org.testng.annotations.Test;
 
 /**
