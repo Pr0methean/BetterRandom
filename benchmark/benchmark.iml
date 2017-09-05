@@ -12,7 +12,7 @@
     <orderEntry type="library" name="Maven: org.openjdk.jmh:jmh-core:1.19" level="project" />
     <orderEntry type="library" name="Maven: net.sf.jopt-simple:jopt-simple:4.6" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="Maven: org.openjdk.jmh:jmh-generator-annprocess:1.19" level="project" />
-    <orderEntry type="module" module-name="BetterRandom" />
+    <orderEntry type="library" name="Maven: io.github.pr0methean.betterrandom:BetterRandom:0.9.1.1" level="project" />
     <orderEntry type="library" scope="TEST" name="Maven: org.testng:testng:6.11" level="project" />
     <orderEntry type="library" scope="TEST" name="Maven: com.beust:jcommander:1.64" level="project" />
     <orderEntry type="library" scope="TEST" name="Maven: org.yaml:snakeyaml:1.17" level="project" />
