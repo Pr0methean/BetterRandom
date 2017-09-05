@@ -174,11 +174,6 @@ public class SingleThreadSplittableRandomAdapterTest extends BaseRandomTest {
   }
 
   @Override
-  public void testSetSeed() {
-    // No-op.
-  }
-
-  @Override
   public void testEquals() {
     // No-op.
   }
