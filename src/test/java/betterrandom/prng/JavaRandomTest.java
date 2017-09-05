@@ -70,7 +70,13 @@ public class JavaRandomTest {
 
   @Test(timeOut = 60000)
   public void testHashCode() throws Exception {
-    assert RandomTestUtils.testHashCodeDistribution(JavaRandom.class.getConstructor())
+    assert RandomTestUtils.testHashCodeDistribution(() -> {
+      try {
+        return new JavaRandom();
+      } catch (SeedException e) {
+        throw new RuntimeException(e);
+      }
+    })
         : "Too many hashCode collisions";
   }
 
