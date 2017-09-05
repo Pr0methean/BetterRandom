@@ -23,7 +23,6 @@ import java.util.concurrent.locks.Condition;
 import org.checkerframework.checker.initialization.qual.UnderInitialization;
 import org.checkerframework.checker.nullness.qual.EnsuresNonNull;
 import org.checkerframework.checker.nullness.qual.RequiresNonNull;
-import org.jetbrains.annotations.NotNull;
 
 @SuppressWarnings("ClassExplicitlyExtendsThread")
 public final class RandomSeederThread extends LooperThread {
@@ -37,6 +36,7 @@ public final class RandomSeederThread extends LooperThread {
    * EntropyCountingRandom} and none has spent its entropy.
    */
   private static final long POLL_INTERVAL_MS = 1000;
+  private static final long serialVersionUID = 5229976461051217528L;
   private final SeedGenerator seedGenerator;
   private final byte[] seedArray = new byte[8];
   private transient Set<Random> prngs;
@@ -64,14 +64,15 @@ public final class RandomSeederThread extends LooperThread {
     waitForEntropyDrain = lock.newCondition();
   }
 
-  private Object readResolve() {
+  @Override
+  protected Object readResolve() {
     return getInstance(seedGenerator);
   }
 
-  private void readObject(@UnderInitialization RandomSeederThread this,
-      ObjectInputStream in) throws IOException, ClassNotFoundException {
+  private void readObject(@UnderInitialization RandomSeederThread this, ObjectInputStream in)
+      throws IOException, ClassNotFoundException {
     in.defaultReadObject();
-    assert lock != null : "@AssumeAssertion(nullness)";
+    assert lock != null : "@AssumeAssertion(nullness)"; // WTF Checker Framework?!
     initTransientFields();
     if (!prngsSerial.isEmpty()) {
       synchronized (prngs) {

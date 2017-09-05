@@ -9,6 +9,7 @@ import java.io.Serializable;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 import org.checkerframework.checker.initialization.qual.UnderInitialization;
+import org.checkerframework.checker.nullness.qual.MonotonicNonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 
 /**
@@ -32,14 +33,17 @@ import org.checkerframework.checker.nullness.qual.Nullable;
 public class LooperThread extends Thread implements Serializable, Cloneable {
 
   private static final LogPreFormatter LOG = new LogPreFormatter(LooperThread.class);
+  private static final long serialVersionUID = -4387051967625864310L;
 
   private static class ThreadDeathAlreadyHandled extends ThreadDeath {
 
+    private static final long serialVersionUID = 1433257085225877245L;
   }
 
   private static class UncaughtExceptionHandlerWrapper
       implements UncaughtExceptionHandler, Serializable {
 
+    private static final long serialVersionUID = -132520277274461153L;
     @Nullable
     private UncaughtExceptionHandler wrapped = null;
 
@@ -74,6 +78,7 @@ public class LooperThread extends Thread implements Serializable, Cloneable {
    */
   protected transient Lock lock = new ReentrantLock();
 
+  @SuppressWarnings("InstanceVariableMayNotBeInitializedByReadObject")
   private transient boolean alreadyTerminatedWhenDeserialized = false;
   private boolean interrupted = false;
   private boolean daemon = false;
@@ -85,10 +90,10 @@ public class LooperThread extends Thread implements Serializable, Cloneable {
       new UncaughtExceptionHandlerWrapper();
   @Nullable
   private ClassLoader contextClassLoader = null;
-  @Nullable
+  @MonotonicNonNull
   private String name = null;
 
-  private void setGroup(@UnderInitialization LooperThread this, ThreadGroup group) {
+  private void setGroup(@UnderInitialization LooperThread this, @org.jetbrains.annotations.Nullable ThreadGroup group) {
     if (uncaughtExceptionHandler.wrapped == null) {
       uncaughtExceptionHandler.wrapped = group;
     }
@@ -130,10 +135,13 @@ public class LooperThread extends Thread implements Serializable, Cloneable {
    * @return A LooperThread that will replace this one during deserialization.
    */
   @SuppressWarnings("deprecation")
-  private Object readResolve() {
+  protected Object readResolve() {
     LooperThread t;
+    ThreadGroup group = this.group;
     if (group != null) {
-      assert name != null : "@AssumeAssertion(nullness)";
+      if (name == null) {
+        name = getName();
+      }
       t = new LooperThread(group, name);
     } else {
       if (name == null) {

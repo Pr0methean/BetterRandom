@@ -87,10 +87,4 @@ public class JavaRandom extends Random implements RepeatableRandom {
   public byte[] getSeed() {
     return seed.clone();
   }
-
-  @Override
-  public boolean equals(Object other) {
-    return other instanceof JavaRandom
-        && Arrays.equals(seed, ((JavaRandom) other).seed);
-  }
 }
