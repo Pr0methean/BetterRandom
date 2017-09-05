@@ -43,6 +43,7 @@ public abstract class BaseRandom extends Random implements ByteArrayReseedableRa
   public BaseRandom(int seedLength) throws SeedException {
     this(DefaultSeedGenerator.DEFAULT_SEED_GENERATOR.generateSeed(seedLength));
   }
+
   /**
    * Seed the RNG using the provided seed generation strategy.
    *
@@ -90,6 +91,15 @@ public abstract class BaseRandom extends Random implements ByteArrayReseedableRa
     }
   }
 
+  @Override
+  public synchronized void setSeed(@UnknownInitialization(Random.class)BaseRandom this,
+      long seed) {
+    ByteBuffer buffer = ByteBuffer.allocate(8);
+    buffer.putLong(seed);
+    byte[] array = buffer.array();
+    setSeedMaybeInitial(array);
+  }
+
   @EnsuresNonNull("this.seed")
   @Override
   public void setSeed(byte[] seed) {
@@ -99,15 +109,6 @@ public abstract class BaseRandom extends Random implements ByteArrayReseedableRa
     } finally {
       lock.unlock();
     }
-  }
-
-  @Override
-  public synchronized void setSeed(@UnknownInitialization(Random.class)BaseRandom this,
-      long seed) {
-    ByteBuffer buffer = ByteBuffer.allocate(8);
-    buffer.putLong(seed);
-    byte[] array = buffer.array();
-    setSeedMaybeInitial(array);
   }
 
   @SuppressWarnings("method.invocation.invalid")

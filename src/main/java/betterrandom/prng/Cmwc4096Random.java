@@ -30,13 +30,10 @@ import org.checkerframework.checker.nullness.qual.EnsuresNonNull;
  * <p>A Java version of George Marsaglia's <a href="http://school.anhb.uwa.edu.au/personalpages/kwessen/shared/Marsaglia03.html">Complementary
  * Multiply With Carry (CMWC) RNG</a>. This is a very fast PRNG with an extremely long period
  * (2^131104).  It should be used in preference to the {@link MersenneTwisterRandom} when a very
- * long period is required.</p>
- * <p>
- * <p>One potential drawback of this RNG is that it requires significantly more seed data than the
- * other RNGs provided by Uncommons Maths.  It requires just over 16 kilobytes, which may be a
- * problem if your are obtaining seed data from a slow or limited entropy source. In contrast, the
- * Mersenne Twister requires only 128 bits of seed data.</p>
- * <p>
+ * long period is required.</p> <p> <p>One potential drawback of this RNG is that it requires
+ * significantly more seed data than the other RNGs provided by Uncommons Maths.  It requires just
+ * over 16 kilobytes, which may be a problem if your are obtaining seed data from a slow or limited
+ * entropy source. In contrast, the Mersenne Twister requires only 128 bits of seed data.</p> <p>
  * <p><em>NOTE: Because instances of this class require 16-kilobyte seeds, it is not possible to
  * seed this RNG using the {@link #setSeed(long)} method inherited from {@link Random}.  Calls to
  * this method will have no effect. Instead the seed must be set by a constructor.</em></p>
