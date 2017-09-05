@@ -47,16 +47,6 @@ public class SingleThreadSplittableRandomAdapterTest extends BaseRandomTest {
   }
 
   @Test
-  public void testMonteCarloPi() throws Exception {
-    assertMonteCarloPiEstimateSane(tryCreateRng());
-  }
-
-  @Test
-  public void testSetSeed1() throws Exception {
-    // TODO
-  }
-
-  @Test
   public void testNext() throws Exception {
     // TODO
   }
