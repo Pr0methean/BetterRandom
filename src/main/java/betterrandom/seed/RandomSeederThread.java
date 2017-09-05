@@ -72,7 +72,6 @@ public final class RandomSeederThread extends LooperThread {
       ObjectInputStream in) throws IOException, ClassNotFoundException {
     in.defaultReadObject();
     assert lock != null : "@AssumeAssertion(nullness)";
-    assert prngsSerial != null : "@AssumeAssertion(nullness)";
     initTransientFields();
     if (!prngsSerial.isEmpty()) {
       synchronized (prngs) {

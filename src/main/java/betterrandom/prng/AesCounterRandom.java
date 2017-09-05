@@ -148,11 +148,9 @@ public class AesCounterRandom extends BaseEntropyCountingRandom implements Repea
    */
   public AesCounterRandom(byte[] seed) {
     super(seed);
-    assert cipher != null : "@AssumeAssertion(nullness)";
-    assert counter != null : "@AssumeAssertion(nullness)";
-    assert counterInput != null : "@AssumeAssertion(nullness)";
     currentBlock = new byte[COUNTER_SIZE_BYTES * BLOCKS_AT_ONCE];
     index = currentBlock.length; // force generation of first block on demand
+    initTransientFields();
     setSeedInitial(seed);
   }
 
@@ -167,9 +165,6 @@ public class AesCounterRandom extends BaseEntropyCountingRandom implements Repea
 
   private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
     in.defaultReadObject();
-    assert seed != null : "@AssumeAssertion(nullness)";
-    assert lock != null : "@AssumeAssertion(nullness)";
-    assert entropyBits != null : "@AssumeAssertion(nullness)";
     initTransientFields();
     setSeedInitial(seed);
   }
@@ -256,10 +251,6 @@ public class AesCounterRandom extends BaseEntropyCountingRandom implements Repea
 
   @Override
   public void setSeed(byte[] seed) {
-    assert lock != null : "@AssumeAssertion(nullness)";
-    assert cipher != null : "@AssumeAssertion(nullness)";
-    assert counter != null : "@AssumeAssertion(nullness)";
-    assert entropyBits != null : "@AssumeAssertion(nullness)";
     if (seed.length > MAX_TOTAL_SEED_LENGTH_BYTES) {
       throw new IllegalArgumentException(
           "Seed too long: maximum " + MAX_TOTAL_SEED_LENGTH_BYTES + " bytes");
@@ -280,7 +271,6 @@ public class AesCounterRandom extends BaseEntropyCountingRandom implements Repea
         if (!weAreSeeded) {
           key = input.clone();
         } else {
-          assert this.seed != null : "@AssumeAssertion(nullness)";
           // Extend the key
           byte[] newSeed = new byte[this.seed.length + input.length];
           System.arraycopy(this.seed, 0, newSeed, 0, this.seed.length);
@@ -315,6 +305,7 @@ public class AesCounterRandom extends BaseEntropyCountingRandom implements Repea
     } // Otherwise ignore; it's Random.<init> calling us without a full-size seed
   }
 
+  @EnsuresNonNull({"cipher", "counter", "this.seed"})
   @Override
   public void setSeedInitial(@UnknownInitialization(Random.class) AesCounterRandom this, byte[] seed) {
     super.setSeedInitial(seed);
