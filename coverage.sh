@@ -1,7 +1,5 @@
 #!/bin/sh
-mvn jacoco:prepare-agent -pl betterrandom &&\
-mvn test -pl betterrandom &&\
-mvn jacoco:report -pl betterrandom &&\
+mvn -pl betterrandom jacoco:prepare-agent test jacoco:report &&\
 if [ "$TRAVIS" = "true" ]; then
-  mvn coveralls:report -pl betterrandom
+  mvn -pl betterrandom coveralls:report
 fi
