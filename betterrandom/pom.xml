@@ -265,6 +265,7 @@
               <option>-keepnames public class *</option>
               <option>-keepclassmembernames public class * { public &lt;methods&gt;; public &lt;fields&gt;; protected &lt;methods&gt;; protected &lt;fields&gt;; }
               </option>
+              <option>-dontwarn java.lang.invoke**</option>
             </options>
             <libs>
               <lib>${java.home}/lib/rt.jar</lib>
