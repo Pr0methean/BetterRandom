@@ -7,7 +7,7 @@ import org.checkerframework.checker.initialization.qual.UnknownInitialization;
 
 public class AesCounterRandom128Benchmark extends AbstractRandomBenchmark {
 
-  protected AesCounterRandom128Benchmark() throws SeedException {
+  public AesCounterRandom128Benchmark() {
   }
 
   @Override
