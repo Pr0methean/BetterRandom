@@ -15,6 +15,8 @@
 // ============================================================================
 package io.github.pr0methean.betterrandom.prng;
 
+import static org.checkerframework.checker.nullness.NullnessUtil.castNonNull;
+
 import io.github.pr0methean.betterrandom.RepeatableRandom;
 import io.github.pr0methean.betterrandom.seed.DefaultSeedGenerator;
 import io.github.pr0methean.betterrandom.seed.SeedException;
@@ -294,7 +296,7 @@ public class AesCounterRandom extends BaseEntropyCountingRandom implements Repea
     } catch (NoSuchAlgorithmException e) {
       throw new RuntimeException(e);
     }
-    assert this.seed != null : "@AssumeAssertion(nullness)";
+    this.seed = castNonNull(this.seed);
   }
 
   @Override
