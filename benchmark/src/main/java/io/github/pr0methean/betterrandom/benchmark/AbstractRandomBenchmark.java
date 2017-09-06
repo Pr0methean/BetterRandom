@@ -39,8 +39,30 @@ import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 import org.checkerframework.checker.initialization.qual.UnknownInitialization;
 import org.openjdk.jmh.annotations.Benchmark;
+import org.openjdk.jmh.annotations.Scope;
+import org.openjdk.jmh.annotations.State;
 
 public abstract class AbstractRandomBenchmark {
+
+  @State(Scope.Thread)
+  private static class PrngState {
+    public final Random prng = createPrng();
+  }
+
+  @State(Scope.Thread)
+  private static class ReseedingPrngState extends PrngState implements AutoCloseable {
+    public ReseedingPrngState() {
+      seederThread.add(prng);
+    }
+    @Override
+    public void close() {
+      seederThread.remove(prng);
+    }
+    @Override
+    protected void finalize() {
+      close();
+    }
+  }
 
   public AbstractRandomBenchmark() {}
 
@@ -59,34 +81,28 @@ public abstract class AbstractRandomBenchmark {
   }
 
   @Benchmark
-  public void testBytesSequential() throws SeedException {
-    innerTestBytesSequential(createPrng());
+  public void testBytesSequential(PrngState state) throws SeedException {
+    innerTestBytesSequential(state.prng);
   }
 
   @Benchmark
-  public void testBytesSequentialReseeding() throws SeedException {
-    Random prng = createPrng();
-    seederThread.add(prng);
-    innerTestBytesSequential(prng);
-    seederThread.remove(prng);
+  public void testBytesSequentialReseeding(ReseedingPrngState state) throws SeedException {
+    innerTestBytesSequential(state.prng);
   }
 
-  private void innerTestBytesParallel(Random prng) throws SeedException, InterruptedException {
+  private void innerTestBytesContended(Random prng) throws SeedException, InterruptedException {
     for (byte[] bytes : lotsOfBytes) {
       executor.execute(() -> prng.nextBytes(bytes));
     }
     assert executor.awaitTermination(1800, TimeUnit.SECONDS) : "Timed out";
   }
   @Benchmark
-  public void testBytesParallel() throws SeedException, InterruptedException {
-    innerTestBytesParallel(createPrng());
+  public void testBytesContended(PrngState state) throws SeedException, InterruptedException {
+    innerTestBytesContended(state.prng);
   }
 
   @Benchmark
-  public void testBytesParallelReseeding() throws SeedException, InterruptedException {
-    Random prng = createPrng();
-    seederThread.add(prng);
-    innerTestBytesParallel(prng);
-    seederThread.remove(prng);
+  public void testBytesContendedReseeding(ReseedingPrngState state) throws SeedException, InterruptedException {
+    innerTestBytesContended(state.prng);
   }
 }
