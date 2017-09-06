@@ -265,6 +265,7 @@
               <option>-keepnames public class *</option>
               <option>-keepclassmembernames public class * { public &lt;methods&gt;; public &lt;fields&gt;; protected &lt;methods&gt;; protected &lt;fields&gt;; }
               </option>
+              <option>-assumenosideeffects org.checkerframework.checker.nullness.NullnessUtil</option>
               <option>-dontwarn java.lang.invoke**</option>
             </options>
             <libs>
