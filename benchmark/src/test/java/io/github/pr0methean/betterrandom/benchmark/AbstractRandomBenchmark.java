@@ -46,7 +46,7 @@ public abstract class AbstractRandomBenchmark {
 
   protected final static RandomSeederThread seederThread = RandomSeederThread.getInstance(
       DefaultSeedGenerator.DEFAULT_SEED_GENERATOR);
-  protected final static byte[][] lotsOfBytes = new byte[10][1_000_000];
+  protected final static byte[][] lotsOfBytes = new byte[10][10_000];
   protected final static ScheduledThreadPoolExecutor executor = new ScheduledThreadPoolExecutor(10);
 
   protected abstract Random createPrng(@UnknownInitialization AbstractRandomBenchmark this)
