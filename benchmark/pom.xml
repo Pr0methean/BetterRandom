@@ -1,4 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!-- FIXME: Exception in thread "main" java.lang.RuntimeException: ERROR: Unable to find the
+    resource: /META-INF/BenchmarkList -->
 <!--
 Copyright (c) 2014, Oracle America, Inc.
 All rights reserved.
@@ -73,6 +75,7 @@ THE POSSIBILITY OF SUCH DAMAGE.
       <scope>provided</scope>
     </dependency>
     <dependency>
+      <!-- FIXME: Why can't we use an unreleased version from ../pom.xml? -->
       <artifactId>BetterRandom</artifactId>
       <groupId>io.github.pr0methean.betterrandom</groupId>
       <version>0.9.1.1</version>
