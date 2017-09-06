@@ -1,8 +1,8 @@
 #!/bin/sh
 cd betterrandom
-mvn -DskipTests clean install proguard:proguard && (
+mvn clean install proguard:proguard -DskipTests && (
     cd ../benchmark
-    mvn -DskipTests clean install
+    mvn clean install -DskipTests
     cd ..
     java -jar benchmark/target/benchmarks.jar 2>&1 |\
         tee benchmark/target/benchmark_results.txt) ||\
