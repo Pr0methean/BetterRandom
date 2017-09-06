@@ -1,12 +1,11 @@
 package io.github.pr0methean.betterrandom.prng.adapter;
 
 import static io.github.pr0methean.betterrandom.prng.RandomTestUtils.serializeAndDeserialize;
-import static io.github.pr0methean.betterrandom.seed.RandomDotOrgSeedGenerator.RANDOM_DOT_ORG_SEED_GENERATOR;
+import static io.github.pr0methean.betterrandom.seed.DefaultSeedGenerator.DEFAULT_SEED_GENERATOR;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotEquals;
 
-import io.github.pr0methean.betterrandom.seed.DevRandomSeedGenerator;
-import io.github.pr0methean.betterrandom.seed.SecureRandomSeedGenerator;
+import io.github.pr0methean.betterrandom.prng.FakeSeedGenerator;
 import io.github.pr0methean.betterrandom.seed.SeedException;
 import org.testng.annotations.Test;
 
@@ -57,14 +56,13 @@ public class ReseedingSplittableRandomAdapterTest extends SingleThreadSplittable
   @Override
   public void testDump() throws SeedException {
     assertNotEquals(
-        ReseedingSplittableRandomAdapter.getInstance(RANDOM_DOT_ORG_SEED_GENERATOR).dump(),
-        ReseedingSplittableRandomAdapter.getInstance(
-            SecureRandomSeedGenerator.SECURE_RANDOM_SEED_GENERATOR).dump());
+        ReseedingSplittableRandomAdapter.getInstance(DEFAULT_SEED_GENERATOR).dump(),
+        ReseedingSplittableRandomAdapter.getInstance(new FakeSeedGenerator()).dump());
   }
 
   @Test
   public void testFinalize() throws SeedException {
-    ReseedingSplittableRandomAdapter.getInstance(DevRandomSeedGenerator.DEV_RANDOM_SEED_GENERATOR);
+    ReseedingSplittableRandomAdapter.getInstance(new FakeSeedGenerator());
     Runtime.getRuntime().runFinalization();
   }
 }
