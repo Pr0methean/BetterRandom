@@ -4,6 +4,6 @@ mvn -DskipTests clean install proguard:proguard && (
     cd ../benchmark
     mvn -DskipTests clean install
     cd ..
-    java -jar benchmark/target/benchmarks.jar 2>&1 |\
+    java -jar benchmark/target/benchmarks.jar -foe true 2>&1 |\
         tee ./benchmark/target/benchmark_results.txt) ||\
 cd ..
