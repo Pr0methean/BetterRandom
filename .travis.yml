@@ -9,6 +9,7 @@ jdk:
 env:
   - MODE=coverage
   - MODE=test-proguard
+  - MODE=benchmark
 matrix:
   allow_failures:
     - jdk: oraclejdk9 # Currently doesn't set JAVA_HOME correctly for Maven
