@@ -58,8 +58,8 @@ public final class SplittableRandomReseeder {
   public static SplittableRandom reseed(@Nullable SplittableRandom original, long seed) {
     if (CAN_RESEED_REFLECTIVELY && PUT_LONG_VOLATILE != null && original != null) {
       try {
-        PUT_LONG_VOLATILE.invoke(original, SEED_FIELD_OFFSET, seed);
-        PUT_LONG_VOLATILE.invoke(original, GAMMA_FIELD_OFFSET, GOLDEN_GAMMA);
+        PUT_LONG_VOLATILE.invokeExact(original, SEED_FIELD_OFFSET, seed);
+        PUT_LONG_VOLATILE.invokeExact(original, GAMMA_FIELD_OFFSET, GOLDEN_GAMMA);
         return original;
       } catch (Throwable throwable) {
         throw new RuntimeException(throwable);
