@@ -38,6 +38,7 @@ import java.util.Random;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 import org.checkerframework.checker.initialization.qual.UnknownInitialization;
 import org.openjdk.jmh.annotations.Benchmark;
+import org.openjdk.jmh.annotations.State;
 
 public abstract class AbstractRandomBenchmark {
 
