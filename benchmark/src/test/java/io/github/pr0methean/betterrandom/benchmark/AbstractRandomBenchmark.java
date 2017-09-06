@@ -38,52 +38,53 @@ import java.util.Random;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 import org.checkerframework.checker.initialization.qual.UnknownInitialization;
 import org.openjdk.jmh.annotations.Benchmark;
-import org.openjdk.jmh.annotations.State;
 
 public abstract class AbstractRandomBenchmark {
 
-  protected final RandomSeederThread seederThread = RandomSeederThread.getInstance(
-      DefaultSeedGenerator.DEFAULT_SEED_GENERATOR);
-  protected final byte[][] lotsOfBytes = new byte[10][1_000_000];
-  protected final ScheduledThreadPoolExecutor executor = new ScheduledThreadPoolExecutor(10);
-  protected final Random prng;
+  public AbstractRandomBenchmark() {}
 
-  protected AbstractRandomBenchmark() {
-    try {
-      prng = createPrng();
-    } catch (SeedException e) {
-      throw new RuntimeException(e);
-    }
-  }
+  protected final static RandomSeederThread seederThread = RandomSeederThread.getInstance(
+      DefaultSeedGenerator.DEFAULT_SEED_GENERATOR);
+  protected final static byte[][] lotsOfBytes = new byte[10][1_000_000];
+  protected final static ScheduledThreadPoolExecutor executor = new ScheduledThreadPoolExecutor(10);
 
   protected abstract Random createPrng(@UnknownInitialization AbstractRandomBenchmark this)
       throws SeedException;
 
-  @Benchmark
-  public void testBytesSequential() {
+  private void innerTestBytesSequential(Random prng) {
     for (byte[] bytes : lotsOfBytes) {
       prng.nextBytes(bytes);
     }
   }
 
   @Benchmark
-  public void testBytesSequentialReseeding() {
-    seederThread.add(prng);
-    testBytesSequential();
-    seederThread.remove(prng);
+  public void testBytesSequential() throws SeedException {
+    innerTestBytesSequential(createPrng());
   }
 
   @Benchmark
-  public void testBytesParallel() {
+  public void testBytesSequentialReseeding() throws SeedException {
+    Random prng = createPrng();
+    seederThread.add(prng);
+    innerTestBytesSequential(prng);
+    seederThread.remove(prng);
+  }
+
+  private void innerTestBytesParallel(Random prng) throws SeedException {
     for (byte[] bytes : lotsOfBytes) {
       executor.execute(() -> prng.nextBytes(bytes));
     }
   }
+  @Benchmark
+  public void testBytesParallel() throws SeedException {
+    innerTestBytesParallel(createPrng());
+  }
 
   @Benchmark
-  public void testBytesParallelReseeding() {
+  public void testBytesParallelReseeding() throws SeedException {
+    Random prng = createPrng();
     seederThread.add(prng);
-    testBytesParallel();
+    innerTestBytesParallel(prng);
     seederThread.remove(prng);
   }
 }
