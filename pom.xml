@@ -7,6 +7,6 @@
     <packaging>pom</packaging>
     <modules>
         <module>betterrandom</module>
-        <module>benchmark</module>
+        <!--<module>benchmark</module>-->
     </modules>
 </project>
