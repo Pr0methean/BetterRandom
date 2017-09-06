@@ -36,6 +36,7 @@ import io.github.pr0methean.betterrandom.seed.RandomSeederThread;
 import io.github.pr0methean.betterrandom.seed.SeedException;
 import java.util.Random;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 import org.checkerframework.checker.initialization.qual.UnknownInitialization;
 import org.openjdk.jmh.annotations.Benchmark;
 
@@ -70,18 +71,19 @@ public abstract class AbstractRandomBenchmark {
     seederThread.remove(prng);
   }
 
-  private void innerTestBytesParallel(Random prng) throws SeedException {
+  private void innerTestBytesParallel(Random prng) throws SeedException, InterruptedException {
     for (byte[] bytes : lotsOfBytes) {
       executor.execute(() -> prng.nextBytes(bytes));
     }
+    executor.awaitTermination(1800, TimeUnit.SECONDS);
   }
   @Benchmark
-  public void testBytesParallel() throws SeedException {
+  public void testBytesParallel() throws SeedException, InterruptedException {
     innerTestBytesParallel(createPrng());
   }
 
   @Benchmark
-  public void testBytesParallelReseeding() throws SeedException {
+  public void testBytesParallelReseeding() throws SeedException, InterruptedException {
     Random prng = createPrng();
     seederThread.add(prng);
     innerTestBytesParallel(prng);
