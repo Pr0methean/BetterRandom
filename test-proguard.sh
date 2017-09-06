@@ -1,2 +1,4 @@
 #!/bin/sh
-mvn -pl betterrandom clean -pl betterrandom package -pl betterrandom proguard:proguard -pl betterrandom test
+cd betterrandom
+mvn clean package proguard:proguard test
+cd ..
