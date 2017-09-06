@@ -17,6 +17,7 @@ import org.objenesis.ObjenesisStd;
  * support reseeding through its public API, this is the only way a {@link
  * ReseedingSplittableRandomAdapter} can avoid a ridiculous load on the garbage collector.
  */
+@SuppressWarnings("argument.type.incompatible") // Field.get(null) is OK when the field is static!
 public final class SplittableRandomReseeder {
   private static final LogPreFormatter LOG = new LogPreFormatter(SplittableRandomReseeder.class);
   private static final Objenesis OBJENESIS = new ObjenesisStd();
@@ -54,7 +55,7 @@ public final class SplittableRandomReseeder {
   }
 
   public static SplittableRandom reseed(SplittableRandom original, long seed) {
-    if (CAN_RESEED_REFLECTIVELY) {
+    if (CAN_RESEED_REFLECTIVELY && PUT_VOLATILE_LONG != null) {
       try {
         PUT_VOLATILE_LONG.invoke(original, SEED_FIELD_OFFSET, seed);
         PUT_VOLATILE_LONG.invoke(original, GAMMA_FIELD_OFFSET, GOLDEN_GAMMA);
