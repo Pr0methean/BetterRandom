@@ -1,4 +1,5 @@
 #!/bin/sh
 cd betterrandom
-mvn clean package proguard:proguard test
+mvn -DskipTests clean package proguard:proguard
+mvn test
 cd ..
