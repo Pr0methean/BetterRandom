@@ -45,7 +45,7 @@ import org.openjdk.jmh.annotations.State;
 public abstract class AbstractRandomBenchmark {
 
   @State(Scope.Thread)
-  private class PrngState {
+  public class PrngState {
     public final Random prng = createPrng();
 
     public PrngState() throws SeedException {
@@ -53,7 +53,7 @@ public abstract class AbstractRandomBenchmark {
   }
 
   @State(Scope.Thread)
-  private class ReseedingPrngState extends PrngState implements AutoCloseable {
+  public class ReseedingPrngState extends PrngState implements AutoCloseable {
     public ReseedingPrngState() throws SeedException {
       seederThread.add(prng);
     }
