@@ -75,7 +75,7 @@ public abstract class AbstractRandomBenchmark {
     for (byte[] bytes : lotsOfBytes) {
       executor.execute(() -> prng.nextBytes(bytes));
     }
-    executor.awaitTermination(1800, TimeUnit.SECONDS);
+    assert executor.awaitTermination(1800, TimeUnit.SECONDS) : "Timed out";
   }
   @Benchmark
   public void testBytesParallel() throws SeedException, InterruptedException {
