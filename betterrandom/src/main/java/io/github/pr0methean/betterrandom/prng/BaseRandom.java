@@ -1,5 +1,7 @@
 package io.github.pr0methean.betterrandom.prng;
 
+import static org.checkerframework.checker.nullness.NullnessUtil.castNonNull;
+
 import io.github.pr0methean.betterrandom.ByteArrayReseedableRandom;
 import io.github.pr0methean.betterrandom.RepeatableRandom;
 import io.github.pr0methean.betterrandom.seed.DefaultSeedGenerator;
@@ -139,9 +141,8 @@ public abstract class BaseRandom extends Random implements ByteArrayReseedableRa
   private void readObject(@UnderInitialization(BaseRandom.class)BaseRandom this,
       ObjectInputStream in) throws IOException, ClassNotFoundException {
     in.defaultReadObject();
-    assert seed != null : "@AssumeAssertion(nullness)";
     initTransientFields();
-    setSeedInitial(seed);
+    setSeedInitial(castNonNull(seed));
   }
 
   @EnsuresNonNull({"lock", "seed"})
