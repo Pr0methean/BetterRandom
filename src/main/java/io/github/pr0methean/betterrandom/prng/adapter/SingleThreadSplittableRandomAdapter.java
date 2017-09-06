@@ -49,7 +49,7 @@ public class SingleThreadSplittableRandomAdapter extends DirectSplittableRandomA
   @Override
   public synchronized void setSeed(@UnknownInitialization SingleThreadSplittableRandomAdapter this,
       long seed) {
-    underlying = new SplittableRandom(seed);
+    underlying = SplittableRandomReseeder.reseed(underlying, seed);
     this.seed = BinaryUtils.convertLongToBytes(seed);
   }
 
