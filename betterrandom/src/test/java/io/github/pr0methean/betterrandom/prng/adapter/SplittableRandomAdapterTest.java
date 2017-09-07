@@ -1,7 +1,5 @@
 package io.github.pr0methean.betterrandom.prng.adapter;
 
-import static org.testng.Assert.assertEquals;
-
 import io.github.pr0methean.betterrandom.prng.RandomTestUtils;
 import io.github.pr0methean.betterrandom.seed.DefaultSeedGenerator;
 import io.github.pr0methean.betterrandom.seed.SeedException;
@@ -23,5 +21,5 @@ public class SplittableRandomAdapterTest extends SingleThreadSplittableRandomAda
   public void testSetSeed() {
     // No-op.
   }
-  // TODO: Override or add tests for thread-safety.
+  // TODO: Override or add tests for seederThread-safety.
 }

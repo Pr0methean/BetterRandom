@@ -15,8 +15,6 @@
 // ============================================================================
 package io.github.pr0methean.betterrandom.seed;
 
-import io.github.pr0methean.betterrandom.util.LogPreFormatter;
-
 /**
  * Seed generator that maintains multiple strategies for seed generation and will delegate to the
  * best one available for the current operating environment.
@@ -40,7 +38,7 @@ public enum DefaultSeedGenerator implements SeedGenerator {
   };
 
   @Override
-  public void generateSeed(byte[] output) throws SeedException {
+  public void generateSeed(final byte[] output) throws SeedException {
     for (final SeedGenerator generator : GENERATORS) {
       try {
         generator.generateSeed(output);

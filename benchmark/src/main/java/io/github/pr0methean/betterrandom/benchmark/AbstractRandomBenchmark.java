@@ -46,8 +46,8 @@ public abstract class AbstractRandomBenchmark {
   }
   */
 
-  public static void main(String[] args) throws RunnerException {
-    ChainedOptionsBuilder options = new OptionsBuilder()
+  public static void main(final String[] args) throws RunnerException {
+    final ChainedOptionsBuilder options = new OptionsBuilder()
         .addProfiler(HotspotThreadProfiler.class)
         .addProfiler(HotspotRuntimeProfiler.class)
         .addProfiler(HotspotMemoryProfiler.class)
@@ -81,12 +81,12 @@ public abstract class AbstractRandomBenchmark {
   /*
   protected byte innerTestBytesContended() throws InterruptedException {
     // Start the threads
-    for (Thread thread : threads) {
-      thread.start();
+    for (Thread seederThread : threads) {
+      seederThread.start();
     }
     // Wait for the threads to finish
-    for (Thread thread : threads) {
-      thread.join();
+    for (Thread seederThread : threads) {
+      seederThread.join();
     }
     return bytes[prng.nextInt(COLUMNS)][prng.nextInt(ROWS)];
   }

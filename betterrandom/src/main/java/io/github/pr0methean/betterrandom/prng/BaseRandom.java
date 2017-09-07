@@ -79,7 +79,7 @@ public abstract class BaseRandom extends Random implements ByteArrayReseedableRa
    * @return True with probability {@code probability}; false otherwise. If {@code probability < 0},
    *     always returns false. If {@code probability >= 1}, always returns true.
    */
-  public final boolean withProbability(double probability) {
+  public final boolean withProbability(final double probability) {
     if (probability <= 0) {
       return false;
     } else if (probability >= 1) {
@@ -97,7 +97,7 @@ public abstract class BaseRandom extends Random implements ByteArrayReseedableRa
    * @param probability The probability of returning true; always strictly between 0 and 1.
    * @return True with probability {@code probability}; false otherwise.
    */
-  protected boolean withProbabilityInternal(double probability) {
+  protected boolean withProbabilityInternal(final double probability) {
     return nextDouble() <= probability;
   }
 

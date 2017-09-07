@@ -43,7 +43,7 @@ public enum DevRandomSeedGenerator implements SeedGenerator {
     FileInputStream file = null;
     try {
       file = new FileInputStream(DEV_RANDOM);
-      int length = randomSeed.length;
+      final int length = randomSeed.length;
       int count = 0;
       while (count < length) {
         final int bytesRead = file.read(randomSeed, count, length - count);

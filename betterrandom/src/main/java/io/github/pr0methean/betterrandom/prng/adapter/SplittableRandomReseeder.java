@@ -60,7 +60,7 @@ public final class SplittableRandomReseeder {
   private SplittableRandomReseeder() {
   }
 
-  public static SplittableRandom reseed(@Nullable final SplittableRandom original,
+  public static SplittableRandom reseed(final @Nullable SplittableRandom original,
       final long seed) {
     if (CAN_RESEED_REFLECTIVELY && PUT_LONG_VOLATILE != null && original != null) {
       try {

@@ -51,14 +51,12 @@ public class SplittableRandomAdapter extends DirectSplittableRandomAdapter {
   }
 
   @Override
-  public ToStringHelper addSubclassFields(final ToStringHelper original) {
-    return original
-        .add("threadLocal", threadLocal)
-        .add("underlying", underlying);
+  protected ToStringHelper addSubSubclassFields(final ToStringHelper original) {
+    return original.add("threadLocal", threadLocal);
   }
 
   /**
-   * {@inheritDoc} Applies only to the calling thread.
+   * {@inheritDoc} Applies only to the calling seederThread.
    */
   @Override
   public void setSeed(@UnknownInitialization SplittableRandomAdapter this,
