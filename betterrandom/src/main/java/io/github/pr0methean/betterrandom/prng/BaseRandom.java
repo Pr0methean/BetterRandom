@@ -127,6 +127,7 @@ public abstract class BaseRandom extends Random implements ByteArrayReseedableRa
     }
   }
 
+  @SuppressWarnings("method.invocation.invalid")
   @Override
   public synchronized void setSeed(@UnknownInitialization(Random.class)BaseRandom this,
       final long seed) {
