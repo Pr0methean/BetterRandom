@@ -16,7 +16,6 @@ import org.openjdk.jmh.profile.StackProfiler;
 import org.openjdk.jmh.runner.Runner;
 import org.openjdk.jmh.runner.RunnerException;
 import org.openjdk.jmh.runner.options.ChainedOptionsBuilder;
-import org.openjdk.jmh.runner.options.Options;
 import org.openjdk.jmh.runner.options.OptionsBuilder;
 
 // FIXME: Get the multithreaded benchmarks working
@@ -47,6 +46,23 @@ public abstract class AbstractRandomBenchmark {
   }
   */
 
+  public static void main(String[] args) throws RunnerException {
+    ChainedOptionsBuilder options = new OptionsBuilder()
+        .addProfiler(HotspotThreadProfiler.class)
+        .addProfiler(HotspotRuntimeProfiler.class)
+        .addProfiler(HotspotMemoryProfiler.class)
+        .addProfiler(GCProfiler.class)
+        .addProfiler(StackProfiler.class)
+        .shouldFailOnError(true)
+        .forks(1);
+    for (int nThreads = 1; nThreads < 2; nThreads++) {
+      new Runner(options
+          .threads(nThreads)
+          .output(String.format("benchmark/target/%d-thread_bench_results.txt", nThreads))
+          .build()).run();
+    }
+  }
+
   protected abstract Random createPrng(@UnknownInitialization AbstractRandomBenchmark this)
       throws SeedException;
 
@@ -60,11 +76,6 @@ public abstract class AbstractRandomBenchmark {
   @Benchmark
   public byte testBytesSequential() {
     return innerTestBytesSequential();
-  }
-  
-  @TearDown(Level.Trial)
-  public void gc() {
-    System.gc();
   }
 
   /*
@@ -89,20 +100,8 @@ public abstract class AbstractRandomBenchmark {
   }
   */
 
-  public static void main(String[] args) throws RunnerException {
-    ChainedOptionsBuilder options = new OptionsBuilder()
-        .addProfiler(HotspotThreadProfiler.class)
-        .addProfiler(HotspotRuntimeProfiler.class)
-        .addProfiler(HotspotMemoryProfiler.class)
-        .addProfiler(GCProfiler.class)
-        .addProfiler(StackProfiler.class)
-        .shouldFailOnError(true)
-        .forks(1);
-    for (int nThreads = 1; nThreads < 2; nThreads++) {
-      new Runner(options
-          .threads(nThreads)
-          .output(String.format("benchmark/target/%d-thread_bench_results.txt", nThreads))
-          .build()).run();
-    }
+  @TearDown(Level.Trial)
+  public void gc() {
+    System.gc();
   }
 }

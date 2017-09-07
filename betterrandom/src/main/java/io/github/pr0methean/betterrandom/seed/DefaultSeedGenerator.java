@@ -28,6 +28,15 @@ public enum DefaultSeedGenerator implements SeedGenerator {
    */
   DEFAULT_SEED_GENERATOR;
 
+  /**
+   * Delegate generators.
+   */
+  private static final SeedGenerator[] GENERATORS = {
+      DevRandomSeedGenerator.DEV_RANDOM_SEED_GENERATOR,
+      RandomDotOrgSeedGenerator.RANDOM_DOT_ORG_SEED_GENERATOR,
+      SecureRandomSeedGenerator.SECURE_RANDOM_SEED_GENERATOR
+  };
+
   @Override
   public void generateSeed(byte[] output) throws SeedException {
     for (final SeedGenerator generator : GENERATORS) {
@@ -41,15 +50,6 @@ public enum DefaultSeedGenerator implements SeedGenerator {
     // able to generate a seed.
     throw new SeedException("All available seed generation strategies failed.");
   }
-
-  /**
-   * Delegate generators.
-   */
-  private static final SeedGenerator[] GENERATORS = {
-      DevRandomSeedGenerator.DEV_RANDOM_SEED_GENERATOR,
-      RandomDotOrgSeedGenerator.RANDOM_DOT_ORG_SEED_GENERATOR,
-      SecureRandomSeedGenerator.SECURE_RANDOM_SEED_GENERATOR
-  };
 
   /**
    * Generates a seed by trying each of the available strategies in turn until one succeeds.  Tries
