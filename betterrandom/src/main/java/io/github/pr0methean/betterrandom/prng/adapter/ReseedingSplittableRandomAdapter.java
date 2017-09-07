@@ -130,7 +130,7 @@ public class ReseedingSplittableRandomAdapter extends BaseSplittableRandomAdapte
   }
 
   @Override
-  public synchronized void setSeed(@UnknownInitialization ReseedingSplittableRandomAdapter this,
+  public void setSeed(@UnknownInitialization ReseedingSplittableRandomAdapter this,
       final long seed) {
     // No-op.
   }
