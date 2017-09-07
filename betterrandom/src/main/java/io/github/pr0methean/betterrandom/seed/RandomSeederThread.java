@@ -45,6 +45,7 @@ public final class RandomSeederThread extends LooperThread {
   private transient ByteBuffer seedBuffer;
   private transient Condition waitWhileEmpty;
   private transient Condition waitForEntropyDrain;
+  private transient Set<Random> prngsThisIteration;
 
   /**
    * Private constructor because only one instance per seed source.
@@ -72,7 +73,8 @@ public final class RandomSeederThread extends LooperThread {
         });
   }
 
-  @EnsuresNonNull({"prngs", "seedBuffer", "waitWhileEmpty", "waitForEntropyDrain"})
+  @EnsuresNonNull(
+    {"prngs", "seedBuffer", "waitWhileEmpty", "waitForEntropyDrain", "prngsThisIteration"})
   @RequiresNonNull("lock")
   private void initTransientFields(@UnderInitialization RandomSeederThread this) {
     prngs = Collections.synchronizedSet(
@@ -80,6 +82,7 @@ public final class RandomSeederThread extends LooperThread {
     seedBuffer = ByteBuffer.wrap(seedArray);
     waitWhileEmpty = lock.newCondition();
     waitForEntropyDrain = lock.newCondition();
+    prngsThisIteration = new HashSet<>();
   }
 
   @Override
@@ -148,7 +151,6 @@ public final class RandomSeederThread extends LooperThread {
   @Override
   public void iterate() throws InterruptedException {
     boolean entropyConsumed = false;
-    HashSet<Random> prngsThisIteration = new HashSet<>();
     while (true) {
       synchronized (prngs) {
         prngsThisIteration.addAll(prngs);
@@ -179,6 +181,7 @@ public final class RandomSeederThread extends LooperThread {
         interrupt();
       }
     }
+    prngsThisIteration.clear();
     if (!entropyConsumed) {
       waitForEntropyDrain.await(POLL_INTERVAL_MS, TimeUnit.MILLISECONDS);
     }
