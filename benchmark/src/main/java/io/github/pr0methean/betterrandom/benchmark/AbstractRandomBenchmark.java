@@ -27,7 +27,7 @@ public abstract class AbstractRandomBenchmark {
     }
   }
 
-  @Setup(Level.Iteration)
+  @Setup(Level.Invocation)
   @Group("contended")
   public void setUpThreads() {
     for (int column = 0; column < COLUMNS; column++) {
