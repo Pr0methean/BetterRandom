@@ -55,7 +55,7 @@ public abstract class AbstractRandomBenchmark {
         .addProfiler(StackProfiler.class)
         .shouldFailOnError(true)
         .forks(1);
-    for (int nThreads = 1; nThreads < 2; nThreads++) {
+    for (int nThreads = 1; nThreads <= 2; nThreads++) {
       new Runner(options
           .threads(nThreads)
           .output(String.format("benchmark/target/%d-thread_bench_results.txt", nThreads))
