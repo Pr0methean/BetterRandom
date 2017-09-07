@@ -27,7 +27,8 @@ public abstract class DirectSplittableRandomAdapter extends BaseSplittableRandom
 
   @EnsuresNonNull({"this.seed", "underlying"})
   @Override
-  public void setSeedInternal(@UnknownInitialization(Random.class)DirectSplittableRandomAdapter this,
+  protected void setSeedInternal(
+      @UnknownInitialization(Random.class)DirectSplittableRandomAdapter this,
       byte[] seed) {
     if (seed.length != 8) {
       throw new IllegalArgumentException("DirectSplittableRandomAdapter requires an 8-byte seed");

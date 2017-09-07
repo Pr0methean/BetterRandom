@@ -15,12 +15,12 @@
 // ============================================================================
 package io.github.pr0methean.betterrandom.prng;
 
+import com.google.common.base.MoreObjects.ToStringHelper;
 import io.github.pr0methean.betterrandom.RepeatableRandom;
 import io.github.pr0methean.betterrandom.seed.DefaultSeedGenerator;
 import io.github.pr0methean.betterrandom.seed.SeedException;
 import io.github.pr0methean.betterrandom.seed.SeedGenerator;
 import io.github.pr0methean.betterrandom.util.BinaryUtils;
-import com.google.common.base.MoreObjects.ToStringHelper;
 import java.util.Random;
 import org.checkerframework.checker.initialization.qual.UnknownInitialization;
 
@@ -90,7 +90,8 @@ public class XorShiftRandom extends BaseEntropyCountingRandom implements Repeata
   }
 
   @Override
-  public void setSeedInternal(@UnknownInitialization(Random.class)XorShiftRandom this, byte[] seed) {
+  protected void setSeedInternal(@UnknownInitialization(Random.class)XorShiftRandom this,
+      byte[] seed) {
     super.setSeedInternal(seed);
     int[] state = BinaryUtils.convertBytesToInts(this.seed);
     state1 = state[0];
