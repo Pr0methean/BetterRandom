@@ -145,6 +145,9 @@ seederThread.add(myRandom);
 # Build scripts
 
 * `benchmark.sh`: Compile and run benchmarks. Output will be in `benchmark/target`.
+* `benchmark-extra-metrics.sh`: Compile and run the same benchmarks; but in addition to throughput,
+  also collect many extra metrics concerning garbage collection, lock/monitor performance, and
+  thread births and deaths. May require HotSpot JVM.
 * `coverage.sh`: Compile and run tests and generate coverage reports. Upload them to Coveralls if
   running in Travis-CI.
 * `release.sh`: Used to perform new releases.
