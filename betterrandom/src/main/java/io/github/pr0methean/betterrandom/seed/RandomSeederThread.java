@@ -39,14 +39,15 @@ public final class RandomSeederThread extends LooperThread {
   private static final long POLL_INTERVAL_MS = 1000;
   private static final long serialVersionUID = 5229976461051217528L;
   private final SeedGenerator seedGenerator;
-  private final byte[] seedArray = new byte[8];
+  private final byte[] longSeedArray = new byte[8];
   // WeakHashMap-based Set can't be serialized, so read & write this copy instead
   private final Set<Random> prngsSerial = new HashSet<>();
   private transient Set<Random> prngs;
-  private transient ByteBuffer seedBuffer;
+  private transient ByteBuffer longSeedBuffer;
   private transient Condition waitWhileEmpty;
   private transient Condition waitForEntropyDrain;
   private transient Set<Random> prngsThisIteration;
+  private transient WeakHashMap<ByteArrayReseedableRandom, byte[]> seedArrays;
 
   /**
    * Private constructor because only one instance per seed source.
@@ -75,15 +76,17 @@ public final class RandomSeederThread extends LooperThread {
   }
 
   @EnsuresNonNull(
-      {"prngs", "seedBuffer", "waitWhileEmpty", "waitForEntropyDrain", "prngsThisIteration"})
+      {"prngs", "longSeedBuffer", "longSeedArray", "seedArrays", "waitWhileEmpty",
+          "waitForEntropyDrain", "prngsThisIteration"})
   @RequiresNonNull("lock")
   private void initTransientFields(@UnderInitialization RandomSeederThread this) {
     prngs = Collections.synchronizedSet(
         Collections.newSetFromMap(new WeakHashMap<>()));
-    seedBuffer = ByteBuffer.wrap(seedArray);
+    longSeedBuffer = ByteBuffer.wrap(longSeedArray);
     waitWhileEmpty = lock.newCondition();
     waitForEntropyDrain = lock.newCondition();
     prngsThisIteration = new HashSet<>();
+    seedArrays = new WeakHashMap<>();
   }
 
   @Override
@@ -173,12 +176,16 @@ public final class RandomSeederThread extends LooperThread {
         entropyConsumed = true;
       }
       try {
-        if (random instanceof ByteArrayReseedableRandom) {
+        if (random instanceof ByteArrayReseedableRandom && !((ByteArrayReseedableRandom) random)
+            .preferSeedWithLong()) {
           final ByteArrayReseedableRandom reseedable = (ByteArrayReseedableRandom) random;
-          reseedable.setSeed(seedGenerator.generateSeed(reseedable.getNewSeedLength()));
+          byte[] seedArray = seedArrays.computeIfAbsent(reseedable, random_ ->
+              new byte[random_.getNewSeedLength()]);
+          seedGenerator.generateSeed(seedArray);
+          reseedable.setSeed(seedArray);
         } else {
-          System.arraycopy(seedGenerator.generateSeed(8), 0, seedArray, 0, 8);
-          random.setSeed(seedBuffer.getLong(0));
+          seedGenerator.generateSeed(longSeedArray);
+          random.setSeed(longSeedBuffer.getLong(0));
         }
       } catch (final SeedException e) {
         LOG.error("%s gave SeedException %s", seedGenerator, e);
