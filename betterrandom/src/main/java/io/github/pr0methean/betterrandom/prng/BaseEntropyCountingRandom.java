@@ -76,9 +76,9 @@ public abstract class BaseEntropyCountingRandom extends BaseRandom implements
   }
 
   @Override
-  public void setSeedInitial(@UnknownInitialization(Random.class)BaseEntropyCountingRandom this,
+  public void setSeedInternal(@UnknownInitialization(Random.class)BaseEntropyCountingRandom this,
       byte[] seed) {
-    super.setSeedInitial(seed);
+    super.setSeedInternal(seed);
     entropyBits = new AtomicLong(seed.length * 8);
   }
 

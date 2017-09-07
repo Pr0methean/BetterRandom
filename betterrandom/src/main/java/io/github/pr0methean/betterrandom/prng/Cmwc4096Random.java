@@ -102,11 +102,11 @@ public class Cmwc4096Random extends BaseEntropyCountingRandom implements Repeata
 
   @EnsuresNonNull({"this.seed", "state"})
   @Override
-  public void setSeedInitial(@UnknownInitialization(Random.class)Cmwc4096Random this, byte[] seed) {
+  public void setSeedInternal(@UnknownInitialization(Random.class)Cmwc4096Random this, byte[] seed) {
     if (seed == null || seed.length != SEED_SIZE_BYTES) {
       throw new IllegalArgumentException("CMWC RNG requires 16kb of seed data.");
     }
-    super.setSeedInitial(seed);
+    super.setSeedInternal(seed);
     state = BinaryUtils.convertBytesToInts(seed);
     carry = 362436; // TODO: This should be randomly generated.
     index = 4095;

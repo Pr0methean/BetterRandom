@@ -55,7 +55,7 @@ public class SingleThreadSplittableRandomAdapter extends DirectSplittableRandomA
 
   @EnsuresNonNull({"this.seed", "underlying"})
   @Override
-  public void setSeedInitial(
+  public void setSeedInternal(
       @UnknownInitialization(Random.class)SingleThreadSplittableRandomAdapter this,
       byte[] seed) {
     if (seed.length != 8) {
