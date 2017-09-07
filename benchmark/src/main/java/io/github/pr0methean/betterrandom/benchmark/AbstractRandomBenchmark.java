@@ -41,7 +41,7 @@ public abstract class AbstractRandomBenchmark {
   protected byte innerTestBytesContended() throws InterruptedException {
     Thread[] threads = new Thread[COLUMNS];
     for (int column = 0; column < COLUMNS; column++) {
-      threads[column] = new Thread(() -> prng.nextBytes(column));
+      threads[column] = new Thread(() -> prng.nextBytes(bytes[column]));
       threads[column].start();
     }
     // Wait for the threads to finish
