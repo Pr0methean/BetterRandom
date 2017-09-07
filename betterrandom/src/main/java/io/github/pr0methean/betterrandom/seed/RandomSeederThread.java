@@ -161,7 +161,9 @@ public final class RandomSeederThread extends LooperThread {
         break;
       }
     }
-    for (Random random : prngsThisIteration) {
+    Iterator<Random> iterator = prngsThisIteration.iterator();
+    for (Random random : iterator) {
+      iterator.remove();
       if (random instanceof EntropyCountingRandom
           && ((EntropyCountingRandom) random).entropyBits() > 0) {
         continue;
@@ -181,7 +183,6 @@ public final class RandomSeederThread extends LooperThread {
         interrupt();
       }
     }
-    prngsThisIteration.clear();
     if (!entropyConsumed) {
       waitForEntropyDrain.await(POLL_INTERVAL_MS, TimeUnit.MILLISECONDS);
     }
