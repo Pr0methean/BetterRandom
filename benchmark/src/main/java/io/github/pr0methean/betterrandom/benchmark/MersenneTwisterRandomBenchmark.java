@@ -5,7 +5,7 @@ import io.github.pr0methean.betterrandom.seed.SeedException;
 import java.util.Random;
 import org.checkerframework.checker.initialization.qual.UnknownInitialization;
 
-public class MersenneTwisterRandomBenchmark extends AbstractRandomBenchmark {
+public class MersenneTwisterRandomBenchmark extends AbstractRandomBenchmarkWithReseeding {
 
   @Override
   protected Random createPrng(@UnknownInitialization MersenneTwisterRandomBenchmark this)

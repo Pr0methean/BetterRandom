@@ -4,7 +4,7 @@ import io.github.pr0methean.betterrandom.seed.SeedException;
 import java.util.Random;
 import org.checkerframework.checker.initialization.qual.UnknownInitialization;
 
-public class VanillaJavaRandomBenchmark extends AbstractRandomBenchmark {
+public class VanillaJavaRandomBenchmark extends AbstractRandomBenchmarkWithReseeding {
 
   @Override
   protected Random createPrng(@UnknownInitialization VanillaJavaRandomBenchmark this)
