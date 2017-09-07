@@ -15,12 +15,12 @@
 // ============================================================================
 package io.github.pr0methean.betterrandom.prng;
 
+import com.google.common.base.MoreObjects.ToStringHelper;
 import io.github.pr0methean.betterrandom.RepeatableRandom;
 import io.github.pr0methean.betterrandom.seed.DefaultSeedGenerator;
 import io.github.pr0methean.betterrandom.seed.SeedException;
 import io.github.pr0methean.betterrandom.seed.SeedGenerator;
 import io.github.pr0methean.betterrandom.util.BinaryUtils;
-import com.google.common.base.MoreObjects.ToStringHelper;
 import java.util.Arrays;
 import java.util.Random;
 import org.checkerframework.checker.initialization.qual.UnknownInitialization;
@@ -183,7 +183,7 @@ public class CellularAutomatonRandom extends BaseEntropyCountingRandom implement
   }
 
   @Override
-  public void setSeedInternal(@UnknownInitialization(Random.class)CellularAutomatonRandom this,
+  protected void setSeedInternal(@UnknownInitialization(Random.class)CellularAutomatonRandom this,
       byte[] seed) {
     if (seed.length != SEED_SIZE_BYTES) {
       throw new IllegalArgumentException("Cellular Automaton RNG requires a 32-bit (4-byte) seed.");

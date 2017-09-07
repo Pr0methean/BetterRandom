@@ -17,13 +17,13 @@ package io.github.pr0methean.betterrandom.prng;
 
 import static org.checkerframework.checker.nullness.NullnessUtil.castNonNull;
 
+import com.google.common.base.MoreObjects.ToStringHelper;
 import io.github.pr0methean.betterrandom.RepeatableRandom;
 import io.github.pr0methean.betterrandom.seed.DefaultSeedGenerator;
 import io.github.pr0methean.betterrandom.seed.SeedException;
 import io.github.pr0methean.betterrandom.seed.SeedGenerator;
 import io.github.pr0methean.betterrandom.util.BinaryUtils;
 import io.github.pr0methean.betterrandom.util.LogPreFormatter;
-import com.google.common.base.MoreObjects.ToStringHelper;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.security.GeneralSecurityException;
@@ -308,7 +308,7 @@ public class AesCounterRandom extends BaseEntropyCountingRandom implements Repea
 
   @EnsuresNonNull({"counter", "this.seed"})
   @Override
-  public void setSeedInternal(@UnknownInitialization(Random.class)AesCounterRandom this,
+  protected void setSeedInternal(@UnknownInitialization(Random.class)AesCounterRandom this,
       byte[] seed) {
     super.setSeedInternal(seed);
 

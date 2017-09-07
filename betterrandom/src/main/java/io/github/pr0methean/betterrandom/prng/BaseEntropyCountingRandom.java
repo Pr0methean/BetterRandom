@@ -1,11 +1,11 @@
 package io.github.pr0methean.betterrandom.prng;
 
+import com.google.common.base.MoreObjects.ToStringHelper;
 import io.github.pr0methean.betterrandom.EntropyCountingRandom;
 import io.github.pr0methean.betterrandom.seed.RandomSeederThread;
 import io.github.pr0methean.betterrandom.seed.SeedException;
 import io.github.pr0methean.betterrandom.seed.SeedGenerator;
 import io.github.pr0methean.betterrandom.util.LogPreFormatter;
-import com.google.common.base.MoreObjects.ToStringHelper;
 import java.io.IOException;
 import java.io.InvalidObjectException;
 import java.io.ObjectInputStream;
@@ -76,7 +76,7 @@ public abstract class BaseEntropyCountingRandom extends BaseRandom implements
   }
 
   @Override
-  public void setSeedInternal(@UnknownInitialization(Random.class)BaseEntropyCountingRandom this,
+  protected void setSeedInternal(@UnknownInitialization(Random.class)BaseEntropyCountingRandom this,
       byte[] seed) {
     super.setSeedInternal(seed);
     entropyBits = new AtomicLong(seed.length * 8);
