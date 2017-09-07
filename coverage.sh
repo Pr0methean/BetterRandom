@@ -6,4 +6,5 @@ if [ "$STATUS" = 0 && "$TRAVIS" = "true" ]; then
   mvn coveralls:report
   STATUS=$?
 fi
-cd .. && "$STATUS"
+cd ..
+exit "$STATUS"
