@@ -101,7 +101,7 @@ public abstract class AbstractRandomBenchmark {
     for (int nThreads = 1; nThreads < 2; nThreads++) {
       new Runner(options
           .threads(nThreads)
-          .output(String.format("%d-thread_bench_results.txt", nThreads))
+          .output(String.format("benchmark/target/%d-thread_bench_results.txt", nThreads))
           .build()).run();
     }
   }
