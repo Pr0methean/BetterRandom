@@ -13,10 +13,10 @@ public class SplittableRandomAdapterTest extends SingleThreadSplittableRandomAda
     return new SplittableRandomAdapter(DefaultSeedGenerator.DEFAULT_SEED_GENERATOR);
   }
 
+  /** This test only ensures that deserialization produces a usable instance. */
   @Override
   public void testSerializable() throws SeedException {
-    final BaseSplittableRandomAdapter adapter = tryCreateRng();
-    assertEquals(adapter, RandomTestUtils.serializeAndDeserialize(adapter));
+    RandomTestUtils.serializeAndDeserialize(tryCreateRng()).nextInt();
   }
 
   @Override

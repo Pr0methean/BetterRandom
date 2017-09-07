@@ -80,14 +80,14 @@ public abstract class BaseEntropyCountingRandom extends BaseRandom implements
   @Override
   public void setSeed(final byte[] seed) {
     super.setSeed(seed);
-    entropyBits.updateAndGet(oldCount -> Math.max(oldCount, seed.length * 8));
+    entropyBits.updateAndGet(oldCount -> Math.max(oldCount, Math.min(seed.length, getNewSeedLength()) * 8));
   }
 
   @Override
   protected void setSeedInternal(@UnknownInitialization(Random.class)BaseEntropyCountingRandom this,
       final byte[] seed) {
     super.setSeedInternal(seed);
-    entropyBits = new AtomicLong(seed.length * 8);
+    entropyBits = new AtomicLong(Math.min(seed.length, getNewSeedLength()) * 8);
   }
 
   private void readObject(final ObjectInputStream in) throws IOException, ClassNotFoundException {
@@ -113,4 +113,7 @@ public abstract class BaseEntropyCountingRandom extends BaseRandom implements
     super.readObjectNoData(); // TODO: Is this call redundant?
     entropyBits = new AtomicLong(seed.length * 8);
   }
+
+  @Override
+  public abstract int getNewSeedLength(@UnknownInitialization BaseEntropyCountingRandom this);
 }

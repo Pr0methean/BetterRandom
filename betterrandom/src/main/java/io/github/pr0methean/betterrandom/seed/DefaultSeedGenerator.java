@@ -30,8 +30,6 @@ public enum DefaultSeedGenerator implements SeedGenerator {
    */
   DEFAULT_SEED_GENERATOR;
 
-  private static final LogPreFormatter LOG = new LogPreFormatter(DefaultSeedGenerator.class);
-
   /**
    * Delegate generators.
    */
@@ -47,8 +45,8 @@ public enum DefaultSeedGenerator implements SeedGenerator {
       try {
         generator.generateSeed(output);
         return;
-      } catch (final SeedException ex) {
-        LOG.warn("Unable to use %s: %s", generator, ex);
+      } catch (final SeedException ignored) {
+        // Try the next one
       }
     }
     // This shouldn't happen as at least one the generators should be
