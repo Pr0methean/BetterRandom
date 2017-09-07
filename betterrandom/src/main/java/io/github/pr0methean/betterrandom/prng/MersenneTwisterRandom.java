@@ -204,7 +204,7 @@ public class MersenneTwisterRandom extends BaseEntropyCountingRandom {
   }
 
   @Override
-  public int getNewSeedLength() {
+  public int getNewSeedLength(@UnknownInitialization MersenneTwisterRandom this) {
     return SEED_SIZE_BYTES;
   }
 }

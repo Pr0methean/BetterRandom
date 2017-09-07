@@ -137,7 +137,7 @@ public class Cmwc4096Random extends BaseEntropyCountingRandom {
   }
 
   @Override
-  public int getNewSeedLength() {
+  public int getNewSeedLength(@UnknownInitialization Cmwc4096Random this) {
     return SEED_SIZE_BYTES;
   }
 }

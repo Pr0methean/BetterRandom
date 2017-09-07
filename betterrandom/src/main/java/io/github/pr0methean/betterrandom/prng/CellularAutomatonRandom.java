@@ -200,7 +200,7 @@ public class CellularAutomatonRandom extends BaseEntropyCountingRandom {
   }
 
   @Override
-  public int getNewSeedLength() {
+  public int getNewSeedLength(@UnknownInitialization CellularAutomatonRandom this) {
     return SEED_SIZE_BYTES;
   }
 }

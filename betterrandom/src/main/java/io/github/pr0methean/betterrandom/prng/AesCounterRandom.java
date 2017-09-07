@@ -333,7 +333,7 @@ public class AesCounterRandom extends BaseEntropyCountingRandom {
   }
 
   @Override
-  public int getNewSeedLength() {
+  public int getNewSeedLength(@UnknownInitialization AesCounterRandom this) {
     return MAX_TOTAL_SEED_LENGTH_BYTES;
   }
 }

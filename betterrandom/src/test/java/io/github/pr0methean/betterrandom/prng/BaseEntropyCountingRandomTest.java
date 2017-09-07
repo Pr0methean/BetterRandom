@@ -42,6 +42,8 @@ public abstract class BaseEntropyCountingRandomTest extends BaseRandomTest {
     assertTrue(prng.withProbability(1.0));
     assertEquals(originalEntropy, prng.entropyBits());
     prng.withProbability(0.5);
-    assertEquals(originalEntropy - 1, prng.entropyBits());
+    if (originalEntropy >= 53) {
+      assertEquals(originalEntropy - 1, prng.entropyBits());
+    }
   }
 }

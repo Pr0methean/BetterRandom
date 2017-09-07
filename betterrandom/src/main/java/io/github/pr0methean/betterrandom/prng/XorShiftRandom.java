@@ -84,9 +84,7 @@ public class XorShiftRandom extends BaseEntropyCountingRandom {
   @Override
   public synchronized void setSeed(@UnknownInitialization(Random.class)XorShiftRandom this,
       final long seed) {
-    if (superConstructorFinished) {
-      super.setSeed(seed);
-    } // Otherwise ignore; it's Random.<init> calling us without a full-size seed
+    // No-op.
   }
 
   @Override
@@ -123,7 +121,7 @@ public class XorShiftRandom extends BaseEntropyCountingRandom {
   }
 
   @Override
-  public int getNewSeedLength() {
+  public int getNewSeedLength(@UnknownInitialization XorShiftRandom this) {
     return SEED_SIZE_BYTES;
   }
 }
