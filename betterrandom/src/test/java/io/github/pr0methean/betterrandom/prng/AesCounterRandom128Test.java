@@ -29,24 +29,22 @@ import org.testng.annotations.Test;
  */
 public class AesCounterRandom128Test extends BaseEntropyCountingRandomTest {
 
-  private static final LogPreFormatter LOG = new LogPreFormatter(AesCounterRandom128Test.class);
-
   @Override
   @Test(timeOut = 15000)
   public void testSetSeed() throws SeedException {
     // can't use a real SeedGenerator since we need longs, so use a Random
-    Random masterRNG = new Random();
-    long[] seeds = {masterRNG.nextLong(), masterRNG.nextLong(),
+    final Random masterRNG = new Random();
+    final long[] seeds = {masterRNG.nextLong(), masterRNG.nextLong(),
         masterRNG.nextLong(), masterRNG.nextLong()};
-    long otherSeed = masterRNG.nextLong();
-    AesCounterRandom[] rngs = {new AesCounterRandom(16), new AesCounterRandom(16)};
+    final long otherSeed = masterRNG.nextLong();
+    final AesCounterRandom[] rngs = {new AesCounterRandom(16), new AesCounterRandom(16)};
     for (int i = 0; i < 2; i++) {
-      for (long seed : seeds) {
-        byte[] originalSeed = rngs[i].getSeed();
+      for (final long seed : seeds) {
+        final byte[] originalSeed = rngs[i].getSeed();
         assertTrue(originalSeed.length >= 16);
-        AesCounterRandom rngReseeded = new AesCounterRandom(originalSeed);
+        final AesCounterRandom rngReseeded = new AesCounterRandom(originalSeed);
         assertTrue(rngReseeded.isSeeded());
-        AesCounterRandom rngReseededOther = new AesCounterRandom(originalSeed);
+        final AesCounterRandom rngReseededOther = new AesCounterRandom(originalSeed);
         rngReseeded.setSeed(seed);
         rngReseededOther.setSeed(otherSeed);
         assert !(rngs[i].equals(rngReseeded));
@@ -74,7 +72,7 @@ public class AesCounterRandom128Test extends BaseEntropyCountingRandomTest {
   }
 
   @Override
-  protected BaseRandom createRng(byte[] seed) throws SeedException {
+  protected BaseRandom createRng(final byte[] seed) throws SeedException {
     return new AesCounterRandom(seed);
   }
 }

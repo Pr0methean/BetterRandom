@@ -42,7 +42,7 @@ public abstract class BaseRandom extends Random implements ByteArrayReseedableRa
   /**
    * Creates a new RNG and seeds it using the default seeding strategy.
    */
-  public BaseRandom(int seedLength) throws SeedException {
+  public BaseRandom(final int seedLength) throws SeedException {
     this(DefaultSeedGenerator.DEFAULT_SEED_GENERATOR.generateSeed(seedLength));
   }
 
@@ -53,12 +53,12 @@ public abstract class BaseRandom extends Random implements ByteArrayReseedableRa
    *     RNG.
    * @throws SeedException If there is a problem generating a seed.
    */
-  public BaseRandom(SeedGenerator seedGenerator, int seedLength) throws SeedException {
+  public BaseRandom(final SeedGenerator seedGenerator, final int seedLength) throws SeedException {
     this(seedGenerator.generateSeed(seedLength));
   }
 
   @EnsuresNonNull("this.seed")
-  public BaseRandom(byte[] seed) {
+  public BaseRandom(final byte[] seed) {
     superConstructorFinished = true;
     if (seed == null) {
       throw new IllegalArgumentException("Seed must not be null");
@@ -95,7 +95,7 @@ public abstract class BaseRandom extends Random implements ByteArrayReseedableRa
 
   @EnsuresNonNull("this.seed")
   @Override
-  public void setSeed(byte[] seed) {
+  public void setSeed(final byte[] seed) {
     lock.lock();
     try {
       setSeedInternal(seed);
@@ -106,17 +106,17 @@ public abstract class BaseRandom extends Random implements ByteArrayReseedableRa
 
   @Override
   public synchronized void setSeed(@UnknownInitialization(Random.class)BaseRandom this,
-      long seed) {
-    ByteBuffer buffer = ByteBuffer.allocate(8);
+      final long seed) {
+    final ByteBuffer buffer = ByteBuffer.allocate(8);
     buffer.putLong(seed);
-    byte[] array = buffer.array();
+    final byte[] array = buffer.array();
     setSeedMaybeInitial(array);
   }
 
   @SuppressWarnings("method.invocation.invalid")
   @EnsuresNonNull("this.seed")
   protected void setSeedMaybeInitial(@UnknownInitialization(Random.class)BaseRandom this,
-      byte[] seed) {
+      final byte[] seed) {
     if (superConstructorFinished) {
       setSeed(seed);
     } else {
@@ -133,7 +133,7 @@ public abstract class BaseRandom extends Random implements ByteArrayReseedableRa
    * @param seed The new seed.
    */
   @EnsuresNonNull("this.seed")
-  protected void setSeedInternal(@UnknownInitialization(Random.class)BaseRandom this, byte[] seed) {
+  protected void setSeedInternal(@UnknownInitialization(Random.class)BaseRandom this, final byte[] seed) {
     this.seed = seed.clone();
   }
 
@@ -147,19 +147,19 @@ public abstract class BaseRandom extends Random implements ByteArrayReseedableRa
 
   @EnsuresNonNull({"lock", "seed"})
   private void readObject(@UnderInitialization(BaseRandom.class)BaseRandom this,
-      ObjectInputStream in) throws IOException, ClassNotFoundException {
+      final ObjectInputStream in) throws IOException, ClassNotFoundException {
     in.defaultReadObject();
     initTransientFields();
     setSeedInternal(castNonNull(seed));
   }
 
   @EnsuresNonNull({"lock", "seed"})
-  @SuppressWarnings({"OverriddenMethodCallDuringObjectConstruction"})
+  @SuppressWarnings("OverriddenMethodCallDuringObjectConstruction")
   protected void readObjectNoData() throws InvalidObjectException {
     LOG.warn("BaseRandom.readObjectNoData() invoked; using DefaultSeedGenerator");
     try {
       setSeed(DefaultSeedGenerator.DEFAULT_SEED_GENERATOR.generateSeed(getNewSeedLength()));
-    } catch (SeedException e) {
+    } catch (final SeedException e) {
       throw (InvalidObjectException)
           (new InvalidObjectException("Unable to deserialize or generate a seed this RNG")
               .initCause(e));

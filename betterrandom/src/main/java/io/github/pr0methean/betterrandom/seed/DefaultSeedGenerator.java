@@ -46,11 +46,11 @@ public enum DefaultSeedGenerator implements SeedGenerator {
    * @return A random seed of the requested length.
    */
   @Override
-  public byte[] generateSeed(int length) throws SeedException {
-    for (SeedGenerator generator : GENERATORS) {
+  public byte[] generateSeed(final int length) throws SeedException {
+    for (final SeedGenerator generator : GENERATORS) {
       try {
         return generator.generateSeed(length);
-      } catch (SeedException ex) {
+      } catch (final SeedException ex) {
         // Ignore and try the next generator...
       }
     }

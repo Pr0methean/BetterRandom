@@ -30,7 +30,7 @@ public class Cmwc4096RandomTest extends BaseEntropyCountingRandomTest {
   }
 
   @Override
-  protected BaseRandom createRng(byte[] seed) throws SeedException {
+  protected BaseRandom createRng(final byte[] seed) throws SeedException {
     return new Cmwc4096Random(seed);
   }
 }

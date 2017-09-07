@@ -37,7 +37,7 @@ import org.checkerframework.checker.nullness.qual.RequiresNonNull;
  * @author Tony Pasqualoni (original C version)
  * @author Daniel Dyer (Java port)
  */
-public class CellularAutomatonRandom extends BaseEntropyCountingRandom implements RepeatableRandom {
+public class CellularAutomatonRandom extends BaseEntropyCountingRandom {
 
   private static final long serialVersionUID = 5959251752288589909L;
   private static final int SEED_SIZE_BYTES = 4;
@@ -85,7 +85,7 @@ public class CellularAutomatonRandom extends BaseEntropyCountingRandom implement
     this(DefaultSeedGenerator.DEFAULT_SEED_GENERATOR);
   }
 
-  public CellularAutomatonRandom(SeedGenerator seedGenerator) throws SeedException {
+  public CellularAutomatonRandom(final SeedGenerator seedGenerator) throws SeedException {
     this(seedGenerator.generateSeed(SEED_SIZE_BYTES));
   }
 
@@ -94,12 +94,12 @@ public class CellularAutomatonRandom extends BaseEntropyCountingRandom implement
    *
    * @param seed The seed data used to initialise the RNG.
    */
-  public CellularAutomatonRandom(byte[] seed) {
+  public CellularAutomatonRandom(final byte[] seed) {
     super(seed);
     copySeedToCellsAndPreEvolve();
   }
 
-  private static int convertCellsToInt(int[] cells, int offset) {
+  private static int convertCellsToInt(final int[] cells, final int offset) {
     return cells[offset]
         + (cells[offset + 1] << 8)
         + (cells[offset + 2] << 16)
@@ -107,14 +107,14 @@ public class CellularAutomatonRandom extends BaseEntropyCountingRandom implement
   }
 
   @Override
-  protected ToStringHelper addSubSubclassFields(ToStringHelper original) {
+  protected ToStringHelper addSubSubclassFields(final ToStringHelper original) {
     return original
         .add("cells", Arrays.toString(cells))
         .add("currentCellIndex", currentCellIndex);
   }
 
   @EnsuresNonNull("cells")
-  @RequiresNonNull({"seed"})
+  @RequiresNonNull("seed")
   private void copySeedToCellsAndPreEvolve(@UnknownInitialization CellularAutomatonRandom this) {
     cells = new int[AUTOMATON_LENGTH];
     // Set initial cell states using seed.
@@ -139,16 +139,15 @@ public class CellularAutomatonRandom extends BaseEntropyCountingRandom implement
   }
 
   @RequiresNonNull("cells")
-  private int internalNext(@UnknownInitialization CellularAutomatonRandom this, int bits) {
-    int result;
+  private int internalNext(@UnknownInitialization CellularAutomatonRandom this, final int bits) {
     // Set cell addresses using address of current cell.
-    int cellC = currentCellIndex - 1;
-    int cellB = cellC - 1;
+    final int cellC = currentCellIndex - 1;
 
     // Update cell states using rule table.
     cells[currentCellIndex] = RNG_RULE[cells[cellC] + cells[currentCellIndex]];
+    final int cellB = cellC - 1;
     cells[cellC] = RNG_RULE[cells[cellB] + cells[cellC]];
-    int cellA = cellB - 1;
+    final int cellA = cellB - 1;
     cells[cellB] = RNG_RULE[cells[cellA] + cells[cellB]];
 
     // Update the state of cellA and shift current cell to the left by 4 bytes.
@@ -159,7 +158,7 @@ public class CellularAutomatonRandom extends BaseEntropyCountingRandom implement
       cells[cellA] = RNG_RULE[cells[cellA - 1] + cells[cellA]];
       currentCellIndex -= 4;
     }
-    result = convertCellsToInt(cells, cellA);
+    final int result = convertCellsToInt(cells, cellA);
     return result >>> (32 - bits);
   }
 
@@ -167,7 +166,7 @@ public class CellularAutomatonRandom extends BaseEntropyCountingRandom implement
    * {@inheritDoc}
    */
   @Override
-  public int next(int bits) {
+  public int next(final int bits) {
     lock.lock();
     try {
       return internalNext(bits);
@@ -178,13 +177,14 @@ public class CellularAutomatonRandom extends BaseEntropyCountingRandom implement
   }
 
   @Override
-  public void setSeed(@UnknownInitialization(Random.class)CellularAutomatonRandom this, long seed) {
+  public synchronized void setSeed(@UnknownInitialization(Random.class)CellularAutomatonRandom this,
+      final long seed) {
     setSeedMaybeInitial(BinaryUtils.convertIntToBytes(((Long) seed).hashCode()));
   }
 
   @Override
   protected void setSeedInternal(@UnknownInitialization(Random.class)CellularAutomatonRandom this,
-      byte[] seed) {
+      final byte[] seed) {
     if (seed.length != SEED_SIZE_BYTES) {
       throw new IllegalArgumentException("Cellular Automaton RNG requires a 32-bit (4-byte) seed.");
     }

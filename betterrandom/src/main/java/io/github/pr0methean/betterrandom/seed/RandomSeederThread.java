@@ -51,7 +51,7 @@ public final class RandomSeederThread extends LooperThread {
   /**
    * Private constructor because only one instance per seed source.
    */
-  private RandomSeederThread(SeedGenerator seedGenerator) {
+  private RandomSeederThread(final SeedGenerator seedGenerator) {
     this.seedGenerator = seedGenerator;
     initTransientFields();
   }
@@ -60,13 +60,13 @@ public final class RandomSeederThread extends LooperThread {
    * Obtain the instance for the given {@link SeedGenerator}, creating and starting it if it doesn't
    * exist.
    */
-  public static RandomSeederThread getInstance(SeedGenerator seedGenerator) {
+  public static RandomSeederThread getInstance(final SeedGenerator seedGenerator) {
     Objects.requireNonNull(seedGenerator,
         "Trying to get RandomSeederThread for null SeedGenerator");
     return INSTANCES.computeIfAbsent(seedGenerator,
         seedGen -> {
           LOG.info("Creating a RandomSeederThread for %s", seedGen);
-          RandomSeederThread thread = new RandomSeederThread(seedGen);
+          final RandomSeederThread thread = new RandomSeederThread(seedGen);
           thread.setName("RandomSeederThread for " + seedGen);
           thread.setDaemon(true);
           thread.start();
@@ -91,7 +91,7 @@ public final class RandomSeederThread extends LooperThread {
     return getInstance(seedGenerator);
   }
 
-  private void readObject(@UnderInitialization RandomSeederThread this, ObjectInputStream in)
+  private void readObject(@UnderInitialization RandomSeederThread this, final ObjectInputStream in)
       throws IOException, ClassNotFoundException {
     in.defaultReadObject();
     assert lock != null : "@AssumeAssertion(nullness)"; // WTF Checker Framework?!
@@ -110,7 +110,7 @@ public final class RandomSeederThread extends LooperThread {
     }
   }
 
-  private void writeObject(ObjectOutputStream out) throws IOException {
+  private void writeObject(final ObjectOutputStream out) throws IOException {
     synchronized (prngs) {
       prngsSerial.addAll(prngs);
     }
@@ -124,12 +124,12 @@ public final class RandomSeederThread extends LooperThread {
    *
    * @return Whether or not the reseed was successfully scheduled.
    */
-  public boolean asyncReseed(Random random) {
+  public boolean asyncReseed(final Random random) {
     if (!(random instanceof EntropyCountingRandom)) {
       // Reseed of non-entropy-counting Random happens every iteration anyway
       return prngs.contains(random);
     }
-    boolean eligible;
+    final boolean eligible;
     synchronized (prngs) {
       eligible = prngs.contains(random);
     }
@@ -151,7 +151,6 @@ public final class RandomSeederThread extends LooperThread {
   @SuppressWarnings("InfiniteLoopStatement")
   @Override
   public void iterate() throws InterruptedException {
-    boolean entropyConsumed = false;
     while (true) {
       synchronized (prngs) {
         prngsThisIteration.addAll(prngs);
@@ -162,10 +161,10 @@ public final class RandomSeederThread extends LooperThread {
         break;
       }
     }
-    Iterator<Random> iterator = prngsThisIteration.iterator();
-    Random random;
+    final Iterator<Random> iterator = prngsThisIteration.iterator();
+    boolean entropyConsumed = false;
     while (iterator.hasNext()) {
-      random = iterator.next();
+      Random random = iterator.next();
       iterator.remove();
       if (random instanceof EntropyCountingRandom
           && ((EntropyCountingRandom) random).entropyBits() > 0) {
@@ -175,13 +174,13 @@ public final class RandomSeederThread extends LooperThread {
       }
       try {
         if (random instanceof ByteArrayReseedableRandom) {
-          ByteArrayReseedableRandom reseedable = (ByteArrayReseedableRandom) random;
+          final ByteArrayReseedableRandom reseedable = (ByteArrayReseedableRandom) random;
           reseedable.setSeed(seedGenerator.generateSeed(reseedable.getNewSeedLength()));
         } else {
           System.arraycopy(seedGenerator.generateSeed(8), 0, seedArray, 0, 8);
           random.setSeed(seedBuffer.getLong(0));
         }
-      } catch (SeedException e) {
+      } catch (final SeedException e) {
         LOG.error("%s gave SeedException %s", seedGenerator, e);
         interrupt();
       }
@@ -203,7 +202,7 @@ public final class RandomSeederThread extends LooperThread {
    * ByteArrayReseedableRandom#setSeed(byte[])}, as one of those methods may be called immediately
    * and this would cause a circular deadlock.
    */
-  public void add(Random... randoms) {
+  public void add(final Random... randoms) {
     if (isInterrupted()) {
       throw new IllegalStateException("Already shut down");
     }
@@ -217,7 +216,7 @@ public final class RandomSeederThread extends LooperThread {
     }
   }
 
-  public void remove(Random... randoms) {
+  public void remove(final Random... randoms) {
     prngs.removeAll(Arrays.asList(randoms));
   }
 

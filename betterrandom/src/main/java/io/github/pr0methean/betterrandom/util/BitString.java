@@ -47,7 +47,7 @@ public final class BitString implements Cloneable, Serializable {
    *
    * @param length The number of bits.
    */
-  public BitString(int length) {
+  public BitString(final int length) {
     if (length < 0) {
       throw new IllegalArgumentException("Length must be non-negative.");
     }
@@ -64,7 +64,7 @@ public final class BitString implements Cloneable, Serializable {
    * @param length The number of bits.
    * @param rng A source of randomness.
    */
-  public BitString(int length, Random rng) {
+  public BitString(final int length, final Random rng) {
     this(length);
     // We can set bits 32 at a time rather than calling rng.nextBoolean()
     // and setting each one individually.
@@ -74,10 +74,10 @@ public final class BitString implements Cloneable, Serializable {
     // If the last word is not fully utilised, zero any out-of-bounds bits.
     // This is necessary because the countSetBits() methods will count
     // out-of-bounds bits.
-    int bitsUsed = length % WORD_LENGTH;
+    final int bitsUsed = length % WORD_LENGTH;
     if (bitsUsed < WORD_LENGTH) {
-      int unusedBits = WORD_LENGTH - bitsUsed;
-      int mask = ALL_ONES >>> unusedBits;
+      final int unusedBits = WORD_LENGTH - bitsUsed;
+      final int mask = ALL_ONES >>> unusedBits;
       data[data.length - 1] &= mask;
     }
   }
@@ -87,7 +87,7 @@ public final class BitString implements Cloneable, Serializable {
    *
    * @param value A character string of ones and zeros.
    */
-  public BitString(CharSequence value) {
+  public BitString(final CharSequence value) {
     this(value.length());
     for (int i = 0; i < value.length(); i++) {
       if (value.charAt(i) == '1') {
@@ -113,10 +113,10 @@ public final class BitString implements Cloneable, Serializable {
    * @throws IndexOutOfBoundsException If the specified index is not a bit position in this bit
    *     string.
    */
-  public boolean getBit(int index) {
+  public boolean getBit(final int index) {
     assertValidIndex(index);
-    int word = index / WORD_LENGTH;
-    int offset = index % WORD_LENGTH;
+    final int word = index / WORD_LENGTH;
+    final int offset = index % WORD_LENGTH;
     return (data[word] & (1 << offset)) != 0;
   }
 
@@ -128,10 +128,10 @@ public final class BitString implements Cloneable, Serializable {
    * @throws IndexOutOfBoundsException If the specified index is not a bit position in this bit
    *     string.
    */
-  public void setBit(int index, boolean set) {
+  public void setBit(final int index, final boolean set) {
     assertValidIndex(index);
-    int word = index / WORD_LENGTH;
-    int offset = index % WORD_LENGTH;
+    final int word = index / WORD_LENGTH;
+    final int offset = index % WORD_LENGTH;
     if (set) {
       data[word] |= (1 << offset);
     } else // Unset the bit.
@@ -147,10 +147,10 @@ public final class BitString implements Cloneable, Serializable {
    * @throws IndexOutOfBoundsException If the specified index is not a bit position in this bit
    *     string.
    */
-  public void flipBit(int index) {
+  public void flipBit(final int index) {
     assertValidIndex(index);
-    int word = index / WORD_LENGTH;
-    int offset = index % WORD_LENGTH;
+    final int word = index / WORD_LENGTH;
+    final int offset = index % WORD_LENGTH;
     data[word] ^= (1 << offset);
   }
 
@@ -160,7 +160,7 @@ public final class BitString implements Cloneable, Serializable {
    * @param index The index to check.
    * @throws IndexOutOfBoundsException If the index is not valid.
    */
-  private void assertValidIndex(int index) {
+  private void assertValidIndex(final int index) {
     if (index >= length || index < 0) {
       throw new IndexOutOfBoundsException("Invalid index: " + index + " (length: " + length + ")");
     }
@@ -207,22 +207,22 @@ public final class BitString implements Cloneable, Serializable {
    * @param length The number of contiguous bits to swap.
    */
   @SuppressWarnings("AccessingNonPublicFieldOfAnotherObject")
-  public void swapSubstring(BitString other, int start, int length) {
+  public void swapSubstring(final BitString other, final int start, final int length) {
     assertValidIndex(start);
     other.assertValidIndex(start);
 
     int word = start / WORD_LENGTH;
 
-    int partialWordSize = (WORD_LENGTH - start) % WORD_LENGTH;
+    final int partialWordSize = (WORD_LENGTH - start) % WORD_LENGTH;
     if (partialWordSize > 0) {
       swapBits(other, word, ALL_ONES << (WORD_LENGTH - partialWordSize));
       ++word;
     }
 
     int remainingBits = length - partialWordSize;
-    int stop = remainingBits / WORD_LENGTH;
+    final int stop = remainingBits / WORD_LENGTH;
     for (int i = word; i < stop; i++) {
-      int temp = data[i];
+      final int temp = data[i];
       data[i] = other.data[i];
       other.data[i] = temp;
     }
@@ -239,12 +239,12 @@ public final class BitString implements Cloneable, Serializable {
    * @param swapMask A mask that specifies which bits in the word will be swapped.
    */
   @SuppressWarnings("AccessingNonPublicFieldOfAnotherObject")
-  private void swapBits(BitString other, int word, int swapMask) {
-    int preserveMask = ~swapMask;
-    int preservedThis = data[word] & preserveMask;
-    int preservedThat = other.data[word] & preserveMask;
-    int swapThis = data[word] & swapMask;
-    int swapThat = other.data[word] & swapMask;
+  private void swapBits(final BitString other, final int word, final int swapMask) {
+    final int preserveMask = ~swapMask;
+    final int preservedThis = data[word] & preserveMask;
+    final int preservedThat = other.data[word] & preserveMask;
+    final int swapThis = data[word] & swapMask;
+    final int swapThat = other.data[word] & swapMask;
     data[word] = preservedThis | swapThat;
     other.data[word] = preservedThat | swapThis;
   }
@@ -257,7 +257,7 @@ public final class BitString implements Cloneable, Serializable {
    */
   @Override
   public String toString() {
-    StringBuilder buffer = new StringBuilder();
+    final StringBuilder buffer = new StringBuilder();
     for (int i = length - 1; i >= 0; i--) {
       buffer.append(getBit(i) ? '1' : '0');
     }
@@ -270,10 +270,10 @@ public final class BitString implements Cloneable, Serializable {
   @Override
   public BitString clone() {
     try {
-      BitString clone = (BitString) super.clone();
+      final BitString clone = (BitString) super.clone();
       clone.data = data.clone();
       return clone;
-    } catch (CloneNotSupportedException ex) {
+    } catch (final CloneNotSupportedException ex) {
       // Not possible.
       throw new InternalError("Cloning failed.", ex);
     }
@@ -285,7 +285,7 @@ public final class BitString implements Cloneable, Serializable {
    */
   @SuppressWarnings("NonFinalFieldReferenceInEquals")
   @Override
-  public boolean equals(Object o) {
+  public boolean equals(final Object o) {
     if (this == o) {
       return true;
     }
@@ -293,7 +293,7 @@ public final class BitString implements Cloneable, Serializable {
       return false;
     }
 
-    BitString bitString = (BitString) o;
+    final BitString bitString = (BitString) o;
 
     return length == bitString.length && Arrays.equals(data, bitString.data);
   }
