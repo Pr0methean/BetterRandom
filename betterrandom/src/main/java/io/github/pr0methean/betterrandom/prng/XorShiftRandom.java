@@ -15,12 +15,12 @@
 // ============================================================================
 package io.github.pr0methean.betterrandom.prng;
 
+import com.google.common.base.MoreObjects.ToStringHelper;
 import io.github.pr0methean.betterrandom.RepeatableRandom;
 import io.github.pr0methean.betterrandom.seed.DefaultSeedGenerator;
 import io.github.pr0methean.betterrandom.seed.SeedException;
 import io.github.pr0methean.betterrandom.seed.SeedGenerator;
 import io.github.pr0methean.betterrandom.util.BinaryUtils;
-import com.google.common.base.MoreObjects.ToStringHelper;
 import java.util.Random;
 import org.checkerframework.checker.initialization.qual.UnknownInitialization;
 
@@ -35,7 +35,7 @@ import org.checkerframework.checker.initialization.qual.UnknownInitialization;
  * @author Daniel Dyer
  * @since 1.2
  */
-public class XorShiftRandom extends BaseEntropyCountingRandom implements RepeatableRandom {
+public class XorShiftRandom extends BaseEntropyCountingRandom {
 
   private static final long serialVersionUID = 952521144304194886L;
   private static final int SEED_SIZE_BYTES = 20; // Needs 5 32-bit integers.
@@ -53,7 +53,7 @@ public class XorShiftRandom extends BaseEntropyCountingRandom implements Repeata
    *
    * @param seed The seed data used to initialise the RNG.
    */
-  public XorShiftRandom(byte[] seed) {
+  public XorShiftRandom(final byte[] seed) {
     super(seed);
   }
 
@@ -61,12 +61,12 @@ public class XorShiftRandom extends BaseEntropyCountingRandom implements Repeata
     this(DefaultSeedGenerator.DEFAULT_SEED_GENERATOR);
   }
 
-  public XorShiftRandom(SeedGenerator seedGenerator) throws SeedException {
+  public XorShiftRandom(final SeedGenerator seedGenerator) throws SeedException {
     this(seedGenerator.generateSeed(SEED_SIZE_BYTES));
   }
 
   @Override
-  protected ToStringHelper addSubSubclassFields(ToStringHelper original) {
+  protected ToStringHelper addSubSubclassFields(final ToStringHelper original) {
     return original
         .add("state1", state1)
         .add("state2", state2)
@@ -83,16 +83,18 @@ public class XorShiftRandom extends BaseEntropyCountingRandom implements Repeata
   }
 
   @Override
-  public void setSeed(@UnknownInitialization(Random.class)XorShiftRandom this, long seed) {
+  public synchronized void setSeed(@UnknownInitialization(Random.class)XorShiftRandom this,
+      final long seed) {
     if (superConstructorFinished) {
       super.setSeed(seed);
     } // Otherwise ignore; it's Random.<init> calling us without a full-size seed
   }
 
   @Override
-  public void setSeedInitial(@UnknownInitialization(Random.class)XorShiftRandom this, byte[] seed) {
-    super.setSeedInitial(seed);
-    int[] state = BinaryUtils.convertBytesToInts(this.seed);
+  protected void setSeedInternal(@UnknownInitialization(Random.class)XorShiftRandom this,
+      final byte[] seed) {
+    super.setSeedInternal(seed);
+    final int[] state = BinaryUtils.convertBytesToInts(this.seed);
     state1 = state[0];
     state2 = state[1];
     state3 = state[2];
@@ -104,16 +106,16 @@ public class XorShiftRandom extends BaseEntropyCountingRandom implements Repeata
    * {@inheritDoc}
    */
   @Override
-  protected int next(int bits) {
+  protected int next(final int bits) {
     lock.lock();
     try {
-      int t = (state1 ^ (state1 >> 7));
+      final int t = (state1 ^ (state1 >> 7));
       state1 = state2;
       state2 = state3;
       state3 = state4;
       state4 = state5;
       state5 = (state5 ^ (state5 << 6)) ^ (t ^ (t << 13));
-      int value = (state2 + state2 + 1) * state5;
+      final int value = (state2 + state2 + 1) * state5;
       recordEntropySpent(bits);
       return value >>> (32 - bits);
     } finally {

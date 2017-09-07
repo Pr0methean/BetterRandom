@@ -15,33 +15,26 @@ public abstract class DirectSplittableRandomAdapter extends BaseSplittableRandom
   @SuppressWarnings("InstanceVariableMayNotBeInitializedByReadObject")
   protected transient SplittableRandom underlying; // a SplittableRandom is not Serializable
 
-  public DirectSplittableRandomAdapter(byte[] seed) {
+  public DirectSplittableRandomAdapter(final byte[] seed) {
     super(seed);
-    setSeedInitial(seed);
+    setSeedInternal(seed);
   }
 
-  private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
+  private void readObject(final ObjectInputStream in) throws IOException, ClassNotFoundException {
     in.defaultReadObject();
-    setSeedInitial(seed);
+    setSeedInternal(seed);
   }
 
   @EnsuresNonNull({"this.seed", "underlying"})
   @Override
-  public void setSeedInitial(@UnknownInitialization(Random.class)DirectSplittableRandomAdapter this,
-      byte[] seed) {
+  protected void setSeedInternal(
+      @UnknownInitialization(Random.class)DirectSplittableRandomAdapter this,
+      final byte[] seed) {
     if (seed.length != 8) {
       throw new IllegalArgumentException("DirectSplittableRandomAdapter requires an 8-byte seed");
     }
-    super.setSeedInitial(seed);
+    super.setSeedInternal(seed);
     underlying = new SplittableRandom(
         BinaryUtils.convertBytesToLong(seed, 0));
-  }
-
-  @Override
-  public boolean equals(Object o) {
-    return this == o
-        || (o != null
-        && getClass() == o.getClass()
-        && Arrays.equals(getSeed(), ((SplittableRandomAdapter) o).getSeed()));
   }
 }

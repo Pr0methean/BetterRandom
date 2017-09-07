@@ -41,7 +41,6 @@ public final class RandomTestUtils {
 
   public static final RandomSeederThread DEFAULT_SEEDER =
       RandomSeederThread.getInstance(DefaultSeedGenerator.DEFAULT_SEED_GENERATOR);
-  private static final LogPreFormatter LOG = new LogPreFormatter(RandomTestUtils.class);
 
   private RandomTestUtils() {
     // Prevents instantiation of utility class.
@@ -52,11 +51,9 @@ public final class RandomTestUtils {
    * as equal. Also checks for compliance with basic parts of the Object.equals() contract.
    */
   @SuppressWarnings({"EqualsWithItself", "ObjectEqualsNull", "argument.type.incompatible"})
-  public static void doEqualsSanityChecks(Supplier<? extends Random> ctor) {
-    Random rng;
-    Random rng2;
-    rng = ctor.get();
-    rng2 = ctor.get();
+  public static void doEqualsSanityChecks(final Supplier<? extends Random> ctor) {
+    final Random rng = ctor.get();
+    final Random rng2 = ctor.get();
     assert !(rng.equals(rng2));
     assert rng.equals(rng) : "RNG doesn't compare equal to itself";
     assert !(rng.equals(null)) : "RNG compares equal to null";
@@ -67,8 +64,8 @@ public final class RandomTestUtils {
    * Test that in a sample of 100 RNGs from the given parameterless constructor, there are at least
    * 90 unique hash codes.
    */
-  public static boolean testHashCodeDistribution(Supplier<? extends Random> ctor) {
-    HashSet<Integer> uniqueHashCodes = new HashSet<>();
+  public static boolean testHashCodeDistribution(final Supplier<? extends Random> ctor) {
+    final HashSet<Integer> uniqueHashCodes = new HashSet<>();
     for (int i = 0; i < 25; i++) {
       uniqueHashCodes.add(ctor.get().hashCode());
     }
@@ -84,9 +81,9 @@ public final class RandomTestUtils {
    * @param iterations The number of values to generate from each RNG and compare.
    * @return true if the two RNGs produce the same sequence of values, false otherwise.
    */
-  public static boolean testEquivalence(Random rng1,
-      Random rng2,
-      int iterations) {
+  public static boolean testEquivalence(final Random rng1,
+      final Random rng2,
+      final int iterations) {
     for (int i = 0; i < iterations; i++) {
       if (rng1.nextInt() != rng2.nextInt()) {
         return false;
@@ -107,8 +104,8 @@ public final class RandomTestUtils {
    *     be sufficient.
    * @return An approximation of pi generated using the provided RNG.
    */
-  public static double calculateMonteCarloValueForPi(Random rng,
-      int iterations) {
+  public static double calculateMonteCarloValueForPi(final Random rng,
+      final int iterations) {
     // Assumes a quadrant of a circle of radius 1, bounded by a box with
     // sides of length 1.  The area of the square is therefore 1 square unit
     // and the area of the quadrant is (pi * r^2) / 4.
@@ -118,8 +115,8 @@ public final class RandomTestUtils {
     // in the quadrant (expressed as a fraction of the total number of points)
     // to be pi/4.  Therefore pi = 4 * ratio.
     for (int i = 0; i < iterations; i++) {
-      double x = rng.nextDouble();
-      double y = rng.nextDouble();
+      final double x = rng.nextDouble();
+      final double y = rng.nextDouble();
       if (isInQuadrant(x, y)) {
         ++totalInsideQuadrant;
       }
@@ -136,8 +133,8 @@ public final class RandomTestUtils {
    * @param y The y-coordinate of the point (must be between 0 and 1).
    * @return True if the point is within the quadrant, false otherwise.
    */
-  private static boolean isInQuadrant(double x, double y) {
-    double distance = Math.sqrt((x * x) + (y * y));
+  private static boolean isInQuadrant(final double x, final double y) {
+    final double distance = Math.sqrt((x * x) + (y * y));
     return distance <= 1;
   }
 
@@ -152,10 +149,10 @@ public final class RandomTestUtils {
    *     calculation.
    * @return The standard deviation of the generated sample.
    */
-  public static double calculateSampleStandardDeviation(Random rng,
-      int maxValue,
-      int iterations) {
-    DescriptiveStatistics stats = new DescriptiveStatistics();
+  public static double calculateSampleStandardDeviation(final Random rng,
+      final int maxValue,
+      final int iterations) {
+    final DescriptiveStatistics stats = new DescriptiveStatistics();
     for (int i = 0; i < iterations; i++) {
       stats.addValue(rng.nextInt(maxValue));
     }
@@ -163,12 +160,12 @@ public final class RandomTestUtils {
   }
 
   @SuppressWarnings("unchecked")
-  public static <T extends Serializable> T serializeAndDeserialize(T object) {
+  public static <T extends Serializable> T serializeAndDeserialize(final T object) {
     try (
         ByteArrayOutputStream byteOutStream = new ByteArrayOutputStream();
         ObjectOutputStream objectOutStream = new ObjectOutputStream(byteOutStream)) {
       objectOutStream.writeObject(object);
-      byte[] serialCopy = byteOutStream.toByteArray();
+      final byte[] serialCopy = byteOutStream.toByteArray();
       // Read the object back-in.
       try (ObjectInputStream objectInStream = new ObjectInputStream(
           new ByteArrayInputStream(serialCopy))) {
@@ -180,31 +177,31 @@ public final class RandomTestUtils {
   }
 
   @SuppressWarnings({"unchecked", "ObjectEquality"})
-  public static <T extends Random> void assertEquivalentWhenSerializedAndDeserialized(T rng) {
-    T rng2 = serializeAndDeserialize(rng);
+  public static <T extends Random> void assertEquivalentWhenSerializedAndDeserialized(final T rng) {
+    final T rng2 = serializeAndDeserialize(rng);
     assert rng != rng2 : "Deserialised RNG should be distinct object.";
     // Both RNGs should generate the same sequence.
     assert testEquivalence(rng, rng2, 20) : "Output mismatch after serialisation.";
   }
 
-  public static void assertStandardDeviationSane(Random rng) {
+  public static void assertStandardDeviationSane(final Random rng) {
     // Expected standard deviation for a uniformly distributed population of values in the range 0..n
     // approaches n/sqrt(12).
-    int n = 100;
-    double observedSD = calculateSampleStandardDeviation(rng, n, 10000);
-    double expectedSD = n / Math.sqrt(12);
+    final int n = 100;
+    final double observedSD = calculateSampleStandardDeviation(rng, n, 10000);
+    final double expectedSD = n / Math.sqrt(12);
     Reporter.log("Expected SD: " + expectedSD + ", observed SD: " + observedSD);
     assertEquals(observedSD, expectedSD, 0.02 * expectedSD,
         "Standard deviation is outside acceptable range: " + observedSD);
   }
 
-  public static void assertMonteCarloPiEstimateSane(Random rng) {
+  public static void assertMonteCarloPiEstimateSane(final Random rng) {
     assertMonteCarloPiEstimateSane(rng, 100000);
   }
 
   public static void assertMonteCarloPiEstimateSane(
-      Random rng, int iterations) {
-    double pi = calculateMonteCarloValueForPi(rng, iterations);
+      final Random rng, final int iterations) {
+    final double pi = calculateMonteCarloValueForPi(rng, iterations);
     Reporter.log("Monte Carlo value for Pi: " + pi);
     assertEquals(pi, Math.PI, 0.01 * Math.PI,
         "Monte Carlo value for Pi is outside acceptable range:" + pi);

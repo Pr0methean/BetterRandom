@@ -45,23 +45,18 @@ import org.openjdk.jmh.annotations.State;
 @State(Scope.Thread)
 public abstract class AbstractRandomBenchmark {
 
+  protected static final RandomSeederThread seederThread = RandomSeederThread.getInstance(
+      DefaultSeedGenerator.DEFAULT_SEED_GENERATOR);
   private static final int COLUMNS = 2;
   private static final int ROWS = 10_000;
-
-  public AbstractRandomBenchmark() {}
-
-  protected final static RandomSeederThread seederThread = RandomSeederThread.getInstance(
-      DefaultSeedGenerator.DEFAULT_SEED_GENERATOR);
-
   protected final byte[][] bytes = new byte[COLUMNS][ROWS];
   protected final ScheduledThreadPoolExecutor executor = new ScheduledThreadPoolExecutor(2);
-  
   protected final Random prng;
-  
+
   {
     try {
       prng = createPrng();
-    } catch (SeedException e) {
+    } catch (final SeedException e) {
       throw new AssertionError(e);
     }
   }
@@ -70,27 +65,27 @@ public abstract class AbstractRandomBenchmark {
       throws SeedException;
 
   private byte innerTestBytesSequential() {
-    for (byte[] bytes : bytes) {
-      prng.nextBytes(bytes);
+    for (final byte[] column : bytes) {
+      prng.nextBytes(column);
     }
     return bytes[prng.nextInt(COLUMNS)][prng.nextInt(ROWS)];
   }
 
   @Benchmark
-  public byte testBytesSequential() throws SeedException {
+  public byte testBytesSequential() {
     return innerTestBytesSequential();
   }
 
   @Benchmark
-  public byte testBytesSequentialReseeding() throws SeedException {
+  public byte testBytesSequentialReseeding() {
     seederThread.add(prng);
-    byte b = innerTestBytesSequential();
+    final byte b = innerTestBytesSequential();
     seederThread.remove(prng);
     return b;
   }
 
-  private byte innerTestBytesContended() throws SeedException, InterruptedException {
-    for (byte[] column : bytes) {
+  private byte innerTestBytesContended() throws InterruptedException {
+    for (final byte[] column : bytes) {
       executor.execute(() -> prng.nextBytes(column));
     }
     assert executor.awaitTermination(1800, TimeUnit.SECONDS) : "Timed out";
@@ -105,7 +100,7 @@ public abstract class AbstractRandomBenchmark {
   @Benchmark
   public byte testBytesContendedReseeding() throws SeedException, InterruptedException {
     seederThread.add(prng);
-    byte b = innerTestBytesContended();
+    final byte b = innerTestBytesContended();
     seederThread.remove(prng);
     return b;
   }

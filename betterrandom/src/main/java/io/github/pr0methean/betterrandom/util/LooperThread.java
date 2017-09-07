@@ -1,5 +1,7 @@
 package io.github.pr0methean.betterrandom.util;
 
+import static org.checkerframework.checker.nullness.NullnessUtil.castNonNull;
+
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -47,28 +49,24 @@ public class LooperThread extends Thread implements Serializable, Cloneable {
   private boolean daemon = false;
   private int priority = Thread.NORM_PRIORITY;
   private State state = State.NEW;
-  @Nullable
-  private ThreadGroup group;
-  @Nullable
-  private ClassLoader contextClassLoader = null;
-  @MonotonicNonNull
-  private String name = null;
+  private @Nullable ThreadGroup group;
+  private @Nullable ClassLoader contextClassLoader = null;
+  private @MonotonicNonNull String name = null;
 
   public LooperThread() {
     super();
   }
 
-  public LooperThread(String name) {
+  public LooperThread(final String name) {
     super(name);
   }
 
-  public LooperThread(ThreadGroup group, String name) {
+  public LooperThread(final ThreadGroup group, final String name) {
     super(group, name);
     setGroup(group);
   }
 
-  @Nullable
-  private static <T> T serializableOrNull(@Nullable T object) {
+  private static @Nullable <T> T serializableOrNull(@Nullable final T object) {
     if (!(object instanceof Serializable)) {
       return null;
     }
@@ -76,7 +74,7 @@ public class LooperThread extends Thread implements Serializable, Cloneable {
   }
 
   private void setGroup(@UnderInitialization LooperThread this,
-      @org.jetbrains.annotations.Nullable ThreadGroup group) {
+      @org.jetbrains.annotations.Nullable final ThreadGroup group) {
     if (uncaughtExceptionHandler.wrapped == null) {
       uncaughtExceptionHandler.wrapped = group;
     }
@@ -85,7 +83,7 @@ public class LooperThread extends Thread implements Serializable, Cloneable {
   /**
    * Used only to prepare subclasses before readResolve.
    */
-  private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
+  private void readObject(final ObjectInputStream in) throws IOException, ClassNotFoundException {
     in.defaultReadObject();
     lock = new ReentrantLock();
   }
@@ -98,19 +96,11 @@ public class LooperThread extends Thread implements Serializable, Cloneable {
    */
   @SuppressWarnings("deprecation")
   protected Object readResolve() {
-    LooperThread t;
-    ThreadGroup group = this.group;
+    final LooperThread t;
     if (group != null) {
-      if (name == null) {
-        name = getName();
-      }
-      t = new LooperThread(group, name);
+      t = new LooperThread(castNonNull(group), name == null ? getName() : name);
     } else {
-      if (name == null) {
-        t = new LooperThread();
-      } else {
-        t = new LooperThread(name);
-      }
+      t = name == null ? new LooperThread() : new LooperThread(name);
     }
     t.setDaemon(daemon);
     if (name != null) {
@@ -161,7 +151,7 @@ public class LooperThread extends Thread implements Serializable, Cloneable {
         } finally {
           lock.unlock();
         }
-      } catch (InterruptedException e) {
+      } catch (final InterruptedException e) {
         LOG.error("Interrupted: %s", e);
         interrupt();
         break;
@@ -169,30 +159,25 @@ public class LooperThread extends Thread implements Serializable, Cloneable {
     }
   }
 
-  @SuppressWarnings("override.return.invalid")
-  @Nullable
   @Override
-  public UncaughtExceptionHandler getUncaughtExceptionHandler() {
+  @SuppressWarnings("override.return.invalid")
+  public @Nullable UncaughtExceptionHandler getUncaughtExceptionHandler() {
     return uncaughtExceptionHandler.wrapped;
   }
 
   @Override
-  public void setUncaughtExceptionHandler(UncaughtExceptionHandler handler) {
+  public void setUncaughtExceptionHandler(final UncaughtExceptionHandler handler) {
     uncaughtExceptionHandler.wrapped = handler;
     super.setUncaughtExceptionHandler(uncaughtExceptionHandler);
   }
 
   @Override
   public State getState() {
-    if (alreadyTerminatedWhenDeserialized) {
-      return State.TERMINATED;
-    } else {
-      return super.getState();
-    }
+    return alreadyTerminatedWhenDeserialized ? State.TERMINATED : super.getState();
   }
 
   @Override
-  public void start() {
+  public synchronized void start() {
     if (alreadyTerminatedWhenDeserialized) {
       throw new IllegalThreadStateException(
           "This thread was deserialized from one that had already terminated");
@@ -200,7 +185,7 @@ public class LooperThread extends Thread implements Serializable, Cloneable {
     super.start();
   }
 
-  private void writeObject(ObjectOutputStream out) throws IOException {
+  private void writeObject(final ObjectOutputStream out) throws IOException {
     lock.lock();
     try {
       interrupted = isInterrupted();
@@ -216,6 +201,7 @@ public class LooperThread extends Thread implements Serializable, Cloneable {
     }
   }
 
+  @SuppressWarnings("MethodDoesntCallSuperMethod")
   @Override
   public LooperThread clone() {
     lock.lock();
@@ -245,18 +231,17 @@ public class LooperThread extends Thread implements Serializable, Cloneable {
       implements UncaughtExceptionHandler, Serializable {
 
     private static final long serialVersionUID = -132520277274461153L;
-    @Nullable
-    private UncaughtExceptionHandler wrapped = null;
+    private @Nullable UncaughtExceptionHandler wrapped = null;
 
     @SuppressWarnings("deprecation")
     @Override
-    public void uncaughtException(Thread t, Throwable e) {
+    public void uncaughtException(final Thread t, final Throwable e) {
       if (!(e instanceof ThreadDeathAlreadyHandled)) {
         LOG.error("Uncaught exception: %s", e);
         if (wrapped != null) {
           wrapped.uncaughtException(t, e);
         } else {
-          UncaughtExceptionHandler defaultHandler = getDefaultUncaughtExceptionHandler();
+          final UncaughtExceptionHandler defaultHandler = getDefaultUncaughtExceptionHandler();
           if (defaultHandler == null) {
             e.printStackTrace();
             t.stop(e); // necessary so that join() (which is final) will return
@@ -267,7 +252,7 @@ public class LooperThread extends Thread implements Serializable, Cloneable {
       }
     }
 
-    private void writeObject(ObjectOutputStream out) throws IOException {
+    private void writeObject(final ObjectOutputStream out) throws IOException {
       wrapped = serializableOrNull(wrapped);
       out.defaultWriteObject();
     }

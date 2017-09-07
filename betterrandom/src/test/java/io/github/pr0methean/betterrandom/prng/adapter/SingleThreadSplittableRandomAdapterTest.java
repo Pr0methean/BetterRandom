@@ -20,8 +20,8 @@ public class SingleThreadSplittableRandomAdapterTest extends BaseRandomTest {
   }
 
   @Override
-  protected BaseRandom createRng(byte[] seed) throws SeedException {
-    BaseSplittableRandomAdapter adapter = tryCreateRng();
+  protected BaseRandom createRng(final byte[] seed) throws SeedException {
+    final BaseSplittableRandomAdapter adapter = tryCreateRng();
     adapter.setSeed(seed);
     return adapter;
   }
@@ -34,12 +34,12 @@ public class SingleThreadSplittableRandomAdapterTest extends BaseRandomTest {
   @Override
   @Test
   public void testSerializable() throws SeedException {
-    BaseSplittableRandomAdapter adapter = tryCreateRng();
+    final BaseSplittableRandomAdapter adapter = tryCreateRng();
     // May change when serialized and deserialized, but deserializing twice should yield same object
     // and deserialization should be idempotent
-    BaseSplittableRandomAdapter adapter2 = serializeAndDeserialize(adapter);
-    BaseSplittableRandomAdapter adapter3 = serializeAndDeserialize(adapter);
-    BaseSplittableRandomAdapter adapter4 = serializeAndDeserialize(adapter2);
+    final BaseSplittableRandomAdapter adapter2 = serializeAndDeserialize(adapter);
+    final BaseSplittableRandomAdapter adapter3 = serializeAndDeserialize(adapter);
+    final BaseSplittableRandomAdapter adapter4 = serializeAndDeserialize(adapter2);
     testEquivalence(adapter2, adapter3, 20);
     testEquivalence(adapter2, adapter4, 20);
   }

@@ -8,7 +8,8 @@ import org.checkerframework.checker.initialization.qual.UnknownInitialization;
 public class Cmwc4096RandomBenchmark extends AbstractRandomBenchmark {
 
   @Override
-  protected Random createPrng(@UnknownInitialization Cmwc4096RandomBenchmark this) throws SeedException {
+  protected Random createPrng(@UnknownInitialization Cmwc4096RandomBenchmark this)
+      throws SeedException {
     return new Cmwc4096Random();
   }
 }

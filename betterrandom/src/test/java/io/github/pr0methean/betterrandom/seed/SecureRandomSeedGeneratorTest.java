@@ -27,8 +27,8 @@ public class SecureRandomSeedGeneratorTest {
 
   @Test(timeOut = 15000)
   public void testGenerator() throws SeedException {
-    SeedGenerator generator = SecureRandomSeedGenerator.SECURE_RANDOM_SEED_GENERATOR;
-    byte[] seed = generator.generateSeed(32);
+    final SeedGenerator generator = SecureRandomSeedGenerator.SECURE_RANDOM_SEED_GENERATOR;
+    final byte[] seed = generator.generateSeed(32);
     assert seed.length == 32 : "Failed to generate seed of correct length";
   }
 }
