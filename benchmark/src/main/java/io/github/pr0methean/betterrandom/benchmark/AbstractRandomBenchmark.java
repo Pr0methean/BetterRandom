@@ -8,8 +8,11 @@ import java.util.concurrent.Future;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 import org.checkerframework.checker.initialization.qual.UnknownInitialization;
 import org.openjdk.jmh.annotations.Benchmark;
+import org.openjdk.jmh.annotations.Scope;
+import org.openjdk.jmh.annotations.State;
 import org.openjdk.jmh.annotations.TearDown;
 
+@State(Scope.Benchmark)
 public abstract class AbstractRandomBenchmark {
 
   private static final int COLUMNS = 2;
