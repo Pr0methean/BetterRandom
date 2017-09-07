@@ -152,6 +152,11 @@ public abstract class BaseRandom extends Random implements ByteArrayReseedableRa
     }
   }
 
+  @Override
+  public boolean preferSeedWithLong() {
+    return getNewSeedLength() <= 8;
+  }
+
   /**
    * Sets the seed, and should be overridden to set other state that derives from the seed. Called
    * by {@link #setSeed(byte[])}, whose default implementation ensures that the lock is held while
