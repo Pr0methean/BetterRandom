@@ -35,12 +35,14 @@ import io.github.pr0methean.betterrandom.seed.DefaultSeedGenerator;
 import io.github.pr0methean.betterrandom.seed.RandomSeederThread;
 import io.github.pr0methean.betterrandom.seed.SeedException;
 import java.util.Random;
+import java.util.concurrent.ExecutorCompletionService;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 import org.checkerframework.checker.initialization.qual.UnknownInitialization;
 import org.openjdk.jmh.annotations.Benchmark;
 import org.openjdk.jmh.annotations.Scope;
 import org.openjdk.jmh.annotations.State;
+import org.openjdk.jmh.annotations.TearDown;
 
 @State(Scope.Benchmark)
 public abstract class AbstractRandomBenchmark {
@@ -51,6 +53,8 @@ public abstract class AbstractRandomBenchmark {
   private static final int ROWS = 10_000;
   protected final byte[][] bytes = new byte[COLUMNS][ROWS];
   protected final ScheduledThreadPoolExecutor executor = new ScheduledThreadPoolExecutor(2);
+  protected final ExecutorCompletionService<Void> completion =
+      new ExecutorCompletionService<>(executor);
   protected final Random prng;
 
   {
@@ -86,9 +90,17 @@ public abstract class AbstractRandomBenchmark {
 
   private byte innerTestBytesContended() throws InterruptedException {
     for (final byte[] column : bytes) {
-      executor.execute(() -> prng.nextBytes(column));
+      completion.submit(() -> prng.nextBytes(column), null);
     }
-    assert executor.awaitTermination(1800, TimeUnit.SECONDS) : "Timed out";
+    // Wait for all jobs to finish
+    while (true) {
+      Future<Void> future = completion.poll();
+      if (future == null) {
+        break;
+      } else {
+        future.get();
+      }
+    }
     return bytes[prng.nextInt(COLUMNS)][prng.nextInt(ROWS)];
   }
 
@@ -103,5 +115,12 @@ public abstract class AbstractRandomBenchmark {
     final byte b = innerTestBytesContended();
     seederThread.remove(prng);
     return b;
+  }
+  
+  @TearDown
+  public void tearDown() {
+    if (!(executor.shutdownNow().isEmpty())) {
+      throw new AssertionError("Thread pool had unfinished tasks at teardown");
+    }
   }
 }
