@@ -31,8 +31,8 @@ public abstract class AbstractRandomBenchmark {
   @Group("contended")
   public void setUpThreads() {
     for (int column = 0; column < COLUMNS; column++) {
-      int finalColumn = column;
-      threads[column] = new Thread(() -> prng.nextBytes(bytes[finalColumn]));
+      final int column_ = column;
+      threads[column] = new Thread(() -> prng.nextBytes(bytes[column_]));
     }
   }
 
