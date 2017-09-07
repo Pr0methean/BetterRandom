@@ -180,7 +180,7 @@ public class CellularAutomatonRandom extends BaseEntropyCountingRandom {
   @Override
   public synchronized void setSeed(@UnknownInitialization(Random.class)CellularAutomatonRandom this,
       final long seed) {
-    byte[] shortenedSeed = convertIntToBytes(((Long) seed).hashCode())''
+    byte[] shortenedSeed = convertIntToBytes(((Long) seed).hashCode());
     if (superConstructorFinished) {
       setSeedInternal(shortenedSeed);
     } else {
