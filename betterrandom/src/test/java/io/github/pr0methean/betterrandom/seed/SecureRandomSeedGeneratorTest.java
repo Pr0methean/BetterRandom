@@ -30,5 +30,6 @@ public class SecureRandomSeedGeneratorTest {
     final SeedGenerator generator = SecureRandomSeedGenerator.SECURE_RANDOM_SEED_GENERATOR;
     final byte[] seed = generator.generateSeed(32);
     assert seed.length == 32 : "Failed to generate seed of correct length";
+    generator.generateSeed(seed); // Check that other syntax also works
   }
 }

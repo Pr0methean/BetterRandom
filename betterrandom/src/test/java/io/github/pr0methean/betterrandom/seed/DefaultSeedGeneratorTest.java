@@ -37,7 +37,7 @@ public class DefaultSeedGeneratorTest {
     try {
       // Don't allow file system or network access.
       System.setSecurityManager(new RestrictedSecurityManager(affectedThread));
-      DefaultSeedGenerator.DEFAULT_SEED_GENERATOR.generateSeed(4);
+      DefaultSeedGenerator.DEFAULT_SEED_GENERATOR.generateSeed(new byte[4]);
       // Should get to here without exceptions.
     } finally {
       // Restore the original security manager so that we don't

@@ -33,6 +33,7 @@ public class DevRandomSeedGeneratorTest {
       final SeedGenerator generator = DevRandomSeedGenerator.DEV_RANDOM_SEED_GENERATOR;
       final byte[] seed = generator.generateSeed(32);
       assert seed.length == 32 : "Failed to generate seed of correct length";
+      generator.generateSeed(seed); // Check that other syntax also works
     } catch (final SeedException ex) {
       // This exception is OK, but only if we are running on a platform that
       // does not provide /dev/random.
