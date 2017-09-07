@@ -10,7 +10,6 @@ import io.github.pr0methean.betterrandom.seed.DefaultSeedGenerator;
 import io.github.pr0methean.betterrandom.seed.SeedException;
 import java.io.IOException;
 import java.security.GeneralSecurityException;
-import java.util.Random;
 import org.testng.annotations.Test;
 
 public abstract class BaseRandomTest {

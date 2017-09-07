@@ -23,7 +23,6 @@ import java.net.URLConnection;
 import java.text.MessageFormat;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
-import java.util.logging.Logger;
 
 /**
  * Connects to the <a href="http://www.random.org" target="_top">random.org</a> website (via HTTPS)
