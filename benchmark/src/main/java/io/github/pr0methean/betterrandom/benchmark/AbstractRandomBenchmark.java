@@ -4,8 +4,10 @@ import io.github.pr0methean.betterrandom.seed.SeedException;
 import java.util.Random;
 import org.checkerframework.checker.initialization.qual.UnknownInitialization;
 import org.openjdk.jmh.annotations.Benchmark;
+import org.openjdk.jmh.annotations.Level;
 import org.openjdk.jmh.annotations.Scope;
 import org.openjdk.jmh.annotations.State;
+import org.openjdk.jmh.annotations.TearDown;
 
 // FIXME: Get the multithreaded benchmarks working
 @State(Scope.Benchmark)
@@ -14,7 +16,7 @@ public abstract class AbstractRandomBenchmark {
   private static final int COLUMNS = 2;
   private static final int ROWS = 50_000;
   protected final byte[][] bytes = new byte[COLUMNS][ROWS];
-  protected final Thread[] threads = new Thread[COLUMNS];
+  // protected final Thread[] threads = new Thread[COLUMNS];
   protected final Random prng;
 
   {
@@ -48,6 +50,11 @@ public abstract class AbstractRandomBenchmark {
   @Benchmark
   public byte testBytesSequential() {
     return innerTestBytesSequential();
+  }
+  
+  @TearDown(Level.Trial)
+  public void gc() {
+    System.gc();
   }
 
   /*
