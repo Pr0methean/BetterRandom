@@ -62,7 +62,7 @@ public class SplittableRandomAdapter extends DirectSplittableRandomAdapter {
    * {@inheritDoc} Applies only to the calling thread.
    */
   @Override
-  public synchronized void setSeed(@UnknownInitialization SplittableRandomAdapter this,
+  public void setSeed(@UnknownInitialization SplittableRandomAdapter this,
       final long seed) {
     this.seed = BinaryUtils.convertLongToBytes(seed);
     if (superConstructorFinished && threadLocal != null) {
