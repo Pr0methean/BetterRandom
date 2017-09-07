@@ -4,12 +4,10 @@ import io.github.pr0methean.betterrandom.seed.SeedException;
 import java.util.Random;
 import org.checkerframework.checker.initialization.qual.UnknownInitialization;
 import org.openjdk.jmh.annotations.Benchmark;
-import org.openjdk.jmh.annotations.Group;
-import org.openjdk.jmh.annotations.Level;
 import org.openjdk.jmh.annotations.Scope;
-import org.openjdk.jmh.annotations.Setup;
 import org.openjdk.jmh.annotations.State;
 
+// FIXME: Get the multithreaded benchmarks working
 @State(Scope.Benchmark)
 public abstract class AbstractRandomBenchmark {
 
@@ -27,7 +25,7 @@ public abstract class AbstractRandomBenchmark {
     }
   }
 
-  @Setup(Level.Invocation)
+  /*
   @Group("contended")
   public void setUpThreads() {
     for (int column = 0; column < COLUMNS; column++) {
@@ -35,6 +33,7 @@ public abstract class AbstractRandomBenchmark {
       threads[column] = new Thread(() -> prng.nextBytes(bytes[column_]));
     }
   }
+  */
 
   protected abstract Random createPrng(@UnknownInitialization AbstractRandomBenchmark this)
       throws SeedException;
@@ -51,6 +50,7 @@ public abstract class AbstractRandomBenchmark {
     return innerTestBytesSequential();
   }
 
+  /*
   protected byte innerTestBytesContended() throws InterruptedException {
     // Start the threads
     for (Thread thread : threads) {
@@ -62,10 +62,13 @@ public abstract class AbstractRandomBenchmark {
     }
     return bytes[prng.nextInt(COLUMNS)][prng.nextInt(ROWS)];
   }
+  */
 
+  /*
   @Benchmark
   @Group("contended")
   public byte testBytesContended() throws SeedException, InterruptedException {
     return innerTestBytesContended();
   }
+  */
 }
