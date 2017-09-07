@@ -120,13 +120,13 @@ public class MersenneTwisterRandom extends BaseEntropyCountingRandom implements 
   }
 
   @Override
-  public void setSeedInitial(
+  public void setSeedInternal(
       @UnknownInitialization(Random.class)MersenneTwisterRandom this, byte[] seed) {
     if (seed == null || seed.length != SEED_SIZE_BYTES) {
       throw new IllegalArgumentException("Mersenne Twister RNG requires a 128-bit (16-byte) seed.");
     }
     assert mt != null : "@AssumeAssertion(nullness)";
-    super.setSeedInitial(seed);
+    super.setSeedInternal(seed);
     int[] seedInts = BinaryUtils.convertBytesToInts(seed);
 
     // This section is translated from the init_genrand code in the C version.

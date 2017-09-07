@@ -90,8 +90,8 @@ public class XorShiftRandom extends BaseEntropyCountingRandom implements Repeata
   }
 
   @Override
-  public void setSeedInitial(@UnknownInitialization(Random.class)XorShiftRandom this, byte[] seed) {
-    super.setSeedInitial(seed);
+  public void setSeedInternal(@UnknownInitialization(Random.class)XorShiftRandom this, byte[] seed) {
+    super.setSeedInternal(seed);
     int[] state = BinaryUtils.convertBytesToInts(this.seed);
     state1 = state[0];
     state2 = state[1];
