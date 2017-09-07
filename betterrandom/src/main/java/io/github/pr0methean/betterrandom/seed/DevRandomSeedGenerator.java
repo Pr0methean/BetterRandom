@@ -39,11 +39,11 @@ public enum DevRandomSeedGenerator implements SeedGenerator {
    * @throws SeedException If {@literal /dev/random} does not exist or is not accessible
    */
   @SuppressWarnings({"IOResourceOpenedButNotSafelyClosed", "resource"})
-  public byte[] generateSeed(final int length) throws SeedException {
+  public void generateSeed(final byte[] randomSeed) throws SeedException {
     FileInputStream file = null;
     try {
       file = new FileInputStream(DEV_RANDOM);
-      final byte[] randomSeed = new byte[length];
+      int length = randomSeed.length;
       int count = 0;
       while (count < length) {
         final int bytesRead = file.read(randomSeed, count, length - count);
@@ -52,7 +52,6 @@ public enum DevRandomSeedGenerator implements SeedGenerator {
         }
         count += bytesRead;
       }
-      return randomSeed;
     } catch (final IOException ex) {
       throw new SeedException("Failed reading from " + DEV_RANDOM.getName(), ex);
     } catch (final SecurityException ex) {

@@ -38,6 +38,36 @@ public abstract class BaseRandom extends Random implements ByteArrayReseedableRa
   @SuppressWarnings({"InstanceVariableMayNotBeInitializedByReadObject",
       "FieldAccessedSynchronizedAndUnsynchronized"})
   protected transient boolean superConstructorFinished = false;
+  protected transient byte[] longSeedArray;
+  protected transient ByteBuffer longSeedBuffer;
+
+  /**
+   * Creates a new RNG and seeds it using the default seeding strategy.
+   */
+  public BaseRandom(final int seedLength) throws SeedException {
+    this(DefaultSeedGenerator.DEFAULT_SEED_GENERATOR.generateSeed(seedLength));
+  }
+
+  /**
+   * Seed the RNG using the provided seed generation strategy.
+   *
+   * @param seedGenerator The seed generation strategy that will provide the seed value for this
+   *     RNG.
+   * @throws SeedException If there is a problem generating a seed.
+   */
+  public BaseRandom(final SeedGenerator seedGenerator, final int seedLength) throws SeedException {
+    this(seedGenerator.generateSeed(seedLength));
+  }
+
+  @EnsuresNonNull("this.seed")
+  public BaseRandom(final byte[] seed) {
+    superConstructorFinished = true;
+    if (seed == null) {
+      throw new IllegalArgumentException("Seed must not be null");
+    }
+    initTransientFields();
+    setSeedInternal(seed);
+  }
 
   /**
    * The purpose of this method is so that entropy-counting subclasses can detect that no more than
@@ -71,34 +101,6 @@ public abstract class BaseRandom extends Random implements ByteArrayReseedableRa
     return nextDouble() <= probability;
   }
 
-  /**
-   * Creates a new RNG and seeds it using the default seeding strategy.
-   */
-  public BaseRandom(final int seedLength) throws SeedException {
-    this(DefaultSeedGenerator.DEFAULT_SEED_GENERATOR.generateSeed(seedLength));
-  }
-
-  /**
-   * Seed the RNG using the provided seed generation strategy.
-   *
-   * @param seedGenerator The seed generation strategy that will provide the seed value for this
-   *     RNG.
-   * @throws SeedException If there is a problem generating a seed.
-   */
-  public BaseRandom(final SeedGenerator seedGenerator, final int seedLength) throws SeedException {
-    this(seedGenerator.generateSeed(seedLength));
-  }
-
-  @EnsuresNonNull("this.seed")
-  public BaseRandom(final byte[] seed) {
-    superConstructorFinished = true;
-    if (seed == null) {
-      throw new IllegalArgumentException("Seed must not be null");
-    }
-    initTransientFields();
-    setSeedInternal(seed);
-  }
-
   public abstract ToStringHelper addSubclassFields(ToStringHelper original);
 
   public String dump() {
@@ -125,6 +127,16 @@ public abstract class BaseRandom extends Random implements ByteArrayReseedableRa
     }
   }
 
+  @Override
+  public synchronized void setSeed(@UnknownInitialization(Random.class)BaseRandom this,
+      final long seed) {
+    if (superConstructorFinished) {
+      setSeed(seed);
+    } else {
+      setSeedInternal(BinaryUtils.convertLongToBytes(seed));
+    }
+  }
+
   @EnsuresNonNull("this.seed")
   @Override
   public void setSeed(final byte[] seed) {
@@ -133,26 +145,6 @@ public abstract class BaseRandom extends Random implements ByteArrayReseedableRa
       setSeedInternal(seed);
     } finally {
       lock.unlock();
-    }
-  }
-
-  @Override
-  public synchronized void setSeed(@UnknownInitialization(Random.class)BaseRandom this,
-      final long seed) {
-    final ByteBuffer buffer = ByteBuffer.allocate(8);
-    buffer.putLong(seed);
-    final byte[] array = buffer.array();
-    setSeedMaybeInitial(array);
-  }
-
-  @SuppressWarnings("method.invocation.invalid")
-  @EnsuresNonNull("this.seed")
-  protected void setSeedMaybeInitial(@UnknownInitialization(Random.class)BaseRandom this,
-      final byte[] seed) {
-    if (superConstructorFinished) {
-      setSeed(seed);
-    } else {
-      setSeedInternal(seed);
     }
   }
 
@@ -170,11 +162,13 @@ public abstract class BaseRandom extends Random implements ByteArrayReseedableRa
     this.seed = seed.clone();
   }
 
-  @EnsuresNonNull("lock")
+  @EnsuresNonNull({"lock", "longSeedArray", "longSeedBuffer"})
   protected void initTransientFields(@UnknownInitialization BaseRandom this) {
     if (lock == null) {
       lock = new ReentrantLock();
     }
+    longSeedArray = new byte[8];
+    longSeedBuffer = ByteBuffer.wrap(longSeedArray);
     superConstructorFinished = true;
   }
 
