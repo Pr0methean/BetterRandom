@@ -33,7 +33,6 @@ package io.github.pr0methean.betterrandom.benchmark;
 
 import io.github.pr0methean.betterrandom.seed.DefaultSeedGenerator;
 import io.github.pr0methean.betterrandom.seed.RandomSeederThread;
-import io.github.pr0methean.betterrandom.seed.SeedException;
 import org.openjdk.jmh.annotations.Benchmark;
 import org.openjdk.jmh.annotations.Scope;
 import org.openjdk.jmh.annotations.State;
