@@ -21,30 +21,30 @@ public abstract class BaseEntropyCountingRandom extends BaseRandom implements
   private static final long serialVersionUID = 1838766748070164286L;
   private static final LogPreFormatter LOG = new LogPreFormatter(BaseEntropyCountingRandom.class);
   protected AtomicLong entropyBits;
-  private @Nullable RandomSeederThread thread;
+  protected @Nullable RandomSeederThread seederThread;
 
   @EnsuresNonNull("entropyBits")
   public BaseEntropyCountingRandom(final int seedLength) throws SeedException {
     super(seedLength);
-    assert entropyBits != null : "@AssumeAssertion(nullness)";
+    entropyBits = new AtomicLong(0);
   }
 
   @EnsuresNonNull("entropyBits")
   public BaseEntropyCountingRandom(final SeedGenerator seedGenerator, final int seedLength)
       throws SeedException {
     super(seedGenerator, seedLength);
-    assert entropyBits != null : "@AssumeAssertion(nullness)";
+    entropyBits = new AtomicLong(0);
   }
 
   @EnsuresNonNull("entropyBits")
   public BaseEntropyCountingRandom(final byte[] seed) {
     super(seed);
-    assert entropyBits != null : "@AssumeAssertion(nullness)";
+    entropyBits = new AtomicLong(0);
   }
 
   @Override
-  protected boolean withProbabilityInternal(double probability) {
-    boolean result = super.withProbabilityInternal(probability);
+  protected boolean withProbabilityInternal(final double probability) {
+    final boolean result = super.withProbabilityInternal(probability);
     // Random.nextDouble() uses 53 bits, but we're only outputting 1, so credit the rest back
     // TODO: Maybe track fractional bits of entropy in a fixed-point form?
     recordEntropySpent(-52);
@@ -55,23 +55,25 @@ public abstract class BaseEntropyCountingRandom extends BaseRandom implements
   public ToStringHelper addSubclassFields(final ToStringHelper original) {
     return addSubSubclassFields(original
         .add("entropyBits", entropyBits.get())
-        .add("thread", thread));
+        .add("seederThread", seederThread));
   }
 
   protected abstract ToStringHelper addSubSubclassFields(ToStringHelper original);
 
   @SuppressWarnings("ObjectEquality")
-  public void setSeederThread(final RandomSeederThread thread) {
-    thread.add(this);
+  public void setSeederThread(@org.jetbrains.annotations.Nullable final RandomSeederThread thread) {
+    if (thread != null) {
+      thread.add(this);
+    }
     lock.lock();
     try {
-      if (this.thread == thread) {
+      if (this.seederThread == thread) {
         return;
       }
-      if (this.thread != null) {
-        this.thread.remove(this);
+      if (this.seederThread != null) {
+        this.seederThread.remove(this);
       }
-      this.thread = thread;
+      this.seederThread = thread;
     } finally {
       lock.unlock();
     }
@@ -80,7 +82,8 @@ public abstract class BaseEntropyCountingRandom extends BaseRandom implements
   @Override
   public void setSeed(final byte[] seed) {
     super.setSeed(seed);
-    entropyBits.updateAndGet(oldCount -> Math.max(oldCount, Math.min(seed.length, getNewSeedLength()) * 8));
+    entropyBits.updateAndGet(
+        oldCount -> Math.max(oldCount, Math.min(seed.length, getNewSeedLength()) * 8));
   }
 
   @Override
@@ -102,8 +105,8 @@ public abstract class BaseEntropyCountingRandom extends BaseRandom implements
 
   protected final void recordEntropySpent(final long bits) {
     if (entropyBits.updateAndGet(oldCount -> Math.max(oldCount - bits, 0)) == 0
-        && thread != null) {
-      thread.asyncReseed(this);
+        && seederThread != null) {
+      seederThread.asyncReseed(this);
     }
   }
 

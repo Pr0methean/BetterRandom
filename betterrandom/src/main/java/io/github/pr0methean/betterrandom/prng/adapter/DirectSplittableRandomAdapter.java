@@ -1,5 +1,6 @@
 package io.github.pr0methean.betterrandom.prng.adapter;
 
+import com.google.common.base.MoreObjects.ToStringHelper;
 import io.github.pr0methean.betterrandom.util.BinaryUtils;
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -17,6 +18,11 @@ public abstract class DirectSplittableRandomAdapter extends BaseSplittableRandom
   public DirectSplittableRandomAdapter(final byte[] seed) {
     super(seed);
     setSeedInternal(seed);
+  }
+
+  @Override
+  public ToStringHelper addSubclassFields(final ToStringHelper original) {
+    return original.add("underlying", underlying);
   }
 
   private void readObject(final ObjectInputStream in) throws IOException, ClassNotFoundException {

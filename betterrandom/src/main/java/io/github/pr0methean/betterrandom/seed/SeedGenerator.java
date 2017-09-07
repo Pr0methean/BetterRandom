@@ -40,8 +40,8 @@ public interface SeedGenerator extends Serializable {
    * @return A byte array containing the seed data.
    * @throws SeedException If a seed cannot be generated for any reason.
    */
-  default byte[] generateSeed(int length) throws SeedException {
-    byte[] output = new byte[length];
+  default byte[] generateSeed(final int length) throws SeedException {
+    final byte[] output = new byte[length];
     generateSeed(output);
     return output;
   }

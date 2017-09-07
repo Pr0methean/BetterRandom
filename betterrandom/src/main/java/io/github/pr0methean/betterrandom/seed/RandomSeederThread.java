@@ -167,7 +167,7 @@ public final class RandomSeederThread extends LooperThread {
     final Iterator<Random> iterator = prngsThisIteration.iterator();
     boolean entropyConsumed = false;
     while (iterator.hasNext()) {
-      Random random = iterator.next();
+      final Random random = iterator.next();
       iterator.remove();
       if (random instanceof EntropyCountingRandom
           && ((EntropyCountingRandom) random).entropyBits() > 0) {
@@ -179,7 +179,7 @@ public final class RandomSeederThread extends LooperThread {
         if (random instanceof ByteArrayReseedableRandom && !((ByteArrayReseedableRandom) random)
             .preferSeedWithLong()) {
           final ByteArrayReseedableRandom reseedable = (ByteArrayReseedableRandom) random;
-          byte[] seedArray = seedArrays.computeIfAbsent(reseedable, random_ ->
+          final byte[] seedArray = seedArrays.computeIfAbsent(reseedable, random_ ->
               new byte[random_.getNewSeedLength()]);
           seedGenerator.generateSeed(seedArray);
           reseedable.setSeed(seedArray);
