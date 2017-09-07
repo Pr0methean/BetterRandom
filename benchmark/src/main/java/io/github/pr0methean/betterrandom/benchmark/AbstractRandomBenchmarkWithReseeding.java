@@ -35,7 +35,6 @@ import io.github.pr0methean.betterrandom.seed.DefaultSeedGenerator;
 import io.github.pr0methean.betterrandom.seed.RandomSeederThread;
 import io.github.pr0methean.betterrandom.seed.SeedException;
 import org.openjdk.jmh.annotations.Benchmark;
-import org.openjdk.jmh.annotations.Group;
 import org.openjdk.jmh.annotations.Scope;
 import org.openjdk.jmh.annotations.State;
 
@@ -52,7 +51,8 @@ public abstract class AbstractRandomBenchmarkWithReseeding extends AbstractRando
     seederThread.remove(prng);
     return b;
   }
-
+  
+  /*
   @Benchmark
   @Group("contended")
   public byte testBytesContendedReseeding()
@@ -62,4 +62,5 @@ public abstract class AbstractRandomBenchmarkWithReseeding extends AbstractRando
     seederThread.remove(prng);
     return b;
   }
+  */
 }
