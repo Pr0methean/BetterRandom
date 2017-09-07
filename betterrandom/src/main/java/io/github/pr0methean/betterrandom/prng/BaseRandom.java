@@ -64,7 +64,7 @@ public abstract class BaseRandom extends Random implements ByteArrayReseedableRa
       throw new IllegalArgumentException("Seed must not be null");
     }
     initTransientFields();
-    setSeedInitial(seed);
+    setSeedInternal(seed);
   }
 
   public abstract ToStringHelper addSubclassFields(ToStringHelper original);
@@ -107,7 +107,7 @@ public abstract class BaseRandom extends Random implements ByteArrayReseedableRa
   public void setSeed(byte[] seed) {
     lock.lock();
     try {
-      setSeedInitial(seed);
+      setSeedInternal(seed);
     } finally {
       lock.unlock();
     }
@@ -120,12 +120,20 @@ public abstract class BaseRandom extends Random implements ByteArrayReseedableRa
     if (superConstructorFinished) {
       setSeed(seed);
     } else {
-      setSeedInitial(seed);
+      setSeedInternal(seed);
     }
   }
 
+  /**
+   * Sets the seed, and should be overridden to set other state that derives from the seed. Called
+   * by {@link #setSeed(byte[])}, whose default implementation ensures that the lock is held while
+   * doing so. Also called by constructors, {@link #readObject(ObjectInputStream)} and {@link
+   * #readObjectNoData()}.
+   *
+   * @param seed The new seed.
+   */
   @EnsuresNonNull("this.seed")
-  public void setSeedInitial(@UnknownInitialization(Random.class)BaseRandom this, byte[] seed) {
+  protected void setSeedInternal(@UnknownInitialization(Random.class)BaseRandom this, byte[] seed) {
     this.seed = seed.clone();
   }
 
@@ -142,7 +150,7 @@ public abstract class BaseRandom extends Random implements ByteArrayReseedableRa
       ObjectInputStream in) throws IOException, ClassNotFoundException {
     in.defaultReadObject();
     initTransientFields();
-    setSeedInitial(castNonNull(seed));
+    setSeedInternal(castNonNull(seed));
   }
 
   @EnsuresNonNull({"lock", "seed"})
