@@ -21,8 +21,7 @@ public final class SplittableRandomReseeder {
 
   private static final LogPreFormatter LOG = new LogPreFormatter(SplittableRandomReseeder.class);
   private static final Objenesis OBJENESIS = new ObjenesisStd();
-  @Nullable
-  private static MethodHandle PUT_LONG_VOLATILE;
+  private static @Nullable MethodHandle PUT_LONG_VOLATILE;
   private static long GAMMA_FIELD_OFFSET;
   private static long SEED_FIELD_OFFSET;
   private static long GOLDEN_GAMMA;
@@ -30,29 +29,29 @@ public final class SplittableRandomReseeder {
 
   static {
     try {
-      Class<?> unsafeClass = Class.forName("sun.misc.Unsafe");
+      final Class<?> unsafeClass = Class.forName("sun.misc.Unsafe");
       Object unsafe;
       try {
-        Field unsafeInstance = unsafeClass.getDeclaredField("theUnsafe");
+        final Field unsafeInstance = unsafeClass.getDeclaredField("theUnsafe");
         unsafeInstance.setAccessible(true);
         unsafe = unsafeInstance.get(null);
       } catch (NoSuchFieldException | IllegalAccessException e) {
         unsafe = OBJENESIS.newInstance(unsafeClass);
       }
-      Method getFieldOffset = unsafeClass.getDeclaredMethod("objectFieldOffset", Field.class);
+      final Method getFieldOffset = unsafeClass.getDeclaredMethod("objectFieldOffset", Field.class);
       GAMMA_FIELD_OFFSET = (long) (getFieldOffset
           .invoke(unsafe, SplittableRandom.class.getDeclaredField("gamma")));
       SEED_FIELD_OFFSET = (long) (getFieldOffset
           .invoke(unsafe, SplittableRandom.class.getDeclaredField("seed")));
-      Field goldenGammaField = SplittableRandom.class.getDeclaredField("GOLDEN_GAMMA");
+      final Field goldenGammaField = SplittableRandom.class.getDeclaredField("GOLDEN_GAMMA");
       goldenGammaField.setAccessible(true);
       GOLDEN_GAMMA = (long) (goldenGammaField.get(null));
-      Method putVolatileLong = unsafeClass
+      final Method putVolatileLong = unsafeClass
           .getDeclaredMethod("putLongVolatile", Object.class, long.class, long.class);
       putVolatileLong.setAccessible(true);
       PUT_LONG_VOLATILE = MethodHandles.lookup().unreflect(putVolatileLong).bindTo(unsafe);
       CAN_RESEED_REFLECTIVELY = true;
-    } catch (ReflectiveOperationException e) {
+    } catch (final ReflectiveOperationException e) {
       LOG.error("Can't reflectively reseed SplittableRandom instances: %s", e);
       CAN_RESEED_REFLECTIVELY = false;
     }
@@ -61,13 +60,13 @@ public final class SplittableRandomReseeder {
   private SplittableRandomReseeder() {
   }
 
-  public static SplittableRandom reseed(@Nullable SplittableRandom original, long seed) {
+  public static SplittableRandom reseed(@Nullable final SplittableRandom original, final long seed) {
     if (CAN_RESEED_REFLECTIVELY && PUT_LONG_VOLATILE != null && original != null) {
       try {
         PUT_LONG_VOLATILE.invokeExact((Object) original, SEED_FIELD_OFFSET, seed);
         PUT_LONG_VOLATILE.invokeExact((Object) original, GAMMA_FIELD_OFFSET, GOLDEN_GAMMA);
         return original;
-      } catch (Throwable throwable) {
+      } catch (final Throwable throwable) {
         throw new RuntimeException(throwable);
       }
     } else {

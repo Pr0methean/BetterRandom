@@ -15,19 +15,19 @@ public abstract class BaseEntropyCountingRandomTest extends BaseRandomTest {
   protected BaseEntropyCountingRandom createRng() {
     try {
       return tryCreateRng();
-    } catch (SeedException e) {
+    } catch (final SeedException e) {
       throw new RuntimeException(e);
     }
   }
 
   @Test(timeOut = 15000)
   public void testReseeding() throws Exception {
-    BaseEntropyCountingRandom rng = createRng();
-    byte[] oldSeed = rng.getSeed();
+    final BaseEntropyCountingRandom rng = createRng();
+    final byte[] oldSeed = rng.getSeed();
     rng.setSeederThread(RandomTestUtils.DEFAULT_SEEDER);
     rng.nextBytes(new byte[20000]);
     Thread.sleep(2000);
-    byte[] newSeed = rng.getSeed();
+    final byte[] newSeed = rng.getSeed();
     assertFalse(Arrays.equals(oldSeed, newSeed));
   }
 }

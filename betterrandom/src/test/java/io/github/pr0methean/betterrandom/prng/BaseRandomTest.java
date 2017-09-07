@@ -17,9 +17,9 @@ public abstract class BaseRandomTest {
    */
   @Test(timeOut = 15000)
   public void testRepeatability() throws SeedException {
-    BaseRandom rng = createRng();
+    final BaseRandom rng = createRng();
     // Create second RNG using same seed.
-    BaseRandom duplicateRNG = createRng(rng.getSeed());
+    final BaseRandom duplicateRNG = createRng(rng.getSeed());
     assert RandomTestUtils
         .testEquivalence(rng, duplicateRNG, 1000) : "Generated sequences do not match.";
   }
@@ -27,7 +27,7 @@ public abstract class BaseRandomTest {
   protected BaseRandom createRng() {
     try {
       return tryCreateRng();
-    } catch (SeedException e) {
+    } catch (final SeedException e) {
       throw new RuntimeException(e);
     }
   }
@@ -51,7 +51,7 @@ public abstract class BaseRandomTest {
   @Test(timeOut = 15000, groups = "non-deterministic",
       dependsOnMethods = "testRepeatability")
   public void testDistribution() throws SeedException {
-    BaseRandom rng = createRng();
+    final BaseRandom rng = createRng();
     assertMonteCarloPiEstimateSane(rng);
   }
 
@@ -63,7 +63,7 @@ public abstract class BaseRandomTest {
   @Test(timeOut = 15000, groups = "non-deterministic",
       dependsOnMethods = "testRepeatability")
   public void testStandardDeviation() throws SeedException {
-    BaseRandom rng = createRng();
+    final BaseRandom rng = createRng();
     // Expected standard deviation for a uniformly distributed population of values in the range 0..n
     // approaches n/sqrt(12).
     assertStandardDeviationSane(rng);
@@ -91,16 +91,16 @@ public abstract class BaseRandomTest {
   @Test(timeOut = 15000)
   public void testSerializable() throws IOException, ClassNotFoundException, SeedException {
     // Serialise an RNG.
-    BaseRandom rng = createRng();
+    final BaseRandom rng = createRng();
     RandomTestUtils.assertEquivalentWhenSerializedAndDeserialized(rng);
   }
 
   @Test(timeOut = 15000)
   public void testSetSeed() throws SeedException {
-    byte[] seed = DefaultSeedGenerator.DEFAULT_SEED_GENERATOR
+    final byte[] seed = DefaultSeedGenerator.DEFAULT_SEED_GENERATOR
         .generateSeed(createRng().getNewSeedLength());
-    BaseRandom rng = createRng();
-    BaseRandom rng2 = createRng();
+    final BaseRandom rng = createRng();
+    final BaseRandom rng2 = createRng();
     rng.nextLong(); // ensure they won't both be in initial state before reseeding
     rng.setSeed(seed);
     rng2.setSeed(seed);

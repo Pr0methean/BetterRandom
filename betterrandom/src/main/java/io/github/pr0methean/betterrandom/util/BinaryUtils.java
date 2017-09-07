@@ -41,9 +41,9 @@ public final class BinaryUtils {
    * @param data An array of bytes to convert to a String.
    * @return A hexadecimal String representation of the data.
    */
-  public static String convertBytesToHexString(byte[] data) {
-    StringBuilder buffer = new StringBuilder(data.length * 2);
-    for (byte b : data) {
+  public static String convertBytesToHexString(final byte[] data) {
+    final StringBuilder buffer = new StringBuilder(data.length * 2);
+    for (final byte b : data) {
       buffer.append(HEX_CHARS[(b >>> 4) & 0x0F]);
       buffer.append(HEX_CHARS[b & 0x0F]);
     }
@@ -57,13 +57,13 @@ public final class BinaryUtils {
    * @param hex The hexadecimal String to be converted into an array of bytes.
    * @return An array of bytes that.
    */
-  public static byte[] convertHexStringToBytes(String hex) {
+  public static byte[] convertHexStringToBytes(final String hex) {
     if (hex.length() % 2 != 0) {
       throw new IllegalArgumentException("Hex string must have even number of characters.");
     }
-    byte[] seed = new byte[hex.length() / 2];
+    final byte[] seed = new byte[hex.length() / 2];
     for (int i = 0; i < seed.length; i++) {
-      int index = i * 2;
+      final int index = i * 2;
       seed[i] = (byte) Integer.parseInt(hex.substring(index, index + 2), 16);
     }
     return seed;
@@ -77,7 +77,7 @@ public final class BinaryUtils {
    * @param offset The position to start reading the 4-byte int from.
    * @return The 32-bit integer represented by the four bytes.
    */
-  public static int convertBytesToInt(byte[] bytes, int offset) {
+  public static int convertBytesToInt(final byte[] bytes, final int offset) {
     return (BITWISE_BYTE_TO_INT & bytes[offset + 3])
         | ((BITWISE_BYTE_TO_INT & bytes[offset + 2]) << 8)
         | ((BITWISE_BYTE_TO_INT & bytes[offset + 1]) << 16)
@@ -92,11 +92,11 @@ public final class BinaryUtils {
    * @return An array of 32-bit integers constructed from the data.
    * @since 1.1
    */
-  public static int[] convertBytesToInts(byte[] bytes) {
+  public static int[] convertBytesToInts(final byte[] bytes) {
     if (bytes.length % 4 != 0) {
       throw new IllegalArgumentException("Number of input bytes must be a multiple of 4.");
     }
-    int[] ints = new int[bytes.length / 4];
+    final int[] ints = new int[bytes.length / 4];
     for (int i = 0; i < ints.length; i++) {
       ints[i] = convertBytesToInt(bytes, i * 4);
     }
@@ -112,10 +112,10 @@ public final class BinaryUtils {
    * @return The 64-bit integer represented by the eight bytes.
    * @since 1.1
    */
-  public static long convertBytesToLong(byte[] bytes, int offset) {
+  public static long convertBytesToLong(final byte[] bytes, final int offset) {
     long value = 0;
     for (int i = offset; i < offset + 8; i++) {
-      byte b = bytes[i];
+      final byte b = bytes[i];
       value <<= 8;
       value |= b;
     }
@@ -129,11 +129,11 @@ public final class BinaryUtils {
    * @param value The value to convert (must be between zero and one).
    * @return A bit string representing the value in fixed-point format.
    */
-  public static BitString convertDoubleToFixedPointBits(double value) {
+  public static BitString convertDoubleToFixedPointBits(final double value) {
     if (value < 0.0d || value >= 1.0d) {
       throw new IllegalArgumentException("Value must be between 0 and 1.");
     }
-    StringBuilder bits = new StringBuilder(64);
+    final StringBuilder bits = new StringBuilder(64);
     double bitValue = 0.5d;
     double d = value;
     while (d > 0) {
@@ -148,16 +148,16 @@ public final class BinaryUtils {
     return new BitString(bits.toString());
   }
 
-  public static byte[] convertLongToBytes(long input) {
-    byte[] array = new byte[Long.BYTES];
-    ByteBuffer buffer = ByteBuffer.wrap(array);
+  public static byte[] convertLongToBytes(final long input) {
+    final byte[] array = new byte[Long.BYTES];
+    final ByteBuffer buffer = ByteBuffer.wrap(array);
     buffer.putLong(input);
     return array;
   }
 
-  public static byte[] convertIntToBytes(int input) {
-    byte[] array = new byte[Integer.BYTES];
-    ByteBuffer buffer = ByteBuffer.wrap(array);
+  public static byte[] convertIntToBytes(final int input) {
+    final byte[] array = new byte[Integer.BYTES];
+    final ByteBuffer buffer = ByteBuffer.wrap(array);
     buffer.putInt(input);
     return array;
   }

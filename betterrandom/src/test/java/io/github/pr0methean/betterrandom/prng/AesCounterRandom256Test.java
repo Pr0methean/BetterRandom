@@ -8,7 +8,7 @@ public class AesCounterRandom256Test extends AesCounterRandom128Test {
   public BaseEntropyCountingRandom createRng() {
     try {
       return new AesCounterRandom(32);
-    } catch (SeedException e) {
+    } catch (final SeedException e) {
       throw new RuntimeException(e);
     }
   }

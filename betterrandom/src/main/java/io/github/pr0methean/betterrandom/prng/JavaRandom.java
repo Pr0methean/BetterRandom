@@ -53,7 +53,7 @@ public class JavaRandom extends Random implements RepeatableRandom {
    *     RNG.
    * @throws SeedException If there is a problem generating a seed.
    */
-  public JavaRandom(SeedGenerator seedGenerator) throws SeedException {
+  public JavaRandom(final SeedGenerator seedGenerator) throws SeedException {
     this(seedGenerator.generateSeed(SEED_SIZE_BYTES));
   }
 
@@ -62,7 +62,7 @@ public class JavaRandom extends Random implements RepeatableRandom {
    *
    * @param seed The seed data used to initialise the RNG.
    */
-  public JavaRandom(byte[] seed) {
+  public JavaRandom(final byte[] seed) {
     super(createLongSeed(seed));
     this.seed = seed.clone();
   }
@@ -70,7 +70,7 @@ public class JavaRandom extends Random implements RepeatableRandom {
   /**
    * Helper method to convert seed bytes into the long value required by the super class.
    */
-  private static long createLongSeed(byte[] seed) {
+  private static long createLongSeed(final byte[] seed) {
     if (seed == null || seed.length != SEED_SIZE_BYTES) {
       throw new IllegalArgumentException("Java RNG requires a 64-bit (8-byte) seed.");
     }

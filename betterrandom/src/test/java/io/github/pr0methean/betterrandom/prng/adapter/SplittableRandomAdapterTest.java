@@ -15,7 +15,7 @@ public class SplittableRandomAdapterTest extends SingleThreadSplittableRandomAda
 
   @Override
   public void testSerializable() throws SeedException {
-    BaseSplittableRandomAdapter adapter = tryCreateRng();
+    final BaseSplittableRandomAdapter adapter = tryCreateRng();
     assertEquals(adapter, RandomTestUtils.serializeAndDeserialize(adapter));
   }
 
