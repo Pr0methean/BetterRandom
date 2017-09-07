@@ -2,12 +2,15 @@ package io.github.pr0methean.betterrandom.prng;
 
 import static io.github.pr0methean.betterrandom.prng.RandomTestUtils.assertMonteCarloPiEstimateSane;
 import static io.github.pr0methean.betterrandom.prng.RandomTestUtils.assertStandardDeviationSane;
+import static org.testng.Assert.assertFalse;
 import static org.testng.Assert.assertNotEquals;
+import static org.testng.Assert.assertTrue;
 
 import io.github.pr0methean.betterrandom.seed.DefaultSeedGenerator;
 import io.github.pr0methean.betterrandom.seed.SeedException;
 import java.io.IOException;
 import java.security.GeneralSecurityException;
+import java.util.Random;
 import org.testng.annotations.Test;
 
 public abstract class BaseRandomTest {
@@ -126,5 +129,12 @@ public abstract class BaseRandomTest {
   @Test(timeOut = 15000)
   public void testDump() throws SeedException {
     assertNotEquals(createRng().dump(), createRng().dump());
+  }
+
+  @Test(timeOut = 1000)
+  public void testWithProbability() {
+    BaseRandom prng = createRng();
+    assertFalse(prng.withProbability(0.0));
+    assertTrue(prng.withProbability(1.0));
   }
 }

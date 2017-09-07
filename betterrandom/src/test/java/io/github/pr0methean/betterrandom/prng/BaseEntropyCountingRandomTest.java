@@ -1,6 +1,8 @@
 package io.github.pr0methean.betterrandom.prng;
 
+import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertFalse;
+import static org.testng.Assert.assertTrue;
 
 import io.github.pr0methean.betterrandom.seed.SeedException;
 import java.util.Arrays;
@@ -29,5 +31,17 @@ public abstract class BaseEntropyCountingRandomTest extends BaseRandomTest {
     Thread.sleep(2000);
     final byte[] newSeed = rng.getSeed();
     assertFalse(Arrays.equals(oldSeed, newSeed));
+  }
+
+  @Override
+  @Test(timeOut = 1000)
+  public void testWithProbability() {
+    BaseEntropyCountingRandom prng = createRng();
+    long originalEntropy = prng.entropyBits();
+    assertFalse(prng.withProbability(0.0));
+    assertTrue(prng.withProbability(1.0));
+    assertEquals(originalEntropy, prng.entropyBits());
+    prng.withProbability(0.5);
+    assertEquals(originalEntropy - 1, prng.entropyBits());
   }
 }

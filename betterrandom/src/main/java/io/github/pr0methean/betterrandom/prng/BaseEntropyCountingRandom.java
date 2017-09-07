@@ -23,6 +23,15 @@ public abstract class BaseEntropyCountingRandom extends BaseRandom implements
   protected AtomicLong entropyBits;
   private @Nullable RandomSeederThread thread;
 
+  @Override
+  protected boolean withProbabilityInternal(double probability) {
+    boolean result = super.withProbabilityInternal(probability);
+    // Random.nextDouble() uses 53 bits, but we're only outputting 1, so credit the rest back
+    // TODO: Maybe track fractional bits of entropy in a fixed-point form?
+    recordEntropySpent(-52);
+    return result;
+  }
+
   @EnsuresNonNull("entropyBits")
   public BaseEntropyCountingRandom(final int seedLength) throws SeedException {
     super(seedLength);
