@@ -8,7 +8,8 @@ import org.checkerframework.checker.initialization.qual.UnknownInitialization;
 public class AesCounterRandom256Benchmark extends AbstractRandomBenchmark {
 
   @Override
-  protected Random createPrng(@UnknownInitialization AesCounterRandom256Benchmark this) throws SeedException {
+  protected Random createPrng(@UnknownInitialization AesCounterRandom256Benchmark this)
+      throws SeedException {
     return new AesCounterRandom(32);
   }
 }

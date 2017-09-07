@@ -8,7 +8,8 @@ import org.checkerframework.checker.initialization.qual.UnknownInitialization;
 public class ReseedingSplittableRandomAdapterBenchmark extends AbstractRandomBenchmark {
 
   @Override
-  protected Random createPrng(@UnknownInitialization ReseedingSplittableRandomAdapterBenchmark this) throws SeedException {
+  protected Random createPrng(@UnknownInitialization ReseedingSplittableRandomAdapterBenchmark this)
+      throws SeedException {
     return ReseedingSplittableRandomAdapter.getDefaultInstance();
   }
 }

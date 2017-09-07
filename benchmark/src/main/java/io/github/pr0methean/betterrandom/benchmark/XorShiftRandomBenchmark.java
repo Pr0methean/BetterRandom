@@ -8,7 +8,8 @@ import org.checkerframework.checker.initialization.qual.UnknownInitialization;
 public class XorShiftRandomBenchmark extends AbstractRandomBenchmark {
 
   @Override
-  protected Random createPrng(@UnknownInitialization XorShiftRandomBenchmark this) throws SeedException {
+  protected Random createPrng(@UnknownInitialization XorShiftRandomBenchmark this)
+      throws SeedException {
     return new XorShiftRandom();
   }
 }
