@@ -32,8 +32,8 @@ public class DefaultSeedGeneratorTest {
   @SuppressWarnings("CallToSystemSetSecurityManager")
   @Test(timeOut = 120000)
   public void testRestrictedEnvironment() throws SeedException {
-    Thread affectedThread = Thread.currentThread();
-    SecurityManager securityManager = System.getSecurityManager();
+    final Thread affectedThread = Thread.currentThread();
+    final SecurityManager securityManager = System.getSecurityManager();
     try {
       // Don't allow file system or network access.
       System.setSecurityManager(new RestrictedSecurityManager(affectedThread));
@@ -55,13 +55,13 @@ public class DefaultSeedGeneratorTest {
 
     private final Thread affectedThread;
 
-    private RestrictedSecurityManager(Thread affectedThread) {
+    private RestrictedSecurityManager(final Thread affectedThread) {
       this.affectedThread = affectedThread;
     }
 
     @SuppressWarnings("ObjectEquality")
     @Override
-    public void checkRead(String file) {
+    public void checkRead(final String file) {
       if (Thread.currentThread() == affectedThread && "/dev/random".equals(file)) {
         throw new SecurityException("Test not permitted to access /dev/random");
       }
@@ -69,14 +69,14 @@ public class DefaultSeedGeneratorTest {
 
     @SuppressWarnings("ObjectEquality")
     @Override
-    public void checkConnect(String host, int port) {
+    public void checkConnect(final String host, final int port) {
       if (Thread.currentThread() == affectedThread) {
         throw new SecurityException("Test not permitted to connect to " + host + ":" + port);
       }
     }
 
     @Override
-    public void checkPermission(Permission permission) {
+    public void checkPermission(final Permission permission) {
       // Allow everything.
     }
   }

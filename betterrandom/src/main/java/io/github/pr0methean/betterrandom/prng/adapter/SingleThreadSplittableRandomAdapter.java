@@ -1,9 +1,9 @@
 package io.github.pr0methean.betterrandom.prng.adapter;
 
+import com.google.common.base.MoreObjects.ToStringHelper;
 import io.github.pr0methean.betterrandom.seed.SeedException;
 import io.github.pr0methean.betterrandom.seed.SeedGenerator;
 import io.github.pr0methean.betterrandom.util.BinaryUtils;
-import com.google.common.base.MoreObjects.ToStringHelper;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.util.Random;
@@ -16,16 +16,16 @@ public class SingleThreadSplittableRandomAdapter extends DirectSplittableRandomA
   private static final long serialVersionUID = -1125374167384636394L;
   private boolean deserializedAndNotUsedSince = false;
 
-  public SingleThreadSplittableRandomAdapter(SeedGenerator seedGenerator) throws SeedException {
+  public SingleThreadSplittableRandomAdapter(final SeedGenerator seedGenerator) throws SeedException {
     this(seedGenerator.generateSeed(SEED_LENGTH_BYTES));
   }
 
-  public SingleThreadSplittableRandomAdapter(byte[] seed) {
+  public SingleThreadSplittableRandomAdapter(final byte[] seed) {
     super(seed);
   }
 
   @Override
-  public ToStringHelper addSubclassFields(ToStringHelper original) {
+  public ToStringHelper addSubclassFields(final ToStringHelper original) {
     return original
         .add("underlying", underlying);
   }
@@ -36,7 +36,7 @@ public class SingleThreadSplittableRandomAdapter extends DirectSplittableRandomA
     return underlying;
   }
 
-  private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
+  private void readObject(final ObjectInputStream in) throws IOException, ClassNotFoundException {
     in.defaultReadObject();
     setSeed(seed);
     if (!deserializedAndNotUsedSince) {
@@ -48,16 +48,16 @@ public class SingleThreadSplittableRandomAdapter extends DirectSplittableRandomA
   @EnsuresNonNull({"this.seed", "underlying"})
   @Override
   public synchronized void setSeed(@UnknownInitialization SingleThreadSplittableRandomAdapter this,
-      long seed) {
+      final long seed) {
     underlying = SplittableRandomReseeder.reseed(underlying, seed);
     this.seed = BinaryUtils.convertLongToBytes(seed);
   }
 
   @EnsuresNonNull({"this.seed", "underlying"})
   @Override
-  public void setSeedInitial(
+  public void setSeedInternal(
       @UnknownInitialization(Random.class)SingleThreadSplittableRandomAdapter this,
-      byte[] seed) {
+      final byte[] seed) {
     if (seed.length != 8) {
       throw new IllegalArgumentException("DirectSplittableRandomAdapter requires an 8-byte seed");
     }

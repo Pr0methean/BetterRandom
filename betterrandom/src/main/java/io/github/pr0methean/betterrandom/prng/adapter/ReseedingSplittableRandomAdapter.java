@@ -1,10 +1,10 @@
 package io.github.pr0methean.betterrandom.prng.adapter;
 
+import com.google.common.base.MoreObjects.ToStringHelper;
 import io.github.pr0methean.betterrandom.seed.DefaultSeedGenerator;
 import io.github.pr0methean.betterrandom.seed.RandomSeederThread;
 import io.github.pr0methean.betterrandom.seed.SeedException;
 import io.github.pr0methean.betterrandom.seed.SeedGenerator;
-import com.google.common.base.MoreObjects.ToStringHelper;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.util.Collections;
@@ -38,7 +38,7 @@ public class ReseedingSplittableRandomAdapter extends BaseSplittableRandomAdapte
    *
    * @param seedGenerator The seed generator this adapter will use.
    */
-  private ReseedingSplittableRandomAdapter(SeedGenerator seedGenerator) throws SeedException {
+  private ReseedingSplittableRandomAdapter(final SeedGenerator seedGenerator) throws SeedException {
     super(seedGenerator.generateSeed(SEED_LENGTH_BYTES));
     this.seedGenerator = seedGenerator;
     initSubclassTransientFields();
@@ -51,19 +51,19 @@ public class ReseedingSplittableRandomAdapter extends BaseSplittableRandomAdapte
   }
 
   @SuppressWarnings("SynchronizationOnStaticField")
-  public static ReseedingSplittableRandomAdapter getInstance(SeedGenerator seedGenerator)
+  public static ReseedingSplittableRandomAdapter getInstance(final SeedGenerator seedGenerator)
       throws SeedException {
     synchronized (INSTANCES) {
       try {
         return INSTANCES.computeIfAbsent(seedGenerator, seedGen -> {
           try {
             return new ReseedingSplittableRandomAdapter(seedGen);
-          } catch (SeedException e) {
+          } catch (final SeedException e) {
             throw new RuntimeException(e);
           }
         });
-      } catch (RuntimeException e) {
-        Throwable cause = e.getCause();
+      } catch (final RuntimeException e) {
+        final Throwable cause = e.getCause();
         if (cause instanceof SeedException) {
           throw (SeedException) cause;
         } else {
@@ -74,13 +74,13 @@ public class ReseedingSplittableRandomAdapter extends BaseSplittableRandomAdapte
   }
 
   @Override
-  public ToStringHelper addSubclassFields(ToStringHelper original) {
+  public ToStringHelper addSubclassFields(final ToStringHelper original) {
     return original
         .add("threadLocal", threadLocal)
         .add("seederThread", seederThread);
   }
 
-  private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
+  private void readObject(final ObjectInputStream in) throws IOException, ClassNotFoundException {
     in.defaultReadObject();
     assert seedGenerator != null : "@AssumeAssertion(nullness)";
     initSubclassTransientFields();
@@ -89,7 +89,7 @@ public class ReseedingSplittableRandomAdapter extends BaseSplittableRandomAdapte
   private ReseedingSplittableRandomAdapter readResolve() throws IOException {
     try {
       return getInstance(seedGenerator);
-    } catch (SeedException e) {
+    } catch (final SeedException e) {
       throw new IOException(e);
     }
   }
@@ -102,7 +102,7 @@ public class ReseedingSplittableRandomAdapter extends BaseSplittableRandomAdapte
       threadLocal = ThreadLocal.withInitial(() -> {
         try {
           return new SingleThreadSplittableRandomAdapter(seedGenerator);
-        } catch (SeedException e) {
+        } catch (final SeedException e) {
           throw new RuntimeException(e);
         }
       });
@@ -112,7 +112,7 @@ public class ReseedingSplittableRandomAdapter extends BaseSplittableRandomAdapte
 
   @Override
   protected SplittableRandom getSplittableRandom() {
-    SingleThreadSplittableRandomAdapter adapterForThread = threadLocal.get();
+    final SingleThreadSplittableRandomAdapter adapterForThread = threadLocal.get();
     seederThread.add(adapterForThread);
     return adapterForThread.getSplittableRandom();
   }
@@ -123,14 +123,15 @@ public class ReseedingSplittableRandomAdapter extends BaseSplittableRandomAdapte
   }
 
   @Override
-  public boolean equals(@Nullable Object o) {
+  public boolean equals(@Nullable final Object o) {
     return this == o
         || (o instanceof ReseedingSplittableRandomAdapter
         && seedGenerator.equals(((ReseedingSplittableRandomAdapter) o).seedGenerator));
   }
 
   @Override
-  public void setSeed(@UnknownInitialization ReseedingSplittableRandomAdapter this, long seed) {
+  public synchronized void setSeed(@UnknownInitialization ReseedingSplittableRandomAdapter this,
+      final long seed) {
     // No-op.
   }
 

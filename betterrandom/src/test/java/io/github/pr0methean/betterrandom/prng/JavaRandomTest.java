@@ -31,9 +31,9 @@ public class JavaRandomTest {
   @Test(timeOut = 15000)
   public void testRepeatability() throws SeedException {
     // Create an RNG using the default seeding strategy.
-    JavaRandom rng = new JavaRandom();
+    final JavaRandom rng = new JavaRandom();
     // Create second RNG using same seed.
-    JavaRandom duplicateRNG = new JavaRandom(rng.getSeed());
+    final JavaRandom duplicateRNG = new JavaRandom(rng.getSeed());
     assert RandomTestUtils
         .testEquivalence(rng, duplicateRNG, 1000) : "Generated sequences do not match.";
   }
@@ -62,7 +62,7 @@ public class JavaRandomTest {
     RandomTestUtils.doEqualsSanityChecks(() -> {
       try {
         return new JavaRandom();
-      } catch (SeedException e) {
+      } catch (final SeedException e) {
         throw new RuntimeException(e);
       }
     });
@@ -73,7 +73,7 @@ public class JavaRandomTest {
     assert RandomTestUtils.testHashCodeDistribution(() -> {
       try {
         return new JavaRandom();
-      } catch (SeedException e) {
+      } catch (final SeedException e) {
         throw new RuntimeException(e);
       }
     })

@@ -8,7 +8,8 @@ import org.checkerframework.checker.initialization.qual.UnknownInitialization;
 public class CellularAutomatonRandomBenchmark extends AbstractRandomBenchmark {
 
   @Override
-  protected Random createPrng(@UnknownInitialization CellularAutomatonRandomBenchmark this) throws SeedException {
+  protected Random createPrng(@UnknownInitialization CellularAutomatonRandomBenchmark this)
+      throws SeedException {
     return new CellularAutomatonRandom();
   }
 }

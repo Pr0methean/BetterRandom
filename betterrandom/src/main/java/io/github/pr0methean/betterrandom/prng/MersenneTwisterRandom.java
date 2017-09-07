@@ -15,12 +15,12 @@
 // ============================================================================
 package io.github.pr0methean.betterrandom.prng;
 
+import com.google.common.base.MoreObjects.ToStringHelper;
 import io.github.pr0methean.betterrandom.RepeatableRandom;
 import io.github.pr0methean.betterrandom.seed.DefaultSeedGenerator;
 import io.github.pr0methean.betterrandom.seed.SeedException;
 import io.github.pr0methean.betterrandom.seed.SeedGenerator;
 import io.github.pr0methean.betterrandom.util.BinaryUtils;
-import com.google.common.base.MoreObjects.ToStringHelper;
 import java.util.Arrays;
 import java.util.Random;
 import org.checkerframework.checker.initialization.qual.UnknownInitialization;
@@ -44,7 +44,7 @@ import org.checkerframework.checker.nullness.qual.EnsuresNonNull;
  * @author Makoto Matsumoto and Takuji Nishimura (original C version)
  * @author Daniel Dyer (Java port)
  */
-public class MersenneTwisterRandom extends BaseEntropyCountingRandom implements RepeatableRandom {
+public class MersenneTwisterRandom extends BaseEntropyCountingRandom {
 
   private static final long serialVersionUID = -4856906677508460512L;
 
@@ -79,17 +79,17 @@ public class MersenneTwisterRandom extends BaseEntropyCountingRandom implements 
    *
    * @param seed The seed data used to initialise the RNG.
    */
-  public MersenneTwisterRandom(byte[] seed) {
+  public MersenneTwisterRandom(final byte[] seed) {
     super(seed);
     assert mt != null : "@AssumeAssertion(nullness)";
   }
 
-  public MersenneTwisterRandom(SeedGenerator seedGenerator) throws SeedException {
+  public MersenneTwisterRandom(final SeedGenerator seedGenerator) throws SeedException {
     this(seedGenerator.generateSeed(SEED_SIZE_BYTES));
   }
 
   @Override
-  protected ToStringHelper addSubSubclassFields(ToStringHelper original) {
+  protected ToStringHelper addSubSubclassFields(final ToStringHelper original) {
     return original
         .add("mt", Arrays.toString(mt))
         .add("mtIndex", mtIndex);
@@ -103,7 +103,8 @@ public class MersenneTwisterRandom extends BaseEntropyCountingRandom implements 
   }
 
   @Override
-  public void setSeed(@UnknownInitialization(Random.class)MersenneTwisterRandom this, long seed) {
+  public synchronized void setSeed(@UnknownInitialization(Random.class)MersenneTwisterRandom this,
+      final long seed) {
     if (superConstructorFinished) {
       super.setSeed(seed);
     } // Otherwise ignore; it's Random.<init> calling us without a full-size seed
@@ -120,14 +121,14 @@ public class MersenneTwisterRandom extends BaseEntropyCountingRandom implements 
   }
 
   @Override
-  public void setSeedInitial(
-      @UnknownInitialization(Random.class)MersenneTwisterRandom this, byte[] seed) {
+  protected void setSeedInternal(
+      @UnknownInitialization(Random.class)MersenneTwisterRandom this, final byte[] seed) {
     if (seed == null || seed.length != SEED_SIZE_BYTES) {
       throw new IllegalArgumentException("Mersenne Twister RNG requires a 128-bit (16-byte) seed.");
     }
     assert mt != null : "@AssumeAssertion(nullness)";
-    super.setSeedInitial(seed);
-    int[] seedInts = BinaryUtils.convertBytesToInts(seed);
+    super.setSeedInternal(seed);
+    final int[] seedInts = BinaryUtils.convertBytesToInts(seed);
 
     // This section is translated from the init_genrand code in the C version.
     mt[0] = BOOTSTRAP_SEED;
@@ -167,9 +168,9 @@ public class MersenneTwisterRandom extends BaseEntropyCountingRandom implements 
    * {@inheritDoc}
    */
   @Override
-  protected final int next(int bits) {
-    int y;
+  protected final int next(final int bits) {
     lock.lock();
+    int y;
     try {
       if (mtIndex >= N) // Generate N ints at a time.
       {

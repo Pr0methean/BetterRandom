@@ -27,17 +27,17 @@ public class BinaryUtilsTest {
 
   @Test(timeOut = 15000)
   public void testBytesToHexString() {
-    byte[] seed = {124, 11, 0, -76, -3, 127, -128, -1};
-    String expectedHex = "7C0B00B4FD7F80FF";
-    String generatedHex = BinaryUtils.convertBytesToHexString(seed);
+    final byte[] seed = {124, 11, 0, -76, -3, 127, -128, -1};
+    final String expectedHex = "7C0B00B4FD7F80FF";
+    final String generatedHex = BinaryUtils.convertBytesToHexString(seed);
     assert generatedHex.equals(expectedHex) : "Wrong hex string: " + generatedHex;
   }
 
   @Test(timeOut = 15000)
   public void testHexStringToBytes() {
-    String hex = "7C0B00B4FD7F80FF";
-    byte[] expectedData = {124, 11, 0, -76, -3, 127, -128, -1};
-    byte[] generatedData = BinaryUtils.convertHexStringToBytes(hex);
+    final String hex = "7C0B00B4FD7F80FF";
+    final byte[] expectedData = {124, 11, 0, -76, -3, 127, -128, -1};
+    final byte[] generatedData = BinaryUtils.convertHexStringToBytes(hex);
     assert Arrays.equals(generatedData, expectedData) :
         "Wrong byte array: " + Arrays.toString(generatedData);
   }
@@ -55,9 +55,9 @@ public class BinaryUtilsTest {
    */
   @Test(timeOut = 15000)
   public void testConvertBytesToInt() {
-    byte[] bytes = {8, 4, 2, 1};
+    final byte[] bytes = {8, 4, 2, 1};
     final int expected = 134480385;
-    int result = BinaryUtils.convertBytesToInt(bytes, 0);
+    final int result = BinaryUtils.convertBytesToInt(bytes, 0);
     assert expected == result : "Expected " + expected + ", was " + result;
   }
 
@@ -67,9 +67,9 @@ public class BinaryUtilsTest {
    */
   @Test(timeOut = 15000)
   public void testConvertBytesToInts() {
-    byte[] bytes = {0, 0, 0, 16, 8, 4, 2, 1};
+    final byte[] bytes = {0, 0, 0, 16, 8, 4, 2, 1};
     final int expected1 = 16;
-    int[] result = BinaryUtils.convertBytesToInts(bytes);
+    final int[] result = BinaryUtils.convertBytesToInts(bytes);
     assert expected1 == result[0] : "Expected first int to be " + expected1 + ", was " + result[0];
     final int expected2 = 134480385;
     assert expected2 == result[1] : "Expected second int to be " + expected2 + ", was " + result[1];
@@ -81,7 +81,7 @@ public class BinaryUtilsTest {
    */
   @Test(timeOut = 15000, expectedExceptions = IllegalArgumentException.class)
   public void testConvertWrongNumberOfBytesToInts() {
-    byte[] bytes = {0, 0, 16, 8, 4, 2, 1};
+    final byte[] bytes = {0, 0, 16, 8, 4, 2, 1};
     BinaryUtils.convertBytesToInts(bytes);
   }
 
@@ -91,9 +91,9 @@ public class BinaryUtilsTest {
    */
   @Test(timeOut = 15000)
   public void testConvertBytesToLong() {
-    byte[] bytes = {0, 0, 0, 16, 8, 4, 2, 1};
+    final byte[] bytes = {0, 0, 0, 16, 8, 4, 2, 1};
     final long expected = 68853957121L;
-    long result = BinaryUtils.convertBytesToLong(bytes, 0);
+    final long result = BinaryUtils.convertBytesToLong(bytes, 0);
     assert expected == result : "Expected " + expected + ", was " + result;
   }
 
@@ -102,16 +102,16 @@ public class BinaryUtilsTest {
    */
   @Test(timeOut = 15000)
   public void testConvertNegativeBytesToLong() {
-    byte[] bytes = {-121, 30, 107, -100, -76, -8, 53, 81};
+    final byte[] bytes = {-121, 30, 107, -100, -76, -8, 53, 81};
     final long expected = -510639L;
-    long result = BinaryUtils.convertBytesToLong(bytes, 0);
+    final long result = BinaryUtils.convertBytesToLong(bytes, 0);
     assert expected == result : "Expected " + expected + ", was " + result;
   }
 
   @Test(timeOut = 15000)
   public void testConvertFixedPoint() {
     final double value = 0.6875d;
-    BitString bits = BinaryUtils.convertDoubleToFixedPointBits(value);
+    final BitString bits = BinaryUtils.convertDoubleToFixedPointBits(value);
     assert "1011".equals(bits.toString()) : "Binary representation should be 1011, is " + bits;
   }
 
@@ -120,7 +120,7 @@ public class BinaryUtilsTest {
    */
   @Test(timeOut = 15000, dependsOnMethods = "testConvertFixedPoint")
   public void testConvertFixedPointZero() {
-    BitString bits = BinaryUtils.convertDoubleToFixedPointBits(0d);
+    final BitString bits = BinaryUtils.convertDoubleToFixedPointBits(0d);
     assert bits.countSetBits() == 0 : "Binary representation should be 0";
   }
 
