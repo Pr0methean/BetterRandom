@@ -62,6 +62,6 @@ public class SingleThreadSplittableRandomAdapter extends DirectSplittableRandomA
       throw new IllegalArgumentException("DirectSplittableRandomAdapter requires an 8-byte seed");
     }
     underlying = SplittableRandomReseeder.reseed(underlying, BinaryUtils.convertBytesToLong(seed, 0));
-    super.setSeedInternal(seed);
+    this.seed = seed;
   }
 }
