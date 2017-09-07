@@ -76,7 +76,8 @@ public final class RandomSeederThread extends LooperThread {
   }
 
   @EnsuresNonNull(
-      {"prngs", "longSeedBuffer", "waitWhileEmpty", "waitForEntropyDrain", "prngsThisIteration"})
+      {"prngs", "longSeedBuffer", "longSeedArray", "seedArrays", "waitWhileEmpty",
+          "waitForEntropyDrain", "prngsThisIteration"})
   @RequiresNonNull("lock")
   private void initTransientFields(@UnderInitialization RandomSeederThread this) {
     prngs = Collections.synchronizedSet(
@@ -175,10 +176,11 @@ public final class RandomSeederThread extends LooperThread {
         entropyConsumed = true;
       }
       try {
-        if (random instanceof ByteArrayReseedableRandom && !((ByteArrayReseedableRandom) random).preferSeedWithLong()) {
+        if (random instanceof ByteArrayReseedableRandom && !((ByteArrayReseedableRandom) random)
+            .preferSeedWithLong()) {
           final ByteArrayReseedableRandom reseedable = (ByteArrayReseedableRandom) random;
           byte[] seedArray = seedArrays.computeIfAbsent(reseedable, random_ ->
-                  new byte[random_.getNewSeedLength()]);
+              new byte[random_.getNewSeedLength()]);
           seedGenerator.generateSeed(seedArray);
           reseedable.setSeed(seedArray);
         } else {
