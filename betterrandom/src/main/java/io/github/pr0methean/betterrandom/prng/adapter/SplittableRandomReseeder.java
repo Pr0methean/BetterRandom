@@ -18,15 +18,15 @@ import org.objenesis.ObjenesisStd;
  */
 @SuppressWarnings("argument.type.incompatible") // Field.get(null) is OK when the field is static!
 public final class SplittableRandomReseeder {
+
   private static final LogPreFormatter LOG = new LogPreFormatter(SplittableRandomReseeder.class);
   private static final Objenesis OBJENESIS = new ObjenesisStd();
-  @Nullable private static MethodHandle PUT_LONG_VOLATILE;
+  @Nullable
+  private static MethodHandle PUT_LONG_VOLATILE;
   private static long GAMMA_FIELD_OFFSET;
   private static long SEED_FIELD_OFFSET;
   private static long GOLDEN_GAMMA;
   private static boolean CAN_RESEED_REFLECTIVELY;
-
-  private SplittableRandomReseeder() {}
 
   static {
     try {
@@ -40,12 +40,15 @@ public final class SplittableRandomReseeder {
         unsafe = OBJENESIS.newInstance(unsafeClass);
       }
       Method getFieldOffset = unsafeClass.getDeclaredMethod("objectFieldOffset", Field.class);
-      GAMMA_FIELD_OFFSET = (long) (getFieldOffset.invoke(unsafe, SplittableRandom.class.getDeclaredField("gamma")));
-      SEED_FIELD_OFFSET = (long) (getFieldOffset.invoke(unsafe, SplittableRandom.class.getDeclaredField("seed")));
+      GAMMA_FIELD_OFFSET = (long) (getFieldOffset
+          .invoke(unsafe, SplittableRandom.class.getDeclaredField("gamma")));
+      SEED_FIELD_OFFSET = (long) (getFieldOffset
+          .invoke(unsafe, SplittableRandom.class.getDeclaredField("seed")));
       Field goldenGammaField = SplittableRandom.class.getDeclaredField("GOLDEN_GAMMA");
       goldenGammaField.setAccessible(true);
       GOLDEN_GAMMA = (long) (goldenGammaField.get(null));
-      Method putVolatileLong = unsafeClass.getDeclaredMethod("putLongVolatile", Object.class, long.class, long.class);
+      Method putVolatileLong = unsafeClass
+          .getDeclaredMethod("putLongVolatile", Object.class, long.class, long.class);
       putVolatileLong.setAccessible(true);
       PUT_LONG_VOLATILE = MethodHandles.lookup().unreflect(putVolatileLong).bindTo(unsafe);
       CAN_RESEED_REFLECTIVELY = true;
@@ -53,6 +56,9 @@ public final class SplittableRandomReseeder {
       LOG.error("Can't reflectively reseed SplittableRandom instances: %s", e);
       CAN_RESEED_REFLECTIVELY = false;
     }
+  }
+
+  private SplittableRandomReseeder() {
   }
 
   public static SplittableRandom reseed(@Nullable SplittableRandom original, long seed) {

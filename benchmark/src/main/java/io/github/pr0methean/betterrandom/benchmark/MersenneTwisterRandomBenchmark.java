@@ -8,7 +8,8 @@ import org.checkerframework.checker.initialization.qual.UnknownInitialization;
 public class MersenneTwisterRandomBenchmark extends AbstractRandomBenchmark {
 
   @Override
-  protected Random createPrng(@UnknownInitialization MersenneTwisterRandomBenchmark this) throws SeedException {
+  protected Random createPrng(@UnknownInitialization MersenneTwisterRandomBenchmark this)
+      throws SeedException {
     return new MersenneTwisterRandom();
   }
 }
