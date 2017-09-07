@@ -40,6 +40,38 @@ public abstract class BaseRandom extends Random implements ByteArrayReseedableRa
   protected transient boolean superConstructorFinished = false;
 
   /**
+   * The purpose of this method is so that entropy-counting subclasses can detect that no more than
+   * 1 bit of entropy is actually being consumed, even though this method uses {@link #nextDouble()}
+   * which normally consumes 53 bits. Tracking of fractional bits of entropy is currently not
+   * implemented in {@link BaseEntropyCountingRandom}.
+   *
+   * @param probability The probability of returning true.
+   * @return True with probability {@code probability}; false otherwise. If {@code probability < 0},
+   *     always returns false. If {@code probability >= 1}, always returns true.
+   */
+  public final boolean withProbability(double probability) {
+    if (probability <= 0) {
+      return false;
+    } else if (probability >= 1) {
+      return true;
+    } else {
+      return withProbabilityInternal(probability);
+    }
+  }
+
+  /**
+   * Called by {@link #withProbability(double)} to generate a boolean with a specified probability
+   * of returning true, after special cases (probability 0 or less, or 1 or more) have been
+   * eliminated.
+   *
+   * @param probability The probability of returning true; always strictly between 0 and 1.
+   * @return True with probability {@code probability}; false otherwise.
+   */
+  protected boolean withProbabilityInternal(double probability) {
+    return nextDouble() <= probability;
+  }
+
+  /**
    * Creates a new RNG and seeds it using the default seeding strategy.
    */
   public BaseRandom(final int seedLength) throws SeedException {
@@ -133,7 +165,8 @@ public abstract class BaseRandom extends Random implements ByteArrayReseedableRa
    * @param seed The new seed.
    */
   @EnsuresNonNull("this.seed")
-  protected void setSeedInternal(@UnknownInitialization(Random.class)BaseRandom this, final byte[] seed) {
+  protected void setSeedInternal(@UnknownInitialization(Random.class)BaseRandom this,
+      final byte[] seed) {
     this.seed = seed.clone();
   }
 
