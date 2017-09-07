@@ -34,7 +34,6 @@ package io.github.pr0methean.betterrandom.benchmark;
 import io.github.pr0methean.betterrandom.seed.DefaultSeedGenerator;
 import io.github.pr0methean.betterrandom.seed.RandomSeederThread;
 import io.github.pr0methean.betterrandom.seed.SeedException;
-import java.util.concurrent.ExecutionException;
 import org.openjdk.jmh.annotations.Benchmark;
 import org.openjdk.jmh.annotations.Scope;
 import org.openjdk.jmh.annotations.State;
@@ -55,7 +54,7 @@ public abstract class AbstractRandomBenchmarkWithReseeding extends AbstractRando
 
   @Benchmark
   public byte testBytesContendedReseeding()
-      throws SeedException, InterruptedException, ExecutionException {
+      throws SeedException, InterruptedException {
     seederThread.add(prng);
     final byte b = innerTestBytesContended();
     seederThread.remove(prng);
