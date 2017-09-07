@@ -26,10 +26,7 @@ public class RandomDotOrgSeedGeneratorTest {
 
   @Test(timeOut = 120000)
   public void testGenerator() throws SeedException {
-    final SeedGenerator generator = RandomDotOrgSeedGenerator.RANDOM_DOT_ORG_SEED_GENERATOR;
-    final byte[] seed = generator.generateSeed(32);
-    assert seed.length == 32 : "Failed to generate seed of correct length";
-    generator.generateSeed(seed); // Check that other syntax also works
+    SeedTestUtils.testGenerator(RandomDotOrgSeedGenerator.RANDOM_DOT_ORG_SEED_GENERATOR);
   }
 
   /**

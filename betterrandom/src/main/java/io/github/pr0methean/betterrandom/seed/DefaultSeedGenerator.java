@@ -15,6 +15,8 @@
 // ============================================================================
 package io.github.pr0methean.betterrandom.seed;
 
+import io.github.pr0methean.betterrandom.util.LogPreFormatter;
+
 /**
  * Seed generator that maintains multiple strategies for seed generation and will delegate to the
  * best one available for the current operating environment.
@@ -27,6 +29,8 @@ public enum DefaultSeedGenerator implements SeedGenerator {
    * Singleton instance.
    */
   DEFAULT_SEED_GENERATOR;
+
+  private static final LogPreFormatter LOG = new LogPreFormatter(DefaultSeedGenerator.class);
 
   /**
    * Delegate generators.
@@ -42,8 +46,9 @@ public enum DefaultSeedGenerator implements SeedGenerator {
     for (final SeedGenerator generator : GENERATORS) {
       try {
         generator.generateSeed(output);
+        return;
       } catch (final SeedException ex) {
-        // Ignore and try the next generator...
+        LOG.warn("Unable to use %s: %s", generator, ex);
       }
     }
     // This shouldn't happen as at least one the generators should be

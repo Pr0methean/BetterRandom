@@ -25,6 +25,11 @@ import org.testng.annotations.Test;
  */
 public class DefaultSeedGeneratorTest {
 
+  @Test
+  public void testBasicFunction() throws SeedException {
+    SeedTestUtils.testGenerator(DefaultSeedGenerator.DEFAULT_SEED_GENERATOR);
+  }
+
   /**
    * Check that the default seed generator gracefully falls back to an alternative generation
    * strategy when the security manager prevents it from using its first choice.
