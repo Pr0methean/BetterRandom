@@ -75,7 +75,7 @@ public final class RandomSeederThread extends LooperThread {
   }
 
   @EnsuresNonNull(
-    {"prngs", "seedBuffer", "waitWhileEmpty", "waitForEntropyDrain", "prngsThisIteration"})
+      {"prngs", "seedBuffer", "waitWhileEmpty", "waitForEntropyDrain", "prngsThisIteration"})
   @RequiresNonNull("lock")
   private void initTransientFields(@UnderInitialization RandomSeederThread this) {
     prngs = Collections.synchronizedSet(

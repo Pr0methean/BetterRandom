@@ -2,6 +2,8 @@ package io.github.pr0methean.betterrandom.prng;
 
 import static org.checkerframework.checker.nullness.NullnessUtil.castNonNull;
 
+import com.google.common.base.MoreObjects;
+import com.google.common.base.MoreObjects.ToStringHelper;
 import io.github.pr0methean.betterrandom.ByteArrayReseedableRandom;
 import io.github.pr0methean.betterrandom.RepeatableRandom;
 import io.github.pr0methean.betterrandom.seed.DefaultSeedGenerator;
@@ -10,8 +12,6 @@ import io.github.pr0methean.betterrandom.seed.SeedGenerator;
 import io.github.pr0methean.betterrandom.util.BinaryUtils;
 import io.github.pr0methean.betterrandom.util.Dumpable;
 import io.github.pr0methean.betterrandom.util.LogPreFormatter;
-import com.google.common.base.MoreObjects;
-import com.google.common.base.MoreObjects.ToStringHelper;
 import java.io.IOException;
 import java.io.InvalidObjectException;
 import java.io.ObjectInputStream;
@@ -93,15 +93,6 @@ public abstract class BaseRandom extends Random implements ByteArrayReseedableRa
     }
   }
 
-  @Override
-  public synchronized void setSeed(@UnknownInitialization(Random.class)BaseRandom this,
-      long seed) {
-    ByteBuffer buffer = ByteBuffer.allocate(8);
-    buffer.putLong(seed);
-    byte[] array = buffer.array();
-    setSeedMaybeInitial(array);
-  }
-
   @EnsuresNonNull("this.seed")
   @Override
   public void setSeed(byte[] seed) {
@@ -111,6 +102,15 @@ public abstract class BaseRandom extends Random implements ByteArrayReseedableRa
     } finally {
       lock.unlock();
     }
+  }
+
+  @Override
+  public synchronized void setSeed(@UnknownInitialization(Random.class)BaseRandom this,
+      long seed) {
+    ByteBuffer buffer = ByteBuffer.allocate(8);
+    buffer.putLong(seed);
+    byte[] array = buffer.array();
+    setSeedMaybeInitial(array);
   }
 
   @SuppressWarnings("method.invocation.invalid")

@@ -7,7 +7,8 @@ import org.checkerframework.checker.initialization.qual.UnknownInitialization;
 public class VanillaJavaRandomBenchmark extends AbstractRandomBenchmark {
 
   @Override
-  protected Random createPrng(@UnknownInitialization VanillaJavaRandomBenchmark this) throws SeedException {
+  protected Random createPrng(@UnknownInitialization VanillaJavaRandomBenchmark this)
+      throws SeedException {
     return new Random();
   }
 }

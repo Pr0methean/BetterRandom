@@ -45,25 +45,23 @@ import org.openjdk.jmh.annotations.State;
 @State(Scope.Thread)
 public abstract class AbstractRandomBenchmark {
 
-  private static final int COLUMNS = 2;
-  private static final int ROWS = 10_000;
-
-  public AbstractRandomBenchmark() {}
-
   protected final static RandomSeederThread seederThread = RandomSeederThread.getInstance(
       DefaultSeedGenerator.DEFAULT_SEED_GENERATOR);
-
+  private static final int COLUMNS = 2;
+  private static final int ROWS = 10_000;
   protected final byte[][] bytes = new byte[COLUMNS][ROWS];
   protected final ScheduledThreadPoolExecutor executor = new ScheduledThreadPoolExecutor(2);
-  
   protected final Random prng;
-  
+
   {
     try {
       prng = createPrng();
     } catch (SeedException e) {
       throw new AssertionError(e);
     }
+  }
+
+  public AbstractRandomBenchmark() {
   }
 
   protected abstract Random createPrng(@UnknownInitialization AbstractRandomBenchmark this)
