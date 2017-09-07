@@ -98,8 +98,8 @@ public enum RandomDotOrgSeedGenerator implements SeedGenerator {
    * {@inheritDoc}
    */
   @SuppressWarnings({"AssignmentToStaticFieldFromInstanceMethod", "BusyWait"})
-  public byte[] generateSeed(final int length) throws SeedException {
-    final byte[] seedData = new byte[length];
+  public void generateSeed(final byte[] seedData) throws SeedException {
+    int length = seedData.length;
     boolean succeeded = false;
     while (!succeeded) {
       cacheLock.lock();
@@ -125,7 +125,6 @@ public enum RandomDotOrgSeedGenerator implements SeedGenerator {
         cacheLock.unlock();
       }
     }
-    return seedData;
   }
 
   @Override

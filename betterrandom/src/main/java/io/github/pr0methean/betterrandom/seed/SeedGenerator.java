@@ -28,9 +28,21 @@ public interface SeedGenerator extends Serializable {
   /**
    * Generate a seed value for a random number generator.
    *
+   * @param output The array that is to be populated with the seed.
+   * @throws SeedException If a seed cannot be generated for any reason.
+   */
+  void generateSeed(byte[] output) throws SeedException;
+
+  /**
+   * Generate a seed value for a random number generator.
+   *
    * @param length The length of the seed to generate (in bytes).
    * @return A byte array containing the seed data.
    * @throws SeedException If a seed cannot be generated for any reason.
    */
-  byte[] generateSeed(int length) throws SeedException;
+  default byte[] generateSeed(int length) throws SeedException {
+    byte[] output = new byte[length];
+    generateSeed(output);
+    return output;
+  }
 }

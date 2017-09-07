@@ -44,24 +44,4 @@ public class SingleThreadSplittableRandomAdapter extends DirectSplittableRandomA
       deserializedAndNotUsedSince = true; // Ensures serializing and deserializing is idempotent
     }
   }
-
-  @EnsuresNonNull({"this.seed", "underlying"})
-  @Override
-  public synchronized void setSeed(@UnknownInitialization SingleThreadSplittableRandomAdapter this,
-      final long seed) {
-    underlying = SplittableRandomReseeder.reseed(underlying, seed);
-    this.seed = BinaryUtils.convertLongToBytes(seed);
-  }
-
-  @EnsuresNonNull({"this.seed", "underlying"})
-  @Override
-  public void setSeedInternal(
-      @UnknownInitialization(Random.class)SingleThreadSplittableRandomAdapter this,
-      final byte[] seed) {
-    if (seed.length != 8) {
-      throw new IllegalArgumentException("DirectSplittableRandomAdapter requires an 8-byte seed");
-    }
-    underlying = SplittableRandomReseeder.reseed(underlying, BinaryUtils.convertBytesToLong(seed, 0));
-    this.seed = seed;
-  }
 }

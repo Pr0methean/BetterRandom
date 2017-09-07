@@ -28,6 +28,20 @@ public enum DefaultSeedGenerator implements SeedGenerator {
    */
   DEFAULT_SEED_GENERATOR;
 
+  @Override
+  public void generateSeed(byte[] output) throws SeedException {
+    for (final SeedGenerator generator : GENERATORS) {
+      try {
+        generator.generateSeed(output);
+      } catch (final SeedException ex) {
+        // Ignore and try the next generator...
+      }
+    }
+    // This shouldn't happen as at least one the generators should be
+    // able to generate a seed.
+    throw new SeedException("All available seed generation strategies failed.");
+  }
+
   /**
    * Delegate generators.
    */

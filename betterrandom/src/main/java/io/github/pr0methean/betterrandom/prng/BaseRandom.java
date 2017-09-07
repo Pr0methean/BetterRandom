@@ -38,6 +38,8 @@ public abstract class BaseRandom extends Random implements ByteArrayReseedableRa
   @SuppressWarnings({"InstanceVariableMayNotBeInitializedByReadObject",
       "FieldAccessedSynchronizedAndUnsynchronized"})
   protected transient boolean superConstructorFinished = false;
+  protected transient byte[] longSeedArray = new byte[8];
+  protected transient ByteBuffer longSeedBuffer = ByteBuffer.wrap(longSeedArray);
 
   /**
    * The purpose of this method is so that entropy-counting subclasses can detect that no more than
@@ -139,10 +141,8 @@ public abstract class BaseRandom extends Random implements ByteArrayReseedableRa
   @Override
   public synchronized void setSeed(@UnknownInitialization(Random.class)BaseRandom this,
       final long seed) {
-    final ByteBuffer buffer = ByteBuffer.allocate(8);
-    buffer.putLong(seed);
-    final byte[] array = buffer.array();
-    setSeedMaybeInitial(array);
+    longSeedBuffer.putLong(seed);
+    setSeedMaybeInitial(longSeedArray);
   }
 
   @SuppressWarnings("method.invocation.invalid")

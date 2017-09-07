@@ -64,9 +64,7 @@ public class SplittableRandomAdapter extends DirectSplittableRandomAdapter {
   @Override
   public void setSeed(@UnknownInitialization SplittableRandomAdapter this,
       final long seed) {
-    this.seed = BinaryUtils.convertLongToBytes(seed);
-    if (superConstructorFinished && threadLocal != null) {
-      threadLocal.set(SplittableRandomReseeder.reseed(threadLocal.get(), seed));
-    }
+    super.setSeed(seed);
+    threadLocal.set(SplittableRandomReseeder.reseed(threadLocal.get(), seed));
   }
 }
