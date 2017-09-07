@@ -5,7 +5,7 @@ import io.github.pr0methean.betterrandom.seed.SeedException;
 import java.util.Random;
 import org.checkerframework.checker.initialization.qual.UnknownInitialization;
 
-public class AesCounterRandom128Benchmark extends AbstractRandomBenchmark {
+public class AesCounterRandom128Benchmark extends AbstractRandomBenchmarkWithReseeding {
 
   public AesCounterRandom128Benchmark() {
   }
