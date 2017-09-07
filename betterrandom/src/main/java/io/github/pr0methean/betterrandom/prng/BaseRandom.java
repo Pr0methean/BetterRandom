@@ -131,7 +131,10 @@ public abstract class BaseRandom extends Random implements ByteArrayReseedableRa
   public synchronized void setSeed(@UnknownInitialization(Random.class)BaseRandom this,
       final long seed) {
     if (superConstructorFinished) {
-      setSeed(seed);
+      assert longSeedArray != null : "@AssumeAssertion(nullness)";
+      assert longSeedBuffer != null : "@AssumeAssertion(nullness)";
+      longSeedBuffer.putLong(seed);
+      setSeed(longSeedArray);
     } else {
       setSeedInternal(BinaryUtils.convertLongToBytes(seed));
     }

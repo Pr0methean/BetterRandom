@@ -184,7 +184,7 @@ public class CellularAutomatonRandom extends BaseEntropyCountingRandom {
     if (superConstructorFinished) {
       setSeedInternal(shortenedSeed);
     } else {
-      this.seed = shortenedSeed;
+      this.seed = shortenedSeed; // can't do anything else yet
     }
   }
 
