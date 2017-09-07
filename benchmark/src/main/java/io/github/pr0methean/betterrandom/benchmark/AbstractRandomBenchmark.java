@@ -8,6 +8,15 @@ import org.openjdk.jmh.annotations.Level;
 import org.openjdk.jmh.annotations.Scope;
 import org.openjdk.jmh.annotations.State;
 import org.openjdk.jmh.annotations.TearDown;
+import org.openjdk.jmh.profile.GCProfiler;
+import org.openjdk.jmh.profile.HotspotMemoryProfiler;
+import org.openjdk.jmh.profile.HotspotRuntimeProfiler;
+import org.openjdk.jmh.profile.HotspotThreadProfiler;
+import org.openjdk.jmh.profile.StackProfiler;
+import org.openjdk.jmh.runner.Runner;
+import org.openjdk.jmh.runner.RunnerException;
+import org.openjdk.jmh.runner.options.Options;
+import org.openjdk.jmh.runner.options.OptionsBuilder;
 
 // FIXME: Get the multithreaded benchmarks working
 @State(Scope.Benchmark)
@@ -78,4 +87,15 @@ public abstract class AbstractRandomBenchmark {
     return innerTestBytesContended();
   }
   */
+
+  public static void main(String[] args) throws RunnerException {
+    new Runner(new OptionsBuilder()
+        .addProfiler(HotspotThreadProfiler.class)
+        .addProfiler(HotspotRuntimeProfiler.class)
+        .addProfiler(HotspotMemoryProfiler.class)
+        .addProfiler(GCProfiler.class)
+        .addProfiler(StackProfiler.class)
+        .output("benchmark_results_2.txt")
+        .build()).run();
+  }
 }
