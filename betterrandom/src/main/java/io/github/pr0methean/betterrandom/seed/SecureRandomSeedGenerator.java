@@ -36,7 +36,7 @@ public enum SecureRandomSeedGenerator implements SeedGenerator {
   /**
    * {@inheritDoc}
    */
-  public byte[] generateSeed(int length) throws SeedException {
+  public byte[] generateSeed(final int length) throws SeedException {
     return SOURCE.generateSeed(length);
   }
 

@@ -37,7 +37,6 @@ public enum RandomDotOrgSeedGenerator implements SeedGenerator {
 
   RANDOM_DOT_ORG_SEED_GENERATOR;
 
-  private static final Logger LOG = Logger.getLogger(RandomDotOrgSeedGenerator.class.getName());
   private static final String BASE_URL = "https://www.random.org";
   /**
    * The URL from which the random bytes are retrieved.
@@ -65,7 +64,7 @@ public enum RandomDotOrgSeedGenerator implements SeedGenerator {
    * @throws IOException If there is a problem downloading the random bits.
    */
 
-  private static void refreshCache(int requiredBytes) throws IOException {
+  private static void refreshCache(final int requiredBytes) throws IOException {
     cacheLock.lock();
     try {
       int numberOfBytes = Math.max(requiredBytes, cache.length);
@@ -74,8 +73,8 @@ public enum RandomDotOrgSeedGenerator implements SeedGenerator {
         cache = new byte[numberOfBytes];
         cacheOffset = numberOfBytes;
       }
-      URL url = new URL(MessageFormat.format(RANDOM_URL, numberOfBytes));
-      URLConnection connection = url.openConnection();
+      final URL url = new URL(MessageFormat.format(RANDOM_URL, numberOfBytes));
+      final URLConnection connection = url.openConnection();
       connection.setRequestProperty("User-Agent", USER_AGENT);
 
       try (BufferedReader reader = new BufferedReader(
@@ -99,8 +98,8 @@ public enum RandomDotOrgSeedGenerator implements SeedGenerator {
    * {@inheritDoc}
    */
   @SuppressWarnings({"AssignmentToStaticFieldFromInstanceMethod", "BusyWait"})
-  public byte[] generateSeed(int length) throws SeedException {
-    byte[] seedData = new byte[length];
+  public byte[] generateSeed(final int length) throws SeedException {
+    final byte[] seedData = new byte[length];
     boolean succeeded = false;
     while (!succeeded) {
       cacheLock.lock();
@@ -108,7 +107,7 @@ public enum RandomDotOrgSeedGenerator implements SeedGenerator {
         int count = 0;
         while (count < length) {
           if (cacheOffset < cache.length) {
-            int numberOfBytes = Math.min(length - count, cache.length - cacheOffset);
+            final int numberOfBytes = Math.min(length - count, cache.length - cacheOffset);
             System.arraycopy(cache, cacheOffset, seedData, count, numberOfBytes);
             count += numberOfBytes;
             cacheOffset += numberOfBytes;
@@ -117,9 +116,9 @@ public enum RandomDotOrgSeedGenerator implements SeedGenerator {
           }
           succeeded = true;
         }
-      } catch (IOException ex) {
+      } catch (final IOException ex) {
         throw new SeedException("Failed downloading bytes from " + BASE_URL, ex);
-      } catch (SecurityException ex) {
+      } catch (final SecurityException ex) {
         // Might be thrown if resource access is restricted (such as in an applet sandbox).
         throw new SeedException("SecurityManager prevented access to " + BASE_URL, ex);
       } finally {

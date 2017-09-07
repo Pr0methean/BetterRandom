@@ -11,22 +11,22 @@ public abstract class BaseSplittableRandomAdapter extends BaseRandom {
   public static final int SEED_LENGTH_BYTES = 8;
   private static final long serialVersionUID = 4273652147052638879L;
 
-  public BaseSplittableRandomAdapter(byte[] seed) {
+  public BaseSplittableRandomAdapter(final byte[] seed) {
     super(seed);
   }
 
   protected abstract SplittableRandom getSplittableRandom();
 
   @Override
-  protected int next(int bits) {
+  protected int next(final int bits) {
 
     return nextInt() & ((1 << bits) - 1);
   }
 
   @Override
-  public void nextBytes(byte[] bytes) {
+  public void nextBytes(final byte[] bytes) {
 
-    SplittableRandom local = getSplittableRandom();
+    final SplittableRandom local = getSplittableRandom();
     for (int i = 0; i < bytes.length; i++) {
       bytes[i] = (byte) (local.nextInt(256));
     }
@@ -39,12 +39,12 @@ public abstract class BaseSplittableRandomAdapter extends BaseRandom {
   }
 
   @Override
-  public int nextInt(int bound) {
+  public int nextInt(final int bound) {
 
     return getSplittableRandom().nextInt(bound);
   }
 
-  public int nextInt(int origin, int bound) {
+  public int nextInt(final int origin, final int bound) {
 
     return getSplittableRandom().nextInt(origin, bound);
   }
@@ -55,12 +55,12 @@ public abstract class BaseSplittableRandomAdapter extends BaseRandom {
     return getSplittableRandom().nextLong();
   }
 
-  public long nextLong(long bound) {
+  public long nextLong(final long bound) {
 
     return getSplittableRandom().nextLong(bound);
   }
 
-  public long nextLong(long origin, long bound) {
+  public long nextLong(final long origin, final long bound) {
 
     return getSplittableRandom().nextLong(origin, bound);
   }
@@ -71,12 +71,12 @@ public abstract class BaseSplittableRandomAdapter extends BaseRandom {
     return getSplittableRandom().nextDouble();
   }
 
-  public double nextDouble(double bound) {
+  public double nextDouble(final double bound) {
 
     return getSplittableRandom().nextDouble(bound);
   }
 
-  public double nextDouble(double origin, double bound) {
+  public double nextDouble(final double origin, final double bound) {
 
     return getSplittableRandom().nextDouble(origin, bound);
   }
@@ -88,7 +88,7 @@ public abstract class BaseSplittableRandomAdapter extends BaseRandom {
   }
 
   @Override
-  public IntStream ints(long streamSize) {
+  public IntStream ints(final long streamSize) {
 
     return getSplittableRandom().ints(streamSize);
   }
@@ -100,20 +100,20 @@ public abstract class BaseSplittableRandomAdapter extends BaseRandom {
   }
 
   @Override
-  public IntStream ints(long streamSize, int randomNumberOrigin,
-      int randomNumberBound) {
+  public IntStream ints(final long streamSize, final int randomNumberOrigin,
+      final int randomNumberBound) {
 
     return getSplittableRandom().ints(streamSize, randomNumberOrigin, randomNumberBound);
   }
 
   @Override
-  public IntStream ints(int randomNumberOrigin, int randomNumberBound) {
+  public IntStream ints(final int randomNumberOrigin, final int randomNumberBound) {
 
     return getSplittableRandom().ints(randomNumberOrigin, randomNumberBound);
   }
 
   @Override
-  public LongStream longs(long streamSize) {
+  public LongStream longs(final long streamSize) {
 
     return getSplittableRandom().longs(streamSize);
   }
@@ -125,20 +125,20 @@ public abstract class BaseSplittableRandomAdapter extends BaseRandom {
   }
 
   @Override
-  public LongStream longs(long streamSize, long randomNumberOrigin,
-      long randomNumberBound) {
+  public LongStream longs(final long streamSize, final long randomNumberOrigin,
+      final long randomNumberBound) {
 
     return getSplittableRandom().longs(streamSize, randomNumberOrigin, randomNumberBound);
   }
 
   @Override
-  public LongStream longs(long randomNumberOrigin, long randomNumberBound) {
+  public LongStream longs(final long randomNumberOrigin, final long randomNumberBound) {
 
     return getSplittableRandom().longs(randomNumberOrigin, randomNumberBound);
   }
 
   @Override
-  public DoubleStream doubles(long streamSize) {
+  public DoubleStream doubles(final long streamSize) {
 
     return getSplittableRandom().doubles(streamSize);
   }
@@ -150,14 +150,14 @@ public abstract class BaseSplittableRandomAdapter extends BaseRandom {
   }
 
   @Override
-  public DoubleStream doubles(long streamSize, double randomNumberOrigin,
-      double randomNumberBound) {
+  public DoubleStream doubles(final long streamSize, final double randomNumberOrigin,
+      final double randomNumberBound) {
 
     return getSplittableRandom().doubles(streamSize, randomNumberOrigin, randomNumberBound);
   }
 
   @Override
-  public DoubleStream doubles(double randomNumberOrigin, double randomNumberBound) {
+  public DoubleStream doubles(final double randomNumberOrigin, final double randomNumberBound) {
 
     return getSplittableRandom().doubles(randomNumberOrigin, randomNumberBound);
   }

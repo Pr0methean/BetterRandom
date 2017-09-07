@@ -19,7 +19,6 @@
     <annotatedJdk>${org.checkerframework:jdk8:jar}</annotatedJdk>
     <github.global.server>github</github.global.server>
   </properties>
-  <groupId>io.github.pr0methean.betterrandom</groupId>
   <artifactId>BetterRandom</artifactId>
   <version>0.9.1.2-SNAPSHOT</version>
   <name>BetterRandom</name>
@@ -301,7 +300,7 @@
               </goals>
               <!-- select the Maven phase in which the plugin will be executed -->
               <phase>site-deploy</phase>
-              <!--suppress MavenModelInspection -->
+              <!--suppress MavenModelInspection, MavenModelInspection -->
               <configuration>
                 <!-- Plugin configuration ges here -->
 

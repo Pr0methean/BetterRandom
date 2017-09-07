@@ -28,7 +28,7 @@ public class SeedException extends Exception {
   /**
    * @param message Details of the problem.
    */
-  public SeedException(String message) {
+  public SeedException(final String message) {
     super(message);
   }
 
@@ -36,7 +36,7 @@ public class SeedException extends Exception {
    * @param message Details of the problem.
    * @param cause The root cause of the problem.
    */
-  public SeedException(String message, Throwable cause) {
+  public SeedException(final String message, final Throwable cause) {
     super(message, cause);
   }
 }
