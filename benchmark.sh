@@ -4,4 +4,6 @@ mvn -DskipTests clean package proguard:proguard &&\
 cd ../benchmark &&\
 mvn -DskipTests clean package &&\
 cd ..
-java -jar benchmark/target/benchmarks.jar -foe true -v EXTRA
+java -cp benchmark/target/benchmarks.jar \
+    io.github.pr0methean.betterrandom.benchmark.AbstractRandomBenchmark \
+    -v EXTRA
