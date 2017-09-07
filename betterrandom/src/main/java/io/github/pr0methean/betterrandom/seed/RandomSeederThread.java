@@ -163,7 +163,9 @@ public final class RandomSeederThread extends LooperThread {
       }
     }
     Iterator<Random> iterator = prngsThisIteration.iterator();
-    for (Random random : iterator) {
+    Random random;
+    while (iterator.hasNext()) {
+      random = iterator.next();
       iterator.remove();
       if (random instanceof EntropyCountingRandom
           && ((EntropyCountingRandom) random).entropyBits() > 0) {
