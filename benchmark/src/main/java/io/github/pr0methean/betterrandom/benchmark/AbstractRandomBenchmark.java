@@ -15,6 +15,7 @@ import org.openjdk.jmh.profile.HotspotThreadProfiler;
 import org.openjdk.jmh.profile.StackProfiler;
 import org.openjdk.jmh.runner.Runner;
 import org.openjdk.jmh.runner.RunnerException;
+import org.openjdk.jmh.runner.options.ChainedOptionsBuilder;
 import org.openjdk.jmh.runner.options.Options;
 import org.openjdk.jmh.runner.options.OptionsBuilder;
 
@@ -89,13 +90,19 @@ public abstract class AbstractRandomBenchmark {
   */
 
   public static void main(String[] args) throws RunnerException {
-    new Runner(new OptionsBuilder()
+    ChainedOptionsBuilder options = new OptionsBuilder()
         .addProfiler(HotspotThreadProfiler.class)
         .addProfiler(HotspotRuntimeProfiler.class)
         .addProfiler(HotspotMemoryProfiler.class)
         .addProfiler(GCProfiler.class)
         .addProfiler(StackProfiler.class)
-        .output("benchmark_results_2.txt")
-        .build()).run();
+        .shouldFailOnError(true)
+        .forks(1);
+    for (int nThreads = 1; nThreads < 2; nThreads++) {
+      new Runner(options
+          .threads(nThreads)
+          .output(String.format("%d-thread_bench_results.txt", nThreads))
+          .build()).run();
+    }
   }
 }
