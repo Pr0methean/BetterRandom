@@ -144,9 +144,11 @@ seederThread.add(myRandom);
 
 # Build scripts
 
-* `coverage.sh`: Run tests and generate coverage reports. Upload them to Coveralls if running in
-  Travis-CI.
-* `test-proguard.sh`: Run tests against Proguarded jar.
+* `benchmark.sh`: Compile and run benchmarks. Output will be in `benchmark/target`.
+* `coverage.sh`: Compile and run tests and generate coverage reports. Upload them to Coveralls if
+  running in Travis-CI.
+* `release.sh`: Used to perform new releases.
+* `test-proguard.sh`: Compile and run tests against Proguarded jar.
 
 # Credits
 
