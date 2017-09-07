@@ -3,7 +3,6 @@ package io.github.pr0methean.betterrandom.prng.adapter;
 import com.google.common.base.MoreObjects.ToStringHelper;
 import io.github.pr0methean.betterrandom.seed.SeedException;
 import io.github.pr0methean.betterrandom.seed.SeedGenerator;
-import io.github.pr0methean.betterrandom.util.BinaryUtils;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.util.SplittableRandom;
@@ -65,6 +64,8 @@ public class SplittableRandomAdapter extends DirectSplittableRandomAdapter {
   public void setSeed(@UnknownInitialization SplittableRandomAdapter this,
       final long seed) {
     super.setSeed(seed);
-    threadLocal.set(SplittableRandomReseeder.reseed(threadLocal.get(), seed));
+    if (threadLocal != null) {
+      threadLocal.set(SplittableRandomReseeder.reseed(threadLocal.get(), seed));
+    }
   }
 }

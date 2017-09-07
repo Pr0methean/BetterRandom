@@ -15,8 +15,9 @@
 // ============================================================================
 package io.github.pr0methean.betterrandom.prng;
 
+import static io.github.pr0methean.betterrandom.util.BinaryUtils.convertIntToBytes;
+
 import com.google.common.base.MoreObjects.ToStringHelper;
-import io.github.pr0methean.betterrandom.RepeatableRandom;
 import io.github.pr0methean.betterrandom.seed.DefaultSeedGenerator;
 import io.github.pr0methean.betterrandom.seed.SeedException;
 import io.github.pr0methean.betterrandom.seed.SeedGenerator;
@@ -179,7 +180,11 @@ public class CellularAutomatonRandom extends BaseEntropyCountingRandom {
   @Override
   public synchronized void setSeed(@UnknownInitialization(Random.class)CellularAutomatonRandom this,
       final long seed) {
-    setSeedMaybeInitial(BinaryUtils.convertIntToBytes(((Long) seed).hashCode()));
+    if (superConstructorFinished) {
+      setSeedInternal(convertIntToBytes(((Long) seed).hashCode()));
+    } else {
+      super.setSeed(seed);
+    }
   }
 
   @Override

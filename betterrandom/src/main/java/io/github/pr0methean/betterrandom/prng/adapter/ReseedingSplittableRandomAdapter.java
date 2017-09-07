@@ -138,7 +138,7 @@ public class ReseedingSplittableRandomAdapter extends BaseSplittableRandomAdapte
   @Override
   protected void setSeedInternal(@UnknownInitialization ReseedingSplittableRandomAdapter this,
       final byte[] seed) {
-    // No-op.
+    this.seed = seed.clone();
   }
 
   @Override

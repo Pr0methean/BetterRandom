@@ -3,7 +3,6 @@ package io.github.pr0methean.betterrandom.prng.adapter;
 import io.github.pr0methean.betterrandom.util.BinaryUtils;
 import java.io.IOException;
 import java.io.ObjectInputStream;
-import java.nio.ByteBuffer;
 import java.util.Random;
 import java.util.SplittableRandom;
 import org.checkerframework.checker.initialization.qual.UnknownInitialization;
@@ -46,8 +45,12 @@ public abstract class DirectSplittableRandomAdapter extends BaseSplittableRandom
   @Override
   public void setSeed(@UnknownInitialization DirectSplittableRandomAdapter this,
       final long seed) {
-    longSeedBuffer.putLong(seed);
-    super.setSeedInternal(longSeedArray);
-    underlying = SplittableRandomReseeder.reseed(underlying, seed);
+    if (superConstructorFinished) {
+      assert longSeedBuffer != null : "@AssumeAssertion(nullness)";
+      assert longSeedArray != null : "@AssumeAssertion(nullness)";
+      longSeedBuffer.putLong(seed);
+      super.setSeedInternal(longSeedArray);
+      underlying = SplittableRandomReseeder.reseed(underlying, seed);
+    }
   }
 }

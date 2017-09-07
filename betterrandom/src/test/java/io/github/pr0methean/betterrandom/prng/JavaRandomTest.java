@@ -54,7 +54,7 @@ public class JavaRandomTest {
   @SuppressWarnings({"argument.type.incompatible", "return.type.incompatible"})
   @Test(timeOut = 15000, expectedExceptions = IllegalArgumentException.class)
   public void testNullSeed() throws SeedException {
-    new JavaRandom(length -> null);
+    new JavaRandom((byte[]) null);
   }
 
   @Test(timeOut = 15000)
