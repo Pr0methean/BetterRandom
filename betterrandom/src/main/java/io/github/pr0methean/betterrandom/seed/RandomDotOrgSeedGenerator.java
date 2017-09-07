@@ -23,7 +23,6 @@ import java.net.URLConnection;
 import java.text.MessageFormat;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
-import java.util.logging.Logger;
 
 /**
  * Connects to the <a href="http://www.random.org" target="_top">random.org</a> website (via HTTPS)
@@ -98,8 +97,8 @@ public enum RandomDotOrgSeedGenerator implements SeedGenerator {
    * {@inheritDoc}
    */
   @SuppressWarnings({"AssignmentToStaticFieldFromInstanceMethod", "BusyWait"})
-  public byte[] generateSeed(final int length) throws SeedException {
-    final byte[] seedData = new byte[length];
+  public void generateSeed(final byte[] seedData) throws SeedException {
+    int length = seedData.length;
     boolean succeeded = false;
     while (!succeeded) {
       cacheLock.lock();
@@ -125,7 +124,6 @@ public enum RandomDotOrgSeedGenerator implements SeedGenerator {
         cacheLock.unlock();
       }
     }
-    return seedData;
   }
 
   @Override

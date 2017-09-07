@@ -18,7 +18,6 @@ package io.github.pr0methean.betterrandom.prng;
 import static org.checkerframework.checker.nullness.NullnessUtil.castNonNull;
 
 import com.google.common.base.MoreObjects.ToStringHelper;
-import io.github.pr0methean.betterrandom.RepeatableRandom;
 import io.github.pr0methean.betterrandom.seed.DefaultSeedGenerator;
 import io.github.pr0methean.betterrandom.seed.SeedException;
 import io.github.pr0methean.betterrandom.seed.SeedGenerator;
@@ -175,7 +174,7 @@ public class AesCounterRandom extends BaseEntropyCountingRandom {
   /**
    * Called in constructor and readObject to initialize transient fields.
    */
-  @EnsuresNonNull({"counter", "counterInput", "cipher", "lock"})
+  @EnsuresNonNull({"counter", "counterInput", "cipher", "lock", "longSeedArray", "longSeedBuffer"})
   protected void initTransientFields(
       @UnknownInitialization AesCounterRandom this) {
     super.initTransientFields();

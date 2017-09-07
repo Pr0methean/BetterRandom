@@ -18,4 +18,11 @@ public interface ByteArrayReseedableRandom /* extends BaseRandom */ {
    *     lengths are supported.
    */
   int getNewSeedLength();
+
+  /**
+   * @return Whether we prefer to have {@link java.util.Random#setSeed(long)} called instead.
+   */
+  default boolean preferSeedWithLong() {
+    return false;
+  }
 }
