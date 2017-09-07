@@ -42,70 +42,70 @@ import org.openjdk.jmh.annotations.Benchmark;
 import org.openjdk.jmh.annotations.Scope;
 import org.openjdk.jmh.annotations.State;
 
+@State(Scope.Thread)
 public abstract class AbstractRandomBenchmark {
 
-  @State(Scope.Thread)
-  public class PrngState {
-    public final Random prng = createPrng();
-
-    public PrngState() throws SeedException {
-    }
-  }
-
-  @State(Scope.Thread)
-  public class ReseedingPrngState extends PrngState implements AutoCloseable {
-    public ReseedingPrngState() throws SeedException {
-      seederThread.add(prng);
-    }
-    @Override
-    public void close() {
-      seederThread.remove(prng);
-    }
-    @Override
-    protected void finalize() {
-      close();
-    }
-  }
+  private static final int COLUMNS = 2;
+  private static final int ROWS = 10_000;
 
   public AbstractRandomBenchmark() {}
 
   protected final static RandomSeederThread seederThread = RandomSeederThread.getInstance(
       DefaultSeedGenerator.DEFAULT_SEED_GENERATOR);
-  protected final static byte[][] lotsOfBytes = new byte[2][10_000];
+  protected final static byte[][] bytes = new byte[COLUMNS][ROWS];
   protected final static ScheduledThreadPoolExecutor executor = new ScheduledThreadPoolExecutor(2);
+  
+  protected final Random prng;
+  
+  {
+    try {
+      prng = createPrng();
+    } catch (SeedException e) {
+      throw new AssertionError(e);
+    }
+  }
 
   protected abstract Random createPrng(@UnknownInitialization AbstractRandomBenchmark this)
       throws SeedException;
 
-  private void innerTestBytesSequential(Random prng) {
-    for (byte[] bytes : lotsOfBytes) {
+  private byte innerTestBytesSequential() {
+    for (byte[] bytes : bytes) {
       prng.nextBytes(bytes);
     }
+    return bytes[prng.nextInt(COLUMNS)][prng.nextInt(ROWS)];
   }
 
   @Benchmark
-  public void testBytesSequential(PrngState state) throws SeedException {
-    innerTestBytesSequential(state.prng);
+  public byte testBytesSequential() throws SeedException {
+    return innerTestBytesSequential();
   }
 
   @Benchmark
-  public void testBytesSequentialReseeding(ReseedingPrngState state) throws SeedException {
-    innerTestBytesSequential(state.prng);
+  public byte testBytesSequentialReseeding() throws SeedException {
+    seederThread.add(prng);
+    byte b = innerTestBytesSequential();
+    seederThread.remove(prng);
+    return b;
   }
 
-  private void innerTestBytesContended(Random prng) throws SeedException, InterruptedException {
-    for (byte[] bytes : lotsOfBytes) {
-      executor.execute(() -> prng.nextBytes(bytes));
+  private byte innerTestBytesContended() throws SeedException, InterruptedException {
+    for (byte[] column : bytes) {
+      executor.execute(() -> prng.nextBytes(column));
     }
     assert executor.awaitTermination(1800, TimeUnit.SECONDS) : "Timed out";
-  }
-  @Benchmark
-  public void testBytesContended(PrngState state) throws SeedException, InterruptedException {
-    innerTestBytesContended(state.prng);
+    return bytes[prng.nextInt(COLUMNS)][prng.nextInt(ROWS)];
   }
 
   @Benchmark
-  public void testBytesContendedReseeding(ReseedingPrngState state) throws SeedException, InterruptedException {
-    innerTestBytesContended(state.prng);
+  public byte testBytesContended() throws SeedException, InterruptedException {
+    return innerTestBytesContended();
+  }
+
+  @Benchmark
+  public byte testBytesContendedReseeding() throws SeedException, InterruptedException {
+    seederThread.add(prng);
+    byte b = innerTestBytesContended();
+    seederThread.remove(prng);
+    return b;
   }
 }
