@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- FIXME: Exception in thread "main" java.lang.RuntimeException: ERROR: Unable to find the
+<!-- FIXME: Exception in seederThread "main" java.lang.RuntimeException: ERROR: Unable to find the
     resource: /META-INF/BenchmarkList -->
 <!--
 Copyright (c) 2014, Oracle America, Inc.

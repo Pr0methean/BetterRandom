@@ -132,7 +132,7 @@ public abstract class BaseRandomTest {
 
   @Test(timeOut = 1000)
   public void testWithProbability() {
-    BaseRandom prng = createRng();
+    final BaseRandom prng = createRng();
     assertFalse(prng.withProbability(0.0));
     assertTrue(prng.withProbability(1.0));
   }

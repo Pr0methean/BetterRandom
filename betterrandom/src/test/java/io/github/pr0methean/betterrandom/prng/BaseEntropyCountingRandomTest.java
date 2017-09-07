@@ -36,8 +36,8 @@ public abstract class BaseEntropyCountingRandomTest extends BaseRandomTest {
   @Override
   @Test(timeOut = 1000)
   public void testWithProbability() {
-    BaseEntropyCountingRandom prng = createRng();
-    long originalEntropy = prng.entropyBits();
+    final BaseEntropyCountingRandom prng = createRng();
+    final long originalEntropy = prng.entropyBits();
     assertFalse(prng.withProbability(0.0));
     assertTrue(prng.withProbability(1.0));
     assertEquals(originalEntropy, prng.entropyBits());

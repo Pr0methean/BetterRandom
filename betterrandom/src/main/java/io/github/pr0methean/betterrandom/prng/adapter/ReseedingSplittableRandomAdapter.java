@@ -18,8 +18,8 @@ import org.checkerframework.checker.nullness.qual.RequiresNonNull;
 
 /**
  * A version of {@link SplittableRandomAdapter} that uses a {@link RandomSeederThread} to replace
- * each thread's {@link SplittableRandom} with a reseeded one as frequently as possible, but not
- * more frequently than it is being used.
+ * each seederThread's {@link SplittableRandom} with a reseeded one as frequently as possible, but
+ * not more frequently than it is being used.
  */
 public class ReseedingSplittableRandomAdapter extends BaseSplittableRandomAdapter {
 
@@ -27,8 +27,7 @@ public class ReseedingSplittableRandomAdapter extends BaseSplittableRandomAdapte
   private static final Map<SeedGenerator, ReseedingSplittableRandomAdapter> INSTANCES =
       Collections.synchronizedMap(new WeakHashMap<>());
   protected final SeedGenerator seedGenerator;
-  @SuppressWarnings("InstanceVariableMayNotBeInitializedByReadObject")
-  private RandomSeederThread seederThread;
+  protected RandomSeederThread seederThread; // Hide inherited, because not nullable for us
   @SuppressWarnings({"ThreadLocalNotStaticFinal",
       "InstanceVariableMayNotBeInitializedByReadObject"})
   private transient ThreadLocal<SingleThreadSplittableRandomAdapter> threadLocal;
@@ -74,10 +73,8 @@ public class ReseedingSplittableRandomAdapter extends BaseSplittableRandomAdapte
   }
 
   @Override
-  public ToStringHelper addSubclassFields(final ToStringHelper original) {
-    return original
-        .add("threadLocal", threadLocal)
-        .add("seederThread", seederThread);
+  protected ToStringHelper addSubSubclassFields(final ToStringHelper original) {
+    return original.add("threadLocal", threadLocal);
   }
 
   private void readObject(final ObjectInputStream in) throws IOException, ClassNotFoundException {
@@ -123,7 +120,7 @@ public class ReseedingSplittableRandomAdapter extends BaseSplittableRandomAdapte
   }
 
   @Override
-  public boolean equals(@Nullable final Object o) {
+  public boolean equals(final @Nullable Object o) {
     return this == o
         || (o instanceof ReseedingSplittableRandomAdapter
         && seedGenerator.equals(((ReseedingSplittableRandomAdapter) o).seedGenerator));
