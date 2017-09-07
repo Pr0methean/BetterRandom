@@ -11,7 +11,7 @@ public class AesCounterRandom384Test extends AesCounterRandom256Test {
   static {
     try {
       UNLIMITED_STRENGTH_CRYPTO = Cipher.getMaxAllowedKeyLength("AES") >= 256;
-    } catch (NoSuchAlgorithmException e) {
+    } catch (final NoSuchAlgorithmException e) {
       throw new RuntimeException(e);
     }
   }
@@ -21,7 +21,7 @@ public class AesCounterRandom384Test extends AesCounterRandom256Test {
     if (UNLIMITED_STRENGTH_CRYPTO) {
       try {
         return new AesCounterRandom(48);
-      } catch (SeedException e) {
+      } catch (final SeedException e) {
         throw new RuntimeException(e);
       }
     } else {

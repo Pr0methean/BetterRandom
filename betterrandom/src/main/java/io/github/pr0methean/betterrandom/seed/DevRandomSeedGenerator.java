@@ -39,23 +39,23 @@ public enum DevRandomSeedGenerator implements SeedGenerator {
    * @throws SeedException If {@literal /dev/random} does not exist or is not accessible
    */
   @SuppressWarnings({"IOResourceOpenedButNotSafelyClosed", "resource"})
-  public byte[] generateSeed(int length) throws SeedException {
+  public byte[] generateSeed(final int length) throws SeedException {
     FileInputStream file = null;
     try {
       file = new FileInputStream(DEV_RANDOM);
-      byte[] randomSeed = new byte[length];
+      final byte[] randomSeed = new byte[length];
       int count = 0;
       while (count < length) {
-        int bytesRead = file.read(randomSeed, count, length - count);
+        final int bytesRead = file.read(randomSeed, count, length - count);
         if (bytesRead == -1) {
           throw new SeedException("EOF encountered reading random data.");
         }
         count += bytesRead;
       }
       return randomSeed;
-    } catch (IOException ex) {
+    } catch (final IOException ex) {
       throw new SeedException("Failed reading from " + DEV_RANDOM.getName(), ex);
-    } catch (SecurityException ex) {
+    } catch (final SecurityException ex) {
       // Might be thrown if resource access is restricted (such as in
       // an applet sandbox).
       throw new SeedException("SecurityManager prevented access to " + DEV_RANDOM.getName(), ex);
@@ -63,7 +63,7 @@ public enum DevRandomSeedGenerator implements SeedGenerator {
       if (file != null) {
         try {
           file.close();
-        } catch (IOException ex) {
+        } catch (final IOException ex) {
           // Ignore.
         }
       }

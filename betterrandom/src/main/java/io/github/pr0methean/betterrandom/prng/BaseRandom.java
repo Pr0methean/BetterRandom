@@ -2,6 +2,8 @@ package io.github.pr0methean.betterrandom.prng;
 
 import static org.checkerframework.checker.nullness.NullnessUtil.castNonNull;
 
+import com.google.common.base.MoreObjects;
+import com.google.common.base.MoreObjects.ToStringHelper;
 import io.github.pr0methean.betterrandom.ByteArrayReseedableRandom;
 import io.github.pr0methean.betterrandom.RepeatableRandom;
 import io.github.pr0methean.betterrandom.seed.DefaultSeedGenerator;
@@ -10,8 +12,6 @@ import io.github.pr0methean.betterrandom.seed.SeedGenerator;
 import io.github.pr0methean.betterrandom.util.BinaryUtils;
 import io.github.pr0methean.betterrandom.util.Dumpable;
 import io.github.pr0methean.betterrandom.util.LogPreFormatter;
-import com.google.common.base.MoreObjects;
-import com.google.common.base.MoreObjects.ToStringHelper;
 import java.io.IOException;
 import java.io.InvalidObjectException;
 import java.io.ObjectInputStream;
@@ -42,7 +42,7 @@ public abstract class BaseRandom extends Random implements ByteArrayReseedableRa
   /**
    * Creates a new RNG and seeds it using the default seeding strategy.
    */
-  public BaseRandom(int seedLength) throws SeedException {
+  public BaseRandom(final int seedLength) throws SeedException {
     this(DefaultSeedGenerator.DEFAULT_SEED_GENERATOR.generateSeed(seedLength));
   }
 
@@ -53,18 +53,18 @@ public abstract class BaseRandom extends Random implements ByteArrayReseedableRa
    *     RNG.
    * @throws SeedException If there is a problem generating a seed.
    */
-  public BaseRandom(SeedGenerator seedGenerator, int seedLength) throws SeedException {
+  public BaseRandom(final SeedGenerator seedGenerator, final int seedLength) throws SeedException {
     this(seedGenerator.generateSeed(seedLength));
   }
 
   @EnsuresNonNull("this.seed")
-  public BaseRandom(byte[] seed) {
+  public BaseRandom(final byte[] seed) {
     superConstructorFinished = true;
     if (seed == null) {
       throw new IllegalArgumentException("Seed must not be null");
     }
     initTransientFields();
-    setSeedInitial(seed);
+    setSeedInternal(seed);
   }
 
   public abstract ToStringHelper addSubclassFields(ToStringHelper original);
@@ -93,39 +93,47 @@ public abstract class BaseRandom extends Random implements ByteArrayReseedableRa
     }
   }
 
-  @Override
-  public synchronized void setSeed(@UnknownInitialization(Random.class)BaseRandom this,
-      long seed) {
-    ByteBuffer buffer = ByteBuffer.allocate(8);
-    buffer.putLong(seed);
-    byte[] array = buffer.array();
-    setSeedMaybeInitial(array);
-  }
-
   @EnsuresNonNull("this.seed")
   @Override
-  public void setSeed(byte[] seed) {
+  public void setSeed(final byte[] seed) {
     lock.lock();
     try {
-      setSeedInitial(seed);
+      setSeedInternal(seed);
     } finally {
       lock.unlock();
     }
   }
 
+  @Override
+  public synchronized void setSeed(@UnknownInitialization(Random.class)BaseRandom this,
+      final long seed) {
+    final ByteBuffer buffer = ByteBuffer.allocate(8);
+    buffer.putLong(seed);
+    final byte[] array = buffer.array();
+    setSeedMaybeInitial(array);
+  }
+
   @SuppressWarnings("method.invocation.invalid")
   @EnsuresNonNull("this.seed")
   protected void setSeedMaybeInitial(@UnknownInitialization(Random.class)BaseRandom this,
-      byte[] seed) {
+      final byte[] seed) {
     if (superConstructorFinished) {
       setSeed(seed);
     } else {
-      setSeedInitial(seed);
+      setSeedInternal(seed);
     }
   }
 
+  /**
+   * Sets the seed, and should be overridden to set other state that derives from the seed. Called
+   * by {@link #setSeed(byte[])}, whose default implementation ensures that the lock is held while
+   * doing so. Also called by constructors, {@link #readObject(ObjectInputStream)} and {@link
+   * #readObjectNoData()}.
+   *
+   * @param seed The new seed.
+   */
   @EnsuresNonNull("this.seed")
-  public void setSeedInitial(@UnknownInitialization(Random.class)BaseRandom this, byte[] seed) {
+  protected void setSeedInternal(@UnknownInitialization(Random.class)BaseRandom this, final byte[] seed) {
     this.seed = seed.clone();
   }
 
@@ -139,19 +147,19 @@ public abstract class BaseRandom extends Random implements ByteArrayReseedableRa
 
   @EnsuresNonNull({"lock", "seed"})
   private void readObject(@UnderInitialization(BaseRandom.class)BaseRandom this,
-      ObjectInputStream in) throws IOException, ClassNotFoundException {
+      final ObjectInputStream in) throws IOException, ClassNotFoundException {
     in.defaultReadObject();
     initTransientFields();
-    setSeedInitial(castNonNull(seed));
+    setSeedInternal(castNonNull(seed));
   }
 
   @EnsuresNonNull({"lock", "seed"})
-  @SuppressWarnings({"OverriddenMethodCallDuringObjectConstruction"})
+  @SuppressWarnings("OverriddenMethodCallDuringObjectConstruction")
   protected void readObjectNoData() throws InvalidObjectException {
     LOG.warn("BaseRandom.readObjectNoData() invoked; using DefaultSeedGenerator");
     try {
       setSeed(DefaultSeedGenerator.DEFAULT_SEED_GENERATOR.generateSeed(getNewSeedLength()));
-    } catch (SeedException e) {
+    } catch (final SeedException e) {
       throw (InvalidObjectException)
           (new InvalidObjectException("Unable to deserialize or generate a seed this RNG")
               .initCause(e));

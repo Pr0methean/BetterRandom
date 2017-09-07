@@ -30,7 +30,7 @@ public class MersenneTwisterRandomTest extends BaseEntropyCountingRandomTest {
   }
 
   @Override
-  protected BaseRandom createRng(byte[] seed) throws SeedException {
+  protected BaseRandom createRng(final byte[] seed) throws SeedException {
     return new MersenneTwisterRandom(seed);
   }
 }

@@ -15,12 +15,12 @@
 // ============================================================================
 package io.github.pr0methean.betterrandom.prng;
 
+import com.google.common.base.MoreObjects.ToStringHelper;
 import io.github.pr0methean.betterrandom.RepeatableRandom;
 import io.github.pr0methean.betterrandom.seed.DefaultSeedGenerator;
 import io.github.pr0methean.betterrandom.seed.SeedException;
 import io.github.pr0methean.betterrandom.seed.SeedGenerator;
 import io.github.pr0methean.betterrandom.util.BinaryUtils;
-import com.google.common.base.MoreObjects.ToStringHelper;
 import java.util.Arrays;
 import java.util.Random;
 import org.checkerframework.checker.initialization.qual.UnknownInitialization;
@@ -41,7 +41,7 @@ import org.checkerframework.checker.nullness.qual.EnsuresNonNull;
  * @author Daniel Dyer
  * @since 1.2
  */
-public class Cmwc4096Random extends BaseEntropyCountingRandom implements RepeatableRandom {
+public class Cmwc4096Random extends BaseEntropyCountingRandom {
 
   private static final int SEED_SIZE_BYTES = 16384; // Needs 4,096 32-bit integers.
 
@@ -66,7 +66,7 @@ public class Cmwc4096Random extends BaseEntropyCountingRandom implements Repeata
    *     RNG.
    * @throws SeedException If there is a problem generating a seed.
    */
-  public Cmwc4096Random(SeedGenerator seedGenerator) throws SeedException {
+  public Cmwc4096Random(final SeedGenerator seedGenerator) throws SeedException {
     this(seedGenerator.generateSeed(SEED_SIZE_BYTES));
   }
 
@@ -75,13 +75,13 @@ public class Cmwc4096Random extends BaseEntropyCountingRandom implements Repeata
    *
    * @param seed The seed data used to initialise the RNG.
    */
-  public Cmwc4096Random(byte[] seed) {
+  public Cmwc4096Random(final byte[] seed) {
     super(seed);
     assert state != null : "@AssumeAssertion(nullness)";
   }
 
   @Override
-  protected ToStringHelper addSubSubclassFields(ToStringHelper original) {
+  protected ToStringHelper addSubSubclassFields(final ToStringHelper original) {
     return original
         .add("state", Arrays.toString(state));
   }
@@ -94,7 +94,8 @@ public class Cmwc4096Random extends BaseEntropyCountingRandom implements Repeata
   }
 
   @Override
-  public void setSeed(@UnknownInitialization(Random.class)Cmwc4096Random this, long seed) {
+  public synchronized void setSeed(@UnknownInitialization(Random.class)Cmwc4096Random this,
+      final long seed) {
     if (superConstructorFinished) {
       super.setSeed(seed);
     } // Otherwise ignore; it's Random.<init> calling us without a full-size seed
@@ -102,11 +103,12 @@ public class Cmwc4096Random extends BaseEntropyCountingRandom implements Repeata
 
   @EnsuresNonNull({"this.seed", "state"})
   @Override
-  public void setSeedInitial(@UnknownInitialization(Random.class)Cmwc4096Random this, byte[] seed) {
+  protected void setSeedInternal(@UnknownInitialization(Random.class)Cmwc4096Random this,
+      final byte[] seed) {
     if (seed == null || seed.length != SEED_SIZE_BYTES) {
       throw new IllegalArgumentException("CMWC RNG requires 16kb of seed data.");
     }
-    super.setSeedInitial(seed);
+    super.setSeedInternal(seed);
     state = BinaryUtils.convertBytesToInts(seed);
     carry = 362436; // TODO: This should be randomly generated.
     index = 4095;
@@ -116,11 +118,11 @@ public class Cmwc4096Random extends BaseEntropyCountingRandom implements Repeata
    * {@inheritDoc}
    */
   @Override
-  protected int next(int bits) {
+  protected int next(final int bits) {
     lock.lock();
     try {
       index = (index + 1) & 4095;
-      long t = A * (state[index] & 0xFFFFFFFFL) + carry;
+      final long t = A * (state[index] & 0xFFFFFFFFL) + carry;
       carry = (int) (t >> 32);
       int x = ((int) t) + carry;
       if (x < carry) {
