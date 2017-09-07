@@ -183,7 +183,7 @@ public class CellularAutomatonRandom extends BaseEntropyCountingRandom {
     if (superConstructorFinished) {
       setSeedInternal(convertIntToBytes(((Long) seed).hashCode()));
     } else {
-      super.setSeed(seed);
+      this.seed = seed;
     }
   }
 
