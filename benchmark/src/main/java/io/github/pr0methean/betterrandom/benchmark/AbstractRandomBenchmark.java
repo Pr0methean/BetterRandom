@@ -42,7 +42,7 @@ import org.openjdk.jmh.annotations.Benchmark;
 import org.openjdk.jmh.annotations.Scope;
 import org.openjdk.jmh.annotations.State;
 
-@State(Scope.Group)
+@State(Scope.Benchmark)
 public abstract class AbstractRandomBenchmark {
 
   protected static final RandomSeederThread seederThread = RandomSeederThread.getInstance(
