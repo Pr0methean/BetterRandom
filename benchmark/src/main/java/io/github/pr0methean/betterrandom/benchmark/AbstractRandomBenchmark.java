@@ -2,6 +2,7 @@ package io.github.pr0methean.betterrandom.benchmark;
 
 import io.github.pr0methean.betterrandom.seed.SeedException;
 import java.util.Random;
+import java.util.logging.Logger;
 import org.checkerframework.checker.initialization.qual.UnknownInitialization;
 import org.openjdk.jmh.annotations.Benchmark;
 import org.openjdk.jmh.annotations.Level;
@@ -13,6 +14,7 @@ import org.openjdk.jmh.profile.HotspotMemoryProfiler;
 import org.openjdk.jmh.profile.HotspotRuntimeProfiler;
 import org.openjdk.jmh.profile.HotspotThreadProfiler;
 import org.openjdk.jmh.profile.StackProfiler;
+import org.openjdk.jmh.results.format.ResultFormatType;
 import org.openjdk.jmh.runner.Runner;
 import org.openjdk.jmh.runner.RunnerException;
 import org.openjdk.jmh.runner.options.ChainedOptionsBuilder;
@@ -47,6 +49,7 @@ public abstract class AbstractRandomBenchmark {
   */
 
   public static void main(final String[] args) throws RunnerException {
+    Logger.getGlobal().setLevel(java.util.logging.Level.OFF);
     final ChainedOptionsBuilder options = new OptionsBuilder()
         .addProfiler(HotspotThreadProfiler.class)
         .addProfiler(HotspotRuntimeProfiler.class)
@@ -54,11 +57,13 @@ public abstract class AbstractRandomBenchmark {
         .addProfiler(GCProfiler.class)
         .addProfiler(StackProfiler.class)
         .shouldFailOnError(true)
-        .forks(1);
+        .forks(1)
+        .resultFormat(ResultFormatType.CSV)
+        .detectJvmArgs();
     for (int nThreads = 1; nThreads <= 2; nThreads++) {
       new Runner(options
           .threads(nThreads)
-          .output(String.format("benchmark/target/%d-thread_bench_results.txt", nThreads))
+          .output(String.format("benchmark/target/%d-thread_bench_results.csv", nThreads))
           .build()).run();
     }
   }
