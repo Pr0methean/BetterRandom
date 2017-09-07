@@ -3,7 +3,7 @@ package io.github.pr0methean.betterrandom.prng.adapter;
 import io.github.pr0methean.betterrandom.util.BinaryUtils;
 import java.io.IOException;
 import java.io.ObjectInputStream;
-import java.util.Arrays;
+import java.nio.ByteBuffer;
 import java.util.Random;
 import java.util.SplittableRandom;
 import org.checkerframework.checker.initialization.qual.UnknownInitialization;
@@ -34,7 +34,20 @@ public abstract class DirectSplittableRandomAdapter extends BaseSplittableRandom
       throw new IllegalArgumentException("DirectSplittableRandomAdapter requires an 8-byte seed");
     }
     super.setSeedInternal(seed);
-    underlying = new SplittableRandom(
+    underlying = SplittableRandomReseeder.reseed(underlying,
         BinaryUtils.convertBytesToLong(seed, 0));
+  }
+
+  @Override
+  public boolean preferSeedWithLong() {
+    return true;
+  }
+
+  @Override
+  public void setSeed(@UnknownInitialization DirectSplittableRandomAdapter this,
+      final long seed) {
+    longSeedBuffer.putLong(seed);
+    super.setSeedInternal(longSeedArray);
+    underlying = SplittableRandomReseeder.reseed(underlying, seed);
   }
 }

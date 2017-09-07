@@ -41,6 +41,11 @@ public enum SecureRandomSeedGenerator implements SeedGenerator {
   }
 
   @Override
+  public void generateSeed(final byte[] output) throws SeedException {
+    System.arraycopy(SOURCE.generateSeed(output.length), 0, output, 0, output.length);
+  }
+
+  @Override
   public String toString() {
     return "java.security.SecureRandom";
   }

@@ -136,6 +136,12 @@ public class ReseedingSplittableRandomAdapter extends BaseSplittableRandomAdapte
   }
 
   @Override
+  protected void setSeedInternal(@UnknownInitialization ReseedingSplittableRandomAdapter this,
+      final byte[] seed) {
+    // No-op.
+  }
+
+  @Override
   public int hashCode() {
     return seedGenerator.hashCode() + 1;
   }
