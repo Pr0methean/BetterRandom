@@ -142,7 +142,7 @@ public class AesCounterRandom extends BaseEntropyCountingRandom implements Repea
     currentBlock = new byte[COUNTER_SIZE_BYTES * BLOCKS_AT_ONCE];
     index = currentBlock.length; // force generation of first block on demand
     initTransientFields();
-    setSeedInitial(seed);
+    setSeedInternal(seed);
   }
 
   /**
@@ -169,7 +169,7 @@ public class AesCounterRandom extends BaseEntropyCountingRandom implements Repea
   private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
     in.defaultReadObject();
     initTransientFields();
-    setSeedInitial(seed);
+    setSeedInternal(seed);
   }
 
   /**
@@ -289,7 +289,7 @@ public class AesCounterRandom extends BaseEntropyCountingRandom implements Repea
       }
       lock.lock();
       try {
-        setSeedInitial(key);
+        setSeedInternal(key);
       } finally {
         lock.unlock();
       }
@@ -308,9 +308,9 @@ public class AesCounterRandom extends BaseEntropyCountingRandom implements Repea
 
   @EnsuresNonNull({"counter", "this.seed"})
   @Override
-  public void setSeedInitial(@UnknownInitialization(Random.class)AesCounterRandom this,
+  public void setSeedInternal(@UnknownInitialization(Random.class)AesCounterRandom this,
       byte[] seed) {
-    super.setSeedInitial(seed);
+    super.setSeedInternal(seed);
 
     int seedLength = seed.length;
     if (seedLength < 16 || seedLength > MAX_TOTAL_SEED_LENGTH_BYTES) {
