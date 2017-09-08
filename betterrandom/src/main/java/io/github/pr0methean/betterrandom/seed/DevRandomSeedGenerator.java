@@ -33,7 +33,7 @@ public enum DevRandomSeedGenerator implements SeedGenerator {
   private static final File DEV_RANDOM = new File("/dev/random");
 
   /**
-   * {@inheritDoc}
+   *
    *
    * @return The requested number of random bytes, read directly from {@literal /dev/random}.
    * @throws SeedException If {@literal /dev/random} does not exist or is not accessible
