@@ -1,7 +1,7 @@
 # 0.9.2
-* Refactorings that should improve performance of all PRNGs (although
-  `ReseedingSplittableRandomAdapter` will still need much more future work).
-* Benchmarks are now available.
+* Refactorings to increase object reuse, and therefore throughput, in all PRNGs, especially
+  `ReseedingSplittableRandomAdapter` (which improved benchmark throughput by a factor of over 300).
+* Benchmarks are now available on GitHub.
 
 # 0.9.1.1
 * First release on Maven Central.
