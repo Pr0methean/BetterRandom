@@ -1,13 +1,16 @@
 package io.github.pr0methean.betterrandom.benchmark;
 
+import com.google.common.collect.HashMultiset;
 import com.google.monitoring.runtime.instrumentation.AllocationRecorder;
 import io.github.pr0methean.betterrandom.seed.SeedException;
+import java.util.Arrays;
 import java.util.Random;
 import java.util.logging.Logger;
 import org.checkerframework.checker.initialization.qual.UnknownInitialization;
 import org.openjdk.jmh.annotations.Benchmark;
 import org.openjdk.jmh.annotations.Level;
 import org.openjdk.jmh.annotations.Scope;
+import org.openjdk.jmh.annotations.Setup;
 import org.openjdk.jmh.annotations.State;
 import org.openjdk.jmh.annotations.TearDown;
 import org.openjdk.jmh.profile.GCProfiler;
@@ -31,7 +34,54 @@ public abstract class AbstractRandomBenchmark {
   // protected final Thread[] threads = new Thread[COLUMNS];
   protected final Random prng;
 
-  static {
+  private static final class StackTrace {
+
+    private static final int OBJECT_CREATION_STACK_DEPTH = 5;
+    private final StackTraceElement[] elements;
+
+    private StackTrace(StackTraceElement[] elements) {
+      this.elements = Arrays.copyOf(elements, OBJECT_CREATION_STACK_DEPTH);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+      if (this == o) {
+        return true;
+      }
+      if (!(o instanceof StackTrace)) {
+        return false;
+      }
+
+      StackTrace that = (StackTrace) o;
+      return Arrays.equals(elements, that.elements);
+    }
+
+    @Override
+    public int hashCode() {
+      return Arrays.hashCode(elements);
+    }
+
+    @Override
+    public String toString() {
+      StringBuilder stringBuilder = new StringBuilder();
+      for (StackTraceElement element : elements) {
+        stringBuilder.append(element);
+        stringBuilder.append('\n');
+      }
+      return stringBuilder.toString();
+    }
+  }
+
+  private final HashMultiset<StackTrace> stackTraces = HashMultiset.create();
+
+  @Setup(Level.Trial)
+  public void setUp() {
+    AllocationRecorder.addSampler((arrayLength, desc, newObj, size) -> {
+      if (!desc.contains("StackTrace")) {
+        System.out.format("Created %s (a %s of %d bytes)\n", newObj, desc, size);
+        stackTraces.add(new StackTrace(Thread.currentThread().getStackTrace()));
+      }
+    });
   }
 
   {
@@ -110,7 +160,11 @@ public abstract class AbstractRandomBenchmark {
   */
 
   @TearDown(Level.Trial)
-  public void gc() {
+  public void tearDown() {
     System.gc();
+    for (StackTrace stackTrace : stackTraces) {
+      System.out.format("%d objects created from:\n%s\n", stackTraces.count(stackTrace), stackTrace);
+    }
+    stackTraces.clear();
   }
 }
