@@ -39,8 +39,8 @@ public class JavaRandom extends Random implements RepeatableRandom, ByteArrayRes
   private static final long serialVersionUID = -6526304552538799385L;
   private static final int SEED_SIZE_BYTES = 8;
 
-  private byte[] seedArray;
-  private ByteBuffer seedBuffer;
+  private final byte[] seedArray = new byte[SEED_SIZE_BYTES];
+  private final ByteBuffer seedBuffer = ByteBuffer.wrap(seedArray);
 
   /**
    * Creates a new RNG and seeds it using the default seeding strategy.
@@ -90,21 +90,12 @@ public class JavaRandom extends Random implements RepeatableRandom, ByteArrayRes
   @Override
   public void setSeed(long seed) {
     super.setSeed(seed);
-    if (seedBuffer == null || seedArray == null) {
-      seedArray = new byte[SEED_SIZE_BYTES];
-      seedBuffer = ByteBuffer.wrap(seedArray);
-    }
     seedBuffer.putLong(seed);
   }
 
   @Override
   public void setSeed(byte[] seed) {
-    if (seedBuffer == null || seedArray == null) {
-      seedArray = seed.clone();
-      seedBuffer = ByteBuffer.wrap(seedArray);
-    } else {
-      System.arraycopy(seed, 0, seedArray, 0, SEED_SIZE_BYTES);
-    }
+    System.arraycopy(seed, 0, seedArray, 0, SEED_SIZE_BYTES);
     super.setSeed(seedBuffer.getLong(0));
   }
 

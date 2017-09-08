@@ -1,0 +1,303 @@
+// ============================================================================
+//   Copyright 2006-2012 Daniel W. Dyer
+//
+//   Licensed under the Apache License, Version 2.0 (the "License");
+//   you may not use this file except in compliance with the License.
+//   You may obtain a copy of the License at
+//
+//       http://www.apache.org/licenses/LICENSE-2.0
+//
+//   Unless required by applicable law or agreed to in writing, software
+//   distributed under the License is distributed on an "AS IS" BASIS,
+//   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+//   See the License for the specific language governing permissions and
+//   limitations under the License.
+// ============================================================================
+package io.github.pr0methean.betterrandom.util;
+
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.math.BigInteger;
+import java.util.Random;
+import org.testng.annotations.Test;
+
+/**
+ * Unit test for the {@link BitString} type.
+ *
+ * @author Daniel Dyer
+ */
+public class BitStringTest {
+
+  /**
+   * Check that a bit string is constructed correctly, with the correct length and all bits
+   * initially set to zero.
+   */
+  @Test(timeOut = 15000)
+  public void testCreateBitString() {
+    final BitString bitString = new BitString(100);
+    assert
+        bitString.getLength() == 100 :
+        "BitString created with wrong length: " + bitString.getLength();
+    for (int i = 0; i < bitString.getLength(); i++) {
+      assert !bitString.getBit(i) : "Bit " + i + " should not be set.";
+    }
+  }
+
+  /**
+   * Check that a random bit string of the correct length is constructed.
+   */
+  @Test(timeOut = 15000, dependsOnMethods = "testCreateBitString")
+  public void testCreateRandomBitString() {
+    final BitString bitString = new BitString(100, new Random());
+    assert
+        bitString.getLength() == 100 :
+        "BitString created with wrong length: " + bitString.getLength();
+  }
+
+  /**
+   * Make sure that bits are set correctly.
+   */
+  @Test(timeOut = 15000, dependsOnMethods = "testCreateBitString")
+  public void testSetBits() {
+    final BitString bitString = new BitString(5);
+    bitString.setBit(1, true);
+    bitString.setBit(4, true);
+    // Testing with non-symmetrical string to ensure that there are no endian
+    // problems.
+    assert !bitString.getBit(0) : "Bit 0 should not be set.";
+    assert bitString.getBit(1) : "Bit 1 should be set.";
+    assert !bitString.getBit(2) : "Bit 2 should not be set.";
+    assert !bitString.getBit(3) : "Bit 3 should not be set.";
+    assert bitString.getBit(4) : "Bit 4 should be set.";
+    // Test unsetting a bit.
+    bitString.setBit(4, false);
+    assert !bitString.getBit(4) : "Bit 4 should be unset.";
+  }
+
+  /**
+   * Make sure bit-flipping works as expected.
+   */
+  @Test(timeOut = 15000, dependsOnMethods = "testCreateBitString")
+  public void testFlipBits() {
+    final BitString bitString = new BitString(5);
+    bitString.flipBit(2);
+    assert bitString.getBit(2) : "Flipping unset bit failed.";
+    bitString.flipBit(2);
+    assert !bitString.getBit(2) : "Flipping set bit failed.";
+  }
+
+  /**
+   * Checks that string representations are correctly generated.
+   */
+  @Test(timeOut = 15000, dependsOnMethods = "testSetBits")
+  public void testToString() {
+    final BitString bitString = new BitString(10);
+    bitString.setBit(3, true);
+    bitString.setBit(7, true);
+    bitString.setBit(8, true);
+    final String string = bitString.toString();
+    // Testing with leading zero to make sure it isn't omitted.
+    assert "0110001000".equals(string) : "Incorrect string representation: " + string;
+  }
+
+  /**
+   * Checks that the String-parsing constructor works correctly.
+   */
+  @Test(timeOut = 15000, dependsOnMethods = "testToString")
+  public void testParsing() {
+    // Use a 33-bit string to check that word boundaries are dealt with correctly.
+    final String fromString = "111010101110101100010100101000101";
+    final BitString bitString = new BitString(fromString);
+    final String toString = bitString.toString();
+    assert toString.equals(fromString) : "Failed parsing: String representations do not match.";
+  }
+
+  /**
+   * Checks that integer conversion is correct.
+   */
+  @Test(timeOut = 15000, dependsOnMethods = "testSetBits")
+  public void testToNumber() {
+    final BitString bitString = new BitString(10);
+    bitString.setBit(0, true);
+    bitString.setBit(9, true);
+    final BigInteger number = bitString.toNumber();
+    assert number.intValue() == 513 : "Incorrect number conversion: " + number.intValue();
+  }
+
+  /**
+   * Checks that the bit string can correctly count its number of set bits.
+   */
+  @Test(timeOut = 15000, dependsOnMethods = "testSetBits")
+  public void testCountSetBits() {
+    final BitString bitString = new BitString(64);
+    assert bitString.countSetBits() == 0 : "Initial string should have no 1s.";
+    // The bits to set have been chosen because they deal with boundary cases.
+    bitString.setBit(0, true);
+    bitString.setBit(31, true);
+    bitString.setBit(32, true);
+    bitString.setBit(33, true);
+    bitString.setBit(63, true);
+    final int setBits = bitString.countSetBits();
+    assert setBits == 5 : "No. set bits should be 5, is " + setBits;
+  }
+
+  /**
+   * Checks that the bit string can correctly count its number of unset bits.
+   */
+  @Test(timeOut = 15000, dependsOnMethods = "testSetBits")
+  public void testCountUnsetBits() {
+    final BitString bitString = new BitString(12);
+    assert bitString.countUnsetBits() == 12 : "Initial string should have no 1s.";
+    bitString.setBit(0, true);
+    bitString.setBit(5, true);
+    bitString.setBit(6, true);
+    bitString.setBit(9, true);
+    bitString.setBit(10, true);
+    final int setBits = bitString.countUnsetBits();
+    assert setBits == 7 : "No. set bits should be 7, is " + setBits;
+  }
+
+  @SuppressWarnings("ObjectEquality")
+  @Test(timeOut = 15000, dependsOnMethods = {"testSetBits", "testFlipBits"})
+  public void testClone() {
+    final BitString bitString = new BitString(10);
+    bitString.setBit(3, true);
+    bitString.setBit(7, true);
+    bitString.setBit(8, true);
+    final BitString clone = bitString.clone();
+    // Check the clone is a bit-for-bit duplicate.
+    for (int i = 0; i < bitString.getLength(); i++) {
+      assert
+          bitString.getBit(i) == clone.getBit(i) :
+          "Cloned bit string does not match in position " + i;
+    }
+    // Check that clone is distinct from original (i.e. it does not change
+    // if the original is modified).
+    assert clone != bitString : "Clone is same object.";
+    bitString.flipBit(2);
+    assert !clone.getBit(2) : "Clone is not independent from original.";
+  }
+
+  @SuppressWarnings({"EqualsWithItself", "ObjectEqualsNull", "argument.type.incompatible"})
+  @Test(timeOut = 15000, dependsOnMethods = "testClone")
+  public void testEquals() {
+    final BitString bitString = new BitString(10);
+    bitString.setBit(2, true);
+    bitString.setBit(5, true);
+    bitString.setBit(8, true);
+    assert bitString.equals(bitString) : "Object should always equal itself.";
+    assert !bitString.equals(null) : "Object should never equal null.";
+    assert !bitString.equals(new Object()) : "BitString should not equal object of different type.";
+
+    final BitString clone = bitString.clone();
+    assert clone.equals(bitString) : "Equals comparison failed on equivalent bit strings.";
+    // Equivalent objects must have the same hash code.
+    assert bitString.hashCode() == clone.hashCode() : "Hash codes do not match.";
+    // Changing one of the objects should result in them no longer being considered equal.
+    clone.flipBit(0);
+    assert !clone.equals(bitString) : "Equals comparison failed on different bit strings.";
+    // Bit strings of different lengths but with the same bits set should not be
+    // considered equal.
+    final BitString shortBitString = new BitString(9);
+    shortBitString.setBit(2, true);
+    shortBitString.setBit(5, true);
+    shortBitString.setBit(8, true);
+    assert !shortBitString
+        .equals(bitString) : "Equals comparison failed on different length bit strings.";
+  }
+
+  /**
+   * The length of a bit string must be non-negative.  If an attempt is made to create a bit string
+   * with a negative length, an appropriate exception must be thrown.
+   */
+  @Test(timeOut = 15000, expectedExceptions = IllegalArgumentException.class)
+  public void testInvalidLength() {
+    new BitString(-1);
+  }
+
+  /**
+   * Checks to ensure that invalid characters in a String used to construct the bit string results
+   * in an appropriate exception.  Not throwing an exception is an error since bugs in programs that
+   * use bit strings will be hard to detect.
+   */
+  @Test(timeOut = 15000, expectedExceptions = IllegalArgumentException.class)
+  public void testInvalidChars() {
+    new BitString("0010201"); // Invalid.
+  }
+
+  /**
+   * The index of an individual bit must be non-negative.  If an attempt is made to set a negative
+   * bit position, an appropriate exception must be thrown.
+   */
+  @Test(timeOut = 15000, expectedExceptions = IndexOutOfBoundsException.class)
+  public void testNegativeIndex() {
+    final BitString bitString = new BitString(1);
+    bitString.setBit(-1, false);
+  }
+
+  /**
+   * The index of an individual bit must be within the range 0 to length-1. If an attempt is made to
+   * set a negative bit position, an appropriate exception must be thrown.
+   */
+  @Test(timeOut = 15000, expectedExceptions = IndexOutOfBoundsException.class)
+  public void testIndexTooHigh() {
+    final BitString bitString = new BitString(1);
+    bitString.setBit(1, false);
+  }
+
+  @Test(timeOut = 15000, dependsOnMethods = "testEquals")
+  public void testSerialisation() throws IOException, ClassNotFoundException {
+    final BitString bitString = new BitString("0101010");
+    final ByteArrayOutputStream byteStream = new ByteArrayOutputStream();
+    try (ObjectOutputStream objectStream = new ObjectOutputStream(byteStream)) {
+      objectStream.writeObject(bitString);
+      objectStream.flush();
+    }
+    final byte[] bytes = byteStream.toByteArray();
+    try (ObjectInputStream inputStream = new ObjectInputStream(new ByteArrayInputStream(bytes))) {
+      final BitString bitString2 = (BitString) inputStream.readObject();
+      assert bitString2.equals(bitString) : "Deserialized object is not the same as original.";
+    }
+  }
+
+  @Test(timeOut = 15000)
+  public void testSwapSubstringWordAligned() {
+    // Bit indices are little-endian, so position 0 is the rightmost bit.
+    final BitString ones = new BitString(
+        "1111111111111111111111111111111111111111111111111111111111111111");
+    final BitString zeros = new BitString(
+        "0000000000000000000000000000000000000000000000000000000000000000");
+    ones.swapSubstring(zeros, 0, 32);
+    assert "1111111111111111111111111111111100000000000000000000000000000000"
+        .equals(ones.toString())
+        : "Substring swap failed: " + ones;
+    assert "0000000000000000000000000000000011111111111111111111111111111111"
+        .equals(zeros.toString())
+        : "Substring swap failed: " + zeros;
+  }
+
+  @Test(timeOut = 15000)
+  public void testSwapSubstringNonAlignedStart() {
+    // Bit indices are little-endian, so position 0 is the rightmost bit.
+    final BitString ones = new BitString("1111111111111111111111111111111111111111");
+    final BitString zeros = new BitString("0000000000000000000000000000000000000000");
+    ones.swapSubstring(zeros, 2, 30);
+    assert "1111111100000000000000000000000000000011".equals(ones.toString()) :
+        "Substring swap failed: " + ones;
+    assert "0000000011111111111111111111111111111100".equals(zeros.toString()) :
+        "Substring swap failed: " + zeros;
+  }
+
+  @Test(timeOut = 15000)
+  public void testSwapSubstringNonAlignedEnd() {
+    // Bit indices are little-endian, so position 0 is the rightmost bit.
+    final BitString ones = new BitString("1111111111");
+    final BitString zeros = new BitString("0000000000");
+    ones.swapSubstring(zeros, 0, 3);
+    assert "1111111000".equals(ones.toString()) : "Substring swap failed: " + ones;
+    assert "0000000111".equals(zeros.toString()) : "Substring swap failed: " + zeros;
+  }
+}
