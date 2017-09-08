@@ -23,6 +23,8 @@ import io.github.pr0methean.betterrandom.seed.SeedGenerator;
 import io.github.pr0methean.betterrandom.util.BinaryUtils;
 import java.nio.ByteBuffer;
 import java.util.Random;
+import org.checkerframework.checker.initialization.qual.UnknownInitialization;
+import org.checkerframework.checker.nullness.qual.EnsuresNonNull;
 
 /**
  * <p>This is the default {@link Random JDK RNG} extended to implement the {@link RepeatableRandom}
@@ -39,8 +41,8 @@ public class JavaRandom extends Random implements RepeatableRandom, ByteArrayRes
   private static final long serialVersionUID = -6526304552538799385L;
   private static final int SEED_SIZE_BYTES = 8;
 
-  private final byte[] seedArray = new byte[SEED_SIZE_BYTES];
-  private final ByteBuffer seedBuffer = ByteBuffer.wrap(seedArray);
+  private byte[] seedArray;
+  private ByteBuffer seedBuffer;
 
   /**
    * Creates a new RNG and seeds it using the default seeding strategy.
@@ -67,7 +69,9 @@ public class JavaRandom extends Random implements RepeatableRandom, ByteArrayRes
    */
   public JavaRandom(final byte[] seed) {
     super(createLongSeed(seed));
-    System.arraycopy(seed, 0, seedArray, 0, SEED_SIZE_BYTES);
+    initFields();
+    System.arraycopy(seed, 0,
+        (/* WTF CheckerFramework?! */ Object) seedArray, 0, SEED_SIZE_BYTES);
   }
 
   /**
@@ -80,6 +84,14 @@ public class JavaRandom extends Random implements RepeatableRandom, ByteArrayRes
     return BinaryUtils.convertBytesToLong(seed, 0);
   }
 
+  @EnsuresNonNull({"seedBuffer", "seedArray"})
+  private void initFields(@UnknownInitialization JavaRandom this) {
+    if (seedBuffer == null || seedArray == null) {
+      seedArray = new byte[SEED_SIZE_BYTES];
+      seedBuffer = ByteBuffer.wrap(seedArray);
+    }
+  }
+
   /**
    * {@inheritDoc}
    */
@@ -88,14 +100,20 @@ public class JavaRandom extends Random implements RepeatableRandom, ByteArrayRes
   }
 
   @Override
-  public void setSeed(long seed) {
+  public void setSeed(@UnknownInitialization(Random.class) JavaRandom this, long seed) {
     super.setSeed(seed);
+    initFields();
     seedBuffer.putLong(seed);
   }
 
   @Override
-  public void setSeed(byte[] seed) {
-    System.arraycopy(seed, 0, seedArray, 0, SEED_SIZE_BYTES);
+  public void setSeed(@UnknownInitialization(Random.class) JavaRandom this, byte[] seed) {
+    if (seedBuffer == null || seedArray == null) {
+      seedArray = seed.clone();
+      seedBuffer = ByteBuffer.wrap(seedArray);
+    } else {
+      System.arraycopy(seed, 0, seedArray, 0, SEED_SIZE_BYTES);
+    }
     super.setSeed(seedBuffer.getLong(0));
   }
 
