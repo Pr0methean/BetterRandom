@@ -180,8 +180,6 @@ public class AesCounterRandom extends BaseEntropyCountingRandom {
 
   /**
    * Called in constructor and readObject to initialize transient fields.
-   *
-   * @param this a {@link io.github.pr0methean.betterrandom.prng.AesCounterRandom} object.
    */
   @EnsuresNonNull({"counter", "counterInput", "cipher", "lock", "longSeedArray", "longSeedBuffer"})
   protected void initTransientFields(
