@@ -31,6 +31,9 @@ public abstract class AbstractRandomBenchmark {
   // protected final Thread[] threads = new Thread[COLUMNS];
   protected final Random prng;
 
+  static {
+  }
+
   {
     try {
       prng = createPrng();
