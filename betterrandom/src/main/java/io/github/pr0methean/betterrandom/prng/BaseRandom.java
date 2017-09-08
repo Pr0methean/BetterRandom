@@ -114,9 +114,6 @@ public abstract class BaseRandom extends Random implements ByteArrayReseedableRa
     }
   }
 
-  /**
-   * {@inheritDoc}
-   */
   @Override
   public byte[] getSeed() {
     lock.lock();
