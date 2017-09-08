@@ -3,6 +3,7 @@ package io.github.pr0methean.betterrandom.benchmark;
 import com.google.common.collect.HashMultiset;
 import com.google.monitoring.runtime.instrumentation.AllocationRecorder;
 import io.github.pr0methean.betterrandom.seed.SeedException;
+import io.github.pr0methean.betterrandom.util.LogPreFormatter;
 import java.util.Arrays;
 import java.util.Random;
 import java.util.logging.Logger;
@@ -27,6 +28,7 @@ import org.openjdk.jmh.runner.options.OptionsBuilder;
 // FIXME: Get the multithreaded benchmarks working
 @State(Scope.Benchmark)
 public abstract class AbstractRandomBenchmark {
+  private static final LogPreFormatter LOG = new LogPreFormatter(AbstractRandomBenchmark.class);
 
   private static final int COLUMNS = 2;
   private static final int ROWS = 50_000;
@@ -78,7 +80,7 @@ public abstract class AbstractRandomBenchmark {
   public void setUp() {
     AllocationRecorder.addSampler((arrayLength, desc, newObj, size) -> {
       if (!desc.contains("StackTrace")) {
-        System.out.format("Created %s (a %s of %d bytes)\n", newObj, desc, size);
+        LOG.info("Created %s (a %s of %d bytes)\n", newObj, desc, size);
         stackTraces.add(new StackTrace(Thread.currentThread().getStackTrace()));
       }
     });
@@ -103,7 +105,6 @@ public abstract class AbstractRandomBenchmark {
   */
 
   public static void main(final String[] args) throws RunnerException {
-    Logger.getGlobal().setLevel(java.util.logging.Level.OFF);
     final ChainedOptionsBuilder options = new OptionsBuilder()
         .addProfiler(HotspotThreadProfiler.class)
         .addProfiler(HotspotRuntimeProfiler.class)
@@ -163,7 +164,7 @@ public abstract class AbstractRandomBenchmark {
   public void tearDown() {
     System.gc();
     for (StackTrace stackTrace : stackTraces) {
-      System.out.format("%d objects created from:\n%s\n", stackTraces.count(stackTrace), stackTrace);
+      LOG.info("%d objects created from:\n%s\n", stackTraces.count(stackTrace), stackTrace);
     }
     stackTraces.clear();
   }
