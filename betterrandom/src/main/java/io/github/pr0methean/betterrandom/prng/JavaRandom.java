@@ -15,11 +15,13 @@
 // ============================================================================
 package io.github.pr0methean.betterrandom.prng;
 
+import io.github.pr0methean.betterrandom.ByteArrayReseedableRandom;
 import io.github.pr0methean.betterrandom.RepeatableRandom;
 import io.github.pr0methean.betterrandom.seed.DefaultSeedGenerator;
 import io.github.pr0methean.betterrandom.seed.SeedException;
 import io.github.pr0methean.betterrandom.seed.SeedGenerator;
 import io.github.pr0methean.betterrandom.util.BinaryUtils;
+import java.nio.ByteBuffer;
 import java.util.Random;
 
 /**
@@ -28,16 +30,17 @@ import java.util.Random;
  * MersenneTwisterRandom} should be used in preference to this class because it is statistically
  * more random and performs slightly better.</p> <p> <p><em>NOTE: Instances of this class do not use
  * the seeding mechanism inherited from {@link Random}.  Calls to the {@link #setSeed(long)} method
- * will have no effect.  Instead the seed must be set by a constructor.</em></p>
+ * will have no effect.  Instead the seedArray must be set by a constructor.</em></p>
  *
  * @author Daniel Dyer
  */
-public class JavaRandom extends Random implements RepeatableRandom {
+public class JavaRandom extends Random implements RepeatableRandom, ByteArrayReseedableRandom {
 
   private static final long serialVersionUID = -6526304552538799385L;
   private static final int SEED_SIZE_BYTES = 8;
 
-  private final byte[] seed;
+  private final byte[] seedArray = new byte[SEED_SIZE_BYTES];
+  private final ByteBuffer seedBuffer = ByteBuffer.wrap(seedArray);
 
   /**
    * Creates a new RNG and seeds it using the default seeding strategy.
@@ -47,32 +50,32 @@ public class JavaRandom extends Random implements RepeatableRandom {
   }
 
   /**
-   * Seed the RNG using the provided seed generation strategy.
+   * Seed the RNG using the provided seedArray generation strategy.
    *
-   * @param seedGenerator The seed generation strategy that will provide the seed value for this
+   * @param seedGenerator The seedArray generation strategy that will provide the seedArray value for this
    *     RNG.
-   * @throws SeedException If there is a problem generating a seed.
+   * @throws SeedException If there is a problem generating a seedArray.
    */
   public JavaRandom(final SeedGenerator seedGenerator) throws SeedException {
     this(seedGenerator.generateSeed(SEED_SIZE_BYTES));
   }
 
   /**
-   * Creates an RNG and seeds it with the specified seed data.
+   * Creates an RNG and seeds it with the specified seedArray data.
    *
-   * @param seed The seed data used to initialise the RNG.
+   * @param seed The seedArray data used to initialise the RNG.
    */
   public JavaRandom(final byte[] seed) {
     super(createLongSeed(seed));
-    this.seed = seed.clone();
+    System.arraycopy(seed, 0, seedArray, 0, SEED_SIZE_BYTES);
   }
 
   /**
-   * Helper method to convert seed bytes into the long value required by the super class.
+   * Helper method to convert seedArray bytes into the long value required by the super class.
    */
   private static long createLongSeed(final byte[] seed) {
     if (seed == null || seed.length != SEED_SIZE_BYTES) {
-      throw new IllegalArgumentException("Java RNG requires a 64-bit (8-byte) seed.");
+      throw new IllegalArgumentException("Java RNG requires a 64-bit (8-byte) seedArray.");
     }
     return BinaryUtils.convertBytesToLong(seed, 0);
   }
@@ -81,6 +84,28 @@ public class JavaRandom extends Random implements RepeatableRandom {
    * {@inheritDoc}
    */
   public byte[] getSeed() {
-    return seed.clone();
+    return seedArray.clone();
+  }
+
+  @Override
+  public void setSeed(long seed) {
+    super.setSeed(seed);
+    seedBuffer.putLong(seed);
+  }
+
+  @Override
+  public void setSeed(byte[] seed) {
+    System.arraycopy(seed, 0, seedArray, 0, SEED_SIZE_BYTES);
+    super.setSeed(seedBuffer.getLong(0));
+  }
+
+  @Override
+  public boolean preferSeedWithLong() {
+    return true;
+  }
+
+  @Override
+  public int getNewSeedLength() {
+    return SEED_SIZE_BYTES;
   }
 }
