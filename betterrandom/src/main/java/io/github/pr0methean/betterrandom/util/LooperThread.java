@@ -99,6 +99,9 @@ public class LooperThread extends Thread implements Serializable, Cloneable {
 
   /**
    * Used only to prepare subclasses before readResolve.
+   * @param in The {@link ObjectInputStream} we're being read from.
+   * @throws IOException When thrown by {@link ObjectInputStream#defaultReadObject}.
+   * @throws ClassNotFoundException When thrown by {@link ObjectInputStream#defaultReadObject}.
    */
   private void readObject(final ObjectInputStream in) throws IOException, ClassNotFoundException {
     in.defaultReadObject();
