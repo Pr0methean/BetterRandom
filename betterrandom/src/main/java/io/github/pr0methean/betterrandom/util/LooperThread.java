@@ -21,16 +21,19 @@ import org.checkerframework.checker.nullness.qual.Nullable;
  * class is concrete is that temporary instances are needed during deserialization. The loop should
  * be reasonably short, since it will block serialization and cloning that would otherwise catch it
  * in mid-iteration. </p><p> Thread state that WILL be restored includes: </p> <ul> <li>{@link
- * #getName()}</li> <li>{@link #getPriority()}</li> <li>{@link #getState()} == {@link
+ *#getName()}</li> <li>{@link #getPriority()}</li> <li>{@link #getState()} == {@link
  * State#NEW}</li> <li>{@link #getState()} == {@link State#TERMINATED}</li> <li>{@link
- * #isInterrupted()}</li> <li>{@link #isDaemon()}</li> </ul><p> Thread state that will be restored
- * ONLY if its values are {@link Serializable} includes: </p><ul> <li>{@link #getThreadGroup()}</li>
+ *#isInterrupted()}</li> <li>{@link #isDaemon()}</li> </ul><p> Thread state that will be restored
+ * ONLY if its values are {@link java.io.Serializable} includes: </p><ul> <li>{@link #getThreadGroup()}</li>
  * <li>{@link #getUncaughtExceptionHandler()}</li> <li>{@link #getContextClassLoader()}</li>
  * </ul><p> Thread state that will NEVER be restored includes: </p><ul> <li>Program counter, call
  * stack, and local variables. The seederThread will restart.</li> <li>Suspended status (see {@link
  * Thread#suspend()}</li> <li>{@link #getState()} == {@link State#TIMED_WAITING}</li> <li>{@link
- * #getState()} == {@link State#WAITING}</li> <li>{@link #getState()} == {@link State#BLOCKED}</li>
+ *#getState()} == {@link State#WAITING}</li> <li>{@link #getState()} == {@link State#BLOCKED}</li>
  * <li>{@link #getId()}</li> <li>{@link #holdsLock(Object)}</li> </ul>
+ *
+ * @author ubuntu
+ * @version $Id: $Id
  */
 public class LooperThread extends Thread implements Serializable, Cloneable {
 
@@ -53,14 +56,28 @@ public class LooperThread extends Thread implements Serializable, Cloneable {
   private @Nullable ClassLoader contextClassLoader = null;
   private @MonotonicNonNull String name = null;
 
+  /**
+   * <p>Constructor for LooperThread.</p>
+   */
   public LooperThread() {
     super();
   }
 
+  /**
+   * <p>Constructor for LooperThread.</p>
+   *
+   * @param name a {@link java.lang.String} object.
+   */
   public LooperThread(final String name) {
     super(name);
   }
 
+  /**
+   * <p>Constructor for LooperThread.</p>
+   *
+   * @param group a {@link java.lang.ThreadGroup} object.
+   * @param name a {@link java.lang.String} object.
+   */
   public LooperThread(final ThreadGroup group, final String name) {
     super(group, name);
     setGroup(group);
@@ -136,11 +153,14 @@ public class LooperThread extends Thread implements Serializable, Cloneable {
 
   /**
    * The task that will be iterated indefinitely.
+   *
+   * @throws java.lang.InterruptedException if any.
    */
   protected void iterate() throws InterruptedException {
     throw new UnsupportedOperationException("This method should be overridden!");
   }
 
+  /** {@inheritDoc} */
   @Override
   public final void run() {
     while (true) {
@@ -159,23 +179,27 @@ public class LooperThread extends Thread implements Serializable, Cloneable {
     }
   }
 
+  /** {@inheritDoc} */
   @Override
   @SuppressWarnings("override.return.invalid")
   public @Nullable UncaughtExceptionHandler getUncaughtExceptionHandler() {
     return uncaughtExceptionHandler.wrapped;
   }
 
+  /** {@inheritDoc} */
   @Override
   public void setUncaughtExceptionHandler(final UncaughtExceptionHandler handler) {
     uncaughtExceptionHandler.wrapped = handler;
     super.setUncaughtExceptionHandler(uncaughtExceptionHandler);
   }
 
+  /** {@inheritDoc} */
   @Override
   public State getState() {
     return alreadyTerminatedWhenDeserialized ? State.TERMINATED : super.getState();
   }
 
+  /** {@inheritDoc} */
   @Override
   public synchronized void start() {
     if (alreadyTerminatedWhenDeserialized) {
@@ -201,6 +225,7 @@ public class LooperThread extends Thread implements Serializable, Cloneable {
     }
   }
 
+  /** {@inheritDoc} */
   @SuppressWarnings("MethodDoesntCallSuperMethod")
   @Override
   public LooperThread clone() {

@@ -8,36 +8,70 @@ import java.util.stream.IntStream;
 import java.util.stream.LongStream;
 import org.checkerframework.checker.initialization.qual.UnknownInitialization;
 
+/**
+ * <p>Abstract BaseSplittableRandomAdapter class.</p>
+ *
+ * @author ubuntu
+ * @version $Id: $Id
+ */
 public abstract class BaseSplittableRandomAdapter extends BaseEntropyCountingRandom {
 
+  /** Constant <code>SEED_LENGTH_BYTES=8</code> */
   public static final int SEED_LENGTH_BYTES = 8;
   private static final long serialVersionUID = 4273652147052638879L;
 
+  /**
+   * <p>Constructor for BaseSplittableRandomAdapter.</p>
+   *
+   * @param seed an array of byte.
+   */
   public BaseSplittableRandomAdapter(final byte[] seed) {
     super(seed);
   }
 
+  /**
+   * <p>entropyOfInt.</p>
+   *
+   * @param origin a int.
+   * @param bound a int.
+   * @return a int.
+   */
   protected static int entropyOfInt(final int origin, final int bound) {
     return 32 - Integer.numberOfLeadingZeros(bound - origin - 1);
   }
 
+  /**
+   * <p>entropyOfLong.</p>
+   *
+   * @param origin a long.
+   * @param bound a long.
+   * @return a int.
+   */
   protected static int entropyOfLong(final long origin, final long bound) {
     return 64 - Long.numberOfLeadingZeros(bound - origin - 1);
   }
 
+  /** {@inheritDoc} */
   @Override
   public ToStringHelper addSubclassFields(final ToStringHelper original) {
     return original;
   }
 
+  /**
+   * <p>getSplittableRandom.</p>
+   *
+   * @return a {@link java.util.SplittableRandom} object.
+   */
   protected abstract SplittableRandom getSplittableRandom();
 
+  /** {@inheritDoc} */
   @Override
   protected int next(final int bits) {
     recordEntropySpent(bits);
     return nextInt() & ((1 << bits) - 1);
   }
 
+  /** {@inheritDoc} */
   @Override
   public void nextBytes(final byte[] bytes) {
     final SplittableRandom local = getSplittableRandom();
@@ -47,6 +81,7 @@ public abstract class BaseSplittableRandomAdapter extends BaseEntropyCountingRan
     recordEntropySpent(bytes.length * 8);
   }
 
+  /** {@inheritDoc} */
   @Override
   public int nextInt() {
     final int out = getSplittableRandom().nextInt();
@@ -54,6 +89,7 @@ public abstract class BaseSplittableRandomAdapter extends BaseEntropyCountingRan
     return out;
   }
 
+  /** {@inheritDoc} */
   @Override
   public int nextInt(final int bound) {
     final int out = getSplittableRandom().nextInt(bound);
@@ -61,12 +97,20 @@ public abstract class BaseSplittableRandomAdapter extends BaseEntropyCountingRan
     return out;
   }
 
+  /**
+   * <p>nextInt.</p>
+   *
+   * @param origin a int.
+   * @param bound a int.
+   * @return a int.
+   */
   public int nextInt(final int origin, final int bound) {
     final int out = getSplittableRandom().nextInt(origin, bound);
     recordEntropySpent(entropyOfInt(origin, bound));
     return out;
   }
 
+  /** {@inheritDoc} */
   @Override
   public long nextLong() {
     final long out = getSplittableRandom().nextLong();
@@ -74,18 +118,32 @@ public abstract class BaseSplittableRandomAdapter extends BaseEntropyCountingRan
     return out;
   }
 
+  /**
+   * <p>nextLong.</p>
+   *
+   * @param bound a long.
+   * @return a long.
+   */
   public long nextLong(final long bound) {
     final long out = getSplittableRandom().nextLong(bound);
     recordEntropySpent(entropyOfLong(0, bound));
     return out;
   }
 
+  /**
+   * <p>nextLong.</p>
+   *
+   * @param origin a long.
+   * @param bound a long.
+   * @return a long.
+   */
   public long nextLong(final long origin, final long bound) {
     final long out = getSplittableRandom().nextLong(origin, bound);
     recordEntropySpent(entropyOfLong(origin, bound));
     return out;
   }
 
+  /** {@inheritDoc} */
   @Override
   public double nextDouble() {
     final double out = getSplittableRandom().nextDouble();
@@ -93,18 +151,32 @@ public abstract class BaseSplittableRandomAdapter extends BaseEntropyCountingRan
     return out;
   }
 
+  /**
+   * <p>nextDouble.</p>
+   *
+   * @param bound a double.
+   * @return a double.
+   */
   public double nextDouble(final double bound) {
     final double out = getSplittableRandom().nextDouble(bound);
     recordEntropySpent(53);
     return out;
   }
 
+  /**
+   * <p>nextDouble.</p>
+   *
+   * @param origin a double.
+   * @param bound a double.
+   * @return a double.
+   */
   public double nextDouble(final double origin, final double bound) {
     final double out = getSplittableRandom().nextDouble(origin, bound);
     recordEntropySpent(53);
     return out;
   }
 
+  /** {@inheritDoc} */
   @Override
   public boolean nextBoolean() {
     final boolean out = getSplittableRandom().nextBoolean();
@@ -112,6 +184,7 @@ public abstract class BaseSplittableRandomAdapter extends BaseEntropyCountingRan
     return out;
   }
 
+  /** {@inheritDoc} */
   @Override
   public IntStream ints(final long streamSize) {
     final IntStream out = getSplittableRandom().split().ints(streamSize);
@@ -119,6 +192,7 @@ public abstract class BaseSplittableRandomAdapter extends BaseEntropyCountingRan
     return out;
   }
 
+  /** {@inheritDoc} */
   @Override
   public IntStream ints() {
     final IntStream out = getSplittableRandom().split().ints();
@@ -126,6 +200,7 @@ public abstract class BaseSplittableRandomAdapter extends BaseEntropyCountingRan
     return out;
   }
 
+  /** {@inheritDoc} */
   @Override
   public IntStream ints(final long streamSize, final int randomNumberOrigin,
       final int randomNumberBound) {
@@ -135,6 +210,7 @@ public abstract class BaseSplittableRandomAdapter extends BaseEntropyCountingRan
     return out;
   }
 
+  /** {@inheritDoc} */
   @Override
   public IntStream ints(final int randomNumberOrigin, final int randomNumberBound) {
     final IntStream out = getSplittableRandom().split().ints(randomNumberOrigin, randomNumberBound);
@@ -149,6 +225,7 @@ public abstract class BaseSplittableRandomAdapter extends BaseEntropyCountingRan
     }
   }
 
+  /** {@inheritDoc} */
   @Override
   public LongStream longs(final long streamSize) {
     final LongStream out = getSplittableRandom().split().longs(streamSize);
@@ -156,6 +233,7 @@ public abstract class BaseSplittableRandomAdapter extends BaseEntropyCountingRan
     return out;
   }
 
+  /** {@inheritDoc} */
   @Override
   public LongStream longs() {
     final LongStream out = getSplittableRandom().split().longs();
@@ -163,6 +241,7 @@ public abstract class BaseSplittableRandomAdapter extends BaseEntropyCountingRan
     return out;
   }
 
+  /** {@inheritDoc} */
   @Override
   public LongStream longs(final long streamSize, final long randomNumberOrigin,
       final long randomNumberBound) {
@@ -172,6 +251,7 @@ public abstract class BaseSplittableRandomAdapter extends BaseEntropyCountingRan
     return out;
   }
 
+  /** {@inheritDoc} */
   @Override
   public LongStream longs(final long randomNumberOrigin, final long randomNumberBound) {
     final LongStream out = getSplittableRandom().split()
@@ -180,6 +260,7 @@ public abstract class BaseSplittableRandomAdapter extends BaseEntropyCountingRan
     return out;
   }
 
+  /** {@inheritDoc} */
   @Override
   public DoubleStream doubles(final long streamSize) {
     final DoubleStream out = getSplittableRandom().split().doubles(streamSize);
@@ -187,6 +268,7 @@ public abstract class BaseSplittableRandomAdapter extends BaseEntropyCountingRan
     return out;
   }
 
+  /** {@inheritDoc} */
   @Override
   public DoubleStream doubles() {
     final DoubleStream out = getSplittableRandom().split().doubles();
@@ -194,6 +276,7 @@ public abstract class BaseSplittableRandomAdapter extends BaseEntropyCountingRan
     return out;
   }
 
+  /** {@inheritDoc} */
   @Override
   public DoubleStream doubles(final long streamSize, final double randomNumberOrigin,
       final double randomNumberBound) {
@@ -203,6 +286,7 @@ public abstract class BaseSplittableRandomAdapter extends BaseEntropyCountingRan
     return out;
   }
 
+  /** {@inheritDoc} */
   @Override
   public DoubleStream doubles(final double randomNumberOrigin, final double randomNumberBound) {
     final DoubleStream out = getSplittableRandom().split()
@@ -211,6 +295,7 @@ public abstract class BaseSplittableRandomAdapter extends BaseEntropyCountingRan
     return out;
   }
 
+  /** {@inheritDoc} */
   @Override
   public int getNewSeedLength(@UnknownInitialization BaseSplittableRandomAdapter this) {
     return SEED_LENGTH_BYTES;

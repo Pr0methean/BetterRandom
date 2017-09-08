@@ -27,14 +27,15 @@ import org.checkerframework.checker.initialization.qual.UnknownInitialization;
 import org.checkerframework.checker.nullness.qual.EnsuresNonNull;
 
 /**
- * <p>This is the default {@link Random JDK RNG} extended to implement the {@link RepeatableRandom}
+ * <p>This is the default {@link Random JDK RNG} extended to implement the {@link io.github.pr0methean.betterrandom.RepeatableRandom}
  * interface (for consistency with the other RNGs in this package).</p> <p>The {@link
  * MersenneTwisterRandom} should be used in preference to this class because it is statistically
  * more random and performs slightly better.</p> <p><em>NOTE: Instances of this class do not use
- * the seeding mechanism inherited from {@link Random}.  Calls to the {@link #setSeed(long)} method
+ * the seeding mechanism inherited from {@link java.util.Random}.  Calls to the {@link #setSeed(long)} method
  * will have no effect.  Instead the seedArray must be set by a constructor.</em></p>
  *
  * @author Daniel Dyer
+ * @version $Id: $Id
  */
 public class JavaRandom extends Random implements RepeatableRandom, ByteArrayReseedableRandom {
 
@@ -46,6 +47,8 @@ public class JavaRandom extends Random implements RepeatableRandom, ByteArrayRes
 
   /**
    * Creates a new RNG and seeds it using the default seeding strategy.
+   *
+   * @throws io.github.pr0methean.betterrandom.seed.SeedException if any.
    */
   public JavaRandom() throws SeedException {
     this(DefaultSeedGenerator.DEFAULT_SEED_GENERATOR.generateSeed(SEED_SIZE_BYTES));
@@ -56,7 +59,7 @@ public class JavaRandom extends Random implements RepeatableRandom, ByteArrayRes
    *
    * @param seedGenerator The seedArray generation strategy that will provide the seedArray value for this
    *     RNG.
-   * @throws SeedException If there is a problem generating a seedArray.
+   * @throws io.github.pr0methean.betterrandom.seed.SeedException If there is a problem generating a seedArray.
    */
   public JavaRandom(final SeedGenerator seedGenerator) throws SeedException {
     this(seedGenerator.generateSeed(SEED_SIZE_BYTES));
@@ -92,10 +95,16 @@ public class JavaRandom extends Random implements RepeatableRandom, ByteArrayRes
     }
   }
 
+  /**
+   * <p>getSeed.</p>
+   *
+   * @return an array of byte.
+   */
   public byte[] getSeed() {
     return seedArray.clone();
   }
 
+  /** {@inheritDoc} */
   @Override
   public void setSeed(@UnknownInitialization(Random.class) JavaRandom this, long seed) {
     super.setSeed(seed);
@@ -103,6 +112,7 @@ public class JavaRandom extends Random implements RepeatableRandom, ByteArrayRes
     seedBuffer.putLong(seed);
   }
 
+  /** {@inheritDoc} */
   @Override
   public void setSeed(@UnknownInitialization(Random.class) JavaRandom this, byte[] seed) {
     if (seedBuffer == null || seedArray == null) {
@@ -114,11 +124,13 @@ public class JavaRandom extends Random implements RepeatableRandom, ByteArrayRes
     super.setSeed(seedBuffer.getLong(0));
   }
 
+  /** {@inheritDoc} */
   @Override
   public boolean preferSeedWithLong() {
     return true;
   }
 
+  /** {@inheritDoc} */
   @Override
   public int getNewSeedLength() {
     return SEED_SIZE_BYTES;

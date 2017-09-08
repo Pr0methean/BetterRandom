@@ -9,17 +9,29 @@ import java.util.SplittableRandom;
 import org.checkerframework.checker.initialization.qual.UnknownInitialization;
 import org.checkerframework.checker.nullness.qual.EnsuresNonNull;
 
+/**
+ * <p>Abstract DirectSplittableRandomAdapter class.</p>
+ *
+ * @author ubuntu
+ * @version $Id: $Id
+ */
 public abstract class DirectSplittableRandomAdapter extends BaseSplittableRandomAdapter {
 
   private static final long serialVersionUID = 4273652147052638879L;
   @SuppressWarnings("InstanceVariableMayNotBeInitializedByReadObject")
   protected transient SplittableRandom underlying; // a SplittableRandom is not Serializable
 
+  /**
+   * <p>Constructor for DirectSplittableRandomAdapter.</p>
+   *
+   * @param seed an array of byte.
+   */
   public DirectSplittableRandomAdapter(final byte[] seed) {
     super(seed);
     setSeedInternal(seed);
   }
 
+  /** {@inheritDoc} */
   @Override
   public ToStringHelper addSubclassFields(final ToStringHelper original) {
     return original.add("underlying", underlying);
@@ -30,6 +42,7 @@ public abstract class DirectSplittableRandomAdapter extends BaseSplittableRandom
     setSeedInternal(seed);
   }
 
+  /** {@inheritDoc} */
   @EnsuresNonNull({"this.seed", "underlying"})
   @Override
   protected void setSeedInternal(
@@ -43,11 +56,13 @@ public abstract class DirectSplittableRandomAdapter extends BaseSplittableRandom
         BinaryUtils.convertBytesToLong(seed, 0));
   }
 
+  /** {@inheritDoc} */
   @Override
   public boolean preferSeedWithLong() {
     return true;
   }
 
+  /** {@inheritDoc} */
   @Override
   public void setSeed(@UnknownInitialization DirectSplittableRandomAdapter this,
       final long seed) {

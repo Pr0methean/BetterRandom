@@ -45,9 +45,10 @@ import org.checkerframework.checker.nullness.qual.EnsuresNonNull;
  * (192 or 256 bits) but if the cryptography policy files are not installed, a {@link
  * GeneralSecurityException} will be thrown.</p> <p><em>NOTE: Because instances of this class
  * require 128-bit seeds, it is not possible to seed this RNG using the {@link #setSeed(long)}
- * method inherited from {@link Random} until the seed array has been set.</em></p>
+ * method inherited from {@link java.util.Random} until the seed array has been set.</em></p>
  *
  * @author Daniel Dyer
+ * @version $Id: $Id
  */
 public class AesCounterRandom extends BaseEntropyCountingRandom {
 
@@ -102,6 +103,8 @@ public class AesCounterRandom extends BaseEntropyCountingRandom {
 
   /**
    * Creates a new RNG and seeds it using 256 bits from the default seeding strategy.
+   *
+   * @throws io.github.pr0methean.betterrandom.seed.SeedException if any.
    */
   public AesCounterRandom() throws SeedException {
     this(DEFAULT_SEED_SIZE_BYTES);
@@ -112,7 +115,7 @@ public class AesCounterRandom extends BaseEntropyCountingRandom {
    *
    * @param seedGenerator The seed generation strategy that will provide the seed value for this
    *     RNG.
-   * @throws SeedException If there is a problem generating a seed.
+   * @throws io.github.pr0methean.betterrandom.seed.SeedException If there is a problem generating a seed.
    */
   public AesCounterRandom(final SeedGenerator seedGenerator) throws SeedException {
     this(seedGenerator.generateSeed(DEFAULT_SEED_SIZE_BYTES));
@@ -126,6 +129,7 @@ public class AesCounterRandom extends BaseEntropyCountingRandom {
    *     bits), 24 (192 bits) and 32 (256 bits).  Any other values will result in an exception from
    *     the AES implementation.
    * @since 1.0.2
+   * @throws io.github.pr0methean.betterrandom.seed.SeedException if any.
    */
   public AesCounterRandom(final int seedSizeBytes) throws SeedException {
     this(DefaultSeedGenerator.DEFAULT_SEED_GENERATOR.generateSeed(seedSizeBytes));
@@ -145,6 +149,8 @@ public class AesCounterRandom extends BaseEntropyCountingRandom {
   }
 
   /**
+   * <p>getMaxKeyLengthBytes.</p>
+   *
    * @return If the seed is longer than this, part of it becomes the counter's initial value.
    *     Otherwise, the full seed becomes the AES key and the counter is initially zero. Public for
    *     testing of its initialization.
@@ -158,6 +164,7 @@ public class AesCounterRandom extends BaseEntropyCountingRandom {
         : input.length >= 24 ? 24 : 16;
   }
 
+  /** {@inheritDoc} */
   @Override
   public ToStringHelper addSubSubclassFields(final ToStringHelper original) {
     return original
@@ -173,6 +180,8 @@ public class AesCounterRandom extends BaseEntropyCountingRandom {
 
   /**
    * Called in constructor and readObject to initialize transient fields.
+   *
+   * @param this a {@link io.github.pr0methean.betterrandom.prng.AesCounterRandom} object.
    */
   @EnsuresNonNull({"counter", "counterInput", "cipher", "lock", "longSeedArray", "longSeedBuffer"})
   protected void initTransientFields(
@@ -217,6 +226,7 @@ public class AesCounterRandom extends BaseEntropyCountingRandom {
         totalBytes);
   }
 
+  /** {@inheritDoc} */
   @Override
   protected final int next(final int bits) {
     lock.lock();
@@ -243,11 +253,14 @@ public class AesCounterRandom extends BaseEntropyCountingRandom {
 
   /**
    * For debugging. Should always be true.
+   *
+   * @return a boolean.
    */
   public boolean isSeeded() {
     return seeded;
   }
 
+  /** {@inheritDoc} */
   @Override
   public void setSeed(final byte[] seed) {
     if (seed.length > MAX_TOTAL_SEED_LENGTH_BYTES) {
@@ -295,6 +308,7 @@ public class AesCounterRandom extends BaseEntropyCountingRandom {
     this.seed = castNonNull(this.seed);
   }
 
+  /** {@inheritDoc} */
   @Override
   public synchronized void setSeed(@UnknownInitialization(Random.class)AesCounterRandom this,
       final long seed) {
@@ -303,6 +317,7 @@ public class AesCounterRandom extends BaseEntropyCountingRandom {
     } // Otherwise ignore; it's Random.<init> calling us without a full-size seed
   }
 
+  /** {@inheritDoc} */
   @EnsuresNonNull({"counter", "this.seed"})
   @Override
   protected void setSeedInternal(@UnknownInitialization(Random.class)AesCounterRandom this,
@@ -329,6 +344,7 @@ public class AesCounterRandom extends BaseEntropyCountingRandom {
     seeded = true;
   }
 
+  /** {@inheritDoc} */
   @Override
   public int getNewSeedLength(@UnknownInitialization AesCounterRandom this) {
     return MAX_TOTAL_SEED_LENGTH_BYTES;
