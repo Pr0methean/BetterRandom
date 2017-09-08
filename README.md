@@ -152,6 +152,8 @@ seederThread.add(myRandom);
   running in Travis-CI.
 * `release.sh`: Used to perform new releases.
 * `test-proguard.sh`: Compile and run tests against Proguarded jar.
+* `prepare-workspace.sh`: Install necessary packages on a fresh Ubuntu Trusty Tahr workspace, such
+  as what c9.io provides.
 
 # Credits
 
