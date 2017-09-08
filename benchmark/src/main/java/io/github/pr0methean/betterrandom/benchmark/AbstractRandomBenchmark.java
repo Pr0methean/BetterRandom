@@ -75,6 +75,7 @@ public abstract class AbstractRandomBenchmark {
 
   private final HashMultiset<StackTrace> stackTraces = HashMultiset.create();
 
+  // FIXME: Why isn't this outputting anything?
   @Setup(Level.Trial)
   public void setUp() {
     AllocationRecorder.addSampler((arrayLength, desc, newObj, size) -> {
@@ -159,6 +160,7 @@ public abstract class AbstractRandomBenchmark {
   }
   */
 
+  // FIXME: Why isn't this outputting anything either?
   @TearDown(Level.Trial)
   public void tearDown() {
     System.gc();
