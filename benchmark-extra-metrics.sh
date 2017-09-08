@@ -5,5 +5,4 @@ cd ../benchmark &&\
 mvn -DskipTests clean package &&\
 cd .. &&\
 java -cp benchmark/target/benchmarks.jar \
-    io.github.pr0methean.betterrandom.benchmark.AbstractRandomBenchmark \
-    -v EXTRA
+    io.github.pr0methean.betterrandom.benchmark.AbstractRandomBenchmark
