@@ -191,7 +191,6 @@ public abstract class BaseRandom extends Random implements ByteArrayReseedableRa
    *#readObjectNoData()}.
    *
    * @param seed The new seed.
-   * @param this a {@link io.github.pr0methean.betterrandom.prng.BaseRandom} object.
    */
   @EnsuresNonNull("this.seed")
   protected void setSeedInternal(@UnknownInitialization(Random.class)BaseRandom this,
@@ -200,9 +199,7 @@ public abstract class BaseRandom extends Random implements ByteArrayReseedableRa
   }
 
   /**
-   * <p>initTransientFields.</p>
-   *
-   * @param this a {@link io.github.pr0methean.betterrandom.prng.BaseRandom} object.
+   * Called in constructor and readObject to initialize transient fields.
    */
   @EnsuresNonNull({"lock", "longSeedArray", "longSeedBuffer"})
   protected void initTransientFields(@UnknownInitialization BaseRandom this) {
