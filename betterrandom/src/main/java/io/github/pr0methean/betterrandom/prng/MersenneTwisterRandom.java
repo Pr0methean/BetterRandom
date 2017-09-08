@@ -28,14 +28,14 @@ import org.checkerframework.checker.nullness.qual.EnsuresNonNull;
 /**
  * <p>Random number generator based on the <a href="http://www.math.sci.hiroshima-u.ac.jp/~m-mat/MT/emt.html"
  * target="_top">Mersenne Twister</a> algorithm developed by Makoto Matsumoto and Takuji
- * Nishimura.</p> <p> <p>This is a very fast random number generator with good statistical
+ * Nishimura.</p> <p>This is a very fast random number generator with good statistical
  * properties (it passes the full DIEHARD suite).  This is the best RNG for most experiments.  If a
- * non-linear generator is required, use the slower {@link AesCounterRandom} RNG.</p> <p> <p>This
+ * non-linear generator is required, use the slower {@link AesCounterRandom} RNG.</p> <p>This
  * PRNG is deterministic, which can be advantageous for testing purposes since the output is
  * repeatable.  If multiple instances of this class are created with the same seed they will all
- * have identical output.</p> <p> <p>This code is translated from the original C version and assumes
+ * have identical output.</p> <p>This code is translated from the original C version and assumes
  * that we will always seed from an array of bytes.  I don't pretend to know the meanings of the
- * magic numbers or how it works, it just does.</p> <p> <p><em>NOTE: Because instances of this class
+ * magic numbers or how it works, it just does.</p> <p><em>NOTE: Because instances of this class
  * require 128-bit seeds, it is not possible to seed this RNG using the {@link #setSeed(long)}
  * method inherited from {@link Random}.  Calls to this method will have no effect. Instead the seed
  * must be set by a constructor.</em></p>
@@ -94,9 +94,6 @@ public class MersenneTwisterRandom extends BaseEntropyCountingRandom {
         .add("mtIndex", mtIndex);
   }
 
-  /**
-   * {@inheritDoc}
-   */
   public byte[] getSeed() {
     return seed.clone();
   }
@@ -163,9 +160,6 @@ public class MersenneTwisterRandom extends BaseEntropyCountingRandom {
     mt[0] = UPPER_MASK; // Most significant bit is 1 - guarantees non-zero initial array.
   }
 
-  /**
-   * {@inheritDoc}
-   */
   @Override
   protected final int next(final int bits) {
     lock.lock();

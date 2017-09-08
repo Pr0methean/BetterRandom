@@ -19,9 +19,9 @@ import java.security.SecureRandom;
 
 /**
  * <p>{@link SeedGenerator} implementation that uses Java's bundled {@link SecureRandom} RNG to
- * generate random seed data.</p> <p> <p>The advantage of using SecureRandom for seeding but not as
+ * generate random seed data.</p> <p>The advantage of using SecureRandom for seeding but not as
  * the primary RNG is that we can use it to seed RNGs that are much faster than SecureRandom.</p>
- * <p> <p>This is the only seeding strategy that is guaranteed to work on all platforms and
+ * <p>This is the only seeding strategy that is guaranteed to work on all platforms and
  * therefore is provided as a fall-back option should none of the other provided {@link
  * SeedGenerator} implementations be usable.</p>
  *
@@ -33,9 +33,6 @@ public enum SecureRandomSeedGenerator implements SeedGenerator {
 
   private static final SecureRandom SOURCE = new SecureRandom();
 
-  /**
-   * {@inheritDoc}
-   */
   public byte[] generateSeed(final int length) throws SeedException {
     return SOURCE.generateSeed(length);
   }

@@ -31,7 +31,7 @@ import org.checkerframework.checker.nullness.qual.RequiresNonNull;
 /**
  * <p>Java port of the <a href="http://home.southernct.edu/~pasqualonia1/ca/report.html"
  * target="_top">cellular automaton pseudorandom number generator</a> developed by Tony
- * Pasqualoni.</p> <p> <p><em>NOTE: Instances of this class do not use the seeding mechanism
+ * Pasqualoni.</p> <p><em>NOTE: Instances of this class do not use the seeding mechanism
  * inherited from {@link Random}.  Calls to the {@link #setSeed(long)} method will have no effect.
  * Instead the seed must be set by a constructor.</em></p>
  *
@@ -163,9 +163,6 @@ public class CellularAutomatonRandom extends BaseEntropyCountingRandom {
     return result >>> (32 - bits);
   }
 
-  /**
-   * {@inheritDoc}
-   */
   @Override
   public int next(final int bits) {
     lock.lock();

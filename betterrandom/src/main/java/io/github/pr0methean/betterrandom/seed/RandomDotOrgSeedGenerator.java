@@ -93,9 +93,6 @@ public enum RandomDotOrgSeedGenerator implements SeedGenerator {
     }
   }
 
-  /**
-   * {@inheritDoc}
-   */
   @SuppressWarnings({"AssignmentToStaticFieldFromInstanceMethod", "BusyWait"})
   public void generateSeed(final byte[] seedData) throws SeedException {
     final int length = seedData.length;
