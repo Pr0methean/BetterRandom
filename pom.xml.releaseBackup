@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://maven.apache.org/POM/4.0.0" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <artifactId>root</artifactId>
+  <groupId>io.github.pr0methean.betterrandom</groupId>
+  <version>1.0.0-SNAPSHOT</version>
+  <packaging>pom</packaging>
+  <modules>
+    <module>betterrandom</module>
+    <!--<module>benchmark</module>-->
+  </modules>
+  <properties>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <prefix/>
+    <maven.compiler.source>1.8</maven.compiler.source>
+    <maven.compiler.target>1.8</maven.compiler.target>
+    <annotatedJdk>${org.checkerframework:jdk8:jar}</annotatedJdk>
+    <github.global.server>github</github.global.server>
+  </properties>
+
+  <name>root</name>
+  <description>See the "BetterRandom" module for the main purpose of this group. This root target is only used for management of various types of tests and benchmarks.
+  </description>
+  <url>https://github.com/Pr0methean/BetterRandom</url>
+
+  <licenses>
+    <license>
+      <name>Apache License, Version 2.0</name>
+      <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+      <distribution>repo</distribution>
+    </license>
+  </licenses>
+
+  <scm>
+    <url>https://github.com/Pr0methean/BetterRandom</url>
+    <connection>scm:git:git://github.com/Pr0methean/BetterRandom.git</connection>
+    <developerConnection>scm:git:git@github.com:Pr0methean/BetterRandom.git</developerConnection>
+  </scm>
+
+  <distributionManagement>
+    <snapshotRepository>
+      <id>sonatype-nexus-snapshots</id>
+      <name>Sonatype Nexus snapshot repository</name>
+      <url>https://oss.sonatype.org/content/repositories/snapshots</url>
+    </snapshotRepository>
+    <repository>
+      <id>sonatype-nexus-staging</id>
+      <name>Sonatype Nexus release repository</name>
+      <url>https://oss.sonatype.org/service/local/staging/deploy/maven2</url>
+    </repository>
+  </distributionManagement>
+</project>

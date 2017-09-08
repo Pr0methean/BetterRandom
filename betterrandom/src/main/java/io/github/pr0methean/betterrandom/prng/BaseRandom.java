@@ -23,6 +23,12 @@ import org.checkerframework.checker.initialization.qual.UnderInitialization;
 import org.checkerframework.checker.initialization.qual.UnknownInitialization;
 import org.checkerframework.checker.nullness.qual.EnsuresNonNull;
 
+/**
+ * <p>Abstract BaseRandom class.</p>
+ *
+ * @author ubuntu
+ * @version $Id: $Id
+ */
 public abstract class BaseRandom extends Random implements ByteArrayReseedableRandom,
     RepeatableRandom, Dumpable {
 
@@ -43,6 +49,9 @@ public abstract class BaseRandom extends Random implements ByteArrayReseedableRa
 
   /**
    * Creates a new RNG and seeds it using the default seeding strategy.
+   *
+   * @param seedLength a int.
+   * @throws io.github.pr0methean.betterrandom.seed.SeedException if any.
    */
   public BaseRandom(final int seedLength) throws SeedException {
     this(DefaultSeedGenerator.DEFAULT_SEED_GENERATOR.generateSeed(seedLength));
@@ -53,12 +62,18 @@ public abstract class BaseRandom extends Random implements ByteArrayReseedableRa
    *
    * @param seedGenerator The seed generation strategy that will provide the seed value for this
    *     RNG.
-   * @throws SeedException If there is a problem generating a seed.
+   * @throws io.github.pr0methean.betterrandom.seed.SeedException If there is a problem generating a seed.
+   * @param seedLength a int.
    */
   public BaseRandom(final SeedGenerator seedGenerator, final int seedLength) throws SeedException {
     this(seedGenerator.generateSeed(seedLength));
   }
 
+  /**
+   * <p>Constructor for BaseRandom.</p>
+   *
+   * @param seed an array of byte.
+   */
   @EnsuresNonNull("this.seed")
   public BaseRandom(final byte[] seed) {
     superConstructorFinished = true;
@@ -73,7 +88,7 @@ public abstract class BaseRandom extends Random implements ByteArrayReseedableRa
    * The purpose of this method is so that entropy-counting subclasses can detect that no more than
    * 1 bit of entropy is actually being consumed, even though this method uses {@link #nextDouble()}
    * which normally consumes 53 bits. Tracking of fractional bits of entropy is currently not
-   * implemented in {@link BaseEntropyCountingRandom}.
+   * implemented in {@link io.github.pr0methean.betterrandom.prng.BaseEntropyCountingRandom}.
    *
    * @param probability The probability of returning true.
    * @return True with probability {@code probability}; false otherwise. If {@code probability < 0},
@@ -101,8 +116,19 @@ public abstract class BaseRandom extends Random implements ByteArrayReseedableRa
     return nextDouble() <= probability;
   }
 
+  /**
+   * <p>addSubclassFields.</p>
+   *
+   * @param original a {@link com.google.common.base.MoreObjects.ToStringHelper} object.
+   * @return a {@link com.google.common.base.MoreObjects.ToStringHelper} object.
+   */
   public abstract ToStringHelper addSubclassFields(ToStringHelper original);
 
+  /**
+   * <p>dump.</p>
+   *
+   * @return a {@link java.lang.String} object.
+   */
   public String dump() {
     lock.lock();
     try {
@@ -114,6 +140,7 @@ public abstract class BaseRandom extends Random implements ByteArrayReseedableRa
     }
   }
 
+  /** {@inheritDoc} */
   @Override
   public byte[] getSeed() {
     lock.lock();
@@ -124,6 +151,7 @@ public abstract class BaseRandom extends Random implements ByteArrayReseedableRa
     }
   }
 
+  /** {@inheritDoc} */
   @SuppressWarnings("method.invocation.invalid")
   @Override
   public synchronized void setSeed(@UnknownInitialization(Random.class)BaseRandom this,
@@ -138,6 +166,7 @@ public abstract class BaseRandom extends Random implements ByteArrayReseedableRa
     }
   }
 
+  /** {@inheritDoc} */
   @EnsuresNonNull("this.seed")
   @Override
   public void setSeed(final byte[] seed) {
@@ -149,6 +178,7 @@ public abstract class BaseRandom extends Random implements ByteArrayReseedableRa
     }
   }
 
+  /** {@inheritDoc} */
   @Override
   public boolean preferSeedWithLong() {
     return getNewSeedLength() <= 8;
@@ -158,9 +188,10 @@ public abstract class BaseRandom extends Random implements ByteArrayReseedableRa
    * Sets the seed, and should be overridden to set other state that derives from the seed. Called
    * by {@link #setSeed(byte[])}, whose default implementation ensures that the lock is held while
    * doing so. Also called by constructors, {@link #readObject(ObjectInputStream)} and {@link
-   * #readObjectNoData()}.
+   *#readObjectNoData()}.
    *
    * @param seed The new seed.
+   * @param this a {@link io.github.pr0methean.betterrandom.prng.BaseRandom} object.
    */
   @EnsuresNonNull("this.seed")
   protected void setSeedInternal(@UnknownInitialization(Random.class)BaseRandom this,
@@ -168,6 +199,11 @@ public abstract class BaseRandom extends Random implements ByteArrayReseedableRa
     this.seed = seed.clone();
   }
 
+  /**
+   * <p>initTransientFields.</p>
+   *
+   * @param this a {@link io.github.pr0methean.betterrandom.prng.BaseRandom} object.
+   */
   @EnsuresNonNull({"lock", "longSeedArray", "longSeedBuffer"})
   protected void initTransientFields(@UnknownInitialization BaseRandom this) {
     if (lock == null) {
@@ -186,6 +222,11 @@ public abstract class BaseRandom extends Random implements ByteArrayReseedableRa
     setSeedInternal(castNonNull(seed));
   }
 
+  /**
+   * <p>readObjectNoData.</p>
+   *
+   * @throws java.io.InvalidObjectException if any.
+   */
   @EnsuresNonNull({"lock", "seed"})
   @SuppressWarnings("OverriddenMethodCallDuringObjectConstruction")
   protected void readObjectNoData() throws InvalidObjectException {

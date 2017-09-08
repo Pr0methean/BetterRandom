@@ -21,10 +21,13 @@ package io.github.pr0methean.betterrandom;
  * This seed value can then be reused to create a random source with identical output.
  *
  * @author Daniel Dyer
+ * @version $Id: $Id
  */
 public interface RepeatableRandom {
 
   /**
+   * <p>getSeed.</p>
+   *
    * @return The seed data used to initialise this pseudo-random number generator.
    */
   byte[] getSeed();

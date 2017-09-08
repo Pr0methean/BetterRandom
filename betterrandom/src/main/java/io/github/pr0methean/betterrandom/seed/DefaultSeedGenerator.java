@@ -20,6 +20,7 @@ package io.github.pr0methean.betterrandom.seed;
  * best one available for the current operating environment.
  *
  * @author Daniel Dyer
+ * @version $Id: $Id
  */
 public enum DefaultSeedGenerator implements SeedGenerator {
 
@@ -37,6 +38,7 @@ public enum DefaultSeedGenerator implements SeedGenerator {
       SecureRandomSeedGenerator.SECURE_RANDOM_SEED_GENERATOR
   };
 
+  /** {@inheritDoc} */
   @Override
   public void generateSeed(final byte[] output) throws SeedException {
     for (final SeedGenerator generator : GENERATORS) {
@@ -53,12 +55,11 @@ public enum DefaultSeedGenerator implements SeedGenerator {
   }
 
   /**
+   * {@inheritDoc}
+   *
    * Generates a seed by trying each of the available strategies in turn until one succeeds.  Tries
    * the most suitable strategy first and eventually degrades to the least suitable (but guaranteed
    * to work) strategy.
-   *
-   * @param length The length (in bytes) of the seed.
-   * @return A random seed of the requested length.
    */
   @Override
   public byte[] generateSeed(final int length) throws SeedException {

@@ -31,11 +31,13 @@ import java.util.concurrent.locks.ReentrantLock;
  * useful on Microsoft Windows and other platforms that do not provide {@literal /dev/random}.
  *
  * @author Daniel Dyer
+ * @version $Id: $Id
  */
 public enum RandomDotOrgSeedGenerator implements SeedGenerator {
 
   RANDOM_DOT_ORG_SEED_GENERATOR;
 
+  /** Constant <code>BASE_URL="https://www.random.org"</code> */
   private static final String BASE_URL = "https://www.random.org";
   /**
    * The URL from which the random bytes are retrieved.
@@ -93,6 +95,12 @@ public enum RandomDotOrgSeedGenerator implements SeedGenerator {
     }
   }
 
+  /**
+   * <p>generateSeed.</p>
+   *
+   * @param seedData an array of byte.
+   * @throws io.github.pr0methean.betterrandom.seed.SeedException if any.
+   */
   @SuppressWarnings({"AssignmentToStaticFieldFromInstanceMethod", "BusyWait"})
   public void generateSeed(final byte[] seedData) throws SeedException {
     final int length = seedData.length;
@@ -123,6 +131,7 @@ public enum RandomDotOrgSeedGenerator implements SeedGenerator {
     }
   }
 
+  /** {@inheritDoc} */
   @Override
   public String toString() {
     return BASE_URL;

@@ -18,7 +18,7 @@ package io.github.pr0methean.betterrandom.seed;
 import java.security.SecureRandom;
 
 /**
- * <p>{@link SeedGenerator} implementation that uses Java's bundled {@link SecureRandom} RNG to
+ * <p>{@link io.github.pr0methean.betterrandom.seed.SeedGenerator} implementation that uses Java's bundled {@link java.security.SecureRandom} RNG to
  * generate random seed data.</p> <p>The advantage of using SecureRandom for seeding but not as
  * the primary RNG is that we can use it to seed RNGs that are much faster than SecureRandom.</p>
  * <p>This is the only seeding strategy that is guaranteed to work on all platforms and
@@ -26,22 +26,33 @@ import java.security.SecureRandom;
  * SeedGenerator} implementations be usable.</p>
  *
  * @author Daniel Dyer
+ * @version $Id: $Id
  */
 public enum SecureRandomSeedGenerator implements SeedGenerator {
 
   SECURE_RANDOM_SEED_GENERATOR;
 
+  /** Constant <code>SOURCE</code> */
   private static final SecureRandom SOURCE = new SecureRandom();
 
+  /**
+   * <p>generateSeed.</p>
+   *
+   * @param length a int.
+   * @return an array of byte.
+   * @throws io.github.pr0methean.betterrandom.seed.SeedException if any.
+   */
   public byte[] generateSeed(final int length) throws SeedException {
     return SOURCE.generateSeed(length);
   }
 
+  /** {@inheritDoc} */
   @Override
   public void generateSeed(final byte[] output) throws SeedException {
     System.arraycopy(SOURCE.generateSeed(output.length), 0, output, 0, output.length);
   }
 
+  /** {@inheritDoc} */
   @Override
   public String toString() {
     return "java.security.SecureRandom";

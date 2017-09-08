@@ -32,11 +32,12 @@ import org.checkerframework.checker.nullness.qual.RequiresNonNull;
  * <p>Java port of the <a href="http://home.southernct.edu/~pasqualonia1/ca/report.html"
  * target="_top">cellular automaton pseudorandom number generator</a> developed by Tony
  * Pasqualoni.</p> <p><em>NOTE: Instances of this class do not use the seeding mechanism
- * inherited from {@link Random}.  Calls to the {@link #setSeed(long)} method will have no effect.
+ * inherited from {@link java.util.Random}.  Calls to the {@link #setSeed(long)} method will have no effect.
  * Instead the seed must be set by a constructor.</em></p>
  *
  * @author Tony Pasqualoni (original C version)
  * @author Daniel Dyer (Java port)
+ * @version $Id: $Id
  */
 public class CellularAutomatonRandom extends BaseEntropyCountingRandom {
 
@@ -82,10 +83,21 @@ public class CellularAutomatonRandom extends BaseEntropyCountingRandom {
 
   private int currentCellIndex;
 
+  /**
+   * <p>Constructor for CellularAutomatonRandom.</p>
+   *
+   * @throws io.github.pr0methean.betterrandom.seed.SeedException if any.
+   */
   public CellularAutomatonRandom() throws SeedException {
     this(DefaultSeedGenerator.DEFAULT_SEED_GENERATOR);
   }
 
+  /**
+   * <p>Constructor for CellularAutomatonRandom.</p>
+   *
+   * @param seedGenerator a {@link io.github.pr0methean.betterrandom.seed.SeedGenerator} object.
+   * @throws io.github.pr0methean.betterrandom.seed.SeedException if any.
+   */
   public CellularAutomatonRandom(final SeedGenerator seedGenerator) throws SeedException {
     this(seedGenerator.generateSeed(SEED_SIZE_BYTES));
   }
@@ -107,6 +119,7 @@ public class CellularAutomatonRandom extends BaseEntropyCountingRandom {
         + (cells[offset + 3] << 24);
   }
 
+  /** {@inheritDoc} */
   @Override
   protected ToStringHelper addSubSubclassFields(final ToStringHelper original) {
     return original
@@ -163,6 +176,7 @@ public class CellularAutomatonRandom extends BaseEntropyCountingRandom {
     return result >>> (32 - bits);
   }
 
+  /** {@inheritDoc} */
   @Override
   public int next(final int bits) {
     lock.lock();
@@ -174,6 +188,7 @@ public class CellularAutomatonRandom extends BaseEntropyCountingRandom {
     }
   }
 
+  /** {@inheritDoc} */
   @Override
   public synchronized void setSeed(@UnknownInitialization(Random.class)CellularAutomatonRandom this,
       final long seed) {
@@ -185,6 +200,7 @@ public class CellularAutomatonRandom extends BaseEntropyCountingRandom {
     }
   }
 
+  /** {@inheritDoc} */
   @Override
   protected void setSeedInternal(@UnknownInitialization(Random.class)CellularAutomatonRandom this,
       final byte[] seed) {
@@ -196,6 +212,7 @@ public class CellularAutomatonRandom extends BaseEntropyCountingRandom {
     copySeedToCellsAndPreEvolve();
   }
 
+  /** {@inheritDoc} */
   @Override
   public int getNewSeedLength(@UnknownInitialization CellularAutomatonRandom this) {
     return SEED_SIZE_BYTES;

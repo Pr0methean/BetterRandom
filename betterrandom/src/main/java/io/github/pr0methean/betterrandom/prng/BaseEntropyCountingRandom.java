@@ -15,6 +15,12 @@ import org.checkerframework.checker.initialization.qual.UnknownInitialization;
 import org.checkerframework.checker.nullness.qual.EnsuresNonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 
+/**
+ * <p>Abstract BaseEntropyCountingRandom class.</p>
+ *
+ * @author ubuntu
+ * @version $Id: $Id
+ */
 public abstract class BaseEntropyCountingRandom extends BaseRandom implements
     EntropyCountingRandom {
 
@@ -23,12 +29,25 @@ public abstract class BaseEntropyCountingRandom extends BaseRandom implements
   protected AtomicLong entropyBits;
   protected @Nullable RandomSeederThread seederThread;
 
+  /**
+   * <p>Constructor for BaseEntropyCountingRandom.</p>
+   *
+   * @param seedLength a int.
+   * @throws io.github.pr0methean.betterrandom.seed.SeedException if any.
+   */
   @EnsuresNonNull("entropyBits")
   public BaseEntropyCountingRandom(final int seedLength) throws SeedException {
     super(seedLength);
     entropyBits = new AtomicLong(0);
   }
 
+  /**
+   * <p>Constructor for BaseEntropyCountingRandom.</p>
+   *
+   * @param seedGenerator a {@link io.github.pr0methean.betterrandom.seed.SeedGenerator} object.
+   * @param seedLength a int.
+   * @throws io.github.pr0methean.betterrandom.seed.SeedException if any.
+   */
   @EnsuresNonNull("entropyBits")
   public BaseEntropyCountingRandom(final SeedGenerator seedGenerator, final int seedLength)
       throws SeedException {
@@ -36,12 +55,18 @@ public abstract class BaseEntropyCountingRandom extends BaseRandom implements
     entropyBits = new AtomicLong(0);
   }
 
+  /**
+   * <p>Constructor for BaseEntropyCountingRandom.</p>
+   *
+   * @param seed an array of byte.
+   */
   @EnsuresNonNull("entropyBits")
   public BaseEntropyCountingRandom(final byte[] seed) {
     super(seed);
     entropyBits = new AtomicLong(0);
   }
 
+  /** {@inheritDoc} */
   @Override
   protected boolean withProbabilityInternal(final double probability) {
     final boolean result = super.withProbabilityInternal(probability);
@@ -51,6 +76,7 @@ public abstract class BaseEntropyCountingRandom extends BaseRandom implements
     return result;
   }
 
+  /** {@inheritDoc} */
   @Override
   public ToStringHelper addSubclassFields(final ToStringHelper original) {
     return addSubSubclassFields(original
@@ -58,8 +84,19 @@ public abstract class BaseEntropyCountingRandom extends BaseRandom implements
         .add("seederThread", seederThread));
   }
 
+  /**
+   * <p>addSubSubclassFields.</p>
+   *
+   * @param original a {@link com.google.common.base.MoreObjects.ToStringHelper} object.
+   * @return a {@link com.google.common.base.MoreObjects.ToStringHelper} object.
+   */
   protected abstract ToStringHelper addSubSubclassFields(ToStringHelper original);
 
+  /**
+   * <p>Setter for the field <code>seederThread</code>.</p>
+   *
+   * @param thread a {@link io.github.pr0methean.betterrandom.seed.RandomSeederThread} object.
+   */
   @SuppressWarnings("ObjectEquality")
   public void setSeederThread(@org.jetbrains.annotations.Nullable final RandomSeederThread thread) {
     if (thread != null) {
@@ -79,6 +116,7 @@ public abstract class BaseEntropyCountingRandom extends BaseRandom implements
     }
   }
 
+  /** {@inheritDoc} */
   @Override
   public void setSeed(final byte[] seed) {
     super.setSeed(seed);
@@ -86,6 +124,7 @@ public abstract class BaseEntropyCountingRandom extends BaseRandom implements
         oldCount -> Math.max(oldCount, Math.min(seed.length, getNewSeedLength()) * 8));
   }
 
+  /** {@inheritDoc} */
   @Override
   protected void setSeedInternal(@UnknownInitialization(Random.class)BaseEntropyCountingRandom this,
       final byte[] seed) {
@@ -98,11 +137,17 @@ public abstract class BaseEntropyCountingRandom extends BaseRandom implements
     assert entropyBits != null : "@AssumeAssertion(nullness)";
   }
 
+  /** {@inheritDoc} */
   @Override
   public long entropyBits() {
     return entropyBits.get();
   }
 
+  /**
+   * <p>recordEntropySpent.</p>
+   *
+   * @param bits a long.
+   */
   protected final void recordEntropySpent(final long bits) {
     if (entropyBits.updateAndGet(oldCount -> Math.max(oldCount - bits, 0)) == 0
         && seederThread != null) {
@@ -110,6 +155,7 @@ public abstract class BaseEntropyCountingRandom extends BaseRandom implements
     }
   }
 
+  /** {@inheritDoc} */
   @Override
   protected void readObjectNoData() throws InvalidObjectException {
     LOG.warn("readObjectNoData() invoked; assuming initial entropy is equal to seed length!");
@@ -117,6 +163,7 @@ public abstract class BaseEntropyCountingRandom extends BaseRandom implements
     entropyBits = new AtomicLong(seed.length * 8);
   }
 
+  /** {@inheritDoc} */
   @Override
   public abstract int getNewSeedLength(@UnknownInitialization BaseEntropyCountingRandom this);
 }
