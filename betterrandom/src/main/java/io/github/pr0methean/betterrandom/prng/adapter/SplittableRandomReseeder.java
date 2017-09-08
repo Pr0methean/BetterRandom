@@ -54,7 +54,11 @@ public final class SplittableRandomReseeder {
       putVolatileLong.setAccessible(true);
       PUT_LONG_VOLATILE = MethodHandles.lookup().unreflect(putVolatileLong).bindTo(unsafe);
       CAN_RESEED_REFLECTIVELY = true;
-    } catch (final ReflectiveOperationException e) {
+    } catch (final Exception e) {
+      if (e instanceof RuntimeException
+          && !("java.lang.reflect.InaccessibleObjectException".equals(e.getClass().getName())) {
+        throw (RuntimeException) e;    
+      }
       LOG.error("Can't reflectively reseed SplittableRandom instances: %s", e);
       CAN_RESEED_REFLECTIVELY = false;
     }
