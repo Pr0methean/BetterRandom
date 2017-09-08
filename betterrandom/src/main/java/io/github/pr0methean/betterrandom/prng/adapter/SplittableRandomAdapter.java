@@ -11,7 +11,10 @@ import org.checkerframework.checker.nullness.qual.EnsuresNonNull;
 import org.checkerframework.checker.nullness.qual.RequiresNonNull;
 
 /**
- * Thread-safe version of {@link SingleThreadSplittableRandomAdapter}.
+ * Thread-safe version of {@link io.github.pr0methean.betterrandom.prng.adapter.SingleThreadSplittableRandomAdapter}.
+ *
+ * @author ubuntu
+ * @version $Id: $Id
  */
 public class SplittableRandomAdapter extends DirectSplittableRandomAdapter {
 
@@ -19,6 +22,12 @@ public class SplittableRandomAdapter extends DirectSplittableRandomAdapter {
   @SuppressWarnings("ThreadLocalNotStaticFinal")
   private transient ThreadLocal<SplittableRandom> threadLocal;
 
+  /**
+   * <p>Constructor for SplittableRandomAdapter.</p>
+   *
+   * @param seedGenerator a {@link io.github.pr0methean.betterrandom.seed.SeedGenerator} object.
+   * @throws io.github.pr0methean.betterrandom.seed.SeedException if any.
+   */
   public SplittableRandomAdapter(final SeedGenerator seedGenerator) throws SeedException {
     super(seedGenerator.generateSeed(SEED_LENGTH_BYTES));
     initSubclassTransientFields();
@@ -45,11 +54,13 @@ public class SplittableRandomAdapter extends DirectSplittableRandomAdapter {
     assert threadLocal != null : "@AssumeAssertion(nullness)";
   }
 
+  /** {@inheritDoc} */
   @Override
   protected SplittableRandom getSplittableRandom() {
     return threadLocal.get();
   }
 
+  /** {@inheritDoc} */
   @Override
   protected ToStringHelper addSubSubclassFields(final ToStringHelper original) {
     return original.add("threadLocal", threadLocal);

@@ -27,6 +27,7 @@ import java.util.Random;
  * fixed number of bits is required.</p>
  *
  * @author Daniel Dyer
+ * @version $Id: $Id
  */
 public final class BitString implements Cloneable, Serializable {
 
@@ -99,6 +100,8 @@ public final class BitString implements Cloneable, Serializable {
   }
 
   /**
+   * <p>Getter for the field <code>length</code>.</p>
+   *
    * @return The length of this bit string.
    */
   public int getLength() {
@@ -110,7 +113,7 @@ public final class BitString implements Cloneable, Serializable {
    *
    * @param index The index of the bit to look-up (0 is the least-significant bit).
    * @return A boolean indicating whether the bit is set or not.
-   * @throws IndexOutOfBoundsException If the specified index is not a bit position in this bit
+   * @throws java.lang.IndexOutOfBoundsException If the specified index is not a bit position in this bit
    *     string.
    */
   public boolean getBit(final int index) {
@@ -125,7 +128,7 @@ public final class BitString implements Cloneable, Serializable {
    *
    * @param index The index of the bit to set (0 is the least-significant bit).
    * @param set A boolean indicating whether the bit should be set or not.
-   * @throws IndexOutOfBoundsException If the specified index is not a bit position in this bit
+   * @throws java.lang.IndexOutOfBoundsException If the specified index is not a bit position in this bit
    *     string.
    */
   public void setBit(final int index, final boolean set) {
@@ -144,7 +147,7 @@ public final class BitString implements Cloneable, Serializable {
    * Inverts the value of the bit at the specified index.
    *
    * @param index The bit to flip (0 is the least-significant bit).
-   * @throws IndexOutOfBoundsException If the specified index is not a bit position in this bit
+   * @throws java.lang.IndexOutOfBoundsException If the specified index is not a bit position in this bit
    *     string.
    */
   public void flipBit(final int index) {
@@ -167,6 +170,8 @@ public final class BitString implements Cloneable, Serializable {
   }
 
   /**
+   * <p>countSetBits.</p>
+   *
    * @return The number of bits that are 1s rather than 0s.
    */
   public int countSetBits() {
@@ -181,6 +186,8 @@ public final class BitString implements Cloneable, Serializable {
   }
 
   /**
+   * <p>countUnsetBits.</p>
+   *
    * @return The number of bits that are 0s rather than 1s.
    */
   public int countUnsetBits() {
@@ -191,7 +198,7 @@ public final class BitString implements Cloneable, Serializable {
    * Interprets this bit string as being a binary numeric value and returns the integer that it
    * represents.
    *
-   * @return A {@link BigInteger} that contains the numeric value represented by this bit string.
+   * @return A {@link java.math.BigInteger} that contains the numeric value represented by this bit string.
    */
   public BigInteger toNumber() {
     return (new BigInteger(toString(), 2));
@@ -250,10 +257,10 @@ public final class BitString implements Cloneable, Serializable {
   }
 
   /**
+   * {@inheritDoc}
+   *
    * Creates a textual representation of this bit string in big-endian order (index 0 is the
    * right-most bit).
-   *
-   * @return This bit string rendered as a String of 1s and 0s.
    */
   @Override
   public String toString() {
@@ -264,9 +271,7 @@ public final class BitString implements Cloneable, Serializable {
     return buffer.toString();
   }
 
-  /**
-   * @return An identical copy of this bit string.
-   */
+  /** {@inheritDoc} */
   @Override
   public BitString clone() {
     try {
@@ -279,10 +284,7 @@ public final class BitString implements Cloneable, Serializable {
     }
   }
 
-  /**
-   * @return True if the argument is a BitString instance and both bit strings are the same length
-   *     with identical bits set/unset.
-   */
+  /** {@inheritDoc} */
   @SuppressWarnings("NonFinalFieldReferenceInEquals")
   @Override
   public boolean equals(final Object o) {
@@ -299,6 +301,8 @@ public final class BitString implements Cloneable, Serializable {
   }
 
   /**
+   * {@inheritDoc}
+   *
    * Over-ridden to be consistent with {@link #equals(Object)}.
    */
   @SuppressWarnings("NonFinalFieldReferencedInHashCode")

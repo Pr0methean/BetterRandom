@@ -16,16 +16,19 @@
 package io.github.pr0methean.betterrandom.seed;
 
 /**
- * Exception thrown by {@link SeedGenerator} implementations when they are unable to generate a new
+ * Exception thrown by {@link io.github.pr0methean.betterrandom.seed.SeedGenerator} implementations when they are unable to generate a new
  * seed for an RNG.
  *
  * @author Daniel Dyer
+ * @version $Id: $Id
  */
 public class SeedException extends Exception {
 
   private static final long serialVersionUID = -6151013676983010168L;
 
   /**
+   * <p>Constructor for SeedException.</p>
+   *
    * @param message Details of the problem.
    */
   public SeedException(final String message) {
@@ -33,6 +36,8 @@ public class SeedException extends Exception {
   }
 
   /**
+   * <p>Constructor for SeedException.</p>
+   *
    * @param message Details of the problem.
    * @param cause The root cause of the problem.
    */

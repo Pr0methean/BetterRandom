@@ -15,6 +15,9 @@ import org.objenesis.ObjenesisStd;
  * {@link sun.misc.Unsafe#putLongVolatile(Object, long, long)}. Since SplittableRandom doesn't
  * support reseeding through its public API, this is the only way a {@link
  * ReseedingSplittableRandomAdapter} can avoid a ridiculous load on the garbage collector.
+ *
+ * @author ubuntu
+ * @version $Id: $Id
  */
 @SuppressWarnings("argument.type.incompatible") // Field.get(null) is OK when the field is static!
 public final class SplittableRandomReseeder {
@@ -60,6 +63,13 @@ public final class SplittableRandomReseeder {
   private SplittableRandomReseeder() {
   }
 
+  /**
+   * <p>reseed.</p>
+   *
+   * @param original a {@link java.util.SplittableRandom} object.
+   * @param seed a long.
+   * @return a {@link java.util.SplittableRandom} object.
+   */
   public static SplittableRandom reseed(final @Nullable SplittableRandom original,
       final long seed) {
     if (CAN_RESEED_REFLECTIVELY && PUT_LONG_VOLATILE != null && original != null) {

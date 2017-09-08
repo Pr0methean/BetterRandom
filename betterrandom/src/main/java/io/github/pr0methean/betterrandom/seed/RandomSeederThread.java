@@ -25,6 +25,12 @@ import org.checkerframework.checker.initialization.qual.UnderInitialization;
 import org.checkerframework.checker.nullness.qual.EnsuresNonNull;
 import org.checkerframework.checker.nullness.qual.RequiresNonNull;
 
+/**
+ * <p>RandomSeederThread class.</p>
+ *
+ * @author ubuntu
+ * @version $Id: $Id
+ */
 @SuppressWarnings("ClassExplicitlyExtendsThread")
 public final class RandomSeederThread extends LooperThread {
 
@@ -58,8 +64,11 @@ public final class RandomSeederThread extends LooperThread {
   }
 
   /**
-   * Obtain the instance for the given {@link SeedGenerator}, creating and starting it if it doesn't
+   * Obtain the instance for the given {@link io.github.pr0methean.betterrandom.seed.SeedGenerator}, creating and starting it if it doesn't
    * exist.
+   *
+   * @param seedGenerator a {@link io.github.pr0methean.betterrandom.seed.SeedGenerator} object.
+   * @return a {@link io.github.pr0methean.betterrandom.seed.RandomSeederThread} object.
    */
   public static RandomSeederThread getInstance(final SeedGenerator seedGenerator) {
     Objects.requireNonNull(seedGenerator,
@@ -89,6 +98,7 @@ public final class RandomSeederThread extends LooperThread {
     seedArrays = new WeakHashMap<>();
   }
 
+  /** {@inheritDoc} */
   @Override
   protected Object readResolve() {
     return getInstance(seedGenerator);
@@ -122,10 +132,11 @@ public final class RandomSeederThread extends LooperThread {
   }
 
   /**
-   * Asynchronously triggers reseeding of the given {@link EntropyCountingRandom} if it is
+   * Asynchronously triggers reseeding of the given {@link io.github.pr0methean.betterrandom.EntropyCountingRandom} if it is
    * associated with a live RandomSeederThread.
    *
    * @return Whether or not the reseed was successfully scheduled.
+   * @param random a {@link java.util.Random} object.
    */
   public boolean asyncReseed(final Random random) {
     if (!(random instanceof EntropyCountingRandom)) {
@@ -151,6 +162,7 @@ public final class RandomSeederThread extends LooperThread {
     }
   }
 
+  /** {@inheritDoc} */
   @SuppressWarnings("InfiniteLoopStatement")
   @Override
   public void iterate() throws InterruptedException {
@@ -197,6 +209,11 @@ public final class RandomSeederThread extends LooperThread {
     }
   }
 
+  /**
+   * <p>isEmpty.</p>
+   *
+   * @return a boolean.
+   */
   public boolean isEmpty() {
     synchronized (prngs) {
       return prngs.isEmpty();
@@ -204,10 +221,12 @@ public final class RandomSeederThread extends LooperThread {
   }
 
   /**
-   * Add one or more {@link Random} instances. The caller must not hold locks on any of these
-   * instances that are also acquired during {@link Random#setSeed(long)} or {@link
+   * Add one or more {@link java.util.Random} instances. The caller must not hold locks on any of these
+   * instances that are also acquired during {@link java.util.Random#setSeed(long)} or {@link
    * ByteArrayReseedableRandom#setSeed(byte[])}, as one of those methods may be called immediately
    * and this would cause a circular deadlock.
+   *
+   * @param randoms a {@link java.util.Random} object.
    */
   public void add(final Random... randoms) {
     if (isInterrupted()) {
@@ -223,10 +242,18 @@ public final class RandomSeederThread extends LooperThread {
     }
   }
 
+  /**
+   * <p>remove.</p>
+   *
+   * @param randoms a {@link java.util.Random} object.
+   */
   public void remove(final Random... randoms) {
     prngs.removeAll(Arrays.asList(randoms));
   }
 
+  /**
+   * <p>stopIfEmpty.</p>
+   */
   public void stopIfEmpty() {
     if (isEmpty()) {
       interrupt();

@@ -25,18 +25,20 @@ import java.io.IOException;
  * SeedException} is thrown.
  *
  * @author Daniel Dyer
+ * @version $Id: $Id
  */
 public enum DevRandomSeedGenerator implements SeedGenerator {
 
   DEV_RANDOM_SEED_GENERATOR;
 
+  /** Constant <code>DEV_RANDOM</code> */
   private static final File DEV_RANDOM = new File("/dev/random");
 
   /**
+   * <p>generateSeed.</p>
    *
-   *
-   * @return The requested number of random bytes, read directly from {@literal /dev/random}.
-   * @throws SeedException If {@literal /dev/random} does not exist or is not accessible
+   * @throws io.github.pr0methean.betterrandom.seed.SeedException If {@literal /dev/random} does not exist or is not accessible
+   * @param randomSeed an array of byte.
    */
   @SuppressWarnings({"IOResourceOpenedButNotSafelyClosed", "resource"})
   public void generateSeed(final byte[] randomSeed) throws SeedException {
@@ -69,6 +71,7 @@ public enum DevRandomSeedGenerator implements SeedGenerator {
     }
   }
 
+  /** {@inheritDoc} */
   @Override
   public String toString() {
     return "/dev/random";
