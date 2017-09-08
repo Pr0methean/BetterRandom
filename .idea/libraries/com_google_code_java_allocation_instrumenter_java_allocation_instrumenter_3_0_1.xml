@@ -1,0 +1,26 @@
+<component name="libraryTable">
+  <library name="com.google.code.java-allocation-instrumenter:java-allocation-instrumenter:3.0.1" type="repository">
+    <properties maven-id="com.google.code.java-allocation-instrumenter:java-allocation-instrumenter:3.0.1" />
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/lib/java-allocation-instrumenter-3.0.1.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/asm-5.0.3.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/asm-analysis-5.0.3.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/asm-commons-5.0.3.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/asm-tree-5.0.3.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/asm-util-5.0.3.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/asm-xml-5.0.3.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/guava-18.0.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/asm-5.0.3.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/asm-analysis-5.0.3.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/asm-commons-5.0.3.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/asm-tree-5.0.3.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/asm-util-5.0.3.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/asm-xml-5.0.3.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/guava-18.0.jar!/" />
+    </CLASSES>
+    <JAVADOC>
+      <root url="jar://$PROJECT_DIR$/lib/java-allocation-instrumenter-3.0.1-javadoc.jar!/" />
+    </JAVADOC>
+    <SOURCES />
+  </library>
+</component>
