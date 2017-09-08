@@ -1,5 +1,6 @@
 package io.github.pr0methean.betterrandom.benchmark;
 
+import com.google.monitoring.runtime.instrumentation.AllocationRecorder;
 import io.github.pr0methean.betterrandom.seed.SeedException;
 import java.util.Random;
 import java.util.logging.Logger;
