@@ -56,7 +56,8 @@ public final class SplittableRandomReseeder {
       CAN_RESEED_REFLECTIVELY = true;
     } catch (final Exception e) {
       if (e instanceof RuntimeException
-          && !("java.lang.reflect.InaccessibleObjectException".equals(e.getClass().getName())) {
+          && !("java.lang.reflect.InaccessibleObjectException".equals(e.getClass().getName()))) {
+        // InaccessibleObjectException is new in Java 9
         throw (RuntimeException) e;    
       }
       LOG.error("Can't reflectively reseed SplittableRandom instances: %s", e);
