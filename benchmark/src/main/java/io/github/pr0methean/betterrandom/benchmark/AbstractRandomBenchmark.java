@@ -80,7 +80,7 @@ public abstract class AbstractRandomBenchmark {
   public void setUp() {
     AllocationRecorder.addSampler((arrayLength, desc, newObj, size) -> {
       if (!desc.contains("StackTrace")) {
-        System.out.format("Created %s (a %s of %d bytes)\n", newObj, desc, size);
+        LOG.info("Created %s (a %s of %d bytes)\n", newObj, desc, size);
         stackTraces.add(new StackTrace(Thread.currentThread().getStackTrace()));
       }
     });
