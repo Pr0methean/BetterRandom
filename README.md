@@ -1,5 +1,6 @@
 [![Build Status](https://travis-ci.org/Pr0methean/BetterRandom.svg?branch=master)](https://travis-ci.org/Pr0methean/BetterRandom)
 [![Coverage Status](https://coveralls.io/repos/github/Pr0methean/BetterRandom/badge.svg?branch=master)](https://coveralls.io/github/Pr0methean/BetterRandom?branch=master)
+[![Codacy Badge](https://api.codacy.com/project/badge/Grade/98a727e6ce3340598e9ae7757f3997fc)](https://www.codacy.com/app/Pr0methean/BetterRandom?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=Pr0methean/BetterRandom&amp;utm_campaign=Badge_Grade)
 
 BetterRandom is a library designed to help improve the quality and performance of random-number
 generation on Java. It includes:
