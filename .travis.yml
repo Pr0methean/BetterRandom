@@ -7,8 +7,7 @@ jdk:
   - oraclejdk8
   - openjdk8
 env:
-  - MODE=coverage
-  - MODE=test-proguard
+  - MODE=tests-combined
   - MODE=benchmark
 matrix:
   allow_failures:
