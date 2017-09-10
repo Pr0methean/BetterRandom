@@ -19,7 +19,7 @@
   </properties>
   <groupId>io.github.pr0methean.betterrandom</groupId>
   <artifactId>BetterRandom</artifactId>
-  <version>0.9.2.13</version>
+  <version>0.9.2.11-SNAPSHOT</version>
   <name>BetterRandom</name>
   <description>BetterRandom is a library designed to help improve the quality and performance of
     random-number generation on Java.
@@ -38,7 +38,7 @@
     <url>https://github.com/Pr0methean/BetterRandom</url>
     <connection>scm:git:git://github.com/Pr0methean/BetterRandom.git</connection>
     <developerConnection>scm:git:git@github.com:Pr0methean/BetterRandom.git</developerConnection>
-    <tag>BetterRandom-0.9.2.13</tag>
+    <tag>BetterRandom-0.9.2.7-SNAPSHOT</tag>
   </scm>
 
   <distributionManagement>
@@ -133,15 +133,6 @@
           </configuration>
           <executions>
             <execution>
-              <id>test</id>
-              <phase>test</phase>
-              <goals>
-                <goal>test-jar</goal>
-              </goals>
-            </execution>
-            <execution>
-              <id>verify</id>
-              <phase>verify</phase>
               <goals>
                 <goal>test-jar</goal>
               </goals>
@@ -217,14 +208,13 @@
               <goals>
                 <goal>prepare-agent</goal>
               </goals>
-              <phase>pre-test</phase>
               <configuration>
                 <dumpOnExit>true</dumpOnExit>
               </configuration>
             </execution>
             <execution>
               <id>default-report</id>
-              <phase>post-test</phase>
+              <phase>prepare-package</phase>
               <goals>
                 <goal>report</goal>
               </goals>
@@ -264,7 +254,6 @@
           <artifactId>proguard-maven-plugin</artifactId>
           <executions>
             <execution>
-              <id>package</id>
               <phase>package</phase>
               <goals>
                 <goal>proguard</goal>
