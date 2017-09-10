@@ -333,8 +333,9 @@ public class AesCounterRandom extends BaseEntropyCountingRandom {
     // rest goes to counter
     counter = new byte[COUNTER_SIZE_BYTES];
     System.arraycopy(seed, keyLength, counter, 0, seedLength - keyLength);
+    assert cipher != null : "@AssumeAssertion(nullness)";
     try {
-      castNonNull(cipher).init(Cipher.ENCRYPT_MODE, new SecretKeySpec(key, ALGORITHM));
+      cipher.init(Cipher.ENCRYPT_MODE, new SecretKeySpec(key, ALGORITHM));
     } catch (final InvalidKeyException e) {
       throw new RuntimeException("Invalid key: " + Arrays.toString(key), e);
     }
