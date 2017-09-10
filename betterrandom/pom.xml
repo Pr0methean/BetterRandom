@@ -217,14 +217,14 @@
               <goals>
                 <goal>prepare-agent</goal>
               </goals>
-              <phase>process-test-classes</phase>
+              <phase>pre-test</phase>
               <configuration>
                 <dumpOnExit>true</dumpOnExit>
               </configuration>
             </execution>
             <execution>
               <id>default-report</id>
-              <phase>prepare-package</phase>
+              <phase>post-test</phase>
               <goals>
                 <goal>report</goal>
               </goals>

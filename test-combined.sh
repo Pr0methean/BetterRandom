@@ -1,4 +1,4 @@
 #!/bin/sh
 cd betterrandom &&\
-mvn clean test package proguard:proguard verify &&\
+mvn clean test package verify &&\
 cd ..
