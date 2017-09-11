@@ -58,6 +58,14 @@
 
   <dependencies>
     <dependency>
+      <!-- Overrides transitive dep on 5.2.1 -->
+			<groupId>net.sf.proguard</groupId>
+			<artifactId>proguard-base</artifactId>
+			<version>5.3.3</version>
+			<scope>runtime</scope>
+			<optional>true</optional>
+		</dependency>
+    <dependency>
       <groupId>org.testng</groupId>
       <artifactId>testng</artifactId>
       <version>6.11</version>
