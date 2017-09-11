@@ -283,7 +283,7 @@
               <option>-renamesourcefileattribute SourceFile</option>
               <option>
                 -keepattributes Exceptions,InnerClasses,Signature,Deprecated,
-                SourceFile,LineNumberTable,*Annotation*,EnclosingMethod
+                SourceFile,LineNumberTable,*Annotation*,EnclosingMethod,StackMap,StackMapTable
               </option>
               <option>
                 -keep public class * { public protected *; }
@@ -320,7 +320,7 @@
               <option>-dontwarn java.lang.invoke**</option>
             
               <!-- Work around an optimization bug -->
-              <option>-dontoptimize class io.github.pr0methean.betterrandom.prng.JavaRandom</option>
+              <!-- <option>-dontoptimize class io.github.pr0methean.betterrandom.prng.JavaRandom</option> -->
             </options>
             <libs>
               <lib>${java.home}/lib/rt.jar</lib>
