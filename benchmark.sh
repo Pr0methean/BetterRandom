@@ -4,7 +4,7 @@ mvn -DskipTests clean package proguard:proguard install &&\
 cd ../benchmark &&\
 mvn -DskipTests clean package &&\
 cd target &&\
-if [ $TRAVIS = "true" ]; then
+if [ "$TRAVIS" = "true" ]; then
     java -jar benchmarks.jar -f 1 -t 1 -foe true -v EXTRA &&\
     java -jar benchmarks.jar -f 1 -t 2 -foe true -v EXTRA
 else
