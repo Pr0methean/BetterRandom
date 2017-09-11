@@ -56,7 +56,7 @@ public class AesCounterRandom128Test extends BaseEntropyCountingRandomTest {
     assert rngs[0].nextLong() != rngs[1].nextLong()
         : "RNGs converged after 4 setSeed calls";
   }
-  
+
   @Override
   @Test(timeOut = 30000)
   public void testReseeding() throws Exception {

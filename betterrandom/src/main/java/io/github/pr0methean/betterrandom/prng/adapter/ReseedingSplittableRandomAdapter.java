@@ -17,9 +17,10 @@ import org.checkerframework.checker.nullness.qual.Nullable;
 import org.checkerframework.checker.nullness.qual.RequiresNonNull;
 
 /**
- * A version of {@link io.github.pr0methean.betterrandom.prng.adapter.SplittableRandomAdapter} that uses a {@link io.github.pr0methean.betterrandom.seed.RandomSeederThread} to replace
- * each seederThread's {@link java.util.SplittableRandom} with a reseeded one as frequently as possible, but
- * not more frequently than it is being used.
+ * A version of {@link io.github.pr0methean.betterrandom.prng.adapter.SplittableRandomAdapter} that
+ * uses a {@link io.github.pr0methean.betterrandom.seed.RandomSeederThread} to replace each
+ * seederThread's {@link java.util.SplittableRandom} with a reseeded one as frequently as possible,
+ * but not more frequently than it is being used.
  *
  * @author ubuntu
  * @version $Id: $Id
@@ -49,7 +50,8 @@ public class ReseedingSplittableRandomAdapter extends BaseSplittableRandomAdapte
   /**
    * <p>getDefaultInstance.</p>
    *
-   * @return a {@link io.github.pr0methean.betterrandom.prng.adapter.ReseedingSplittableRandomAdapter} object.
+   * @return a {@link io.github.pr0methean.betterrandom.prng.adapter.ReseedingSplittableRandomAdapter}
+   *     object.
    * @throws io.github.pr0methean.betterrandom.seed.SeedException if any.
    */
   @SuppressWarnings("NonThreadSafeLazyInitialization")
@@ -61,8 +63,10 @@ public class ReseedingSplittableRandomAdapter extends BaseSplittableRandomAdapte
   /**
    * <p>getInstance.</p>
    *
-   * @param seedGenerator a {@link io.github.pr0methean.betterrandom.seed.SeedGenerator} object.
-   * @return a {@link io.github.pr0methean.betterrandom.prng.adapter.ReseedingSplittableRandomAdapter} object.
+   * @param seedGenerator a {@link io.github.pr0methean.betterrandom.seed.SeedGenerator}
+   *     object.
+   * @return a {@link io.github.pr0methean.betterrandom.prng.adapter.ReseedingSplittableRandomAdapter}
+   *     object.
    * @throws io.github.pr0methean.betterrandom.seed.SeedException if any.
    */
   @SuppressWarnings("SynchronizationOnStaticField")

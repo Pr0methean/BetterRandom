@@ -113,8 +113,8 @@ public final class BitString implements Cloneable, Serializable {
    *
    * @param index The index of the bit to look-up (0 is the least-significant bit).
    * @return A boolean indicating whether the bit is set or not.
-   * @throws java.lang.IndexOutOfBoundsException If the specified index is not a bit position in this bit
-   *     string.
+   * @throws java.lang.IndexOutOfBoundsException If the specified index is not a bit position in
+   *     this bit string.
    */
   public boolean getBit(final int index) {
     assertValidIndex(index);
@@ -128,8 +128,8 @@ public final class BitString implements Cloneable, Serializable {
    *
    * @param index The index of the bit to set (0 is the least-significant bit).
    * @param set A boolean indicating whether the bit should be set or not.
-   * @throws java.lang.IndexOutOfBoundsException If the specified index is not a bit position in this bit
-   *     string.
+   * @throws java.lang.IndexOutOfBoundsException If the specified index is not a bit position in
+   *     this bit string.
    */
   public void setBit(final int index, final boolean set) {
     assertValidIndex(index);
@@ -147,8 +147,8 @@ public final class BitString implements Cloneable, Serializable {
    * Inverts the value of the bit at the specified index.
    *
    * @param index The bit to flip (0 is the least-significant bit).
-   * @throws java.lang.IndexOutOfBoundsException If the specified index is not a bit position in this bit
-   *     string.
+   * @throws java.lang.IndexOutOfBoundsException If the specified index is not a bit position in
+   *     this bit string.
    */
   public void flipBit(final int index) {
     assertValidIndex(index);
@@ -198,7 +198,8 @@ public final class BitString implements Cloneable, Serializable {
    * Interprets this bit string as being a binary numeric value and returns the integer that it
    * represents.
    *
-   * @return A {@link java.math.BigInteger} that contains the numeric value represented by this bit string.
+   * @return A {@link java.math.BigInteger} that contains the numeric value represented by this bit
+   *     string.
    */
   public BigInteger toNumber() {
     return (new BigInteger(toString(), 2));
@@ -258,7 +259,7 @@ public final class BitString implements Cloneable, Serializable {
 
   /**
    * {@inheritDoc}
-   *
+   * <p>
    * Creates a textual representation of this bit string in big-endian order (index 0 is the
    * right-most bit).
    */
@@ -302,7 +303,7 @@ public final class BitString implements Cloneable, Serializable {
 
   /**
    * {@inheritDoc}
-   *
+   * <p>
    * Over-ridden to be consistent with {@link #equals(Object)}.
    */
   @SuppressWarnings("NonFinalFieldReferencedInHashCode")

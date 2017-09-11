@@ -64,10 +64,11 @@ public final class RandomSeederThread extends LooperThread {
   }
 
   /**
-   * Obtain the instance for the given {@link io.github.pr0methean.betterrandom.seed.SeedGenerator}, creating and starting it if it doesn't
-   * exist.
+   * Obtain the instance for the given {@link io.github.pr0methean.betterrandom.seed.SeedGenerator},
+   * creating and starting it if it doesn't exist.
    *
-   * @param seedGenerator a {@link io.github.pr0methean.betterrandom.seed.SeedGenerator} object.
+   * @param seedGenerator a {@link io.github.pr0methean.betterrandom.seed.SeedGenerator}
+   *     object.
    * @return a {@link io.github.pr0methean.betterrandom.seed.RandomSeederThread} object.
    */
   public static RandomSeederThread getInstance(final SeedGenerator seedGenerator) {
@@ -132,11 +133,11 @@ public final class RandomSeederThread extends LooperThread {
   }
 
   /**
-   * Asynchronously triggers reseeding of the given {@link io.github.pr0methean.betterrandom.EntropyCountingRandom} if it is
-   * associated with a live RandomSeederThread.
+   * Asynchronously triggers reseeding of the given {@link io.github.pr0methean.betterrandom.EntropyCountingRandom}
+   * if it is associated with a live RandomSeederThread.
    *
-   * @return Whether or not the reseed was successfully scheduled.
    * @param random a {@link java.util.Random} object.
+   * @return Whether or not the reseed was successfully scheduled.
    */
   public boolean asyncReseed(final Random random) {
     if (!(random instanceof EntropyCountingRandom)) {
@@ -221,8 +222,8 @@ public final class RandomSeederThread extends LooperThread {
   }
 
   /**
-   * Add one or more {@link java.util.Random} instances. The caller must not hold locks on any of these
-   * instances that are also acquired during {@link java.util.Random#setSeed(long)} or {@link
+   * Add one or more {@link java.util.Random} instances. The caller must not hold locks on any of
+   * these instances that are also acquired during {@link java.util.Random#setSeed(long)} or {@link
    * ByteArrayReseedableRandom#setSeed(byte[])}, as one of those methods may be called immediately
    * and this would cause a circular deadlock.
    *
