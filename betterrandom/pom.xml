@@ -284,7 +284,7 @@
               </option>
               <option>
                 -keepclassmembers class * implements java.io.Serializable { static final long serialVersionUID; private static final java.io.ObjectStreamField[] serialPersistentFields; private void writeObject(java.io.ObjectOutputStream); private void readObject(java.io.ObjectInputStream);
-                private void readObjectNoData(); java.lang.Object writeReplace(); java.lang.Object readResolve(); !static !transient &lt;fields&gt; }
+                private void readObjectNoData(); java.lang.Object writeReplace(); java.lang.Object readResolve(); !static !transient &lt;fields&gt;; }
               </option>
               <option>-assumenosideeffects public class org.checkerframework.checker.nullness.NullnessUtil
               </option>
