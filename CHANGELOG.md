@@ -2,6 +2,8 @@
 * Refactorings to increase object reuse, and therefore throughput, in all PRNGs, especially
   `ReseedingSplittableRandomAdapter` (which improved benchmark throughput by a factor of over 300).
 * Benchmarks are now available on GitHub.
+* `JavaRandom` is now `RandomWrapper`, and can take any Random instance as the one to wrap.
+* `RandomWrapper` and `SplittableRandomAdapter` now count entropy.
 
 # 0.9.1.1
 * First release on Maven Central.
