@@ -1,8 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--suppress XmlHighlighting -->
-<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xmlns="http://maven.apache.org/POM/4.0.0"
-  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <packaging>jar</packaging>
   <!--  <parent>
@@ -13,7 +11,7 @@
   </parent> -->
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <prefix/>
+    <prefix />
     <maven.compiler.source>1.8</maven.compiler.source>
     <maven.compiler.target>1.8</maven.compiler.target>
     <annotatedJdk>${org.checkerframework:jdk8:jar}</annotatedJdk>
@@ -21,10 +19,9 @@
   </properties>
   <groupId>io.github.pr0methean.betterrandom</groupId>
   <artifactId>BetterRandom</artifactId>
-  <version>0.9.2.16-SNAPSHOT</version>
+  <version>0.9.2.18-SNAPSHOT</version>
   <name>BetterRandom</name>
-  <description>BetterRandom is a library designed to help improve the quality and performance of
-    random-number generation on Java.
+  <description>BetterRandom is a library designed to help improve the quality and performance of random-number generation on Java.
   </description>
   <url>https://github.com/Pr0methean/BetterRandom</url>
 
@@ -58,12 +55,18 @@
 
   <dependencies>
     <dependency>
+      <!-- https://mvnrepository.com/artifact/org.apache.maven.plugins/maven-deploy-plugin -->
+      <groupId>org.apache.maven.plugins</groupId>
+      <artifactId>maven-deploy-plugin</artifactId>
+      <version>2.8.2</version>
+    </dependency>
+    <dependency>
       <!-- Overrides transitive dep on 5.2.1 -->
-			<groupId>net.sf.proguard</groupId>
-			<artifactId>proguard-base</artifactId>
-			<version>5.3.3</version>
-			<scope>runtime</scope>
-		</dependency>
+      <groupId>net.sf.proguard</groupId>
+      <artifactId>proguard-base</artifactId>
+      <version>5.3.3</version>
+      <scope>runtime</scope>
+    </dependency>
     <dependency>
       <groupId>org.testng</groupId>
       <artifactId>testng</artifactId>
@@ -277,48 +280,39 @@
               <option>-optimizationpasses 5</option>
               <option>-dontskipnonpubliclibraryclasses</option>
               <option>-verbose</option>
-              
+
               <!-- Library standard settings -->
               <option>-keepparameternames</option>
               <option>-renamesourcefileattribute SourceFile</option>
               <option>
-                -keepattributes Exceptions,InnerClasses,Signature,Deprecated,
-                SourceFile,LineNumberTable,*Annotation*,EnclosingMethod,StackMap,StackMapTable
+                -keepattributes Exceptions,InnerClasses,Signature,Deprecated, SourceFile,LineNumberTable,*Annotation*,EnclosingMethod,StackMap,StackMapTable
               </option>
               <option>
                 -keep public class * { public protected *; }
               </option>
               <option>
-                -keepclassmembernames class * { java.lang.Class class$(java.lang.String);
-                java.lang.Class class$(java.lang.String, boolean); }
+                -keepclassmembernames class * { java.lang.Class class$(java.lang.String); java.lang.Class class$(java.lang.String, boolean); }
               </option>
               <option>
-                -keepclasseswithmembernames,includedescriptorclasses class * { native
-                &lt;methods&gt;; }
+                -keepclasseswithmembernames,includedescriptorclasses class * { native &lt;methods&gt;; }
               </option>
               <option>
-                -keepclassmembers,allowoptimization enum * { public static **[] values(); public
-                static ** valueOf(java.lang.String); }
+                -keepclassmembers,allowoptimization enum * { public static **[] values(); public static ** valueOf(java.lang.String); }
               </option>
-              
+
               <!-- Serialization settings -->
               <option>
-                -keepclassmembers class * implements java.io.Serializable { static final long
-                serialVersionUID; private static final java.io.ObjectStreamField[]
-                serialPersistentFields; private void writeObject(java.io.ObjectOutputStream);
-                private void readObject(java.io.ObjectInputStream);
-                private void readObjectNoData(); java.lang.Object writeReplace(); java.lang.Object
-                readResolve(); !static !transient &lt;fields&gt;; }
+                -keepclassmembers class * implements java.io.Serializable { static final long serialVersionUID; private static final java.io.ObjectStreamField[] serialPersistentFields; private void writeObject(java.io.ObjectOutputStream); private void readObject(java.io.ObjectInputStream);
+                private void readObjectNoData(); java.lang.Object writeReplace(); java.lang.Object readResolve(); !static !transient &lt;fields&gt;; }
               </option>
-              
+
               <!-- Allow deletion of castNonNull -->
-              <option>-assumenosideeffects public class
-                org.checkerframework.checker.nullness.NullnessUtil
+              <option>-assumenosideeffects public class org.checkerframework.checker.nullness.NullnessUtil
               </option>
-              
+
               <!-- Work around a MethodHandle.invokeExact signature-check issue -->
               <option>-dontwarn java.lang.invoke**</option>
-            
+
               <!-- Work around an optimization bug -->
               <!-- <option>-dontoptimize class io.github.pr0methean.betterrandom.prng.RandomWrapperper</option> -->
             </options>
@@ -367,7 +361,14 @@
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-release-plugin</artifactId>
           <version>2.5</version>
-
+      <dependencies>
+        <!-- https://stackoverflow.com/questions/15166781/mvn-releaseprepare-not-committing-changes-to-pom-xml -->
+        <dependency>
+          <groupId>org.apache.maven.scm</groupId>
+          <artifactId>maven-scm-provider-gitexe</artifactId>
+          <version>1.9.5</version>
+        </dependency>
+       </dependencies>
           <configuration>
             <mavenExecutorId>forked-path</mavenExecutorId>
 
