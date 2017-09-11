@@ -23,7 +23,7 @@ import org.testng.annotations.Test;
  *
  * @author Daniel Dyer
  */
-public class JavaRandomTest {
+public class RandomWrapperTest {
 
   /**
    * Test to ensure that two distinct RNGs with the same seed return the same sequence of numbers.
@@ -31,9 +31,9 @@ public class JavaRandomTest {
   @Test(timeOut = 15000)
   public void testRepeatability() throws SeedException {
     // Create an RNG using the default seeding strategy.
-    final JavaRandom rng = new JavaRandom();
+    final RandomWrapper rng = new RandomWrapper();
     // Create second RNG using same seed.
-    final JavaRandom duplicateRNG = new JavaRandom(rng.getSeed());
+    final RandomWrapper duplicateRNG = new RandomWrapper(rng.getSeed());
     assert RandomTestUtils
         .testEquivalence(rng, duplicateRNG, 1000) : "Generated sequences do not match.";
   }
@@ -44,7 +44,7 @@ public class JavaRandomTest {
    */
   @Test(timeOut = 15000, expectedExceptions = IllegalArgumentException.class)
   public void testInvalidSeedSize() {
-    new JavaRandom(new byte[]{1, 2, 3, 4, 5, 6,
+    new RandomWrapper(new byte[]{1, 2, 3, 4, 5, 6,
         7}); // One byte too few, should cause an IllegalArgumentException.
   }
 
@@ -54,14 +54,14 @@ public class JavaRandomTest {
   @SuppressWarnings({"argument.type.incompatible", "return.type.incompatible"})
   @Test(timeOut = 15000, expectedExceptions = IllegalArgumentException.class)
   public void testNullSeed() throws SeedException {
-    new JavaRandom((byte[]) null);
+    new RandomWrapper((byte[]) null);
   }
 
   @Test(timeOut = 15000)
   public void testEquals() throws ReflectiveOperationException {
     RandomTestUtils.doEqualsSanityChecks(() -> {
       try {
-        return new JavaRandom();
+        return new RandomWrapper();
       } catch (final SeedException e) {
         throw new RuntimeException(e);
       }
@@ -72,7 +72,7 @@ public class JavaRandomTest {
   public void testHashCode() throws Exception {
     assert RandomTestUtils.testHashCodeDistribution(() -> {
       try {
-        return new JavaRandom();
+        return new RandomWrapper();
       } catch (final SeedException e) {
         throw new RuntimeException(e);
       }
