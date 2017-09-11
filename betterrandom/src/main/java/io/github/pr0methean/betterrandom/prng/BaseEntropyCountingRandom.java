@@ -24,6 +24,8 @@ import org.checkerframework.checker.nullness.qual.Nullable;
 public abstract class BaseEntropyCountingRandom extends BaseRandom implements
     EntropyCountingRandom {
 
+  public static final int ENTROPY_OF_DOUBLE = 53;
+  protected static final long ENTROPY_OF_FLOAT = 24;
   private static final long serialVersionUID = 1838766748070164286L;
   private static final LogPreFormatter LOG = new LogPreFormatter(BaseEntropyCountingRandom.class);
   protected AtomicLong entropyBits;
@@ -79,10 +81,32 @@ public abstract class BaseEntropyCountingRandom extends BaseRandom implements
 
   /** {@inheritDoc} */
   @Override
-  public ToStringHelper addSubclassFields(final ToStringHelper original) {
+  public final ToStringHelper addSubclassFields(final ToStringHelper original) {
     return addSubSubclassFields(original
         .add("entropyBits", entropyBits.get())
         .add("seederThread", seederThread));
+  }
+
+  /**
+   * <p>entropyOfInt.</p>
+   *
+   * @param origin a int.
+   * @param bound a int.
+   * @return a int.
+   */
+  protected static int entropyOfInt(final int origin, final int bound) {
+    return 32 - Integer.numberOfLeadingZeros(bound - origin - 1);
+  }
+
+  /**
+   * <p>entropyOfLong.</p>
+   *
+   * @param origin a long.
+   * @param bound a long.
+   * @return a int.
+   */
+  protected static int entropyOfLong(final long origin, final long bound) {
+    return 64 - Long.numberOfLeadingZeros(bound - origin - 1);
   }
 
   /**
@@ -162,6 +186,13 @@ public abstract class BaseEntropyCountingRandom extends BaseRandom implements
     LOG.warn("readObjectNoData() invoked; assuming initial entropy is equal to seed length!");
     super.readObjectNoData(); // TODO: Is this call redundant?
     entropyBits = new AtomicLong(seed.length * 8);
+  }
+
+  protected void recordAllEntropySpent() {
+    entropyBits.set(0);
+    if (seederThread != null) {
+      seederThread.asyncReseed(this);
+    }
   }
 
   /** {@inheritDoc} */
