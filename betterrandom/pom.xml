@@ -320,7 +320,7 @@
               <option>-dontwarn java.lang.invoke**</option>
             
               <!-- Work around an optimization bug -->
-              <!-- <option>-dontoptimize class io.github.pr0methean.betterrandom.prng.JavaRandom</option> -->
+              <!-- <option>-dontoptimize class io.github.pr0methean.betterrandom.prng.RandomWrapperper</option> -->
             </options>
             <libs>
               <lib>${java.home}/lib/rt.jar</lib>
