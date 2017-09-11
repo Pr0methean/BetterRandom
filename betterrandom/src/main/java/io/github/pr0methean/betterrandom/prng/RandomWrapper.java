@@ -15,33 +15,48 @@
 // ============================================================================
 package io.github.pr0methean.betterrandom.prng;
 
+import static org.checkerframework.checker.nullness.NullnessUtil.castNonNull;
+
 import com.google.common.base.MoreObjects.ToStringHelper;
 import io.github.pr0methean.betterrandom.ByteArrayReseedableRandom;
 import io.github.pr0methean.betterrandom.RepeatableRandom;
 import io.github.pr0methean.betterrandom.seed.DefaultSeedGenerator;
 import io.github.pr0methean.betterrandom.seed.SeedException;
 import io.github.pr0methean.betterrandom.seed.SeedGenerator;
-import java.nio.ByteBuffer;
 import java.util.Random;
 import java.util.stream.DoubleStream;
 import java.util.stream.IntStream;
 import java.util.stream.LongStream;
 import org.checkerframework.checker.initialization.qual.UnknownInitialization;
-import org.checkerframework.checker.nullness.qual.EnsuresNonNull;
 
 /**
- * <p>Wraps any {@link Random} as a {@link RepeatableRandom} and {@link
- * ByteArrayReseedableRandom}. Note that if this is constructed using an existing instance, we won't
- * know the initial seed, and so {@link #getSeed()} will return an empty array.</p>
+ * <p>Wraps any {@link Random} as a {@link RepeatableRandom} and {@link ByteArrayReseedableRandom}.
+ * Can be used to encapsulate away a change of implementation in midstream. Note that when this is
+ * constructed using an existing instance, and after {@link #setWrapped(Random)} is called, we won't
+ * know the initial seed until the next {@link #setSeed(byte[])} or {@link #setSeed(long)} call, and
+ * so {@link #getSeed()} will return an empty array until then.</p>
  *
- * @author Daniel Dyer, Chris Hennick
+ * @author Chris Hennick
  * @version $Id: $Id
  */
 public class RandomWrapper extends BaseRandom {
 
   private static final long serialVersionUID = -6526304552538799385L;
   private static final int SEED_SIZE_BYTES = 8;
-  private final Random wrapped;
+  public static final byte[] EMPTY_ARRAY = new byte[0];
+
+  /** @return The wrapped {@link Random}. */
+  public Random getWrapped() {
+    return wrapped;
+  }
+
+  /** @param wrapped The new {@link Random} instance to wrap. */
+  public void setWrapped(Random wrapped) {
+    this.wrapped = wrapped;
+    this.seed = EMPTY_ARRAY;
+  }
+
+  private Random wrapped;
 
   /**
    * Creates a new RNG and seeds it using the default seeding strategy.
@@ -84,18 +99,23 @@ public class RandomWrapper extends BaseRandom {
    * Creates an instance wrapping the given {@link Random}.
    *
    * @param wrapped The {@link Random} to wrap.
-   * @throws SeedException Should never happen, but Java won't let us wrap the super() call in a try
-   *     block.
    */
-  public RandomWrapper(Random wrapped) throws SeedException {
-    super(0); // We won't know the wrapped PRNG's seed
+  public RandomWrapper(Random wrapped) {
+    super(EMPTY_ARRAY); // We won't know the wrapped PRNG's seed
     this.wrapped = wrapped;
   }
 
   @Override
-  public void setSeed(@UnknownInitialization(Random.class)RandomWrapper RandomWrapper.this, byte[] seed) {
-    super.setSeed(seed);
-    wrapped.setSeed(longSeedBuffer.getLong(0));
+  public void setSeedInternal(@UnknownInitialization(Random.class)RandomWrapper this,
+      byte[] seed) {
+    if (seed.length != SEED_SIZE_BYTES) {
+      throw new IllegalArgumentException("RandomWrapper requires a 64-bit (8-byte) seed.");
+    }
+    super.setSeedInternal(seed);
+    if (wrapped != null && longSeedBuffer != null && longSeedArray != null) {
+      System.arraycopy(seed, 0, longSeedArray, 0, SEED_SIZE_BYTES);
+      wrapped.setSeed(longSeedBuffer.getLong(0));
+    }
   }
 
   /** {@inheritDoc} */
