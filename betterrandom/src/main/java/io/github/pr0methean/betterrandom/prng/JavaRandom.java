@@ -27,12 +27,13 @@ import org.checkerframework.checker.initialization.qual.UnknownInitialization;
 import org.checkerframework.checker.nullness.qual.EnsuresNonNull;
 
 /**
- * <p>This is the default {@link Random JDK RNG} extended to implement the {@link io.github.pr0methean.betterrandom.RepeatableRandom}
- * interface (for consistency with the other RNGs in this package).</p> <p>The {@link
- * MersenneTwisterRandom} should be used in preference to this class because it is statistically
- * more random and performs slightly better.</p> <p><em>NOTE: Instances of this class do not use
- * the seeding mechanism inherited from {@link java.util.Random}.  Calls to the {@link #setSeed(long)} method
- * will have no effect.  Instead the seedArray must be set by a constructor.</em></p>
+ * <p>This is the default {@link Random JDK RNG} extended to implement the {@link
+ * io.github.pr0methean.betterrandom.RepeatableRandom} interface (for consistency with the other
+ * RNGs in this package).</p> <p>The {@link MersenneTwisterRandom} should be used in preference to
+ * this class because it is statistically more random and performs slightly better.</p> <p><em>NOTE:
+ * Instances of this class do not use the seeding mechanism inherited from {@link java.util.Random}.
+ *  Calls to the {@link #setSeed(long)} method will have no effect.  Instead the seedArray must be
+ * set by a constructor.</em></p>
  *
  * @author Daniel Dyer
  * @version $Id: $Id
@@ -57,9 +58,10 @@ public class JavaRandom extends Random implements RepeatableRandom, ByteArrayRes
   /**
    * Seed the RNG using the provided seedArray generation strategy.
    *
-   * @param seedGenerator The seedArray generation strategy that will provide the seedArray value for this
-   *     RNG.
-   * @throws io.github.pr0methean.betterrandom.seed.SeedException If there is a problem generating a seedArray.
+   * @param seedGenerator The seedArray generation strategy that will provide the seedArray
+   *     value for this RNG.
+   * @throws io.github.pr0methean.betterrandom.seed.SeedException If there is a problem
+   *     generating a seedArray.
    */
   public JavaRandom(final SeedGenerator seedGenerator) throws SeedException {
     this(seedGenerator.generateSeed(SEED_SIZE_BYTES));
@@ -106,15 +108,7 @@ public class JavaRandom extends Random implements RepeatableRandom, ByteArrayRes
 
   /** {@inheritDoc} */
   @Override
-  public void setSeed(@UnknownInitialization(Random.class) JavaRandom this, long seed) {
-    super.setSeed(seed);
-    initFields();
-    seedBuffer.putLong(seed);
-  }
-
-  /** {@inheritDoc} */
-  @Override
-  public void setSeed(@UnknownInitialization(Random.class) JavaRandom this, byte[] seed) {
+  public void setSeed(@UnknownInitialization(Random.class)JavaRandom this, byte[] seed) {
     if (seedBuffer == null || seedArray == null) {
       seedArray = seed.clone();
       seedBuffer = ByteBuffer.wrap(seedArray);
@@ -122,6 +116,14 @@ public class JavaRandom extends Random implements RepeatableRandom, ByteArrayRes
       System.arraycopy(seed, 0, seedArray, 0, SEED_SIZE_BYTES);
     }
     super.setSeed(seedBuffer.getLong(0));
+  }
+
+  /** {@inheritDoc} */
+  @Override
+  public void setSeed(@UnknownInitialization(Random.class)JavaRandom this, long seed) {
+    super.setSeed(seed);
+    initFields();
+    seedBuffer.putLong(seed);
   }
 
   /** {@inheritDoc} */

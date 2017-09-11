@@ -44,7 +44,8 @@ public abstract class BaseEntropyCountingRandom extends BaseRandom implements
   /**
    * <p>Constructor for BaseEntropyCountingRandom.</p>
    *
-   * @param seedGenerator a {@link io.github.pr0methean.betterrandom.seed.SeedGenerator} object.
+   * @param seedGenerator a {@link io.github.pr0methean.betterrandom.seed.SeedGenerator}
+   *     object.
    * @param seedLength a int.
    * @throws io.github.pr0methean.betterrandom.seed.SeedException if any.
    */

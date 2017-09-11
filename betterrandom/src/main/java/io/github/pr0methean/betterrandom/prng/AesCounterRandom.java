@@ -39,10 +39,10 @@ import org.checkerframework.checker.nullness.qual.EnsuresNonNull;
 
 /**
  * <p>Non-linear random number generator based on the AES block cipher in counter mode. Uses the
- * seed as a key to encrypt a 128-bit counter using AES(Rijndael).</p> <p>By default, we only
- * use a 128-bit key for the cipher because any larger key requires the inconvenience of installing
- * the unlimited strength cryptography policy files for the Java platform.  Larger keys may be used
- * (192 or 256 bits) but if the cryptography policy files are not installed, a {@link
+ * seed as a key to encrypt a 128-bit counter using AES(Rijndael).</p> <p>By default, we only use a
+ * 128-bit key for the cipher because any larger key requires the inconvenience of installing the
+ * unlimited strength cryptography policy files for the Java platform.  Larger keys may be used (192
+ * or 256 bits) but if the cryptography policy files are not installed, a {@link
  * GeneralSecurityException} will be thrown.</p> <p><em>NOTE: Because instances of this class
  * require 128-bit seeds, it is not possible to seed this RNG using the {@link #setSeed(long)}
  * method inherited from {@link java.util.Random} until the seed array has been set.</em></p>
@@ -115,7 +115,8 @@ public class AesCounterRandom extends BaseEntropyCountingRandom {
    *
    * @param seedGenerator The seed generation strategy that will provide the seed value for this
    *     RNG.
-   * @throws io.github.pr0methean.betterrandom.seed.SeedException If there is a problem generating a seed.
+   * @throws io.github.pr0methean.betterrandom.seed.SeedException If there is a problem
+   *     generating a seed.
    */
   public AesCounterRandom(final SeedGenerator seedGenerator) throws SeedException {
     this(seedGenerator.generateSeed(DEFAULT_SEED_SIZE_BYTES));
@@ -128,8 +129,8 @@ public class AesCounterRandom extends BaseEntropyCountingRandom {
    * @param seedSizeBytes The number of bytes to use for seed data.  Valid values are 16 (128
    *     bits), 24 (192 bits) and 32 (256 bits).  Any other values will result in an exception from
    *     the AES implementation.
-   * @since 1.0.2
    * @throws io.github.pr0methean.betterrandom.seed.SeedException if any.
+   * @since 1.0.2
    */
   public AesCounterRandom(final int seedSizeBytes) throws SeedException {
     this(DefaultSeedGenerator.DEFAULT_SEED_GENERATOR.generateSeed(seedSizeBytes));

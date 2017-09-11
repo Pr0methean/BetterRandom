@@ -21,7 +21,8 @@ public class SingleThreadSplittableRandomAdapter extends DirectSplittableRandomA
   /**
    * <p>Constructor for SingleThreadSplittableRandomAdapter.</p>
    *
-   * @param seedGenerator a {@link io.github.pr0methean.betterrandom.seed.SeedGenerator} object.
+   * @param seedGenerator a {@link io.github.pr0methean.betterrandom.seed.SeedGenerator}
+   *     object.
    * @throws io.github.pr0methean.betterrandom.seed.SeedException if any.
    */
   public SingleThreadSplittableRandomAdapter(final SeedGenerator seedGenerator)

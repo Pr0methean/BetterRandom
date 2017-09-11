@@ -21,16 +21,17 @@ import org.checkerframework.checker.nullness.qual.Nullable;
  * class is concrete is that temporary instances are needed during deserialization. The loop should
  * be reasonably short, since it will block serialization and cloning that would otherwise catch it
  * in mid-iteration. </p><p> Thread state that WILL be restored includes: </p> <ul> <li>{@link
- *#getName()}</li> <li>{@link #getPriority()}</li> <li>{@link #getState()} == {@link
+ * #getName()}</li> <li>{@link #getPriority()}</li> <li>{@link #getState()} == {@link
  * State#NEW}</li> <li>{@link #getState()} == {@link State#TERMINATED}</li> <li>{@link
- *#isInterrupted()}</li> <li>{@link #isDaemon()}</li> </ul><p> Thread state that will be restored
- * ONLY if its values are {@link java.io.Serializable} includes: </p><ul> <li>{@link #getThreadGroup()}</li>
- * <li>{@link #getUncaughtExceptionHandler()}</li> <li>{@link #getContextClassLoader()}</li>
- * </ul><p> Thread state that will NEVER be restored includes: </p><ul> <li>Program counter, call
- * stack, and local variables. The seederThread will restart.</li> <li>Suspended status (see {@link
- * Thread#suspend()}</li> <li>{@link #getState()} == {@link State#TIMED_WAITING}</li> <li>{@link
- *#getState()} == {@link State#WAITING}</li> <li>{@link #getState()} == {@link State#BLOCKED}</li>
- * <li>{@link #getId()}</li> <li>{@link #holdsLock(Object)}</li> </ul>
+ * #isInterrupted()}</li> <li>{@link #isDaemon()}</li> </ul><p> Thread state that will be restored
+ * ONLY if its values are {@link java.io.Serializable} includes: </p><ul> <li>{@link
+ * #getThreadGroup()}</li> <li>{@link #getUncaughtExceptionHandler()}</li> <li>{@link
+ * #getContextClassLoader()}</li> </ul><p> Thread state that will NEVER be restored includes:
+ * </p><ul> <li>Program counter, call stack, and local variables. The seederThread will
+ * restart.</li> <li>Suspended status (see {@link Thread#suspend()}</li> <li>{@link #getState()} ==
+ * {@link State#TIMED_WAITING}</li> <li>{@link #getState()} == {@link State#WAITING}</li> <li>{@link
+ * #getState()} == {@link State#BLOCKED}</li> <li>{@link #getId()}</li> <li>{@link
+ * #holdsLock(Object)}</li> </ul>
  *
  * @author ubuntu
  * @version $Id: $Id
@@ -99,6 +100,7 @@ public class LooperThread extends Thread implements Serializable, Cloneable {
 
   /**
    * Used only to prepare subclasses before readResolve.
+   *
    * @param in The {@link ObjectInputStream} we're being read from.
    * @throws IOException When thrown by {@link ObjectInputStream#defaultReadObject}.
    * @throws ClassNotFoundException When thrown by {@link ObjectInputStream#defaultReadObject}.

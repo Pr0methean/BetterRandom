@@ -28,17 +28,17 @@ import org.checkerframework.checker.nullness.qual.EnsuresNonNull;
 /**
  * <p>Random number generator based on the <a href="http://www.math.sci.hiroshima-u.ac.jp/~m-mat/MT/emt.html"
  * target="_top">Mersenne Twister</a> algorithm developed by Makoto Matsumoto and Takuji
- * Nishimura.</p> <p>This is a very fast random number generator with good statistical
- * properties (it passes the full DIEHARD suite).  This is the best RNG for most experiments.  If a
- * non-linear generator is required, use the slower {@link io.github.pr0methean.betterrandom.prng.AesCounterRandom} RNG.</p> <p>This
- * PRNG is deterministic, which can be advantageous for testing purposes since the output is
- * repeatable.  If multiple instances of this class are created with the same seed they will all
- * have identical output.</p> <p>This code is translated from the original C version and assumes
- * that we will always seed from an array of bytes.  I don't pretend to know the meanings of the
- * magic numbers or how it works, it just does.</p> <p><em>NOTE: Because instances of this class
+ * Nishimura.</p> <p>This is a very fast random number generator with good statistical properties
+ * (it passes the full DIEHARD suite).  This is the best RNG for most experiments.  If a non-linear
+ * generator is required, use the slower {@link io.github.pr0methean.betterrandom.prng.AesCounterRandom}
+ * RNG.</p> <p>This PRNG is deterministic, which can be advantageous for testing purposes since the
+ * output is repeatable.  If multiple instances of this class are created with the same seed they
+ * will all have identical output.</p> <p>This code is translated from the original C version and
+ * assumes that we will always seed from an array of bytes.  I don't pretend to know the meanings of
+ * the magic numbers or how it works, it just does.</p> <p><em>NOTE: Because instances of this class
  * require 128-bit seeds, it is not possible to seed this RNG using the {@link #setSeed(long)}
- * method inherited from {@link java.util.Random}.  Calls to this method will have no effect. Instead the seed
- * must be set by a constructor.</em></p>
+ * method inherited from {@link java.util.Random}.  Calls to this method will have no effect.
+ * Instead the seed must be set by a constructor.</em></p>
  *
  * @author Makoto Matsumoto and Takuji Nishimura (original C version)
  * @author Daniel Dyer (Java port)
@@ -89,7 +89,8 @@ public class MersenneTwisterRandom extends BaseEntropyCountingRandom {
   /**
    * <p>Constructor for MersenneTwisterRandom.</p>
    *
-   * @param seedGenerator a {@link io.github.pr0methean.betterrandom.seed.SeedGenerator} object.
+   * @param seedGenerator a {@link io.github.pr0methean.betterrandom.seed.SeedGenerator}
+   *     object.
    * @throws io.github.pr0methean.betterrandom.seed.SeedException if any.
    */
   public MersenneTwisterRandom(final SeedGenerator seedGenerator) throws SeedException {
