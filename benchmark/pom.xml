@@ -36,12 +36,6 @@ THE POSSIBILITY OF SUCH DAMAGE.
   xmlns="http://maven.apache.org/POM/4.0.0"
   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
-  <parent>
-    <artifactId>root</artifactId>
-    <groupId>io.github.pr0methean.betterrandom</groupId>
-    <version>0.9.2.6-SNAPSHOT</version>
-    <relativePath>../pom.xml</relativePath>
-  </parent>
   <!--
   <repositories>
     <repository>
@@ -52,6 +46,7 @@ THE POSSIBILITY OF SUCH DAMAGE.
   -->
 
   <artifactId>benchmark</artifactId>
+  <groupId>io.github.pr0methean.betterrandom</groupId>
   <version>0.9.2-SNAPSHOT</version>
   <packaging>jar</packaging>
 
@@ -77,7 +72,7 @@ THE POSSIBILITY OF SUCH DAMAGE.
     <dependency>
       <artifactId>BetterRandom</artifactId>
       <groupId>io.github.pr0methean.betterrandom</groupId>
-      <version>0.9.2.11-SNAPSHOT</version>
+      <version>0.9.2.16-SNAPSHOT</version> <!-- FIXME: Find some way to auto-update this -->
     </dependency>
     <!-- https://mvnrepository.com/artifact/com.google.code.java-allocation-instrumenter/java-allocation-instrumenter -->
     <dependency>

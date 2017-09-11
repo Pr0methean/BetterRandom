@@ -29,7 +29,7 @@ import org.testng.annotations.Test;
 public class AesCounterRandom128Test extends BaseEntropyCountingRandomTest {
 
   @Override
-  @Test(timeOut = 15000)
+  @Test(timeOut = 30000)
   public void testSetSeed() throws SeedException {
     // can't use a real SeedGenerator since we need longs, so use a Random
     final Random masterRNG = new Random();
@@ -55,6 +55,12 @@ public class AesCounterRandom128Test extends BaseEntropyCountingRandomTest {
     }
     assert rngs[0].nextLong() != rngs[1].nextLong()
         : "RNGs converged after 4 setSeed calls";
+  }
+  
+  @Override
+  @Test(timeOut = 30000)
+  public void testReseeding() throws Exception {
+    super.testReseeding();
   }
 
   @Test(timeOut = 15000)
