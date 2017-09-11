@@ -33,7 +33,7 @@ public abstract class AbstractRandomBenchmark {
   private static final int ROWS = 50_000;
   protected final byte[][] bytes = new byte[COLUMNS][ROWS];
   // protected final Thread[] threads = new Thread[COLUMNS];
-  protected final Random prng;
+  protected Random prng;
 
   private static final class StackTrace {
 
@@ -75,23 +75,21 @@ public abstract class AbstractRandomBenchmark {
 
   private final HashMultiset<StackTrace> stackTraces = HashMultiset.create();
 
-  // FIXME: Why isn't this outputting anything?
   @Setup(Level.Trial)
   public void setUp() {
+    try {
+      prng = createPrng();
+    } catch (final SeedException e) {
+      throw new AssertionError(e);
+    }
+
+    // FIXME: Why isn't this outputting anything?
     AllocationRecorder.addSampler((arrayLength, desc, newObj, size) -> {
       if (!desc.contains("StackTrace")) {
         LOG.info("Created %s (a %s of %d bytes)\n", newObj, desc, size);
         stackTraces.add(new StackTrace(Thread.currentThread().getStackTrace()));
       }
     });
-  }
-
-  {
-    try {
-      prng = createPrng();
-    } catch (final SeedException e) {
-      throw new AssertionError(e);
-    }
   }
 
   /*
@@ -123,8 +121,7 @@ public abstract class AbstractRandomBenchmark {
     }
   }
 
-  protected abstract Random createPrng(@UnknownInitialization AbstractRandomBenchmark this)
-      throws SeedException;
+  protected abstract Random createPrng() throws SeedException;
 
   protected byte innerTestBytesSequential() {
     for (final byte[] column : bytes) {

@@ -11,8 +11,7 @@ public class AesCounterRandom128Benchmark extends AbstractRandomBenchmarkWithRes
   }
 
   @Override
-  protected Random createPrng(@UnknownInitialization AesCounterRandom128Benchmark this)
-      throws SeedException {
+  protected Random createPrng() throws SeedException {
     return new AesCounterRandom(16);
   }
 }
