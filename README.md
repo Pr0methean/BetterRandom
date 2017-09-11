@@ -56,16 +56,23 @@ replacements for `java.util.Random`.
 
 ## Summary
 
-| Class                   | Seed size (bytes)  | Period (bits)      | Performance | Effect of `setSeed(long)`   | `getSeed()` rewinds? | Algorithm author
-|-------------------------|--------------------|--------------------|-------------|-----------------------------|----------------------|--------------------
-| AesCounterRandom        |  16-48<sup>*</sup> | 2<sup>135</sup>    | Medium      | Combines with existing seed | No                   | [NIST](http://csrc.nist.gov/groups/ST/toolkit/documents/rng/BlockCipherDRBGs.pdf)
-| CellularAutomatonRandom |                  4 | ?                  | Medium      | Replaces existing seed      | Yes                  | [Anthony Pasqualoni](http://web.archive.org/web/20160413212616/http://home.southernct.edu/~pasqualonia1/ca/report.html)
-| Cmwc4096Random          |              16384 | 2<sup>131104</sup> | Fast        | Not supported               | Yes                  | [George Marsaglia](http://school.anhb.uwa.edu.au/personalpages/kwessen/shared/Marsaglia03.html)
-| MersenneTwisterRandom   |                 16 | 2<sup>19937</sup>  | Fast        | Not supported               | Yes                  | [Makoto Matsumoto](http://www.math.sci.hiroshima-u.ac.jp/~m-mat/MT/emt.html)
-| XorShiftRandom          |                 20 | ~2<sup>160</sup>   | Fastest     | Not supported               | Yes                  | [George Marsaglia](http://www.jstatsoft.org/v08/i14/paper)
+| Class                   | Seed size (bytes)  | Period (bits)      |  MB/s | MB/s with RandomSeederThread | Effect of `setSeed(long)`                     | `getSeed()` rewinds? | Algorithm author
+|-------------------------|--------------------|--------------------|-------|------------------------------|-----------------------------------------------|----------------------|--------------------
+| AesCounterRandom        |  16-48<sup>*</sup> | 2<sup>135</sup>    |  83.6 |                         43.0 | Combines with existing seed                   | No                   | [NIST](http://csrc.nist.gov/groups/ST/toolkit/documents/rng/BlockCipherDRBGs.pdf)
+| CellularAutomatonRandom |                  4 | ?                  |  47.0 |                          2.0 | Replaces existing seed                        | Yes                  | [Anthony Pasqualoni](http://web.archive.org/web/20160413212616/http://home.southernct.edu/~pasqualonia1/ca/report.html)
+| Cmwc4096Random          |              16384 | 2<sup>131104</sup> |  42.7 |                          7.6 | Not supported                                 | Yes                  | [George Marsaglia](http://school.anhb.uwa.edu.au/personalpages/kwessen/shared/Marsaglia03.html)
+| MersenneTwisterRandom   |                 16 | 2<sup>19937</sup>  |  35.8 |                         29.7 | Not supported                                 | Yes                  | [Makoto Matsumoto](http://www.math.sci.hiroshima-u.ac.jp/~m-mat/MT/emt.html)
+| XorShiftRandom          |                 20 | ~2<sup>160</sup>   |  43.1 |                         34.9 | Not supported                                 | Yes                  | [George Marsaglia](http://www.jstatsoft.org/v08/i14/paper)
+| SplittableRandomAdapter |                  8 | 2<sup>64</sup>     | 264.1 |            194.1<sup>†</sup> | Replaces existing seed (calling thread only)  | Yes                  | [Guy Steele and Doug Lea](http://hg.openjdk.java.net/jdk8/jdk8/jdk/file/687fd7c7986d/src/share/classes/java/util/SplittableRandom.java)
+
+Speed figures were obtained on a [Cloud9](http://c9.io) free workspace (512 MiB RAM, 2 GiB disk,
+Xeon Family 6 Model 63 @ 4x2.3 GHz with 45 MiB cache) and should be interpreted with extreme
+caution. For example, AesCounterRandom is probably much slower on CPUs without AES-NI.
 
 <sup>*</sup>Seed sizes above 32 for AesCounterRandom require jurisdiction policy files that allow
 192- and 256-bit AES seeds.
+<sup>**</sup>Can be reseeded independently on each thread, affecting only that thread.
+<sup>†</sup>Using specialized subclass ReseedingSplittableRandomAdapter.
 
 ## AesCounterRandom
 

@@ -265,10 +265,9 @@
               <option>-optimizationpasses 5</option>
               <option>-dontskipnonpubliclibraryclasses</option>
               <option>-verbose</option>
-              <option>-keep, allowobfuscation public class *</option>
-              <option>-keepnames public class *</option>
-              <option>-keepclassmembernames public class * { public &lt;methods&gt;; public &lt;fields&gt;;
-                protected &lt;methods&gt;; protected &lt;fields&gt;; }
+              <option>-keep public class **</option>
+              <option>-keepnames public class **</option>
+              <option>-keepclassmembernames public class ** { public *; protected *; }
               </option>
               <option>-assumenosideeffects public class
                 org.checkerframework.checker.nullness.NullnessUtil
