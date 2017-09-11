@@ -64,7 +64,9 @@ public class JavaRandom extends Random implements RepeatableRandom, ByteArrayRes
    *     generating a seedArray.
    */
   public JavaRandom(final SeedGenerator seedGenerator) throws SeedException {
-    this(seedGenerator.generateSeed(SEED_SIZE_BYTES));
+    initFields();
+    seedGenerator.generateSeed(seedArray);
+    super.setSeed(seedBuffer.getLong(0));
   }
 
   /**
