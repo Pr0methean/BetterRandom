@@ -277,6 +277,8 @@
               <option>-optimizationpasses 5</option>
               <option>-dontskipnonpubliclibraryclasses</option>
               <option>-verbose</option>
+              
+              <!-- Library standard settings -->
               <option>-keepparameternames</option>
               <option>-renamesourcefileattribute SourceFile</option>
               <option>
@@ -298,6 +300,8 @@
                 -keepclassmembers,allowoptimization enum * { public static **[] values(); public
                 static ** valueOf(java.lang.String); }
               </option>
+              
+              <!-- Serialization settings -->
               <option>
                 -keepclassmembers class * implements java.io.Serializable { static final long
                 serialVersionUID; private static final java.io.ObjectStreamField[]
@@ -306,10 +310,17 @@
                 private void readObjectNoData(); java.lang.Object writeReplace(); java.lang.Object
                 readResolve(); !static !transient &lt;fields&gt;; }
               </option>
+              
+              <!-- Allow deletion of castNonNull -->
               <option>-assumenosideeffects public class
                 org.checkerframework.checker.nullness.NullnessUtil
               </option>
+              
+              <!-- Work around a MethodHandle.invokeExact signature-check issue -->
               <option>-dontwarn java.lang.invoke**</option>
+            
+              <!-- Work around an optimization bug -->
+              <option>-dontoptimize class io.github.pr0methean.betterrandom.prng.JavaRandom</option>
             </options>
             <libs>
               <lib>${java.home}/lib/rt.jar</lib>
