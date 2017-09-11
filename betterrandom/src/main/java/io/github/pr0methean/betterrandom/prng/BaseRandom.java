@@ -62,8 +62,9 @@ public abstract class BaseRandom extends Random implements ByteArrayReseedableRa
    *
    * @param seedGenerator The seed generation strategy that will provide the seed value for this
    *     RNG.
-   * @throws io.github.pr0methean.betterrandom.seed.SeedException If there is a problem generating a seed.
    * @param seedLength a int.
+   * @throws io.github.pr0methean.betterrandom.seed.SeedException If there is a problem
+   *     generating a seed.
    */
   public BaseRandom(final SeedGenerator seedGenerator, final int seedLength) throws SeedException {
     this(seedGenerator.generateSeed(seedLength));
@@ -152,6 +153,18 @@ public abstract class BaseRandom extends Random implements ByteArrayReseedableRa
   }
 
   /** {@inheritDoc} */
+  @EnsuresNonNull("this.seed")
+  @Override
+  public void setSeed(final byte[] seed) {
+    lock.lock();
+    try {
+      setSeedInternal(seed);
+    } finally {
+      lock.unlock();
+    }
+  }
+
+  /** {@inheritDoc} */
   @SuppressWarnings("method.invocation.invalid")
   @Override
   public synchronized void setSeed(@UnknownInitialization(Random.class)BaseRandom this,
@@ -167,18 +180,6 @@ public abstract class BaseRandom extends Random implements ByteArrayReseedableRa
   }
 
   /** {@inheritDoc} */
-  @EnsuresNonNull("this.seed")
-  @Override
-  public void setSeed(final byte[] seed) {
-    lock.lock();
-    try {
-      setSeedInternal(seed);
-    } finally {
-      lock.unlock();
-    }
-  }
-
-  /** {@inheritDoc} */
   @Override
   public boolean preferSeedWithLong() {
     return getNewSeedLength() <= 8;
@@ -188,7 +189,7 @@ public abstract class BaseRandom extends Random implements ByteArrayReseedableRa
    * Sets the seed, and should be overridden to set other state that derives from the seed. Called
    * by {@link #setSeed(byte[])}, whose default implementation ensures that the lock is held while
    * doing so. Also called by constructors, {@link #readObject(ObjectInputStream)} and {@link
-   *#readObjectNoData()}.
+   * #readObjectNoData()}.
    *
    * @param seed The new seed.
    */

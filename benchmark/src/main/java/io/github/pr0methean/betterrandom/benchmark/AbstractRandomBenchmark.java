@@ -6,7 +6,6 @@ import io.github.pr0methean.betterrandom.seed.SeedException;
 import io.github.pr0methean.betterrandom.util.LogPreFormatter;
 import java.util.Arrays;
 import java.util.Random;
-import org.checkerframework.checker.initialization.qual.UnknownInitialization;
 import org.openjdk.jmh.annotations.Benchmark;
 import org.openjdk.jmh.annotations.Level;
 import org.openjdk.jmh.annotations.Scope;
@@ -27,13 +26,107 @@ import org.openjdk.jmh.runner.options.OptionsBuilder;
 // FIXME: Get the multithreaded benchmarks working
 @State(Scope.Benchmark)
 public abstract class AbstractRandomBenchmark {
+
   private static final LogPreFormatter LOG = new LogPreFormatter(AbstractRandomBenchmark.class);
 
   private static final int COLUMNS = 2;
   private static final int ROWS = 50_000;
   protected final byte[][] bytes = new byte[COLUMNS][ROWS];
+  private final HashMultiset<StackTrace> stackTraces = HashMultiset.create();
   // protected final Thread[] threads = new Thread[COLUMNS];
   protected Random prng;
+
+  public static void main(final String[] args) throws RunnerException {
+    final ChainedOptionsBuilder options = new OptionsBuilder()
+        .addProfiler(HotspotThreadProfiler.class)
+        .addProfiler(HotspotRuntimeProfiler.class)
+        .addProfiler(HotspotMemoryProfiler.class)
+        .addProfiler(GCProfiler.class)
+        .addProfiler(StackProfiler.class)
+        .shouldFailOnError(true)
+        .forks(1)
+        .resultFormat(ResultFormatType.CSV)
+        .detectJvmArgs();
+    for (int nThreads = 1; nThreads <= 2; nThreads++) {
+      new Runner(options
+          .threads(nThreads)
+          .output(String.format("%d-thread_bench_results.csv", nThreads))
+          .build()).run();
+    }
+  }
+
+  @Setup(Level.Trial)
+  public void setUp() {
+    try {
+      prng = createPrng();
+    } catch (final SeedException e) {
+      throw new AssertionError(e);
+    }
+
+    // FIXME: Why isn't this outputting anything?
+    AllocationRecorder.addSampler((arrayLength, desc, newObj, size) -> {
+      if (!desc.contains("StackTrace")) {
+        LOG.info("Created %s (a %s of %d bytes)\n", newObj, desc, size);
+        stackTraces.add(new StackTrace(Thread.currentThread().getStackTrace()));
+      }
+    });
+  }
+
+  /*
+  @Group("contended")
+  public void setUpThreads() {
+    for (int column = 0; column < COLUMNS; column++) {
+      final int column_ = column;
+      threads[column] = new Thread(() -> prng.nextBytes(bytes[column_]));
+    }
+  }
+  */
+
+  protected abstract Random createPrng() throws SeedException;
+
+  protected byte innerTestBytesSequential() {
+    for (final byte[] column : bytes) {
+      prng.nextBytes(column);
+    }
+    return bytes[prng.nextInt(COLUMNS)][prng.nextInt(ROWS)];
+  }
+
+  @Benchmark
+  public byte testBytesSequential() {
+    return innerTestBytesSequential();
+  }
+
+  // FIXME: Why isn't this outputting anything either?
+  @TearDown(Level.Trial)
+  public void tearDown() {
+    System.gc();
+    for (StackTrace stackTrace : stackTraces) {
+      LOG.info("%d objects created from:\n%s\n", stackTraces.count(stackTrace), stackTrace);
+    }
+    stackTraces.clear();
+  }
+
+  /*
+  protected byte innerTestBytesContended() throws InterruptedException {
+    // Start the threads
+    for (Thread seederThread : threads) {
+      seederThread.start();
+    }
+    // Wait for the threads to finish
+    for (Thread seederThread : threads) {
+      seederThread.join();
+    }
+    return bytes[prng.nextInt(COLUMNS)][prng.nextInt(ROWS)];
+  }
+  */
+
+  /*
+  @Benchmark
+  @Group("contended")
+  public byte testBytesContended() throws SeedException, InterruptedException {
+    return innerTestBytesContended();
+  }
+  */
 
   private static final class StackTrace {
 
@@ -71,99 +164,5 @@ public abstract class AbstractRandomBenchmark {
       }
       return stringBuilder.toString();
     }
-  }
-
-  private final HashMultiset<StackTrace> stackTraces = HashMultiset.create();
-
-  @Setup(Level.Trial)
-  public void setUp() {
-    try {
-      prng = createPrng();
-    } catch (final SeedException e) {
-      throw new AssertionError(e);
-    }
-
-    // FIXME: Why isn't this outputting anything?
-    AllocationRecorder.addSampler((arrayLength, desc, newObj, size) -> {
-      if (!desc.contains("StackTrace")) {
-        LOG.info("Created %s (a %s of %d bytes)\n", newObj, desc, size);
-        stackTraces.add(new StackTrace(Thread.currentThread().getStackTrace()));
-      }
-    });
-  }
-
-  /*
-  @Group("contended")
-  public void setUpThreads() {
-    for (int column = 0; column < COLUMNS; column++) {
-      final int column_ = column;
-      threads[column] = new Thread(() -> prng.nextBytes(bytes[column_]));
-    }
-  }
-  */
-
-  public static void main(final String[] args) throws RunnerException {
-    final ChainedOptionsBuilder options = new OptionsBuilder()
-        .addProfiler(HotspotThreadProfiler.class)
-        .addProfiler(HotspotRuntimeProfiler.class)
-        .addProfiler(HotspotMemoryProfiler.class)
-        .addProfiler(GCProfiler.class)
-        .addProfiler(StackProfiler.class)
-        .shouldFailOnError(true)
-        .forks(1)
-        .resultFormat(ResultFormatType.CSV)
-        .detectJvmArgs();
-    for (int nThreads = 1; nThreads <= 2; nThreads++) {
-      new Runner(options
-          .threads(nThreads)
-          .output(String.format("%d-thread_bench_results.csv", nThreads))
-          .build()).run();
-    }
-  }
-
-  protected abstract Random createPrng() throws SeedException;
-
-  protected byte innerTestBytesSequential() {
-    for (final byte[] column : bytes) {
-      prng.nextBytes(column);
-    }
-    return bytes[prng.nextInt(COLUMNS)][prng.nextInt(ROWS)];
-  }
-
-  @Benchmark
-  public byte testBytesSequential() {
-    return innerTestBytesSequential();
-  }
-
-  /*
-  protected byte innerTestBytesContended() throws InterruptedException {
-    // Start the threads
-    for (Thread seederThread : threads) {
-      seederThread.start();
-    }
-    // Wait for the threads to finish
-    for (Thread seederThread : threads) {
-      seederThread.join();
-    }
-    return bytes[prng.nextInt(COLUMNS)][prng.nextInt(ROWS)];
-  }
-  */
-
-  /*
-  @Benchmark
-  @Group("contended")
-  public byte testBytesContended() throws SeedException, InterruptedException {
-    return innerTestBytesContended();
-  }
-  */
-
-  // FIXME: Why isn't this outputting anything either?
-  @TearDown(Level.Trial)
-  public void tearDown() {
-    System.gc();
-    for (StackTrace stackTrace : stackTraces) {
-      LOG.info("%d objects created from:\n%s\n", stackTraces.count(stackTrace), stackTrace);
-    }
-    stackTraces.clear();
   }
 }

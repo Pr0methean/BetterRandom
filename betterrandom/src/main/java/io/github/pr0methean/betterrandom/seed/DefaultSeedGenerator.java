@@ -56,7 +56,7 @@ public enum DefaultSeedGenerator implements SeedGenerator {
 
   /**
    * {@inheritDoc}
-   *
+   * <p>
    * Generates a seed by trying each of the available strategies in turn until one succeeds.  Tries
    * the most suitable strategy first and eventually degrades to the least suitable (but guaranteed
    * to work) strategy.

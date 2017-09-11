@@ -37,8 +37,9 @@ public enum DevRandomSeedGenerator implements SeedGenerator {
   /**
    * <p>generateSeed.</p>
    *
-   * @throws io.github.pr0methean.betterrandom.seed.SeedException If {@literal /dev/random} does not exist or is not accessible
    * @param randomSeed an array of byte.
+   * @throws io.github.pr0methean.betterrandom.seed.SeedException If {@literal /dev/random} does
+   *     not exist or is not accessible
    */
   @SuppressWarnings({"IOResourceOpenedButNotSafelyClosed", "resource"})
   public void generateSeed(final byte[] randomSeed) throws SeedException {

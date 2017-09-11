@@ -18,12 +18,12 @@ package io.github.pr0methean.betterrandom.seed;
 import java.security.SecureRandom;
 
 /**
- * <p>{@link io.github.pr0methean.betterrandom.seed.SeedGenerator} implementation that uses Java's bundled {@link java.security.SecureRandom} RNG to
- * generate random seed data.</p> <p>The advantage of using SecureRandom for seeding but not as
- * the primary RNG is that we can use it to seed RNGs that are much faster than SecureRandom.</p>
- * <p>This is the only seeding strategy that is guaranteed to work on all platforms and
- * therefore is provided as a fall-back option should none of the other provided {@link
- * SeedGenerator} implementations be usable.</p>
+ * <p>{@link io.github.pr0methean.betterrandom.seed.SeedGenerator} implementation that uses Java's
+ * bundled {@link java.security.SecureRandom} RNG to generate random seed data.</p> <p>The advantage
+ * of using SecureRandom for seeding but not as the primary RNG is that we can use it to seed RNGs
+ * that are much faster than SecureRandom.</p> <p>This is the only seeding strategy that is
+ * guaranteed to work on all platforms and therefore is provided as a fall-back option should none
+ * of the other provided {@link SeedGenerator} implementations be usable.</p>
  *
  * @author Daniel Dyer
  * @version $Id: $Id
