@@ -42,10 +42,10 @@ public class SingleThreadSplittableRandomAdapter extends DirectSplittableRandomA
   /** {@inheritDoc} */
   @Override
   protected ToStringHelper addSubSubclassFields(final ToStringHelper original) {
-    return original.add("deserializedAndNotUsedSince", deserializedAndNotUsedSince);
+    return super.addSubSubclassFields(original)
+        .add("deserializedAndNotUsedSince", deserializedAndNotUsedSince);
   }
 
-  /** {@inheritDoc} */
   @Override
   protected SplittableRandom getSplittableRandom() {
     deserializedAndNotUsedSince = false;

@@ -15,10 +15,9 @@
 // ============================================================================
 package io.github.pr0methean.betterrandom.prng;
 
-import static org.checkerframework.checker.nullness.NullnessUtil.castNonNull;
-
 import com.google.common.base.MoreObjects.ToStringHelper;
 import io.github.pr0methean.betterrandom.ByteArrayReseedableRandom;
+import io.github.pr0methean.betterrandom.EntropyCountingRandom;
 import io.github.pr0methean.betterrandom.RepeatableRandom;
 import io.github.pr0methean.betterrandom.seed.DefaultSeedGenerator;
 import io.github.pr0methean.betterrandom.seed.SeedException;
@@ -39,7 +38,7 @@ import org.checkerframework.checker.initialization.qual.UnknownInitialization;
  * @author Chris Hennick
  * @version $Id: $Id
  */
-public class RandomWrapper extends BaseRandom {
+public class RandomWrapper extends BaseEntropyCountingRandom {
 
   private static final long serialVersionUID = -6526304552538799385L;
   private static final int SEED_SIZE_BYTES = 8;
@@ -53,7 +52,15 @@ public class RandomWrapper extends BaseRandom {
   /** @param wrapped The new {@link Random} instance to wrap. */
   public void setWrapped(Random wrapped) {
     this.wrapped = wrapped;
+    readEntropyOfWrapped(wrapped);
     this.seed = EMPTY_ARRAY;
+  }
+
+  private void readEntropyOfWrapped(@UnknownInitialization(BaseEntropyCountingRandom.class) RandomWrapper this,
+      Random wrapped) {
+    entropyBits.set(wrapped instanceof EntropyCountingRandom
+        ? ((EntropyCountingRandom) wrapped).entropyBits()
+        : 64);
   }
 
   private Random wrapped;
@@ -91,7 +98,7 @@ public class RandomWrapper extends BaseRandom {
   }
 
   @Override
-  public ToStringHelper addSubclassFields(ToStringHelper original) {
+  protected ToStringHelper addSubSubclassFields(ToStringHelper original) {
     return original.add("wrapped", wrapped);
   }
 
@@ -102,6 +109,7 @@ public class RandomWrapper extends BaseRandom {
    */
   public RandomWrapper(Random wrapped) {
     super(EMPTY_ARRAY); // We won't know the wrapped PRNG's seed
+    readEntropyOfWrapped(wrapped);
     this.wrapped = wrapped;
   }
 
@@ -126,90 +134,129 @@ public class RandomWrapper extends BaseRandom {
 
   /** {@inheritDoc} */
   @Override
-  public int getNewSeedLength() {
+  public int getNewSeedLength(@UnknownInitialization RandomWrapper this) {
     return SEED_SIZE_BYTES;
   }
 
   public void nextBytes(byte[] bytes) {
     wrapped.nextBytes(bytes);
+    recordEntropySpent(bytes.length * 8);
   }
 
   public int nextInt() {
-    return wrapped.nextInt();
+    int result = wrapped.nextInt();
+    recordEntropySpent(32);
+    return result;
   }
 
   public int nextInt(int bound) {
-    return wrapped.nextInt(bound);
+    int result = wrapped.nextInt(bound);
+    recordEntropySpent(entropyOfInt(0, bound));
+    return result;
   }
 
   public long nextLong() {
-    return wrapped.nextLong();
+    long result = wrapped.nextLong();
+    recordEntropySpent(64);
+    return result;
   }
 
   public boolean nextBoolean() {
-    return wrapped.nextBoolean();
+    boolean result = wrapped.nextBoolean();
+    recordEntropySpent(1);
+    return result;
   }
 
   public float nextFloat() {
-    return wrapped.nextFloat();
+    float result = wrapped.nextFloat();
+    recordEntropySpent(ENTROPY_OF_FLOAT);
+    return result;
   }
 
   public double nextDouble() {
-    return wrapped.nextDouble();
+    double result = wrapped.nextDouble();
+    recordEntropySpent(ENTROPY_OF_DOUBLE);
+    return result;
   }
 
   public double nextGaussian() {
-    return wrapped.nextGaussian();
+    double result = wrapped.nextGaussian();
+    recordEntropySpent(ENTROPY_OF_DOUBLE); // 2 Gaussians are generated from 2 nextDouble() calls
+    return result;
   }
 
   public IntStream ints(long streamSize) {
-    return wrapped.ints(streamSize);
+    IntStream result = wrapped.ints(streamSize);
+    recordEntropySpent(32 * streamSize);
+    return result;
   }
 
   public IntStream ints() {
-    return wrapped.ints();
+    IntStream result = wrapped.ints();
+    recordAllEntropySpent();
+    return result;
   }
 
   public IntStream ints(long streamSize, int randomNumberOrigin,
       int randomNumberBound) {
-    return wrapped.ints(streamSize, randomNumberOrigin, randomNumberBound);
+    IntStream result = wrapped.ints(streamSize, randomNumberOrigin, randomNumberBound);
+    recordEntropySpent(streamSize * entropyOfInt(randomNumberOrigin, randomNumberBound));
+    return result;
   }
 
   public IntStream ints(int randomNumberOrigin, int randomNumberBound) {
-    return wrapped.ints(randomNumberOrigin, randomNumberBound);
+    IntStream result = wrapped.ints(randomNumberOrigin, randomNumberBound);
+    recordAllEntropySpent();
+    return result;
   }
 
   public LongStream longs(long streamSize) {
-    return wrapped.longs(streamSize);
+    LongStream result = wrapped.longs(streamSize);
+    recordEntropySpent(64 * streamSize);
+    return result;
   }
 
   public LongStream longs() {
-    return wrapped.longs();
+    LongStream result = wrapped.longs();
+    recordAllEntropySpent();
+    return result;
   }
 
   public LongStream longs(long streamSize, long randomNumberOrigin,
       long randomNumberBound) {
-    return wrapped.longs(streamSize, randomNumberOrigin, randomNumberBound);
+    LongStream result = wrapped.longs(streamSize, randomNumberOrigin, randomNumberBound);
+    recordEntropySpent(streamSize * entropyOfLong(randomNumberOrigin, randomNumberBound));
+    return result;
   }
 
   public LongStream longs(long randomNumberOrigin, long randomNumberBound) {
-    return wrapped.longs(randomNumberOrigin, randomNumberBound);
+    LongStream result = wrapped.longs(randomNumberOrigin, randomNumberBound);
+    recordAllEntropySpent();
+    return result;
   }
 
   public DoubleStream doubles(long streamSize) {
-    return wrapped.doubles(streamSize);
+    DoubleStream result = wrapped.doubles(streamSize);
+    recordEntropySpent(streamSize * ENTROPY_OF_DOUBLE);
+    return result;
   }
 
   public DoubleStream doubles() {
-    return wrapped.doubles();
+    DoubleStream result = wrapped.doubles();
+    recordAllEntropySpent();
+    return result;
   }
 
   public DoubleStream doubles(long streamSize, double randomNumberOrigin,
       double randomNumberBound) {
-    return wrapped.doubles(streamSize, randomNumberOrigin, randomNumberBound);
+    DoubleStream result = wrapped.doubles(streamSize, randomNumberOrigin, randomNumberBound);
+    recordEntropySpent(streamSize * ENTROPY_OF_DOUBLE);
+    return result;
   }
 
   public DoubleStream doubles(double randomNumberOrigin, double randomNumberBound) {
-    return wrapped.doubles(randomNumberOrigin, randomNumberBound);
+    DoubleStream result = wrapped.doubles(randomNumberOrigin, randomNumberBound);
+    recordAllEntropySpent();
+    return result;
   }
 }
