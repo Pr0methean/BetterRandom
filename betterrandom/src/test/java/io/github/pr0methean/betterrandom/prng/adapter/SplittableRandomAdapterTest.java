@@ -15,12 +15,11 @@ public class SplittableRandomAdapterTest extends SingleThreadSplittableRandomAda
 
   private static final SeedGenerator FAKE_SEED_GENERATOR = new FakeSeedGenerator();
 
-/*
   @Override
   @Test(enabled = false) // https://github.com/Pr0methean/BetterRandom/issues/5
   public void testRepeatability() throws SeedException {
     super.testRepeatability();
-  }*/
+  }
 
   @Override
   protected SplittableRandomAdapter tryCreateRng() throws SeedException {
