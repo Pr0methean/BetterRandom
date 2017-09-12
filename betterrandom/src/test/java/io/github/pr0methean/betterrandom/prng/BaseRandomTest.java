@@ -146,8 +146,8 @@ public abstract class BaseRandomTest {
   @Test(timeOut = 20000)
   public void testReseeding() throws Exception {
     final BaseRandom rng = createRng();
-    final byte[] oldSeed = rng.getSeed();
     rng.setSeederThread(RandomTestUtils.DEFAULT_SEEDER);
+    final byte[] oldSeed = rng.getSeed();
     rng.nextBytes(new byte[20000]);
     Thread.sleep(5000);
     final byte[] newSeed = rng.getSeed();
