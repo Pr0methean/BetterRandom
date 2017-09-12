@@ -170,13 +170,11 @@ public final class RandomSeederThread extends LooperThread {
   @SuppressWarnings("InfiniteLoopStatement")
   @Override
   public void iterate() throws InterruptedException {
-    LOG.info("Starting iteration");
     while (true) {
       synchronized (prngs) {
         prngsThisIteration.addAll(prngs);
       }
       if (prngsThisIteration.isEmpty()) {
-        LOG.info("Empty; waiting for a Random to reseed");
         waitWhileEmpty.await();
       } else {
         break;
@@ -189,13 +187,11 @@ public final class RandomSeederThread extends LooperThread {
       iterator.remove();
       if (random instanceof EntropyCountingRandom
           && ((EntropyCountingRandom) random).entropyBits() > 0) {
-        LOG.info("Skipping %s: still has entropy", random);
         continue;
       } else {
         entropyConsumed = true;
       }
       try {
-        LOG.info("Reseeding %s", random);
         if (random instanceof ByteArrayReseedableRandom && !((ByteArrayReseedableRandom) random)
             .preferSeedWithLong()) {
           final ByteArrayReseedableRandom reseedable = (ByteArrayReseedableRandom) random;
@@ -207,10 +203,6 @@ public final class RandomSeederThread extends LooperThread {
           seedGenerator.generateSeed(longSeedArray);
           random.setSeed(longSeedBuffer.getLong(0));
         }
-        LOG.info("%s reseeded", random);
-      } catch (final SeedException e) {
-        LOG.error("%s gave SeedException %s", seedGenerator, e);
-        interrupt();
       } catch (Throwable t) {
         LOG.error("%s", t);
         for (StackTraceElement element : t.getStackTrace()) {
@@ -220,7 +212,6 @@ public final class RandomSeederThread extends LooperThread {
       }
     }
     if (!entropyConsumed) {
-      LOG.info("No PRNG needed entropy; sleeping for %d ms", POLL_INTERVAL_MS);
       waitForEntropyDrain.await(POLL_INTERVAL_MS, TimeUnit.MILLISECONDS);
     }
   }
@@ -269,6 +260,11 @@ public final class RandomSeederThread extends LooperThread {
 
   /**
    * <p>stopIfEmpty.</p>
+<<<<<<<<< saved version
+
+=========
+
+>>>>>>>>> local version
    */
   public void stopIfEmpty() {
     if (isEmpty()) {
