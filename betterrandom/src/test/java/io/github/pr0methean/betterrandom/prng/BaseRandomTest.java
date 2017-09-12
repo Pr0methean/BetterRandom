@@ -9,6 +9,8 @@ import static org.testng.Assert.assertTrue;
 
 import io.github.pr0methean.betterrandom.seed.DefaultSeedGenerator;
 import io.github.pr0methean.betterrandom.seed.SeedException;
+import io.github.pr0methean.betterrandom.util.BinaryUtils;
+import io.github.pr0methean.betterrandom.util.LogPreFormatter;
 import java.io.IOException;
 import java.security.GeneralSecurityException;
 import java.util.Arrays;
@@ -16,16 +18,22 @@ import org.testng.annotations.Test;
 
 public abstract class BaseRandomTest {
 
+  private static final LogPreFormatter LOG = new LogPreFormatter(BaseRandomTest.class);
+
   /**
    * Test to ensure that two distinct RNGs with the same seed return the same sequence of numbers.
    */
   @Test(timeOut = 15000)
   public void testRepeatability() throws SeedException {
     final BaseRandom rng = createRng();
+    byte[] seed = rng.getSeed();
+    LOG.info("Original seed is %s", BinaryUtils.convertBytesToHexString(seed));
     // Create second RNG using same seed.
     final BaseRandom duplicateRNG = createRng(rng.getSeed());
+    LOG.info("Copy's seed is %s", BinaryUtils.convertBytesToHexString(duplicateRNG.getSeed()));
     assert RandomTestUtils
-        .testEquivalence(rng, duplicateRNG, 1000) : "Generated sequences do not match.";
+        .testEquivalence(rng, duplicateRNG, 1000) :
+        String.format("Generated sequences do not match between:%n%s%nand:%n%s", rng.dump(), duplicateRNG.dump());
   }
 
   @Test(timeOut = 15000, expectedExceptions = IllegalArgumentException.class)

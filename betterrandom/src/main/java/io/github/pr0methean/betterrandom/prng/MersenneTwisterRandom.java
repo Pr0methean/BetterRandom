@@ -104,25 +104,17 @@ public class MersenneTwisterRandom extends BaseRandom {
         .add("mtIndex", mtIndex);
   }
 
-  /**
-   * <p>getSeed.</p>
-   *
-   * @return an array of byte.
-   */
-  public byte[] getSeed() {
-    return seed.clone();
-  }
-
   @Override
   public synchronized void setSeed(@UnknownInitialization(Random.class)MersenneTwisterRandom this,
       final long seed) {
     if (superConstructorFinished) {
       super.setSeed(seed);
-    } // Otherwise ignore; it's Random.<init> calling us without a full-size seed
+    } else {
+      fallbackSetSeed();
+    }
   }
 
   @Override
-
   @EnsuresNonNull({"lock", "mt", "longSeedArray", "longSeedBuffer"})
   protected void initTransientFields(@UnknownInitialization MersenneTwisterRandom this) {
     super.initTransientFields();

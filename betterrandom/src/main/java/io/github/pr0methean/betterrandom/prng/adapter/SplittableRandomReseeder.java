@@ -1,5 +1,6 @@
 package io.github.pr0methean.betterrandom.prng.adapter;
 
+import io.github.pr0methean.betterrandom.util.BinaryUtils;
 import io.github.pr0methean.betterrandom.util.LogPreFormatter;
 import java.lang.invoke.MethodHandle;
 import java.lang.invoke.MethodHandles;
@@ -26,6 +27,7 @@ public final class SplittableRandomReseeder {
   private static final LogPreFormatter LOG = new LogPreFormatter(SplittableRandomReseeder.class);
   private static final Objenesis OBJENESIS = new ObjenesisStd();
   private static @Nullable MethodHandle PUT_LONG_VOLATILE;
+  private static @Nullable Field SEED_FIELD;
   private static long GAMMA_FIELD_OFFSET;
   private static long SEED_FIELD_OFFSET;
   private static long GOLDEN_GAMMA;
@@ -45,8 +47,10 @@ public final class SplittableRandomReseeder {
       final Method getFieldOffset = unsafeClass.getDeclaredMethod("objectFieldOffset", Field.class);
       GAMMA_FIELD_OFFSET = (long) (getFieldOffset
           .invoke(unsafe, SplittableRandom.class.getDeclaredField("gamma")));
+      SEED_FIELD = SplittableRandom.class.getDeclaredField("seed");
+      SEED_FIELD.setAccessible(true);
       SEED_FIELD_OFFSET = (long) (getFieldOffset
-          .invoke(unsafe, SplittableRandom.class.getDeclaredField("seed")));
+          .invoke(unsafe, SEED_FIELD));
       final Field goldenGammaField = SplittableRandom.class.getDeclaredField("GOLDEN_GAMMA");
       goldenGammaField.setAccessible(true);
       GOLDEN_GAMMA = (long) (goldenGammaField.get(null));
@@ -66,11 +70,12 @@ public final class SplittableRandomReseeder {
   }
 
   /**
-   * <p>reseed.</p>
+   * Reseeds if possible, or else replaces, a {@link SplittableRandom}.
    *
-   * @param original a {@link java.util.SplittableRandom} object.
-   * @param seed a long.
-   * @return a {@link java.util.SplittableRandom} object.
+   * @param original a {@link SplittableRandom}.
+   * @param seed a seed.
+   * @return a {@link SplittableRandom} whose seed is {@code seed}, and if possible is the same
+   *     object as {@code original}.
    */
   public static SplittableRandom reseed(final @Nullable SplittableRandom original,
       final long seed) {
@@ -84,6 +89,18 @@ public final class SplittableRandomReseeder {
       }
     } else {
       return new SplittableRandom(seed);
+    }
+  }
+
+  public static byte[] getSeed(SplittableRandom splittableRandom) {
+    if (SEED_FIELD == null) {
+      throw new UnsupportedOperationException();
+    } else {
+      try {
+        return BinaryUtils.convertLongToBytes((long) (SEED_FIELD.get(splittableRandom)));
+      } catch (IllegalAccessException e) {
+        throw new RuntimeException(e);
+      }
     }
   }
 }
