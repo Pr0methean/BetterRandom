@@ -28,6 +28,7 @@ import org.checkerframework.checker.nullness.qual.RequiresNonNull;
 public class ReseedingSplittableRandomAdapter extends BaseSplittableRandomAdapter {
 
   private static final long serialVersionUID = 6301096404034224037L;
+  @SuppressWarnings("StaticCollection")
   private static final Map<SeedGenerator, ReseedingSplittableRandomAdapter> INSTANCES =
       Collections.synchronizedMap(new WeakHashMap<>());
   protected final SeedGenerator seedGenerator;

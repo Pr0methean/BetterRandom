@@ -19,7 +19,8 @@ import org.objenesis.ObjenesisStd;
  * @author ubuntu
  * @version $Id: $Id
  */
-@SuppressWarnings("argument.type.incompatible") // Field.get(null) is OK when the field is static!
+@SuppressWarnings({"argument.type.incompatible", "CanBeFinal"})
+// Field.get(null) is OK when the field is static!
 public final class SplittableRandomReseeder {
 
   private static final LogPreFormatter LOG = new LogPreFormatter(SplittableRandomReseeder.class);

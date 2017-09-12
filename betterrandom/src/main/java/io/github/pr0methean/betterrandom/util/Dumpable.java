@@ -13,5 +13,6 @@ public interface Dumpable {
    *
    * @return a {@link java.lang.String} object.
    */
+  @EntryPoint
   String dump();
 }

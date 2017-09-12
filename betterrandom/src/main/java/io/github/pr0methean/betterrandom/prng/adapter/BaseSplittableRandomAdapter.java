@@ -2,6 +2,7 @@ package io.github.pr0methean.betterrandom.prng.adapter;
 
 import com.google.common.base.MoreObjects.ToStringHelper;
 import io.github.pr0methean.betterrandom.prng.BaseEntropyCountingRandom;
+import io.github.pr0methean.betterrandom.util.EntryPoint;
 import java.util.SplittableRandom;
 import java.util.stream.DoubleStream;
 import java.util.stream.IntStream;
@@ -76,12 +77,17 @@ public abstract class BaseSplittableRandomAdapter extends BaseEntropyCountingRan
   }
 
   /**
-   * <p>nextInt.</p>
+   * Returns a pseudorandom {@code int} value between the specified
+   * origin (inclusive) and the specified bound (exclusive).
    *
-   * @param origin a int.
-   * @param bound a int.
-   * @return a int.
+   * @param origin the least value returned
+   * @param bound the upper bound (exclusive)
+   * @return a pseudorandom {@code int} value between the origin
+   *         (inclusive) and the bound (exclusive)
+   * @throws IllegalArgumentException if {@code origin} is greater than
+   *         or equal to {@code bound}
    */
+  @EntryPoint
   public int nextInt(final int origin, final int bound) {
     final int out = getSplittableRandom().nextInt(origin, bound);
     recordEntropySpent(entropyOfInt(origin, bound));
@@ -97,11 +103,15 @@ public abstract class BaseSplittableRandomAdapter extends BaseEntropyCountingRan
   }
 
   /**
-   * <p>nextLong.</p>
+   * Returns a pseudorandom {@code long} value between zero (inclusive)
+   * and the specified bound (exclusive).
    *
-   * @param bound a long.
-   * @return a long.
+   * @param bound the upper bound (exclusive).  Must be positive.
+   * @return a pseudorandom {@code long} value between zero
+   *         (inclusive) and the bound (exclusive)
+   * @throws IllegalArgumentException if {@code bound} is not positive
    */
+  @EntryPoint
   public long nextLong(final long bound) {
     final long out = getSplittableRandom().nextLong(bound);
     recordEntropySpent(entropyOfLong(0, bound));
@@ -109,12 +119,17 @@ public abstract class BaseSplittableRandomAdapter extends BaseEntropyCountingRan
   }
 
   /**
-   * <p>nextLong.</p>
+   * Returns a pseudorandom {@code long} value between the specified
+   * origin (inclusive) and the specified bound (exclusive).
    *
-   * @param origin a long.
-   * @param bound a long.
-   * @return a long.
+   * @param origin the least value returned
+   * @param bound the upper bound (exclusive)
+   * @return a pseudorandom {@code long} value between the origin
+   *         (inclusive) and the bound (exclusive)
+   * @throws IllegalArgumentException if {@code origin} is greater than
+   *         or equal to {@code bound}
    */
+  @EntryPoint
   public long nextLong(final long origin, final long bound) {
     final long out = getSplittableRandom().nextLong(origin, bound);
     recordEntropySpent(entropyOfLong(origin, bound));
@@ -130,11 +145,15 @@ public abstract class BaseSplittableRandomAdapter extends BaseEntropyCountingRan
   }
 
   /**
-   * <p>nextDouble.</p>
+   * Returns a pseudorandom {@code double} value between 0.0
+   * (inclusive) and the specified bound (exclusive).
    *
-   * @param bound a double.
-   * @return a double.
+   * @param bound the upper bound (exclusive).  Must be positive.
+   * @return a pseudorandom {@code double} value between zero
+   *         (inclusive) and the bound (exclusive)
+   * @throws IllegalArgumentException if {@code bound} is not positive
    */
+  @EntryPoint
   public double nextDouble(final double bound) {
     final double out = getSplittableRandom().nextDouble(bound);
     recordEntropySpent(ENTROPY_OF_DOUBLE);
@@ -142,12 +161,17 @@ public abstract class BaseSplittableRandomAdapter extends BaseEntropyCountingRan
   }
 
   /**
-   * <p>nextDouble.</p>
+   * Returns a pseudorandom {@code double} value between the specified
+   * origin (inclusive) and bound (exclusive).
    *
-   * @param origin a double.
-   * @param bound a double.
-   * @return a double.
+   * @param origin the least value returned
+   * @param bound the upper bound (exclusive)
+   * @return a pseudorandom {@code double} value between the origin
+   *         (inclusive) and the bound (exclusive)
+   * @throws IllegalArgumentException if {@code origin} is greater than
+   *         or equal to {@code bound}
    */
+  @EntryPoint
   public double nextDouble(final double origin, final double bound) {
     final double out = getSplittableRandom().nextDouble(origin, bound);
     recordEntropySpent(ENTROPY_OF_DOUBLE);

@@ -36,6 +36,7 @@ public final class RandomSeederThread extends LooperThread {
 
   private static final ExecutorService WAKER_UPPER = Executors.newSingleThreadExecutor();
   private static final LogPreFormatter LOG = new LogPreFormatter(RandomSeederThread.class);
+  @SuppressWarnings("StaticCollection")
   private static final Map<SeedGenerator, RandomSeederThread> INSTANCES =
       Collections.synchronizedMap(new WeakHashMap<>());
   /**

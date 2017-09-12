@@ -3,6 +3,7 @@ package io.github.pr0methean.betterrandom.benchmark;
 import com.google.common.collect.HashMultiset;
 import com.google.monitoring.runtime.instrumentation.AllocationRecorder;
 import io.github.pr0methean.betterrandom.seed.SeedException;
+import io.github.pr0methean.betterrandom.util.EntryPoint;
 import io.github.pr0methean.betterrandom.util.LogPreFormatter;
 import java.util.Arrays;
 import java.util.Random;
@@ -55,6 +56,9 @@ public abstract class AbstractRandomBenchmark {
     }
   }
 
+  @EntryPoint
+  public AbstractRandomBenchmark() {}
+
   @Setup(Level.Trial)
   public void setUp() {
     try {
@@ -66,7 +70,7 @@ public abstract class AbstractRandomBenchmark {
     // FIXME: Why isn't this outputting anything?
     AllocationRecorder.addSampler((arrayLength, desc, newObj, size) -> {
       if (!desc.contains("StackTrace")) {
-        LOG.info("Created %s (a %s of %d bytes)\n", newObj, desc, size);
+        LOG.info("Created %s (a %s of %d bytes)", newObj, desc, size);
         stackTraces.add(new StackTrace(Thread.currentThread().getStackTrace()));
       }
     });
@@ -100,8 +104,8 @@ public abstract class AbstractRandomBenchmark {
   @TearDown(Level.Trial)
   public void tearDown() {
     System.gc();
-    for (StackTrace stackTrace : stackTraces) {
-      LOG.info("%d objects created from:\n%s\n", stackTraces.count(stackTrace), stackTrace);
+    for (final StackTrace stackTrace : stackTraces) {
+      LOG.info("%d objects created from:%n%s%n", stackTraces.count(stackTrace), stackTrace);
     }
     stackTraces.clear();
   }
@@ -131,14 +135,15 @@ public abstract class AbstractRandomBenchmark {
   private static final class StackTrace {
 
     private static final int OBJECT_CREATION_STACK_DEPTH = 5;
+    private static final String NEWLINE = String.format("%n");
     private final StackTraceElement[] elements;
 
-    private StackTrace(StackTraceElement[] elements) {
+    private StackTrace(final StackTraceElement[] elements) {
       this.elements = Arrays.copyOf(elements, OBJECT_CREATION_STACK_DEPTH);
     }
 
     @Override
-    public boolean equals(Object o) {
+    public boolean equals(final Object o) {
       if (this == o) {
         return true;
       }
@@ -146,7 +151,7 @@ public abstract class AbstractRandomBenchmark {
         return false;
       }
 
-      StackTrace that = (StackTrace) o;
+      final StackTrace that = (StackTrace) o;
       return Arrays.equals(elements, that.elements);
     }
 
@@ -157,10 +162,10 @@ public abstract class AbstractRandomBenchmark {
 
     @Override
     public String toString() {
-      StringBuilder stringBuilder = new StringBuilder();
-      for (StackTraceElement element : elements) {
+      final StringBuilder stringBuilder = new StringBuilder();
+      for (final StackTraceElement element : elements) {
         stringBuilder.append(element);
-        stringBuilder.append('\n');
+        stringBuilder.append(NEWLINE);
       }
       return stringBuilder.toString();
     }

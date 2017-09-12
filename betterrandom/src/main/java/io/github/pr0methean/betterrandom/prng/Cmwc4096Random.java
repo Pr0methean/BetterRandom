@@ -20,6 +20,7 @@ import io.github.pr0methean.betterrandom.seed.DefaultSeedGenerator;
 import io.github.pr0methean.betterrandom.seed.SeedException;
 import io.github.pr0methean.betterrandom.seed.SeedGenerator;
 import io.github.pr0methean.betterrandom.util.BinaryUtils;
+import io.github.pr0methean.betterrandom.util.EntryPoint;
 import java.util.Arrays;
 import java.util.Random;
 import org.checkerframework.checker.initialization.qual.UnknownInitialization;
@@ -70,6 +71,7 @@ public class Cmwc4096Random extends BaseEntropyCountingRandom {
    * @throws io.github.pr0methean.betterrandom.seed.SeedException If there is a problem
    *     generating a seed.
    */
+  @EntryPoint
   public Cmwc4096Random(final SeedGenerator seedGenerator) throws SeedException {
     this(seedGenerator.generateSeed(SEED_SIZE_BYTES));
   }
