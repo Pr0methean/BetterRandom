@@ -19,6 +19,7 @@ import org.testng.annotations.Test;
 public abstract class BaseRandomTest {
 
   private static final LogPreFormatter LOG = new LogPreFormatter(BaseRandomTest.class);
+  private static final int MAX_DUMPED_SEED_LENGTH = 32;
 
   /**
    * Test to ensure that two distinct RNGs with the same seed return the same sequence of numbers.
@@ -27,10 +28,14 @@ public abstract class BaseRandomTest {
   public void testRepeatability() throws SeedException {
     final BaseRandom rng = createRng();
     byte[] seed = rng.getSeed();
-    LOG.info("Original seed is %s", BinaryUtils.convertBytesToHexString(seed));
+    if (seed.length <= MAX_DUMPED_SEED_LENGTH) {
+      LOG.info("Original seed is %s", BinaryUtils.convertBytesToHexString(seed));
+    }
     // Create second RNG using same seed.
     final BaseRandom duplicateRNG = createRng(rng.getSeed());
-    LOG.info("Copy's seed is %s", BinaryUtils.convertBytesToHexString(duplicateRNG.getSeed()));
+    if (seed.length <= MAX_DUMPED_SEED_LENGTH) {
+      LOG.info("Copy's seed is %s", BinaryUtils.convertBytesToHexString(duplicateRNG.getSeed()));
+    }
     assert RandomTestUtils
         .testEquivalence(rng, duplicateRNG, 1000) :
         String.format("Generated sequences do not match between:%n%s%nand:%n%s", rng.dump(), duplicateRNG.dump());
