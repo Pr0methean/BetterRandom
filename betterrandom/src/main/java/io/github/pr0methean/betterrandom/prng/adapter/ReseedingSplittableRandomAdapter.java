@@ -11,6 +11,7 @@ import java.util.Collections;
 import java.util.Map;
 import java.util.SplittableRandom;
 import java.util.WeakHashMap;
+import java.util.concurrent.atomic.AtomicLong;
 import org.checkerframework.checker.initialization.qual.UnknownInitialization;
 import org.checkerframework.checker.nullness.qual.EnsuresNonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
@@ -153,6 +154,9 @@ public class ReseedingSplittableRandomAdapter extends BaseSplittableRandomAdapte
   protected void setSeedInternal(@UnknownInitialization ReseedingSplittableRandomAdapter this,
       final byte[] seed) {
     this.seed = seed.clone();
+    if (entropyBits == null) {
+      entropyBits = new AtomicLong(0);
+    }
   }
 
   @Override
