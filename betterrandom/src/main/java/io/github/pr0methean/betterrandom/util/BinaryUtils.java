@@ -124,32 +124,6 @@ public final class BinaryUtils {
   }
 
   /**
-   * Converts a floating point value in the range 0 - 1 into a fixed point bit string (where the
-   * most significant bit has a value of 0.5).
-   *
-   * @param value The value to convert (must be between zero and one).
-   * @return A bit string representing the value in fixed-point format.
-   */
-  public static BitString convertDoubleToFixedPointBits(final double value) {
-    if (value < 0.0d || value >= 1.0d) {
-      throw new IllegalArgumentException("Value must be between 0 and 1.");
-    }
-    final StringBuilder bits = new StringBuilder(64);
-    double bitValue = 0.5d;
-    double d = value;
-    while (d > 0) {
-      if (d >= bitValue) {
-        bits.append('1');
-        d -= bitValue;
-      } else {
-        bits.append('0');
-      }
-      bitValue /= 2;
-    }
-    return new BitString(bits.toString());
-  }
-
-  /**
    * <p>convertLongToBytes.</p>
    *
    * @param input a long.
