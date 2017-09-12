@@ -9,7 +9,8 @@ public class ReseedingSplittableRandomAdapterBenchmark extends
     AbstractRandomBenchmark {
 
   @EntryPoint
-  public ReseedingSplittableRandomAdapterBenchmark() {}
+  public ReseedingSplittableRandomAdapterBenchmark() {
+  }
 
   @Override
   protected Random createPrng()

@@ -8,7 +8,8 @@ import java.util.Random;
 public class VanillaJavaSecureRandomBenchmark extends AbstractRandomBenchmark {
 
   @EntryPoint
-  public VanillaJavaSecureRandomBenchmark() {}
+  public VanillaJavaSecureRandomBenchmark() {
+  }
 
   @Override
   protected Random createPrng()
