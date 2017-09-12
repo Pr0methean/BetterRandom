@@ -208,6 +208,8 @@
             <annotationProcessors>
               <annotationProcessor>org.checkerframework.checker.nullness.NullnessChecker
               </annotationProcessor>
+              <annotationProcessor>org.checkerframework.checker.lock.LockChecker
+              </annotationProcessor>
             </annotationProcessors>
             <compilerArgs>
               <arg>-Xbootclasspath/p:${annotatedJdk}</arg>

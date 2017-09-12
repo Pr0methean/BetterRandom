@@ -22,6 +22,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.Condition;
 import org.checkerframework.checker.initialization.qual.UnderInitialization;
+import org.checkerframework.checker.lock.qual.GuardedBy;
 import org.checkerframework.checker.nullness.qual.EnsuresNonNull;
 import org.checkerframework.checker.nullness.qual.RequiresNonNull;
 
@@ -37,6 +38,7 @@ public final class RandomSeederThread extends LooperThread {
   private static final ExecutorService WAKER_UPPER = Executors.newSingleThreadExecutor();
   private static final LogPreFormatter LOG = new LogPreFormatter(RandomSeederThread.class);
   @SuppressWarnings("StaticCollection")
+  @GuardedBy("<self>")
   private static final Map<SeedGenerator, RandomSeederThread> INSTANCES =
       Collections.synchronizedMap(new WeakHashMap<>());
   /**
@@ -49,10 +51,10 @@ public final class RandomSeederThread extends LooperThread {
   private final byte[] longSeedArray = new byte[8];
   // WeakHashMap-based Set can't be serialized, so read & write this copy instead
   private final Set<Random> prngsSerial = new HashSet<>();
-  private transient Set<Random> prngs;
+  private transient @GuardedBy("<self>") Set<Random> prngs;
   private transient ByteBuffer longSeedBuffer;
-  private transient Condition waitWhileEmpty;
-  private transient Condition waitForEntropyDrain;
+  private transient @GuardedBy("lock") Condition waitWhileEmpty;
+  private transient @GuardedBy("lock") Condition waitForEntropyDrain;
   private transient Set<Random> prngsThisIteration;
   private transient WeakHashMap<ByteArrayReseedableRandom, byte[]> seedArrays;
 
@@ -75,15 +77,17 @@ public final class RandomSeederThread extends LooperThread {
   public static RandomSeederThread getInstance(final SeedGenerator seedGenerator) {
     Objects.requireNonNull(seedGenerator,
         "Trying to get RandomSeederThread for null SeedGenerator");
-    return INSTANCES.computeIfAbsent(seedGenerator,
-        seedGen -> {
-          LOG.info("Creating a RandomSeederThread for %s", seedGen);
-          final RandomSeederThread thread = new RandomSeederThread(seedGen);
-          thread.setName("RandomSeederThread for " + seedGen);
-          thread.setDaemon(true);
-          thread.start();
-          return thread;
-        });
+    synchronized (INSTANCES) {
+      return INSTANCES.computeIfAbsent(seedGenerator,
+          seedGen -> {
+            LOG.info("Creating a RandomSeederThread for %s", seedGen);
+            final RandomSeederThread thread = new RandomSeederThread(seedGen);
+            thread.setName("RandomSeederThread for " + seedGen);
+            thread.setDaemon(true);
+            thread.start();
+            return thread;
+          });
+    }
   }
 
   @EnsuresNonNull(
@@ -256,6 +260,7 @@ public final class RandomSeederThread extends LooperThread {
    */
   public void stopIfEmpty() {
     if (isEmpty()) {
+      LOG.info("Stopping empty RandomSeederThread for %s", seedGenerator);
       interrupt();
     }
   }
