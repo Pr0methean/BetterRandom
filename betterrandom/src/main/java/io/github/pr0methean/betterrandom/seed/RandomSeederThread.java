@@ -211,6 +211,12 @@ public final class RandomSeederThread extends LooperThread {
       } catch (final SeedException e) {
         LOG.error("%s gave SeedException %s", seedGenerator, e);
         interrupt();
+      } catch (NullPointerException e) {
+        LOG.error("%s", e);
+        for (StackTraceElement element : e.getStackTrace()) {
+          LOG.error("  %s", element);
+        }
+        interrupt();
       }
     }
     if (!entropyConsumed) {
