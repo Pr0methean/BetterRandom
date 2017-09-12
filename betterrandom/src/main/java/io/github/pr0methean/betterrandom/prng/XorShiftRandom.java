@@ -106,6 +106,9 @@ public class XorShiftRandom extends BaseRandom {
   @Override
   protected void setSeedInternal(@UnknownInitialization(Random.class)XorShiftRandom this,
       final byte[] seed) {
+    if (seed.length != SEED_SIZE_BYTES) {
+      throw new IllegalArgumentException("XorShiftRandom requires a 20-byte seed");
+    }
     super.setSeedInternal(seed);
     final int[] state = BinaryUtils.convertBytesToInts(this.seed);
     state1 = state[0];
