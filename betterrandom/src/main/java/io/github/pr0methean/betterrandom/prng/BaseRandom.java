@@ -97,20 +97,6 @@ public abstract class BaseRandom extends Random implements ByteArrayReseedableRa
   }
 
   /**
-   * The purpose of this method is so that entropy-counting subclasses can detect that no more than
-   * 1 bit of entropy is actually being consumed, even though this method uses {@link #nextDouble()}
-   * which normally consumes 53 bits. Tracking of fractional bits of entropy is currently not
-   * implemented in {@link io.github.pr0methean.betterrandom.prng.BaseRandom}.
-   *
-   * @param probability The probability of returning true.
-   * @return True with probability {@code probability}; false otherwise. If {@code probability < 0},
-   *     always returns false. If {@code probability >= 1}, always returns true.
-   */
-  public final boolean withProbability(final double probability) {
-    return probability >= 1 || (probability > 0 && withProbabilityInternal(probability));
-  }
-
-  /**
    * <p>entropyOfInt.</p>
    *
    * @param origin a int.
@@ -130,6 +116,20 @@ public abstract class BaseRandom extends Random implements ByteArrayReseedableRa
    */
   protected static int entropyOfLong(final long origin, final long bound) {
     return 64 - Long.numberOfLeadingZeros(bound - origin - 1);
+  }
+
+  /**
+   * The purpose of this method is so that entropy-counting subclasses can detect that no more than
+   * 1 bit of entropy is actually being consumed, even though this method uses {@link #nextDouble()}
+   * which normally consumes 53 bits. Tracking of fractional bits of entropy is currently not
+   * implemented in {@link io.github.pr0methean.betterrandom.prng.BaseRandom}.
+   *
+   * @param probability The probability of returning true.
+   * @return True with probability {@code probability}; false otherwise. If {@code probability < 0},
+   *     always returns false. If {@code probability >= 1}, always returns true.
+   */
+  public final boolean withProbability(final double probability) {
+    return probability >= 1 || (probability > 0 && withProbabilityInternal(probability));
   }
 
   /**
@@ -175,6 +175,17 @@ public abstract class BaseRandom extends Random implements ByteArrayReseedableRa
     lock.lock();
     try {
       return seed.clone();
+    } finally {
+      lock.unlock();
+    }
+  }
+
+  @EnsuresNonNull("this.seed")
+  @Override
+  public void setSeed(final byte[] seed) {
+    lock.lock();
+    try {
+      setSeedInternal(seed);
     } finally {
       lock.unlock();
     }
@@ -226,17 +237,6 @@ public abstract class BaseRandom extends Random implements ByteArrayReseedableRa
     }
   }
 
-  @EnsuresNonNull("this.seed")
-  @Override
-  public void setSeed(final byte[] seed) {
-    lock.lock();
-    try {
-      setSeedInternal(seed);
-    } finally {
-      lock.unlock();
-    }
-  }
-
   @Override
   public boolean preferSeedWithLong() {
     return getNewSeedLength() <= 8;
@@ -255,7 +255,7 @@ public abstract class BaseRandom extends Random implements ByteArrayReseedableRa
       final byte[] seed) {
     if (this.seed == null) {
       this.seed = seed.clone();
-          } else {
+    } else {
       System.arraycopy(seed, 0, this.seed, 0, seed.length);
     }
     if (entropyBits == null) {

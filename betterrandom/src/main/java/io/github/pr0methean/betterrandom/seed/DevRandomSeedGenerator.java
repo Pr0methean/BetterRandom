@@ -18,7 +18,6 @@ package io.github.pr0methean.betterrandom.seed;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.nio.file.Paths;
 
 /**
  * RNG seed strategy that gets data from {@literal /dev/random} on systems that provide it (e.g.
