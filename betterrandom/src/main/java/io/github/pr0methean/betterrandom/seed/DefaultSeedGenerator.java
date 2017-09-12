@@ -38,7 +38,6 @@ public enum DefaultSeedGenerator implements SeedGenerator {
       SecureRandomSeedGenerator.SECURE_RANDOM_SEED_GENERATOR
   };
 
-  /** {@inheritDoc} */
   @Override
   public void generateSeed(final byte[] output) throws SeedException {
     for (final SeedGenerator generator : GENERATORS) {

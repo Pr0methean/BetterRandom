@@ -9,7 +9,8 @@ import java.util.Random;
 public class RandomWrapperSecureRandomBenchmark extends AbstractRandomBenchmark {
 
   @EntryPoint
-  public RandomWrapperSecureRandomBenchmark() {}
+  public RandomWrapperSecureRandomBenchmark() {
+  }
 
   @Override
   protected Random createPrng() throws SeedException {

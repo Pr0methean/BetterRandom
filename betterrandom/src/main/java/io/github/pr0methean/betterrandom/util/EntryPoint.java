@@ -13,4 +13,6 @@ import java.lang.annotation.Target;
 @Inherited
 @Retention(RetentionPolicy.SOURCE)
 @Target({ElementType.METHOD, ElementType.CONSTRUCTOR})
-public @interface EntryPoint {}
+public @interface EntryPoint {
+
+}

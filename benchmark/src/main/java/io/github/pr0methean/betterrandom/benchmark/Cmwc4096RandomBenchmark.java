@@ -8,7 +8,8 @@ import java.util.Random;
 public class Cmwc4096RandomBenchmark extends AbstractRandomBenchmarkWithReseeding {
 
   @EntryPoint
-  public Cmwc4096RandomBenchmark() {}
+  public Cmwc4096RandomBenchmark() {
+  }
 
   @Override
   protected Random createPrng()

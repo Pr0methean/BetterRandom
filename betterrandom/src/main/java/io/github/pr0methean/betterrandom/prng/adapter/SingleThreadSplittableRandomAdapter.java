@@ -39,7 +39,6 @@ public class SingleThreadSplittableRandomAdapter extends DirectSplittableRandomA
     super(seed);
   }
 
-  /** {@inheritDoc} */
   @Override
   protected ToStringHelper addSubSubclassFields(final ToStringHelper original) {
     return super.addSubSubclassFields(original)

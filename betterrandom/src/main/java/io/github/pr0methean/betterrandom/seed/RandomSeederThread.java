@@ -65,12 +65,12 @@ public final class RandomSeederThread extends LooperThread {
   }
 
   /**
-   * Obtain the instance for the given {@link io.github.pr0methean.betterrandom.seed.SeedGenerator},
+   * Obtain the instance for the given {@link SeedGenerator},
    * creating and starting it if it doesn't exist.
    *
-   * @param seedGenerator a {@link io.github.pr0methean.betterrandom.seed.SeedGenerator}
-   *     object.
-   * @return a {@link io.github.pr0methean.betterrandom.seed.RandomSeederThread} object.
+   * @param seedGenerator the {@link SeedGenerator} to use to seed PRNGs registered with this
+   *     RandomSeederThread.
+   * @return a RandomSeederThread that is running and is backed by {@code seedGenerator}.
    */
   public static RandomSeederThread getInstance(final SeedGenerator seedGenerator) {
     Objects.requireNonNull(seedGenerator,
@@ -100,7 +100,6 @@ public final class RandomSeederThread extends LooperThread {
     seedArrays = new WeakHashMap<>();
   }
 
-  /** {@inheritDoc} */
   @Override
   protected Object readResolve() {
     return getInstance(seedGenerator);
@@ -164,7 +163,6 @@ public final class RandomSeederThread extends LooperThread {
     }
   }
 
-  /** {@inheritDoc} */
   @SuppressWarnings("InfiniteLoopStatement")
   @Override
   public void iterate() throws InterruptedException {

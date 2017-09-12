@@ -8,7 +8,8 @@ import java.util.Random;
 public class XorShiftRandomBenchmark extends AbstractRandomBenchmarkWithReseeding {
 
   @EntryPoint
-  public XorShiftRandomBenchmark() {}
+  public XorShiftRandomBenchmark() {
+  }
 
   @Override
   protected Random createPrng()

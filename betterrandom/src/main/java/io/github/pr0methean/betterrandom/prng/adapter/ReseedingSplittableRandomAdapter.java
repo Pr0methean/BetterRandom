@@ -49,11 +49,9 @@ public class ReseedingSplittableRandomAdapter extends BaseSplittableRandomAdapte
   }
 
   /**
-   * <p>getDefaultInstance.</p>
-   *
-   * @return a {@link io.github.pr0methean.betterrandom.prng.adapter.ReseedingSplittableRandomAdapter}
-   *     object.
-   * @throws io.github.pr0methean.betterrandom.seed.SeedException if any.
+   * @return The instance backed by the {@link DefaultSeedGenerator}.
+   * @throws SeedException if the {@link DefaultSeedGenerator} throws one while generating the
+   *     initial seed.
    */
   @SuppressWarnings("NonThreadSafeLazyInitialization")
   public static ReseedingSplittableRandomAdapter getDefaultInstance()
@@ -62,13 +60,11 @@ public class ReseedingSplittableRandomAdapter extends BaseSplittableRandomAdapte
   }
 
   /**
-   * <p>getInstance.</p>
-   *
    * @param seedGenerator a {@link io.github.pr0methean.betterrandom.seed.SeedGenerator}
    *     object.
-   * @return a {@link io.github.pr0methean.betterrandom.prng.adapter.ReseedingSplittableRandomAdapter}
-   *     object.
-   * @throws io.github.pr0methean.betterrandom.seed.SeedException if any.
+   * @return the ReseedingSplittableRandomAdapter backed by {@code seedGenerator}.
+   * @throws SeedException if {@code seedGenerator} throws one while generating the initial
+   *     seed.
    */
   @SuppressWarnings("SynchronizationOnStaticField")
   public static ReseedingSplittableRandomAdapter getInstance(final SeedGenerator seedGenerator)
@@ -93,7 +89,6 @@ public class ReseedingSplittableRandomAdapter extends BaseSplittableRandomAdapte
     }
   }
 
-  /** {@inheritDoc} */
   @Override
   protected ToStringHelper addSubSubclassFields(final ToStringHelper original) {
     return original.add("threadLocal", threadLocal);
@@ -129,7 +124,6 @@ public class ReseedingSplittableRandomAdapter extends BaseSplittableRandomAdapte
     seederThread = RandomSeederThread.getInstance(seedGenerator);
   }
 
-  /** {@inheritDoc} */
   @Override
   protected SplittableRandom getSplittableRandom() {
     final SingleThreadSplittableRandomAdapter adapterForThread = threadLocal.get();
@@ -137,13 +131,11 @@ public class ReseedingSplittableRandomAdapter extends BaseSplittableRandomAdapte
     return adapterForThread.getSplittableRandom();
   }
 
-  /** {@inheritDoc} */
   @Override
   protected void finalize() {
     seederThread.stopIfEmpty();
   }
 
-  /** {@inheritDoc} */
   @Override
   public boolean equals(final @Nullable Object o) {
     return this == o
@@ -151,27 +143,23 @@ public class ReseedingSplittableRandomAdapter extends BaseSplittableRandomAdapte
         && seedGenerator.equals(((ReseedingSplittableRandomAdapter) o).seedGenerator));
   }
 
-  /** {@inheritDoc} */
   @Override
   public void setSeed(@UnknownInitialization ReseedingSplittableRandomAdapter this,
       final long seed) {
     // No-op.
   }
 
-  /** {@inheritDoc} */
   @Override
   protected void setSeedInternal(@UnknownInitialization ReseedingSplittableRandomAdapter this,
       final byte[] seed) {
     this.seed = seed.clone();
   }
 
-  /** {@inheritDoc} */
   @Override
   public int hashCode() {
     return seedGenerator.hashCode() + 1;
   }
 
-  /** {@inheritDoc} */
   @Override
   public String toString() {
     return "ReseedingSplittableRandomAdapter using " + seedGenerator;

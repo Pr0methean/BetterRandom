@@ -86,7 +86,6 @@ public class Cmwc4096Random extends BaseEntropyCountingRandom {
     assert state != null : "@AssumeAssertion(nullness)";
   }
 
-  /** {@inheritDoc} */
   @Override
   protected ToStringHelper addSubSubclassFields(final ToStringHelper original) {
     return original
@@ -102,7 +101,6 @@ public class Cmwc4096Random extends BaseEntropyCountingRandom {
     return seed.clone();
   }
 
-  /** {@inheritDoc} */
   @Override
   public synchronized void setSeed(@UnknownInitialization(Random.class)Cmwc4096Random this,
       final long seed) {
@@ -111,7 +109,6 @@ public class Cmwc4096Random extends BaseEntropyCountingRandom {
     } // Otherwise ignore; it's Random.<init> calling us without a full-size seed
   }
 
-  /** {@inheritDoc} */
   @EnsuresNonNull({"this.seed", "state"})
   @Override
   protected void setSeedInternal(@UnknownInitialization(Random.class)Cmwc4096Random this,
@@ -125,7 +122,6 @@ public class Cmwc4096Random extends BaseEntropyCountingRandom {
     index = 4095;
   }
 
-  /** {@inheritDoc} */
   @Override
   protected int next(final int bits) {
     lock.lock();
@@ -146,7 +142,6 @@ public class Cmwc4096Random extends BaseEntropyCountingRandom {
     }
   }
 
-  /** {@inheritDoc} */
   @Override
   public int getNewSeedLength(@UnknownInitialization Cmwc4096Random this) {
     return SEED_SIZE_BYTES;

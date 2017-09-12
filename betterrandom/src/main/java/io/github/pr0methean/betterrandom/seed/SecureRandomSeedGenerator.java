@@ -32,7 +32,7 @@ public enum SecureRandomSeedGenerator implements SeedGenerator {
 
   SECURE_RANDOM_SEED_GENERATOR;
 
-  /** Constant <code>SOURCE</code> */
+  /** Constant {@code SOURCE} */
   private static final SecureRandom SOURCE = new SecureRandom();
 
   /**
@@ -46,13 +46,11 @@ public enum SecureRandomSeedGenerator implements SeedGenerator {
     return SOURCE.generateSeed(length);
   }
 
-  /** {@inheritDoc} */
   @Override
   public void generateSeed(final byte[] output) throws SeedException {
     System.arraycopy(SOURCE.generateSeed(output.length), 0, output, 0, output.length);
   }
 
-  /** {@inheritDoc} */
   @Override
   public String toString() {
     return "java.security.SecureRandom";

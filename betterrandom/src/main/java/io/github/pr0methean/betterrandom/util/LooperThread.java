@@ -165,7 +165,6 @@ public class LooperThread extends Thread implements Serializable, Cloneable {
     throw new UnsupportedOperationException("This method should be overridden!");
   }
 
-  /** {@inheritDoc} */
   @Override
   public final void run() {
     while (true) {
@@ -184,27 +183,23 @@ public class LooperThread extends Thread implements Serializable, Cloneable {
     }
   }
 
-  /** {@inheritDoc} */
   @Override
   @SuppressWarnings("override.return.invalid")
   public @Nullable UncaughtExceptionHandler getUncaughtExceptionHandler() {
     return uncaughtExceptionHandler.wrapped;
   }
 
-  /** {@inheritDoc} */
   @Override
   public void setUncaughtExceptionHandler(final UncaughtExceptionHandler handler) {
     uncaughtExceptionHandler.wrapped = handler;
     super.setUncaughtExceptionHandler(uncaughtExceptionHandler);
   }
 
-  /** {@inheritDoc} */
   @Override
   public State getState() {
     return alreadyTerminatedWhenDeserialized ? State.TERMINATED : super.getState();
   }
 
-  /** {@inheritDoc} */
   @Override
   public synchronized void start() {
     if (alreadyTerminatedWhenDeserialized) {
@@ -230,7 +225,6 @@ public class LooperThread extends Thread implements Serializable, Cloneable {
     }
   }
 
-  /** {@inheritDoc} */
   @SuppressWarnings("MethodDoesntCallSuperMethod")
   @Override
   public LooperThread clone() {

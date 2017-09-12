@@ -37,7 +37,7 @@ public enum RandomDotOrgSeedGenerator implements SeedGenerator {
 
   RANDOM_DOT_ORG_SEED_GENERATOR;
 
-  /** Constant <code>BASE_URL="https://www.random.org"</code> */
+  /** Constant {@code BASE_URL="https://www.random.org"} */
   private static final String BASE_URL = "https://www.random.org";
   /**
    * The URL from which the random bytes are retrieved.
@@ -131,7 +131,6 @@ public enum RandomDotOrgSeedGenerator implements SeedGenerator {
     }
   }
 
-  /** {@inheritDoc} */
   @Override
   public String toString() {
     return BASE_URL;
