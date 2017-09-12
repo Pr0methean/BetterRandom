@@ -65,8 +65,8 @@ public final class RandomSeederThread extends LooperThread {
   }
 
   /**
-   * Obtain the instance for the given {@link SeedGenerator},
-   * creating and starting it if it doesn't exist.
+   * Obtain the instance for the given {@link SeedGenerator}, creating and starting it if it doesn't
+   * exist.
    *
    * @param seedGenerator the {@link SeedGenerator} to use to seed PRNGs registered with this
    *     RandomSeederThread.
