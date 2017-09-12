@@ -1,7 +1,7 @@
 package io.github.pr0methean.betterrandom.prng.adapter;
 
 import com.google.common.base.MoreObjects.ToStringHelper;
-import io.github.pr0methean.betterrandom.prng.BaseEntropyCountingRandom;
+import io.github.pr0methean.betterrandom.prng.BaseRandom;
 import io.github.pr0methean.betterrandom.util.EntryPoint;
 import java.util.SplittableRandom;
 import java.util.stream.DoubleStream;
@@ -15,7 +15,7 @@ import org.checkerframework.checker.initialization.qual.UnknownInitialization;
  * @author ubuntu
  * @version $Id: $Id
  */
-public abstract class BaseSplittableRandomAdapter extends BaseEntropyCountingRandom {
+public abstract class BaseSplittableRandomAdapter extends BaseRandom {
 
   /** Constant {@code SEED_LENGTH_BYTES=8} */
   public static final int SEED_LENGTH_BYTES = 8;

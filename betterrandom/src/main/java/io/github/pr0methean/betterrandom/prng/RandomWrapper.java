@@ -39,7 +39,7 @@ import org.checkerframework.checker.initialization.qual.UnknownInitialization;
  * @author Chris Hennick
  * @version $Id: $Id
  */
-public class RandomWrapper extends BaseEntropyCountingRandom {
+public class RandomWrapper extends BaseRandom {
 
   public static final byte[] EMPTY_ARRAY = new byte[0];
   private static final long serialVersionUID = -6526304552538799385L;
@@ -106,7 +106,7 @@ public class RandomWrapper extends BaseEntropyCountingRandom {
   }
 
   private void readEntropyOfWrapped(
-      @UnknownInitialization(BaseEntropyCountingRandom.class)RandomWrapper this,
+      @UnknownInitialization(BaseRandom.class)RandomWrapper this,
       final Random wrapped) {
     entropyBits.set(wrapped instanceof EntropyCountingRandom
         ? ((EntropyCountingRandom) wrapped).entropyBits()

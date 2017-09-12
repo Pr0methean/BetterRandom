@@ -5,8 +5,10 @@ import static org.checkerframework.checker.nullness.NullnessUtil.castNonNull;
 import com.google.common.base.MoreObjects;
 import com.google.common.base.MoreObjects.ToStringHelper;
 import io.github.pr0methean.betterrandom.ByteArrayReseedableRandom;
+import io.github.pr0methean.betterrandom.EntropyCountingRandom;
 import io.github.pr0methean.betterrandom.RepeatableRandom;
 import io.github.pr0methean.betterrandom.seed.DefaultSeedGenerator;
+import io.github.pr0methean.betterrandom.seed.RandomSeederThread;
 import io.github.pr0methean.betterrandom.seed.SeedException;
 import io.github.pr0methean.betterrandom.seed.SeedGenerator;
 import io.github.pr0methean.betterrandom.util.BinaryUtils;
@@ -17,11 +19,13 @@ import java.io.InvalidObjectException;
 import java.io.ObjectInputStream;
 import java.nio.ByteBuffer;
 import java.util.Random;
+import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 import org.checkerframework.checker.initialization.qual.UnderInitialization;
 import org.checkerframework.checker.initialization.qual.UnknownInitialization;
 import org.checkerframework.checker.nullness.qual.EnsuresNonNull;
+import org.checkerframework.checker.nullness.qual.Nullable;
 
 /**
  * <p>Abstract BaseRandom class.</p>
@@ -30,8 +34,10 @@ import org.checkerframework.checker.nullness.qual.EnsuresNonNull;
  * @version $Id: $Id
  */
 public abstract class BaseRandom extends Random implements ByteArrayReseedableRandom,
-    RepeatableRandom, Dumpable {
+    RepeatableRandom, Dumpable, EntropyCountingRandom {
 
+  public static final int ENTROPY_OF_DOUBLE = 53;
+  protected static final long ENTROPY_OF_FLOAT = 24;
   private static final LogPreFormatter LOG = new LogPreFormatter(BaseRandom.class);
   private static final long serialVersionUID = -1556392727255964947L;
   protected byte[] seed;
@@ -46,6 +52,8 @@ public abstract class BaseRandom extends Random implements ByteArrayReseedableRa
   protected transient boolean superConstructorFinished = false;
   protected transient byte[] longSeedArray;
   protected transient ByteBuffer longSeedBuffer;
+  protected AtomicLong entropyBits;
+  protected @Nullable RandomSeederThread seederThread;
 
   /**
    * Creates a new RNG and seeds it using the default seeding strategy.
@@ -55,6 +63,7 @@ public abstract class BaseRandom extends Random implements ByteArrayReseedableRa
    */
   public BaseRandom(final int seedLength) throws SeedException {
     this(DefaultSeedGenerator.DEFAULT_SEED_GENERATOR.generateSeed(seedLength));
+    entropyBits = new AtomicLong(0);
   }
 
   /**
@@ -68,6 +77,7 @@ public abstract class BaseRandom extends Random implements ByteArrayReseedableRa
    */
   public BaseRandom(final SeedGenerator seedGenerator, final int seedLength) throws SeedException {
     this(seedGenerator.generateSeed(seedLength));
+    entropyBits = new AtomicLong(0);
   }
 
   /**
@@ -83,13 +93,14 @@ public abstract class BaseRandom extends Random implements ByteArrayReseedableRa
     }
     initTransientFields();
     setSeedInternal(seed);
+    entropyBits = new AtomicLong(0);
   }
 
   /**
    * The purpose of this method is so that entropy-counting subclasses can detect that no more than
    * 1 bit of entropy is actually being consumed, even though this method uses {@link #nextDouble()}
    * which normally consumes 53 bits. Tracking of fractional bits of entropy is currently not
-   * implemented in {@link io.github.pr0methean.betterrandom.prng.BaseEntropyCountingRandom}.
+   * implemented in {@link io.github.pr0methean.betterrandom.prng.BaseRandom}.
    *
    * @param probability The probability of returning true.
    * @return True with probability {@code probability}; false otherwise. If {@code probability < 0},
@@ -97,6 +108,28 @@ public abstract class BaseRandom extends Random implements ByteArrayReseedableRa
    */
   public final boolean withProbability(final double probability) {
     return probability >= 1 || (probability > 0 && withProbabilityInternal(probability));
+  }
+
+  /**
+   * <p>entropyOfInt.</p>
+   *
+   * @param origin a int.
+   * @param bound a int.
+   * @return a int.
+   */
+  protected static int entropyOfInt(final int origin, final int bound) {
+    return 32 - Integer.numberOfLeadingZeros(bound - origin - 1);
+  }
+
+  /**
+   * <p>entropyOfLong.</p>
+   *
+   * @param origin a long.
+   * @param bound a long.
+   * @return a int.
+   */
+  protected static int entropyOfLong(final long origin, final long bound) {
+    return 64 - Long.numberOfLeadingZeros(bound - origin - 1);
   }
 
   /**
@@ -108,16 +141,18 @@ public abstract class BaseRandom extends Random implements ByteArrayReseedableRa
    * @return True with probability {@code probability}; false otherwise.
    */
   protected boolean withProbabilityInternal(final double probability) {
-    return nextDouble() <= probability;
+    final boolean result = nextDouble() <= probability;
+    // Random.nextDouble() uses 53 bits, but we're only outputting 1, so credit the rest back
+    // TODO: Maybe track fractional bits of entropy in a fixed-point form?
+    recordEntropySpent(-52);
+    return result;
   }
 
-  /**
-   * <p>addSubclassFields.</p>
-   *
-   * @param original a {@link com.google.common.base.MoreObjects.ToStringHelper} object.
-   * @return a {@link com.google.common.base.MoreObjects.ToStringHelper} object.
-   */
-  public abstract ToStringHelper addSubclassFields(ToStringHelper original);
+  public final ToStringHelper addSubclassFields(final ToStringHelper original) {
+    return addSubSubclassFields(original
+        .add("entropyBits", entropyBits.get())
+        .add("seederThread", seederThread));
+  }
 
   /**
    * <p>dump.</p>
@@ -159,6 +194,38 @@ public abstract class BaseRandom extends Random implements ByteArrayReseedableRa
     }
   }
 
+  /**
+   * <p>addSubSubclassFields.</p>
+   *
+   * @param original a {@link ToStringHelper} object.
+   * @return a {@link ToStringHelper} object.
+   */
+  protected abstract ToStringHelper addSubSubclassFields(ToStringHelper original);
+
+  /**
+   * <p>Setter for the field {@code seederThread}.</p>
+   *
+   * @param thread a {@link io.github.pr0methean.betterrandom.seed.RandomSeederThread} object.
+   */
+  @SuppressWarnings("ObjectEquality")
+  public void setSeederThread(@org.jetbrains.annotations.Nullable final RandomSeederThread thread) {
+    if (thread != null) {
+      thread.add(this);
+    }
+    lock.lock();
+    try {
+      if (this.seederThread == thread) {
+        return;
+      }
+      if (this.seederThread != null) {
+        this.seederThread.remove(this);
+      }
+      this.seederThread = thread;
+    } finally {
+      lock.unlock();
+    }
+  }
+
   @EnsuresNonNull("this.seed")
   @Override
   public void setSeed(final byte[] seed) {
@@ -183,14 +250,19 @@ public abstract class BaseRandom extends Random implements ByteArrayReseedableRa
    *
    * @param seed The new seed.
    */
-  @EnsuresNonNull("this.seed")
+  @EnsuresNonNull({"this.seed", "entropyBits"})
   protected void setSeedInternal(@UnknownInitialization(Random.class)BaseRandom this,
       final byte[] seed) {
     if (this.seed == null) {
       this.seed = seed.clone();
-    } else {
+          } else {
       System.arraycopy(seed, 0, this.seed, 0, seed.length);
     }
+    if (entropyBits == null) {
+      entropyBits = new AtomicLong(0);
+    }
+    entropyBits.updateAndGet(
+        oldCount -> Math.max(oldCount, Math.min(seed.length, getNewSeedLength()) * 8));
   }
 
   /**
@@ -206,7 +278,7 @@ public abstract class BaseRandom extends Random implements ByteArrayReseedableRa
     superConstructorFinished = true;
   }
 
-  @EnsuresNonNull({"lock", "seed"})
+  @EnsuresNonNull({"lock", "seed", "entropyBits"})
   private void readObject(@UnderInitialization(BaseRandom.class)BaseRandom this,
       final ObjectInputStream in) throws IOException, ClassNotFoundException {
     in.defaultReadObject();
@@ -214,12 +286,29 @@ public abstract class BaseRandom extends Random implements ByteArrayReseedableRa
     setSeedInternal(castNonNull(seed));
   }
 
+  @Override
+  public long entropyBits() {
+    return entropyBits.get();
+  }
+
+  /**
+   * <p>recordEntropySpent.</p>
+   *
+   * @param bits a long.
+   */
+  protected final void recordEntropySpent(final long bits) {
+    if (entropyBits.updateAndGet(oldCount -> Math.max(oldCount - bits, 0)) == 0
+        && seederThread != null) {
+      seederThread.asyncReseed(this);
+    }
+  }
+
   /**
    * <p>readObjectNoData.</p>
    *
    * @throws java.io.InvalidObjectException if any.
    */
-  @EnsuresNonNull({"lock", "seed"})
+  @EnsuresNonNull({"lock", "seed", "entropyBits"})
   @SuppressWarnings("OverriddenMethodCallDuringObjectConstruction")
   protected void readObjectNoData() throws InvalidObjectException {
     LOG.warn("BaseRandom.readObjectNoData() invoked; using DefaultSeedGenerator");
@@ -232,4 +321,14 @@ public abstract class BaseRandom extends Random implements ByteArrayReseedableRa
     }
     initTransientFields();
   }
+
+  protected void recordAllEntropySpent() {
+    entropyBits.set(0);
+    if (seederThread != null) {
+      seederThread.asyncReseed(this);
+    }
+  }
+
+  @Override
+  public abstract int getNewSeedLength(@UnknownInitialization BaseRandom this);
 }
