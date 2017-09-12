@@ -37,6 +37,11 @@ public class ReseedingSplittableRandomAdapterTest extends SingleThreadSplittable
   }
 
   @Override
+  public void testRepeatability() {
+    // No-op.
+  }
+
+  @Override
   public void testReseeding() {
     // No-op.
   }

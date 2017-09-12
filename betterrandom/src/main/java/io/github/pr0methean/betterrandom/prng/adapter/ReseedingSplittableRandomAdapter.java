@@ -145,12 +145,6 @@ public class ReseedingSplittableRandomAdapter extends BaseSplittableRandomAdapte
   }
 
   @Override
-  public void setSeed(@UnknownInitialization ReseedingSplittableRandomAdapter this,
-      final long seed) {
-    // No-op.
-  }
-
-  @Override
   protected void setSeedInternal(@UnknownInitialization ReseedingSplittableRandomAdapter this,
       final byte[] seed) {
     this.seed = seed.clone();

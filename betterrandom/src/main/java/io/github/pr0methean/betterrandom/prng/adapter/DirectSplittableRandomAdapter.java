@@ -68,6 +68,8 @@ public abstract class DirectSplittableRandomAdapter extends BaseSplittableRandom
       longSeedBuffer.putLong(seed);
       super.setSeedInternal(longSeedArray);
       underlying = SplittableRandomReseeder.reseed(underlying, seed);
+    } else {
+      fallbackSetSeed();
     }
   }
 }
