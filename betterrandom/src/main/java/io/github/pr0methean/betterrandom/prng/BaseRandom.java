@@ -188,7 +188,7 @@ public abstract class BaseRandom extends Random implements ByteArrayReseedableRa
     if (superConstructorFinished) {
       assert longSeedArray != null : "@AssumeAssertion(nullness)";
       assert longSeedBuffer != null : "@AssumeAssertion(nullness)";
-      longSeedBuffer.putLong(seed);
+      longSeedBuffer.putLong(0, seed);
       setSeed(longSeedArray);
     } else {
       setSeedInternal(BinaryUtils.convertLongToBytes(seed));
