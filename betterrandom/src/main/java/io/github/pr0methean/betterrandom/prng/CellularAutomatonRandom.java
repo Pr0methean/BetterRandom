@@ -39,7 +39,7 @@ import org.checkerframework.checker.nullness.qual.RequiresNonNull;
  * @author Daniel Dyer (Java port)
  * @version $Id: $Id
  */
-public class CellularAutomatonRandom extends BaseEntropyCountingRandom {
+public class CellularAutomatonRandom extends BaseRandom {
 
   private static final long serialVersionUID = 5959251752288589909L;
   private static final int SEED_SIZE_BYTES = 4;

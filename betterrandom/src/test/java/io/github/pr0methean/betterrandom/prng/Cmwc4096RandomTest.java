@@ -22,10 +22,10 @@ import io.github.pr0methean.betterrandom.seed.SeedException;
  *
  * @author Daniel Dyer
  */
-public class Cmwc4096RandomTest extends BaseEntropyCountingRandomTest {
+public class Cmwc4096RandomTest extends BaseRandomTest {
 
   @Override
-  protected BaseEntropyCountingRandom tryCreateRng() throws SeedException {
+  protected BaseRandom tryCreateRng() throws SeedException {
     return new Cmwc4096Random();
   }
 

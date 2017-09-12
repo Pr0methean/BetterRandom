@@ -35,7 +35,7 @@ import org.checkerframework.checker.initialization.qual.UnknownInitialization;
  * @version $Id: $Id
  * @since 1.2
  */
-public class XorShiftRandom extends BaseEntropyCountingRandom {
+public class XorShiftRandom extends BaseRandom {
 
   private static final long serialVersionUID = 952521144304194886L;
   private static final int SEED_SIZE_BYTES = 20; // Needs 5 32-bit integers.

@@ -44,7 +44,7 @@ import org.checkerframework.checker.nullness.qual.EnsuresNonNull;
  * @author Daniel Dyer (Java port)
  * @version $Id: $Id
  */
-public class MersenneTwisterRandom extends BaseEntropyCountingRandom {
+public class MersenneTwisterRandom extends BaseRandom {
 
   private static final long serialVersionUID = -4856906677508460512L;
 
