@@ -5,8 +5,10 @@ import static io.github.pr0methean.betterrandom.seed.DefaultSeedGenerator.DEFAUL
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotEquals;
 
+import io.github.pr0methean.betterrandom.prng.BaseRandom;
 import io.github.pr0methean.betterrandom.seed.FakeSeedGenerator;
 import io.github.pr0methean.betterrandom.seed.SeedException;
+import io.github.pr0methean.betterrandom.util.BinaryUtils;
 import org.testng.annotations.Test;
 
 public class ReseedingSplittableRandomAdapterTest extends SingleThreadSplittableRandomAdapterTest {
@@ -37,28 +39,35 @@ public class ReseedingSplittableRandomAdapterTest extends SingleThreadSplittable
   }
 
   @Override
+  @Test(enabled = false)
   public void testRepeatability() {
     // No-op.
   }
 
   @Override
+  @Test(enabled = false)
   public void testReseeding() {
     // No-op.
   }
 
+  /** Test for crashes only, since setSeed is a no-op. */
   @Override
-  public void testSetSeed() {
-    // No-op.
+  public void testSetSeed() throws SeedException {
+    BaseRandom prng = createRng();
+    prng.nextLong();
+    prng.setSeed(DEFAULT_SEED_GENERATOR.generateSeed(8));
+    prng.setSeed(BinaryUtils.convertBytesToLong(DEFAULT_SEED_GENERATOR.generateSeed(8)));
+    prng.nextLong();
   }
 
   @Override
-  @Test
+  @Test(enabled = false)
   public void testSeedTooShort() {
     // No-op.
   }
 
   @Override
-  @Test
+  @Test(enabled = false)
   public void testSeedTooLong() {
     // No-op.
   }

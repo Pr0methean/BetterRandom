@@ -41,10 +41,11 @@ import org.checkerframework.checker.initialization.qual.UnknownInitialization;
  */
 public class RandomWrapper extends BaseRandom {
 
-  public static final byte[] EMPTY_ARRAY = new byte[0];
+  public static final byte[] DUMMY_SEED = new byte[8];
   private static final long serialVersionUID = -6526304552538799385L;
   private static final int SEED_SIZE_BYTES = 8;
   private Random wrapped;
+  private boolean unknownSeed = true;
 
   /**
    * Creates a new RNG and seeds it using the default seeding strategy.
@@ -67,6 +68,7 @@ public class RandomWrapper extends BaseRandom {
   public RandomWrapper(final SeedGenerator seedGenerator) throws SeedException {
     super(seedGenerator, SEED_SIZE_BYTES);
     wrapped = new Random(longSeedBuffer.getLong(0));
+    unknownSeed = false;
   }
 
   /**
@@ -77,6 +79,7 @@ public class RandomWrapper extends BaseRandom {
   public RandomWrapper(final byte[] seed) {
     super(seed);
     wrapped = new Random(longSeedBuffer.getLong(0));
+    unknownSeed = false;
   }
 
   /**
@@ -86,9 +89,18 @@ public class RandomWrapper extends BaseRandom {
    */
   @EntryPoint
   public RandomWrapper(final Random wrapped) {
-    super(EMPTY_ARRAY); // We won't know the wrapped PRNG's seed
+    super(getSeedOrDummy(wrapped)); // We won't know the wrapped PRNG's seed
+    unknownSeed = !(wrapped instanceof RepeatableRandom);
     readEntropyOfWrapped(wrapped);
     this.wrapped = wrapped;
+  }
+
+  private static byte[] getSeedOrDummy(Random wrapped) {
+    if (wrapped instanceof RepeatableRandom) {
+      return ((RepeatableRandom) wrapped).getSeed();
+    } else {
+      return DUMMY_SEED;
+    }
   }
 
   /** @return The wrapped {@link Random}. */
@@ -102,7 +114,8 @@ public class RandomWrapper extends BaseRandom {
   public void setWrapped(final Random wrapped) {
     this.wrapped = wrapped;
     readEntropyOfWrapped(wrapped);
-    this.seed = EMPTY_ARRAY;
+    this.seed = getSeedOrDummy(wrapped);
+    unknownSeed = !(wrapped instanceof RepeatableRandom);
   }
 
   private void readEntropyOfWrapped(
@@ -119,6 +132,14 @@ public class RandomWrapper extends BaseRandom {
   }
 
   @Override
+  public byte[] getSeed() {
+    if (unknownSeed) {
+      throw new UnsupportedOperationException();
+    }
+    return super.getSeed();
+  }
+
+  @Override
   public void setSeedInternal(@UnknownInitialization(Random.class)RandomWrapper this,
       final byte[] seed) {
     if (seed.length != SEED_SIZE_BYTES) {
@@ -128,6 +149,7 @@ public class RandomWrapper extends BaseRandom {
     if (wrapped != null && longSeedBuffer != null && longSeedArray != null) {
       System.arraycopy(seed, 0, longSeedArray, 0, SEED_SIZE_BYTES);
       wrapped.setSeed(longSeedBuffer.getLong(0));
+      unknownSeed = false;
     }
   }
 

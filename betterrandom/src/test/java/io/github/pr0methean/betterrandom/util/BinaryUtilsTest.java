@@ -15,6 +15,8 @@
 // ============================================================================
 package io.github.pr0methean.betterrandom.util;
 
+import static io.github.pr0methean.betterrandom.util.BinaryUtils.convertBytesToLong;
+
 import java.util.Arrays;
 import org.testng.annotations.Test;
 
@@ -103,7 +105,7 @@ public class BinaryUtilsTest {
   @Test(timeOut = 1000)
   public void testConvertBytesToLong() {
     final byte[] bytes = LONG_BYTES;
-    final long result = BinaryUtils.convertBytesToLong(bytes, 0);
+    final long result = convertBytesToLong(bytes);
     assert LONG == result : "Expected " + LONG + ", was " + result;
   }
 
@@ -114,7 +116,7 @@ public class BinaryUtilsTest {
   public void testConvertNegativeBytesToLong() {
     final byte[] bytes = {-121, 30, 107, -100, -76, -8, 53, 81};
     final long expected = -510639L;
-    final long result = BinaryUtils.convertBytesToLong(bytes, 0);
+    final long result = convertBytesToLong(bytes);
     assert expected == result : "Expected " + expected + ", was " + result;
   }
 }
