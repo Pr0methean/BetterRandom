@@ -37,6 +37,10 @@ public abstract class AbstractRandomBenchmark {
   // protected final Thread[] threads = new Thread[COLUMNS];
   protected Random prng;
 
+  @EntryPoint
+  public AbstractRandomBenchmark() {
+  }
+
   public static void main(final String[] args) throws RunnerException {
     final ChainedOptionsBuilder options = new OptionsBuilder()
         .addProfiler(HotspotThreadProfiler.class)
@@ -55,9 +59,6 @@ public abstract class AbstractRandomBenchmark {
           .build()).run();
     }
   }
-
-  @EntryPoint
-  public AbstractRandomBenchmark() {}
 
   @Setup(Level.Trial)
   public void setUp() {

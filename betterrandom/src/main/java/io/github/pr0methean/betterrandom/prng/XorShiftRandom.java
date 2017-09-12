@@ -77,7 +77,6 @@ public class XorShiftRandom extends BaseEntropyCountingRandom {
     this(seedGenerator.generateSeed(SEED_SIZE_BYTES));
   }
 
-  /** {@inheritDoc} */
   @Override
   protected ToStringHelper addSubSubclassFields(final ToStringHelper original) {
     return original
@@ -97,14 +96,12 @@ public class XorShiftRandom extends BaseEntropyCountingRandom {
     return seed.clone();
   }
 
-  /** {@inheritDoc} */
   @Override
   public synchronized void setSeed(@UnknownInitialization(Random.class)XorShiftRandom this,
       final long seed) {
     // No-op.
   }
 
-  /** {@inheritDoc} */
   @Override
   protected void setSeedInternal(@UnknownInitialization(Random.class)XorShiftRandom this,
       final byte[] seed) {
@@ -117,7 +114,6 @@ public class XorShiftRandom extends BaseEntropyCountingRandom {
     state5 = state[4];
   }
 
-  /** {@inheritDoc} */
   @Override
   protected int next(final int bits) {
     lock.lock();
@@ -136,7 +132,6 @@ public class XorShiftRandom extends BaseEntropyCountingRandom {
     }
   }
 
-  /** {@inheritDoc} */
   @Override
   public int getNewSeedLength(@UnknownInitialization XorShiftRandom this) {
     return SEED_SIZE_BYTES;

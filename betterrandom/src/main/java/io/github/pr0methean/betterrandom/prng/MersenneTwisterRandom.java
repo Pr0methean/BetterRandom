@@ -97,7 +97,6 @@ public class MersenneTwisterRandom extends BaseEntropyCountingRandom {
     this(seedGenerator.generateSeed(SEED_SIZE_BYTES));
   }
 
-  /** {@inheritDoc} */
   @Override
   protected ToStringHelper addSubSubclassFields(final ToStringHelper original) {
     return original
@@ -114,7 +113,6 @@ public class MersenneTwisterRandom extends BaseEntropyCountingRandom {
     return seed.clone();
   }
 
-  /** {@inheritDoc} */
   @Override
   public synchronized void setSeed(@UnknownInitialization(Random.class)MersenneTwisterRandom this,
       final long seed) {
@@ -123,7 +121,6 @@ public class MersenneTwisterRandom extends BaseEntropyCountingRandom {
     } // Otherwise ignore; it's Random.<init> calling us without a full-size seed
   }
 
-  /** {@inheritDoc} */
   @Override
 
   @EnsuresNonNull({"lock", "mt", "longSeedArray", "longSeedBuffer"})
@@ -134,7 +131,6 @@ public class MersenneTwisterRandom extends BaseEntropyCountingRandom {
     }
   }
 
-  /** {@inheritDoc} */
   @Override
   protected void setSeedInternal(
       @UnknownInitialization(Random.class)MersenneTwisterRandom this, final byte[] seed) {
@@ -179,7 +175,6 @@ public class MersenneTwisterRandom extends BaseEntropyCountingRandom {
     mt[0] = UPPER_MASK; // Most significant bit is 1 - guarantees non-zero initial array.
   }
 
-  /** {@inheritDoc} */
   @Override
   protected final int next(final int bits) {
     lock.lock();
@@ -217,7 +212,6 @@ public class MersenneTwisterRandom extends BaseEntropyCountingRandom {
     return y >>> (32 - bits);
   }
 
-  /** {@inheritDoc} */
   @Override
   public int getNewSeedLength(@UnknownInitialization MersenneTwisterRandom this) {
     return SEED_SIZE_BYTES;

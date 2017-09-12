@@ -18,7 +18,6 @@ package io.github.pr0methean.betterrandom.seed;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.nio.file.Path;
 import java.nio.file.Paths;
 
 /**
@@ -33,7 +32,7 @@ public enum DevRandomSeedGenerator implements SeedGenerator {
 
   DEV_RANDOM_SEED_GENERATOR;
 
-  /** Constant <code>DEV_RANDOM</code> */
+  /** Constant {@code DEV_RANDOM} */
   private static final File DEV_RANDOM = Paths.get("dev", "random").toFile();
   private static final String DEV_RANDOM_STRING = DEV_RANDOM.toString();
 
@@ -75,7 +74,6 @@ public enum DevRandomSeedGenerator implements SeedGenerator {
     }
   }
 
-  /** {@inheritDoc} */
   @Override
   public String toString() {
     return DEV_RANDOM_STRING;

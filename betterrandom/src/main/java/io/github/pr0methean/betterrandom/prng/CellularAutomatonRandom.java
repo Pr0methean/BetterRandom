@@ -120,7 +120,6 @@ public class CellularAutomatonRandom extends BaseEntropyCountingRandom {
         + (cells[offset + 3] << 24);
   }
 
-  /** {@inheritDoc} */
   @Override
   protected ToStringHelper addSubSubclassFields(final ToStringHelper original) {
     return original
@@ -177,7 +176,6 @@ public class CellularAutomatonRandom extends BaseEntropyCountingRandom {
     return result >>> (32 - bits);
   }
 
-  /** {@inheritDoc} */
   @Override
   public int next(final int bits) {
     lock.lock();
@@ -189,7 +187,6 @@ public class CellularAutomatonRandom extends BaseEntropyCountingRandom {
     }
   }
 
-  /** {@inheritDoc} */
   @Override
   public synchronized void setSeed(@UnknownInitialization(Random.class)CellularAutomatonRandom this,
       final long seed) {
@@ -201,7 +198,6 @@ public class CellularAutomatonRandom extends BaseEntropyCountingRandom {
     }
   }
 
-  /** {@inheritDoc} */
   @Override
   protected void setSeedInternal(@UnknownInitialization(Random.class)CellularAutomatonRandom this,
       final byte[] seed) {
@@ -213,7 +209,6 @@ public class CellularAutomatonRandom extends BaseEntropyCountingRandom {
     copySeedToCellsAndPreEvolve();
   }
 
-  /** {@inheritDoc} */
   @Override
   public int getNewSeedLength(@UnknownInitialization CellularAutomatonRandom this) {
     return SEED_SIZE_BYTES;

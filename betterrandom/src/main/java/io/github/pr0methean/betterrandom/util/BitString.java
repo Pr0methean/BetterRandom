@@ -100,7 +100,7 @@ public final class BitString implements Cloneable, Serializable {
   }
 
   /**
-   * <p>Getter for the field <code>length</code>.</p>
+   * <p>Getter for the field {@code length}.</p>
    *
    * @return The length of this bit string.
    */
@@ -272,7 +272,6 @@ public final class BitString implements Cloneable, Serializable {
     return buffer.toString();
   }
 
-  /** {@inheritDoc} */
   @Override
   public BitString clone() {
     try {
@@ -285,7 +284,6 @@ public final class BitString implements Cloneable, Serializable {
     }
   }
 
-  /** {@inheritDoc} */
   @SuppressWarnings("NonFinalFieldReferenceInEquals")
   @Override
   public boolean equals(final Object o) {

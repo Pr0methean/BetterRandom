@@ -8,7 +8,8 @@ import java.util.Random;
 public class CellularAutomatonRandomBenchmark extends AbstractRandomBenchmarkWithReseeding {
 
   @EntryPoint
-  public CellularAutomatonRandomBenchmark() {}
+  public CellularAutomatonRandomBenchmark() {
+  }
 
   @Override
   protected Random createPrng()
