@@ -6,6 +6,7 @@ import io.github.pr0methean.betterrandom.seed.SeedGenerator;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.util.SplittableRandom;
+import java.util.concurrent.atomic.AtomicLong;
 import org.checkerframework.checker.initialization.qual.UnknownInitialization;
 import org.checkerframework.checker.nullness.qual.EnsuresNonNull;
 import org.checkerframework.checker.nullness.qual.RequiresNonNull;
@@ -19,8 +20,10 @@ import org.checkerframework.checker.nullness.qual.RequiresNonNull;
 public class SplittableRandomAdapter extends DirectSplittableRandomAdapter {
 
   private static final long serialVersionUID = 2190439512972880590L;
+  public static final int SEED_LENGTH_BITS = SEED_LENGTH_BYTES * 8;
   @SuppressWarnings("ThreadLocalNotStaticFinal")
   private transient ThreadLocal<SplittableRandom> threadLocal;
+  private transient ThreadLocal<AtomicLong> entropyBits;
 
   /**
    * <p>Constructor for SplittableRandomAdapter.</p>
@@ -41,18 +44,35 @@ public class SplittableRandomAdapter extends DirectSplittableRandomAdapter {
     initSubclassTransientFields();
   }
 
-  @EnsuresNonNull("threadLocal")
+  @Override
+  public long entropyBits() {
+    return entropyBits.get().get();
+  }
+
+  @Override
+  protected void recordEntropySpent(long bits) {
+    entropyBits.get().addAndGet(-bits);
+  }
+
+  @Override
+  protected void recordAllEntropySpent() {
+    entropyBits.get().set(0);
+  }
+
+  @EnsuresNonNull({"threadLocal", "entropyBits"})
   @RequiresNonNull({"lock", "underlying"})
   private void initSubclassTransientFields(
       @UnknownInitialization(BaseSplittableRandomAdapter.class)SplittableRandomAdapter this) {
     lock.lock();
     try {
       threadLocal = ThreadLocal.withInitial(underlying::split);
+      entropyBits = ThreadLocal.withInitial(() -> new AtomicLong(SEED_LENGTH_BITS));
     } finally {
       lock.unlock();
     }
     // WTF Checker Framework? Why is this needed?
     assert threadLocal != null : "@AssumeAssertion(nullness)";
+    assert entropyBits != null : "@AssumeAssertion(nullness)";
   }
 
   @Override
@@ -74,6 +94,9 @@ public class SplittableRandomAdapter extends DirectSplittableRandomAdapter {
     super.setSeed(seed);
     if (threadLocal != null) {
       threadLocal.set(SplittableRandomReseeder.reseed(threadLocal.get(), seed));
+      if (entropyBits != null) {
+        entropyBits.get().updateAndGet(oldValue -> Math.max(oldValue, SEED_LENGTH_BITS));
+      }
     }
   }
 }
