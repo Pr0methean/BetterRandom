@@ -221,8 +221,7 @@ public class AesCounterRandom extends BaseEntropyCountingRandom {
       System.arraycopy(counter, 0, counterInput, i * COUNTER_SIZE_BYTES, COUNTER_SIZE_BYTES);
     }
     final int totalBytes = COUNTER_SIZE_BYTES * BLOCKS_AT_ONCE;
-    System.arraycopy(cipher.doFinal(counterInput), 0, currentBlock, 0,
-        totalBytes);
+    cipher.doFinal(counterInput, 0, totalBytes, currentBlock);
   }
 
   /** {@inheritDoc} */
