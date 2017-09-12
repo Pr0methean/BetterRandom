@@ -78,6 +78,7 @@ public class AesCounterRandom extends BaseRandom {
   private static final int BLOCKS_AT_ONCE = 16;
   private static final String HASH_ALGORITHM = "SHA-256";
   private static final int MAX_TOTAL_SEED_LENGTH_BYTES;
+  public static final byte[] EMPTY_ARRAY = new byte[0];
   @SuppressWarnings("CanBeFinal")
   private static int MAX_KEY_LENGTH_BYTES = 0;
 
@@ -304,12 +305,11 @@ public class AesCounterRandom extends BaseRandom {
   }
 
   @Override
+  @SuppressWarnings("contracts.postcondition.not.satisfied")
   public synchronized void setSeed(@UnknownInitialization(Random.class)AesCounterRandom this,
       final long seed) {
     if (superConstructorFinished) {
       super.setSeed(seed);
-    } else {
-      fallbackSetSeed();
     }
   }
 
@@ -317,13 +317,12 @@ public class AesCounterRandom extends BaseRandom {
   @Override
   protected void setSeedInternal(@UnknownInitialization(Random.class)AesCounterRandom this,
       final byte[] seed) {
-    super.setSeedInternal(seed);
-
     final int seedLength = seed.length;
     if (seedLength < 16 || seedLength > MAX_TOTAL_SEED_LENGTH_BYTES) {
       throw new IllegalArgumentException(String.format(
           "Seed length is %d bytes; need 16 to %d bytes", seedLength, MAX_TOTAL_SEED_LENGTH_BYTES));
     }
+    super.setSeedInternal(seed);
     // determine how much of seed can go to key
     final int keyLength = getKeyLength(seed);
     final byte[] key = Arrays.copyOfRange(seed, 0, keyLength);
