@@ -25,24 +25,37 @@ import org.testng.annotations.Test;
  */
 public class BinaryUtilsTest {
 
-  @Test(timeOut = 15000)
-  public void testBytesToHexString() {
-    final byte[] seed = {124, 11, 0, -76, -3, 127, -128, -1};
-    final String expectedHex = "7C0B00B4FD7F80FF";
-    final String generatedHex = BinaryUtils.convertBytesToHexString(seed);
-    assert generatedHex.equals(expectedHex) : "Wrong hex string: " + generatedHex;
+  public static final byte[] TEST_HEX_BYTES = {124, 11, 0, -76, -3, 127, -128, -1};
+  public static final String TEST_HEX_STRING = "7C0B00B4FD7F80FF";
+  public static final byte[] LONG_BYTES = {0, 0, 0, 16, 8, 4, 2, 1};
+  public static final long LONG = 68853957121L;
+  public static final byte[] INT_BYTES = {8, 4, 2, 1};
+  public static final int INT = 134480385;
+
+  @Test
+  public void testConvertLongToBytes() throws Exception {
+    assert Arrays.equals(LONG_BYTES, BinaryUtils.convertLongToBytes(LONG));
   }
 
-  @Test(timeOut = 15000)
-  public void testHexStringToBytes() {
-    final String hex = "7C0B00B4FD7F80FF";
-    final byte[] expectedData = {124, 11, 0, -76, -3, 127, -128, -1};
-    final byte[] generatedData = BinaryUtils.convertHexStringToBytes(hex);
-    assert Arrays.equals(generatedData, expectedData) :
+  @Test
+  public void testConvertIntToBytes() throws Exception {
+    assert Arrays.equals(INT_BYTES, BinaryUtils.convertIntToBytes(INT));
+  }
+
+  @Test(timeOut = 1000)
+  public void testConvertBytesToHexString() {
+    final String generatedHex = BinaryUtils.convertBytesToHexString(TEST_HEX_BYTES);
+    assert generatedHex.equals(TEST_HEX_STRING) : "Wrong hex string: " + generatedHex;
+  }
+
+  @Test(timeOut = 1000)
+  public void testConvertHexStringToBytes() {
+    final byte[] generatedData = BinaryUtils.convertHexStringToBytes(TEST_HEX_STRING);
+    assert Arrays.equals(generatedData, TEST_HEX_BYTES) :
         "Wrong byte array: " + Arrays.toString(generatedData);
   }
 
-  @Test(timeOut = 15000, expectedExceptions = IllegalArgumentException.class)
+  @Test(timeOut = 1000, expectedExceptions = IllegalArgumentException.class)
   public void testInvalidHexStringLength() {
     // Hex string should have even number of characters (2 per byte), so
     // this should throw an exception.
@@ -53,21 +66,19 @@ public class BinaryUtilsTest {
    * Make sure that the conversion method correctly converts 4 bytes to an integer assuming
    * big-endian convention.
    */
-  @Test(timeOut = 15000)
+  @Test(timeOut = 1000)
   public void testConvertBytesToInt() {
-    final byte[] bytes = {8, 4, 2, 1};
-    final int expected = 134480385;
-    final int result = BinaryUtils.convertBytesToInt(bytes, 0);
-    assert expected == result : "Expected " + expected + ", was " + result;
+    final int result = BinaryUtils.convertBytesToInt(INT_BYTES, 0);
+    assert INT == result : "Expected " + INT + ", was " + result;
   }
 
   /**
    * Make sure that the conversion method correctly converts multiples of 4 bytes to an array of
    * integers assuming big-endian convention.
    */
-  @Test(timeOut = 15000)
+  @Test(timeOut = 1000)
   public void testConvertBytesToInts() {
-    final byte[] bytes = {0, 0, 0, 16, 8, 4, 2, 1};
+    final byte[] bytes = LONG_BYTES;
     final int expected1 = 16;
     final int[] result = BinaryUtils.convertBytesToInts(bytes);
     assert expected1 == result[0] : "Expected first int to be " + expected1 + ", was " + result[0];
@@ -79,7 +90,7 @@ public class BinaryUtilsTest {
    * Make sure that the conversion method throws an exception if the number of bytes is not a
    * multiple of 4.
    */
-  @Test(timeOut = 15000, expectedExceptions = IllegalArgumentException.class)
+  @Test(timeOut = 1000, expectedExceptions = IllegalArgumentException.class)
   public void testConvertWrongNumberOfBytesToInts() {
     final byte[] bytes = {0, 0, 16, 8, 4, 2, 1};
     BinaryUtils.convertBytesToInts(bytes);
@@ -89,60 +100,21 @@ public class BinaryUtilsTest {
    * Make sure that the conversion method correctly converts 8 bytes to a long assuming big-endian
    * convention.
    */
-  @Test(timeOut = 15000)
+  @Test(timeOut = 1000)
   public void testConvertBytesToLong() {
-    final byte[] bytes = {0, 0, 0, 16, 8, 4, 2, 1};
-    final long expected = 68853957121L;
+    final byte[] bytes = LONG_BYTES;
     final long result = BinaryUtils.convertBytesToLong(bytes, 0);
-    assert expected == result : "Expected " + expected + ", was " + result;
+    assert LONG == result : "Expected " + LONG + ", was " + result;
   }
 
   /**
    * Regression test for failure to correctly convert values that contain negative bytes.
    */
-  @Test(timeOut = 15000)
+  @Test(timeOut = 1000)
   public void testConvertNegativeBytesToLong() {
     final byte[] bytes = {-121, 30, 107, -100, -76, -8, 53, 81};
     final long expected = -510639L;
     final long result = BinaryUtils.convertBytesToLong(bytes, 0);
     assert expected == result : "Expected " + expected + ", was " + result;
-  }
-
-  @Test(timeOut = 15000)
-  public void testConvertFixedPoint() {
-    final double value = 0.6875d;
-    final BitString bits = BinaryUtils.convertDoubleToFixedPointBits(value);
-    assert "1011".equals(bits.toString()) : "Binary representation should be 1011, is " + bits;
-  }
-
-  /**
-   * Makes sure that zero is dealt with correctly by the fixed point conversion method.
-   */
-  @Test(timeOut = 15000, dependsOnMethods = "testConvertFixedPoint")
-  public void testConvertFixedPointZero() {
-    final BitString bits = BinaryUtils.convertDoubleToFixedPointBits(0d);
-    assert bits.countSetBits() == 0 : "Binary representation should be 0";
-  }
-
-  /**
-   * An attempt to convert a value of 1 or greater should result in an exception since there is no
-   * way to represent these values in our fixed point scheme (which has no places to the left of the
-   * decimal point).  Not throwing an exception would be a bug.
-   */
-  @Test(timeOut = 15000, dependsOnMethods = "testConvertFixedPoint",
-      expectedExceptions = IllegalArgumentException.class)
-  public void testConvertFixedPointTooHigh() {
-    BinaryUtils.convertDoubleToFixedPointBits(1d);
-  }
-
-  /**
-   * An attempt to convert a negative value should result in an exception since there is no way to
-   * represent these values in our fixed point scheme (there is no sign bit).  Not throwing an
-   * exception would be a bug.
-   */
-  @Test(timeOut = 15000, dependsOnMethods = "testConvertFixedPoint",
-      expectedExceptions = IllegalArgumentException.class)
-  public void testConvertFixedPointNegative() {
-    BinaryUtils.convertDoubleToFixedPointBits(-0.5d);
   }
 }
