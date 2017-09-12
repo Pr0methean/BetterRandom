@@ -130,7 +130,7 @@
             <trimStackTrace>false</trimStackTrace>
             <parallel>methods</parallel>
             <forkedProcessTimeoutInSeconds>300</forkedProcessTimeoutInSeconds>
-            <argLine>@{argLine} -XX:-OmitStackTraceInFastThrow</argLine>
+            <argLine>${surefireArgLine} -XX:-OmitStackTraceInFastThrow</argLine>
           </configuration>
         </plugin>
         <plugin>
