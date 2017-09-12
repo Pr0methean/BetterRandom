@@ -180,17 +180,6 @@ public abstract class BaseRandom extends Random implements ByteArrayReseedableRa
     }
   }
 
-  @EnsuresNonNull("this.seed")
-  @Override
-  public void setSeed(final byte[] seed) {
-    lock.lock();
-    try {
-      setSeedInternal(seed);
-    } finally {
-      lock.unlock();
-    }
-  }
-
   @SuppressWarnings("method.invocation.invalid")
   @Override
   public synchronized void setSeed(@UnknownInitialization(Random.class)BaseRandom this,
@@ -202,6 +191,17 @@ public abstract class BaseRandom extends Random implements ByteArrayReseedableRa
       setSeed(longSeedArray);
     } else {
       setSeedInternal(BinaryUtils.convertLongToBytes(seed));
+    }
+  }
+
+  @EnsuresNonNull("this.seed")
+  @Override
+  public void setSeed(final byte[] seed) {
+    lock.lock();
+    try {
+      setSeedInternal(seed);
+    } finally {
+      lock.unlock();
     }
   }
 
@@ -306,7 +306,8 @@ public abstract class BaseRandom extends Random implements ByteArrayReseedableRa
 
   /**
    * Used to deserialize a subclass instance that wasn't a subclass instance when it was serialized.
-   * Since that means we can't deserialize our seed, we generate a new one with the {@link DefaultSeedGenerator}.
+   * Since that means we can't deserialize our seed, we generate a new one with the {@link
+   * DefaultSeedGenerator}.
    *
    * @throws InvalidObjectException if the {@link DefaultSeedGenerator} fails.
    */
