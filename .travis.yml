@@ -1,7 +1,9 @@
 sudo: required
 dist: trusty
 group: edge
-language: java
+language:
+  - java
+  - android
 jdk:
   - oraclejdk9
   - oraclejdk8
