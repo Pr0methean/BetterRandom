@@ -25,6 +25,7 @@ import org.testng.annotations.Test;
  *
  * @author Daniel Dyer
  */
+@SuppressWarnings("HardcodedFileSeparator")
 public class DevRandomSeedGeneratorTest {
 
   @Test(timeOut = 15000)

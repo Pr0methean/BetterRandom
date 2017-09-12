@@ -18,6 +18,8 @@ package io.github.pr0methean.betterrandom.seed;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
 /**
  * RNG seed strategy that gets data from {@literal /dev/random} on systems that provide it (e.g.
@@ -32,7 +34,8 @@ public enum DevRandomSeedGenerator implements SeedGenerator {
   DEV_RANDOM_SEED_GENERATOR;
 
   /** Constant <code>DEV_RANDOM</code> */
-  private static final File DEV_RANDOM = new File("/dev/random");
+  private static final File DEV_RANDOM = Paths.get("dev", "random").toFile();
+  private static final String DEV_RANDOM_STRING = DEV_RANDOM.toString();
 
   /**
    * <p>generateSeed.</p>
@@ -75,6 +78,6 @@ public enum DevRandomSeedGenerator implements SeedGenerator {
   /** {@inheritDoc} */
   @Override
   public String toString() {
-    return "/dev/random";
+    return DEV_RANDOM_STRING;
   }
 }

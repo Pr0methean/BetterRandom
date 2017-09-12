@@ -92,7 +92,7 @@ public class LooperThread extends Thread implements Serializable, Cloneable {
   }
 
   private void setGroup(@UnderInitialization LooperThread this,
-      @org.jetbrains.annotations.Nullable final ThreadGroup group) {
+      @Nullable final ThreadGroup group) {
     if (uncaughtExceptionHandler.wrapped == null) {
       uncaughtExceptionHandler.wrapped = group;
     }

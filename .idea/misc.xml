@@ -1,25 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="EntryPointsManager">
-    <pattern value="betterrandom.seed.RandomSeederThread" method="add" />
-    <pattern value="betterrandom.seed.RandomSeederThread" method="getInstance" />
-    <pattern value="betterrandom.seed.RandomSeederThread" />
-    <pattern value="betterrandom.prng.RepeatableRNG" method="getSeed" />
-    <pattern value="betterrandom.prng.BaseRandom" method="readObjectNoData" />
-    <pattern value="betterrandom.prng.adapter.ReseedingSplittableRandomAdapter" method="getSplittableRandom" />
-    <pattern value="betterrandom.prng.adapter.ReseedingSplittableRandomAdapter" method="getInstance" />
-    <pattern value="betterrandom.prng.adapter.ReseedingSplittableRandomAdapter" method="initTransientFields" />
-    <pattern value="betterrandom.prng.adapter.ReseedingSplittableRandomAdapter" />
-    <pattern value="betterrandom.prng.adapter.SingleThreadSplittableRandomAdapter" method="nextDouble" />
-    <pattern value="betterrandom.prng.adapter.SingleThreadSplittableRandomAdapter" method="nextLong" />
-    <pattern value="betterrandom.prng.adapter.SingleThreadSplittableRandomAdapter" method="nextInt" />
-    <pattern value="betterrandom.prng.adapter.SingleThreadSplittableRandomAdapter" />
-    <pattern value="betterrandom.RepeatableRandom" method="getSeed" />
-    <pattern value="betterrandom.prng.adapter.BaseSplittableRandomAdapter" method="nextDouble" />
-    <pattern value="betterrandom.prng.adapter.BaseSplittableRandomAdapter" method="nextLong" />
-    <pattern value="betterrandom.prng.adapter.BaseSplittableRandomAdapter" method="nextInt" />
-    <pattern value="betterrandom.prng.adapter.BaseSplittableRandomAdapter" />
-    <pattern value="betterrandom.prng.adapter.ReseedingSplittableRandomAdapter" method="readResolve" />
+    <list size="2">
+      <item index="0" class="java.lang.String" itemvalue="io.github.pr0methean.betterrandom.util.EntryPoint" />
+      <item index="1" class="java.lang.String" itemvalue="org.openjdk.jmh.annotations.Benchmark" />
+    </list>
+    <pattern value="java.io.Serializable" hierarchically="true" method="readObject" />
+    <pattern value="java.io.Serializable" hierarchically="true" method="readResolve" />
+    <pattern value="java.io.Serializable" hierarchically="true" method="readObjectNoData" />
+    <pattern value="java.io.Serializable" hierarchically="true" method="writeObject" />
+    <pattern value="java.io.Serializable" hierarchically="true" method="writeReplace" />
   </component>
   <component name="MavenProjectsManager">
     <option name="originalFiles">
