@@ -52,8 +52,7 @@ public abstract class BaseRandomTest {
    * subtle statistical anomalies that would be picked up by Diehard, but it provides a simple check
    * for major problems with the output.
    */
-  @Test(timeOut = 15000, groups = "non-deterministic",
-      dependsOnMethods = "testRepeatability")
+  @Test(timeOut = 15000, groups = "non-deterministic")
   public void testDistribution() throws SeedException {
     final BaseRandom rng = createRng();
     assertMonteCarloPiEstimateSane(rng);
@@ -64,8 +63,7 @@ public abstract class BaseRandomTest {
    * subtle statistical anomalies that would be picked up by Diehard, but it provides a simple check
    * for major problems with the output.
    */
-  @Test(timeOut = 15000, groups = "non-deterministic",
-      dependsOnMethods = "testRepeatability")
+  @Test(timeOut = 15000, groups = "non-deterministic")
   public void testStandardDeviation() throws SeedException {
     final BaseRandom rng = createRng();
     // Expected standard deviation for a uniformly distributed population of values in the range 0..n
