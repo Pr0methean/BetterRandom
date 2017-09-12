@@ -152,10 +152,11 @@ seederThread.add(myRandom);
 * `benchmark-extra-metrics.sh`: Compile and run the same benchmarks; but in addition to throughput,
   also collect many extra metrics concerning garbage collection, lock/monitor performance, and
   thread births and deaths. May require HotSpot JVM.
-* `coverage.sh`: Compile and run tests and generate coverage reports. Upload them to Coveralls if
-  running in Travis-CI.
+* `coverage.sh`: Compile and run unit tests and generate coverage reports. Upload them to Coveralls
+  if running in Travis-CI.
+* `test-proguard.sh`: Compile and run unit tests against Proguarded jar.
+* `unit-tests.sh`: Combined functions of `coverage.sh` and `test-proguard.sh`.
 * `release.sh`: Used to perform new releases.
-* `test-proguard.sh`: Compile and run tests against Proguarded jar.
 * `prepare-workspace.sh`: Install necessary packages on a fresh Ubuntu Trusty Tahr workspace, such
   as what c9.io provides.
 
