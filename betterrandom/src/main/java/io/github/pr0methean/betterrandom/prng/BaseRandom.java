@@ -292,11 +292,12 @@ public abstract class BaseRandom extends Random implements ByteArrayReseedableRa
   }
 
   /**
-   * <p>recordEntropySpent.</p>
+   * Record that entropy has been spent, and schedule a reseeding if this PRNG has now spent as much
+   * as it's been seeded with.
    *
-   * @param bits a long.
+   * @param bits The number of bits of entropy spent.
    */
-  protected final void recordEntropySpent(final long bits) {
+  protected void recordEntropySpent(final long bits) {
     if (entropyBits.updateAndGet(oldCount -> Math.max(oldCount - bits, 0)) == 0
         && seederThread != null) {
       seederThread.asyncReseed(this);
@@ -304,13 +305,14 @@ public abstract class BaseRandom extends Random implements ByteArrayReseedableRa
   }
 
   /**
-   * <p>readObjectNoData.</p>
+   * Used to deserialize a subclass instance that wasn't a subclass instance when it was serialized.
+   * Since that means we can't deserialize our seed, we generate a new one with the {@link DefaultSeedGenerator}.
    *
-   * @throws java.io.InvalidObjectException if any.
+   * @throws InvalidObjectException if the {@link DefaultSeedGenerator} fails.
    */
   @EnsuresNonNull({"lock", "seed", "entropyBits"})
   @SuppressWarnings("OverriddenMethodCallDuringObjectConstruction")
-  protected void readObjectNoData() throws InvalidObjectException {
+  private void readObjectNoData() throws InvalidObjectException {
     LOG.warn("BaseRandom.readObjectNoData() invoked; using DefaultSeedGenerator");
     try {
       setSeed(DefaultSeedGenerator.DEFAULT_SEED_GENERATOR.generateSeed(getNewSeedLength()));
