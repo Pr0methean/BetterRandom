@@ -168,6 +168,7 @@ public abstract class BaseRandomTest {
     Thread.sleep(5000);
     final byte[] newSeed = rng.getSeed();
     assertFalse(Arrays.equals(oldSeed, newSeed));
+    rng.setSeederThread(null);
   }
 
   @Test(timeOut = 1000)
