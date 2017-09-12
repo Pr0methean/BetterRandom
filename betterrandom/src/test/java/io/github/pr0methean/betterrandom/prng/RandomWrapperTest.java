@@ -23,7 +23,7 @@ import org.testng.annotations.Test;
  *
  * @author Daniel Dyer
  */
-public class RandomWrapperTest {
+public class RandomWrapperTest extends BaseRandomTest {
 
   /**
    * Test to ensure that two distinct RNGs with the same seed return the same sequence of numbers.
@@ -38,47 +38,13 @@ public class RandomWrapperTest {
         .testEquivalence(rng, duplicateRNG, 1000) : "Generated sequences do not match.";
   }
 
-  /**
-   * Make sure that the RNG does not accept seeds that are too small since this could affect the
-   * distribution of the output.
-   */
-  @Test(timeOut = 15000, expectedExceptions = IllegalArgumentException.class)
-  public void testInvalidSeedSize() {
-    new RandomWrapper(new byte[]{1, 2, 3, 4, 5, 6,
-        7}); // One byte too few, should cause an IllegalArgumentException.
+  @Override
+  protected BaseRandom tryCreateRng() throws SeedException {
+    return new RandomWrapper();
   }
 
-  /**
-   * RNG must not accept a null seed otherwise it will not be properly initialised.
-   */
-  @SuppressWarnings({"argument.type.incompatible", "return.type.incompatible"})
-  @Test(timeOut = 15000, expectedExceptions = IllegalArgumentException.class)
-  public void testNullSeed() throws SeedException {
-    new RandomWrapper((byte[]) null);
+  @Override
+  protected BaseRandom createRng(byte[] seed) throws SeedException {
+    return new RandomWrapper(seed);
   }
-
-  @Test(timeOut = 15000)
-  public void testEquals() throws ReflectiveOperationException {
-    RandomTestUtils.doEqualsSanityChecks(() -> {
-      try {
-        return new RandomWrapper();
-      } catch (final SeedException e) {
-        throw new RuntimeException(e);
-      }
-    });
-  }
-
-  @Test(timeOut = 60000)
-  public void testHashCode() throws Exception {
-    assert RandomTestUtils.testHashCodeDistribution(() -> {
-      try {
-        return new RandomWrapper();
-      } catch (final SeedException e) {
-        throw new RuntimeException(e);
-      }
-    })
-        : "Too many hashCode collisions";
-  }
-
-  // Don't bother testing the distribution of the output for this RNG, it's beyond our control.
 }

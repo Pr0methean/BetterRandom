@@ -171,11 +171,13 @@ public class SingleThreadSplittableRandomAdapterTest extends BaseRandomTest {
   }
 
   @Override
+  @Test(enabled = false)
   public void testEquals() {
     // No-op.
   }
 
   @Override
+  @Test(enabled = false)
   public void testHashCode() {
     // No-op.
   }

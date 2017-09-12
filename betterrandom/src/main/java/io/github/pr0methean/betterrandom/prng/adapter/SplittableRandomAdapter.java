@@ -1,5 +1,7 @@
 package io.github.pr0methean.betterrandom.prng.adapter;
 
+import static io.github.pr0methean.betterrandom.util.BinaryUtils.convertBytesToLong;
+
 import com.google.common.base.MoreObjects.ToStringHelper;
 import io.github.pr0methean.betterrandom.seed.SeedException;
 import io.github.pr0methean.betterrandom.seed.SeedGenerator;
@@ -126,6 +128,6 @@ public class SplittableRandomAdapter extends DirectSplittableRandomAdapter {
     if (seed.length != SEED_LENGTH_BYTES) {
       throw new IllegalArgumentException("SplittableRandomAdapter requires an 8-byte seed");
     }
-    setSeed(BinaryUtils.convertBytesToLong(seed, 0));
+    setSeed(convertBytesToLong(seed));
   }
 }

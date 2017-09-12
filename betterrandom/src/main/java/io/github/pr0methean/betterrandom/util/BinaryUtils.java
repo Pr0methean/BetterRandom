@@ -148,4 +148,8 @@ public final class BinaryUtils {
     buffer.putInt(input);
     return array;
   }
+
+  public static long convertBytesToLong(byte[] bytes) {
+    return convertBytesToLong(bytes, 0);
+  }
 }

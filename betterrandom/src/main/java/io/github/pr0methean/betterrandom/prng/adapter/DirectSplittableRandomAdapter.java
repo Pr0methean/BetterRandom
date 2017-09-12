@@ -51,7 +51,7 @@ public abstract class DirectSplittableRandomAdapter extends BaseSplittableRandom
     }
     super.setSeedInternal(seed);
     underlying = SplittableRandomReseeder.reseed(underlying,
-        BinaryUtils.convertBytesToLong(seed, 0));
+        BinaryUtils.convertBytesToLong(seed));
   }
 
   @Override
