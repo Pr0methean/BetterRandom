@@ -3,7 +3,6 @@ dist: trusty
 group: edge
 language:
   - java
-  - android
 jdk:
   - oraclejdk9
   - oraclejdk8
@@ -11,6 +10,32 @@ jdk:
 env:
   - MODE=tests-combined
   - MODE=benchmark
+matrix:
+  include:
+    - language: android
+      jdk: openjdk8
+      env: MODE=tests-combined
+    - language: android
+      jdk: openjdk8
+      env: MODE=benchmark
+    - language: java
+      jdk: openjdk8
+      env: MODE=tests-combined
+    - language: java
+      jdk: openjdk8
+      env: MODE=benchmark
+    - language: java
+      jdk: oraclejdk8
+      env: MODE=tests-combined
+    - language: java
+      jdk: oraclejdk8
+      env: MODE=benchmark  
+    - language: java
+      jdk: openjdk9
+      env: MODE=tests-combined
+    - language: java
+      jdk: openjdk9
+      env: MODE=benchmark  
 matrix:
   allow_failures:
     - jdk: oraclejdk9 # Currently doesn't set JAVA_HOME correctly for Maven
