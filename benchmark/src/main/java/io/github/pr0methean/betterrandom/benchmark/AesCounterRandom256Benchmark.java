@@ -8,7 +8,8 @@ import java.util.Random;
 public class AesCounterRandom256Benchmark extends AbstractRandomBenchmarkWithReseeding {
 
   @EntryPoint
-  public AesCounterRandom256Benchmark() {}
+  public AesCounterRandom256Benchmark() {
+  }
 
   @Override
   protected Random createPrng()
