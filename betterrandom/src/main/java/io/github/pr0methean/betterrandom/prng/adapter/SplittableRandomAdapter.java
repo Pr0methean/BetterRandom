@@ -19,8 +19,8 @@ import org.checkerframework.checker.nullness.qual.RequiresNonNull;
  */
 public class SplittableRandomAdapter extends DirectSplittableRandomAdapter {
 
-  private static final long serialVersionUID = 2190439512972880590L;
   public static final int SEED_LENGTH_BITS = SEED_LENGTH_BYTES * 8;
+  private static final long serialVersionUID = 2190439512972880590L;
   @SuppressWarnings("ThreadLocalNotStaticFinal")
   private transient ThreadLocal<SplittableRandom> threadLocal;
   private transient ThreadLocal<AtomicLong> entropyBits;
