@@ -12,7 +12,9 @@ import org.checkerframework.checker.nullness.qual.EnsuresNonNull;
 import org.checkerframework.checker.nullness.qual.RequiresNonNull;
 
 /**
- * Thread-safe version of {@link io.github.pr0methean.betterrandom.prng.adapter.SingleThreadSplittableRandomAdapter}.
+ * Thread-safe version of {@link SingleThreadSplittableRandomAdapter}. Reseeding this will only
+ * affect the calling thread, so this can't be used with a {@link io.github.pr0methean.betterrandom.seed.RandomSeederThread}.
+ * Instead, use a {@link ReseedingSplittableRandomAdapter}.
  *
  * @author ubuntu
  * @version $Id: $Id
