@@ -64,7 +64,7 @@ public class DefaultSeedGeneratorTest {
       this.affectedThread = affectedThread;
     }
 
-    @SuppressWarnings("ObjectEquality")
+    @SuppressWarnings({"ObjectEquality", "HardcodedFileSeparator"})
     @Override
     public void checkRead(final String file) {
       if (Thread.currentThread() == affectedThread && "/dev/random".equals(file)) {

@@ -15,6 +15,8 @@
 // ============================================================================
 package io.github.pr0methean.betterrandom;
 
+import io.github.pr0methean.betterrandom.util.EntryPoint;
+
 /**
  * Deterministic random number generators are repeatable, which can prove useful for testing and
  * validation.  This interface defines an operation to return the seed data from a repeatable RNG.
@@ -30,5 +32,6 @@ public interface RepeatableRandom {
    *
    * @return The seed data used to initialise this pseudo-random number generator.
    */
+  @EntryPoint
   byte[] getSeed();
 }

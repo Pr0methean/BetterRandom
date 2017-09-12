@@ -14,12 +14,11 @@ public final class SeedTestUtils {
   }
 
   public static void testGenerator(final SeedGenerator seedGenerator) throws SeedException {
-    final SeedGenerator generator = seedGenerator;
-    final byte[] seed = generator.generateSeed(SEED_SIZE);
+    final byte[] seed = seedGenerator.generateSeed(SEED_SIZE);
     assert seed.length == SEED_SIZE : "Failed to generate seed of correct length";
     assertFalse(Arrays.equals(seed, ALL_ZEROES));
     final byte[] secondSeed = new byte[SEED_SIZE];
-    generator.generateSeed(secondSeed); // Check that other syntax also works
+    seedGenerator.generateSeed(secondSeed); // Check that other syntax also works
     assertFalse(Arrays.equals(secondSeed, ALL_ZEROES));
     assertFalse(Arrays.equals(seed, secondSeed));
   }

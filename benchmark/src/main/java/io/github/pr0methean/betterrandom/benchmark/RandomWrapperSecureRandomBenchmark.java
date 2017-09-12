@@ -1,18 +1,18 @@
 package io.github.pr0methean.betterrandom.benchmark;
 
-import io.github.pr0methean.betterrandom.prng.AesCounterRandom;
+import io.github.pr0methean.betterrandom.prng.RandomWrapper;
 import io.github.pr0methean.betterrandom.seed.SeedException;
 import io.github.pr0methean.betterrandom.util.EntryPoint;
+import java.security.SecureRandom;
 import java.util.Random;
 
-public class AesCounterRandom128Benchmark extends AbstractRandomBenchmarkWithReseeding {
+public class RandomWrapperSecureRandomBenchmark extends AbstractRandomBenchmark {
 
   @EntryPoint
-  public AesCounterRandom128Benchmark() {
-  }
+  public RandomWrapperSecureRandomBenchmark() {}
 
   @Override
   protected Random createPrng() throws SeedException {
-    return new AesCounterRandom(16);
+    return new RandomWrapper(new SecureRandom());
   }
 }
