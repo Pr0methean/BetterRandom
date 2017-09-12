@@ -3,6 +3,7 @@ package io.github.pr0methean.betterrandom.prng.adapter;
 import com.google.common.base.MoreObjects.ToStringHelper;
 import io.github.pr0methean.betterrandom.seed.SeedException;
 import io.github.pr0methean.betterrandom.seed.SeedGenerator;
+import io.github.pr0methean.betterrandom.util.BinaryUtils;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.util.SplittableRandom;
@@ -21,11 +22,12 @@ import org.checkerframework.checker.nullness.qual.RequiresNonNull;
  */
 public class SplittableRandomAdapter extends DirectSplittableRandomAdapter {
 
-  public static final int SEED_LENGTH_BITS = SEED_LENGTH_BYTES * 8;
+  private static final int SEED_LENGTH_BITS = SEED_LENGTH_BYTES * 8;
   private static final long serialVersionUID = 2190439512972880590L;
   @SuppressWarnings("ThreadLocalNotStaticFinal")
-  private transient ThreadLocal<SplittableRandom> threadLocal;
+  private transient ThreadLocal<SplittableRandom> splittableRandoms;
   private transient ThreadLocal<AtomicLong> entropyBits;
+  private transient ThreadLocal<byte[]> seeds;
 
   /**
    * <p>Constructor for SplittableRandomAdapter.</p>
@@ -61,44 +63,69 @@ public class SplittableRandomAdapter extends DirectSplittableRandomAdapter {
     entropyBits.get().set(0);
   }
 
-  @EnsuresNonNull({"threadLocal", "entropyBits"})
+  @EnsuresNonNull({"splittableRandoms", "entropyBits", "seeds"})
   @RequiresNonNull({"lock", "underlying"})
   private void initSubclassTransientFields(
       @UnknownInitialization(BaseSplittableRandomAdapter.class)SplittableRandomAdapter this) {
     lock.lock();
     try {
-      threadLocal = ThreadLocal.withInitial(underlying::split);
+      splittableRandoms = ThreadLocal.withInitial(underlying::split);
       entropyBits = ThreadLocal.withInitial(() -> new AtomicLong(SEED_LENGTH_BITS));
+
+      // getSeed() will return the master seed on each thread where setSeed() yet hasn't been called
+      seeds = ThreadLocal.withInitial(() -> SplittableRandomReseeder.getSeed(splittableRandoms.get()));
     } finally {
       lock.unlock();
     }
     // WTF Checker Framework? Why is this needed?
-    assert threadLocal != null : "@AssumeAssertion(nullness)";
+    assert splittableRandoms != null : "@AssumeAssertion(nullness)";
     assert entropyBits != null : "@AssumeAssertion(nullness)";
+    assert seeds != null : "@AssumeAssertion(nullness)";
   }
 
   @Override
   protected SplittableRandom getSplittableRandom() {
-    return threadLocal.get();
+    return splittableRandoms.get();
   }
 
   @Override
   protected ToStringHelper addSubSubclassFields(final ToStringHelper original) {
-    return original.add("threadLocal", threadLocal);
+    return original.add("splittableRandoms", splittableRandoms);
+  }
+
+  @Override
+  public byte[] getSeed() {
+    return seeds.get();
   }
 
   /**
-   * {@inheritDoc} Applies only to the calling seederThread.
+   * {@inheritDoc} Applies only to the calling thread.
    */
   @Override
   public void setSeed(@UnknownInitialization SplittableRandomAdapter this,
       final long seed) {
-    super.setSeed(seed);
-    if (threadLocal != null) {
-      threadLocal.set(SplittableRandomReseeder.reseed(threadLocal.get(), seed));
+    if (this.seed == null) {
+      super.setSeed(seed);
+    }
+    if (splittableRandoms != null) {
+      splittableRandoms.set(SplittableRandomReseeder.reseed(splittableRandoms.get(), seed));
       if (entropyBits != null) {
         entropyBits.get().updateAndGet(oldValue -> Math.max(oldValue, SEED_LENGTH_BITS));
       }
+      if (seeds != null) {
+        seeds.set(BinaryUtils.convertLongToBytes(seed));
+      }
     }
+  }
+
+  /**
+   * {@inheritDoc} Applies only to the calling thread.
+   */
+  @Override
+  public void setSeed(@UnknownInitialization SplittableRandomAdapter this, final byte[] seed) {
+    if (seed.length != SEED_LENGTH_BYTES) {
+      throw new IllegalArgumentException("SplittableRandomAdapter requires an 8-byte seed");
+    }
+    setSeed(BinaryUtils.convertBytesToLong(seed, 0));
   }
 }

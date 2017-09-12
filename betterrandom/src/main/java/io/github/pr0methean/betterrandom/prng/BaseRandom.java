@@ -181,6 +181,7 @@ public abstract class BaseRandom extends Random implements ByteArrayReseedableRa
   }
 
   @SuppressWarnings("method.invocation.invalid")
+  @EnsuresNonNull("this.seed")
   @Override
   public synchronized void setSeed(@UnknownInitialization(Random.class)BaseRandom this,
       final long seed) {
@@ -315,14 +316,22 @@ public abstract class BaseRandom extends Random implements ByteArrayReseedableRa
   @SuppressWarnings("OverriddenMethodCallDuringObjectConstruction")
   private void readObjectNoData() throws InvalidObjectException {
     LOG.warn("BaseRandom.readObjectNoData() invoked; using DefaultSeedGenerator");
-    try {
-      setSeed(DefaultSeedGenerator.DEFAULT_SEED_GENERATOR.generateSeed(getNewSeedLength()));
-    } catch (final SeedException e) {
-      throw (InvalidObjectException)
-          (new InvalidObjectException("Unable to deserialize or generate a seed this RNG")
-              .initCause(e));
-    }
+    fallbackSetSeed();
     initTransientFields();
+    setSeedInternal(this.seed);
+  }
+
+  /**
+   * Generates a seed using the default seed generator. For use in handling a {@link #setSeed(long)}
+   * call in subclasses that can't actually use an 8-byte seed.
+   */
+  @EnsuresNonNull("seed")
+  protected void fallbackSetSeed(@UnknownInitialization BaseRandom this) {
+    try {
+      this.seed = DefaultSeedGenerator.DEFAULT_SEED_GENERATOR.generateSeed(getNewSeedLength());
+    } catch (final SeedException e) {
+      throw new RuntimeException(e);
+    }
   }
 
   protected void recordAllEntropySpent() {

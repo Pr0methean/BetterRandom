@@ -106,7 +106,9 @@ public class Cmwc4096Random extends BaseRandom {
       final long seed) {
     if (superConstructorFinished) {
       super.setSeed(seed);
-    } // Otherwise ignore; it's Random.<init> calling us without a full-size seed
+    } else {
+      fallbackSetSeed();
+    }
   }
 
   @EnsuresNonNull({"this.seed", "state", "entropyBits"})

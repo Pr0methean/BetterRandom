@@ -176,11 +176,6 @@ public class SingleThreadSplittableRandomAdapterTest extends BaseRandomTest {
   }
 
   @Override
-  public void testRepeatability() {
-    // No-op.
-  }
-
-  @Override
   public void testHashCode() {
     // No-op.
   }
