@@ -22,10 +22,10 @@ import io.github.pr0methean.betterrandom.seed.SeedException;
  *
  * @author Daniel Dyer
  */
-public class XorShiftRandomTest extends BaseEntropyCountingRandomTest {
+public class XorShiftRandomTest extends BaseRandomTest {
 
   @Override
-  protected BaseEntropyCountingRandom tryCreateRng() throws SeedException {
+  protected BaseRandom tryCreateRng() throws SeedException {
     return new XorShiftRandom();
   }
 

@@ -50,7 +50,7 @@ import org.checkerframework.checker.nullness.qual.EnsuresNonNull;
  * @author Daniel Dyer
  * @version $Id: $Id
  */
-public class AesCounterRandom extends BaseEntropyCountingRandom {
+public class AesCounterRandom extends BaseRandom {
 
   private static final long serialVersionUID = 5949778642428995210L;
   private static final LogPreFormatter LOG = new LogPreFormatter(AesCounterRandom.class);

@@ -32,18 +32,15 @@ public enum DevRandomSeedGenerator implements SeedGenerator {
 
   DEV_RANDOM_SEED_GENERATOR;
 
-  /** Constant {@code DEV_RANDOM} */
-  private static final File DEV_RANDOM = Paths.get("dev", "random").toFile();
-  private static final String DEV_RANDOM_STRING = DEV_RANDOM.toString();
+  private static final String DEV_RANDOM_STRING = "/dev/random";
+  private static final File DEV_RANDOM = new File(DEV_RANDOM_STRING);
 
   /**
-   * <p>generateSeed.</p>
-   *
-   * @param randomSeed an array of byte.
    * @throws io.github.pr0methean.betterrandom.seed.SeedException If {@literal /dev/random} does
    *     not exist or is not accessible
    */
   @SuppressWarnings({"IOResourceOpenedButNotSafelyClosed", "resource"})
+  @Override
   public void generateSeed(final byte[] randomSeed) throws SeedException {
     FileInputStream file = null;
     try {

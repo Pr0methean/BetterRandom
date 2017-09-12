@@ -43,7 +43,7 @@ import org.checkerframework.checker.nullness.qual.EnsuresNonNull;
  * @version $Id: $Id
  * @since 1.2
  */
-public class Cmwc4096Random extends BaseEntropyCountingRandom {
+public class Cmwc4096Random extends BaseRandom {
 
   private static final int SEED_SIZE_BYTES = 16384; // Needs 4,096 32-bit integers.
 

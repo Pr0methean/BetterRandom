@@ -26,7 +26,7 @@ import org.testng.annotations.Test;
  *
  * @author Daniel Dyer
  */
-public class AesCounterRandom128Test extends BaseEntropyCountingRandomTest {
+public class AesCounterRandom128Test extends BaseRandomTest {
 
   @Override
   @Test(timeOut = 30000)
@@ -72,7 +72,7 @@ public class AesCounterRandom128Test extends BaseEntropyCountingRandomTest {
   }
 
   @Override
-  protected BaseEntropyCountingRandom tryCreateRng() throws SeedException {
+  protected BaseRandom tryCreateRng() throws SeedException {
     return new AesCounterRandom(16);
   }
 

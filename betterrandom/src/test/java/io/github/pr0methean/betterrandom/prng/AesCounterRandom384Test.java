@@ -17,7 +17,7 @@ public class AesCounterRandom384Test extends AesCounterRandom256Test {
   }
 
   @Override
-  public BaseEntropyCountingRandom createRng() {
+  public BaseRandom createRng() {
     if (UNLIMITED_STRENGTH_CRYPTO) {
       try {
         return new AesCounterRandom(48);
