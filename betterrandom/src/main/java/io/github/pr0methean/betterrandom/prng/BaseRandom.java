@@ -220,7 +220,7 @@ public abstract class BaseRandom extends Random implements ByteArrayReseedableRa
    * @param thread a {@link io.github.pr0methean.betterrandom.seed.RandomSeederThread} object.
    */
   @SuppressWarnings("ObjectEquality")
-  public void setSeederThread(@org.jetbrains.annotations.Nullable final RandomSeederThread thread) {
+  public void setSeederThread(@Nullable final RandomSeederThread thread) {
     if (thread != null) {
       thread.add(this);
     }
