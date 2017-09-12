@@ -8,7 +8,8 @@ import java.util.Random;
 public class RandomWrapperBenchmark extends AbstractRandomBenchmarkWithReseeding {
 
   @EntryPoint
-  public RandomWrapperBenchmark() {}
+  public RandomWrapperBenchmark() {
+  }
 
   @Override
   protected Random createPrng()

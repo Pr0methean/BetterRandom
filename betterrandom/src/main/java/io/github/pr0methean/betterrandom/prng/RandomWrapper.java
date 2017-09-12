@@ -41,31 +41,9 @@ import org.checkerframework.checker.initialization.qual.UnknownInitialization;
  */
 public class RandomWrapper extends BaseEntropyCountingRandom {
 
+  public static final byte[] EMPTY_ARRAY = new byte[0];
   private static final long serialVersionUID = -6526304552538799385L;
   private static final int SEED_SIZE_BYTES = 8;
-  public static final byte[] EMPTY_ARRAY = new byte[0];
-
-  /** @return The wrapped {@link Random}. */
-  @EntryPoint
-  public Random getWrapped() {
-    return wrapped;
-  }
-
-  /** @param wrapped The new {@link Random} instance to wrap. */
-  @EntryPoint
-  public void setWrapped(final Random wrapped) {
-    this.wrapped = wrapped;
-    readEntropyOfWrapped(wrapped);
-    this.seed = EMPTY_ARRAY;
-  }
-
-  private void readEntropyOfWrapped(@UnknownInitialization(BaseEntropyCountingRandom.class) RandomWrapper this,
-      final Random wrapped) {
-    entropyBits.set(wrapped instanceof EntropyCountingRandom
-        ? ((EntropyCountingRandom) wrapped).entropyBits()
-        : 64);
-  }
-
   private Random wrapped;
 
   /**
@@ -101,11 +79,6 @@ public class RandomWrapper extends BaseEntropyCountingRandom {
     wrapped = new Random(longSeedBuffer.getLong(0));
   }
 
-  @Override
-  protected ToStringHelper addSubSubclassFields(final ToStringHelper original) {
-    return original.add("wrapped", wrapped);
-  }
-
   /**
    * Creates an instance wrapping the given {@link Random}.
    *
@@ -116,6 +89,33 @@ public class RandomWrapper extends BaseEntropyCountingRandom {
     super(EMPTY_ARRAY); // We won't know the wrapped PRNG's seed
     readEntropyOfWrapped(wrapped);
     this.wrapped = wrapped;
+  }
+
+  /** @return The wrapped {@link Random}. */
+  @EntryPoint
+  public Random getWrapped() {
+    return wrapped;
+  }
+
+  /** @param wrapped The new {@link Random} instance to wrap. */
+  @EntryPoint
+  public void setWrapped(final Random wrapped) {
+    this.wrapped = wrapped;
+    readEntropyOfWrapped(wrapped);
+    this.seed = EMPTY_ARRAY;
+  }
+
+  private void readEntropyOfWrapped(
+      @UnknownInitialization(BaseEntropyCountingRandom.class)RandomWrapper this,
+      final Random wrapped) {
+    entropyBits.set(wrapped instanceof EntropyCountingRandom
+        ? ((EntropyCountingRandom) wrapped).entropyBits()
+        : 64);
+  }
+
+  @Override
+  protected ToStringHelper addSubSubclassFields(final ToStringHelper original) {
+    return original.add("wrapped", wrapped);
   }
 
   @Override
@@ -131,13 +131,11 @@ public class RandomWrapper extends BaseEntropyCountingRandom {
     }
   }
 
-  /** {@inheritDoc} */
   @Override
   public boolean preferSeedWithLong() {
     return true;
   }
 
-  /** {@inheritDoc} */
   @Override
   public int getNewSeedLength(@UnknownInitialization RandomWrapper this) {
     return SEED_SIZE_BYTES;

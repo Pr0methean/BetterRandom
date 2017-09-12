@@ -96,13 +96,7 @@ public abstract class BaseRandom extends Random implements ByteArrayReseedableRa
    *     always returns false. If {@code probability >= 1}, always returns true.
    */
   public final boolean withProbability(final double probability) {
-    if (probability <= 0) {
-      return false;
-    } else if (probability >= 1) {
-      return true;
-    } else {
-      return withProbabilityInternal(probability);
-    }
+    return probability >= 1 || (probability > 0 && withProbabilityInternal(probability));
   }
 
   /**
@@ -141,7 +135,6 @@ public abstract class BaseRandom extends Random implements ByteArrayReseedableRa
     }
   }
 
-  /** {@inheritDoc} */
   @Override
   public byte[] getSeed() {
     lock.lock();
@@ -152,7 +145,6 @@ public abstract class BaseRandom extends Random implements ByteArrayReseedableRa
     }
   }
 
-  /** {@inheritDoc} */
   @SuppressWarnings("method.invocation.invalid")
   @Override
   public synchronized void setSeed(@UnknownInitialization(Random.class)BaseRandom this,
@@ -167,7 +159,6 @@ public abstract class BaseRandom extends Random implements ByteArrayReseedableRa
     }
   }
 
-  /** {@inheritDoc} */
   @EnsuresNonNull("this.seed")
   @Override
   public void setSeed(final byte[] seed) {
@@ -179,7 +170,6 @@ public abstract class BaseRandom extends Random implements ByteArrayReseedableRa
     }
   }
 
-  /** {@inheritDoc} */
   @Override
   public boolean preferSeedWithLong() {
     return getNewSeedLength() <= 8;

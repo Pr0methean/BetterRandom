@@ -9,7 +9,8 @@ import java.util.Random;
 public class SplittableRandomAdapterBenchmark extends AbstractRandomBenchmark {
 
   @EntryPoint
-  public SplittableRandomAdapterBenchmark() {}
+  public SplittableRandomAdapterBenchmark() {
+  }
 
   @Override
   protected Random createPrng() throws SeedException {

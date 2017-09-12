@@ -91,7 +91,6 @@ public abstract class BaseEntropyCountingRandom extends BaseRandom implements
     return 64 - Long.numberOfLeadingZeros(bound - origin - 1);
   }
 
-  /** {@inheritDoc} */
   @Override
   protected boolean withProbabilityInternal(final double probability) {
     final boolean result = super.withProbabilityInternal(probability);
@@ -101,7 +100,6 @@ public abstract class BaseEntropyCountingRandom extends BaseRandom implements
     return result;
   }
 
-  /** {@inheritDoc} */
   @Override
   public final ToStringHelper addSubclassFields(final ToStringHelper original) {
     return addSubSubclassFields(original
@@ -118,7 +116,7 @@ public abstract class BaseEntropyCountingRandom extends BaseRandom implements
   protected abstract ToStringHelper addSubSubclassFields(ToStringHelper original);
 
   /**
-   * <p>Setter for the field <code>seederThread</code>.</p>
+   * <p>Setter for the field {@code seederThread}.</p>
    *
    * @param thread a {@link io.github.pr0methean.betterrandom.seed.RandomSeederThread} object.
    */
@@ -141,7 +139,6 @@ public abstract class BaseEntropyCountingRandom extends BaseRandom implements
     }
   }
 
-  /** {@inheritDoc} */
   @Override
   public void setSeed(final byte[] seed) {
     super.setSeed(seed);
@@ -149,7 +146,6 @@ public abstract class BaseEntropyCountingRandom extends BaseRandom implements
         oldCount -> Math.max(oldCount, Math.min(seed.length, getNewSeedLength()) * 8));
   }
 
-  /** {@inheritDoc} */
   @Override
   protected void setSeedInternal(@UnknownInitialization(Random.class)BaseEntropyCountingRandom this,
       final byte[] seed) {
@@ -162,7 +158,6 @@ public abstract class BaseEntropyCountingRandom extends BaseRandom implements
     assert entropyBits != null : "@AssumeAssertion(nullness)";
   }
 
-  /** {@inheritDoc} */
   @Override
   public long entropyBits() {
     return entropyBits.get();
@@ -180,7 +175,6 @@ public abstract class BaseEntropyCountingRandom extends BaseRandom implements
     }
   }
 
-  /** {@inheritDoc} */
   @Override
   protected void readObjectNoData() throws InvalidObjectException {
     LOG.warn("readObjectNoData() invoked; assuming initial entropy is equal to seed length!");
@@ -195,7 +189,6 @@ public abstract class BaseEntropyCountingRandom extends BaseRandom implements
     }
   }
 
-  /** {@inheritDoc} */
   @Override
   public abstract int getNewSeedLength(@UnknownInitialization BaseEntropyCountingRandom this);
 }

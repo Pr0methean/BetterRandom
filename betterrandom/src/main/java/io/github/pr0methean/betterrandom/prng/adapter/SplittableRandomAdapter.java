@@ -55,13 +55,11 @@ public class SplittableRandomAdapter extends DirectSplittableRandomAdapter {
     assert threadLocal != null : "@AssumeAssertion(nullness)";
   }
 
-  /** {@inheritDoc} */
   @Override
   protected SplittableRandom getSplittableRandom() {
     return threadLocal.get();
   }
 
-  /** {@inheritDoc} */
   @Override
   protected ToStringHelper addSubSubclassFields(final ToStringHelper original) {
     return original.add("threadLocal", threadLocal);

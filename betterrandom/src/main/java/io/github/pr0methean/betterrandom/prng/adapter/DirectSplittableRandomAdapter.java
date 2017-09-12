@@ -31,7 +31,6 @@ public abstract class DirectSplittableRandomAdapter extends BaseSplittableRandom
     setSeedInternal(seed);
   }
 
-  /** {@inheritDoc} */
   @Override
   protected ToStringHelper addSubSubclassFields(final ToStringHelper original) {
     return original.add("underlying", underlying);
@@ -42,7 +41,6 @@ public abstract class DirectSplittableRandomAdapter extends BaseSplittableRandom
     setSeedInternal(seed);
   }
 
-  /** {@inheritDoc} */
   @EnsuresNonNull({"this.seed", "underlying"})
   @Override
   protected void setSeedInternal(
@@ -56,13 +54,11 @@ public abstract class DirectSplittableRandomAdapter extends BaseSplittableRandom
         BinaryUtils.convertBytesToLong(seed, 0));
   }
 
-  /** {@inheritDoc} */
   @Override
   public boolean preferSeedWithLong() {
     return true;
   }
 
-  /** {@inheritDoc} */
   @Override
   public void setSeed(@UnknownInitialization DirectSplittableRandomAdapter this,
       final long seed) {
