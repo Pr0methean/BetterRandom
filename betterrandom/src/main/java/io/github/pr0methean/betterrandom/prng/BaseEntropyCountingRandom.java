@@ -69,24 +69,6 @@ public abstract class BaseEntropyCountingRandom extends BaseRandom implements
     entropyBits = new AtomicLong(0);
   }
 
-  /** {@inheritDoc} */
-  @Override
-  protected boolean withProbabilityInternal(final double probability) {
-    final boolean result = super.withProbabilityInternal(probability);
-    // Random.nextDouble() uses 53 bits, but we're only outputting 1, so credit the rest back
-    // TODO: Maybe track fractional bits of entropy in a fixed-point form?
-    recordEntropySpent(-52);
-    return result;
-  }
-
-  /** {@inheritDoc} */
-  @Override
-  public final ToStringHelper addSubclassFields(final ToStringHelper original) {
-    return addSubSubclassFields(original
-        .add("entropyBits", entropyBits.get())
-        .add("seederThread", seederThread));
-  }
-
   /**
    * <p>entropyOfInt.</p>
    *
@@ -107,6 +89,24 @@ public abstract class BaseEntropyCountingRandom extends BaseRandom implements
    */
   protected static int entropyOfLong(final long origin, final long bound) {
     return 64 - Long.numberOfLeadingZeros(bound - origin - 1);
+  }
+
+  /** {@inheritDoc} */
+  @Override
+  protected boolean withProbabilityInternal(final double probability) {
+    final boolean result = super.withProbabilityInternal(probability);
+    // Random.nextDouble() uses 53 bits, but we're only outputting 1, so credit the rest back
+    // TODO: Maybe track fractional bits of entropy in a fixed-point form?
+    recordEntropySpent(-52);
+    return result;
+  }
+
+  /** {@inheritDoc} */
+  @Override
+  public final ToStringHelper addSubclassFields(final ToStringHelper original) {
+    return addSubSubclassFields(original
+        .add("entropyBits", entropyBits.get())
+        .add("seederThread", seederThread));
   }
 
   /**

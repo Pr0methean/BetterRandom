@@ -8,7 +8,8 @@ import java.util.Random;
 public class MersenneTwisterRandomBenchmark extends AbstractRandomBenchmarkWithReseeding {
 
   @EntryPoint
-  public MersenneTwisterRandomBenchmark() {}
+  public MersenneTwisterRandomBenchmark() {
+  }
 
   @Override
   protected Random createPrng()
