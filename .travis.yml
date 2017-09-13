@@ -1,3 +1,6 @@
+os:
+  - linux
+  - osx
 sudo: required
 dist: trusty
 group: edge
@@ -13,9 +16,11 @@ env:
 matrix:
   include:
     - language: android
+      os: linux
       jdk: openjdk8
       env: OP=unit-tests ANDROID=1
     - language: android
+      os: linux
       jdk: openjdk8
       env: OP=benchmark ANDROID=1
   allow_failures:
