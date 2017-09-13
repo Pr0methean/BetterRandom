@@ -7,7 +7,7 @@ import io.github.pr0methean.betterrandom.seed.DefaultSeedGenerator;
 import io.github.pr0methean.betterrandom.seed.FakeSeedGenerator;
 import io.github.pr0methean.betterrandom.seed.SeedException;
 import io.github.pr0methean.betterrandom.seed.SeedGenerator;
-import io.github.pr0methean.betterrandom.util.Failing;
+import io.github.pr0methean.betterrandom.Failing;
 import java.util.Arrays;
 import org.testng.annotations.Test;
 
