@@ -21,7 +21,7 @@ import static io.github.pr0methean.betterrandom.prng.RandomTestUtils.checkStream
 import static org.testng.Assert.assertTrue;
 
 import io.github.pr0methean.betterrandom.seed.SeedException;
-import io.github.pr0methean.betterrandom.util.Failing;
+import io.github.pr0methean.betterrandom.Failing;
 import java.util.Random;
 import org.testng.annotations.Test;
 

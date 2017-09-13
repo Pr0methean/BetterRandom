@@ -16,7 +16,7 @@
 package io.github.pr0methean.betterrandom.prng;
 
 import io.github.pr0methean.betterrandom.seed.SeedException;
-import io.github.pr0methean.betterrandom.util.Failing;
+import io.github.pr0methean.betterrandom.Failing;
 
 /**
  * Unit test for the cellular automaton RNG.
