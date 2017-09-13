@@ -36,6 +36,7 @@ import org.checkerframework.checker.nullness.qual.Nullable;
  * @author ubuntu
  * @version $Id: $Id
  */
+@SuppressWarnings("AccessingNonPublicFieldOfAnotherObject")
 public class LooperThread extends Thread implements Serializable, Cloneable {
 
   private static final LogPreFormatter LOG = new LogPreFormatter(LooperThread.class);
@@ -92,7 +93,7 @@ public class LooperThread extends Thread implements Serializable, Cloneable {
   }
 
   private void setGroup(@UnderInitialization LooperThread this,
-      @Nullable final ThreadGroup group) {
+      final @Nullable ThreadGroup group) {
     if (uncaughtExceptionHandler.wrapped == null) {
       uncaughtExceptionHandler.wrapped = group;
     }

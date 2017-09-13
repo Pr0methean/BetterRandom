@@ -52,7 +52,6 @@ import org.checkerframework.checker.nullness.qual.EnsuresNonNull;
  */
 public class AesCounterRandom extends BaseRandom {
 
-  public static final byte[] EMPTY_ARRAY = new byte[0];
   private static final long serialVersionUID = 5949778642428995210L;
   private static final LogPreFormatter LOG = new LogPreFormatter(AesCounterRandom.class);
   private static final int DEFAULT_SEED_SIZE_BYTES = 32;

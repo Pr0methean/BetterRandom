@@ -92,13 +92,13 @@ public final class SplittableRandomReseeder {
     }
   }
 
-  public static byte[] getSeed(SplittableRandom splittableRandom) {
+  public static byte[] getSeed(final SplittableRandom splittableRandom) {
     if (SEED_FIELD == null) {
       throw new UnsupportedOperationException();
     } else {
       try {
         return BinaryUtils.convertLongToBytes((long) (SEED_FIELD.get(splittableRandom)));
-      } catch (IllegalAccessException e) {
+      } catch (final IllegalAccessException e) {
         throw new RuntimeException(e);
       }
     }
