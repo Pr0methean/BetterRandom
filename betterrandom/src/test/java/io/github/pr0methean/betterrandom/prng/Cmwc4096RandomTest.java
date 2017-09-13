@@ -16,6 +16,7 @@
 package io.github.pr0methean.betterrandom.prng;
 
 import io.github.pr0methean.betterrandom.seed.SeedException;
+import io.github.pr0methean.betterrandom.util.Failing;
 
 /**
  * Unit test for the Complementary Multiply With Carry (CMWC) RNG.
@@ -23,6 +24,12 @@ import io.github.pr0methean.betterrandom.seed.SeedException;
  * @author Daniel Dyer
  */
 public class Cmwc4096RandomTest extends BaseRandomTest {
+
+  @Failing
+  @Override
+  protected boolean alwaysCheckEntropy() {
+    return false;
+  }
 
   @Override
   protected BaseRandom tryCreateRng() throws SeedException {

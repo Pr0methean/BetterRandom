@@ -2,12 +2,12 @@ package io.github.pr0methean.betterrandom.prng.adapter;
 
 import static org.testng.Assert.assertFalse;
 
-import io.github.pr0methean.betterrandom.prng.BaseRandom;
 import io.github.pr0methean.betterrandom.prng.RandomTestUtils;
 import io.github.pr0methean.betterrandom.seed.DefaultSeedGenerator;
 import io.github.pr0methean.betterrandom.seed.FakeSeedGenerator;
 import io.github.pr0methean.betterrandom.seed.SeedException;
 import io.github.pr0methean.betterrandom.seed.SeedGenerator;
+import io.github.pr0methean.betterrandom.util.Failing;
 import java.util.Arrays;
 import org.testng.annotations.Test;
 
@@ -16,6 +16,7 @@ public class SplittableRandomAdapterTest extends SingleThreadSplittableRandomAda
   private static final SeedGenerator FAKE_SEED_GENERATOR = new FakeSeedGenerator();
 
   @Override
+  @Failing
   @Test(enabled = false) // https://github.com/Pr0methean/BetterRandom/issues/5
   public void testRepeatability() throws SeedException {
     super.testRepeatability();

@@ -16,6 +16,7 @@
 package io.github.pr0methean.betterrandom.prng;
 
 import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertTrue;
 
 import io.github.pr0methean.betterrandom.seed.DefaultSeedGenerator;
 import io.github.pr0methean.betterrandom.seed.RandomSeederThread;
@@ -26,8 +27,14 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Random;
 import java.util.function.Supplier;
+import java.util.stream.BaseStream;
+import java.util.stream.DoubleStream;
+import java.util.stream.IntStream;
+import java.util.stream.LongStream;
+import java.util.stream.Stream;
 import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
 import org.testng.Reporter;
 
@@ -43,6 +50,106 @@ public final class RandomTestUtils {
 
   private RandomTestUtils() {
     // Prevents instantiation of utility class.
+  }
+
+  /**
+   * @param origin Minimum expected value, inclusive.
+   * @param bound Maximum expected value, exclusive.
+   * @param checkEntropy
+   */
+  public static void checkRangeAndEntropy(
+      BaseRandom prng,
+      long expectedEntropySpent,
+      Supplier<? extends Number> numberSupplier,
+      double origin,
+      double bound, boolean checkEntropy) {
+    long oldEntropy = prng.entropyBits();
+    Number output = numberSupplier.get();
+    assertTrue(output.doubleValue() >= origin);
+    assertTrue(output.doubleValue() < bound);
+    if (checkEntropy) {
+      assertEquals(oldEntropy - expectedEntropySpent, prng.entropyBits());
+    }
+  }
+
+  /**
+   * @param expectedCount Negative for an endless stream.
+   * @param origin Minimum expected value, inclusive.
+   * @param bound Maximum expected value, exclusive.
+   */
+  public static void checkStream(
+      BaseRandom prng,
+      long maxEntropySpentPerNumber,
+      BaseStream<? extends Number, ?> stream,
+      long expectedCount,
+      double origin,
+      double bound,
+      boolean checkEntropyCount) {
+    long expectedMinEntropy = prng.entropyBits();
+    long count = 0;
+    for (Iterator<? extends Number> streamIter = stream.iterator(); streamIter.hasNext(); ) {
+      count++;
+      if (expectedCount < 0) {
+        if (count > 20) {
+          break;
+        }
+      } else {
+        assertTrue(count <= expectedCount);
+      }
+      Number number = streamIter.next();
+      assertGreaterOrEqual(origin, number.doubleValue());
+      assertLess(bound, number.doubleValue());
+    }
+    if (expectedCount >= 0 && checkEntropyCount) {
+      expectedMinEntropy -= maxEntropySpentPerNumber * expectedCount;
+      assertGreaterOrEqual(expectedMinEntropy, prng.entropyBits());
+    }
+
+  }
+
+  public static void assertGreaterOrEqual(long expected, long actual) {
+    if (actual < expected) {
+      throw new AssertionError(
+          String.format("Expected at least %d but found %d", expected, actual));
+    }
+  }
+
+  public static void assertGreaterOrEqual(double expected, double actual) {
+    if (actual < expected) {
+      throw new AssertionError(
+          String.format("Expected at least %f but found %f", expected, actual));
+    }
+  }
+
+  public static void assertLess(double expected, double actual) {
+    if (actual >= expected) {
+      throw new AssertionError(
+          String.format("Expected less than %f but found %f", expected, actual));
+    }
+  }
+
+  private static <T, U extends BaseStream<T, U>> BaseStream<T, U> limit(
+      BaseStream<T, U> stream, long size) {
+    if (stream instanceof Stream<?>) {
+      return (BaseStream<T, U>) ((Stream<T>) stream).limit(size);
+    } else if (stream instanceof IntStream) {
+      return (BaseStream<T, U>) ((IntStream) stream).limit(size);
+    } else if (stream instanceof LongStream) {
+      return (BaseStream<T, U>) ((LongStream) stream).limit(size);
+    } else if (stream instanceof DoubleStream) {
+      return (BaseStream<T, U>) ((DoubleStream) stream).limit(size);
+    } else {
+      throw new UnsupportedOperationException();
+    }
+  }
+
+  private static long count(BaseStream<?, ?> stream) {
+    long count = 0;
+    for (Iterator<?> streamIter = stream.iterator(); streamIter.hasNext(); ) {
+      streamIter.next();
+      count++;
+    }
+    return count;
   }
 
   /**

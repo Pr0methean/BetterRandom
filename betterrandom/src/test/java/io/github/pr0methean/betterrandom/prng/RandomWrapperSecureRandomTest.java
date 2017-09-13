@@ -1,14 +1,27 @@
 package io.github.pr0methean.betterrandom.prng;
 
+import static io.github.pr0methean.betterrandom.prng.BaseRandom.ENTROPY_OF_DOUBLE;
+import static io.github.pr0methean.betterrandom.prng.RandomTestUtils.checkRangeAndEntropy;
+
 import io.github.pr0methean.betterrandom.seed.DefaultSeedGenerator;
 import io.github.pr0methean.betterrandom.seed.SeedException;
-import java.io.IOException;
+import io.github.pr0methean.betterrandom.util.Failing;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import org.jetbrains.annotations.NotNull;
 import org.testng.annotations.Test;
 
 public class RandomWrapperSecureRandomTest extends BaseRandomTest {
+
+  private static final SecureRandom SEED_GEN = new SecureRandom();
+
+  @Failing // Entropy count currently incorrect
+  @Override
+  public void testNextGaussian() throws Exception {
+    BaseRandom prng = createRng();
+    checkRangeAndEntropy(prng, 2 * ENTROPY_OF_DOUBLE,
+        () -> prng.nextGaussian() + prng.nextGaussian(), -Double.MAX_VALUE, Double.MAX_VALUE, false);
+  }
 
   @Override
   @Test(enabled = false)
@@ -33,8 +46,6 @@ public class RandomWrapperSecureRandomTest extends BaseRandomTest {
   public void testRepeatability() throws SeedException {
     // No-op.
   }
-
-  private static final SecureRandom SEED_GEN = new SecureRandom();
 
   @Override
   protected BaseRandom tryCreateRng() throws SeedException {

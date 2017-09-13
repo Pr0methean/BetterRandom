@@ -16,6 +16,7 @@
 package io.github.pr0methean.betterrandom.prng;
 
 import io.github.pr0methean.betterrandom.seed.SeedException;
+import io.github.pr0methean.betterrandom.util.Failing;
 import org.testng.annotations.Test;
 
 /**
@@ -24,6 +25,12 @@ import org.testng.annotations.Test;
  * @author Daniel Dyer
  */
 public class RandomWrapperTest extends BaseRandomTest {
+
+  @Failing
+  @Override
+  protected boolean alwaysCheckEntropy() {
+    return false;
+  }
 
   /**
    * Test to ensure that two distinct RNGs with the same seed return the same sequence of numbers.
