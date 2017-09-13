@@ -5,14 +5,24 @@ import static io.github.pr0methean.betterrandom.prng.RandomTestUtils.checkRangeA
 import static io.github.pr0methean.betterrandom.prng.RandomTestUtils.serializeAndDeserialize;
 import static io.github.pr0methean.betterrandom.prng.RandomTestUtils.testEquivalence;
 
+import io.github.pr0methean.betterrandom.Failing;
 import io.github.pr0methean.betterrandom.prng.BaseRandom;
 import io.github.pr0methean.betterrandom.prng.BaseRandomTest;
+import io.github.pr0methean.betterrandom.prng.RandomTestUtils.EntropyCheckMode;
 import io.github.pr0methean.betterrandom.seed.DefaultSeedGenerator;
 import io.github.pr0methean.betterrandom.seed.SeedException;
-import io.github.pr0methean.betterrandom.Failing;
 import org.testng.annotations.Test;
 
 public class SingleThreadSplittableRandomAdapterTest extends BaseRandomTest {
+
+  @Override
+  @Failing
+  public void testNextGaussian() {
+    final BaseRandom prng = createRng();
+    checkRangeAndEntropy(prng, 2 * ENTROPY_OF_DOUBLE,
+        () -> prng.nextGaussian() + prng.nextGaussian(), -Double.MAX_VALUE, Double.MAX_VALUE,
+        EntropyCheckMode.OFF);
+  }
 
   /**
    * Overridden in subclasses, so that subclassing the test can test the subclasses.
@@ -63,14 +73,5 @@ public class SingleThreadSplittableRandomAdapterTest extends BaseRandomTest {
   @Test(enabled = false)
   public void testHashCode() {
     // No-op.
-  }
-
-  @Failing // Entropy count currently incorrect.
-  @Override
-  public void testNextGaussian() throws Exception {
-    final BaseRandom prng = createRng();
-    checkRangeAndEntropy(prng, 2 * ENTROPY_OF_DOUBLE,
-        () -> prng.nextGaussian() + prng.nextGaussian(), -Double.MAX_VALUE, Double.MAX_VALUE,
-        false);
   }
 }
