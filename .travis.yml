@@ -3,13 +3,6 @@ dist: trusty
 group: edge
 language:
   - java
-jdk:
-  - oraclejdk9
-  - oraclejdk8
-  - openjdk8
-env:
-  - OP=unit-tests
-  - OP=benchmark
 matrix:
   include:
     - language: android
