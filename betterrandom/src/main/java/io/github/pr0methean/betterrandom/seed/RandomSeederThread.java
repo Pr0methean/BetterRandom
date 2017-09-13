@@ -259,12 +259,11 @@ public final class RandomSeederThread extends LooperThread {
   }
 
   /**
-   * <p>stopIfEmpty.</p>
-<<<<<<<<< saved version
-
-=========
-
->>>>>>>>> local version
+   * <p>stopIfEmpty.</p> <<<<<<<<< saved version
+   * <p>
+   * =========
+   * <p>
+   * >>>>>>>>> local version
    */
   public void stopIfEmpty() {
     if (isEmpty()) {
