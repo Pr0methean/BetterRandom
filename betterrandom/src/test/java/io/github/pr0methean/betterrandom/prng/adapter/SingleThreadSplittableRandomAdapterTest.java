@@ -1,5 +1,7 @@
 package io.github.pr0methean.betterrandom.prng.adapter;
 
+import static io.github.pr0methean.betterrandom.prng.BaseRandom.ENTROPY_OF_DOUBLE;
+import static io.github.pr0methean.betterrandom.prng.RandomTestUtils.checkRangeAndEntropy;
 import static io.github.pr0methean.betterrandom.prng.RandomTestUtils.serializeAndDeserialize;
 import static io.github.pr0methean.betterrandom.prng.RandomTestUtils.testEquivalence;
 
@@ -7,6 +9,7 @@ import io.github.pr0methean.betterrandom.prng.BaseRandom;
 import io.github.pr0methean.betterrandom.prng.BaseRandomTest;
 import io.github.pr0methean.betterrandom.seed.DefaultSeedGenerator;
 import io.github.pr0methean.betterrandom.seed.SeedException;
+import io.github.pr0methean.betterrandom.util.Failing;
 import org.testng.annotations.Test;
 
 public class SingleThreadSplittableRandomAdapterTest extends BaseRandomTest {
@@ -44,126 +47,6 @@ public class SingleThreadSplittableRandomAdapterTest extends BaseRandomTest {
     testEquivalence(adapter2, adapter4, 20);
   }
 
-  @Test
-  public void testNext() throws Exception {
-    // TODO
-  }
-
-  @Test
-  public void testNextBytes() throws Exception {
-    // TODO
-  }
-
-  @Test
-  public void testNextInt() throws Exception {
-    // TODO
-  }
-
-  @Test
-  public void testNextInt1() throws Exception {
-    // TODO
-  }
-
-  @Test
-  public void testNextInt2() throws Exception {
-    // TODO
-  }
-
-  @Test
-  public void testNextLong() throws Exception {
-    // TODO
-  }
-
-  @Test
-  public void testNextLong1() throws Exception {
-    // TODO
-  }
-
-  @Test
-  public void testNextLong2() throws Exception {
-    // TODO
-  }
-
-  @Test
-  public void testNextDouble() throws Exception {
-    // TODO
-  }
-
-  @Test
-  public void testNextDouble1() throws Exception {
-    // TODO
-  }
-
-  @Test
-  public void testNextDouble2() throws Exception {
-    // TODO
-  }
-
-  @Test
-  public void testNextBoolean() throws Exception {
-    // TODO
-  }
-
-  @Test
-  public void testInts() throws Exception {
-    // TODO
-  }
-
-  @Test
-  public void testInts1() throws Exception {
-    // TODO
-  }
-
-  @Test
-  public void testInts2() throws Exception {
-    // TODO
-  }
-
-  @Test
-  public void testInts3() throws Exception {
-    // TODO
-  }
-
-  @Test
-  public void testLongs() throws Exception {
-    // TODO
-  }
-
-  @Test
-  public void testLongs1() throws Exception {
-    // TODO
-  }
-
-  @Test
-  public void testLongs2() throws Exception {
-    // TODO
-  }
-
-  @Test
-  public void testLongs3() throws Exception {
-    // TODO
-  }
-
-  @Test
-  public void testDoubles() throws Exception {
-    // TODO
-  }
-
-  @Test
-  public void testDoubles1() throws Exception {
-    // TODO
-  }
-
-  @Test
-  public void testDoubles2() throws Exception {
-    // TODO
-  }
-
-  @Test
-  public void testDoubles3() throws Exception {
-    // TODO
-  }
-
   @Override
   @Test
   public void testNullSeed() {
@@ -180,5 +63,13 @@ public class SingleThreadSplittableRandomAdapterTest extends BaseRandomTest {
   @Test(enabled = false)
   public void testHashCode() {
     // No-op.
+  }
+
+  @Failing // Entropy count currently incorrect.
+  @Override
+  public void testNextGaussian() throws Exception {
+    BaseRandom prng = createRng();
+    checkRangeAndEntropy(prng, 2 * ENTROPY_OF_DOUBLE,
+        () -> prng.nextGaussian() + prng.nextGaussian(), -Double.MAX_VALUE, Double.MAX_VALUE, false);
   }
 }
