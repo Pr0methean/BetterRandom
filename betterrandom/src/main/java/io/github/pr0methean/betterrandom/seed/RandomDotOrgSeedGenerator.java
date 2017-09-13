@@ -84,6 +84,7 @@ public enum RandomDotOrgSeedGenerator implements SeedGenerator {
         for (String line = reader.readLine(); line != null; line = reader.readLine()) {
           ++index;
           cache[index] = (byte) Integer.parseInt(line, 16);
+          // Can't use Byte.parseByte, since it expects signed
         }
         if (index < cache.length - 1) {
           throw new IOException("Insufficient data received.");
