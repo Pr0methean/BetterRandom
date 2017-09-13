@@ -68,7 +68,7 @@ public class SingleThreadSplittableRandomAdapterTest extends BaseRandomTest {
   @Failing // Entropy count currently incorrect.
   @Override
   public void testNextGaussian() throws Exception {
-    BaseRandom prng = createRng();
+    final BaseRandom prng = createRng();
     checkRangeAndEntropy(prng, 2 * ENTROPY_OF_DOUBLE,
         () -> prng.nextGaussian() + prng.nextGaussian(), -Double.MAX_VALUE, Double.MAX_VALUE,
         false);

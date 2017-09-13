@@ -5,7 +5,7 @@ import io.github.pr0methean.betterrandom.seed.SeedException;
 public class AesCounterRandom256Test extends AesCounterRandom128Test {
 
   @Override
-  public BaseRandom createRng() {
+  protected BaseRandom createRng() {
     try {
       return new AesCounterRandom(32);
     } catch (final SeedException e) {

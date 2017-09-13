@@ -51,7 +51,7 @@ public class RandomWrapperTest extends BaseRandomTest {
   }
 
   @Override
-  protected BaseRandom createRng(byte[] seed) throws SeedException {
+  protected BaseRandom createRng(final byte[] seed) throws SeedException {
     return new RandomWrapper(seed);
   }
 }

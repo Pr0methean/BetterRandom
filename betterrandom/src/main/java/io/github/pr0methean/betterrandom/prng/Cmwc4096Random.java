@@ -124,6 +124,7 @@ public class Cmwc4096Random extends BaseRandom {
     index = 4095;
   }
 
+  @SuppressWarnings("NumericCastThatLosesPrecision")
   @Override
   protected int next(final int bits) {
     lock.lock();
