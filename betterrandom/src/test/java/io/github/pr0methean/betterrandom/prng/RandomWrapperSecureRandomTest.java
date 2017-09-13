@@ -3,9 +3,10 @@ package io.github.pr0methean.betterrandom.prng;
 import static io.github.pr0methean.betterrandom.prng.BaseRandom.ENTROPY_OF_DOUBLE;
 import static io.github.pr0methean.betterrandom.prng.RandomTestUtils.checkRangeAndEntropy;
 
+import io.github.pr0methean.betterrandom.Failing;
+import io.github.pr0methean.betterrandom.prng.RandomTestUtils.EntropyCheckMode;
 import io.github.pr0methean.betterrandom.seed.DefaultSeedGenerator;
 import io.github.pr0methean.betterrandom.seed.SeedException;
-import io.github.pr0methean.betterrandom.Failing;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import org.jetbrains.annotations.NotNull;
@@ -24,13 +25,13 @@ public class RandomWrapperSecureRandomTest extends BaseRandomTest {
     }
   }
 
-  @Failing // Entropy count currently incorrect
   @Override
-  public void testNextGaussian() throws Exception {
+  @Failing
+  public void testNextGaussian() {
     final BaseRandom prng = createRng();
     checkRangeAndEntropy(prng, 2 * ENTROPY_OF_DOUBLE,
         () -> prng.nextGaussian() + prng.nextGaussian(), -Double.MAX_VALUE, Double.MAX_VALUE,
-        false);
+        EntropyCheckMode.OFF);
   }
 
   @Override
