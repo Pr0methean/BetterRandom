@@ -41,6 +41,13 @@ public class AesCounterRandom128Test extends BaseRandomTest {
 
   @Failing // Currently counting entropy incorrectly.
   @Override
+  public void testInts3() throws Exception {
+    BaseRandom prng = createRng();
+    checkStream(prng, 32, prng.ints(3, 1 << 27,  Integer.MAX_VALUE), 3, 1 << 27, Integer.MAX_VALUE, false);
+  }
+
+  @Failing // Currently counting entropy incorrectly.
+  @Override
   public void testNextGaussian() throws Exception {
     BaseRandom prng = createRng();
     checkRangeAndEntropy(prng, 2 * ENTROPY_OF_DOUBLE,
