@@ -65,7 +65,7 @@ public final class BinaryUtils {
     final byte[] seed = new byte[hex.length() / 2];
     for (int i = 0; i < seed.length; i++) {
       final int index = i * 2;
-      seed[i] = (byte) Integer.parseInt(hex.substring(index, index + 2), 16);
+      seed[i] = Byte.parseByte(hex.substring(index, index + 2), 16);
     }
     return seed;
   }
@@ -149,7 +149,7 @@ public final class BinaryUtils {
     return array;
   }
 
-  public static long convertBytesToLong(byte[] bytes) {
+  public static long convertBytesToLong(final byte[] bytes) {
     return convertBytesToLong(bytes, 0);
   }
 }

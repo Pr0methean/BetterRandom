@@ -44,6 +44,11 @@ public final class RandomTestUtils {
   public static final RandomSeederThread DEFAULT_SEEDER =
       RandomSeederThread.getInstance(DefaultSeedGenerator.DEFAULT_SEED_GENERATOR);
 
+  /** The square root of 12, calculated in extended precision by Wolfram Alpha. */
+  private static final double SQRT_12 = 3.4641016151377546;
+  private static final int INSTANCES_TO_HASH = 25;
+  private static final int EXPECTED_UNIQUE_HASHES = (int) (0.8 * INSTANCES_TO_HASH);
+
   private RandomTestUtils() {
     // Prevents instantiation of utility class.
   }
@@ -53,13 +58,13 @@ public final class RandomTestUtils {
    * @param bound Maximum expected value, exclusive.
    */
   public static void checkRangeAndEntropy(
-      BaseRandom prng,
-      long expectedEntropySpent,
-      Supplier<? extends Number> numberSupplier,
-      double origin,
-      double bound, boolean checkEntropy) {
-    long oldEntropy = prng.entropyBits();
-    Number output = numberSupplier.get();
+      final BaseRandom prng,
+      final long expectedEntropySpent,
+      final Supplier<? extends Number> numberSupplier,
+      final double origin,
+      final double bound, final boolean checkEntropy) {
+    final long oldEntropy = prng.entropyBits();
+    final Number output = numberSupplier.get();
     assertTrue(output.doubleValue() >= origin);
     assertTrue(output.doubleValue() < bound);
     if (checkEntropy) {
@@ -73,16 +78,16 @@ public final class RandomTestUtils {
    * @param bound Maximum expected value, exclusive.
    */
   public static void checkStream(
-      BaseRandom prng,
-      long maxEntropySpentPerNumber,
-      BaseStream<? extends Number, ?> stream,
-      long expectedCount,
-      double origin,
-      double bound,
-      boolean checkEntropyCount) {
+      final BaseRandom prng,
+      final long maxEntropySpentPerNumber,
+      final BaseStream<? extends Number, ?> stream,
+      final long expectedCount,
+      final double origin,
+      final double bound,
+      final boolean checkEntropyCount) {
     long expectedMinEntropy = prng.entropyBits();
     long count = 0;
-    for (Iterator<? extends Number> streamIter = stream.iterator(); streamIter.hasNext(); ) {
+    for (final Iterator<? extends Number> streamIter = stream.iterator(); streamIter.hasNext(); ) {
       count++;
       if (expectedCount < 0) {
         if (count > 20) {
@@ -91,7 +96,7 @@ public final class RandomTestUtils {
       } else {
         assertTrue(count <= expectedCount);
       }
-      Number number = streamIter.next();
+      final Number number = streamIter.next();
       assertGreaterOrEqual(origin, number.doubleValue());
       assertLess(bound, number.doubleValue());
     }
@@ -101,21 +106,21 @@ public final class RandomTestUtils {
     }
   }
 
-  public static void assertGreaterOrEqual(long expected, long actual) {
+  private static void assertGreaterOrEqual(final long expected, final long actual) {
     if (actual < expected) {
       throw new AssertionError(
           String.format("Expected at least %d but found %d", expected, actual));
     }
   }
 
-  public static void assertGreaterOrEqual(double expected, double actual) {
+  private static void assertGreaterOrEqual(final double expected, final double actual) {
     if (actual < expected) {
       throw new AssertionError(
           String.format("Expected at least %f but found %f", expected, actual));
     }
   }
 
-  public static void assertLess(double expected, double actual) {
+  private static void assertLess(final double expected, final double actual) {
     if (actual >= expected) {
       throw new AssertionError(
           String.format("Expected less than %f but found %f", expected, actual));
@@ -141,11 +146,11 @@ public final class RandomTestUtils {
    * 90 unique hash codes.
    */
   public static boolean testHashCodeDistribution(final Supplier<? extends Random> ctor) {
-    final HashSet<Integer> uniqueHashCodes = new HashSet<>();
-    for (int i = 0; i < 25; i++) {
+    final HashSet<Integer> uniqueHashCodes = new HashSet<>(INSTANCES_TO_HASH);
+    for (int i = 0; i < INSTANCES_TO_HASH; i++) {
       uniqueHashCodes.add(ctor.get().hashCode());
     }
-    return uniqueHashCodes.size() >= 20;
+    return uniqueHashCodes.size() >= EXPECTED_UNIQUE_HASHES;
   }
 
   /**
@@ -180,7 +185,7 @@ public final class RandomTestUtils {
    *     be sufficient.
    * @return An approximation of pi generated using the provided RNG.
    */
-  public static double calculateMonteCarloValueForPi(final Random rng,
+  private static double calculateMonteCarloValueForPi(final Random rng,
       final int iterations) {
     // Assumes a quadrant of a circle of radius 1, bounded by a box with
     // sides of length 1.  The area of the square is therefore 1 square unit
@@ -225,7 +230,7 @@ public final class RandomTestUtils {
    *     calculation.
    * @return The standard deviation of the generated sample.
    */
-  public static double calculateSampleStandardDeviation(final Random rng,
+  private static double calculateSampleStandardDeviation(final Random rng,
       final int maxValue,
       final int iterations) {
     final DescriptiveStatistics stats = new DescriptiveStatistics();
@@ -265,7 +270,7 @@ public final class RandomTestUtils {
     // approaches n/sqrt(12).
     final int n = 100;
     final double observedSD = calculateSampleStandardDeviation(rng, n, 10000);
-    final double expectedSD = n / Math.sqrt(12);
+    final double expectedSD = n / SQRT_12;
     Reporter.log("Expected SD: " + expectedSD + ", observed SD: " + observedSD);
     assertEquals(observedSD, expectedSD, 0.02 * expectedSD,
         "Standard deviation is outside acceptable range: " + observedSD);
@@ -275,7 +280,7 @@ public final class RandomTestUtils {
     assertMonteCarloPiEstimateSane(rng, 100000);
   }
 
-  public static void assertMonteCarloPiEstimateSane(
+  private static void assertMonteCarloPiEstimateSane(
       final Random rng, final int iterations) {
     final double pi = calculateMonteCarloValueForPi(rng, iterations);
     Reporter.log("Monte Carlo value for Pi: " + pi);

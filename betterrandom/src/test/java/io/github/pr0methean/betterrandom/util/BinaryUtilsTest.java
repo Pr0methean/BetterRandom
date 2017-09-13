@@ -27,12 +27,12 @@ import org.testng.annotations.Test;
  */
 public class BinaryUtilsTest {
 
-  public static final byte[] TEST_HEX_BYTES = {124, 11, 0, -76, -3, 127, -128, -1};
-  public static final String TEST_HEX_STRING = "7C0B00B4FD7F80FF";
-  public static final byte[] LONG_BYTES = {0, 0, 0, 16, 8, 4, 2, 1};
-  public static final long LONG = 68853957121L;
-  public static final byte[] INT_BYTES = {8, 4, 2, 1};
-  public static final int INT = 134480385;
+  private static final byte[] TEST_HEX_BYTES = {124, 11, 0, -76, -3, 127, -128, -1};
+  private static final String TEST_HEX_STRING = "7C0B00B4FD7F80FF";
+  private static final byte[] LONG_BYTES = {0, 0, 0, 16, 8, 4, 2, 1};
+  private static final long LONG = 68853957121L;
+  private static final byte[] INT_BYTES = {8, 4, 2, 1};
+  private static final int INT = 134480385;
 
   @Test
   public void testConvertLongToBytes() throws Exception {
@@ -80,9 +80,8 @@ public class BinaryUtilsTest {
    */
   @Test(timeOut = 1000)
   public void testConvertBytesToInts() {
-    final byte[] bytes = LONG_BYTES;
     final int expected1 = 16;
-    final int[] result = BinaryUtils.convertBytesToInts(bytes);
+    final int[] result = BinaryUtils.convertBytesToInts(LONG_BYTES);
     assert expected1 == result[0] : "Expected first int to be " + expected1 + ", was " + result[0];
     final int expected2 = 134480385;
     assert expected2 == result[1] : "Expected second int to be " + expected2 + ", was " + result[1];
@@ -104,8 +103,7 @@ public class BinaryUtilsTest {
    */
   @Test(timeOut = 1000)
   public void testConvertBytesToLong() {
-    final byte[] bytes = LONG_BYTES;
-    final long result = convertBytesToLong(bytes);
+    final long result = convertBytesToLong(LONG_BYTES);
     assert LONG == result : "Expected " + LONG + ", was " + result;
   }
 

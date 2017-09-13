@@ -4,7 +4,7 @@ import static org.testng.Assert.assertFalse;
 
 import java.util.Arrays;
 
-public final class SeedTestUtils {
+final class SeedTestUtils {
 
   private static final int SEED_SIZE = 32;
   @SuppressWarnings("MismatchedReadAndWriteOfArray")

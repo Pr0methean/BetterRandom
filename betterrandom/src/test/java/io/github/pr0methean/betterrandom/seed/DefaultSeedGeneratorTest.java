@@ -76,7 +76,7 @@ public class DefaultSeedGeneratorTest {
     @Override
     public void checkConnect(final String host, final int port) {
       if (Thread.currentThread() == affectedThread) {
-        throw new SecurityException("Test not permitted to connect to " + host + ":" + port);
+        throw new SecurityException("Test not permitted to connect to " + host + ':' + port);
       }
     }
 
