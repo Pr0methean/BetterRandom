@@ -1,3 +1,8 @@
+# 0.10.0
+* Fixed a bug where `BaseRandom` would crash if `setSeed(long)` was called more than once.
+* Merged `BaseEntropyCountingRandom` into `BaseRandom`.
+* Improvements to test coverage.
+
 # 0.9.2
 * Refactorings to increase object reuse, and therefore throughput, in all PRNGs, especially
   `ReseedingSplittableRandomAdapter` (which improved benchmark throughput by a factor of over 300).
