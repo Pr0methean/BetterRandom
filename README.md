@@ -48,8 +48,11 @@ replacements for `java.util.Random`.
 ** Use `getNewSeedLength()` to get the recommended seed size. 
 
 * `entropyBits()`: Find out when the PRNG has output more random data than it has been seeded with,
-  and thus could benefit from being reseeded. Even when reseeded repeatedly without being used, the
-  entropy count won't ever go above the size of the PRNG's internal state.
+  and thus could benefit from being reseeded. Even when the PRNG is reseeded repeatedly without
+  being used, the entropy count won't ever go above the size of the PRNG's internal state.
+** CAUTION: This feature is in alpha. Many inherited methods from `java.util.Random` obtain more
+   bits than they actually use, and will need to be overwritten to either eliminate the waste or
+   exclude it from the entropy debit.
 
 * `setSeederThread(RandomSeederThread)`: Reseeds the PRNG whenever its entropy is spent, but only
   as long as a seed generator can keep up. See below.
