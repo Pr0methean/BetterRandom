@@ -30,6 +30,7 @@ public class MersenneTwisterRandomTest extends BaseRandomTest {
   protected boolean alwaysCheckEntropy() {
     return false;
   }
+
   @Override
   protected BaseRandom tryCreateRng() throws SeedException {
     return new MersenneTwisterRandom();

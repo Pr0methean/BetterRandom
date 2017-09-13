@@ -61,8 +61,7 @@ public abstract class BaseRandomTest {
   protected abstract BaseRandom createRng(byte[] seed) throws SeedException;
 
   /**
-   * @return true if this method wraps all its next* methods and thus has exact
-   * entropy counts.
+   * @return true if this method wraps all its next* methods and thus has exact entropy counts.
    */
   protected boolean alwaysCheckEntropy() {
     return true;
@@ -178,7 +177,8 @@ public abstract class BaseRandomTest {
     assertFalse(prng.withProbability(0.0));
     assertTrue(prng.withProbability(1.0));
     assertEquals(originalEntropy, prng.entropyBits());
-    checkRangeAndEntropy(prng, 1, () -> prng.withProbability(0.7) ? 0 : 1, 0, 2, alwaysCheckEntropy());
+    checkRangeAndEntropy(prng, 1, () -> prng.withProbability(0.7) ? 0 : 1, 0, 2,
+        alwaysCheckEntropy());
   }
 
   @Test
@@ -204,62 +204,69 @@ public abstract class BaseRandomTest {
   public void testNextLong() throws Exception {
     BaseRandom prng = createRng();
     checkRangeAndEntropy(prng, 64, prng::nextLong, Long.MIN_VALUE,
-        Long.MAX_VALUE + 1.0,  alwaysCheckEntropy());
+        Long.MAX_VALUE + 1.0, alwaysCheckEntropy());
   }
 
   @Test
   public void testNextDouble() throws Exception {
     BaseRandom prng = createRng();
-    checkRangeAndEntropy(prng, ENTROPY_OF_DOUBLE, prng::nextDouble, 0.0, 1.0,  alwaysCheckEntropy());
+    checkRangeAndEntropy(prng, ENTROPY_OF_DOUBLE, prng::nextDouble, 0.0, 1.0, alwaysCheckEntropy());
   }
 
   @Test
   public void testNextGaussian() throws Exception {
     BaseRandom prng = createRng();
     checkRangeAndEntropy(prng, 2 * ENTROPY_OF_DOUBLE,
-        () -> prng.nextGaussian() + prng.nextGaussian(), -Double.MAX_VALUE, Double.MAX_VALUE,  alwaysCheckEntropy());
+        () -> prng.nextGaussian() + prng.nextGaussian(), -Double.MAX_VALUE, Double.MAX_VALUE,
+        alwaysCheckEntropy());
   }
 
   @Test
   public void testNextBoolean() throws Exception {
     BaseRandom prng = createRng();
-    checkRangeAndEntropy(prng, 1, () -> prng.nextBoolean() ? 0 : 1, 0, 2,  alwaysCheckEntropy());
+    checkRangeAndEntropy(prng, 1, () -> prng.nextBoolean() ? 0 : 1, 0, 2, alwaysCheckEntropy());
   }
 
   @Test
   public void testInts() throws Exception {
     BaseRandom prng = createRng();
-    checkStream(prng, 32, prng.ints(), -1, Integer.MIN_VALUE, Integer.MAX_VALUE + 1L,  alwaysCheckEntropy());
+    checkStream(prng, 32, prng.ints(), -1, Integer.MIN_VALUE, Integer.MAX_VALUE + 1L,
+        alwaysCheckEntropy());
   }
 
   @Test
   public void testInts1() throws Exception {
     BaseRandom prng = createRng();
-    checkStream(prng, 32, prng.ints(20), 20, Integer.MIN_VALUE, Integer.MAX_VALUE + 1L,  alwaysCheckEntropy());
+    checkStream(prng, 32, prng.ints(20), 20, Integer.MIN_VALUE, Integer.MAX_VALUE + 1L,
+        alwaysCheckEntropy());
   }
 
   @Test
   public void testInts2() throws Exception {
     BaseRandom prng = createRng();
-    checkStream(prng, 32, prng.ints(1 << 27, Integer.MAX_VALUE), -1, 1 << 27, Integer.MAX_VALUE,  alwaysCheckEntropy());
+    checkStream(prng, 32, prng.ints(1 << 27, Integer.MAX_VALUE), -1, 1 << 27, Integer.MAX_VALUE,
+        alwaysCheckEntropy());
   }
 
   @Test
   public void testInts3() throws Exception {
     BaseRandom prng = createRng();
-    checkStream(prng, 32, prng.ints(3, 1 << 27,  Integer.MAX_VALUE), 3, 1 << 27, Integer.MAX_VALUE,  alwaysCheckEntropy());
+    checkStream(prng, 32, prng.ints(3, 1 << 27, Integer.MAX_VALUE), 3, 1 << 27, Integer.MAX_VALUE,
+        alwaysCheckEntropy());
   }
 
   @Test
   public void testLongs() throws Exception {
     BaseRandom prng = createRng();
-    checkStream(prng, 64, prng.longs(), -1, Long.MIN_VALUE, Long.MAX_VALUE + 1.0,  alwaysCheckEntropy());
+    checkStream(prng, 64, prng.longs(), -1, Long.MIN_VALUE, Long.MAX_VALUE + 1.0,
+        alwaysCheckEntropy());
   }
 
   @Test
   public void testLongs1() throws Exception {
     BaseRandom prng = createRng();
-    checkStream(prng, 64, prng.longs(20), 20, Long.MIN_VALUE, Long.MAX_VALUE + 1.0,  alwaysCheckEntropy());
+    checkStream(prng, 64, prng.longs(20), 20, Long.MIN_VALUE, Long.MAX_VALUE + 1.0,
+        alwaysCheckEntropy());
   }
 
   @Test
@@ -271,7 +278,8 @@ public abstract class BaseRandomTest {
   @Test
   public void testLongs3() throws Exception {
     BaseRandom prng = createRng();
-    checkStream(prng, 42, prng.longs(20, 1 << 40, 1 << 42), 20, 1 << 8, 1 << 10, alwaysCheckEntropy());
+    checkStream(prng, 42, prng.longs(20, 1 << 40, 1 << 42), 20, 1 << 8, 1 << 10,
+        alwaysCheckEntropy());
   }
 
   @Test
@@ -283,19 +291,21 @@ public abstract class BaseRandomTest {
   @Test
   public void testDoubles1() throws Exception {
     BaseRandom prng = createRng();
-    checkStream(prng, ENTROPY_OF_DOUBLE, prng.doubles(20), 20, 0.0, 1.0,  alwaysCheckEntropy());
+    checkStream(prng, ENTROPY_OF_DOUBLE, prng.doubles(20), 20, 0.0, 1.0, alwaysCheckEntropy());
   }
 
   @Test
   public void testDoubles2() throws Exception {
     BaseRandom prng = createRng();
-    checkStream(prng, ENTROPY_OF_DOUBLE, prng.doubles(-5.0, 8.0), -1, -5.0, 8.0,  alwaysCheckEntropy());
+    checkStream(prng, ENTROPY_OF_DOUBLE, prng.doubles(-5.0, 8.0), -1, -5.0, 8.0,
+        alwaysCheckEntropy());
   }
 
   @Test
   public void testDoubles3() throws Exception {
     BaseRandom prng = createRng();
-    checkStream(prng, ENTROPY_OF_DOUBLE, prng.doubles(20, -5.0, 8.0), 20, -5.0, 8.0,  alwaysCheckEntropy());
+    checkStream(prng, ENTROPY_OF_DOUBLE, prng.doubles(20, -5.0, 8.0), 20, -5.0, 8.0,
+        alwaysCheckEntropy());
   }
 
   private static final class FlakyTestRetrier extends RetryAnalyzerCount {

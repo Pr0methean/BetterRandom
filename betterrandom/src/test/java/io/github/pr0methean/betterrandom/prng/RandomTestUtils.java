@@ -31,10 +31,6 @@ import java.util.Iterator;
 import java.util.Random;
 import java.util.function.Supplier;
 import java.util.stream.BaseStream;
-import java.util.stream.DoubleStream;
-import java.util.stream.IntStream;
-import java.util.stream.LongStream;
-import java.util.stream.Stream;
 import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
 import org.testng.Reporter;
 
@@ -55,7 +51,6 @@ public final class RandomTestUtils {
   /**
    * @param origin Minimum expected value, inclusive.
    * @param bound Maximum expected value, exclusive.
-   * @param checkEntropy
    */
   public static void checkRangeAndEntropy(
       BaseRandom prng,
@@ -104,7 +99,6 @@ public final class RandomTestUtils {
       expectedMinEntropy -= maxEntropySpentPerNumber * expectedCount;
       assertGreaterOrEqual(expectedMinEntropy, prng.entropyBits());
     }
-
   }
 
   public static void assertGreaterOrEqual(long expected, long actual) {
