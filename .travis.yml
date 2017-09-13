@@ -25,6 +25,7 @@ matrix:
       env: OP=benchmark ANDROID=1
   allow_failures:
     - jdk: oraclejdk9 # Currently doesn't set JAVA_HOME correctly for Maven
+    - language: android # Scripts still in development
   fast_finish: true
 script:
   # Test AesCounterRandom with limited-strength crypto on Oracle
