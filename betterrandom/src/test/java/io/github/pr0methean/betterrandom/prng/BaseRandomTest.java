@@ -272,14 +272,14 @@ public abstract class BaseRandomTest {
   @Test
   public void testLongs2() throws Exception {
     final BaseRandom prng = createRng();
-    checkStream(prng, 42, prng.longs(1L << 40, 1L << 42), -1, 1 << 40, 1 << 42,
+    checkStream(prng, 42, prng.longs(1L << 40, 1L << 42), -1, 1L << 40, 1L << 42,
         alwaysCheckEntropy());
   }
 
   @Test
   public void testLongs3() throws Exception {
     final BaseRandom prng = createRng();
-    checkStream(prng, 42, prng.longs(20, 1L << 40, 1L << 42), 20, 1 << 40, 1 << 42,
+    checkStream(prng, 42, prng.longs(20, 1L << 40, 1L << 42), 20, 1L << 40, 1L << 42,
         alwaysCheckEntropy());
   }
 
