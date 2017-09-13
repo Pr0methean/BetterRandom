@@ -128,30 +128,6 @@ public final class RandomTestUtils {
     }
   }
 
-  private static <T, U extends BaseStream<T, U>> BaseStream<T, U> limit(
-      BaseStream<T, U> stream, long size) {
-    if (stream instanceof Stream<?>) {
-      return (BaseStream<T, U>) ((Stream<T>) stream).limit(size);
-    } else if (stream instanceof IntStream) {
-      return (BaseStream<T, U>) ((IntStream) stream).limit(size);
-    } else if (stream instanceof LongStream) {
-      return (BaseStream<T, U>) ((LongStream) stream).limit(size);
-    } else if (stream instanceof DoubleStream) {
-      return (BaseStream<T, U>) ((DoubleStream) stream).limit(size);
-    } else {
-      throw new UnsupportedOperationException();
-    }
-  }
-
-  private static long count(BaseStream<?, ?> stream) {
-    long count = 0;
-    for (Iterator<?> streamIter = stream.iterator(); streamIter.hasNext(); ) {
-      streamIter.next();
-      count++;
-    }
-    return count;
-  }
-
   /**
    * Test that the given parameterless constructor, called twice, doesn't produce RNGs that compare
    * as equal. Also checks for compliance with basic parts of the Object.equals() contract.
