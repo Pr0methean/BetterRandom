@@ -62,13 +62,37 @@ public final class RandomTestUtils {
       final long expectedEntropySpent,
       final Supplier<? extends Number> numberSupplier,
       final double origin,
-      final double bound, final boolean checkEntropy) {
+      final double bound,
+      final boolean checkEntropy) {
+    checkRangeAndEntropy(prng, expectedEntropySpent, numberSupplier, origin, bound,
+        checkEntropy ? EntropyCheckMode.EXACT : EntropyCheckMode.OFF);
+  }
+
+  public static void checkRangeAndEntropy(
+      final BaseRandom prng,
+      final long expectedEntropySpent,
+      final Supplier<? extends Number> numberSupplier,
+      final double origin,
+      final double bound,
+      final EntropyCheckMode entropyCheckMode) {
     final long oldEntropy = prng.entropyBits();
     final Number output = numberSupplier.get();
     assertTrue(output.doubleValue() >= origin);
     assertTrue(output.doubleValue() < bound);
-    if (checkEntropy) {
-      assertEquals(oldEntropy - expectedEntropySpent, prng.entropyBits());
+    if (entropyCheckMode == EntropyCheckMode.EXACT
+        || entropyCheckMode == EntropyCheckMode.UPPER_BOUND) {
+      assertGreaterOrEqual(oldEntropy - expectedEntropySpent, prng.entropyBits());
+    }
+    if (entropyCheckMode == EntropyCheckMode.EXACT
+        || entropyCheckMode == EntropyCheckMode.LOWER_BOUND) {
+      assertLessOrEqual(oldEntropy - expectedEntropySpent, prng.entropyBits());
+    }
+  }
+
+  private static void assertLessOrEqual(final long expected, final long actual) {
+    if (actual > expected) {
+      throw new AssertionError(
+          String.format("Expected no more than %d but found %d", expected, actual));
     }
   }
 
@@ -286,5 +310,9 @@ public final class RandomTestUtils {
     Reporter.log("Monte Carlo value for Pi: " + pi);
     assertEquals(pi, Math.PI, 0.01 * Math.PI,
         "Monte Carlo value for Pi is outside acceptable range:" + pi);
+  }
+
+  public enum EntropyCheckMode {
+    EXACT, UPPER_BOUND, LOWER_BOUND, OFF
   }
 }

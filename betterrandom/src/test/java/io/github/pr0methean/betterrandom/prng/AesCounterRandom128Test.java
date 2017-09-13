@@ -15,13 +15,12 @@
 // ============================================================================
 package io.github.pr0methean.betterrandom.prng;
 
-import static io.github.pr0methean.betterrandom.prng.BaseRandom.ENTROPY_OF_DOUBLE;
 import static io.github.pr0methean.betterrandom.prng.RandomTestUtils.checkRangeAndEntropy;
 import static io.github.pr0methean.betterrandom.prng.RandomTestUtils.checkStream;
 import static org.testng.Assert.assertTrue;
 
-import io.github.pr0methean.betterrandom.seed.SeedException;
 import io.github.pr0methean.betterrandom.Failing;
+import io.github.pr0methean.betterrandom.seed.SeedException;
 import java.util.Random;
 import org.testng.annotations.Test;
 
@@ -45,15 +44,6 @@ public class AesCounterRandom128Test extends BaseRandomTest {
   public void testInts3() throws Exception {
     final BaseRandom prng = createRng();
     checkStream(prng, 32, prng.ints(3, 1 << 27, Integer.MAX_VALUE), 3, 1 << 27, Integer.MAX_VALUE,
-        false);
-  }
-
-  @Failing // Currently counting entropy incorrectly.
-  @Override
-  public void testNextGaussian() throws Exception {
-    final BaseRandom prng = createRng();
-    checkRangeAndEntropy(prng, 2 * ENTROPY_OF_DOUBLE,
-        () -> prng.nextGaussian() + prng.nextGaussian(), -Double.MAX_VALUE, Double.MAX_VALUE,
         false);
   }
 
