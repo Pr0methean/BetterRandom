@@ -203,9 +203,11 @@ public final class RandomSeederThread extends LooperThread {
           random.setSeed(longSeedBuffer.getLong(0));
         }
       } catch (final Throwable t) {
-        LOG.error("%s", t);
-        for (final StackTraceElement element : t.getStackTrace()) {
-          LOG.error("  %s", element);
+        if (!(t instanceof InterruptedException)) {
+          LOG.error("%s", t);
+          for (final StackTraceElement element : t.getStackTrace()) {
+            LOG.error("  %s", element);
+          }
         }
         interrupt();
       }
