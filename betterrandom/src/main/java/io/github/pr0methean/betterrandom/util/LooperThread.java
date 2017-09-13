@@ -177,7 +177,6 @@ public class LooperThread extends Thread implements Serializable, Cloneable {
           lock.unlock();
         }
       } catch (final InterruptedException e) {
-        LOG.error("Interrupted: %s", e);
         interrupt();
         break;
       }
