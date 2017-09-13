@@ -65,7 +65,7 @@ public final class BinaryUtils {
     final byte[] seed = new byte[hex.length() / 2];
     for (int i = 0; i < seed.length; i++) {
       final int index = i * 2;
-      seed[i] = Integer.parseInt(hex.substring(index, index + 2), 16);
+      seed[i] = (byte) Integer.parseInt(hex.substring(index, index + 2), 16);
       // Can't use Byte.parseByte since it expects signed
     }
     return seed;
