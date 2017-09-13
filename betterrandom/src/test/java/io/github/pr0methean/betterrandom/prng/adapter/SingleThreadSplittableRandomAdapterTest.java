@@ -70,6 +70,7 @@ public class SingleThreadSplittableRandomAdapterTest extends BaseRandomTest {
   public void testNextGaussian() throws Exception {
     BaseRandom prng = createRng();
     checkRangeAndEntropy(prng, 2 * ENTROPY_OF_DOUBLE,
-        () -> prng.nextGaussian() + prng.nextGaussian(), -Double.MAX_VALUE, Double.MAX_VALUE, false);
+        () -> prng.nextGaussian() + prng.nextGaussian(), -Double.MAX_VALUE, Double.MAX_VALUE,
+        false);
   }
 }

@@ -180,17 +180,6 @@ public abstract class BaseRandom extends Random implements ByteArrayReseedableRa
     }
   }
 
-  @EnsuresNonNull("this.seed")
-  @Override
-  public void setSeed(final byte[] seed) {
-    lock.lock();
-    try {
-      setSeedInternal(seed);
-    } finally {
-      lock.unlock();
-    }
-  }
-
   @SuppressWarnings("method.invocation.invalid")
   @EnsuresNonNull("this.seed")
   @Override
@@ -203,6 +192,17 @@ public abstract class BaseRandom extends Random implements ByteArrayReseedableRa
       setSeed(longSeedArray);
     } else {
       setSeedInternal(BinaryUtils.convertLongToBytes(seed));
+    }
+  }
+
+  @EnsuresNonNull("this.seed")
+  @Override
+  public void setSeed(final byte[] seed) {
+    lock.lock();
+    try {
+      setSeedInternal(seed);
+    } finally {
+      lock.unlock();
     }
   }
 
