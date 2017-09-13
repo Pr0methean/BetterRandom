@@ -41,6 +41,7 @@ import org.checkerframework.checker.initialization.qual.UnknownInitialization;
  */
 public class RandomWrapper extends BaseRandom {
 
+  @SuppressWarnings("PublicStaticArrayField")
   public static final byte[] DUMMY_SEED = new byte[8];
   private static final long serialVersionUID = -6526304552538799385L;
   private static final int SEED_SIZE_BYTES = 8;
@@ -95,12 +96,9 @@ public class RandomWrapper extends BaseRandom {
     this.wrapped = wrapped;
   }
 
-  private static byte[] getSeedOrDummy(Random wrapped) {
-    if (wrapped instanceof RepeatableRandom) {
-      return ((RepeatableRandom) wrapped).getSeed();
-    } else {
-      return DUMMY_SEED;
-    }
+  private static byte[] getSeedOrDummy(final Random wrapped) {
+    return wrapped instanceof RepeatableRandom ? ((RepeatableRandom) wrapped).getSeed()
+        : DUMMY_SEED;
   }
 
   /** @return The wrapped {@link Random}. */
@@ -165,7 +163,7 @@ public class RandomWrapper extends BaseRandom {
 
   public void nextBytes(final byte[] bytes) {
     wrapped.nextBytes(bytes);
-    recordEntropySpent(bytes.length * 8);
+    recordEntropySpent(bytes.length * 8L);
   }
 
   public int nextInt() {

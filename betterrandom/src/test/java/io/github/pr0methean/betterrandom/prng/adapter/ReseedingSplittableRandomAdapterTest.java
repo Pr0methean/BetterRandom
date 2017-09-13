@@ -9,7 +9,7 @@ import io.github.pr0methean.betterrandom.prng.BaseRandom;
 import io.github.pr0methean.betterrandom.seed.FakeSeedGenerator;
 import io.github.pr0methean.betterrandom.seed.SeedException;
 import io.github.pr0methean.betterrandom.util.BinaryUtils;
-import io.github.pr0methean.betterrandom.util.Failing;
+import io.github.pr0methean.betterrandom.Failing;
 import org.testng.annotations.Test;
 
 public class ReseedingSplittableRandomAdapterTest extends SingleThreadSplittableRandomAdapterTest {
@@ -60,7 +60,7 @@ public class ReseedingSplittableRandomAdapterTest extends SingleThreadSplittable
   /** Test for crashes only, since setSeed is a no-op. */
   @Override
   public void testSetSeed() throws SeedException {
-    BaseRandom prng = createRng();
+    final BaseRandom prng = createRng();
     prng.nextLong();
     prng.setSeed(DEFAULT_SEED_GENERATOR.generateSeed(8));
     prng.setSeed(BinaryUtils.convertBytesToLong(DEFAULT_SEED_GENERATOR.generateSeed(8)));

@@ -83,7 +83,7 @@ public enum RandomDotOrgSeedGenerator implements SeedGenerator {
         int index = -1;
         for (String line = reader.readLine(); line != null; line = reader.readLine()) {
           ++index;
-          cache[index] = (byte) Integer.parseInt(line, 16);
+          cache[index] = Byte.parseByte(line, 16);
         }
         if (index < cache.length - 1) {
           throw new IOException("Insufficient data received.");
