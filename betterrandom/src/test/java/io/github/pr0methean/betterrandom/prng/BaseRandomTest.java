@@ -171,7 +171,7 @@ public abstract class BaseRandomTest {
     rng.setSeederThread(null);
   }
 
-  @Test(timeOut = 1000)
+  @Test(timeOut = 3000)
   public void testWithProbability() {
     final BaseRandom prng = createRng();
     final long originalEntropy = prng.entropyBits();
