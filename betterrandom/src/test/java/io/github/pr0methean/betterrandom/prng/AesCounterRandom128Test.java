@@ -17,6 +17,7 @@ package io.github.pr0methean.betterrandom.prng;
 
 import static io.github.pr0methean.betterrandom.prng.BaseRandom.ENTROPY_OF_DOUBLE;
 import static io.github.pr0methean.betterrandom.prng.RandomTestUtils.checkRangeAndEntropy;
+import static io.github.pr0methean.betterrandom.prng.RandomTestUtils.checkStream;
 import static org.testng.Assert.assertTrue;
 
 import io.github.pr0methean.betterrandom.seed.SeedException;
