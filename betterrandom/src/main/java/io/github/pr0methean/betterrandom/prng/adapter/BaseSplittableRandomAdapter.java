@@ -48,13 +48,14 @@ public abstract class BaseSplittableRandomAdapter extends BaseRandom {
     return nextInt() & ((1 << bits) - 1);
   }
 
+  @SuppressWarnings("NumericCastThatLosesPrecision")
   @Override
   public void nextBytes(final byte[] bytes) {
     final SplittableRandom local = getSplittableRandom();
     for (int i = 0; i < bytes.length; i++) {
       bytes[i] = (byte) (local.nextInt(256));
     }
-    recordEntropySpent(bytes.length * 8);
+    recordEntropySpent(bytes.length * 8L);
   }
 
   @Override

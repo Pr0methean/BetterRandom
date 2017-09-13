@@ -26,13 +26,14 @@ import org.openjdk.jmh.runner.options.OptionsBuilder;
 
 // FIXME: Get the multithreaded benchmarks working
 @State(Scope.Benchmark)
-public abstract class AbstractRandomBenchmark {
+abstract class AbstractRandomBenchmark {
 
   private static final LogPreFormatter LOG = new LogPreFormatter(AbstractRandomBenchmark.class);
 
   private static final int COLUMNS = 2;
   private static final int ROWS = 50_000;
-  protected final byte[][] bytes = new byte[COLUMNS][ROWS];
+  @SuppressWarnings("MismatchedReadAndWriteOfArray")
+  private final byte[][] bytes = new byte[COLUMNS][ROWS];
   private final HashMultiset<StackTrace> stackTraces = HashMultiset.create();
   // protected final Thread[] threads = new Thread[COLUMNS];
   protected Random prng;
@@ -41,6 +42,7 @@ public abstract class AbstractRandomBenchmark {
   public AbstractRandomBenchmark() {
   }
 
+  @SuppressWarnings("ObjectAllocationInLoop")
   public static void main(final String[] args) throws RunnerException {
     final ChainedOptionsBuilder options = new OptionsBuilder()
         .addProfiler(HotspotThreadProfiler.class)
@@ -89,7 +91,7 @@ public abstract class AbstractRandomBenchmark {
 
   protected abstract Random createPrng() throws SeedException;
 
-  protected byte innerTestBytesSequential() {
+  byte innerTestBytesSequential() {
     for (final byte[] column : bytes) {
       prng.nextBytes(column);
     }
@@ -137,6 +139,8 @@ public abstract class AbstractRandomBenchmark {
 
     private static final int OBJECT_CREATION_STACK_DEPTH = 5;
     private static final String NEWLINE = String.format("%n");
+    /** A rough estimate of the average of {@link StackTraceElement#toString()}.length(). */
+    private static final int ESTIMATED_AVERAGE_STACK_TRACE_ELEMENT_SIZE = 50;
     private final StackTraceElement[] elements;
 
     private StackTrace(final StackTraceElement[] elements) {
@@ -163,7 +167,8 @@ public abstract class AbstractRandomBenchmark {
 
     @Override
     public String toString() {
-      final StringBuilder stringBuilder = new StringBuilder();
+      final StringBuilder stringBuilder = new StringBuilder(
+          elements.length * ESTIMATED_AVERAGE_STACK_TRACE_ELEMENT_SIZE);
       for (final StackTraceElement element : elements) {
         stringBuilder.append(element);
         stringBuilder.append(NEWLINE);
