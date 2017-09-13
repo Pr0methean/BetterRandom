@@ -5,7 +5,7 @@ import static io.github.pr0methean.betterrandom.prng.RandomTestUtils.checkRangeA
 
 import io.github.pr0methean.betterrandom.seed.DefaultSeedGenerator;
 import io.github.pr0methean.betterrandom.seed.SeedException;
-import io.github.pr0methean.betterrandom.util.Failing;
+import io.github.pr0methean.betterrandom.Failing;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import org.jetbrains.annotations.NotNull;
