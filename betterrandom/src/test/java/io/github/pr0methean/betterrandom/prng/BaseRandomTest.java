@@ -26,7 +26,7 @@ public abstract class BaseRandomTest {
 
   private static final LogPreFormatter LOG = new LogPreFormatter(BaseRandomTest.class);
   private static final int MAX_DUMPED_SEED_LENGTH = 32;
-  private static final int TEST_RESEEDING_RETRIES = 3;
+  private static final int FLAKY_TEST_RETRIES = 3;
 
   /**
    * Test to ensure that two distinct RNGs with the same seed return the same sequence of numbers.
@@ -73,7 +73,7 @@ public abstract class BaseRandomTest {
    * subtle statistical anomalies that would be picked up by Diehard, but it provides a simple check
    * for major problems with the output.
    */
-  @Test(timeOut = 15000, groups = "non-deterministic")
+  @Test(timeOut = 20000, groups = "non-deterministic", retryAnalyzer = FlakyTestRetrier.class)
   public void testDistribution() throws SeedException {
     final BaseRandom rng = createRng();
     assertMonteCarloPiEstimateSane(rng);
@@ -84,7 +84,7 @@ public abstract class BaseRandomTest {
    * subtle statistical anomalies that would be picked up by Diehard, but it provides a simple check
    * for major problems with the output.
    */
-  @Test(timeOut = 15000, groups = "non-deterministic")
+  @Test(timeOut = 20000, groups = "non-deterministic", retryAnalyzer = FlakyTestRetrier.class)
   public void testStandardDeviation() throws SeedException {
     final BaseRandom rng = createRng();
     // Expected standard deviation for a uniformly distributed population of values in the range 0..n
@@ -159,7 +159,7 @@ public abstract class BaseRandomTest {
     }
   }
 
-  @Test(timeOut = 20000, retryAnalyzer = TestReseedingRetrier.class)
+  @Test(timeOut = 20000, retryAnalyzer = FlakyTestRetrier.class)
   public void testReseeding() throws Exception {
     final BaseRandom rng = createRng();
     rng.setSeederThread(RandomTestUtils.DEFAULT_SEEDER);
@@ -298,11 +298,11 @@ public abstract class BaseRandomTest {
     checkStream(prng, ENTROPY_OF_DOUBLE, prng.doubles(20, -5.0, 8.0), 20, -5.0, 8.0,  alwaysCheckEntropy());
   }
 
-  private static final class TestReseedingRetrier extends RetryAnalyzerCount {
+  private static final class FlakyTestRetrier extends RetryAnalyzerCount {
 
     @EntryPoint
-    public TestReseedingRetrier() {
-      setCount(TEST_RESEEDING_RETRIES);
+    public FlakyTestRetrier() {
+      setCount(FLAKY_TEST_RETRIES);
     }
 
     @Override
