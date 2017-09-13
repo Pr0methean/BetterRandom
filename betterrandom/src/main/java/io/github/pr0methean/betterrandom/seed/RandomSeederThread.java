@@ -38,9 +38,8 @@ public final class RandomSeederThread extends LooperThread {
   private static final ExecutorService WAKER_UPPER = Executors.newSingleThreadExecutor();
   private static final LogPreFormatter LOG = new LogPreFormatter(RandomSeederThread.class);
   @SuppressWarnings("StaticCollection")
-  @GuardedBy("<self>")
-  private static final Map<SeedGenerator, RandomSeederThread> INSTANCES =
-      Collections.synchronizedMap(new WeakHashMap<>());
+  private static final @GuardedBy("<self>") Map<SeedGenerator, RandomSeederThread> INSTANCES =
+      Collections.synchronizedMap(new WeakHashMap<>(1));
   /**
    * Used to avoid full spin-locking when every {@link Random} to be reseeded is an {@link
    * EntropyCountingRandom} and none has spent its entropy.
@@ -96,12 +95,12 @@ public final class RandomSeederThread extends LooperThread {
   @RequiresNonNull("lock")
   private void initTransientFields(@UnderInitialization RandomSeederThread this) {
     prngs = Collections.synchronizedSet(
-        Collections.newSetFromMap(new WeakHashMap<>()));
+        Collections.newSetFromMap(new WeakHashMap<>(1)));
     longSeedBuffer = ByteBuffer.wrap(longSeedArray);
     waitWhileEmpty = lock.newCondition();
     waitForEntropyDrain = lock.newCondition();
-    prngsThisIteration = new HashSet<>();
-    seedArrays = new WeakHashMap<>();
+    prngsThisIteration = new HashSet<>(1);
+    seedArrays = new WeakHashMap<>(1);
   }
 
   @Override
@@ -167,7 +166,7 @@ public final class RandomSeederThread extends LooperThread {
     }
   }
 
-  @SuppressWarnings("InfiniteLoopStatement")
+  @SuppressWarnings({"InfiniteLoopStatement", "ObjectAllocationInLoop"})
   @Override
   public void iterate() throws InterruptedException {
     while (true) {
@@ -203,9 +202,9 @@ public final class RandomSeederThread extends LooperThread {
           seedGenerator.generateSeed(longSeedArray);
           random.setSeed(longSeedBuffer.getLong(0));
         }
-      } catch (Throwable t) {
+      } catch (final Throwable t) {
         LOG.error("%s", t);
-        for (StackTraceElement element : t.getStackTrace()) {
+        for (final StackTraceElement element : t.getStackTrace()) {
           LOG.error("  %s", element);
         }
         interrupt();

@@ -122,7 +122,7 @@ public abstract class BaseRandom extends Random implements ByteArrayReseedableRa
    * The purpose of this method is so that entropy-counting subclasses can detect that no more than
    * 1 bit of entropy is actually being consumed, even though this method uses {@link #nextDouble()}
    * which normally consumes 53 bits. Tracking of fractional bits of entropy is currently not
-   * implemented in {@link io.github.pr0methean.betterrandom.prng.BaseRandom}.
+   * implemented in BaseRandom.
    *
    * @param probability The probability of returning true.
    * @return True with probability {@code probability}; false otherwise. If {@code probability < 0},
@@ -180,6 +180,17 @@ public abstract class BaseRandom extends Random implements ByteArrayReseedableRa
     }
   }
 
+  @EnsuresNonNull("this.seed")
+  @Override
+  public void setSeed(final byte[] seed) {
+    lock.lock();
+    try {
+      setSeedInternal(seed);
+    } finally {
+      lock.unlock();
+    }
+  }
+
   @SuppressWarnings("method.invocation.invalid")
   @EnsuresNonNull("this.seed")
   @Override
@@ -192,17 +203,6 @@ public abstract class BaseRandom extends Random implements ByteArrayReseedableRa
       setSeed(longSeedArray);
     } else {
       setSeedInternal(BinaryUtils.convertLongToBytes(seed));
-    }
-  }
-
-  @EnsuresNonNull("this.seed")
-  @Override
-  public void setSeed(final byte[] seed) {
-    lock.lock();
-    try {
-      setSeedInternal(seed);
-    } finally {
-      lock.unlock();
     }
   }
 
@@ -220,7 +220,7 @@ public abstract class BaseRandom extends Random implements ByteArrayReseedableRa
    * @param thread a {@link io.github.pr0methean.betterrandom.seed.RandomSeederThread} object.
    */
   @SuppressWarnings("ObjectEquality")
-  public void setSeederThread(@Nullable final RandomSeederThread thread) {
+  public void setSeederThread(final @Nullable RandomSeederThread thread) {
     if (thread != null) {
       thread.add(this);
     }
@@ -263,7 +263,7 @@ public abstract class BaseRandom extends Random implements ByteArrayReseedableRa
       entropyBits = new AtomicLong(0);
     }
     entropyBits.updateAndGet(
-        oldCount -> Math.max(oldCount, Math.min(seed.length, getNewSeedLength()) * 8));
+        oldCount -> Math.max(oldCount, Math.min(seed.length, getNewSeedLength()) * 8L));
   }
 
   /**

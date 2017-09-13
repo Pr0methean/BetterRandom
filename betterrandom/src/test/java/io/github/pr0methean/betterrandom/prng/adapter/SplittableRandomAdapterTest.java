@@ -7,7 +7,7 @@ import io.github.pr0methean.betterrandom.seed.DefaultSeedGenerator;
 import io.github.pr0methean.betterrandom.seed.FakeSeedGenerator;
 import io.github.pr0methean.betterrandom.seed.SeedException;
 import io.github.pr0methean.betterrandom.seed.SeedGenerator;
-import io.github.pr0methean.betterrandom.util.Failing;
+import io.github.pr0methean.betterrandom.Failing;
 import java.util.Arrays;
 import org.testng.annotations.Test;
 
@@ -39,11 +39,11 @@ public class SplittableRandomAdapterTest extends SingleThreadSplittableRandomAda
    */
   @Override
   public void testReseeding() throws SeedException {
-    byte[] output1 = new byte[20];
-    byte[] output2 = new byte[20];
-    SplittableRandomAdapter rng1 = new SplittableRandomAdapter(FAKE_SEED_GENERATOR);
-    SplittableRandomAdapter rng2 = new SplittableRandomAdapter(FAKE_SEED_GENERATOR);
+    final byte[] output1 = new byte[20];
+    final SplittableRandomAdapter rng1 = new SplittableRandomAdapter(FAKE_SEED_GENERATOR);
+    final SplittableRandomAdapter rng2 = new SplittableRandomAdapter(FAKE_SEED_GENERATOR);
     rng1.nextBytes(output1);
+    final byte[] output2 = new byte[20];
     rng2.nextBytes(output2);
     rng1.setSeed(DefaultSeedGenerator.DEFAULT_SEED_GENERATOR.generateSeed(8));
     rng1.nextBytes(output1);

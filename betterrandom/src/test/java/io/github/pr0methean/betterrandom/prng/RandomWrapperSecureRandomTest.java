@@ -5,7 +5,7 @@ import static io.github.pr0methean.betterrandom.prng.RandomTestUtils.checkRangeA
 
 import io.github.pr0methean.betterrandom.seed.DefaultSeedGenerator;
 import io.github.pr0methean.betterrandom.seed.SeedException;
-import io.github.pr0methean.betterrandom.util.Failing;
+import io.github.pr0methean.betterrandom.Failing;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import org.jetbrains.annotations.NotNull;
@@ -15,10 +15,19 @@ public class RandomWrapperSecureRandomTest extends BaseRandomTest {
 
   private static final SecureRandom SEED_GEN = new SecureRandom();
 
+  @NotNull
+  private static RandomWrapper createRngInternal() {
+    try {
+      return new RandomWrapper(SecureRandom.getInstance("SHA1PRNG"));
+    } catch (final NoSuchAlgorithmException e) {
+      throw new RuntimeException(e);
+    }
+  }
+
   @Failing // Entropy count currently incorrect
   @Override
   public void testNextGaussian() throws Exception {
-    BaseRandom prng = createRng();
+    final BaseRandom prng = createRng();
     checkRangeAndEntropy(prng, 2 * ENTROPY_OF_DOUBLE,
         () -> prng.nextGaussian() + prng.nextGaussian(), -Double.MAX_VALUE, Double.MAX_VALUE,
         false);
@@ -36,7 +45,7 @@ public class RandomWrapperSecureRandomTest extends BaseRandomTest {
    */
   @Override
   public void testSetSeed() throws SeedException {
-    BaseRandom prng = createRng();
+    final BaseRandom prng = createRng();
     prng.nextLong();
     prng.setSeed(DefaultSeedGenerator.DEFAULT_SEED_GENERATOR.generateSeed(8));
     prng.nextLong();
@@ -50,25 +59,14 @@ public class RandomWrapperSecureRandomTest extends BaseRandomTest {
 
   @Override
   protected BaseRandom tryCreateRng() throws SeedException {
-    RandomWrapper wrapper = createRngInternal();
+    final RandomWrapper wrapper = createRngInternal();
     wrapper.setSeed(SEED_GEN.nextLong());
     return wrapper;
   }
 
-  @NotNull
-  private RandomWrapper createRngInternal() {
-    RandomWrapper wrapper = null;
-    try {
-      wrapper = new RandomWrapper(SecureRandom.getInstance("SHA1PRNG"));
-    } catch (NoSuchAlgorithmException e) {
-      throw new RuntimeException(e);
-    }
-    return wrapper;
-  }
-
   @Override
-  protected BaseRandom createRng(byte[] seed) throws SeedException {
-    RandomWrapper wrapper = createRngInternal();
+  protected BaseRandom createRng(final byte[] seed) throws SeedException {
+    final RandomWrapper wrapper = createRngInternal();
     wrapper.setSeed(seed);
     return wrapper;
   }

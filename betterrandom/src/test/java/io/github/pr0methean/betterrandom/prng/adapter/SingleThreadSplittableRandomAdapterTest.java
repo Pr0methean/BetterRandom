@@ -9,7 +9,7 @@ import io.github.pr0methean.betterrandom.prng.BaseRandom;
 import io.github.pr0methean.betterrandom.prng.BaseRandomTest;
 import io.github.pr0methean.betterrandom.seed.DefaultSeedGenerator;
 import io.github.pr0methean.betterrandom.seed.SeedException;
-import io.github.pr0methean.betterrandom.util.Failing;
+import io.github.pr0methean.betterrandom.Failing;
 import org.testng.annotations.Test;
 
 public class SingleThreadSplittableRandomAdapterTest extends BaseRandomTest {
@@ -68,7 +68,7 @@ public class SingleThreadSplittableRandomAdapterTest extends BaseRandomTest {
   @Failing // Entropy count currently incorrect.
   @Override
   public void testNextGaussian() throws Exception {
-    BaseRandom prng = createRng();
+    final BaseRandom prng = createRng();
     checkRangeAndEntropy(prng, 2 * ENTROPY_OF_DOUBLE,
         () -> prng.nextGaussian() + prng.nextGaussian(), -Double.MAX_VALUE, Double.MAX_VALUE,
         false);
