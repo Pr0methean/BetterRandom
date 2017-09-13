@@ -1,8 +1,13 @@
 #!/bin/sh
+if [ "$ANDROID" = 1 ]; then
+  MAYBE_ANDROID_FLAG="-Pandroid"
+else
+  MAYBE_ANDROID_FLAG=""
+fi
 cd betterrandom
-mvn -DskipTests clean package proguard:proguard install &&\
+mvn -DskipTests $MAYBE_ANDROID_FLAG clean package proguard:proguard install &&\
 cd ../benchmark &&\
-mvn -DskipTests clean package &&\
+mvn -DskipTests $MAYBE_ANDROID_FLAG clean package &&\
 cd target &&\
 if [ "$TRAVIS" = "true" ]; then
     java -jar benchmarks.jar -f 1 -t 1 -foe true -v EXTRA &&\
