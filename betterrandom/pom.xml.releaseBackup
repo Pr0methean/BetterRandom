@@ -19,7 +19,7 @@
   </properties>
   <groupId>io.github.pr0methean.betterrandom</groupId>
   <artifactId>BetterRandom</artifactId>
-  <version>0.10.0</version>
+  <version>0.10.0-SNAPSHOT</version>
   <name>BetterRandom</name>
   <description>BetterRandom is a library designed to help improve the quality and performance of
     random-number generation on Java.
@@ -38,7 +38,7 @@
     <url>https://github.com/Pr0methean/BetterRandom</url>
     <connection>scm:git:git://github.com/Pr0methean/BetterRandom.git</connection>
     <developerConnection>scm:git:git@github.com:Pr0methean/BetterRandom.git</developerConnection>
-    <tag>BetterRandom-0.10.0</tag>
+    <tag>BetterRandom-0.10.0-SNAPSHOT</tag>
   </scm>
 
   <distributionManagement>
@@ -124,13 +124,13 @@
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-surefire-plugin</artifactId>
-          <version>2.20</version>
+          <version>2.14.1</version>
           <configuration>
             <!-- <argLine>${surefireArgLine}</argLine> -->
             <trimStackTrace>false</trimStackTrace>
             <parallel>methods</parallel>
             <forkedProcessTimeoutInSeconds>300</forkedProcessTimeoutInSeconds>
-            <argLine>-XX:-OmitStackTraceInFastThrow @{...}</argLine>
+            <argLine>${surefireArgLine} -XX:-OmitStackTraceInFastThrow</argLine>
           </configuration>
         </plugin>
         <plugin>
@@ -441,7 +441,7 @@
     <developer>
       <id>Pr0methean</id>
       <name>Chris Hennick</name>
-      <email>chrishennick1@gmail.com</email>
+      <email>seahen123@gmail.com</email>
       <url>https://github.com/Pr0methean</url>
     </developer>
   </developers>
