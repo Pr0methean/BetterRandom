@@ -24,10 +24,10 @@ matrix:
       jdk: oraclejdk8
       env: OP=benchmark  
     - language: java
-      jdk: openjdk9
+      jdk: oraclejdk9
       env: OP=unit-tests
     - language: java
-      jdk: openjdk9
+      jdk: oraclejdk9
       env: OP=benchmark
   allow_failures:
     - jdk: oraclejdk9 # Currently doesn't set JAVA_HOME correctly for Maven
