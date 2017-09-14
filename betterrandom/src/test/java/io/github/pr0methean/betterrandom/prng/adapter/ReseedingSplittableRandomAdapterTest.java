@@ -5,11 +5,11 @@ import static io.github.pr0methean.betterrandom.seed.DefaultSeedGenerator.DEFAUL
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotEquals;
 
+import io.github.pr0methean.betterrandom.Failing;
 import io.github.pr0methean.betterrandom.prng.BaseRandom;
 import io.github.pr0methean.betterrandom.seed.FakeSeedGenerator;
 import io.github.pr0methean.betterrandom.seed.SeedException;
 import io.github.pr0methean.betterrandom.util.BinaryUtils;
-import io.github.pr0methean.betterrandom.Failing;
 import org.testng.annotations.Test;
 
 public class ReseedingSplittableRandomAdapterTest extends SingleThreadSplittableRandomAdapterTest {
