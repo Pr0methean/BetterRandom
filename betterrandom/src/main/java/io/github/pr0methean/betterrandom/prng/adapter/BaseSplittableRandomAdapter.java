@@ -3,6 +3,7 @@ package io.github.pr0methean.betterrandom.prng.adapter;
 import com.google.common.base.MoreObjects.ToStringHelper;
 import io.github.pr0methean.betterrandom.prng.BaseRandom;
 import io.github.pr0methean.betterrandom.util.EntryPoint;
+import java.util.Random;
 import java.util.SplittableRandom;
 import java.util.stream.DoubleStream;
 import java.util.stream.IntStream;
@@ -20,6 +21,8 @@ public abstract class BaseSplittableRandomAdapter extends BaseRandom {
   /** Constant {@code SEED_LENGTH_BYTES=8} */
   public static final int SEED_LENGTH_BYTES = 8;
   private static final long serialVersionUID = 4273652147052638879L;
+  private double nextNextGaussian;
+  private boolean haveNextNextGaussian;
 
   /**
    * <p>Constructor for BaseSplittableRandomAdapter.</p>
@@ -33,6 +36,13 @@ public abstract class BaseSplittableRandomAdapter extends BaseRandom {
   @Override
   protected ToStringHelper addSubSubclassFields(final ToStringHelper original) {
     return original;
+  }
+
+  @Override
+  protected void setSeedInternal(
+      @UnknownInitialization(Random.class)BaseSplittableRandomAdapter this, byte[] seed) {
+    haveNextNextGaussian = false;
+    super.setSeedInternal(seed);
   }
 
   /**
@@ -137,6 +147,34 @@ public abstract class BaseSplittableRandomAdapter extends BaseRandom {
     return out;
   }
 
+  @Override
+  public synchronized double nextGaussian() {
+    double output;
+    if (haveNextNextGaussian) {
+      haveNextNextGaussian = false;
+      output = nextNextGaussian;
+    } else {
+      double v1, v2, s;
+      do {
+        v1 = 2 * getSplittableRandom().nextDouble() - 1; // between -1 and 1
+        v2 = 2 * getSplittableRandom().nextDouble() - 1; // between -1 and 1
+        s = v1 * v1 + v2 * v2;
+      } while (s >= 1 || s == 0);
+      double multiplier = StrictMath.sqrt(-2 * StrictMath.log(s) / s);
+      nextNextGaussian = v2 * multiplier;
+      haveNextNextGaussian = true;
+      output = v1 * multiplier;
+    }
+
+    // Upper bound. 2 Gaussians are generated from *at least* 2, but sometimes more, nextDouble()
+    // calls. But the entropy of the final output can't exceed 64 bits, since that's its length,
+    // and must actually be smaller since the 2^64 possible values of a double aren't all equally
+    // likely. But I don't know how *much* smaller.
+    recordEntropySpent(64);
+
+    return output;
+  }
+
   /**
    * Returns a pseudorandom {@code double} value between 0.0 (inclusive) and the specified bound
    * (exclusive).
@@ -174,6 +212,14 @@ public abstract class BaseSplittableRandomAdapter extends BaseRandom {
   public boolean nextBoolean() {
     final boolean out = getSplittableRandom().nextBoolean();
     recordEntropySpent(1);
+    return out;
+  }
+
+  @Override
+  public float nextFloat() {
+    final float out = getSplittableRandom().nextInt(1 << ENTROPY_OF_FLOAT) /
+        ((float) (1 << ENTROPY_OF_FLOAT));
+    recordEntropySpent(ENTROPY_OF_FLOAT);
     return out;
   }
 
