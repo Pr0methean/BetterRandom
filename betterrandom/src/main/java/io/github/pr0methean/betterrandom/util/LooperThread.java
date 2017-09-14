@@ -312,22 +312,7 @@ public class LooperThread extends Thread implements Serializable, Cloneable {
   @SuppressWarnings("MethodDoesntCallSuperMethod")
   @Override
   public LooperThread clone() {
-    lock.lock();
-    try (
-        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-        ObjectOutputStream objectOutputStream = new ObjectOutputStream(byteArrayOutputStream)) {
-      objectOutputStream.writeObject(this);
-      try (
-          ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(
-              byteArrayOutputStream.toByteArray());
-          ObjectInputStream objectInputStream = new ObjectInputStream(byteArrayInputStream)) {
-        return (LooperThread) objectInputStream.readObject();
-      }
-    } catch (IOException | ClassNotFoundException e) {
-      throw new InternalError(e);
-    } finally {
-      lock.unlock();
-    }
+    return CloneViaSerialization.clone(this);
   }
 
   private static class UncaughtExceptionHandlerWrapper
