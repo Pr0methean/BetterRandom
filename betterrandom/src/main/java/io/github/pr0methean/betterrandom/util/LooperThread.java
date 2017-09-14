@@ -117,7 +117,6 @@ public class LooperThread extends Thread implements Serializable, Cloneable {
    *
    * @return A LooperThread that will replace this one during deserialization.
    */
-  @SuppressWarnings("deprecation")
   protected Object readResolve() {
     final LooperThread t;
     if (group != null) {
@@ -148,7 +147,7 @@ public class LooperThread extends Thread implements Serializable, Cloneable {
         t.start();
         break;
       case TERMINATED:
-        t.stop(new ThreadDeathAlreadyHandled());
+        t.setStopped();
         t.alreadyTerminatedWhenDeserialized = true;
     }
     if (interrupted) {
@@ -157,12 +156,23 @@ public class LooperThread extends Thread implements Serializable, Cloneable {
     return t;
   }
 
+  private void setStopped() {
+    if (getState() == State.NEW) {
+      start();
+    }
+    interrupt();
+    interrupted(); // Clear interrupted flag
+  }
+
   /**
-   * The task that will be iterated indefinitely.
+   * The task that will be iterated until it returns false. Cannot be abstract for serialization reasons, but
+   * must be overridden in subclasses.
    *
-   * @throws java.lang.InterruptedException if any.
+   * @return true if this thread should continue to iterate.
+   * @throws InterruptedException if any.
+   * @throws UnsupportedOperationException if this method has not been overridden.
    */
-  protected void iterate() throws InterruptedException {
+  protected boolean iterate() throws InterruptedException {
     throw new UnsupportedOperationException("This method should be overridden!");
   }
 
@@ -172,7 +182,9 @@ public class LooperThread extends Thread implements Serializable, Cloneable {
       try {
         lock.lockInterruptibly();
         try {
-          iterate();
+          if (!iterate()) {
+            break;
+          }
         } finally {
           lock.unlock();
         }
