@@ -1,4 +1,4 @@
-package io.github.pr0methean.betterrandom;
+package io.github.pr0methean.betterrandom.util;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -7,13 +7,19 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
 
-/** Helper methods used for testing of multiple packages. */
-public final class TestUtil {
+public final class CloneViaSerialization {
   /** Utility class that should not be instantiated. */
   private TestUtil() {}
 
+  /**
+   * Clones an object by serializing and deserializing it.
+   *
+   * @param object The object to clone.
+   * @param <T> The type of {@code object}.
+   * @return A clone of {@code object}.
+   */
   @SuppressWarnings("unchecked")
-  public static <T extends Serializable> T serializeAndDeserialize(final T object) {
+  public static <T extends Serializable> T clone(final T object) {
     try (
         ByteArrayOutputStream byteOutStream = new ByteArrayOutputStream();
         ObjectOutputStream objectOutStream = new ObjectOutputStream(byteOutStream)) {
@@ -28,6 +34,4 @@ public final class TestUtil {
       throw new RuntimeException(e);
     }
   }
-
-  public static class MockException extends RuntimeException {}
 }

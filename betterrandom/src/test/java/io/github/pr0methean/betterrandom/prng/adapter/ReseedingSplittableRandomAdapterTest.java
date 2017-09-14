@@ -1,6 +1,5 @@
 package io.github.pr0methean.betterrandom.prng.adapter;
 
-import static io.github.pr0methean.betterrandom.TestUtil.serializeAndDeserialize;
 import static io.github.pr0methean.betterrandom.seed.DefaultSeedGenerator.DEFAULT_SEED_GENERATOR;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotEquals;
@@ -10,6 +9,7 @@ import io.github.pr0methean.betterrandom.prng.BaseRandom;
 import io.github.pr0methean.betterrandom.seed.FakeSeedGenerator;
 import io.github.pr0methean.betterrandom.seed.SeedException;
 import io.github.pr0methean.betterrandom.util.BinaryUtils;
+import io.github.pr0methean.betterrandom.util.CloneViaSerialization;
 import org.testng.annotations.Test;
 
 public class ReseedingSplittableRandomAdapterTest extends SingleThreadSplittableRandomAdapterTest {
@@ -42,7 +42,7 @@ public class ReseedingSplittableRandomAdapterTest extends SingleThreadSplittable
   @Override
   public void testSerializable() throws SeedException {
     final BaseSplittableRandomAdapter adapter = tryCreateRng();
-    assertEquals(adapter, serializeAndDeserialize(adapter));
+    assertEquals(adapter, CloneViaSerialization.clone(adapter));
   }
 
   @Override
