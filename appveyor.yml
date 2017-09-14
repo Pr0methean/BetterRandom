@@ -24,4 +24,4 @@ cache:
   - C:\maven\
   - C:\Users\appveyor\.m2
 matrix:
-  - fast_finish: true
+  fast_finish: true
