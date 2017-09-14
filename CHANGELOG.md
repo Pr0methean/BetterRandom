@@ -3,6 +3,7 @@
 * Scripts that are not actively maintained now live in the `cutting_room_floor` folder.
 
 # 0.10.0
+* Release jars are now optimized by Proguard.
 * Fixed a bug where `BaseRandom` would crash if `setSeed(long)` was called more than once.
 * Merged `BaseEntropyCountingRandom` into `BaseRandom`.
 * Improvements to test coverage.
