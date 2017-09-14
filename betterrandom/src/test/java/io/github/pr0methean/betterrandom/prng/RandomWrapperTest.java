@@ -15,7 +15,7 @@
 // ============================================================================
 package io.github.pr0methean.betterrandom.prng;
 
-import io.github.pr0methean.betterrandom.Failing;
+import io.github.pr0methean.betterrandom.TestingDeficiency;
 import io.github.pr0methean.betterrandom.seed.SeedException;
 import org.testng.annotations.Test;
 
@@ -26,7 +26,7 @@ import org.testng.annotations.Test;
  */
 public class RandomWrapperTest extends BaseRandomTest {
 
-  @Failing
+  @TestingDeficiency
   @Override
   protected boolean alwaysCheckEntropy() {
     return false;

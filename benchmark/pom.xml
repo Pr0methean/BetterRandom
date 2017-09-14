@@ -218,15 +218,15 @@ THE POSSIBILITY OF SUCH DAMAGE.
   </build>
 
   <profiles>
-        <profile>
+    <profile>
       <id>android</id>
-     <repositories>
-       <repository>
-         <id>google</id>
-         <name>Google Maven repository</name>
-         <url>https://maven.google.com</url>
-       </repository>
-     </repositories>
+      <repositories>
+        <repository>
+          <id>google</id>
+          <name>Google Maven repository</name>
+          <url>https://maven.google.com</url>
+        </repository>
+      </repositories>
       <properties>
         <packaging>aar</packaging>
       </properties>
