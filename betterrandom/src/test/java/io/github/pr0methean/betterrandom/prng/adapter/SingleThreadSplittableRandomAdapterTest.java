@@ -5,7 +5,7 @@ import static io.github.pr0methean.betterrandom.prng.RandomTestUtils.checkRangeA
 import static io.github.pr0methean.betterrandom.prng.RandomTestUtils.serializeAndDeserialize;
 import static io.github.pr0methean.betterrandom.prng.RandomTestUtils.testEquivalence;
 
-import io.github.pr0methean.betterrandom.Failing;
+import io.github.pr0methean.betterrandom.TestingDeficiency;
 import io.github.pr0methean.betterrandom.prng.BaseRandom;
 import io.github.pr0methean.betterrandom.prng.BaseRandomTest;
 import io.github.pr0methean.betterrandom.prng.RandomTestUtils.EntropyCheckMode;
@@ -16,7 +16,7 @@ import org.testng.annotations.Test;
 public class SingleThreadSplittableRandomAdapterTest extends BaseRandomTest {
 
   @Override
-  @Failing
+  @TestingDeficiency
   public void testNextGaussian() {
     final BaseRandom prng = createRng();
     checkRangeAndEntropy(prng, 2 * ENTROPY_OF_DOUBLE,
