@@ -90,6 +90,5 @@ matrix:
   fast_finish: true
 script:
   # Test AesCounterRandom with limited-strength crypto on Oracle
-  - sudo mv -f travis-resources/local_policy.jar $JAVA_HOME/jre/lib/security/local_policy.jar
-  - sudo mv -f travis-resources/US_export_policy.jar $JAVA_HOME/jre/lib/security/US_export_policy.jar
+  - ./remove_unlimited_crypto.sh
   - ./${OP}.sh
