@@ -10,7 +10,6 @@ environment:
       RUNNER: cygwin64
     - OP: benchmark
       RUNNER: cygwin64
-    fast_finish: true
 install:
   # Log versions for debugging
   - java -version
@@ -24,3 +23,5 @@ test_script:
 cache:
   - C:\maven\
   - C:\Users\appveyor\.m2
+matrix:
+  - fast_finish: true
