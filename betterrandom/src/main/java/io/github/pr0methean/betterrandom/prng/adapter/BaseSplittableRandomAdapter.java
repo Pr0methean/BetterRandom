@@ -18,8 +18,7 @@ import org.checkerframework.checker.initialization.qual.UnknownInitialization;
  */
 public abstract class BaseSplittableRandomAdapter extends BaseRandom {
 
-  /** Constant {@code SEED_LENGTH_BYTES=8} */
-  public static final int SEED_LENGTH_BYTES = 8;
+  protected static final int SEED_LENGTH_BYTES = 8;
   private static final long serialVersionUID = 4273652147052638879L;
   private double nextNextGaussian;
   private boolean haveNextNextGaussian;
