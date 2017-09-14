@@ -86,7 +86,6 @@ matrix:
   allow_failures:
     - jdk: oraclejdk9 # Currently doesn't set JAVA_HOME correctly for Maven
     - language: android # Scripts still in development
-    - os: osx # https://github.com/travis-ci/travis-ci/issues/8422
   fast_finish: true
 script:
   # Test AesCounterRandom with limited-strength crypto on Oracle
