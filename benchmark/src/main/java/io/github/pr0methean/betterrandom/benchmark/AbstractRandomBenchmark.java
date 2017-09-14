@@ -24,7 +24,6 @@ import org.openjdk.jmh.runner.RunnerException;
 import org.openjdk.jmh.runner.options.ChainedOptionsBuilder;
 import org.openjdk.jmh.runner.options.OptionsBuilder;
 
-// FIXME: Get the multithreaded benchmarks working
 @State(Scope.Benchmark)
 abstract class AbstractRandomBenchmark {
 
@@ -35,7 +34,6 @@ abstract class AbstractRandomBenchmark {
   @SuppressWarnings("MismatchedReadAndWriteOfArray")
   private final byte[][] bytes = new byte[COLUMNS][ROWS];
   private final HashMultiset<StackTrace> stackTraces = HashMultiset.create();
-  // protected final Thread[] threads = new Thread[COLUMNS];
   protected Random prng;
 
   @EntryPoint
@@ -79,16 +77,6 @@ abstract class AbstractRandomBenchmark {
     });
   }
 
-  /*
-  @Group("contended")
-  public void setUpThreads() {
-    for (int column = 0; column < COLUMNS; column++) {
-      final int column_ = column;
-      threads[column] = new Thread(() -> prng.nextBytes(bytes[column_]));
-    }
-  }
-  */
-
   protected abstract Random createPrng() throws SeedException;
 
   byte innerTestBytesSequential() {
@@ -113,33 +101,11 @@ abstract class AbstractRandomBenchmark {
     stackTraces.clear();
   }
 
-  /*
-  protected byte innerTestBytesContended() throws InterruptedException {
-    // Start the threads
-    for (Thread seederThread : threads) {
-      seederThread.start();
-    }
-    // Wait for the threads to finish
-    for (Thread seederThread : threads) {
-      seederThread.join();
-    }
-    return bytes[prng.nextInt(COLUMNS)][prng.nextInt(ROWS)];
-  }
-  */
-
-  /*
-  @Benchmark
-  @Group("contended")
-  public byte testBytesContended() throws SeedException, InterruptedException {
-    return innerTestBytesContended();
-  }
-  */
-
   private static final class StackTrace {
 
     private static final int OBJECT_CREATION_STACK_DEPTH = 5;
     private static final String NEWLINE = String.format("%n");
-    /** A rough estimate of the average of {@link StackTraceElement#toString()}.length(). */
+    /** A rough estimate of the average length of {@link StackTraceElement#toString()}. */
     private static final int ESTIMATED_AVERAGE_STACK_TRACE_ELEMENT_SIZE = 50;
     private final StackTraceElement[] elements;
 
