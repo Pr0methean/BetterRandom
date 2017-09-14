@@ -6,7 +6,8 @@ install:
   # Log versions for debugging
   - java -version
   - mvn --version
-build_script: # empty, as shell scripts both build and test
+build_script: # dummy, as shell scripts both build and test
+  - echo
 test_script:
   - C:\mingw-w64\x86_64-6.3.0-posix-seh-rt_v5-rev1\bin\run.exe ./unit-tests.sh
   - C:\mingw-w64\x86_64-6.3.0-posix-seh-rt_v5-rev1\bin\run.exe ./benchmark.sh
