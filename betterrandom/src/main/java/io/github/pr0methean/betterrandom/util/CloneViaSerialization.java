@@ -9,7 +9,7 @@ import java.io.Serializable;
 
 public final class CloneViaSerialization {
   /** Utility class that should not be instantiated. */
-  private TestUtil() {}
+  private CloneViaSerialization() {}
 
   /**
    * Clones an object by serializing and deserializing it.
