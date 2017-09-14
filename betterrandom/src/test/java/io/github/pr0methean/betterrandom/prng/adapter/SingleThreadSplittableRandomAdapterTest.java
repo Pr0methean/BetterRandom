@@ -2,7 +2,7 @@ package io.github.pr0methean.betterrandom.prng.adapter;
 
 import static io.github.pr0methean.betterrandom.prng.BaseRandom.ENTROPY_OF_DOUBLE;
 import static io.github.pr0methean.betterrandom.prng.RandomTestUtils.checkRangeAndEntropy;
-import static io.github.pr0methean.betterrandom.prng.RandomTestUtils.serializeAndDeserialize;
+import static io.github.pr0methean.betterrandom.TestUtil.serializeAndDeserialize;
 import static io.github.pr0methean.betterrandom.prng.RandomTestUtils.testEquivalence;
 
 import io.github.pr0methean.betterrandom.TestingDeficiency;

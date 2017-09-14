@@ -169,7 +169,7 @@ public final class RandomSeederThread extends LooperThread {
 
   @SuppressWarnings({"InfiniteLoopStatement", "ObjectAllocationInLoop"})
   @Override
-  public void iterate() throws InterruptedException {
+  public boolean iterate() throws InterruptedException {
     while (true) {
       synchronized (prngs) {
         prngsThisIteration.addAll(prngs);
@@ -216,6 +216,7 @@ public final class RandomSeederThread extends LooperThread {
     if (!entropyConsumed) {
       waitForEntropyDrain.await(POLL_INTERVAL_MS, TimeUnit.MILLISECONDS);
     }
+    return true;
   }
 
   /**

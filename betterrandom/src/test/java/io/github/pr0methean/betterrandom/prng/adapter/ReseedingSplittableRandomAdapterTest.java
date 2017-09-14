@@ -1,6 +1,6 @@
 package io.github.pr0methean.betterrandom.prng.adapter;
 
-import static io.github.pr0methean.betterrandom.prng.RandomTestUtils.serializeAndDeserialize;
+import static io.github.pr0methean.betterrandom.TestUtil.serializeAndDeserialize;
 import static io.github.pr0methean.betterrandom.seed.DefaultSeedGenerator.DEFAULT_SEED_GENERATOR;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotEquals;

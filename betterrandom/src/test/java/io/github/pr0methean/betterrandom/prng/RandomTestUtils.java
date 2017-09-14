@@ -18,14 +18,9 @@ package io.github.pr0methean.betterrandom.prng;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertTrue;
 
+import io.github.pr0methean.betterrandom.TestUtil;
 import io.github.pr0methean.betterrandom.seed.DefaultSeedGenerator;
 import io.github.pr0methean.betterrandom.seed.RandomSeederThread;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Random;
@@ -264,26 +259,9 @@ public final class RandomTestUtils {
     return stats.getStandardDeviation();
   }
 
-  @SuppressWarnings("unchecked")
-  public static <T extends Serializable> T serializeAndDeserialize(final T object) {
-    try (
-        ByteArrayOutputStream byteOutStream = new ByteArrayOutputStream();
-        ObjectOutputStream objectOutStream = new ObjectOutputStream(byteOutStream)) {
-      objectOutStream.writeObject(object);
-      final byte[] serialCopy = byteOutStream.toByteArray();
-      // Read the object back-in.
-      try (ObjectInputStream objectInStream = new ObjectInputStream(
-          new ByteArrayInputStream(serialCopy))) {
-        return (T) (objectInStream.readObject());
-      }
-    } catch (IOException | ClassNotFoundException e) {
-      throw new RuntimeException(e);
-    }
-  }
-
   @SuppressWarnings({"unchecked", "ObjectEquality"})
   public static <T extends Random> void assertEquivalentWhenSerializedAndDeserialized(final T rng) {
-    final T rng2 = serializeAndDeserialize(rng);
+    final T rng2 = TestUtil.serializeAndDeserialize(rng);
     assert rng != rng2 : "Deserialised RNG should be distinct object.";
     // Both RNGs should generate the same sequence.
     assert testEquivalence(rng, rng2, 20) : "Output mismatch after serialisation.";
