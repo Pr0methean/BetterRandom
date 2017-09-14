@@ -83,6 +83,7 @@ public final class RandomSeederThread extends LooperThread {
             final RandomSeederThread thread = new RandomSeederThread(seedGen);
             thread.setName("RandomSeederThread for " + seedGen);
             thread.setDaemon(true);
+            thread.setPriority(Thread.MIN_PRIORITY);
             thread.start();
             return thread;
           });
