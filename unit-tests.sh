@@ -13,7 +13,7 @@ if [ "$STATUS" = 0 ]; then
     mvn $MAYBE_ANDROID_FLAG coveralls:report
   fi
   mvn -DskipTests $MAYBE_ANDROID_FLAG package proguard:proguard && (
-  rm .surefire-* # Workaround for https://issues.apache.org/jira/browse/SUREFIRE-1414
+  rm .surefire-* || true # Workaround for https://issues.apache.org/jira/browse/SUREFIRE-1414
   # Post-Proguard test (verifies Proguard settings)
   mvn $MAYBE_ANDROID_FLAG test -e)
   STATUS=$?
