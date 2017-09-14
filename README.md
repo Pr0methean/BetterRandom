@@ -1,4 +1,5 @@
-[![Build Status](https://travis-ci.org/Pr0methean/BetterRandom.svg?branch=master)](https://travis-ci.org/Pr0methean/BetterRandom)
+[![Build Status (Travis - Linux & OS X)](https://travis-ci.org/Pr0methean/BetterRandom.svg?branch=master)](https://travis-ci.org/Pr0methean/BetterRandom)
+[![Build status (Appveyor - Windows)](https://ci.appveyor.com/api/projects/status/fg6siyo4ft98gfff?svg=true)](https://ci.appveyor.com/project/Pr0methean/betterrandom)
 [![Coverage Status](https://coveralls.io/repos/github/Pr0methean/BetterRandom/badge.svg?branch=master)](https://coveralls.io/github/Pr0methean/BetterRandom?branch=master)
 [![Codacy Badge](https://api.codacy.com/project/badge/Grade/98a727e6ce3340598e9ae7757f3997fc)](https://www.codacy.com/app/Pr0methean/BetterRandom?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=Pr0methean/BetterRandom&amp;utm_campaign=Badge_Grade)
 
@@ -29,6 +30,23 @@ are two ways to minimize this risk, both of which BetterRandom can help with:
 * Have several different PRNG algorithms available, all with the same interfaces.
 * Reseed PRNGs as often as possible, ideally with a seed source that continues to receive entropy
   in parallel with your simulation.
+
+# Supported environments
+
+BetterRandom requires many Java 8 features, but should work on any JVM that has them. Continuous
+integration takes place in the following environments:
+
+* Linux (on Travis): OpenJDK 8, Oracle JDK 8
+* Cygwin (on Appveyor): JDK 8 (unclear whether Oracle or OpenJDK)
+
+Continuous integration for the following environments is a work in progress:
+
+* Oracle JDK 9 (on Travis, currently not working properly with Maven)
+* OS X (on Travis)
+* MinGW (on Appveyor)
+
+Continuous integration on BSD isn't likely any time soon, since no free providers of it seem to be
+integrated with GitHub.
 
 # Alternative random number generators
 
