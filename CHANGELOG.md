@@ -1,3 +1,7 @@
+# 0.10.1
+* Fixed some bugs involving serialization and deserialization of `LooperThread`.
+* Scripts that are not actively maintained now live in the `cutting_room_floor` folder.
+
 # 0.10.0
 * Fixed a bug where `BaseRandom` would crash if `setSeed(long)` was called more than once.
 * Merged `BaseEntropyCountingRandom` into `BaseRandom`.
