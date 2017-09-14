@@ -11,8 +11,8 @@ build_script: # dummy, as shell scripts both build and test
 test_script:
 #  - C:\mingw-w64\x86_64-6.3.0-posix-seh-rt_v5-rev1\bin\run.exe ./unit-tests.sh
 #  - C:\mingw-w64\x86_64-6.3.0-posix-seh-rt_v5-rev1\bin\run.exe ./benchmark.sh
-  - c:\cygwin64\bin\run.exe ./unit-tests.sh
-  - c:\cygwin64\bin\run.exe ./benchmark.sh
+  - c:\cygwin64\bin\bash ./unit-tests.sh
+  - c:\cygwin64\bin\bash ./benchmark.sh
 cache:
   - C:\maven\
   - C:\Users\appveyor\.m2
