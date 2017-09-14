@@ -15,6 +15,30 @@ env:
   - OP=benchmark
 matrix:
   include:
+    - language: java
+      os: linux
+      jdk: oraclejdk9
+      env: OP=unit-tests
+    - language: java
+      os: linux
+      jdk: oraclejdk9
+      env: OP=benchmark
+    - language: java
+      os: linux
+      jdk: oraclejdk8
+      env: OP=unit-tests
+    - language: java
+      os: linux
+      jdk: oraclejdk8
+      env: OP=benchmark
+    - language: java
+      os: linux
+      jdk: openjdk8
+      env: OP=unit-tests
+    - language: java
+      os: linux
+      jdk: openjdk8
+      env: OP=benchmark
     - language: android
       os: linux
       jdk: openjdk8
@@ -23,9 +47,58 @@ matrix:
       os: linux
       jdk: openjdk8
       env: OP=benchmark ANDROID=1
+    - language: java
+      os: osx
+      osx_image: xcode9
+      env: OP=unit-tests
+    - language: java
+      os: osx
+      osx_image: xcode9
+      env: OP=benchmark
+    - language: java
+      os: osx
+      osx_image: xcode8.3
+      env: OP=unit-tests
+    - language: java
+      os: osx
+      osx_image: xcode8.3
+      env: OP=benchmark
+    - language: java
+      os: osx
+      osx_image: xcode8.2
+      env: OP=unit-tests
+    - language: java
+      os: osx
+      osx_image: xcode8.2
+      env: OP=benchmark
+    - language: java
+      os: osx
+      osx_image: xcode8.1
+      env: OP=unit-tests
+    - language: java
+      os: osx
+      osx_image: xcode8.1
+      env: OP=benchmark
+    - language: java
+      os: osx
+      osx_image: xcode8
+      env: OP=unit-tests
+    - language: java
+      os: osx
+      osx_image: xcode8
+      env: OP=benchmark
+    - language: java
+      os: osx
+      osx_image: xcode7.3
+      env: OP=unit-tests
+    - language: java
+      os: osx
+      osx_image: xcode7.3
+      env: OP=benchmark
   allow_failures:
     - jdk: oraclejdk9 # Currently doesn't set JAVA_HOME correctly for Maven
     - language: android # Scripts still in development
+    - os: osx # TODO: Remove this once we know what xcode image versions have jdk8
   fast_finish: true
 script:
   # Test AesCounterRandom with limited-strength crypto on Oracle
