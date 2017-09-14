@@ -64,7 +64,6 @@ public enum RandomDotOrgSeedGenerator implements SeedGenerator {
    *     permitted by random.org for a single request.
    * @throws IOException If there is a problem downloading the random bits.
    */
-
   private static void refreshCache(final int requiredBytes) throws IOException {
     cacheLock.lock();
     try {
@@ -96,39 +95,29 @@ public enum RandomDotOrgSeedGenerator implements SeedGenerator {
     }
   }
 
-  /**
-   * <p>generateSeed.</p>
-   *
-   * @param seedData an array of byte.
-   * @throws io.github.pr0methean.betterrandom.seed.SeedException if any.
-   */
   @SuppressWarnings({"AssignmentToStaticFieldFromInstanceMethod", "BusyWait"})
   public void generateSeed(final byte[] seedData) throws SeedException {
     final int length = seedData.length;
-    boolean succeeded = false;
-    while (!succeeded) {
-      cacheLock.lock();
-      try {
-        int count = 0;
-        while (count < length) {
-          if (cacheOffset < cache.length) {
-            final int numberOfBytes = Math.min(length - count, cache.length - cacheOffset);
-            System.arraycopy(cache, cacheOffset, seedData, count, numberOfBytes);
-            count += numberOfBytes;
-            cacheOffset += numberOfBytes;
-          } else {
-            refreshCache(length - count);
-          }
-          succeeded = true;
+    cacheLock.lock();
+    try {
+      int count = 0;
+      while (count < length) {
+        if (cacheOffset < cache.length) {
+          final int numberOfBytes = Math.min(length - count, cache.length - cacheOffset);
+          System.arraycopy(cache, cacheOffset, seedData, count, numberOfBytes);
+          count += numberOfBytes;
+          cacheOffset += numberOfBytes;
+        } else {
+          refreshCache(length - count);
         }
-      } catch (final IOException ex) {
-        throw new SeedException("Failed downloading bytes from " + BASE_URL, ex);
-      } catch (final SecurityException ex) {
-        // Might be thrown if resource access is restricted (such as in an applet sandbox).
-        throw new SeedException("SecurityManager prevented access to " + BASE_URL, ex);
-      } finally {
-        cacheLock.unlock();
       }
+    } catch (final IOException ex) {
+      throw new SeedException("Failed downloading bytes from " + BASE_URL, ex);
+    } catch (final SecurityException ex) {
+      // Might be thrown if resource access is restricted (such as in an applet sandbox).
+      throw new SeedException("SecurityManager prevented access to " + BASE_URL, ex);
+    } finally {
+      cacheLock.unlock();
     }
   }
 
