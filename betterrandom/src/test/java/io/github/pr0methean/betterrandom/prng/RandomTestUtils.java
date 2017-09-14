@@ -18,9 +18,9 @@ package io.github.pr0methean.betterrandom.prng;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertTrue;
 
-import io.github.pr0methean.betterrandom.TestUtil;
 import io.github.pr0methean.betterrandom.seed.DefaultSeedGenerator;
 import io.github.pr0methean.betterrandom.seed.RandomSeederThread;
+import io.github.pr0methean.betterrandom.util.CloneViaSerialization;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Random;
@@ -261,7 +261,7 @@ public final class RandomTestUtils {
 
   @SuppressWarnings({"unchecked", "ObjectEquality"})
   public static <T extends Random> void assertEquivalentWhenSerializedAndDeserialized(final T rng) {
-    final T rng2 = TestUtil.serializeAndDeserialize(rng);
+    final T rng2 = CloneViaSerialization.clone(rng);
     assert rng != rng2 : "Deserialised RNG should be distinct object.";
     // Both RNGs should generate the same sequence.
     assert testEquivalence(rng, rng2, 20) : "Output mismatch after serialisation.";

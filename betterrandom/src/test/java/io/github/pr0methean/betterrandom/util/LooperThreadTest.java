@@ -7,7 +7,7 @@ import static org.testng.Assert.assertNull;
 import static org.testng.Assert.assertSame;
 import static org.testng.Assert.assertTrue;
 
-import io.github.pr0methean.betterrandom.TestUtil;
+import io.github.pr0methean.betterrandom.MockException;
 import java.io.InvalidObjectException;
 import java.io.Serializable;
 import java.lang.Thread.State;
@@ -99,7 +99,7 @@ public class LooperThreadTest {
   private static final     AtomicBoolean exceptionHandlerRun = new AtomicBoolean(false);
   private static final Runnable TARGET = (Serializable & Runnable)() -> {
     if (shouldThrow.get()) {
-      throw new TestUtil.MockException();
+      throw new MockException();
     }
     iterationsRun.addAndGet(1);
   };
@@ -120,7 +120,7 @@ public class LooperThreadTest {
   @Test
   public void testSerializable_notStarted() {
     LooperThread thread = new SkeletonLooperThread();
-    LooperThread copy = TestUtil.serializeAndDeserialize(thread);
+    LooperThread copy = CloneViaSerialization.clone(thread);
     assertNotSame(thread, copy);
     assertEquals(State.NEW, copy.getState());
   }
@@ -132,7 +132,7 @@ public class LooperThreadTest {
     try {
       thread.join();
     } catch (InterruptedException expected) {}
-    LooperThread copy = TestUtil.serializeAndDeserialize(thread);
+    LooperThread copy = CloneViaSerialization.clone(thread);
     assertNotSame(thread, copy);
     assertEquals(State.TERMINATED, copy.getState());
   }
@@ -144,7 +144,7 @@ public class LooperThreadTest {
     LooperThread thread = new SkeletonLooperThread(() -> {});
     thread.setContextClassLoader(new MockClassLoader());
     thread.setUncaughtExceptionHandler((thread_, throwable) -> exceptionHandlerRun.set(true));
-    LooperThread copy = TestUtil.serializeAndDeserialize(thread);
+    LooperThread copy = CloneViaSerialization.clone(thread);
     assertSame(copy.getContextClassLoader(), Thread.currentThread().getContextClassLoader());
     shouldThrow.set(true);
     copy.start();
@@ -161,7 +161,7 @@ public class LooperThreadTest {
     thread.setUncaughtExceptionHandler(new SerializableUncaughtExceptionHandler());
     thread.setPriority(2);
     thread.setDaemon(true);
-    LooperThread copy = TestUtil.serializeAndDeserialize(thread);
+    LooperThread copy = CloneViaSerialization.clone(thread);
     assertTrue(copy.getContextClassLoader() instanceof SerializableClassLoader);
     assertTrue(copy.getUncaughtExceptionHandler() instanceof SerializableUncaughtExceptionHandler);
     assertEquals(2, copy.getPriority());
