@@ -145,6 +145,7 @@ public class LooperThreadTest {
     thread.setContextClassLoader(new MockClassLoader());
     thread.setUncaughtExceptionHandler((thread_, throwable) -> exceptionHandlerRun.set(true));
     LooperThread copy = CloneViaSerialization.clone(thread);
+    assertNotSame(copy, thread);
     assertSame(copy.getContextClassLoader(), Thread.currentThread().getContextClassLoader());
     shouldThrow.set(true);
     copy.start();
@@ -162,6 +163,7 @@ public class LooperThreadTest {
     thread.setPriority(2);
     thread.setDaemon(true);
     LooperThread copy = CloneViaSerialization.clone(thread);
+    assertNotSame(copy, thread);
     assertTrue(copy.getContextClassLoader() instanceof SerializableClassLoader);
     assertTrue(copy.getUncaughtExceptionHandler() instanceof SerializableUncaughtExceptionHandler);
     assertEquals(2, copy.getPriority());
