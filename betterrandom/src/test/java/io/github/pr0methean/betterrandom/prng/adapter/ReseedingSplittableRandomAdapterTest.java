@@ -5,7 +5,7 @@ import static io.github.pr0methean.betterrandom.seed.DefaultSeedGenerator.DEFAUL
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotEquals;
 
-import io.github.pr0methean.betterrandom.Failing;
+import io.github.pr0methean.betterrandom.TestingDeficiency;
 import io.github.pr0methean.betterrandom.prng.BaseRandom;
 import io.github.pr0methean.betterrandom.seed.FakeSeedGenerator;
 import io.github.pr0methean.betterrandom.seed.SeedException;
@@ -19,7 +19,7 @@ public class ReseedingSplittableRandomAdapterTest extends SingleThreadSplittable
     return ReseedingSplittableRandomAdapter.getDefaultInstance();
   }
 
-  @Failing
+  @TestingDeficiency
   @Override
   protected boolean alwaysCheckEntropy() {
     return false;
