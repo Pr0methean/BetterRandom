@@ -35,7 +35,7 @@ public enum DevRandomSeedGenerator implements SeedGenerator {
   private static final File DEV_RANDOM = new File(DEV_RANDOM_STRING);
 
   /**
-   * @throws io.github.pr0methean.betterrandom.seed.SeedException If {@literal /dev/random} does
+   * @throws io.github.pr0methean.betterrandom.seed.SeedException if {@literal /dev/random} does
    *     not exist or is not accessible
    */
   @SuppressWarnings({"IOResourceOpenedButNotSafelyClosed", "resource"})
