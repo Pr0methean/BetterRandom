@@ -5,6 +5,7 @@ import io.github.pr0methean.betterrandom.EntropyCountingRandom;
 import io.github.pr0methean.betterrandom.util.LogPreFormatter;
 import io.github.pr0methean.betterrandom.util.LooperThread;
 import java.io.IOException;
+import java.io.InvalidObjectException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.nio.ByteBuffer;
@@ -24,6 +25,8 @@ import java.util.concurrent.locks.Condition;
 import org.checkerframework.checker.initialization.qual.UnderInitialization;
 import org.checkerframework.checker.lock.qual.GuardedBy;
 import org.checkerframework.checker.nullness.qual.EnsuresNonNull;
+import org.checkerframework.checker.nullness.qual.MonotonicNonNull;
+import org.checkerframework.checker.nullness.qual.Nullable;
 import org.checkerframework.checker.nullness.qual.RequiresNonNull;
 
 /**
@@ -56,6 +59,14 @@ public final class RandomSeederThread extends LooperThread {
   private transient @GuardedBy("lock") Condition waitForEntropyDrain;
   private transient Set<Random> prngsThisIteration;
   private transient WeakHashMap<ByteArrayReseedableRandom, byte[]> seedArrays;
+
+  public RandomSeederThread(
+      ThreadGroup group, Runnable target, String name,
+      long stackSize, SeedGenerator seedGenerator) {
+    super(group, target, name, stackSize);
+    this.seedGenerator = seedGenerator;
+    initTransientFields();
+  }
 
   /**
    * Private constructor because only one instance per seed source.

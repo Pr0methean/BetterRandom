@@ -5,20 +5,30 @@ import static org.checkerframework.checker.nullness.NullnessUtil.castNonNull;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.InvalidObjectException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 import org.checkerframework.checker.initialization.qual.UnderInitialization;
 import org.checkerframework.checker.nullness.qual.MonotonicNonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
+import org.checkerframework.checker.nullness.qual.RequiresNonNull;
 
 /**
  * <p> EXPERIMENTAL. Thread that loops a given task until interrupted (or until JVM shutdown, if it
  * {@link #isDaemon()}), with the iterations being transactional. Because of these constraints, it
- * can be serialized and cloned. Subclasses must override {@link #iterate()}; the only reason this
- * class is concrete is that temporary instances are needed during deserialization. The loop should
+ * can be serialized and cloned. Subclasses must override {@link #iterate()} if instantiated without
+ * a target {@link Runnable}; the only reason this
+ * class is concrete is that temporary instances are needed during deserialization.</p>
+ *
+ * Subclasses should override the {@link #readResolveConstructorWrapper()} method to ensure they are
+ * deserialized as a subclass instance.
+ *
+ * <p>{@link #iterate()}'s body should
  * be reasonably short, since it will block serialization and cloning that would otherwise catch it
  * in mid-iteration. </p><p> Thread state that WILL be restored includes: </p> <ul> <li>{@link
  * #getName()}</li> <li>{@link #getPriority()}</li> <li>{@link #getState()} == {@link
@@ -33,8 +43,7 @@ import org.checkerframework.checker.nullness.qual.Nullable;
  * #getState()} == {@link State#BLOCKED}</li> <li>{@link #getId()}</li> <li>{@link
  * #holdsLock(Object)}</li> </ul>
  *
- * @author ubuntu
- * @version $Id: $Id
+ * @author Chris Hennick
  */
 @SuppressWarnings("AccessingNonPublicFieldOfAnotherObject")
 public class LooperThread extends Thread implements Serializable, Cloneable {
@@ -54,15 +63,33 @@ public class LooperThread extends Thread implements Serializable, Cloneable {
   private boolean daemon = false;
   private int priority = Thread.NORM_PRIORITY;
   private State state = State.NEW;
-  private @Nullable ThreadGroup group;
+  @Nullable
+  protected ThreadGroup group;
   private @Nullable ClassLoader contextClassLoader = null;
-  private @MonotonicNonNull String name = null;
+  protected transient @Nullable Runnable target;
+  private @Nullable Runnable serialTarget;
+  @MonotonicNonNull
+  protected String name = null;
+  protected final long stackSize;
 
   /**
    * <p>Constructor for LooperThread.</p>
    */
   public LooperThread() {
     super();
+    stackSize = 0;
+  }
+
+  public LooperThread(Runnable target) {
+    super(target);
+    this.target = target;
+    stackSize = 0;
+  }
+
+  public LooperThread(ThreadGroup group, Runnable target) {
+    super(group, target);
+    this.target = target;
+    stackSize = 0;
   }
 
   /**
@@ -72,6 +99,7 @@ public class LooperThread extends Thread implements Serializable, Cloneable {
    */
   public LooperThread(final String name) {
     super(name);
+    stackSize = 0;
   }
 
   /**
@@ -83,6 +111,27 @@ public class LooperThread extends Thread implements Serializable, Cloneable {
   public LooperThread(final ThreadGroup group, final String name) {
     super(group, name);
     setGroup(group);
+    stackSize = 0;
+  }
+
+  public LooperThread(Runnable target, String name) {
+    super(target, name);
+    this.target = target;
+    stackSize = 0;
+  }
+
+  public LooperThread(ThreadGroup group, Runnable target, String name) {
+    super(group, target, name);
+    this.target = target;
+    setGroup(group);
+    stackSize = 0;
+  }
+
+  public LooperThread(ThreadGroup group, Runnable target, String name, long stackSize) {
+    super(group, target, name, stackSize);
+    this.target = target;
+    setGroup(group);
+    this.stackSize = stackSize;
   }
 
   private static @Nullable <T> T serializableOrNull(final @Nullable T object) {
@@ -112,22 +161,27 @@ public class LooperThread extends Thread implements Serializable, Cloneable {
   }
 
   /**
-   * Use readResolve rather than readObject, because stack size and seederThread group can only be
+   * Use readResolve rather than readObject, because stack size and thread group can only be
    * restored in Thread constructors.
    *
    * @return A LooperThread that will replace this one during deserialization.
    */
-  protected Object readResolve() {
+  protected Object readResolve()
+      throws InvalidObjectException {
+    target = serialTarget;
     final LooperThread t;
-    if (group != null) {
-      t = new LooperThread(castNonNull(group), name == null ? getName() : name);
-    } else {
-      t = name == null ? new LooperThread() : new LooperThread(name);
+    if (group == null) {
+      group = Thread.currentThread().getThreadGroup();
     }
+    if (name == null) {
+      name = getName();
+    }
+    if (target == null) {
+      target = new DummyTarget();
+    }
+    assert group != null : "@AssumeAssertion(nullness)";
+    t = readResolveConstructorWrapper();
     t.setDaemon(daemon);
-    if (name != null) {
-      t.setName(name);
-    }
     t.setPriority(priority);
     if (uncaughtExceptionHandler.wrapped != null) {
       t.setUncaughtExceptionHandler(uncaughtExceptionHandler.wrapped);
@@ -156,6 +210,17 @@ public class LooperThread extends Thread implements Serializable, Cloneable {
     return t;
   }
 
+  /**
+   * @return A new LooperThread whose group is {@link #group}, whose target is {@link #target},
+   * whose name is {@link #name}, whose stack size is {@link #stackSize} and, in subclasses that do not
+   * override {@link #readResolve()}, whose subclass fields are copied from this one.
+   */
+  @RequiresNonNull({"group", "target", "name"})
+  protected LooperThread readResolveConstructorWrapper()
+      throws InvalidObjectException {
+    return new LooperThread(group, target, name, stackSize);
+  }
+
   private void setStopped() {
     if (getState() == State.NEW) {
       start();
@@ -166,14 +231,20 @@ public class LooperThread extends Thread implements Serializable, Cloneable {
 
   /**
    * The task that will be iterated until it returns false. Cannot be abstract for serialization reasons, but
-   * must be overridden in subclasses.
+   * must be overridden in subclasses if they are instantiated without a target {@link Runnable}.
    *
    * @return true if this thread should continue to iterate.
    * @throws InterruptedException if any.
    * @throws UnsupportedOperationException if this method has not been overridden.
    */
   protected boolean iterate() throws InterruptedException {
-    throw new UnsupportedOperationException("This method should be overridden!");
+    if (target == null || target instanceof DummyTarget) {
+      throw new UnsupportedOperationException("This method should be overridden, or else this "
+          + "thread should have been created with a Serializable target!");
+    } else {
+      target.run();
+      return true;
+    }
   }
 
   @Override
@@ -231,6 +302,7 @@ public class LooperThread extends Thread implements Serializable, Cloneable {
       state = getState();
       group = serializableOrNull(getThreadGroup());
       contextClassLoader = serializableOrNull(getContextClassLoader());
+      serialTarget = serializableOrNull(target);
       out.defaultWriteObject();
     } finally {
       lock.unlock();
@@ -258,21 +330,14 @@ public class LooperThread extends Thread implements Serializable, Cloneable {
     }
   }
 
-  private static class ThreadDeathAlreadyHandled extends ThreadDeath {
-
-    private static final long serialVersionUID = 1433257085225877245L;
-  }
-
   private static class UncaughtExceptionHandlerWrapper
       implements UncaughtExceptionHandler, Serializable {
 
     private static final long serialVersionUID = -132520277274461153L;
     private @Nullable UncaughtExceptionHandler wrapped = null;
 
-    @SuppressWarnings("deprecation")
     @Override
     public void uncaughtException(final Thread t, final Throwable e) {
-      if (!(e instanceof ThreadDeathAlreadyHandled)) {
         LOG.error("Uncaught exception: %s", e);
         if (wrapped != null) {
           wrapped.uncaughtException(t, e);
@@ -280,17 +345,23 @@ public class LooperThread extends Thread implements Serializable, Cloneable {
           final UncaughtExceptionHandler defaultHandler = getDefaultUncaughtExceptionHandler();
           if (defaultHandler == null) {
             e.printStackTrace();
-            t.stop(e); // necessary so that join() (which is final) will return
+            t.interrupt(); // necessary so that join() (which is final) will return
           } else {
             defaultHandler.uncaughtException(t, e);
           }
         }
-      }
     }
 
     private void writeObject(final ObjectOutputStream out) throws IOException {
       wrapped = serializableOrNull(wrapped);
       out.defaultWriteObject();
+    }
+  }
+
+  private class DummyTarget implements @Nullable Runnable {
+    @Override
+    public void run() {
+      throw new UnsupportedOperationException("Dummy target");
     }
   }
 }
