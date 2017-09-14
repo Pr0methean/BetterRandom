@@ -204,7 +204,11 @@ public class RandomWrapper extends BaseRandom {
 
   public double nextGaussian() {
     final double result = wrapped.nextGaussian();
-    recordEntropySpent(ENTROPY_OF_DOUBLE); // 2 Gaussians are generated from 2 nextDouble() calls
+    recordEntropySpent(64);
+    // Upper bound. 2 Gaussians are generated from *at least* 2, but sometimes more, nextDouble()
+    // calls. But the entropy of the final output can't exceed 64 bits, since that's its length,
+    // and must actually be smaller since the 2^64 possible values of a double aren't all equally
+    // likely. But I don't know how *much* smaller.
     return result;
   }
 

@@ -2,12 +2,12 @@ package io.github.pr0methean.betterrandom.prng.adapter;
 
 import static org.testng.Assert.assertFalse;
 
+import io.github.pr0methean.betterrandom.Failing;
 import io.github.pr0methean.betterrandom.prng.RandomTestUtils;
 import io.github.pr0methean.betterrandom.seed.DefaultSeedGenerator;
 import io.github.pr0methean.betterrandom.seed.FakeSeedGenerator;
 import io.github.pr0methean.betterrandom.seed.SeedException;
 import io.github.pr0methean.betterrandom.seed.SeedGenerator;
-import io.github.pr0methean.betterrandom.Failing;
 import java.util.Arrays;
 import org.testng.annotations.Test;
 
