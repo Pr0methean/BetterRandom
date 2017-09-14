@@ -19,7 +19,7 @@ import static io.github.pr0methean.betterrandom.prng.RandomTestUtils.checkRangeA
 import static io.github.pr0methean.betterrandom.prng.RandomTestUtils.checkStream;
 import static org.testng.Assert.assertTrue;
 
-import io.github.pr0methean.betterrandom.Failing;
+import io.github.pr0methean.betterrandom.TestingDeficiency;
 import io.github.pr0methean.betterrandom.seed.SeedException;
 import java.util.Random;
 import org.testng.annotations.Test;
@@ -31,7 +31,7 @@ import org.testng.annotations.Test;
  */
 public class AesCounterRandom128Test extends BaseRandomTest {
 
-  @Failing // Currently counting entropy incorrectly.
+  @TestingDeficiency // Currently counting entropy incorrectly.
   @Override
   public void testNextInt1() throws Exception {
     final BaseRandom prng = createRng();
@@ -39,7 +39,7 @@ public class AesCounterRandom128Test extends BaseRandomTest {
         () -> prng.nextInt(3 << 29), 0, 3 << 29, false);
   }
 
-  @Failing // Currently counting entropy incorrectly.
+  @TestingDeficiency // Currently counting entropy incorrectly.
   @Override
   public void testInts3() throws Exception {
     final BaseRandom prng = createRng();
