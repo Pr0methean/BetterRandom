@@ -1,6 +1,6 @@
 #!/bin/sh
 cd betterrandom
-mvn -DskipTests clean package proguard:proguard
+mvn -DskipTests clean package
 mvn test
 STATUS=$?
 cd ..
