@@ -12,6 +12,12 @@ mvn release:perform -X -DskipTests -Dgoals="package proguard:proguard" ) ||\
       git tag -d "BetterRandom-$NEWVERSION"
       git push origin ":refs/tags/BetterRandom-$NEWVERSION"
       mvn versions:set "-DoldVersion=$NEWVERSION" "-DnewVersion=$OLDVERSION"
+      rm -f release.properties
+      rm -f pom.xml.versionsBackup
+      rm -f pom.xml.releaseBackup
+      git add pom.xml
+      git commit -m "Roll back version increment from failed release"
+      git push
     fi
 )
 cd ..
