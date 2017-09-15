@@ -19,10 +19,9 @@
   </properties>
   <groupId>io.github.pr0methean.betterrandom</groupId>
   <artifactId>BetterRandom</artifactId>
-  <version>0.10.2-SNAPSHOT</version>
+  <version>0.10.1-SNAPSHOT</version>
   <name>BetterRandom</name>
-  <description>BetterRandom is a library designed to help improve the quality and performance of
-    random-number generation on Java.
+  <description>BetterRandom is a library designed to help improve the quality and performance of random-number generation on Java.
   </description>
   <url>https://github.com/Pr0methean/BetterRandom</url>
 
@@ -143,13 +142,6 @@
               </manifest>
             </archive>
           </configuration>
-          <executions>
-            <execution>
-              <goals>
-                <goal>test-jar</goal>
-              </goals>
-            </execution>
-          </executions>
         </plugin>
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
@@ -266,14 +258,6 @@
           <groupId>com.github.wvengen</groupId>
           <artifactId>proguard-maven-plugin</artifactId>
           <version>2.0.14</version>
-          <executions>
-            <execution>
-              <phase>package</phase>
-              <goals>
-                <goal>proguard</goal>
-              </goals>
-            </execution>
-          </executions>
           <configuration>
             <proguardJar>
               ${user.home}/.m2/repository/net/sf/proguard/proguard-base/5.3.3/proguard-base-5.3.3.jar
@@ -287,38 +271,29 @@
               <option>-keepparameternames</option>
               <option>-renamesourcefileattribute SourceFile</option>
               <option>
-                -keepattributes Exceptions,InnerClasses,Signature,Deprecated,
-                SourceFile,LineNumberTable,*Annotation*,EnclosingMethod,StackMap,StackMapTable
+                -keepattributes Exceptions,InnerClasses,Signature,Deprecated, SourceFile,LineNumberTable,*Annotation*,EnclosingMethod,StackMap,StackMapTable
               </option>
               <option>
                 -keep public class * { public protected *; }
               </option>
               <option>
-                -keepclassmembernames class * { java.lang.Class class$(java.lang.String);
-                java.lang.Class class$(java.lang.String, boolean); }
+                -keepclassmembernames class * { java.lang.Class class$(java.lang.String); java.lang.Class class$(java.lang.String, boolean); }
               </option>
               <option>
-                -keepclasseswithmembernames,includedescriptorclasses class * { native &lt;methods&gt;;
-                }
+                -keepclasseswithmembernames,includedescriptorclasses class * { native &lt;methods&gt;; }
               </option>
               <option>
-                -keepclassmembers,allowoptimization enum * { public static **[] values(); public
-                static ** valueOf(java.lang.String); }
+                -keepclassmembers,allowoptimization enum * { public static **[] values(); public static ** valueOf(java.lang.String); }
               </option>
 
               <!-- Serialization settings -->
               <option>
-                -keepclassmembers class * implements java.io.Serializable { static final long
-                serialVersionUID; private static final java.io.ObjectStreamField[]
-                serialPersistentFields; private void writeObject(java.io.ObjectOutputStream);
-                private void readObject(java.io.ObjectInputStream);
-                private void readObjectNoData(); java.lang.Object writeReplace(); java.lang.Object
-                readResolve(); !static !transient &lt;fields&gt;; }
+                -keepclassmembers class * implements java.io.Serializable { static final long serialVersionUID; private static final java.io.ObjectStreamField[] serialPersistentFields; private void writeObject(java.io.ObjectOutputStream); private void readObject(java.io.ObjectInputStream);
+                private void readObjectNoData(); java.lang.Object writeReplace(); java.lang.Object readResolve(); !static !transient &lt;fields&gt;; }
               </option>
 
               <!-- Allow deletion of castNonNull -->
-              <option>-assumenosideeffects public class
-                org.checkerframework.checker.nullness.NullnessUtil
+              <option>-assumenosideeffects public class org.checkerframework.checker.nullness.NullnessUtil
               </option>
 
               <!-- Work around a MethodHandle.invokeExact signature-check issue -->
@@ -400,6 +375,41 @@
         </plugin>
       </plugins>
     </pluginManagement>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-jar-plugin</artifactId>
+        <version>3.0.2</version>
+        <executions>
+          <execution>
+            <id>jar</id>
+            <phase>prepare-package</phase>
+            <goals>
+              <goal>jar</goal>
+            </goals>
+          </execution>
+          <execution>
+            <id>test-jar</id>
+            <goals>
+              <goal>test-jar</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <groupId>com.github.wvengen</groupId>
+        <artifactId>proguard-maven-plugin</artifactId>
+        <version>2.0.14</version>
+        <executions>
+          <execution>
+            <phase>package</phase>
+            <goals>
+              <goal>proguard</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
   </build>
   <profiles>
 
