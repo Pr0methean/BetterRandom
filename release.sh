@@ -5,7 +5,7 @@ rm -f release.properties &&\
 rm -rf ../../.m2/repository/io/github/pr0methean/betterrandom/ &&\
 (mvn release:clean &&\
 mvn release:prepare -X &&\
-mvn release:perform -X) ||\
+mvn release:perform -X -Dgoals="package proguard:proguard" ) ||\
 (
     NEWVERSION=version=`mvn help:evaluate -Dexpression=project.version | sed -n -e '/^\[.*\]/ !{ /^[0-9]/ { p; q } }'`
     if [ "$NEWVERSION" != "$OLDVERSION" ]; then
