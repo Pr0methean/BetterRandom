@@ -6,6 +6,7 @@ rm -rf ../../.m2/repository/io/github/pr0methean/betterrandom/ &&\
 (mvn release:clean &&\
 mvn release:prepare -X &&\
 mvn package &&\
+mv "target/BetterRandom-$NEWVERSION.jar" "target/checkout/BetterRandom-$NEWVERSION.jar" # FIXME: Why is this needed?
 mvn release:perform -X -Dmaven.main.skip=true -Dmaven.test.skip=true -Dgoals="proguard:proguard deploy" ) ||\
 (
     NEWVERSION=`mvn help:evaluate -Dexpression=project.version | sed -n -e '/^\[.*\]/ !{ /^[0-9]/ { p; q } }' | sed 's/version=//'`
