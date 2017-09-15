@@ -72,7 +72,7 @@ THE POSSIBILITY OF SUCH DAMAGE.
     <dependency>
       <artifactId>BetterRandom</artifactId>
       <groupId>io.github.pr0methean.betterrandom</groupId>
-      <version>0.10.1-SNAPSHOT</version> <!-- FIXME: Find some way to auto-update this -->
+      <version>0.10.2-SNAPSHOT</version> <!-- FIXME: Find some way to auto-update this -->
     </dependency>
     <!-- https://mvnrepository.com/artifact/com.google.code.java-allocation-instrumenter/java-allocation-instrumenter -->
     <dependency>
