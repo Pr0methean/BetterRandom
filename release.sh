@@ -11,7 +11,7 @@ mvn release:perform -X -Dgoals="package proguard:proguard" ) ||\
     if [ "$NEWVERSION" != "$OLDVERSION" ]; then
       git tag -d "BetterRandom-${NEWVERSION}"
       git push origin ":refs/tags/BetterRandom-${NEWVERSION}"
-      mvn versions:set $OLDVERSION
+      mvn versions:set "-DoldVersion=$NEWVERSION" "-DnewVersion=$OLDVERSION"
     fi
 )
 cd ..
