@@ -5,7 +5,7 @@ else
   MAYBE_ANDROID_FLAG=""
 fi
 cd betterrandom
-mvn -DskipTests $MAYBE_ANDROID_FLAG clean package proguard:proguard install &&\
+mvn -DskipTests $MAYBE_ANDROID_FLAG clean package install &&\
 cd ../benchmark &&\
 mvn -DskipTests $MAYBE_ANDROID_FLAG clean package &&\
 cd target &&\
