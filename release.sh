@@ -6,7 +6,7 @@ rm -rf ../../.m2/repository/io/github/pr0methean/betterrandom/ &&\
 (
   mvn release:clean &&\
   mvn release:prepare -X &&\
-  mvn release:perform -X -Dmaven.test.skip=true
+  mvn release:perform -X -Dmaven.main.skip=true -Dmaven.test.skip=true
 ) || (
     NEWVERSION=`mvn help:evaluate -Dexpression=project.version | sed -n -e '/^\[.*\]/ !{ /^[0-9]/ { p; q } }' | sed 's/version=//'`
     if [ "$NEWVERSION" != "$OLDVERSION" ]; then
