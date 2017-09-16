@@ -2,11 +2,10 @@
 environment:
   JAVA_HOME: C:\Program Files\Java\jdk1.8.0
   matrix:
-# TODO: Find out how to run with MSYS
-#    - OP: unit-tests
-#      RUNNER: msys\1.0
-#    - OP: benchmark
-#      RUNNER: msys\1.0
+    - OP: unit-tests
+      RUNNER: MinGW
+    - OP: benchmark
+      RUNNER: MinGW
     - OP: unit-tests
       RUNNER: cygwin64
     - OP: benchmark
@@ -18,8 +17,6 @@ install:
 build_script: # dummy, as shell scripts both build and test
   - echo
 test_script:
-#  - C:\mingw-w64\x86_64-6.3.0-posix-seh-rt_v5-rev1\bin\run.exe ./unit-tests.sh
-#  - C:\mingw-w64\x86_64-6.3.0-posix-seh-rt_v5-rev1\bin\run.exe ./benchmark.sh
   - c:\%RUNNER%\bin\sh ./%OP%.sh
 cache:
   - C:\maven\
