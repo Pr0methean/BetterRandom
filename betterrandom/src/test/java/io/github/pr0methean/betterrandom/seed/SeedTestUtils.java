@@ -10,8 +10,8 @@ final class SeedTestUtils {
   @SuppressWarnings("MismatchedReadAndWriteOfArray")
   private static final byte[] ALL_ZEROES = new byte[SEED_SIZE];
 
-  private SeedTestUtils() {
-  }
+  /** This is a utility class and shouldn't be instantiated. */
+  private SeedTestUtils() {}
 
   public static void testGenerator(final SeedGenerator seedGenerator) throws SeedException {
     final byte[] seed = seedGenerator.generateSeed(SEED_SIZE);
