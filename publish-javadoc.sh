@@ -1,6 +1,6 @@
 #!/bin/sh
 echo '<!DOCTYPE html><html><head /><body>' > betterrandom/src/main/javadoc/overview.html
-markdown README.md >> betterrandom/src/main/javadoc/overview.html
+ruby ./render-readme-for-javadoc.rb >> betterrandom/src/main/javadoc/overview.html
 echo '</body></html>' >> betterrandom/src/main/javadoc/overview.html
 cd betterrandom
 mvn javadoc:javadoc
