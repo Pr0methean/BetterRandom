@@ -1,5 +1,5 @@
 #!/bin/sh
-markdown README.md > betterrandom/src/overview.html
+markdown README.md > betterrandom/src/main/javadoc/overview.html
 cd betterrandom
 mvn javadoc:javadoc
 mv target/site/apidocs ../docs
