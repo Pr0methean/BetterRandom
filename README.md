@@ -153,11 +153,13 @@ replacements for `java.util.Random`.
 | Cmwc4096Random          |              16384 | 2<sup>131104</sup> | Medium |                     Very slow | Not supported                                 | Yes                  | [George Marsaglia](http://school.anhb.uwa.edu.au/personalpages/kwessen/shared/Marsaglia03.html)
 | MersenneTwisterRandom   |                 16 | 2<sup>19937</sup>  | Medium |                        Medium | Not supported                                 | Yes                  | [Makoto Matsumoto](http://www.math.sci.hiroshima-u.ac.jp/~m-mat/MT/emt.html)
 | XorShiftRandom          |                 20 | ~2<sup>160</sup>   | Medium |                        Medium | Not supported                                 | Yes                  | [George Marsaglia](http://www.jstatsoft.org/v08/i14/paper)
-| SplittableRandomAdapter |                  8 | 2<sup>64</sup>     |   Fast |              Fast<sup>†</sup> | Replaces existing seed (calling thread only)  | Yes                  | [Guy Steele and Doug Lea](http://hg.openjdk.java.net/jdk8/jdk8/jdk/file/687fd7c7986d/src/share/classes/java/util/SplittableRandom.java)
+| SplittableRandomAdapter |     8<sup>**</sup> | 2<sup>64</sup>     |   Fast |              Fast<sup>†</sup> | Replaces existing seed (calling thread only)  | Yes                  | [Guy Steele and Doug Lea](http://hg.openjdk.java.net/jdk8/jdk8/jdk/file/687fd7c7986d/src/share/classes/java/util/SplittableRandom.java)
 
 <sup>*</sup>Seed sizes above 32 for AesCounterRandom require jurisdiction policy files that allow
 192- and 256-bit AES seeds.
+
 <sup>**</sup>Can be reseeded independently on each thread, affecting only that thread.
+
 <sup>†</sup>Use specialized subclass ReseedingSplittableRandomAdapter.
 
 ## AesCounterRandom
