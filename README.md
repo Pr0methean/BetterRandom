@@ -35,6 +35,73 @@ are two ways to minimize this risk, both of which BetterRandom can help with:
 * Reseed PRNGs as often as possible, ideally with a seed source that continues to receive entropy
   in parallel with your simulation.
 
+# Usage examples
+
+## Cryptographic PRNG that uses Random.org for frequent reseeding
+```
+import static io.github.pr0methean.betterrandom.seed.RandomDotOrgSeedGenerator.RANDOM_DOT_ORG_SEED_GENERATOR;
+
+import io.github.pr0methean.betterrandom.seed.RandomSeederThread;
+import io.github.pr0methean.betterrandom.seed.SeedException;
+import io.github.pr0methean.betterrandom.util.BinaryUtils;
+
+public class AesCounterRandomDemo {
+  public static void main(String[] args) throws SeedException {
+    AesCounterRandom random = new AesCounterRandom(RANDOM_DOT_ORG_SEED_GENERATOR);
+    RandomSeederThread.getInstance(RANDOM_DOT_ORG_SEED_GENERATOR).add(random);
+    byte[] randomBytes = new byte[32];
+    for (int i=0; i<20; i++) {
+      random.nextBytes(randomBytes);
+      System.out.format("Bytes: %s\n", BinaryUtils.convertBytesToHexString(randomBytes));
+    }
+  }
+}
+```
+
+## ReseedingSplittableRandomAdapter for fast, high-quality parallel bridge dealing
+```
+import static io.github.pr0methean.betterrandom.seed.DefaultSeedGenerator.DEFAULT_SEED_GENERATOR;
+
+import edu.emory.mathcs.backport.java.util.Collections;
+import io.github.pr0methean.betterrandom.seed.SeedException;
+import java.util.Arrays;
+import java.util.List;
+import java.util.concurrent.ScheduledThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
+
+public class SplittableRandomAdapterDemo {
+  private static final String[] VALUE_LABELS = {"A","K","Q","J","10","9","8","7","6","5","4","3","2"};
+  private static final String[] SUIT_LABELS = {"♥️","♣️","♦️","♠️"};
+  public static void main(String[] args) throws SeedException, InterruptedException {
+    String[] cards = new String[52];
+    int i=0;
+    for (String suit : SUIT_LABELS) {
+      for (String value : VALUE_LABELS) {
+        cards[i] = value + suit;
+        i++;
+      }
+    }
+    ThreadLocal<List<String>> deckCopies = ThreadLocal.withInitial(() -> Arrays.asList(cards.clone()));
+    ScheduledThreadPoolExecutor executor = new ScheduledThreadPoolExecutor(4);
+    ReseedingSplittableRandomAdapter random = ReseedingSplittableRandomAdapter.getInstance(
+        DEFAULT_SEED_GENERATOR);
+    for (i=0; i<1000; i++) {
+      executor.submit(() -> {
+        List<String> deck = deckCopies.get();
+        Collections.shuffle(deck, random);
+        System.out.format("North: %s%nEast: %s%nSouth: %s%nWest: %s%n%n",
+            String.join(",", deck.subList(0, 13)),
+            String.join(",", deck.subList(13, 26)),
+            String.join(",", deck.subList(26, 39)),
+            String.join(",", deck.subList(39, 52)));
+      });
+    }
+    executor.shutdown();
+    executor.awaitTermination(1, TimeUnit.MINUTES);
+  }
+}
+
+```
 # Supported environments
 
 BetterRandom requires many Java 8 features, but should work on any JVM that has them. Continuous
@@ -108,7 +175,7 @@ prevented by using a hash function rather than a reversible cipher, but the hash
 standard JVMs are less cryptographically secure than AES and won't run as fast on hardware featuring
 AES-NI.
 
-# SplittableRandom adapters
+## SplittableRandom adapters
 
 These classes use `java.util.SplittableRandom` instances to implement the methods of `Random`,
 despite that the two classes are unrelated and have slightly different method signatures. Several
