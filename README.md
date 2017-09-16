@@ -246,6 +246,7 @@ seederThread.add(myRandom);
 * `test-proguard.sh`: Compile and run unit tests against Proguarded jar.
 * `unit-tests.sh`: Combined functions of `coverage.sh` and `test-proguard.sh`.
 * `release.sh`: Used to perform new releases.
+* `publish-javadoc.sh`: Used to release updated Javadocs to github.io.
 * `prepare-workspace.sh`: Install necessary packages on a fresh Ubuntu Trusty Tahr workspace, such
   as what c9.io provides.
 
