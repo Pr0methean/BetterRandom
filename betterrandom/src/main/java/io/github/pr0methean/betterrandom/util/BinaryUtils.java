@@ -32,9 +32,8 @@ public final class BinaryUtils {
   private static final char[] HEX_CHARS = {'0', '1', '2', '3', '4', '5', '6', '7',
       '8', '9', 'A', 'B', 'C', 'D', 'E', 'F'};
 
-  private BinaryUtils() {
-    // Prevents instantiation of utility class.
-  }
+  /** This is a utility class and shouldn't be instantiated. */
+  private BinaryUtils() {}
 
   /**
    * Converts an array of bytes in to a String of hexadecimal characters (0 - F).
