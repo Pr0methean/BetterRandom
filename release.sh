@@ -17,7 +17,7 @@ rm -rf ../../.m2/repository/io/github/pr0methean/betterrandom/ &&\
       rm -f pom.xml.versionsBackup
       rm -f pom.xml.releaseBackup
       git add pom.xml
-      git commit -m "Roll back version increment from failed release"
+      git commit -m "🤖 Roll back version increment from failed release"
       git push
     fi
 )
