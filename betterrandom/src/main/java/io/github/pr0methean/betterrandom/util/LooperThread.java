@@ -165,6 +165,7 @@ public class LooperThread extends Thread implements Serializable, Cloneable {
    * restored in Thread constructors.
    *
    * @return A LooperThread that will replace this one during deserialization.
+   * @throws InvalidObjectException if this LooperThread's serial form is invalid.
    */
   protected Object readResolve()
       throws InvalidObjectException {
@@ -212,8 +213,9 @@ public class LooperThread extends Thread implements Serializable, Cloneable {
 
   /**
    * @return A new LooperThread whose group is {@link #group}, whose target is {@link #target},
-   * whose name is {@link #name}, whose stack size is {@link #stackSize} and, in subclasses that do not
-   * override {@link #readResolve()}, whose subclass fields are copied from this one.
+   * whose name is {@link #name}, whose stack size is {@link #stackSize} and that either has its
+   * subclass fields copied from this one or overrides {@link #readResolve} to populate them.
+   * @throws InvalidObjectException if this LooperThread's serial form is invalid.
    */
   @RequiresNonNull({"group", "target", "name"})
   protected LooperThread readResolveConstructorWrapper()
