@@ -1,10 +1,3 @@
-[![Build Status (Travis - Linux & OS X)](https://travis-ci.org/Pr0methean/BetterRandom.svg?branch=master)](https://travis-ci.org/Pr0methean/BetterRandom)
-[![Build status (Appveyor - Windows)](https://ci.appveyor.com/api/projects/status/fg6siyo4ft98gfff?svg=true)](https://ci.appveyor.com/project/Pr0methean/betterrandom)
-[![Coverage Status](https://coveralls.io/repos/github/Pr0methean/BetterRandom/badge.svg?branch=master)](https://coveralls.io/github/Pr0methean/BetterRandom?branch=master)
-[![Codacy Badge](https://api.codacy.com/project/badge/Grade/98a727e6ce3340598e9ae7757f3997fc)](https://www.codacy.com/app/Pr0methean/BetterRandom?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=Pr0methean/BetterRandom&amp;utm_campaign=Badge_Grade)
-[![codebeat badge](https://codebeat.co/badges/4339b354-590c-4871-b441-d694dc5a33ea)](https://codebeat.co/projects/github-com-pr0methean-betterrandom-master)
-[![BCH compliance](https://bettercodehub.com/edge/badge/Pr0methean/BetterRandom?branch=master)](https://bettercodehub.com/)
-
 BetterRandom is a library designed to help improve the quality and performance of random-number
 generation on Java. It includes:
 
@@ -19,6 +12,13 @@ generation on Java. It includes:
   [Collections.shuffle(List<>,Random)](https://docs.oracle.com/javase/8/docs/api/java/util/Collections.html#shuffle-java.util.List-java.util.Random-)
   that don't have overloads to use with a SplittableRandom. They can be reseeded (this is
   implemented by replacing the SplittableRandom).
+
+[![Build Status (Travis - Linux & OS X)](https://travis-ci.org/Pr0methean/BetterRandom.svg?branch=master)](https://travis-ci.org/Pr0methean/BetterRandom)
+[![Build status (Appveyor - Windows)](https://ci.appveyor.com/api/projects/status/fg6siyo4ft98gfff?svg=true)](https://ci.appveyor.com/project/Pr0methean/betterrandom)
+[![Coverage Status](https://coveralls.io/repos/github/Pr0methean/BetterRandom/badge.svg?branch=master)](https://coveralls.io/github/Pr0methean/BetterRandom?branch=master)
+[![Codacy Badge](https://api.codacy.com/project/badge/Grade/98a727e6ce3340598e9ae7757f3997fc)](https://www.codacy.com/app/Pr0methean/BetterRandom?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=Pr0methean/BetterRandom&amp;utm_campaign=Badge_Grade)
+[![codebeat badge](https://codebeat.co/badges/4339b354-590c-4871-b441-d694dc5a33ea)](https://codebeat.co/projects/github-com-pr0methean-betterrandom-master)
+[![BCH compliance](https://bettercodehub.com/edge/badge/Pr0methean/BetterRandom?branch=master)](https://bettercodehub.com/)
 
 # Design philosophy: don't take chances on randomness
 
