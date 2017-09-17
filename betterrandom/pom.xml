@@ -181,6 +181,9 @@
           </executions>
           <configuration>
             <notimestamp>true</notimestamp>
+            <show>protected</show>
+            <bottom><![CDATA[
+              © {currentYear} Chris Hennick. Free to use under the <a href="https://www.apache.org/licenses/LICENSE-2.0">Apache License 2.0</a>.]]></bottom>
           </configuration>
         </plugin>
         <plugin>
