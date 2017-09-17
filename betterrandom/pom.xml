@@ -179,6 +179,9 @@
               </goals>
             </execution>
           </executions>
+          <configuration>
+            <notimestamp>true</notimestamp>
+          </configuration>
         </plugin>
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
@@ -404,24 +407,24 @@
                 <requireMavenVersion>
                   <version>3.0.5</version>
                 </requireMavenVersion>
-              </rules>    
+              </rules>
             </configuration>
           </execution>
         </executions>
       </plugin>
       <plugin>
-          <groupId>com.github.wvengen</groupId>
-          <artifactId>proguard-maven-plugin</artifactId>
-          <version>2.0.14</version>
-          <executions>
-            <execution>
-              <phase>package</phase>
-              <goals>
-                <goal>proguard</goal>
-              </goals>
-            </execution>
-          </executions>
-        </plugin>
+        <groupId>com.github.wvengen</groupId>
+        <artifactId>proguard-maven-plugin</artifactId>
+        <version>2.0.14</version>
+        <executions>
+          <execution>
+            <phase>package</phase>
+            <goals>
+              <goal>proguard</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
     </plugins>
   </build>
   <profiles>
@@ -475,11 +478,11 @@
       </properties>
       <dependencies>
         <dependency>
-  <groupId>de.lemona.android</groupId>
-  <artifactId>android-testng</artifactId>
-  <version>1.1.27</version>
-  <type>pom</type>
-</dependency>
+          <groupId>de.lemona.android</groupId>
+          <artifactId>android-testng</artifactId>
+          <version>1.1.27</version>
+          <type>pom</type>
+        </dependency>
         <dependency>
           <groupId>com.google.android.gms</groupId>
           <artifactId>play-services</artifactId>
