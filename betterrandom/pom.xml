@@ -76,7 +76,6 @@
     <!-- https://mvnrepository.com/artifact/org.apache.commons/commons-math3 -->
     <dependency>
       <groupId>org.apache.commons</groupId>
-      <artifactId>commons-math3</artifactId>
       <version>3.6.1</version>
       <scope>test</scope>
     </dependency>
@@ -507,6 +506,7 @@
         <artifactId>maven-javadoc-plugin</artifactId>
         <version>3.0.0-M1</version>
         <configuration>
+          <notimestamp>true</notimestamp>
           <show>protected</show>
         </configuration>
       </plugin>
