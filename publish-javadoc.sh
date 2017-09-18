@@ -6,9 +6,19 @@ cd betterrandom
 mvn javadoc:javadoc
 cd ..
 cp -r betterrandom/target/site/apidocs/* docs
+
+# AdSense
 sed -i 's/<head>/<head><script async src="\/\/pagead2.googlesyndication.com\/pagead\/js\/adsbygoogle.js"><\/script><script>(adsbygoogle = window.adsbygoogle || []).push({google_ad_client: "ca-pub-9922551172827508", enable_page_level_ads: true});<\/script>/' docs/index.html
+
 cd docs
-find . -iname "*.html" -exec sed -i 's/<\/head>/<script async src="https:\/\/www.googletagmanager.com\/gtag\/js?id=UA-106545233-1"><\/script><script>window.dataLayer = window.dataLayer || []; function gtag(){dataLayer.push(arguments)}; gtag('js', new Date()); gtag('config', 'UA-106545233-1');<\/script><\/head>/' {} \;
+
+# Google Analytics
+find . -iname "*.html" -exec sed -i 's/<head>/<head><!-- Google Tag Manager --><script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start': new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0], j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src='https:\/\/www.googletagmanager.com\/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);})(window,document,'script','dataLayer','GTM-K9NNCTT');<\/script><!-- End Google Tag Manager -->/' {} \;
+find . -iname "*.html" -exec sed -i 's/<body>/<body><!-- Google Tag Manager (noscript) -->
+<noscript><iframe src="https:\/\/www.googletagmanager.com\/ns.html?id=GTM-K9NNCTT"
+height="0" width="0" style="display:none;visibility:hidden"><\/iframe><\/noscript>
+<!-- End Google Tag Manager (noscript) -->/' {} \;
+
 git add .
 git commit -m "🤖 Update Javadocs for GitHub Pages"
 git push
