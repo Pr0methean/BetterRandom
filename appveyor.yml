@@ -4,12 +4,13 @@ environment:
   matrix:
     - OP: unit-tests
       RUNNER: MinGW\msys\1.0
-    - OP: benchmark
-      RUNNER: MinGW\msys\1.0
+# FIXME: Benchmarks have performance problems on Appveyor
+#    - OP: benchmark
+#      RUNNER: MinGW\msys\1.0
     - OP: unit-tests
       RUNNER: cygwin64
-    - OP: benchmark
-      RUNNER: cygwin64
+#    - OP: benchmark
+#      RUNNER: cygwin64
 install:
   # Log versions for debugging
   - java -version
