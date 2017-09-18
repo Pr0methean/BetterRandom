@@ -26,7 +26,7 @@ public class ReseedingSplittableRandomAdapterDemo {
     ScheduledThreadPoolExecutor executor = new ScheduledThreadPoolExecutor(4);
     ReseedingSplittableRandomAdapter random = ReseedingSplittableRandomAdapter.getInstance(
         DEFAULT_SEED_GENERATOR);
-    for (i=0; i<1000; i++) {
+    for (i=0; i<200; i++) {
       executor.submit(() -> {
         List<String> deck = deckCopies.get();
         Collections.shuffle(deck, random);
