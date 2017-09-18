@@ -7,7 +7,7 @@ public class ReseedingSplittableRandomAdapterDemoTest {
 
   private static final String[] NO_ARGS = {};
 
-  @Test
+  @Test(timeOut = 120_000)
   public void ensureNoDemoCrash() throws SeedException, InterruptedException {
     ReseedingSplittableRandomAdapterDemo.main(NO_ARGS);
   }

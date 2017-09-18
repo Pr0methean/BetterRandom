@@ -8,7 +8,7 @@ public class AesCounterRandomDemoTest {
 
   private static final String[] NO_ARGS = {};
 
-  @Test
+  @Test(timeOut = 120_000)
   public void ensureNoDemoCrash() throws SeedException {
     if (TestUtils.notOnAppveyor()) {
       AesCounterRandomDemo.main(NO_ARGS);
