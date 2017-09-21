@@ -1,5 +1,7 @@
 package io.github.pr0methean.betterrandom.prng.adapter;
 
+import static org.checkerframework.checker.nullness.NullnessUtil.castNonNull;
+
 import com.google.common.base.MoreObjects.ToStringHelper;
 import io.github.pr0methean.betterrandom.seed.DefaultSeedGenerator;
 import io.github.pr0methean.betterrandom.seed.RandomSeederThread;
@@ -15,7 +17,6 @@ import java.util.concurrent.atomic.AtomicLong;
 import org.checkerframework.checker.initialization.qual.UnknownInitialization;
 import org.checkerframework.checker.nullness.qual.EnsuresNonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
-import org.checkerframework.checker.nullness.qual.RequiresNonNull;
 
 /**
  * A version of {@link io.github.pr0methean.betterrandom.prng.adapter.SplittableRandomAdapter} that
@@ -97,7 +98,6 @@ public class ReseedingSplittableRandomAdapter extends BaseSplittableRandomAdapte
 
   private void readObject(final ObjectInputStream in) throws IOException, ClassNotFoundException {
     in.defaultReadObject();
-    assert seedGenerator != null : "@AssumeAssertion(nullness)";
     initSubclassTransientFields();
   }
 
@@ -110,13 +110,12 @@ public class ReseedingSplittableRandomAdapter extends BaseSplittableRandomAdapte
   }
 
   @EnsuresNonNull({"threadLocal", "seederThread"})
-  @RequiresNonNull("seedGenerator")
   private void initSubclassTransientFields(
       @UnknownInitialization(BaseSplittableRandomAdapter.class)ReseedingSplittableRandomAdapter this) {
     if (threadLocal == null) {
       threadLocal = ThreadLocal.withInitial(() -> {
         try {
-          return new SingleThreadSplittableRandomAdapter(seedGenerator);
+          return new SingleThreadSplittableRandomAdapter(castNonNull(seedGenerator));
         } catch (final SeedException e) {
           throw new RuntimeException(e);
         }
