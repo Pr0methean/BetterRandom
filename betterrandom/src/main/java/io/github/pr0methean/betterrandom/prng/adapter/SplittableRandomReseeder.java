@@ -7,6 +7,8 @@ import java.lang.invoke.MethodHandles;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.SplittableRandom;
+import org.checkerframework.checker.nullness.qual.EnsuresNonNullIf;
+import org.checkerframework.checker.nullness.qual.MonotonicNonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.objenesis.Objenesis;
 import org.objenesis.ObjenesisStd;
@@ -26,8 +28,8 @@ public final class SplittableRandomReseeder {
 
   private static final LogPreFormatter LOG = new LogPreFormatter(SplittableRandomReseeder.class);
   private static final Objenesis OBJENESIS = new ObjenesisStd();
-  private static @Nullable MethodHandle PUT_LONG_VOLATILE;
-  private static @Nullable Field SEED_FIELD;
+  private static @MonotonicNonNull MethodHandle PUT_LONG_VOLATILE;
+  private static @MonotonicNonNull Field SEED_FIELD;
   private static long GAMMA_FIELD_OFFSET;
   private static long SEED_FIELD_OFFSET;
   private static long GOLDEN_GAMMA;
@@ -66,6 +68,7 @@ public final class SplittableRandomReseeder {
     }
   }
 
+  /** Utility class that shouldn't be instantiated. */
   private SplittableRandomReseeder() {
   }
 
@@ -92,11 +95,18 @@ public final class SplittableRandomReseeder {
     }
   }
 
+  /** @return false if {@link #getSeed(SplittableRandom)} will fail; true otherwise. */
+  @EnsuresNonNullIf(result = true, expression = {"SEED_FIELD"})
+  public static boolean canGetSeed() {
+    return SEED_FIELD != null;
+  }
+
   public static byte[] getSeed(final SplittableRandom splittableRandom) {
-    if (SEED_FIELD == null) {
+    if (!canGetSeed()) {
       throw new UnsupportedOperationException();
     } else {
       try {
+        assert SEED_FIELD != null : "@AssumeAssertion(nullness)";
         return BinaryUtils.convertLongToBytes((long) (SEED_FIELD.get(splittableRandom)));
       } catch (final IllegalAccessException e) {
         throw new RuntimeException(e);
