@@ -8,8 +8,10 @@ import java.io.ObjectOutputStream;
 import java.io.Serializable;
 
 public final class CloneViaSerialization {
+
   /** Utility class that should not be instantiated. */
-  private CloneViaSerialization() {}
+  private CloneViaSerialization() {
+  }
 
   /**
    * Clones an object by serializing and deserializing it.

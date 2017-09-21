@@ -18,7 +18,6 @@ package io.github.pr0methean.betterrandom.prng;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertTrue;
 
-import io.github.pr0methean.betterrandom.TestingDeficiency;
 import io.github.pr0methean.betterrandom.seed.DefaultSeedGenerator;
 import io.github.pr0methean.betterrandom.seed.RandomSeederThread;
 import io.github.pr0methean.betterrandom.util.CloneViaSerialization;
@@ -46,7 +45,8 @@ public final class RandomTestUtils {
   private static final int EXPECTED_UNIQUE_HASHES = (int) (0.8 * INSTANCES_TO_HASH);
 
   /** This is a utility class and shouldn't be instantiated. */
-  private RandomTestUtils() {}
+  private RandomTestUtils() {
+  }
 
   /**
    * @param origin Minimum expected value, inclusive.
@@ -291,6 +291,9 @@ public final class RandomTestUtils {
   }
 
   public enum EntropyCheckMode {
-    EXACT, UPPER_BOUND, LOWER_BOUND, OFF
+    EXACT,
+    UPPER_BOUND,
+    LOWER_BOUND,
+    OFF
   }
 }

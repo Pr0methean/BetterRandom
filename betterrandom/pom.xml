@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--suppress XmlHighlighting -->
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xmlns="http://maven.apache.org/POM/4.0.0"
   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <packaging>jar</packaging>
@@ -211,7 +211,8 @@
               <Xmaxerrs>10000</Xmaxerrs>
               <Xmaxwarns>10000</Xmaxwarns>
             </compilerArguments>
-            <!-- Disabled due to https://github.com/typetools/checker-framework/issues/1531:
+            <!-- Disabled due to https://github.com/typetools/checker-framework/issues/1531
+            and https://github.com/typetools/checker-framework/issues/1510:
             <annotationProcessors>
               <annotationProcessor>org.checkerframework.checker.nullness.NullnessChecker
               </annotationProcessor>

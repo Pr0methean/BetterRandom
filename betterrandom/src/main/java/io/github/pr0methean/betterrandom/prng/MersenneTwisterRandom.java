@@ -15,6 +15,8 @@
 // ============================================================================
 package io.github.pr0methean.betterrandom.prng;
 
+import static org.checkerframework.checker.nullness.NullnessUtil.castNonNull;
+
 import com.google.common.base.MoreObjects.ToStringHelper;
 import io.github.pr0methean.betterrandom.seed.DefaultSeedGenerator;
 import io.github.pr0methean.betterrandom.seed.SeedException;
@@ -83,7 +85,7 @@ public class MersenneTwisterRandom extends BaseRandom {
    */
   public MersenneTwisterRandom(final byte[] seed) {
     super(seed);
-    assert mt != null : "@AssumeAssertion(nullness)";
+    mt = castNonNull(mt);
   }
 
   /**
@@ -129,7 +131,7 @@ public class MersenneTwisterRandom extends BaseRandom {
     if (seed == null || seed.length != SEED_SIZE_BYTES) {
       throw new IllegalArgumentException("Mersenne Twister RNG requires a 128-bit (16-byte) seed.");
     }
-    assert mt != null : "@AssumeAssertion(nullness)";
+    mt = castNonNull(mt);
     super.setSeedInternal(seed);
     final int[] seedInts = BinaryUtils.convertBytesToInts(seed);
 
