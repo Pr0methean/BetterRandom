@@ -11,7 +11,8 @@ final class SeedTestUtils {
   private static final byte[] ALL_ZEROES = new byte[SEED_SIZE];
 
   /** This is a utility class and shouldn't be instantiated. */
-  private SeedTestUtils() {}
+  private SeedTestUtils() {
+  }
 
   public static void testGenerator(final SeedGenerator seedGenerator) throws SeedException {
     final byte[] seed = seedGenerator.generateSeed(SEED_SIZE);
