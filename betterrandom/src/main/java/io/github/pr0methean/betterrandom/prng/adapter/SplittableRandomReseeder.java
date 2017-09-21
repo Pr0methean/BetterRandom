@@ -38,6 +38,7 @@ public final class SplittableRandomReseeder {
   private static long SEED_FIELD_OFFSET;
   private static long GOLDEN_GAMMA;
   private static boolean CAN_RESEED_REFLECTIVELY;
+  /** Visible only for test debugging. */
   protected static final Class<?> SPLITTABLE_RANDOM_CLASS = SplittableRandom.class;
 
   static {
@@ -53,16 +54,16 @@ public final class SplittableRandomReseeder {
         unsafe = OBJENESIS.newInstance(unsafeClass);
       }
       final Method getFieldOffset = unsafeClass.getDeclaredMethod("objectFieldOffset", Field.class);
-      GAMMA_FIELD = SplittableRandom.class.getDeclaredField("gamma");
+      GAMMA_FIELD = SPLITTABLE_RANDOM_CLASS.getDeclaredField("gamma");
       GAMMA_FIELD.setAccessible(true);
-      SEED_FIELD = SplittableRandom.class.getDeclaredField("seed");
+      SEED_FIELD = SPLITTABLE_RANDOM_CLASS.getDeclaredField("seed");
       SEED_FIELD.setAccessible(true);
       CAN_RESEED_REFLECTIVELY = true;
       GAMMA_FIELD_OFFSET = (long) (getFieldOffset
           .invoke(unsafe, GAMMA_FIELD));
       SEED_FIELD_OFFSET = (long) (getFieldOffset
           .invoke(unsafe, SEED_FIELD));
-      final Field goldenGammaField = SplittableRandom.class.getDeclaredField("GOLDEN_GAMMA");
+      final Field goldenGammaField = SPLITTABLE_RANDOM_CLASS.getDeclaredField("GOLDEN_GAMMA");
       goldenGammaField.setAccessible(true);
       GOLDEN_GAMMA = (long) (goldenGammaField.get(null));
       final Method putVolatileLong = unsafeClass
