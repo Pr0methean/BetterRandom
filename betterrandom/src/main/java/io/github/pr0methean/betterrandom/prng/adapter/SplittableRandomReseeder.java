@@ -38,6 +38,7 @@ public final class SplittableRandomReseeder {
   private static long SEED_FIELD_OFFSET;
   private static long GOLDEN_GAMMA;
   private static boolean CAN_RESEED_REFLECTIVELY;
+  protected static final Class<?> SPLITTABLE_RANDOM_CLASS = SplittableRandom.class;
 
   static {
     try {
@@ -118,9 +119,9 @@ public final class SplittableRandomReseeder {
     } else {
       try {
         return BinaryUtils.convertLongToBytes(
-            (long) (GET_LONG_VOLATILE == null
-                ? castNonNull(SEED_FIELD).get(splittableRandom)
-                : GET_LONG_VOLATILE.invokeExact(splittableRandom, (long) SEED_FIELD_OFFSET)));
+            GET_LONG_VOLATILE == null
+                ? castNonNull(SEED_FIELD).getLong(splittableRandom)
+                : (long) (GET_LONG_VOLATILE.invokeExact(splittableRandom, (long) SEED_FIELD_OFFSET)));
       } catch (final Throwable t) {
         throw new RuntimeException(t);
       }
