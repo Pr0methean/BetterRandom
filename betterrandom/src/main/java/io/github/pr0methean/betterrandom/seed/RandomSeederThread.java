@@ -1,11 +1,12 @@
 package io.github.pr0methean.betterrandom.seed;
 
+import static org.checkerframework.checker.nullness.NullnessUtil.castNonNull;
+
 import io.github.pr0methean.betterrandom.ByteArrayReseedableRandom;
 import io.github.pr0methean.betterrandom.EntropyCountingRandom;
 import io.github.pr0methean.betterrandom.util.LogPreFormatter;
 import io.github.pr0methean.betterrandom.util.LooperThread;
 import java.io.IOException;
-import java.io.InvalidObjectException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.nio.ByteBuffer;
@@ -25,8 +26,6 @@ import java.util.concurrent.locks.Condition;
 import org.checkerframework.checker.initialization.qual.UnderInitialization;
 import org.checkerframework.checker.lock.qual.GuardedBy;
 import org.checkerframework.checker.nullness.qual.EnsuresNonNull;
-import org.checkerframework.checker.nullness.qual.MonotonicNonNull;
-import org.checkerframework.checker.nullness.qual.Nullable;
 import org.checkerframework.checker.nullness.qual.RequiresNonNull;
 
 /**
@@ -123,17 +122,16 @@ public final class RandomSeederThread extends LooperThread {
   private void readObject(@UnderInitialization RandomSeederThread this, final ObjectInputStream in)
       throws IOException, ClassNotFoundException {
     in.defaultReadObject();
-    assert lock != null : "@AssumeAssertion(nullness)"; // WTF Checker Framework?!
     initTransientFields();
     if (!prngsSerial.isEmpty()) {
       synchronized (prngs) {
         prngs.addAll(prngsSerial);
       }
-      lock.lock();
+      castNonNull(lock).lock();
       try {
         waitWhileEmpty.signalAll();
       } finally {
-        lock.unlock();
+        castNonNull(lock).unlock();
       }
       prngsSerial.clear();
     }

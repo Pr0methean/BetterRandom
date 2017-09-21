@@ -2,6 +2,7 @@ package io.github.pr0methean.betterrandom.prng.adapter;
 
 import static io.github.pr0methean.betterrandom.prng.adapter.SplittableRandomReseeder.canGetSeed;
 import static io.github.pr0methean.betterrandom.util.BinaryUtils.convertBytesToLong;
+import static org.checkerframework.checker.nullness.NullnessUtil.castNonNull;
 
 import com.google.common.base.MoreObjects.ToStringHelper;
 import io.github.pr0methean.betterrandom.seed.SeedException;
@@ -46,8 +47,8 @@ public class SplittableRandomAdapter extends DirectSplittableRandomAdapter {
 
   private void readObject(final ObjectInputStream in) throws IOException, ClassNotFoundException {
     in.defaultReadObject();
-    assert lock != null : "@AssumeAssertion(nullness)";
-    assert underlying != null : "@AssumeAssertion(nullness)";
+    lock = castNonNull(lock);
+    underlying = castNonNull(underlying);
     initSubclassTransientFields();
   }
 
@@ -84,9 +85,9 @@ public class SplittableRandomAdapter extends DirectSplittableRandomAdapter {
       lock.unlock();
     }
     // WTF Checker Framework? Why is this needed?
-    assert splittableRandoms != null : "@AssumeAssertion(nullness)";
-    assert entropyBits != null : "@AssumeAssertion(nullness)";
-    assert seeds != null : "@AssumeAssertion(nullness)";
+    splittableRandoms = castNonNull(splittableRandoms);
+    entropyBits = castNonNull(entropyBits);
+    seeds = castNonNull(seeds);
   }
 
   @Override
@@ -108,17 +109,6 @@ public class SplittableRandomAdapter extends DirectSplittableRandomAdapter {
    * {@inheritDoc} Applies only to the calling thread.
    */
   @Override
-  public void setSeed(@UnknownInitialization SplittableRandomAdapter this, final byte[] seed) {
-    if (seed.length != SEED_LENGTH_BYTES) {
-      throw new IllegalArgumentException("SplittableRandomAdapter requires an 8-byte seed");
-    }
-    setSeed(convertBytesToLong(seed));
-  }
-
-  /**
-   * {@inheritDoc} Applies only to the calling thread.
-   */
-  @Override
   public void setSeed(@UnknownInitialization SplittableRandomAdapter this,
       final long seed) {
     if (this.seed == null) {
@@ -133,5 +123,16 @@ public class SplittableRandomAdapter extends DirectSplittableRandomAdapter {
         seeds.set(BinaryUtils.convertLongToBytes(seed));
       }
     }
+  }
+
+  /**
+   * {@inheritDoc} Applies only to the calling thread.
+   */
+  @Override
+  public void setSeed(@UnknownInitialization SplittableRandomAdapter this, final byte[] seed) {
+    if (seed.length != SEED_LENGTH_BYTES) {
+      throw new IllegalArgumentException("SplittableRandomAdapter requires an 8-byte seed");
+    }
+    setSeed(convertBytesToLong(seed));
   }
 }

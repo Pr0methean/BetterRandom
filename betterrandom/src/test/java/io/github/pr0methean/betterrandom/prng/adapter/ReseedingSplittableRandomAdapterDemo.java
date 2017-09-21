@@ -10,23 +10,26 @@ import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
 public class ReseedingSplittableRandomAdapterDemo {
-  private static final String[] VALUE_LABELS = {"A","K","Q","J","10","9","8","7","6","5","4","3","2"};
-  private static final String[] SUIT_LABELS = {"♥️","♣️","♦️","♠️"};
+
+  private static final String[] VALUE_LABELS = {"A", "K", "Q", "J", "10", "9", "8", "7", "6", "5",
+      "4", "3", "2"};
+  private static final String[] SUIT_LABELS = {"♥️", "♣️", "♦️", "♠️"};
 
   public static void main(String[] args) throws SeedException, InterruptedException {
     String[] cards = new String[52];
-    int i=0;
+    int i = 0;
     for (String suit : SUIT_LABELS) {
       for (String value : VALUE_LABELS) {
         cards[i] = value + suit;
         i++;
       }
     }
-    ThreadLocal<List<String>> deckCopies = ThreadLocal.withInitial(() -> Arrays.asList(cards.clone()));
+    ThreadLocal<List<String>> deckCopies = ThreadLocal
+        .withInitial(() -> Arrays.asList(cards.clone()));
     ScheduledThreadPoolExecutor executor = new ScheduledThreadPoolExecutor(4);
     ReseedingSplittableRandomAdapter random = ReseedingSplittableRandomAdapter.getInstance(
         DEFAULT_SEED_GENERATOR);
-    for (i=0; i<200; i++) {
+    for (i = 0; i < 200; i++) {
       executor.submit(() -> {
         List<String> deck = deckCopies.get();
         Collections.shuffle(deck, random);
