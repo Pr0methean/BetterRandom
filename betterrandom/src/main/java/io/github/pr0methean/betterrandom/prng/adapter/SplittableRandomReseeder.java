@@ -1,5 +1,7 @@
 package io.github.pr0methean.betterrandom.prng.adapter;
 
+import static org.checkerframework.checker.nullness.NullnessUtil.castNonNull;
+
 import io.github.pr0methean.betterrandom.util.BinaryUtils;
 import io.github.pr0methean.betterrandom.util.LogPreFormatter;
 import java.lang.invoke.MethodHandle;
@@ -28,8 +30,10 @@ public final class SplittableRandomReseeder {
 
   private static final LogPreFormatter LOG = new LogPreFormatter(SplittableRandomReseeder.class);
   private static final Objenesis OBJENESIS = new ObjenesisStd();
+  private static @MonotonicNonNull MethodHandle GET_LONG_VOLATILE;
   private static @MonotonicNonNull MethodHandle PUT_LONG_VOLATILE;
   private static @MonotonicNonNull Field SEED_FIELD;
+  private static @MonotonicNonNull Field GAMMA_FIELD;
   private static long GAMMA_FIELD_OFFSET;
   private static long SEED_FIELD_OFFSET;
   private static long GOLDEN_GAMMA;
@@ -37,6 +41,7 @@ public final class SplittableRandomReseeder {
 
   static {
     try {
+      CAN_RESEED_REFLECTIVELY = false;
       final Class<?> unsafeClass = Class.forName("sun.misc.Unsafe");
       Object unsafe;
       try {
@@ -47,10 +52,13 @@ public final class SplittableRandomReseeder {
         unsafe = OBJENESIS.newInstance(unsafeClass);
       }
       final Method getFieldOffset = unsafeClass.getDeclaredMethod("objectFieldOffset", Field.class);
-      GAMMA_FIELD_OFFSET = (long) (getFieldOffset
-          .invoke(unsafe, SplittableRandom.class.getDeclaredField("gamma")));
+      GAMMA_FIELD = SplittableRandom.class.getDeclaredField("gamma");
+      GAMMA_FIELD.setAccessible(true);
       SEED_FIELD = SplittableRandom.class.getDeclaredField("seed");
       SEED_FIELD.setAccessible(true);
+      CAN_RESEED_REFLECTIVELY = true;
+      GAMMA_FIELD_OFFSET = (long) (getFieldOffset
+          .invoke(unsafe, GAMMA_FIELD));
       SEED_FIELD_OFFSET = (long) (getFieldOffset
           .invoke(unsafe, SEED_FIELD));
       final Field goldenGammaField = SplittableRandom.class.getDeclaredField("GOLDEN_GAMMA");
@@ -60,11 +68,9 @@ public final class SplittableRandomReseeder {
           .getDeclaredMethod("putLongVolatile", Object.class, long.class, long.class);
       putVolatileLong.setAccessible(true);
       PUT_LONG_VOLATILE = MethodHandles.lookup().unreflect(putVolatileLong).bindTo(unsafe);
-      CAN_RESEED_REFLECTIVELY = true;
     } catch (final Exception e) {
       // May include at least one exception type that's new in Java 9
       LOG.error("Can't reflectively reseed SplittableRandom instances: %s", e);
-      CAN_RESEED_REFLECTIVELY = false;
     }
   }
 
@@ -82,13 +88,18 @@ public final class SplittableRandomReseeder {
    */
   public static SplittableRandom reseed(final @Nullable SplittableRandom original,
       final long seed) {
-    if (CAN_RESEED_REFLECTIVELY && PUT_LONG_VOLATILE != null && original != null) {
+    if (CAN_RESEED_REFLECTIVELY && original != null) {
       try {
-        PUT_LONG_VOLATILE.invokeExact((Object) original, SEED_FIELD_OFFSET, seed);
-        PUT_LONG_VOLATILE.invokeExact((Object) original, GAMMA_FIELD_OFFSET, GOLDEN_GAMMA);
+        if (PUT_LONG_VOLATILE == null) {
+          castNonNull(SEED_FIELD).set(original, seed);
+          castNonNull(GAMMA_FIELD).set(original, GOLDEN_GAMMA);
+        } else {
+          PUT_LONG_VOLATILE.invokeExact((Object) original, SEED_FIELD_OFFSET, seed);
+          PUT_LONG_VOLATILE.invokeExact((Object) original, GAMMA_FIELD_OFFSET, GOLDEN_GAMMA);
+        }
         return original;
-      } catch (final Throwable throwable) {
-        throw new RuntimeException(throwable);
+      } catch (final Throwable t) {
+        throw new RuntimeException(t);
       }
     } else {
       return new SplittableRandom(seed);
@@ -106,10 +117,12 @@ public final class SplittableRandomReseeder {
       throw new UnsupportedOperationException();
     } else {
       try {
-        assert SEED_FIELD != null : "@AssumeAssertion(nullness)";
-        return BinaryUtils.convertLongToBytes((long) (SEED_FIELD.get(splittableRandom)));
-      } catch (final IllegalAccessException e) {
-        throw new RuntimeException(e);
+        return BinaryUtils.convertLongToBytes(
+            (long) (GET_LONG_VOLATILE == null
+                ? castNonNull(SEED_FIELD).get(splittableRandom)
+                : GET_LONG_VOLATILE.invokeExact(splittableRandom, (long) SEED_FIELD_OFFSET)));
+      } catch (final Throwable t) {
+        throw new RuntimeException(t);
       }
     }
   }
