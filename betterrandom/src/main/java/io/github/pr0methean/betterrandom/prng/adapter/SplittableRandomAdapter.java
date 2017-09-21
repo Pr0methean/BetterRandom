@@ -1,5 +1,6 @@
 package io.github.pr0methean.betterrandom.prng.adapter;
 
+import static io.github.pr0methean.betterrandom.prng.adapter.SplittableRandomReseeder.canGetSeed;
 import static io.github.pr0methean.betterrandom.util.BinaryUtils.convertBytesToLong;
 
 import com.google.common.base.MoreObjects.ToStringHelper;
@@ -74,9 +75,11 @@ public class SplittableRandomAdapter extends DirectSplittableRandomAdapter {
       splittableRandoms = ThreadLocal.withInitial(underlying::split);
       entropyBits = ThreadLocal.withInitial(() -> new AtomicLong(SEED_LENGTH_BITS));
 
-      // getSeed() will return the master seed on each thread where setSeed() yet hasn't been called
-      seeds = ThreadLocal
-          .withInitial(() -> SplittableRandomReseeder.getSeed(splittableRandoms.get()));
+      // If necessary, getSeed() will return the master seed on each thread where setSeed() yet
+      // hasn't been called
+      seeds = ThreadLocal.withInitial(canGetSeed()
+          ? () -> SplittableRandomReseeder.getSeed(splittableRandoms.get())
+          : () -> seed);
     } finally {
       lock.unlock();
     }
