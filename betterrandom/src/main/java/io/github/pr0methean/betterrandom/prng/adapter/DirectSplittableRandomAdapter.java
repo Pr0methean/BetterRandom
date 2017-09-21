@@ -1,5 +1,7 @@
 package io.github.pr0methean.betterrandom.prng.adapter;
 
+import static org.checkerframework.checker.nullness.NullnessUtil.castNonNull;
+
 import com.google.common.base.MoreObjects.ToStringHelper;
 import io.github.pr0methean.betterrandom.util.BinaryUtils;
 import java.io.IOException;
@@ -63,10 +65,8 @@ public abstract class DirectSplittableRandomAdapter extends BaseSplittableRandom
   public void setSeed(@UnknownInitialization DirectSplittableRandomAdapter this,
       final long seed) {
     if (superConstructorFinished) {
-      assert longSeedBuffer != null : "@AssumeAssertion(nullness)";
-      assert longSeedArray != null : "@AssumeAssertion(nullness)";
-      longSeedBuffer.putLong(seed);
-      super.setSeedInternal(longSeedArray);
+      castNonNull(longSeedBuffer).putLong(seed);
+      super.setSeedInternal(castNonNull(longSeedArray));
       underlying = SplittableRandomReseeder.reseed(underlying, seed);
     } else {
       fallbackSetSeed();
