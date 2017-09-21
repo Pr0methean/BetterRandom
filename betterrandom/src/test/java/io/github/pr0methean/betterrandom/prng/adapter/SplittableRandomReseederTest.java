@@ -26,7 +26,7 @@ public class SplittableRandomReseederTest {
   }
 
   @TestingDeficiency
-  @Test(enabled = false) // https://github.com/Pr0methean/BetterRandom/issues/5
+  @Test(enabled = false)
   public void testGetSeed() throws Exception {
     SplittableRandom random = new SplittableRandom(TEST_SEED);
     // Test for class-loader trickery by the test framework
