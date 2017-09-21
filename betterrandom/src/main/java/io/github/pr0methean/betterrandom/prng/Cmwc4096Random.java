@@ -15,6 +15,8 @@
 // ============================================================================
 package io.github.pr0methean.betterrandom.prng;
 
+import static org.checkerframework.checker.nullness.NullnessUtil.castNonNull;
+
 import com.google.common.base.MoreObjects.ToStringHelper;
 import io.github.pr0methean.betterrandom.seed.DefaultSeedGenerator;
 import io.github.pr0methean.betterrandom.seed.SeedException;
@@ -83,7 +85,7 @@ public class Cmwc4096Random extends BaseRandom {
    */
   public Cmwc4096Random(final byte[] seed) {
     super(seed);
-    assert state != null : "@AssumeAssertion(nullness)";
+    state = castNonNull(state);
   }
 
   @Override

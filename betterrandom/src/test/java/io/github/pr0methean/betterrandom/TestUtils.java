@@ -7,7 +7,8 @@ package io.github.pr0methean.betterrandom;
 public final class TestUtils {
 
   /** This is a utility class and shouldn't be instantiated. */
-  private TestUtils() {}
+  private TestUtils() {
+  }
 
   /**
    * Appveyor doesn't currently use enough IP addresses to get all its random.org usage allowed, so

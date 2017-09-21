@@ -33,7 +33,8 @@ public final class BinaryUtils {
       '8', '9', 'A', 'B', 'C', 'D', 'E', 'F'};
 
   /** This is a utility class and shouldn't be instantiated. */
-  private BinaryUtils() {}
+  private BinaryUtils() {
+  }
 
   /**
    * Converts an array of bytes in to a String of hexadecimal characters (0 - F).
