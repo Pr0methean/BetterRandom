@@ -18,6 +18,7 @@ package io.github.pr0methean.betterrandom.seed;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  * RNG seed strategy that gets data from {@literal /dev/random} on systems that provide it (e.g.
@@ -31,6 +32,7 @@ public enum DevRandomSeedGenerator implements SeedGenerator {
 
   DEV_RANDOM_SEED_GENERATOR;
 
+  private static AtomicBoolean DEV_RANDOM_DOES_NOT_EXIST = new AtomicBoolean(false);
   private static final String DEV_RANDOM_STRING = "/dev/random";
   private static final File DEV_RANDOM = new File(DEV_RANDOM_STRING);
 
@@ -41,6 +43,9 @@ public enum DevRandomSeedGenerator implements SeedGenerator {
   @SuppressWarnings({"IOResourceOpenedButNotSafelyClosed", "resource"})
   @Override
   public void generateSeed(final byte[] randomSeed) throws SeedException {
+    if (DEV_RANDOM_DOES_NOT_EXIST.get()) {
+      throw new SeedException("Cannot open /dev/random");
+    }
     FileInputStream file = null;
     try {
       file = new FileInputStream(DEV_RANDOM);
@@ -54,6 +59,9 @@ public enum DevRandomSeedGenerator implements SeedGenerator {
         count += bytesRead;
       }
     } catch (final IOException ex) {
+      if (!DEV_RANDOM.exists()) {
+        DEV_RANDOM_DOES_NOT_EXIST.lazySet(true);
+      }
       throw new SeedException("Failed reading from " + DEV_RANDOM.getName(), ex);
     } catch (final SecurityException ex) {
       // Might be thrown if resource access is restricted (such as in
