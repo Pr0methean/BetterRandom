@@ -1,6 +1,8 @@
 sudo: required
 dist: trusty
 group: edge
+git:
+  submodules: false # No need to download javadocs
 matrix:
   include:
     - language: java
