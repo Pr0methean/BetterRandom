@@ -42,11 +42,6 @@ public final class RandomSeederThread extends LooperThread {
   @SuppressWarnings("StaticCollection")
   private static final @GuardedBy("<self>") Map<SeedGenerator, RandomSeederThread> INSTANCES =
       Collections.synchronizedMap(new WeakHashMap<>(1));
-  /**
-   * Used to avoid full spin-locking when every {@link Random} to be reseeded is an {@link
-   * EntropyCountingRandom} and none has spent its entropy.
-   */
-  private static final long POLL_INTERVAL_MS = 1000;
   private static final long serialVersionUID = 5229976461051217528L;
   private final SeedGenerator seedGenerator;
   private final byte[] longSeedArray = new byte[8];
@@ -84,8 +79,6 @@ public final class RandomSeederThread extends LooperThread {
    * @return a RandomSeederThread that is running and is backed by {@code seedGenerator}.
    */
   public static RandomSeederThread getInstance(final SeedGenerator seedGenerator) {
-    Objects.requireNonNull(seedGenerator,
-        "Trying to get RandomSeederThread for null SeedGenerator");
     synchronized (INSTANCES) {
       return INSTANCES.computeIfAbsent(seedGenerator,
           seedGen -> {
@@ -223,7 +216,7 @@ public final class RandomSeederThread extends LooperThread {
       }
     }
     if (!entropyConsumed) {
-      waitForEntropyDrain.await(POLL_INTERVAL_MS, TimeUnit.MILLISECONDS);
+      waitForEntropyDrain.await();
     }
     return true;
   }
