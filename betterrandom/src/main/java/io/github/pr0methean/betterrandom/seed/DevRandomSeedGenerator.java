@@ -15,9 +15,11 @@
 // ============================================================================
 package io.github.pr0methean.betterrandom.seed;
 
+import io.github.pr0methean.betterrandom.util.LogPreFormatter;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.util.ResourceBundle;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
@@ -32,6 +34,7 @@ public enum DevRandomSeedGenerator implements SeedGenerator {
 
   DEV_RANDOM_SEED_GENERATOR;
 
+  private static final LogPreFormatter LOG = new LogPreFormatter(DevRandomSeedGenerator.class);
   private static AtomicBoolean DEV_RANDOM_DOES_NOT_EXIST = new AtomicBoolean(false);
   private static final String DEV_RANDOM_STRING = "/dev/random";
   private static final File DEV_RANDOM = new File(DEV_RANDOM_STRING);
@@ -43,8 +46,8 @@ public enum DevRandomSeedGenerator implements SeedGenerator {
   @SuppressWarnings({"IOResourceOpenedButNotSafelyClosed", "resource"})
   @Override
   public void generateSeed(final byte[] randomSeed) throws SeedException {
-    if (DEV_RANDOM_DOES_NOT_EXIST.get()) {
-      throw new SeedException("Cannot open /dev/random");
+    if (!isWorthTrying()) {
+      throw new SeedException(DEV_RANDOM_STRING + " did not exist when previously checked for");
     }
     FileInputStream file = null;
     try {
@@ -60,13 +63,14 @@ public enum DevRandomSeedGenerator implements SeedGenerator {
       }
     } catch (final IOException ex) {
       if (!DEV_RANDOM.exists()) {
+        LOG.error(DEV_RANDOM_STRING + " does not exist");
         DEV_RANDOM_DOES_NOT_EXIST.lazySet(true);
       }
-      throw new SeedException("Failed reading from " + DEV_RANDOM.getName(), ex);
+      throw new SeedException("Failed reading from " + DEV_RANDOM_STRING, ex);
     } catch (final SecurityException ex) {
       // Might be thrown if resource access is restricted (such as in
       // an applet sandbox).
-      throw new SeedException("SecurityManager prevented access to " + DEV_RANDOM.getName(), ex);
+      throw new SeedException("SecurityManager prevented access to " + DEV_RANDOM_STRING, ex);
     } finally {
       if (file != null) {
         try {
@@ -76,6 +80,11 @@ public enum DevRandomSeedGenerator implements SeedGenerator {
         }
       }
     }
+  }
+
+  @Override
+  public boolean isWorthTrying() {
+    return !(DEV_RANDOM_DOES_NOT_EXIST.get());
   }
 
   @Override
