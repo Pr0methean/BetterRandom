@@ -21,6 +21,9 @@ import java.io.InputStreamReader;
 import java.net.URL;
 import java.net.URLConnection;
 import java.text.MessageFormat;
+import java.time.Clock;
+import java.time.Duration;
+import java.time.Instant;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
@@ -35,7 +38,8 @@ import java.util.concurrent.locks.ReentrantLock;
  */
 public enum RandomDotOrgSeedGenerator implements SeedGenerator {
 
-  RANDOM_DOT_ORG_SEED_GENERATOR;
+  RANDOM_DOT_ORG_SEED_GENERATOR(false),
+  RATE_LIMITED_ON_FAIL(true);
 
   private static final String BASE_URL = "https://www.random.org";
   /**
@@ -52,9 +56,22 @@ public enum RandomDotOrgSeedGenerator implements SeedGenerator {
    * Random.org does not allow requests for more than 10k integers at once.
    */
   private static final int MAX_REQUEST_SIZE = 10000;
+  private static Instant EARLIEST_NEXT_ATTEMPT = Instant.MIN;
+  private static final Duration COOLDOWN_ON_FAILURE = Duration.ofSeconds(10);
+
   private static final Lock cacheLock = new ReentrantLock();
+  public static final Clock CLOCK = Clock.systemDefaultZone();
   private static byte[] cache = new byte[1024];
   private static int cacheOffset = cache.length;
+
+  /**
+   * If true, don't attempt to contact random.org again for COOLDOWN_ON_FAILURE after an IOException
+   */
+  private final boolean rateLimitOnFailure;
+
+  RandomDotOrgSeedGenerator(boolean rateLimitOnFailure) {
+    this.rateLimitOnFailure = rateLimitOnFailure;
+  }
 
   /**
    * @param requiredBytes The preferred number of bytes to request from random.org. The
@@ -96,6 +113,9 @@ public enum RandomDotOrgSeedGenerator implements SeedGenerator {
 
   @SuppressWarnings({"AssignmentToStaticFieldFromInstanceMethod", "BusyWait"})
   public void generateSeed(final byte[] seedData) throws SeedException {
+    if (rateLimitOnFailure && EARLIEST_NEXT_ATTEMPT.isAfter(CLOCK.instant())) {
+      throw new SeedException("Not retrying so soon after an IOException");
+    }
     final int length = seedData.length;
     cacheLock.lock();
     try {
@@ -111,6 +131,7 @@ public enum RandomDotOrgSeedGenerator implements SeedGenerator {
         }
       }
     } catch (final IOException ex) {
+      EARLIEST_NEXT_ATTEMPT = CLOCK.instant().plus(COOLDOWN_ON_FAILURE);
       throw new SeedException("Failed downloading bytes from " + BASE_URL, ex);
     } catch (final SecurityException ex) {
       // Might be thrown if resource access is restricted (such as in an applet sandbox).
