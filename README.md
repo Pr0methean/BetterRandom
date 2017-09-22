@@ -107,10 +107,8 @@ integration takes place in the following environments:
 
 * Linux (on Travis): OpenJDK 8, Oracle JDK 8
 * OS X (on Travis): JDK 8 (unclear whether Oracle or OpenJDK)
-* Cygwin (on Appveyor): JDK 8 (unclear whether Oracle or OpenJDK; benchmarks disabled; possible
-  performance issues)
-* MinGW (on Appveyor): JDK 8 (unclear whether Oracle or OpenJDK; benchmarks disabled; possible
-  performance issues)
+* Cygwin (on Appveyor): JDK 8 (unclear whether Oracle or OpenJDK)
+* MinGW (on Appveyor): JDK 8 (unclear whether Oracle or OpenJDK)
 
 Continuous integration for Oracle JDK 9 is set up on Travis, but will be ignored until Travis knows
 how to properly set `$JAVA_HOME` for JDK 9. CI on BSD or Android isn't likely any time soon, since

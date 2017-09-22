@@ -1,3 +1,7 @@
+# 0.10.2
+* Improved performance of `DefaultSeedGenerator` on MinGW and naked Windows, especially when
+  random.org is unavailable and the number of CPU cores is limited.
+
 # 0.10.1
 * Fixed some bugs involving serialization and deserialization of `LooperThread`.
 * Scripts that are not actively maintained now live in the `cutting_room_floor` folder.
