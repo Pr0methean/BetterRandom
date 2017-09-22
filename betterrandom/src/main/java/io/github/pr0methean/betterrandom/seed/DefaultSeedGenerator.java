@@ -38,21 +38,6 @@ public enum DefaultSeedGenerator implements SeedGenerator {
       SecureRandomSeedGenerator.SECURE_RANDOM_SEED_GENERATOR
   };
 
-  @Override
-  public void generateSeed(final byte[] output) throws SeedException {
-    for (final SeedGenerator generator : GENERATORS) {
-      try {
-        generator.generateSeed(output);
-        return;
-      } catch (final SeedException ignored) {
-        // Try the next one
-      }
-    }
-    // This shouldn't happen as at least one the generators should be
-    // able to generate a seed.
-    throw new SeedException("All available seed generation strategies failed.");
-  }
-
   /**
    * {@inheritDoc}
    * <p>
@@ -61,12 +46,15 @@ public enum DefaultSeedGenerator implements SeedGenerator {
    * to work) strategy.
    */
   @Override
-  public byte[] generateSeed(final int length) throws SeedException {
+  public void generateSeed(final byte[] output) throws SeedException {
     for (final SeedGenerator generator : GENERATORS) {
-      try {
-        return generator.generateSeed(length);
-      } catch (final SeedException ex) {
-        // Ignore and try the next generator...
+      if (generator.isWorthTrying()) {
+        try {
+          generator.generateSeed(output);
+          return;
+        } catch (final SeedException ignored) {
+          // Try the next one
+        }
       }
     }
     // This shouldn't happen as at least one the generators should be

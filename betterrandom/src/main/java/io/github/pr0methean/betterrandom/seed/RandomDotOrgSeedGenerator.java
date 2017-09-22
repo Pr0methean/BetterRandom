@@ -113,7 +113,7 @@ public enum RandomDotOrgSeedGenerator implements SeedGenerator {
 
   @SuppressWarnings({"AssignmentToStaticFieldFromInstanceMethod", "BusyWait"})
   public void generateSeed(final byte[] seedData) throws SeedException {
-    if (rateLimitOnFailure && EARLIEST_NEXT_ATTEMPT.isAfter(CLOCK.instant())) {
+    if (!isWorthTrying()) {
       throw new SeedException("Not retrying so soon after an IOException");
     }
     final int length = seedData.length;
@@ -139,6 +139,11 @@ public enum RandomDotOrgSeedGenerator implements SeedGenerator {
     } finally {
       cacheLock.unlock();
     }
+  }
+
+  @Override
+  public boolean isWorthTrying() {
+    return !rateLimitOnFailure || !EARLIEST_NEXT_ATTEMPT.isAfter(CLOCK.instant());
   }
 
   @Override
