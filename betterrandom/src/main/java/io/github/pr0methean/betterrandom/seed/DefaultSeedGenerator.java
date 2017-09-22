@@ -34,7 +34,7 @@ public enum DefaultSeedGenerator implements SeedGenerator {
    */
   private static final SeedGenerator[] GENERATORS = {
       DevRandomSeedGenerator.DEV_RANDOM_SEED_GENERATOR,
-      RandomDotOrgSeedGenerator.RANDOM_DOT_ORG_SEED_GENERATOR,
+      RandomDotOrgSeedGenerator.RATE_LIMITED_ON_FAIL,
       SecureRandomSeedGenerator.SECURE_RANDOM_SEED_GENERATOR
   };
 
