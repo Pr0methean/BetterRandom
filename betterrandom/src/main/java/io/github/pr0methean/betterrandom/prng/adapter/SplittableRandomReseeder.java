@@ -39,9 +39,10 @@ public final class SplittableRandomReseeder {
   private static long GOLDEN_GAMMA;
   private static boolean CAN_RESEED_REFLECTIVELY;
   /** Visible only for test debugging. */
-  protected static final Class<?> SPLITTABLE_RANDOM_CLASS = SplittableRandom.class;
+  protected static final Class<?> SPLITTABLE_RANDOM_CLASS;
 
   static {
+    SPLITTABLE_RANDOM_CLASS = SplittableRandom.class;
     try {
       CAN_RESEED_REFLECTIVELY = false;
       final Class<?> unsafeClass = Class.forName("sun.misc.Unsafe");
