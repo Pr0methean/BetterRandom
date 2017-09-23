@@ -19,7 +19,6 @@ import io.github.pr0methean.betterrandom.util.LogPreFormatter;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.util.ResourceBundle;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
@@ -35,9 +34,9 @@ public enum DevRandomSeedGenerator implements SeedGenerator {
   DEV_RANDOM_SEED_GENERATOR;
 
   private static final LogPreFormatter LOG = new LogPreFormatter(DevRandomSeedGenerator.class);
-  private static AtomicBoolean DEV_RANDOM_DOES_NOT_EXIST = new AtomicBoolean(false);
   private static final String DEV_RANDOM_STRING = "/dev/random";
   private static final File DEV_RANDOM = new File(DEV_RANDOM_STRING);
+  private static AtomicBoolean DEV_RANDOM_DOES_NOT_EXIST = new AtomicBoolean(false);
 
   /**
    * @throws io.github.pr0methean.betterrandom.seed.SeedException if {@literal /dev/random} does

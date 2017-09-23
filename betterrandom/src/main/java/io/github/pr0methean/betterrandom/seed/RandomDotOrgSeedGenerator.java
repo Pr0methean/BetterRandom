@@ -41,6 +41,8 @@ public enum RandomDotOrgSeedGenerator implements SeedGenerator {
   RANDOM_DOT_ORG_SEED_GENERATOR(false),
   RATE_LIMITED_ON_FAIL(true);
 
+  public static final Clock CLOCK = Clock.systemDefaultZone();
+  public static final int MAX_CACHE_SIZE = 1024;
   private static final String BASE_URL = "https://www.random.org";
   /**
    * The URL from which the random bytes are retrieved.
@@ -56,19 +58,16 @@ public enum RandomDotOrgSeedGenerator implements SeedGenerator {
    * Random.org does not allow requests for more than 10k integers at once.
    */
   private static final int GLOBAL_MAX_REQUEST_SIZE = 10000;
-
-  private static Instant EARLIEST_NEXT_ATTEMPT = Instant.MIN;
   private static final Duration COOLDOWN_ON_FAILURE = Duration.ofSeconds(10);
-
   private static final Lock cacheLock = new ReentrantLock();
-  public static final Clock CLOCK = Clock.systemDefaultZone();
-  public static final int MAX_CACHE_SIZE = 1024;
+  private static Instant EARLIEST_NEXT_ATTEMPT = Instant.MIN;
   private static byte[] cache = new byte[MAX_CACHE_SIZE];
   private static int cacheOffset = cache.length;
   private static int maxRequestSize = GLOBAL_MAX_REQUEST_SIZE;
 
   /**
-   * If true, don't attempt to contact random.org again for COOLDOWN_ON_FAILURE after an IOException
+   * If true, don't attempt to contact random.org again for COOLDOWN_ON_FAILURE after an
+   * IOException
    */
   private final boolean rateLimitOnFailure;
 
@@ -115,8 +114,8 @@ public enum RandomDotOrgSeedGenerator implements SeedGenerator {
   }
 
   /**
-   * Sets the maximum request size that we will expect random.org to allow. If more than
-   * {@link #GLOBAL_MAX_REQUEST_SIZE}, will be set to that value instead.
+   * Sets the maximum request size that we will expect random.org to allow. If more than {@link
+   * #GLOBAL_MAX_REQUEST_SIZE}, will be set to that value instead.
    *
    * @param maxRequestSize the new maximum request size in bytes.
    */

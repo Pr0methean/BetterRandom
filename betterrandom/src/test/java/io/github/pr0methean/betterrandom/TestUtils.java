@@ -11,8 +11,9 @@ public final class TestUtils {
   }
 
   /**
-   * Appveyor and the OSX environment on Travis-CI don't currently use enough IP addresses to get heavy random.org usage allowed, so
-   * tests that are sufficiently demanding of random.org won't run on those environments.
+   * Appveyor and the OSX environment on Travis-CI don't currently use enough IP addresses to get
+   * heavy random.org usage allowed, so tests that are sufficiently demanding of random.org won't
+   * run on those environments.
    *
    * @return true if we're not running on Appveyor or a Travis-CI OSX instance, false if we are.
    */
