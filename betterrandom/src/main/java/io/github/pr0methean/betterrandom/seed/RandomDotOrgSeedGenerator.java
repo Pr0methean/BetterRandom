@@ -64,6 +64,16 @@ public enum RandomDotOrgSeedGenerator implements SeedGenerator {
   private static byte[] cache = new byte[1024];
   private static int cacheOffset = cache.length;
 
+  /** @return the number of bytes that will be requested at once from random.org. */
+  public static int getCacheSize() {
+    cacheLock.lock();
+    try {
+      return cache.length;
+    } finally {
+      cacheLock.unlock();
+    }
+  }
+
   /**
    * Sets the number of bytes to request and cache at once. If this exceeds {@link #MAX_REQUEST_SIZE},
    * the cache size will become {@link #MAX_REQUEST_SIZE} instead.
