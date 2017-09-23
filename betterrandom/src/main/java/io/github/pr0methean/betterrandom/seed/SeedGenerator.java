@@ -48,8 +48,8 @@ public interface SeedGenerator extends Serializable {
 
   /**
    * @return true if we cannot determine without I/O calls that this SeedGenerator would throw a
-   * {@link SeedException} if {@link #generateSeed(int)} or {@link #generateSeed(byte[])} were
-   * being called right now.
+   *     {@link SeedException} if {@link #generateSeed(int)} or {@link #generateSeed(byte[])} were
+   *     being called right now.
    */
   default boolean isWorthTrying() {
     return true;

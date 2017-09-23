@@ -28,6 +28,8 @@ import org.objenesis.ObjenesisStd;
 // Field.get(null) is OK when the field is static!
 public final class SplittableRandomReseeder {
 
+  /** Visible only for test debugging. */
+  protected static final Class<?> SPLITTABLE_RANDOM_CLASS;
   private static final LogPreFormatter LOG = new LogPreFormatter(SplittableRandomReseeder.class);
   private static final Objenesis OBJENESIS = new ObjenesisStd();
   private static @MonotonicNonNull MethodHandle GET_LONG_VOLATILE;
@@ -38,8 +40,6 @@ public final class SplittableRandomReseeder {
   private static long SEED_FIELD_OFFSET;
   private static long GOLDEN_GAMMA;
   private static boolean CAN_RESEED_REFLECTIVELY;
-  /** Visible only for test debugging. */
-  protected static final Class<?> SPLITTABLE_RANDOM_CLASS;
 
   static {
     SPLITTABLE_RANDOM_CLASS = SplittableRandom.class;
@@ -123,7 +123,8 @@ public final class SplittableRandomReseeder {
         return BinaryUtils.convertLongToBytes(
             GET_LONG_VOLATILE == null
                 ? castNonNull(SEED_FIELD).getLong(splittableRandom)
-                : (long) (GET_LONG_VOLATILE.invokeExact(splittableRandom, (long) SEED_FIELD_OFFSET)));
+                : (long) (GET_LONG_VOLATILE
+                    .invokeExact(splittableRandom, (long) SEED_FIELD_OFFSET)));
       } catch (final Throwable t) {
         throw new RuntimeException(t);
       }
