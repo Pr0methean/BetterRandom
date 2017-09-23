@@ -27,9 +27,7 @@ public class RandomDotOrgSeedGeneratorTest {
 
   @Test(timeOut = 120000)
   public void testGenerator() throws SeedException {
-    if (TestUtils.notOnAppveyor()) {
-      SeedTestUtils.testGenerator(RandomDotOrgSeedGenerator.RANDOM_DOT_ORG_SEED_GENERATOR);
-    }
+    SeedTestUtils.testGenerator(RandomDotOrgSeedGenerator.RANDOM_DOT_ORG_SEED_GENERATOR);
   }
 
   /**
@@ -38,7 +36,7 @@ public class RandomDotOrgSeedGeneratorTest {
    */
   @Test(timeOut = 120000)
   public void testLargeRequest() throws SeedException {
-    if (TestUtils.notOnAppveyor()) {
+    if (TestUtils.canRunRandomDotOrgLargeTest()) {
       final SeedGenerator generator = RandomDotOrgSeedGenerator.RANDOM_DOT_ORG_SEED_GENERATOR;
       // 1024 bytes are cached internally, so request more than that.
       final byte[] seed = generator.generateSeed(1025);
