@@ -8,7 +8,6 @@ import io.github.pr0methean.betterrandom.TestingDeficiency;
 import io.github.pr0methean.betterrandom.util.BinaryUtils;
 import java.util.Arrays;
 import java.util.SplittableRandom;
-import org.testng.Assert;
 import org.testng.annotations.Test;
 
 public class SplittableRandomReseederTest {
