@@ -1,14 +1,17 @@
 #!/bin/sh
-cd betterrandom &&\
-OLDVERSION=`mvn help:evaluate -Dexpression=project.version | sed -n -e '/^\[.*\]/ !{ /^[0-9]/ { p; q } }' | sed 's/version=//'`
+cd betterrandom
+OLDVERSION=`mvn help:evaluate -Dexpression=project.version | sed -n -e '/^\[.*\]/ !{ /^[0-9]/ { p; q } }' | sed 's/version=//'` &&\
 rm -f release.properties &&\
 rm -rf ../../.m2/repository/io/github/pr0methean/betterrandom/ &&\
+mvn release:clean &&\
 (
-  mvn release:clean &&\
-  mvn release:prepare -X &&\
-  mvn release:perform -X -Dmaven.main.skip=true -Dmaven.test.skip=true
-) || (
-    NEWVERSION=`mvn help:evaluate -Dexpression=project.version | sed -n -e '/^\[.*\]/ !{ /^[0-9]/ { p; q } }' | sed 's/version=//'`
+  release:prepare -X
+  NEWVERSION=`mvn help:evaluate -Dexpression=project.version | sed -n -e '/^\[.*\]/ !{ /^[0-9]/ { p; q } }' | sed 's/version=//'`
+  (
+    mvn release:perform -X -Dmaven.main.skip=true -Dmaven.test.skip=true
+  ) && (
+    sed -i "s/$OLDVERSION/$NEWVERSION/" ../benchmark/pom.xml
+  ) || (
     if [ "$NEWVERSION" != "$OLDVERSION" ]; then
       git tag -d "BetterRandom-$NEWVERSION"
       git push origin ":refs/tags/BetterRandom-$NEWVERSION"
@@ -20,5 +23,6 @@ rm -rf ../../.m2/repository/io/github/pr0methean/betterrandom/ &&\
       git commit -m "🤖 Roll back version increment from failed release"
       git push
     fi
+  )
 )
 cd ..
