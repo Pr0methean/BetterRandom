@@ -15,6 +15,8 @@
 // ============================================================================
 package io.github.pr0methean.betterrandom.seed;
 
+import static io.github.pr0methean.betterrandom.TestUtils.canRunRandomDotOrgLargeTest;
+import static io.github.pr0methean.betterrandom.TestUtils.isNotAppveyor;
 import static org.testng.Assert.assertEquals;
 
 import io.github.pr0methean.betterrandom.TestUtils;
@@ -32,14 +34,16 @@ public class RandomDotOrgSeedGeneratorTest {
 
   @BeforeClass
   public void setUp() {
-    if (!TestUtils.canRunRandomDotOrgLargeTest()) {
+    if (!canRunRandomDotOrgLargeTest()) {
       RandomDotOrgSeedGenerator.setMaxRequestSize(SMALL_REQUEST_SIZE);
     }
   }
 
   @Test(timeOut = 120000)
   public void testGenerator() throws SeedException {
-    SeedTestUtils.testGenerator(RandomDotOrgSeedGenerator.RANDOM_DOT_ORG_SEED_GENERATOR);
+    if (isNotAppveyor()) {
+      SeedTestUtils.testGenerator(RandomDotOrgSeedGenerator.RANDOM_DOT_ORG_SEED_GENERATOR);
+    }
   }
 
   /**
@@ -48,7 +52,7 @@ public class RandomDotOrgSeedGeneratorTest {
    */
   @Test(timeOut = 120000)
   public void testLargeRequest() throws SeedException {
-    if (TestUtils.canRunRandomDotOrgLargeTest()) {
+    if (canRunRandomDotOrgLargeTest()) {
       // Request more bytes than are cached internally.
       int seedLength = 1025;
       final SeedGenerator generator = RandomDotOrgSeedGenerator.RANDOM_DOT_ORG_SEED_GENERATOR;
