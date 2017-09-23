@@ -3,7 +3,7 @@ cd betterrandom
 OLDVERSION=`mvn help:evaluate -Dexpression=project.version | sed -n -e '/^\[.*\]/ !{ /^[0-9]/ { p; q } }' | sed 's/version=//'` &&\
 rm -f release.properties &&\
 rm -rf ../../.m2/repository/io/github/pr0methean/betterrandom/ &&\
-mvn release:clean release:prepare -X &&\
+mvn release:clean release:prepare -X -DskipTests -Dmaven.test.skip=true &&\
 (
   NEWVERSION=`mvn help:evaluate -Dexpression=project.version | sed -n -e '/^\[.*\]/ !{ /^[0-9]/ { p; q } }' | sed 's/version=//'`
   (
