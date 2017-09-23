@@ -10,7 +10,7 @@ public class AesCounterRandomDemoTest {
 
   @Test(timeOut = 120_000)
   public void ensureNoDemoCrash() throws SeedException {
-    if (TestUtils.notOnAppveyor()) {
+    if (TestUtils.canRunRandomDotOrgLargeTest()) {
       AesCounterRandomDemo.main(NO_ARGS);
     }
   }
