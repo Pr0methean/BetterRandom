@@ -16,6 +16,8 @@
 package io.github.pr0methean.betterrandom.seed;
 
 import io.github.pr0methean.betterrandom.TestUtils;
+import org.testng.annotations.BeforeClass;
+import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
 /**
@@ -24,6 +26,15 @@ import org.testng.annotations.Test;
  * @author Daniel Dyer
  */
 public class RandomDotOrgSeedGeneratorTest {
+
+  public static final int SMALL_CACHE_SIZE = 128;
+
+  @BeforeClass
+  public void setUp() {
+    if (!TestUtils.canRunRandomDotOrgLargeTest()) {
+      RandomDotOrgSeedGenerator.setCacheSize(SMALL_CACHE_SIZE);
+    }
+  }
 
   @Test(timeOut = 120000)
   public void testGenerator() throws SeedException {
