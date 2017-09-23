@@ -65,6 +65,29 @@ public enum RandomDotOrgSeedGenerator implements SeedGenerator {
   private static int cacheOffset = cache.length;
 
   /**
+   * Sets the number of bytes to request and cache at once. If this exceeds {@link #MAX_REQUEST_SIZE},
+   * the cache size will become {@link #MAX_REQUEST_SIZE} instead.
+   *
+   * @param newSize The new number of bytes.
+   */
+  public static void setCacheSize(int newSize) {
+    if (newSize <= 0) {
+      throw new IllegalArgumentException("New cache size must be positive, but is " + newSize);
+    }
+    newSize = Math.min(newSize, MAX_REQUEST_SIZE);
+    cacheLock.lock();
+    try {
+      int sizeChange = newSize - cache.length;
+      byte[] newCache = new byte[newSize];
+      System.arraycopy(cache, cacheOffset, newCache, cacheOffset + sizeChange, cache.length - cacheOffset);
+      cacheOffset += sizeChange;
+      cache = newCache;
+    } finally {
+      cacheLock.unlock();
+    }
+  }
+
+  /**
    * If true, don't attempt to contact random.org again for COOLDOWN_ON_FAILURE after an IOException
    */
   private final boolean rateLimitOnFailure;
