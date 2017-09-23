@@ -19,7 +19,16 @@ public final class TestUtils {
    */
   @TestingDeficiency
   public static boolean canRunRandomDotOrgLargeTest() {
-    return System.getenv("APPVEYOR") == null
+    return isNotAppveyor()
         && !("osx".equals(System.getenv("TRAVIS_OS_NAME")));
+  }
+
+  /**
+   * Appveyor doesn't seem to be allowed any random.org usage at all.
+   *
+   * @return true if we're not running on Appveyor, false if we are.
+   */
+  public static boolean isNotAppveyor() {
+    return System.getenv("APPVEYOR") == null;
   }
 }
