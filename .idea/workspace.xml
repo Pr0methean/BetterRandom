@@ -69,8 +69,8 @@
       <file leaf-file-name="RandomDotOrgSeedGeneratorTest.java" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/betterrandom/src/test/java/io/github/pr0methean/betterrandom/seed/RandomDotOrgSeedGeneratorTest.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="214">
-              <caret line="48" column="30" lean-forward="false" selection-start-line="48" selection-start-column="14" selection-end-line="48" selection-end-column="30" />
+            <state relative-caret-position="54">
+              <caret line="30" column="49" lean-forward="false" selection-start-line="30" selection-start-column="49" selection-end-line="30" selection-end-column="49" />
               <folding />
             </state>
           </provider>
@@ -99,11 +99,11 @@
       <file leaf-file-name="RandomDotOrgSeedGenerator.java" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/betterrandom/src/main/java/io/github/pr0methean/betterrandom/seed/RandomDotOrgSeedGenerator.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="206">
-              <caret line="67" column="23" lean-forward="true" selection-start-line="67" selection-start-column="23" selection-end-line="67" selection-end-column="23" />
+            <state relative-caret-position="678">
+              <caret line="89" column="60" lean-forward="false" selection-start-line="89" selection-start-column="60" selection-end-line="89" selection-end-column="60" />
               <folding>
-                <marker date="1506127198573" expanded="false" signature="1895:1938" ph="/HardcodedFileSeparator/" />
-                <marker date="1506127198573" expanded="true" signature="5631:5707" ph="/AssignmentToStaticFieldFromInstanceMethod, BusyWait/" />
+                <marker date="1506128148902" expanded="false" signature="1895:1938" ph="/HardcodedFileSeparator/" />
+                <marker date="1506128148902" expanded="true" signature="5649:5725" ph="/AssignmentToStaticFieldFromInstanceMethod, BusyWait/" />
               </folding>
             </state>
           </provider>
@@ -1499,17 +1499,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/betterrandom/src/main/java/io/github/pr0methean/betterrandom/seed/RandomDotOrgSeedGenerator.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="206">
-          <caret line="67" column="23" lean-forward="true" selection-start-line="67" selection-start-column="23" selection-end-line="67" selection-end-column="23" />
-          <folding>
-            <marker date="1506127198573" expanded="false" signature="1895:1938" ph="/HardcodedFileSeparator/" />
-            <marker date="1506127198573" expanded="true" signature="5631:5707" ph="/AssignmentToStaticFieldFromInstanceMethod, BusyWait/" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/betterrandom/src/test/java/io/github/pr0methean/betterrandom/seed/SeedTestUtils.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="267">
@@ -1518,10 +1507,21 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/betterrandom/src/main/java/io/github/pr0methean/betterrandom/seed/RandomDotOrgSeedGenerator.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="678">
+          <caret line="89" column="60" lean-forward="false" selection-start-line="89" selection-start-column="60" selection-end-line="89" selection-end-column="60" />
+          <folding>
+            <marker date="1506128148902" expanded="false" signature="1895:1938" ph="/HardcodedFileSeparator/" />
+            <marker date="1506128148902" expanded="true" signature="5649:5725" ph="/AssignmentToStaticFieldFromInstanceMethod, BusyWait/" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/betterrandom/src/test/java/io/github/pr0methean/betterrandom/seed/RandomDotOrgSeedGeneratorTest.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="214">
-          <caret line="48" column="30" lean-forward="false" selection-start-line="48" selection-start-column="14" selection-end-line="48" selection-end-column="30" />
+        <state relative-caret-position="54">
+          <caret line="30" column="49" lean-forward="false" selection-start-line="30" selection-start-column="49" selection-end-line="30" selection-end-column="49" />
           <folding />
         </state>
       </provider>

@@ -15,9 +15,10 @@
 // ============================================================================
 package io.github.pr0methean.betterrandom.seed;
 
+import static org.testng.Assert.assertEquals;
+
 import io.github.pr0methean.betterrandom.TestUtils;
 import org.testng.annotations.BeforeClass;
-import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
 /**
@@ -27,12 +28,12 @@ import org.testng.annotations.Test;
  */
 public class RandomDotOrgSeedGeneratorTest {
 
-  public static final int SMALL_CACHE_SIZE = 64;
+  public static final int SMALL_REQUEST_SIZE = 32;
 
   @BeforeClass
   public void setUp() {
     if (!TestUtils.canRunRandomDotOrgLargeTest()) {
-      RandomDotOrgSeedGenerator.setCacheSize(SMALL_CACHE_SIZE);
+      RandomDotOrgSeedGenerator.setMaxRequestSize(SMALL_REQUEST_SIZE);
     }
   }
 
@@ -48,9 +49,9 @@ public class RandomDotOrgSeedGeneratorTest {
   @Test(timeOut = 120000)
   public void testLargeRequest() throws SeedException {
     // Request more bytes than are cached internally.
-    int seedLength = RandomDotOrgSeedGenerator.getCacheSize() + 1;
+    int seedLength = 1025;
     final SeedGenerator generator = RandomDotOrgSeedGenerator.RANDOM_DOT_ORG_SEED_GENERATOR;
-    final byte[] seed = generator.generateSeed(seedLength);
-    assert seed.length == seedLength : "Failed to generate seed of correct length";
+    assertEquals(generator.generateSeed(seedLength).length, seedLength,
+        "Failed to generate seed of length " + seedLength);
   }
 }
