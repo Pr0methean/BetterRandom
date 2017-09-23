@@ -55,47 +55,17 @@ public enum RandomDotOrgSeedGenerator implements SeedGenerator {
   /**
    * Random.org does not allow requests for more than 10k integers at once.
    */
-  private static final int MAX_REQUEST_SIZE = 10000;
+  private static final int GLOBAL_MAX_REQUEST_SIZE = 10000;
+
   private static Instant EARLIEST_NEXT_ATTEMPT = Instant.MIN;
   private static final Duration COOLDOWN_ON_FAILURE = Duration.ofSeconds(10);
 
   private static final Lock cacheLock = new ReentrantLock();
   public static final Clock CLOCK = Clock.systemDefaultZone();
-  private static byte[] cache = new byte[1024];
+  public static final int MAX_CACHE_SIZE = 1024;
+  private static byte[] cache = new byte[MAX_CACHE_SIZE];
   private static int cacheOffset = cache.length;
-
-  /** @return the number of bytes that will be requested at once from random.org. */
-  public static int getCacheSize() {
-    cacheLock.lock();
-    try {
-      return cache.length;
-    } finally {
-      cacheLock.unlock();
-    }
-  }
-
-  /**
-   * Sets the number of bytes to request and cache at once. If this exceeds {@link #MAX_REQUEST_SIZE},
-   * the cache size will become {@link #MAX_REQUEST_SIZE} instead.
-   *
-   * @param newSize The new number of bytes.
-   */
-  public static void setCacheSize(int newSize) {
-    if (newSize <= 0) {
-      throw new IllegalArgumentException("New cache size must be positive, but is " + newSize);
-    }
-    newSize = Math.min(newSize, MAX_REQUEST_SIZE);
-    cacheLock.lock();
-    try {
-      int sizeChange = newSize - cache.length;
-      byte[] newCache = new byte[newSize];
-      System.arraycopy(cache, cacheOffset, newCache, cacheOffset + sizeChange, cache.length - cacheOffset);
-      cacheOffset += sizeChange;
-      cache = newCache;
-    } finally {
-      cacheLock.unlock();
-    }
-  }
+  private static int maxRequestSize = GLOBAL_MAX_REQUEST_SIZE;
 
   /**
    * If true, don't attempt to contact random.org again for COOLDOWN_ON_FAILURE after an IOException
@@ -117,7 +87,7 @@ public enum RandomDotOrgSeedGenerator implements SeedGenerator {
     cacheLock.lock();
     try {
       int numberOfBytes = Math.max(requiredBytes, cache.length);
-      numberOfBytes = Math.min(numberOfBytes, MAX_REQUEST_SIZE);
+      numberOfBytes = Math.min(numberOfBytes, maxRequestSize);
       if (numberOfBytes != cache.length) {
         cache = new byte[numberOfBytes];
         cacheOffset = numberOfBytes;
@@ -139,6 +109,30 @@ public enum RandomDotOrgSeedGenerator implements SeedGenerator {
         }
         cacheOffset = 0;
       }
+    } finally {
+      cacheLock.unlock();
+    }
+  }
+
+  /**
+   * Sets the maximum request size that we will expect random.org to allow. If more than
+   * {@link #GLOBAL_MAX_REQUEST_SIZE}, will be set to that value instead.
+   *
+   * @param maxRequestSize the new maximum request size in bytes.
+   */
+  public static void setMaxRequestSize(int maxRequestSize) {
+    maxRequestSize = Math.min(maxRequestSize, GLOBAL_MAX_REQUEST_SIZE);
+    int maxNewCacheSize = Math.min(maxRequestSize, MAX_CACHE_SIZE);
+    cacheLock.lock();
+    try {
+      int sizeChange = maxNewCacheSize - cache.length;
+      if (sizeChange > 0) {
+        byte[] newCache = new byte[maxNewCacheSize];
+        int newCacheOffset = cacheOffset + sizeChange;
+        System.arraycopy(cache, cacheOffset, newCache, newCacheOffset, cache.length - cacheOffset);
+        cache = newCache;
+      }
+      RandomDotOrgSeedGenerator.maxRequestSize = maxRequestSize;
     } finally {
       cacheLock.unlock();
     }
