@@ -27,7 +27,7 @@ import org.testng.annotations.Test;
  */
 public class RandomDotOrgSeedGeneratorTest {
 
-  public static final int SMALL_CACHE_SIZE = 128;
+  public static final int SMALL_CACHE_SIZE = 64;
 
   @BeforeClass
   public void setUp() {
@@ -47,11 +47,10 @@ public class RandomDotOrgSeedGeneratorTest {
    */
   @Test(timeOut = 120000)
   public void testLargeRequest() throws SeedException {
-    if (TestUtils.canRunRandomDotOrgLargeTest()) {
-      final SeedGenerator generator = RandomDotOrgSeedGenerator.RANDOM_DOT_ORG_SEED_GENERATOR;
-      // 1024 bytes are cached internally, so request more than that.
-      final byte[] seed = generator.generateSeed(1025);
-      assert seed.length == 1025 : "Failed to generate seed of correct length";
-    }
+    // Request more bytes than are cached internally.
+    int seedLength = RandomDotOrgSeedGenerator.getCacheSize() + 1;
+    final SeedGenerator generator = RandomDotOrgSeedGenerator.RANDOM_DOT_ORG_SEED_GENERATOR;
+    final byte[] seed = generator.generateSeed(seedLength);
+    assert seed.length == seedLength : "Failed to generate seed of correct length";
   }
 }
