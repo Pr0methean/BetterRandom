@@ -6,7 +6,9 @@ else
 fi
 cd betterrandom
 # Coverage test
-mvn $MAYBE_ANDROID_FLAG clean jacoco:prepare-agent test jacoco:report -e
+if [ "$TRAVIS_OS_NAME" != "osx" ]; then
+  mvn $MAYBE_ANDROID_FLAG clean jacoco:prepare-agent test jacoco:report -e
+fi
 STATUS=$?
 if [ "$STATUS" = 0 ]; then
   if [ "$TRAVIS" = "true" ]; then
