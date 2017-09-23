@@ -7,8 +7,12 @@ mvn release:clean release:prepare -X -DskipTests -Dmaven.test.skip=true &&\
 (
   NEWVERSION=`mvn help:evaluate -Dexpression=project.version | sed -n -e '/^\[.*\]/ !{ /^[0-9]/ { p; q } }' | sed 's/version=//'`
   mvn release:perform -X -DskipTests -Dmaven.main.skip=true -Dmaven.test.skip=true &&\
-  sed -i "s/$OLDVERSION/$NEWVERSION/" ../benchmark/pom.xml ||\
   (
+    sed -i "s/$OLDVERSION/$NEWVERSION/" ../benchmark/pom.xml &&\
+    git add ../benchmark/pom.xml
+    git commit -m "🤖 Update benchmark to use new snapshot version following release"
+    git push
+  ) || (
     if [ "$NEWVERSION" != "$OLDVERSION" ]; then
       git tag -d "BetterRandom-$NEWVERSION"
       git push origin ":refs/tags/BetterRandom-$NEWVERSION"
