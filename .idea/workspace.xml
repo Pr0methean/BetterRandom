@@ -6,9 +6,8 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="8d34e3fe-111b-4f5b-b1bf-5875a1f8c255" name="Default" comment="">
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/benchmark/pom.xml" afterPath="$PROJECT_DIR$/benchmark/pom.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/betterrandom/pom.xml" afterPath="$PROJECT_DIR$/betterrandom/pom.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/betterrandom/src/main/java/io/github/pr0methean/betterrandom/prng/adapter/BaseSplittableRandomAdapter.java" afterPath="$PROJECT_DIR$/betterrandom/src/main/java/io/github/pr0methean/betterrandom/prng/adapter/BaseSplittableRandomAdapter.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/betterrandom/src/main/java/io/github/pr0methean/betterrandom/prng/adapter/SplittableRandomReseeder.java" afterPath="$PROJECT_DIR$/betterrandom/src/main/java/io/github/pr0methean/betterrandom/prng/adapter/SplittableRandomReseeder.java" />
     </list>
     <ignored path="$PROJECT_DIR$/out/" />
     <ignored path="$PROJECT_DIR$/target/" />
@@ -32,115 +31,151 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="375">
-      <file leaf-file-name="LooperThreadTest.java" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/betterrandom/src/test/java/io/github/pr0methean/betterrandom/util/LooperThreadTest.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="220">
-              <caret line="134" column="24" lean-forward="false" selection-start-line="134" selection-start-column="24" selection-end-line="134" selection-end-column="24" />
-              <folding>
-                <element signature="imports" expanded="true" />
-                <element signature="class#SerializableThreadGroupSurrogate#0;class#LooperThreadTest#0" expanded="false" />
-                <element signature="class#SerializableThreadGroup#0;class#LooperThreadTest#0" expanded="false" />
-                <element signature="e#6997#6998#0" expanded="true" />
-                <element signature="e#7039#7040#0" expanded="true" />
-                <element signature="e#7084#7085#0" expanded="true" />
-                <element signature="e#7123#7124#0" expanded="true" />
-                <element signature="e#7393#7394#0" expanded="true" />
-                <element signature="e#7436#7437#0" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="BaseRandom.java" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/betterrandom/src/main/java/io/github/pr0methean/betterrandom/prng/BaseRandom.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="140">
-              <caret line="212" column="36" lean-forward="false" selection-start-line="212" selection-start-column="36" selection-end-line="212" selection-end-column="36" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="BaseSplittableRandomAdapter.java" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/betterrandom/src/main/java/io/github/pr0methean/betterrandom/prng/adapter/BaseSplittableRandomAdapter.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="220">
-              <caret line="33" column="0" lean-forward="true" selection-start-line="33" selection-start-column="0" selection-end-line="33" selection-end-column="0" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="DirectSplittableRandomAdapter.java" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/betterrandom/src/main/java/io/github/pr0methean/betterrandom/prng/adapter/DirectSplittableRandomAdapter.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="1120">
-              <caret line="67" column="17" lean-forward="false" selection-start-line="67" selection-start-column="17" selection-end-line="67" selection-end-column="17" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="ReseedingSplittableRandomAdapter.java" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/betterrandom/src/main/java/io/github/pr0methean/betterrandom/prng/adapter/ReseedingSplittableRandomAdapter.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="1760">
-              <caret line="105" column="25" lean-forward="false" selection-start-line="105" selection-start-column="25" selection-end-line="105" selection-end-column="25" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="SingleThreadSplittableRandomAdapter.java" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/betterrandom/src/main/java/io/github/pr0methean/betterrandom/prng/adapter/SingleThreadSplittableRandomAdapter.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="163">
-              <caret line="15" column="13" lean-forward="false" selection-start-line="15" selection-start-column="13" selection-end-line="15" selection-end-column="13" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="SplittableRandomAdapter.java" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/betterrandom/src/main/java/io/github/pr0methean/betterrandom/prng/adapter/SplittableRandomAdapter.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="720">
-              <caret line="50" column="41" lean-forward="false" selection-start-line="50" selection-start-column="41" selection-end-line="50" selection-end-column="41" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="SplittableRandomReseeder.java" pinned="false" current-in-tab="false">
+      <file leaf-file-name="SplittableRandomReseeder.java" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/betterrandom/src/main/java/io/github/pr0methean/betterrandom/prng/adapter/SplittableRandomReseeder.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="300">
-              <caret line="24" column="17" lean-forward="false" selection-start-line="24" selection-start-column="17" selection-end-line="24" selection-end-column="17" />
+            <state relative-caret-position="800">
+              <caret line="40" column="36" lean-forward="false" selection-start-line="40" selection-start-column="36" selection-end-line="40" selection-end-column="36" />
               <folding>
                 <element signature="imports" expanded="true" />
-                <marker date="1506395473478" expanded="true" signature="3081:3772" ph="{...}" />
+                <element signature="e#1105#1168#0" expanded="true" />
+                <element signature="e#3233#3234#0" expanded="true" />
+                <element signature="e#3268#3269#0" expanded="true" />
               </folding>
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="pom.xml" pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/betterrandom/pom.xml">
+      <file leaf-file-name="SplittableRandomReseederTest.java" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/betterrandom/src/test/java/io/github/pr0methean/betterrandom/prng/adapter/SplittableRandomReseederTest.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="140">
-              <caret line="40" column="28" lean-forward="false" selection-start-line="40" selection-start-column="28" selection-end-line="40" selection-end-column="28" />
-              <folding />
+            <state relative-caret-position="-11">
+              <caret line="23" column="3" lean-forward="true" selection-start-line="23" selection-start-column="3" selection-end-line="23" selection-end-column="3" />
+              <folding>
+                <element signature="imports" expanded="true" />
+              </folding>
             </state>
           </provider>
         </entry>
       </file>
       <file leaf-file-name="pom.xml" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/benchmark/pom.xml">
+        <entry file="file://$PROJECT_DIR$/betterrandom/pom.xml">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="140">
-              <caret line="72" column="21" lean-forward="false" selection-start-line="72" selection-start-column="21" selection-end-line="72" selection-end-column="21" />
-              <folding />
+            <state relative-caret-position="124">
+              <caret line="82" column="17" lean-forward="false" selection-start-line="82" selection-start-column="17" selection-end-line="82" selection-end-column="17" />
+              <folding>
+                <marker date="1506468564125" expanded="true" signature="3860:3987" ph="..." />
+                <marker date="1506468564125" expanded="true" signature="4015:16230" ph="..." />
+                <marker date="1506468564125" expanded="true" signature="4031:4284" ph="..." />
+                <marker date="1506468564125" expanded="true" signature="4048:4267" ph="..." />
+                <marker date="1506468564125" expanded="true" signature="4117:4249" ph="..." />
+                <marker date="1506468564125" expanded="true" signature="4307:15229" ph="..." />
+                <marker date="1506468564125" expanded="true" signature="4323:15205" ph="..." />
+                <marker date="1506468564125" expanded="true" signature="4340:4729" ph="..." />
+                <marker date="1506468564125" expanded="true" signature="4513:4711" ph="..." />
+                <marker date="1506468564125" expanded="true" signature="4746:5407" ph="..." />
+                <marker date="1506468564125" expanded="true" signature="4913:5210" ph="..." />
+                <marker date="1506468564125" expanded="true" signature="4935:5183" ph="..." />
+                <marker date="1506468564125" expanded="true" signature="4960:5160" ph="..." />
+                <marker date="1506468564125" expanded="true" signature="5233:5389" ph="..." />
+                <marker date="1506468564125" expanded="true" signature="5257:5365" ph="..." />
+                <marker date="1506468564125" expanded="true" signature="5279:5340" ph="..." />
+                <marker date="1506468564125" expanded="true" signature="5424:5842" ph="..." />
+                <marker date="1506468564125" expanded="true" signature="5591:5824" ph="..." />
+                <marker date="1506468564125" expanded="true" signature="5615:5800" ph="..." />
+                <marker date="1506468564125" expanded="true" signature="5711:5775" ph="..." />
+                <marker date="1506468564125" expanded="true" signature="5899:6679" ph="..." />
+                <marker date="1506468564125" expanded="true" signature="6067:6292" ph="..." />
+                <marker date="1506468564125" expanded="true" signature="6091:6268" ph="..." />
+                <marker date="1506468564125" expanded="true" signature="6187:6243" ph="..." />
+                <marker date="1506468564125" expanded="true" signature="6318:6661" ph="..." />
+                <marker date="1506468564125" expanded="true" signature="6418:6634" ph="..." />
+                <marker date="1506468564125" expanded="true" signature="6696:7043" ph="..." />
+                <marker date="1506468564125" expanded="true" signature="6867:7025" ph="..." />
+                <marker date="1506468564125" expanded="true" signature="6891:7001" ph="..." />
+                <marker date="1506468564125" expanded="true" signature="6913:6976" ph="..." />
+                <marker date="1506468564125" expanded="true" signature="7060:7944" ph="..." />
+                <marker date="1506468564125" expanded="true" signature="7178:7926" ph="..." />
+                <marker date="1506468564125" expanded="true" signature="7287:7404" ph="..." />
+                <marker date="1506468564125" expanded="true" signature="7422:7897" ph="..." />
+                <marker date="1506468564125" expanded="true" signature="7961:9305" ph="..." />
+                <marker date="1506468564125" expanded="true" signature="8114:9287" ph="..." />
+                <marker date="1506468564125" expanded="true" signature="8138:8403" ph="..." />
+                <marker date="1506468564125" expanded="true" signature="8205:8271" ph="..." />
+                <marker date="1506468564125" expanded="true" signature="8301:8378" ph="..." />
+                <marker date="1506468564125" expanded="true" signature="8427:8616" ph="..." />
+                <marker date="1506468564125" expanded="true" signature="8532:8591" ph="..." />
+                <marker date="1506468564125" expanded="true" signature="8640:9263" ph="..." />
+                <marker date="1506468564125" expanded="true" signature="8699:8757" ph="..." />
+                <marker date="1506468564125" expanded="true" signature="8787:9238" ph="..." />
+                <marker date="1506468564125" expanded="true" signature="8811:9207" ph="..." />
+                <marker date="1506468564125" expanded="true" signature="8836:9182" ph="..." />
+                <marker date="1506468564125" expanded="true" signature="8911:9156" ph="..." />
+                <marker date="1506468564125" expanded="true" signature="8941:9126" ph="..." />
+                <marker date="1506468564125" expanded="true" signature="9322:9594" ph="..." />
+                <marker date="1506468564125" expanded="true" signature="9491:9576" ph="..." />
+                <marker date="1506468564125" expanded="true" signature="9611:12507" ph="..." />
+                <marker date="1506468564125" expanded="true" signature="9778:12489" ph="..." />
+                <marker date="1506468564125" expanded="true" signature="9804:9933" ph="..." />
+                <marker date="1506468564125" expanded="true" signature="9955:12324" ph="..." />
+                <marker date="1506468564125" expanded="true" signature="10305:10502" ph="..." />
+                <marker date="1506468564125" expanded="true" signature="10525:10610" ph="..." />
+                <marker date="1506468564125" expanded="true" signature="10633:10816" ph="..." />
+                <marker date="1506468564125" expanded="true" signature="10839:10984" ph="..." />
+                <marker date="1506468564125" expanded="false" signature="10927:10931" ph="&lt;" />
+                <marker date="1506468564125" expanded="false" signature="10938:10942" ph="&gt;" />
+                <marker date="1506468564125" expanded="true" signature="11007:11183" ph="..." />
+                <marker date="1506468564125" expanded="true" signature="11253:11783" ph="..." />
+                <marker date="1506468564125" expanded="false" signature="11743:11747" ph="&lt;" />
+                <marker date="1506468564125" expanded="false" signature="11753:11757" ph="&gt;" />
+                <marker date="1506468564125" expanded="true" signature="11860:11984" ph="..." />
+                <marker date="1506468564125" expanded="true" signature="12343:12462" ph="..." />
+                <marker date="1506468564125" expanded="true" signature="12524:12766" ph="..." />
+                <marker date="1506468564125" expanded="true" signature="12783:13814" ph="..." />
+                <marker date="1506468564125" expanded="true" signature="12978:13796" ph="..." />
+                <marker date="1506468564125" expanded="true" signature="13002:13772" ph="..." />
+                <marker date="1506468564125" expanded="true" signature="13024:13081" ph="..." />
+                <marker date="1506468564125" expanded="true" signature="13309:13747" ph="..." />
+                <marker date="1506468564125" expanded="true" signature="13871:14526" ph="..." />
+                <marker date="1506468564125" expanded="true" signature="14041:14395" ph="..." />
+                <marker date="1506468564125" expanded="true" signature="14185:14369" ph="..." />
+                <marker date="1506468564125" expanded="true" signature="14421:14508" ph="..." />
+                <marker date="1506468564125" expanded="true" signature="14572:15009" ph="..." />
+                <marker date="1506468564125" expanded="true" signature="14785:14991" ph="..." />
+                <marker date="1506468564125" expanded="true" signature="15026:15188" ph="..." />
+                <marker date="1506468564125" expanded="true" signature="15243:16219" ph="..." />
+                <marker date="1506468564125" expanded="true" signature="15258:15838" ph="..." />
+                <marker date="1506468564125" expanded="true" signature="15422:15822" ph="..." />
+                <marker date="1506468564125" expanded="true" signature="15444:15800" ph="..." />
+                <marker date="1506468564125" expanded="true" signature="15499:15555" ph="..." />
+                <marker date="1506468564125" expanded="true" signature="15583:15777" ph="..." />
+                <marker date="1506468564125" expanded="true" signature="15605:15748" ph="..." />
+                <marker date="1506468564125" expanded="true" signature="15643:15725" ph="..." />
+                <marker date="1506468564125" expanded="true" signature="15853:16204" ph="..." />
+                <marker date="1506468564125" expanded="true" signature="16009:16188" ph="..." />
+                <marker date="1506468564125" expanded="true" signature="16031:16166" ph="..." />
+                <marker date="1506468564125" expanded="true" signature="16086:16143" ph="..." />
+                <marker date="1506468564125" expanded="true" signature="16243:18048" ph="..." />
+                <marker date="1506468564125" expanded="true" signature="16296:17012" ph="..." />
+                <marker date="1506468564125" expanded="true" signature="16353:16480" ph="..." />
+                <marker date="1506468564125" expanded="true" signature="16372:16460" ph="..." />
+                <marker date="1506468564125" expanded="true" signature="16494:16997" ph="..." />
+                <marker date="1506468564125" expanded="true" signature="16512:16982" ph="..." />
+                <marker date="1506468564125" expanded="true" signature="16531:16963" ph="..." />
+                <marker date="1506468564125" expanded="true" signature="16701:16943" ph="..." />
+                <marker date="1506468564125" expanded="true" signature="16727:16917" ph="..." />
+                <marker date="1506468564125" expanded="true" signature="16829:16890" ph="..." />
+                <marker date="1506468564125" expanded="true" signature="17027:18033" ph="..." />
+                <marker date="1506468564125" expanded="true" signature="17140:17491" ph="..." />
+                <marker date="1506468564125" expanded="true" signature="17161:17302" ph="..." />
+                <marker date="1506468564125" expanded="true" signature="17323:17469" ph="..." />
+                <marker date="1506468564125" expanded="true" signature="17510:17565" ph="..." />
+                <marker date="1506468564125" expanded="true" signature="17586:18018" ph="..." />
+                <marker date="1506468564125" expanded="true" signature="17607:17789" ph="..." />
+                <marker date="1506468564125" expanded="true" signature="17810:17996" ph="..." />
+                <marker date="1506468564125" expanded="true" signature="18108:18304" ph="..." />
+                <marker date="1506468564125" expanded="true" signature="18124:18288" ph="..." />
+              </folding>
             </state>
           </provider>
         </entry>
@@ -244,19 +279,19 @@
         <option value="$PROJECT_DIR$/betterrandom/src/main/java/io/github/pr0methean/betterrandom/prng/adapter/SplittableRandomAdapter.java" />
         <option value="$PROJECT_DIR$/betterrandom/src/main/java/io/github/pr0methean/betterrandom/seed/RandomSeederThread.java" />
         <option value="$PROJECT_DIR$/betterrandom/src/main/java/io/github/pr0methean/betterrandom/prng/adapter/ReseedingSplittableRandomAdapter.java" />
-        <option value="$PROJECT_DIR$/betterrandom/src/test/java/io/github/pr0methean/betterrandom/prng/adapter/SplittableRandomReseederTest.java" />
         <option value="$PROJECT_DIR$/betterrandom/src/main/java/io/github/pr0methean/betterrandom/seed/SeedGenerator.java" />
         <option value="$PROJECT_DIR$/betterrandom/src/main/java/io/github/pr0methean/betterrandom/seed/DefaultSeedGenerator.java" />
         <option value="$PROJECT_DIR$/betterrandom/src/main/java/io/github/pr0methean/betterrandom/seed/RandomDotOrgSeedGenerator.java" />
         <option value="$PROJECT_DIR$/betterrandom/src/test/java/io/github/pr0methean/betterrandom/TestUtils.java" />
         <option value="$PROJECT_DIR$/betterrandom/src/test/java/io/github/pr0methean/betterrandom/seed/RandomDotOrgSeedGeneratorTest.java" />
         <option value="$PROJECT_DIR$/betterrandom/src/main/java/io/github/pr0methean/betterrandom/seed/DevRandomSeedGenerator.java" />
-        <option value="$PROJECT_DIR$/betterrandom/src/main/java/io/github/pr0methean/betterrandom/prng/adapter/SplittableRandomReseeder.java" />
         <option value="$PROJECT_DIR$/betterrandom/src/main/java/io/github/pr0methean/betterrandom/util/LooperThread.java" />
         <option value="$PROJECT_DIR$/betterrandom/src/test/java/io/github/pr0methean/betterrandom/util/LooperThreadTest.java" />
         <option value="$PROJECT_DIR$/betterrandom/src/main/java/io/github/pr0methean/betterrandom/prng/adapter/BaseSplittableRandomAdapter.java" />
         <option value="$PROJECT_DIR$/betterrandom/pom.xml" />
         <option value="$PROJECT_DIR$/benchmark/pom.xml" />
+        <option value="$PROJECT_DIR$/betterrandom/src/test/java/io/github/pr0methean/betterrandom/prng/adapter/SplittableRandomReseederTest.java" />
+        <option value="$PROJECT_DIR$/betterrandom/src/main/java/io/github/pr0methean/betterrandom/prng/adapter/SplittableRandomReseeder.java" />
       </list>
     </option>
   </component>
@@ -328,6 +363,8 @@
     </navigator>
     <panes>
       <pane id="Scope" />
+      <pane id="Scratches" />
+      <pane id="PackagesPane" />
       <pane id="ProjectPane">
         <subPane>
           <expand>
@@ -338,12 +375,103 @@
             <path>
               <item name="BetterRandom" type="b2602c69:ProjectViewProjectNode" />
               <item name="BetterRandom" type="462c0819:PsiDirectoryNode" />
-              <item name="benchmark" type="462c0819:PsiDirectoryNode" />
+              <item name="betterrandom" type="462c0819:PsiDirectoryNode" />
             </path>
             <path>
               <item name="BetterRandom" type="b2602c69:ProjectViewProjectNode" />
               <item name="BetterRandom" type="462c0819:PsiDirectoryNode" />
               <item name="betterrandom" type="462c0819:PsiDirectoryNode" />
+              <item name="src" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="BetterRandom" type="b2602c69:ProjectViewProjectNode" />
+              <item name="BetterRandom" type="462c0819:PsiDirectoryNode" />
+              <item name="betterrandom" type="462c0819:PsiDirectoryNode" />
+              <item name="src" type="462c0819:PsiDirectoryNode" />
+              <item name="main" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="BetterRandom" type="b2602c69:ProjectViewProjectNode" />
+              <item name="BetterRandom" type="462c0819:PsiDirectoryNode" />
+              <item name="betterrandom" type="462c0819:PsiDirectoryNode" />
+              <item name="src" type="462c0819:PsiDirectoryNode" />
+              <item name="main" type="462c0819:PsiDirectoryNode" />
+              <item name="java" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="BetterRandom" type="b2602c69:ProjectViewProjectNode" />
+              <item name="BetterRandom" type="462c0819:PsiDirectoryNode" />
+              <item name="betterrandom" type="462c0819:PsiDirectoryNode" />
+              <item name="src" type="462c0819:PsiDirectoryNode" />
+              <item name="main" type="462c0819:PsiDirectoryNode" />
+              <item name="java" type="462c0819:PsiDirectoryNode" />
+              <item name="betterrandom" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="BetterRandom" type="b2602c69:ProjectViewProjectNode" />
+              <item name="BetterRandom" type="462c0819:PsiDirectoryNode" />
+              <item name="betterrandom" type="462c0819:PsiDirectoryNode" />
+              <item name="src" type="462c0819:PsiDirectoryNode" />
+              <item name="main" type="462c0819:PsiDirectoryNode" />
+              <item name="java" type="462c0819:PsiDirectoryNode" />
+              <item name="betterrandom" type="462c0819:PsiDirectoryNode" />
+              <item name="prng" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="BetterRandom" type="b2602c69:ProjectViewProjectNode" />
+              <item name="BetterRandom" type="462c0819:PsiDirectoryNode" />
+              <item name="betterrandom" type="462c0819:PsiDirectoryNode" />
+              <item name="src" type="462c0819:PsiDirectoryNode" />
+              <item name="main" type="462c0819:PsiDirectoryNode" />
+              <item name="java" type="462c0819:PsiDirectoryNode" />
+              <item name="betterrandom" type="462c0819:PsiDirectoryNode" />
+              <item name="prng" type="462c0819:PsiDirectoryNode" />
+              <item name="adapter" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="BetterRandom" type="b2602c69:ProjectViewProjectNode" />
+              <item name="BetterRandom" type="462c0819:PsiDirectoryNode" />
+              <item name="betterrandom" type="462c0819:PsiDirectoryNode" />
+              <item name="src" type="462c0819:PsiDirectoryNode" />
+              <item name="test" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="BetterRandom" type="b2602c69:ProjectViewProjectNode" />
+              <item name="BetterRandom" type="462c0819:PsiDirectoryNode" />
+              <item name="betterrandom" type="462c0819:PsiDirectoryNode" />
+              <item name="src" type="462c0819:PsiDirectoryNode" />
+              <item name="test" type="462c0819:PsiDirectoryNode" />
+              <item name="java" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="BetterRandom" type="b2602c69:ProjectViewProjectNode" />
+              <item name="BetterRandom" type="462c0819:PsiDirectoryNode" />
+              <item name="betterrandom" type="462c0819:PsiDirectoryNode" />
+              <item name="src" type="462c0819:PsiDirectoryNode" />
+              <item name="test" type="462c0819:PsiDirectoryNode" />
+              <item name="java" type="462c0819:PsiDirectoryNode" />
+              <item name="betterrandom" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="BetterRandom" type="b2602c69:ProjectViewProjectNode" />
+              <item name="BetterRandom" type="462c0819:PsiDirectoryNode" />
+              <item name="betterrandom" type="462c0819:PsiDirectoryNode" />
+              <item name="src" type="462c0819:PsiDirectoryNode" />
+              <item name="test" type="462c0819:PsiDirectoryNode" />
+              <item name="java" type="462c0819:PsiDirectoryNode" />
+              <item name="betterrandom" type="462c0819:PsiDirectoryNode" />
+              <item name="prng" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="BetterRandom" type="b2602c69:ProjectViewProjectNode" />
+              <item name="BetterRandom" type="462c0819:PsiDirectoryNode" />
+              <item name="betterrandom" type="462c0819:PsiDirectoryNode" />
+              <item name="src" type="462c0819:PsiDirectoryNode" />
+              <item name="test" type="462c0819:PsiDirectoryNode" />
+              <item name="java" type="462c0819:PsiDirectoryNode" />
+              <item name="betterrandom" type="462c0819:PsiDirectoryNode" />
+              <item name="prng" type="462c0819:PsiDirectoryNode" />
+              <item name="adapter" type="462c0819:PsiDirectoryNode" />
             </path>
             <path>
               <item name="BetterRandom" type="b2602c69:ProjectViewProjectNode" />
@@ -432,8 +560,6 @@
           <select />
         </subPane>
       </pane>
-      <pane id="Scratches" />
-      <pane id="PackagesPane" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -872,30 +998,46 @@
     <layout>
       <window_info id="Palette" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
+      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.27719298" sideWeight="0.45718655" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Palette&#9;" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4105263" sideWeight="0.44189602" order="10" side_tool="true" content_ui="tabs" />
       <window_info id="Maven Projects" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
-      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32982457" sideWeight="0.558104" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.057894737" sideWeight="0.558104" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32982457" sideWeight="0.5" order="8" side_tool="false" content_ui="tabs" />
       <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="9" side_tool="false" content_ui="tabs" />
       <window_info id="Designer" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
-      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.28975534" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
-      <window_info id="Inspection Results" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.23684211" sideWeight="0.496337" order="13" side_tool="false" content_ui="tabs" />
-      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.08947369" sideWeight="0.49082568" order="1" side_tool="false" content_ui="tabs" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.068042815" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.2553517" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="UI Designer" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="true" content_ui="tabs" />
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
+      <window_info id="Palette" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Code explorer" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
       <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
+      <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4105263" sideWeight="0.44189602" order="10" side_tool="true" content_ui="tabs" />
       <window_info id="Analyze Dataflow to" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.44983277" sideWeight="0.5" order="11" side_tool="false" content_ui="tabs" />
+      <window_info id="Maven Projects" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Dependency Viewer" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.2736842" sideWeight="0.5" order="12" side_tool="false" content_ui="tabs" />
       <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="2" side_tool="false" content_ui="combo" />
+      <window_info id="Designer" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Inspection Results" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.23684211" sideWeight="0.496337" order="13" side_tool="false" content_ui="tabs" />
+      <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.2553517" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
+      <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
+      <window_info id="UI Designer" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
+      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
+      <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
       <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.27719298" sideWeight="0.45718655" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="Palette&#9;" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
       <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
+      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32982457" sideWeight="0.558104" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32982457" sideWeight="0.5" order="8" side_tool="false" content_ui="tabs" />
+      <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="9" side_tool="false" content_ui="tabs" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.28975534" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.08947369" sideWeight="0.49082568" order="1" side_tool="false" content_ui="tabs" />
+      <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="true" content_ui="tabs" />
     </layout>
   </component>
   <component name="VcsContentAnnotationSettings">
@@ -1088,7 +1230,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="139">
           <caret line="87" column="31" lean-forward="false" selection-start-line="87" selection-start-column="31" selection-end-line="87" selection-end-column="31" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -1096,14 +1237,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="79">
           <caret line="133" column="25" lean-forward="false" selection-start-line="133" selection-start-column="25" selection-end-line="133" selection-end-column="25" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/betterrandom/src/test/java/io/github/pr0methean/betterrandom/prng/adapter/SplittableRandomReseederTest.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="240">
-          <caret line="21" column="22" lean-forward="true" selection-start-line="21" selection-start-column="22" selection-end-line="21" selection-end-column="22" />
         </state>
       </provider>
     </entry>
@@ -1115,13 +1248,13 @@
       </provider>
     </entry>
     <entry file="jar://C:/Program Files/Java/jdk1.8.0_131/jre/lib/resources.jar!/com/sun/org/apache/xerces/internal/impl/msg/DatatypeMessages.properties">
-      <provider editor-type-id="ResourceBundle">
-        <state />
-      </provider>
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="160">
           <caret line="8" column="8" lean-forward="false" selection-start-line="8" selection-start-column="8" selection-end-line="8" selection-end-column="8" />
         </state>
+      </provider>
+      <provider editor-type-id="ResourceBundle">
+        <state />
       </provider>
     </entry>
     <entry file="jar://C:/Program Files/Java/jdk1.8.0_131/jre/lib/resources.jar!/com/sun/corba/se/impl/logging/LogStrings.properties">
@@ -1132,23 +1265,19 @@
       </provider>
     </entry>
     <entry file="jar://C:/Program Files/Java/jdk1.8.0_131/jre/lib/resources.jar!/com/sun/corba/se/impl/orbutil/resources/sunorb.properties">
-      <provider editor-type-id="ResourceBundle">
-        <state />
-      </provider>
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="-280">
           <caret line="28" column="51" lean-forward="true" selection-start-line="28" selection-start-column="51" selection-end-line="28" selection-end-column="51" />
         </state>
+      </provider>
+      <provider editor-type-id="ResourceBundle">
+        <state />
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/betterrandom/src/main/java/io/github/pr0methean/betterrandom/seed/SeedGenerator.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="780">
           <caret line="54" column="16" lean-forward="false" selection-start-line="54" selection-start-column="16" selection-end-line="54" selection-end-column="16" />
-          <folding>
-            <element signature="e#2104#2105#0" expanded="false" />
-            <element signature="e#2125#2126#0" expanded="false" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -1156,7 +1285,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="700">
           <caret line="49" column="14" lean-forward="false" selection-start-line="49" selection-start-column="14" selection-end-line="49" selection-end-column="14" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -1164,7 +1292,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="960">
           <caret line="62" column="3" lean-forward="false" selection-start-line="62" selection-start-column="3" selection-end-line="62" selection-end-column="3" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -1187,10 +1314,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="23400">
           <caret line="1283" column="19" lean-forward="false" selection-start-line="1283" selection-start-column="19" selection-end-line="1283" selection-end-column="19" />
-          <folding>
-            <element signature="e#58973#58974#0" expanded="false" />
-            <element signature="e#59023#59024#0" expanded="false" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -1198,7 +1321,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="300">
           <caret line="17" column="54" lean-forward="false" selection-start-line="17" selection-start-column="54" selection-end-line="17" selection-end-column="54" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -1206,15 +1328,13 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="-1220">
           <caret line="115" column="23" lean-forward="false" selection-start-line="115" selection-start-column="23" selection-end-line="115" selection-end-column="23" />
-          <folding>
-            <marker date="1506128676661" expanded="true" signature="7736:7765" ph="{...}" />
-          </folding>
+          <folding />
         </state>
       </provider>
     </entry>
     <entry file="jar://C:/Program Files/Java/jdk1.8.0_131/src.zip!/java/util/SplittableRandom.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="240">
+        <state relative-caret-position="287">
           <caret line="160" column="64" lean-forward="false" selection-start-line="160" selection-start-column="45" selection-end-line="160" selection-end-column="64" />
           <folding />
         </state>
@@ -1224,9 +1344,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="317">
           <caret line="60" column="27" lean-forward="true" selection-start-line="60" selection-start-column="27" selection-end-line="60" selection-end-column="27" />
-          <folding>
-            <element signature="imports" expanded="true" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -1234,7 +1351,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="300">
           <caret line="35" column="23" lean-forward="true" selection-start-line="35" selection-start-column="23" selection-end-line="35" selection-end-column="23" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -1253,10 +1369,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="348">
           <caret line="88" column="60" lean-forward="false" selection-start-line="88" selection-start-column="60" selection-end-line="88" selection-end-column="60" />
-          <folding>
-            <marker date="1506128676614" expanded="false" signature="2007:2050" ph="/HardcodedFileSeparator/" />
-            <marker date="1506128676614" expanded="true" signature="5652:5728" ph="/AssignmentToStaticFieldFromInstanceMethod, BusyWait/" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -1264,7 +1376,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="-13">
           <caret line="1891" column="16" lean-forward="true" selection-start-line="1891" selection-start-column="16" selection-end-line="1891" selection-end-column="16" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -1272,7 +1383,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="-377">
           <caret line="271" column="0" lean-forward="false" selection-start-line="271" selection-start-column="0" selection-end-line="271" selection-end-column="64" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -1297,15 +1407,10 @@
         <state relative-caret-position="220">
           <caret line="134" column="24" lean-forward="false" selection-start-line="134" selection-start-column="24" selection-end-line="134" selection-end-column="24" />
           <folding>
-            <element signature="imports" expanded="true" />
+            <element signature="imports" expanded="false" />
             <element signature="class#SerializableThreadGroupSurrogate#0;class#LooperThreadTest#0" expanded="false" />
             <element signature="class#SerializableThreadGroup#0;class#LooperThreadTest#0" expanded="false" />
-            <element signature="e#6997#6998#0" expanded="true" />
-            <element signature="e#7039#7040#0" expanded="true" />
-            <element signature="e#7084#7085#0" expanded="true" />
-            <element signature="e#7123#7124#0" expanded="true" />
-            <element signature="e#7393#7394#0" expanded="true" />
-            <element signature="e#7436#7437#0" expanded="true" />
+            <element signature="e#7123#7124#0" expanded="false" />
           </folding>
         </state>
       </provider>
@@ -1350,30 +1455,153 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/betterrandom/src/main/java/io/github/pr0methean/betterrandom/prng/adapter/SplittableRandomReseeder.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="300">
-          <caret line="24" column="17" lean-forward="false" selection-start-line="24" selection-start-column="17" selection-end-line="24" selection-end-column="17" />
-          <folding>
-            <element signature="imports" expanded="true" />
-            <marker date="1506395473478" expanded="true" signature="3081:3772" ph="{...}" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/benchmark/pom.xml">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="140">
           <caret line="72" column="21" lean-forward="false" selection-start-line="72" selection-start-column="21" selection-end-line="72" selection-end-column="21" />
-          <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/betterrandom/pom.xml">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="140">
-          <caret line="40" column="28" lean-forward="false" selection-start-line="40" selection-start-column="28" selection-end-line="40" selection-end-column="28" />
-          <folding />
+        <state relative-caret-position="124">
+          <caret line="82" column="17" lean-forward="false" selection-start-line="82" selection-start-column="17" selection-end-line="82" selection-end-column="17" />
+          <folding>
+            <marker date="1506468564125" expanded="true" signature="3860:3987" ph="..." />
+            <marker date="1506468564125" expanded="true" signature="4015:16230" ph="..." />
+            <marker date="1506468564125" expanded="true" signature="4031:4284" ph="..." />
+            <marker date="1506468564125" expanded="true" signature="4048:4267" ph="..." />
+            <marker date="1506468564125" expanded="true" signature="4117:4249" ph="..." />
+            <marker date="1506468564125" expanded="true" signature="4307:15229" ph="..." />
+            <marker date="1506468564125" expanded="true" signature="4323:15205" ph="..." />
+            <marker date="1506468564125" expanded="true" signature="4340:4729" ph="..." />
+            <marker date="1506468564125" expanded="true" signature="4513:4711" ph="..." />
+            <marker date="1506468564125" expanded="true" signature="4746:5407" ph="..." />
+            <marker date="1506468564125" expanded="true" signature="4913:5210" ph="..." />
+            <marker date="1506468564125" expanded="true" signature="4935:5183" ph="..." />
+            <marker date="1506468564125" expanded="true" signature="4960:5160" ph="..." />
+            <marker date="1506468564125" expanded="true" signature="5233:5389" ph="..." />
+            <marker date="1506468564125" expanded="true" signature="5257:5365" ph="..." />
+            <marker date="1506468564125" expanded="true" signature="5279:5340" ph="..." />
+            <marker date="1506468564125" expanded="true" signature="5424:5842" ph="..." />
+            <marker date="1506468564125" expanded="true" signature="5591:5824" ph="..." />
+            <marker date="1506468564125" expanded="true" signature="5615:5800" ph="..." />
+            <marker date="1506468564125" expanded="true" signature="5711:5775" ph="..." />
+            <marker date="1506468564125" expanded="true" signature="5899:6679" ph="..." />
+            <marker date="1506468564125" expanded="true" signature="6067:6292" ph="..." />
+            <marker date="1506468564125" expanded="true" signature="6091:6268" ph="..." />
+            <marker date="1506468564125" expanded="true" signature="6187:6243" ph="..." />
+            <marker date="1506468564125" expanded="true" signature="6318:6661" ph="..." />
+            <marker date="1506468564125" expanded="true" signature="6418:6634" ph="..." />
+            <marker date="1506468564125" expanded="true" signature="6696:7043" ph="..." />
+            <marker date="1506468564125" expanded="true" signature="6867:7025" ph="..." />
+            <marker date="1506468564125" expanded="true" signature="6891:7001" ph="..." />
+            <marker date="1506468564125" expanded="true" signature="6913:6976" ph="..." />
+            <marker date="1506468564125" expanded="true" signature="7060:7944" ph="..." />
+            <marker date="1506468564125" expanded="true" signature="7178:7926" ph="..." />
+            <marker date="1506468564125" expanded="true" signature="7287:7404" ph="..." />
+            <marker date="1506468564125" expanded="true" signature="7422:7897" ph="..." />
+            <marker date="1506468564125" expanded="true" signature="7961:9305" ph="..." />
+            <marker date="1506468564125" expanded="true" signature="8114:9287" ph="..." />
+            <marker date="1506468564125" expanded="true" signature="8138:8403" ph="..." />
+            <marker date="1506468564125" expanded="true" signature="8205:8271" ph="..." />
+            <marker date="1506468564125" expanded="true" signature="8301:8378" ph="..." />
+            <marker date="1506468564125" expanded="true" signature="8427:8616" ph="..." />
+            <marker date="1506468564125" expanded="true" signature="8532:8591" ph="..." />
+            <marker date="1506468564125" expanded="true" signature="8640:9263" ph="..." />
+            <marker date="1506468564125" expanded="true" signature="8699:8757" ph="..." />
+            <marker date="1506468564125" expanded="true" signature="8787:9238" ph="..." />
+            <marker date="1506468564125" expanded="true" signature="8811:9207" ph="..." />
+            <marker date="1506468564125" expanded="true" signature="8836:9182" ph="..." />
+            <marker date="1506468564125" expanded="true" signature="8911:9156" ph="..." />
+            <marker date="1506468564125" expanded="true" signature="8941:9126" ph="..." />
+            <marker date="1506468564125" expanded="true" signature="9322:9594" ph="..." />
+            <marker date="1506468564125" expanded="true" signature="9491:9576" ph="..." />
+            <marker date="1506468564125" expanded="true" signature="9611:12507" ph="..." />
+            <marker date="1506468564125" expanded="true" signature="9778:12489" ph="..." />
+            <marker date="1506468564125" expanded="true" signature="9804:9933" ph="..." />
+            <marker date="1506468564125" expanded="true" signature="9955:12324" ph="..." />
+            <marker date="1506468564125" expanded="true" signature="10305:10502" ph="..." />
+            <marker date="1506468564125" expanded="true" signature="10525:10610" ph="..." />
+            <marker date="1506468564125" expanded="true" signature="10633:10816" ph="..." />
+            <marker date="1506468564125" expanded="true" signature="10839:10984" ph="..." />
+            <marker date="1506468564125" expanded="false" signature="10927:10931" ph="&lt;" />
+            <marker date="1506468564125" expanded="false" signature="10938:10942" ph="&gt;" />
+            <marker date="1506468564125" expanded="true" signature="11007:11183" ph="..." />
+            <marker date="1506468564125" expanded="true" signature="11253:11783" ph="..." />
+            <marker date="1506468564125" expanded="false" signature="11743:11747" ph="&lt;" />
+            <marker date="1506468564125" expanded="false" signature="11753:11757" ph="&gt;" />
+            <marker date="1506468564125" expanded="true" signature="11860:11984" ph="..." />
+            <marker date="1506468564125" expanded="true" signature="12343:12462" ph="..." />
+            <marker date="1506468564125" expanded="true" signature="12524:12766" ph="..." />
+            <marker date="1506468564125" expanded="true" signature="12783:13814" ph="..." />
+            <marker date="1506468564125" expanded="true" signature="12978:13796" ph="..." />
+            <marker date="1506468564125" expanded="true" signature="13002:13772" ph="..." />
+            <marker date="1506468564125" expanded="true" signature="13024:13081" ph="..." />
+            <marker date="1506468564125" expanded="true" signature="13309:13747" ph="..." />
+            <marker date="1506468564125" expanded="true" signature="13871:14526" ph="..." />
+            <marker date="1506468564125" expanded="true" signature="14041:14395" ph="..." />
+            <marker date="1506468564125" expanded="true" signature="14185:14369" ph="..." />
+            <marker date="1506468564125" expanded="true" signature="14421:14508" ph="..." />
+            <marker date="1506468564125" expanded="true" signature="14572:15009" ph="..." />
+            <marker date="1506468564125" expanded="true" signature="14785:14991" ph="..." />
+            <marker date="1506468564125" expanded="true" signature="15026:15188" ph="..." />
+            <marker date="1506468564125" expanded="true" signature="15243:16219" ph="..." />
+            <marker date="1506468564125" expanded="true" signature="15258:15838" ph="..." />
+            <marker date="1506468564125" expanded="true" signature="15422:15822" ph="..." />
+            <marker date="1506468564125" expanded="true" signature="15444:15800" ph="..." />
+            <marker date="1506468564125" expanded="true" signature="15499:15555" ph="..." />
+            <marker date="1506468564125" expanded="true" signature="15583:15777" ph="..." />
+            <marker date="1506468564125" expanded="true" signature="15605:15748" ph="..." />
+            <marker date="1506468564125" expanded="true" signature="15643:15725" ph="..." />
+            <marker date="1506468564125" expanded="true" signature="15853:16204" ph="..." />
+            <marker date="1506468564125" expanded="true" signature="16009:16188" ph="..." />
+            <marker date="1506468564125" expanded="true" signature="16031:16166" ph="..." />
+            <marker date="1506468564125" expanded="true" signature="16086:16143" ph="..." />
+            <marker date="1506468564125" expanded="true" signature="16243:18048" ph="..." />
+            <marker date="1506468564125" expanded="true" signature="16296:17012" ph="..." />
+            <marker date="1506468564125" expanded="true" signature="16353:16480" ph="..." />
+            <marker date="1506468564125" expanded="true" signature="16372:16460" ph="..." />
+            <marker date="1506468564125" expanded="true" signature="16494:16997" ph="..." />
+            <marker date="1506468564125" expanded="true" signature="16512:16982" ph="..." />
+            <marker date="1506468564125" expanded="true" signature="16531:16963" ph="..." />
+            <marker date="1506468564125" expanded="true" signature="16701:16943" ph="..." />
+            <marker date="1506468564125" expanded="true" signature="16727:16917" ph="..." />
+            <marker date="1506468564125" expanded="true" signature="16829:16890" ph="..." />
+            <marker date="1506468564125" expanded="true" signature="17027:18033" ph="..." />
+            <marker date="1506468564125" expanded="true" signature="17140:17491" ph="..." />
+            <marker date="1506468564125" expanded="true" signature="17161:17302" ph="..." />
+            <marker date="1506468564125" expanded="true" signature="17323:17469" ph="..." />
+            <marker date="1506468564125" expanded="true" signature="17510:17565" ph="..." />
+            <marker date="1506468564125" expanded="true" signature="17586:18018" ph="..." />
+            <marker date="1506468564125" expanded="true" signature="17607:17789" ph="..." />
+            <marker date="1506468564125" expanded="true" signature="17810:17996" ph="..." />
+            <marker date="1506468564125" expanded="true" signature="18108:18304" ph="..." />
+            <marker date="1506468564125" expanded="true" signature="18124:18288" ph="..." />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/betterrandom/src/test/java/io/github/pr0methean/betterrandom/prng/adapter/SplittableRandomReseederTest.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-11">
+          <caret line="23" column="3" lean-forward="true" selection-start-line="23" selection-start-column="3" selection-end-line="23" selection-end-column="3" />
+          <folding>
+            <element signature="imports" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/betterrandom/src/main/java/io/github/pr0methean/betterrandom/prng/adapter/SplittableRandomReseeder.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="800">
+          <caret line="40" column="36" lean-forward="false" selection-start-line="40" selection-start-column="36" selection-end-line="40" selection-end-column="36" />
+          <folding>
+            <element signature="imports" expanded="true" />
+            <element signature="e#1105#1168#0" expanded="true" />
+            <element signature="e#3233#3234#0" expanded="true" />
+            <element signature="e#3268#3269#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
