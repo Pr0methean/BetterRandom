@@ -6,7 +6,6 @@
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
-        <module name="benchmark" />
       </profile>
       <profile name="Annotation profile for root" enabled="true">
         <sourceOutputDir name="target/generated-sources/annotations" />

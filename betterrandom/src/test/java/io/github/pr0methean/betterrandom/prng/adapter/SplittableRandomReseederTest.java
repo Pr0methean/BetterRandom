@@ -4,8 +4,6 @@ import static io.github.pr0methean.betterrandom.prng.adapter.SplittableRandomRes
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertTrue;
 
-import io.github.pr0methean.betterrandom.TestingDeficiency;
-import io.github.pr0methean.betterrandom.util.BinaryUtils;
 import java.util.Arrays;
 import java.util.SplittableRandom;
 import org.testng.annotations.Test;
@@ -20,17 +18,17 @@ public class SplittableRandomReseederTest {
     SplittableRandom random = new SplittableRandom();
     random.nextLong();
     random = SplittableRandomReseeder.reseed(random, TEST_SEED);
+    assertEquals(SplittableRandomReseeder.getSeed(random), TEST_SEED);
     long[] actual = random.longs(20).toArray();
     assertTrue(Arrays.equals(expected, actual));
   }
 
-  @TestingDeficiency
-  @Test(enabled = false)
+  @Test
   public void testGetSeed() throws Exception {
     SplittableRandom random = new SplittableRandom(TEST_SEED);
     // Test for class-loader trickery by the test framework
     assertTrue(SPLITTABLE_RANDOM_CLASS.isInstance(random));
-    assertEquals(BinaryUtils.convertBytesToLong(SplittableRandomReseeder.getSeed(random)),
+    assertEquals(SplittableRandomReseeder.getSeed(random),
         TEST_SEED);
   }
 }
