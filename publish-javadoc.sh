@@ -22,7 +22,7 @@ find . -iname "*.html" -exec sed -i 's/<head>/<head><!-- Google Tag Manager --><
 find . -iname "*.html" -exec sed -i 's/<body>/<body><!-- Google Tag Manager (noscript) --><noscript><iframe src="https:\/\/www.googletagmanager.com\/ns.html?id=GTM-K9NNCTT" height="0" width="0" style="display:none;visibility:hidden"><\/iframe><\/noscript><!-- End Google Tag Manager (noscript) -->/' {} \;
 
 # Minify & inline
-find . -iname "*.html" -exec inliner -i --skip-absolute-urls {} > {}.tmp \;
+find . -iname "*.html" -exec sh -c 'inliner -i --skip-absolute-urls $0 > $0.tmp' {} \;
 find . -iname "*.html.tmp" -exec rename "s/html.tmp$/html/" {} \;
 
 git add .
