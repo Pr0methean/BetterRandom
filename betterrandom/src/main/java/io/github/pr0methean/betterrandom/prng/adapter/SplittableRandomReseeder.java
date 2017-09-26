@@ -96,8 +96,8 @@ public final class SplittableRandomReseeder {
     if (CAN_RESEED_REFLECTIVELY && original != null) {
       try {
         if (PUT_LONG_VOLATILE == null) {
-          castNonNull(SEED_FIELD).set(original, seed);
-          castNonNull(GAMMA_FIELD).set(original, GOLDEN_GAMMA);
+          castNonNull(SEED_FIELD).setLong(original, seed);
+          castNonNull(GAMMA_FIELD).setLong(original, GOLDEN_GAMMA);
         } else {
           PUT_LONG_VOLATILE.invokeExact((Object) original, SEED_FIELD_OFFSET, seed);
           PUT_LONG_VOLATILE.invokeExact((Object) original, GAMMA_FIELD_OFFSET, GOLDEN_GAMMA);
