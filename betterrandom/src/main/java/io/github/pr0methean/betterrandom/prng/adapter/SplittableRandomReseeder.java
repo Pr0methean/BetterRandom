@@ -124,7 +124,7 @@ public final class SplittableRandomReseeder {
             GET_LONG_VOLATILE == null
                 ? castNonNull(SEED_FIELD).getLong(splittableRandom)
                 : (long) (GET_LONG_VOLATILE
-                    .invokeExact(splittableRandom, (long) SEED_FIELD_OFFSET)));
+                    .invokeExact((Object) splittableRandom, (long) SEED_FIELD_OFFSET)));
       } catch (final Throwable t) {
         throw new RuntimeException(t);
       }
