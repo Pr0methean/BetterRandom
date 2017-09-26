@@ -23,7 +23,7 @@ find . -iname "*.html" -exec sed -i 's/<body>/<body><!-- Google Tag Manager (nos
 
 # Minify & inline
 find . -iname "*.html" -exec sh -c 'inliner -i --skip-absolute-urls $0 > $0.tmp' {} \;
-find . -iname "*.html.tmp" -exec rename "s/html.tmp$/html/" {} \;
+find . -iname "*.html.tmp" -exec rename -f "s/html.tmp$/html/" {} \;
 
 git add .
 git commit -m "🤖 Update Javadocs for GitHub Pages"
