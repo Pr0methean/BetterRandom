@@ -131,7 +131,7 @@ public class LooperThreadTest {
     assertTrue(exceptionHandlerRun.get());
   }
 
-  @TestingDeficiency // FIXME: Failing
+  @TestingDeficiency
   @Test(enabled = false)
   public void testDefaultUncaughtExceptionHandler() throws InterruptedException {
     final AtomicBoolean defaultHandlerCalled = new AtomicBoolean(false);
@@ -143,6 +143,7 @@ public class LooperThreadTest {
       FailingLooperThread failingThread = new FailingLooperThread();
       failingThread.start();
       failingThread.join();
+      Thread.sleep(1000);
       assertTrue(defaultHandlerCalled.get());
     } finally {
       Thread.setDefaultUncaughtExceptionHandler(oldHandler);
