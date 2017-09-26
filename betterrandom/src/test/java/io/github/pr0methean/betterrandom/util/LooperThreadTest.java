@@ -5,6 +5,7 @@ import static org.testng.Assert.assertFalse;
 import static org.testng.Assert.assertNotSame;
 import static org.testng.Assert.assertSame;
 import static org.testng.Assert.assertTrue;
+import static org.testng.Assert.fail;
 
 import io.github.pr0methean.betterrandom.MockException;
 import java.io.InvalidObjectException;
@@ -79,6 +80,11 @@ public class LooperThreadTest {
     LooperThread copy = CloneViaSerialization.clone(thread);
     assertNotSame(thread, copy);
     assertEquals(State.TERMINATED, copy.getState());
+    try {
+      copy.start();
+      fail("Shouldn't be able to start a thread that's already terminated");
+    } catch (final IllegalThreadStateException expected) {
+    }
   }
 
   @SuppressWarnings("argument.type.incompatible")
@@ -124,6 +130,23 @@ public class LooperThreadTest {
     assertTrue(exceptionHandlerRun.get());
   }
 
+  @Test
+  public void testDefaultUncaughtExceptionHandler() throws InterruptedException {
+    final AtomicBoolean defaultHandlerCalled = new AtomicBoolean(false);
+    UncaughtExceptionHandler oldHandler = Thread.getDefaultUncaughtExceptionHandler();
+    try {
+      Thread.setDefaultUncaughtExceptionHandler((thread, throwable) -> {
+        defaultHandlerCalled.set(true);
+      });
+      FailingLooperThread failingThread = new FailingLooperThread();
+      failingThread.start();
+      failingThread.join();
+      assertTrue(defaultHandlerCalled.get());
+    } finally {
+      Thread.setDefaultUncaughtExceptionHandler(oldHandler);
+    }
+  }
+
   /**
    * Intermediate used to give {@link SerializableThreadGroup} a parameterless super constructor for
    * deserialization purposes.
@@ -166,6 +189,16 @@ public class LooperThreadTest {
     public boolean iterate() throws InterruptedException {
       TARGET.run();
       return iterationsRun.get() < 100;
+    }
+  }
+
+  private static class FailingLooperThread extends LooperThread {
+    public FailingLooperThread() {
+      super("FailingLooperThread");
+    }
+    @Override
+    public boolean iterate() {
+      throw new MockException();
     }
   }
 
