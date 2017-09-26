@@ -21,6 +21,10 @@ find . -iname "*.html" -exec sed -i 's/<li><a href="[^\"]*" target="_top">No&nbs
 find . -iname "*.html" -exec sed -i 's/<head>/<head><!-- Google Tag Manager --><script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({"gtm.start": new Date().getTime(),event:"gtm.js"});var f=d.getElementsByTagName(s)[0], j=d.createElement(s),dl=l!="dataLayer"?"&l="+l:"";j.async=true;j.src="https:\/\/www.googletagmanager.com\/gtm.js?id="+i+dl;f.parentNode.insertBefore(j,f);})(window,document,"script","dataLayer","GTM-K9NNCTT");<\/script><!-- End Google Tag Manager -->/' {} \;
 find . -iname "*.html" -exec sed -i 's/<body>/<body><!-- Google Tag Manager (noscript) --><noscript><iframe src="https:\/\/www.googletagmanager.com\/ns.html?id=GTM-K9NNCTT" height="0" width="0" style="display:none;visibility:hidden"><\/iframe><\/noscript><!-- End Google Tag Manager (noscript) -->/' {} \;
 
+# Minify & inline
+find . -iname "*.html" -exec inliner -i --skip-absolute-urls {} > {}.tmp \;
+find . -iname "*.html.tmp" -exec rename "s/html.tmp$/html/" {} \;
+
 git add .
 git commit -m "🤖 Update Javadocs for GitHub Pages"
 git push
