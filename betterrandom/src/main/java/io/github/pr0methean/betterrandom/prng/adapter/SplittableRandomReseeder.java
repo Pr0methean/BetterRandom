@@ -38,7 +38,7 @@ public final class SplittableRandomReseeder {
   private static @MonotonicNonNull Field GAMMA_FIELD;
   private static long GAMMA_FIELD_OFFSET;
   private static long SEED_FIELD_OFFSET;
-  private static long GOLDEN_GAMMA;
+  private static final long GOLDEN_GAMMA = 0x9e3779b97f4a7c15L;
   private static boolean CAN_RESEED_REFLECTIVELY;
 
   static {
@@ -64,13 +64,15 @@ public final class SplittableRandomReseeder {
           .invoke(unsafe, GAMMA_FIELD));
       SEED_FIELD_OFFSET = (long) (getFieldOffset
           .invoke(unsafe, SEED_FIELD));
-      final Field goldenGammaField = SPLITTABLE_RANDOM_CLASS.getDeclaredField("GOLDEN_GAMMA");
-      goldenGammaField.setAccessible(true);
-      GOLDEN_GAMMA = (long) (goldenGammaField.get(null));
-      final Method putVolatileLong = unsafeClass
+      final MethodHandles.Lookup lookup = MethodHandles.lookup();
+      final Method putLongVolatile = unsafeClass
           .getDeclaredMethod("putLongVolatile", Object.class, long.class, long.class);
-      putVolatileLong.setAccessible(true);
-      PUT_LONG_VOLATILE = MethodHandles.lookup().unreflect(putVolatileLong).bindTo(unsafe);
+      putLongVolatile.setAccessible(true);
+      PUT_LONG_VOLATILE = lookup.unreflect(putLongVolatile).bindTo(unsafe);
+      final Method getLongVolatile = unsafeClass.getDeclaredMethod("getLongVolatile",
+          Object.class, long.class);
+      getLongVolatile.setAccessible(true);
+      GET_LONG_VOLATILE = lookup.unreflect(getLongVolatile).bindTo(unsafe);
     } catch (final Exception e) {
       // May include at least one exception type that's new in Java 9
       LOG.error("Can't reflectively reseed SplittableRandom instances: %s", e);
@@ -110,15 +112,13 @@ public final class SplittableRandomReseeder {
   }
 
   /** @return false if {@link #getSeed(SplittableRandom)} will fail; true otherwise. */
-  @EnsuresNonNullIf(result = true, expression = {"SEED_FIELD"})
+  @EnsuresNonNullIf(result = true, expression = "SEED_FIELD")
   public static boolean canGetSeed() {
     return SEED_FIELD != null;
   }
 
   public static byte[] getSeed(final SplittableRandom splittableRandom) {
-    if (!canGetSeed()) {
-      throw new UnsupportedOperationException();
-    } else {
+    if (canGetSeed()) {
       try {
         return BinaryUtils.convertLongToBytes(
             GET_LONG_VOLATILE == null
@@ -128,6 +128,8 @@ public final class SplittableRandomReseeder {
       } catch (final Throwable t) {
         throw new RuntimeException(t);
       }
+    } else {
+      throw new UnsupportedOperationException();
     }
   }
 }
