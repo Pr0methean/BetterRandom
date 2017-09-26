@@ -4,16 +4,11 @@ import static org.checkerframework.checker.nullness.NullnessUtil.castNonNull;
 
 import io.github.pr0methean.betterrandom.util.BinaryUtils;
 import io.github.pr0methean.betterrandom.util.LogPreFormatter;
-import java.lang.invoke.MethodHandle;
-import java.lang.invoke.MethodHandles;
 import java.lang.reflect.Field;
-import java.lang.reflect.Method;
 import java.util.SplittableRandom;
 import org.checkerframework.checker.nullness.qual.EnsuresNonNullIf;
 import org.checkerframework.checker.nullness.qual.MonotonicNonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
-import org.objenesis.Objenesis;
-import org.objenesis.ObjenesisStd;
 
 /**
  * Utility class to re-seed a {@link java.util.SplittableRandom} instance using reflection and
@@ -31,9 +26,9 @@ public final class SplittableRandomReseeder {
   /** Visible only for test debugging. */
   protected static final Class<?> SPLITTABLE_RANDOM_CLASS;
   private static final LogPreFormatter LOG = new LogPreFormatter(SplittableRandomReseeder.class);
+  private static final long GOLDEN_GAMMA = 0x9e3779b97f4a7c15L;
   private static @MonotonicNonNull Field SEED_FIELD;
   private static @MonotonicNonNull Field GAMMA_FIELD;
-  private static final long GOLDEN_GAMMA = 0x9e3779b97f4a7c15L;
   private static boolean CAN_RESEED_REFLECTIVELY;
 
   static {

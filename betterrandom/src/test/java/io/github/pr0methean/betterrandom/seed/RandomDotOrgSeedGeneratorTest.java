@@ -19,7 +19,6 @@ import static io.github.pr0methean.betterrandom.TestUtils.canRunRandomDotOrgLarg
 import static io.github.pr0methean.betterrandom.TestUtils.isNotAppveyor;
 import static org.testng.Assert.assertEquals;
 
-import io.github.pr0methean.betterrandom.TestUtils;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
