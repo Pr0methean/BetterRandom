@@ -14,25 +14,21 @@ import org.testng.annotations.Test;
 public class SplittableRandomAdapterTest extends SingleThreadSplittableRandomAdapterTest {
 
   private static final SeedGenerator FAKE_SEED_GENERATOR = new FakeSeedGenerator();
-
-  @Override
-  @TestingDeficiency
-  @Test(enabled = false) // https://github.com/Pr0methean/BetterRandom/issues/5
-  public void testRepeatability() throws SeedException {
-    super.testRepeatability();
-  }
+  private static final long TEST_SEED = 0x0123456789ABCDEFL;
 
   @Override
   protected SplittableRandomAdapter tryCreateRng() throws SeedException {
     return new SplittableRandomAdapter(DefaultSeedGenerator.DEFAULT_SEED_GENERATOR);
   }
 
+
   /** This test only ensures that deserialization produces a usable instance. */
+/*
   @Override
   public void testSerializable() throws SeedException {
     CloneViaSerialization.clone(tryCreateRng()).nextInt();
   }
-
+*/
   /**
    * Since reseeding is thread-local, we can't use a {@link io.github.pr0methean.betterrandom.seed.RandomSeederThread}
    * for this test.
