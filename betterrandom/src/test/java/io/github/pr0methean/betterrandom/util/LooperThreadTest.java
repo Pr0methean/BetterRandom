@@ -196,9 +196,11 @@ public class LooperThreadTest {
   }
 
   private static class FailingLooperThread extends LooperThread {
+
     public FailingLooperThread() {
       super("FailingLooperThread");
     }
+
     @Override
     public boolean iterate() {
       throw new MockException();

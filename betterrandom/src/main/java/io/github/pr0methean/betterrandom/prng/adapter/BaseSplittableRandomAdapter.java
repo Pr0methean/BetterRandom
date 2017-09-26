@@ -1,6 +1,5 @@
 package io.github.pr0methean.betterrandom.prng.adapter;
 
-import com.google.common.base.MoreObjects.ToStringHelper;
 import io.github.pr0methean.betterrandom.prng.BaseRandom;
 import io.github.pr0methean.betterrandom.util.EntryPoint;
 import java.util.Random;
