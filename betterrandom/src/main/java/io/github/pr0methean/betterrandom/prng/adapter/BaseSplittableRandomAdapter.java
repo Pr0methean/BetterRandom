@@ -33,11 +33,6 @@ public abstract class BaseSplittableRandomAdapter extends BaseRandom {
   }
 
   @Override
-  protected ToStringHelper addSubSubclassFields(final ToStringHelper original) {
-    return original;
-  }
-
-  @Override
   protected void setSeedInternal(
       @UnknownInitialization(Random.class)BaseSplittableRandomAdapter this, byte[] seed) {
     haveNextNextGaussian = false;
