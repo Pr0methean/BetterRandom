@@ -269,7 +269,6 @@ public class LooperThread extends Thread implements Serializable, Cloneable {
   @Override
   public void setUncaughtExceptionHandler(final UncaughtExceptionHandler handler) {
     uncaughtExceptionHandler.wrapped = handler;
-    super.setUncaughtExceptionHandler(uncaughtExceptionHandler);
   }
 
   @Override
