@@ -39,18 +39,18 @@ public enum DevRandomSeedGenerator implements SeedGenerator {
   private static AtomicBoolean DEV_RANDOM_DOES_NOT_EXIST = new AtomicBoolean(false);
 
   /**
-   * @throws io.github.pr0methean.betterrandom.seed.SeedException if {@literal /dev/random} does
-   *     not exist or is not accessible
+   * @throws SeedException if {@literal /dev/random} does not exist or is not accessible. If it
+   *     did not exist during a previous {@link #generateSeed(byte[])} or {@link #generateSeed(int)}
+   *     call, then for performance reasons, it is assumed to continue not to exist for the rest of
+   *     the JVM's lifespan.
    */
-  @SuppressWarnings({"IOResourceOpenedButNotSafelyClosed", "resource"})
   @Override
   public void generateSeed(final byte[] randomSeed) throws SeedException {
     if (!isWorthTrying()) {
       throw new SeedException(DEV_RANDOM_STRING + " did not exist when previously checked for");
     }
-    FileInputStream file = null;
-    try {
-      file = new FileInputStream(DEV_RANDOM);
+
+    try (FileInputStream file = new FileInputStream(DEV_RANDOM)) {
       final int length = randomSeed.length;
       int count = 0;
       while (count < length) {
@@ -70,14 +70,6 @@ public enum DevRandomSeedGenerator implements SeedGenerator {
       // Might be thrown if resource access is restricted (such as in
       // an applet sandbox).
       throw new SeedException("SecurityManager prevented access to " + DEV_RANDOM_STRING, ex);
-    } finally {
-      if (file != null) {
-        try {
-          file.close();
-        } catch (final IOException ex) {
-          // Ignore.
-        }
-      }
     }
   }
 
