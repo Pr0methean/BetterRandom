@@ -15,7 +15,6 @@
 // ============================================================================
 package io.github.pr0methean.betterrandom.prng;
 
-import io.github.pr0methean.betterrandom.TestingDeficiency;
 import io.github.pr0methean.betterrandom.seed.SeedException;
 
 /**
@@ -33,11 +32,5 @@ public class XorShiftRandomTest extends BaseRandomTest {
   @Override
   protected BaseRandom createRng(final byte[] seed) throws SeedException {
     return new XorShiftRandom(seed);
-  }
-
-  @TestingDeficiency
-  @Override
-  protected boolean alwaysCheckEntropy() {
-    return false;
   }
 }

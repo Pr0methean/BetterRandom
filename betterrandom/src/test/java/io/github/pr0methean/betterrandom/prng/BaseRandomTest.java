@@ -217,14 +217,11 @@ public abstract class BaseRandomTest {
   @Test
   public void testNextGaussian() throws Exception {
     final BaseRandom prng = createRng();
-    // Sometimes nextGaussian needs to call nextDouble() more than twice to generate two outputs
-    // (When (2*nextDouble()-1)^2 + (2*nextDouble()-1)^2 >= 1, the answers are rejected; I think
-    // this is about 1/3 of the time.)
     // TODO: Find out the actual Shannon entropy of nextGaussian() and adjust the entropy count to
     // it in a wrapper function.
     checkRangeAndEntropy(prng, 2 * ENTROPY_OF_DOUBLE,
         () -> prng.nextGaussian() + prng.nextGaussian(), -Double.MAX_VALUE, Double.MAX_VALUE,
-        alwaysCheckEntropy() ? EntropyCheckMode.LOWER_BOUND : EntropyCheckMode.OFF);
+        EntropyCheckMode.EXACT);
   }
 
   @Test
