@@ -44,6 +44,11 @@ public class SplittableRandomAdapter extends DirectSplittableRandomAdapter {
     initSubclassTransientFields();
   }
 
+  public SplittableRandomAdapter(long testSeed) {
+    super(testSeed);
+    initSubclassTransientFields();
+  }
+
   private void readObject(final ObjectInputStream in) throws IOException, ClassNotFoundException {
     in.defaultReadObject();
     lock = castNonNull(lock);
