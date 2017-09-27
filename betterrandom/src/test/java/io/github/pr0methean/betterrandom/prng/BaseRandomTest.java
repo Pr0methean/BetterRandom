@@ -46,10 +46,10 @@ public abstract class BaseRandomTest {
   public static void testEntropyOfLong() {
     assertEquals(entropyOfLong(0, 1, 0);
     assertEquals(entropyOfLong(0, 2, 1);
-    assertEquals(entropyOfLong(0, 1 << 42), 42);
-    assertEquals(entropyOfLong(1 << 22, 1 << 42), 42);
-    assertEquals(entropyOfLong(-(1 << 42), 0), 42);
-    assertEquals(entropyOfLong(-(1 << 42), 1), 43);
+    assertEquals(entropyOfLong(0, 1L << 42), 42);
+    assertEquals(entropyOfLong(1 << 22, 1: << 42), 42);
+    assertEquals(entropyOfLong(-(1L << 42), 0), 42);
+    assertEquals(entropyOfLong(-(1L << 42), 1), 43);
   }
 
   /**
