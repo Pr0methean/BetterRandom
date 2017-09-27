@@ -1,17 +1,17 @@
 package io.github.pr0methean.betterrandom.util;
 
 /**
- * <p>Dumpable interface.</p>
+ * Object that can be dumped (written for debugging purposes to a more detailed string
+ * representation than what {@link Object#toString()} returns.
  *
- * @author ubuntu
+ * @author Chris Hennick
  * @version $Id: $Id
  */
 public interface Dumpable {
 
   /**
-   * <p>dump.</p>
-   *
-   * @return a {@link java.lang.String} object.
+   * @return a {@link String} representing the state of this object for debugging purposes, in more
+   *     detail than {@link Object#toString()} returns.
    */
   @EntryPoint
   String dump();

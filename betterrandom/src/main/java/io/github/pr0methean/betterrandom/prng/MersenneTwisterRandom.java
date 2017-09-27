@@ -201,8 +201,6 @@ public class MersenneTwisterRandom extends BaseRandom {
     y ^= (y << 7) & GENERATE_MASK1;
     y ^= (y << 15) & GENERATE_MASK2;
     y ^= (y >>> 18);
-
-    recordEntropySpent(bits);
     return y >>> (32 - bits);
   }
 

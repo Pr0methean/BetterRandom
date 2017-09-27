@@ -129,7 +129,6 @@ public class XorShiftRandom extends BaseRandom {
       state4 = state5;
       state5 = (state5 ^ (state5 << 6)) ^ (t ^ (t << 13));
       final int value = (state2 + state2 + 1) * state5;
-      recordEntropySpent(bits);
       return value >>> (32 - bits);
     } finally {
       lock.unlock();

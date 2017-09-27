@@ -163,11 +163,9 @@ public abstract class BaseSplittableRandomAdapter extends BaseRandom {
       output = v1 * multiplier;
     }
 
-    // Upper bound. 2 Gaussians are generated from *at least* 2, but sometimes more, nextDouble()
-    // calls. But the entropy of the final output can't exceed 64 bits, since that's its length,
-    // and must actually be smaller since the 2^64 possible values of a double aren't all equally
-    // likely. But I don't know how *much* smaller.
-    recordEntropySpent(64);
+    // Upper bound. 2 Gaussians are generated from 2 nextDouble calls, which once made are either
+    // used or rerolled.
+    recordEntropySpent(ENTROPY_OF_DOUBLE);
 
     return output;
   }

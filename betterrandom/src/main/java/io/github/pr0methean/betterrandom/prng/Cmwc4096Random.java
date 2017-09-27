@@ -140,7 +140,6 @@ public class Cmwc4096Random extends BaseRandom {
         carry++;
       }
       state[index] = 0xFFFFFFFE - x;
-      recordEntropySpent(bits);
       return state[index] >>> (32 - bits);
     } finally {
       lock.unlock();

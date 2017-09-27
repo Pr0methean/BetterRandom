@@ -243,7 +243,6 @@ public class AesCounterRandom extends BaseRandom {
     } finally {
       lock.unlock();
     }
-    recordEntropySpent(bits);
     return result >>> (32 - bits);
   }
 

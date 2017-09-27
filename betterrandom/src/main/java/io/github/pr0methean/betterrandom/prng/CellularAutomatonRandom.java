@@ -182,7 +182,6 @@ public class CellularAutomatonRandom extends BaseRandom {
     try {
       return internalNext(bits);
     } finally {
-      recordEntropySpent(bits);
       lock.unlock();
     }
   }

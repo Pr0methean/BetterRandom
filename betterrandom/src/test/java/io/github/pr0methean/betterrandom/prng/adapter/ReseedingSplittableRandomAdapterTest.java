@@ -4,7 +4,6 @@ import static io.github.pr0methean.betterrandom.seed.DefaultSeedGenerator.DEFAUL
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotEquals;
 
-import io.github.pr0methean.betterrandom.TestingDeficiency;
 import io.github.pr0methean.betterrandom.prng.BaseRandom;
 import io.github.pr0methean.betterrandom.seed.FakeSeedGenerator;
 import io.github.pr0methean.betterrandom.seed.SeedException;
@@ -17,12 +16,6 @@ public class ReseedingSplittableRandomAdapterTest extends SingleThreadSplittable
   @Override
   protected ReseedingSplittableRandomAdapter tryCreateRng() throws SeedException {
     return ReseedingSplittableRandomAdapter.getDefaultInstance();
-  }
-
-  @TestingDeficiency
-  @Override
-  protected boolean alwaysCheckEntropy() {
-    return false;
   }
 
   // FIXME: Why does this need more time than other PRNGs?!
