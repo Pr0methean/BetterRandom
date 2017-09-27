@@ -3,7 +3,6 @@ package io.github.pr0methean.betterrandom.prng.adapter;
 import static org.checkerframework.checker.nullness.NullnessUtil.castNonNull;
 
 import com.google.common.base.MoreObjects.ToStringHelper;
-import io.github.pr0methean.betterrandom.util.BinaryUtils;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.util.Random;
@@ -62,7 +61,8 @@ public abstract class DirectSplittableRandomAdapter extends BaseSplittableRandom
   }
 
   @EnsuresNonNull({"this.seed", "underlying", "entropyBits"})
-  protected void setSeedInternal(@UnknownInitialization(Random.class)DirectSplittableRandomAdapter this, final long seed) {
+  protected void setSeedInternal(
+      @UnknownInitialization(Random.class)DirectSplittableRandomAdapter this, final long seed) {
     longSeedBuffer.putLong(0, seed);
     super.setSeedInternal(longSeedArray);
     underlying = new SplittableRandom(seed);

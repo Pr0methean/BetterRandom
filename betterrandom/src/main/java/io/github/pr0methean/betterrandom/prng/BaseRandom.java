@@ -22,6 +22,9 @@ import java.util.Random;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
+import java.util.stream.DoubleStream;
+import java.util.stream.IntStream;
+import java.util.stream.LongStream;
 import org.checkerframework.checker.initialization.qual.UnderInitialization;
 import org.checkerframework.checker.initialization.qual.UnknownInitialization;
 import org.checkerframework.checker.nullness.qual.EnsuresNonNull;
@@ -163,11 +166,130 @@ public abstract class BaseRandom extends Random implements ByteArrayReseedableRa
         .add("seederThread", seederThread));
   }
 
-  /**
-   * <p>dump.</p>
-   *
-   * @return a {@link java.lang.String} object.
-   */
+  @Override
+  public void nextBytes(byte[] bytes) {
+    super.nextBytes(bytes);
+    recordEntropySpent(bytes.length * 8);
+  }
+
+  @Override
+  public int nextInt() {
+    recordEntropySpent(32);
+    return super.nextInt();
+  }
+
+  @Override
+  public int nextInt(int bound) {
+    recordEntropySpent(entropyOfInt(0, bound));
+    return super.nextInt(bound);
+  }
+
+  @Override
+  public long nextLong() {
+    recordEntropySpent(64);
+    return super.nextLong();
+  }
+
+  @Override
+  public boolean nextBoolean() {
+    recordEntropySpent(1);
+    return super.nextBoolean();
+  }
+
+  @Override
+  public float nextFloat() {
+    recordEntropySpent(ENTROPY_OF_FLOAT);
+    return super.nextFloat();
+  }
+
+  @Override
+  public double nextDouble() {
+    recordEntropySpent(ENTROPY_OF_DOUBLE);
+    return super.nextDouble();
+  }
+
+  @Override
+  public synchronized double nextGaussian() {
+    // Upper bound. 2 Gaussians are generated from 2 nextDouble calls, which once made are either
+    // used or rerolled.
+    recordEntropySpent(ENTROPY_OF_DOUBLE);
+
+    return super.nextGaussian();
+  }
+
+  @Override
+  public IntStream ints(long streamSize) {
+    recordEntropySpent(32 * streamSize);
+    return super.ints(streamSize);
+  }
+
+  @Override
+  public IntStream ints() {
+    recordAllEntropySpent();
+    return super.ints();
+  }
+
+  @Override
+  public IntStream ints(long streamSize, int randomNumberOrigin, int randomNumberBound) {
+    recordEntropySpent(streamSize * entropyOfInt(randomNumberOrigin, randomNumberBound));
+    return super.ints(streamSize, randomNumberOrigin, randomNumberBound);
+  }
+
+  @Override
+  public IntStream ints(int randomNumberOrigin, int randomNumberBound) {
+    recordAllEntropySpent();
+    return super.ints(randomNumberOrigin, randomNumberBound);
+  }
+
+  @Override
+  public LongStream longs(long streamSize) {
+    recordEntropySpent(streamSize * 64);
+    return super.longs(streamSize);
+  }
+
+  @Override
+  public LongStream longs() {
+    recordAllEntropySpent();
+    return super.longs();
+  }
+
+  @Override
+  public LongStream longs(long streamSize, long randomNumberOrigin, long randomNumberBound) {
+    recordEntropySpent(streamSize * entropyOfLong(randomNumberOrigin, randomNumberBound));
+    return super.longs(streamSize, randomNumberOrigin, randomNumberBound);
+  }
+
+  @Override
+  public LongStream longs(long randomNumberOrigin, long randomNumberBound) {
+    recordAllEntropySpent();
+    return super.longs(randomNumberOrigin, randomNumberBound);
+  }
+
+  @Override
+  public DoubleStream doubles(long streamSize) {
+    recordEntropySpent(streamSize * ENTROPY_OF_DOUBLE);
+    return super.doubles(streamSize);
+  }
+
+  @Override
+  public DoubleStream doubles() {
+    recordAllEntropySpent();
+    return super.doubles();
+  }
+
+  @Override
+  public DoubleStream doubles(long streamSize, double randomNumberOrigin,
+      double randomNumberBound) {
+    recordEntropySpent(streamSize * ENTROPY_OF_DOUBLE);
+    return super.doubles(streamSize, randomNumberOrigin, randomNumberBound);
+  }
+
+  @Override
+  public DoubleStream doubles(double randomNumberOrigin, double randomNumberBound) {
+    recordAllEntropySpent();
+    return super.doubles(randomNumberOrigin, randomNumberBound);
+  }
+
   public String dump() {
     lock.lock();
     try {
@@ -189,17 +311,6 @@ public abstract class BaseRandom extends Random implements ByteArrayReseedableRa
     }
   }
 
-  @EnsuresNonNull("this.seed")
-  @Override
-  public void setSeed(final byte[] seed) {
-    lock.lock();
-    try {
-      setSeedInternal(seed);
-    } finally {
-      lock.unlock();
-    }
-  }
-
   @SuppressWarnings("method.invocation.invalid")
   @EnsuresNonNull("this.seed")
   @Override
@@ -210,6 +321,17 @@ public abstract class BaseRandom extends Random implements ByteArrayReseedableRa
       setSeed(castNonNull(longSeedArray));
     } else {
       setSeedInternal(BinaryUtils.convertLongToBytes(seed));
+    }
+  }
+
+  @EnsuresNonNull("this.seed")
+  @Override
+  public void setSeed(final byte[] seed) {
+    lock.lock();
+    try {
+      setSeedInternal(seed);
+    } finally {
+      lock.unlock();
     }
   }
 

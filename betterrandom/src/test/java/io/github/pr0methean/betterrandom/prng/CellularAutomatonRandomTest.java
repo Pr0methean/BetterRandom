@@ -15,7 +15,6 @@
 // ============================================================================
 package io.github.pr0methean.betterrandom.prng;
 
-import io.github.pr0methean.betterrandom.TestingDeficiency;
 import io.github.pr0methean.betterrandom.seed.SeedException;
 
 /**
@@ -24,12 +23,6 @@ import io.github.pr0methean.betterrandom.seed.SeedException;
  * @author Daniel Dyer
  */
 public class CellularAutomatonRandomTest extends BaseRandomTest {
-
-  @TestingDeficiency
-  @Override
-  protected boolean alwaysCheckEntropy() {
-    return false;
-  }
 
   @Override
   protected BaseRandom tryCreateRng() throws SeedException {

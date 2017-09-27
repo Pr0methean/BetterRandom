@@ -15,7 +15,6 @@
 // ============================================================================
 package io.github.pr0methean.betterrandom.prng;
 
-import io.github.pr0methean.betterrandom.TestingDeficiency;
 import io.github.pr0methean.betterrandom.seed.SeedException;
 import org.testng.annotations.Test;
 
@@ -26,15 +25,10 @@ import org.testng.annotations.Test;
  */
 public class RandomWrapperTest extends BaseRandomTest {
 
-  @TestingDeficiency
-  @Override
-  protected boolean alwaysCheckEntropy() {
-    return false;
-  }
-
   /**
    * Test to ensure that two distinct RNGs with the same seed return the same sequence of numbers.
    */
+  @Override
   @Test(timeOut = 15000)
   public void testRepeatability() throws SeedException {
     // Create an RNG using the default seeding strategy.
