@@ -19,7 +19,6 @@ import java.io.InvalidObjectException;
 import java.io.ObjectInputStream;
 import java.nio.ByteBuffer;
 import java.util.Random;
-import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
@@ -41,10 +40,10 @@ public abstract class BaseRandom extends Random implements ByteArrayReseedableRa
     RepeatableRandom, Dumpable, EntropyCountingRandom {
 
   public static final int ENTROPY_OF_DOUBLE = 53;
+  public static final long NAN_LONG_BITS = Double.doubleToLongBits(Double.NaN);
   protected static final long ENTROPY_OF_FLOAT = 24;
   private static final LogPreFormatter LOG = new LogPreFormatter(BaseRandom.class);
   private static final long serialVersionUID = -1556392727255964947L;
-  public static final long NAN_LONG_BITS = Double.doubleToLongBits(Double.NaN);
   protected byte[] seed;
   // Lock to prevent concurrent modification of the RNG's internal state.
   @SuppressWarnings("InstanceVariableMayNotBeInitializedByReadObject")
@@ -59,6 +58,8 @@ public abstract class BaseRandom extends Random implements ByteArrayReseedableRa
   protected transient ByteBuffer longSeedBuffer;
   protected AtomicLong entropyBits;
   protected @Nullable RandomSeederThread seederThread;
+  private AtomicLong nextNextGaussian = new AtomicLong(
+      NAN_LONG_BITS); // Stored as a long since there's no atomic double
 
   /**
    * Creates a new RNG and seeds it using the default seeding strategy.
@@ -114,7 +115,7 @@ public abstract class BaseRandom extends Random implements ByteArrayReseedableRa
    * @param origin the minimum, inclusive.
    * @param bound the maximum, exclusive.
    * @return the entropy in bits, rounded up, of a random {@code int} between {@code origin} and
-   * {@code bound}.
+   *     {@code bound}.
    */
   protected static int entropyOfInt(final int origin, final int bound) {
     return 32 - Integer.numberOfLeadingZeros(bound - origin - 1);
@@ -124,7 +125,7 @@ public abstract class BaseRandom extends Random implements ByteArrayReseedableRa
    * @param origin the minimum, inclusive.
    * @param bound the maximum, exclusive.
    * @return the entropy in bits, rounded up, of a random {@code long} between {@code origin} and
-   * {@code bound}.
+   *     {@code bound}.
    */
   protected static int entropyOfLong(final long origin, final long bound) {
     return 64 - Long.numberOfLeadingZeros(bound - origin - 1);
@@ -207,8 +208,6 @@ public abstract class BaseRandom extends Random implements ByteArrayReseedableRa
     return super.nextDouble();
   }
 
-  private AtomicLong nextNextGaussian = new AtomicLong(NAN_LONG_BITS); // Stored as a long since there's no atomic double
-
   /**
    * {@inheritDoc} This is overridden both for entropy-counting purposes and to make it lockless.
    */
@@ -221,15 +220,15 @@ public abstract class BaseRandom extends Random implements ByteArrayReseedableRa
     // See Knuth, ACP, Section 3.4.1 Algorithm C.
     double out = Double.longBitsToDouble(nextNextGaussian.getAndSet(NAN_LONG_BITS));
     if (Double.isNaN(out)) {
-          double v1, v2, s;
-          do {
-              v1 = 2 * super.nextDouble() - 1; // between -1 and 1
-              v2 = 2 * super.nextDouble() - 1; // between -1 and 1
-              s = v1 * v1 + v2 * v2;
-          } while (s >= 1 || s == 0);
-          double multiplier = StrictMath.sqrt(-2 * StrictMath.log(s)/s);
-          this.nextNextGaussian.set(Double.doubleToRawLongBits(v2 * multiplier));
-          return v1 * multiplier;
+      double v1, v2, s;
+      do {
+        v1 = 2 * super.nextDouble() - 1; // between -1 and 1
+        v2 = 2 * super.nextDouble() - 1; // between -1 and 1
+        s = v1 * v1 + v2 * v2;
+      } while (s >= 1 || s == 0);
+      double multiplier = StrictMath.sqrt(-2 * StrictMath.log(s) / s);
+      this.nextNextGaussian.set(Double.doubleToRawLongBits(v2 * multiplier));
+      return v1 * multiplier;
     } else {
       return out;
     }
@@ -329,6 +328,17 @@ public abstract class BaseRandom extends Random implements ByteArrayReseedableRa
     }
   }
 
+  @EnsuresNonNull("this.seed")
+  @Override
+  public void setSeed(final byte[] seed) {
+    lock.lock();
+    try {
+      setSeedInternal(seed);
+    } finally {
+      lock.unlock();
+    }
+  }
+
   @SuppressWarnings("method.invocation.invalid")
   @EnsuresNonNull("this.seed")
   @Override
@@ -339,17 +349,6 @@ public abstract class BaseRandom extends Random implements ByteArrayReseedableRa
       setSeed(castNonNull(longSeedArray));
     } else {
       setSeedInternal(BinaryUtils.convertLongToBytes(seed));
-    }
-  }
-
-  @EnsuresNonNull("this.seed")
-  @Override
-  public void setSeed(final byte[] seed) {
-    lock.lock();
-    try {
-      setSeedInternal(seed);
-    } finally {
-      lock.unlock();
     }
   }
 
