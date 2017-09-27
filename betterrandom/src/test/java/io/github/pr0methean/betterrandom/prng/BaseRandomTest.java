@@ -34,8 +34,8 @@ public abstract class BaseRandomTest {
 
   @Test
   public static void testEntropyOfInt() {
-    assertEquals(entropyOfInt(0, 1, 0);
-    assertEquals(entropyOfInt(0, 2, 1);
+    assertEquals(entropyOfInt(0, 1), 0);
+    assertEquals(entropyOfInt(0, 2), 1);
     assertEquals(entropyOfInt(0, 1 << 24), 24);
     assertEquals(entropyOfInt(1 << 22, 1 << 24), 24);
     assertEquals(entropyOfInt(-(1 << 24), 0), 24);
@@ -44,10 +44,10 @@ public abstract class BaseRandomTest {
 
   @Test
   public static void testEntropyOfLong() {
-    assertEquals(entropyOfLong(0, 1, 0);
-    assertEquals(entropyOfLong(0, 2, 1);
+    assertEquals(entropyOfLong(0, 1), 0);
+    assertEquals(entropyOfLong(0, 2), 1);
     assertEquals(entropyOfLong(0, 1L << 42), 42);
-    assertEquals(entropyOfLong(1 << 22, 1: << 42), 42);
+    assertEquals(entropyOfLong(1 << 22, 1L << 42), 42);
     assertEquals(entropyOfLong(-(1L << 42), 0), 42);
     assertEquals(entropyOfLong(-(1L << 42), 1), 43);
   }
