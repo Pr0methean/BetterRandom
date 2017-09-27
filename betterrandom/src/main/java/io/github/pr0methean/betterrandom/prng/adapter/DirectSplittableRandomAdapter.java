@@ -52,8 +52,7 @@ public abstract class DirectSplittableRandomAdapter extends BaseSplittableRandom
       throw new IllegalArgumentException("DirectSplittableRandomAdapter requires an 8-byte seed");
     }
     super.setSeedInternal(seed);
-    underlying = SplittableRandomReseeder.reseed(underlying,
-        BinaryUtils.convertBytesToLong(seed));
+    underlying = new SplittableRandom(BinaryUtils.convertBytesToLong(seed));
   }
 
   @Override
@@ -67,7 +66,7 @@ public abstract class DirectSplittableRandomAdapter extends BaseSplittableRandom
     if (superConstructorFinished) {
       castNonNull(longSeedBuffer).putLong(seed);
       super.setSeedInternal(castNonNull(longSeedArray));
-      underlying = SplittableRandomReseeder.reseed(underlying, seed);
+      underlying = new SplittableRandom(seed);
     } else {
       fallbackSetSeed();
     }
