@@ -98,6 +98,14 @@ public abstract class BaseSplittableRandomAdapter extends BaseRandom {
   }
 
   @Override
+  protected boolean withProbabilityInternal(double probability) {
+    final boolean result = getSplittableRandom().nextDouble() < probability;
+    // We're only outputting one bit
+    recordEntropySpent(1);
+    return result;
+  }
+
+  @Override
   public long nextLong() {
     final long out = getSplittableRandom().nextLong();
     recordEntropySpent(64);
