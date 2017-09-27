@@ -33,6 +33,11 @@ public abstract class DirectSplittableRandomAdapter extends BaseSplittableRandom
     setSeedInternal(seed);
   }
 
+  public DirectSplittableRandomAdapter(long seed) {
+    super(seed);
+    setSeedInternal(seed);
+  }
+
   @Override
   protected ToStringHelper addSubSubclassFields(final ToStringHelper original) {
     return original.add("underlying", underlying);
@@ -52,7 +57,15 @@ public abstract class DirectSplittableRandomAdapter extends BaseSplittableRandom
       throw new IllegalArgumentException("DirectSplittableRandomAdapter requires an 8-byte seed");
     }
     super.setSeedInternal(seed);
-    underlying = new SplittableRandom(BinaryUtils.convertBytesToLong(seed));
+    System.arraycopy(seed, 0, longSeedArray, 0, Long.BYTES);
+    underlying = new SplittableRandom(longSeedBuffer.getLong(0));
+  }
+
+  @EnsuresNonNull({"this.seed", "underlying", "entropyBits"})
+  protected void setSeedInternal(@UnknownInitialization(Random.class)DirectSplittableRandomAdapter this, final long seed) {
+    longSeedBuffer.putLong(0, seed);
+    super.setSeedInternal(longSeedArray);
+    underlying = new SplittableRandom(seed);
   }
 
   @Override
