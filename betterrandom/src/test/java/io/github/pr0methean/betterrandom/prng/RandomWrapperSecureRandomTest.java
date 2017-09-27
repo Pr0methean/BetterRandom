@@ -26,15 +26,6 @@ public class RandomWrapperSecureRandomTest extends BaseRandomTest {
   }
 
   @Override
-  @TestingDeficiency
-  public void testNextGaussian() {
-    final BaseRandom prng = createRng();
-    checkRangeAndEntropy(prng, 2 * ENTROPY_OF_DOUBLE,
-        () -> prng.nextGaussian() + prng.nextGaussian(), -Double.MAX_VALUE, Double.MAX_VALUE,
-        EntropyCheckMode.OFF);
-  }
-
-  @Override
   @Test(enabled = false)
   public void testNullSeed() throws SeedException {
     // No-op.
