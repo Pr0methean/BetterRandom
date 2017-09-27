@@ -31,6 +31,10 @@ public abstract class BaseSplittableRandomAdapter extends BaseRandom {
     super(seed);
   }
 
+  public BaseSplittableRandomAdapter(long seed) {
+    super(seed);
+  }
+
   @Override
   protected void setSeedInternal(
       @UnknownInitialization(Random.class)BaseSplittableRandomAdapter this, byte[] seed) {

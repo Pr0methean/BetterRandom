@@ -59,7 +59,7 @@ public abstract class BaseRandom extends Random implements ByteArrayReseedableRa
    * Creates a new RNG and seeds it using the default seeding strategy.
    *
    * @param seedLength a int.
-   * @throws io.github.pr0methean.betterrandom.seed.SeedException if any.
+   * @throws SeedException if any.
    */
   public BaseRandom(final int seedLength) throws SeedException {
     this(DefaultSeedGenerator.DEFAULT_SEED_GENERATOR.generateSeed(seedLength));
@@ -67,13 +67,12 @@ public abstract class BaseRandom extends Random implements ByteArrayReseedableRa
   }
 
   /**
-   * Seed the RNG using the provided seed generation strategy.
+   * Creates a new RNG and seeds it using the provided seed generation strategy.
    *
    * @param seedGenerator The seed generation strategy that will provide the seed value for this
    *     RNG.
-   * @param seedLength a int.
-   * @throws io.github.pr0methean.betterrandom.seed.SeedException If there is a problem
-   *     generating a seed.
+   * @param seedLength The seed length in bytes.
+   * @throws SeedException If there is a problem generating a seed.
    */
   public BaseRandom(final SeedGenerator seedGenerator, final int seedLength) throws SeedException {
     this(seedGenerator.generateSeed(seedLength));
@@ -81,9 +80,9 @@ public abstract class BaseRandom extends Random implements ByteArrayReseedableRa
   }
 
   /**
-   * <p>Constructor for BaseRandom.</p>
+   * Creates a new RNG with the provided seed.
    *
-   * @param seed an array of byte.
+   * @param seed the seed.
    */
   @EnsuresNonNull("this.seed")
   public BaseRandom(final byte[] seed) {
@@ -94,6 +93,16 @@ public abstract class BaseRandom extends Random implements ByteArrayReseedableRa
     initTransientFields();
     setSeedInternal(seed);
     entropyBits = new AtomicLong(0);
+  }
+
+  /**
+   * Creates a new RNG with the provided seed. Only works in subclasses that can accept an 8-byte or
+   * shorter seed.
+   *
+   * @param seed the seed.
+   */
+  protected BaseRandom(long seed) {
+    this(BinaryUtils.convertLongToBytes(seed));
   }
 
   /**
