@@ -41,7 +41,7 @@ public enum RandomDotOrgSeedGenerator implements SeedGenerator {
   RANDOM_DOT_ORG_SEED_GENERATOR(false),
   RATE_LIMITED_ON_FAIL(true);
 
-  public static final Clock CLOCK = Clock.systemDefaultZone();
+  public static final Clock CLOCK = Clock.systemUTC();
   public static final int MAX_CACHE_SIZE = 1024;
   private static final String BASE_URL = "https://www.random.org";
   /**
