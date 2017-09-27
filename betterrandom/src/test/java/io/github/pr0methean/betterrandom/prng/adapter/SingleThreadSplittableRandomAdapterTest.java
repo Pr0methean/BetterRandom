@@ -15,15 +15,6 @@ import org.testng.annotations.Test;
 
 public class SingleThreadSplittableRandomAdapterTest extends BaseRandomTest {
 
-  @Override
-  @TestingDeficiency
-  public void testNextGaussian() {
-    final BaseRandom prng = createRng();
-    checkRangeAndEntropy(prng, 2 * ENTROPY_OF_DOUBLE,
-        () -> prng.nextGaussian() + prng.nextGaussian(), -Double.MAX_VALUE, Double.MAX_VALUE,
-        EntropyCheckMode.OFF);
-  }
-
   /**
    * Overridden in subclasses, so that subclassing the test can test the subclasses.
    */

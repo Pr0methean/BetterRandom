@@ -31,22 +31,6 @@ import org.testng.annotations.Test;
  */
 public class AesCounterRandom128Test extends BaseRandomTest {
 
-  @TestingDeficiency // Currently counting entropy incorrectly.
-  @Override
-  public void testNextInt1() throws Exception {
-    final BaseRandom prng = createRng();
-    checkRangeAndEntropy(prng, 31,
-        () -> prng.nextInt(3 << 29), 0, 3 << 29, false);
-  }
-
-  @TestingDeficiency // Currently counting entropy incorrectly.
-  @Override
-  public void testInts3() throws Exception {
-    final BaseRandom prng = createRng();
-    checkStream(prng, 32, prng.ints(3, 1 << 27, Integer.MAX_VALUE), 3, 1 << 27, Integer.MAX_VALUE,
-        false);
-  }
-
   @SuppressWarnings("ObjectAllocationInLoop")
   @Override
   @Test(timeOut = 30000)
