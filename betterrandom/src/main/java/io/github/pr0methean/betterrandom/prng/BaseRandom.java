@@ -448,7 +448,7 @@ public abstract class BaseRandom extends Random implements ByteArrayReseedableRa
    * @param bits The number of bits of entropy spent.
    */
   protected void recordEntropySpent(final long bits) {
-    if (entropyBits.updateAndGet(oldCount -> Math.max(oldCount - bits, 0)) == 0
+    if (entropyBits.addAndGet(-bits) <= 0
         && seederThread != null) {
       seederThread.asyncReseed(this);
     }
