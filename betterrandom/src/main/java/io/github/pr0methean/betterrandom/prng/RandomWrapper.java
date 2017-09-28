@@ -121,7 +121,9 @@ public class RandomWrapper extends BaseRandom {
       final Random wrapped) {
     entropyBits.set(wrapped instanceof EntropyCountingRandom
         ? ((EntropyCountingRandom) wrapped).entropyBits()
-        : 64);
+        : (wrapped instanceof RepeatableRandom
+            ? ((RepeatableRandom) wrapped).getSeed().length * (long) (Byte.SIZE)
+            : Long.SIZE));
   }
 
   @Override
@@ -163,12 +165,12 @@ public class RandomWrapper extends BaseRandom {
 
   public void nextBytes(final byte[] bytes) {
     wrapped.nextBytes(bytes);
-    recordEntropySpent(bytes.length * 8L);
+    recordEntropySpent(bytes.length * (long) (Byte.SIZE));
   }
 
   public int nextInt() {
     final int result = wrapped.nextInt();
-    recordEntropySpent(32);
+    recordEntropySpent(Integer.SIZE);
     return result;
   }
 
@@ -180,7 +182,7 @@ public class RandomWrapper extends BaseRandom {
 
   public long nextLong() {
     final long result = wrapped.nextLong();
-    recordEntropySpent(64);
+    recordEntropySpent(Long.SIZE);
     return result;
   }
 
@@ -214,7 +216,7 @@ public class RandomWrapper extends BaseRandom {
 
   public IntStream ints(final long streamSize) {
     final IntStream result = wrapped.ints(streamSize);
-    recordEntropySpent(32 * streamSize);
+    recordEntropySpent(Integer.SIZE * streamSize);
     return result;
   }
 
@@ -239,7 +241,7 @@ public class RandomWrapper extends BaseRandom {
 
   public LongStream longs(final long streamSize) {
     final LongStream result = wrapped.longs(streamSize);
-    recordEntropySpent(64 * streamSize);
+    recordEntropySpent(Long.SIZE * streamSize);
     return result;
   }
 

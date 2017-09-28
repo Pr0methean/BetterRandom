@@ -118,7 +118,7 @@ public abstract class BaseRandom extends Random implements ByteArrayReseedableRa
    *     {@code bound}.
    */
   protected static int entropyOfInt(final int origin, final int bound) {
-    return 32 - Integer.numberOfLeadingZeros(bound - origin - 1);
+    return Integer.SIZE - Integer.numberOfLeadingZeros(bound - origin - 1);
   }
 
   /**
@@ -128,7 +128,7 @@ public abstract class BaseRandom extends Random implements ByteArrayReseedableRa
    *     {@code bound}.
    */
   protected static int entropyOfLong(final long origin, final long bound) {
-    return 64 - Long.numberOfLeadingZeros(bound - origin - 1);
+    return Long.SIZE - Long.numberOfLeadingZeros(bound - origin - 1);
   }
 
   /**
@@ -170,13 +170,14 @@ public abstract class BaseRandom extends Random implements ByteArrayReseedableRa
   @Override
   public void nextBytes(byte[] bytes) {
     for (int i = 0; i < bytes.length; i++) {
-      bytes[i] = (byte) nextInt(1 << Byte.SIZE);
+      bytes[i] = (byte) next(Byte.SIZE);
+      recordEntropySpent(Byte.SIZE);
     }
   }
 
   @Override
   public int nextInt() {
-    recordEntropySpent(32);
+    recordEntropySpent(Integer.SIZE);
     return super.nextInt();
   }
 
@@ -188,7 +189,7 @@ public abstract class BaseRandom extends Random implements ByteArrayReseedableRa
 
   @Override
   public long nextLong() {
-    recordEntropySpent(64);
+    recordEntropySpent(Long.SIZE);
     return super.nextLong();
   }
 
@@ -238,7 +239,7 @@ public abstract class BaseRandom extends Random implements ByteArrayReseedableRa
 
   @Override
   public IntStream ints(long streamSize) {
-    recordEntropySpent(32 * streamSize);
+    recordEntropySpent(Integer.SIZE * streamSize);
     return super.ints(streamSize);
   }
 
@@ -262,7 +263,7 @@ public abstract class BaseRandom extends Random implements ByteArrayReseedableRa
 
   @Override
   public LongStream longs(long streamSize) {
-    recordEntropySpent(streamSize * 64);
+    recordEntropySpent(streamSize * Long.SIZE);
     return super.longs(streamSize);
   }
 
