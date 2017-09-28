@@ -31,26 +31,7 @@ public abstract class BaseRandomTest {
   private static final LogPreFormatter LOG = new LogPreFormatter(BaseRandomTest.class);
   private static final int MAX_DUMPED_SEED_LENGTH = 32;
   private static final int FLAKY_TEST_RETRIES = 3;
-
-  @Test
-  public static void testEntropyOfInt() {
-    assertEquals(entropyOfInt(0, 1), 0);
-    assertEquals(entropyOfInt(0, 2), 1);
-    assertEquals(entropyOfInt(0, 1 << 24), 24);
-    assertEquals(entropyOfInt(1 << 22, 1 << 24), 24);
-    assertEquals(entropyOfInt(-(1 << 24), 0), 24);
-    assertEquals(entropyOfInt(-(1 << 24), 1), 25);
-  }
-
-  @Test
-  public static void testEntropyOfLong() {
-    assertEquals(entropyOfLong(0, 1), 0);
-    assertEquals(entropyOfLong(0, 2), 1);
-    assertEquals(entropyOfLong(0, 1L << 42), 42);
-    assertEquals(entropyOfLong(1 << 22, 1L << 42), 42);
-    assertEquals(entropyOfLong(-(1L << 42), 0), 42);
-    assertEquals(entropyOfLong(-(1L << 42), 1), 43);
-  }
+  private static final int TEST_BYTE_ARRAY_LENGTH = 20;
 
   /**
    * Test to ensure that two distinct RNGs with the same seed return the same sequence of numbers.
@@ -200,7 +181,12 @@ public abstract class BaseRandomTest {
 
   @Test
   public void testNextBytes() throws Exception {
-    // TODO
+    byte[] testBytes = new byte[TEST_BYTE_ARRAY_LENGTH];
+    BaseRandom prng = createRng();
+    long oldEntropy = prng.entropyBits();
+    prng.nextBytes(testBytes);
+    assertFalse(Arrays.equals(testBytes, new byte[TEST_BYTE_ARRAY_LENGTH]));
+    assertEquals(prng.entropyBits(), oldEntropy - 8 * TEST_BYTE_ARRAY_LENGTH);
   }
 
   @Test
