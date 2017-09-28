@@ -62,13 +62,13 @@ public abstract class BaseSplittableRandomAdapter extends BaseRandom {
     for (int i = 0; i < bytes.length; i++) {
       bytes[i] = (byte) (local.nextInt(256));
     }
-    recordEntropySpent(bytes.length * 8L);
+    recordEntropySpent(bytes.length * (long)(Byte.SIZE));
   }
 
   @Override
   public int nextInt() {
     final int out = getSplittableRandom().nextInt();
-    recordEntropySpent(32);
+    recordEntropySpent(Integer.SIZE);
     return out;
   }
 
@@ -108,7 +108,7 @@ public abstract class BaseSplittableRandomAdapter extends BaseRandom {
   @Override
   public long nextLong() {
     final long out = getSplittableRandom().nextLong();
-    recordEntropySpent(64);
+    recordEntropySpent(Long.SIZE);
     return out;
   }
 
@@ -229,7 +229,7 @@ public abstract class BaseSplittableRandomAdapter extends BaseRandom {
   @Override
   public IntStream ints(final long streamSize) {
     final IntStream out = getSplittableRandom().split().ints(streamSize);
-    recordEntropySpent(streamSize * 32);
+    recordEntropySpent(streamSize * Integer.SIZE);
     return out;
   }
 
@@ -259,7 +259,7 @@ public abstract class BaseSplittableRandomAdapter extends BaseRandom {
   @Override
   public LongStream longs(final long streamSize) {
     final LongStream out = getSplittableRandom().split().longs(streamSize);
-    recordEntropySpent(64 * streamSize);
+    recordEntropySpent(Long.SIZE * streamSize);
     return out;
   }
 
