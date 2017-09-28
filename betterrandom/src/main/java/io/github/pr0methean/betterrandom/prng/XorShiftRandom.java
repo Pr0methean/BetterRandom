@@ -32,7 +32,6 @@ import org.checkerframework.checker.initialization.qual.UnknownInitialization;
  * to this method will have no effect. Instead the seed must be set by a constructor.</em></p>
  *
  * @author Daniel Dyer
- * @version $Id: $Id
  * @since 1.2
  */
 public class XorShiftRandom extends BaseRandom {

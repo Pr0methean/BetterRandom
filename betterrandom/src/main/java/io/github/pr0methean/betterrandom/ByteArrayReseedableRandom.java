@@ -5,7 +5,6 @@ package io.github.pr0methean.betterrandom;
  * java.util.Random#setSeed(long)} (although that may also be supported).
  *
  * @author Chris Hennick
- * @version $Id: $Id
  */
 public interface ByteArrayReseedableRandom /* extends BaseRandom */ {
 

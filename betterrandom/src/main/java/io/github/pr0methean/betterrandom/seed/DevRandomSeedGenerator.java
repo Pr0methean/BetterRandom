@@ -27,7 +27,6 @@ import java.util.concurrent.atomic.AtomicBoolean;
  * SeedException} is thrown.
  *
  * @author Daniel Dyer
- * @version $Id: $Id
  */
 public enum DevRandomSeedGenerator implements SeedGenerator {
 

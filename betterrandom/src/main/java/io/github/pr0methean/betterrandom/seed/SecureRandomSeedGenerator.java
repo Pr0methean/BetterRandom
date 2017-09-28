@@ -26,7 +26,6 @@ import java.security.SecureRandom;
  * of the other provided {@link SeedGenerator} implementations be usable.</p>
  *
  * @author Daniel Dyer
- * @version $Id: $Id
  */
 public enum SecureRandomSeedGenerator implements SeedGenerator {
 

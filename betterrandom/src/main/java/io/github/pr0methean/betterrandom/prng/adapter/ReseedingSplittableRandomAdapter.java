@@ -25,7 +25,6 @@ import org.checkerframework.checker.nullness.qual.Nullable;
  * but not more frequently than it is being used.
  *
  * @author ubuntu
- * @version $Id: $Id
  */
 public class ReseedingSplittableRandomAdapter extends BaseSplittableRandomAdapter {
 

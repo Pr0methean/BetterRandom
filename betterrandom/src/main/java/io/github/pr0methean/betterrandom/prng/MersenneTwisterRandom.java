@@ -44,7 +44,6 @@ import org.checkerframework.checker.nullness.qual.EnsuresNonNull;
  *
  * @author Makoto Matsumoto and Takuji Nishimura (original C version)
  * @author Daniel Dyer (Java port)
- * @version $Id: $Id
  */
 public class MersenneTwisterRandom extends BaseRandom {
 

@@ -30,7 +30,6 @@ import org.checkerframework.checker.nullness.qual.RequiresNonNull;
  * Thread that loops over {@link Random} instances and reseeds them.
  *
  * @author Chris Hennick
- * @version $Id: $Id
  */
 @SuppressWarnings("ClassExplicitlyExtendsThread")
 public final class RandomSeederThread extends LooperThread {

@@ -42,7 +42,6 @@ import org.checkerframework.checker.nullness.qual.EnsuresNonNull;
  * constructor.</em></p>
  *
  * @author Daniel Dyer
- * @version $Id: $Id
  * @since 1.2
  */
 public class Cmwc4096Random extends BaseRandom {

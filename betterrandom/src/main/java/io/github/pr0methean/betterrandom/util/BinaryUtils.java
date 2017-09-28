@@ -21,7 +21,6 @@ import java.nio.ByteBuffer;
  * Utility methods for working with binary and hex data.
  *
  * @author Daniel Dyer
- * @version $Id: $Id
  */
 public final class BinaryUtils {
 

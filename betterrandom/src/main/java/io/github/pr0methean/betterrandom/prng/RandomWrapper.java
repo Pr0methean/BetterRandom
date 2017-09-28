@@ -37,7 +37,6 @@ import org.checkerframework.checker.initialization.qual.UnknownInitialization;
  * so {@link #getSeed()} will return an empty array until then.</p>
  *
  * @author Chris Hennick
- * @version $Id: $Id
  */
 public class RandomWrapper extends BaseRandom {
 

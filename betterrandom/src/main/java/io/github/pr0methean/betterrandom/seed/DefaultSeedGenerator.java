@@ -20,7 +20,6 @@ package io.github.pr0methean.betterrandom.seed;
  * best one available for the current operating environment.
  *
  * @author Daniel Dyer
- * @version $Id: $Id
  */
 public enum DefaultSeedGenerator implements SeedGenerator {
 
