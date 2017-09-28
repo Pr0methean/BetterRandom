@@ -166,10 +166,12 @@ public abstract class BaseRandom extends Random implements ByteArrayReseedableRa
         .add("seederThread", seederThread));
   }
 
+  /** {@inheritDoc} Reimplemented for entropy-counting purposes. */
   @Override
   public void nextBytes(byte[] bytes) {
-    super.nextBytes(bytes);
-    recordEntropySpent(bytes.length * 8);
+    for (int i = 0; i < bytes.length; i++) {
+      bytes[i] = (byte) nextInt(1 << Byte.SIZE);
+    }
   }
 
   @Override
