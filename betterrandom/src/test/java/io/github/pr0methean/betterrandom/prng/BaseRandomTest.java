@@ -1,8 +1,6 @@
 package io.github.pr0methean.betterrandom.prng;
 
 import static io.github.pr0methean.betterrandom.prng.BaseRandom.ENTROPY_OF_DOUBLE;
-import static io.github.pr0methean.betterrandom.prng.BaseRandom.entropyOfInt;
-import static io.github.pr0methean.betterrandom.prng.BaseRandom.entropyOfLong;
 import static io.github.pr0methean.betterrandom.prng.RandomTestUtils.assertMonteCarloPiEstimateSane;
 import static io.github.pr0methean.betterrandom.prng.RandomTestUtils.assertStandardDeviationSane;
 import static io.github.pr0methean.betterrandom.prng.RandomTestUtils.checkRangeAndEntropy;
@@ -281,7 +279,8 @@ public abstract class BaseRandomTest {
         true);
   }
 
-  @TestingDeficiency // entropy count currently failing
+  @TestingDeficiency
+  // entropy count currently failing, or else last param to checkStream would be true
   @Test
   public void testLongs3() throws Exception {
     final BaseRandom prng = createRng();
