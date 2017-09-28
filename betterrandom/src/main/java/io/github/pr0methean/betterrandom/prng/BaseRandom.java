@@ -225,7 +225,7 @@ public abstract class BaseRandom extends Random implements ByteArrayReseedableRa
   }
 
   /**
-   * Lockless reimplementation of {@link #nextGaussian()}.
+   * Core of a lockless reimplementation of {@link #nextGaussian()}.
    *
    * @param nextDouble shall return a random number between 0 and 1, like {@link #nextDouble()},
    *     but shall not debit the entropy count.
