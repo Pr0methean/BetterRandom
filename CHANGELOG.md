@@ -1,3 +1,10 @@
+# 1.0.0
+* Fixed most entropy-counting bugs.
+* Removed `SplittableRandomReseeder` since it is unreliable on some platforms (probably due to
+  `SplittableRandom`'s non-volatile access to its fields).
+* Removed default implementation of `BaseSplittableRandomAdapter.addSubclassFields` since it's
+  neither used nor tested within this library.
+
 # 0.10.2
 * Improved performance of `DefaultSeedGenerator` on MinGW and naked Windows, especially when
   random.org is unavailable and the number of CPU cores is limited.

@@ -14,8 +14,9 @@ install:
   # Log versions for debugging
   - java -version
   - mvn --version
-build_script: # dummy, as shell scripts both build and test
-  - echo
+build_script:
+  # shell scripts both build and test, so all we need to do here is set the character encoding
+  - chcp 65001
 test_script:
   - c:\%RUNNER%\bin\sh ./%OP%.sh
 cache:
