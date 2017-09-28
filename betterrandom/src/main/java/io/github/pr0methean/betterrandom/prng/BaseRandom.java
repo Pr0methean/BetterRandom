@@ -471,7 +471,13 @@ public abstract class BaseRandom extends Random implements ByteArrayReseedableRa
   @SuppressWarnings("OverriddenMethodCallDuringObjectConstruction")
   private void readObjectNoData() throws InvalidObjectException {
     LOG.warn("BaseRandom.readObjectNoData() invoked; using DefaultSeedGenerator");
-    fallbackSetSeed();
+    try {
+      fallbackSetSeed();
+    } catch (RuntimeException e) {
+      throw (InvalidObjectException) (new InvalidObjectException(
+          "Failed to deserialize or generate a seed")
+          .initCause(e.getCause()));
+    }
     initTransientFields();
     setSeedInternal(this.seed);
   }
