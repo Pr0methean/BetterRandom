@@ -178,9 +178,7 @@ public class AesCounterRandom extends BaseRandom {
     setSeedInternal(seed);
   }
 
-  /**
-   * Called in constructor and readObject to initialize transient fields.
-   */
+  @Override
   @EnsuresNonNull({"counter", "counterInput", "cipher", "lock", "longSeedArray", "longSeedBuffer"})
   protected void initTransientFields(
       @UnknownInitialization AesCounterRandom this) {
@@ -244,15 +242,6 @@ public class AesCounterRandom extends BaseRandom {
       lock.unlock();
     }
     return result >>> (32 - bits);
-  }
-
-  /**
-   * For debugging. Should always be true.
-   *
-   * @return a boolean.
-   */
-  public boolean isSeeded() {
-    return seeded;
   }
 
   @Override

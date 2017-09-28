@@ -32,16 +32,10 @@ public enum SecureRandomSeedGenerator implements SeedGenerator {
 
   SECURE_RANDOM_SEED_GENERATOR;
 
-  /** Constant {@code SOURCE} */
+  /** The {@link SecureRandom} that generates the seeds. */
   private static final SecureRandom SOURCE = new SecureRandom();
 
-  /**
-   * <p>generateSeed.</p>
-   *
-   * @param length a int.
-   * @return an array of byte.
-   * @throws io.github.pr0methean.betterrandom.seed.SeedException if any.
-   */
+  @Override
   public byte[] generateSeed(final int length) throws SeedException {
     return SOURCE.generateSeed(length);
   }

@@ -94,11 +94,7 @@ public class Cmwc4096Random extends BaseRandom {
         .add("state", Arrays.toString(state));
   }
 
-  /**
-   * <p>getSeed.</p>
-   *
-   * @return an array of byte.
-   */
+  @Override
   public byte[] getSeed() {
     return seed.clone();
   }

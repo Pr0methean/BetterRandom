@@ -12,8 +12,9 @@ import org.testng.annotations.Test;
 public class SingleThreadSplittableRandomAdapterTest extends BaseRandomTest {
 
   /**
-   * Overridden in subclasses, so that subclassing the test can test the subclasses.
+   * {@inheritDoc} Overridden in subclasses, so that subclassing the test can test the subclasses.
    */
+  @Override
   protected BaseSplittableRandomAdapter tryCreateRng() throws SeedException {
     return new SingleThreadSplittableRandomAdapter(
         DefaultSeedGenerator.DEFAULT_SEED_GENERATOR);

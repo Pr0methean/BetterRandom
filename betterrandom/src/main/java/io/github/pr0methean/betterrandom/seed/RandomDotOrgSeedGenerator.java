@@ -31,7 +31,8 @@ import java.util.concurrent.locks.ReentrantLock;
  * Connects to the <a href="http://www.random.org" target="_top">random.org</a> website (via HTTPS)
  * and downloads a set of random bits to use as seed data.  It is generally better to use the {@link
  * DevRandomSeedGenerator} where possible, as it should be much quicker. This seed generator is most
- * useful on Microsoft Windows and other platforms that do not provide {@literal /dev/random}.
+ * useful on Microsoft Windows without Cygwin, and other platforms that do not provide {@literal
+ * /dev/random}.
  *
  * @author Daniel Dyer
  * @version $Id: $Id
@@ -82,6 +83,7 @@ public enum RandomDotOrgSeedGenerator implements SeedGenerator {
    *     permitted by random.org for a single request.
    * @throws IOException If there is a problem downloading the random bits.
    */
+  @SuppressWarnings("NumericCastThatLosesPrecision")
   private static void refreshCache(final int requiredBytes) throws IOException {
     cacheLock.lock();
     try {
@@ -137,7 +139,8 @@ public enum RandomDotOrgSeedGenerator implements SeedGenerator {
     }
   }
 
-  @SuppressWarnings({"AssignmentToStaticFieldFromInstanceMethod", "BusyWait"})
+  @Override
+  @SuppressWarnings("AssignmentToStaticFieldFromInstanceMethod")
   public void generateSeed(final byte[] seedData) throws SeedException {
     if (!isWorthTrying()) {
       throw new SeedException("Not retrying so soon after an IOException");

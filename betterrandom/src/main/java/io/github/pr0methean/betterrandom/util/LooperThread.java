@@ -72,13 +72,13 @@ public class LooperThread extends Thread implements Serializable, Cloneable {
     stackSize = 0;
   }
 
-  public LooperThread(Runnable target) {
+  public LooperThread(@Nullable Runnable target) {
     super(target);
     this.target = target;
     stackSize = 0;
   }
 
-  public LooperThread(ThreadGroup group, Runnable target) {
+  public LooperThread(ThreadGroup group, @Nullable Runnable target) {
     super(group, target);
     this.target = target;
     stackSize = 0;
@@ -106,20 +106,20 @@ public class LooperThread extends Thread implements Serializable, Cloneable {
     stackSize = 0;
   }
 
-  public LooperThread(Runnable target, String name) {
+  public LooperThread(@Nullable Runnable target, String name) {
     super(target, name);
     this.target = target;
     stackSize = 0;
   }
 
-  public LooperThread(ThreadGroup group, Runnable target, String name) {
+  public LooperThread(ThreadGroup group, @Nullable Runnable target, String name) {
     super(group, target, name);
     this.target = target;
     setGroup(group);
     stackSize = 0;
   }
 
-  public LooperThread(ThreadGroup group, Runnable target, String name, long stackSize) {
+  public LooperThread(ThreadGroup group, @Nullable Runnable target, String name, long stackSize) {
     super(group, target, name, stackSize);
     this.target = target;
     setGroup(group);
@@ -336,7 +336,7 @@ public class LooperThread extends Thread implements Serializable, Cloneable {
     }
   }
 
-  private class DummyTarget implements @Nullable Runnable {
+  private static class DummyTarget implements @Nullable Runnable {
 
     @Override
     public void run() {

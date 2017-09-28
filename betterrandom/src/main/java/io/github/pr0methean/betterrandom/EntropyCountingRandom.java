@@ -5,7 +5,7 @@ package io.github.pr0methean.betterrandom;
  * have entropy equal to their length) so we can decide whether or not it needs reseeding again
  * yet.
  *
- * @author ubuntu
+ * @author Chris Hennick
  * @version $Id: $Id
  */
 public interface EntropyCountingRandom {
