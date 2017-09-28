@@ -14,7 +14,6 @@ import org.checkerframework.checker.nullness.qual.EnsuresNonNull;
  * <p>Abstract DirectSplittableRandomAdapter class.</p>
  *
  * @author ubuntu
- * @version $Id: $Id
  */
 public abstract class DirectSplittableRandomAdapter extends BaseSplittableRandomAdapter {
 

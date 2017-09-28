@@ -23,7 +23,6 @@ import io.github.pr0methean.betterrandom.util.EntryPoint;
  * This seed value can then be reused to create a random source with identical output.
  *
  * @author Daniel Dyer
- * @version $Id: $Id
  */
 public interface RepeatableRandom {
 

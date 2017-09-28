@@ -1,20 +1,21 @@
 package io.github.pr0methean.betterrandom;
 
 /**
- * A {@link java.util.Random} that can track its inflow and outflow of entropy (assuming that seeds
- * have entropy equal to their length) so we can decide whether or not it needs reseeding again
- * yet.
+ * A {@link java.util.Random} that can track its inflow and outflow of entropy so we can determine
+ * when it needs reseeding again.
  *
  * @author Chris Hennick
- * @version $Id: $Id
  */
 public interface EntropyCountingRandom {
 
   /**
-   * <p>entropyBits.</p>
+   * Returns an estimate of the current amount of entropy.
    *
-   * @return The current amount of entropy (bits seeded with or bits of internal state, whichever
-   *     was less at the time, minus bits returned).
+   * @return The current estimated amount of entropy. Every time the PRNG is reseeded, the entropy
+   *     count is set to the new seed's length; and every time it is used, it is decreased by the
+   *     number of random bits in the output rounded up. The amount of entropy can go below zero,
+   *     giving an indication of how far the entropy has been stretched. This estimate is a lower
+   *     bound if the seed is perfectly random and is not being reused.
    */
   long entropyBits();
 }

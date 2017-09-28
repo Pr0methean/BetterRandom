@@ -7,7 +7,6 @@ import java.util.logging.Logger;
  * <p>LogPreFormatter class.</p>
  *
  * @author ubuntu
- * @version $Id: $Id
  */
 public class LogPreFormatter {
 

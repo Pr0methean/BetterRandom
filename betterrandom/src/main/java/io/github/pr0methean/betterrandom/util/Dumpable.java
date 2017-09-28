@@ -5,7 +5,6 @@ package io.github.pr0methean.betterrandom.util;
  * representation than what {@link Object#toString()} returns.
  *
  * @author Chris Hennick
- * @version $Id: $Id
  */
 public interface Dumpable {
 

@@ -48,7 +48,6 @@ import org.checkerframework.checker.nullness.qual.EnsuresNonNull;
  * method inherited from {@link java.util.Random} until the seed array has been set.</em></p>
  *
  * @author Daniel Dyer
- * @version $Id: $Id
  */
 public class AesCounterRandom extends BaseRandom {
 
@@ -244,6 +243,10 @@ public class AesCounterRandom extends BaseRandom {
     return result >>> (32 - bits);
   }
 
+  /**
+   * {@inheritDoc} If the seed is not of the maximum length, it is combined with the existing seed
+   * using SHA-256.
+   */
   @Override
   public void setSeed(final byte[] seed) {
     if (seed.length > MAX_TOTAL_SEED_LENGTH_BYTES) {
@@ -291,6 +294,9 @@ public class AesCounterRandom extends BaseRandom {
     this.seed = castNonNull(this.seed);
   }
 
+  /**
+   * {@inheritDoc} The seed is combined with the existing seed using SHA-256.
+   */
   @Override
   @SuppressWarnings("contracts.postcondition.not.satisfied")
   public synchronized void setSeed(@UnknownInitialization(Random.class)AesCounterRandom this,

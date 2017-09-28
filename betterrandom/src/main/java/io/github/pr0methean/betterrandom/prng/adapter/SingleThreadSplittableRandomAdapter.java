@@ -11,7 +11,6 @@ import java.util.SplittableRandom;
  * <p>SingleThreadSplittableRandomAdapter class.</p>
  *
  * @author ubuntu
- * @version $Id: $Id
  */
 public class SingleThreadSplittableRandomAdapter extends DirectSplittableRandomAdapter {
 
