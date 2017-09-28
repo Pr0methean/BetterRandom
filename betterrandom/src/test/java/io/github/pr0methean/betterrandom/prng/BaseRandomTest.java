@@ -263,14 +263,14 @@ public abstract class BaseRandomTest {
   @Test
   public void testInts2() throws Exception {
     final BaseRandom prng = createRng();
-    checkStream(prng, 32, prng.ints(1 << 27, Integer.MAX_VALUE), -1, 1 << 27, Integer.MAX_VALUE,
+    checkStream(prng, 29, prng.ints(1 << 27, 1 << 29), -1, 1 << 27, 1 << 29,
         true);
   }
 
   @Test
   public void testInts3() throws Exception {
     final BaseRandom prng = createRng();
-    checkStream(prng, 32, prng.ints(3, 1 << 27, Integer.MAX_VALUE), 3, 1 << 27, Integer.MAX_VALUE,
+    checkStream(prng, 29, prng.ints(3, 1 << 27, 1 << 29), 3, 1 << 27, 1 << 29,
         true);
   }
 
