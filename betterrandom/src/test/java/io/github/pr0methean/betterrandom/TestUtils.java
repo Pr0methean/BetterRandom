@@ -17,6 +17,7 @@ public final class TestUtils {
    *
    * @return true if we're not running on Appveyor or a Travis-CI OSX instance, false if we are.
    */
+  @SuppressWarnings("CallToSystemGetenv")
   @TestingDeficiency
   public static boolean canRunRandomDotOrgLargeTest() {
     return isNotAppveyor()
@@ -28,6 +29,7 @@ public final class TestUtils {
    *
    * @return true if we're not running on Appveyor, false if we are.
    */
+  @SuppressWarnings("CallToSystemGetenv")
   public static boolean isNotAppveyor() {
     return System.getenv("APPVEYOR") == null;
   }

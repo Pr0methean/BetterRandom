@@ -62,7 +62,7 @@ public abstract class BaseSplittableRandomAdapter extends BaseRandom {
     for (int i = 0; i < bytes.length; i++) {
       bytes[i] = (byte) (local.nextInt(256));
     }
-    recordEntropySpent(bytes.length * (long)(Byte.SIZE));
+    recordEntropySpent(bytes.length * (long) (Byte.SIZE));
   }
 
   @Override
@@ -153,29 +153,12 @@ public abstract class BaseSplittableRandomAdapter extends BaseRandom {
   }
 
   @Override
-  public synchronized double nextGaussian() {
-    double output;
-    if (haveNextNextGaussian) {
-      haveNextNextGaussian = false;
-      output = nextNextGaussian;
-    } else {
-      double v1, v2, s;
-      do {
-        v1 = 2 * getSplittableRandom().nextDouble() - 1; // between -1 and 1
-        v2 = 2 * getSplittableRandom().nextDouble() - 1; // between -1 and 1
-        s = v1 * v1 + v2 * v2;
-      } while (s >= 1 || s == 0);
-      double multiplier = StrictMath.sqrt(-2 * StrictMath.log(s) / s);
-      nextNextGaussian = v2 * multiplier;
-      haveNextNextGaussian = true;
-      output = v1 * multiplier;
-    }
-
+  public double nextGaussian() {
     // Upper bound. 2 Gaussians are generated from 2 nextDouble calls, which once made are either
     // used or rerolled.
     recordEntropySpent(ENTROPY_OF_DOUBLE);
 
-    return output;
+    return internalNextGaussian(() -> getSplittableRandom().nextDouble());
   }
 
   /**

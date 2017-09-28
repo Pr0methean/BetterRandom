@@ -11,6 +11,7 @@ import org.testng.annotations.Test;
  * https://github.com/cbeust/testng/issues/1561
  */
 public class BaseRandomStaticTest {
+
   @Test
   public static void testEntropyOfInt() {
     assertEquals(entropyOfInt(0, 1), 0);

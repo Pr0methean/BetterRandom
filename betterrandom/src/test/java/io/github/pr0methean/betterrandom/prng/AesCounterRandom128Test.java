@@ -43,7 +43,6 @@ public class AesCounterRandom128Test extends BaseRandomTest {
         final byte[] originalSeed = rngs[i].getSeed();
         assertTrue(originalSeed.length >= 16);
         final AesCounterRandom rngReseeded = new AesCounterRandom(originalSeed);
-        assertTrue(rngReseeded.isSeeded());
         final AesCounterRandom rngReseededOther = new AesCounterRandom(originalSeed);
         rngReseeded.setSeed(seed);
         rngReseededOther.setSeed(otherSeed);

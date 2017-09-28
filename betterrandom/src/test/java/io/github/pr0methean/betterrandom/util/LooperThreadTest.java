@@ -21,6 +21,7 @@ import org.checkerframework.checker.nullness.qual.RequiresNonNull;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
+@SuppressWarnings("ClassLoaderInstantiation")
 public class LooperThreadTest {
 
   private static final String THREAD_NAME = "LooperThread for serialization test";
@@ -137,9 +138,8 @@ public class LooperThreadTest {
     final AtomicBoolean defaultHandlerCalled = new AtomicBoolean(false);
     UncaughtExceptionHandler oldHandler = Thread.getDefaultUncaughtExceptionHandler();
     try {
-      Thread.setDefaultUncaughtExceptionHandler((thread, throwable) -> {
-        defaultHandlerCalled.set(true);
-      });
+      Thread.setDefaultUncaughtExceptionHandler(
+          (thread, throwable) -> defaultHandlerCalled.set(true));
       FailingLooperThread failingThread = new FailingLooperThread();
       failingThread.start();
       failingThread.join();
@@ -164,12 +164,16 @@ public class LooperThreadTest {
   private static class SerializableThreadGroup extends SerializableThreadGroupSurrogate
       implements Serializable {
 
+    private static final long serialVersionUID = 4660069266898564395L;
+
     public SerializableThreadGroup() {
       super();
     }
   }
 
   private static class SkeletonLooperThread extends LooperThread {
+
+    private static final long serialVersionUID = -6863326140536988360L;
 
     public SkeletonLooperThread() {
     }
@@ -197,6 +201,8 @@ public class LooperThreadTest {
 
   private static class FailingLooperThread extends LooperThread {
 
+    private static final long serialVersionUID = -1882343225722025757L;
+
     public FailingLooperThread() {
       super("FailingLooperThread");
     }
@@ -218,11 +224,14 @@ public class LooperThreadTest {
     }
   }
 
+  @SuppressWarnings("CustomClassloader")
   private static class MockClassLoader extends ClassLoader {
 
   }
 
+  @SuppressWarnings("CustomClassloader")
   private static class SerializableClassLoader extends ClassLoader implements Serializable {
 
+    private static final long serialVersionUID = -5540517522704769624L;
   }
 }

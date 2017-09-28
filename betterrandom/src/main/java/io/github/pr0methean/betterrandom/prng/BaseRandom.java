@@ -22,6 +22,7 @@ import java.util.Random;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
+import java.util.function.DoubleSupplier;
 import java.util.stream.DoubleStream;
 import java.util.stream.IntStream;
 import java.util.stream.LongStream;
@@ -31,9 +32,9 @@ import org.checkerframework.checker.nullness.qual.EnsuresNonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 
 /**
- * <p>Abstract BaseRandom class.</p>
+ * Abstract {@link Random} with a seed field and an implementations of entropy counting.
  *
- * @author ubuntu
+ * @author Chris Hennick
  * @version $Id: $Id
  */
 public abstract class BaseRandom extends Random implements ByteArrayReseedableRandom,
@@ -45,7 +46,7 @@ public abstract class BaseRandom extends Random implements ByteArrayReseedableRa
   private static final LogPreFormatter LOG = new LogPreFormatter(BaseRandom.class);
   private static final long serialVersionUID = -1556392727255964947L;
   protected byte[] seed;
-  // Lock to prevent concurrent modification of the RNG's internal state.
+  /** Lock to prevent concurrent modification of the RNG's internal state. */
   @SuppressWarnings("InstanceVariableMayNotBeInitializedByReadObject")
   protected transient Lock lock;
   /**
@@ -167,6 +168,7 @@ public abstract class BaseRandom extends Random implements ByteArrayReseedableRa
   }
 
   /** {@inheritDoc} Reimplemented for entropy-counting purposes. */
+  @SuppressWarnings("NumericCastThatLosesPrecision")
   @Override
   public void nextBytes(byte[] bytes) {
     for (int i = 0; i < bytes.length; i++) {
@@ -219,14 +221,24 @@ public abstract class BaseRandom extends Random implements ByteArrayReseedableRa
     // Upper bound. 2 Gaussians are generated from 2 nextDouble calls, which once made are either
     // used or rerolled.
     recordEntropySpent(ENTROPY_OF_DOUBLE);
+    return internalNextGaussian(super::nextDouble);
+  }
 
+  /**
+   * Lockless reimplementation of {@link #nextGaussian()}.
+   *
+   * @param nextDouble shall return a random number between 0 and 1, like {@link #nextDouble()},
+   *     but shall not debit the entropy count.
+   * @return a random number that is normally distributed with mean 0 and standard deviation 1.
+   */
+  protected double internalNextGaussian(DoubleSupplier nextDouble) {
     // See Knuth, ACP, Section 3.4.1 Algorithm C.
     double out = Double.longBitsToDouble(nextNextGaussian.getAndSet(NAN_LONG_BITS));
     if (Double.isNaN(out)) {
       double v1, v2, s;
       do {
-        v1 = 2 * super.nextDouble() - 1; // between -1 and 1
-        v2 = 2 * super.nextDouble() - 1; // between -1 and 1
+        v1 = 2 * nextDouble.getAsDouble() - 1; // between -1 and 1
+        v2 = 2 * nextDouble.getAsDouble() - 1; // between -1 and 1
         s = v1 * v1 + v2 * v2;
       } while (s >= 1 || s == 0);
       double multiplier = StrictMath.sqrt(-2 * StrictMath.log(s) / s);
@@ -310,6 +322,7 @@ public abstract class BaseRandom extends Random implements ByteArrayReseedableRa
     return super.doubles(randomNumberOrigin, randomNumberBound);
   }
 
+  @Override
   public String dump() {
     lock.lock();
     try {
@@ -331,17 +344,6 @@ public abstract class BaseRandom extends Random implements ByteArrayReseedableRa
     }
   }
 
-  @EnsuresNonNull("this.seed")
-  @Override
-  public void setSeed(final byte[] seed) {
-    lock.lock();
-    try {
-      setSeedInternal(seed);
-    } finally {
-      lock.unlock();
-    }
-  }
-
   @SuppressWarnings("method.invocation.invalid")
   @EnsuresNonNull("this.seed")
   @Override
@@ -352,6 +354,17 @@ public abstract class BaseRandom extends Random implements ByteArrayReseedableRa
       setSeed(castNonNull(longSeedArray));
     } else {
       setSeedInternal(BinaryUtils.convertLongToBytes(seed));
+    }
+  }
+
+  @EnsuresNonNull("this.seed")
+  @Override
+  public void setSeed(final byte[] seed) {
+    lock.lock();
+    try {
+      setSeedInternal(seed);
+    } finally {
+      lock.unlock();
     }
   }
 

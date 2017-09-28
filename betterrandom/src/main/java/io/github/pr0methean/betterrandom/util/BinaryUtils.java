@@ -58,6 +58,7 @@ public final class BinaryUtils {
    * @param hex The hexadecimal String to be converted into an array of bytes.
    * @return An array of bytes that.
    */
+  @SuppressWarnings("NumericCastThatLosesPrecision")
   public static byte[] convertHexStringToBytes(final String hex) {
     if (hex.length() % 2 != 0) {
       throw new IllegalArgumentException("Hex string must have even number of characters.");
