@@ -58,7 +58,8 @@ public abstract class BaseRandom extends Random implements ByteArrayReseedableRa
   protected transient byte[] longSeedArray;
   protected transient ByteBuffer longSeedBuffer;
   protected AtomicLong entropyBits;
-  protected AtomicReference<@Nullable RandomSeederThread> seederThread = new AtomicReference<>(null);
+  protected AtomicReference<@Nullable RandomSeederThread> seederThread = new AtomicReference<>(
+      null);
   private AtomicLong nextNextGaussian = new AtomicLong(
       NAN_LONG_BITS); // Stored as a long since there's no atomic double
 
@@ -369,19 +370,19 @@ public abstract class BaseRandom extends Random implements ByteArrayReseedableRa
   }
 
   /**
-   * <p>addSubSubclassFields.</p>
+   * Adds the fields that were not inherited from {@link BaseRandom} to the given {@link
+   * ToStringHelper} for dumping.
    *
    * @param original a {@link ToStringHelper} object.
-   * @return a {@link ToStringHelper} object.
+   * @return {@code original} with the fields not inherited from {@link BaseRandom} written to it.
    */
   protected abstract ToStringHelper addSubSubclassFields(ToStringHelper original);
 
   /**
-   * Registers this PRNG with the given {@link RandomSeederThread} to schedule reseeding when we
-   * run out of entropy. Unregisters
+   * Registers this PRNG with the given {@link RandomSeederThread} to schedule reseeding when we run
+   * out of entropy. Unregisters
    *
-   * @param thread a {@link RandomSeederThread} that will
-   *     be used to reseed this PRNG.
+   * @param thread a {@link RandomSeederThread} that will be used to reseed this PRNG.
    */
   @SuppressWarnings("ObjectEquality")
   public void setSeederThread(final @Nullable RandomSeederThread thread) {
@@ -451,9 +452,11 @@ public abstract class BaseRandom extends Random implements ByteArrayReseedableRa
    * @param bits The number of bits of entropy spent.
    */
   protected void recordEntropySpent(final long bits) {
-    if (entropyBits.addAndGet(-bits) <= 0
-        && seederThread != null) {
-      seederThread.asyncReseed(this);
+    if (entropyBits.addAndGet(-bits) <= 0) {
+      RandomSeederThread thread = seederThread.get();
+      if (thread != null) {
+        thread.asyncReseed(this);
+      }
     }
   }
 
