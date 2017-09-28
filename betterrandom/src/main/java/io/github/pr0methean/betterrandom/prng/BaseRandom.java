@@ -20,6 +20,7 @@ import java.io.ObjectInputStream;
 import java.nio.ByteBuffer;
 import java.util.Random;
 import java.util.concurrent.atomic.AtomicLong;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 import java.util.function.DoubleSupplier;
@@ -35,7 +36,6 @@ import org.checkerframework.checker.nullness.qual.Nullable;
  * Abstract {@link Random} with a seed field and an implementations of entropy counting.
  *
  * @author Chris Hennick
- * @version $Id: $Id
  */
 public abstract class BaseRandom extends Random implements ByteArrayReseedableRandom,
     RepeatableRandom, Dumpable, EntropyCountingRandom {
@@ -58,7 +58,7 @@ public abstract class BaseRandom extends Random implements ByteArrayReseedableRa
   protected transient byte[] longSeedArray;
   protected transient ByteBuffer longSeedBuffer;
   protected AtomicLong entropyBits;
-  protected @Nullable RandomSeederThread seederThread;
+  protected AtomicReference<@Nullable RandomSeederThread> seederThread = new AtomicReference<>(null);
   private AtomicLong nextNextGaussian = new AtomicLong(
       NAN_LONG_BITS); // Stored as a long since there's no atomic double
 
@@ -344,6 +344,17 @@ public abstract class BaseRandom extends Random implements ByteArrayReseedableRa
     }
   }
 
+  @EnsuresNonNull("this.seed")
+  @Override
+  public void setSeed(final byte[] seed) {
+    lock.lock();
+    try {
+      setSeedInternal(seed);
+    } finally {
+      lock.unlock();
+    }
+  }
+
   @SuppressWarnings("method.invocation.invalid")
   @EnsuresNonNull("this.seed")
   @Override
@@ -357,17 +368,6 @@ public abstract class BaseRandom extends Random implements ByteArrayReseedableRa
     }
   }
 
-  @EnsuresNonNull("this.seed")
-  @Override
-  public void setSeed(final byte[] seed) {
-    lock.lock();
-    try {
-      setSeedInternal(seed);
-    } finally {
-      lock.unlock();
-    }
-  }
-
   /**
    * <p>addSubSubclassFields.</p>
    *
@@ -377,26 +377,16 @@ public abstract class BaseRandom extends Random implements ByteArrayReseedableRa
   protected abstract ToStringHelper addSubSubclassFields(ToStringHelper original);
 
   /**
-   * <p>Setter for the field {@code seederThread}.</p>
+   * Registers this PRNG with the given {@link RandomSeederThread} to schedule reseeding when we
+   * run out of entropy. Unregisters
    *
-   * @param thread a {@link io.github.pr0methean.betterrandom.seed.RandomSeederThread} object.
+   * @param thread a {@link RandomSeederThread} that will
+   *     be used to reseed this PRNG.
    */
   @SuppressWarnings("ObjectEquality")
   public void setSeederThread(final @Nullable RandomSeederThread thread) {
-    if (thread != null) {
+    if (seederThread.getAndSet(thread) != thread && thread != null) {
       thread.add(this);
-    }
-    lock.lock();
-    try {
-      if (this.seederThread == thread) {
-        return;
-      }
-      if (this.seederThread != null) {
-        this.seederThread.remove(this);
-      }
-      this.seederThread = thread;
-    } finally {
-      lock.unlock();
     }
   }
 

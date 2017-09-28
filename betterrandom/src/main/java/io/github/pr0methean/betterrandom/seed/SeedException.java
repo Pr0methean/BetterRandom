@@ -20,7 +20,6 @@ package io.github.pr0methean.betterrandom.seed;
  * when they are unable to generate a new seed for an RNG.
  *
  * @author Daniel Dyer
- * @version $Id: $Id
  */
 public class SeedException extends Exception {
 

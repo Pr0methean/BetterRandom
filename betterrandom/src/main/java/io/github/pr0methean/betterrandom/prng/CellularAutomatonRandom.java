@@ -37,7 +37,6 @@ import org.checkerframework.checker.nullness.qual.RequiresNonNull;
  *
  * @author Tony Pasqualoni (original C version)
  * @author Daniel Dyer (Java port)
- * @version $Id: $Id
  */
 public class CellularAutomatonRandom extends BaseRandom {
 

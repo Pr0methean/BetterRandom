@@ -13,7 +13,6 @@ import org.checkerframework.checker.initialization.qual.UnknownInitialization;
  * <p>Abstract BaseSplittableRandomAdapter class.</p>
  *
  * @author ubuntu
- * @version $Id: $Id
  */
 public abstract class BaseSplittableRandomAdapter extends BaseRandom {
 

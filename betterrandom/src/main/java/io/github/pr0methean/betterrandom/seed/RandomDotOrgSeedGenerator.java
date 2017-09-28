@@ -35,7 +35,6 @@ import java.util.concurrent.locks.ReentrantLock;
  * /dev/random}.
  *
  * @author Daniel Dyer
- * @version $Id: $Id
  */
 public enum RandomDotOrgSeedGenerator implements SeedGenerator {
 
