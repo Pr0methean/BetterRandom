@@ -87,11 +87,7 @@ public class XorShiftRandom extends BaseRandom {
         .add("state5", state5);
   }
 
-  /**
-   * <p>getSeed.</p>
-   *
-   * @return an array of byte.
-   */
+  @Override
   public byte[] getSeed() {
     return seed.clone();
   }

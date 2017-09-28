@@ -27,9 +27,9 @@ import org.checkerframework.checker.nullness.qual.EnsuresNonNull;
 import org.checkerframework.checker.nullness.qual.RequiresNonNull;
 
 /**
- * <p>RandomSeederThread class.</p>
+ * Thread that loops over {@link Random} instances and reseeds them.
  *
- * @author ubuntu
+ * @author Chris Hennick
  * @version $Id: $Id
  */
 @SuppressWarnings("ClassExplicitlyExtendsThread")
@@ -167,7 +167,7 @@ public final class RandomSeederThread extends LooperThread {
     }
   }
 
-  @SuppressWarnings({"InfiniteLoopStatement", "ObjectAllocationInLoop"})
+  @SuppressWarnings({"InfiniteLoopStatement", "ObjectAllocationInLoop", "AwaitNotInLoop"})
   @Override
   public boolean iterate() throws InterruptedException {
     while (true) {
@@ -204,11 +204,9 @@ public final class RandomSeederThread extends LooperThread {
           random.setSeed(longSeedBuffer.getLong(0));
         }
       } catch (final Throwable t) {
-        if (!(t instanceof InterruptedException)) {
-          LOG.error("%s", t);
-          for (final StackTraceElement element : t.getStackTrace()) {
-            LOG.error("  %s", element);
-          }
+        LOG.error("%s", t);
+        for (final StackTraceElement element : t.getStackTrace()) {
+          LOG.error("  %s", element);
         }
         interrupt();
       }

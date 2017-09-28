@@ -14,7 +14,7 @@ public class AesCounterRandomDemo {
     byte[] randomBytes = new byte[32];
     for (int i = 0; i < 20; i++) {
       random.nextBytes(randomBytes);
-      System.out.format("Bytes: %s\n", BinaryUtils.convertBytesToHexString(randomBytes));
+      System.out.format("Bytes: %s%n", BinaryUtils.convertBytesToHexString(randomBytes));
     }
   }
 }

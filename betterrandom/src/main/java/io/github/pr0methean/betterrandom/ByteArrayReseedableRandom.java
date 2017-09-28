@@ -3,6 +3,9 @@ package io.github.pr0methean.betterrandom;
 /**
  * A {@link java.util.Random} that can be reseeded using a byte array instead of using {@link
  * java.util.Random#setSeed(long)} (although that may also be supported).
+ *
+ * @author Chris Hennick
+ * @version $Id: $Id
  */
 public interface ByteArrayReseedableRandom /* extends BaseRandom */ {
 
@@ -20,7 +23,8 @@ public interface ByteArrayReseedableRandom /* extends BaseRandom */ {
   int getNewSeedLength();
 
   /**
-   * @return Whether we prefer to have {@link java.util.Random#setSeed(long)} called instead.
+   * @return true if {@link java.util.Random#setSeed(long)} will tend to perform better than {@link
+   *     #setSeed(byte[])}.
    */
   default boolean preferSeedWithLong() {
     return false;

@@ -163,47 +163,55 @@ public class RandomWrapper extends BaseRandom {
     return SEED_SIZE_BYTES;
   }
 
+  @Override
   public void nextBytes(final byte[] bytes) {
     wrapped.nextBytes(bytes);
     recordEntropySpent(bytes.length * (long) (Byte.SIZE));
   }
 
+  @Override
   public int nextInt() {
     final int result = wrapped.nextInt();
     recordEntropySpent(Integer.SIZE);
     return result;
   }
 
+  @Override
   public int nextInt(final int bound) {
     final int result = wrapped.nextInt(bound);
     recordEntropySpent(entropyOfInt(0, bound));
     return result;
   }
 
+  @Override
   public long nextLong() {
     final long result = wrapped.nextLong();
     recordEntropySpent(Long.SIZE);
     return result;
   }
 
+  @Override
   public boolean nextBoolean() {
     final boolean result = wrapped.nextBoolean();
     recordEntropySpent(1);
     return result;
   }
 
+  @Override
   public float nextFloat() {
     final float result = wrapped.nextFloat();
     recordEntropySpent(ENTROPY_OF_FLOAT);
     return result;
   }
 
+  @Override
   public double nextDouble() {
     final double result = wrapped.nextDouble();
     recordEntropySpent(ENTROPY_OF_DOUBLE);
     return result;
   }
 
+  @Override
   public double nextGaussian() {
     final double result = wrapped.nextGaussian();
 
@@ -214,18 +222,21 @@ public class RandomWrapper extends BaseRandom {
     return result;
   }
 
+  @Override
   public IntStream ints(final long streamSize) {
     final IntStream result = wrapped.ints(streamSize);
     recordEntropySpent(Integer.SIZE * streamSize);
     return result;
   }
 
+  @Override
   public IntStream ints() {
     final IntStream result = wrapped.ints();
     recordAllEntropySpent();
     return result;
   }
 
+  @Override
   public IntStream ints(final long streamSize, final int randomNumberOrigin,
       final int randomNumberBound) {
     final IntStream result = wrapped.ints(streamSize, randomNumberOrigin, randomNumberBound);
@@ -233,24 +244,28 @@ public class RandomWrapper extends BaseRandom {
     return result;
   }
 
+  @Override
   public IntStream ints(final int randomNumberOrigin, final int randomNumberBound) {
     final IntStream result = wrapped.ints(randomNumberOrigin, randomNumberBound);
     recordAllEntropySpent();
     return result;
   }
 
+  @Override
   public LongStream longs(final long streamSize) {
     final LongStream result = wrapped.longs(streamSize);
     recordEntropySpent(Long.SIZE * streamSize);
     return result;
   }
 
+  @Override
   public LongStream longs() {
     final LongStream result = wrapped.longs();
     recordAllEntropySpent();
     return result;
   }
 
+  @Override
   public LongStream longs(final long streamSize, final long randomNumberOrigin,
       final long randomNumberBound) {
     final LongStream result = wrapped.longs(streamSize, randomNumberOrigin, randomNumberBound);
@@ -258,24 +273,28 @@ public class RandomWrapper extends BaseRandom {
     return result;
   }
 
+  @Override
   public LongStream longs(final long randomNumberOrigin, final long randomNumberBound) {
     final LongStream result = wrapped.longs(randomNumberOrigin, randomNumberBound);
     recordAllEntropySpent();
     return result;
   }
 
+  @Override
   public DoubleStream doubles(final long streamSize) {
     final DoubleStream result = wrapped.doubles(streamSize);
     recordEntropySpent(streamSize * ENTROPY_OF_DOUBLE);
     return result;
   }
 
+  @Override
   public DoubleStream doubles() {
     final DoubleStream result = wrapped.doubles();
     recordAllEntropySpent();
     return result;
   }
 
+  @Override
   public DoubleStream doubles(final long streamSize, final double randomNumberOrigin,
       final double randomNumberBound) {
     final DoubleStream result = wrapped.doubles(streamSize, randomNumberOrigin, randomNumberBound);
@@ -283,6 +302,7 @@ public class RandomWrapper extends BaseRandom {
     return result;
   }
 
+  @Override
   public DoubleStream doubles(final double randomNumberOrigin, final double randomNumberBound) {
     final DoubleStream result = wrapped.doubles(randomNumberOrigin, randomNumberBound);
     recordAllEntropySpent();

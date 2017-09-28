@@ -34,15 +34,16 @@ public enum DevRandomSeedGenerator implements SeedGenerator {
   DEV_RANDOM_SEED_GENERATOR;
 
   private static final LogPreFormatter LOG = new LogPreFormatter(DevRandomSeedGenerator.class);
+  @SuppressWarnings("HardcodedFileSeparator")
   private static final String DEV_RANDOM_STRING = "/dev/random";
   private static final File DEV_RANDOM = new File(DEV_RANDOM_STRING);
   private static AtomicBoolean DEV_RANDOM_DOES_NOT_EXIST = new AtomicBoolean(false);
 
   /**
    * @throws SeedException if {@literal /dev/random} does not exist or is not accessible. If it
-   *     did not exist during a previous {@link #generateSeed(byte[])} or {@link #generateSeed(int)}
-   *     call, then for performance reasons, it is assumed to continue not to exist for the rest of
-   *     the JVM's lifespan.
+   *     did not exist during a previous call to this method or to {@link #generateSeed(int)}, then
+   *     for performance reasons, we assume for the rest of the JVM's lifespan that it still doesn't
+   *     exist.
    */
   @Override
   public void generateSeed(final byte[] randomSeed) throws SeedException {
