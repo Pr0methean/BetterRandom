@@ -155,9 +155,6 @@ public class RandomWrapper extends BaseRandom {
   @Override
   public void setSeedInternal(@UnknownInitialization(Random.class)RandomWrapper this,
       final byte[] seed) {
-    if (seed.length != Long.BYTES) {
-      throw new IllegalArgumentException("RandomWrapper requires a 64-bit (8-byte) seed.");
-    }
     lock.lock();
     try {
       super.setSeedInternal(seed);
