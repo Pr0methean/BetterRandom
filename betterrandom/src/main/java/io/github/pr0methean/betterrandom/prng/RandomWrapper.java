@@ -43,7 +43,6 @@ public class RandomWrapper extends BaseRandom {
   @SuppressWarnings("PublicStaticArrayField")
   public static final byte[] DUMMY_SEED = new byte[8];
   private static final long serialVersionUID = -6526304552538799385L;
-  private static final int SEED_SIZE_BYTES = 8;
   private Random wrapped;
   private boolean unknownSeed = true;
 
@@ -53,7 +52,7 @@ public class RandomWrapper extends BaseRandom {
    * @throws io.github.pr0methean.betterrandom.seed.SeedException if any.
    */
   public RandomWrapper() throws SeedException {
-    this(DefaultSeedGenerator.DEFAULT_SEED_GENERATOR.generateSeed(SEED_SIZE_BYTES));
+    this(DefaultSeedGenerator.DEFAULT_SEED_GENERATOR.generateSeed(Long.BYTES));
   }
 
   /**
@@ -66,7 +65,7 @@ public class RandomWrapper extends BaseRandom {
    */
   @EntryPoint
   public RandomWrapper(final SeedGenerator seedGenerator) throws SeedException {
-    super(seedGenerator, SEED_SIZE_BYTES);
+    super(seedGenerator, Long.BYTES);
     wrapped = new Random(longSeedBuffer.getLong(0));
     unknownSeed = false;
   }
@@ -80,6 +79,11 @@ public class RandomWrapper extends BaseRandom {
     super(seed);
     wrapped = new Random(longSeedBuffer.getLong(0));
     unknownSeed = false;
+  }
+
+  @Override
+  protected int next(int bits) {
+    return bits >= 32 ? wrapped.nextInt() : wrapped.nextInt(1 << bits);
   }
 
   /**
@@ -141,14 +145,20 @@ public class RandomWrapper extends BaseRandom {
   @Override
   public void setSeedInternal(@UnknownInitialization(Random.class)RandomWrapper this,
       final byte[] seed) {
-    if (seed.length != SEED_SIZE_BYTES) {
+    if (seed.length != Long.BYTES) {
       throw new IllegalArgumentException("RandomWrapper requires a 64-bit (8-byte) seed.");
     }
     super.setSeedInternal(seed);
-    if (wrapped != null && longSeedBuffer != null && longSeedArray != null) {
-      System.arraycopy(seed, 0, longSeedArray, 0, SEED_SIZE_BYTES);
-      wrapped.setSeed(longSeedBuffer.getLong(0));
-      unknownSeed = false;
+    if (wrapped != null) {
+      if (wrapped instanceof ByteArrayReseedableRandom && !((ByteArrayReseedableRandom) wrapped)
+          .preferSeedWithLong()) {
+        ((ByteArrayReseedableRandom) wrapped).setSeed(seed);
+        unknownSeed = false;
+      } else if (longSeedBuffer != null && longSeedArray != null) {
+        System.arraycopy(seed, 0, longSeedArray, 0, Long.BYTES);
+        wrapped.setSeed(longSeedBuffer.getLong(0));
+        unknownSeed = false;
+      }
     }
   }
 
@@ -157,9 +167,14 @@ public class RandomWrapper extends BaseRandom {
     return true;
   }
 
+  /** */
   @Override
   public int getNewSeedLength(@UnknownInitialization RandomWrapper this) {
-    return SEED_SIZE_BYTES;
+    if (wrapped instanceof ByteArrayReseedableRandom) {
+      return ((ByteArrayReseedableRandom) wrapped).getNewSeedLength();
+    } else {
+      return Long.BYTES;
+    }
   }
 
   @Override

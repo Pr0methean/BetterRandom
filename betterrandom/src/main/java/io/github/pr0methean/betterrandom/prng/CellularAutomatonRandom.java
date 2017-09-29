@@ -207,6 +207,7 @@ public class CellularAutomatonRandom extends BaseRandom {
     copySeedToCellsAndPreEvolve();
   }
 
+  /** Returns the only supported seed length. */
   @Override
   public int getNewSeedLength(@UnknownInitialization CellularAutomatonRandom this) {
     return SEED_SIZE_BYTES;

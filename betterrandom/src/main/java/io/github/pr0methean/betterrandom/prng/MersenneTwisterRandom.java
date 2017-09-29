@@ -203,6 +203,7 @@ public class MersenneTwisterRandom extends BaseRandom {
     return y >>> (32 - bits);
   }
 
+  /** Returns the only supported seed length. */
   @Override
   public int getNewSeedLength(@UnknownInitialization MersenneTwisterRandom this) {
     return SEED_SIZE_BYTES;

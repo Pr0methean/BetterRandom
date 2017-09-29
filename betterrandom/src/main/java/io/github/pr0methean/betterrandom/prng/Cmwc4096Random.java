@@ -141,6 +141,7 @@ public class Cmwc4096Random extends BaseRandom {
     }
   }
 
+  /** Returns the only supported seed length. */
   @Override
   public int getNewSeedLength(@UnknownInitialization Cmwc4096Random this) {
     return SEED_SIZE_BYTES;
