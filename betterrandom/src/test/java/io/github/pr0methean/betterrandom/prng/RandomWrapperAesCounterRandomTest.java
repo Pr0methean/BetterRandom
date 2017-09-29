@@ -2,7 +2,7 @@ package io.github.pr0methean.betterrandom.prng;
 
 import io.github.pr0methean.betterrandom.seed.SeedException;
 
-public class RandomWrapperAesCounterRandomTest extends BaseRandomTest {
+public class RandomWrapperAesCounterRandomTest extends AesCounterRandom128Test {
 
   @Override
   protected RandomWrapper tryCreateRng() throws SeedException {
