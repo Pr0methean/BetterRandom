@@ -157,6 +157,9 @@ public class RandomWrapper extends BaseRandom {
   @Override
   public void setSeedInternal(@UnknownInitialization(Random.class)RandomWrapper this,
       final byte[] seed) {
+    if (seed == null) {
+      throw new IllegalArgumentException("Seed must not be null");
+    }
     boolean locked = false;
     if (lock != null) {
       lock.lock();
@@ -168,8 +171,8 @@ public class RandomWrapper extends BaseRandom {
       }
       super.setSeedInternal(seed);
       if (wrapped != null) {
-        if (wrapped instanceof ByteArrayReseedableRandom && !((ByteArrayReseedableRandom) wrapped)
-            .preferSeedWithLong()) {
+        if (wrapped instanceof ByteArrayReseedableRandom &&
+            (seed.length != Long.BYTES || !((ByteArrayReseedableRandom) wrapped).preferSeedWithLong())) {
           ((ByteArrayReseedableRandom) wrapped).setSeed(seed);
           unknownSeed = false;
         } else if (longSeedBuffer != null && longSeedArray != null) {
