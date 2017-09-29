@@ -152,10 +152,15 @@ public class RandomWrapper extends BaseRandom {
     return super.getSeed();
   }
 
+  @SuppressWarnings("LockAcquiredButNotSafelyReleased")
   @Override
   public void setSeedInternal(@UnknownInitialization(Random.class)RandomWrapper this,
       final byte[] seed) {
-    lock.lock();
+    boolean locked = false;
+    if (lock != null) {
+      lock.lock();
+      locked = true;
+    }
     try {
       super.setSeedInternal(seed);
       if (wrapped != null) {
@@ -170,7 +175,9 @@ public class RandomWrapper extends BaseRandom {
         }
       }
     } finally {
-      lock.unlock();
+      if (locked) {
+        lock.unlock();
+      }
     }
   }
 
@@ -183,8 +190,10 @@ public class RandomWrapper extends BaseRandom {
   @SuppressWarnings("LockAcquiredButNotSafelyReleased")
   @Override
   public int getNewSeedLength(@UnknownInitialization RandomWrapper this) {
+    boolean locked = false;
     if (lock != null) {
       lock.lock();
+      locked = true;
     }
     try {
       if (wrapped instanceof ByteArrayReseedableRandom) {
@@ -193,7 +202,7 @@ public class RandomWrapper extends BaseRandom {
         return Long.BYTES;
       }
     } finally {
-      if (lock != null) {
+      if (locked) {
         lock.unlock();
       }
     }
