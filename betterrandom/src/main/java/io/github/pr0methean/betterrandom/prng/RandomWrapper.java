@@ -171,9 +171,18 @@ public class RandomWrapper extends BaseRandom {
       }
       super.setSeedInternal(seed);
       if (wrapped != null) {
-        if (wrapped instanceof ByteArrayReseedableRandom &&
-            (seed.length != Long.BYTES || !((ByteArrayReseedableRandom) wrapped).preferSeedWithLong())) {
-          ((ByteArrayReseedableRandom) wrapped).setSeed(seed);
+        ByteArrayReseedableRandom asByteArray = null;
+        if (wrapped instanceof ByteArrayReseedableRandom) {
+          asByteArray = (ByteArrayReseedableRandom) wrapped;
+        }
+        if (asByteArray == null && seed.length != Long.BYTES) {
+          throw new IllegalArgumentException("RandomWrapper requires an 8-byte seed when not wrapping a ByteArrayReseedableRandom");
+        }
+        if (asByteArray != null && asByteArray.preferSeedWithLong() && seed.length == Long.BYTES) {
+          asByteArray = null;
+        }
+        if (asByteArray != null) {
+          asByteArray.setSeed(seed);
           unknownSeed = false;
         } else if (longSeedBuffer != null && longSeedArray != null) {
           System.arraycopy(seed, 0, longSeedArray, 0, Long.BYTES);
