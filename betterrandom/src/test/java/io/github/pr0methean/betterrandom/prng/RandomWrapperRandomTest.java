@@ -23,7 +23,7 @@ import org.testng.annotations.Test;
  *
  * @author Daniel Dyer
  */
-public class RandomWrapperTest extends BaseRandomTest {
+public class RandomWrapperRandomTest extends BaseRandomTest {
 
   /**
    * Test to ensure that two distinct RNGs with the same seed return the same sequence of numbers.

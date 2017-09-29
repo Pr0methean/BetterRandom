@@ -149,11 +149,12 @@ public class AesCounterRandom extends BaseRandom {
   }
 
   /**
-   * <p>getMaxKeyLengthBytes.</p>
+   * Returns the maximum length in bytes of an AES key, which is {@code
+   * Math.min(Cipher.getMaxAllowedKeyLength("AES/ECB/NoPadding") / 8, 32)}. If the seed is longer
+   * than this, part of it becomes the counter's initial value. Otherwise, the full seed becomes the
+   * AES key and the counter is initially zero. Public for testing of its initialization.
    *
-   * @return If the seed is longer than this, part of it becomes the counter's initial value.
-   *     Otherwise, the full seed becomes the AES key and the counter is initially zero. Public for
-   *     testing of its initialization.
+   * @return the maximum length in bytes of an AES key.
    */
   public static int getMaxKeyLengthBytes() {
     return MAX_KEY_LENGTH_BYTES;
@@ -330,6 +331,7 @@ public class AesCounterRandom extends BaseRandom {
     seeded = true;
   }
 
+  /** Returns the longest supported seed length. */
   @Override
   public int getNewSeedLength(@UnknownInitialization AesCounterRandom this) {
     return MAX_TOTAL_SEED_LENGTH_BYTES;
