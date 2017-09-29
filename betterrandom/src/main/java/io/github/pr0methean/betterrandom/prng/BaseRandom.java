@@ -168,6 +168,14 @@ public abstract class BaseRandom extends Random implements ByteArrayReseedableRa
         .add("seederThread", seederThread));
   }
 
+  /**
+   * Generates the next pseudorandom number. Called by all other random-number-generating methods.
+   * Should not debit the entropy count, since that's done by the calling methods according to the
+   * amount they actually output.
+   */
+  @Override
+  protected abstract int next(int bits);
+
   /** {@inheritDoc} Reimplemented for entropy-counting purposes. */
   @SuppressWarnings("NumericCastThatLosesPrecision")
   @Override
@@ -453,10 +461,14 @@ public abstract class BaseRandom extends Random implements ByteArrayReseedableRa
    */
   protected void recordEntropySpent(final long bits) {
     if (entropyBits.addAndGet(-bits) <= 0) {
-      RandomSeederThread thread = seederThread.get();
-      if (thread != null) {
-        thread.asyncReseed(this);
-      }
+      asyncReseedIfPossible();
+    }
+  }
+
+  private void asyncReseedIfPossible() {
+    RandomSeederThread thread = seederThread.get();
+    if (thread != null) {
+      thread.asyncReseed(this);
     }
   }
 
@@ -497,9 +509,7 @@ public abstract class BaseRandom extends Random implements ByteArrayReseedableRa
 
   protected void recordAllEntropySpent() {
     entropyBits.set(0);
-    if (seederThread != null) {
-      seederThread.asyncReseed(this);
-    }
+    asyncReseedIfPossible();
   }
 
   @Override
