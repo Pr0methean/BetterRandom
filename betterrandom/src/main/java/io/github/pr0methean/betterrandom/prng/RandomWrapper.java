@@ -23,6 +23,7 @@ import io.github.pr0methean.betterrandom.seed.DefaultSeedGenerator;
 import io.github.pr0methean.betterrandom.seed.SeedException;
 import io.github.pr0methean.betterrandom.seed.SeedGenerator;
 import io.github.pr0methean.betterrandom.util.EntryPoint;
+import java.util.Arrays;
 import java.util.Random;
 import java.util.stream.DoubleStream;
 import java.util.stream.IntStream;
@@ -162,6 +163,9 @@ public class RandomWrapper extends BaseRandom {
       locked = true;
     }
     try {
+      if (this.seed == null || this.seed.length != seed.length) {
+        this.seed = new byte[seed.length];
+      }
       super.setSeedInternal(seed);
       if (wrapped != null) {
         if (wrapped instanceof ByteArrayReseedableRandom && !((ByteArrayReseedableRandom) wrapped)
