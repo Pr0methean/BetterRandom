@@ -78,6 +78,9 @@ public class RandomWrapper extends BaseRandom {
    */
   public RandomWrapper(final byte[] seed) {
     super(seed);
+    if (seed.length != Long.BYTES) {
+      throw new IllegalArgumentException("RandomWrapper requires an 8-byte seed when defaulting to java.util.Random");
+    }
     wrapped = new Random(longSeedBuffer.getLong(0));
     unknownSeed = false;
   }
