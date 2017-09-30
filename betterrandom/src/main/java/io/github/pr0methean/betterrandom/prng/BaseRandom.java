@@ -247,27 +247,15 @@ public abstract class BaseRandom extends Random implements ByteArrayReseedableRa
     return super.nextInt();
   }
 
-  private int nextIntNoEntropyDebit() {
-    return super.nextInt();
-  }
-
   @Override
   public int nextInt(int bound) {
     recordEntropySpent(entropyOfInt(0, bound));
     return super.nextInt(bound);
   }
 
-  private int nextIntNoEntropyDebit(int bound) {
-    return super.nextInt(bound);
-  }
-
   @Override
   public long nextLong() {
     recordEntropySpent(Long.SIZE);
-    return super.nextLong();
-  }
-
-  private long nextLongNoEntropyDebit() {
     return super.nextLong();
   }
 
@@ -430,20 +418,17 @@ public abstract class BaseRandom extends Random implements ByteArrayReseedableRa
 
   @Override
   public DoubleStream doubles() {
-    recordAllEntropySpent();
     return super.doubles();
   }
 
   @Override
   public DoubleStream doubles(long streamSize, double randomNumberOrigin,
       double randomNumberBound) {
-    recordEntropySpent(streamSize * ENTROPY_OF_DOUBLE);
     return super.doubles(streamSize, randomNumberOrigin, randomNumberBound);
   }
 
   @Override
   public DoubleStream doubles(double randomNumberOrigin, double randomNumberBound) {
-    recordAllEntropySpent();
     return super.doubles(randomNumberOrigin, randomNumberBound);
   }
 

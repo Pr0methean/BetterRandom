@@ -226,10 +226,24 @@ public abstract class BaseRandomTest {
   }
 
   @Test
-  public void testNextInt2() throws Exception {
+  public void testNextInt() throws Exception {
     final BaseRandom prng = createRng();
     checkRangeAndEntropy(prng, 32,
         prng::nextInt, Integer.MIN_VALUE, Integer.MAX_VALUE + 1L, true);
+  }
+
+  @Test
+  public void testNextInt2() throws Exception {
+    final BaseRandom prng = createRng();
+    checkRangeAndEntropy(prng, 29,
+        () -> prng.nextInt(1 << 27, 1 << 29), 1 << 27, 1 << 29, true);
+  }
+
+  @Test
+  public void testNextInt2HugeRange() throws Exception {
+    final BaseRandom prng = createRng();
+    checkRangeAndEntropy(prng, 32,
+        () -> prng.nextInt(Integer.MIN_VALUE, 1 << 29), Integer.MIN_VALUE, 1 << 29, true);
   }
 
   @Test
@@ -237,6 +251,20 @@ public abstract class BaseRandomTest {
     final BaseRandom prng = createRng();
     checkRangeAndEntropy(prng, 64, prng::nextLong, Long.MIN_VALUE,
         Long.MAX_VALUE + 1.0, true);
+  }
+
+  @Test
+  public void testNextLong2() throws Exception {
+    final BaseRandom prng = createRng();
+    checkRangeAndEntropy(prng, 42,
+        () -> prng.nextLong(1L << 40, 1L << 42), 1L << 40, 1L << 42, true);
+  }
+
+  @Test
+  public void testNextLong2HugeRange() throws Exception {
+    final BaseRandom prng = createRng();
+    checkRangeAndEntropy(prng, 64,
+        () -> prng.nextLong(Long.MIN_VALUE, 1 << 29), Long.MIN_VALUE, 1 << 29, true);
   }
 
   @Test
