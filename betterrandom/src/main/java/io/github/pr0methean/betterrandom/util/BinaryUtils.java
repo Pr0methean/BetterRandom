@@ -25,7 +25,8 @@ import java.util.Arrays;
  *
  * @author Daniel Dyer
  */
-public final class BinaryUtils {
+public enum BinaryUtils {
+  ;
 
   private static final ThreadLocal<byte[]> LONG_BYTE_ARRAY = withInitial(
       () -> new byte[Long.BYTES]);
@@ -42,10 +43,6 @@ public final class BinaryUtils {
 
   private static final char[] HEX_CHARS = {'0', '1', '2', '3', '4', '5', '6', '7',
       '8', '9', 'A', 'B', 'C', 'D', 'E', 'F'};
-
-  /** This is a utility class and shouldn't be instantiated. */
-  private BinaryUtils() {
-  }
 
   /**
    * Converts an array of bytes in to a String of hexadecimal characters (0 - F).
@@ -71,7 +68,7 @@ public final class BinaryUtils {
    */
   @SuppressWarnings("NumericCastThatLosesPrecision")
   public static byte[] convertHexStringToBytes(final String hex) {
-    if (hex.length() % 2 != 0) {
+    if ((hex.length() % 2) != 0) {
       throw new IllegalArgumentException("Hex string must have even number of characters.");
     }
     final byte[] seed = new byte[hex.length() / 2];
@@ -107,7 +104,7 @@ public final class BinaryUtils {
    * @since 1.1
    */
   public static int[] convertBytesToInts(final byte[] bytes) {
-    if (bytes.length % 4 != 0) {
+    if ((bytes.length % 4) != 0) {
       throw new IllegalArgumentException("Number of input bytes must be a multiple of 4.");
     }
     final int[] ints = new int[bytes.length / 4];
@@ -127,7 +124,7 @@ public final class BinaryUtils {
    */
   public static long convertBytesToLong(final byte[] bytes, final int offset) {
     long value = 0;
-    for (int i = offset; i < offset + 8; i++) {
+    for (int i = offset; i < (offset + 8); i++) {
       final byte b = bytes[i];
       value <<= 8;
       value |= b;

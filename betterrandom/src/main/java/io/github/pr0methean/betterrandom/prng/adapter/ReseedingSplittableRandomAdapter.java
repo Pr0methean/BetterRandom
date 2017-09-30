@@ -19,9 +19,9 @@ import org.checkerframework.checker.nullness.qual.EnsuresNonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 
 /**
- * A version of {@link io.github.pr0methean.betterrandom.prng.adapter.SplittableRandomAdapter} that
- * uses a {@link io.github.pr0methean.betterrandom.seed.RandomSeederThread} to replace each
- * thread's {@link java.util.SplittableRandom} with a reseeded one as frequently as possible,
+ * A version of {@link SplittableRandomAdapter} that
+ * uses a {@link RandomSeederThread} to replace each
+ * thread's {@link SplittableRandom} with a reseeded one as frequently as possible,
  * but not more frequently than it is being used.
  *
  * @author ubuntu
@@ -60,7 +60,7 @@ public class ReseedingSplittableRandomAdapter extends BaseSplittableRandomAdapte
   }
 
   /**
-   * @param seedGenerator a {@link io.github.pr0methean.betterrandom.seed.SeedGenerator}
+   * @param seedGenerator a {@link SeedGenerator}
    *     object.
    * @return the ReseedingSplittableRandomAdapter backed by {@code seedGenerator}.
    * @throws SeedException if {@code seedGenerator} throws one while generating the initial
@@ -131,8 +131,8 @@ public class ReseedingSplittableRandomAdapter extends BaseSplittableRandomAdapte
 
   @Override
   public boolean equals(final @Nullable Object o) {
-    return this == o
-        || (o instanceof ReseedingSplittableRandomAdapter
+    return (this == o)
+        || ((o instanceof ReseedingSplittableRandomAdapter)
         && seedGenerator.equals(((ReseedingSplittableRandomAdapter) o).seedGenerator));
   }
 

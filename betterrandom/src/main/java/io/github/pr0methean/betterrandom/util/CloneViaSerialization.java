@@ -7,11 +7,8 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
 
-public final class CloneViaSerialization {
-
-  /** Utility class that should not be instantiated. */
-  private CloneViaSerialization() {
-  }
+public enum CloneViaSerialization {
+  /* Utility class with no instances */;
 
   /**
    * Clones an object by serializing and deserializing it.

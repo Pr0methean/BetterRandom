@@ -6,7 +6,8 @@ import io.github.pr0methean.betterrandom.seed.RandomSeederThread;
 import io.github.pr0methean.betterrandom.seed.SeedException;
 import io.github.pr0methean.betterrandom.util.BinaryUtils;
 
-public class AesCounterRandomDemo {
+public enum AesCounterRandomDemo {
+  ;
 
   public static void main(final String[] args) throws SeedException {
     final AesCounterRandom random = new AesCounterRandom(SECURE_RANDOM_SEED_GENERATOR);

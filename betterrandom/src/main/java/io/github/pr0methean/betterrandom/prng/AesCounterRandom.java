@@ -45,7 +45,7 @@ import org.checkerframework.checker.nullness.qual.EnsuresNonNull;
  * or 256 bits) but if the cryptography policy files are not installed, a {@link
  * GeneralSecurityException} will be thrown.</p> <p><em>NOTE: Because instances of this class
  * require 128-bit seeds, it is not possible to seed this RNG using the {@link #setSeed(long)}
- * method inherited from {@link java.util.Random} until the seed array has been set.</em></p>
+ * method inherited from {@link Random} until the seed array has been set.</em></p>
  *
  * @author Daniel Dyer
  */
@@ -103,7 +103,7 @@ public class AesCounterRandom extends BaseRandom {
   /**
    * Creates a new RNG and seeds it using 256 bits from the {@link DefaultSeedGenerator}.
    *
-   * @throws io.github.pr0methean.betterrandom.seed.SeedException if any.
+   * @throws SeedException if the {@link DefaultSeedGenerator} fails to generate a seed.
    */
   public AesCounterRandom() throws SeedException {
     this(DEFAULT_SEED_SIZE_BYTES);
@@ -114,7 +114,7 @@ public class AesCounterRandom extends BaseRandom {
    *
    * @param seedGenerator The seed generation strategy that will provide the seed value for this
    *     RNG.
-   * @throws io.github.pr0methean.betterrandom.seed.SeedException if there is a problem
+   * @throws SeedException if there is a problem
    *     generating a seed.
    */
   public AesCounterRandom(final SeedGenerator seedGenerator) throws SeedException {
@@ -127,7 +127,7 @@ public class AesCounterRandom extends BaseRandom {
    *
    * @param seedSizeBytes The number of bytes to use for seed data. Valid values range from 16 to
    *     {@link #getMaxKeyLengthBytes()}() + 16.
-   * @throws io.github.pr0methean.betterrandom.seed.SeedException if there is a problem
+   * @throws SeedException if there is a problem
    *     generating a seed.
    */
   public AesCounterRandom(final int seedSizeBytes) throws SeedException {
@@ -161,8 +161,8 @@ public class AesCounterRandom extends BaseRandom {
   }
 
   private static int getKeyLength(final byte[] input) {
-    return input.length > MAX_KEY_LENGTH_BYTES ? MAX_KEY_LENGTH_BYTES
-        : input.length >= 24 ? 24 : 16;
+    return (input.length > MAX_KEY_LENGTH_BYTES) ? MAX_KEY_LENGTH_BYTES
+        : ((input.length >= 24) ? 24 : 16);
   }
 
   @Override
@@ -226,7 +226,7 @@ public class AesCounterRandom extends BaseRandom {
     lock.lock();
     int result;
     try {
-      if (currentBlock.length - index < 4) {
+      if ((currentBlock.length - index) < 4) {
         try {
           nextBlock();
           index = 0;
@@ -312,7 +312,7 @@ public class AesCounterRandom extends BaseRandom {
   protected void setSeedInternal(@UnknownInitialization(Random.class)AesCounterRandom this,
       final byte[] seed) {
     final int seedLength = seed.length;
-    if (seedLength < 16 || seedLength > MAX_TOTAL_SEED_LENGTH_BYTES) {
+    if ((seedLength < 16) || (seedLength > MAX_TOTAL_SEED_LENGTH_BYTES)) {
       throw new IllegalArgumentException(String.format(
           "Seed length is %d bytes; need 16 to %d bytes", seedLength, MAX_TOTAL_SEED_LENGTH_BYTES));
     }

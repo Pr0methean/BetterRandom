@@ -34,9 +34,9 @@ public class SplittableRandomAdapter extends DirectSplittableRandomAdapter {
   /**
    * <p>Constructor for SplittableRandomAdapter.</p>
    *
-   * @param seedGenerator a {@link io.github.pr0methean.betterrandom.seed.SeedGenerator}
+   * @param seedGenerator a {@link SeedGenerator}
    *     object.
-   * @throws io.github.pr0methean.betterrandom.seed.SeedException if any.
+   * @throws SeedException if any.
    */
   public SplittableRandomAdapter(final SeedGenerator seedGenerator) throws SeedException {
     super(seedGenerator.generateSeed(SEED_LENGTH_BYTES));

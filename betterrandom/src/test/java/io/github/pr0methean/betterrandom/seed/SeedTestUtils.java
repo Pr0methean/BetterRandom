@@ -4,15 +4,12 @@ import static org.testng.Assert.assertFalse;
 
 import java.util.Arrays;
 
-final class SeedTestUtils {
+enum SeedTestUtils {
+  ;
 
   private static final int SEED_SIZE = 32;
   @SuppressWarnings("MismatchedReadAndWriteOfArray")
   private static final byte[] ALL_ZEROES = new byte[SEED_SIZE];
-
-  /** This is a utility class and shouldn't be instantiated. */
-  private SeedTestUtils() {
-  }
 
   public static void testGenerator(final SeedGenerator seedGenerator) throws SeedException {
     final byte[] seed = seedGenerator.generateSeed(SEED_SIZE);

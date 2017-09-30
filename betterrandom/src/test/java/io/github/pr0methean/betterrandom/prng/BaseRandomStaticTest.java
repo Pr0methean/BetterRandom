@@ -13,7 +13,7 @@ import org.testng.annotations.Test;
 public class BaseRandomStaticTest {
 
   @Test
-  public static void testEntropyOfInt() {
+  public void testEntropyOfInt() {
     assertEquals(entropyOfInt(0, 1), 0);
     assertEquals(entropyOfInt(0, 2), 1);
     assertEquals(entropyOfInt(0, 1 << 24), 24);
@@ -23,7 +23,7 @@ public class BaseRandomStaticTest {
   }
 
   @Test
-  public static void testEntropyOfLong() {
+  public void testEntropyOfLong() {
     assertEquals(entropyOfLong(0, 1), 0);
     assertEquals(entropyOfLong(0, 2), 1);
     assertEquals(entropyOfLong(0, 1L << 42), 42);
