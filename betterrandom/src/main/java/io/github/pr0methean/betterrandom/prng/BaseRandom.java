@@ -17,7 +17,6 @@ import io.github.pr0methean.betterrandom.util.LogPreFormatter;
 import java.io.IOException;
 import java.io.InvalidObjectException;
 import java.io.ObjectInputStream;
-import java.nio.ByteBuffer;
 import java.util.Random;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.atomic.AtomicReference;
@@ -386,7 +385,12 @@ public abstract class BaseRandom extends Random implements ByteArrayReseedableRa
   @Override
   public synchronized void setSeed(@UnknownInitialization(Random.class)BaseRandom this,
       final long seed) {
-    setSeedInternal(BinaryUtils.convertLongToBytes(seed));
+    final byte[] seedBytes = BinaryUtils.convertLongToBytes(seed);
+    if (superConstructorFinished) {
+      setSeed(seedBytes);
+    } else {
+      setSeedInternal(seedBytes);
+    }
   }
 
   /**
