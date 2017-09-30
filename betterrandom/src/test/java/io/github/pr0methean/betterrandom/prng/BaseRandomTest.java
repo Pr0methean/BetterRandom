@@ -180,8 +180,8 @@ public abstract class BaseRandomTest {
     final BaseRandom rng = createRng();
     rng.setSeederThread(RandomTestUtils.DEFAULT_SEEDER);
     final byte[] oldSeed = rng.getSeed();
-    rng.nextBytes(new byte[20000]);
-    Thread.sleep(5000);
+    rng.nextBytes(new byte[oldSeed.length + 1]);
+    Thread.sleep(5000 + (oldSeed.length / 2));
     final byte[] newSeed = rng.getSeed();
     assertFalse(Arrays.equals(oldSeed, newSeed));
     rng.setSeederThread(null);
