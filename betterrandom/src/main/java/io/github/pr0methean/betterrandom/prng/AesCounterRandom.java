@@ -110,11 +110,11 @@ public class AesCounterRandom extends BaseRandom {
   }
 
   /**
-   * Seed the RNG using the provided seed generation strategy to create a 128-bit seed.
+   * Seed the RNG using the provided seed generation strategy to create a 256-bit seed.
    *
    * @param seedGenerator The seed generation strategy that will provide the seed value for this
    *     RNG.
-   * @throws io.github.pr0methean.betterrandom.seed.SeedException If there is a problem
+   * @throws io.github.pr0methean.betterrandom.seed.SeedException if there is a problem
    *     generating a seed.
    */
   public AesCounterRandom(final SeedGenerator seedGenerator) throws SeedException {
@@ -125,11 +125,13 @@ public class AesCounterRandom extends BaseRandom {
    * Seed the RNG using the default seed generation strategy to create a seed of the specified
    * size.
    *
-   * @param seedSizeBytes The number of bytes to use for seed data.  Valid values are 16 (128
-   *     bits), 24 (192 bits) and 32 (256 bits).  Any other values will result in an exception from
-   *     the AES implementation.
-   * @throws io.github.pr0methean.betterrandom.seed.SeedException if any.
-   * @since 1.0.2
+   * @param seedSizeBytes The number of bytes to use for seed data.  Valid values are 16, 24, 32,
+   *     40 and 48. Sizes 40 and 48 require
+   *     <a href="http://www.oracle.com/technetwork/java/javase/downloads/jce8-download-2133166.html">unlimited-strength
+   *     jurisdiction policy files</a> (except on OpenJDK and Android). Any other values will result
+   *     in an exception.
+   * @throws io.github.pr0methean.betterrandom.seed.SeedException if there is a problem
+   *     generating a seed.
    */
   public AesCounterRandom(final int seedSizeBytes) throws SeedException {
     this(DefaultSeedGenerator.DEFAULT_SEED_GENERATOR.generateSeed(seedSizeBytes));
