@@ -115,6 +115,43 @@
     </resources>
     <pluginManagement>
       <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-javadoc-plugin</artifactId>
+        <version>3.0.0-M1</version>
+        <configuration>
+          <sourcepath>${user.home}/j2se-src:${basedir}/src/main/java</sourcepath>
+          <notimestamp>true</notimestamp>
+          <subpackages>io.github.pr0methean</subpackages>
+          <show>protected</show>
+          <detectLinks>true</detectLinks>
+          <links>
+            <link>https://checkerframework.org/api</link>
+            <link>https://docs.oracle.com/javase/8/docs/api</link>
+            <link>https://google.github.io/guava/releases/19.0/api/docs</link>
+          </links>
+          <tags>
+            <tag>
+              <name>apiNote</name>
+              <placement>a</placement>
+
+              <head>API Note:</head>
+            </tag>
+            <tag>
+              <name>implSpec</name>
+              <placement>a</placement>
+
+              <head>Implementation Requirements:</head>
+            </tag>
+            <tag>
+              <name>implNote</name>
+              <placement>a</placement>
+
+              <head>Implementation Note:</head>
+            </tag>
+          </tags>
+        </configuration>
+      </plugin>
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-surefire-plugin</artifactId>
@@ -518,7 +555,7 @@
           <detectLinks>true</detectLinks>
           <links>
             <link>https://docs.oracle.com/javase/8/docs/api</link>
-            <link>https://google.github.io/guava/releases/19.0/api/docs/</link>
+            <link>https://google.github.io/guava/releases/19.0/api/docs</link>
           </links>
           <tags>
             <tag>
