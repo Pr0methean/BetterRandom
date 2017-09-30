@@ -256,7 +256,7 @@ public abstract class BaseRandom extends Random implements ByteArrayReseedableRa
   @Override
   public long nextLong() {
     recordEntropySpent(Long.SIZE);
-    return super.nextLong();
+    return nextLongNoEntropyDebit();
   }
 
   @Override
@@ -351,12 +351,14 @@ public abstract class BaseRandom extends Random implements ByteArrayReseedableRa
     if (range > 0) {
       // range is no more than Integer.MAX_VALUE
       return nextInt(range) + origin;
+    } else {
+      int output;
+      do {
+        output = super.nextInt();
+      } while (output < origin || output >= bound);
+      recordEntropySpent(entropyOfInt(origin, bound));
+      return output;
     }
-    int output;
-    do {
-      output = super.nextInt();
-    } while (output < origin || output >= bound);
-    return output;
   }
 
   @Override
@@ -400,9 +402,18 @@ public abstract class BaseRandom extends Random implements ByteArrayReseedableRa
     }
     long output;
     do {
-      output = super.nextLong();
+      output = nextLongNoEntropyDebit();
     } while (output < origin || output >= bound);
+    recordEntropySpent(entropyOfLong(origin, bound));
     return output;
+  }
+
+  /**
+   * Returns the next random {@code long}, but does not debit entropy.
+   * @return a pseudorandom {@code long} with all possible values equally likely.
+   */
+  protected long nextLongNoEntropyDebit() {
+    return super.nextLong();
   }
 
   @Override
