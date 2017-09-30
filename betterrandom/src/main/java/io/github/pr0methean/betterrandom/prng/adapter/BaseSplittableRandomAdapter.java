@@ -78,18 +78,7 @@ public abstract class BaseSplittableRandomAdapter extends BaseRandom {
     return out;
   }
 
-  /**
-   * Returns a pseudorandom {@code int} value between the specified origin (inclusive) and the
-   * specified bound (exclusive).
-   *
-   * @param origin the least value returned
-   * @param bound the upper bound (exclusive)
-   * @return a pseudorandom {@code int} value between the origin (inclusive) and the bound
-   *     (exclusive)
-   * @throws IllegalArgumentException if {@code origin} is greater than or equal to {@code
-   *     bound}
-   */
-  @EntryPoint
+  @Override
   public int nextInt(final int origin, final int bound) {
     final int out = getSplittableRandom().nextInt(origin, bound);
     recordEntropySpent(entropyOfInt(origin, bound));
@@ -126,18 +115,7 @@ public abstract class BaseSplittableRandomAdapter extends BaseRandom {
     return out;
   }
 
-  /**
-   * Returns a pseudorandom {@code long} value between the specified origin (inclusive) and the
-   * specified bound (exclusive).
-   *
-   * @param origin the least value returned
-   * @param bound the upper bound (exclusive)
-   * @return a pseudorandom {@code long} value between the origin (inclusive) and the bound
-   *     (exclusive)
-   * @throws IllegalArgumentException if {@code origin} is greater than or equal to {@code
-   *     bound}
-   */
-  @EntryPoint
+  @Override
   public long nextLong(final long origin, final long bound) {
     final long out = getSplittableRandom().nextLong(origin, bound);
     recordEntropySpent(entropyOfLong(origin, bound));
