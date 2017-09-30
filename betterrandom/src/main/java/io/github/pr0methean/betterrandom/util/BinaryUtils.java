@@ -15,7 +15,10 @@
 // ============================================================================
 package io.github.pr0methean.betterrandom.util;
 
+import static java.lang.ThreadLocal.withInitial;
+
 import java.nio.ByteBuffer;
+import java.util.Arrays;
 
 /**
  * Utility methods for working with binary and hex data.
@@ -23,6 +26,15 @@ import java.nio.ByteBuffer;
  * @author Daniel Dyer
  */
 public final class BinaryUtils {
+
+  private static final ThreadLocal<byte[]> LONG_BYTE_ARRAY = withInitial(
+      () -> new byte[Long.BYTES]);
+  private static final ThreadLocal<ByteBuffer> LONG_BYTE_BUFFER = withInitial(
+      () -> ByteBuffer.wrap(LONG_BYTE_ARRAY.get()));
+  private static final ThreadLocal<byte[]> INT_BYTE_ARRAY =
+      withInitial(() -> new byte[Integer.BYTES]);
+  private static final ThreadLocal<ByteBuffer> INT_BYTE_BUFFER = withInitial(
+      () -> ByteBuffer.wrap(INT_BYTE_ARRAY.get()));
 
   // Mask for casting a byte to an int, bit-by-bit (with
   // bitwise AND) with no special consideration for the sign bit.
@@ -112,7 +124,6 @@ public final class BinaryUtils {
    * @param bytes The data to read from.
    * @param offset The position to start reading the 8-byte long from.
    * @return The 64-bit integer represented by the eight bytes.
-   * @since 1.1
    */
   public static long convertBytesToLong(final byte[] bytes, final int offset) {
     long value = 0;
@@ -125,16 +136,14 @@ public final class BinaryUtils {
   }
 
   /**
-   * <p>convertLongToBytes.</p>
+   * Converts a long to an array of bytes.
    *
    * @param input a long.
-   * @return an array of byte.
+   * @return an array of 8 bytes containing the long's value in a platform-defined endianness.
    */
   public static byte[] convertLongToBytes(final long input) {
-    final byte[] array = new byte[Long.BYTES];
-    final ByteBuffer buffer = ByteBuffer.wrap(array);
-    buffer.putLong(input);
-    return array;
+    LONG_BYTE_BUFFER.get().putLong(0, input);
+    return LONG_BYTE_ARRAY.get();
   }
 
   /**
@@ -144,12 +153,16 @@ public final class BinaryUtils {
    * @return an array of byte.
    */
   public static byte[] convertIntToBytes(final int input) {
-    final byte[] array = new byte[Integer.BYTES];
-    final ByteBuffer buffer = ByteBuffer.wrap(array);
-    buffer.putInt(input);
-    return array;
+    INT_BYTE_BUFFER.get().putInt(0, input);
+    return INT_BYTE_ARRAY.get();
   }
 
+  /**
+   * Convert a byte array to a long, reversing {@link #convertLongToBytes(long)}.
+   *
+   * @param bytes a byte array of length {@link Long#BYTES}.
+   * @return {@code bytes} as a long.
+   */
   public static long convertBytesToLong(final byte[] bytes) {
     return convertBytesToLong(bytes, 0);
   }

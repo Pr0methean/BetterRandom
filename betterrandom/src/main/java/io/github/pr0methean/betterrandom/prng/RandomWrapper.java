@@ -22,6 +22,7 @@ import io.github.pr0methean.betterrandom.RepeatableRandom;
 import io.github.pr0methean.betterrandom.seed.DefaultSeedGenerator;
 import io.github.pr0methean.betterrandom.seed.SeedException;
 import io.github.pr0methean.betterrandom.seed.SeedGenerator;
+import io.github.pr0methean.betterrandom.util.BinaryUtils;
 import io.github.pr0methean.betterrandom.util.EntryPoint;
 import java.util.Arrays;
 import java.util.Random;
@@ -67,7 +68,7 @@ public class RandomWrapper extends BaseRandom {
   @EntryPoint
   public RandomWrapper(final SeedGenerator seedGenerator) throws SeedException {
     super(seedGenerator, Long.BYTES);
-    wrapped = new Random(longSeedBuffer.getLong(0));
+    wrapped = new Random(BinaryUtils.convertBytesToLong(seed));
     unknownSeed = false;
   }
 
@@ -81,7 +82,7 @@ public class RandomWrapper extends BaseRandom {
     if (seed.length != Long.BYTES) {
       throw new IllegalArgumentException("RandomWrapper requires an 8-byte seed when defaulting to java.util.Random");
     }
-    wrapped = new Random(longSeedBuffer.getLong(0));
+    wrapped = new Random(BinaryUtils.convertBytesToLong(seed));
     unknownSeed = false;
   }
 
@@ -174,21 +175,20 @@ public class RandomWrapper extends BaseRandom {
       }
       super.setSeedInternal(seed);
       if (wrapped != null) {
-        ByteArrayReseedableRandom asByteArray = null;
+        ByteArrayReseedableRandom asByteArrayReseedable = null;
         if (wrapped instanceof ByteArrayReseedableRandom) {
-          asByteArray = (ByteArrayReseedableRandom) wrapped;
-          if (asByteArray.preferSeedWithLong() && seed.length == Long.BYTES) {
-            asByteArray = null;
+          asByteArrayReseedable = (ByteArrayReseedableRandom) wrapped;
+          if (asByteArrayReseedable.preferSeedWithLong() && seed.length == Long.BYTES) {
+            asByteArrayReseedable = null;
           }
-        } else if (asByteArray == null && seed.length != Long.BYTES) {
+        } else if (asByteArrayReseedable == null && seed.length != Long.BYTES) {
           throw new IllegalArgumentException("RandomWrapper requires an 8-byte seed when not wrapping a ByteArrayReseedableRandom");
         }
-        if (asByteArray != null) {
-          asByteArray.setSeed(seed);
+        if (asByteArrayReseedable != null) {
+          asByteArrayReseedable.setSeed(seed);
           unknownSeed = false;
-        } else if (longSeedBuffer != null && longSeedArray != null) {
-          System.arraycopy(seed, 0, longSeedArray, 0, Long.BYTES);
-          wrapped.setSeed(longSeedBuffer.getLong(0));
+        } else {
+          wrapped.setSeed(BinaryUtils.convertBytesToLong(seed));
           unknownSeed = false;
         }
       }

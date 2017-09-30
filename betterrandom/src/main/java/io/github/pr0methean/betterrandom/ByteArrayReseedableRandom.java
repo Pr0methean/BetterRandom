@@ -16,9 +16,9 @@ public interface ByteArrayReseedableRandom /* extends BaseRandom */ {
   void setSeed(byte[] seed);
 
   /**
-   * Returns the preferred length of a new byte-array seed. The meaning of "preferred" may vary in
-   * implementations that support multiple seed lengths, but it should probably usually mean the
-   * longest supported seed length, since the longer the seed, the more random the output.
+   * Returns the preferred length of a new byte-array seed. "Preferred" is implementation-defined
+   * when multiple seed lengths are supported, but should probably usually mean the longest one,
+   * since the longer the seed, the more random the output.
    *
    * @return The desired length of a new byte-array seed.
    */

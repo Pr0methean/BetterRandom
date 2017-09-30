@@ -40,24 +40,42 @@ import org.checkerframework.checker.nullness.qual.Nullable;
 public abstract class BaseRandom extends Random implements ByteArrayReseedableRandom,
     RepeatableRandom, Dumpable, EntropyCountingRandom {
 
-  public static final int ENTROPY_OF_DOUBLE = 53;
-  public static final long NAN_LONG_BITS = Double.doubleToLongBits(Double.NaN);
+  /** The number of pseudorandom bits in {@link #nextFloat()}(). */
   protected static final long ENTROPY_OF_FLOAT = 24;
+
+  /** The number of pseudorandom bits in {@link #nextDouble()}(). */
+  protected static final int ENTROPY_OF_DOUBLE = 53;
+
+  private static final long NAN_LONG_BITS = Double.doubleToLongBits(Double.NaN);
   private static final LogPreFormatter LOG = new LogPreFormatter(BaseRandom.class);
   private static final long serialVersionUID = -1556392727255964947L;
+
+  /**
+   * The seed this PRNG was seeded with, as a byte array. Used by {@link #getSeed()} even if the
+   * actual internal state of the PRNG is stored elsewhere (since otherwise getSeed() would require
+   * a slow type conversion).
+   */
   protected byte[] seed;
+
   /** Lock to prevent concurrent modification of the RNG's internal state. */
   @SuppressWarnings("InstanceVariableMayNotBeInitializedByReadObject")
   protected transient Lock lock;
+
   /**
-   * Use this to ignore setSeed(long) calls from super constructor
+   * When false inside a call to {@link #setSeed(long)}, this is because we are being called by
+   * {@link Random#Random()} or {@link Random#Random(long)}. Such calls may need to be ignored if
+   * {@link #setSeed(long)} is not supported or is overridden to use subclass fields.
    */
   @SuppressWarnings({"InstanceVariableMayNotBeInitializedByReadObject",
       "FieldAccessedSynchronizedAndUnsynchronized"})
   protected transient boolean superConstructorFinished = false;
-  protected transient byte[] longSeedArray;
-  protected transient ByteBuffer longSeedBuffer;
+
   protected AtomicLong entropyBits;
+
+  /**
+   * If the referent is non-null, it will be invoked to reseed this PRNG whenever random output is
+   * taken and {@link #entropyBits()} called immediately afterward would return zero or negative.
+   */
   protected AtomicReference<@Nullable RandomSeederThread> seederThread = new AtomicReference<>(
       null);
   private AtomicLong nextNextGaussian = new AtomicLong(
@@ -364,17 +382,11 @@ public abstract class BaseRandom extends Random implements ByteArrayReseedableRa
     }
   }
 
-  @SuppressWarnings("method.invocation.invalid")
-  @EnsuresNonNull("this.seed")
+  @EnsuresNonNull({"this.seed", "entropyBits"})
   @Override
   public synchronized void setSeed(@UnknownInitialization(Random.class)BaseRandom this,
       final long seed) {
-    if (superConstructorFinished) {
-      castNonNull(longSeedBuffer).putLong(0, seed);
-      setSeed(castNonNull(longSeedArray));
-    } else {
-      setSeedInternal(BinaryUtils.convertLongToBytes(seed));
-    }
+    setSeedInternal(BinaryUtils.convertLongToBytes(seed));
   }
 
   /**
@@ -430,13 +442,11 @@ public abstract class BaseRandom extends Random implements ByteArrayReseedableRa
   /**
    * Called in constructor and readObject to initialize transient fields.
    */
-  @EnsuresNonNull({"lock", "longSeedArray", "longSeedBuffer"})
+  @EnsuresNonNull("lock")
   protected void initTransientFields(@UnknownInitialization BaseRandom this) {
     if (lock == null) {
       lock = new ReentrantLock();
     }
-    longSeedArray = new byte[8];
-    longSeedBuffer = ByteBuffer.wrap(longSeedArray);
     superConstructorFinished = true;
   }
 
