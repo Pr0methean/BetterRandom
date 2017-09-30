@@ -4,6 +4,9 @@ import io.github.pr0methean.betterrandom.prng.BaseRandom;
 import io.github.pr0methean.betterrandom.util.EntryPoint;
 import java.util.Random;
 import java.util.SplittableRandom;
+import java.util.stream.DoubleStream;
+import java.util.stream.IntStream;
+import java.util.stream.LongStream;
 import org.checkerframework.checker.initialization.qual.UnknownInitialization;
 
 /**
@@ -15,6 +18,8 @@ public abstract class BaseSplittableRandomAdapter extends BaseRandom {
 
   protected static final int SEED_LENGTH_BYTES = 8;
   private static final long serialVersionUID = 4273652147052638879L;
+  private double nextNextGaussian;
+  private boolean haveNextNextGaussian;
 
   /**
    * <p>Constructor for BaseSplittableRandomAdapter.</p>
@@ -25,13 +30,14 @@ public abstract class BaseSplittableRandomAdapter extends BaseRandom {
     super(seed);
   }
 
-  public BaseSplittableRandomAdapter(final long seed) {
+  public BaseSplittableRandomAdapter(long seed) {
     super(seed);
   }
 
   @Override
   protected void setSeedInternal(
-      @UnknownInitialization(Random.class)BaseSplittableRandomAdapter this, final byte[] seed) {
+      @UnknownInitialization(Random.class)BaseSplittableRandomAdapter this, byte[] seed) {
+    haveNextNextGaussian = false;
     super.setSeedInternal(seed);
   }
 
@@ -80,7 +86,7 @@ public abstract class BaseSplittableRandomAdapter extends BaseRandom {
   }
 
   @Override
-  protected boolean withProbabilityInternal(final double probability) {
+  protected boolean withProbabilityInternal(double probability) {
     final boolean result = getSplittableRandom().nextDouble() < probability;
     // We're only outputting one bit
     recordEntropySpent(1);
@@ -109,7 +115,7 @@ public abstract class BaseSplittableRandomAdapter extends BaseRandom {
 
   @Override
   public long nextLong(final long origin, final long bound) {
-    final long out = getSplittableRandom().nextLong(origin, bound);
+    long out = getSplittableRandom().nextLong(origin, bound);
     recordEntropySpent(entropyOfLong(origin, bound));
     return out;
   }

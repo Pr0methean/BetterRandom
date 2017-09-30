@@ -127,7 +127,7 @@ public class MersenneTwisterRandom extends BaseRandom {
   @Override
   protected void setSeedInternal(
       @UnknownInitialization(Random.class)MersenneTwisterRandom this, final byte[] seed) {
-    if ((seed == null) || (seed.length != SEED_SIZE_BYTES)) {
+    if (seed == null || seed.length != SEED_SIZE_BYTES) {
       throw new IllegalArgumentException("Mersenne Twister RNG requires a 128-bit (16-byte) seed.");
     }
     mt = castNonNull(mt);
@@ -137,8 +137,8 @@ public class MersenneTwisterRandom extends BaseRandom {
     // This section is translated from the init_genrand code in the C version.
     mt[0] = BOOTSTRAP_SEED;
     for (mtIndex = 1; mtIndex < N; mtIndex++) {
-      mt[mtIndex] = ((BOOTSTRAP_FACTOR
-          * (mt[mtIndex - 1] ^ (mt[mtIndex - 1] >>> 30)))
+      mt[mtIndex] = (BOOTSTRAP_FACTOR
+          * (mt[mtIndex - 1] ^ (mt[mtIndex - 1] >>> 30))
           + mtIndex);
     }
 
@@ -176,11 +176,11 @@ public class MersenneTwisterRandom extends BaseRandom {
       if (mtIndex >= N) // Generate N ints at a time.
       {
         int kk;
-        for (kk = 0; kk < (N - M); kk++) {
+        for (kk = 0; kk < N - M; kk++) {
           y = (mt[kk] & UPPER_MASK) | (mt[kk + 1] & LOWER_MASK);
           mt[kk] = mt[kk + M] ^ (y >>> 1) ^ MAG01[y & 0x1];
         }
-        for (; kk < (N - 1); kk++) {
+        for (; kk < N - 1; kk++) {
           y = (mt[kk] & UPPER_MASK) | (mt[kk + 1] & LOWER_MASK);
           mt[kk] = mt[kk + (M - N)] ^ (y >>> 1) ^ MAG01[y & 0x1];
         }

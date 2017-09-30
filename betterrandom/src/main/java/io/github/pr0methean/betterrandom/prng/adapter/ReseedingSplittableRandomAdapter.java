@@ -33,6 +33,7 @@ public class ReseedingSplittableRandomAdapter extends BaseSplittableRandomAdapte
   private static final Map<SeedGenerator, ReseedingSplittableRandomAdapter> INSTANCES =
       Collections.synchronizedMap(new WeakHashMap<>(1));
   protected final SeedGenerator seedGenerator;
+  protected RandomSeederThread seederThread; // Hide inherited, because not nullable for us
   @SuppressWarnings({"ThreadLocalNotStaticFinal",
       "InstanceVariableMayNotBeInitializedByReadObject"})
   private transient ThreadLocal<SingleThreadSplittableRandomAdapter> threadLocal;
@@ -107,7 +108,7 @@ public class ReseedingSplittableRandomAdapter extends BaseSplittableRandomAdapte
     }
   }
 
-  @EnsuresNonNull({"threadLocal", "seederThread.get()"})
+  @EnsuresNonNull({"threadLocal", "seederThread"})
   private void initSubclassTransientFields(
       @UnknownInitialization(BaseSplittableRandomAdapter.class)ReseedingSplittableRandomAdapter this) {
     if (threadLocal == null) {
@@ -119,20 +120,25 @@ public class ReseedingSplittableRandomAdapter extends BaseSplittableRandomAdapte
         }
       });
     }
-    seederThread.set(RandomSeederThread.getInstance(seedGenerator));
+    seederThread = RandomSeederThread.getInstance(seedGenerator);
   }
 
   @Override
   protected SplittableRandom getSplittableRandom() {
     final SingleThreadSplittableRandomAdapter adapterForThread = threadLocal.get();
-    castNonNull(seederThread.get()).add(adapterForThread);
+    seederThread.add(adapterForThread);
     return adapterForThread.getSplittableRandom();
   }
 
   @Override
+  protected void finalize() {
+    seederThread.stopIfEmpty();
+  }
+
+  @Override
   public boolean equals(final @Nullable Object o) {
-    return (this == o)
-        || ((o instanceof ReseedingSplittableRandomAdapter)
+    return this == o
+        || (o instanceof ReseedingSplittableRandomAdapter
         && seedGenerator.equals(((ReseedingSplittableRandomAdapter) o).seedGenerator));
   }
 
