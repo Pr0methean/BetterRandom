@@ -1,18 +1,17 @@
 package io.github.pr0methean.betterrandom.util;
 
 import java.util.Spliterator.OfInt;
-import java.util.Spliterator.OfLong;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.function.IntConsumer;
 import java.util.function.IntSupplier;
-import java.util.function.LongConsumer;
-import java.util.function.LongSupplier;
+import org.checkerframework.checker.nullness.qual.Nullable;
 
 /**
- * An unordered, concurrent {@link OfInt} that invokes an {@link IntSupplier} to get
- * its values and has a preset size.
+ * An unordered, concurrent {@link OfInt} that invokes an {@link IntSupplier} to get its values and
+ * has a preset size.
  */
 public class IntSupplierSpliterator implements OfInt {
+
   private final AtomicLong remaining;
   private final IntSupplier supplier;
 
@@ -27,12 +26,8 @@ public class IntSupplierSpliterator implements OfInt {
   }
 
   @Override
-  public OfInt trySplit() {
-    if (remaining.get() <= 0) {
-      return null;
-    } else {
-      return new IntSupplierSpliterator(remaining, supplier);
-    }
+  public @Nullable OfInt trySplit() {
+    return remaining.get() <= 0 ? null : new IntSupplierSpliterator(remaining, supplier);
   }
 
   @Override

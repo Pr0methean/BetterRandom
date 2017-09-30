@@ -1,8 +1,6 @@
 <component name="libraryTable">
   <library name="Maven: org.apache.maven.plugins:maven-deploy-plugin:maven-plugin:2.8.2">
-    <CLASSES>
-      <root url="jar://$MAVEN_REPOSITORY$/org/apache/maven/plugins/maven-deploy-plugin/2.8.2/maven-deploy-plugin-2.8.2.jar!/" />
-    </CLASSES>
+    <CLASSES />
     <JAVADOC>
       <root url="jar://$MAVEN_REPOSITORY$/org/apache/maven/plugins/maven-deploy-plugin/2.8.2/maven-deploy-plugin-2.8.2-javadoc.jar!/" />
     </JAVADOC>

@@ -52,13 +52,6 @@ public abstract class DirectSplittableRandomAdapter extends BaseSplittableRandom
     underlying = new SplittableRandom(BinaryUtils.convertBytesToLong(seed));
   }
 
-  @EnsuresNonNull({"this.seed", "underlying", "getEntropyBits"})
-  protected void setSeedInternal(
-      @UnknownInitialization(Random.class)DirectSplittableRandomAdapter this, final long seed) {
-    super.setSeedInternal(BinaryUtils.convertLongToBytes(seed));
-    underlying = new SplittableRandom(seed);
-  }
-
   @Override
   public boolean preferSeedWithLong() {
     return true;
