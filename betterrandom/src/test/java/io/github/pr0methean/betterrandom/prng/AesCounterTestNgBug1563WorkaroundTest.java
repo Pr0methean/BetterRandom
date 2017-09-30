@@ -6,6 +6,7 @@ import java.security.GeneralSecurityException;
 
 /**
  * Temporary workaround for https://github.com/cbeust/testng/issues/1563
+ * FIXME: Unsuccessful! Update once someone answers https://github.com/cbeust/testng/issues/1563
  */
 public class AesCounterTestNgBug1563WorkaroundTest extends AesCounterRandom128Test {
 
