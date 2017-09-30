@@ -47,7 +47,7 @@ public abstract class DirectSplittableRandomAdapter extends BaseSplittableRandom
     setSeedInternal(seed);
   }
 
-  @EnsuresNonNull({"this.seed", "underlying", "entropyBits"})
+  @EnsuresNonNull({"this.seed", "underlying", "getEntropyBits"})
   @Override
   protected void setSeedInternal(
       @UnknownInitialization(Random.class)DirectSplittableRandomAdapter this,
@@ -59,7 +59,7 @@ public abstract class DirectSplittableRandomAdapter extends BaseSplittableRandom
     underlying = new SplittableRandom(BinaryUtils.convertBytesToLong(seed));
   }
 
-  @EnsuresNonNull({"this.seed", "underlying", "entropyBits"})
+  @EnsuresNonNull({"this.seed", "underlying", "getEntropyBits"})
   protected void setSeedInternal(
       @UnknownInitialization(Random.class)DirectSplittableRandomAdapter this, final long seed) {
     super.setSeedInternal(BinaryUtils.convertLongToBytes(seed));

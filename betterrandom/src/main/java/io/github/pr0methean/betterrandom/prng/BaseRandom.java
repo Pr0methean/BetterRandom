@@ -61,19 +61,20 @@ public abstract class BaseRandom extends Random implements ByteArrayReseedableRa
   protected transient Lock lock;
 
   /**
-   * When false inside a call to {@link #setSeed(long)}, this is because we are being called by
-   * {@link Random#Random()} or {@link Random#Random(long)}. Such calls may need to be ignored if
-   * {@link #setSeed(long)} is not supported or is overridden to use subclass fields.
+   * Set by the constructor once either {@link Random#Random()} or {@link Random#Random(long)}.
+   * Intended for {@link #setSeed(long)}, which may have to ignore calls while this is false if the
+   * subclass does not support 8-byte seeds, or it overriddes setSeed(long) to use subclass fields.
    */
   @SuppressWarnings({"InstanceVariableMayNotBeInitializedByReadObject",
       "FieldAccessedSynchronizedAndUnsynchronized"})
   protected transient boolean superConstructorFinished = false;
 
+  /** Stores the entropy estimate backing {@link #getEntropyBits()}. */
   protected AtomicLong entropyBits;
 
   /**
    * If the referent is non-null, it will be invoked to reseed this PRNG whenever random output is
-   * taken and {@link #entropyBits()} called immediately afterward would return zero or negative.
+   * taken and {@link #getEntropyBits()} called immediately afterward would return zero or negative.
    */
   protected AtomicReference<@Nullable RandomSeederThread> seederThread = new AtomicReference<>(
       null);
@@ -179,16 +180,11 @@ public abstract class BaseRandom extends Random implements ByteArrayReseedableRa
     return result;
   }
 
-  public final ToStringHelper addSubclassFields(final ToStringHelper original) {
-    return addSubSubclassFields(original
-        .add("entropyBits", entropyBits.get())
-        .add("seederThread", seederThread));
-  }
-
   /**
    * Generates the next pseudorandom number. Called by all other random-number-generating methods.
    * Should not debit the entropy count, since that's done by the calling methods according to the
-   * amount they actually output.
+   * amount they actually output (see for example {@link #withProbability(double)}, which uses
+   * {@link #ENTROPY_OF_DOUBLE} random bits but outputs only one).
    */
   @Override
   protected abstract int next(int bits);
@@ -352,8 +348,10 @@ public abstract class BaseRandom extends Random implements ByteArrayReseedableRa
   public String dump() {
     lock.lock();
     try {
-      return addSubclassFields(MoreObjects.toStringHelper(this)
-          .add("seed", BinaryUtils.convertBytesToHexString(seed)))
+      return addSubSubclassFields(MoreObjects.toStringHelper(this)
+          .add("seed", BinaryUtils.convertBytesToHexString(seed))
+          .add("getEntropyBits", entropyBits.get())
+          .add("seederThread", seederThread))
           .toString();
     } finally {
       lock.unlock();
@@ -381,7 +379,7 @@ public abstract class BaseRandom extends Random implements ByteArrayReseedableRa
     }
   }
 
-  @EnsuresNonNull({"this.seed", "entropyBits"})
+  @EnsuresNonNull({"this.seed", "getEntropyBits"})
   @Override
   public synchronized void setSeed(@UnknownInitialization(Random.class)BaseRandom this,
       final long seed) {
@@ -428,7 +426,7 @@ public abstract class BaseRandom extends Random implements ByteArrayReseedableRa
    *
    * @param seed The new seed.
    */
-  @EnsuresNonNull({"this.seed", "entropyBits"})
+  @EnsuresNonNull({"this.seed", "getEntropyBits"})
   protected void setSeedInternal(@UnknownInitialization(Random.class)BaseRandom this,
       final byte[] seed) {
     if (this.seed == null) {
@@ -454,7 +452,7 @@ public abstract class BaseRandom extends Random implements ByteArrayReseedableRa
     superConstructorFinished = true;
   }
 
-  @EnsuresNonNull({"lock", "seed", "entropyBits"})
+  @EnsuresNonNull({"lock", "seed", "getEntropyBits"})
   private void readObject(@UnderInitialization(BaseRandom.class)BaseRandom this,
       final ObjectInputStream in) throws IOException, ClassNotFoundException {
     in.defaultReadObject();
@@ -463,7 +461,7 @@ public abstract class BaseRandom extends Random implements ByteArrayReseedableRa
   }
 
   @Override
-  public long entropyBits() {
+  public long getEntropyBits() {
     return entropyBits.get();
   }
 
@@ -493,7 +491,7 @@ public abstract class BaseRandom extends Random implements ByteArrayReseedableRa
    *
    * @throws InvalidObjectException if the {@link DefaultSeedGenerator} fails.
    */
-  @EnsuresNonNull({"lock", "seed", "entropyBits"})
+  @EnsuresNonNull({"lock", "seed", "getEntropyBits"})
   @SuppressWarnings("OverriddenMethodCallDuringObjectConstruction")
   private void readObjectNoData() throws InvalidObjectException {
     LOG.warn("BaseRandom.readObjectNoData() invoked; using DefaultSeedGenerator");

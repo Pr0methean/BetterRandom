@@ -17,5 +17,5 @@ public interface EntropyCountingRandom {
    *     giving an indication of how far the entropy has been stretched. This estimate is a lower
    *     bound if the seed is perfectly random and is not being reused.
    */
-  long entropyBits();
+  long getEntropyBits();
 }

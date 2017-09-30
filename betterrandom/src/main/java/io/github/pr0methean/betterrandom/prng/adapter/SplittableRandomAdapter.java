@@ -56,7 +56,7 @@ public class SplittableRandomAdapter extends DirectSplittableRandomAdapter {
   }
 
   @Override
-  public long entropyBits() {
+  public long getEntropyBits() {
     return entropyBits.get().get();
   }
 
@@ -70,7 +70,7 @@ public class SplittableRandomAdapter extends DirectSplittableRandomAdapter {
     entropyBits.get().set(0);
   }
 
-  @EnsuresNonNull({"splittableRandoms", "entropyBits", "seeds"})
+  @EnsuresNonNull({"splittableRandoms", "getEntropyBits", "seeds"})
   @RequiresNonNull({"lock", "underlying"})
   private void initSubclassTransientFields(
       @UnknownInitialization(BaseSplittableRandomAdapter.class)SplittableRandomAdapter this) {
