@@ -9,7 +9,6 @@ import static org.testng.Assert.assertFalse;
 import static org.testng.Assert.assertNotEquals;
 import static org.testng.Assert.assertTrue;
 
-import io.github.pr0methean.betterrandom.TestingDeficiency;
 import io.github.pr0methean.betterrandom.prng.RandomTestUtils.EntropyCheckMode;
 import io.github.pr0methean.betterrandom.seed.DefaultSeedGenerator;
 import io.github.pr0methean.betterrandom.seed.SeedException;
@@ -20,7 +19,6 @@ import java.io.IOException;
 import java.security.GeneralSecurityException;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Random;
 import java.util.function.Supplier;
 import org.testng.ITestResult;
 import org.testng.Reporter;
@@ -28,14 +26,6 @@ import org.testng.annotations.Test;
 import org.testng.util.RetryAnalyzerCount;
 
 public abstract class BaseRandomTest {
-
-  private enum TestEnum {
-    RED,
-    YELLOW,
-    BLUE;
-  }
-
-  ;
 
   /**
    * The square root of 12, rounded from an extended-precision calculation that was done by Wolfram
@@ -47,12 +37,12 @@ public abstract class BaseRandomTest {
   private static final int MAX_DUMPED_SEED_LENGTH = 32;
   private static final int FLAKY_TEST_RETRIES = 3;
   private static final int TEST_BYTE_ARRAY_LENGTH = 20;
-
   private static final String HELLO = "Hello";
   private static final String HOW_ARE_YOU = "How are you?";
   private static final String GOODBYE = "Goodbye";
   private static final String[] STRING_ARRAY = {HELLO, HOW_ARE_YOU, GOODBYE};
   private static final List<String> STRING_LIST = Arrays.asList(STRING_ARRAY);
+  private static final int ELEMENTS = 100;
 
   /**
    * Test to ensure that two distinct RNGs with the same seed return the same sequence of numbers.
@@ -111,7 +101,7 @@ public abstract class BaseRandomTest {
     // approaches n/sqrt(12).
     final int n = 100;
     final double observedSD = RandomTestUtils
-        .calculateSampleStandardDeviation((Random) rng, n, 10000);
+        .calculateSampleStandardDeviation(rng, n, 10000);
     final double expectedSD = n / SQRT_12;
     Reporter.log("Expected SD: " + expectedSD + ", observed SD: " + observedSD);
     assertEquals(observedSD, expectedSD, 0.02 * expectedSD,
@@ -210,12 +200,12 @@ public abstract class BaseRandomTest {
 
   @Test
   public void testNextBytes() throws Exception {
-    byte[] testBytes = new byte[TEST_BYTE_ARRAY_LENGTH];
-    BaseRandom prng = createRng();
-    long oldEntropy = prng.getEntropyBits();
+    final byte[] testBytes = new byte[TEST_BYTE_ARRAY_LENGTH];
+    final BaseRandom prng = createRng();
+    final long oldEntropy = prng.getEntropyBits();
     prng.nextBytes(testBytes);
     assertFalse(Arrays.equals(testBytes, new byte[TEST_BYTE_ARRAY_LENGTH]));
-    assertEquals(prng.getEntropyBits(), oldEntropy - 8 * TEST_BYTE_ARRAY_LENGTH);
+    assertEquals(prng.getEntropyBits(), oldEntropy - (8 * TEST_BYTE_ARRAY_LENGTH));
   }
 
   @Test
@@ -371,10 +361,8 @@ public abstract class BaseRandomTest {
         true);
   }
 
-  private static final int ELEMENTS = 100;
-
-  private <E> void testGeneratesAll(Supplier<E> generator, E... expected) {
-    final BaseRandom prng = createRng();
+  @SafeVarargs
+  private final <E> void testGeneratesAll(final Supplier<E> generator, final E... expected) {
     final E[] selected = Arrays.copyOf(expected, ELEMENTS); // Saves passing in a Class<E>
     for (int i = 0; i < ELEMENTS; i++) {
       selected[i] = generator.get();
@@ -399,6 +387,12 @@ public abstract class BaseRandomTest {
     final BaseRandom prng = createRng();
     testGeneratesAll(() -> prng.nextEnum(TestEnum.class), TestEnum.RED, TestEnum.YELLOW,
         TestEnum.BLUE);
+  }
+
+  private enum TestEnum {
+    RED,
+    YELLOW,
+    BLUE
   }
 
   private static final class FlakyTestRetrier extends RetryAnalyzerCount {

@@ -67,7 +67,7 @@ public class DefaultSeedGeneratorTest {
     @SuppressWarnings({"ObjectEquality", "HardcodedFileSeparator"})
     @Override
     public void checkRead(final String file) {
-      if (Thread.currentThread() == affectedThread && "/dev/random".equals(file)) {
+      if ((Thread.currentThread() == affectedThread) && "/dev/random".equals(file)) {
         throw new SecurityException("Test not permitted to access /dev/random");
       }
     }

@@ -52,8 +52,8 @@ public final class RandomSeederThread extends LooperThread {
   private transient WeakHashMap<ByteArrayReseedableRandom, byte[]> seedArrays;
 
   public RandomSeederThread(
-      ThreadGroup group, Runnable target, String name,
-      long stackSize, SeedGenerator seedGenerator) {
+      final ThreadGroup group, final Runnable target, final String name,
+      final long stackSize, final SeedGenerator seedGenerator) {
     super(group, target, name, stackSize);
     this.seedGenerator = seedGenerator;
     initTransientFields();
@@ -184,14 +184,14 @@ public final class RandomSeederThread extends LooperThread {
     while (iterator.hasNext()) {
       final Random random = iterator.next();
       iterator.remove();
-      if (random instanceof EntropyCountingRandom
-          && ((EntropyCountingRandom) random).getEntropyBits() > 0) {
+      if ((random instanceof EntropyCountingRandom)
+          && (((EntropyCountingRandom) random).getEntropyBits() > 0)) {
         continue;
       } else {
         entropyConsumed = true;
       }
       try {
-        if (random instanceof ByteArrayReseedableRandom && !((ByteArrayReseedableRandom) random)
+        if ((random instanceof ByteArrayReseedableRandom) && !((ByteArrayReseedableRandom) random)
             .preferSeedWithLong()) {
           final ByteArrayReseedableRandom reseedable = (ByteArrayReseedableRandom) random;
           final byte[] seedArray = seedArrays.computeIfAbsent(reseedable, random_ ->

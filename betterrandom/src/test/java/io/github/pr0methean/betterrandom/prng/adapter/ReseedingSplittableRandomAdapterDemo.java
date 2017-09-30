@@ -15,23 +15,23 @@ public class ReseedingSplittableRandomAdapterDemo {
       "4", "3", "2"};
   private static final String[] SUIT_LABELS = {"♥️", "♣️", "♦️", "♠️"};
 
-  public static void main(String[] args) throws SeedException, InterruptedException {
-    String[] cards = new String[52];
+  public static void main(final String[] args) throws SeedException, InterruptedException {
+    final String[] cards = new String[52];
     int i = 0;
-    for (String suit : SUIT_LABELS) {
-      for (String value : VALUE_LABELS) {
+    for (final String suit : SUIT_LABELS) {
+      for (final String value : VALUE_LABELS) {
         cards[i] = value + suit;
         i++;
       }
     }
-    ThreadLocal<List<String>> deckCopies = ThreadLocal
+    final ThreadLocal<List<String>> deckCopies = ThreadLocal
         .withInitial(() -> Arrays.asList(cards.clone()));
-    ScheduledThreadPoolExecutor executor = new ScheduledThreadPoolExecutor(4);
-    ReseedingSplittableRandomAdapter random = ReseedingSplittableRandomAdapter.getInstance(
+    final ScheduledThreadPoolExecutor executor = new ScheduledThreadPoolExecutor(4);
+    final ReseedingSplittableRandomAdapter random = ReseedingSplittableRandomAdapter.getInstance(
         DEFAULT_SEED_GENERATOR);
     for (i = 0; i < 200; i++) {
       executor.submit(() -> {
-        List<String> deck = deckCopies.get();
+        final List<String> deck = deckCopies.get();
         Collections.shuffle(deck, random);
         System.out.format("North: %s%nEast: %s%nSouth: %s%nWest: %s%n%n",
             String.join(",", deck.subList(0, 13)),

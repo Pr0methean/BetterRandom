@@ -72,12 +72,12 @@ public final class RandomTestUtils {
     final Number output = numberSupplier.get();
     assertTrue(output.doubleValue() >= origin);
     assertTrue(output.doubleValue() < bound);
-    if (entropyCheckMode == EntropyCheckMode.EXACT
-        || entropyCheckMode == EntropyCheckMode.UPPER_BOUND) {
+    if ((entropyCheckMode == EntropyCheckMode.EXACT)
+        || (entropyCheckMode == EntropyCheckMode.UPPER_BOUND)) {
       assertGreaterOrEqual(oldEntropy - expectedEntropySpent, prng.getEntropyBits());
     }
-    if (entropyCheckMode == EntropyCheckMode.EXACT
-        || entropyCheckMode == EntropyCheckMode.LOWER_BOUND) {
+    if ((entropyCheckMode == EntropyCheckMode.EXACT)
+        || (entropyCheckMode == EntropyCheckMode.LOWER_BOUND)) {
       assertLessOrEqual(oldEntropy - expectedEntropySpent, prng.getEntropyBits());
     }
   }
@@ -117,7 +117,7 @@ public final class RandomTestUtils {
       assertGreaterOrEqual(origin, number.doubleValue());
       assertLess(bound, number.doubleValue());
     }
-    if (expectedCount >= 0 && checkEntropyCount) {
+    if ((expectedCount >= 0) && checkEntropyCount) {
       expectedMinEntropy -= maxEntropySpentPerNumber * expectedCount;
       assertGreaterOrEqual(expectedMinEntropy, prng.getEntropyBits());
     }

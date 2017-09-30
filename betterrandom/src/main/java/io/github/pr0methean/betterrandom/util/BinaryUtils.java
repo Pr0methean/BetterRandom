@@ -18,7 +18,6 @@ package io.github.pr0methean.betterrandom.util;
 import static java.lang.ThreadLocal.withInitial;
 
 import java.nio.ByteBuffer;
-import java.util.Arrays;
 
 /**
  * Utility methods for working with binary and hex data.
@@ -71,7 +70,7 @@ public final class BinaryUtils {
    */
   @SuppressWarnings("NumericCastThatLosesPrecision")
   public static byte[] convertHexStringToBytes(final String hex) {
-    if (hex.length() % 2 != 0) {
+    if ((hex.length() % 2) != 0) {
       throw new IllegalArgumentException("Hex string must have even number of characters.");
     }
     final byte[] seed = new byte[hex.length() / 2];
@@ -107,7 +106,7 @@ public final class BinaryUtils {
    * @since 1.1
    */
   public static int[] convertBytesToInts(final byte[] bytes) {
-    if (bytes.length % 4 != 0) {
+    if ((bytes.length % 4) != 0) {
       throw new IllegalArgumentException("Number of input bytes must be a multiple of 4.");
     }
     final int[] ints = new int[bytes.length / 4];
@@ -127,7 +126,7 @@ public final class BinaryUtils {
    */
   public static long convertBytesToLong(final byte[] bytes, final int offset) {
     long value = 0;
-    for (int i = offset; i < offset + 8; i++) {
+    for (int i = offset; i < (offset + 8); i++) {
       final byte b = bytes[i];
       value <<= 8;
       value |= b;
