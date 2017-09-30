@@ -4,6 +4,7 @@
   `SplittableRandom`'s non-volatile access to its fields).
 * Removed default implementation of `BaseSplittableRandomAdapter.addSubclassFields` since it's
   neither used nor tested within this library.
+* Added `BaseRandom.nextElement` and `BaseRandom.nextEnum` convenience methods.
 
 # 0.10.2
 * Improved performance of `DefaultSeedGenerator` on MinGW and naked Windows, especially when
