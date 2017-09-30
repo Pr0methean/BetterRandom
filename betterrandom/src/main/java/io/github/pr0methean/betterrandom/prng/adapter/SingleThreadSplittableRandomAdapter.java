@@ -20,8 +20,7 @@ public class SingleThreadSplittableRandomAdapter extends DirectSplittableRandomA
   /**
    * <p>Constructor for SingleThreadSplittableRandomAdapter.</p>
    *
-   * @param seedGenerator a {@link SeedGenerator}
-   *     object.
+   * @param seedGenerator a {@link SeedGenerator} object.
    * @throws SeedException if any.
    */
   public SingleThreadSplittableRandomAdapter(final SeedGenerator seedGenerator)

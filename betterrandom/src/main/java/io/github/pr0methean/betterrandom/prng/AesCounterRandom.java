@@ -114,21 +114,18 @@ public class AesCounterRandom extends BaseRandom {
    *
    * @param seedGenerator The seed generation strategy that will provide the seed value for this
    *     RNG.
-   * @throws SeedException if there is a problem
-   *     generating a seed.
+   * @throws SeedException if there is a problem generating a seed.
    */
   public AesCounterRandom(final SeedGenerator seedGenerator) throws SeedException {
     this(seedGenerator.generateSeed(DEFAULT_SEED_SIZE_BYTES));
   }
 
   /**
-   * Seed the RNG using the {@link DefaultSeedGenerator} to create a seed of the specified
-   * size.
+   * Seed the RNG using the {@link DefaultSeedGenerator} to create a seed of the specified size.
    *
-   * @param seedSizeBytes The number of bytes to use for seed data. Valid values range from 16 to
-   *     {@link #getMaxKeyLengthBytes()}() + 16.
-   * @throws SeedException if there is a problem
-   *     generating a seed.
+   * @param seedSizeBytes The number of bytes to use for seed data. Valid values range from 16
+   *     to {@link #getMaxKeyLengthBytes()}() + 16.
+   * @throws SeedException if there is a problem generating a seed.
    */
   public AesCounterRandom(final int seedSizeBytes) throws SeedException {
     this(DefaultSeedGenerator.DEFAULT_SEED_GENERATOR.generateSeed(seedSizeBytes));
@@ -137,8 +134,8 @@ public class AesCounterRandom extends BaseRandom {
   /**
    * Creates an RNG and seeds it with the specified seed data.
    *
-   * @param seed The seed data used to initialise the RNG. Length must be at least 16 and no more
-   *     than {@link #getMaxKeyLengthBytes()}() + 16.
+   * @param seed The seed data used to initialise the RNG. Length must be at least 16 and no
+   *     more than {@link #getMaxKeyLengthBytes()}() + 16.
    */
   public AesCounterRandom(final byte[] seed) {
     super(seed);

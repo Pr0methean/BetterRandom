@@ -19,10 +19,9 @@ import org.checkerframework.checker.nullness.qual.EnsuresNonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 
 /**
- * A version of {@link SplittableRandomAdapter} that
- * uses a {@link RandomSeederThread} to replace each
- * thread's {@link SplittableRandom} with a reseeded one as frequently as possible,
- * but not more frequently than it is being used.
+ * A version of {@link SplittableRandomAdapter} that uses a {@link RandomSeederThread} to replace
+ * each thread's {@link SplittableRandom} with a reseeded one as frequently as possible, but not
+ * more frequently than it is being used.
  *
  * @author ubuntu
  */
@@ -60,8 +59,7 @@ public class ReseedingSplittableRandomAdapter extends BaseSplittableRandomAdapte
   }
 
   /**
-   * @param seedGenerator a {@link SeedGenerator}
-   *     object.
+   * @param seedGenerator a {@link SeedGenerator} object.
    * @return the ReseedingSplittableRandomAdapter backed by {@code seedGenerator}.
    * @throws SeedException if {@code seedGenerator} throws one while generating the initial
    *     seed.
