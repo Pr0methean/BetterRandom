@@ -3,6 +3,7 @@ package io.github.pr0methean.betterrandom.prng.adapter;
 import static org.checkerframework.checker.nullness.NullnessUtil.castNonNull;
 
 import com.google.common.base.MoreObjects.ToStringHelper;
+import io.github.pr0methean.betterrandom.util.BinaryUtils;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.util.Random;
@@ -51,19 +52,17 @@ public abstract class DirectSplittableRandomAdapter extends BaseSplittableRandom
   protected void setSeedInternal(
       @UnknownInitialization(Random.class)DirectSplittableRandomAdapter this,
       final byte[] seed) {
-    if (seed.length != 8) {
+    if (seed.length != Long.BYTES) {
       throw new IllegalArgumentException("DirectSplittableRandomAdapter requires an 8-byte seed");
     }
     super.setSeedInternal(seed);
-    System.arraycopy(seed, 0, longSeedArray, 0, Long.BYTES);
-    underlying = new SplittableRandom(longSeedBuffer.getLong(0));
+    underlying = new SplittableRandom(BinaryUtils.convertBytesToLong(seed));
   }
 
   @EnsuresNonNull({"this.seed", "underlying", "entropyBits"})
   protected void setSeedInternal(
       @UnknownInitialization(Random.class)DirectSplittableRandomAdapter this, final long seed) {
-    longSeedBuffer.putLong(0, seed);
-    super.setSeedInternal(longSeedArray);
+    super.setSeedInternal(BinaryUtils.convertLongToBytes(seed));
     underlying = new SplittableRandom(seed);
   }
 
@@ -75,12 +74,7 @@ public abstract class DirectSplittableRandomAdapter extends BaseSplittableRandom
   @Override
   public void setSeed(@UnknownInitialization DirectSplittableRandomAdapter this,
       final long seed) {
-    if (superConstructorFinished) {
-      castNonNull(longSeedBuffer).putLong(seed);
-      super.setSeedInternal(castNonNull(longSeedArray));
-      underlying = new SplittableRandom(seed);
-    } else {
-      fallbackSetSeed();
-    }
+    super.setSeedInternal(BinaryUtils.convertLongToBytes(seed));
+    underlying = new SplittableRandom(seed);
   }
 }

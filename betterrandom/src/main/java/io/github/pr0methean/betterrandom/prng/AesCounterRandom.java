@@ -101,7 +101,7 @@ public class AesCounterRandom extends BaseRandom {
   private int index;
 
   /**
-   * Creates a new RNG and seeds it using 256 bits from the default seeding strategy.
+   * Creates a new RNG and seeds it using 256 bits from the {@link DefaultSeedGenerator}.
    *
    * @throws io.github.pr0methean.betterrandom.seed.SeedException if any.
    */
@@ -122,14 +122,11 @@ public class AesCounterRandom extends BaseRandom {
   }
 
   /**
-   * Seed the RNG using the default seed generation strategy to create a seed of the specified
+   * Seed the RNG using the {@link DefaultSeedGenerator} to create a seed of the specified
    * size.
    *
-   * @param seedSizeBytes The number of bytes to use for seed data.  Valid values are 16, 24, 32,
-   *     40 and 48. Sizes 40 and 48 require
-   *     <a href="http://www.oracle.com/technetwork/java/javase/downloads/jce8-download-2133166.html">unlimited-strength
-   *     jurisdiction policy files</a> (except on OpenJDK and Android). Any other values will result
-   *     in an exception.
+   * @param seedSizeBytes The number of bytes to use for seed data. Valid values range from 16 to
+   *     {@link #getMaxKeyLengthBytes()}() + 16.
    * @throws io.github.pr0methean.betterrandom.seed.SeedException if there is a problem
    *     generating a seed.
    */
@@ -140,7 +137,8 @@ public class AesCounterRandom extends BaseRandom {
   /**
    * Creates an RNG and seeds it with the specified seed data.
    *
-   * @param seed The seed data used to initialise the RNG.
+   * @param seed The seed data used to initialise the RNG. Length must be at least 16 and no more
+   *     than {@link #getMaxKeyLengthBytes()}() + 16.
    */
   public AesCounterRandom(final byte[] seed) {
     super(seed);
