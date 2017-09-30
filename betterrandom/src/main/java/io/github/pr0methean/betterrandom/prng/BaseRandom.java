@@ -26,7 +26,6 @@ import java.util.concurrent.atomic.AtomicReference;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 import java.util.function.DoubleSupplier;
-import java.util.function.IntSupplier;
 import java.util.stream.DoubleStream;
 import java.util.stream.IntStream;
 import java.util.stream.LongStream;
@@ -53,30 +52,6 @@ public abstract class BaseRandom extends Random implements ByteArrayReseedableRa
   private static final long NAN_LONG_BITS = Double.doubleToLongBits(Double.NaN);
   private static final LogPreFormatter LOG = new LogPreFormatter(BaseRandom.class);
   private static final long serialVersionUID = -1556392727255964947L;
-
-  /**
-   * The seed this PRNG was seeded with, as a byte array. Used by {@link #getSeed()} even if the
-   * actual internal state of the PRNG is stored elsewhere (since otherwise getSeed() would require
-   * a slow type conversion).
-   */
-  protected byte[] seed;
-
-  /** Lock to prevent concurrent modification of the RNG's internal state. */
-  @SuppressWarnings("InstanceVariableMayNotBeInitializedByReadObject")
-  protected transient Lock lock;
-
-  /**
-   * Set by the constructor once either {@link Random#Random()} or {@link Random#Random(long)}.
-   * Intended for {@link #setSeed(long)}, which may have to ignore calls while this is false if the
-   * subclass does not support 8-byte seeds, or it overriddes setSeed(long) to use subclass fields.
-   */
-  @SuppressWarnings({"InstanceVariableMayNotBeInitializedByReadObject",
-      "FieldAccessedSynchronizedAndUnsynchronized"})
-  protected transient boolean superConstructorFinished = false;
-
-  /** Stores the entropy estimate backing {@link #getEntropyBits()}. */
-  protected AtomicLong entropyBits;
-
   /**
    * If the referent is non-null, it will be invoked to reseed this PRNG whenever random output is
    * taken and {@link #getEntropyBits()} called immediately afterward would return zero or
@@ -86,6 +61,25 @@ public abstract class BaseRandom extends Random implements ByteArrayReseedableRa
       null);
   private final AtomicLong nextNextGaussian = new AtomicLong(
       NAN_LONG_BITS); // Stored as a long since there's no atomic double
+  /**
+   * The seed this PRNG was seeded with, as a byte array. Used by {@link #getSeed()} even if the
+   * actual internal state of the PRNG is stored elsewhere (since otherwise getSeed() would require
+   * a slow type conversion).
+   */
+  protected byte[] seed;
+  /** Lock to prevent concurrent modification of the RNG's internal state. */
+  @SuppressWarnings("InstanceVariableMayNotBeInitializedByReadObject")
+  protected transient Lock lock;
+  /**
+   * Set by the constructor once either {@link Random#Random()} or {@link Random#Random(long)}.
+   * Intended for {@link #setSeed(long)}, which may have to ignore calls while this is false if the
+   * subclass does not support 8-byte seeds, or it overriddes setSeed(long) to use subclass fields.
+   */
+  @SuppressWarnings({"InstanceVariableMayNotBeInitializedByReadObject",
+      "FieldAccessedSynchronizedAndUnsynchronized"})
+  protected transient boolean superConstructorFinished = false;
+  /** Stores the entropy estimate backing {@link #getEntropyBits()}. */
+  protected AtomicLong entropyBits;
 
   /**
    * Creates a new RNG and seeds it using the default seeding strategy.
@@ -325,7 +319,8 @@ public abstract class BaseRandom extends Random implements ByteArrayReseedableRa
   }
 
   @Override
-  public IntStream ints(final long streamSize, final int randomNumberOrigin, final int randomNumberBound) {
+  public IntStream ints(final long streamSize, final int randomNumberOrigin,
+      final int randomNumberBound) {
     return StreamSupport.intStream(new IntSupplierSpliterator(streamSize,
             () -> nextInt(randomNumberOrigin, randomNumberBound)),
         true);
@@ -378,7 +373,8 @@ public abstract class BaseRandom extends Random implements ByteArrayReseedableRa
   }
 
   @Override
-  public LongStream longs(final long streamSize, final long randomNumberOrigin, final long randomNumberBound) {
+  public LongStream longs(final long streamSize, final long randomNumberOrigin,
+      final long randomNumberBound) {
     return StreamSupport.longStream(new LongSupplierSpliterator(streamSize,
             () -> nextLong(randomNumberOrigin, randomNumberBound)),
         true);
@@ -410,6 +406,7 @@ public abstract class BaseRandom extends Random implements ByteArrayReseedableRa
 
   /**
    * Returns the next random {@code long}, but does not debit entropy.
+   *
    * @return a pseudorandom {@code long} with all possible values equally likely.
    */
   protected long nextLongNoEntropyDebit() {
@@ -451,17 +448,6 @@ public abstract class BaseRandom extends Random implements ByteArrayReseedableRa
     }
   }
 
-  @EnsuresNonNull("this.seed")
-  @Override
-  public void setSeed(final byte[] seed) {
-    lock.lock();
-    try {
-      setSeedInternal(seed);
-    } finally {
-      lock.unlock();
-    }
-  }
-
   @EnsuresNonNull({"this.seed", "getEntropyBits"})
   @Override
   public synchronized void setSeed(@UnknownInitialization(Random.class)BaseRandom this,
@@ -471,6 +457,17 @@ public abstract class BaseRandom extends Random implements ByteArrayReseedableRa
       setSeed(seedBytes);
     } else {
       setSeedInternal(seedBytes);
+    }
+  }
+
+  @EnsuresNonNull("this.seed")
+  @Override
+  public void setSeed(final byte[] seed) {
+    lock.lock();
+    try {
+      setSeedInternal(seed);
+    } finally {
+      lock.unlock();
     }
   }
 
@@ -489,7 +486,7 @@ public abstract class BaseRandom extends Random implements ByteArrayReseedableRa
    *
    * @param thread a {@link RandomSeederThread} that will be used to reseed this PRNG.
    */
-  @SuppressWarnings("ObjectEquality")
+  @SuppressWarnings({"ObjectEquality", "EqualityOperatorComparesObjects"})
   public void setSeederThread(final @Nullable RandomSeederThread thread) {
     if ((seederThread.getAndSet(thread) != thread) && (thread != null)) {
       thread.add(this);

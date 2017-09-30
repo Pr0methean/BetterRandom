@@ -25,9 +25,6 @@ import io.github.pr0methean.betterrandom.seed.SeedGenerator;
 import io.github.pr0methean.betterrandom.util.BinaryUtils;
 import io.github.pr0methean.betterrandom.util.EntryPoint;
 import java.util.Random;
-import java.util.stream.DoubleStream;
-import java.util.stream.IntStream;
-import java.util.stream.LongStream;
 import org.checkerframework.checker.initialization.qual.UnknownInitialization;
 import org.checkerframework.checker.nullness.qual.Nullable;
 
@@ -62,8 +59,7 @@ public class RandomWrapper extends BaseRandom {
    *
    * @param seedGenerator The seedArray generation strategy that will provide the seedArray
    *     value for this RNG.
-   * @throws SeedException If there is a problem
-   *     generating a seedArray.
+   * @throws SeedException If there is a problem generating a seedArray.
    */
   @EntryPoint
   public RandomWrapper(final SeedGenerator seedGenerator) throws SeedException {
@@ -80,15 +76,11 @@ public class RandomWrapper extends BaseRandom {
   public RandomWrapper(final byte[] seed) {
     super(seed);
     if (seed.length != Long.BYTES) {
-      throw new IllegalArgumentException("RandomWrapper requires an 8-byte seed when defaulting to java.util.Random");
+      throw new IllegalArgumentException(
+          "RandomWrapper requires an 8-byte seed when defaulting to java.util.Random");
     }
     wrapped = new Random(BinaryUtils.convertBytesToLong(seed));
     unknownSeed = false;
-  }
-
-  @Override
-  protected int next(final int bits) {
-    return (bits >= 32) ? wrapped.nextInt() : wrapped.nextInt(1 << bits);
   }
 
   /**
@@ -107,6 +99,11 @@ public class RandomWrapper extends BaseRandom {
   private static byte[] getSeedOrDummy(final Random wrapped) {
     return (wrapped instanceof RepeatableRandom) ? ((RepeatableRandom) wrapped).getSeed()
         : DUMMY_SEED;
+  }
+
+  @Override
+  protected int next(final int bits) {
+    return (bits >= 32) ? wrapped.nextInt() : wrapped.nextInt(1 << bits);
   }
 
   /** @return The wrapped {@link Random}. */
@@ -181,8 +178,9 @@ public class RandomWrapper extends BaseRandom {
           if (asByteArrayReseedable.preferSeedWithLong() && (seed.length == Long.BYTES)) {
             asByteArrayReseedable = null;
           }
-        } else if ((asByteArrayReseedable == null) && (seed.length != Long.BYTES)) {
-          throw new IllegalArgumentException("RandomWrapper requires an 8-byte seed when not wrapping a ByteArrayReseedableRandom");
+        } else if (seed.length != Long.BYTES) {
+          throw new IllegalArgumentException(
+              "RandomWrapper requires an 8-byte seed when not wrapping a ByteArrayReseedableRandom");
         }
         if (asByteArrayReseedable != null) {
           asByteArrayReseedable.setSeed(seed);
@@ -214,11 +212,8 @@ public class RandomWrapper extends BaseRandom {
       locked = true;
     }
     try {
-      if (wrapped instanceof ByteArrayReseedableRandom) {
-        return ((ByteArrayReseedableRandom) wrapped).getNewSeedLength();
-      } else {
-        return Long.BYTES;
-      }
+      return wrapped instanceof ByteArrayReseedableRandom ? ((ByteArrayReseedableRandom) wrapped)
+          .getNewSeedLength() : Long.BYTES;
     } finally {
       if (locked) {
         lock.unlock();

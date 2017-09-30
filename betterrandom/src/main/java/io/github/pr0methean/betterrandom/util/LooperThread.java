@@ -26,10 +26,10 @@ import org.checkerframework.checker.nullness.qual.RequiresNonNull;
  * restored includes: </p> <ul> <li>{@link #getName()}</li> <li>{@link #getPriority()}</li>
  * <li>{@link #getState()} == {@link State#NEW}</li> <li>{@link #getState()} == {@link
  * State#TERMINATED}</li> <li>{@link #isInterrupted()}</li> <li>{@link #isDaemon()}</li> </ul><p>
- * Thread state that will be restored ONLY if its values are {@link Serializable} includes:
- * </p><ul> <li>{@link #getThreadGroup()}</li> <li>{@link #getUncaughtExceptionHandler()}</li>
- * <li>{@link #getContextClassLoader()}</li> </ul><p> Thread state that will NEVER be restored
- * includes: </p><ul> <li>Program counter, call stack, and local variables. The seederThread will
+ * Thread state that will be restored ONLY if its values are {@link Serializable} includes: </p><ul>
+ * <li>{@link #getThreadGroup()}</li> <li>{@link #getUncaughtExceptionHandler()}</li> <li>{@link
+ * #getContextClassLoader()}</li> </ul><p> Thread state that will NEVER be restored includes:
+ * </p><ul> <li>Program counter, call stack, and local variables. The seederThread will
  * restart.</li> <li>Suspended status (see {@link Thread#suspend()}</li> <li>{@link #getState()} ==
  * {@link State#TIMED_WAITING}</li> <li>{@link #getState()} == {@link State#WAITING}</li> <li>{@link
  * #getState()} == {@link State#BLOCKED}</li> <li>{@link #getId()}</li> <li>{@link
@@ -69,13 +69,13 @@ public class LooperThread extends Thread implements Serializable, Cloneable {
     stackSize = 0;
   }
 
-  public LooperThread(@Nullable final Runnable target) {
+  public LooperThread(final @Nullable Runnable target) {
     super(target);
     this.target = target;
     stackSize = 0;
   }
 
-  public LooperThread(final ThreadGroup group, @Nullable final Runnable target) {
+  public LooperThread(final ThreadGroup group, final @Nullable Runnable target) {
     super(group, target);
     this.target = target;
     stackSize = 0;
@@ -103,20 +103,21 @@ public class LooperThread extends Thread implements Serializable, Cloneable {
     stackSize = 0;
   }
 
-  public LooperThread(@Nullable final Runnable target, final String name) {
+  public LooperThread(final @Nullable Runnable target, final String name) {
     super(target, name);
     this.target = target;
     stackSize = 0;
   }
 
-  public LooperThread(final ThreadGroup group, @Nullable final Runnable target, final String name) {
+  public LooperThread(final ThreadGroup group, final @Nullable Runnable target, final String name) {
     super(group, target, name);
     this.target = target;
     setGroup(group);
     stackSize = 0;
   }
 
-  public LooperThread(final ThreadGroup group, @Nullable final Runnable target, final String name, final long stackSize) {
+  public LooperThread(final ThreadGroup group, final @Nullable Runnable target, final String name,
+      final long stackSize) {
     super(group, target, name, stackSize);
     this.target = target;
     setGroup(group);
@@ -159,7 +160,6 @@ public class LooperThread extends Thread implements Serializable, Cloneable {
   protected Object readResolve()
       throws InvalidObjectException {
     target = serialTarget;
-    final LooperThread t;
     if (name == null) {
       name = getName();
     }
@@ -169,7 +169,7 @@ public class LooperThread extends Thread implements Serializable, Cloneable {
     if (group == null) {
       group = castNonNull(Thread.currentThread().getThreadGroup());
     }
-    t = readResolveConstructorWrapper();
+    final LooperThread t = readResolveConstructorWrapper();
     t.setDaemon(daemon);
     t.setPriority(priority);
     if (uncaughtExceptionHandler.wrapped != null) {
@@ -250,7 +250,7 @@ public class LooperThread extends Thread implements Serializable, Cloneable {
         } finally {
           lock.unlock();
         }
-      } catch (final InterruptedException e) {
+      } catch (final InterruptedException ignored) {
         interrupt();
         break;
       }

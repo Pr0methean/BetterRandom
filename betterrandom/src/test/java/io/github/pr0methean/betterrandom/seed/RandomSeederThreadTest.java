@@ -25,11 +25,11 @@ public class RandomSeederThreadTest {
 
   @Test
   public void testAddRemoveAndIsEmpty() throws Exception {
-    Random prng = new Random(TEST_SEED);
-    byte[] bytesWithOldSeed = new byte[TEST_OUTPUT_SIZE];
+    final Random prng = new Random(TEST_SEED);
+    final byte[] bytesWithOldSeed = new byte[TEST_OUTPUT_SIZE];
     prng.nextBytes(bytesWithOldSeed);
     prng.setSeed(TEST_SEED); // Rewind
-    RandomSeederThread thread = getInstance(DefaultSeedGenerator.DEFAULT_SEED_GENERATOR);
+    final RandomSeederThread thread = getInstance(DefaultSeedGenerator.DEFAULT_SEED_GENERATOR);
     assertTrue(thread.isEmpty());
     thread.add(prng);
     assertFalse(thread.isEmpty());
@@ -37,15 +37,15 @@ public class RandomSeederThreadTest {
     assertFalse(thread.isEmpty());
     thread.remove(prng);
     assertTrue(thread.isEmpty());
-    byte[] bytesWithNewSeed = new byte[TEST_OUTPUT_SIZE];
+    final byte[] bytesWithNewSeed = new byte[TEST_OUTPUT_SIZE];
     prng.nextBytes(bytesWithNewSeed);
     assertFalse(Arrays.equals(bytesWithOldSeed, bytesWithNewSeed));
   }
 
   @Test
   public void testStopIfEmpty() throws Exception {
-    RandomSeederThread thread = getInstance(new FakeSeedGenerator());
-    Random prng = new Random();
+    final RandomSeederThread thread = getInstance(new FakeSeedGenerator());
+    final Random prng = new Random();
     thread.add(prng);
     thread.stopIfEmpty();
     assertTrue(thread.isAlive());
@@ -57,11 +57,11 @@ public class RandomSeederThreadTest {
 
   @Test
   public void testStopAllEmpty() throws Exception {
-    RandomSeederThread neverAddedTo = getInstance(new FakeSeedGenerator());
-    RandomSeederThread addedToAndRemoved = getInstance(new FakeSeedGenerator());
-    RandomSeederThread addedToAndLeft = getInstance(new FakeSeedGenerator());
-    Random addedAndRemoved = new Random();
-    Random addedAndLeft = new Random();
+    final RandomSeederThread neverAddedTo = getInstance(new FakeSeedGenerator());
+    final RandomSeederThread addedToAndRemoved = getInstance(new FakeSeedGenerator());
+    final RandomSeederThread addedToAndLeft = getInstance(new FakeSeedGenerator());
+    final Random addedAndRemoved = new Random();
+    final Random addedAndLeft = new Random();
     addedToAndRemoved.add(addedAndRemoved);
     addedToAndRemoved.remove(addedAndRemoved);
     addedToAndLeft.add(addedAndLeft);

@@ -1,8 +1,6 @@
 <component name="libraryTable">
   <library name="Maven: org.checkerframework:jdk8:2.1.14">
-    <CLASSES>
-      <root url="jar://$MAVEN_REPOSITORY$/org/checkerframework/jdk8/2.1.14/jdk8-2.1.14.jar!/" />
-    </CLASSES>
+    <CLASSES />
     <JAVADOC>
       <root url="jar://$MAVEN_REPOSITORY$/org/checkerframework/jdk8/2.1.14/jdk8-2.1.14-javadoc.jar!/" />
     </JAVADOC>
