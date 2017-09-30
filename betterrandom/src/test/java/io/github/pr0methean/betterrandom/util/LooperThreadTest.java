@@ -45,7 +45,7 @@ public class LooperThreadTest {
       THREAD_STACK_SIZE.setAccessible(true);
       THREAD_TARGET = Thread.class.getDeclaredField("target");
       THREAD_TARGET.setAccessible(true);
-    } catch (NoSuchFieldException e) {
+    } catch (final NoSuchFieldException e) {
       throw new RuntimeException(e);
     }
   }
@@ -65,21 +65,21 @@ public class LooperThreadTest {
 
   @Test
   public void testSerializable_notStarted() {
-    LooperThread thread = new SkeletonLooperThread();
-    LooperThread copy = CloneViaSerialization.clone(thread);
+    final LooperThread thread = new SkeletonLooperThread();
+    final LooperThread copy = CloneViaSerialization.clone(thread);
     assertNotSame(thread, copy);
     assertEquals(State.NEW, copy.getState());
   }
 
   @Test
   public void testSerializable_alreadyExited() {
-    LooperThread thread = new SkeletonLooperThread();
+    final LooperThread thread = new SkeletonLooperThread();
     thread.start();
     try {
       thread.join();
-    } catch (InterruptedException expected) {
+    } catch (final InterruptedException expected) {
     }
-    LooperThread copy = CloneViaSerialization.clone(thread);
+    final LooperThread copy = CloneViaSerialization.clone(thread);
     assertNotSame(thread, copy);
     assertEquals(State.TERMINATED, copy.getState());
     try {
@@ -93,11 +93,11 @@ public class LooperThreadTest {
   @Test
   public void testSerializable_nonSerializableState()
       throws InterruptedException, MalformedURLException, IllegalAccessException {
-    LooperThread thread = new SkeletonLooperThread(() -> {
+    final LooperThread thread = new SkeletonLooperThread(() -> {
     });
     thread.setContextClassLoader(new MockClassLoader());
     thread.setUncaughtExceptionHandler((thread_, throwable) -> exceptionHandlerRun.set(true));
-    LooperThread copy = CloneViaSerialization.clone(thread);
+    final LooperThread copy = CloneViaSerialization.clone(thread);
     assertNotSame(copy, thread);
     assertSame(copy.getContextClassLoader(), Thread.currentThread().getContextClassLoader());
     shouldThrow.set(true);
@@ -110,13 +110,13 @@ public class LooperThreadTest {
   @Test
   public void testSerializable_serializableState()
       throws InterruptedException, IllegalAccessException {
-    LooperThread thread = new LooperThread(new SerializableThreadGroup(), TARGET, THREAD_NAME,
+    final LooperThread thread = new LooperThread(new SerializableThreadGroup(), TARGET, THREAD_NAME,
         STACK_SIZE);
     thread.setContextClassLoader(new SerializableClassLoader());
     thread.setUncaughtExceptionHandler(new SerializableUncaughtExceptionHandler());
     thread.setPriority(2);
     thread.setDaemon(true);
-    LooperThread copy = CloneViaSerialization.clone(thread);
+    final LooperThread copy = CloneViaSerialization.clone(thread);
     assertNotSame(copy, thread);
     assertTrue(copy.getContextClassLoader() instanceof SerializableClassLoader);
     assertTrue(copy.getUncaughtExceptionHandler() instanceof SerializableUncaughtExceptionHandler);
@@ -136,11 +136,11 @@ public class LooperThreadTest {
   @Test(enabled = false)
   public void testDefaultUncaughtExceptionHandler() throws InterruptedException {
     final AtomicBoolean defaultHandlerCalled = new AtomicBoolean(false);
-    UncaughtExceptionHandler oldHandler = Thread.getDefaultUncaughtExceptionHandler();
+    final UncaughtExceptionHandler oldHandler = Thread.getDefaultUncaughtExceptionHandler();
     try {
       Thread.setDefaultUncaughtExceptionHandler(
           (thread, throwable) -> defaultHandlerCalled.set(true));
-      FailingLooperThread failingThread = new FailingLooperThread();
+      final FailingLooperThread failingThread = new FailingLooperThread();
       failingThread.start();
       failingThread.join();
       Thread.sleep(1000);
@@ -167,7 +167,6 @@ public class LooperThreadTest {
     private static final long serialVersionUID = 4660069266898564395L;
 
     public SerializableThreadGroup() {
-      super();
     }
   }
 
@@ -178,11 +177,12 @@ public class LooperThreadTest {
     public SkeletonLooperThread() {
     }
 
-    public SkeletonLooperThread(Runnable target) {
+    public SkeletonLooperThread(final Runnable target) {
       super(target);
     }
 
-    public SkeletonLooperThread(ThreadGroup group, Runnable target, String name, long stackSize) {
+    public SkeletonLooperThread(final ThreadGroup group, final Runnable target, final String name,
+        final long stackSize) {
       super(group, target, name, stackSize);
     }
 
@@ -219,7 +219,7 @@ public class LooperThreadTest {
     private static final long serialVersionUID = -4761296548510628117L;
 
     @Override
-    public void uncaughtException(Thread t, Throwable e) {
+    public void uncaughtException(final Thread t, final Throwable e) {
       exceptionHandlerRun.set(true);
     }
   }

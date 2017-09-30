@@ -18,7 +18,7 @@ public class LogPreFormatter {
    * @param clazz a {@link java.lang.Class} object.
    */
   public LogPreFormatter(final Class<?> clazz) {
-    this.logger = Logger.getLogger(clazz.getName());
+    logger = Logger.getLogger(clazz.getName());
   }
 
   /**

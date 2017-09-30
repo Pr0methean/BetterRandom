@@ -141,12 +141,12 @@ public class CellularAutomatonRandom extends BaseRandom {
     if (seedAsInt != 0xFFFFFFFF) {
       seedAsInt++;
     }
-    for (int i = 0; i < AUTOMATON_LENGTH - 4; i++) {
+    for (int i = 0; i < (AUTOMATON_LENGTH - 4); i++) {
       cells[i] = 0x000000FF & (seedAsInt >> (i % 32));
     }
 
     // Evolve automaton before returning integers.
-    for (int i = 0; i < AUTOMATON_LENGTH * AUTOMATON_LENGTH / 4; i++) {
+    for (int i = 0; i < ((AUTOMATON_LENGTH * AUTOMATON_LENGTH) / 4); i++) {
       internalNext(32);
     }
   }
