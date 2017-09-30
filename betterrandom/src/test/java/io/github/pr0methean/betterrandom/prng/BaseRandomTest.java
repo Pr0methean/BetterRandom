@@ -283,6 +283,13 @@ public abstract class BaseRandomTest {
   }
 
   @Test
+  public void testInts2HugeRange() throws Exception {
+    final BaseRandom prng = createRng();
+    checkStream(prng, 32, prng.ints(Integer.MIN_VALUE, 1 << 7), -1, Integer.MIN_VALUE, 1 << 7,
+        true);
+  }
+
+  @Test
   public void testInts3() throws Exception {
     final BaseRandom prng = createRng();
     checkStream(prng, 29, prng.ints(3, 1 << 27, 1 << 29), 3, 1 << 27, 1 << 29,
