@@ -19,13 +19,23 @@ import io.github.pr0methean.betterrandom.util.LogPreFormatter;
 import java.io.IOException;
 import java.security.GeneralSecurityException;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Random;
+import java.util.function.Supplier;
 import org.testng.ITestResult;
 import org.testng.Reporter;
 import org.testng.annotations.Test;
 import org.testng.util.RetryAnalyzerCount;
 
 public abstract class BaseRandomTest {
+
+  private enum TestEnum {
+    RED,
+    YELLOW,
+    BLUE;
+  }
+
+  ;
 
   /**
    * The square root of 12, rounded from an extended-precision calculation that was done by Wolfram
@@ -37,6 +47,12 @@ public abstract class BaseRandomTest {
   private static final int MAX_DUMPED_SEED_LENGTH = 32;
   private static final int FLAKY_TEST_RETRIES = 3;
   private static final int TEST_BYTE_ARRAY_LENGTH = 20;
+
+  private static final String HELLO = "Hello";
+  private static final String HOW_ARE_YOU = "How are you?";
+  private static final String GOODBYE = "Goodbye";
+  private static final String[] STRING_ARRAY = {HELLO, HOW_ARE_YOU, GOODBYE};
+  private static final List<String> STRING_LIST = Arrays.asList(STRING_ARRAY);
 
   /**
    * Test to ensure that two distinct RNGs with the same seed return the same sequence of numbers.
@@ -327,6 +343,36 @@ public abstract class BaseRandomTest {
     final BaseRandom prng = createRng();
     checkStream(prng, ENTROPY_OF_DOUBLE, prng.doubles(20, -5.0, 8.0), 20, -5.0, 8.0,
         true);
+  }
+
+  private static final int ELEMENTS = 100;
+
+  private <E> void testGeneratesAll(Supplier<E> generator, E... expected) {
+    final BaseRandom prng = createRng();
+    final E[] selected = Arrays.copyOf(expected, ELEMENTS); // Saves passing in a Class<E>
+    for (int i = 0; i < ELEMENTS; i++) {
+      selected[i] = generator.get();
+    }
+    assertTrue(Arrays.asList(selected).containsAll(Arrays.asList(expected)));
+  }
+
+  @Test
+  public void testNextElementArray() {
+    final BaseRandom prng = createRng();
+    testGeneratesAll(() -> prng.nextElement(STRING_ARRAY), STRING_ARRAY);
+  }
+
+  @Test
+  public void testNextElementList() {
+    final BaseRandom prng = createRng();
+    testGeneratesAll(() -> prng.nextElement(STRING_LIST), STRING_ARRAY);
+  }
+
+  @Test
+  public void testNextEnum() {
+    final BaseRandom prng = createRng();
+    testGeneratesAll(() -> prng.nextEnum(TestEnum.class), TestEnum.RED, TestEnum.YELLOW,
+        TestEnum.BLUE);
   }
 
   private static final class FlakyTestRetrier extends RetryAnalyzerCount {
