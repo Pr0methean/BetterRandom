@@ -20,13 +20,13 @@ import org.checkerframework.checker.nullness.qual.RequiresNonNull;
  * affect the calling thread, so this can't be used with a {@link io.github.pr0methean.betterrandom.seed.RandomSeederThread}.
  * Instead, use a {@link ReseedingSplittableRandomAdapter}.
  *
- * @author ubuntu
+ * @author Chris Hennick
  */
+@SuppressWarnings("ThreadLocalNotStaticFinal")
 public class SplittableRandomAdapter extends DirectSplittableRandomAdapter {
 
   private static final int SEED_LENGTH_BITS = SEED_LENGTH_BYTES * 8;
   private static final long serialVersionUID = 2190439512972880590L;
-  @SuppressWarnings("ThreadLocalNotStaticFinal")
   private transient ThreadLocal<SplittableRandom> splittableRandoms;
   private transient ThreadLocal<AtomicLong> entropyBits;
   private transient ThreadLocal<byte[]> seeds;
@@ -40,11 +40,6 @@ public class SplittableRandomAdapter extends DirectSplittableRandomAdapter {
    */
   public SplittableRandomAdapter(final SeedGenerator seedGenerator) throws SeedException {
     super(seedGenerator.generateSeed(SEED_LENGTH_BYTES));
-    initSubclassTransientFields();
-  }
-
-  public SplittableRandomAdapter(long testSeed) {
-    super(testSeed);
     initSubclassTransientFields();
   }
 
@@ -63,11 +58,6 @@ public class SplittableRandomAdapter extends DirectSplittableRandomAdapter {
   @Override
   protected void recordEntropySpent(final long bits) {
     entropyBits.get().addAndGet(-bits);
-  }
-
-  @Override
-  protected void recordAllEntropySpent() {
-    entropyBits.get().set(0);
   }
 
   @EnsuresNonNull({"splittableRandoms", "getEntropyBits", "seeds"})

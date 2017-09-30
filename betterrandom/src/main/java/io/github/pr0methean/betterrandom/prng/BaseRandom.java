@@ -82,9 +82,9 @@ public abstract class BaseRandom extends Random implements ByteArrayReseedableRa
    * taken and {@link #getEntropyBits()} called immediately afterward would return zero or
    * negative.
    */
-  protected AtomicReference<@Nullable RandomSeederThread> seederThread = new AtomicReference<>(
+  protected final AtomicReference<@Nullable RandomSeederThread> seederThread = new AtomicReference<>(
       null);
-  private AtomicLong nextNextGaussian = new AtomicLong(
+  private final AtomicLong nextNextGaussian = new AtomicLong(
       NAN_LONG_BITS); // Stored as a long since there's no atomic double
 
   /**
@@ -428,22 +428,6 @@ public abstract class BaseRandom extends Random implements ByteArrayReseedableRa
   }
 
   @Override
-  public DoubleStream doubles() {
-    return super.doubles();
-  }
-
-  @Override
-  public DoubleStream doubles(long streamSize, double randomNumberOrigin,
-      double randomNumberBound) {
-    return super.doubles(streamSize, randomNumberOrigin, randomNumberBound);
-  }
-
-  @Override
-  public DoubleStream doubles(double randomNumberOrigin, double randomNumberBound) {
-    return super.doubles(randomNumberOrigin, randomNumberBound);
-  }
-
-  @Override
   public String dump() {
     lock.lock();
     try {
@@ -616,11 +600,6 @@ public abstract class BaseRandom extends Random implements ByteArrayReseedableRa
     } catch (final SeedException e) {
       throw new RuntimeException(e);
     }
-  }
-
-  protected void recordAllEntropySpent() {
-    entropyBits.set(0);
-    asyncReseedIfPossible();
   }
 
   @Override
