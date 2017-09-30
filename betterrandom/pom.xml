@@ -149,6 +149,12 @@
 
               <head>Implementation Note:</head>
             </tag>
+            <tag>
+              <name>jls</name>
+              <placement>a</placement>
+
+              <head>Java Language Specification:</head>
+            </tag>
           </tags>
         </configuration>
       </plugin>

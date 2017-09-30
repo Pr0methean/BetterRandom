@@ -8,6 +8,12 @@ cd ..
 cp -r betterrandom/target/site/apidocs/* docs
 cd docs
 
+# FIXME: Why are these getting generated in the first place?!
+rm -r com
+rm -r java
+rm -r javax
+rm -r org
+
 # Disable frames, step 1
 mv overview-summary.html index.html
 
