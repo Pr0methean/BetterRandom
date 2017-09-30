@@ -71,7 +71,7 @@ public enum RandomDotOrgSeedGenerator implements SeedGenerator {
    */
   private final boolean rateLimitOnFailure;
 
-  RandomDotOrgSeedGenerator(boolean rateLimitOnFailure) {
+  RandomDotOrgSeedGenerator(final boolean rateLimitOnFailure) {
     this.rateLimitOnFailure = rateLimitOnFailure;
   }
 
@@ -104,7 +104,7 @@ public enum RandomDotOrgSeedGenerator implements SeedGenerator {
           cache[index] = (byte) Integer.parseInt(line, 16);
           // Can't use Byte.parseByte, since it expects signed
         }
-        if (index < cache.length - 1) {
+        if (index < (cache.length - 1)) {
           throw new IOException("Insufficient data received.");
         }
         cacheOffset = 0;
@@ -122,13 +122,13 @@ public enum RandomDotOrgSeedGenerator implements SeedGenerator {
    */
   public static void setMaxRequestSize(int maxRequestSize) {
     maxRequestSize = Math.min(maxRequestSize, GLOBAL_MAX_REQUEST_SIZE);
-    int maxNewCacheSize = Math.min(maxRequestSize, MAX_CACHE_SIZE);
+    final int maxNewCacheSize = Math.min(maxRequestSize, MAX_CACHE_SIZE);
     cacheLock.lock();
     try {
-      int sizeChange = maxNewCacheSize - cache.length;
+      final int sizeChange = maxNewCacheSize - cache.length;
       if (sizeChange > 0) {
-        byte[] newCache = new byte[maxNewCacheSize];
-        int newCacheOffset = cacheOffset + sizeChange;
+        final byte[] newCache = new byte[maxNewCacheSize];
+        final int newCacheOffset = cacheOffset + sizeChange;
         System.arraycopy(cache, cacheOffset, newCache, newCacheOffset, cache.length - cacheOffset);
         cache = newCache;
       }

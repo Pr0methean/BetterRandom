@@ -50,11 +50,9 @@ public class LooperThread extends Thread implements Serializable, Cloneable {
    * #iterate()} called by {@link #run()}.
    */
   protected transient Lock lock = new ReentrantLock();
-  @Nullable
-  protected ThreadGroup group;
+  protected @Nullable ThreadGroup group;
   protected transient @Nullable Runnable target;
-  @MonotonicNonNull
-  protected String name = null;
+  protected @MonotonicNonNull String name = null;
   @SuppressWarnings("InstanceVariableMayNotBeInitializedByReadObject")
   private transient boolean alreadyTerminatedWhenDeserialized = false;
   private boolean interrupted = false;
@@ -68,17 +66,16 @@ public class LooperThread extends Thread implements Serializable, Cloneable {
    * <p>Constructor for LooperThread.</p>
    */
   public LooperThread() {
-    super();
     stackSize = 0;
   }
 
-  public LooperThread(@Nullable Runnable target) {
+  public LooperThread(@Nullable final Runnable target) {
     super(target);
     this.target = target;
     stackSize = 0;
   }
 
-  public LooperThread(ThreadGroup group, @Nullable Runnable target) {
+  public LooperThread(final ThreadGroup group, @Nullable final Runnable target) {
     super(group, target);
     this.target = target;
     stackSize = 0;
@@ -106,20 +103,21 @@ public class LooperThread extends Thread implements Serializable, Cloneable {
     stackSize = 0;
   }
 
-  public LooperThread(@Nullable Runnable target, String name) {
+  public LooperThread(@Nullable final Runnable target, final String name) {
     super(target, name);
     this.target = target;
     stackSize = 0;
   }
 
-  public LooperThread(ThreadGroup group, @Nullable Runnable target, String name) {
+  public LooperThread(final ThreadGroup group, @Nullable final Runnable target, final String name) {
     super(group, target, name);
     this.target = target;
     setGroup(group);
     stackSize = 0;
   }
 
-  public LooperThread(ThreadGroup group, @Nullable Runnable target, String name, long stackSize) {
+  public LooperThread(final ThreadGroup group, @Nullable final Runnable target, final String name,
+      final long stackSize) {
     super(group, target, name, stackSize);
     this.target = target;
     setGroup(group);
@@ -162,7 +160,6 @@ public class LooperThread extends Thread implements Serializable, Cloneable {
   protected Object readResolve()
       throws InvalidObjectException {
     target = serialTarget;
-    final LooperThread t;
     if (name == null) {
       name = getName();
     }
@@ -172,7 +169,7 @@ public class LooperThread extends Thread implements Serializable, Cloneable {
     if (group == null) {
       group = castNonNull(Thread.currentThread().getThreadGroup());
     }
-    t = readResolveConstructorWrapper();
+    final LooperThread t = readResolveConstructorWrapper();
     t.setDaemon(daemon);
     t.setPriority(priority);
     if (uncaughtExceptionHandler.wrapped != null) {
@@ -232,7 +229,7 @@ public class LooperThread extends Thread implements Serializable, Cloneable {
    * @throws UnsupportedOperationException if this method has not been overridden.
    */
   protected boolean iterate() throws InterruptedException {
-    if (target == null || target instanceof DummyTarget) {
+    if ((target == null) || (target instanceof DummyTarget)) {
       throw new UnsupportedOperationException("This method should be overridden, or else this "
           + "thread should have been created with a Serializable target!");
     } else {
@@ -253,7 +250,7 @@ public class LooperThread extends Thread implements Serializable, Cloneable {
         } finally {
           lock.unlock();
         }
-      } catch (final InterruptedException e) {
+      } catch (final InterruptedException ignored) {
         interrupt();
         break;
       }

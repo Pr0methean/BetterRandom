@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--suppress XmlHighlighting -->
-<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://maven.apache.org/POM/4.0.0" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xmlns="http://maven.apache.org/POM/4.0.0"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <packaging>jar</packaging>
   <!--  <parent>
@@ -21,7 +23,8 @@
   <artifactId>BetterRandom</artifactId>
   <version>0.11.0-SNAPSHOT</version>
   <name>BetterRandom</name>
-  <description>BetterRandom is a library designed to help improve the quality and performance of random-number generation on Java.
+  <description>BetterRandom is a library designed to help improve the quality and performance of
+    random-number generation on Java.
   </description>
   <url>https://github.com/Pr0methean/BetterRandom</url>
 
@@ -115,49 +118,49 @@
     </resources>
     <pluginManagement>
       <plugins>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-javadoc-plugin</artifactId>
-        <version>3.0.0-M1</version>
-        <configuration>
-          <sourcepath>${user.home}/j2se-src:${basedir}/src/main/java</sourcepath>
-          <notimestamp>true</notimestamp>
-          <subpackages>io.github.pr0methean</subpackages>
-          <show>protected</show>
-          <detectLinks>true</detectLinks>
-          <links>
-            <link>https://checkerframework.org/api</link>
-            <link>https://docs.oracle.com/javase/8/docs/api</link>
-            <link>https://google.github.io/guava/releases/19.0/api/docs</link>
-          </links>
-          <tags>
-            <tag>
-              <name>apiNote</name>
-              <placement>a</placement>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-javadoc-plugin</artifactId>
+          <version>3.0.0-M1</version>
+          <configuration>
+            <sourcepath>${user.home}/j2se-src:${basedir}/src/main/java</sourcepath>
+            <notimestamp>true</notimestamp>
+            <subpackages>io.github.pr0methean</subpackages>
+            <show>protected</show>
+            <detectLinks>true</detectLinks>
+            <links>
+              <link>https://checkerframework.org/api</link>
+              <link>https://docs.oracle.com/javase/8/docs/api</link>
+              <link>https://google.github.io/guava/releases/19.0/api/docs</link>
+            </links>
+            <tags>
+              <tag>
+                <name>apiNote</name>
+                <placement>a</placement>
 
-              <head>API Note:</head>
-            </tag>
-            <tag>
-              <name>implSpec</name>
-              <placement>a</placement>
+                <head>API Note:</head>
+              </tag>
+              <tag>
+                <name>implSpec</name>
+                <placement>a</placement>
 
-              <head>Implementation Requirements:</head>
-            </tag>
-            <tag>
-              <name>implNote</name>
-              <placement>a</placement>
+                <head>Implementation Requirements:</head>
+              </tag>
+              <tag>
+                <name>implNote</name>
+                <placement>a</placement>
 
-              <head>Implementation Note:</head>
-            </tag>
-            <tag>
-              <name>jls</name>
-              <placement>a</placement>
+                <head>Implementation Note:</head>
+              </tag>
+              <tag>
+                <name>jls</name>
+                <placement>a</placement>
 
-              <head>Java Language Specification:</head>
-            </tag>
-          </tags>
-        </configuration>
-      </plugin>
+                <head>Java Language Specification:</head>
+              </tag>
+            </tags>
+          </configuration>
+        </plugin>
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-surefire-plugin</artifactId>
@@ -327,29 +330,38 @@
               <option>-keepparameternames</option>
               <option>-renamesourcefileattribute SourceFile</option>
               <option>
-                -keepattributes Exceptions,InnerClasses,Signature,Deprecated, SourceFile,LineNumberTable,*Annotation*,EnclosingMethod,StackMap,StackMapTable
+                -keepattributes Exceptions,InnerClasses,Signature,Deprecated,
+                SourceFile,LineNumberTable,*Annotation*,EnclosingMethod,StackMap,StackMapTable
               </option>
               <option>
                 -keep public class * { public protected *; }
               </option>
               <option>
-                -keepclassmembernames class * { java.lang.Class class$(java.lang.String); java.lang.Class class$(java.lang.String, boolean); }
+                -keepclassmembernames class * { java.lang.Class class$(java.lang.String);
+                java.lang.Class class$(java.lang.String, boolean); }
               </option>
               <option>
-                -keepclasseswithmembernames,includedescriptorclasses class * { native &lt;methods&gt;; }
+                -keepclasseswithmembernames,includedescriptorclasses class * { native &lt;methods&gt;;
+                }
               </option>
               <option>
-                -keepclassmembers,allowoptimization enum * { public static **[] values(); public static ** valueOf(java.lang.String); }
+                -keepclassmembers,allowoptimization enum * { public static **[] values(); public
+                static ** valueOf(java.lang.String); }
               </option>
 
               <!-- Serialization settings -->
               <option>
-                -keepclassmembers class * implements java.io.Serializable { static final long serialVersionUID; private static final java.io.ObjectStreamField[] serialPersistentFields; private void writeObject(java.io.ObjectOutputStream); private void readObject(java.io.ObjectInputStream);
-                private void readObjectNoData(); java.lang.Object writeReplace(); java.lang.Object readResolve(); !static !transient &lt;fields&gt;; }
+                -keepclassmembers class * implements java.io.Serializable { static final long
+                serialVersionUID; private static final java.io.ObjectStreamField[]
+                serialPersistentFields; private void writeObject(java.io.ObjectOutputStream);
+                private void readObject(java.io.ObjectInputStream);
+                private void readObjectNoData(); java.lang.Object writeReplace(); java.lang.Object
+                readResolve(); !static !transient &lt;fields&gt;; }
               </option>
 
               <!-- Allow deletion of castNonNull -->
-              <option>-assumenosideeffects public class org.checkerframework.checker.nullness.NullnessUtil
+              <option>-assumenosideeffects public class
+                org.checkerframework.checker.nullness.NullnessUtil
               </option>
 
               <!-- Work around a MethodHandle.invokeExact signature-check issue -->

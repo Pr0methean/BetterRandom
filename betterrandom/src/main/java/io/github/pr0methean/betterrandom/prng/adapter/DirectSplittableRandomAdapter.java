@@ -1,7 +1,5 @@
 package io.github.pr0methean.betterrandom.prng.adapter;
 
-import static org.checkerframework.checker.nullness.NullnessUtil.castNonNull;
-
 import com.google.common.base.MoreObjects.ToStringHelper;
 import io.github.pr0methean.betterrandom.util.BinaryUtils;
 import java.io.IOException;
@@ -32,7 +30,7 @@ public abstract class DirectSplittableRandomAdapter extends BaseSplittableRandom
     setSeedInternal(seed);
   }
 
-  public DirectSplittableRandomAdapter(long seed) {
+  public DirectSplittableRandomAdapter(final long seed) {
     super(seed);
     setSeedInternal(seed);
   }
