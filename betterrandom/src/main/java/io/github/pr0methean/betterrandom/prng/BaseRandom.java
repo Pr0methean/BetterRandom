@@ -338,22 +338,37 @@ public abstract class BaseRandom extends Random implements ByteArrayReseedableRa
 
   @Override
   public IntStream ints(long streamSize, int randomNumberOrigin, int randomNumberBound) {
-    IntSupplier nextInt;
-    int range = randomNumberBound - randomNumberOrigin;
-    if (randomNumberBound - randomNumberOrigin > 0) {
-      nextInt = () -> randomNumberOrigin + nextInt(range);
-    } else {
-      nextInt = () -> {
-        int output;
-        do {
-          output = super.nextInt();
-        } while (output < randomNumberOrigin || output > randomNumberBound);
-        return output;
-      };
-    }
     return StreamSupport.intStream(new IntSupplierSpliterator(streamSize,
-            nextInt),
+            () -> nextInt(randomNumberOrigin, randomNumberBound)),
         true);
+  }
+
+  /**
+   * Returns a pseudorandom {@code int} value between the specified origin (inclusive) and the
+   * specified bound (exclusive).
+   *
+   * @param origin the least value returned
+   * @param bound the upper bound (exclusive)
+   * @return a pseudorandom {@code int} value between the origin (inclusive) and the bound
+   *     (exclusive)
+   * @throws IllegalArgumentException if {@code origin} is greater than or equal to {@code
+   *     bound}
+   */
+  public int nextInt(int origin, int bound) {
+    if (bound <= origin) {
+      throw new IllegalArgumentException(String.format("Bound %d must be greater than origin %d",
+          bound, origin));
+    }
+    int range = bound - origin;
+    if (range > 0) {
+      // range is no more than Integer.MAX_VALUE
+      return nextInt(range) + bound;
+    }
+    int output;
+    do {
+      output = super.nextInt();
+    } while (output < origin || output > bound);
+    return output;
   }
 
   @Override
@@ -375,14 +390,31 @@ public abstract class BaseRandom extends Random implements ByteArrayReseedableRa
   @Override
   public LongStream longs(long streamSize, long randomNumberOrigin, long randomNumberBound) {
     return StreamSupport.longStream(new LongSupplierSpliterator(streamSize,
-            () -> {
-              long output;
-              do {
-                output = super.nextLong();
-              } while (output < randomNumberOrigin || output > randomNumberBound);
-              return output;
-            }),
+            () -> nextLong(randomNumberOrigin, randomNumberBound)),
         true);
+  }
+
+  /**
+   * Returns a pseudorandom {@code long} value between the specified origin (inclusive) and the
+   * specified bound (exclusive).
+   *
+   * @param origin the least value returned
+   * @param bound the upper bound (exclusive)
+   * @return a pseudorandom {@code long} value between the origin (inclusive) and the bound
+   *     (exclusive)
+   * @throws IllegalArgumentException if {@code origin} is greater than or equal to {@code
+   *     bound}
+   */
+  public long nextLong(long origin, long bound) {
+    if (bound <= origin) {
+      throw new IllegalArgumentException(String.format("Bound %d must be greater than origin %d",
+          bound, origin));
+    }
+    long output;
+    do {
+      output = super.nextLong();
+    } while (output < origin || output > bound);
+    return output;
   }
 
   @Override
