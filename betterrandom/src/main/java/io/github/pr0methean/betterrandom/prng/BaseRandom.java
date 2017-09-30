@@ -13,7 +13,9 @@ import io.github.pr0methean.betterrandom.seed.SeedException;
 import io.github.pr0methean.betterrandom.seed.SeedGenerator;
 import io.github.pr0methean.betterrandom.util.BinaryUtils;
 import io.github.pr0methean.betterrandom.util.Dumpable;
+import io.github.pr0methean.betterrandom.util.IntSupplierSpliterator;
 import io.github.pr0methean.betterrandom.util.LogPreFormatter;
+import io.github.pr0methean.betterrandom.util.LongSupplierSpliterator;
 import java.io.IOException;
 import java.io.InvalidObjectException;
 import java.io.ObjectInputStream;
@@ -24,9 +26,11 @@ import java.util.concurrent.atomic.AtomicReference;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 import java.util.function.DoubleSupplier;
+import java.util.function.IntSupplier;
 import java.util.stream.DoubleStream;
 import java.util.stream.IntStream;
 import java.util.stream.LongStream;
+import java.util.stream.StreamSupport;
 import org.checkerframework.checker.initialization.qual.UnderInitialization;
 import org.checkerframework.checker.initialization.qual.UnknownInitialization;
 import org.checkerframework.checker.nullness.qual.EnsuresNonNull;
@@ -39,29 +43,6 @@ import org.checkerframework.checker.nullness.qual.Nullable;
  */
 public abstract class BaseRandom extends Random implements ByteArrayReseedableRandom,
     RepeatableRandom, Dumpable, EntropyCountingRandom {
-
-  /**
-   * This is used because {@link Random#internalNextInt} and {@link Random#internalNextLong(long,
-   * long)} may call {@link #nextInt()} and {@link #nextLong()} more than once, which would lead to
-   * excessive entropy debits.
-   */
-  private class NonEntropyCountingProxy extends Random {
-
-    @Override
-    public int nextInt() {
-      return BaseRandom.this.nextIntNoEntropyDebit();
-    }
-
-    @Override
-    public int nextInt(int bound) {
-      return BaseRandom.this.nextIntNoEntropyDebit(bound);
-    }
-
-    @Override
-    public long nextLong() {
-      return BaseRandom.this.nextLongNoEntropyDebit();
-    }
-  }
 
   /** The number of pseudorandom bits in {@link #nextFloat()}(). */
   protected static final long ENTROPY_OF_FLOAT = 24;
@@ -346,50 +327,67 @@ public abstract class BaseRandom extends Random implements ByteArrayReseedableRa
 
   @Override
   public IntStream ints(long streamSize) {
-    recordEntropySpent(Integer.SIZE * streamSize);
-    return new NonEntropyCountingProxy().ints(streamSize);
+    return StreamSupport.intStream(new IntSupplierSpliterator(streamSize, this::nextInt),
+        true);
   }
 
   @Override
   public IntStream ints() {
-    recordAllEntropySpent();
-    return new NonEntropyCountingProxy().ints();
+    return ints(Long.MAX_VALUE);
   }
 
   @Override
   public IntStream ints(long streamSize, int randomNumberOrigin, int randomNumberBound) {
-    recordEntropySpent(streamSize * entropyOfInt(randomNumberOrigin, randomNumberBound));
-    return new NonEntropyCountingProxy().ints(streamSize, randomNumberOrigin, randomNumberBound);
+    IntSupplier nextInt;
+    int range = randomNumberBound - randomNumberOrigin;
+    if (randomNumberBound - randomNumberOrigin > 0) {
+      nextInt = () -> randomNumberOrigin + nextInt(range);
+    } else {
+      nextInt = () -> {
+        int output;
+        do {
+          output = super.nextInt();
+        } while (output < randomNumberOrigin || output > randomNumberBound);
+        return output;
+      };
+    }
+    return StreamSupport.intStream(new IntSupplierSpliterator(streamSize,
+            nextInt),
+        true);
   }
 
   @Override
   public IntStream ints(int randomNumberOrigin, int randomNumberBound) {
-    recordAllEntropySpent();
-    return new NonEntropyCountingProxy().ints(randomNumberOrigin, randomNumberBound);
+    return ints(Long.MAX_VALUE, randomNumberOrigin, randomNumberBound);
   }
 
   @Override
   public LongStream longs(long streamSize) {
-    recordEntropySpent(streamSize * Long.SIZE);
-    return new NonEntropyCountingProxy().longs(streamSize);
+    return StreamSupport.longStream(new LongSupplierSpliterator(streamSize, this::nextLong),
+        true);
   }
 
   @Override
   public LongStream longs() {
-    recordAllEntropySpent();
-    return new NonEntropyCountingProxy().longs();
+    return longs(Long.MAX_VALUE);
   }
 
   @Override
   public LongStream longs(long streamSize, long randomNumberOrigin, long randomNumberBound) {
-    recordEntropySpent(streamSize * entropyOfLong(randomNumberOrigin, randomNumberBound));
-    return new NonEntropyCountingProxy().longs(streamSize, randomNumberOrigin, randomNumberBound);
+    return StreamSupport.longStream(new LongSupplierSpliterator(streamSize,
+            () -> {
+              long output;
+              do {
+                output = super.nextLong();
+              } while (output < randomNumberOrigin || output > randomNumberBound);
+              return output;
+            }),
+        true);
   }
 
   @Override
   public LongStream longs(long randomNumberOrigin, long randomNumberBound) {
-    recordAllEntropySpent();
-    return new NonEntropyCountingProxy().longs(randomNumberOrigin, randomNumberBound);
+    return longs(Long.MAX_VALUE, randomNumberOrigin, randomNumberBound);
   }
 
   @Override
