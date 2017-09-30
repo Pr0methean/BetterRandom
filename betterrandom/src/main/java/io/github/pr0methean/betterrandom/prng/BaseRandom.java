@@ -592,6 +592,7 @@ public abstract class BaseRandom extends Random implements ByteArrayReseedableRa
     }
   }
 
+  /*
   @Override
   protected void finalize() {
     RandomSeederThread thread = seederThread.get();
@@ -599,7 +600,7 @@ public abstract class BaseRandom extends Random implements ByteArrayReseedableRa
       thread.remove(this);
       thread.stopIfEmpty();
     }
-  }
+  }*/
 
   @Override
   public abstract int getNewSeedLength(@UnknownInitialization BaseRandom this);
