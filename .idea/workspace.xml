@@ -5,9 +5,6 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="8d34e3fe-111b-4f5b-b1bf-5875a1f8c255" name="Default" comment="">
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/betterrandom/src/main/java/io/github/pr0methean/betterrandom/prng/BaseRandom.java" afterPath="$PROJECT_DIR$/betterrandom/src/main/java/io/github/pr0methean/betterrandom/prng/BaseRandom.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/betterrandom/src/main/java/io/github/pr0methean/betterrandom/prng/RandomWrapper.java" afterPath="$PROJECT_DIR$/betterrandom/src/main/java/io/github/pr0methean/betterrandom/prng/RandomWrapper.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/betterrandom/src/main/java/io/github/pr0methean/betterrandom/prng/adapter/BaseSplittableRandomAdapter.java" afterPath="$PROJECT_DIR$/betterrandom/src/main/java/io/github/pr0methean/betterrandom/prng/adapter/BaseSplittableRandomAdapter.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/betterrandom/src/test/java/io/github/pr0methean/betterrandom/prng/BaseRandomTest.java" afterPath="$PROJECT_DIR$/betterrandom/src/test/java/io/github/pr0methean/betterrandom/prng/BaseRandomTest.java" />
     </list>
     <ignored path="$PROJECT_DIR$/out/" />
@@ -54,16 +51,14 @@
       <file leaf-file-name="BaseRandomTest.java" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/betterrandom/src/test/java/io/github/pr0methean/betterrandom/prng/BaseRandomTest.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="261">
-              <caret line="291" column="7" lean-forward="true" selection-start-line="291" selection-start-column="7" selection-end-line="291" selection-end-column="7" />
+            <state relative-caret-position="63">
+              <caret line="310" column="3" lean-forward="false" selection-start-line="310" selection-start-column="3" selection-end-line="310" selection-end-column="3" />
               <folding>
                 <element signature="imports" expanded="true" />
                 <element signature="method#testReseeding#0;class#BaseRandomTest#0" expanded="false" />
                 <element signature="method#testWithProbability#0;class#BaseRandomTest#0" expanded="false" />
-                <element signature="method#testNextInt2#0;class#BaseRandomTest#0" expanded="false" />
-                <element signature="method#testNextLong#0;class#BaseRandomTest#0" expanded="false" />
                 <element signature="method#testNextDouble#0;class#BaseRandomTest#0" expanded="false" />
-                <marker date="1506795495726" expanded="true" signature="11964:11971" ph="{...}" />
+                <marker date="1506795782191" expanded="true" signature="12637:12644" ph="{...}" />
               </folding>
             </state>
           </provider>
@@ -1585,16 +1580,14 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/betterrandom/src/test/java/io/github/pr0methean/betterrandom/prng/BaseRandomTest.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="261">
-          <caret line="291" column="7" lean-forward="true" selection-start-line="291" selection-start-column="7" selection-end-line="291" selection-end-column="7" />
+        <state relative-caret-position="63">
+          <caret line="310" column="3" lean-forward="false" selection-start-line="310" selection-start-column="3" selection-end-line="310" selection-end-column="3" />
           <folding>
             <element signature="imports" expanded="true" />
             <element signature="method#testReseeding#0;class#BaseRandomTest#0" expanded="false" />
             <element signature="method#testWithProbability#0;class#BaseRandomTest#0" expanded="false" />
-            <element signature="method#testNextInt2#0;class#BaseRandomTest#0" expanded="false" />
-            <element signature="method#testNextLong#0;class#BaseRandomTest#0" expanded="false" />
             <element signature="method#testNextDouble#0;class#BaseRandomTest#0" expanded="false" />
-            <marker date="1506795495726" expanded="true" signature="11964:11971" ph="{...}" />
+            <marker date="1506795782191" expanded="true" signature="12637:12644" ph="{...}" />
           </folding>
         </state>
       </provider>
