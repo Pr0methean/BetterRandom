@@ -40,6 +40,29 @@ import org.checkerframework.checker.nullness.qual.Nullable;
 public abstract class BaseRandom extends Random implements ByteArrayReseedableRandom,
     RepeatableRandom, Dumpable, EntropyCountingRandom {
 
+  /**
+   * This is used because {@link Random#internalNextInt} and {@link Random#internalNextLong(long,
+   * long)} may call {@link #nextInt()} and {@link #nextLong()} more than once, which would lead to
+   * excessive entropy debits.
+   */
+  private class NonEntropyCountingProxy extends Random {
+
+    @Override
+    public int nextInt() {
+      return BaseRandom.this.nextIntNoEntropyDebit();
+    }
+
+    @Override
+    public int nextInt(int bound) {
+      return BaseRandom.this.nextIntNoEntropyDebit(bound);
+    }
+
+    @Override
+    public long nextLong() {
+      return BaseRandom.this.nextLongNoEntropyDebit();
+    }
+  }
+
   /** The number of pseudorandom bits in {@link #nextFloat()}(). */
   protected static final long ENTROPY_OF_FLOAT = 24;
 
@@ -243,15 +266,27 @@ public abstract class BaseRandom extends Random implements ByteArrayReseedableRa
     return super.nextInt();
   }
 
+  private int nextIntNoEntropyDebit() {
+    return super.nextInt();
+  }
+
   @Override
   public int nextInt(int bound) {
     recordEntropySpent(entropyOfInt(0, bound));
     return super.nextInt(bound);
   }
 
+  private int nextIntNoEntropyDebit(int bound) {
+    return super.nextInt(bound);
+  }
+
   @Override
   public long nextLong() {
     recordEntropySpent(Long.SIZE);
+    return super.nextLong();
+  }
+
+  private long nextLongNoEntropyDebit() {
     return super.nextLong();
   }
 
@@ -312,49 +347,49 @@ public abstract class BaseRandom extends Random implements ByteArrayReseedableRa
   @Override
   public IntStream ints(long streamSize) {
     recordEntropySpent(Integer.SIZE * streamSize);
-    return super.ints(streamSize);
+    return new NonEntropyCountingProxy().ints(streamSize);
   }
 
   @Override
   public IntStream ints() {
     recordAllEntropySpent();
-    return super.ints();
+    return new NonEntropyCountingProxy().ints();
   }
 
   @Override
   public IntStream ints(long streamSize, int randomNumberOrigin, int randomNumberBound) {
     recordEntropySpent(streamSize * entropyOfInt(randomNumberOrigin, randomNumberBound));
-    return super.ints(streamSize, randomNumberOrigin, randomNumberBound);
+    return new NonEntropyCountingProxy().ints(streamSize, randomNumberOrigin, randomNumberBound);
   }
 
   @Override
   public IntStream ints(int randomNumberOrigin, int randomNumberBound) {
     recordAllEntropySpent();
-    return super.ints(randomNumberOrigin, randomNumberBound);
+    return new NonEntropyCountingProxy().ints(randomNumberOrigin, randomNumberBound);
   }
 
   @Override
   public LongStream longs(long streamSize) {
     recordEntropySpent(streamSize * Long.SIZE);
-    return super.longs(streamSize);
+    return new NonEntropyCountingProxy().longs(streamSize);
   }
 
   @Override
   public LongStream longs() {
     recordAllEntropySpent();
-    return super.longs();
+    return new NonEntropyCountingProxy().longs();
   }
 
   @Override
   public LongStream longs(long streamSize, long randomNumberOrigin, long randomNumberBound) {
     recordEntropySpent(streamSize * entropyOfLong(randomNumberOrigin, randomNumberBound));
-    return super.longs(streamSize, randomNumberOrigin, randomNumberBound);
+    return new NonEntropyCountingProxy().longs(streamSize, randomNumberOrigin, randomNumberBound);
   }
 
   @Override
   public LongStream longs(long randomNumberOrigin, long randomNumberBound) {
     recordAllEntropySpent();
-    return super.longs(randomNumberOrigin, randomNumberBound);
+    return new NonEntropyCountingProxy().longs(randomNumberOrigin, randomNumberBound);
   }
 
   @Override
