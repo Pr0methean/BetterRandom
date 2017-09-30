@@ -18,7 +18,6 @@ package io.github.pr0methean.betterrandom.util;
 import static java.lang.ThreadLocal.withInitial;
 
 import java.nio.ByteBuffer;
-import java.util.Arrays;
 
 /**
  * Utility methods for working with binary and hex data.

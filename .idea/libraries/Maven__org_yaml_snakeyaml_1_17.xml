@@ -1,8 +1,6 @@
 <component name="libraryTable">
   <library name="Maven: org.yaml:snakeyaml:1.17">
-    <CLASSES>
-      <root url="jar://$MAVEN_REPOSITORY$/org/yaml/snakeyaml/1.17/snakeyaml-1.17.jar!/" />
-    </CLASSES>
+    <CLASSES />
     <JAVADOC>
       <root url="jar://$MAVEN_REPOSITORY$/org/yaml/snakeyaml/1.17/snakeyaml-1.17-javadoc.jar!/" />
     </JAVADOC>
