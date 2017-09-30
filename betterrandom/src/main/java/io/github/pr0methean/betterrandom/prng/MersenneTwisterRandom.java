@@ -32,14 +32,14 @@ import org.checkerframework.checker.nullness.qual.EnsuresNonNull;
  * target="_top">Mersenne Twister</a> algorithm developed by Makoto Matsumoto and Takuji
  * Nishimura.</p> <p>This is a very fast random number generator with good statistical properties
  * (it passes the full DIEHARD suite).  This is the best RNG for most experiments.  If a non-linear
- * generator is required, use the slower {@link io.github.pr0methean.betterrandom.prng.AesCounterRandom}
+ * generator is required, use the slower {@link AesCounterRandom}
  * RNG.</p> <p>This PRNG is deterministic, which can be advantageous for testing purposes since the
  * output is repeatable.  If multiple instances of this class are created with the same seed they
  * will all have identical output.</p> <p>This code is translated from the original C version and
  * assumes that we will always seed from an array of bytes.  I don't pretend to know the meanings of
  * the magic numbers or how it works, it just does.</p> <p><em>NOTE: Because instances of this class
  * require 128-bit seeds, it is not possible to seed this RNG using the {@link #setSeed(long)}
- * method inherited from {@link java.util.Random}.  Calls to this method will have no effect.
+ * method inherited from {@link Random}.  Calls to this method will have no effect.
  * Instead the seed must be set by a constructor.</em></p>
  *
  * @author Makoto Matsumoto and Takuji Nishimura (original C version)
@@ -71,7 +71,7 @@ public class MersenneTwisterRandom extends BaseRandom {
   /**
    * Creates a new RNG and seeds it using the default seeding strategy.
    *
-   * @throws io.github.pr0methean.betterrandom.seed.SeedException if any.
+   * @throws SeedException if any.
    */
   public MersenneTwisterRandom() throws SeedException {
     this(DefaultSeedGenerator.DEFAULT_SEED_GENERATOR);
@@ -90,9 +90,9 @@ public class MersenneTwisterRandom extends BaseRandom {
   /**
    * <p>Constructor for MersenneTwisterRandom.</p>
    *
-   * @param seedGenerator a {@link io.github.pr0methean.betterrandom.seed.SeedGenerator}
+   * @param seedGenerator a {@link SeedGenerator}
    *     object.
-   * @throws io.github.pr0methean.betterrandom.seed.SeedException if any.
+   * @throws SeedException if any.
    */
   public MersenneTwisterRandom(final SeedGenerator seedGenerator) throws SeedException {
     this(seedGenerator.generateSeed(SEED_SIZE_BYTES));
@@ -127,7 +127,7 @@ public class MersenneTwisterRandom extends BaseRandom {
   @Override
   protected void setSeedInternal(
       @UnknownInitialization(Random.class)MersenneTwisterRandom this, final byte[] seed) {
-    if (seed == null || seed.length != SEED_SIZE_BYTES) {
+    if ((seed == null) || (seed.length != SEED_SIZE_BYTES)) {
       throw new IllegalArgumentException("Mersenne Twister RNG requires a 128-bit (16-byte) seed.");
     }
     mt = castNonNull(mt);
@@ -137,8 +137,8 @@ public class MersenneTwisterRandom extends BaseRandom {
     // This section is translated from the init_genrand code in the C version.
     mt[0] = BOOTSTRAP_SEED;
     for (mtIndex = 1; mtIndex < N; mtIndex++) {
-      mt[mtIndex] = (BOOTSTRAP_FACTOR
-          * (mt[mtIndex - 1] ^ (mt[mtIndex - 1] >>> 30))
+      mt[mtIndex] = ((BOOTSTRAP_FACTOR
+          * (mt[mtIndex - 1] ^ (mt[mtIndex - 1] >>> 30)))
           + mtIndex);
     }
 
@@ -176,11 +176,11 @@ public class MersenneTwisterRandom extends BaseRandom {
       if (mtIndex >= N) // Generate N ints at a time.
       {
         int kk;
-        for (kk = 0; kk < N - M; kk++) {
+        for (kk = 0; kk < (N - M); kk++) {
           y = (mt[kk] & UPPER_MASK) | (mt[kk + 1] & LOWER_MASK);
           mt[kk] = mt[kk + M] ^ (y >>> 1) ^ MAG01[y & 0x1];
         }
-        for (; kk < N - 1; kk++) {
+        for (; kk < (N - 1); kk++) {
           y = (mt[kk] & UPPER_MASK) | (mt[kk + 1] & LOWER_MASK);
           mt[kk] = mt[kk + (M - N)] ^ (y >>> 1) ^ MAG01[y & 0x1];
         }

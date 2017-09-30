@@ -26,7 +26,7 @@ import org.checkerframework.checker.nullness.qual.RequiresNonNull;
  * restored includes: </p> <ul> <li>{@link #getName()}</li> <li>{@link #getPriority()}</li>
  * <li>{@link #getState()} == {@link State#NEW}</li> <li>{@link #getState()} == {@link
  * State#TERMINATED}</li> <li>{@link #isInterrupted()}</li> <li>{@link #isDaemon()}</li> </ul><p>
- * Thread state that will be restored ONLY if its values are {@link java.io.Serializable} includes:
+ * Thread state that will be restored ONLY if its values are {@link Serializable} includes:
  * </p><ul> <li>{@link #getThreadGroup()}</li> <li>{@link #getUncaughtExceptionHandler()}</li>
  * <li>{@link #getContextClassLoader()}</li> </ul><p> Thread state that will NEVER be restored
  * includes: </p><ul> <li>Program counter, call stack, and local variables. The seederThread will
@@ -50,11 +50,9 @@ public class LooperThread extends Thread implements Serializable, Cloneable {
    * #iterate()} called by {@link #run()}.
    */
   protected transient Lock lock = new ReentrantLock();
-  @Nullable
-  protected ThreadGroup group;
+  protected @Nullable ThreadGroup group;
   protected transient @Nullable Runnable target;
-  @MonotonicNonNull
-  protected String name = null;
+  protected @MonotonicNonNull String name = null;
   @SuppressWarnings("InstanceVariableMayNotBeInitializedByReadObject")
   private transient boolean alreadyTerminatedWhenDeserialized = false;
   private boolean interrupted = false;
@@ -68,17 +66,16 @@ public class LooperThread extends Thread implements Serializable, Cloneable {
    * <p>Constructor for LooperThread.</p>
    */
   public LooperThread() {
-    super();
     stackSize = 0;
   }
 
-  public LooperThread(@Nullable Runnable target) {
+  public LooperThread(@Nullable final Runnable target) {
     super(target);
     this.target = target;
     stackSize = 0;
   }
 
-  public LooperThread(ThreadGroup group, @Nullable Runnable target) {
+  public LooperThread(final ThreadGroup group, @Nullable final Runnable target) {
     super(group, target);
     this.target = target;
     stackSize = 0;
@@ -87,7 +84,7 @@ public class LooperThread extends Thread implements Serializable, Cloneable {
   /**
    * <p>Constructor for LooperThread.</p>
    *
-   * @param name a {@link java.lang.String} object.
+   * @param name a {@link String} object.
    */
   public LooperThread(final String name) {
     super(name);
@@ -97,8 +94,8 @@ public class LooperThread extends Thread implements Serializable, Cloneable {
   /**
    * <p>Constructor for LooperThread.</p>
    *
-   * @param group a {@link java.lang.ThreadGroup} object.
-   * @param name a {@link java.lang.String} object.
+   * @param group a {@link ThreadGroup} object.
+   * @param name a {@link String} object.
    */
   public LooperThread(final ThreadGroup group, final String name) {
     super(group, name);
@@ -106,20 +103,20 @@ public class LooperThread extends Thread implements Serializable, Cloneable {
     stackSize = 0;
   }
 
-  public LooperThread(@Nullable Runnable target, String name) {
+  public LooperThread(@Nullable final Runnable target, final String name) {
     super(target, name);
     this.target = target;
     stackSize = 0;
   }
 
-  public LooperThread(ThreadGroup group, @Nullable Runnable target, String name) {
+  public LooperThread(final ThreadGroup group, @Nullable final Runnable target, final String name) {
     super(group, target, name);
     this.target = target;
     setGroup(group);
     stackSize = 0;
   }
 
-  public LooperThread(ThreadGroup group, @Nullable Runnable target, String name, long stackSize) {
+  public LooperThread(final ThreadGroup group, @Nullable final Runnable target, final String name, final long stackSize) {
     super(group, target, name, stackSize);
     this.target = target;
     setGroup(group);
@@ -232,7 +229,7 @@ public class LooperThread extends Thread implements Serializable, Cloneable {
    * @throws UnsupportedOperationException if this method has not been overridden.
    */
   protected boolean iterate() throws InterruptedException {
-    if (target == null || target instanceof DummyTarget) {
+    if ((target == null) || (target instanceof DummyTarget)) {
       throw new UnsupportedOperationException("This method should be overridden, or else this "
           + "thread should have been created with a Serializable target!");
     } else {

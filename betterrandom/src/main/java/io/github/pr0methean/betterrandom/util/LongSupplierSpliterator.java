@@ -7,19 +7,19 @@ import java.util.function.LongConsumer;
 import java.util.function.LongSupplier;
 
 /**
- * An unordered, concurrent {@link Spliterator.OfLong} that invokes a {@link LongSupplier} to get
+ * An unordered, concurrent {@link OfLong} that invokes a {@link LongSupplier} to get
  * its values and has a preset size.
  */
 public class LongSupplierSpliterator implements OfLong {
   private final AtomicLong remaining;
   private final LongSupplier supplier;
 
-  public LongSupplierSpliterator(long size, LongSupplier supplier) {
+  public LongSupplierSpliterator(final long size, final LongSupplier supplier) {
     this(new AtomicLong(size), supplier);
   }
 
   /** Used to share the AtomicLong between partitions. */
-  private LongSupplierSpliterator(AtomicLong remaining, LongSupplier supplier) {
+  private LongSupplierSpliterator(final AtomicLong remaining, final LongSupplier supplier) {
     this.remaining = remaining;
     this.supplier = supplier;
   }
@@ -44,7 +44,7 @@ public class LongSupplierSpliterator implements OfLong {
   }
 
   @Override
-  public boolean tryAdvance(LongConsumer action) {
+  public boolean tryAdvance(final LongConsumer action) {
     if (remaining.decrementAndGet() >= 0) {
       action.accept(supplier.getAsLong());
       return true;

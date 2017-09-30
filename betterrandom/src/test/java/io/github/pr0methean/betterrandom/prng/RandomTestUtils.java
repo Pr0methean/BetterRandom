@@ -16,6 +16,7 @@
 package io.github.pr0methean.betterrandom.prng;
 
 import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertNotSame;
 import static org.testng.Assert.assertTrue;
 
 import io.github.pr0methean.betterrandom.seed.DefaultSeedGenerator;
@@ -34,17 +35,14 @@ import org.testng.Reporter;
  *
  * @author Daniel Dyer
  */
-public final class RandomTestUtils {
+public enum RandomTestUtils {
+  ;
 
   public static final RandomSeederThread DEFAULT_SEEDER =
       RandomSeederThread.getInstance(DefaultSeedGenerator.DEFAULT_SEED_GENERATOR);
 
   private static final int INSTANCES_TO_HASH = 25;
   private static final int EXPECTED_UNIQUE_HASHES = (int) (0.8 * INSTANCES_TO_HASH);
-
-  /** This is a utility class and shouldn't be instantiated. */
-  private RandomTestUtils() {
-  }
 
   /**
    * @param origin Minimum expected value, inclusive.
@@ -257,10 +255,10 @@ public final class RandomTestUtils {
     return stats.getStandardDeviation();
   }
 
-  @SuppressWarnings({"unchecked", "ObjectEquality"})
+  @SuppressWarnings("unchecked")
   public static <T extends Random> void assertEquivalentWhenSerializedAndDeserialized(final T rng) {
     final T rng2 = CloneViaSerialization.clone(rng);
-    assert rng != rng2 : "Deserialised RNG should be distinct object.";
+    assertNotSame(rng, rng2, "Deserialised RNG should be distinct object.");
     // Both RNGs should generate the same sequence.
     assert testEquivalence(rng, rng2, 20) : "Output mismatch after serialisation.";
   }

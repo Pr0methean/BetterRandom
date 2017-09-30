@@ -55,7 +55,7 @@ public class DefaultSeedGeneratorTest {
    * This security manager allows everything except for some operations that are explicitly blocked.
    * These operations are accessing /dev/random and opening a socket connection.
    */
-  @SuppressWarnings("CustomSecurityManager")
+  @SuppressWarnings({"CustomSecurityManager", "EqualityOperatorComparesObjects"})
   private static final class RestrictedSecurityManager extends SecurityManager {
 
     private final Thread affectedThread;

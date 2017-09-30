@@ -52,8 +52,8 @@ public final class RandomSeederThread extends LooperThread {
   private transient WeakHashMap<ByteArrayReseedableRandom, byte[]> seedArrays;
 
   public RandomSeederThread(
-      ThreadGroup group, Runnable target, String name,
-      long stackSize, SeedGenerator seedGenerator) {
+      final ThreadGroup group, final Runnable target, final String name,
+      final long stackSize, final SeedGenerator seedGenerator) {
     super(group, target, name, stackSize);
     this.seedGenerator = seedGenerator;
     initTransientFields();
@@ -136,10 +136,10 @@ public final class RandomSeederThread extends LooperThread {
   }
 
   /**
-   * Asynchronously triggers reseeding of the given {@link io.github.pr0methean.betterrandom.EntropyCountingRandom}
+   * Asynchronously triggers reseeding of the given {@link EntropyCountingRandom}
    * if it is associated with a live RandomSeederThread.
    *
-   * @param random a {@link java.util.Random} object.
+   * @param random a {@link Random} object.
    * @return Whether or not the reseed was successfully scheduled.
    */
   public boolean asyncReseed(final Random random) {
@@ -184,14 +184,14 @@ public final class RandomSeederThread extends LooperThread {
     while (iterator.hasNext()) {
       final Random random = iterator.next();
       iterator.remove();
-      if (random instanceof EntropyCountingRandom
-          && ((EntropyCountingRandom) random).getEntropyBits() > 0) {
+      if ((random instanceof EntropyCountingRandom)
+          && (((EntropyCountingRandom) random).getEntropyBits() > 0)) {
         continue;
       } else {
         entropyConsumed = true;
       }
       try {
-        if (random instanceof ByteArrayReseedableRandom && !((ByteArrayReseedableRandom) random)
+        if ((random instanceof ByteArrayReseedableRandom) && !((ByteArrayReseedableRandom) random)
             .preferSeedWithLong()) {
           final ByteArrayReseedableRandom reseedable = (ByteArrayReseedableRandom) random;
           final byte[] seedArray = seedArrays.computeIfAbsent(reseedable, random_ ->
@@ -217,9 +217,8 @@ public final class RandomSeederThread extends LooperThread {
   }
 
   /**
-   * <p>isEmpty.</p>
-   *
-   * @return a boolean.
+   * Returns true if no {@link Random} instances are registered with this RandomSeederThread.
+   * @return true if no {@link Random} instances are registered with this RandomSeederThread.
    */
   public boolean isEmpty() {
     synchronized (prngs) {
@@ -228,12 +227,12 @@ public final class RandomSeederThread extends LooperThread {
   }
 
   /**
-   * Add one or more {@link java.util.Random} instances. The caller must not hold locks on any of
-   * these instances that are also acquired during {@link java.util.Random#setSeed(long)} or {@link
+   * Add one or more {@link Random} instances. The caller must not hold locks on any of
+   * these instances that are also acquired during {@link Random#setSeed(long)} or {@link
    * ByteArrayReseedableRandom#setSeed(byte[])}, as one of those methods may be called immediately
    * and this would cause a circular deadlock.
    *
-   * @param randoms a {@link java.util.Random} object.
+   * @param randoms a {@link Random} object.
    */
   public void add(final Random... randoms) {
     if (isInterrupted()) {
@@ -252,7 +251,7 @@ public final class RandomSeederThread extends LooperThread {
   /**
    * <p>remove.</p>
    *
-   * @param randoms a {@link java.util.Random} object.
+   * @param randoms a {@link Random} object.
    */
   public void remove(final Random... randoms) {
     prngs.removeAll(Arrays.asList(randoms));
@@ -265,6 +264,17 @@ public final class RandomSeederThread extends LooperThread {
     if (isEmpty()) {
       LOG.info("Stopping empty RandomSeederThread for %s", seedGenerator);
       interrupt();
+    }
+  }
+
+  /**
+   * Shut down all instances with which no {@link Random} instances are registered.
+   */
+  public static void stopAllEmpty() {
+    synchronized (INSTANCES) {
+      for (final RandomSeederThread instance : INSTANCES.values()) {
+        instance.stopIfEmpty();
+      }
     }
   }
 }

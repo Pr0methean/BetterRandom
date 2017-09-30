@@ -16,12 +16,12 @@ public class IntSupplierSpliterator implements OfInt {
   private final AtomicLong remaining;
   private final IntSupplier supplier;
 
-  public IntSupplierSpliterator(long size, IntSupplier supplier) {
+  public IntSupplierSpliterator(final long size, final IntSupplier supplier) {
     this(new AtomicLong(size), supplier);
   }
 
   /** Used to share the AtomicLong between partitions. */
-  private IntSupplierSpliterator(AtomicLong remaining, IntSupplier supplier) {
+  private IntSupplierSpliterator(final AtomicLong remaining, final IntSupplier supplier) {
     this.remaining = remaining;
     this.supplier = supplier;
   }
@@ -46,7 +46,7 @@ public class IntSupplierSpliterator implements OfInt {
   }
 
   @Override
-  public boolean tryAdvance(IntConsumer action) {
+  public boolean tryAdvance(final IntConsumer action) {
     if (remaining.decrementAndGet() >= 0) {
       action.accept(supplier.getAsInt());
       return true;
