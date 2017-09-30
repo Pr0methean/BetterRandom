@@ -17,6 +17,7 @@ import io.github.pr0methean.betterrandom.util.LogPreFormatter;
 import java.io.IOException;
 import java.io.InvalidObjectException;
 import java.io.ObjectInputStream;
+import java.util.List;
 import java.util.Random;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.atomic.AtomicReference;
@@ -74,7 +75,8 @@ public abstract class BaseRandom extends Random implements ByteArrayReseedableRa
 
   /**
    * If the referent is non-null, it will be invoked to reseed this PRNG whenever random output is
-   * taken and {@link #getEntropyBits()} called immediately afterward would return zero or negative.
+   * taken and {@link #getEntropyBits()} called immediately afterward would return zero or
+   * negative.
    */
   protected AtomicReference<@Nullable RandomSeederThread> seederThread = new AtomicReference<>(
       null);
@@ -178,6 +180,42 @@ public abstract class BaseRandom extends Random implements ByteArrayReseedableRa
     // We're only outputting one bit
     recordEntropySpent(1);
     return result;
+  }
+
+  /**
+   * Chooses a random element from the given array.
+   *
+   * @param array A non-empty array to choose from.
+   * @param <E> The element type of {@code array}; usually inferred by the compiler.
+   * @return An element chosen from {@code array} at random, with all elements having equal
+   *     probability.
+   */
+  public <E> E nextElement(E[] array) {
+    return array[nextInt(array.length)];
+  }
+
+  /**
+   * Chooses a random element from the given list.
+   *
+   * @param list A non-empty {@link List} to choose from.
+   * @param <E> The element type of {@code list}; usually inferred by the compiler.
+   * @return An element chosen from {@code list} at random, with all elements having equal
+   *     probability.
+   */
+  public <E> E nextElement(List<E> list) {
+    return list.get(nextInt(list.size()));
+  }
+
+  /**
+   * Chooses a random value of the given enum class.
+   *
+   * @param enumClass An enum class having at least one value.
+   * @param <E> The type of {@code enumClass}; usually inferred by the compiler.
+   * @return A value of {@code enumClass} chosen at random, with all elements having equal
+   *     probability.
+   */
+  public <E extends Enum<E>> E nextEnum(Class<E> enumClass) {
+    return nextElement(enumClass.getEnumConstants());
   }
 
   /**
