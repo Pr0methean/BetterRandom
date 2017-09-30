@@ -90,6 +90,17 @@ public final class RandomSeederThread extends LooperThread {
     }
   }
 
+  /**
+   * Shut down all instances with which no {@link Random} instances are registered.
+   */
+  public static void stopAllEmpty() {
+    synchronized (INSTANCES) {
+      for (final RandomSeederThread instance : INSTANCES.values()) {
+        instance.stopIfEmpty();
+      }
+    }
+  }
+
   @EnsuresNonNull(
       {"prngs", "longSeedBuffer", "longSeedArray", "seedArrays", "waitWhileEmpty",
           "waitForEntropyDrain", "prngsThisIteration"})
@@ -136,8 +147,8 @@ public final class RandomSeederThread extends LooperThread {
   }
 
   /**
-   * Asynchronously triggers reseeding of the given {@link EntropyCountingRandom}
-   * if it is associated with a live RandomSeederThread.
+   * Asynchronously triggers reseeding of the given {@link EntropyCountingRandom} if it is
+   * associated with a live RandomSeederThread.
    *
    * @param random a {@link Random} object.
    * @return Whether or not the reseed was successfully scheduled.
@@ -218,6 +229,7 @@ public final class RandomSeederThread extends LooperThread {
 
   /**
    * Returns true if no {@link Random} instances are registered with this RandomSeederThread.
+   *
    * @return true if no {@link Random} instances are registered with this RandomSeederThread.
    */
   public boolean isEmpty() {
@@ -227,8 +239,8 @@ public final class RandomSeederThread extends LooperThread {
   }
 
   /**
-   * Add one or more {@link Random} instances. The caller must not hold locks on any of
-   * these instances that are also acquired during {@link Random#setSeed(long)} or {@link
+   * Add one or more {@link Random} instances. The caller must not hold locks on any of these
+   * instances that are also acquired during {@link Random#setSeed(long)} or {@link
    * ByteArrayReseedableRandom#setSeed(byte[])}, as one of those methods may be called immediately
    * and this would cause a circular deadlock.
    *
@@ -264,17 +276,6 @@ public final class RandomSeederThread extends LooperThread {
     if (isEmpty()) {
       LOG.info("Stopping empty RandomSeederThread for %s", seedGenerator);
       interrupt();
-    }
-  }
-
-  /**
-   * Shut down all instances with which no {@link Random} instances are registered.
-   */
-  public static void stopAllEmpty() {
-    synchronized (INSTANCES) {
-      for (final RandomSeederThread instance : INSTANCES.values()) {
-        instance.stopIfEmpty();
-      }
     }
   }
 }
