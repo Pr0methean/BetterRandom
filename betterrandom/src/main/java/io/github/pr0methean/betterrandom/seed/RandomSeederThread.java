@@ -185,7 +185,7 @@ public final class RandomSeederThread extends LooperThread {
       final Random random = iterator.next();
       iterator.remove();
       if (random instanceof EntropyCountingRandom
-          && ((EntropyCountingRandom) random).entropyBits() > 0) {
+          && ((EntropyCountingRandom) random).getEntropyBits() > 0) {
         continue;
       } else {
         entropyConsumed = true;

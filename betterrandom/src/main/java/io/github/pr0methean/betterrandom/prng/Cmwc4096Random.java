@@ -108,7 +108,7 @@ public class Cmwc4096Random extends BaseRandom {
     }
   }
 
-  @EnsuresNonNull({"this.seed", "state", "entropyBits"})
+  @EnsuresNonNull({"this.seed", "state", "getEntropyBits"})
   @Override
   protected void setSeedInternal(@UnknownInitialization(Random.class)Cmwc4096Random this,
       final byte[] seed) {

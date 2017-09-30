@@ -24,7 +24,6 @@ import io.github.pr0methean.betterrandom.seed.SeedException;
 import io.github.pr0methean.betterrandom.seed.SeedGenerator;
 import io.github.pr0methean.betterrandom.util.BinaryUtils;
 import io.github.pr0methean.betterrandom.util.EntryPoint;
-import java.util.Arrays;
 import java.util.Random;
 import java.util.stream.DoubleStream;
 import java.util.stream.IntStream;
@@ -138,7 +137,7 @@ public class RandomWrapper extends BaseRandom {
       @UnknownInitialization(BaseRandom.class)RandomWrapper this,
       final Random wrapped) {
     entropyBits.set(wrapped instanceof EntropyCountingRandom
-        ? ((EntropyCountingRandom) wrapped).entropyBits()
+        ? ((EntropyCountingRandom) wrapped).getEntropyBits()
         : (wrapped instanceof RepeatableRandom
             ? ((RepeatableRandom) wrapped).getSeed().length * (long) (Byte.SIZE)
             : Long.SIZE));

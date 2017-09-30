@@ -39,8 +39,6 @@ public final class RandomTestUtils {
   public static final RandomSeederThread DEFAULT_SEEDER =
       RandomSeederThread.getInstance(DefaultSeedGenerator.DEFAULT_SEED_GENERATOR);
 
-  /** The square root of 12, calculated in extended precision by Wolfram Alpha. */
-  private static final double SQRT_12 = 3.4641016151377546;
   private static final int INSTANCES_TO_HASH = 25;
   private static final int EXPECTED_UNIQUE_HASHES = (int) (0.8 * INSTANCES_TO_HASH);
 
@@ -70,17 +68,17 @@ public final class RandomTestUtils {
       final double origin,
       final double bound,
       final EntropyCheckMode entropyCheckMode) {
-    final long oldEntropy = prng.entropyBits();
+    final long oldEntropy = prng.getEntropyBits();
     final Number output = numberSupplier.get();
     assertTrue(output.doubleValue() >= origin);
     assertTrue(output.doubleValue() < bound);
     if (entropyCheckMode == EntropyCheckMode.EXACT
         || entropyCheckMode == EntropyCheckMode.UPPER_BOUND) {
-      assertGreaterOrEqual(oldEntropy - expectedEntropySpent, prng.entropyBits());
+      assertGreaterOrEqual(oldEntropy - expectedEntropySpent, prng.getEntropyBits());
     }
     if (entropyCheckMode == EntropyCheckMode.EXACT
         || entropyCheckMode == EntropyCheckMode.LOWER_BOUND) {
-      assertLessOrEqual(oldEntropy - expectedEntropySpent, prng.entropyBits());
+      assertLessOrEqual(oldEntropy - expectedEntropySpent, prng.getEntropyBits());
     }
   }
 
@@ -104,7 +102,7 @@ public final class RandomTestUtils {
       final double origin,
       final double bound,
       final boolean checkEntropyCount) {
-    long expectedMinEntropy = prng.entropyBits();
+    long expectedMinEntropy = prng.getEntropyBits();
     long count = 0;
     for (final Iterator<? extends Number> streamIter = stream.iterator(); streamIter.hasNext(); ) {
       count++;
@@ -121,7 +119,7 @@ public final class RandomTestUtils {
     }
     if (expectedCount >= 0 && checkEntropyCount) {
       expectedMinEntropy -= maxEntropySpentPerNumber * expectedCount;
-      assertGreaterOrEqual(expectedMinEntropy, prng.entropyBits());
+      assertGreaterOrEqual(expectedMinEntropy, prng.getEntropyBits());
     }
   }
 
@@ -239,7 +237,7 @@ public final class RandomTestUtils {
   }
 
   /**
-   * Generates a sequence of values from a given random number generator and then calculates the
+   * Generates a sequence of integers from a given random number generator and then calculates the
    * standard deviation of the sample.
    *
    * @param rng The RNG to use.
@@ -249,7 +247,7 @@ public final class RandomTestUtils {
    *     calculation.
    * @return The standard deviation of the generated sample.
    */
-  private static double calculateSampleStandardDeviation(final Random rng,
+  public static double calculateSampleStandardDeviation(final Random rng,
       final int maxValue,
       final int iterations) {
     final DescriptiveStatistics stats = new DescriptiveStatistics();
@@ -265,17 +263,6 @@ public final class RandomTestUtils {
     assert rng != rng2 : "Deserialised RNG should be distinct object.";
     // Both RNGs should generate the same sequence.
     assert testEquivalence(rng, rng2, 20) : "Output mismatch after serialisation.";
-  }
-
-  public static void assertStandardDeviationSane(final Random rng) {
-    // Expected standard deviation for a uniformly distributed population of values in the range 0..n
-    // approaches n/sqrt(12).
-    final int n = 100;
-    final double observedSD = calculateSampleStandardDeviation(rng, n, 10000);
-    final double expectedSD = n / SQRT_12;
-    Reporter.log("Expected SD: " + expectedSD + ", observed SD: " + observedSD);
-    assertEquals(observedSD, expectedSD, 0.02 * expectedSD,
-        "Standard deviation is outside acceptable range: " + observedSD);
   }
 
   public static void assertMonteCarloPiEstimateSane(final Random rng) {
