@@ -43,13 +43,7 @@ public class RandomWrapper extends BaseRandom {
   private static final long serialVersionUID = -6526304552538799385L;
   private Random wrapped;
   private boolean unknownSeed = true;
-
-  {
-    if (locked) {
-      lock.unlock();
-    }
-  }
-
+  
   /**
    * Creates a new RNG and seeds it using the default seeding strategy.
    *
@@ -152,15 +146,15 @@ public class RandomWrapper extends BaseRandom {
     return original.add("wrapped", wrapped);
   }
 
-    @Override
+  @Override
   public byte[] getSeed() {
     if (unknownSeed) {
       throw new UnsupportedOperationException();
     }
     return super.getSeed();
-  } finally
+  }
 
-@SuppressWarnings("LockAcquiredButNotSafelyReleased")
+  @SuppressWarnings("LockAcquiredButNotSafelyReleased")
   @Override
   public void setSeedInternal(@UnknownInitialization(Random.class)RandomWrapper this,
       final byte[] seed) {
@@ -182,22 +176,24 @@ public class RandomWrapper extends BaseRandom {
         if (wrapped instanceof ByteArrayReseedableRandom &&
             (!asByteArrayReseedable.preferSeedWithLong() || (seed.length != Long.BYTES))) {
           asByteArrayReseedable = (ByteArrayReseedableRandom) wrapped;
+        } else if (seed.length != Long.BYTES) {
+          throw new IllegalArgumentException(
+              "RandomWrapper requires an 8-byte seed when not wrapping a ByteArrayReseedableRandom");
         }
-      } else if ((asByteArrayReseedable == null) && (seed.length != Long.BYTES)) {
-        throw new IllegalArgumentException(
-            "RandomWrapper requires an 8-byte seed when not wrapping a ByteArrayReseedableRandom");
+        if (asByteArrayReseedable != null) {
+          asByteArrayReseedable.setSeed(seed);
+          unknownSeed = false;
+        } else {
+          wrapped.setSeed(BinaryUtils.convertBytesToLong(seed));
+          unknownSeed = false;
+        }
       }
-      if (asByteArrayReseedable != null) {
-        asByteArrayReseedable.setSeed(seed);
-        unknownSeed = false;
-      } else {
-        wrapped.setSeed(BinaryUtils.convertBytesToLong(seed));
-        unknownSeed = false;
+    } finally {
+      if (locked) {
+        lock.unlock();
       }
     }
   }
-
-}
 
   @Override
   public boolean preferSeedWithLong() {
