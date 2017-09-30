@@ -112,7 +112,7 @@ public class Cmwc4096Random extends BaseRandom {
   @Override
   protected void setSeedInternal(@UnknownInitialization(Random.class)Cmwc4096Random this,
       final byte[] seed) {
-    if ((seed == null) || (seed.length != SEED_SIZE_BYTES)) {
+    if (seed == null || seed.length != SEED_SIZE_BYTES) {
       throw new IllegalArgumentException("CMWC RNG requires 16kb of seed data.");
     }
     super.setSeedInternal(seed);
@@ -127,7 +127,7 @@ public class Cmwc4096Random extends BaseRandom {
     lock.lock();
     try {
       index = (index + 1) & 4095;
-      final long t = (A * (state[index] & 0xFFFFFFFFL)) + carry;
+      final long t = A * (state[index] & 0xFFFFFFFFL) + carry;
       carry = (int) (t >> 32);
       int x = ((int) t) + carry;
       if (x < carry) {

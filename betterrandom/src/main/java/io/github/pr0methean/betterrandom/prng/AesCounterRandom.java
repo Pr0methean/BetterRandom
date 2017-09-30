@@ -122,10 +122,11 @@ public class AesCounterRandom extends BaseRandom {
   }
 
   /**
-   * Seed the RNG using the {@link DefaultSeedGenerator} to create a seed of the specified size.
+   * Seed the RNG using the {@link DefaultSeedGenerator} to create a seed of the specified
+   * size.
    *
-   * @param seedSizeBytes The number of bytes to use for seed data. Valid values range from 16
-   *     to {@link #getMaxKeyLengthBytes()}() + 16.
+   * @param seedSizeBytes The number of bytes to use for seed data. Valid values range from 16 to
+   *     {@link #getMaxKeyLengthBytes()}() + 16.
    * @throws io.github.pr0methean.betterrandom.seed.SeedException if there is a problem
    *     generating a seed.
    */
@@ -136,8 +137,8 @@ public class AesCounterRandom extends BaseRandom {
   /**
    * Creates an RNG and seeds it with the specified seed data.
    *
-   * @param seed The seed data used to initialise the RNG. Length must be at least 16 and no
-   *     more than {@link #getMaxKeyLengthBytes()}() + 16.
+   * @param seed The seed data used to initialise the RNG. Length must be at least 16 and no more
+   *     than {@link #getMaxKeyLengthBytes()}() + 16.
    */
   public AesCounterRandom(final byte[] seed) {
     super(seed);
@@ -160,8 +161,8 @@ public class AesCounterRandom extends BaseRandom {
   }
 
   private static int getKeyLength(final byte[] input) {
-    return (input.length > MAX_KEY_LENGTH_BYTES) ? MAX_KEY_LENGTH_BYTES
-        : ((input.length >= 24) ? 24 : 16);
+    return input.length > MAX_KEY_LENGTH_BYTES ? MAX_KEY_LENGTH_BYTES
+        : input.length >= 24 ? 24 : 16;
   }
 
   @Override
@@ -225,7 +226,7 @@ public class AesCounterRandom extends BaseRandom {
     lock.lock();
     int result;
     try {
-      if ((currentBlock.length - index) < 4) {
+      if (currentBlock.length - index < 4) {
         try {
           nextBlock();
           index = 0;
@@ -311,7 +312,7 @@ public class AesCounterRandom extends BaseRandom {
   protected void setSeedInternal(@UnknownInitialization(Random.class)AesCounterRandom this,
       final byte[] seed) {
     final int seedLength = seed.length;
-    if ((seedLength < 16) || (seedLength > MAX_TOTAL_SEED_LENGTH_BYTES)) {
+    if (seedLength < 16 || seedLength > MAX_TOTAL_SEED_LENGTH_BYTES) {
       throw new IllegalArgumentException(String.format(
           "Seed length is %d bytes; need 16 to %d bytes", seedLength, MAX_TOTAL_SEED_LENGTH_BYTES));
     }
