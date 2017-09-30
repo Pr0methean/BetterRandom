@@ -2,7 +2,6 @@ package io.github.pr0methean.betterrandom.prng;
 
 import static io.github.pr0methean.betterrandom.prng.BaseRandom.ENTROPY_OF_DOUBLE;
 import static io.github.pr0methean.betterrandom.prng.RandomTestUtils.assertMonteCarloPiEstimateSane;
-import static io.github.pr0methean.betterrandom.prng.RandomTestUtils.assertStandardDeviationSane;
 import static io.github.pr0methean.betterrandom.prng.RandomTestUtils.checkRangeAndEntropy;
 import static io.github.pr0methean.betterrandom.prng.RandomTestUtils.checkStream;
 import static org.testng.Assert.assertEquals;
@@ -20,11 +19,19 @@ import io.github.pr0methean.betterrandom.util.LogPreFormatter;
 import java.io.IOException;
 import java.security.GeneralSecurityException;
 import java.util.Arrays;
+import java.util.Random;
 import org.testng.ITestResult;
+import org.testng.Reporter;
 import org.testng.annotations.Test;
 import org.testng.util.RetryAnalyzerCount;
 
 public abstract class BaseRandomTest {
+
+  /**
+   * The square root of 12, rounded from an extended-precision calculation that was done by Wolfram
+   * Alpha (and thus at least as accurate as {@code StrictMath.sqrt(12.0)}).
+   */
+  protected static final double SQRT_12 = 3.4641016151377546;
 
   private static final LogPreFormatter LOG = new LogPreFormatter(BaseRandomTest.class);
   private static final int MAX_DUMPED_SEED_LENGTH = 32;
@@ -84,7 +91,15 @@ public abstract class BaseRandomTest {
     final BaseRandom rng = createRng();
     // Expected standard deviation for a uniformly distributed population of values in the range 0..n
     // approaches n/sqrt(12).
-    assertStandardDeviationSane(rng);
+    // Expected standard deviation for a uniformly distributed population of values in the range 0..n
+    // approaches n/sqrt(12).
+    final int n = 100;
+    final double observedSD = RandomTestUtils
+        .calculateSampleStandardDeviation((Random) rng, n, 10000);
+    final double expectedSD = n / SQRT_12;
+    Reporter.log("Expected SD: " + expectedSD + ", observed SD: " + observedSD);
+    assertEquals(observedSD, expectedSD, 0.02 * expectedSD,
+        "Standard deviation is outside acceptable range: " + observedSD);
   }
 
   /**
@@ -169,10 +184,10 @@ public abstract class BaseRandomTest {
   @Test(timeOut = 3000)
   public void testWithProbability() {
     final BaseRandom prng = createRng();
-    final long originalEntropy = prng.entropyBits();
+    final long originalEntropy = prng.getEntropyBits();
     assertFalse(prng.withProbability(0.0));
     assertTrue(prng.withProbability(1.0));
-    assertEquals(originalEntropy, prng.entropyBits());
+    assertEquals(originalEntropy, prng.getEntropyBits());
     checkRangeAndEntropy(prng, 1, () -> prng.withProbability(0.7) ? 0 : 1, 0, 2,
         true);
   }
@@ -181,10 +196,10 @@ public abstract class BaseRandomTest {
   public void testNextBytes() throws Exception {
     byte[] testBytes = new byte[TEST_BYTE_ARRAY_LENGTH];
     BaseRandom prng = createRng();
-    long oldEntropy = prng.entropyBits();
+    long oldEntropy = prng.getEntropyBits();
     prng.nextBytes(testBytes);
     assertFalse(Arrays.equals(testBytes, new byte[TEST_BYTE_ARRAY_LENGTH]));
-    assertEquals(prng.entropyBits(), oldEntropy - 8 * TEST_BYTE_ARRAY_LENGTH);
+    assertEquals(prng.getEntropyBits(), oldEntropy - 8 * TEST_BYTE_ARRAY_LENGTH);
   }
 
   @Test
