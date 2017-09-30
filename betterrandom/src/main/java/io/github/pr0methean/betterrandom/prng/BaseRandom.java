@@ -362,12 +362,12 @@ public abstract class BaseRandom extends Random implements ByteArrayReseedableRa
     int range = bound - origin;
     if (range > 0) {
       // range is no more than Integer.MAX_VALUE
-      return nextInt(range) + bound;
+      return nextInt(range) + origin;
     }
     int output;
     do {
       output = super.nextInt();
-    } while (output < origin || output > bound);
+    } while (output < origin || output >= bound);
     return output;
   }
 
@@ -413,7 +413,7 @@ public abstract class BaseRandom extends Random implements ByteArrayReseedableRa
     long output;
     do {
       output = super.nextLong();
-    } while (output < origin || output > bound);
+    } while (output < origin || output >= bound);
     return output;
   }
 
