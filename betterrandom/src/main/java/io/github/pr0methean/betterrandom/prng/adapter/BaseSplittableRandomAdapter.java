@@ -94,10 +94,8 @@ public abstract class BaseSplittableRandomAdapter extends BaseRandom {
   }
 
   @Override
-  public long nextLong() {
-    final long out = getSplittableRandom().nextLong();
-    recordEntropySpent(Long.SIZE);
-    return out;
+  protected long nextLongNoEntropyDebit() {
+    return getSplittableRandom().nextLong();
   }
 
   /**
@@ -117,9 +115,7 @@ public abstract class BaseSplittableRandomAdapter extends BaseRandom {
 
   @Override
   public long nextLong(final long origin, final long bound) {
-    final long out = getSplittableRandom().nextLong(origin, bound);
-    recordEntropySpent(entropyOfLong(origin, bound));
-    return out;
+    return getSplittableRandom().nextLong(origin, bound);
   }
 
   @Override
