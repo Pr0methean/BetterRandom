@@ -3,7 +3,7 @@ package io.github.pr0methean.betterrandom.seed;
 import static io.github.pr0methean.betterrandom.seed.RandomSeederThread.getInstance;
 import static io.github.pr0methean.betterrandom.seed.RandomSeederThread.stopAllEmpty;
 import static org.testng.Assert.assertFalse;
-import static org.testng.Assert.assertSame;
+import static org.testng.Assert.assertNotSame;
 import static org.testng.Assert.assertTrue;
 import static org.testng.AssertJUnit.assertEquals;
 
@@ -19,7 +19,7 @@ public class RandomSeederThreadTest {
 
   @Test
   public void testGetInstance() throws Exception {
-    assertSame(getInstance(RandomDotOrgSeedGenerator.RATE_LIMITED_ON_FAIL),
+    assertNotSame(getInstance(RandomDotOrgSeedGenerator.RATE_LIMITED_ON_FAIL),
         getInstance(RandomDotOrgSeedGenerator.RANDOM_DOT_ORG_SEED_GENERATOR));
   }
 
@@ -29,7 +29,7 @@ public class RandomSeederThreadTest {
     final byte[] bytesWithOldSeed = new byte[TEST_OUTPUT_SIZE];
     prng.nextBytes(bytesWithOldSeed);
     prng.setSeed(TEST_SEED); // Rewind
-    final RandomSeederThread thread = getInstance(DefaultSeedGenerator.DEFAULT_SEED_GENERATOR);
+    final RandomSeederThread thread = getInstance(new FakeSeedGenerator());
     assertTrue(thread.isEmpty());
     thread.add(prng);
     assertFalse(thread.isEmpty());
