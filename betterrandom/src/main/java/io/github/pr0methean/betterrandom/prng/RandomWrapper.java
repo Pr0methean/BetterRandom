@@ -29,6 +29,7 @@ import java.util.stream.DoubleStream;
 import java.util.stream.IntStream;
 import java.util.stream.LongStream;
 import org.checkerframework.checker.initialization.qual.UnknownInitialization;
+import org.checkerframework.checker.nullness.qual.Nullable;
 
 /**
  * <p>Wraps any {@link Random} as a {@link RepeatableRandom} and {@link ByteArrayReseedableRandom}.
@@ -50,7 +51,7 @@ public class RandomWrapper extends BaseRandom {
   /**
    * Creates a new RNG and seeds it using the default seeding strategy.
    *
-   * @throws io.github.pr0methean.betterrandom.seed.SeedException if any.
+   * @throws SeedException if any.
    */
   public RandomWrapper() throws SeedException {
     this(DefaultSeedGenerator.DEFAULT_SEED_GENERATOR.generateSeed(Long.BYTES));
@@ -61,7 +62,7 @@ public class RandomWrapper extends BaseRandom {
    *
    * @param seedGenerator The seedArray generation strategy that will provide the seedArray
    *     value for this RNG.
-   * @throws io.github.pr0methean.betterrandom.seed.SeedException If there is a problem
+   * @throws SeedException If there is a problem
    *     generating a seedArray.
    */
   @EntryPoint
@@ -86,8 +87,8 @@ public class RandomWrapper extends BaseRandom {
   }
 
   @Override
-  protected int next(int bits) {
-    return bits >= 32 ? wrapped.nextInt() : wrapped.nextInt(1 << bits);
+  protected int next(final int bits) {
+    return (bits >= 32) ? wrapped.nextInt() : wrapped.nextInt(1 << bits);
   }
 
   /**
@@ -104,7 +105,7 @@ public class RandomWrapper extends BaseRandom {
   }
 
   private static byte[] getSeedOrDummy(final Random wrapped) {
-    return wrapped instanceof RepeatableRandom ? ((RepeatableRandom) wrapped).getSeed()
+    return (wrapped instanceof RepeatableRandom) ? ((RepeatableRandom) wrapped).getSeed()
         : DUMMY_SEED;
   }
 
@@ -126,7 +127,7 @@ public class RandomWrapper extends BaseRandom {
     try {
       this.wrapped = wrapped;
       readEntropyOfWrapped(wrapped);
-      this.seed = getSeedOrDummy(wrapped);
+      seed = getSeedOrDummy(wrapped);
       unknownSeed = !(wrapped instanceof RepeatableRandom);
     } finally {
       lock.unlock();
@@ -136,10 +137,10 @@ public class RandomWrapper extends BaseRandom {
   private void readEntropyOfWrapped(
       @UnknownInitialization(BaseRandom.class)RandomWrapper this,
       final Random wrapped) {
-    entropyBits.set(wrapped instanceof EntropyCountingRandom
+    entropyBits.set((wrapped instanceof EntropyCountingRandom)
         ? ((EntropyCountingRandom) wrapped).getEntropyBits()
-        : (wrapped instanceof RepeatableRandom
-            ? ((RepeatableRandom) wrapped).getSeed().length * (long) (Byte.SIZE)
+        : ((wrapped instanceof RepeatableRandom)
+            ? (((RepeatableRandom) wrapped).getSeed().length * (long) (Byte.SIZE))
             : Long.SIZE));
   }
 
@@ -169,18 +170,18 @@ public class RandomWrapper extends BaseRandom {
       locked = true;
     }
     try {
-      if (this.seed == null || this.seed.length != seed.length) {
+      if ((this.seed == null) || (this.seed.length != seed.length)) {
         this.seed = new byte[seed.length];
       }
       super.setSeedInternal(seed);
       if (wrapped != null) {
-        ByteArrayReseedableRandom asByteArrayReseedable = null;
+        @Nullable ByteArrayReseedableRandom asByteArrayReseedable = null;
         if (wrapped instanceof ByteArrayReseedableRandom) {
           asByteArrayReseedable = (ByteArrayReseedableRandom) wrapped;
-          if (asByteArrayReseedable.preferSeedWithLong() && seed.length == Long.BYTES) {
+          if (asByteArrayReseedable.preferSeedWithLong() && (seed.length == Long.BYTES)) {
             asByteArrayReseedable = null;
           }
-        } else if (asByteArrayReseedable == null && seed.length != Long.BYTES) {
+        } else if ((asByteArrayReseedable == null) && (seed.length != Long.BYTES)) {
           throw new IllegalArgumentException("RandomWrapper requires an 8-byte seed when not wrapping a ByteArrayReseedableRandom");
         }
         if (asByteArrayReseedable != null) {

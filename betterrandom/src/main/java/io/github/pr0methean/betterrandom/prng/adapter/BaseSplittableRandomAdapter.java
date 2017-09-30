@@ -25,20 +25,20 @@ public abstract class BaseSplittableRandomAdapter extends BaseRandom {
     super(seed);
   }
 
-  public BaseSplittableRandomAdapter(long seed) {
+  public BaseSplittableRandomAdapter(final long seed) {
     super(seed);
   }
 
   @Override
   protected void setSeedInternal(
-      @UnknownInitialization(Random.class)BaseSplittableRandomAdapter this, byte[] seed) {
+      @UnknownInitialization(Random.class)BaseSplittableRandomAdapter this, final byte[] seed) {
     super.setSeedInternal(seed);
   }
 
   /**
    * <p>getSplittableRandom.</p>
    *
-   * @return a {@link java.util.SplittableRandom} object.
+   * @return a {@link SplittableRandom} object.
    */
   protected abstract SplittableRandom getSplittableRandom();
 
@@ -80,7 +80,7 @@ public abstract class BaseSplittableRandomAdapter extends BaseRandom {
   }
 
   @Override
-  protected boolean withProbabilityInternal(double probability) {
+  protected boolean withProbabilityInternal(final double probability) {
     final boolean result = getSplittableRandom().nextDouble() < probability;
     // We're only outputting one bit
     recordEntropySpent(1);
@@ -109,7 +109,7 @@ public abstract class BaseSplittableRandomAdapter extends BaseRandom {
 
   @Override
   public long nextLong(final long origin, final long bound) {
-    long out = getSplittableRandom().nextLong(origin, bound);
+    final long out = getSplittableRandom().nextLong(origin, bound);
     recordEntropySpent(entropyOfLong(origin, bound));
     return out;
   }

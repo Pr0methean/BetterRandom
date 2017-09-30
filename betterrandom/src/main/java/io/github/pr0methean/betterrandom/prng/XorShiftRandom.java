@@ -26,9 +26,9 @@ import org.checkerframework.checker.initialization.qual.UnknownInitialization;
 /**
  * <p>Very fast pseudo random number generator.  See <a href="http://school.anhb.uwa.edu.au/personalpages/kwessen/shared/Marsaglia03.html">this
  * page</a> for a description.  This RNG has a period of about 2^160, which is not as long as the
- * {@link io.github.pr0methean.betterrandom.prng.MersenneTwisterRandom} but it is faster.</p>
+ * {@link MersenneTwisterRandom} but it is faster.</p>
  * <p><em>NOTE: Because instances of this class require 160-bit seeds, it is not possible to seed
- * this RNG using the {@link #setSeed(long)} method inherited from {@link java.util.Random}.  Calls
+ * this RNG using the {@link #setSeed(long)} method inherited from {@link Random}.  Calls
  * to this method will have no effect. Instead the seed must be set by a constructor.</em></p>
  *
  * @author Daniel Dyer
@@ -59,7 +59,7 @@ public class XorShiftRandom extends BaseRandom {
   /**
    * <p>Constructor for XorShiftRandom.</p>
    *
-   * @throws io.github.pr0methean.betterrandom.seed.SeedException if any.
+   * @throws SeedException if any.
    */
   public XorShiftRandom() throws SeedException {
     this(DefaultSeedGenerator.DEFAULT_SEED_GENERATOR);
@@ -68,9 +68,9 @@ public class XorShiftRandom extends BaseRandom {
   /**
    * <p>Constructor for XorShiftRandom.</p>
    *
-   * @param seedGenerator a {@link io.github.pr0methean.betterrandom.seed.SeedGenerator}
+   * @param seedGenerator a {@link SeedGenerator}
    *     object.
-   * @throws io.github.pr0methean.betterrandom.seed.SeedException if any.
+   * @throws SeedException if any.
    */
   public XorShiftRandom(final SeedGenerator seedGenerator) throws SeedException {
     this(seedGenerator.generateSeed(SEED_SIZE_BYTES));

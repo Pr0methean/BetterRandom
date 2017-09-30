@@ -16,7 +16,7 @@
 package io.github.pr0methean.betterrandom.seed;
 
 /**
- * Exception thrown by {@link io.github.pr0methean.betterrandom.seed.SeedGenerator} implementations
+ * Exception thrown by {@link SeedGenerator} implementations
  * when they are unable to generate a new seed for an RNG.
  *
  * @author Daniel Dyer
