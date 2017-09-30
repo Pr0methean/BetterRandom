@@ -310,13 +310,11 @@ public abstract class BaseRandomTest {
         true);
   }
 
-  @TestingDeficiency
-  // entropy count currently failing, or else last param to checkStream would be true
   @Test
   public void testLongs3() throws Exception {
     final BaseRandom prng = createRng();
     checkStream(prng, 42, prng.longs(20, 1L << 40, 1L << 42), 20, 1L << 40, 1L << 42,
-        false);
+        true);
   }
 
   @Test
