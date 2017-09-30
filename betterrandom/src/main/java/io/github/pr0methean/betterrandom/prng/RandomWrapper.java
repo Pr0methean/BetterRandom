@@ -246,10 +246,8 @@ public class RandomWrapper extends BaseRandom {
   }
 
   @Override
-  public long nextLong() {
-    final long result = wrapped.nextLong();
-    recordEntropySpent(Long.SIZE);
-    return result;
+  protected long nextLongNoEntropyDebit() {
+    return wrapped.nextLong();
   }
 
   @Override

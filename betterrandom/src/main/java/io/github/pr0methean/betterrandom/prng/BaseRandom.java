@@ -254,7 +254,7 @@ public abstract class BaseRandom extends Random implements ByteArrayReseedableRa
   }
 
   @Override
-  public long nextLong() {
+  public final long nextLong() {
     recordEntropySpent(Long.SIZE);
     return nextLongNoEntropyDebit();
   }
