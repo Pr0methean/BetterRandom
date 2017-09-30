@@ -10,7 +10,7 @@ import org.testng.annotations.Test;
 public class AesCounterTestNgBug1563WorkaroundTest extends AesCounterRandom128Test {
 
   @Test
-  public void testLongs3_() throws Exception {
+  public void testRenamedLongs3() throws Exception {
     super.testLongs3();
   }
 }
