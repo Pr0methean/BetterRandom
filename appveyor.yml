@@ -24,3 +24,6 @@ cache:
   - C:\Users\appveyor\.m2
 matrix:
   fast_finish: true
+environment:
+  access_token:
+    secure: UrMOuu5SzFyDvmnIwDu4EJol6YwyLJJ3yAAvA8URK7x8cmssL4106Wr8MmS01GGL
