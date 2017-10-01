@@ -38,9 +38,6 @@ import org.testng.Reporter;
 public enum RandomTestUtils {
   ;
 
-  public static final RandomSeederThread DEFAULT_SEEDER =
-      RandomSeederThread.getInstance(DefaultSeedGenerator.DEFAULT_SEED_GENERATOR);
-
   private static final int INSTANCES_TO_HASH = 25;
   private static final int EXPECTED_UNIQUE_HASHES = (int) (0.8 * INSTANCES_TO_HASH);
 
