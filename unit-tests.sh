@@ -18,7 +18,7 @@ if [ "$STATUS" = 0 ]; then
       git config --global user.email "travis@travis-ci.org"
       PUSHPARAM="--set-upstream originauth"
     else
-      GH_TOKEN=`powershell 'echo ($env:access_token)' `
+      GH_TOKEN=`powershell 'Write-Host ($env:access_token) -NoNewLine' `
       COMMIT="$APPVEYOR_REPO_COMMIT"
       JOBID="appveyor_$APPVEYOR_JOB_NUMBER"
       git config --global user.email "appveyor@appveyor.com"
@@ -26,7 +26,7 @@ if [ "$STATUS" = 0 ]; then
     fi
     mkdir -p "$COMMIT/target"
     cp ../target/jacoco.exec "$COMMIT/target/$JOBID.exec"
-    cp ../../travis-resources/jacoco_merge.xml betterrandom-coverage/$COMMIT/pom.xml
+    cp ../../travis-resources/jacoco_merge.xml $COMMIT/pom.xml
     cd "$COMMIT"
     git add .
     git commit -m "Coverage report from job $JOBID"
