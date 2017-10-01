@@ -25,7 +25,7 @@ import org.checkerframework.checker.initialization.qual.UnknownInitialization;
 
 /**
  * <p>Very fast pseudo random number generator.  See <a href="http://school.anhb.uwa.edu.au/personalpages/kwessen/shared/Marsaglia03.html">this
- * page</a> for a description.  This RNG has a period of about 2^160, which is not as long as the
+ * page</a> for a description.  This RNG has a period of about 2<sup>160</sup>, which is not as long as the
  * {@link MersenneTwisterRandom} but it is faster.</p> <p><em>NOTE: Because instances of this class
  * require 160-bit seeds, it is not possible to seed this RNG using the {@link #setSeed(long)}
  * method inherited from {@link Random}.  Calls to this method will have no effect. Instead the seed
@@ -90,11 +90,16 @@ public class XorShiftRandom extends BaseRandom {
     return seed.clone();
   }
 
+  /*
+   * No-op.
+   * @param seed ignored
+   */
   @Override
-  public synchronized void setSeed(@UnknownInitialization(Random.class)XorShiftRandom this,
+  public synchronized void setSeed(@UnknownInitialization(Random.class)MersenneTwisterRandom this,
       final long seed) {
-    // Can't actually accept a long seed.
-    fallbackSetSeed();
+    if (!superConstructorFinished) {
+      fallbackSetSeed();
+    }
   }
 
   @Override

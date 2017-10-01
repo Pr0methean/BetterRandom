@@ -104,12 +104,14 @@ public class MersenneTwisterRandom extends BaseRandom {
         .add("mtIndex", mtIndex);
   }
 
+  /*
+   * No-op.
+   * @param seed ignored
+   */
   @Override
   public synchronized void setSeed(@UnknownInitialization(Random.class)MersenneTwisterRandom this,
       final long seed) {
-    if (superConstructorFinished) {
-      super.setSeed(seed);
-    } else {
+    if (!superConstructorFinished) {
       fallbackSetSeed();
     }
   }

@@ -31,7 +31,7 @@ import org.checkerframework.checker.nullness.qual.EnsuresNonNull;
 /**
  * <p>A Java version of George Marsaglia's <a href="http://school.anhb.uwa.edu.au/personalpages/kwessen/shared/Marsaglia03.html">Complementary
  * Multiply With Carry (CMWC) RNG</a>. This is a very fast PRNG with an extremely long period
- * (2^131104).  It should be used in preference to the {@link MersenneTwisterRandom} when a very
+ * (2<sup>131104</sup>). It should be used in preference to the {@link MersenneTwisterRandom} when a very
  * long period is required.</p> <p>One potential drawback of this RNG is that it requires
  * significantly more seed data than the other RNGs provided by Uncommons Maths.  It requires just
  * over 16 kilobytes, which may be a problem if your are obtaining seed data from a slow or limited
@@ -96,12 +96,14 @@ public class Cmwc4096Random extends BaseRandom {
     return seed.clone();
   }
 
+  /*
+   * No-op.
+   * @param seed ignored
+   */
   @Override
   public synchronized void setSeed(@UnknownInitialization(Random.class)Cmwc4096Random this,
       final long seed) {
-    if (superConstructorFinished) {
-      super.setSeed(seed);
-    } else {
+    if (!superConstructorFinished) {
       fallbackSetSeed();
     }
   }
