@@ -16,13 +16,11 @@ if [ "$STATUS" = 0 ]; then
       COMMIT="$TRAVIS_COMMIT"
       JOBID="travis_$TRAVIS_JOB_NUMBER"
       git config --global user.email "travis@travis-ci.org"
-      PUSHPARAM="--set-upstream originauth"
     else
       GH_TOKEN=`powershell 'Write-Host ($env:access_token) -NoNewLine' `
       COMMIT="$APPVEYOR_REPO_COMMIT"
       JOBID="appveyor_$APPVEYOR_JOB_NUMBER"
       git config --global user.email "appveyor@appveyor.com"
-      PUSHPARAM=""
     fi
     mkdir -p "$COMMIT/target"
     cp ../target/jacoco.exec "$COMMIT/target/$JOBID.exec"
@@ -31,7 +29,7 @@ if [ "$STATUS" = 0 ]; then
     git add .
     git commit -m "Coverage report from job $JOBID"
     git remote add originauth "https://${GH_TOKEN}@github.com/Pr0methean/betterrandom-coverage.git"
-    git push $PUSHPARAM master
+    git push --set-upstream originauth master
     while [ ! $? ]; do
       git pull --commit  # Merge
       git push
