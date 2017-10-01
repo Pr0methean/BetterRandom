@@ -124,7 +124,7 @@ public class AesCounterRandom extends BaseRandom {
    * Seed the RNG using the {@link DefaultSeedGenerator} to create a seed of the specified size.
    *
    * @param seedSizeBytes The number of bytes to use for seed data. Valid values range from 16
-   *     to {@link #getMaxKeyLengthBytes()}() + 16.
+   *     to {@link #getMaxKeyLengthBytes()} + 16.
    * @throws SeedException if there is a problem generating a seed.
    */
   public AesCounterRandom(final int seedSizeBytes) throws SeedException {
@@ -135,7 +135,7 @@ public class AesCounterRandom extends BaseRandom {
    * Creates an RNG and seeds it with the specified seed data.
    *
    * @param seed The seed data used to initialise the RNG. Length must be at least 16 and no
-   *     more than {@link #getMaxKeyLengthBytes()}() + 16.
+   *     more than {@link #getMaxKeyLengthBytes()} + 16.
    */
   public AesCounterRandom(final byte[] seed) {
     super(seed);
@@ -293,7 +293,7 @@ public class AesCounterRandom extends BaseRandom {
   }
 
   /**
-   * {@inheritDoc} The seed is combined with the existing seed using SHA-256.
+   * Combines the given seed with the existing seed using SHA-256.
    */
   @Override
   @SuppressWarnings("contracts.postcondition.not.satisfied")
