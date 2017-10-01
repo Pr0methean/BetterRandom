@@ -11,6 +11,7 @@ import static org.testng.Assert.assertTrue;
 
 import io.github.pr0methean.betterrandom.prng.RandomTestUtils.EntropyCheckMode;
 import io.github.pr0methean.betterrandom.seed.DefaultSeedGenerator;
+import io.github.pr0methean.betterrandom.seed.RandomSeederThread;
 import io.github.pr0methean.betterrandom.seed.SeedException;
 import io.github.pr0methean.betterrandom.util.BinaryUtils;
 import io.github.pr0methean.betterrandom.util.EntryPoint;
@@ -22,6 +23,7 @@ import java.util.List;
 import java.util.function.Supplier;
 import org.testng.ITestResult;
 import org.testng.Reporter;
+import org.testng.annotations.AfterClass;
 import org.testng.annotations.Test;
 import org.testng.util.RetryAnalyzerCount;
 
@@ -178,7 +180,7 @@ public abstract class BaseRandomTest {
   @Test(timeOut = 20000, retryAnalyzer = FlakyTestRetrier.class)
   public void testReseeding() throws Exception {
     final BaseRandom rng = createRng();
-    rng.setSeederThread(RandomTestUtils.DEFAULT_SEEDER);
+    rng.setSeederThread(RandomSeederThread.getInstance(DefaultSeedGenerator.DEFAULT_SEED_GENERATOR));
     final byte[] oldSeed = rng.getSeed();
     rng.nextBytes(new byte[oldSeed.length + 1]);
     Thread.sleep(5000 + (oldSeed.length / 2));
@@ -387,6 +389,12 @@ public abstract class BaseRandomTest {
     final BaseRandom prng = createRng();
     testGeneratesAll(() -> prng.nextEnum(TestEnum.class), TestEnum.RED, TestEnum.YELLOW,
         TestEnum.BLUE);
+  }
+
+  @AfterClass
+  public void classTearDown() {
+    System.gc();
+    RandomSeederThread.stopAllEmpty();
   }
 
   private enum TestEnum {

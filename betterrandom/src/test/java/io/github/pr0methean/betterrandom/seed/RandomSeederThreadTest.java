@@ -10,6 +10,7 @@ import static org.testng.AssertJUnit.assertEquals;
 import java.lang.Thread.State;
 import java.util.Arrays;
 import java.util.Random;
+import org.testng.annotations.AfterClass;
 import org.testng.annotations.Test;
 
 public class RandomSeederThreadTest {
@@ -71,5 +72,11 @@ public class RandomSeederThreadTest {
     assertEquals(addedToAndRemoved.getState(), State.TERMINATED);
     assertTrue(addedToAndLeft.isAlive());
     System.out.println(addedAndLeft.nextInt()); // prevent GC before this point
+  }
+
+  @AfterClass
+  public void classTearDown() {
+    System.gc();
+    stopAllEmpty();
   }
 }
