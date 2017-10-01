@@ -48,6 +48,7 @@ import org.checkerframework.checker.nullness.qual.EnsuresNonNull;
  * method inherited from {@link Random} until the seed array has been set.</em></p>
  *
  * @author Daniel Dyer
+ * @author Chris Hennick
  */
 public class AesCounterRandom extends BaseRandom {
 

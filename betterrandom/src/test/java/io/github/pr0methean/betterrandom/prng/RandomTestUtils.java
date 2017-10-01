@@ -97,8 +97,8 @@ public enum RandomTestUtils {
       final double origin,
       final double bound,
       final boolean checkEntropyCount) {
-    long expectedMinEntropy = prng.getEntropyBits();
     long count = 0;
+    long oldEntropy = prng.getEntropyBits();
     for (final Iterator<? extends Number> streamIter = stream.iterator(); streamIter.hasNext(); ) {
       count++;
       if (expectedCount < 0) {
@@ -111,10 +111,11 @@ public enum RandomTestUtils {
       final Number number = streamIter.next();
       assertGreaterOrEqual(origin, number.doubleValue());
       assertLess(bound, number.doubleValue());
-    }
-    if ((expectedCount >= 0) && checkEntropyCount) {
-      expectedMinEntropy -= maxEntropySpentPerNumber * expectedCount;
-      assertGreaterOrEqual(expectedMinEntropy, prng.getEntropyBits());
+      if (checkEntropyCount) {
+        long newEntropy = prng.getEntropyBits();
+        assertGreaterOrEqual(oldEntropy - maxEntropySpentPerNumber, newEntropy);
+        oldEntropy = newEntropy;
+      }
     }
   }
 
