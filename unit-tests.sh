@@ -25,8 +25,8 @@ if [ "$STATUS" = 0 ]; then
       git pull --commit  # Merge
     done
     mvn jacoco:merge
-    mv target/jacoco.exec ../target
-    cd ..
+    mv target/jacoco.exec ../../target
+    cd ../..
     mvn coveralls:report
   fi
   mvn -DskipTests $MAYBE_ANDROID_FLAG package && (
