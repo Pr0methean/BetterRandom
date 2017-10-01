@@ -24,8 +24,8 @@ if [ "$STATUS" = 0 ]; then
       git config --global user.email "appveyor@appveyor.com"
       PUSHPARAM=""
     fi
-    mkdir -p "$COMMIT"
-    cp ../target/jacoco.exec "$COMMIT/$JOBID.exec"
+    mkdir -p "$COMMIT/target"
+    cp ../target/jacoco.exec "$COMMIT/target/$JOBID.exec"
     cp ../../travis-resources/jacoco_merge.xml betterrandom-coverage/$COMMIT/pom.xml
     cd "$COMMIT"
     git add .
