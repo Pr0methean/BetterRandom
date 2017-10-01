@@ -419,12 +419,6 @@ public abstract class BaseRandom extends Random implements ByteArrayReseedableRa
   }
 
   @Override
-  public DoubleStream doubles(final long streamSize) {
-    recordEntropySpent(streamSize * ENTROPY_OF_DOUBLE);
-    return super.doubles(streamSize);
-  }
-
-  @Override
   public String dump() {
     lock.lock();
     try {
