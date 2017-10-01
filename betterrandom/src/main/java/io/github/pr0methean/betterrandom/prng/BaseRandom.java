@@ -219,8 +219,8 @@ public abstract class BaseRandom extends Random implements ByteArrayReseedableRa
   /**
    * Generates the next pseudorandom number. Called by all other random-number-generating methods.
    * Should not debit the entropy count, since that's done by the calling methods according to the
-   * amount they actually output (see for example {@link #withProbability(double)}, which uses
-   * {@link #ENTROPY_OF_DOUBLE} random bits but outputs only one).
+   * amount they actually output (see for example {@link #withProbability(double)}, which uses 53
+   * random bits but outputs only one, and thus debits only 1 bit of entropy).
    */
   @Override
   protected abstract int next(int bits);
@@ -482,14 +482,21 @@ public abstract class BaseRandom extends Random implements ByteArrayReseedableRa
 
   /**
    * Registers this PRNG with the given {@link RandomSeederThread} to schedule reseeding when we run
-   * out of entropy. Unregisters
+   * out of entropy. Unregisters this PRNG with the previous {@link RandomSeederThread} if it had
+   * a different one.
    *
    * @param thread a {@link RandomSeederThread} that will be used to reseed this PRNG.
    */
   @SuppressWarnings({"ObjectEquality", "EqualityOperatorComparesObjects"})
   public void setSeederThread(final @Nullable RandomSeederThread thread) {
-    if ((seederThread.getAndSet(thread) != thread) && (thread != null)) {
-      thread.add(this);
+    RandomSeederThread oldThread = seederThread.getAndSet(thread);
+    if (thread != oldThread) {
+      if (oldThread != null) {
+        oldThread.remove(this);
+      }
+      if (thread != null) {
+        thread.add(this);
+      }
     }
   }
 
