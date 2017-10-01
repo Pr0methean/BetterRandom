@@ -28,8 +28,10 @@ if [ "$STATUS" = 0 ]; then
     cd betterrandom-coverage/$COMMIT
     git add .
     git commit -m "Coverage report from job $JOBID"
-    while [ ! `git push` ]; do
+    git push
+    while [ ! $? ]; do
       git pull --commit  # Merge
+      git push
     done
     mvn jacoco:merge
     mv target/jacoco.exec ../../target
