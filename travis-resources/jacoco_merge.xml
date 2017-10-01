@@ -12,6 +12,7 @@
     <version>1.0.0-SNAPSHOT</version>
     <build>
         <pluginManagement>
+            <plugins>
             <plugin>
                 <groupId>org.jacoco</groupId>
                 <artifactId>jacoco-maven-plugin</artifactId>
@@ -63,6 +64,7 @@
                     <failOnServiceError>true</failOnServiceError>
                 </configuration>
             </plugin>
+            </plugins>
         </pluginManagement>
         <plugins>
             <plugin>
