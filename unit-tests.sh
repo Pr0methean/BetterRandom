@@ -6,22 +6,29 @@ else
 fi
 cd betterrandom
 # Coverage test
-if ( [ "$TRAVIS_OS_NAME" != "osx" ] && [ "$APPVEYOR" = "" ] ); then
-  mvn $MAYBE_ANDROID_FLAG clean jacoco:prepare-agent test jacoco:report -e
-fi
+mvn $MAYBE_ANDROID_FLAG clean jacoco:prepare-agent test jacoco:report -e
 STATUS=$?
 if [ "$STATUS" = 0 ]; then
-  if [ "$TRAVIS" = "true" ]; then
-    git config --global user.email "travis@travis-ci.org"
-    git config --global user.name "Travis CI on behalf of Chris Hennick"
+  if ([ "$TRAVIS" = "true" ] || [ "$APPVEYOR" != "" ] ); then
+    if [ "$TRAVIS" = "true" ]; then
+      COMMIT="$TRAVIS_COMMIT"
+      JOBID="travis_$TRAVIS_JOB_NUMBER"
+      git config --global user.email "travis@travis-ci.org"
+      git config --global user.name "Travis CI on behalf of Chris Hennick"
+    else
+      COMMIT="$APPVEYOR_REPO_COMMIT"
+      JOBID="appveyor_$APPVEYOR_JOB_NUMBER"
+      git config --global user.email "appveyor@appveyor.com"
+      git config --global user.name "Appveyor on behalf of Chris Hennick"
+    fi
     git clone https://github.com/Pr0methean/betterrandom-coverage.git
-    mkdir -p "betterrandom-coverage/$TRAVIS_BUILD_NUMBER"
-    cp target/jacoco.exec "betterrandom-coverage/$TRAVIS_BUILD_NUMBER/$TRAVIS_JOB_NUMBER.exec"
-    cp travis-resources/jacoco_merge.xml betterrandom-coverage/$TRAVIS_BUILD_NUMBER/pom.xml
-    cd betterrandom-coverage/$TRAVIS_BUILD_NUMBER
-    git add "$TRAVIS_BUILD_NUMBER"
-    git commit -m "Coverage report from job $TRAVIS_JOB_NUMBER"
-    while [ ! git push ]; do
+    mkdir -p "betterrandom-coverage/$COMMIT"
+    cp target/jacoco.exec "betterrandom-coverage/$COMMIT/$JOBID.exec"
+    cp ../travis-resources/jacoco_merge.xml betterrandom-coverage/$COMMIT/pom.xml
+    cd betterrandom-coverage/$COMMIT
+    git add .
+    git commit -m "Coverage report from job $JOBID"
+    while [ ! `git push` ]; do
       git pull --commit  # Merge
     done
     mvn jacoco:merge
