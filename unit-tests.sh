@@ -9,6 +9,8 @@ cd betterrandom
 mvn $MAYBE_ANDROID_FLAG clean jacoco:prepare-agent test jacoco:report -e
 STATUS=$?
 if [ "$STATUS" = 0 ]; then
+  git clone https://github.com/Pr0methean/betterrandom-coverage.git
+  cd betterrandom-coverage
   if ([ "$TRAVIS" = "true" ] || [ "$APPVEYOR" != "" ] ); then
     if [ "$TRAVIS" = "true" ]; then
       COMMIT="$TRAVIS_COMMIT"
@@ -17,19 +19,19 @@ if [ "$STATUS" = 0 ]; then
       git remote add originauth "https://${GH_TOKEN}@github.com/Pr0methean/betterrandom-coverage.git"
       PUSHPARAM="--set-upstream originauth"
     else
+      powershell 'Add-Content "$env:USERPROFILE\.git-credentials" "https://$($env:access_token):x-oauth-basic@github.com`n"'
       COMMIT="$APPVEYOR_REPO_COMMIT"
       JOBID="appveyor_$APPVEYOR_JOB_NUMBER"
       git config --global user.email "appveyor@appveyor.com"
       PUSHPARAM=""
     fi
-    git clone https://github.com/Pr0methean/betterrandom-coverage.git
-    mkdir -p "betterrandom-coverage/$COMMIT"
-    cp target/jacoco.exec "betterrandom-coverage/$COMMIT/$JOBID.exec"
+    mkdir -p "$COMMIT"
+    cp ../target/jacoco.exec "$COMMIT/$JOBID.exec"
     cp ../travis-resources/jacoco_merge.xml betterrandom-coverage/$COMMIT/pom.xml
-    cd betterrandom-coverage/$COMMIT
+    cd "$COMMIT"
     git add .
     git commit -m "Coverage report from job $JOBID"
-    git push $PUSHPARAM
+    git push $PUSHPARAM master
     while [ ! $? ]; do
       git pull --commit  # Merge
       git push
