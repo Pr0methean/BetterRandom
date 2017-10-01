@@ -132,20 +132,24 @@ public abstract class BaseRandom extends Random implements ByteArrayReseedableRa
   }
 
   /**
+   * Calculates the entropy in bits, rounded up, of a random {@code int} between {@code origin}
+   *     (inclusive) and {@code bound} (exclusive).
+   * 
    * @param origin the minimum, inclusive.
    * @param bound the maximum, exclusive.
-   * @return the entropy in bits, rounded up, of a random {@code int} between {@code origin} and
-   *     {@code bound}.
+   * @return the entropy.
    */
   protected static long entropyOfInt(final int origin, final int bound) {
     return Integer.SIZE - Integer.numberOfLeadingZeros(bound - origin - 1);
   }
 
   /**
+   * Calculates the entropy in bits, rounded up, of a random {@code long} between {@code origin}
+   *     (inclusive) and {@code bound} (exclusive).
+   * 
    * @param origin the minimum, inclusive.
    * @param bound the maximum, exclusive.
-   * @return the entropy in bits, rounded up, of a random {@code long} between {@code origin} and
-   *     {@code bound}.
+   * @return the entropy.
    */
   protected static long entropyOfLong(final long origin, final long bound) {
     return Long.SIZE - Long.numberOfLeadingZeros(bound - origin - 1);

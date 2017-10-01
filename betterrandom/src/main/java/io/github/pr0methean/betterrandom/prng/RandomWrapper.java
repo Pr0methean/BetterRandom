@@ -33,14 +33,13 @@ import org.checkerframework.checker.nullness.qual.Nullable;
  * Can be used to encapsulate away a change of implementation in midstream. Note that when this is
  * constructed using an existing instance, and after {@link #setWrapped(Random)} is called, we won't
  * know the initial seed until the next {@link #setSeed(byte[])} or {@link #setSeed(long)} call, and
- * so {@link #getSeed()} will return an empty array until then.</p>
+ * so {@link #getSeed()} will return a dummy array until then.</p>
  *
  * @author Chris Hennick
  */
 public class RandomWrapper extends BaseRandom {
 
-  @SuppressWarnings("PublicStaticArrayField")
-  public static final byte[] DUMMY_SEED = new byte[8];
+  private static final byte[] DUMMY_SEED = new byte[8];
   private static final long serialVersionUID = -6526304552538799385L;
   private Random wrapped;
   private boolean unknownSeed = true;
@@ -106,7 +105,10 @@ public class RandomWrapper extends BaseRandom {
     return (bits >= 32) ? wrapped.nextInt() : wrapped.nextInt(1 << bits);
   }
 
-  /** @return The wrapped {@link Random}. */
+  /**
+   * Returns the {@link Random} instance this RandomWrapper is currently wrapping.
+   * @return The wrapped {@link Random}.
+   */
   @EntryPoint
   public Random getWrapped() {
     lock.lock();
@@ -117,7 +119,10 @@ public class RandomWrapper extends BaseRandom {
     }
   }
 
-  /** @param wrapped The new {@link Random} instance to wrap. */
+  /**
+   * Replaces the underlying {@link Random} instance with the given one on subsequent calls.
+   * @param wrapped The new {@link Random} instance to wrap.
+   */
   @EntryPoint
   public void setWrapped(final Random wrapped) {
     lock.lock();
