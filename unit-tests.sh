@@ -37,7 +37,11 @@ if [ "$STATUS" = 0 ]; then
     mvn jacoco:merge
     mv target/jacoco.exec ../../target
     cd ../..
-    mvn coveralls:report
+    if [ "$TRAVIS" = "true" ]; then
+      # Coveralls doesn't seem to work in non-.NET Appveyor yet
+      # so we have to hope Appveyor pushes its Jacoco reports before Travis does! :(
+      mvn coveralls:report
+    fi
   fi
   mvn -DskipTests $MAYBE_ANDROID_FLAG package && (
   # Post-Proguard test (verifies Proguard settings)
