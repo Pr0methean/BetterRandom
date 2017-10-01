@@ -121,12 +121,7 @@
           <version>3.0.0-M1</version>
           <configuration>
             <sourcepath>${user.home}/j2se-src:${basedir}/src/main/java</sourcepath>
-            <doclet>com.google.doclava.Doclava</doclet>
-            <docletArtifact>
-              <groupId>com.google.doclava</groupId>
-              <artifactId>doclava</artifactId>
-              <version>1.0.6</version>
-            </docletArtifact>
+            <javadocVersion>1.8.0</javadocVersion>
             <notimestamp>true</notimestamp>
             <subpackages>io.github.pr0methean</subpackages>
             <show>protected</show>
@@ -224,6 +219,7 @@
             </execution>
           </executions>
           <configuration>
+            <javadocVersion>1.8.0</javadocVersion>
             <notimestamp>true</notimestamp>
             <show>protected</show>
             <bottom>
@@ -561,12 +557,7 @@
         <artifactId>maven-javadoc-plugin</artifactId>
         <version>3.0.0-M1</version>
         <configuration>
-          <doclet>com.google.doclava.Doclava</doclet>
-          <docletArtifact>
-            <groupId>com.google.doclava</groupId>
-            <artifactId>doclava</artifactId>
-            <version>1.0.6</version>
-          </docletArtifact>
+          <javadocVersion>1.8.0</javadocVersion>
           <sourcepath>${user.home}/j2se-src:${basedir}/src/main/java</sourcepath>
           <notimestamp>true</notimestamp>
           <show>protected</show>
