@@ -9,9 +9,9 @@ cd betterrandom
 mvn $MAYBE_ANDROID_FLAG clean jacoco:prepare-agent test jacoco:report -e
 STATUS=$?
 if [ "$STATUS" = 0 ]; then
-  git clone https://github.com/Pr0methean/betterrandom-coverage.git
-  cd betterrandom-coverage
   if ([ "$TRAVIS" = "true" ] || [ "$APPVEYOR" != "" ] ); then
+    git clone https://github.com/Pr0methean/betterrandom-coverage.git
+    cd betterrandom-coverage
     if [ "$TRAVIS" = "true" ]; then
       COMMIT="$TRAVIS_COMMIT"
       JOBID="travis_$TRAVIS_JOB_NUMBER"
@@ -27,7 +27,7 @@ if [ "$STATUS" = 0 ]; then
     fi
     mkdir -p "$COMMIT"
     cp ../target/jacoco.exec "$COMMIT/$JOBID.exec"
-    cp ../travis-resources/jacoco_merge.xml betterrandom-coverage/$COMMIT/pom.xml
+    cp ../../travis-resources/jacoco_merge.xml betterrandom-coverage/$COMMIT/pom.xml
     cd "$COMMIT"
     git add .
     git commit -m "Coverage report from job $JOBID"
