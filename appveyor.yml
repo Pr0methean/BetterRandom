@@ -10,6 +10,8 @@ environment:
       RUNNER: MinGW\msys\1.0
     - OP: benchmark
       RUNNER: cygwin64
+  access_token:
+    secure: UrMOuu5SzFyDvmnIwDu4EJol6YwyLJJ3yAAvA8URK7x8cmssL4106Wr8MmS01GGL
 install:
   # Log versions for debugging
   - java -version
@@ -24,6 +26,3 @@ cache:
   - C:\Users\appveyor\.m2
 matrix:
   fast_finish: true
-environment:
-  access_token:
-    secure: UrMOuu5SzFyDvmnIwDu4EJol6YwyLJJ3yAAvA8URK7x8cmssL4106Wr8MmS01GGL

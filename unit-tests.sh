@@ -14,12 +14,13 @@ if [ "$STATUS" = 0 ]; then
       COMMIT="$TRAVIS_COMMIT"
       JOBID="travis_$TRAVIS_JOB_NUMBER"
       git config --global user.email "travis@travis-ci.org"
-      git config --global user.name "Travis CI on behalf of Chris Hennick"
+      git remote add originauth "https://${GH_TOKEN}@github.com/Pr0methean/betterrandom-coverage.git"
+      PUSHPARAM="--set-upstream originauth"
     else
       COMMIT="$APPVEYOR_REPO_COMMIT"
       JOBID="appveyor_$APPVEYOR_JOB_NUMBER"
       git config --global user.email "appveyor@appveyor.com"
-      git config --global user.name "Appveyor on behalf of Chris Hennick"
+      PUSHPARAM=""
     fi
     git clone https://github.com/Pr0methean/betterrandom-coverage.git
     mkdir -p "betterrandom-coverage/$COMMIT"
@@ -28,7 +29,7 @@ if [ "$STATUS" = 0 ]; then
     cd betterrandom-coverage/$COMMIT
     git add .
     git commit -m "Coverage report from job $JOBID"
-    git push
+    git push $PUSHPARAM
     while [ ! $? ]; do
       git pull --commit  # Merge
       git push
