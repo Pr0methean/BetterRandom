@@ -138,7 +138,7 @@ public abstract class BaseRandom extends Random implements ByteArrayReseedableRa
    * @param bound the maximum, exclusive.
    * @return the entropy.
    */
-  protected static long entropyOfInt(final int origin, final int bound) {
+  protected static int entropyOfInt(final int origin, final int bound) {
     return Integer.SIZE - Integer.numberOfLeadingZeros(bound - origin - 1);
   }
 
@@ -150,7 +150,7 @@ public abstract class BaseRandom extends Random implements ByteArrayReseedableRa
    * @param bound the maximum, exclusive.
    * @return the entropy.
    */
-  protected static long entropyOfLong(final long origin, final long bound) {
+  protected static int entropyOfLong(final long origin, final long bound) {
     return Long.SIZE - Long.numberOfLeadingZeros(bound - origin - 1);
   }
 
@@ -399,13 +399,20 @@ public abstract class BaseRandom extends Random implements ByteArrayReseedableRa
       throw new IllegalArgumentException(String.format("Bound %d must be greater than origin %d",
           bound, origin));
     }
-    if ((bound - origin) <= Integer.MAX_VALUE) {
-      // calling nextInt instead will save a lot of rejections
-      return nextInt((int) (bound - origin)) + origin;
-    }
+    long range = bound - origin;
     long output;
     do {
-      output = nextLongNoEntropyDebit();
+      if (range < 0) {
+        output = nextLongNoEntropyDebit();
+      } else {
+        int bits = entropyOfLong(origin, bound);
+        output = origin;
+        if (bits > 32) {
+          output += next(32) + (((long)next(bits - 32)) << 32);
+        } else {
+          output += next(bits);
+        }
+      }
     } while ((output < origin) || (output >= bound));
     recordEntropySpent(entropyOfLong(origin, bound));
     return output;
