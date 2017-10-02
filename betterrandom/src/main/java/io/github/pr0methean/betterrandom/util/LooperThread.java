@@ -63,20 +63,37 @@ public class LooperThread extends Thread implements Serializable, Cloneable {
   private @Nullable Runnable serialTarget;
 
   /**
-   * <p>Constructor for LooperThread.</p>
+   * Constructs a LooperThread with all properties as defaults. Protected because it does not set a
+   * target, and thus should only be used in subclasses that override {@link #iterate()}.
    */
-  public LooperThread() {
+  protected LooperThread() {
     stackSize = 0;
   }
 
+  /**
+   * Constructs a LooperThread with the given target. {@code target} should only be null if called
+   * from a subclass that overrides {@link #iterate()}.
+   *
+   * @param target If not null, the target this thread will run in {@link #iterate()}.
+   */
   @SuppressWarnings("argument.type.incompatible")
+  @EntryPoint
   public LooperThread(final @Nullable Runnable target) {
     super(target);
     this.target = target;
     stackSize = 0;
   }
 
+  /**
+   * Constructs a LooperThread that belongs to the given {@link ThreadGroup} and has the given
+   * target. {@code target} should only be null if called from a subclass that overrides {@link
+   * #iterate()}.
+   *
+   * @param group The ThreadGroup this thread will belong to.
+   * @param target If not null, the target this thread will run in {@link #iterate()}.
+   */
   @SuppressWarnings("argument.type.incompatible")
+  @EntryPoint
   public LooperThread(final ThreadGroup group, final @Nullable Runnable target) {
     super(group, target);
     this.target = target;
@@ -84,35 +101,58 @@ public class LooperThread extends Thread implements Serializable, Cloneable {
   }
 
   /**
-   * <p>Constructor for LooperThread.</p>
+   * Constructs a LooperThread with the given name. Protected because it does not set a target, and
+   * thus should only be used in subclasses that override {@link #iterate()}.
    *
-   * @param name a {@link String} object.
+   * @param name the thread name
    */
-  public LooperThread(final String name) {
+  @EntryPoint
+  protected LooperThread(final String name) {
     super(name);
     stackSize = 0;
   }
 
   /**
-   * <p>Constructor for LooperThread.</p>
+   * Constructs a LooperThread with the given name and belonging to the given {@link ThreadGroup}.
+   * Protected because it does not set a target, and thus should only be used in subclasses that
+   * override {@link #iterate()}.
    *
-   * @param group a {@link ThreadGroup} object.
-   * @param name a {@link String} object.
+   * @param group The ThreadGroup this thread will belong to.
+   * @param name the thread name
    */
-  public LooperThread(final ThreadGroup group, final String name) {
+  @EntryPoint
+  protected LooperThread(final ThreadGroup group, final String name) {
     super(group, name);
     setGroup(group);
     stackSize = 0;
   }
 
+  /**
+   * Constructs a LooperThread with the given name and target. {@code target} should only be null if
+   * called from a subclass that overrides {@link #iterate()}.
+   *
+   * @param name the thread name
+   * @param target If not null, the target this thread will run in {@link #iterate()}.
+   */
   @SuppressWarnings("argument.type.incompatible")
+  @EntryPoint
   public LooperThread(final @Nullable Runnable target, final String name) {
     super(target, name);
     this.target = target;
     stackSize = 0;
   }
 
+  /**
+   * Constructs a LooperThread with the given name and target, belonging to the given {@link
+   * ThreadGroup}. {@code target} should only be null if called from a subclass that overrides
+   * {@link #iterate()}.
+   *
+   * @param group The ThreadGroup this thread will belong to.
+   * @param target If not null, the target this thread will run in {@link #iterate()}.
+   * @param name the thread name
+   */
   @SuppressWarnings("argument.type.incompatible")
+  @EntryPoint
   public LooperThread(final ThreadGroup group, final @Nullable Runnable target, final String name) {
     super(group, target, name);
     this.target = target;
@@ -120,6 +160,18 @@ public class LooperThread extends Thread implements Serializable, Cloneable {
     stackSize = 0;
   }
 
+  /**
+   * Constructs a LooperThread with the given name and target, belonging to the given {@link
+   * ThreadGroup} and having the given preferred stack size. {@code target} should only be null if
+   * called from a subclass that overrides {@link #iterate()}. See {@link Thread#Thread(ThreadGroup,
+   * Runnable, String, long)} for caveats about specifying the stack size.
+   *
+   * @param group The ThreadGroup this thread will belong to.
+   * @param target If not null, the target this thread will run in {@link #iterate()}.
+   * @param name the thread name
+   * @param stackSize the desired stack size for the new thread, or zero to indicate that this
+   *     parameter is to be ignored.
+   */
   @SuppressWarnings("argument.type.incompatible")
   public LooperThread(final ThreadGroup group, final @Nullable Runnable target, final String name,
       final long stackSize) {
