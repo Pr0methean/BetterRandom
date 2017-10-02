@@ -408,7 +408,7 @@ public abstract class BaseRandom extends Random implements ByteArrayReseedableRa
         int bits = entropyOfLong(origin, bound);
         output = origin;
         output += (bits > 32)
-            ? (next(32) + (((long) next(bits - 32)) << 32))
+            ? (next(32) | (((long) next(bits - 32)) << 32))
             : next(bits);
       }
     } while ((output < origin) || (output >= bound));
