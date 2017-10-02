@@ -24,6 +24,7 @@ import io.github.pr0methean.betterrandom.seed.SeedGenerator;
 import io.github.pr0methean.betterrandom.util.BinaryUtils;
 import java.util.Arrays;
 import java.util.Random;
+import java.util.concurrent.atomic.AtomicLong;
 import org.checkerframework.checker.initialization.qual.UnknownInitialization;
 import org.checkerframework.checker.nullness.qual.EnsuresNonNull;
 
@@ -117,7 +118,7 @@ public class MersenneTwisterRandom extends BaseRandom {
   }
 
   @Override
-  @EnsuresNonNull({"lock", "mt", "longSeedArray", "longSeedBuffer"})
+  @EnsuresNonNull({"lock", "mt"})
   protected void initTransientFields(@UnknownInitialization MersenneTwisterRandom this) {
     super.initTransientFields();
     if (mt == null) {

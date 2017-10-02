@@ -69,12 +69,14 @@ public class LooperThread extends Thread implements Serializable, Cloneable {
     stackSize = 0;
   }
 
+  @SuppressWarnings("argument.type.incompatible")
   public LooperThread(final @Nullable Runnable target) {
     super(target);
     this.target = target;
     stackSize = 0;
   }
 
+  @SuppressWarnings("argument.type.incompatible")
   public LooperThread(final ThreadGroup group, final @Nullable Runnable target) {
     super(group, target);
     this.target = target;
@@ -103,12 +105,14 @@ public class LooperThread extends Thread implements Serializable, Cloneable {
     stackSize = 0;
   }
 
+  @SuppressWarnings("argument.type.incompatible")
   public LooperThread(final @Nullable Runnable target, final String name) {
     super(target, name);
     this.target = target;
     stackSize = 0;
   }
 
+  @SuppressWarnings("argument.type.incompatible")
   public LooperThread(final ThreadGroup group, final @Nullable Runnable target, final String name) {
     super(group, target, name);
     this.target = target;
@@ -116,6 +120,7 @@ public class LooperThread extends Thread implements Serializable, Cloneable {
     stackSize = 0;
   }
 
+  @SuppressWarnings("argument.type.incompatible")
   public LooperThread(final ThreadGroup group, final @Nullable Runnable target, final String name,
       final long stackSize) {
     super(group, target, name, stackSize);

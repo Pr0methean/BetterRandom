@@ -456,6 +456,7 @@ public abstract class BaseRandom extends Random implements ByteArrayReseedableRa
     }
   }
 
+  @SuppressWarnings("method.invocation.invalid")
   @EnsuresNonNull({"this.seed", "entropyBits"})
   @Override
   public synchronized void setSeed(@UnknownInitialization(Random.class)BaseRandom this,
@@ -594,12 +595,15 @@ public abstract class BaseRandom extends Random implements ByteArrayReseedableRa
    * Generates a seed using the default seed generator. For use in handling a {@link #setSeed(long)}
    * call in subclasses that can't actually use an 8-byte seed.
    */
-  @EnsuresNonNull("seed")
+  @EnsuresNonNull({"seed", "entropyBits"})
   protected void fallbackSetSeed(@UnknownInitialization BaseRandom this) {
     try {
       seed = DefaultSeedGenerator.DEFAULT_SEED_GENERATOR.generateSeed(getNewSeedLength());
     } catch (final SeedException e) {
       throw new RuntimeException(e);
+    }
+    if (entropyBits == null) {
+      entropyBits = new AtomicLong(seed.length * 8);
     }
   }
 
