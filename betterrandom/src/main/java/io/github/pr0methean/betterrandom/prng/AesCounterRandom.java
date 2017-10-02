@@ -177,7 +177,7 @@ public class AesCounterRandom extends BaseRandom {
   }
 
   @Override
-  @EnsuresNonNull({"counter", "counterInput", "cipher", "lock", "longSeedArray", "longSeedBuffer"})
+  @EnsuresNonNull({"counter", "counterInput", "cipher", "lock"})
   protected void initTransientFields(
       @UnknownInitialization AesCounterRandom this) {
     super.initTransientFields();
