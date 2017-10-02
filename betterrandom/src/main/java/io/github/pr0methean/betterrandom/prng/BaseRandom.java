@@ -85,6 +85,16 @@ public abstract class BaseRandom extends Random implements ByteArrayReseedableRa
   protected AtomicLong entropyBits;
 
   /**
+   * Returns true if streams created by {@link #doubles(long, double, double)}, {@link #ints(long,
+   * int, int)}, {@link #longs(long, long, long)} and their overloads should be parallel streams.
+   *
+   * @return true if this PRNG should create parallel streams; false otherwise.
+   */
+  protected boolean useParallelStreams() {
+    return true;
+  }
+
+  /**
    * Creates a new RNG and seeds it using the default seeding strategy.
    *
    * @param seedLength a int.
@@ -156,16 +166,6 @@ public abstract class BaseRandom extends Random implements ByteArrayReseedableRa
    */
   protected static int entropyOfLong(final long origin, final long bound) {
     return Long.SIZE - Long.numberOfLeadingZeros(bound - origin - 1);
-  }
-
-  /**
-   * Returns true if streams created by {@link #doubles(long, double, double)}, {@link #ints(long,
-   * int, int)}, {@link #longs(long, long, long)} and their overloads should be parallel streams.
-   *
-   * @return true if this PRNG should create parallel streams; false otherwise.
-   */
-  protected boolean useParallelStreams() {
-    return true;
   }
 
   /**
@@ -260,7 +260,8 @@ public abstract class BaseRandom extends Random implements ByteArrayReseedableRa
 
   @Override
   public int nextInt(final int bound) {
-    return nextInt(0, bound);
+    recordEntropySpent(entropyOfInt(0, bound));
+    return super.nextInt(bound);
   }
 
   @Override
@@ -571,6 +572,17 @@ public abstract class BaseRandom extends Random implements ByteArrayReseedableRa
     }
   }
 
+  @EnsuresNonNull({"this.seed", "entropyBits"})
+  @Override
+  public void setSeed(final byte[] seed) {
+    lock.lock();
+    try {
+      setSeedInternal(seed);
+    } finally {
+      lock.unlock();
+    }
+  }
+
   @SuppressWarnings("method.invocation.invalid")
   @EnsuresNonNull({"this.seed", "entropyBits"})
   @Override
@@ -581,17 +593,6 @@ public abstract class BaseRandom extends Random implements ByteArrayReseedableRa
       setSeed(seedBytes);
     } else {
       setSeedInternal(seedBytes);
-    }
-  }
-
-  @EnsuresNonNull({"this.seed", "entropyBits"})
-  @Override
-  public void setSeed(final byte[] seed) {
-    lock.lock();
-    try {
-      setSeedInternal(seed);
-    } finally {
-      lock.unlock();
     }
   }
 
