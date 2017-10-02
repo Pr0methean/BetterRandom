@@ -3,16 +3,25 @@ package io.github.pr0methean.betterrandom.prng.adapter;
 import com.google.common.base.MoreObjects.ToStringHelper;
 import io.github.pr0methean.betterrandom.seed.SeedException;
 import io.github.pr0methean.betterrandom.seed.SeedGenerator;
+import io.github.pr0methean.betterrandom.util.spliterator.DoubleSupplierSpliterator;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.util.SplittableRandom;
+import java.util.stream.DoubleStream;
+import java.util.stream.StreamSupport;
 
 /**
- * <p>SingleThreadSplittableRandomAdapter class.</p>
+ * Simple, non-thread-safe implementation of {@link io.github.pr0methean.betterrandom.prng.BaseRandom}
+ * that wraps a {@link SplittableRandom}.
  *
- * @author ubuntu
+ * @author Chris Hennick
  */
 public class SingleThreadSplittableRandomAdapter extends DirectSplittableRandomAdapter {
+
+  @Override
+  protected boolean useParallelStreams() {
+    return false;
+  }
 
   private static final long serialVersionUID = -1125374167384636394L;
   private boolean deserializedAndNotUsedSince = false;

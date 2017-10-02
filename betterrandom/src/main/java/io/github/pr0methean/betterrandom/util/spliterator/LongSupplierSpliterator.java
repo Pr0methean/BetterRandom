@@ -1,4 +1,4 @@
-package io.github.pr0methean.betterrandom.util;
+package io.github.pr0methean.betterrandom.util.spliterator;
 
 import java.util.Spliterator.OfLong;
 import java.util.concurrent.atomic.AtomicLong;
@@ -15,6 +15,12 @@ public class LongSupplierSpliterator implements OfLong {
   private final AtomicLong remaining;
   private final LongSupplier supplier;
 
+  /**
+   * Create an instance.
+   *
+   * @param size The maximum number of values to output.
+   * @param supplier The supplier to wrap.
+   */
   public LongSupplierSpliterator(final long size, final LongSupplier supplier) {
     this(new AtomicLong(size), supplier);
   }

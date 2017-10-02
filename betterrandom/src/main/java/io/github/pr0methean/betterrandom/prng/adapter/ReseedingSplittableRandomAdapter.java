@@ -23,7 +23,7 @@ import org.checkerframework.checker.nullness.qual.Nullable;
  * each thread's {@link SplittableRandom} with a reseeded one as frequently as possible, but not
  * more frequently than it is being used.
  *
- * @author ubuntu
+ * @author Chris Hennick
  */
 public class ReseedingSplittableRandomAdapter extends BaseSplittableRandomAdapter {
 
