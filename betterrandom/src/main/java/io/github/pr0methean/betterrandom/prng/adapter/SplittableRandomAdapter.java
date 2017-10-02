@@ -108,6 +108,7 @@ public class SplittableRandomAdapter extends DirectSplittableRandomAdapter {
   /**
    * {@inheritDoc} Applies only to the calling thread.
    */
+  @SuppressWarnings("contracts.postcondition.not.satisfied")
   @Override
   public void setSeed(@UnknownInitialization SplittableRandomAdapter this,
       final long seed) {
