@@ -13,6 +13,7 @@ import org.checkerframework.checker.nullness.qual.Nullable;
 public class IntSupplierSpliterator implements OfInt {
 
   private final AtomicLong remaining;
+  private final AtomicLong splitsRemaining;
   private final IntSupplier supplier;
 
   /**
@@ -22,19 +23,22 @@ public class IntSupplierSpliterator implements OfInt {
    * @param supplier The supplier to wrap.
    */
   public IntSupplierSpliterator(final long size, final IntSupplier supplier) {
-    this(new AtomicLong(size), supplier);
+    this(new AtomicLong(size), new AtomicLong(Long.SIZE - Long.numberOfLeadingZeros(size)), supplier);
   }
 
   /** Used to share the AtomicLong between partitions. */
-  private IntSupplierSpliterator(final AtomicLong remaining, final IntSupplier supplier) {
+  private IntSupplierSpliterator(final AtomicLong remaining, final AtomicLong splitsRemaining, final IntSupplier supplier) {
     this.remaining = remaining;
+    this.splitsRemaining = splitsRemaining;
     this.supplier = supplier;
   }
 
   @SuppressWarnings("override.return.invalid") // actually is nullable in the interface
   @Override
   public @Nullable OfInt trySplit() {
-    return (remaining.get() <= 0) ? null : new IntSupplierSpliterator(remaining, supplier);
+    return ((splitsRemaining.getAndDecrement() <= 0) || (remaining.get() <= 0))
+        ? null
+        : new IntSupplierSpliterator(remaining, splitsRemaining, supplier);
   }
 
   @Override
