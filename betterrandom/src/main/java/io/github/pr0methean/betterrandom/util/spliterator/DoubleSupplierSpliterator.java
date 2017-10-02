@@ -1,9 +1,11 @@
 package io.github.pr0methean.betterrandom.util.spliterator;
 
+import io.github.pr0methean.betterrandom.util.LogPreFormatter;
 import java.util.Spliterator.OfDouble;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.function.DoubleConsumer;
 import java.util.function.DoubleSupplier;
+import java.util.logging.Level;
 import org.checkerframework.checker.nullness.qual.Nullable;
 
 /**
@@ -11,7 +13,7 @@ import org.checkerframework.checker.nullness.qual.Nullable;
  * and has a preset size.
  */
 public class DoubleSupplierSpliterator implements OfDouble {
-
+  private static final LogPreFormatter LOG = new LogPreFormatter(DoubleSupplierSpliterator.class);
   private final AtomicLong remaining;
   private final DoubleSupplier supplier;
 
@@ -34,6 +36,7 @@ public class DoubleSupplierSpliterator implements OfDouble {
   @SuppressWarnings("override.return.invalid") // actually is nullable in the interface
   @Override
   public @Nullable OfDouble trySplit() {
+    LOG.logStackTrace(Level.INFO, Thread.currentThread().getStackTrace());
     return (remaining.get() <= 0) ? null : new DoubleSupplierSpliterator(remaining, supplier);
   }
 
@@ -49,6 +52,7 @@ public class DoubleSupplierSpliterator implements OfDouble {
 
   @Override
   public boolean tryAdvance(final DoubleConsumer action) {
+    LOG.logStackTrace(Level.INFO, Thread.currentThread().getStackTrace());
     if (remaining.decrementAndGet() >= 0) {
       action.accept(supplier.getAsDouble());
       return true;
