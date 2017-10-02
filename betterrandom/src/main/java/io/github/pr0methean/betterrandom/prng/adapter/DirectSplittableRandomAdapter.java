@@ -2,6 +2,7 @@ package io.github.pr0methean.betterrandom.prng.adapter;
 
 import com.google.common.base.MoreObjects.ToStringHelper;
 import io.github.pr0methean.betterrandom.util.BinaryUtils;
+import io.github.pr0methean.betterrandom.util.EntryPoint;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.util.Random;
@@ -23,13 +24,24 @@ public abstract class DirectSplittableRandomAdapter extends BaseSplittableRandom
   protected transient SplittableRandom underlying; // a SplittableRandom is not Serializable
 
   /**
-   * <p>Constructor for DirectSplittableRandomAdapter.</p>
+   * Constructs an instance with the given seed.
    *
-   * @param seed an array of byte.
+   * @param seed The seed.
    */
   public DirectSplittableRandomAdapter(final byte[] seed) {
     super(seed);
     setSeedInternal(seed);
+  }
+
+  /**
+   * Constructs an instance with the given seed.
+   *
+   * @param seed The seed.
+   */
+  @EntryPoint
+  public DirectSplittableRandomAdapter(final long seed) {
+    super(seed);
+    setSeed(seed);
   }
 
   @Override
