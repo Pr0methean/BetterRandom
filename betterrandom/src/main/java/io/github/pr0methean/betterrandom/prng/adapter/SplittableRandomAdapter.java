@@ -59,7 +59,7 @@ public class SplittableRandomAdapter extends DirectSplittableRandomAdapter {
     entropyBits.get().addAndGet(-bits);
   }
 
-  @EnsuresNonNull({"splittableRandoms", "getEntropyBits", "seeds"})
+  @EnsuresNonNull({"splittableRandoms", "entropyBits", "seeds"})
   @RequiresNonNull({"lock", "underlying"})
   private void initSubclassTransientFields(
       @UnknownInitialization(BaseSplittableRandomAdapter.class)SplittableRandomAdapter this) {
