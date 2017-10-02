@@ -83,17 +83,17 @@
     <dependency>
       <groupId>org.checkerframework</groupId>
       <artifactId>checker-qual</artifactId>
-      <version>2.2.0</version>
+      <version>2.2.1</version>
     </dependency>
     <dependency>
       <groupId>org.checkerframework</groupId>
       <artifactId>checker</artifactId>
-      <version>2.2.0</version>
+      <version>2.2.1</version>
     </dependency>
     <dependency>
       <groupId>org.checkerframework</groupId>
       <artifactId>jdk8</artifactId>
-      <version>2.2.0</version>
+      <version>2.2.1</version>
     </dependency>
     <dependency>
       <groupId>org.apache.maven.plugins</groupId>
@@ -249,8 +249,6 @@
               <Xmaxerrs>10000</Xmaxerrs>
               <Xmaxwarns>10000</Xmaxwarns>
             </compilerArguments>
-            <!-- Disabled due to https://github.com/typetools/checker-framework/issues/1531
-            and https://github.com/typetools/checker-framework/issues/1510:
             <annotationProcessors>
               <annotationProcessor>org.checkerframework.checker.nullness.NullnessChecker
               </annotationProcessor>
@@ -258,7 +256,6 @@
             <compilerArgs>
               <arg>-Xbootclasspath/p:${annotatedJdk}</arg>
             </compilerArgs>
-            -->
           </configuration>
         </plugin>
         <plugin>
