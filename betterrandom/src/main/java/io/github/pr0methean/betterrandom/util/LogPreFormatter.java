@@ -72,9 +72,11 @@ public class LogPreFormatter {
    */
   public void logStackTrace(Level level, StackTraceElement[] stackTrace) {
     if (logger.isLoggable(level)) {
+      StringBuilder stackTraceBuilder = new StringBuilder();
       for (StackTraceElement element : stackTrace) {
-        logger.log(level, "  " + element);
+        stackTraceBuilder.append(String.format("  %s%n", element));
       }
+      logger.log(level, stackTraceBuilder.toString());
     }
   }
 }
