@@ -401,6 +401,7 @@ public abstract class BaseRandomTest {
   public void testDoubles() throws Exception {
     DeadlockWatchdogThread.ensureStarted();
     final BaseRandom prng = createRng();
+    LOG.info("Starting checkStream for %s.testDoubles()", getClass().getSimpleName());
     checkStream(prng, ENTROPY_OF_DOUBLE, prng.doubles().boxed(), -1, 0.0, 1.0, true);
   }
 
