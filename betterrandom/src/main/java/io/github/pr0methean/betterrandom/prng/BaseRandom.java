@@ -445,7 +445,7 @@ public abstract class BaseRandom extends Random implements ByteArrayReseedableRa
     }
   }
 
-  @EnsuresNonNull("this.seed")
+  @EnsuresNonNull({"this.seed", "entropyBits"})
   @Override
   public void setSeed(final byte[] seed) {
     lock.lock();
