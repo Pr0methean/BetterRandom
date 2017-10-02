@@ -338,6 +338,14 @@ public abstract class BaseRandomTest {
         true);
   }
 
+  @Test(timeOut = 1000)
+  public void testLongs3_smallRange() throws Exception {
+    final long bound = (1L << 40) + Integer.MAX_VALUE);
+    final BaseRandom prng = createRng();
+    checkStream(prng, 31, prng.longs(20, 1L << 40, bound), 20, 1L << 40, bound,
+        true);
+  }
+
   @Test
   public void testDoubles() throws Exception {
     final BaseRandom prng = createRng();
