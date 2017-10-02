@@ -1,5 +1,7 @@
 # 1.0.0
-* Fixed most entropy-counting bugs.
+* Fixed entropy counting. After obtaining a stream from one of the `ints`, `longs` or `doubles`
+  methods, you can now expect it to reseed midstream if `setSeederThread` has been called with
+  non-null argument.
 * Removed `SplittableRandomReseeder` since it is unreliable on some platforms (probably due to
   `SplittableRandom`'s non-volatile access to its fields).
 * Removed default implementation of `BaseSplittableRandomAdapter.addSubclassFields` since it's
