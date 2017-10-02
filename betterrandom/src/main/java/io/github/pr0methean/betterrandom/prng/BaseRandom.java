@@ -43,10 +43,10 @@ import org.checkerframework.checker.nullness.qual.Nullable;
 public abstract class BaseRandom extends Random implements ByteArrayReseedableRandom,
     RepeatableRandom, Dumpable, EntropyCountingRandom {
 
-  /** The number of pseudorandom bits in {@link #nextFloat()}(). */
+  /** The number of pseudorandom bits in {@link #nextFloat()}. */
   protected static final long ENTROPY_OF_FLOAT = 24;
 
-  /** The number of pseudorandom bits in {@link #nextDouble()}(). */
+  /** The number of pseudorandom bits in {@link #nextDouble()}. */
   protected static final int ENTROPY_OF_DOUBLE = 53;
 
   private static final long NAN_LONG_BITS = Double.doubleToLongBits(Double.NaN);
@@ -276,7 +276,9 @@ public abstract class BaseRandom extends Random implements ByteArrayReseedableRa
   }
 
   /**
-   * {@inheritDoc} This is overridden both for entropy-counting purposes and to make it lockless.
+   * Returns the next pseudorandom, Gaussian ("normally") distributed double value with mean 0.0 and
+   * standard deviation 1.0 from this random number generator's sequence. Unlike the one in {@link
+   * Random}, this implementation is lockless.
    */
   @Override
   public double nextGaussian() {

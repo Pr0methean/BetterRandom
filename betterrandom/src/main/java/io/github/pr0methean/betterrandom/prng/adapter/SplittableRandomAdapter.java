@@ -25,20 +25,43 @@ import org.checkerframework.checker.nullness.qual.RequiresNonNull;
 @SuppressWarnings("ThreadLocalNotStaticFinal")
 public class SplittableRandomAdapter extends DirectSplittableRandomAdapter {
 
-  private static final int SEED_LENGTH_BITS = SEED_LENGTH_BYTES * 8;
+  private static final int SEED_LENGTH_BITS = Long.BYTES * 8;
   private static final long serialVersionUID = 2190439512972880590L;
   private transient ThreadLocal<SplittableRandom> splittableRandoms;
   private transient ThreadLocal<AtomicLong> entropyBits;
   private transient ThreadLocal<byte[]> seeds;
 
   /**
-   * <p>Constructor for SplittableRandomAdapter.</p>
+   * Use the provided seed generation strategy to create the seed for the master {@link
+   * SplittableRandom}, which will be split to generate an instance for each thread.
    *
-   * @param seedGenerator a {@link SeedGenerator} object.
-   * @throws SeedException if any.
+   * @param seedGenerator The seed generation strategy that will provide the seed value for this
+   *     RNG.
+   * @throws SeedException if there is a problem generating a seed.
    */
   public SplittableRandomAdapter(final SeedGenerator seedGenerator) throws SeedException {
-    super(seedGenerator.generateSeed(SEED_LENGTH_BYTES));
+    this(seedGenerator.generateSeed(Long.BYTES));
+  }
+
+  /**
+   * Use the provided seed for the master {@link SplittableRandom}, which will be split to generate
+   * an instance for each thread.
+   *
+   * @param seed The seed. Must be 8 bytes.
+   */
+  public SplittableRandomAdapter(byte[] seed) {
+    super(seed);
+    initSubclassTransientFields();
+  }
+
+  /**
+   * Use the provided seed for the master {@link SplittableRandom}, which will be split to generate
+   * an instance for each thread.
+   *
+   * @param seed The seed.
+   */
+  public SplittableRandomAdapter(long seed) {
+    super(seed);
     initSubclassTransientFields();
   }
 
@@ -97,17 +120,6 @@ public class SplittableRandomAdapter extends DirectSplittableRandomAdapter {
   /**
    * {@inheritDoc} Applies only to the calling thread.
    */
-  @Override
-  public void setSeed(@UnknownInitialization SplittableRandomAdapter this, final byte[] seed) {
-    if (seed.length != SEED_LENGTH_BYTES) {
-      throw new IllegalArgumentException("SplittableRandomAdapter requires an 8-byte seed");
-    }
-    setSeed(convertBytesToLong(seed));
-  }
-
-  /**
-   * {@inheritDoc} Applies only to the calling thread.
-   */
   @SuppressWarnings("contracts.postcondition.not.satisfied")
   @Override
   public void setSeed(@UnknownInitialization SplittableRandomAdapter this,
@@ -124,5 +136,16 @@ public class SplittableRandomAdapter extends DirectSplittableRandomAdapter {
         seeds.set(BinaryUtils.convertLongToBytes(seed));
       }
     }
+  }
+
+  /**
+   * {@inheritDoc} Applies only to the calling thread.
+   */
+  @Override
+  public void setSeed(@UnknownInitialization SplittableRandomAdapter this, final byte[] seed) {
+    if (seed.length != Long.BYTES) {
+      throw new IllegalArgumentException("SplittableRandomAdapter requires an 8-byte seed");
+    }
+    setSeed(convertBytesToLong(seed));
   }
 }

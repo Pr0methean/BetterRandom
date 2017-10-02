@@ -42,7 +42,7 @@ public class ReseedingSplittableRandomAdapter extends BaseSplittableRandomAdapte
    * @param seedGenerator The seed generator this adapter will use.
    */
   private ReseedingSplittableRandomAdapter(final SeedGenerator seedGenerator) throws SeedException {
-    super(seedGenerator.generateSeed(SEED_LENGTH_BYTES));
+    super(seedGenerator.generateSeed(Long.BYTES));
     this.seedGenerator = seedGenerator;
     initSubclassTransientFields();
   }

@@ -18,22 +18,33 @@ public class SingleThreadSplittableRandomAdapter extends DirectSplittableRandomA
   private boolean deserializedAndNotUsedSince = false;
 
   /**
-   * <p>Constructor for SingleThreadSplittableRandomAdapter.</p>
+   * Use the provided seed generation strategy to create the seed for the underlying {@link
+   * SplittableRandom}.
    *
-   * @param seedGenerator a {@link SeedGenerator} object.
-   * @throws SeedException if any.
+   * @param seedGenerator The seed generation strategy that will provide the seed value for this
+   *     RNG.
+   * @throws SeedException if there is a problem generating a seed.
    */
   public SingleThreadSplittableRandomAdapter(final SeedGenerator seedGenerator)
       throws SeedException {
-    this(seedGenerator.generateSeed(SEED_LENGTH_BYTES));
+    this(seedGenerator.generateSeed(Long.BYTES));
   }
 
   /**
-   * <p>Constructor for SingleThreadSplittableRandomAdapter.</p>
+   * Use the provided seed for the underlying {@link SplittableRandom}.
    *
-   * @param seed an array of byte.
+   * @param seed The seed. Must be 8 bytes.
    */
   public SingleThreadSplittableRandomAdapter(final byte[] seed) {
+    super(seed);
+  }
+
+  /**
+   * Use the provided seed for the underlying {@link SplittableRandom}.
+   *
+   * @param seed The seed.
+   */
+  public SingleThreadSplittableRandomAdapter(final long seed) {
     super(seed);
   }
 
