@@ -335,56 +335,56 @@ public abstract class BaseRandomTest {
   @Test
   public void testInts() throws Exception {
     final BaseRandom prng = createRng();
-    checkStream(prng, 32, prng.ints(), -1, Integer.MIN_VALUE, Integer.MAX_VALUE + 1L,
+    checkStream(prng, 32, prng.ints().boxed(), -1, Integer.MIN_VALUE, Integer.MAX_VALUE + 1L,
         true);
   }
 
   @Test
   public void testInts1() throws Exception {
     final BaseRandom prng = createRng();
-    checkStream(prng, 32, prng.ints(20), 20, Integer.MIN_VALUE, Integer.MAX_VALUE + 1L,
+    checkStream(prng, 32, prng.ints(20).boxed(), 20, Integer.MIN_VALUE, Integer.MAX_VALUE + 1L,
         true);
   }
 
   @Test
   public void testInts2() throws Exception {
     final BaseRandom prng = createRng();
-    checkStream(prng, 29, prng.ints(1 << 27, 1 << 29), -1, 1 << 27, 1 << 29,
+    checkStream(prng, 29, prng.ints(1 << 27, 1 << 29).boxed(), -1, 1 << 27, 1 << 29,
         true);
   }
 
   @Test
   public void testInts3() throws Exception {
     final BaseRandom prng = createRng();
-    checkStream(prng, 29, prng.ints(3, 1 << 27, 1 << 29), 3, 1 << 27, 1 << 29,
+    checkStream(prng, 29, prng.ints(3, 1 << 27, 1 << 29).boxed(), 3, 1 << 27, 1 << 29,
         true);
   }
 
   @Test
   public void testLongs() throws Exception {
     final BaseRandom prng = createRng();
-    checkStream(prng, 64, prng.longs(), -1, Long.MIN_VALUE, Long.MAX_VALUE + 1.0,
+    checkStream(prng, 64, prng.longs().boxed(), -1, Long.MIN_VALUE, Long.MAX_VALUE + 1.0,
         true);
   }
 
   @Test
   public void testLongs1() throws Exception {
     final BaseRandom prng = createRng();
-    checkStream(prng, 64, prng.longs(20), 20, Long.MIN_VALUE, Long.MAX_VALUE + 1.0,
+    checkStream(prng, 64, prng.longs(20).boxed(), 20, Long.MIN_VALUE, Long.MAX_VALUE + 1.0,
         true);
   }
 
   @Test
   public void testLongs2() throws Exception {
     final BaseRandom prng = createRng();
-    checkStream(prng, 42, prng.longs(1L << 40, 1L << 42), -1, 1L << 40, 1L << 42,
+    checkStream(prng, 42, prng.longs(1L << 40, 1L << 42).boxed(), -1, 1L << 40, 1L << 42,
         true);
   }
 
   @Test
   public void testLongs3() throws Exception {
     final BaseRandom prng = createRng();
-    checkStream(prng, 42, prng.longs(20, 1L << 40, 1L << 42), 20, 1L << 40, 1L << 42,
+    checkStream(prng, 42, prng.longs(20, 1L << 40, 1L << 42).boxed(), 20, 1L << 40, 1L << 42,
         true);
   }
 
@@ -392,38 +392,38 @@ public abstract class BaseRandomTest {
   public void testLongs3_smallRange() throws Exception {
     final long bound = (1L << 40) + 2;
     final BaseRandom prng = createRng();
-    checkStream(prng, 31, prng.longs(20, 1L << 40, bound), 20, 1L << 40, bound,
+    checkStream(prng, 31, prng.longs(20, 1L << 40, bound).boxed(), 20, 1L << 40, bound,
         true);
   }
 
   @Test
   public void testDoubles() throws Exception {
     final BaseRandom prng = createRng();
-    checkStream(prng, ENTROPY_OF_DOUBLE, prng.doubles(), -1, 0.0, 1.0, true);
+    checkStream(prng, ENTROPY_OF_DOUBLE, prng.doubles().boxed(), -1, 0.0, 1.0, true);
   }
 
   @Test
   public void testDoubles1() throws Exception {
     final BaseRandom prng = createRng();
-    checkStream(prng, ENTROPY_OF_DOUBLE, prng.doubles(20), 20, 0.0, 1.0, true);
+    checkStream(prng, ENTROPY_OF_DOUBLE, prng.doubles(20).boxed(), 20, 0.0, 1.0, true);
   }
 
   @Test
   public void testDoubles2() throws Exception {
     final BaseRandom prng = createRng();
-    checkStream(prng, ENTROPY_OF_DOUBLE, prng.doubles(-5.0, 8.0), -1, -5.0, 8.0,
+    checkStream(prng, ENTROPY_OF_DOUBLE, prng.doubles(-5.0, 8.0).boxed(), -1, -5.0, 8.0,
         true);
   }
 
   @Test
   public void testDoubles3() throws Exception {
     final BaseRandom prng = createRng();
-    checkStream(prng, ENTROPY_OF_DOUBLE, prng.doubles(20, -5.0, 8.0), 20, -5.0, 8.0,
+    checkStream(prng, ENTROPY_OF_DOUBLE, prng.doubles(20, -5.0, 8.0).boxed(), 20, -5.0, 8.0,
         true);
   }
 
   @SafeVarargs
-  private final <E> void testGeneratesAll(final Supplier<E> generator, final E... expected) {
+  private static <E> void testGeneratesAll(final Supplier<E> generator, final E... expected) {
     final E[] selected = Arrays.copyOf(expected, ELEMENTS); // Saves passing in a Class<E>
     for (int i = 0; i < ELEMENTS; i++) {
       selected[i] = generator.get();
