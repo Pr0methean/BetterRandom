@@ -9,7 +9,9 @@ package io.github.pr0methean.betterrandom.util;
 public interface Dumpable {
 
   /**
-   * Returns a {@link String} representing the state of this object for debugging purposes, including mutable state that {@link Object#toString()} usually doesn't return.
+   * Returns a {@link String} representing the state of this object for debugging purposes,
+   * including mutable state that {@link Object#toString()} usually doesn't return.
+   *
    * @return a representation of this object's state.
    */
   @EntryPoint
