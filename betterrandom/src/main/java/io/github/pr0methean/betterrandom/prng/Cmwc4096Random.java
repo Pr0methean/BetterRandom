@@ -103,9 +103,7 @@ public class Cmwc4096Random extends BaseRandom {
   @Override
   public synchronized void setSeed(@UnknownInitialization(Random.class)Cmwc4096Random this,
       final long seed) {
-    if (!superConstructorFinished) {
-      fallbackSetSeed();
-    }
+    fallbackSetSeed();
   }
 
   @EnsuresNonNull({"this.seed", "state", "entropyBits"})
