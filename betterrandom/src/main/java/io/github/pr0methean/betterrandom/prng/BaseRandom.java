@@ -14,9 +14,11 @@ import io.github.pr0methean.betterrandom.seed.SeedException;
 import io.github.pr0methean.betterrandom.seed.SeedGenerator;
 import io.github.pr0methean.betterrandom.util.BinaryUtils;
 import io.github.pr0methean.betterrandom.util.Dumpable;
-import io.github.pr0methean.betterrandom.util.IntSupplierSpliterator;
+import io.github.pr0methean.betterrandom.util.EntryPoint;
 import io.github.pr0methean.betterrandom.util.LogPreFormatter;
-import io.github.pr0methean.betterrandom.util.LongSupplierSpliterator;
+import io.github.pr0methean.betterrandom.util.spliterator.DoubleSupplierSpliterator;
+import io.github.pr0methean.betterrandom.util.spliterator.IntSupplierSpliterator;
+import io.github.pr0methean.betterrandom.util.spliterator.LongSupplierSpliterator;
 import java.io.IOException;
 import java.io.InvalidObjectException;
 import java.io.ObjectInputStream;
@@ -27,6 +29,7 @@ import java.util.concurrent.atomic.AtomicReference;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 import java.util.function.DoubleSupplier;
+import java.util.stream.DoubleStream;
 import java.util.stream.IntStream;
 import java.util.stream.LongStream;
 import java.util.stream.StreamSupport;
@@ -80,6 +83,15 @@ public abstract class BaseRandom extends Random implements ByteArrayReseedableRa
   protected transient boolean superConstructorFinished = false;
   /** Stores the entropy estimate backing {@link #getEntropyBits()}. */
   protected AtomicLong entropyBits;
+
+  /**
+   * Returns true if streams created by {@link #doubles(long, double, double)}, {@link #ints(long, int, int)},
+   * {@link #longs(long, long, long)} and their overloads should be parallel streams.
+   * @return true if this PRNG should create parallel streams; false otherwise.
+   */
+  protected boolean useParallelStreams() {
+    return true;
+  }
 
   /**
    * Creates a new RNG and seeds it using the default seeding strategy.
@@ -257,6 +269,84 @@ public abstract class BaseRandom extends Random implements ByteArrayReseedableRa
     return nextLongNoEntropyDebit();
   }
 
+  /**
+   * Returns a pseudorandom {@code long} value between zero (inclusive) and the specified bound
+   * (exclusive).
+   *
+   * @param bound the upper bound (exclusive).  Must be positive.
+   * @return a pseudorandom {@code long} value between zero (inclusive) and the bound (exclusive)
+   * @throws IllegalArgumentException if {@code bound} is not positive
+   */
+  public long nextLong(final long bound) {
+    return nextLong(0, bound);
+  }
+
+  /**
+   * Returns a pseudorandom {@code double} value between 0.0 (inclusive) and the specified bound
+   * (exclusive).
+   *
+   * @param bound the upper bound (exclusive).  Must be positive.
+   * @return a pseudorandom {@code double} value between zero (inclusive) and the bound (exclusive)
+   * @throws IllegalArgumentException if {@code bound} is not positive
+   */
+  @EntryPoint
+  public double nextDouble(final double bound) {
+    return nextDouble(0.0, bound);
+  }
+
+  /**
+   * Returns a pseudorandom {@code double} value between the specified origin (inclusive) and bound
+   * (exclusive).
+   *
+   * @param origin the least value returned
+   * @param bound the upper bound (exclusive)
+   * @return a pseudorandom {@code double} value between the origin (inclusive) and the bound
+   *     (exclusive)
+   * @throws IllegalArgumentException if {@code origin} is greater than or equal to {@code
+   *     bound}
+   */
+  public double nextDouble(final double origin, final double bound) {
+    return nextDouble() * (bound - origin) + origin;
+  }
+
+  /**
+   * Returns a stream producing an effectively unlimited number of pseudorandom doubles, each
+   * conforming to the given origin (inclusive) and bound (exclusive). This implementation uses
+   * {@link #nextDouble(double, double)} to generate these numbers.
+   */
+  @Override
+  public DoubleStream doubles(double randomNumberOrigin, double randomNumberBound) {
+    return doubles(Long.MAX_VALUE, randomNumberOrigin, randomNumberBound);
+  }
+
+  /**
+   * Returns a stream producing an effectively unlimited number of pseudorandom doubles, each
+   * between 0.0 (inclusive) and 1.0 (exclusive). This implementation uses
+   * {@link #nextDouble()} to generate these numbers.
+   */
+  @Override
+  public DoubleStream doubles() {
+    return doubles(Long.MAX_VALUE);
+  }
+
+  @Override
+  public DoubleStream doubles(long streamSize) {
+    return StreamSupport.doubleStream(new DoubleSupplierSpliterator(streamSize, this::nextDouble),
+        useParallelStreams());
+  }
+
+  /**
+   * Returns a stream producing the given number of pseudorandom doubles, each conforming to the
+   * given origin (inclusive) and bound (exclusive). This implementation uses {@link
+   * #nextDouble(double, double)} to generate these numbers.
+   */
+  @Override
+  public DoubleStream doubles(long streamSize, double randomNumberOrigin,
+      double randomNumberBound) {
+    return StreamSupport.doubleStream(new DoubleSupplierSpliterator(streamSize,
+        () -> nextDouble(randomNumberOrigin, randomNumberBound)), useParallelStreams());
+  }
+
   @Override
   public boolean nextBoolean() {
     recordEntropySpent(1);
@@ -316,7 +406,7 @@ public abstract class BaseRandom extends Random implements ByteArrayReseedableRa
   @Override
   public IntStream ints(final long streamSize) {
     return StreamSupport.intStream(new IntSupplierSpliterator(streamSize, this::nextInt),
-        true);
+        useParallelStreams());
   }
 
   @Override
@@ -334,7 +424,7 @@ public abstract class BaseRandom extends Random implements ByteArrayReseedableRa
       final int randomNumberBound) {
     return StreamSupport.intStream(new IntSupplierSpliterator(streamSize,
             () -> nextInt(randomNumberOrigin, randomNumberBound)),
-        true);
+        useParallelStreams());
   }
 
   /**
@@ -380,7 +470,7 @@ public abstract class BaseRandom extends Random implements ByteArrayReseedableRa
   @Override
   public LongStream longs(final long streamSize) {
     return StreamSupport.longStream(new LongSupplierSpliterator(streamSize, this::nextLong),
-        true);
+        useParallelStreams());
   }
 
   @Override
@@ -398,7 +488,7 @@ public abstract class BaseRandom extends Random implements ByteArrayReseedableRa
       final long randomNumberBound) {
     return StreamSupport.longStream(new LongSupplierSpliterator(streamSize,
             () -> nextLong(randomNumberOrigin, randomNumberBound)),
-        true);
+        useParallelStreams());
   }
 
   /**

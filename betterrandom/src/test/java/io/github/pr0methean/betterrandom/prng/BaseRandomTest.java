@@ -247,6 +247,13 @@ public abstract class BaseRandomTest {
   }
 
   @Test
+  public void testNextLong1() throws Exception {
+    final BaseRandom prng = createRng();
+    checkRangeAndEntropy(prng, 42,
+        () -> prng.nextLong( 1L << 42), 0, 1L << 42, true);
+  }
+
+  @Test
   public void testNextLong2() throws Exception {
     final BaseRandom prng = createRng();
     checkRangeAndEntropy(prng, 42,

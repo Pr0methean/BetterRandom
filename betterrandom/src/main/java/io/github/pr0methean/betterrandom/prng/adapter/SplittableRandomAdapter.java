@@ -7,10 +7,13 @@ import com.google.common.base.MoreObjects.ToStringHelper;
 import io.github.pr0methean.betterrandom.seed.SeedException;
 import io.github.pr0methean.betterrandom.seed.SeedGenerator;
 import io.github.pr0methean.betterrandom.util.BinaryUtils;
+import io.github.pr0methean.betterrandom.util.spliterator.DoubleSupplierSpliterator;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.util.SplittableRandom;
 import java.util.concurrent.atomic.AtomicLong;
+import java.util.stream.DoubleStream;
+import java.util.stream.StreamSupport;
 import org.checkerframework.checker.initialization.qual.UnknownInitialization;
 import org.checkerframework.checker.nullness.qual.EnsuresNonNull;
 import org.checkerframework.checker.nullness.qual.RequiresNonNull;
@@ -148,4 +151,6 @@ public class SplittableRandomAdapter extends DirectSplittableRandomAdapter {
     }
     setSeed(convertBytesToLong(seed));
   }
+
+
 }
