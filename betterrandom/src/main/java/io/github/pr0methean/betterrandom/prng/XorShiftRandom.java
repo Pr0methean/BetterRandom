@@ -97,9 +97,7 @@ public class XorShiftRandom extends BaseRandom {
   @Override
   public synchronized void setSeed(@UnknownInitialization(Random.class)XorShiftRandom this,
       final long seed) {
-    if (!superConstructorFinished) {
-      fallbackSetSeed();
-    }
+    fallbackSetSeed();
   }
 
   @Override

@@ -112,9 +112,7 @@ public class MersenneTwisterRandom extends BaseRandom {
   @Override
   public synchronized void setSeed(@UnknownInitialization(Random.class)MersenneTwisterRandom this,
       final long seed) {
-    if (!superConstructorFinished) {
-      fallbackSetSeed();
-    }
+    fallbackSetSeed();
   }
 
   @Override
