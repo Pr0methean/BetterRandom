@@ -23,11 +23,13 @@ public class IntSupplierSpliterator implements OfInt {
    * @param supplier The supplier to wrap.
    */
   public IntSupplierSpliterator(final long size, final IntSupplier supplier) {
-    this(new AtomicLong(size), new AtomicLong(Long.SIZE - Long.numberOfLeadingZeros(size)), supplier);
+    this(new AtomicLong(size), new AtomicLong(Long.SIZE - Long.numberOfLeadingZeros(size)),
+        supplier);
   }
 
   /** Used to share the AtomicLong between partitions. */
-  private IntSupplierSpliterator(final AtomicLong remaining, final AtomicLong splitsRemaining, final IntSupplier supplier) {
+  private IntSupplierSpliterator(final AtomicLong remaining, final AtomicLong splitsRemaining,
+      final IntSupplier supplier) {
     this.remaining = remaining;
     this.splitsRemaining = splitsRemaining;
     this.supplier = supplier;
