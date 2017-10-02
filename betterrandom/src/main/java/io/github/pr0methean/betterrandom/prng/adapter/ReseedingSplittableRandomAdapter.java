@@ -117,7 +117,7 @@ public class ReseedingSplittableRandomAdapter extends BaseSplittableRandomAdapte
         }
       });
     }
-    seederThread.set(RandomSeederThread.getInstance(seedGenerator));
+    seederThread.set(RandomSeederThread.getInstance(castNonNull(seedGenerator)));
   }
 
   @Override
