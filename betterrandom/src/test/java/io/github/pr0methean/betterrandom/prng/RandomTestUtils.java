@@ -28,6 +28,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.function.Supplier;
 import java.util.stream.BaseStream;
+import java.util.stream.Stream;
 import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
 import org.testng.Reporter;
 
@@ -93,33 +94,24 @@ public enum RandomTestUtils {
   public static void checkStream(
       final BaseRandom prng,
       final long maxEntropySpentPerNumber,
-      final BaseStream<? extends Number, ?> stream,
+      final Stream<? extends Number> stream,
       final long expectedCount,
       final double origin,
       final double bound,
       final boolean checkEntropyCount) {
     final AtomicLong count = new AtomicLong(0);
     final AtomicLong entropy = new AtomicLong(prng.getEntropyBits());
-    final AtomicBoolean finished = new AtomicBoolean(false);
-    for (Spliterator<? extends Number> streamIter = stream.spliterator();
-        (streamIter != null) && !(finished.get());
-        streamIter = streamIter.trySplit()) {
-      streamIter.tryAdvance((number) -> {
-        long updatedCount = count.incrementAndGet();
-        if (expectedCount < 0) {
-          if (updatedCount > 20) {
-            break;
-          }
-        } else {
-          assertTrue(updatedCount <= expectedCount);
-        }
+    stream.limit((expectedCount < 0) ? 20 : (expectedCount + 1)).forEach((number) -> {
+        count.incrementAndGet();
         assertGreaterOrEqual(origin, number.doubleValue());
         assertLess(bound, number.doubleValue());
         if (checkEntropyCount) {
           long newEntropy = prng.getEntropyBits();
           assertGreaterOrEqual(entropy.getAndSet(newEntropy) - maxEntropySpentPerNumber, newEntropy);
         }
-      });
+    });
+    if (expectedCount >= 0) {
+      assertEquals(count, expectedCount);
     }
   }
 
