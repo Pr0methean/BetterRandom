@@ -399,6 +399,10 @@ public abstract class BaseRandom extends Random implements ByteArrayReseedableRa
       throw new IllegalArgumentException(String.format("Bound %d must be greater than origin %d",
           bound, origin));
     }
+    if ((bound - origin) <= Integer.MAX_VALUE) {
+      // calling nextInt instead will save a lot of rejections
+      return nextInt((int) (bound - origin)) + origin;
+    }
     long output;
     do {
       output = nextLongNoEntropyDebit();

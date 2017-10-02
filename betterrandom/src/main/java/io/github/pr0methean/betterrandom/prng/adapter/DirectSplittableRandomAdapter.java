@@ -10,9 +10,11 @@ import org.checkerframework.checker.initialization.qual.UnknownInitialization;
 import org.checkerframework.checker.nullness.qual.EnsuresNonNull;
 
 /**
- * <p>Abstract DirectSplittableRandomAdapter class.</p>
+ * {@link BaseSplittableRandomAdapter} where {@link #setSeed(long)} and {@link #setSeed(byte[])}
+ * replace the {@link SplittableRandom} that would be used in the same calling context to generate
+ * the random numbers.
  *
- * @author ubuntu
+ * @author Chris Hennick
  */
 public abstract class DirectSplittableRandomAdapter extends BaseSplittableRandomAdapter {
 
@@ -50,11 +52,6 @@ public abstract class DirectSplittableRandomAdapter extends BaseSplittableRandom
     }
     super.setSeedInternal(seed);
     underlying = new SplittableRandom(BinaryUtils.convertBytesToLong(seed));
-  }
-
-  @Override
-  public boolean preferSeedWithLong() {
-    return true;
   }
 
   @Override
