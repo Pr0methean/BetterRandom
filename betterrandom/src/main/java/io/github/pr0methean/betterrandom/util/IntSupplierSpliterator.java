@@ -25,9 +25,10 @@ public class IntSupplierSpliterator implements OfInt {
     this.supplier = supplier;
   }
 
+  @SuppressWarnings("override.return.invalid") // actually is nullable in the interface
   @Override
   public @Nullable OfInt trySplit() {
-    return remaining.get() <= 0 ? null : new IntSupplierSpliterator(remaining, supplier);
+    return (remaining.get() <= 0) ? null : new IntSupplierSpliterator(remaining, supplier);
   }
 
   @Override

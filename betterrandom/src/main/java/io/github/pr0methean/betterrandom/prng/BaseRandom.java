@@ -427,7 +427,7 @@ public abstract class BaseRandom extends Random implements ByteArrayReseedableRa
     try {
       return addSubSubclassFields(MoreObjects.toStringHelper(this)
           .add("seed", BinaryUtils.convertBytesToHexString(seed))
-          .add("getEntropyBits", entropyBits.get())
+          .add("entropyBits", entropyBits.get())
           .add("seederThread", seederThread))
           .toString();
     } finally {
@@ -456,7 +456,7 @@ public abstract class BaseRandom extends Random implements ByteArrayReseedableRa
     }
   }
 
-  @EnsuresNonNull({"this.seed", "getEntropyBits"})
+  @EnsuresNonNull({"this.seed", "entropyBits"})
   @Override
   public synchronized void setSeed(@UnknownInitialization(Random.class)BaseRandom this,
       final long seed) {
@@ -510,7 +510,7 @@ public abstract class BaseRandom extends Random implements ByteArrayReseedableRa
    *
    * @param seed The new seed.
    */
-  @EnsuresNonNull({"this.seed", "getEntropyBits"})
+  @EnsuresNonNull({"this.seed", "entropyBits"})
   protected void setSeedInternal(@UnknownInitialization(Random.class)BaseRandom this,
       final byte[] seed) {
     if (this.seed == null) {
@@ -536,7 +536,7 @@ public abstract class BaseRandom extends Random implements ByteArrayReseedableRa
     superConstructorFinished = true;
   }
 
-  @EnsuresNonNull({"lock", "seed", "getEntropyBits"})
+  @EnsuresNonNull({"lock", "seed", "entropyBits"})
   private void readObject(@UnderInitialization(BaseRandom.class)BaseRandom this,
       final ObjectInputStream in) throws IOException, ClassNotFoundException {
     in.defaultReadObject();
@@ -575,7 +575,7 @@ public abstract class BaseRandom extends Random implements ByteArrayReseedableRa
    *
    * @throws InvalidObjectException if the {@link DefaultSeedGenerator} fails.
    */
-  @EnsuresNonNull({"lock", "seed", "getEntropyBits"})
+  @EnsuresNonNull({"lock", "seed", "entropyBits"})
   @SuppressWarnings("OverriddenMethodCallDuringObjectConstruction")
   private void readObjectNoData() throws InvalidObjectException {
     LOG.warn("BaseRandom.readObjectNoData() invoked; using DefaultSeedGenerator");
