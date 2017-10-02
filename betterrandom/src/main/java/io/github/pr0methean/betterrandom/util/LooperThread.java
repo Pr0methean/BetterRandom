@@ -210,7 +210,7 @@ public class LooperThread extends Thread implements Serializable, Cloneable {
    *     subclass fields copied from this one or overrides {@link #readResolve} to populate them.
    * @throws InvalidObjectException if this LooperThread's serial form is invalid.
    */
-  @RequiresNonNull({"group", "target", "name"})
+  @RequiresNonNull({"group", "name"})
   protected LooperThread readResolveConstructorWrapper()
       throws InvalidObjectException {
     return new LooperThread(group, target, name, stackSize);
