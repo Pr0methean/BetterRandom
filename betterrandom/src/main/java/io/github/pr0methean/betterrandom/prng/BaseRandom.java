@@ -26,7 +26,6 @@ import java.util.concurrent.atomic.AtomicReference;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 import java.util.function.DoubleSupplier;
-import java.util.stream.DoubleStream;
 import java.util.stream.IntStream;
 import java.util.stream.LongStream;
 import java.util.stream.StreamSupport;
@@ -133,8 +132,8 @@ public abstract class BaseRandom extends Random implements ByteArrayReseedableRa
 
   /**
    * Calculates the entropy in bits, rounded up, of a random {@code int} between {@code origin}
-   *     (inclusive) and {@code bound} (exclusive).
-   * 
+   * (inclusive) and {@code bound} (exclusive).
+   *
    * @param origin the minimum, inclusive.
    * @param bound the maximum, exclusive.
    * @return the entropy.
@@ -145,8 +144,8 @@ public abstract class BaseRandom extends Random implements ByteArrayReseedableRa
 
   /**
    * Calculates the entropy in bits, rounded up, of a random {@code long} between {@code origin}
-   *     (inclusive) and {@code bound} (exclusive).
-   * 
+   * (inclusive) and {@code bound} (exclusive).
+   *
    * @param origin the minimum, inclusive.
    * @param bound the maximum, exclusive.
    * @return the entropy.
@@ -446,6 +445,17 @@ public abstract class BaseRandom extends Random implements ByteArrayReseedableRa
     }
   }
 
+  @EnsuresNonNull("this.seed")
+  @Override
+  public void setSeed(final byte[] seed) {
+    lock.lock();
+    try {
+      setSeedInternal(seed);
+    } finally {
+      lock.unlock();
+    }
+  }
+
   @EnsuresNonNull({"this.seed", "getEntropyBits"})
   @Override
   public synchronized void setSeed(@UnknownInitialization(Random.class)BaseRandom this,
@@ -455,17 +465,6 @@ public abstract class BaseRandom extends Random implements ByteArrayReseedableRa
       setSeed(seedBytes);
     } else {
       setSeedInternal(seedBytes);
-    }
-  }
-
-  @EnsuresNonNull("this.seed")
-  @Override
-  public void setSeed(final byte[] seed) {
-    lock.lock();
-    try {
-      setSeedInternal(seed);
-    } finally {
-      lock.unlock();
     }
   }
 
@@ -480,8 +479,8 @@ public abstract class BaseRandom extends Random implements ByteArrayReseedableRa
 
   /**
    * Registers this PRNG with the given {@link RandomSeederThread} to schedule reseeding when we run
-   * out of entropy. Unregisters this PRNG with the previous {@link RandomSeederThread} if it had
-   * a different one.
+   * out of entropy. Unregisters this PRNG with the previous {@link RandomSeederThread} if it had a
+   * different one.
    *
    * @param thread a {@link RandomSeederThread} that will be used to reseed this PRNG.
    */

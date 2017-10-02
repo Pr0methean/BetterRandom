@@ -30,8 +30,7 @@ import org.checkerframework.checker.nullness.qual.RequiresNonNull;
 
 /**
  * Java port of the <a href="http://home.southernct.edu/~pasqualonia1/ca/report.html"
- * target="_top">cellular automaton pseudorandom number generator</a> developed by Tony
- * Pasqualoni.
+ * target="_top">cellular automaton pseudorandom number generator</a> developed by Tony Pasqualoni.
  *
  * @author Tony Pasqualoni (original C version)
  * @author Daniel Dyer (Java port)
