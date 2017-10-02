@@ -23,11 +23,13 @@ public class LongSupplierSpliterator implements OfLong {
    * @param supplier The supplier to wrap.
    */
   public LongSupplierSpliterator(final long size, final LongSupplier supplier) {
-    this(new AtomicLong(size), new AtomicLong(Long.SIZE - Long.numberOfLeadingZeros(size)), supplier);
+    this(new AtomicLong(size), new AtomicLong(Long.SIZE - Long.numberOfLeadingZeros(size)),
+        supplier);
   }
 
   /** Used to share the AtomicLong between partitions. */
-  private LongSupplierSpliterator(final AtomicLong remaining, final AtomicLong splitsRemaining, final LongSupplier supplier) {
+  private LongSupplierSpliterator(final AtomicLong remaining, final AtomicLong splitsRemaining,
+      final LongSupplier supplier) {
     this.remaining = remaining;
     this.splitsRemaining = splitsRemaining;
     this.supplier = supplier;

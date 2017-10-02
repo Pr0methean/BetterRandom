@@ -20,16 +20,10 @@ import static org.testng.Assert.assertNotSame;
 import static org.testng.Assert.assertTrue;
 
 import io.github.pr0methean.betterrandom.util.CloneViaSerialization;
-import io.github.pr0methean.betterrandom.util.LogPreFormatter;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.Random;
-import java.util.Spliterator;
-import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.function.Supplier;
-import java.util.logging.Level;
-import java.util.stream.BaseStream;
 import java.util.stream.Stream;
 import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
 import org.testng.Reporter;
@@ -42,7 +36,6 @@ import org.testng.Reporter;
 public enum RandomTestUtils {
   ;
 
-  private static final LogPreFormatter LOG = new LogPreFormatter(RandomTestUtils.class);
   private static final int INSTANCES_TO_HASH = 25;
   private static final int EXPECTED_UNIQUE_HASHES = (int) (0.8 * INSTANCES_TO_HASH);
 
@@ -102,12 +95,9 @@ public enum RandomTestUtils {
       final double origin,
       final double bound,
       final boolean checkEntropyCount) {
-    LOG.info("Starting checkStream");
     final AtomicLong count = new AtomicLong(0);
     final AtomicLong entropy = new AtomicLong(prng.getEntropyBits());
     stream.limit((expectedCount < 0) ? 20 : (expectedCount + 1)).forEach((number) -> {
-      LOG.info("Iterating over another stream element");
-      LOG.logStackTrace(Level.INFO, Thread.currentThread().getStackTrace());
       count.incrementAndGet();
       assertGreaterOrEqual(origin, number.doubleValue());
       assertLess(bound, number.doubleValue());
@@ -123,7 +113,6 @@ public enum RandomTestUtils {
     if (expectedCount >= 0) {
       assertEquals(count.get(), expectedCount);
     }
-    LOG.info("checkStream finished");
   }
 
   private static void assertGreaterOrEqual(final long expected, final long actual) {

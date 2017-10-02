@@ -5,7 +5,6 @@ import java.util.Spliterator.OfDouble;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.function.DoubleConsumer;
 import java.util.function.DoubleSupplier;
-import java.util.logging.Level;
 import org.checkerframework.checker.nullness.qual.Nullable;
 
 /**
@@ -13,6 +12,7 @@ import org.checkerframework.checker.nullness.qual.Nullable;
  * and has a preset size.
  */
 public class DoubleSupplierSpliterator implements OfDouble {
+
   private static final LogPreFormatter LOG = new LogPreFormatter(DoubleSupplierSpliterator.class);
   private final AtomicLong remaining;
   private final AtomicLong splitsRemaining;
@@ -25,7 +25,8 @@ public class DoubleSupplierSpliterator implements OfDouble {
    * @param supplier The supplier to wrap.
    */
   public DoubleSupplierSpliterator(final long size, final DoubleSupplier supplier) {
-    this(new AtomicLong(size), new AtomicLong(Long.SIZE - Long.numberOfLeadingZeros(size)), supplier);
+    this(new AtomicLong(size), new AtomicLong(Long.SIZE - Long.numberOfLeadingZeros(size)),
+        supplier);
   }
 
   /** Used to share the AtomicLongs between partitions. */
