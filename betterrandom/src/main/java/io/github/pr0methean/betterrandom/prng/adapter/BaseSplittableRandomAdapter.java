@@ -2,12 +2,15 @@ package io.github.pr0methean.betterrandom.prng.adapter;
 
 import io.github.pr0methean.betterrandom.prng.BaseRandom;
 import io.github.pr0methean.betterrandom.util.EntryPoint;
+import io.github.pr0methean.betterrandom.util.spliterator.DoubleSupplierSpliterator;
 import java.util.Random;
 import java.util.SplittableRandom;
+import java.util.stream.DoubleStream;
+import java.util.stream.StreamSupport;
 import org.checkerframework.checker.initialization.qual.UnknownInitialization;
 
 /**
- * Abstract class for implementations of {@link Random} that wrap a {@link SplittableRandom}.
+ * Abstract class for implementations of {@link BaseRandom} that wrap a {@link SplittableRandom}.
  *
  * @author Chris Hennick
  */
@@ -47,6 +50,13 @@ public abstract class BaseSplittableRandomAdapter extends BaseRandom {
    * @return a {@link SplittableRandom}.
    */
   protected abstract SplittableRandom getSplittableRandom();
+
+  @Override
+  public double nextDouble(double origin, double bound) {
+    final double out = getSplittableRandom().nextDouble(origin, bound);
+    recordEntropySpent(ENTROPY_OF_DOUBLE);
+    return out;
+  }
 
   @Override
   protected int next(final int bits) {
@@ -103,15 +113,7 @@ public abstract class BaseSplittableRandomAdapter extends BaseRandom {
     return getSplittableRandom().nextLong();
   }
 
-  /**
-   * Returns a pseudorandom {@code long} value between zero (inclusive) and the specified bound
-   * (exclusive).
-   *
-   * @param bound the upper bound (exclusive).  Must be positive.
-   * @return a pseudorandom {@code long} value between zero (inclusive) and the bound (exclusive)
-   * @throws IllegalArgumentException if {@code bound} is not positive
-   */
-  @EntryPoint
+  @Override
   public long nextLong(final long bound) {
     final long out = getSplittableRandom().nextLong(bound);
     recordEntropySpent(entropyOfLong(0, bound));
@@ -139,39 +141,6 @@ public abstract class BaseSplittableRandomAdapter extends BaseRandom {
     recordEntropySpent(ENTROPY_OF_DOUBLE);
 
     return internalNextGaussian(() -> getSplittableRandom().nextDouble());
-  }
-
-  /**
-   * Returns a pseudorandom {@code double} value between 0.0 (inclusive) and the specified bound
-   * (exclusive).
-   *
-   * @param bound the upper bound (exclusive).  Must be positive.
-   * @return a pseudorandom {@code double} value between zero (inclusive) and the bound (exclusive)
-   * @throws IllegalArgumentException if {@code bound} is not positive
-   */
-  @EntryPoint
-  public double nextDouble(final double bound) {
-    final double out = getSplittableRandom().nextDouble(bound);
-    recordEntropySpent(ENTROPY_OF_DOUBLE);
-    return out;
-  }
-
-  /**
-   * Returns a pseudorandom {@code double} value between the specified origin (inclusive) and bound
-   * (exclusive).
-   *
-   * @param origin the least value returned
-   * @param bound the upper bound (exclusive)
-   * @return a pseudorandom {@code double} value between the origin (inclusive) and the bound
-   *     (exclusive)
-   * @throws IllegalArgumentException if {@code origin} is greater than or equal to {@code
-   *     bound}
-   */
-  @EntryPoint
-  public double nextDouble(final double origin, final double bound) {
-    final double out = getSplittableRandom().nextDouble(origin, bound);
-    recordEntropySpent(ENTROPY_OF_DOUBLE);
-    return out;
   }
 
   @Override
