@@ -32,13 +32,13 @@
       <file leaf-file-name="BaseRandom.java" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/betterrandom/src/main/java/io/github/pr0methean/betterrandom/prng/BaseRandom.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="230">
-              <caret line="410" column="25" lean-forward="false" selection-start-line="410" selection-start-column="25" selection-end-line="410" selection-end-column="25" />
+            <state relative-caret-position="250">
+              <caret line="412" column="0" lean-forward="false" selection-start-line="412" selection-start-column="0" selection-end-line="412" selection-end-column="0" />
               <folding>
-                <element signature="e#15590#15591#0" expanded="true" />
-                <element signature="e#15623#15624#0" expanded="true" />
-                <element signature="e#18070#18071#0" expanded="true" />
-                <element signature="e#18110#18111#0" expanded="true" />
+                <element signature="e#15661#15662#0" expanded="true" />
+                <element signature="e#15694#15695#0" expanded="true" />
+                <element signature="e#18141#18142#0" expanded="true" />
+                <element signature="e#18181#18182#0" expanded="true" />
               </folding>
             </state>
           </provider>
@@ -254,7 +254,7 @@
       </MavenImportingSettings>
     </option>
   </component>
-  <component name="ProjectFrameBounds" extendedState="7">
+  <component name="ProjectFrameBounds" extendedState="6">
     <option name="x" value="-9" />
     <option name="width" value="1280" />
     <option name="height" value="720" />
@@ -1081,7 +1081,7 @@
     </history-entry>
   </component>
   <component name="ToolWindowManager">
-    <frame x="-9" y="-9" width="1384" height="738" extended-state="7" />
+    <frame x="-9" y="-9" width="1384" height="738" extended-state="6" />
     <editor active="true" />
     <layout>
       <window_info id="Palette" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
@@ -1615,13 +1615,13 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/betterrandom/src/main/java/io/github/pr0methean/betterrandom/prng/BaseRandom.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="230">
-          <caret line="410" column="25" lean-forward="false" selection-start-line="410" selection-start-column="25" selection-end-line="410" selection-end-column="25" />
+        <state relative-caret-position="250">
+          <caret line="412" column="0" lean-forward="false" selection-start-line="412" selection-start-column="0" selection-end-line="412" selection-end-column="0" />
           <folding>
-            <element signature="e#15590#15591#0" expanded="true" />
-            <element signature="e#15623#15624#0" expanded="true" />
-            <element signature="e#18070#18071#0" expanded="true" />
-            <element signature="e#18110#18111#0" expanded="true" />
+            <element signature="e#15661#15662#0" expanded="true" />
+            <element signature="e#15694#15695#0" expanded="true" />
+            <element signature="e#18141#18142#0" expanded="true" />
+            <element signature="e#18181#18182#0" expanded="true" />
           </folding>
         </state>
       </provider>

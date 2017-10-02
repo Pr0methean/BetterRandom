@@ -1,5 +1,6 @@
 package io.github.pr0methean.betterrandom.prng;
 
+import static java.lang.Integer.toUnsignedLong;
 import static org.checkerframework.checker.nullness.NullnessUtil.castNonNull;
 
 import com.google.common.base.MoreObjects;
@@ -408,7 +409,7 @@ public abstract class BaseRandom extends Random implements ByteArrayReseedableRa
         int bits = entropyOfLong(origin, bound);
         output = origin;
         output += (bits > 32)
-            ? (next(32) | (((long) next(bits - 32)) << 32))
+            ? (toUnsignedLong(next(32)) | (toUnsignedLong(next(bits - 32)) << 32))
             : next(bits);
       }
     } while ((output < origin) || (output >= bound));
