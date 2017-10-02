@@ -324,6 +324,11 @@ public abstract class BaseRandom extends Random implements ByteArrayReseedableRa
     return ints(Long.MAX_VALUE);
   }
 
+  /**
+   * Returns a stream producing the given number of pseudorandom ints, each conforming to the given
+   * origin (inclusive) and bound (exclusive). This implementation uses {@link #nextInt(int, int)}
+   * to generate these numbers.
+   */
   @Override
   public IntStream ints(final long streamSize, final int randomNumberOrigin,
       final int randomNumberBound) {
@@ -363,9 +368,9 @@ public abstract class BaseRandom extends Random implements ByteArrayReseedableRa
   }
 
   /**
-   * Returns a stream producing an effectively unlimited number of pseudorandom longs, each
+   * Returns a stream producing an effectively unlimited number of pseudorandom ints, each
    * conforming to the given origin (inclusive) and bound (exclusive). This implementation uses
-   * {@link #nextLong(long, long)} to generate these numbers.
+   * {@link #nextInt(int, int)} to generate these numbers.
    */
   @Override
   public IntStream ints(final int randomNumberOrigin, final int randomNumberBound) {
@@ -438,6 +443,11 @@ public abstract class BaseRandom extends Random implements ByteArrayReseedableRa
     return super.nextLong();
   }
 
+  /**
+   * Returns a stream producing an effectively unlimited number of pseudorandom longs, each
+   * conforming to the given origin (inclusive) and bound (exclusive). This implementation uses
+   * {@link #nextLong(long, long)} to generate these numbers.
+   */
   @Override
   public LongStream longs(final long randomNumberOrigin, final long randomNumberBound) {
     return longs(Long.MAX_VALUE, randomNumberOrigin, randomNumberBound);
