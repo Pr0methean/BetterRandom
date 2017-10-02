@@ -15,6 +15,7 @@ import org.checkerframework.checker.nullness.qual.Nullable;
 public class DoubleSupplierSpliterator implements OfDouble {
   private static final LogPreFormatter LOG = new LogPreFormatter(DoubleSupplierSpliterator.class);
   private final AtomicLong remaining;
+  private final AtomicLong splitsRemaining;
   private final DoubleSupplier supplier;
 
   /**
@@ -24,20 +25,24 @@ public class DoubleSupplierSpliterator implements OfDouble {
    * @param supplier The supplier to wrap.
    */
   public DoubleSupplierSpliterator(final long size, final DoubleSupplier supplier) {
-    this(new AtomicLong(size), supplier);
+    this(new AtomicLong(size), new AtomicLong(Long.SIZE - Long.numberOfLeadingZeros(size)), supplier);
   }
 
-  /** Used to share the AtomicLong between partitions. */
-  private DoubleSupplierSpliterator(final AtomicLong remaining, final DoubleSupplier supplier) {
+  /** Used to share the AtomicLongs between partitions. */
+  private DoubleSupplierSpliterator(final AtomicLong remaining, final AtomicLong splitsRemaining,
+      final DoubleSupplier supplier) {
     this.remaining = remaining;
+    this.splitsRemaining = splitsRemaining;
     this.supplier = supplier;
   }
 
   @SuppressWarnings("override.return.invalid") // actually is nullable in the interface
   @Override
   public @Nullable OfDouble trySplit() {
-    LOG.logStackTrace(Level.INFO, Thread.currentThread().getStackTrace());
-    return (remaining.get() <= 0) ? null : new DoubleSupplierSpliterator(remaining, supplier);
+    //LOG.logStackTrace(Level.INFO, Thread.currentThread().getStackTrace());
+    return ((splitsRemaining.getAndDecrement() <= 0) || (remaining.get() <= 0))
+        ? null
+        : new DoubleSupplierSpliterator(remaining, splitsRemaining, supplier);
   }
 
   @Override
@@ -52,7 +57,7 @@ public class DoubleSupplierSpliterator implements OfDouble {
 
   @Override
   public boolean tryAdvance(final DoubleConsumer action) {
-    LOG.logStackTrace(Level.INFO, Thread.currentThread().getStackTrace());
+    //LOG.logStackTrace(Level.INFO, Thread.currentThread().getStackTrace());
     if (remaining.decrementAndGet() >= 0) {
       action.accept(supplier.getAsDouble());
       return true;
