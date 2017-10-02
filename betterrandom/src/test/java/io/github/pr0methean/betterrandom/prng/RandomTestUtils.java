@@ -111,13 +111,17 @@ public enum RandomTestUtils {
       count.incrementAndGet();
       assertGreaterOrEqual(origin, number.doubleValue());
       assertLess(bound, number.doubleValue());
-      if (checkEntropyCount) {
+      if (checkEntropyCount && !(stream.isParallel())) {
         long newEntropy = prng.getEntropyBits();
         assertGreaterOrEqual(entropy.getAndSet(newEntropy) - maxEntropySpentPerNumber, newEntropy);
       }
     });
+    if (checkEntropyCount && stream.isParallel()) {
+      assertGreaterOrEqual(entropy.get() - (maxEntropySpentPerNumber * count.get()),
+          prng.getEntropyBits());
+    }
     if (expectedCount >= 0) {
-      assertEquals(count, expectedCount);
+      assertEquals(count.get(), expectedCount);
     }
     LOG.info("checkStream finished");
   }
