@@ -102,7 +102,7 @@ public final class RandomSeederThread extends LooperThread {
   }
 
   @EnsuresNonNull(
-      {"prngs", "longSeedBuffer", "longSeedArray", "seedArrays", "waitWhileEmpty",
+      {"prngs", "seedArrays", "waitWhileEmpty",
           "waitForEntropyDrain", "prngsThisIteration"})
   @RequiresNonNull("lock")
   private void initTransientFields(@UnderInitialization RandomSeederThread this) {
