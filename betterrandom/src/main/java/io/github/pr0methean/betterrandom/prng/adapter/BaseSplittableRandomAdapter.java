@@ -1,12 +1,8 @@
 package io.github.pr0methean.betterrandom.prng.adapter;
 
 import io.github.pr0methean.betterrandom.prng.BaseRandom;
-import io.github.pr0methean.betterrandom.util.EntryPoint;
-import io.github.pr0methean.betterrandom.util.spliterator.DoubleSupplierSpliterator;
 import java.util.Random;
 import java.util.SplittableRandom;
-import java.util.stream.DoubleStream;
-import java.util.stream.StreamSupport;
 import org.checkerframework.checker.initialization.qual.UnknownInitialization;
 
 /**

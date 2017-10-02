@@ -3,12 +3,9 @@ package io.github.pr0methean.betterrandom.prng.adapter;
 import com.google.common.base.MoreObjects.ToStringHelper;
 import io.github.pr0methean.betterrandom.seed.SeedException;
 import io.github.pr0methean.betterrandom.seed.SeedGenerator;
-import io.github.pr0methean.betterrandom.util.spliterator.DoubleSupplierSpliterator;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.util.SplittableRandom;
-import java.util.stream.DoubleStream;
-import java.util.stream.StreamSupport;
 
 /**
  * Simple, non-thread-safe implementation of {@link io.github.pr0methean.betterrandom.prng.BaseRandom}
@@ -18,14 +15,8 @@ import java.util.stream.StreamSupport;
  */
 public class SingleThreadSplittableRandomAdapter extends DirectSplittableRandomAdapter {
 
-  @Override
-  protected boolean useParallelStreams() {
-    return false;
-  }
-
   private static final long serialVersionUID = -1125374167384636394L;
   private boolean deserializedAndNotUsedSince = false;
-
   /**
    * Use the provided seed generation strategy to create the seed for the underlying {@link
    * SplittableRandom}.
@@ -55,6 +46,11 @@ public class SingleThreadSplittableRandomAdapter extends DirectSplittableRandomA
    */
   public SingleThreadSplittableRandomAdapter(final long seed) {
     super(seed);
+  }
+
+  @Override
+  protected boolean useParallelStreams() {
+    return false;
   }
 
   @Override
