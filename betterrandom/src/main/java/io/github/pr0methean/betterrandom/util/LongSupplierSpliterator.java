@@ -25,9 +25,10 @@ public class LongSupplierSpliterator implements OfLong {
     this.supplier = supplier;
   }
 
+  @SuppressWarnings("override.return.invalid") // actually is nullable in the interface
   @Override
   public @Nullable OfLong trySplit() {
-    return remaining.get() <= 0 ? null : new LongSupplierSpliterator(remaining, supplier);
+    return (remaining.get() <= 0) ? null : new LongSupplierSpliterator(remaining, supplier);
   }
 
   @Override

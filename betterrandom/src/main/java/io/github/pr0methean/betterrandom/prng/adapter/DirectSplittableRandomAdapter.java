@@ -40,7 +40,7 @@ public abstract class DirectSplittableRandomAdapter extends BaseSplittableRandom
     setSeedInternal(seed);
   }
 
-  @EnsuresNonNull({"this.seed", "underlying", "getEntropyBits"})
+  @EnsuresNonNull({"this.seed", "underlying", "entropyBits"})
   @Override
   protected void setSeedInternal(
       @UnknownInitialization(Random.class)DirectSplittableRandomAdapter this,

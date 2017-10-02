@@ -305,7 +305,7 @@ public class AesCounterRandom extends BaseRandom {
     }
   }
 
-  @EnsuresNonNull({"counter", "this.seed", "getEntropyBits"})
+  @EnsuresNonNull({"counter", "this.seed", "entropyBits"})
   @Override
   protected void setSeedInternal(@UnknownInitialization(Random.class)AesCounterRandom this,
       final byte[] seed) {
