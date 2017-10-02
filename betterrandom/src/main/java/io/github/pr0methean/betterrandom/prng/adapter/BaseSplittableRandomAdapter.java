@@ -13,18 +13,22 @@ import org.checkerframework.checker.initialization.qual.UnknownInitialization;
  */
 public abstract class BaseSplittableRandomAdapter extends BaseRandom {
 
-  protected static final int SEED_LENGTH_BYTES = 8;
   private static final long serialVersionUID = 4273652147052638879L;
 
   /**
-   * <p>Constructor for BaseSplittableRandomAdapter.</p>
+   * Constructs an instance with the given seed.
    *
-   * @param seed an array of byte.
+   * @param seed The seed.
    */
   public BaseSplittableRandomAdapter(final byte[] seed) {
     super(seed);
   }
 
+  /**
+   * Constructs an instance with the given seed.
+   *
+   * @param seed The seed.
+   */
   public BaseSplittableRandomAdapter(final long seed) {
     super(seed);
   }
@@ -36,9 +40,11 @@ public abstract class BaseSplittableRandomAdapter extends BaseRandom {
   }
 
   /**
-   * <p>getSplittableRandom.</p>
+   * Returns the {@link SplittableRandom} that is to be used to generate random numbers for the
+   * current calling context. Note that {@link SplittableRandom} instances aren't thread-safe.
+   * Called by all the {@code next*} methods.
    *
-   * @return a {@link SplittableRandom} object.
+   * @return a {@link SplittableRandom}.
    */
   protected abstract SplittableRandom getSplittableRandom();
 
@@ -185,6 +191,6 @@ public abstract class BaseSplittableRandomAdapter extends BaseRandom {
 
   @Override
   public int getNewSeedLength(@UnknownInitialization BaseSplittableRandomAdapter this) {
-    return SEED_LENGTH_BYTES;
+    return Long.BYTES;
   }
 }
