@@ -24,6 +24,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Random;
 import java.util.Spliterator;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.function.Supplier;
 import java.util.stream.BaseStream;
@@ -97,18 +98,21 @@ public enum RandomTestUtils {
       final double origin,
       final double bound,
       final boolean checkEntropyCount) {
-    long count = 0;
-    AtomicLong entropy = new AtomicLong(prng.getEntropyBits());
-    for (Spliterator<? extends Number> streamIter = stream.spliterator(); ; streamIter = streamIter.trySplit()) {
-      count++;
-      if (expectedCount < 0) {
-        if (count > 20) {
-          break;
-        }
-      } else {
-        assertTrue(count <= expectedCount);
-      }
+    final AtomicLong count = new AtomicLong(0);
+    final AtomicLong entropy = new AtomicLong(prng.getEntropyBits());
+    final AtomicBoolean finished = new AtomicBoolean(false);
+    for (Spliterator<? extends Number> streamIter = stream.spliterator();
+        (streamIter != null) && !(finished.get());
+        streamIter = streamIter.trySplit()) {
       streamIter.tryAdvance((number) -> {
+        long updatedCount = count.incrementAndGet();
+        if (expectedCount < 0) {
+          if (updatedCount > 20) {
+            break;
+          }
+        } else {
+          assertTrue(updatedCount <= expectedCount);
+        }
         assertGreaterOrEqual(origin, number.doubleValue());
         assertLess(bound, number.doubleValue());
         if (checkEntropyCount) {
