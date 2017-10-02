@@ -16,13 +16,13 @@ public class DeadlockWatchdogThread extends LooperThread {
   private static final long serialVersionUID = 9118178318042580320L;
 
   private DeadlockWatchdogThread() {
+    super("DeadlockWatchdogThread");
   }
 
   public static void ensureStarted() {
     if (INSTANCE.getState() == State.NEW) {
       INSTANCE.setDaemon(true);
       INSTANCE.setPriority(Thread.MAX_PRIORITY);
-      INSTANCE.setName("DeadlockWatchdogThread");
       INSTANCE.start();
     }
   }
@@ -30,7 +30,6 @@ public class DeadlockWatchdogThread extends LooperThread {
   @Override
   public boolean iterate() throws InterruptedException {
     boolean deadlockFound = false;
-    sleep(5_000);
     long[] threadsOfInterest;
     Level logLevel;
     threadsOfInterest = THREAD_MX_BEAN.findDeadlockedThreads();
@@ -50,6 +49,7 @@ public class DeadlockWatchdogThread extends LooperThread {
         LOG.format(logLevel, "  " + element);
       }
     }
+    sleep(5_000);
     return !deadlockFound; // Terminate when a deadlock is found
   }
 }
