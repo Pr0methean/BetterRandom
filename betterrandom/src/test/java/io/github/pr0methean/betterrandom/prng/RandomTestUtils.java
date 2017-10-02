@@ -23,6 +23,8 @@ import io.github.pr0methean.betterrandom.util.CloneViaSerialization;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Random;
+import java.util.Spliterator;
+import java.util.concurrent.atomic.AtomicLong;
 import java.util.function.Supplier;
 import java.util.stream.BaseStream;
 import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
@@ -96,8 +98,8 @@ public enum RandomTestUtils {
       final double bound,
       final boolean checkEntropyCount) {
     long count = 0;
-    long oldEntropy = prng.getEntropyBits();
-    for (final Iterator<? extends Number> streamIter = stream.iterator(); streamIter.hasNext(); ) {
+    AtomicLong entropy = new AtomicLong(prng.getEntropyBits());
+    for (Spliterator<? extends Number> streamIter = stream.spliterator(); ; streamIter = streamIter.trySplit()) {
       count++;
       if (expectedCount < 0) {
         if (count > 20) {
@@ -106,14 +108,14 @@ public enum RandomTestUtils {
       } else {
         assertTrue(count <= expectedCount);
       }
-      final Number number = streamIter.next();
-      assertGreaterOrEqual(origin, number.doubleValue());
-      assertLess(bound, number.doubleValue());
-      if (checkEntropyCount) {
-        long newEntropy = prng.getEntropyBits();
-        assertGreaterOrEqual(oldEntropy - maxEntropySpentPerNumber, newEntropy);
-        oldEntropy = newEntropy;
-      }
+      streamIter.tryAdvance((number) -> {
+        assertGreaterOrEqual(origin, number.doubleValue());
+        assertLess(bound, number.doubleValue());
+        if (checkEntropyCount) {
+          long newEntropy = prng.getEntropyBits();
+          assertGreaterOrEqual(entropy.getAndSet(newEntropy) - maxEntropySpentPerNumber, newEntropy);
+        }
+      });
     }
   }
 
