@@ -17,6 +17,7 @@ public class SingleThreadSplittableRandomAdapter extends DirectSplittableRandomA
 
   private static final long serialVersionUID = -1125374167384636394L;
   private boolean deserializedAndNotUsedSince = false;
+
   /**
    * Use the provided seed generation strategy to create the seed for the underlying {@link
    * SplittableRandom}.

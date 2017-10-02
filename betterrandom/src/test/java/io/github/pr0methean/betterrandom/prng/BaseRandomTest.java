@@ -47,6 +47,15 @@ public abstract class BaseRandomTest {
   private static final List<String> STRING_LIST = Arrays.asList(STRING_ARRAY);
   private static final int ELEMENTS = 100;
 
+  @SafeVarargs
+  private static <E> void testGeneratesAll(final Supplier<E> generator, final E... expected) {
+    final E[] selected = Arrays.copyOf(expected, ELEMENTS); // Saves passing in a Class<E>
+    for (int i = 0; i < ELEMENTS; i++) {
+      selected[i] = generator.get();
+    }
+    assertTrue(Arrays.asList(selected).containsAll(Arrays.asList(expected)));
+  }
+
   /**
    * Test to ensure that two distinct RNGs with the same seed return the same sequence of numbers.
    */
@@ -401,7 +410,6 @@ public abstract class BaseRandomTest {
   public void testDoubles() throws Exception {
     DeadlockWatchdogThread.ensureStarted();
     final BaseRandom prng = createRng();
-    LOG.info("Starting checkStream for %s.testDoubles()", getClass().getSimpleName());
     checkStream(prng, ENTROPY_OF_DOUBLE, prng.doubles().boxed(), -1, 0.0, 1.0, true);
   }
 
@@ -423,15 +431,6 @@ public abstract class BaseRandomTest {
     final BaseRandom prng = createRng();
     checkStream(prng, ENTROPY_OF_DOUBLE, prng.doubles(20, -5.0, 8.0).boxed(), 20, -5.0, 8.0,
         true);
-  }
-
-  @SafeVarargs
-  private static <E> void testGeneratesAll(final Supplier<E> generator, final E... expected) {
-    final E[] selected = Arrays.copyOf(expected, ELEMENTS); // Saves passing in a Class<E>
-    for (int i = 0; i < ELEMENTS; i++) {
-      selected[i] = generator.get();
-    }
-    assertTrue(Arrays.asList(selected).containsAll(Arrays.asList(expected)));
   }
 
   @Test
