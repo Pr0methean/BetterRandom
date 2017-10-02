@@ -592,18 +592,32 @@ public abstract class BaseRandom extends Random implements ByteArrayReseedableRa
   }
 
   /**
-   * Generates a seed using the default seed generator. For use in handling a {@link #setSeed(long)}
-   * call in subclasses that can't actually use an 8-byte seed.
+   * Generates a seed using the default seed generator if there isn't one already. For use in
+   * handling a {@link #setSeed(long)} call in subclasses that can't actually use an 8-byte seed.
    */
+  @SuppressWarnings("LockAcquiredButNotSafelyReleased")
   @EnsuresNonNull({"seed", "entropyBits"})
   protected void fallbackSetSeed(@UnknownInitialization BaseRandom this) {
-    try {
-      seed = DefaultSeedGenerator.DEFAULT_SEED_GENERATOR.generateSeed(getNewSeedLength());
-    } catch (final SeedException e) {
-      throw new RuntimeException(e);
+    boolean locked = false;
+    if (lock != null) {
+      lock.lock();
+      locked = true;
     }
-    if (entropyBits == null) {
-      entropyBits = new AtomicLong(seed.length * 8);
+    try {
+      if (seed == null) {
+        try {
+          seed = DefaultSeedGenerator.DEFAULT_SEED_GENERATOR.generateSeed(getNewSeedLength());
+        } catch (final SeedException e) {
+          throw new RuntimeException(e);
+        }
+      }
+      if (entropyBits == null) {
+        entropyBits = new AtomicLong(seed.length * 8);
+      }
+    } finally {
+      if (locked) {
+        lock.unlock();
+      }
     }
   }
 
