@@ -40,14 +40,16 @@ public class DeadlockWatchdogThread extends LooperThread {
     } else {
       logLevel = Level.INFO;
       threadsOfInterest = THREAD_MX_BEAN.getAllThreadIds();
+      if (threadsOfInterest.length <= 0) {
+        LOG.error("ThreadMxBean didn't return any thread IDs");
+        return false;
+      }
     }
     for (long id : threadsOfInterest) {
       ThreadInfo threadInfo = THREAD_MX_BEAN.getThreadInfo(id, MAX_STACK_DEPTH);
       LOG.format(logLevel, threadInfo.getThreadName());
       StackTraceElement[] stackTrace = threadInfo.getStackTrace();
-      for (StackTraceElement element : stackTrace) {
-        LOG.format(logLevel, "  " + element);
-      }
+      LOG.logStackTrace(logLevel, stackTrace);
     }
     sleep(5_000);
     return !deadlockFound; // Terminate when a deadlock is found
