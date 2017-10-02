@@ -36,7 +36,7 @@ import org.checkerframework.checker.nullness.qual.EnsuresNonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 
 /**
- * Abstract {@link Random} with a seed field and an implementations of entropy counting.
+ * Abstract {@link Random} with a seed field and an implementation of entropy counting.
  *
  * @author Chris Hennick
  */
@@ -362,6 +362,11 @@ public abstract class BaseRandom extends Random implements ByteArrayReseedableRa
     }
   }
 
+  /**
+   * Returns a stream producing an effectively unlimited number of pseudorandom longs, each
+   * conforming to the given origin (inclusive) and bound (exclusive). This implementation uses
+   * {@link #nextLong(long, long)} to generate these numbers.
+   */
   @Override
   public IntStream ints(final int randomNumberOrigin, final int randomNumberBound) {
     return ints(Long.MAX_VALUE, randomNumberOrigin, randomNumberBound);
@@ -378,6 +383,11 @@ public abstract class BaseRandom extends Random implements ByteArrayReseedableRa
     return longs(Long.MAX_VALUE);
   }
 
+  /**
+   * Returns a stream producing the given number of pseudorandom longs, each conforming to the given
+   * origin (inclusive) and bound (exclusive). This implementation uses {@link #nextLong(long,
+   * long)} to generate these numbers.
+   */
   @Override
   public LongStream longs(final long streamSize, final long randomNumberOrigin,
       final long randomNumberBound) {
