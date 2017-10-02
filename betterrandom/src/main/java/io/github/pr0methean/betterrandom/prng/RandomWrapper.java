@@ -107,6 +107,7 @@ public class RandomWrapper extends BaseRandom {
 
   /**
    * Returns the {@link Random} instance this RandomWrapper is currently wrapping.
+   *
    * @return The wrapped {@link Random}.
    */
   @EntryPoint
@@ -121,6 +122,7 @@ public class RandomWrapper extends BaseRandom {
 
   /**
    * Replaces the underlying {@link Random} instance with the given one on subsequent calls.
+   *
    * @param wrapped The new {@link Random} instance to wrap.
    */
   @EntryPoint
