@@ -218,6 +218,11 @@ public abstract class BaseRandomTest {
         () -> prng.nextInt(3 << 29), 0, 3 << 29, true);
   }
 
+  @Test(expectedExceptions = IllegalArgumentException.class)
+  public void testNextInt1InvalidBound() {
+    createRng().nextInt(-1);
+  }
+
   @Test
   public void testNextInt() throws Exception {
     final BaseRandom prng = createRng();
@@ -230,6 +235,11 @@ public abstract class BaseRandomTest {
     final BaseRandom prng = createRng();
     checkRangeAndEntropy(prng, 29,
         () -> prng.nextInt(1 << 27, 1 << 29), 1 << 27, 1 << 29, true);
+  }
+
+  @Test(expectedExceptions = IllegalArgumentException.class)
+  public void testNextInt2InvalidBound() {
+    createRng().nextInt(10, 9);
   }
 
   @Test
@@ -250,7 +260,12 @@ public abstract class BaseRandomTest {
   public void testNextLong1() throws Exception {
     final BaseRandom prng = createRng();
     checkRangeAndEntropy(prng, 42,
-        () -> prng.nextLong( 1L << 42), 0, 1L << 42, true);
+        () -> prng.nextLong(1L << 42), 0, 1L << 42, true);
+  }
+
+  @Test(expectedExceptions = IllegalArgumentException.class)
+  public void testNextLong1InvalidBound() {
+    createRng().nextLong(-1);
   }
 
   @Test
@@ -258,6 +273,11 @@ public abstract class BaseRandomTest {
     final BaseRandom prng = createRng();
     checkRangeAndEntropy(prng, 42,
         () -> prng.nextLong(1L << 40, 1L << 42), 1L << 40, 1L << 42, true);
+  }
+
+  @Test(expectedExceptions = IllegalArgumentException.class)
+  public void testNextLong2InvalidBound() {
+    createRng().nextLong(10, 9);
   }
 
   @Test
@@ -271,6 +291,29 @@ public abstract class BaseRandomTest {
   public void testNextDouble() throws Exception {
     final BaseRandom prng = createRng();
     checkRangeAndEntropy(prng, ENTROPY_OF_DOUBLE, prng::nextDouble, 0.0, 1.0, true);
+  }
+
+  @Test
+  public void testNextDouble1() throws Exception {
+    final BaseRandom prng = createRng();
+    checkRangeAndEntropy(prng, ENTROPY_OF_DOUBLE, () -> prng.nextDouble(13.37), 0.0, 13.37, true);
+  }
+
+  @Test(expectedExceptions = IllegalArgumentException.class)
+  public void testNextDouble1InvalidBound() {
+    createRng().nextDouble(-1.0);
+  }
+
+  @Test
+  public void testNextDouble2() throws Exception {
+    final BaseRandom prng = createRng();
+    checkRangeAndEntropy(prng, ENTROPY_OF_DOUBLE, () -> prng.nextDouble(-1.0, 13.37), -1.0, 13.37,
+        true);
+  }
+
+  @Test(expectedExceptions = IllegalArgumentException.class)
+  public void testNextDouble2InvalidBound() {
+    createRng().nextDouble(3.5, 3.4);
   }
 
   @Test
