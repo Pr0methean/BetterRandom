@@ -4,9 +4,10 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- * <p>LogPreFormatter class.</p>
+ * Wrapper around {@link Logger} that calls {@link String#format(String, Object...)}, but only if
+ * the log statement is actually eligible to go to an appender.
  *
- * @author ubuntu
+ * @author Chris Hennick
  */
 public class LogPreFormatter {
 

@@ -7,9 +7,9 @@ import java.util.SplittableRandom;
 import org.checkerframework.checker.initialization.qual.UnknownInitialization;
 
 /**
- * <p>Abstract BaseSplittableRandomAdapter class.</p>
+ * Abstract class for implementations of {@link Random} that wrap a {@link SplittableRandom}.
  *
- * @author ubuntu
+ * @author Chris Hennick
  */
 public abstract class BaseSplittableRandomAdapter extends BaseRandom {
 
@@ -85,6 +85,11 @@ public abstract class BaseSplittableRandomAdapter extends BaseRandom {
     // We're only outputting one bit
     recordEntropySpent(1);
     return result;
+  }
+
+  @Override
+  public boolean preferSeedWithLong() {
+    return true;
   }
 
   @Override
