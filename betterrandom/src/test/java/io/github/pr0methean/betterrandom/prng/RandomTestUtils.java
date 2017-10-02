@@ -19,8 +19,6 @@ import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotSame;
 import static org.testng.Assert.assertTrue;
 
-import io.github.pr0methean.betterrandom.seed.DefaultSeedGenerator;
-import io.github.pr0methean.betterrandom.seed.RandomSeederThread;
 import io.github.pr0methean.betterrandom.util.CloneViaSerialization;
 import java.util.HashSet;
 import java.util.Iterator;
