@@ -21,6 +21,7 @@ import java.util.WeakHashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.locks.Condition;
+import java.util.logging.Level;
 import org.checkerframework.checker.initialization.qual.UnderInitialization;
 import org.checkerframework.checker.lock.qual.GuardedBy;
 import org.checkerframework.checker.nullness.qual.EnsuresNonNull;
@@ -215,9 +216,7 @@ public final class RandomSeederThread extends LooperThread {
         }
       } catch (final Throwable t) {
         LOG.error("%s", t);
-        for (final StackTraceElement element : t.getStackTrace()) {
-          LOG.error("  %s", element);
-        }
+        LOG.logStackTrace(Level.SEVERE, t.getStackTrace());
         interrupt();
       }
     }
