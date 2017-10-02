@@ -32,13 +32,13 @@
       <file leaf-file-name="BaseRandom.java" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/betterrandom/src/main/java/io/github/pr0methean/betterrandom/prng/BaseRandom.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="270">
-              <caret line="412" column="31" lean-forward="false" selection-start-line="412" selection-start-column="31" selection-end-line="412" selection-end-column="31" />
+            <state relative-caret-position="250">
+              <caret line="411" column="25" lean-forward="true" selection-start-line="411" selection-start-column="25" selection-end-line="411" selection-end-column="25" />
               <folding>
-                <element signature="e#15622#15623#0" expanded="true" />
-                <element signature="e#15655#15656#0" expanded="true" />
-                <element signature="e#18102#18103#0" expanded="true" />
-                <element signature="e#18142#18143#0" expanded="true" />
+                <element signature="e#15590#15591#0" expanded="true" />
+                <element signature="e#15623#15624#0" expanded="true" />
+                <element signature="e#18070#18071#0" expanded="true" />
+                <element signature="e#18110#18111#0" expanded="true" />
               </folding>
             </state>
           </provider>
@@ -1615,13 +1615,13 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/betterrandom/src/main/java/io/github/pr0methean/betterrandom/prng/BaseRandom.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="270">
-          <caret line="412" column="31" lean-forward="false" selection-start-line="412" selection-start-column="31" selection-end-line="412" selection-end-column="31" />
+        <state relative-caret-position="250">
+          <caret line="411" column="25" lean-forward="true" selection-start-line="411" selection-start-column="25" selection-end-line="411" selection-end-column="25" />
           <folding>
-            <element signature="e#15622#15623#0" expanded="true" />
-            <element signature="e#15655#15656#0" expanded="true" />
-            <element signature="e#18102#18103#0" expanded="true" />
-            <element signature="e#18142#18143#0" expanded="true" />
+            <element signature="e#15590#15591#0" expanded="true" />
+            <element signature="e#15623#15624#0" expanded="true" />
+            <element signature="e#18070#18071#0" expanded="true" />
+            <element signature="e#18110#18111#0" expanded="true" />
           </folding>
         </state>
       </provider>
