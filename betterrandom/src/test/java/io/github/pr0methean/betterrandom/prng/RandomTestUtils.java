@@ -102,6 +102,7 @@ public enum RandomTestUtils {
       final double origin,
       final double bound,
       final boolean checkEntropyCount) {
+    LOG.info("Starting checkStream");
     final AtomicLong count = new AtomicLong(0);
     final AtomicLong entropy = new AtomicLong(prng.getEntropyBits());
     stream.limit((expectedCount < 0) ? 20 : (expectedCount + 1)).forEach((number) -> {
@@ -118,6 +119,7 @@ public enum RandomTestUtils {
     if (expectedCount >= 0) {
       assertEquals(count, expectedCount);
     }
+    LOG.info("checkStream finished");
   }
 
   private static void assertGreaterOrEqual(final long expected, final long actual) {
