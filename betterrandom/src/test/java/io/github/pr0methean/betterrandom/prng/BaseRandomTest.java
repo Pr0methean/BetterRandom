@@ -180,7 +180,8 @@ public abstract class BaseRandomTest {
   @Test(timeOut = 20000, retryAnalyzer = FlakyTestRetrier.class)
   public void testReseeding() throws Exception {
     final BaseRandom rng = createRng();
-    rng.setSeederThread(RandomSeederThread.getInstance(DefaultSeedGenerator.DEFAULT_SEED_GENERATOR));
+    rng.setSeederThread(
+        RandomSeederThread.getInstance(DefaultSeedGenerator.DEFAULT_SEED_GENERATOR));
     final byte[] oldSeed = rng.getSeed();
     rng.nextBytes(new byte[oldSeed.length + 1]);
     Thread.sleep(1000 + (oldSeed.length / 2));
