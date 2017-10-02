@@ -28,14 +28,16 @@ public class DeadlockWatchdogThread extends LooperThread {
   }
 
   @Override
-  public void iterate() throws InterruptedException {
-    sleep(30_000);
+  public boolean iterate() throws InterruptedException {
+    boolean deadlockFound = false;
+    sleep(5_000);
     long[] threadsOfInterest;
     Level logLevel;
     threadsOfInterest = THREAD_MX_BEAN.findDeadlockedThreads();
     if (threadsOfInterest.length > 0) {
       LOG.error("DEADLOCKED THREADS FOUND");
       logLevel = Level.SEVERE;
+      deadlockFound = true;
     } else {
       logLevel = Level.INFO;
       threadsOfInterest = THREAD_MX_BEAN.getAllThreadIds();
@@ -48,5 +50,6 @@ public class DeadlockWatchdogThread extends LooperThread {
         LOG.format(logLevel, "  " + element);
       }
     }
+    return !deadlockFound; // Terminate when a deadlock is found
   }
 }

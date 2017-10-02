@@ -5,9 +5,8 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="8d34e3fe-111b-4f5b-b1bf-5875a1f8c255" name="Default" comment="">
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/betterrandom/src/main/java/io/github/pr0methean/betterrandom/seed/RandomSeederThread.java" afterPath="$PROJECT_DIR$/betterrandom/src/main/java/io/github/pr0methean/betterrandom/seed/RandomSeederThread.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/betterrandom/src/main/java/io/github/pr0methean/betterrandom/util/LogPreFormatter.java" afterPath="$PROJECT_DIR$/betterrandom/src/main/java/io/github/pr0methean/betterrandom/util/LogPreFormatter.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/betterrandom/src/test/java/io/github/pr0methean/betterrandom/prng/RandomTestUtils.java" afterPath="$PROJECT_DIR$/betterrandom/src/test/java/io/github/pr0methean/betterrandom/prng/RandomTestUtils.java" />
+      <change type="MOVED" beforePath="$PROJECT_DIR$/cutting_room_floor/main/java/DeadlockWatchdogThread.java" afterPath="$PROJECT_DIR$/betterrandom/src/test/java/io/github/pr0methean/betterrandom/DeadlockWatchdogThread.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/betterrandom/src/test/java/io/github/pr0methean/betterrandom/prng/BaseRandomTest.java" afterPath="$PROJECT_DIR$/betterrandom/src/test/java/io/github/pr0methean/betterrandom/prng/BaseRandomTest.java" />
     </list>
     <ignored path="$PROJECT_DIR$/out/" />
     <ignored path="$PROJECT_DIR$/target/" />
@@ -46,6 +45,29 @@
           </provider>
         </entry>
       </file>
+      <file leaf-file-name="BaseRandomTest.java" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/betterrandom/src/test/java/io/github/pr0methean/betterrandom/prng/BaseRandomTest.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="3510">
+              <caret line="401" column="43" lean-forward="true" selection-start-line="401" selection-start-column="43" selection-end-line="401" selection-end-column="43" />
+              <folding>
+                <element signature="method#testWithProbability#0;class#BaseRandomTest#0" expanded="false" />
+                <marker date="1506985196329" expanded="true" signature="14343:14350" ph="{...}" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="LooperThread.java" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/betterrandom/src/main/java/io/github/pr0methean/betterrandom/util/LooperThread.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="219">
+              <caret line="287" column="20" lean-forward="false" selection-start-line="287" selection-start-column="20" selection-end-line="287" selection-end-column="20" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
       <file leaf-file-name="Stream.java" pinned="false" current-in-tab="false">
         <entry file="jar://C:/Program Files/Java/jdk1.8.0_131/src.zip!/java/util/stream/Stream.java">
           <provider selected="true" editor-type-id="text-editor">
@@ -59,8 +81,18 @@
       <file leaf-file-name="RandomTestUtils.java" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/betterrandom/src/test/java/io/github/pr0methean/betterrandom/prng/RandomTestUtils.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="40">
+            <state relative-caret-position="160">
               <caret line="108" column="21" lean-forward="false" selection-start-line="108" selection-start-column="21" selection-end-line="108" selection-end-column="21" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="DeadlockWatchdogThread.java" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/betterrandom/src/test/java/io/github/pr0methean/betterrandom/DeadlockWatchdogThread.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="130">
+              <caret line="30" column="18" lean-forward="true" selection-start-line="30" selection-start-column="18" selection-end-line="30" selection-end-column="18" />
               <folding />
             </state>
           </provider>
@@ -76,7 +108,7 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="LogPreFormatter.java" pinned="false" current-in-tab="true">
+      <file leaf-file-name="LogPreFormatter.java" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/betterrandom/src/main/java/io/github/pr0methean/betterrandom/util/LogPreFormatter.java">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="158">
@@ -151,8 +183,6 @@
   <component name="IdeDocumentHistory">
     <option name="CHANGED_PATHS">
       <list>
-        <option value="$PROJECT_DIR$/betterrandom/src/test/java/io/github/pr0methean/betterrandom/prng/adapter/ReseedingSplittableRandomAdapterTest.java" />
-        <option value="$PROJECT_DIR$/betterrandom/src/test/java/io/github/pr0methean/betterrandom/prng/XorShiftRandomTest.java" />
         <option value="$PROJECT_DIR$/betterrandom/src/test/java/io/github/pr0methean/betterrandom/prng/RandomWrapperSecureRandomTest.java" />
         <option value="$PROJECT_DIR$/betterrandom/src/test/java/io/github/pr0methean/betterrandom/prng/BaseRandomStaticsTest.java" />
         <option value="$PROJECT_DIR$/betterrandom/src/main/java/io/github/pr0methean/betterrandom/package-info.java" />
@@ -198,10 +228,12 @@
         <option value="$PROJECT_DIR$/betterrandom/src/main/java/io/github/pr0methean/betterrandom/prng/adapter/SingleThreadSplittableRandomAdapter.java" />
         <option value="$PROJECT_DIR$/betterrandom/src/main/java/io/github/pr0methean/betterrandom/prng/adapter/BaseSplittableRandomAdapter.java" />
         <option value="$PROJECT_DIR$/betterrandom/src/main/java/io/github/pr0methean/betterrandom/prng/BaseRandom.java" />
-        <option value="$PROJECT_DIR$/betterrandom/src/test/java/io/github/pr0methean/betterrandom/prng/BaseRandomTest.java" />
         <option value="$PROJECT_DIR$/betterrandom/src/main/java/io/github/pr0methean/betterrandom/util/LogPreFormatter.java" />
         <option value="$PROJECT_DIR$/betterrandom/src/test/java/io/github/pr0methean/betterrandom/prng/RandomTestUtils.java" />
         <option value="$PROJECT_DIR$/betterrandom/src/main/java/io/github/pr0methean/betterrandom/seed/RandomSeederThread.java" />
+        <option value="$PROJECT_DIR$/cutting_room_floor/main/java/DeadlockWatchdogThread.java" />
+        <option value="$PROJECT_DIR$/betterrandom/src/test/java/io/github/pr0methean/betterrandom/prng/BaseRandomTest.java" />
+        <option value="$PROJECT_DIR$/betterrandom/src/test/java/io/github/pr0methean/betterrandom/DeadlockWatchdogThread.java" />
       </list>
     </option>
   </component>
@@ -477,16 +509,6 @@
             <path>
               <item name="BetterRandom" type="b2602c69:ProjectViewProjectNode" />
               <item name="BetterRandom" type="462c0819:PsiDirectoryNode" />
-              <item name="betterrandom" type="462c0819:PsiDirectoryNode" />
-              <item name="src" type="462c0819:PsiDirectoryNode" />
-              <item name="test" type="462c0819:PsiDirectoryNode" />
-              <item name="java" type="462c0819:PsiDirectoryNode" />
-              <item name="betterrandom" type="462c0819:PsiDirectoryNode" />
-              <item name="seed" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="BetterRandom" type="b2602c69:ProjectViewProjectNode" />
-              <item name="BetterRandom" type="462c0819:PsiDirectoryNode" />
               <item name="cutting_room_floor" type="462c0819:PsiDirectoryNode" />
             </path>
             <path>
@@ -659,11 +681,11 @@
       <recent name="C:\Users\chris\Documents\GitHub\BetterRandom\src\betterrandom\prng" />
     </key>
     <key name="MoveFile.RECENT_KEYS">
+      <recent name="C:\Users\chris\Documents\GitHub\BetterRandom\betterrandom\src\test\java\io\github\pr0methean\betterrandom" />
       <recent name="C:\Users\chris\Documents\GitHub\BetterRandom\lib" />
       <recent name="C:\Users\chris\Documents\GitHub\BetterRandom\cutting_room_floor\main\java" />
       <recent name="C:\Users\chris\Documents\GitHub\BetterRandom\cutting_room_floor\test\java" />
       <recent name="C:\Users\chris\Documents\GitHub\BetterRandom\cutting_room_floor\main" />
-      <recent name="C:\Users\chris\Documents\GitHub\BetterRandom\" />
     </key>
     <key name="ExtractSuperBase.RECENT_KEYS">
       <recent name="io.github.pr0methean.betterrandom.benchmark" />
@@ -1064,7 +1086,7 @@
       <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="9" side_tool="false" content_ui="tabs" />
       <window_info id="Designer" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.3325688" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
-      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.38070175" sideWeight="0.49082568" order="1" side_tool="false" content_ui="tabs" />
+      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.10877193" sideWeight="0.49082568" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.23776758" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="UI Designer" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
@@ -1167,7 +1189,6 @@
     <watches-manager />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/betterrandom/src/test/java/io/github/pr0methean/betterrandom/prng/AesCounterTestNgBug1563WorkaroundTest.java" />
     <entry file="jar://C:/Program Files/Java/jdk1.8.0_131/src.zip!/java/util/stream/StreamSupport.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="180">
@@ -1364,14 +1385,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/betterrandom/src/main/java/io/github/pr0methean/betterrandom/util/LooperThread.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="3760">
-          <caret line="202" column="46" lean-forward="false" selection-start-line="202" selection-start-column="46" selection-end-line="202" selection-end-column="46" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/betterrandom/src/test/java/io/github/pr0methean/betterrandom/prng/adapter/SplittableRandomAdapterTest.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="80">
@@ -1498,19 +1511,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/betterrandom/src/test/java/io/github/pr0methean/betterrandom/prng/BaseRandomTest.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="410">
-          <caret line="443" column="3" lean-forward="true" selection-start-line="443" selection-start-column="3" selection-end-line="443" selection-end-column="3" />
-          <folding>
-            <element signature="method#testWithProbability#0;class#BaseRandomTest#0" expanded="false" />
-            <element signature="e#9168#9169#0" expanded="true" />
-            <element signature="e#9201#9202#0" expanded="true" />
-            <marker date="1506983444858" expanded="true" signature="14278:14285" ph="{...}" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="jar://C:/Program Files/Java/jdk1.8.0_131/src.zip!/java/util/stream/BaseStream.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="640">
@@ -1535,31 +1535,10 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/betterrandom/src/main/java/io/github/pr0methean/betterrandom/prng/BaseRandom.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="610">
-          <caret line="263" column="32" lean-forward="false" selection-start-line="263" selection-start-column="32" selection-end-line="263" selection-end-column="32" />
-          <folding>
-            <element signature="e#4617#4618#0" expanded="true" />
-            <element signature="e#4638#4639#0" expanded="true" />
-            <element signature="e#6097#6098#0" expanded="true" />
-            <element signature="e#6149#6150#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="jar://C:/Program Files/Java/jdk1.8.0_131/src.zip!/java/util/stream/Stream.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="530">
           <caret line="449" column="14" lean-forward="false" selection-start-line="449" selection-start-column="14" selection-end-line="449" selection-end-column="14" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/betterrandom/src/test/java/io/github/pr0methean/betterrandom/prng/RandomTestUtils.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="40">
-          <caret line="108" column="21" lean-forward="false" selection-start-line="108" selection-start-column="21" selection-end-line="108" selection-end-column="21" />
           <folding />
         </state>
       </provider>
@@ -1596,6 +1575,54 @@
         <state relative-caret-position="158">
           <caret line="74" column="49" lean-forward="false" selection-start-line="74" selection-start-column="49" selection-end-line="74" selection-end-column="49" />
           <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/betterrandom/src/test/java/io/github/pr0methean/betterrandom/prng/RandomTestUtils.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="160">
+          <caret line="108" column="21" lean-forward="false" selection-start-line="108" selection-start-column="21" selection-end-line="108" selection-end-column="21" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/betterrandom/src/main/java/io/github/pr0methean/betterrandom/prng/BaseRandom.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="610">
+          <caret line="263" column="32" lean-forward="false" selection-start-line="263" selection-start-column="32" selection-end-line="263" selection-end-column="32" />
+          <folding>
+            <element signature="e#4617#4618#0" expanded="true" />
+            <element signature="e#4638#4639#0" expanded="true" />
+            <element signature="e#6097#6098#0" expanded="true" />
+            <element signature="e#6149#6150#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/betterrandom/src/test/java/io/github/pr0methean/betterrandom/DeadlockWatchdogThread.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="130">
+          <caret line="30" column="18" lean-forward="true" selection-start-line="30" selection-start-column="18" selection-end-line="30" selection-end-column="18" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/betterrandom/src/main/java/io/github/pr0methean/betterrandom/util/LooperThread.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="219">
+          <caret line="287" column="20" lean-forward="false" selection-start-line="287" selection-start-column="20" selection-end-line="287" selection-end-column="20" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/betterrandom/src/test/java/io/github/pr0methean/betterrandom/prng/BaseRandomTest.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="3510">
+          <caret line="401" column="43" lean-forward="true" selection-start-line="401" selection-start-column="43" selection-end-line="401" selection-end-column="43" />
+          <folding>
+            <element signature="method#testWithProbability#0;class#BaseRandomTest#0" expanded="false" />
+            <marker date="1506985196329" expanded="true" signature="14343:14350" ph="{...}" />
+          </folding>
         </state>
       </provider>
     </entry>

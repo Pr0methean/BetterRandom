@@ -9,6 +9,7 @@ import static org.testng.Assert.assertFalse;
 import static org.testng.Assert.assertNotEquals;
 import static org.testng.Assert.assertTrue;
 
+import io.github.pr0methean.betterrandom.DeadlockWatchdogThread;
 import io.github.pr0methean.betterrandom.prng.RandomTestUtils.EntropyCheckMode;
 import io.github.pr0methean.betterrandom.seed.DefaultSeedGenerator;
 import io.github.pr0methean.betterrandom.seed.RandomSeederThread;
@@ -398,6 +399,7 @@ public abstract class BaseRandomTest {
 
   @Test
   public void testDoubles() throws Exception {
+    DeadlockWatchdogThread.ensureStarted();
     final BaseRandom prng = createRng();
     checkStream(prng, ENTROPY_OF_DOUBLE, prng.doubles().boxed(), -1, 0.0, 1.0, true);
   }
