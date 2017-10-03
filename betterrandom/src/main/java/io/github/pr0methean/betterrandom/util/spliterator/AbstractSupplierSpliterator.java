@@ -72,6 +72,10 @@ public abstract class AbstractSupplierSpliterator<TSupplier, TConsumer, TSplitIn
   /**
    * Should wrap a constructor that calls {@link #AbstractSupplierSpliterator(AtomicLong,
    * AtomicLong, Object, boolean)}.
+   * @param remaining An {@link AtomicLong} (shared between splits) that stores how many more
+   *     items will be output by {@link #tryAdvance(Object)}.
+   * @param splitsRemaining An {@link AtomicLong} (shared between splits) that stores how many
+   *     more times the {@link #trySplit()} command will return non-null.
    * @return a descendant spliterator.
    */
   protected abstract TSplitInto internalSplit(AtomicLong remaining, AtomicLong splitsRemaining);
@@ -87,7 +91,7 @@ public abstract class AbstractSupplierSpliterator<TSupplier, TConsumer, TSplitIn
 
   /**
    * @see Spliterator#characteristics()
-   * @param {@code IMMUTABLE | NONNULL | SIZED} in the root spliterator, and
+   * @return {@code IMMUTABLE | NONNULL | SIZED} in the root spliterator, and
    * {@code IMMUTABLE | NONNULL} in descendants.
    */
   public int characteristics() {
