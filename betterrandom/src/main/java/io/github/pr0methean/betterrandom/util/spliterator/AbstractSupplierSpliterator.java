@@ -19,9 +19,9 @@ import org.checkerframework.checker.nullness.qual.Nullable;
  */
 public abstract class AbstractSupplierSpliterator<TSupplier, TConsumer, TSplitInto> {
 
+  protected final TSupplier supplier;
   private final AtomicLong remaining;
   private final AtomicLong splitsRemaining;
-  protected final TSupplier supplier;
   private final boolean sized;
 
   /**
@@ -55,7 +55,8 @@ public abstract class AbstractSupplierSpliterator<TSupplier, TConsumer, TSplitIn
   }
 
   /**
-   * Should wrap a constructor that calls {@link #AbstractSupplierSpliterator(AtomicLong, AtomicLong, Object, boolean)}.
+   * Should wrap a constructor that calls {@link #AbstractSupplierSpliterator(AtomicLong,
+   * AtomicLong, Object, boolean)}.
    */
   protected abstract TSplitInto internalSplit(AtomicLong remaining, AtomicLong splitsRemaining);
 
