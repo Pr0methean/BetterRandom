@@ -66,9 +66,10 @@ public class LogPreFormatter {
   }
 
   /**
-   * Log the stack trace of the current thread.
+   * Log the given stack trace.
    *
    * @param level the level to log at.
+   * @param stackTrace the stack trace to log.
    */
   public void logStackTrace(Level level, StackTraceElement[] stackTrace) {
     if (logger.isLoggable(level)) {
