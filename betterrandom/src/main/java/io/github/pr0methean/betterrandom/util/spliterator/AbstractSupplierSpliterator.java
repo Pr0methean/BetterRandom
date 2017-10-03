@@ -58,7 +58,10 @@ public abstract class AbstractSupplierSpliterator<TSupplier, TConsumer, TSplitIn
   }
 
   @SuppressWarnings("override.return.invalid") // actually is nullable in the interface
-  /** @see Spliterator#trySplit() */
+  /**
+   * @see Spliterator#trySplit()
+   * @return a descendant spliterator, or null if this spliterator refuses to be split any further.
+   */
   public @Nullable TSplitInto trySplit() {
     //LOG.logStackTrace(Level.INFO, Thread.currentThread().getStackTrace());
     return ((splitsRemaining.getAndDecrement() <= 0) || (remaining.get() <= 0))
@@ -69,20 +72,33 @@ public abstract class AbstractSupplierSpliterator<TSupplier, TConsumer, TSplitIn
   /**
    * Should wrap a constructor that calls {@link #AbstractSupplierSpliterator(AtomicLong,
    * AtomicLong, Object, boolean)}.
+   * @return a descendant spliterator.
    */
   protected abstract TSplitInto internalSplit(AtomicLong remaining, AtomicLong splitsRemaining);
 
-  /** @see Spliterator#estimateSize() */
+  /**
+   * @see Spliterator#estimateSize()
+   * @return the total number of items remaining in the root spliterator, and thus an upper bound
+   * on the number available to any one descendant.
+   */
   public long estimateSize() {
     return remaining.get();
   }
 
-  /** @see Spliterator#characteristics() */
+  /**
+   * @see Spliterator#characteristics()
+   * @param {@code IMMUTABLE | NONNULL | SIZED} in the root spliterator, and
+   * {@code IMMUTABLE | NONNULL} in descendants.
+   */
   public int characteristics() {
     return IMMUTABLE | NONNULL | (sized ? SIZED : 0);
   }
 
-  /** @see Spliterator#tryAdvance(Consumer) */
+  /**
+   * @see Spliterator#tryAdvance(Consumer)
+   * @param action the consumer that will receive the next output value if there is one.
+   * @return true if an output was produced and consumed.
+   */
   public boolean tryAdvance(final TConsumer action) {
     //LOG.logStackTrace(Level.INFO, Thread.currentThread().getStackTrace());
     if (remaining.decrementAndGet() >= 0) {
@@ -93,6 +109,9 @@ public abstract class AbstractSupplierSpliterator<TSupplier, TConsumer, TSplitIn
     }
   }
 
-  /** Should be {@code action.accept(supplier.get())} or an equivalent. */
+  /**
+   * Should be {@code action.accept(supplier.get())} or an equivalent.
+   * @param action the consumer that will receive the next output value if there is one.
+   */
   protected abstract void internalSupplyAndAccept(TConsumer action);
 }
