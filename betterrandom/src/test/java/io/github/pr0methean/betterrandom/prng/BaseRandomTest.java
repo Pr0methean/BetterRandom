@@ -422,6 +422,20 @@ public abstract class BaseRandomTest {
   }
 
   @Test
+  public void testGaussians() throws Exception {
+    final BaseRandom prng = createRng();
+    checkStream(prng, ENTROPY_OF_DOUBLE, prng.gaussians().boxed(), -1, -Double.MAX_VALUE,
+        Double.MAX_VALUE, true);
+  }
+
+  @Test
+  public void testGaussians1() throws Exception {
+    final BaseRandom prng = createRng();
+    checkStream(prng, ENTROPY_OF_DOUBLE, prng.gaussians(100).boxed(), 100, -Double.MAX_VALUE,
+        Double.MAX_VALUE, true);
+  }
+
+  @Test
   public void testNextElementArray() {
     final BaseRandom prng = createRng();
     testGeneratesAll(() -> prng.nextElement(STRING_ARRAY), STRING_ARRAY);

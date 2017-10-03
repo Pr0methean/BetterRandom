@@ -352,6 +352,27 @@ public abstract class BaseRandom extends Random implements ByteArrayReseedableRa
         () -> nextDouble(randomNumberOrigin, randomNumberBound)), useParallelStreams());
   }
 
+  /**
+   * Returns a stream producing an effectively unlimited number of pseudorandom doubles that are
+   * normally distributed with mean 0.0 and standard deviation 1.0. This implementation uses {@link
+   * #nextGaussian()}.
+   */
+  public DoubleStream gaussians() {
+    return gaussians(Long.MAX_VALUE);
+  }
+
+  /**
+   * Returns a stream producing the given number of pseudorandom doubles that are normally
+   * distributed with mean 0.0 and standard deviation 1.0. This implementation uses {@link
+   * #nextGaussian()}.
+   *
+   * @param streamSize the number of doubles to generate.
+   */
+  public DoubleStream gaussians(long streamSize) {
+    return StreamSupport.doubleStream(new DoubleSupplierSpliterator(streamSize, this::nextGaussian),
+        useParallelStreams());
+  }
+
   @Override
   public boolean nextBoolean() {
     recordEntropySpent(1);
