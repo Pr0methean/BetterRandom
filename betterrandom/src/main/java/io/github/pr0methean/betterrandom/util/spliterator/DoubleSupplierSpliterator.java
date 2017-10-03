@@ -25,7 +25,7 @@ public class DoubleSupplierSpliterator extends
 
   private DoubleSupplierSpliterator(AtomicLong remaining, AtomicLong splitsRemaining,
       DoubleSupplier doubleSupplier) {
-    super(remaining, splitsRemaining, doubleSupplier);
+    super(remaining, splitsRemaining, doubleSupplier, false);
   }
 
   @Override

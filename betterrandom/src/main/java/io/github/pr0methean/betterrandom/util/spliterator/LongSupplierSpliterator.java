@@ -26,7 +26,7 @@ public class LongSupplierSpliterator extends
   /** Used to share the AtomicLong between partitions. */
   private LongSupplierSpliterator(final AtomicLong remaining, final AtomicLong splitsRemaining,
       final LongSupplier supplier) {
-    super(remaining, splitsRemaining, supplier);
+    super(remaining, splitsRemaining, supplier, false);
   }
 
   @Override
