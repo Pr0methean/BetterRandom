@@ -24,6 +24,10 @@ import java.security.SecureRandom;
  * <p>This is the only seeding strategy that is guaranteed to work on all platforms and therefore is
  * provided as a fall-back option should none of the other provided {@link SeedGenerator}
  * implementations be usable.</p>
+ * <p>On Oracle and OpenJDK, SecureRandom uses {@link sun.security.provider.SeedGenerator}; when 
+ * {@code /dev/random} isn't available, that SeedGenerator class in turn uses the
+  timing of newly-launched threads as a source of randomness, relying on the unpredictable
+  interactions between different configurations of hardware and software and their workloads.</p>
  *
  * @author Daniel Dyer
  */
