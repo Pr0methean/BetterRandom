@@ -99,7 +99,7 @@ public enum RandomTestUtils {
     final Stream<? extends Number> streamToUse = (expectedCount < 0)
         ? stream.sequential().limit(20)
         : stream;
-    long count = stream.mapToLong((number) -> {
+    long count = streamToUse.mapToLong((number) -> {
       assertGreaterOrEqual(origin, number.doubleValue());
       assertLess(bound, number.doubleValue());
       if (checkEntropyCount && !(streamToUse.isParallel())) {
