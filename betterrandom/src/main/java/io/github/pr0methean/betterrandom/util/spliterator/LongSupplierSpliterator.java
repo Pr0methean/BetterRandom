@@ -8,6 +8,8 @@ import java.util.function.LongSupplier;
 /**
  * An unordered, concurrent {@link OfLong} that invokes a {@link LongSupplier} to get its values and
  * has a preset size.
+ *
+ * @author Chris Hennick
  */
 public class LongSupplierSpliterator extends
     AbstractSupplierSpliterator<LongSupplier, LongConsumer, LongSupplierSpliterator> implements
