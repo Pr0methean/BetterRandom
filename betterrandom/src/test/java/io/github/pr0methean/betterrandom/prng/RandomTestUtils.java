@@ -95,22 +95,21 @@ public enum RandomTestUtils {
       final double origin,
       final double bound,
       final boolean checkEntropyCount) {
-    final AtomicLong count = new AtomicLong(0);
     final AtomicLong entropy = new AtomicLong(prng.getEntropyBits());
-    stream.limit((expectedCount < 0) ? 20 : (expectedCount + 1)).forEach((number) -> {
-      count.incrementAndGet();
+    long count = stream.limit((expectedCount < 0) ? 20 : (expectedCount + 1)).mapToLong((number) -> {
       assertGreaterOrEqual(origin, number.doubleValue());
       assertLess(bound, number.doubleValue());
       if (checkEntropyCount && !(stream.isParallel())) {
         long newEntropy = prng.getEntropyBits();
         assertGreaterOrEqual(entropy.getAndSet(newEntropy) - maxEntropySpentPerNumber, newEntropy);
       }
-    });
+      return 1;
+    }).sum();
     if (expectedCount >= 0) {
-      assertEquals(count.get(), expectedCount);
+      assertEquals(count, expectedCount);
     }
     if (checkEntropyCount && stream.isParallel()) {
-      assertGreaterOrEqual(entropy.get() - (maxEntropySpentPerNumber * count.get()),
+      assertGreaterOrEqual(entropy.get() - (maxEntropySpentPerNumber * count),
           prng.getEntropyBits());
     }
   }
