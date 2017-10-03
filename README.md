@@ -135,9 +135,19 @@ replacements for `java.util.Random`.
 * `entropyBits()`: Find out when the PRNG has output more random data than it has been seeded with,
   and thus could benefit from being reseeded. Even when the PRNG is reseeded repeatedly without
   being used, the entropy count won't ever go above the size of the PRNG's internal state.
-** CAUTION: This feature is in alpha. Many inherited methods from `java.util.Random` obtain more
-   bits than they actually use, and will need to be overwritten to either eliminate the waste or
-   exclude it from the entropy debit.
+
+* `withProbability(double)`: Get a boolean with *any* probability of being true, not just 50/50, and
+  the PRNG will still know you're only spending 1 bit of entropy. (Technically it may be [*less*
+  than 1 bit](https://en.wikipedia.org/wiki/Binary_entropy_function), but we don't implement
+  fractional-bit counting yet.)
+
+* Lockless `nextGaussian()`.
+
+* `doubles`, `ints` and `longs` will return parallel streams whenever possible, whereas their
+  implementations in `Random` always return sequential streams.
+
+* `gaussians()` and `gaussians(long streamSize)`: Get an endless or finite stream of
+  normally-distributed doubles.
 
 * `setSeederThread(RandomSeederThread)`: Reseeds the PRNG whenever its entropy is spent, but only
   as long as a seed generator can keep up. See below.
@@ -204,6 +214,8 @@ the seed sources cannot be parallelized. They include:
   and quickly attract regulatory attention.) Note that random.org limits the supply of free random
   numbers to any one IP address; if you operate from a fixed address (at least if you use IPv4), you
   can [check your quota and buy more](https://www.random.org/quota/).
+  * `RandomDotOrgSeedGenerator.RATE_LIMITED_ON_FAIL`: Avoids spamming Random.org or your router, by
+    instantly reporting failure for 10 seconds after every I/O or HTTP error.
 * `SecureRandomSeedGenerator.SECURE_RANDOM_SEED_GENERATOR`: Uses
   `java.security.SecureRandom.generateSeed`. On Oracle and OpenJDK, this in turn uses
   `sun.security.provider.SeedGenerator`; when `/dev/random` isn't available, that in turn uses the
