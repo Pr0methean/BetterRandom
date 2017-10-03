@@ -9,14 +9,11 @@ import static org.testng.Assert.assertFalse;
 import static org.testng.Assert.assertNotEquals;
 import static org.testng.Assert.assertTrue;
 
-import io.github.pr0methean.betterrandom.DeadlockWatchdogThread;
 import io.github.pr0methean.betterrandom.prng.RandomTestUtils.EntropyCheckMode;
 import io.github.pr0methean.betterrandom.seed.DefaultSeedGenerator;
 import io.github.pr0methean.betterrandom.seed.RandomSeederThread;
 import io.github.pr0methean.betterrandom.seed.SeedException;
-import io.github.pr0methean.betterrandom.util.BinaryUtils;
 import io.github.pr0methean.betterrandom.util.EntryPoint;
-import io.github.pr0methean.betterrandom.util.LogPreFormatter;
 import java.io.IOException;
 import java.security.GeneralSecurityException;
 import java.util.Arrays;
@@ -36,8 +33,6 @@ public abstract class BaseRandomTest {
    */
   protected static final double SQRT_12 = 3.4641016151377546;
 
-  private static final LogPreFormatter LOG = new LogPreFormatter(BaseRandomTest.class);
-  private static final int MAX_DUMPED_SEED_LENGTH = 32;
   private static final int FLAKY_TEST_RETRIES = 3;
   private static final int TEST_BYTE_ARRAY_LENGTH = 20;
   private static final String HELLO = "Hello";
@@ -63,14 +58,8 @@ public abstract class BaseRandomTest {
   public void testRepeatability() throws SeedException {
     final BaseRandom rng = createRng();
     final byte[] seed = rng.getSeed();
-    if (seed.length <= MAX_DUMPED_SEED_LENGTH) {
-      LOG.info("Original seed is %s", BinaryUtils.convertBytesToHexString(seed));
-    }
     // Create second RNG using same seed.
     final BaseRandom duplicateRNG = createRng(rng.getSeed());
-    if (seed.length <= MAX_DUMPED_SEED_LENGTH) {
-      LOG.info("Copy's seed is %s", BinaryUtils.convertBytesToHexString(duplicateRNG.getSeed()));
-    }
     assert RandomTestUtils
         .testEquivalence(rng, duplicateRNG, 1000) :
         String.format("Generated sequences do not match between:%n%s%nand:%n%s", rng.dump(),
@@ -408,7 +397,6 @@ public abstract class BaseRandomTest {
 
   @Test
   public void testDoubles() throws Exception {
-    DeadlockWatchdogThread.ensureStarted();
     final BaseRandom prng = createRng();
     checkStream(prng, ENTROPY_OF_DOUBLE, prng.doubles().boxed(), -1, 0.0, 1.0, true);
   }
