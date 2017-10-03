@@ -106,12 +106,12 @@ public enum RandomTestUtils {
         assertGreaterOrEqual(entropy.getAndSet(newEntropy) - maxEntropySpentPerNumber, newEntropy);
       }
     });
+    if (expectedCount >= 0) {
+      assertEquals(count.get(), expectedCount);
+    }
     if (checkEntropyCount && stream.isParallel()) {
       assertGreaterOrEqual(entropy.get() - (maxEntropySpentPerNumber * count.get()),
           prng.getEntropyBits());
-    }
-    if (expectedCount >= 0) {
-      assertEquals(count.get(), expectedCount);
     }
   }
 
