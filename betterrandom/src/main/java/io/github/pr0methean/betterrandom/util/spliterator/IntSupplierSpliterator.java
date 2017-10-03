@@ -8,6 +8,8 @@ import java.util.function.IntSupplier;
 /**
  * An unordered, concurrent {@link OfInt} that invokes an {@link IntSupplier} to get its values and
  * has a preset size.
+ *
+ * @author Chris Hennick
  */
 public class IntSupplierSpliterator extends
     AbstractSupplierSpliterator<IntSupplier, IntConsumer, IntSupplierSpliterator> implements OfInt {

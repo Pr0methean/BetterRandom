@@ -16,6 +16,8 @@ import org.checkerframework.checker.nullness.qual.Nullable;
  * @param <TSupplier> The supplier type.
  * @param <TConsumer> The consumer type that {@link #tryAdvance(Object)} receives.
  * @param <TSplitInto> The return type of {@link #trySplit()}.
+ *
+ * @author Chris Hennick
  */
 public abstract class AbstractSupplierSpliterator<TSupplier, TConsumer, TSplitInto> {
 

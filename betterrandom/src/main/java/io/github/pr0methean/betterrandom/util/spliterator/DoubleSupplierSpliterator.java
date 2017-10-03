@@ -8,6 +8,8 @@ import java.util.function.DoubleSupplier;
 /**
  * An unordered, concurrent {@link OfDouble} that invokes a {@link DoubleSupplier} to get its values
  * and has a preset size.
+ *
+ * @author Chris Hennick
  */
 public class DoubleSupplierSpliterator extends
     AbstractSupplierSpliterator<DoubleSupplier, DoubleConsumer, DoubleSupplierSpliterator> implements
