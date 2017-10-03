@@ -24,7 +24,7 @@ public class IntSupplierSpliterator extends AbstractSupplierSpliterator<IntSuppl
   /** Used to share the AtomicLong between partitions. */
   private IntSupplierSpliterator(final AtomicLong remaining, final AtomicLong splitsRemaining,
       final IntSupplier supplier) {
-    super(remaining, splitsRemaining, supplier);
+    super(remaining, splitsRemaining, supplier, false);
   }
 
   @Override
