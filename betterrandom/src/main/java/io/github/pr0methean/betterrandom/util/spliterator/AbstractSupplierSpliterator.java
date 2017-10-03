@@ -35,7 +35,17 @@ public abstract class AbstractSupplierSpliterator<TSupplier, TConsumer, TSplitIn
         supplier, true);
   }
 
-  /** Used to share the AtomicLongs between partitions. */
+  /**
+   * Used to share the AtomicLongs between partitions.
+   *
+   * @param remaining An {@link AtomicLong} (shared between splits) that stores how many more
+   *     items will be output by {@link #tryAdvance(Object)}.
+   * @param splitsRemaining An {@link AtomicLong} (shared between splits) that stores how many
+   *     more times the {@link #trySplit()} command will return non-null.
+   * @param supplier The supplier to wrap.
+   * @param sized Should be true if this is the root spliterator, and false otherwise (since the
+   *     root spliterator stores the total size, and concurrent splits may compete to exhaust it).
+   */
   protected AbstractSupplierSpliterator(final AtomicLong remaining,
       final AtomicLong splitsRemaining,
       final TSupplier supplier, boolean sized) {
