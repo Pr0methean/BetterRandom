@@ -167,6 +167,12 @@
           <artifactId>maven-surefire-plugin</artifactId>
           <version>2.20.1</version>
           <configuration>
+                      <properties>
+            <property>
+              <name>surefire.testng.verbose</name>
+              <value>10</value>
+            </property>
+          </properties>
             <trimStackTrace>false</trimStackTrace>
             <parallel>methods</parallel>
             <forkedProcessTimeoutInSeconds>600</forkedProcessTimeoutInSeconds>

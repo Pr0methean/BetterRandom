@@ -363,7 +363,7 @@ public abstract class BaseRandom extends Random implements ByteArrayReseedableRa
    * after calling {@link DoubleStream#limit(long)} may cause extra entropy to be spuriously
    * consumed.</p>
    *
-   * @return a stream of normally-distributed random numbers.
+   * @return a stream of normally-distributed random doubles.
    */
   public DoubleStream gaussians() {
     return gaussians(Long.MAX_VALUE);
@@ -375,6 +375,7 @@ public abstract class BaseRandom extends Random implements ByteArrayReseedableRa
    * #nextGaussian()}.
    *
    * @param streamSize the number of doubles to generate.
+   * @return a stream of {@code streamSize} normally-distributed random doubles.
    */
   public DoubleStream gaussians(long streamSize) {
     return StreamSupport.doubleStream(new DoubleSupplierSpliterator(streamSize, this::nextGaussian),
