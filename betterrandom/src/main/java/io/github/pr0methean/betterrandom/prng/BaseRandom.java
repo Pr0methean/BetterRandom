@@ -572,6 +572,17 @@ public abstract class BaseRandom extends Random implements ByteArrayReseedableRa
     }
   }
 
+  @EnsuresNonNull({"this.seed", "entropyBits"})
+  @Override
+  public void setSeed(final byte[] seed) {
+    lock.lock();
+    try {
+      setSeedInternal(seed);
+    } finally {
+      lock.unlock();
+    }
+  }
+
   @SuppressWarnings("method.invocation.invalid")
   @EnsuresNonNull({"this.seed", "entropyBits"})
   @Override
@@ -582,17 +593,6 @@ public abstract class BaseRandom extends Random implements ByteArrayReseedableRa
       setSeed(seedBytes);
     } else {
       setSeedInternal(seedBytes);
-    }
-  }
-
-  @EnsuresNonNull({"this.seed", "entropyBits"})
-  @Override
-  public void setSeed(final byte[] seed) {
-    lock.lock();
-    try {
-      setSeedInternal(seed);
-    } finally {
-      lock.unlock();
     }
   }
 
