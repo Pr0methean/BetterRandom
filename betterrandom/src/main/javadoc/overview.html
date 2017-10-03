@@ -129,10 +129,24 @@ state.</p>
 <li>
 <p><code>entropyBits()</code>: Find out when the PRNG has output more random data than it has been seeded with,
 and thus could benefit from being reseeded. Even when the PRNG is reseeded repeatedly without
-being used, the entropy count won't ever go above the size of the PRNG's internal state.
-** CAUTION: This feature is in alpha. Many inherited methods from <code>java.util.Random</code> obtain more
-bits than they actually use, and will need to be overwritten to either eliminate the waste or
-exclude it from the entropy debit.</p>
+being used, the entropy count won't ever go above the size of the PRNG's internal state.</p>
+</li>
+<li>
+<p><code>withProbability(double)</code>: Get a boolean with <em>any</em> probability of being true, not just 50/50, and
+the PRNG will still know you're only spending 1 bit of entropy. (Technically it may be <a href="https://en.wikipedia.org/wiki/Binary_entropy_function"><em>less</em>
+than 1 bit</a>, but we don't implement
+fractional-bit counting yet.)</p>
+</li>
+<li>
+<p>Lockless <code>nextGaussian()</code>.</p>
+</li>
+<li>
+<p><code>doubles</code>, <code>ints</code> and <code>longs</code> will return parallel streams whenever possible, whereas their
+implementations in <code>Random</code> always return sequential streams.</p>
+</li>
+<li>
+<p><code>gaussians()</code> and <code>gaussians(long streamSize)</code>: Get an endless or finite stream of
+normally-distributed doubles.</p>
 </li>
 <li>
 <p><code>setSeederThread(RandomSeederThread)</code>: Reseeds the PRNG whenever its entropy is spent, but only
@@ -255,7 +269,12 @@ intended to help prevent tampering with the output using a well-placed radio tra
 use of AM/FM helps ensure that any such tampering would cause illegal interference with broadcasts
 and quickly attract regulatory attention.) Note that random.org limits the supply of free random
 numbers to any one IP address; if you operate from a fixed address (at least if you use IPv4), you
-can <a href="https://www.random.org/quota/">check your quota and buy more</a>.</li>
+can <a href="https://www.random.org/quota/">check your quota and buy more</a>.
+<ul>
+<li><code>RandomDotOrgSeedGenerator.RATE_LIMITED_ON_FAIL</code>: Avoids spamming Random.org or your router, by
+instantly reporting failure for 10 seconds after every I/O or HTTP error.</li>
+</ul>
+</li>
 <li><code>SecureRandomSeedGenerator.SECURE_RANDOM_SEED_GENERATOR</code>: Uses
 <code>java.security.SecureRandom.generateSeed</code>. On Oracle and OpenJDK, this in turn uses
 <code>sun.security.provider.SeedGenerator</code>; when <code>/dev/random</code> isn't available, that in turn uses the
