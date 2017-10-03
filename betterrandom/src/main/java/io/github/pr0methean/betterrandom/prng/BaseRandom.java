@@ -315,9 +315,11 @@ public abstract class BaseRandom extends Random implements ByteArrayReseedableRa
   }
 
   /**
-   * Returns a stream producing an effectively unlimited number of pseudorandom doubles, each
+   * <p>Returns a stream producing an effectively unlimited number of pseudorandom doubles, each
    * conforming to the given origin (inclusive) and bound (exclusive). This implementation uses
-   * {@link #nextDouble(double, double)} to generate these numbers.
+   * {@link #nextDouble(double, double)} to generate these numbers.</p> <p>If the returned stream is
+   * a parallel stream, consuming it in parallel after calling {@link DoubleStream#limit(long)} may
+   * cause extra entropy to be spuriously consumed.</p>
    */
   @Override
   public DoubleStream doubles(double randomNumberOrigin, double randomNumberBound) {
@@ -325,9 +327,11 @@ public abstract class BaseRandom extends Random implements ByteArrayReseedableRa
   }
 
   /**
-   * Returns a stream producing an effectively unlimited number of pseudorandom doubles, each
+   * <p>Returns a stream producing an effectively unlimited number of pseudorandom doubles, each
    * between 0.0 (inclusive) and 1.0 (exclusive). This implementation uses {@link #nextDouble()} to
-   * generate these numbers.
+   * generate these numbers.</p> <p>If the returned stream is a parallel stream, consuming it in
+   * parallel after calling {@link DoubleStream#limit(long)} may cause extra entropy to be
+   * spuriously consumed.</p>
    */
   @Override
   public DoubleStream doubles() {
@@ -353,9 +357,13 @@ public abstract class BaseRandom extends Random implements ByteArrayReseedableRa
   }
 
   /**
-   * Returns a stream producing an effectively unlimited number of pseudorandom doubles that are
+   * <p>Returns a stream producing an effectively unlimited number of pseudorandom doubles that are
    * normally distributed with mean 0.0 and standard deviation 1.0. This implementation uses {@link
-   * #nextGaussian()}.
+   * #nextGaussian()}.</p> <p>If the returned stream is a parallel stream, consuming it in parallel
+   * after calling {@link DoubleStream#limit(long)} may cause extra entropy to be spuriously
+   * consumed.</p>
+   *
+   * @return a stream of normally-distributed random numbers.
    */
   public DoubleStream gaussians() {
     return gaussians(Long.MAX_VALUE);
@@ -435,6 +443,11 @@ public abstract class BaseRandom extends Random implements ByteArrayReseedableRa
         useParallelStreams());
   }
 
+  /**
+   * <p>{@inheritDoc}</p> <p>If the returned stream is a parallel stream, consuming it in parallel
+   * after calling {@link DoubleStream#limit(long)} may cause extra entropy to be spuriously
+   * consumed.</p>
+   */
   @Override
   public IntStream ints() {
     return ints(Long.MAX_VALUE);
@@ -484,9 +497,11 @@ public abstract class BaseRandom extends Random implements ByteArrayReseedableRa
   }
 
   /**
-   * Returns a stream producing an effectively unlimited number of pseudorandom ints, each
+   * <p>Returns a stream producing an effectively unlimited number of pseudorandom ints, each
    * conforming to the given origin (inclusive) and bound (exclusive). This implementation uses
-   * {@link #nextInt(int, int)} to generate these numbers.
+   * {@link #nextInt(int, int)} to generate these numbers.</p> <p>If the returned stream is a
+   * parallel stream, consuming it in parallel after calling {@link DoubleStream#limit(long)} may
+   * cause extra entropy to be spuriously consumed.</p>
    */
   @Override
   public IntStream ints(final int randomNumberOrigin, final int randomNumberBound) {
@@ -499,15 +514,22 @@ public abstract class BaseRandom extends Random implements ByteArrayReseedableRa
         useParallelStreams());
   }
 
+  /**
+   * <p>{@inheritDoc}</p> <p>If the returned stream is a parallel stream, consuming it in parallel
+   * after calling {@link DoubleStream#limit(long)} may cause extra entropy to be spuriously
+   * consumed.</p>
+   */
   @Override
   public LongStream longs() {
     return longs(Long.MAX_VALUE);
   }
 
   /**
-   * Returns a stream producing the given number of pseudorandom longs, each conforming to the given
-   * origin (inclusive) and bound (exclusive). This implementation uses {@link #nextLong(long,
-   * long)} to generate these numbers.
+   * <p>Returns a stream producing the given number of pseudorandom longs, each conforming to the
+   * given origin (inclusive) and bound (exclusive). This implementation uses {@link #nextLong(long,
+   * long)} to generate these numbers.</p><p>If the returned stream is a parallel stream, consuming
+   * it in parallel after calling {@link DoubleStream#limit(long)} may cause extra entropy to be
+   * spuriously consumed.</p>
    */
   @Override
   public LongStream longs(final long streamSize, final long randomNumberOrigin,
@@ -560,9 +582,11 @@ public abstract class BaseRandom extends Random implements ByteArrayReseedableRa
   }
 
   /**
-   * Returns a stream producing an effectively unlimited number of pseudorandom longs, each
+   * <p>Returns a stream producing an effectively unlimited number of pseudorandom longs, each
    * conforming to the given origin (inclusive) and bound (exclusive). This implementation uses
-   * {@link #nextLong(long, long)} to generate these numbers.
+   * {@link #nextLong(long, long)} to generate these numbers.</p> <p>If the returned stream is a
+   * parallel stream, consuming it in parallel after calling {@link DoubleStream#limit(long)} may
+   * cause extra entropy to be spuriously consumed.</p>
    */
   @Override
   public LongStream longs(final long randomNumberOrigin, final long randomNumberBound) {
