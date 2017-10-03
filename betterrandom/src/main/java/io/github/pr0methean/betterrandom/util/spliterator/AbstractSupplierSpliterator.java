@@ -1,6 +1,5 @@
 package io.github.pr0methean.betterrandom.util.spliterator;
 
-import static java.util.Spliterator.CONCURRENT;
 import static java.util.Spliterator.IMMUTABLE;
 import static java.util.Spliterator.NONNULL;
 import static java.util.Spliterator.SIZED;
@@ -23,6 +22,7 @@ public abstract class AbstractSupplierSpliterator<TSupplier, TConsumer, TSplitIn
   private final AtomicLong remaining;
   private final AtomicLong splitsRemaining;
   protected final TSupplier supplier;
+  private final boolean sized;
 
   /**
    * Create an instance.
@@ -32,16 +32,17 @@ public abstract class AbstractSupplierSpliterator<TSupplier, TConsumer, TSplitIn
    */
   public AbstractSupplierSpliterator(final long size, final TSupplier supplier) {
     this(new AtomicLong(size), new AtomicLong(Long.SIZE - Long.numberOfLeadingZeros(size)),
-        supplier);
+        supplier, true);
   }
 
   /** Used to share the AtomicLongs between partitions. */
   protected AbstractSupplierSpliterator(final AtomicLong remaining,
       final AtomicLong splitsRemaining,
-      final TSupplier supplier) {
+      final TSupplier supplier, boolean sized) {
     this.remaining = remaining;
     this.splitsRemaining = splitsRemaining;
     this.supplier = supplier;
+    this.sized = sized;
   }
 
   @SuppressWarnings("override.return.invalid") // actually is nullable in the interface
@@ -54,8 +55,7 @@ public abstract class AbstractSupplierSpliterator<TSupplier, TConsumer, TSplitIn
   }
 
   /**
-   * Should wrap a constructor that calls {@link #AbstractSupplierSpliterator(AtomicLong,
-   * AtomicLong, Object)}.
+   * Should wrap a constructor that calls {@link #AbstractSupplierSpliterator(AtomicLong, AtomicLong, Object, boolean)}.
    */
   protected abstract TSplitInto internalSplit(AtomicLong remaining, AtomicLong splitsRemaining);
 
@@ -66,7 +66,7 @@ public abstract class AbstractSupplierSpliterator<TSupplier, TConsumer, TSplitIn
 
   /** @see Spliterator#characteristics() */
   public int characteristics() {
-    return SIZED | CONCURRENT | IMMUTABLE | NONNULL;
+    return IMMUTABLE | NONNULL | (sized ? SIZED : 0);
   }
 
   /** @see Spliterator#tryAdvance(Consumer) */
