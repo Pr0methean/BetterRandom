@@ -63,7 +63,6 @@ public abstract class AbstractSupplierSpliterator<TSupplier, TConsumer, TSplitIn
    * @return a descendant spliterator, or null if this spliterator refuses to be split any further.
    */
   public @Nullable TSplitInto trySplit() {
-    //LOG.logStackTrace(Level.INFO, Thread.currentThread().getStackTrace());
     return ((splitsRemaining.getAndDecrement() <= 0) || (remaining.get() <= 0))
         ? null
         : internalSplit(remaining, splitsRemaining);
@@ -104,7 +103,6 @@ public abstract class AbstractSupplierSpliterator<TSupplier, TConsumer, TSplitIn
    * @return true if an output was produced and consumed.
    */
   public boolean tryAdvance(final TConsumer action) {
-    //LOG.logStackTrace(Level.INFO, Thread.currentThread().getStackTrace());
     if (remaining.decrementAndGet() >= 0) {
       internalSupplyAndAccept(action);
       return true;
