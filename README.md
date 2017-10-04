@@ -20,6 +20,11 @@ generation on Java. It includes:
 [![codebeat badge](https://codebeat.co/badges/4339b354-590c-4871-b441-d694dc5a33ea)](https://codebeat.co/projects/github-com-pr0methean-betterrandom-master)
 [![BCH compliance](https://bettercodehub.com/edge/badge/Pr0methean/BetterRandom?branch=master)](https://bettercodehub.com/)
 
+# Get it from MavenCentral
+
+Get links and dependency codes for the latest version from
+[https://mvnrepository.com/artifact/io.github.pr0methean.betterrandom/BetterRandom](https://mvnrepository.com/artifact/io.github.pr0methean.betterrandom/BetterRandom).
+
 # Design philosophy: don't take chances on randomness
 
 Many standard tests of randomness amount to Monte Carlo simulations. And since widespread
