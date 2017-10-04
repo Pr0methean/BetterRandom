@@ -23,11 +23,12 @@ import java.security.SecureRandom;
  * primary RNG is that we can use it to seed RNGs that are much faster than SecureRandom.</p>
  * <p>This is the only seeding strategy that is guaranteed to work on all platforms and therefore is
  * provided as a fall-back option should none of the other provided {@link SeedGenerator}
- * implementations be usable.</p>
- * <p>On Oracle and OpenJDK, SecureRandom uses {@link sun.security.provider.SeedGenerator}; when 
- * {@code /dev/random} isn't available, that SeedGenerator class in turn uses the
-  timing of newly-launched threads as a source of randomness, relying on the unpredictable
-  interactions between different configurations of hardware and software and their workloads.</p>
+ * implementations be usable.</p> <p>On Oracle and OpenJDK, SecureRandom uses <a
+ * href="http://hg.openjdk.java.net/jdk8/jdk8/jdk/file/tip/src/share/classes/sun/security/provider/SeedGenerator.java">{@code
+ * sun.security.provider.SeedGenerator}</a>; when {@code /dev/random} isn't available, that
+ * SeedGenerator class in turn uses the timing of newly-launched threads as a source of randomness,
+ * relying on the unpredictable interactions between different configurations of hardware and
+ * software and their workloads.</p>
  *
  * @author Daniel Dyer
  */
