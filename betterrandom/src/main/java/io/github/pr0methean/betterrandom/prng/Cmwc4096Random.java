@@ -78,7 +78,7 @@ public class Cmwc4096Random extends BaseRandom {
   /**
    * Creates an RNG and seeds it with the specified seed data.
    *
-   * @param seed The seed data used to initialise the RNG.
+   * @param seed 16384 bytes of seed data used to initialise the RNG.
    */
   public Cmwc4096Random(final byte[] seed) {
     super(seed);
@@ -86,7 +86,7 @@ public class Cmwc4096Random extends BaseRandom {
   }
 
   @Override
-  protected ToStringHelper addSubSubclassFields(final ToStringHelper original) {
+  protected ToStringHelper addSubclassFields(final ToStringHelper original) {
     return original
         .add("state", Arrays.toString(state));
   }
@@ -96,7 +96,7 @@ public class Cmwc4096Random extends BaseRandom {
     return seed.clone();
   }
 
-  /*
+  /**
    * No-op.
    * @param seed ignored
    */

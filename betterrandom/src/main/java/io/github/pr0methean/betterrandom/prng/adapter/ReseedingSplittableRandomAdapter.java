@@ -88,7 +88,7 @@ public class ReseedingSplittableRandomAdapter extends BaseSplittableRandomAdapte
   }
 
   @Override
-  protected ToStringHelper addSubSubclassFields(final ToStringHelper original) {
+  protected ToStringHelper addSubclassFields(final ToStringHelper original) {
     return original.add("threadLocal", threadLocal);
   }
 

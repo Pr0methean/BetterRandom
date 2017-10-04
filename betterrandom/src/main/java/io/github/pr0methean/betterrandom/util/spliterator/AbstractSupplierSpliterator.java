@@ -57,11 +57,11 @@ public abstract class AbstractSupplierSpliterator<TSupplier, TConsumer, TSplitIn
     this.sized = sized;
   }
 
-  @SuppressWarnings("override.return.invalid") // actually is nullable in the interface
   /**
    * @see Spliterator#trySplit()
    * @return a descendant spliterator, or null if this spliterator refuses to be split any further.
    */
+  @SuppressWarnings("override.return.invalid") // actually is nullable in the interface
   public @Nullable TSplitInto trySplit() {
     return ((splitsRemaining.getAndDecrement() <= 0) || (remaining.get() <= 0))
         ? null

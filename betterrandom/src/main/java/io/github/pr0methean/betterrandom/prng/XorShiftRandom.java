@@ -25,9 +25,10 @@ import org.checkerframework.checker.initialization.qual.UnknownInitialization;
 
 /**
  * <p>Very fast pseudo random number generator.  See <a href="http://school.anhb.uwa.edu.au/personalpages/kwessen/shared/Marsaglia03.html">this
- * page</a> for a description.  This RNG has a period of about 2<sup>160</sup>, which is not as long
- * as the {@link MersenneTwisterRandom} but it is faster.</p> <p><em>NOTE: Because instances of this
- * class require 160-bit seeds, it is not possible to seed this RNG using the {@link #setSeed(long)}
+ * page</a> (<a href="http://web.archive.org/web/20170313200403/school.anhb.uwa.edu.au/personalpages/kwessen/shared/Marsaglia03.html">archive</a>)
+ * for a description.  This RNG has a period of about 2<sup>160</sup>, which is not as long as the
+ * {@link MersenneTwisterRandom} but it is faster.</p> <p><em>NOTE: Because instances of this class
+ * require 160-bit seeds, it is not possible to seed this RNG using the {@link #setSeed(long)}
  * method inherited from {@link Random}.  Calls to this method will have no effect. Instead the seed
  * must be set by a constructor.</em></p>
  *
@@ -50,33 +51,34 @@ public class XorShiftRandom extends BaseRandom {
   /**
    * Creates an RNG and seeds it with the specified seed data.
    *
-   * @param seed The seed data used to initialise the RNG.
+   * @param seed 20 bytes of seed data used to initialise the RNG.
    */
   public XorShiftRandom(final byte[] seed) {
     super(seed);
   }
 
   /**
-   * <p>Constructor for XorShiftRandom.</p>
+   * Creates a new RNG and seeds it using the {@link DefaultSeedGenerator}.
    *
-   * @throws SeedException if any.
+   * @throws SeedException if the {@link DefaultSeedGenerator} fails to generate a seed.
    */
   public XorShiftRandom() throws SeedException {
     this(DefaultSeedGenerator.DEFAULT_SEED_GENERATOR);
   }
 
   /**
-   * <p>Constructor for XorShiftRandom.</p>
+   * Seed the RNG using the provided seed generation strategy.
    *
-   * @param seedGenerator a {@link SeedGenerator} object.
-   * @throws SeedException if any.
+   * @param seedGenerator The seed generation strategy that will provide the seed value for this
+   *     RNG.
+   * @throws SeedException if there is a problem generating a seed.
    */
   public XorShiftRandom(final SeedGenerator seedGenerator) throws SeedException {
     this(seedGenerator.generateSeed(SEED_SIZE_BYTES));
   }
 
   @Override
-  protected ToStringHelper addSubSubclassFields(final ToStringHelper original) {
+  protected ToStringHelper addSubclassFields(final ToStringHelper original) {
     return original
         .add("state1", state1)
         .add("state2", state2)
