@@ -28,18 +28,18 @@ import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
 /**
- * <p>Connects to <a href="https://www.random.org/clients/http/" target="_top">random.org's old API</a> (via HTTPS)
- * and downloads a set of random bits to use as seed data.  It is generally better to use the {@link
- * DevRandomSeedGenerator} where possible, as it should be much quicker. This seed generator is most
- * useful on Microsoft Windows without Cygwin, and other platforms that do not provide {@literal
- * /dev/random}.</p>
- * <p>Random.org collects randomness from atmospheric noise using 9 radios, located at undisclosed
- * addresses in Dublin and Copenhagen and tuned to undisclosed AM/FM frequencies. (The secrecy is
- *  intended to help prevent tampering with the output using a well-placed radio transmitter, and the
- * use of AM/FM helps ensure that any such tampering would cause illegal interference with broadcasts
- *  and quickly attract regulatory attention.) Note that random.org limits the supply of free random
- *  numbers to any one IP address; if you operate from a fixed address (at least if you use IPv4), you
- *  can <a href="https://www.random.org/quota/">check your quota and buy more</a>.
+ * <p>Connects to <a href="https://www.random.org/clients/http/" target="_top">random.org's old
+ * API</a> (via HTTPS) and downloads a set of random bits to use as seed data.  It is generally
+ * better to use the {@link DevRandomSeedGenerator} where possible, as it should be much quicker.
+ * This seed generator is most useful on Microsoft Windows without Cygwin, and other platforms that
+ * do not provide {@literal /dev/random}.</p> <p>Random.org collects randomness from atmospheric
+ * noise using 9 radios, located at undisclosed addresses in Dublin and Copenhagen and tuned to
+ * undisclosed AM/FM frequencies. (The secrecy is intended to help prevent tampering with the output
+ * using a well-placed radio transmitter, and the use of AM/FM helps ensure that any such tampering
+ * would cause illegal interference with broadcasts and quickly attract regulatory attention.) Note
+ * that random.org limits the supply of free random numbers to any one IP address; if you operate
+ * from a fixed address (at least if you use IPv4), you can <a href="https://www.random.org/quota/">check
+ * your quota and buy more</a>.
  *
  * @author Daniel Dyer
  * @author Chris Hennick
@@ -52,7 +52,7 @@ public enum RandomDotOrgSeedGenerator implements SeedGenerator {
    * light and/or no other source of randomness will do.
    */
   RANDOM_DOT_ORG_SEED_GENERATOR(false),
-  
+
   /**
    * Upon a failed request, this version of the client requires that you wait 10 seconds before
    * trying again. The {@link DefaultSeedGenerator} uses it and will fall back to the {@link

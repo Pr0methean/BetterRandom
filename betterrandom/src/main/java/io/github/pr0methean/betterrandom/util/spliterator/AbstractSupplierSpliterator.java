@@ -16,7 +16,6 @@ import org.checkerframework.checker.nullness.qual.Nullable;
  * @param <TSupplier> The supplier type.
  * @param <TConsumer> The consumer type that {@link #tryAdvance(Object)} receives.
  * @param <TSplitInto> The return type of {@link #trySplit()}.
- *
  * @author Chris Hennick
  */
 public abstract class AbstractSupplierSpliterator<TSupplier, TConsumer, TSplitInto> {
@@ -58,8 +57,8 @@ public abstract class AbstractSupplierSpliterator<TSupplier, TConsumer, TSplitIn
   }
 
   /**
-   * @see Spliterator#trySplit()
    * @return a descendant spliterator, or null if this spliterator refuses to be split any further.
+   * @see Spliterator#trySplit()
    */
   @SuppressWarnings("override.return.invalid") // actually is nullable in the interface
   public @Nullable TSplitInto trySplit() {
@@ -71,6 +70,7 @@ public abstract class AbstractSupplierSpliterator<TSupplier, TConsumer, TSplitIn
   /**
    * Should wrap a constructor that calls {@link #AbstractSupplierSpliterator(AtomicLong,
    * AtomicLong, Object, boolean)}.
+   *
    * @param remaining An {@link AtomicLong} (shared between splits) that stores how many more
    *     items will be output by {@link #tryAdvance(Object)}.
    * @param splitsRemaining An {@link AtomicLong} (shared between splits) that stores how many
@@ -80,27 +80,27 @@ public abstract class AbstractSupplierSpliterator<TSupplier, TConsumer, TSplitIn
   protected abstract TSplitInto internalSplit(AtomicLong remaining, AtomicLong splitsRemaining);
 
   /**
+   * @return the total number of items remaining in the root spliterator, and thus an upper bound on
+   *     the number available to any one descendant.
    * @see Spliterator#estimateSize()
-   * @return the total number of items remaining in the root spliterator, and thus an upper bound
-   * on the number available to any one descendant.
    */
   public long estimateSize() {
     return remaining.get();
   }
 
   /**
+   * @return {@code IMMUTABLE | NONNULL | SIZED} in the root spliterator, and {@code IMMUTABLE |
+   *     NONNULL} in descendants.
    * @see Spliterator#characteristics()
-   * @return {@code IMMUTABLE | NONNULL | SIZED} in the root spliterator, and
-   * {@code IMMUTABLE | NONNULL} in descendants.
    */
   public int characteristics() {
     return IMMUTABLE | NONNULL | (sized ? SIZED : 0);
   }
 
   /**
-   * @see Spliterator#tryAdvance(Consumer)
    * @param action the consumer that will receive the next output value if there is one.
    * @return true if an output was produced and consumed.
+   * @see Spliterator#tryAdvance(Consumer)
    */
   public boolean tryAdvance(final TConsumer action) {
     if (remaining.decrementAndGet() >= 0) {
@@ -113,6 +113,7 @@ public abstract class AbstractSupplierSpliterator<TSupplier, TConsumer, TSplitIn
 
   /**
    * Should be {@code action.accept(supplier.get())} or an equivalent.
+   *
    * @param action the consumer that will receive the next output value if there is one.
    */
   protected abstract void internalSupplyAndAccept(TConsumer action);
