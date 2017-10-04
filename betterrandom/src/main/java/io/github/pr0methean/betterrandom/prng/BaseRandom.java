@@ -318,7 +318,12 @@ public abstract class BaseRandom extends Random implements ByteArrayReseedableRa
       throw new IllegalArgumentException(String.format("Bound %f must be greater than origin %f",
           bound, origin));
     }
-    return nextDouble() * (bound - origin) + origin;
+    double out = (nextDouble() * (bound - origin)) + origin;
+    if (out >= bound) {
+      // correct for rounding
+      return Double.longBitsToDouble(Double.doubleToLongBits(bound) - 1);
+    }
+    return out;
   }
 
   /**

@@ -41,7 +41,7 @@ public abstract class BaseSplittableRandomAdapter extends BaseRandom {
 
   /**
    * Returns the {@link SplittableRandom} that is to be used to generate random numbers for the
-   * current calling context. Note that {@link SplittableRandom} instances aren't thread-safe.
+   * current thread. ({@link SplittableRandom} isn't thread-safe.)
    * Called by all the {@code next*} methods.
    *
    * @return a {@link SplittableRandom}.
