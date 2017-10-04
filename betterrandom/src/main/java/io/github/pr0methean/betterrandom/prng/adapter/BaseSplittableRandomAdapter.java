@@ -6,7 +6,8 @@ import java.util.SplittableRandom;
 import org.checkerframework.checker.initialization.qual.UnknownInitialization;
 
 /**
- * Abstract class for implementations of {@link BaseRandom} that wrap a {@link SplittableRandom}.
+ * Abstract class for implementations of {@link BaseRandom} that wrap one or more {@link
+ * SplittableRandom} instances.
  *
  * @author Chris Hennick
  */
@@ -154,6 +155,7 @@ public abstract class BaseSplittableRandomAdapter extends BaseRandom {
     return out;
   }
 
+  /** Returns the only supported seed length. */
   @Override
   public int getNewSeedLength(@UnknownInitialization BaseSplittableRandomAdapter this) {
     return Long.BYTES;
