@@ -47,7 +47,7 @@ public abstract class BaseRandom extends Random implements ByteArrayReseedableRa
     RepeatableRandom, Dumpable, EntropyCountingRandom {
 
   /** The number of pseudorandom bits in {@link #nextFloat()}. */
-  protected static final long ENTROPY_OF_FLOAT = 24;
+  protected static final int ENTROPY_OF_FLOAT = 24;
 
   /** The number of pseudorandom bits in {@link #nextDouble()}. */
   protected static final int ENTROPY_OF_DOUBLE = 53;
@@ -74,9 +74,10 @@ public abstract class BaseRandom extends Random implements ByteArrayReseedableRa
   @SuppressWarnings("InstanceVariableMayNotBeInitializedByReadObject")
   protected transient Lock lock;
   /**
-   * Set by the constructor once either {@link Random#Random()} or {@link Random#Random(long)}.
-   * Intended for {@link #setSeed(long)}, which may have to ignore calls while this is false if the
-   * subclass does not support 8-byte seeds, or it overriddes setSeed(long) to use subclass fields.
+   * Set by the constructor once either {@link Random#Random()} or {@link Random#Random(long)} has
+   * returned. Intended for {@link #setSeed(long)}, which may have to ignore calls while this is
+   * false if the subclass does not support 8-byte seeds, or it overriddes setSeed(long) to use
+   * subclass fields.
    */
   @SuppressWarnings({"InstanceVariableMayNotBeInitializedByReadObject",
       "FieldAccessedSynchronizedAndUnsynchronized"})
@@ -85,13 +86,13 @@ public abstract class BaseRandom extends Random implements ByteArrayReseedableRa
   protected AtomicLong entropyBits;
 
   /**
-   * Creates a new RNG and seeds it using the default seeding strategy.
+   * Seed the RNG using the {@link DefaultSeedGenerator} to create a seed of the specified size.
    *
-   * @param seedLength a int.
-   * @throws SeedException if any.
+   * @param seedSizeBytes The number of bytes to use for seed data.
+   * @throws SeedException if the {@link DefaultSeedGenerator} fails to generate a seed.
    */
-  public BaseRandom(final int seedLength) throws SeedException {
-    this(DefaultSeedGenerator.DEFAULT_SEED_GENERATOR.generateSeed(seedLength));
+  public BaseRandom(final int seedSizeBytes) throws SeedException {
+    this(DefaultSeedGenerator.DEFAULT_SEED_GENERATOR.generateSeed(seedSizeBytes));
     entropyBits = new AtomicLong(0);
   }
 
@@ -169,14 +170,12 @@ public abstract class BaseRandom extends Random implements ByteArrayReseedableRa
   }
 
   /**
-   * The purpose of this method is so that entropy-counting subclasses can detect that no more than
-   * 1 bit of entropy is actually being consumed, even though this method uses {@link #nextDouble()}
-   * which normally consumes 53 bits. Tracking of fractional bits of entropy is currently not
-   * implemented in BaseRandom.
+   * <p>Returns true with the given probability, and records that only 1 bit of entropy is being
+   * spent.</p> <p>When {@code probability <= 0}, instantly returns false without recording any
+   * entropy spent. Likewise, instantly returns true when {@code probability >= 1}.</p>
    *
    * @param probability The probability of returning true.
-   * @return True with probability {@code probability}; false otherwise. If {@code probability < 0},
-   *     always returns false. If {@code probability >= 1}, always returns true.
+   * @return True with probability equal to the {@code probability} parameter; false otherwise.
    */
   public final boolean withProbability(final double probability) {
     return (probability >= 1) || ((probability > 0) && withProbabilityInternal(probability));
@@ -184,11 +183,10 @@ public abstract class BaseRandom extends Random implements ByteArrayReseedableRa
 
   /**
    * Called by {@link #withProbability(double)} to generate a boolean with a specified probability
-   * of returning true, after special cases (probability 0 or less, or 1 or more) have been
-   * eliminated.
+   * of returning true, after checking that {@code probability} is strictly between 0 and 1.
    *
-   * @param probability The probability of returning true; always strictly between 0 and 1.
-   * @return True with probability {@code probability}; false otherwise.
+   * @param probability The probability (between 0 and 1 exclusive) of returning true.
+   * @return True with probability equal to the {@code probability} parameter; false otherwise.
    */
   protected boolean withProbabilityInternal(final double probability) {
     final boolean result = super.nextDouble() < probability;
@@ -242,7 +240,11 @@ public abstract class BaseRandom extends Random implements ByteArrayReseedableRa
   @Override
   protected abstract int next(int bits);
 
-  /** {@inheritDoc} Reimplemented for entropy-counting purposes. */
+  /**
+   * Generates random bytes and places them into a user-supplied byte array. The number of random
+   * bytes produced is equal to the length of the byte array. Reimplemented for entropy-counting
+   * purposes.
+   */
   @SuppressWarnings("NumericCastThatLosesPrecision")
   @Override
   public void nextBytes(final byte[] bytes) {
@@ -264,6 +266,11 @@ public abstract class BaseRandom extends Random implements ByteArrayReseedableRa
     return super.nextInt(bound);
   }
 
+  /**
+   * Returns the next pseudorandom, uniformly distributed long value from this random number
+   * generator's sequence. Unlike the inherited implementation in {@link Random#nextLong()}, ones in
+   * BetterRandom generally <i>can</i> be expected to return all 2<sup>64</sup> possible values.
+   */
   @Override
   public final long nextLong() {
     recordEntropySpent(Long.SIZE);
@@ -420,7 +427,7 @@ public abstract class BaseRandom extends Random implements ByteArrayReseedableRa
    *     but shall not debit the entropy count.
    * @return a random number that is normally distributed with mean 0 and standard deviation 1.
    */
-  protected double internalNextGaussian(final DoubleSupplier nextDouble) {
+  protected final double internalNextGaussian(final DoubleSupplier nextDouble) {
     // See Knuth, ACP, Section 3.4.1 Algorithm C.
     final double out = Double.longBitsToDouble(nextNextGaussian.getAndSet(NAN_LONG_BITS));
     if (Double.isNaN(out)) {
@@ -598,7 +605,7 @@ public abstract class BaseRandom extends Random implements ByteArrayReseedableRa
   public String dump() {
     lock.lock();
     try {
-      return addSubSubclassFields(MoreObjects.toStringHelper(this)
+      return addSubclassFields(MoreObjects.toStringHelper(this)
           .add("seed", BinaryUtils.convertBytesToHexString(seed))
           .add("entropyBits", entropyBits.get())
           .add("seederThread", seederThread))
@@ -629,6 +636,13 @@ public abstract class BaseRandom extends Random implements ByteArrayReseedableRa
     }
   }
 
+  /**
+   * Sets the seed of this random number generator using a single long seed, if this implementation
+   * supports that. If it is capable of using 64 bits or less of seed data (i.e. if {@code {@link
+   * #getNewSeedLength()} <= {@link Long#BYTES}}), then this method shall replace the entire seed as
+   * {@link Random#setSeed(long)} does; otherwise, it shall either be a no-op, or shall combine the
+   * input with the existing seed as {@link java.security.SecureRandom#setSeed(long)} does.
+   */
   @SuppressWarnings("method.invocation.invalid")
   @EnsuresNonNull({"this.seed", "entropyBits"})
   @Override
@@ -649,7 +663,7 @@ public abstract class BaseRandom extends Random implements ByteArrayReseedableRa
    * @param original a {@link ToStringHelper} object.
    * @return {@code original} with the fields not inherited from {@link BaseRandom} written to it.
    */
-  protected abstract ToStringHelper addSubSubclassFields(ToStringHelper original);
+  protected abstract ToStringHelper addSubclassFields(ToStringHelper original);
 
   /**
    * Registers this PRNG with the given {@link RandomSeederThread} to schedule reseeding when we run
@@ -678,9 +692,8 @@ public abstract class BaseRandom extends Random implements ByteArrayReseedableRa
 
   /**
    * Sets the seed, and should be overridden to set other state that derives from the seed. Called
-   * by {@link #setSeed(byte[])}, whose default implementation ensures that the lock is held while
-   * doing so. Also called by constructors, {@link #readObject(ObjectInputStream)} and {@link
-   * #readObjectNoData()}.
+   * by {@link #setSeed(byte[])}, constructors, {@link #readObject(ObjectInputStream)} and {@link
+   * #fallbackSetSeed()}. When called after initialization, the {@link #lock} is always held.
    *
    * @param seed The new seed.
    */
@@ -766,7 +779,8 @@ public abstract class BaseRandom extends Random implements ByteArrayReseedableRa
 
   /**
    * Generates a seed using the default seed generator if there isn't one already. For use in
-   * handling a {@link #setSeed(long)} call in subclasses that can't actually use an 8-byte seed.
+   * handling a {@link #setSeed(long)} call from the super constructor {@link Random#Random()} in
+   * subclasses that can't actually use an 8-byte seed. Also used in {@link #readObjectNoData()}.
    */
   @SuppressWarnings("LockAcquiredButNotSafelyReleased")
   @EnsuresNonNull({"seed", "entropyBits"})

@@ -80,7 +80,7 @@ public class MersenneTwisterRandom extends BaseRandom {
   /**
    * Creates an RNG and seeds it with the specified seed data.
    *
-   * @param seed The seed data used to initialise the RNG.
+   * @param seed 16 bytes of seed data used to initialise the RNG.
    */
   public MersenneTwisterRandom(final byte[] seed) {
     super(seed);
@@ -88,23 +88,24 @@ public class MersenneTwisterRandom extends BaseRandom {
   }
 
   /**
-   * <p>Constructor for MersenneTwisterRandom.</p>
+   * Seed the RNG using the provided seed generation strategy.
    *
-   * @param seedGenerator a {@link SeedGenerator} object.
-   * @throws SeedException if any.
+   * @param seedGenerator The seed generation strategy that will provide the seed value for this
+   *     RNG.
+   * @throws SeedException If there is a problem generating a seed.
    */
   public MersenneTwisterRandom(final SeedGenerator seedGenerator) throws SeedException {
     this(seedGenerator.generateSeed(SEED_SIZE_BYTES));
   }
 
   @Override
-  protected ToStringHelper addSubSubclassFields(final ToStringHelper original) {
+  protected ToStringHelper addSubclassFields(final ToStringHelper original) {
     return original
         .add("mt", Arrays.toString(mt))
         .add("mtIndex", mtIndex);
   }
 
-  /*
+  /**
    * No-op.
    * @param seed ignored
    */

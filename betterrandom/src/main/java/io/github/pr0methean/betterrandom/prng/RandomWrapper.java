@@ -24,16 +24,14 @@ import io.github.pr0methean.betterrandom.seed.SeedException;
 import io.github.pr0methean.betterrandom.seed.SeedGenerator;
 import io.github.pr0methean.betterrandom.util.BinaryUtils;
 import io.github.pr0methean.betterrandom.util.EntryPoint;
+import java.security.SecureRandom;
 import java.util.Random;
 import org.checkerframework.checker.initialization.qual.UnknownInitialization;
 import org.checkerframework.checker.nullness.qual.Nullable;
 
 /**
  * <p>Wraps any {@link Random} as a {@link RepeatableRandom} and {@link ByteArrayReseedableRandom}.
- * Can be used to encapsulate away a change of implementation in midstream. Note that when this is
- * constructed using an existing instance, and after {@link #setWrapped(Random)} is called, we won't
- * know the initial seed until the next {@link #setSeed(byte[])} or {@link #setSeed(long)} call, and
- * so {@link #getSeed()} will return a dummy array until then.</p>
+ * Can be used to encapsulate away a change of implementation in midstream.</p>
  *
  * @author Chris Hennick
  */
@@ -45,7 +43,7 @@ public class RandomWrapper extends BaseRandom {
   private boolean unknownSeed = true;
 
   /**
-   * Creates a new RNG and seeds it using the default seeding strategy.
+   * Wraps a {@link Random} and seeds it using the default seeding strategy.
    *
    * @throws SeedException if any.
    */
@@ -54,7 +52,7 @@ public class RandomWrapper extends BaseRandom {
   }
 
   /**
-   * Seed the RNG using the provided seedArray generation strategy.
+   * Wraps a {@link Random} and seeds it using the provided seedArray generation strategy.
    *
    * @param seedGenerator The seedArray generation strategy that will provide the seedArray
    *     value for this RNG.
@@ -68,9 +66,9 @@ public class RandomWrapper extends BaseRandom {
   }
 
   /**
-   * Creates an RNG and seeds it with the specified seedArray data.
+   * Wraps a {@link Random} and seeds it with the specified seed data.
    *
-   * @param seed The seedArray data used to initialise the RNG.
+   * @param seed 8 bytes of seed data used to initialise the RNG.
    */
   public RandomWrapper(final byte[] seed) {
     super(seed);
@@ -149,10 +147,19 @@ public class RandomWrapper extends BaseRandom {
   }
 
   @Override
-  protected ToStringHelper addSubSubclassFields(final ToStringHelper original) {
+  protected ToStringHelper addSubclassFields(final ToStringHelper original) {
     return original.add("wrapped", wrapped);
   }
 
+  /**
+   * Returns the wrapped PRNG's seed, if we know it. When this RandomWrapper is wrapping a passed-in
+   * {@link Random} that's not a {@link RepeatableRandom}, we won't know the seed until the next
+   * {@link #setSeed(byte[])} or {@link #setSeed(long)} call lets us set it ourselves, and so an
+   * {@link UnsupportedOperationException} will be thrown until then.
+   *
+   * @throws UnsupportedOperationException if this RandomWrapper doesn't know the wrapped PRNG's
+   *     seed.
+   */
   @Override
   public byte[] getSeed() {
     if (unknownSeed) {
@@ -185,6 +192,12 @@ public class RandomWrapper extends BaseRandom {
           if (asByteArrayReseedable.preferSeedWithLong() && (seed.length == Long.BYTES)) {
             asByteArrayReseedable = null;
           }
+        } else if (wrapped instanceof SecureRandom) {
+          // Special handling, since SecureRandom isn't ByteArrayReseedableRandom but does have
+          // setSeed(byte[])
+          ((SecureRandom) wrapped).setSeed(seed);
+          unknownSeed = false;
+          return;
         } else if (seed.length != Long.BYTES) {
           throw new IllegalArgumentException(
               "RandomWrapper requires an 8-byte seed when not wrapping a ByteArrayReseedableRandom");

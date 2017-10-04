@@ -45,7 +45,7 @@ public abstract class DirectSplittableRandomAdapter extends BaseSplittableRandom
   }
 
   @Override
-  protected ToStringHelper addSubSubclassFields(final ToStringHelper original) {
+  protected ToStringHelper addSubclassFields(final ToStringHelper original) {
     return original.add("underlying", underlying);
   }
 

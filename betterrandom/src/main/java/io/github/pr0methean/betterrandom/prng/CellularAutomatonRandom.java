@@ -102,7 +102,7 @@ public class CellularAutomatonRandom extends BaseRandom {
   /**
    * Creates an RNG and seeds it with the specified seed data.
    *
-   * @param seed The seed data used to initialise the RNG.
+   * @param seed 4 bytes of seed data used to initialise the RNG.
    */
   public CellularAutomatonRandom(final byte[] seed) {
     super(seed);
@@ -117,7 +117,7 @@ public class CellularAutomatonRandom extends BaseRandom {
   }
 
   @Override
-  protected ToStringHelper addSubSubclassFields(final ToStringHelper original) {
+  protected ToStringHelper addSubclassFields(final ToStringHelper original) {
     return original
         .add("cells", Arrays.toString(cells))
         .add("currentCellIndex", currentCellIndex);

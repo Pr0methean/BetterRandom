@@ -126,7 +126,7 @@ public class AesCounterRandom extends BaseRandom {
    *
    * @param seedSizeBytes The number of bytes to use for seed data. Valid values range from 16
    *     to {@link #getMaxKeyLengthBytes()} + 16.
-   * @throws SeedException if there is a problem generating a seed.
+   * @throws SeedException if the {@link DefaultSeedGenerator} fails to generate a seed.
    */
   public AesCounterRandom(final int seedSizeBytes) throws SeedException {
     this(DefaultSeedGenerator.DEFAULT_SEED_GENERATOR.generateSeed(seedSizeBytes));
@@ -150,7 +150,7 @@ public class AesCounterRandom extends BaseRandom {
    * Returns the maximum length in bytes of an AES key, which is {@code
    * Math.min(Cipher.getMaxAllowedKeyLength("AES/ECB/NoPadding") / 8, 32)}. If the seed is longer
    * than this, part of it becomes the counter's initial value. Otherwise, the full seed becomes the
-   * AES key and the counter is initially zero. Public for testing of its initialization.
+   * AES key and the counter is initially zero.
    *
    * @return the maximum length in bytes of an AES key.
    */
@@ -164,7 +164,7 @@ public class AesCounterRandom extends BaseRandom {
   }
 
   @Override
-  public ToStringHelper addSubSubclassFields(final ToStringHelper original) {
+  public ToStringHelper addSubclassFields(final ToStringHelper original) {
     return original
         .add("counter", BinaryUtils.convertBytesToHexString(counter))
         .add("cipher", cipher);
