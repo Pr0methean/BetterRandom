@@ -21,13 +21,18 @@ import org.checkerframework.checker.nullness.qual.EnsuresNonNull;
 public abstract class DirectSplittableRandomAdapter extends BaseSplittableRandomAdapter {
 
   private static final long serialVersionUID = 4273652147052638879L;
+
+  /**
+   * The master {@link SplittableRandom} that will either be delegated to directly or be split using
+   * {@link SplittableRandom#split()} and have the splits delegated to.
+   */
   @SuppressWarnings("InstanceVariableMayNotBeInitializedByReadObject")
   protected transient SplittableRandom underlying; // a SplittableRandom is not Serializable
 
   /**
-   * Constructs an instance with the given seed.
+   * Wraps a {@link SplittableRandom} with the specified seed.
    *
-   * @param seed The seed.
+   * @param seed 8 bytes of seed data used to initialise the RNG.
    */
   public DirectSplittableRandomAdapter(final byte[] seed) {
     super(seed);
@@ -35,9 +40,9 @@ public abstract class DirectSplittableRandomAdapter extends BaseSplittableRandom
   }
 
   /**
-   * Constructs an instance with the given seed.
+   * Wraps a {@link SplittableRandom} with the specified seed.
    *
-   * @param seed The seed.
+   * @param seed the seed.
    */
   @EntryPoint
   public DirectSplittableRandomAdapter(final long seed) {
@@ -55,6 +60,9 @@ public abstract class DirectSplittableRandomAdapter extends BaseSplittableRandom
     setSeedInternal(seed);
   }
 
+  /**
+   * Replaces the current master {@link SplittableRandom} with a new one that uses the given seed.
+   */
   @EnsuresNonNull({"this.seed", "underlying", "entropyBits"})
   @Override
   protected void setSeedInternal(
@@ -67,6 +75,9 @@ public abstract class DirectSplittableRandomAdapter extends BaseSplittableRandom
     underlying = new SplittableRandom(BinaryUtils.convertBytesToLong(seed));
   }
 
+  /**
+   * Replaces the current master {@link SplittableRandom} with a new one that uses the given seed.
+   */
   @Override
   public void setSeed(@UnknownInitialization DirectSplittableRandomAdapter this,
       final long seed) {
