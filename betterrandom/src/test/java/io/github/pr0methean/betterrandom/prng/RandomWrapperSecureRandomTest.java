@@ -21,16 +21,24 @@ public class RandomWrapperSecureRandomTest extends BaseRandomTest {
     }
   }
 
+  /**
+   * {@link SecureRandom#setSeed(byte[])} has no length restriction, so disinherit {@link
+   * Test#expectedExceptions()}.
+   */
   @Override
-  @Test(enabled = false)
+  @Test
   public void testSeedTooLong() throws GeneralSecurityException, SeedException {
-    // No-op: SecureRandom's setSeed(byte[]) has no length restriction
+    super.testSeedTooLong();
   }
 
+  /**
+   * {@link SecureRandom#setSeed(byte[])} has no length restriction, so disinherit {@link
+   * Test#expectedExceptions()}.
+   */
   @Override
-  @Test(enabled = false)
+  @Test
   public void testSeedTooShort() throws SeedException {
-    // No-op: SecureRandom's setSeed(byte[]) has no length restriction
+    super.testSeedTooShort();
   }
 
   @Override
