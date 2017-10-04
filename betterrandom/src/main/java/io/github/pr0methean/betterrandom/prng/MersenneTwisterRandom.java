@@ -107,6 +107,7 @@ public class MersenneTwisterRandom extends BaseRandom {
 
   /**
    * No-op.
+   *
    * @param seed ignored
    */
   @Override

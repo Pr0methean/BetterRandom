@@ -41,14 +41,14 @@ public abstract class BaseSplittableRandomAdapter extends BaseRandom {
 
   /**
    * Returns the {@link SplittableRandom} that is to be used to generate random numbers for the
-   * current thread. ({@link SplittableRandom} isn't thread-safe.)
-   * Called by all the {@code next*} methods.
+   * current thread. ({@link SplittableRandom} isn't thread-safe.) Called by all the {@code next*}
+   * methods.
    *
    * @return a {@link SplittableRandom}.
    */
   protected abstract SplittableRandom getSplittableRandom();
 
-  /** Delegates to {@link SplittableRandom#nextDouble(double)} */
+  /** Delegates to {@link SplittableRandom#nextDouble(double)}. */
   @Override
   public double nextDouble(final double bound) {
     final double out = getSplittableRandom().nextDouble(bound);
@@ -56,7 +56,7 @@ public abstract class BaseSplittableRandomAdapter extends BaseRandom {
     return out;
   }
 
-  /** Delegates to {@link SplittableRandom#nextDouble(double, double)} */
+  /** Delegates to {@link SplittableRandom#nextDouble(double, double)}. */
   @Override
   public double nextDouble(final double origin, final double bound) {
     final double out = getSplittableRandom().nextDouble(origin, bound);
@@ -64,13 +64,15 @@ public abstract class BaseSplittableRandomAdapter extends BaseRandom {
     return out;
   }
 
-  /** Delegates to {@link SplittableRandom#nextInt()} or {@link SplittableRandom#nextInt(int)} */
+  /** Delegates to {@link SplittableRandom#nextInt()} or {@link SplittableRandom#nextInt(int)}. */
   @Override
   protected int next(final int bits) {
     recordEntropySpent(bits);
-    return bits >= 32 ? getSplittableRandom().nextInt() : getSplittableRandom().nextInt(1L << bits - 1);
+    return (bits >= 32) ? getSplittableRandom().nextInt()
+        : getSplittableRandom().nextInt(1 << bits - 1);
   }
 
+  /** Delegates to {@link SplittableRandom#nextInt(int)}. */
   @SuppressWarnings("NumericCastThatLosesPrecision")
   @Override
   public void nextBytes(final byte[] bytes) {
@@ -81,7 +83,7 @@ public abstract class BaseSplittableRandomAdapter extends BaseRandom {
     recordEntropySpent(bytes.length * (long) (Byte.SIZE));
   }
 
-  /** Delegates to {@link SplittableRandom#nextInt()} */
+  /** Delegates to {@link SplittableRandom#nextInt()}. */
   @Override
   public int nextInt() {
     final int out = getSplittableRandom().nextInt();
@@ -89,7 +91,7 @@ public abstract class BaseSplittableRandomAdapter extends BaseRandom {
     return out;
   }
 
-  /** Delegates to {@link SplittableRandom#nextInt(int)} */
+  /** Delegates to {@link SplittableRandom#nextInt(int)}. */
   @Override
   public int nextInt(final int bound) {
     final int out = getSplittableRandom().nextInt(bound);
@@ -97,7 +99,7 @@ public abstract class BaseSplittableRandomAdapter extends BaseRandom {
     return out;
   }
 
-  /** Delegates to {@link SplittableRandom#nextInt(int, int)} */
+  /** Delegates to {@link SplittableRandom#nextInt(int, int)}. */
   @Override
   public int nextInt(final int origin, final int bound) {
     final int out = getSplittableRandom().nextInt(origin, bound);
@@ -123,7 +125,7 @@ public abstract class BaseSplittableRandomAdapter extends BaseRandom {
     return getSplittableRandom().nextLong();
   }
 
-  /** Delegates to {@link SplittableRandom#nextLong(long)} */
+  /** Delegates to {@link SplittableRandom#nextLong(long)}. */
   @Override
   public long nextLong(final long bound) {
     final long out = getSplittableRandom().nextLong(bound);
@@ -131,7 +133,7 @@ public abstract class BaseSplittableRandomAdapter extends BaseRandom {
     return out;
   }
 
-  /** Delegates to {@link SplittableRandom#nextLong(long, long)} */
+  /** Delegates to {@link SplittableRandom#nextLong(long, long)}. */
   @Override
   public long nextLong(final long origin, final long bound) {
     final long out = getSplittableRandom().nextLong(origin, bound);
@@ -139,7 +141,7 @@ public abstract class BaseSplittableRandomAdapter extends BaseRandom {
     return out;
   }
 
-  /** Delegates to {@link SplittableRandom#nextDouble()} */
+  /** Delegates to {@link SplittableRandom#nextDouble()}. */
   @Override
   public double nextDouble() {
     final double out = getSplittableRandom().nextDouble();
@@ -156,7 +158,7 @@ public abstract class BaseSplittableRandomAdapter extends BaseRandom {
     return internalNextGaussian(() -> getSplittableRandom().nextDouble());
   }
 
-  /** Delegates to {@link SplittableRandom#nextBoolean()} */
+  /** Delegates to {@link SplittableRandom#nextBoolean()}. */
   @Override
   public boolean nextBoolean() {
     final boolean out = getSplittableRandom().nextBoolean();
