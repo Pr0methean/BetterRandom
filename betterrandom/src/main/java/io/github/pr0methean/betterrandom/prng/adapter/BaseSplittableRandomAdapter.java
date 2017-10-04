@@ -3,6 +3,7 @@ package io.github.pr0methean.betterrandom.prng.adapter;
 import io.github.pr0methean.betterrandom.prng.BaseRandom;
 import java.util.Random;
 import java.util.SplittableRandom;
+import java.util.function.DoubleSupplier;
 import org.checkerframework.checker.initialization.qual.UnknownInitialization;
 
 /**
@@ -107,6 +108,7 @@ public abstract class BaseSplittableRandomAdapter extends BaseRandom {
     return out;
   }
 
+  /** Delegates to {@link SplittableRandom#nextDouble()}. {@inheritDoc} */
   @Override
   protected boolean withProbabilityInternal(final double probability) {
     final boolean result = getSplittableRandom().nextDouble() < probability;
@@ -120,6 +122,7 @@ public abstract class BaseSplittableRandomAdapter extends BaseRandom {
     return true;
   }
 
+  /** Delegates to {@link SplittableRandom#nextLong()}. */
   @Override
   protected long nextLongNoEntropyDebit() {
     return getSplittableRandom().nextLong();
@@ -149,6 +152,9 @@ public abstract class BaseSplittableRandomAdapter extends BaseRandom {
     return out;
   }
 
+  /**
+   * Delegates to {@link SplittableRandom#nextDouble()} via {@link #internalNextGaussian(DoubleSupplier)}.
+   */
   @Override
   public double nextGaussian() {
     // Upper bound. 2 Gaussians are generated from 2 nextDouble calls, which once made are either
@@ -166,6 +172,7 @@ public abstract class BaseSplittableRandomAdapter extends BaseRandom {
     return out;
   }
 
+  /** Delegates to {@link SplittableRandom#nextInt(int)}. */
   @Override
   public float nextFloat() {
     final float out = getSplittableRandom().nextInt(1 << ENTROPY_OF_FLOAT) /
