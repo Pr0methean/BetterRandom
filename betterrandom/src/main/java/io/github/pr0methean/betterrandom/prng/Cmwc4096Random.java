@@ -98,6 +98,7 @@ public class Cmwc4096Random extends BaseRandom {
 
   /**
    * No-op.
+   *
    * @param seed ignored
    */
   @Override

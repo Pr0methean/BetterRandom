@@ -41,7 +41,8 @@ public abstract class BaseRandomTest {
   private static final String[] STRING_ARRAY = {HELLO, HOW_ARE_YOU, GOODBYE};
   private static final List<String> STRING_LIST = Arrays.asList(STRING_ARRAY);
   private static final int ELEMENTS = 100;
-  private static final double UPPER_BOUND_FOR_ROUNDING_TEST = Double.longBitsToDouble(Double.doubleToLongBits(1.0) + 4);
+  private static final double UPPER_BOUND_FOR_ROUNDING_TEST = Double
+      .longBitsToDouble(Double.doubleToLongBits(1.0) + 4);
 
   @SafeVarargs
   private static <E> void testGeneratesAll(final Supplier<E> generator, final E... expected) {
@@ -425,9 +426,11 @@ public abstract class BaseRandomTest {
   @Test
   public void testDoubles3RoundingCorrection() throws Exception {
     final BaseRandom prng = createRng();
-    checkStream(prng, ENTROPY_OF_DOUBLE, prng.doubles(20, 1.0, UPPER_BOUND_FOR_ROUNDING_TEST).boxed(), 20, -5.0, 8.0,
+    checkStream(prng, ENTROPY_OF_DOUBLE,
+        prng.doubles(20, 1.0, UPPER_BOUND_FOR_ROUNDING_TEST).boxed(), 20, -5.0, 8.0,
         true);
   }
+
   @Test
   public void testGaussians() throws Exception {
     final BaseRandom prng = createRng();
