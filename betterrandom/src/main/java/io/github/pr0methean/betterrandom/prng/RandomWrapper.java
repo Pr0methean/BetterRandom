@@ -168,6 +168,12 @@ public class RandomWrapper extends BaseRandom {
     return super.getSeed();
   }
 
+  /**
+   * Delegates to one of {@link ByteArrayReseedableRandom#setSeed(byte[])}, {@link
+   * SecureRandom#setSeed(byte[])} or {@link Random#setSeed(long)}.
+   *
+   * @param seed The new seed.
+   */
   @SuppressWarnings("LockAcquiredButNotSafelyReleased")
   @Override
   public void setSeedInternal(@UnknownInitialization(Random.class)RandomWrapper this,
