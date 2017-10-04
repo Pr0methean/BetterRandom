@@ -64,10 +64,11 @@ public abstract class BaseSplittableRandomAdapter extends BaseRandom {
     return out;
   }
 
+  /** Delegates to {@link SplittableRandom#nextInt()} or {@link SplittableRandom#nextInt(int)} */
   @Override
   protected int next(final int bits) {
     recordEntropySpent(bits);
-    return nextInt() & ((1 << bits) - 1);
+    return bits >= 32 ? getSplittableRandom().nextInt() : getSplittableRandom().nextInt(1L << bits - 1);
   }
 
   @SuppressWarnings("NumericCastThatLosesPrecision")
