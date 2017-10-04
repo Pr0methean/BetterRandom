@@ -2,6 +2,7 @@ package io.github.pr0methean.betterrandom.prng;
 
 import io.github.pr0methean.betterrandom.seed.DefaultSeedGenerator;
 import io.github.pr0methean.betterrandom.seed.SeedException;
+import java.security.GeneralSecurityException;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import org.jetbrains.annotations.NotNull;
@@ -18,6 +19,18 @@ public class RandomWrapperSecureRandomTest extends BaseRandomTest {
     } catch (final NoSuchAlgorithmException e) {
       throw new RuntimeException(e);
     }
+  }
+
+  @Override
+  @Test(enabled = false)
+  public void testSeedTooLong() throws GeneralSecurityException, SeedException {
+    // No-op: SecureRandom's setSeed(byte[]) has no length restriction
+  }
+
+  @Override
+  @Test(enabled = false)
+  public void testSeedTooShort() throws SeedException {
+    // No-op: SecureRandom's setSeed(byte[]) has no length restriction
   }
 
   @Override
