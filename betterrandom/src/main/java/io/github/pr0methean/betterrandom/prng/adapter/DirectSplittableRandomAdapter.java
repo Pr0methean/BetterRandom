@@ -11,9 +11,10 @@ import org.checkerframework.checker.initialization.qual.UnknownInitialization;
 import org.checkerframework.checker.nullness.qual.EnsuresNonNull;
 
 /**
- * {@link BaseSplittableRandomAdapter} where {@link #setSeed(long)} and {@link #setSeed(byte[])}
- * replace the {@link SplittableRandom} that would be used in the same calling context to generate
- * the random numbers.
+ * Abstract subclass of {@link BaseSplittableRandomAdapter} where {@link #setSeed(long)} and {@link
+ * #setSeed(byte[])} replace the {@link SplittableRandom} that's used in the context in which they
+ * are called. See {@link ReseedingSplittableRandomAdapter} for an example of when it does
+ * <i>not</i> make sense to extend this class.
  *
  * @author Chris Hennick
  */
