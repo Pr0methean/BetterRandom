@@ -50,8 +50,17 @@ public class LooperThread extends Thread implements Serializable, Cloneable {
    * #iterate()} called by {@link #run()}.
    */
   protected transient Lock lock = new ReentrantLock();
+  /**
+   * The {@link ThreadGroup} this thread belongs to, if any. Held for serialization purposes.
+   */
   protected @Nullable ThreadGroup group;
+  /**
+   * The {@link Runnable} that was passed into this thread's constructor, if any.
+   */
   protected transient @Nullable Runnable target;
+  /**
+   * The name of this thread, if it has a non-default name. Held for serialization purposes.
+   */
   protected @MonotonicNonNull String name = null;
   @SuppressWarnings("InstanceVariableMayNotBeInitializedByReadObject")
   private transient boolean alreadyTerminatedWhenDeserialized = false;
