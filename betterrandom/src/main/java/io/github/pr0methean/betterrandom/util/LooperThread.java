@@ -31,7 +31,7 @@ import org.checkerframework.checker.nullness.qual.RequiresNonNull;
  * <li>{@link #getUncaughtExceptionHandler()}</li> <li>{@link #getContextClassLoader()}</li>
  * </ul><p> Thread state that will NEVER be restored includes: </p><ul> <li>Program counter, call
  * stack, and local variables. The seederThread will restart.</li> <li>Suspended status (see {@link
- * Thread#suspend()}</li> <li>{@link #getState()} == {@link State#TIMED_WAITING}</li> <li>{@link
+ * Thread#suspend()})</li> <li>{@link #getState()} == {@link State#TIMED_WAITING}</li> <li>{@link
  * #getState()} == {@link State#WAITING}</li> <li>{@link #getState()} == {@link State#BLOCKED}</li>
  * <li>{@link #getId()}</li> <li>{@link #holdsLock(Object)}</li> </ul>
  *
