@@ -26,9 +26,9 @@ public class LogPreFormatter {
    * <p>If {@code level} is loggable, formats {@code args} using {@code formatString} and logs
    * them at {@code level}.</p>
    *
-   * @param level a {@link Level} object.
-   * @param formatString a {@link String} object.
-   * @param args a {@link Object} object.
+   * @param level The level to log at.
+   * @param formatString The format string.
+   * @param args The values to be formatted.
    */
   public void format(final Level level, final String formatString, final Object... args) {
     format(level, 2, formatString, args);
@@ -46,8 +46,8 @@ public class LogPreFormatter {
   /**
    * <p>Log a formatted string at {@link Level#SEVERE}.</p>
    *
-   * @param formatString a {@link String} object.
-   * @param args a {@link Object} object.
+   * @param formatString The format string.
+   * @param args The values to be formatted.
    */
   public void error(final String formatString, final Object... args) {
     format(Level.SEVERE, 3, formatString, (Object[]) args);
@@ -56,8 +56,8 @@ public class LogPreFormatter {
   /**
    * <p>Log a formatted string at {@link Level#WARNING}.</p>
    *
-   * @param formatString a {@link String} object.
-   * @param args a {@link Object} object.
+   * @param formatString The format string.
+   * @param args The values to be formatted.
    */
   public void warn(final String formatString, final Object... args) {
     format(Level.WARNING,3, formatString, (Object[]) args);
@@ -66,8 +66,8 @@ public class LogPreFormatter {
   /**
    * <p>Log a formatted string at {@link Level#INFO}.</p>
    *
-   * @param formatString a {@link String} object.
-   * @param args a {@link Object} object.
+   * @param formatString The format string.
+   * @param args The values to be formatted.
    */
   public void info(final String formatString, final Object... args) {
     format(Level.INFO,3, formatString, (Object[]) args);
