@@ -50,7 +50,7 @@ public class LogPreFormatter {
    * @param args a {@link Object} object.
    */
   public void error(final String formatString, final Object... args) {
-    format(Level.SEVERE, 2, formatString, (Object[]) args);
+    format(Level.SEVERE, 3, formatString, (Object[]) args);
   }
 
   /**
@@ -60,7 +60,7 @@ public class LogPreFormatter {
    * @param args a {@link Object} object.
    */
   public void warn(final String formatString, final Object... args) {
-    format(Level.WARNING,2, formatString, (Object[]) args);
+    format(Level.WARNING,3, formatString, (Object[]) args);
   }
 
   /**
@@ -70,7 +70,7 @@ public class LogPreFormatter {
    * @param args a {@link Object} object.
    */
   public void info(final String formatString, final Object... args) {
-    format(Level.INFO,2, formatString, (Object[]) args);
+    format(Level.INFO,3, formatString, (Object[]) args);
   }
 
   /**
