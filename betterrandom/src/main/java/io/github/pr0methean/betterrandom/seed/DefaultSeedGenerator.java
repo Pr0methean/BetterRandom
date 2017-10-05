@@ -17,7 +17,11 @@ package io.github.pr0methean.betterrandom.seed;
 
 /**
  * Seed generator that maintains multiple strategies for seed generation and will delegate to the
- * best one available for the current operating environment.
+ * best one available at any moment. Uses, in order of preference: <ol>
+ *   <li>{@link DevRandomSeedGenerator}</li>
+ *   <li>{@link RandomDotOrgSeedGenerator#DELAYED_RETRY}</li>
+ *   <li>{@link SecureRandomSeedGenerator}</li>
+ * </ol>
  *
  * @author Daniel Dyer
  */
@@ -33,7 +37,7 @@ public enum DefaultSeedGenerator implements SeedGenerator {
    */
   private static final SeedGenerator[] GENERATORS = {
       DevRandomSeedGenerator.DEV_RANDOM_SEED_GENERATOR,
-      RandomDotOrgSeedGenerator.RATE_LIMITED_ON_FAIL,
+      RandomDotOrgSeedGenerator.DELAYED_RETRY,
       SecureRandomSeedGenerator.SECURE_RANDOM_SEED_GENERATOR
   };
 

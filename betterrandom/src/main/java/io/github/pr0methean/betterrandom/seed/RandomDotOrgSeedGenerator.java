@@ -58,7 +58,7 @@ public enum RandomDotOrgSeedGenerator implements SeedGenerator {
    * trying again. The {@link DefaultSeedGenerator} uses it and will fall back to the {@link
    * SecureRandomSeedGenerator} during this waiting period.
    */
-  RATE_LIMITED_ON_FAIL(true);
+  DELAYED_RETRY(true);
 
   public static final Clock CLOCK = Clock.systemUTC();
   public static final int MAX_CACHE_SIZE = 1024;
@@ -88,10 +88,10 @@ public enum RandomDotOrgSeedGenerator implements SeedGenerator {
    * If true, don't attempt to contact random.org again for COOLDOWN_ON_FAILURE after an
    * IOException
    */
-  private final boolean rateLimitOnFailure;
+  private final boolean useRetryDelay;
 
-  RandomDotOrgSeedGenerator(final boolean rateLimitOnFailure) {
-    this.rateLimitOnFailure = rateLimitOnFailure;
+  RandomDotOrgSeedGenerator(final boolean useRetryDelay) {
+    this.useRetryDelay = useRetryDelay;
   }
 
   /**
@@ -190,11 +190,15 @@ public enum RandomDotOrgSeedGenerator implements SeedGenerator {
 
   @Override
   public boolean isWorthTrying() {
-    return !rateLimitOnFailure || !EARLIEST_NEXT_ATTEMPT.isAfter(CLOCK.instant());
+    return !useRetryDelay || !EARLIEST_NEXT_ATTEMPT.isAfter(CLOCK.instant());
   }
 
+  /**
+   * Returns "https://www.random.org (with retry delay)" or "https://www.random.org (without retry
+   * delay)".
+   */
   @Override
   public String toString() {
-    return BASE_URL;
+    return BASE_URL + (useRetryDelay ? " (with retry delay)" : " (without retry delay)");
   }
 }

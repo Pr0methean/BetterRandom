@@ -20,7 +20,7 @@ public class RandomSeederThreadTest {
 
   @Test
   public void testGetInstance() throws Exception {
-    assertNotSame(getInstance(RandomDotOrgSeedGenerator.RATE_LIMITED_ON_FAIL),
+    assertNotSame(getInstance(RandomDotOrgSeedGenerator.DELAYED_RETRY),
         getInstance(RandomDotOrgSeedGenerator.RANDOM_DOT_ORG_SEED_GENERATOR));
   }
 

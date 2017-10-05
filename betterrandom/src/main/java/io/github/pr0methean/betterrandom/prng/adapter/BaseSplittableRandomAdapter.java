@@ -45,7 +45,7 @@ public abstract class BaseSplittableRandomAdapter extends BaseRandom {
    * current thread. ({@link SplittableRandom} isn't thread-safe.) Called by all the {@code next*}
    * methods.
    *
-   * @return a {@link SplittableRandom}.
+   * @return the {@link SplittableRandom} to use with the current thread.
    */
   protected abstract SplittableRandom getSplittableRandom();
 
@@ -108,7 +108,7 @@ public abstract class BaseSplittableRandomAdapter extends BaseRandom {
     return out;
   }
 
-  /** Delegates to {@link SplittableRandom#nextDouble()}. {@inheritDoc} */
+  /** <p>Delegates to {@link SplittableRandom#nextDouble()}.</p> {@inheritDoc} */
   @Override
   protected boolean withProbabilityInternal(final double probability) {
     final boolean result = getSplittableRandom().nextDouble() < probability;
@@ -122,7 +122,7 @@ public abstract class BaseSplittableRandomAdapter extends BaseRandom {
     return true;
   }
 
-  /** Delegates to {@link SplittableRandom#nextLong()}. */
+  /** <p>Delegates to {@link SplittableRandom#nextLong()}.</p> {@inheritDoc} */
   @Override
   protected long nextLongNoEntropyDebit() {
     return getSplittableRandom().nextLong();

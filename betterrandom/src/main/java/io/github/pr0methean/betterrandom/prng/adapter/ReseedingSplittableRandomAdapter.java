@@ -19,9 +19,9 @@ import org.checkerframework.checker.nullness.qual.EnsuresNonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 
 /**
- * A version of {@link SplittableRandomAdapter} that uses a {@link RandomSeederThread} to replace
- * each thread's {@link SplittableRandom} with a reseeded one as frequently as possible, but not
- * more frequently than it is being used.
+ * Like {@link SplittableRandomAdapter}, but uses a {@link RandomSeederThread} to replace each
+ * thread's {@link SplittableRandom} with a reseeded one as frequently as possible, but not more
+ * frequently than it is being used.
  *
  * @author Chris Hennick
  */
@@ -31,6 +31,9 @@ public class ReseedingSplittableRandomAdapter extends BaseSplittableRandomAdapte
   @SuppressWarnings("StaticCollection")
   private static final Map<SeedGenerator, ReseedingSplittableRandomAdapter> INSTANCES =
       Collections.synchronizedMap(new WeakHashMap<>(1));
+  /**
+   * The {@link SeedGenerator} whose associated {@link RandomSeederThread} is used to reseed this.
+   */
   protected final SeedGenerator seedGenerator;
   @SuppressWarnings({"ThreadLocalNotStaticFinal",
       "InstanceVariableMayNotBeInitializedByReadObject"})
@@ -48,6 +51,7 @@ public class ReseedingSplittableRandomAdapter extends BaseSplittableRandomAdapte
   }
 
   /**
+   * Returns the instance backed by the {@link DefaultSeedGenerator}.
    * @return The instance backed by the {@link DefaultSeedGenerator}.
    * @throws SeedException if the {@link DefaultSeedGenerator} throws one while generating the
    *     initial seed.
@@ -59,7 +63,8 @@ public class ReseedingSplittableRandomAdapter extends BaseSplittableRandomAdapte
   }
 
   /**
-   * @param seedGenerator a {@link SeedGenerator} object.
+   * Returns the instance backed by the given {@link SeedGenerator}.
+   * @param seedGenerator The seed generator the returned adapter is to use.
    * @return the ReseedingSplittableRandomAdapter backed by {@code seedGenerator}.
    * @throws SeedException if {@code seedGenerator} throws one while generating the initial
    *     seed.
