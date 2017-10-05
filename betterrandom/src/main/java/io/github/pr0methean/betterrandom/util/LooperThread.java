@@ -15,10 +15,10 @@ import org.checkerframework.checker.nullness.qual.Nullable;
 import org.checkerframework.checker.nullness.qual.RequiresNonNull;
 
 /**
- * <p> EXPERIMENTAL. Thread that loops a given task until interrupted (or until JVM shutdown, if it
- * {@link #isDaemon()}), with the iterations being transactional. Because of these constraints, it
- * can be serialized and cloned. Subclasses must override {@link #iterate()} if instantiated without
- * a target {@link Runnable}; the only reason this class is concrete is that temporary instances are
+ * <p>Thread that loops a given task until interrupted (or until JVM shutdown, if it {@link
+ * #isDaemon()}), with the iterations being transactional. Because of these constraints, it can be
+ * serialized and cloned. Subclasses must override {@link #iterate()} if instantiated without a
+ * target {@link Runnable}; the only reason this class is concrete is that temporary instances are
  * needed during deserialization.</p> <p> Subclasses should override the {@link
  * #readResolveConstructorWrapper()} method to ensure they are deserialized as a subclass instance.
  * </p> <p>{@link #iterate()}'s body should be reasonably short, since it will block serialization

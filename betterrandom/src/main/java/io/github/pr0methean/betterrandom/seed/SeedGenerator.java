@@ -18,9 +18,9 @@ package io.github.pr0methean.betterrandom.seed;
 import java.io.Serializable;
 
 /**
- * Strategy interface for seeding random number generators. Implementations should be enums when
- * their space of configurations is sufficiently small. When it's not, they should implement {@link
- * Object#equals(Object)} and {@link Object#hashCode()} to support {@link RandomSeederThread}.
+ * Strategy interface for seeding random number generators. Implementations that can have multiple
+ * equivalent instances should implement {@link Object#equals(Object)} and {@link Object#hashCode()}
+ * to support {@link RandomSeederThread}.
  *
  * @author Daniel Dyer
  * @author Chris Hennick
