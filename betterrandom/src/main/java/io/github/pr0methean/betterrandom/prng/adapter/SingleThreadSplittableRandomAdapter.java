@@ -49,6 +49,10 @@ public class SingleThreadSplittableRandomAdapter extends DirectSplittableRandomA
     super(seed);
   }
 
+  /**
+   * Returns false, since parallel streams would require thread-safety that we don't have.
+   * @return false.
+   */
   @Override
   protected boolean useParallelStreams() {
     return false;
@@ -60,6 +64,10 @@ public class SingleThreadSplittableRandomAdapter extends DirectSplittableRandomA
         .add("deserializedAndNotUsedSince", deserializedAndNotUsedSince);
   }
 
+  /**
+   * Returns this SingleThreadSplittableRandomAdapter's only {@link SplittableRandom}.
+   * @return {@link #underlying}
+   */
   @Override
   protected SplittableRandom getSplittableRandom() {
     deserializedAndNotUsedSince = false;

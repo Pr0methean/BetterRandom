@@ -24,12 +24,15 @@ import java.util.concurrent.atomic.AtomicBoolean;
 /**
  * RNG seed strategy that gets data from {@literal /dev/random} on systems that provide it (e.g.
  * Solaris/Linux).  If {@literal /dev/random} does not exist or is not accessible, a {@link
- * SeedException} is thrown.
+ * SeedException} is thrown. If {@literal /dev/random} did not exist during a previous call to this
+ * method or to {@link #generateSeed(int)}, then for performance reasons, we assume for the rest of
+ * the JVM's lifespan that it still doesn't exist.
  *
  * @author Daniel Dyer
  */
 public enum DevRandomSeedGenerator implements SeedGenerator {
 
+  /** Singleton instance. */
   DEV_RANDOM_SEED_GENERATOR;
 
   private static final LogPreFormatter LOG = new LogPreFormatter(DevRandomSeedGenerator.class);
@@ -39,10 +42,7 @@ public enum DevRandomSeedGenerator implements SeedGenerator {
   private static final AtomicBoolean DEV_RANDOM_DOES_NOT_EXIST = new AtomicBoolean(false);
 
   /**
-   * @throws SeedException if {@literal /dev/random} does not exist or is not accessible. If it
-   *     did not exist during a previous call to this method or to {@link #generateSeed(int)}, then
-   *     for performance reasons, we assume for the rest of the JVM's lifespan that it still doesn't
-   *     exist.
+   * @throws SeedException if {@literal /dev/random} does not exist or is not accessible.
    */
   @Override
   public void generateSeed(final byte[] randomSeed) throws SeedException {
@@ -78,6 +78,7 @@ public enum DevRandomSeedGenerator implements SeedGenerator {
     return !(DEV_RANDOM_DOES_NOT_EXIST.get());
   }
 
+  /** Returns "/dev/random". */
   @Override
   public String toString() {
     return DEV_RANDOM_STRING;

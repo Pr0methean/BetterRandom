@@ -16,9 +16,9 @@ import org.checkerframework.checker.nullness.qual.EnsuresNonNull;
 import org.checkerframework.checker.nullness.qual.RequiresNonNull;
 
 /**
- * Version of {@link SingleThreadSplittableRandomAdapter} that wraps a {@link ThreadLocal}&lt;{@link
- * SplittableRandom}&gt;. Reseeding this will only affect the calling thread, so this can't be used
- * with a {@link io.github.pr0methean.betterrandom.seed.RandomSeederThread}. Instead, use a {@link
+ * Thread-safe PRNG that wraps a {@link ThreadLocal}&lt;{@link SplittableRandom}&gt;.
+ * Reseeding this will only affect the calling thread, so this can't be used with a {@link
+ * io.github.pr0methean.betterrandom.seed.RandomSeederThread}. Instead, use a {@link
  * ReseedingSplittableRandomAdapter}.
  *
  * @author Chris Hennick
@@ -73,6 +73,7 @@ public class SplittableRandomAdapter extends DirectSplittableRandomAdapter {
     initSubclassTransientFields();
   }
 
+  /** Returns the entropy count for the calling thread (it is separate for each thread). */
   @Override
   public long getEntropyBits() {
     return entropyBits.get().get();
