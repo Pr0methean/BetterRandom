@@ -18,16 +18,18 @@ package io.github.pr0methean.betterrandom.seed;
 import java.io.Serializable;
 
 /**
- * Strategy interface for seeding random number generators. Any implementations that are not enums
- * should implement {@link Object#equals(Object)} and {@link Object#hashCode()}.
+ * Strategy interface for seeding random number generators. Implementations should be enums when
+ * their space of configurations is sufficiently small. When it's not, they should implement {@link
+ * Object#equals(Object)} and {@link Object#hashCode()} to support {@link RandomSeederThread}.
  *
  * @author Daniel Dyer
+ * @author Chris Hennick
  */
 @FunctionalInterface
 public interface SeedGenerator extends Serializable {
 
   /**
-   * Generate a seed value for a random number generator.
+   * Generates a seed value for a random number generator in an existing array.
    *
    * @param output The array that is to be populated with the seed.
    * @throws SeedException If a seed cannot be generated for any reason.
@@ -35,7 +37,7 @@ public interface SeedGenerator extends Serializable {
   void generateSeed(byte[] output) throws SeedException;
 
   /**
-   * Generate a seed value for a random number generator.
+   * Generates and returns a seed value for a random number generator as a new array.
    *
    * @param length The length of the seed to generate (in bytes).
    * @return A byte array containing the seed data.
