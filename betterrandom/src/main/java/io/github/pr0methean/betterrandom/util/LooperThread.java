@@ -314,6 +314,9 @@ public class LooperThread extends Thread implements Serializable, Cloneable {
     }
   }
 
+  /**
+   * Runs {@link #iterate()} until either it returns false or this thread is interrupted.
+   */
   @Override
   public final void run() {
     while (true) {
@@ -375,6 +378,7 @@ public class LooperThread extends Thread implements Serializable, Cloneable {
     }
   }
 
+  /** Clones this LooperThread using {@link CloneViaSerialization#clone(Serializable)}. */
   @SuppressWarnings("MethodDoesntCallSuperMethod")
   @Override
   public LooperThread clone() {

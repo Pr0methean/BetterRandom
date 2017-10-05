@@ -32,8 +32,8 @@
       <file leaf-file-name="LooperThread.java" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/betterrandom/src/main/java/io/github/pr0methean/betterrandom/util/LooperThread.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="157">
-              <caret line="277" column="56" lean-forward="false" selection-start-line="277" selection-start-column="56" selection-end-line="277" selection-end-column="56" />
+            <state relative-caret-position="117">
+              <caret line="380" column="87" lean-forward="false" selection-start-line="380" selection-start-column="87" selection-end-line="380" selection-end-column="87" />
               <folding>
                 <element signature="imports" expanded="true" />
                 <element signature="e#4371#4372#0" expanded="true" />
@@ -1535,8 +1535,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/betterrandom/src/main/java/io/github/pr0methean/betterrandom/util/LooperThread.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="157">
-          <caret line="277" column="56" lean-forward="false" selection-start-line="277" selection-start-column="56" selection-end-line="277" selection-end-column="56" />
+        <state relative-caret-position="117">
+          <caret line="380" column="87" lean-forward="false" selection-start-line="380" selection-start-column="87" selection-end-line="380" selection-end-column="87" />
           <folding>
             <element signature="imports" expanded="true" />
             <element signature="e#4371#4372#0" expanded="true" />
