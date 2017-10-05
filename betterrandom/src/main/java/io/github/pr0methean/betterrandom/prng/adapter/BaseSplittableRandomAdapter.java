@@ -57,7 +57,10 @@ public abstract class BaseSplittableRandomAdapter extends BaseRandom {
     return out;
   }
 
-  /** Delegates to {@link SplittableRandom#nextDouble(double, double) SplittableRandom.nextDouble(origin, bound)}. */
+  /**
+   * Delegates to {@link SplittableRandom#nextDouble(double, double) SplittableRandom.nextDouble(origin,
+   * bound)}.
+   */
   @Override
   public double nextDouble(final double origin, final double bound) {
     final double out = getSplittableRandom().nextDouble(origin, bound);
@@ -100,7 +103,10 @@ public abstract class BaseSplittableRandomAdapter extends BaseRandom {
     return out;
   }
 
-  /** Delegates to {@link SplittableRandom#nextInt(int, int) SplittableRandom.nextInt(origin, bound)}. */
+  /**
+   * Delegates to {@link SplittableRandom#nextInt(int, int) SplittableRandom.nextInt(origin,
+   * bound)}.
+   */
   @Override
   public int nextInt(final int origin, final int bound) {
     final int out = getSplittableRandom().nextInt(origin, bound);
@@ -136,7 +142,10 @@ public abstract class BaseSplittableRandomAdapter extends BaseRandom {
     return out;
   }
 
-  /** Delegates to {@link SplittableRandom#nextLong(long, long) SplittableRandom.nextLong(origin, bound)}. */
+  /**
+   * Delegates to {@link SplittableRandom#nextLong(long, long) SplittableRandom.nextLong(origin,
+   * bound)}.
+   */
   @Override
   public long nextLong(final long origin, final long bound) {
     final long out = getSplittableRandom().nextLong(origin, bound);
