@@ -6,16 +6,19 @@ import static java.util.Spliterator.SIZED;
 
 import java.util.Spliterator;
 import java.util.concurrent.atomic.AtomicLong;
-import java.util.function.Consumer;
 import org.checkerframework.checker.nullness.qual.Nullable;
 
 /**
  * An unordered, concurrent spliterator (possibly unboxed) that invokes a supplier (possibly
  * unboxed) to get its values and has a preset size.
  *
- * @param <TSupplier> The supplier type.
- * @param <TConsumer> The consumer type that {@link #tryAdvance(Object)} receives.
- * @param <TSplitInto> The return type of {@link #trySplit()}.
+ * @param <TSupplier> A specification or unboxed-primitive equivalent of {@link
+ *     java.util.function.Supplier}.
+ * @param <TConsumer> A specification or unboxed-primitive equivalent of {@link
+ *     java.util.function.Consumer} The consumer type that {@link #tryAdvance(Object)} receives.
+ * @param <TSplitInto> The return type of {@link #trySplit()}. Should be a self-reference (i.e.
+ *     {@code ConcreteSupplierSpliterator extends AbstractSupplierSpliterator<T, U,
+ *     ConcreteSupplierSpliterator>}).
  * @author Chris Hennick
  */
 public abstract class AbstractSupplierSpliterator<TSupplier, TConsumer, TSplitInto> {
@@ -100,7 +103,7 @@ public abstract class AbstractSupplierSpliterator<TSupplier, TConsumer, TSplitIn
   /**
    * @param action the consumer that will receive the next output value if there is one.
    * @return true if an output was produced and consumed.
-   * @see Spliterator#tryAdvance(Consumer)
+   * @see Spliterator#tryAdvance(java.util.function.Consumer)
    */
   public boolean tryAdvance(final TConsumer action) {
     if (remaining.decrementAndGet() >= 0) {
