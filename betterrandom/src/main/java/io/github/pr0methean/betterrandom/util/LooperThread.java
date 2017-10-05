@@ -16,24 +16,24 @@ import org.checkerframework.checker.nullness.qual.RequiresNonNull;
 
 /**
  * <p>Thread that loops a given task until interrupted (or until JVM shutdown, if it {@link
- * #isDaemon() is a daemon thread}), with the iterations being transactional. Because of these constraints, it can be
- * serialized and cloned. Subclasses must override {@link #iterate()} if instantiated without a
- * target {@link Runnable}; the only reason this class is concrete is that temporary instances are
- * needed during deserialization.</p> <p> Subclasses should override the {@link
- * #readResolveConstructorWrapper()} method to ensure they are deserialized as a subclass instance.
- * </p> <p>{@link #iterate()}'s body should be reasonably short, since it will block serialization
- * and cloning that would otherwise catch it in mid-iteration. </p><p> Thread state that WILL be
- * restored includes: </p> <ul> <li>{@link #getName()}</li> <li>{@link #getPriority()}</li>
- * <li>{@link #getState()} == {@link State#NEW}</li> <li>{@link #getState()} == {@link
- * State#TERMINATED}</li> <li>{@link #isInterrupted()}</li> <li>{@link #isDaemon()}</li> </ul><p>
- * Thread state that will be restored ONLY if its values are {@link Serializable} includes: </p><ul>
- * <li>{@link #getThreadGroup()}</li> <li>{@link #getUncaughtExceptionHandler()}</li> <li>{@link
- * #getContextClassLoader()}</li> </ul><p> Thread state that will NEVER be restored includes:
- * </p><ul> <li>Program counter, call stack, and local variables. The seederThread will
- * restart.</li> <li>Suspended status (see {@link Thread#suspend()}</li> <li>{@link #getState()} ==
- * {@link State#TIMED_WAITING}</li> <li>{@link #getState()} == {@link State#WAITING}</li> <li>{@link
- * #getState()} == {@link State#BLOCKED}</li> <li>{@link #getId()}</li> <li>{@link
- * #holdsLock(Object)}</li> </ul>
+ * #isDaemon() is a daemon thread}), with the iterations being transactional. Because of these
+ * constraints, it can be serialized and cloned. Subclasses must override {@link #iterate()} if
+ * instantiated without a target {@link Runnable}; the only reason this class is concrete is that
+ * temporary instances are needed during deserialization.</p> <p> Subclasses should override the
+ * {@link #readResolveConstructorWrapper()} method to ensure they are deserialized as a subclass
+ * instance. </p> <p>{@link #iterate()}'s body should be reasonably short, since it will block
+ * serialization and cloning that would otherwise catch it in mid-iteration. </p><p> Thread state
+ * that WILL be restored includes that retrievable by: </p> <ul> <li>{@link #getName()}</li>
+ * <li>{@link #getPriority()}</li> <li>{@link #getState()} == {@link State#NEW}</li> <li>{@link
+ * #getState()} == {@link State#TERMINATED}</li> <li>{@link #isInterrupted()}</li> <li>{@link
+ * #isDaemon()}</li> </ul><p> Thread state that will be restored ONLY if its values are {@link
+ * Serializable} includes that retrievable by: </p><ul> <li>{@link #getThreadGroup()}</li>
+ * <li>{@link #getUncaughtExceptionHandler()}</li> <li>{@link #getContextClassLoader()}</li>
+ * </ul><p> Thread state that will NEVER be restored includes: </p><ul> <li>Program counter, call
+ * stack, and local variables. The seederThread will restart.</li> <li>Suspended status (see {@link
+ * Thread#suspend()}</li> <li>{@link #getState()} == {@link State#TIMED_WAITING}</li> <li>{@link
+ * #getState()} == {@link State#WAITING}</li> <li>{@link #getState()} == {@link State#BLOCKED}</li>
+ * <li>{@link #getId()}</li> <li>{@link #holdsLock(Object)}</li> </ul>
  *
  * @author Chris Hennick
  */
