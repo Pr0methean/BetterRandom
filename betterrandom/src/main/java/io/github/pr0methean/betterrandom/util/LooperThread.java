@@ -16,7 +16,7 @@ import org.checkerframework.checker.nullness.qual.RequiresNonNull;
 
 /**
  * <p>Thread that loops a given task until interrupted (or until JVM shutdown, if it {@link
- * #isDaemon()}), with the iterations being transactional. Because of these constraints, it can be
+ * #isDaemon() is a daemon thread}), with the iterations being transactional. Because of these constraints, it can be
  * serialized and cloned. Subclasses must override {@link #iterate()} if instantiated without a
  * target {@link Runnable}; the only reason this class is concrete is that temporary instances are
  * needed during deserialization.</p> <p> Subclasses should override the {@link
