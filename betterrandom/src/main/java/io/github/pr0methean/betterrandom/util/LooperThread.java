@@ -30,7 +30,7 @@ import org.checkerframework.checker.nullness.qual.RequiresNonNull;
  * Serializable} includes that retrievable by: </p><ul> <li>{@link #getThreadGroup()}</li>
  * <li>{@link #getUncaughtExceptionHandler()}</li> <li>{@link #getContextClassLoader()}</li>
  * </ul><p> Thread state that will NEVER be restored includes: </p><ul> <li>Program counter, call
- * stack, and local variables. The seederThread will restart.</li> <li>Suspended status (see {@link
+ * stack, and local variables. The thread will restart.</li> <li>Suspended status (see {@link
  * Thread#suspend()})</li> <li>{@link #getState()} == {@link State#TIMED_WAITING}</li> <li>{@link
  * #getState()} == {@link State#WAITING}</li> <li>{@link #getState()} == {@link State#BLOCKED}</li>
  * <li>{@link #getId()}</li> <li>{@link #holdsLock(Object)}</li> </ul>
@@ -50,7 +50,7 @@ public class LooperThread extends Thread implements Serializable, Cloneable {
   private final UncaughtExceptionHandlerWrapper uncaughtExceptionHandler =
       new UncaughtExceptionHandlerWrapper();
   /**
-   * The seederThread holds this lock whenever it is being serialized or cloned or is running {@link
+   * The thread holds this lock whenever it is being serialized or cloned or is running {@link
    * #iterate()} called by {@link #run()}.
    */
   protected transient Lock lock = new ReentrantLock();
@@ -347,7 +347,7 @@ public class LooperThread extends Thread implements Serializable, Cloneable {
   public synchronized void start() {
     if (alreadyTerminatedWhenDeserialized) {
       throw new IllegalThreadStateException(
-          "This seederThread was deserialized from one that had already terminated");
+          "This thread was deserialized from one that had already terminated");
     }
     super.start();
   }
