@@ -23,8 +23,9 @@ public abstract class DirectSplittableRandomAdapter extends BaseSplittableRandom
   private static final long serialVersionUID = 4273652147052638879L;
 
   /**
-   * The master {@link SplittableRandom} that will either be delegated to directly or be split using
-   * {@link SplittableRandom#split()} and have the splits delegated to.
+   * The master {@link SplittableRandom} that will either be delegated to directly (see {@link
+   * SingleThreadSplittableRandomAdapter} or be split using {@link SplittableRandom#split()} (see
+   * {@link SplittableRandomAdapter}) and have the splits delegated to.
    */
   @SuppressWarnings("InstanceVariableMayNotBeInitializedByReadObject")
   protected transient SplittableRandom underlying; // a SplittableRandom is not Serializable
@@ -61,7 +62,7 @@ public abstract class DirectSplittableRandomAdapter extends BaseSplittableRandom
   }
 
   /**
-   * Replaces the current master {@link SplittableRandom} with a new one that uses the given seed.
+   * Replaces {@link #underlying} with a new {@link SplittableRandom} that uses the given seed.
    */
   @EnsuresNonNull({"this.seed", "underlying", "entropyBits"})
   @Override
@@ -76,7 +77,7 @@ public abstract class DirectSplittableRandomAdapter extends BaseSplittableRandom
   }
 
   /**
-   * Replaces the current master {@link SplittableRandom} with a new one that uses the given seed.
+   * Replaces {@link #underlying} with a new {@link SplittableRandom} that uses the given seed.
    */
   @Override
   public void setSeed(@UnknownInitialization DirectSplittableRandomAdapter this,
