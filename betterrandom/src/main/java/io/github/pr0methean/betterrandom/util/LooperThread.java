@@ -42,6 +42,10 @@ public class LooperThread extends Thread implements Serializable, Cloneable {
 
   private static final LogPreFormatter LOG = new LogPreFormatter(LooperThread.class);
   private static final long serialVersionUID = -4387051967625864310L;
+  /**
+   * The preferred stack size for this thread, in bytes, if it was specified during construction; 0
+   * otherwise. Held for serialization purposes.
+   */
   protected final long stackSize;
   private final UncaughtExceptionHandlerWrapper uncaughtExceptionHandler =
       new UncaughtExceptionHandlerWrapper();
