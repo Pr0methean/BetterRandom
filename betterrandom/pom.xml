@@ -128,7 +128,6 @@
             <notimestamp>true</notimestamp>
             <subpackages>io.github.pr0methean</subpackages>
             <show>protected</show>
-            <detectLinks>true</detectLinks>
             <links>
               <link>https://checkerframework.org/api</link>
               <link>https://docs.oracle.com/javase/8/docs/api</link>
@@ -578,7 +577,6 @@
           <sourcepath>${user.home}/j2se-src:${basedir}/src/main/java</sourcepath>
           <notimestamp>true</notimestamp>
           <show>protected</show>
-          <detectLinks>true</detectLinks>
           <links>
             <link>https://docs.oracle.com/javase/8/docs/api</link>
             <link>https://google.github.io/guava/releases/19.0/api/docs</link>
