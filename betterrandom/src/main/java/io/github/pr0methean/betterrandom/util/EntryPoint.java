@@ -7,8 +7,9 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Marks a method or constructor as an entry point, for purposes of code inspections that would
- * otherwise detect it as unused.
+ * Marks a method or constructor as an entry point, so that IntelliJ's code inspections won't decide
+ * it's unused. Once test coverage for BetterRandom is complete, this will only be used in
+ * benchmarks and debugging tools.
  */
 @Inherited
 @Retention(RetentionPolicy.SOURCE)
