@@ -30,10 +30,11 @@ import org.checkerframework.checker.nullness.qual.RequiresNonNull;
  * Serializable} includes that retrievable by: </p><ul> <li>{@link #getThreadGroup()}</li>
  * <li>{@link #getUncaughtExceptionHandler()}</li> <li>{@link #getContextClassLoader()}</li>
  * </ul><p> Thread state that will NEVER be restored includes: </p><ul> <li>Program counter, call
- * stack, and local variables. The thread will restart.</li> <li>Suspended status (see {@link
- * Thread#suspend()})</li> <li>{@link #getState()} == {@link State#TIMED_WAITING}</li> <li>{@link
- * #getState()} == {@link State#WAITING}</li> <li>{@link #getState()} == {@link State#BLOCKED}</li>
- * <li>{@link #getId()}</li> <li>{@link #holdsLock(Object)}</li> </ul>
+ * stack, and local variables. Serialization will block until it can happen between iterations of
+ * {@link #iterate()}.</li> <li>Suspended status (see {@link Thread#suspend()}).</li> <li>{@link
+ * #getState()} == {@link State#TIMED_WAITING}</li> <li>{@link #getState()} == {@link
+ * State#WAITING}</li> <li>{@link #getState()} == {@link State#BLOCKED}</li> <li>{@link
+ * #getId()}</li> <li>{@link #holdsLock(Object)}</li> </ul>
  *
  * @author Chris Hennick
  */
@@ -300,9 +301,10 @@ public class LooperThread extends Thread implements Serializable, Cloneable {
    * reasons, but must be overridden in subclasses if they are instantiated without a target {@link
    * Runnable}.
    *
-   * @return true if this thread should continue to iterate.
-   * @throws InterruptedException if any.
-   * @throws UnsupportedOperationException if this method has not been overridden.
+   * @return true if this thread should iterate again.
+   * @throws InterruptedException if interrupted in mid-execution.
+   * @throws UnsupportedOperationException if this method has not been overridden and {@link
+   *     #target} was not set to non-null during construction.
    */
   protected boolean iterate() throws InterruptedException {
     if ((target == null) || (target instanceof DummyTarget)) {
