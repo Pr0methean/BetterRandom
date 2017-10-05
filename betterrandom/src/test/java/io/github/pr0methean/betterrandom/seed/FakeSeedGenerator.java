@@ -8,9 +8,4 @@ public class FakeSeedGenerator implements SeedGenerator {
   public void generateSeed(final byte[] output) throws SeedException {
     // No-op.
   }
-
-  @Override
-  public byte[] generateSeed(final int length) throws SeedException {
-    return new byte[length];
-  }
 }
