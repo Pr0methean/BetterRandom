@@ -28,7 +28,8 @@ import org.checkerframework.checker.nullness.qual.EnsuresNonNull;
 import org.checkerframework.checker.nullness.qual.RequiresNonNull;
 
 /**
- * Thread that loops over {@link Random} instances and reseeds them.
+ * Thread that loops over {@link Random} instances and reseeds them. No {@link
+ * EntropyCountingRandom} will be reseeded when it's already had more input than output.
  *
  * @author Chris Hennick
  */
@@ -260,9 +261,10 @@ public final class RandomSeederThread extends LooperThread {
   }
 
   /**
-   * <p>remove.</p>
+   * Remove one or more {@link Random} instances. If this is called while {@link #getState()} ==
+   * {@link Thread.State#RUNNABLE}, they may still be reseeded once more.
    *
-   * @param randoms a {@link Random} object.
+   * @param randoms the {@link Random} instances to remove.
    */
   public void remove(final Random... randoms) {
     prngs.removeAll(Arrays.asList(randoms));

@@ -63,8 +63,8 @@ public enum RandomDotOrgSeedGenerator implements SeedGenerator {
   /**
    * Measures the retry delay. A ten-second delay might become either nothing or an hour if we used
    * local time during the start or end of Daylight Saving Time, but it's fine if we occasionally
-   * wait 9 or 11 seconds instead of 10 because of a leap-second adjustment. See
-   * <a href="https://www.youtube.com/watch?v=-5wpm-gesOY">Tom Scott's video</a> about the various
+   * wait 9 or 11 seconds instead of 10 because of a leap-second adjustment. See <a
+   * href="https://www.youtube.com/watch?v=-5wpm-gesOY">Tom Scott's video</a> about the various
    * considerations involved in this choice of clock.
    */
   private static final Clock CLOCK = Clock.systemUTC();
@@ -84,7 +84,7 @@ public enum RandomDotOrgSeedGenerator implements SeedGenerator {
    * Random.org does not allow requests for more than 10k integers at once.
    */
   private static final int GLOBAL_MAX_REQUEST_SIZE = 10000;
-  private static final Duration COOLDOWN_ON_FAILURE = Duration.ofSeconds(10);
+  private static final Duration RETRY_DELAY = Duration.ofSeconds(10);
   private static final Lock cacheLock = new ReentrantLock();
   private static Instant EARLIEST_NEXT_ATTEMPT = Instant.MIN;
   private static byte[] cache = new byte[MAX_CACHE_SIZE];
@@ -92,8 +92,7 @@ public enum RandomDotOrgSeedGenerator implements SeedGenerator {
   private static int maxRequestSize = GLOBAL_MAX_REQUEST_SIZE;
 
   /**
-   * If true, don't attempt to contact random.org again for COOLDOWN_ON_FAILURE after an
-   * IOException
+   * If true, don't attempt to contact random.org again for RETRY_DELAY after an IOException
    */
   private final boolean useRetryDelay;
 
@@ -185,7 +184,7 @@ public enum RandomDotOrgSeedGenerator implements SeedGenerator {
         }
       }
     } catch (final IOException ex) {
-      EARLIEST_NEXT_ATTEMPT = CLOCK.instant().plus(COOLDOWN_ON_FAILURE);
+      EARLIEST_NEXT_ATTEMPT = CLOCK.instant().plus(RETRY_DELAY);
       throw new SeedException("Failed downloading bytes from " + BASE_URL, ex);
     } catch (final SecurityException ex) {
       // Might be thrown if resource access is restricted (such as in an applet sandbox).
