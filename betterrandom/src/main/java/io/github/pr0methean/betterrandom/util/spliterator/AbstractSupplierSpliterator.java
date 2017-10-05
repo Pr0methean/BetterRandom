@@ -23,6 +23,7 @@ import org.checkerframework.checker.nullness.qual.Nullable;
  */
 public abstract class AbstractSupplierSpliterator<TSupplier, TConsumer, TSplitInto> {
 
+  /** The supplier of the output values. */
   protected final TSupplier supplier;
   private final AtomicLong remaining;
   private final AtomicLong splitsRemaining;
@@ -71,8 +72,11 @@ public abstract class AbstractSupplierSpliterator<TSupplier, TConsumer, TSplitIn
   }
 
   /**
-   * Should wrap a constructor that calls {@link #AbstractSupplierSpliterator(AtomicLong,
-   * AtomicLong, Object, boolean)}.
+   * Splits off a new instance that uses the same Supplier, and shares its counts of remaining items
+   * and remaining permitted splits with this one. Doesn't decrement the number of remaining
+   * permitted splits (that's done in {@link #trySplit()}). Should wrap a constructor that
+   * ultimately calls {@link #AbstractSupplierSpliterator(AtomicLong, AtomicLong, Object, boolean)
+   * AbstractSupplierSpliterator(remaining, splitsRemaining, supplier, false)}.
    *
    * @param remaining An {@link AtomicLong} (shared between splits) that stores how many more
    *     items will be output by {@link #tryAdvance(Object)}.
@@ -115,7 +119,8 @@ public abstract class AbstractSupplierSpliterator<TSupplier, TConsumer, TSplitIn
   }
 
   /**
-   * Should be {@code action.accept(supplier.get())} or an equivalent.
+   * Supplies the next output value to {@code action}. Should be equivalent to {@code
+   * action.accept(supplier.get())}.
    *
    * @param action the consumer that will receive the next output value if there is one.
    */
