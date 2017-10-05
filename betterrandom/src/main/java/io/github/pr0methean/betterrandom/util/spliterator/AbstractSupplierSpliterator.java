@@ -102,7 +102,7 @@ public abstract class AbstractSupplierSpliterator<TSupplier, TConsumer, TSplitIn
 
   /**
    * Returns {@link Spliterator#IMMUTABLE} | {@link Spliterator#NONNULL}. Also returns {@link Spliterator#SIZED}
-   *     if this spliterator has never been split and doesn't result from a split.
+   *     if this spliterator has never been split and wasn't produced by {@link #trySplit()}.
    * @return The characteristics as defined by {@link Spliterator#characteristics()}.
    */
   public int characteristics() {
