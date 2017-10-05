@@ -22,9 +22,9 @@ import java.io.IOException;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
- * RNG seed strategy that gets data from {@literal /dev/random} on systems that provide it (e.g.
- * Solaris/Linux).  If {@literal /dev/random} does not exist or is not accessible, a {@link
- * SeedException} is thrown. If {@literal /dev/random} did not exist during a previous call to this
+ * RNG seed strategy that gets data from {@code /dev/random} on systems that provide it (e.g.
+ * Solaris/Linux).  If {@code /dev/random} does not exist or is not accessible, a {@link
+ * SeedException} is thrown. If it didn't exist during a previous call to this
  * method or to {@link #generateSeed(int)}, then for performance reasons, we assume for the rest of
  * the JVM's lifespan that it still doesn't exist.
  *
