@@ -54,9 +54,9 @@ public enum RandomDotOrgSeedGenerator implements SeedGenerator {
   RANDOM_DOT_ORG_SEED_GENERATOR(false),
 
   /**
-   * Upon a failed request, this version of the client requires that you wait 10 seconds before
-   * trying again. The {@link DefaultSeedGenerator} uses it and will fall back to the {@link
-   * SecureRandomSeedGenerator} during this waiting period.
+   * Upon a failed request, this version of the client waits 10 seconds before
+   * trying again. If called again during that waiting period, throws {@link SeedException}.
+   * The {@link DefaultSeedGenerator} uses this version.
    */
   DELAYED_RETRY(true);
 
