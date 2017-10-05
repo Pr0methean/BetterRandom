@@ -5,6 +5,7 @@ import static java.util.Spliterator.NONNULL;
 import static java.util.Spliterator.SIZED;
 
 import java.util.Spliterator;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicLong;
 import org.checkerframework.checker.nullness.qual.Nullable;
 
@@ -27,7 +28,7 @@ public abstract class AbstractSupplierSpliterator<TSupplier, TConsumer, TSplitIn
   protected final TSupplier supplier;
   private final AtomicLong remaining;
   private final AtomicLong splitsRemaining;
-  private final boolean sized;
+  private final AtomicBoolean sized = new AtomicBoolean();
 
   /**
    * Create an instance.
@@ -57,7 +58,7 @@ public abstract class AbstractSupplierSpliterator<TSupplier, TConsumer, TSplitIn
     this.remaining = remaining;
     this.splitsRemaining = splitsRemaining;
     this.supplier = supplier;
-    this.sized = sized;
+    this.sized.set(sized);
   }
 
   /**
@@ -66,9 +67,12 @@ public abstract class AbstractSupplierSpliterator<TSupplier, TConsumer, TSplitIn
    */
   @SuppressWarnings("override.return.invalid") // actually is nullable in the interface
   public @Nullable TSplitInto trySplit() {
-    return ((splitsRemaining.getAndDecrement() <= 0) || (remaining.get() <= 0))
-        ? null
-        : internalSplit(remaining, splitsRemaining);
+    if ((splitsRemaining.getAndDecrement() <= 0) || (remaining.get() <= 0)) {
+      return null;
+    } else {
+      sized.set(false); // No longer have exact size, since child will be pulling off of us
+      return internalSplit(remaining, splitsRemaining);
+    }
   }
 
   /**
@@ -87,6 +91,7 @@ public abstract class AbstractSupplierSpliterator<TSupplier, TConsumer, TSplitIn
   protected abstract TSplitInto internalSplit(AtomicLong remaining, AtomicLong splitsRemaining);
 
   /**
+   * Returns an upper bound on the number of remaining items.
    * @return the total number of items remaining in the root spliterator, and thus an upper bound on
    *     the number available to any one descendant.
    * @see Spliterator#estimateSize()
@@ -96,12 +101,12 @@ public abstract class AbstractSupplierSpliterator<TSupplier, TConsumer, TSplitIn
   }
 
   /**
-   * @return {@code IMMUTABLE | NONNULL | SIZED} in the root spliterator, and {@code IMMUTABLE |
-   *     NONNULL} in descendants.
-   * @see Spliterator#characteristics()
+   * Returns {@link Spliterator#IMMUTABLE} | {@link Spliterator#NONNULL}. Also returns {@link Spliterator#SIZED}
+   *     if this spliterator has never been split and doesn't result from a split.
+   * @return The characteristics as defined by {@link Spliterator#characteristics()}.
    */
   public int characteristics() {
-    return IMMUTABLE | NONNULL | (sized ? SIZED : 0);
+    return IMMUTABLE | NONNULL | (sized.get() ? SIZED : 0);
   }
 
   /**
