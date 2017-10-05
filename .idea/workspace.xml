@@ -44,13 +44,13 @@
       <file leaf-file-name="AbstractSupplierSpliterator.java" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/betterrandom/src/main/java/io/github/pr0methean/betterrandom/util/spliterator/AbstractSupplierSpliterator.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="72">
-              <caret line="108" column="47" lean-forward="false" selection-start-line="108" selection-start-column="47" selection-end-line="108" selection-end-column="47" />
+            <state relative-caret-position="360">
+              <caret line="104" column="92" lean-forward="false" selection-start-line="104" selection-start-column="92" selection-end-line="104" selection-end-column="92" />
               <folding>
                 <element signature="imports" expanded="true" />
                 <element signature="e#2815#2859#0" expanded="true" />
-                <element signature="e#4810#4811#0" expanded="true" />
-                <element signature="e#4874#4875#0" expanded="true" />
+                <element signature="e#4821#4822#0" expanded="true" />
+                <element signature="e#4885#4886#0" expanded="true" />
               </folding>
             </state>
           </provider>
@@ -1558,13 +1558,13 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/betterrandom/src/main/java/io/github/pr0methean/betterrandom/util/spliterator/AbstractSupplierSpliterator.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="72">
-          <caret line="108" column="47" lean-forward="false" selection-start-line="108" selection-start-column="47" selection-end-line="108" selection-end-column="47" />
+        <state relative-caret-position="360">
+          <caret line="104" column="92" lean-forward="false" selection-start-line="104" selection-start-column="92" selection-end-line="104" selection-end-column="92" />
           <folding>
             <element signature="imports" expanded="true" />
             <element signature="e#2815#2859#0" expanded="true" />
-            <element signature="e#4810#4811#0" expanded="true" />
-            <element signature="e#4874#4875#0" expanded="true" />
+            <element signature="e#4821#4822#0" expanded="true" />
+            <element signature="e#4885#4886#0" expanded="true" />
           </folding>
         </state>
       </provider>
