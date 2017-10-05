@@ -221,8 +221,9 @@ public class LooperThread extends Thread implements Serializable, Cloneable {
   }
 
   /**
-   * Use readResolve rather than readObject, because stack size and thread group can only be
-   * restored in Thread constructors.
+   * Deserialization uses readResolve rather than {@link #readObject(ObjectInputStream)} alone,
+   * because the API of {@link Thread} only lets us set preferred stack size and thread group during
+   * construction and not update them afterwards.
    *
    * @return A LooperThread that will replace this one during deserialization.
    * @throws InvalidObjectException if this LooperThread's serial form is invalid.
@@ -270,9 +271,14 @@ public class LooperThread extends Thread implements Serializable, Cloneable {
   }
 
   /**
-   * @return A new LooperThread whose group is {@link #group}, whose target is {@link #target},
-   *     whose name is {@link #name}, whose stack size is {@link #stackSize} and that either has its
-   *     subclass fields copied from this one or overrides {@link #readResolve} to populate them.
+   * Returns a new instance of this LooperThread's exact class, whose group is {@link #group}, whose
+   * target is {@link #target}, whose name is {@link #name}, whose preferred stack size per {@link
+   * Thread#Thread(ThreadGroup, Runnable, String, long)} is {@link #stackSize}, and that has its
+   * subclass fields copied from this one if it does not have a {@link #readResolve()} override that
+   * will populate them before deserialization completes. Must be overridden in <em>all</em>
+   * subclasses to fulfill this contract.
+   *
+   * @return the new LooperThread.
    * @throws InvalidObjectException if this LooperThread's serial form is invalid.
    */
   @RequiresNonNull({"group", "name"})
