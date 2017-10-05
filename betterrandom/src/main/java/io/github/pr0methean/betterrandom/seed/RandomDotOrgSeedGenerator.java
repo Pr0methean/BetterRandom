@@ -54,14 +54,21 @@ public enum RandomDotOrgSeedGenerator implements SeedGenerator {
   RANDOM_DOT_ORG_SEED_GENERATOR(false),
 
   /**
-   * Upon a failed request, this version of the client waits 10 seconds before
-   * trying again. If called again during that waiting period, throws {@link SeedException}.
-   * The {@link DefaultSeedGenerator} uses this version.
+   * Upon a failed request, this version of the client waits 10 seconds before trying again. If
+   * called again during that waiting period, throws {@link SeedException}. The {@link
+   * DefaultSeedGenerator} uses this version.
    */
   DELAYED_RETRY(true);
 
-  public static final Clock CLOCK = Clock.systemUTC();
-  public static final int MAX_CACHE_SIZE = 1024;
+  /**
+   * Measures the retry delay. A ten-second delay might become either nothing or an hour if we used
+   * local time during the start or end of Daylight Saving Time, but it's fine if we occasionally
+   * wait 9 or 11 seconds instead of 10 because of a leap-second adjustment. See
+   * <a href="https://www.youtube.com/watch?v=-5wpm-gesOY">Tom Scott's video</a> about the various
+   * considerations involved in this choice of clock.
+   */
+  private static final Clock CLOCK = Clock.systemUTC();
+  private static final int MAX_CACHE_SIZE = 1024;
   private static final String BASE_URL = "https://www.random.org";
   /**
    * The URL from which the random bytes are retrieved.
