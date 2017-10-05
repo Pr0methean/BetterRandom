@@ -14,55 +14,63 @@ public class LogPreFormatter {
   private final Logger logger;
 
   /**
-   * <p>Constructor for LogPreFormatter.</p>
+   * <p>Creates a LogPreFormatter for the given class.</p>
    *
-   * @param clazz a {@link Class} object.
+   * @param clazz The class that will use this LogPreFormatter.
    */
   public LogPreFormatter(final Class<?> clazz) {
     logger = Logger.getLogger(clazz.getName());
   }
 
   /**
-   * <p>format.</p>
+   * <p>If {@code level} is loggable, formats {@code args} using {@code formatString} and logs
+   * them at {@code level}.</p>
    *
    * @param level a {@link Level} object.
    * @param formatString a {@link String} object.
    * @param args a {@link Object} object.
    */
   public void format(final Level level, final String formatString, final Object... args) {
+    format(level, 2, formatString, args);
+  }
+
+  private void format(final Level level, int depthFromRealSource, final String formatString,
+      final Object... args) {
     if (logger.isLoggable(level)) {
-      logger.log(level, String.format(formatString, (Object[]) args));
+      StackTraceElement realSource = Thread.currentThread().getStackTrace()[depthFromRealSource];
+      logger.logp(level, realSource.getClassName(), realSource.getMethodName(),
+          String.format(formatString, (Object[]) args));
     }
   }
 
   /**
-   * <p>error.</p>
+   * <p>Log a formatted string at {@link Level#SEVERE}.</p>
    *
    * @param formatString a {@link String} object.
    * @param args a {@link Object} object.
    */
   public void error(final String formatString, final Object... args) {
-    format(Level.SEVERE, formatString, (Object[]) args);
+    format(Level.SEVERE, 2, formatString, (Object[]) args);
   }
 
   /**
-   * <p>warn.</p>
+   * <p>Log a formatted string at {@link Level#WARNING}.</p>
    *
    * @param formatString a {@link String} object.
    * @param args a {@link Object} object.
    */
   public void warn(final String formatString, final Object... args) {
-    format(Level.WARNING, formatString, (Object[]) args);
+    format(Level.WARNING,2, formatString, (Object[]) args);
   }
 
   /**
-   * <p>info.</p>
+   * <p>Log a formatted string at {@link Level#INFO}.</p>
    *
    * @param formatString a {@link String} object.
    * @param args a {@link Object} object.
    */
   public void info(final String formatString, final Object... args) {
-    format(Level.INFO, formatString, (Object[]) args);
+    format(Level.INFO,2, formatString, (Object[]) args);
   }
 
   /**
@@ -77,7 +85,8 @@ public class LogPreFormatter {
       for (StackTraceElement element : stackTrace) {
         stackTraceBuilder.append(String.format("  %s%n", element));
       }
-      logger.log(level, stackTraceBuilder.toString());
+      logger.logp(level, stackTrace[2].getClassName(), stackTrace[2].getMethodName(),
+          stackTraceBuilder.toString());
     }
   }
 }
