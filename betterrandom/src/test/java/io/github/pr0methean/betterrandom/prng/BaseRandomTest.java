@@ -17,6 +17,7 @@ import io.github.pr0methean.betterrandom.util.EntryPoint;
 import java.io.IOException;
 import java.security.GeneralSecurityException;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.function.Supplier;
 import org.testng.ITestResult;
@@ -39,7 +40,8 @@ public abstract class BaseRandomTest {
   private static final String HOW_ARE_YOU = "How are you?";
   private static final String GOODBYE = "Goodbye";
   private static final String[] STRING_ARRAY = {HELLO, HOW_ARE_YOU, GOODBYE};
-  private static final List<String> STRING_LIST = Arrays.asList(STRING_ARRAY);
+  private static final List<String> STRING_LIST = Collections
+      .unmodifiableList(Arrays.asList(STRING_ARRAY));
   private static final int ELEMENTS = 100;
   private static final double UPPER_BOUND_FOR_ROUNDING_TEST = Double
       .longBitsToDouble(Double.doubleToLongBits(1.0) + 4);
