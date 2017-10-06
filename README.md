@@ -22,8 +22,11 @@ generation on Java. It includes:
 
 # Get it from MavenCentral
 
-Get links and dependency codes for the latest version from
-[https://mvnrepository.com/artifact/io.github.pr0methean.betterrandom/BetterRandom](https://mvnrepository.com/artifact/io.github.pr0methean.betterrandom/BetterRandom).
+* Get the latest version from
+[Maven Central]([https://search.maven.org/#search%7Cga%7C1%7Ca%3A%22BetterRandom%22]).
+* Get dependency codes for Maven, Gradle, SBT, Ivy, Grape, Leiningen and Buildr from
+  [mvnrepository.com](https://mvnrepository.com/artifact/io.github.pr0methean.betterrandom/BetterRandom)
+  (more full-featured than Maven Central, but not always up-to-date).
 
 # Design philosophy: don't take chances on randomness
 
