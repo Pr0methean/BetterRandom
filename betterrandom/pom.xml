@@ -249,7 +249,7 @@
               <Xmaxerrs>10000</Xmaxerrs>
               <Xmaxwarns>10000</Xmaxwarns>
             </compilerArguments>
-            <!-- FIXME: Disable once all issues are fixed 
+            <!-- FIXME: Enable once all issues are fixed 
             <annotationProcessors>
               <annotationProcessor>org.checkerframework.checker.nullness.NullnessChecker
               </annotationProcessor>
