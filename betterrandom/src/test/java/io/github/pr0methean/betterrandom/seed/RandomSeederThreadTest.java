@@ -52,8 +52,8 @@ public class RandomSeederThreadTest {
     assertTrue(thread.isAlive());
     thread.remove(prng);
     thread.stopIfEmpty();
-    Thread.sleep(100);
-    assertEquals(thread.getState(), State.TERMINATED);
+    Thread.sleep(1000);
+    assertEquals(State.TERMINATED, thread.getState());
   }
 
   @Test
