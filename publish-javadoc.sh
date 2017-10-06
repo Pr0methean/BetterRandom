@@ -6,6 +6,7 @@ ruby ./render-readme-for-javadoc.rb >> betterrandom/src/main/javadoc/overview.ht
 echo '</body></html>' >> betterrandom/src/main/javadoc/overview.html
 cd betterrandom
 mvn javadoc:javadoc
+rm src/main/javadoc/overview.html # Only needed temporarily
 cd ..
 cp -r betterrandom/target/site/apidocs/* docs
 cd docs
