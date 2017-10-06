@@ -17,11 +17,9 @@ package io.github.pr0methean.betterrandom.seed;
 
 /**
  * Seed generator that maintains multiple strategies for seed generation and will delegate to the
- * best one available at any moment. Uses, in order of preference: <ol>
- *   <li>{@link DevRandomSeedGenerator}</li>
- *   <li>{@link RandomDotOrgSeedGenerator#DELAYED_RETRY}</li>
- *   <li>{@link SecureRandomSeedGenerator}</li>
- * </ol>
+ * best one available at any moment. Uses, in order of preference: <ol> <li>{@link
+ * DevRandomSeedGenerator}</li> <li>{@link RandomDotOrgSeedGenerator#DELAYED_RETRY}</li> <li>{@link
+ * SecureRandomSeedGenerator}</li> </ol>
  *
  * @author Daniel Dyer
  */

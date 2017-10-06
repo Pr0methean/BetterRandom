@@ -11,12 +11,13 @@ import org.checkerframework.checker.nullness.qual.Nullable;
 
 /**
  * An unordered, concurrent spliterator (possibly unboxed) that invokes a supplier (possibly
- * unboxed) to get its values and has a preset size.
+ * unboxed) to get its values. Has a preset size if it isn't the result of a {@link #trySplit()},
+ * but shares its total size with the other splits if it is.
  *
- * @param <TSupplier> A specification or unboxed-primitive equivalent of {@link
- *     java.util.function.Supplier}.
- * @param <TConsumer> A specification or unboxed-primitive equivalent of {@link
- *     java.util.function.Consumer} The consumer type that {@link #tryAdvance(Object)} receives.
+ * @param <TSupplier> The type of the supplier of output values. A specification or
+ *     unboxed-primitive equivalent of {@link java.util.function.Supplier}.
+ * @param <TConsumer> The consumer type that {@link #tryAdvance(Object)} receives. A
+ *     specification or unboxed-primitive equivalent of {@link java.util.function.Consumer}
  * @param <TSplitInto> The return type of {@link #trySplit()}. Should be a self-reference (i.e.
  *     {@code ConcreteSupplierSpliterator extends AbstractSupplierSpliterator<T, U,
  *     ConcreteSupplierSpliterator>}).
@@ -37,12 +38,15 @@ public abstract class AbstractSupplierSpliterator<TSupplier, TConsumer, TSplitIn
    * @param supplier The supplier to wrap.
    */
   public AbstractSupplierSpliterator(final long size, final TSupplier supplier) {
+    // Set the number of splits to the log2, rounded up, of the size.
+    // Some methods in JDK8 will split a spliterator endlessly if allowed.
     this(new AtomicLong(size), new AtomicLong(Long.SIZE - Long.numberOfLeadingZeros(size)),
         supplier, true);
   }
 
   /**
-   * Used to share the AtomicLongs between partitions.
+   * Create an instance sharing the given {@link AtomicLong}s to track the total remaining size and
+   * the remaining number of splits that are to be allowed. Used for splitting.
    *
    * @param remaining An {@link AtomicLong} (shared between splits) that stores how many more
    *     items will be output by {@link #tryAdvance(Object)}.
@@ -92,6 +96,7 @@ public abstract class AbstractSupplierSpliterator<TSupplier, TConsumer, TSplitIn
 
   /**
    * Returns an upper bound on the number of remaining items.
+   *
    * @return the total number of items remaining in the root spliterator, and thus an upper bound on
    *     the number available to any one descendant.
    * @see Spliterator#estimateSize()
@@ -101,8 +106,10 @@ public abstract class AbstractSupplierSpliterator<TSupplier, TConsumer, TSplitIn
   }
 
   /**
-   * Returns {@link Spliterator#IMMUTABLE} | {@link Spliterator#NONNULL}. Also returns {@link Spliterator#SIZED}
-   *     if this spliterator has never been split and wasn't produced by {@link #trySplit()}.
+   * Returns {@link Spliterator#IMMUTABLE} | {@link Spliterator#NONNULL}. Also returns {@link
+   * Spliterator#SIZED} if this spliterator has never been split and wasn't produced by {@link
+   * #trySplit()}.
+   *
    * @return The characteristics as defined by {@link Spliterator#characteristics()}.
    */
   public int characteristics() {

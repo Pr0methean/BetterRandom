@@ -23,8 +23,8 @@ public class LogPreFormatter {
   }
 
   /**
-   * <p>If {@code level} is loggable, formats {@code args} using {@code formatString} and logs
-   * them at {@code level}.</p>
+   * <p>If {@code level} is loggable, formats {@code args} using {@code formatString} and logs them
+   * at {@code level}.</p>
    *
    * @param level The level to log at.
    * @param formatString The format string.
@@ -60,7 +60,7 @@ public class LogPreFormatter {
    * @param args The values to be formatted.
    */
   public void warn(final String formatString, final Object... args) {
-    format(Level.WARNING,3, formatString, (Object[]) args);
+    format(Level.WARNING, 3, formatString, (Object[]) args);
   }
 
   /**
@@ -70,7 +70,7 @@ public class LogPreFormatter {
    * @param args The values to be formatted.
    */
   public void info(final String formatString, final Object... args) {
-    format(Level.INFO,3, formatString, (Object[]) args);
+    format(Level.INFO, 3, formatString, (Object[]) args);
   }
 
   /**

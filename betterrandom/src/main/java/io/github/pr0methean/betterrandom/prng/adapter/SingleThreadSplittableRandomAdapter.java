@@ -51,6 +51,7 @@ public class SingleThreadSplittableRandomAdapter extends DirectSplittableRandomA
 
   /**
    * Returns false, since parallel streams would require thread-safety that we don't have.
+   *
    * @return false.
    */
   @Override
@@ -66,6 +67,7 @@ public class SingleThreadSplittableRandomAdapter extends DirectSplittableRandomA
 
   /**
    * Returns this SingleThreadSplittableRandomAdapter's only {@link SplittableRandom}.
+   *
    * @return {@link #underlying}
    */
   @Override
