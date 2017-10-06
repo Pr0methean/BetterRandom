@@ -6,8 +6,9 @@ import java.util.function.LongConsumer;
 import java.util.function.LongSupplier;
 
 /**
- * An unordered, concurrent {@link OfLong} that invokes a {@link LongSupplier} to get its values and
- * has a preset size.
+ * An unordered, concurrent {@link OfLong} that invokes a {@link LongSupplier} to get its values.
+ * Has a preset size if it isn't the result of a {@link #trySplit()}, but shares its total size with
+ * the other splits if it is.
  *
  * @author Chris Hennick
  */
