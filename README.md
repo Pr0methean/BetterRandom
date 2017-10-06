@@ -28,6 +28,11 @@ generation on Java. It includes:
   [mvnrepository.com](https://mvnrepository.com/artifact/io.github.pr0methean.betterrandom/BetterRandom)
   (more full-featured than Maven Central, but not always up-to-date).
 
+# Full javadocs
+
+Javadocs for the latest snapshot, including both public and protected members (to support your
+subclassing), are at [pr0methean.github.io](https://pr0methean.github.io/).
+
 # Design philosophy: don't take chances on randomness
 
 Many standard tests of randomness amount to Monte Carlo simulations. And since widespread
