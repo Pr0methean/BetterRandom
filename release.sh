@@ -3,16 +3,16 @@ cd betterrandom
 OLDVERSION=`mvn help:evaluate -Dexpression=project.version | sed -n -e '/^\[.*\]/ !{ /^[0-9]/ { p; q } }' | sed 's/version=//'` &&\
 rm -f release.properties &&\
 rm -rf ../../.m2/repository/io/github/pr0methean/betterrandom/ &&\
-mvn release:clean release:prepare -X -DskipTests -Dmaven.test.skip=true &&\
 (
+  mvn release:clean release:prepare release:perform -X -DskipTests -Dmaven.test.skip=true -Dmaven.main.skip=true
+  STATUS=$?
   NEWVERSION=`mvn help:evaluate -Dexpression=project.version | sed -n -e '/^\[.*\]/ !{ /^[0-9]/ { p; q } }' | sed 's/version=//'`
-  mvn release:perform -X -DskipTests -Dmaven.main.skip=true -Dmaven.test.skip=true &&\
-  (
+  if [ $STATUS ]; then
     sed -i "s/$OLDVERSION/$NEWVERSION/" ../benchmark/pom.xml &&\
     git add ../benchmark/pom.xml
     git commit -m "🤖 Update benchmark to use new snapshot version following release"
     git push
-  ) || (
+  else
     if [ "$NEWVERSION" != "$OLDVERSION" ]; then
       git tag -d "BetterRandom-$NEWVERSION"
       git push origin ":refs/tags/BetterRandom-$NEWVERSION"
@@ -22,6 +22,6 @@ mvn release:clean release:prepare -X -DskipTests -Dmaven.test.skip=true &&\
       git commit -m "🤖 Roll back version increment from failed release"
       git push
     fi
-  )
+  fi
 )
 cd ..
