@@ -4,7 +4,7 @@ OLDVERSION=`mvn help:evaluate -Dexpression=project.version | sed -n -e '/^\[.*\]
 rm -f release.properties &&\
 rm -rf ../../.m2/repository/io/github/pr0methean/betterrandom/ &&\
 (
-  mvn -DskipTests -DskipTests -Darguments=-DskipTests -Dmaven.test.skip=true -Dmaven.main.skip=true release:clean release:prepare release:perform
+  mvn -DskipTests -DskipTests -Darguments=-DskipTests -Dmaven.test.skip=true -Dmaven.main.skip=true release:clean release:perform
   STATUS=$?
   NEWVERSION=`mvn help:evaluate -Dexpression=project.version | sed -n -e '/^\[.*\]/ !{ /^[0-9]/ { p; q } }' | sed 's/version=//'`
   if [ $STATUS ]; then
