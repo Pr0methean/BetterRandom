@@ -6,8 +6,9 @@ import java.util.function.DoubleConsumer;
 import java.util.function.DoubleSupplier;
 
 /**
- * An unordered, concurrent {@link OfDouble} that invokes a {@link DoubleSupplier} to get its values
- * and has a preset size.
+ * An unordered, concurrent {@link OfDouble} that invokes a {@link DoubleSupplier} to get its
+ * values. Has a preset size if it isn't the result of a {@link #trySplit()}, but shares its total
+ * size with the other splits if it is.
  *
  * @author Chris Hennick
  */

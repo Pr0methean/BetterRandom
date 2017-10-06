@@ -6,8 +6,9 @@ import java.util.function.IntConsumer;
 import java.util.function.IntSupplier;
 
 /**
- * An unordered, concurrent {@link OfInt} that invokes an {@link IntSupplier} to get its values and
- * has a preset size.
+ * An unordered, concurrent {@link OfInt} that invokes an {@link IntSupplier} to get its values. Has
+ * a preset size if it isn't the result of a {@link #trySplit()}, but shares its total size with the
+ * other splits if it is.
  *
  * @author Chris Hennick
  */

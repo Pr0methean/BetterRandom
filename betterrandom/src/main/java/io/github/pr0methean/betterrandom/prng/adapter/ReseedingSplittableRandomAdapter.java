@@ -52,6 +52,7 @@ public class ReseedingSplittableRandomAdapter extends BaseSplittableRandomAdapte
 
   /**
    * Returns the instance backed by the {@link DefaultSeedGenerator}.
+   *
    * @return The instance backed by the {@link DefaultSeedGenerator}.
    * @throws SeedException if the {@link DefaultSeedGenerator} throws one while generating the
    *     initial seed.
@@ -64,6 +65,7 @@ public class ReseedingSplittableRandomAdapter extends BaseSplittableRandomAdapte
 
   /**
    * Returns the instance backed by the given {@link SeedGenerator}.
+   *
    * @param seedGenerator The seed generator the returned adapter is to use.
    * @return the ReseedingSplittableRandomAdapter backed by {@code seedGenerator}.
    * @throws SeedException if {@code seedGenerator} throws one while generating the initial
