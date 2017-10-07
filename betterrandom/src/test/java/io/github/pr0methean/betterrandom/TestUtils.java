@@ -37,7 +37,7 @@ public enum TestUtils {
             constructorParams[i] = params.get(parameterTypes[i]);
           }
           test.accept((T) constructor.newInstance(constructorParams));
-        } catch (IllegalAccessException | InstantiationException | InvocationTargetException e) {
+        } catch (IllegalAccessException | InstantiationException | InvocationTargetException | IllegalArgumentException e) {
           throw new AssertionError("Failed to call constructor " + constructor.toGenericString(),
               e);
         }
