@@ -63,14 +63,16 @@ public abstract class BaseRandomTest {
   @Test
   public void testAllPublicConstructors()
       throws SeedException, IllegalAccessException, InstantiationException, InvocationTargetException {
-    BaseRandom basePrng = createRng();
-    int seedLength = basePrng.getNewSeedLength();
+    int seedLength = getNewSeedLength(createRng());
     TestUtils.testAllPublicConstructors(getClassUnderTest(), ImmutableMap.of(
         int.class, seedLength,
         byte[].class, DefaultSeedGenerator.DEFAULT_SEED_GENERATOR.generateSeed(seedLength),
-        SeedGenerator.class, DefaultSeedGenerator.DEFAULT_SEED_GENERATOR,
-        Random.class, basePrng
+        SeedGenerator.class, DefaultSeedGenerator.DEFAULT_SEED_GENERATOR
     ), BaseRandom::nextInt);
+  }
+
+  protected int getNewSeedLength(BaseRandom basePrng) {
+    return basePrng.getNewSeedLength();
   }
 
   protected abstract Class<? extends BaseRandom> getClassUnderTest();
@@ -94,7 +96,7 @@ public abstract class BaseRandomTest {
   public void testSeedTooLong() throws GeneralSecurityException, SeedException {
     createRng(
         DefaultSeedGenerator.DEFAULT_SEED_GENERATOR
-            .generateSeed(createRng().getNewSeedLength() + 1)); // Should throw an exception.
+            .generateSeed(getNewSeedLength(createRng()) + 1)); // Should throw an exception.
   }
 
   protected abstract BaseRandom tryCreateRng() throws SeedException;
@@ -162,7 +164,7 @@ public abstract class BaseRandomTest {
   @Test(timeOut = 15000)
   public void testSetSeed() throws SeedException {
     final byte[] seed = DefaultSeedGenerator.DEFAULT_SEED_GENERATOR
-        .generateSeed(createRng().getNewSeedLength());
+        .generateSeed(getNewSeedLength(createRng()));
     final BaseRandom rng = createRng();
     final BaseRandom rng2 = createRng();
     rng.nextLong(); // ensure they won't both be in initial state before reseeding
