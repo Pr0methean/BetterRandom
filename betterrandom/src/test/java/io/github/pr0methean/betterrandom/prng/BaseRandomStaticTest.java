@@ -3,7 +3,6 @@ package io.github.pr0methean.betterrandom.prng;
 import static io.github.pr0methean.betterrandom.prng.BaseRandom.entropyOfInt;
 import static io.github.pr0methean.betterrandom.prng.BaseRandom.entropyOfLong;
 import static org.testng.Assert.assertEquals;
-import static org.testng.Assert.assertNotSame;
 
 import io.github.pr0methean.betterrandom.TestingDeficiency;
 import java.io.ByteArrayInputStream;
@@ -21,29 +20,7 @@ import org.testng.annotations.Test;
  */
 public class BaseRandomStaticTest {
 
-  private static class Switcheroo implements Serializable {
-
-    private static final long serialVersionUID = 5949778642428995210L;
-  }
-
   private static final String SWITCHEROO_NAME = Switcheroo.class.getName();
-
-  private static class SwitcherooInputStream extends ObjectInputStream {
-    public SwitcherooInputStream(InputStream in) throws IOException {
-      super(in);
-    }
-
-    @Override
-    protected Class<?> resolveClass(ObjectStreamClass desc)
-        throws IOException, ClassNotFoundException {
-      if (Switcheroo.serialVersionUID == desc
-          .getSerialVersionUID()) {
-        return AesCounterRandom.class;
-      } else {
-        return super.resolveClass(desc);
-      }
-    }
-  }
 
   @TestingDeficiency // FIXME: The switcheroo isn't happening!
   @Test(enabled = false)
@@ -81,5 +58,28 @@ public class BaseRandomStaticTest {
     assertEquals(entropyOfLong(1 << 22, 1L << 42), 42);
     assertEquals(entropyOfLong(-(1L << 42), 0), 42);
     assertEquals(entropyOfLong(-(1L << 42), 1), 43);
+  }
+
+  private static class Switcheroo implements Serializable {
+
+    private static final long serialVersionUID = 5949778642428995210L;
+  }
+
+  private static class SwitcherooInputStream extends ObjectInputStream {
+
+    public SwitcherooInputStream(InputStream in) throws IOException {
+      super(in);
+    }
+
+    @Override
+    protected Class<?> resolveClass(ObjectStreamClass desc)
+        throws IOException, ClassNotFoundException {
+      if (Switcheroo.serialVersionUID == desc
+          .getSerialVersionUID()) {
+        return AesCounterRandom.class;
+      } else {
+        return super.resolveClass(desc);
+      }
+    }
   }
 }
