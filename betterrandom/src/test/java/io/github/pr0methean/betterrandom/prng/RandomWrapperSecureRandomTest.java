@@ -29,6 +29,7 @@ public class RandomWrapperSecureRandomTest extends BaseRandomTest {
     int seedLength = getNewSeedLength(basePrng);
     TestUtils.testAllPublicConstructors(getClassUnderTest(), ImmutableMap.of(
         int.class, seedLength,
+        long.class, TEST_SEED,
         byte[].class, DefaultSeedGenerator.DEFAULT_SEED_GENERATOR.generateSeed(seedLength),
         SeedGenerator.class, DefaultSeedGenerator.DEFAULT_SEED_GENERATOR,
         Random.class, new SecureRandom()

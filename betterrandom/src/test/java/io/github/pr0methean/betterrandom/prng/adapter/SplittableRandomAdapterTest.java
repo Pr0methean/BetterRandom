@@ -13,7 +13,6 @@ import java.util.Arrays;
 public class SplittableRandomAdapterTest extends SingleThreadSplittableRandomAdapterTest {
 
   private static final SeedGenerator FAKE_SEED_GENERATOR = new FakeSeedGenerator();
-  private static final long TEST_SEED = 0x0123456789ABCDEFL;
 
   @Override
   protected Class<? extends BaseRandom> getClassUnderTest() {
