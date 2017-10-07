@@ -15,6 +15,11 @@ public class SplittableRandomAdapterTest extends SingleThreadSplittableRandomAda
   private static final SeedGenerator FAKE_SEED_GENERATOR = new FakeSeedGenerator();
   private static final long TEST_SEED = 0x0123456789ABCDEFL;
 
+  @Override
+  protected Class<? extends BaseRandom> getClassUnderTest() {
+    return SplittableRandomAdapter.class;
+  }
+
   /** SplittableRandomAdapter isn't repeatable until its seed has been specified. */
   @Override
   public void testRepeatability() throws SeedException {

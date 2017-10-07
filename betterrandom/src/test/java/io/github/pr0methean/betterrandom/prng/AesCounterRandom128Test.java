@@ -73,6 +73,11 @@ public class AesCounterRandom128Test extends BaseRandomTest {
   }
 
   @Override
+  protected Class<? extends BaseRandom> getClassUnderTest() {
+    return AesCounterRandom.class;
+  }
+
+  @Override
   protected BaseRandom tryCreateRng() throws SeedException {
     return new AesCounterRandom(16);
   }

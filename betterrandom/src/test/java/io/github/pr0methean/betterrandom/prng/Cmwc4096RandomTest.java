@@ -25,6 +25,11 @@ import io.github.pr0methean.betterrandom.seed.SeedException;
 public class Cmwc4096RandomTest extends BaseRandomTest {
 
   @Override
+  protected Class<? extends BaseRandom> getClassUnderTest() {
+    return Cmwc4096Random.class;
+  }
+
+  @Override
   protected BaseRandom tryCreateRng() throws SeedException {
     return new Cmwc4096Random();
   }
