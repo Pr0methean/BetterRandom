@@ -187,7 +187,8 @@ public class LooperThreadTest {
     }
   }
 
-  private static class SkeletonLooperThread extends LooperThread {
+  /** Must be public since ctors are accessed reflectively by {@link TestUtils} */
+  public static class SkeletonLooperThread extends LooperThread {
 
     private static final long serialVersionUID = -6863326140536988360L;
 
