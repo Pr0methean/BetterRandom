@@ -25,7 +25,7 @@ public class BaseRandomStaticTest {
     private static final long serialVersionUID = 8983189998689311065L;
   }
 
-  private static final ObjectStreamClass SWITCHEROO_CLASS = ObjectStreamClass.lookup(Switcheroo.class);
+  private static final String SWITCHEROO_NAME = Switcheroo.class.getName();
 
   private static class SwitcherooInputStream extends ObjectInputStream {
     public SwitcherooInputStream(InputStream in) throws IOException {
@@ -35,7 +35,8 @@ public class BaseRandomStaticTest {
     @Override
     protected Class<?> resolveClass(ObjectStreamClass desc)
         throws IOException, ClassNotFoundException {
-      if (SWITCHEROO_CLASS.equals(desc)) {
+      if (SWITCHEROO_NAME.equals(desc.getName()) && (Switcheroo.serialVersionUID == desc
+          .getSerialVersionUID())) {
         return AesCounterRandom.class;
       } else {
         return super.resolveClass(desc);
