@@ -20,6 +20,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.net.MalformedURLException;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicLong;
+import org.checkerframework.checker.nullness.qual.Nullable;
 import org.checkerframework.checker.nullness.qual.RequiresNonNull;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
@@ -56,7 +57,9 @@ public class LooperThreadTest {
   @Test
   public void testAllPublicConstructors()
       throws IllegalAccessException, InstantiationException, InvocationTargetException {
-    TestUtils.testAllPublicConstructors(LooperThread.class, ImmutableMap.of(
+    // Test SkeletonLooperThread instead of LooperThread so that protected ctors in LooperThread are
+    // also covered
+    TestUtils.testAllPublicConstructors(SkeletonLooperThread.class, ImmutableMap.of(
         ThreadGroup.class, new SerializableThreadGroup(),
         Runnable.class, TARGET,
         String.class, "Test LooperThread",
@@ -193,6 +196,31 @@ public class LooperThreadTest {
 
     public SkeletonLooperThread(final Runnable target) {
       super(target);
+    }
+
+    public SkeletonLooperThread(ThreadGroup group,
+        @Nullable Runnable target) {
+      super(group, target);
+    }
+
+    public SkeletonLooperThread(String name) {
+      super(name);
+    }
+
+    public SkeletonLooperThread(ThreadGroup group, String name) {
+      super(group, name);
+    }
+
+    public SkeletonLooperThread(
+        @Nullable Runnable target,
+        String name) {
+      super(target, name);
+    }
+
+    public SkeletonLooperThread(ThreadGroup group,
+        @Nullable Runnable target,
+        String name) {
+      super(group, target, name);
     }
 
     public SkeletonLooperThread(final ThreadGroup group, final Runnable target, final String name,
