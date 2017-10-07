@@ -7,13 +7,16 @@ import static org.testng.Assert.assertSame;
 import static org.testng.Assert.assertTrue;
 import static org.testng.Assert.fail;
 
+import com.google.common.collect.ImmutableMap;
 import io.github.pr0methean.betterrandom.MockException;
+import io.github.pr0methean.betterrandom.TestUtils;
 import io.github.pr0methean.betterrandom.TestingDeficiency;
 import java.io.InvalidObjectException;
 import java.io.Serializable;
 import java.lang.Thread.State;
 import java.lang.Thread.UncaughtExceptionHandler;
 import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
 import java.net.MalformedURLException;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicLong;
@@ -48,6 +51,17 @@ public class LooperThreadTest {
     } catch (final NoSuchFieldException e) {
       throw new RuntimeException(e);
     }
+  }
+
+  @Test
+  public void testAllPublicConstructors()
+      throws IllegalAccessException, InstantiationException, InvocationTargetException {
+    TestUtils.testAllPublicConstructors(LooperThread.class, ImmutableMap.of(
+        ThreadGroup.class, new SerializableThreadGroup(),
+        Runnable.class, TARGET,
+        String.class, "Test LooperThread",
+        long.class, STACK_SIZE
+    ), LooperThread::start);
   }
 
   @BeforeTest
