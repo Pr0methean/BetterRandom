@@ -17,6 +17,15 @@ public class RandomWrapperSecureRandomTest extends BaseRandomTest {
 
   private static final SecureRandom SEED_GEN = new SecureRandom();
 
+  @NotNull
+  private static RandomWrapper createRngInternal() {
+    try {
+      return new RandomWrapper(SecureRandom.getInstance("SHA1PRNG"));
+    } catch (final NoSuchAlgorithmException e) {
+      throw new RuntimeException(e);
+    }
+  }
+
   @Override
   protected Class<? extends BaseRandom> getClassUnderTest() {
     return RandomWrapper.class;
@@ -34,15 +43,6 @@ public class RandomWrapperSecureRandomTest extends BaseRandomTest {
         SeedGenerator.class, DefaultSeedGenerator.DEFAULT_SEED_GENERATOR,
         Random.class, new SecureRandom()
     ), BaseRandom::nextInt);
-  }
-
-  @NotNull
-  private static RandomWrapper createRngInternal() {
-    try {
-      return new RandomWrapper(SecureRandom.getInstance("SHA1PRNG"));
-    } catch (final NoSuchAlgorithmException e) {
-      throw new RuntimeException(e);
-    }
   }
 
   /**

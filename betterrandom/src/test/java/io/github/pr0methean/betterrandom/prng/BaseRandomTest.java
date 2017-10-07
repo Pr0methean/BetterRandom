@@ -23,7 +23,6 @@ import java.security.GeneralSecurityException;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-import java.util.Random;
 import java.util.function.Supplier;
 import org.testng.ITestResult;
 import org.testng.Reporter;
@@ -38,7 +37,7 @@ public abstract class BaseRandomTest {
    * Alpha (and thus at least as accurate as {@code StrictMath.sqrt(12.0)}).
    */
   protected static final double SQRT_12 = 3.4641016151377546;
-
+  protected static final long TEST_SEED = 0x0123456789ABCDEFL;
   private static final int FLAKY_TEST_RETRIES = 3;
   private static final int TEST_BYTE_ARRAY_LENGTH = 20;
   private static final String HELLO = "Hello";
@@ -50,7 +49,6 @@ public abstract class BaseRandomTest {
   private static final int ELEMENTS = 100;
   private static final double UPPER_BOUND_FOR_ROUNDING_TEST = Double
       .longBitsToDouble(Double.doubleToLongBits(1.0) + 4);
-  protected static final long TEST_SEED = 0x0123456789ABCDEFL;
 
   @SafeVarargs
   private static <E> void testGeneratesAll(final Supplier<E> generator, final E... expected) {

@@ -11,7 +11,6 @@ import com.google.common.collect.ImmutableMap;
 import io.github.pr0methean.betterrandom.MockException;
 import io.github.pr0methean.betterrandom.TestUtils;
 import io.github.pr0methean.betterrandom.TestingDeficiency;
-import io.github.pr0methean.betterrandom.prng.RandomTestUtils;
 import java.io.InvalidObjectException;
 import java.io.Serializable;
 import java.lang.Thread.State;
