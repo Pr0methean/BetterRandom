@@ -14,6 +14,9 @@ cd docs
 # Disable frames, step 1
 mv overview-summary.html index.html
 
+# Create sitemap
+find . -iname "*.html" | sed 's/^\./https:\/\/pr0methean.github.io/' > sitemap.txt
+
 # AdSense
 sed -i 's/<head>/<head><script async src="\/\/pagead2.googlesyndication.com\/pagead\/js\/adsbygoogle.js"><\/script><script>(adsbygoogle = window.adsbygoogle || []).push({google_ad_client: "ca-pub-9922551172827508", enable_page_level_ads: true});<\/script>/' index.html
 
