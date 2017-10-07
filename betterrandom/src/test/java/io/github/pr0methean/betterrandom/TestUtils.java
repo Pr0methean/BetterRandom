@@ -1,6 +1,5 @@
 package io.github.pr0methean.betterrandom;
 
-import io.github.pr0methean.betterrandom.util.LogPreFormatter;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Modifier;
@@ -13,8 +12,6 @@ import java.util.function.Consumer;
  */
 public enum TestUtils {
   ;
-
-  private static final LogPreFormatter LOG = new LogPreFormatter(TestUtils.class);
 
   /**
    * Reflectively calls all public constructors of the given class with the given parameters, and
