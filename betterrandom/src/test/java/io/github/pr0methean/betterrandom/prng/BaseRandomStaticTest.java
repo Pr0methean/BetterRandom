@@ -3,14 +3,62 @@ package io.github.pr0methean.betterrandom.prng;
 import static io.github.pr0methean.betterrandom.prng.BaseRandom.entropyOfInt;
 import static io.github.pr0methean.betterrandom.prng.BaseRandom.entropyOfLong;
 import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertNotSame;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.io.ObjectStreamClass;
+import java.io.Serializable;
 import org.testng.annotations.Test;
 
 /**
- * Tests of the static methods of {@link BaseRandom}. In a separate class to work around
- * https://github.com/cbeust/testng/issues/1561
+ * Tests for {@link BaseRandom} that are not heritable by tests of subclasses.
  */
 public class BaseRandomStaticTest {
+
+  private static class Switcheroo implements Serializable {
+
+    private static final long serialVersionUID = 8983189998689311065L;
+  }
+
+  private static final ObjectStreamClass SWITCHEROO_CLASS = ObjectStreamClass.lookup(Switcheroo.class);
+
+  private static class SwitcherooInputStream extends ObjectInputStream {
+    public SwitcherooInputStream(InputStream in) throws IOException {
+      super(in);
+    }
+
+    @Override
+    protected Class<?> resolveClass(ObjectStreamClass desc)
+        throws IOException, ClassNotFoundException {
+      if (SWITCHEROO_CLASS.equals(desc)) {
+        return AesCounterRandom.class;
+      } else {
+        return super.resolveClass(desc);
+      }
+    }
+  }
+
+  @Test
+  public void testReadObjectNoData() throws IOException, ClassNotFoundException {
+    BaseRandom switchedRandom;
+    try (
+        ByteArrayOutputStream byteOutStream = new ByteArrayOutputStream();
+        ObjectOutputStream objectOutStream = new ObjectOutputStream(byteOutStream)) {
+      objectOutStream.writeObject(new Switcheroo());
+      final byte[] serialCopy = byteOutStream.toByteArray();
+      // Read the object back-in.
+      try (ObjectInputStream objectInStream = new SwitcherooInputStream(
+          new ByteArrayInputStream(serialCopy))) {
+        switchedRandom = (BaseRandom) objectInStream.readObject();
+      }
+    }
+    switchedRandom.nextInt();
+  }
 
   @Test
   public void testEntropyOfInt() {
