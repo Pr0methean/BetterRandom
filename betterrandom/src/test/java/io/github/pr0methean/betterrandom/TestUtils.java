@@ -1,5 +1,6 @@
 package io.github.pr0methean.betterrandom;
 
+import io.github.pr0methean.betterrandom.util.LogPreFormatter;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Modifier;
@@ -13,6 +14,8 @@ import java.util.function.Consumer;
 public enum TestUtils {
   ;
 
+  private static final LogPreFormatter LOG = new LogPreFormatter(TestUtils.class);
+
   /**
    * Reflectively calls all public constructors of the given class with the given parameters, and
    * passes each constructed instance to a consumer.
@@ -23,17 +26,21 @@ public enum TestUtils {
    * @param <T> {@code clazz} as a type.
    */
   public static <T> void testAllPublicConstructors(Class<T> clazz, Map<Class<?>, Object> params,
-      Consumer<T> test)
-      throws IllegalAccessException, InvocationTargetException, InstantiationException {
+      Consumer<T> test) {
     for (Constructor<?> constructor : clazz.getDeclaredConstructors()) {
       if (Modifier.isPublic(constructor.getModifiers())) {
-        int nParams = constructor.getParameterCount();
-        Class[] parameterTypes = constructor.getParameterTypes();
-        Object[] constructorParams = new Object[nParams];
-        for (int i = 0; i < nParams; i++) {
-          constructorParams[i] = params.get(parameterTypes[i]);
+        try {
+          int nParams = constructor.getParameterCount();
+          Class[] parameterTypes = constructor.getParameterTypes();
+          Object[] constructorParams = new Object[nParams];
+          for (int i = 0; i < nParams; i++) {
+            constructorParams[i] = params.get(parameterTypes[i]);
+          }
+          test.accept((T) constructor.newInstance(constructorParams));
+        } catch (IllegalAccessException | InstantiationException | InvocationTargetException e) {
+          throw new AssertionError("Failed to call constructor " + constructor.toGenericString(),
+              e);
         }
-        test.accept((T) constructor.newInstance(constructorParams));
       }
     }
   }
