@@ -25,6 +25,11 @@ import io.github.pr0methean.betterrandom.seed.SeedException;
 public class MersenneTwisterRandomTest extends BaseRandomTest {
 
   @Override
+  protected Class<? extends BaseRandom> getClassUnderTest() {
+    return MersenneTwisterRandom.class;
+  }
+
+  @Override
   protected BaseRandom tryCreateRng() throws SeedException {
     return new MersenneTwisterRandom();
   }

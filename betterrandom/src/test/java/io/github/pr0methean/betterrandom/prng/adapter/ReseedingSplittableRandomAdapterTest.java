@@ -39,6 +39,11 @@ public class ReseedingSplittableRandomAdapterTest extends SingleThreadSplittable
   }
 
   @Override
+  protected Class<? extends BaseRandom> getClassUnderTest() {
+    return ReseedingSplittableRandomAdapter.class;
+  }
+
+  @Override
   @Test(enabled = false)
   public void testRepeatability() {
     // No-op.

@@ -11,6 +11,11 @@ import org.testng.annotations.Test;
 
 public class SingleThreadSplittableRandomAdapterTest extends BaseRandomTest {
 
+  @Override
+  protected Class<? extends BaseRandom> getClassUnderTest() {
+    return SingleThreadSplittableRandomAdapter.class;
+  }
+
   /**
    * {@inheritDoc} Overridden in subclasses, so that subclassing the test can test the subclasses.
    */

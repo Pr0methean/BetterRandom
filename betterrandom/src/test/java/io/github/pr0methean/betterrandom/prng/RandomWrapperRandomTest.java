@@ -25,6 +25,11 @@ import org.testng.annotations.Test;
  */
 public class RandomWrapperRandomTest extends BaseRandomTest {
 
+  @Override
+  protected Class<? extends BaseRandom> getClassUnderTest() {
+    return RandomWrapper.class;
+  }
+
   /**
    * Test to ensure that two distinct RNGs with the same seed return the same sequence of numbers.
    */

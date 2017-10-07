@@ -25,6 +25,11 @@ import io.github.pr0methean.betterrandom.seed.SeedException;
 public class XorShiftRandomTest extends BaseRandomTest {
 
   @Override
+  protected Class<? extends BaseRandom> getClassUnderTest() {
+    return XorShiftRandom.class;
+  }
+
+  @Override
   protected BaseRandom tryCreateRng() throws SeedException {
     return new XorShiftRandom();
   }
