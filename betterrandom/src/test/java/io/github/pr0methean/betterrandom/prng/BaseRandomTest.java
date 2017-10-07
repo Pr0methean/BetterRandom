@@ -50,6 +50,7 @@ public abstract class BaseRandomTest {
   private static final int ELEMENTS = 100;
   private static final double UPPER_BOUND_FOR_ROUNDING_TEST = Double
       .longBitsToDouble(Double.doubleToLongBits(1.0) + 4);
+  protected static final long TEST_SEED = 0x0123456789ABCDEFL;
 
   @SafeVarargs
   private static <E> void testGeneratesAll(final Supplier<E> generator, final E... expected) {
@@ -66,6 +67,7 @@ public abstract class BaseRandomTest {
     int seedLength = getNewSeedLength(createRng());
     TestUtils.testAllPublicConstructors(getClassUnderTest(), ImmutableMap.of(
         int.class, seedLength,
+        long.class, TEST_SEED,
         byte[].class, DefaultSeedGenerator.DEFAULT_SEED_GENERATOR.generateSeed(seedLength),
         SeedGenerator.class, DefaultSeedGenerator.DEFAULT_SEED_GENERATOR
     ), BaseRandom::nextInt);
