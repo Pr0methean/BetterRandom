@@ -11,6 +11,7 @@ import com.google.common.collect.ImmutableMap;
 import io.github.pr0methean.betterrandom.MockException;
 import io.github.pr0methean.betterrandom.TestUtils;
 import io.github.pr0methean.betterrandom.TestingDeficiency;
+import io.github.pr0methean.betterrandom.prng.RandomTestUtils;
 import java.io.InvalidObjectException;
 import java.io.Serializable;
 import java.lang.Thread.State;
@@ -61,7 +62,7 @@ public class LooperThreadTest {
         Runnable.class, TARGET,
         String.class, "Test LooperThread",
         long.class, STACK_SIZE
-    ), LooperThread::start);
+    ), thread -> CloneViaSerialization.clone(thread).start());
   }
 
   @BeforeTest
