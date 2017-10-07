@@ -6,6 +6,12 @@ import javax.crypto.Cipher;
 
 public class AesCounterRandom384Test extends AesCounterRandom256Test {
 
+  @Override
+  protected int getNewSeedLength(BaseRandom basePrng) {
+    return UNLIMITED_STRENGTH_CRYPTO ? 48 : 32;
+  }
+
+
   private static final boolean UNLIMITED_STRENGTH_CRYPTO;
 
   static {
