@@ -9,16 +9,21 @@ import static org.testng.Assert.assertFalse;
 import static org.testng.Assert.assertNotEquals;
 import static org.testng.Assert.assertTrue;
 
+import com.google.common.collect.ImmutableMap;
+import io.github.pr0methean.betterrandom.TestUtils;
 import io.github.pr0methean.betterrandom.prng.RandomTestUtils.EntropyCheckMode;
 import io.github.pr0methean.betterrandom.seed.DefaultSeedGenerator;
 import io.github.pr0methean.betterrandom.seed.RandomSeederThread;
 import io.github.pr0methean.betterrandom.seed.SeedException;
+import io.github.pr0methean.betterrandom.seed.SeedGenerator;
 import io.github.pr0methean.betterrandom.util.EntryPoint;
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 import java.security.GeneralSecurityException;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.Random;
 import java.util.function.Supplier;
 import org.testng.ITestResult;
 import org.testng.Reporter;
@@ -54,6 +59,21 @@ public abstract class BaseRandomTest {
     }
     assertTrue(Arrays.asList(selected).containsAll(Arrays.asList(expected)));
   }
+
+  @Test
+  public void testAllPublicConstructors()
+      throws SeedException, IllegalAccessException, InstantiationException, InvocationTargetException {
+    BaseRandom basePrng = createRng();
+    int seedLength = basePrng.getNewSeedLength();
+    TestUtils.testAllPublicConstructors(getClassUnderTest(), ImmutableMap.of(
+        int.class, seedLength,
+        byte[].class, DefaultSeedGenerator.DEFAULT_SEED_GENERATOR.generateSeed(seedLength),
+        SeedGenerator.class, DefaultSeedGenerator.DEFAULT_SEED_GENERATOR,
+        Random.class, basePrng
+    ), BaseRandom::nextInt);
+  }
+
+  protected abstract Class<? extends BaseRandom> getClassUnderTest();
 
   /**
    * Test to ensure that two distinct RNGs with the same seed return the same sequence of numbers.
