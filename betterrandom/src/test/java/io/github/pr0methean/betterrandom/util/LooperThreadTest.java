@@ -229,10 +229,10 @@ public class LooperThreadTest {
       super(group, target, name, stackSize);
     }
 
-    @RequiresNonNull({"group", "target", "name"})
+    @RequiresNonNull({"serialGroup", "target", "name"})
     @Override
     protected LooperThread readResolveConstructorWrapper() throws InvalidObjectException {
-      return new SkeletonLooperThread(group, target, name, stackSize);
+      return new SkeletonLooperThread(serialGroup, target, name, stackSize);
     }
 
     @Override
