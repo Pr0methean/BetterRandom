@@ -9,7 +9,7 @@ import java.lang.annotation.Target;
 /**
  * Marks a method or constructor as an entry point, so that IntelliJ's code inspections won't decide
  * it's unused. Once test coverage for BetterRandom is complete, this will only be used in
- * benchmarks and debugging tools.
+ * benchmarks and debugging tools, and for constructors that are tested reflectively.
  */
 @Inherited
 @Retention(RetentionPolicy.SOURCE)

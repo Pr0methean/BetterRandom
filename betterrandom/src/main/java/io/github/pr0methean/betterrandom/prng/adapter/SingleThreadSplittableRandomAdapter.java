@@ -1,6 +1,7 @@
 package io.github.pr0methean.betterrandom.prng.adapter;
 
 import com.google.common.base.MoreObjects.ToStringHelper;
+import io.github.pr0methean.betterrandom.seed.DefaultSeedGenerator;
 import io.github.pr0methean.betterrandom.seed.SeedException;
 import io.github.pr0methean.betterrandom.seed.SeedGenerator;
 import java.io.IOException;
@@ -29,6 +30,16 @@ public class SingleThreadSplittableRandomAdapter extends DirectSplittableRandomA
   public SingleThreadSplittableRandomAdapter(final SeedGenerator seedGenerator)
       throws SeedException {
     this(seedGenerator.generateSeed(Long.BYTES));
+  }
+
+  /**
+   * Use the {@link DefaultSeedGenerator} to create the seed for the underlying {@link
+   * SplittableRandom}.
+   *
+   * @throws SeedException if the {@link DefaultSeedGenerator} fails to generate a seed.
+   */
+  public SingleThreadSplittableRandomAdapter() throws SeedException {
+    this(DefaultSeedGenerator.DEFAULT_SEED_GENERATOR.generateSeed(Long.BYTES));
   }
 
   /**
