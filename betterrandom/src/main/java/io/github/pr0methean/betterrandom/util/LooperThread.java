@@ -7,7 +7,6 @@ import java.io.InvalidObjectException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
-import java.lang.Thread.UncaughtExceptionHandler;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 import org.checkerframework.checker.initialization.qual.UnderInitialization;
@@ -223,8 +222,8 @@ public class LooperThread extends Thread implements Serializable, Cloneable {
 
   /**
    * Deserialization uses readResolve rather than {@link #readObject(ObjectInputStream)} alone,
-   * because the API of {@link Thread} only lets us set preferred stack size and thread serialGroup during
-   * construction and not update them afterwards.
+   * because the API of {@link Thread} only lets us set preferred stack size and thread serialGroup
+   * during construction and not update them afterwards.
    *
    * @return A LooperThread that will replace this one during deserialization.
    * @throws InvalidObjectException if this LooperThread's serial form is invalid.
@@ -272,12 +271,12 @@ public class LooperThread extends Thread implements Serializable, Cloneable {
   }
 
   /**
-   * Returns a new instance of this LooperThread's exact class, whose serialGroup is {@link #serialGroup}, whose
-   * target is {@link #target}, whose name is {@link #name}, whose preferred stack size per {@link
-   * Thread#Thread(ThreadGroup, Runnable, String, long)} is {@link #stackSize}, and that has its
-   * subclass fields copied from this one if it does not have a {@link #readResolve()} override that
-   * will populate them before deserialization completes. Must be overridden in <em>all</em>
-   * subclasses to fulfill this contract.
+   * Returns a new instance of this LooperThread's exact class, whose serialGroup is {@link
+   * #serialGroup}, whose target is {@link #target}, whose name is {@link #name}, whose preferred
+   * stack size per {@link Thread#Thread(ThreadGroup, Runnable, String, long)} is {@link
+   * #stackSize}, and that has its subclass fields copied from this one if it does not have a {@link
+   * #readResolve()} override that will populate them before deserialization completes. Must be
+   * overridden in <em>all</em> subclasses to fulfill this contract.
    *
    * @return the new LooperThread.
    * @throws InvalidObjectException if this LooperThread's serial form is invalid.
