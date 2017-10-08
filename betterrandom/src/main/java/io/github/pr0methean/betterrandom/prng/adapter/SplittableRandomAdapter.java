@@ -4,6 +4,7 @@ import static io.github.pr0methean.betterrandom.util.BinaryUtils.convertBytesToL
 import static org.checkerframework.checker.nullness.NullnessUtil.castNonNull;
 
 import com.google.common.base.MoreObjects.ToStringHelper;
+import io.github.pr0methean.betterrandom.seed.DefaultSeedGenerator;
 import io.github.pr0methean.betterrandom.seed.SeedException;
 import io.github.pr0methean.betterrandom.seed.SeedGenerator;
 import io.github.pr0methean.betterrandom.util.BinaryUtils;
@@ -53,6 +54,16 @@ public class SplittableRandomAdapter extends DirectSplittableRandomAdapter {
   public SplittableRandomAdapter(byte[] seed) {
     super(seed);
     initSubclassTransientFields();
+  }
+
+  /**
+   * Use the {@link DefaultSeedGenerator} to generate a seed for the master {@link
+   * SplittableRandom}, which will be split to generate an instance for each thread.
+   *
+   * @throws SeedException if the {@link DefaultSeedGenerator} fails to generate a seed.
+   */
+  public SplittableRandomAdapter() throws SeedException {
+    this(DefaultSeedGenerator.DEFAULT_SEED_GENERATOR.generateSeed(Long.BYTES));
   }
 
   /**
@@ -122,17 +133,6 @@ public class SplittableRandomAdapter extends DirectSplittableRandomAdapter {
   /**
    * {@inheritDoc} Applies only to the calling thread.
    */
-  @Override
-  public void setSeed(@UnknownInitialization SplittableRandomAdapter this, final byte[] seed) {
-    if (seed.length != Long.BYTES) {
-      throw new IllegalArgumentException("SplittableRandomAdapter requires an 8-byte seed");
-    }
-    setSeed(convertBytesToLong(seed));
-  }
-
-  /**
-   * {@inheritDoc} Applies only to the calling thread.
-   */
   @SuppressWarnings("contracts.postcondition.not.satisfied")
   @Override
   public void setSeed(@UnknownInitialization SplittableRandomAdapter this,
@@ -149,5 +149,16 @@ public class SplittableRandomAdapter extends DirectSplittableRandomAdapter {
         seeds.set(BinaryUtils.convertLongToBytes(seed));
       }
     }
+  }
+
+  /**
+   * {@inheritDoc} Applies only to the calling thread.
+   */
+  @Override
+  public void setSeed(@UnknownInitialization SplittableRandomAdapter this, final byte[] seed) {
+    if (seed.length != Long.BYTES) {
+      throw new IllegalArgumentException("SplittableRandomAdapter requires an 8-byte seed");
+    }
+    setSeed(convertBytesToLong(seed));
   }
 }
