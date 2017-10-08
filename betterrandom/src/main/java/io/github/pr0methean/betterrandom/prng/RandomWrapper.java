@@ -66,7 +66,7 @@ public class RandomWrapper extends BaseRandom {
   }
 
   /**
-   * Wraps a {@link Random} and seeds it with the specified seed data.
+   * Wraps a new {@link Random} seeded it with the specified seed data.
    *
    * @param seed 8 bytes of seed data used to initialise the RNG.
    */
@@ -77,6 +77,18 @@ public class RandomWrapper extends BaseRandom {
           "RandomWrapper requires an 8-byte seed when defaulting to java.util.Random");
     }
     wrapped = new Random(BinaryUtils.convertBytesToLong(seed));
+    unknownSeed = false;
+  }
+
+  /**
+   * Wraps a new {@link Random} seeded with the specified seed.
+   *
+   * @param seed seed used to initialise the {@link Random}.
+   */
+  @EntryPoint
+  public RandomWrapper(final long seed) {
+    super(seed);
+    wrapped = new Random(seed);
     unknownSeed = false;
   }
 
