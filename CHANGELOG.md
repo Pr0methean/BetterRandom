@@ -1,3 +1,7 @@
+# 1.0.1
+* Fixed a bug involving uncaught-exception handlers for a `LooperThread`.
+* Added several useful new constructor overloads.
+
 # 1.0.0
 * Fixed entropy counting. After obtaining a stream from one of the `ints`, `longs` or `doubles`
   methods, you can now expect it to reseed midstream if `setSeederThread` has been called with
