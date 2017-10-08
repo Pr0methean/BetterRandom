@@ -149,8 +149,7 @@ public class LooperThreadTest {
     assertTrue(exceptionHandlerRun.get());
   }
 
-  @TestingDeficiency
-  @Test(enabled = false)
+  @Test
   public void testDefaultUncaughtExceptionHandler() throws InterruptedException {
     final AtomicBoolean defaultHandlerCalled = new AtomicBoolean(false);
     final UncaughtExceptionHandler oldHandler = Thread.getDefaultUncaughtExceptionHandler();
