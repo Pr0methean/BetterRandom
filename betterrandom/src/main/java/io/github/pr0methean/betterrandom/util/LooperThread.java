@@ -40,8 +40,7 @@ import org.checkerframework.checker.nullness.qual.RequiresNonNull;
  * @author Chris Hennick
  */
 @SuppressWarnings("AccessingNonPublicFieldOfAnotherObject")
-public class LooperThread extends Thread implements Serializable, Cloneable,
-    UncaughtExceptionHandler {
+public class LooperThread extends Thread implements Serializable, Cloneable {
 
   private static final LogPreFormatter LOG = new LogPreFormatter(LooperThread.class);
   private static final long serialVersionUID = -4387051967625864310L;
@@ -76,7 +75,6 @@ public class LooperThread extends Thread implements Serializable, Cloneable,
   private @Nullable ClassLoader contextClassLoader = null;
   private @Nullable Runnable serialTarget;
   private @Nullable UncaughtExceptionHandler serialUncaughtExceptionHandler;
-  private @Nullable transient UncaughtExceptionHandler realUncaughtExceptionHandler;
   private @Nullable ThreadGroup realGroup;
 
   /**
@@ -351,7 +349,6 @@ public class LooperThread extends Thread implements Serializable, Cloneable,
       throw new IllegalThreadStateException(
           "This thread was deserialized from one that had already terminated");
     }
-    setUncaughtExceptionHandler(this);
     super.start();
   }
 
@@ -365,6 +362,7 @@ public class LooperThread extends Thread implements Serializable, Cloneable,
       state = getState();
       serialGroup = serializableOrNull(getThreadGroup());
       contextClassLoader = serializableOrNull(getContextClassLoader());
+      serialUncaughtExceptionHandler = serializableOrNull(getUncaughtExceptionHandler());
       serialTarget = serializableOrNull(target);
       out.defaultWriteObject();
     } finally {
@@ -372,39 +370,11 @@ public class LooperThread extends Thread implements Serializable, Cloneable,
     }
   }
 
-  @Override
-  public synchronized UncaughtExceptionHandler getUncaughtExceptionHandler() {
-    return (realUncaughtExceptionHandler != null) ? realUncaughtExceptionHandler : realGroup;
-  }
-
-  @Override
-  public synchronized void setUncaughtExceptionHandler(UncaughtExceptionHandler eh) {
-    realUncaughtExceptionHandler = eh;
-    serialUncaughtExceptionHandler = (eh instanceof Serializable) ? eh : null;
-  }
-
   /** Clones this LooperThread using {@link CloneViaSerialization#clone(Serializable)}. */
   @SuppressWarnings("MethodDoesntCallSuperMethod")
   @Override
   public LooperThread clone() {
     return CloneViaSerialization.clone(this);
-  }
-
-  @Override
-  public synchronized void uncaughtException(Thread t, Throwable e) {
-    if (realUncaughtExceptionHandler != null) {
-      realUncaughtExceptionHandler.uncaughtException(t, e);
-    } else if (realGroup != null) {
-      realGroup.uncaughtException(t, e);
-    } else {
-      UncaughtExceptionHandler defaultHandler = getDefaultUncaughtExceptionHandler();
-      if (defaultHandler != null) {
-        defaultHandler.uncaughtException(t, e);
-      } else {
-        e.printStackTrace();
-        System.exit(1);
-      }
-    }
   }
 
   private static class DummyTarget implements @Nullable Runnable {
