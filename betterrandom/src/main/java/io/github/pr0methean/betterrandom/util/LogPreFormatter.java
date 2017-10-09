@@ -11,6 +11,8 @@ import java.util.logging.Logger;
  */
 public class LogPreFormatter {
 
+  // An estimate of the average length of StackTraceElement.toString()
+  private static final int ESTIMATED_STE_SIZE = 50;
   private final Logger logger;
 
   /**
@@ -22,22 +24,10 @@ public class LogPreFormatter {
     logger = Logger.getLogger(clazz.getName());
   }
 
-  /**
-   * <p>If {@code level} is loggable, formats {@code args} using {@code formatString} and logs them
-   * at {@code level}.</p>
-   *
-   * @param level The level to log at.
-   * @param formatString The format string.
-   * @param args The values to be formatted.
-   */
-  public void format(final Level level, final String formatString, final Object... args) {
-    format(level, 2, formatString, args);
-  }
-
-  private void format(final Level level, int depthFromRealSource, final String formatString,
+  private void format(final Level level, final int depthFromRealSource, final String formatString,
       final Object... args) {
     if (logger.isLoggable(level)) {
-      StackTraceElement realSource = Thread.currentThread().getStackTrace()[depthFromRealSource];
+      final StackTraceElement realSource = Thread.currentThread().getStackTrace()[depthFromRealSource];
       logger.logp(level, realSource.getClassName(), realSource.getMethodName(),
           String.format(formatString, (Object[]) args));
     }
@@ -79,10 +69,10 @@ public class LogPreFormatter {
    * @param level the level to log at.
    * @param stackTrace the stack trace to log.
    */
-  public void logStackTrace(Level level, StackTraceElement[] stackTrace) {
+  public void logStackTrace(final Level level, final StackTraceElement[] stackTrace) {
     if (logger.isLoggable(level)) {
-      StringBuilder stackTraceBuilder = new StringBuilder();
-      for (StackTraceElement element : stackTrace) {
+      final StringBuilder stackTraceBuilder = new StringBuilder(stackTrace.length * ESTIMATED_STE_SIZE);
+      for (final StackTraceElement element : stackTrace) {
         stackTraceBuilder.append(String.format("  %s%n", element));
       }
       logger.logp(level, stackTrace[2].getClassName(), stackTrace[2].getMethodName(),

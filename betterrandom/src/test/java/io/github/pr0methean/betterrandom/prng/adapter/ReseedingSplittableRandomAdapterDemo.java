@@ -2,7 +2,6 @@ package io.github.pr0methean.betterrandom.prng.adapter;
 
 import static io.github.pr0methean.betterrandom.seed.DefaultSeedGenerator.DEFAULT_SEED_GENERATOR;
 
-import edu.emory.mathcs.backport.java.util.Collections;
 import io.github.pr0methean.betterrandom.seed.SeedException;
 import java.util.Arrays;
 import java.util.List;

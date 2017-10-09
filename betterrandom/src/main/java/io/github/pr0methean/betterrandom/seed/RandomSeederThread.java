@@ -155,6 +155,7 @@ public final class RandomSeederThread extends LooperThread {
    * @param random a {@link Random} object.
    * @return Whether or not the reseed was successfully scheduled.
    */
+  @SuppressWarnings("UnusedReturnValue")
   public boolean asyncReseed(final Random random) {
     if (!(random instanceof EntropyCountingRandom)) {
       // Reseed of non-entropy-counting Random happens every iteration anyway

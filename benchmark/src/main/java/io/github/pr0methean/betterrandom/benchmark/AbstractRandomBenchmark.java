@@ -29,7 +29,7 @@ abstract class AbstractRandomBenchmark {
   protected Random prng;
 
   @EntryPoint
-  public AbstractRandomBenchmark() {
+  protected AbstractRandomBenchmark() {
   }
 
   @SuppressWarnings("ObjectAllocationInLoop")

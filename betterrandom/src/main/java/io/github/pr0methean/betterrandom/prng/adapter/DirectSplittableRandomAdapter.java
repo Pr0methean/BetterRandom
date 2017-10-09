@@ -35,7 +35,7 @@ public abstract class DirectSplittableRandomAdapter extends BaseSplittableRandom
    *
    * @param seed 8 bytes of seed data used to initialise the RNG.
    */
-  public DirectSplittableRandomAdapter(final byte[] seed) {
+  protected DirectSplittableRandomAdapter(final byte[] seed) {
     super(seed);
     setSeedInternal(seed);
   }
@@ -46,7 +46,7 @@ public abstract class DirectSplittableRandomAdapter extends BaseSplittableRandom
    * @param seed the seed.
    */
   @EntryPoint
-  public DirectSplittableRandomAdapter(final long seed) {
+  protected DirectSplittableRandomAdapter(final long seed) {
     super(seed);
     setSeed(seed);
   }

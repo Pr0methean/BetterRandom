@@ -250,7 +250,7 @@ public class RandomWrapper extends BaseRandom {
       locked = true;
     }
     try {
-      return wrapped instanceof ByteArrayReseedableRandom ? ((ByteArrayReseedableRandom) wrapped)
+      return (wrapped instanceof ByteArrayReseedableRandom) ? ((ByteArrayReseedableRandom) wrapped)
           .getNewSeedLength() : Long.BYTES;
     } finally {
       if (locked) {
