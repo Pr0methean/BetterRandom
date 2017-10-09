@@ -104,7 +104,7 @@ public class CellularAutomatonRandom extends BaseRandom {
    *
    * @param seed seed used to initialise the RNG.
    */
-  public CellularAutomatonRandom(int seed) {
+  public CellularAutomatonRandom(final int seed) {
     super(convertIntToBytes(seed));
     copySeedToCellsAndPreEvolve();
   }

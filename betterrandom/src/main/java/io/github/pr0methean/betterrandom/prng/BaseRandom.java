@@ -91,7 +91,7 @@ public abstract class BaseRandom extends Random implements ByteArrayReseedableRa
    * @param seedSizeBytes The number of bytes to use for seed data.
    * @throws SeedException if the {@link DefaultSeedGenerator} fails to generate a seed.
    */
-  public BaseRandom(final int seedSizeBytes) throws SeedException {
+  protected BaseRandom(final int seedSizeBytes) throws SeedException {
     this(DefaultSeedGenerator.DEFAULT_SEED_GENERATOR.generateSeed(seedSizeBytes));
     entropyBits = new AtomicLong(0);
   }
@@ -104,7 +104,7 @@ public abstract class BaseRandom extends Random implements ByteArrayReseedableRa
    * @param seedLength The seed length in bytes.
    * @throws SeedException If there is a problem generating a seed.
    */
-  public BaseRandom(final SeedGenerator seedGenerator, final int seedLength) throws SeedException {
+  protected BaseRandom(final SeedGenerator seedGenerator, final int seedLength) throws SeedException {
     this(seedGenerator.generateSeed(seedLength));
     entropyBits = new AtomicLong(0);
   }
@@ -115,7 +115,7 @@ public abstract class BaseRandom extends Random implements ByteArrayReseedableRa
    * @param seed the seed.
    */
   @EnsuresNonNull("this.seed")
-  public BaseRandom(final byte[] seed) {
+  protected BaseRandom(final byte[] seed) {
     superConstructorFinished = true;
     if (seed == null) {
       throw new IllegalArgumentException("Seed must not be null");
@@ -318,7 +318,7 @@ public abstract class BaseRandom extends Random implements ByteArrayReseedableRa
       throw new IllegalArgumentException(String.format("Bound %f must be greater than origin %f",
           bound, origin));
     }
-    double out = (nextDouble() * (bound - origin)) + origin;
+    final double out = (nextDouble() * (bound - origin)) + origin;
     if (out >= bound) {
       // correct for rounding
       return Double.longBitsToDouble(Double.doubleToLongBits(bound) - 1);
@@ -334,7 +334,7 @@ public abstract class BaseRandom extends Random implements ByteArrayReseedableRa
    * cause extra entropy to be spuriously consumed.</p>
    */
   @Override
-  public DoubleStream doubles(double randomNumberOrigin, double randomNumberBound) {
+  public DoubleStream doubles(final double randomNumberOrigin, final double randomNumberBound) {
     return doubles(Long.MAX_VALUE, randomNumberOrigin, randomNumberBound);
   }
 
@@ -351,7 +351,7 @@ public abstract class BaseRandom extends Random implements ByteArrayReseedableRa
   }
 
   @Override
-  public DoubleStream doubles(long streamSize) {
+  public DoubleStream doubles(final long streamSize) {
     return StreamSupport.doubleStream(new DoubleSupplierSpliterator(streamSize, this::nextDouble),
         useParallelStreams());
   }
@@ -362,8 +362,8 @@ public abstract class BaseRandom extends Random implements ByteArrayReseedableRa
    * #nextDouble(double, double)} to generate these numbers.
    */
   @Override
-  public DoubleStream doubles(long streamSize, double randomNumberOrigin,
-      double randomNumberBound) {
+  public DoubleStream doubles(final long streamSize, final double randomNumberOrigin,
+      final double randomNumberBound) {
     return StreamSupport.doubleStream(new DoubleSupplierSpliterator(streamSize,
         () -> nextDouble(randomNumberOrigin, randomNumberBound)), useParallelStreams());
   }
@@ -389,7 +389,7 @@ public abstract class BaseRandom extends Random implements ByteArrayReseedableRa
    * @param streamSize the number of doubles to generate.
    * @return a stream of {@code streamSize} normally-distributed random doubles.
    */
-  public DoubleStream gaussians(long streamSize) {
+  public DoubleStream gaussians(final long streamSize) {
     return StreamSupport.doubleStream(new DoubleSupplierSpliterator(streamSize, this::nextGaussian),
         useParallelStreams());
   }
@@ -432,6 +432,7 @@ public abstract class BaseRandom extends Random implements ByteArrayReseedableRa
    *     but shall not debit the entropy count.
    * @return a random number that is normally distributed with mean 0 and standard deviation 1.
    */
+  @SuppressWarnings("LocalVariableHidesMemberVariable")
   protected final double internalNextGaussian(final DoubleSupplier nextDouble) {
     // See Knuth, ACP, Section 3.4.1 Algorithm C.
     final double out = Double.longBitsToDouble(nextNextGaussian.getAndSet(NAN_LONG_BITS));
@@ -568,13 +569,13 @@ public abstract class BaseRandom extends Random implements ByteArrayReseedableRa
       throw new IllegalArgumentException(String.format("Bound %d must be greater than origin %d",
           bound, origin));
     }
-    long range = bound - origin;
+    final long range = bound - origin;
     long output;
     do {
       if (range < 0) {
         output = nextLongNoEntropyDebit();
       } else {
-        int bits = entropyOfLong(origin, bound);
+        final int bits = entropyOfLong(origin, bound);
         output = origin;
         output += (bits > 32)
             ? (toUnsignedLong(next(32)) | (toUnsignedLong(next(bits - 32)) << 32))
@@ -679,7 +680,7 @@ public abstract class BaseRandom extends Random implements ByteArrayReseedableRa
    */
   @SuppressWarnings({"ObjectEquality", "EqualityOperatorComparesObjects"})
   public void setSeederThread(final @Nullable RandomSeederThread thread) {
-    RandomSeederThread oldThread = seederThread.getAndSet(thread);
+    final RandomSeederThread oldThread = seederThread.getAndSet(thread);
     if (thread != oldThread) {
       if (oldThread != null) {
         oldThread.remove(this);
@@ -804,7 +805,7 @@ public abstract class BaseRandom extends Random implements ByteArrayReseedableRa
         }
       }
       if (entropyBits == null) {
-        entropyBits = new AtomicLong(seed.length * 8);
+        entropyBits = new AtomicLong(seed.length * 8L);
       }
     } finally {
       if (locked) {

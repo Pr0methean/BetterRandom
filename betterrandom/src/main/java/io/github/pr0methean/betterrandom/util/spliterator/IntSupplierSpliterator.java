@@ -32,12 +32,12 @@ public class IntSupplierSpliterator extends
   }
 
   @Override
-  protected IntSupplierSpliterator internalSplit(AtomicLong remaining, AtomicLong splitsRemaining) {
+  protected IntSupplierSpliterator internalSplit(final AtomicLong remaining, final AtomicLong splitsRemaining) {
     return new IntSupplierSpliterator(remaining, splitsRemaining, supplier);
   }
 
   @Override
-  protected void internalSupplyAndAccept(IntConsumer action) {
+  protected void internalSupplyAndAccept(final IntConsumer action) {
     action.accept(supplier.getAsInt());
   }
 }

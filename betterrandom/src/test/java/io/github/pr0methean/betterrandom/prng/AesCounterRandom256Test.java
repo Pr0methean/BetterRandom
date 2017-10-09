@@ -7,7 +7,7 @@ import org.testng.annotations.Test;
 public class AesCounterRandom256Test extends AesCounterRandom128Test {
 
   @Override
-  protected int getNewSeedLength(BaseRandom basePrng) {
+  protected int getNewSeedLength(final BaseRandom basePrng) {
     return 32;
   }
 

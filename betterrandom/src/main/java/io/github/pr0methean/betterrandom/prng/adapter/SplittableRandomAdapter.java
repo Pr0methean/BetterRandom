@@ -51,7 +51,7 @@ public class SplittableRandomAdapter extends DirectSplittableRandomAdapter {
    *
    * @param seed The seed. Must be 8 bytes.
    */
-  public SplittableRandomAdapter(byte[] seed) {
+  public SplittableRandomAdapter(final byte[] seed) {
     super(seed);
     initSubclassTransientFields();
   }
@@ -72,7 +72,7 @@ public class SplittableRandomAdapter extends DirectSplittableRandomAdapter {
    *
    * @param seed The seed.
    */
-  public SplittableRandomAdapter(long seed) {
+  public SplittableRandomAdapter(final long seed) {
     super(seed);
     initSubclassTransientFields();
   }

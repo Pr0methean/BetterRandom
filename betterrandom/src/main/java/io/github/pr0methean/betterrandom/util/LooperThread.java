@@ -41,7 +41,6 @@ import org.checkerframework.checker.nullness.qual.RequiresNonNull;
 @SuppressWarnings("AccessingNonPublicFieldOfAnotherObject")
 public class LooperThread extends Thread implements Serializable, Cloneable {
 
-  private static final LogPreFormatter LOG = new LogPreFormatter(LooperThread.class);
   private static final long serialVersionUID = -4387051967625864310L;
   /**
    * The preferred stack size for this thread, in bytes, if it was specified during construction; 0
@@ -74,7 +73,6 @@ public class LooperThread extends Thread implements Serializable, Cloneable {
   private @Nullable ClassLoader contextClassLoader = null;
   private @Nullable Runnable serialTarget;
   private @Nullable UncaughtExceptionHandler serialUncaughtExceptionHandler;
-  private @Nullable ThreadGroup realGroup;
 
   /**
    * Constructs a LooperThread with all properties as defaults. Protected because it does not set a
@@ -204,7 +202,6 @@ public class LooperThread extends Thread implements Serializable, Cloneable {
 
   private void setGroup(@UnderInitialization LooperThread this,
       final @Nullable ThreadGroup group) {
-    realGroup = group;
     serialGroup = (group instanceof Serializable) ? group : null;
   }
 
@@ -305,6 +302,7 @@ public class LooperThread extends Thread implements Serializable, Cloneable {
    * @throws UnsupportedOperationException if this method has not been overridden and {@link
    *     #target} was not set to non-null during construction.
    */
+  @SuppressWarnings("BooleanMethodIsAlwaysInverted")
   protected boolean iterate() throws InterruptedException {
     if ((target == null) || (target instanceof DummyTarget)) {
       throw new UnsupportedOperationException("This method should be overridden, or else this "

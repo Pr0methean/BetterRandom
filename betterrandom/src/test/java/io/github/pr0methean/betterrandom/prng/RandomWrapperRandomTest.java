@@ -39,8 +39,8 @@ public class RandomWrapperRandomTest extends BaseRandomTest {
   @Override
   public void testAllPublicConstructors()
       throws SeedException, IllegalAccessException, InstantiationException, InvocationTargetException {
-    BaseRandom basePrng = createRng();
-    int seedLength = getNewSeedLength(basePrng);
+    final BaseRandom basePrng = createRng();
+    final int seedLength = getNewSeedLength(basePrng);
     TestUtils.testAllPublicConstructors(getClassUnderTest(), ImmutableMap.of(
         int.class, seedLength,
         long.class, TEST_SEED,

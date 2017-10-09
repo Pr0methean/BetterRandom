@@ -44,6 +44,7 @@ public abstract class BaseRandomTest {
   private static final String HOW_ARE_YOU = "How are you?";
   private static final String GOODBYE = "Goodbye";
   private static final String[] STRING_ARRAY = {HELLO, HOW_ARE_YOU, GOODBYE};
+  @SuppressWarnings("StaticCollection")
   private static final List<String> STRING_LIST = Collections
       .unmodifiableList(Arrays.asList(STRING_ARRAY));
   private static final int ELEMENTS = 100;
@@ -62,7 +63,7 @@ public abstract class BaseRandomTest {
   @Test
   public void testAllPublicConstructors()
       throws SeedException, IllegalAccessException, InstantiationException, InvocationTargetException {
-    int seedLength = getNewSeedLength(createRng());
+    final int seedLength = getNewSeedLength(createRng());
     TestUtils.testAllPublicConstructors(getClassUnderTest(), ImmutableMap.of(
         int.class, seedLength,
         long.class, TEST_SEED,
@@ -71,7 +72,7 @@ public abstract class BaseRandomTest {
     ), BaseRandom::nextInt);
   }
 
-  protected int getNewSeedLength(BaseRandom basePrng) {
+  protected int getNewSeedLength(final BaseRandom basePrng) {
     return basePrng.getNewSeedLength();
   }
 
@@ -83,7 +84,6 @@ public abstract class BaseRandomTest {
   @Test(timeOut = 15000)
   public void testRepeatability() throws SeedException {
     final BaseRandom rng = createRng();
-    final byte[] seed = rng.getSeed();
     // Create second RNG using same seed.
     final BaseRandom duplicateRNG = createRng(rng.getSeed());
     assert RandomTestUtils
