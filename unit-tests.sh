@@ -41,6 +41,10 @@ if [ "$STATUS" = 0 ]; then
       # Coveralls doesn't seem to work in non-.NET Appveyor yet
       # so we have to hope Appveyor pushes its Jacoco reports before Travis does! :(
       mvn coveralls:report
+      
+      # Send Coverage to Codacy
+      wget 'https://github.com/codacy/codacy-coverage-reporter/releases/download/2.0.0/codacy-coverage-reporter-2.0.0-assembly.jar'
+      java -cp codacy-coverage-reporter-2.0.0-assembly.jar -l Java -r target/jacoco.exec
     fi
   fi
   mvn -DskipTests $MAYBE_ANDROID_FLAG package && (
