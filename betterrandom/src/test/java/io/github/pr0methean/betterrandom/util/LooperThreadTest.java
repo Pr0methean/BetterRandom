@@ -197,28 +197,28 @@ public class LooperThreadTest {
       super(target);
     }
 
-    public SkeletonLooperThread(ThreadGroup group,
-        @Nullable Runnable target) {
+    public SkeletonLooperThread(final ThreadGroup group,
+        @Nullable final Runnable target) {
       super(group, target);
     }
 
-    public SkeletonLooperThread(String name) {
+    public SkeletonLooperThread(final String name) {
       super(name);
     }
 
-    public SkeletonLooperThread(ThreadGroup group, String name) {
+    public SkeletonLooperThread(final ThreadGroup group, final String name) {
       super(group, name);
     }
 
     public SkeletonLooperThread(
-        @Nullable Runnable target,
-        String name) {
+        @Nullable final Runnable target,
+        final String name) {
       super(target, name);
     }
 
-    public SkeletonLooperThread(ThreadGroup group,
-        @Nullable Runnable target,
-        String name) {
+    public SkeletonLooperThread(final ThreadGroup group,
+        @Nullable final Runnable target,
+        final String name) {
       super(group, target, name);
     }
 

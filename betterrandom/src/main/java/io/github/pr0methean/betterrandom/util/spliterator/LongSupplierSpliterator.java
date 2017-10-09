@@ -33,13 +33,13 @@ public class LongSupplierSpliterator extends
   }
 
   @Override
-  protected LongSupplierSpliterator internalSplit(AtomicLong remaining,
-      AtomicLong splitsRemaining) {
+  protected LongSupplierSpliterator internalSplit(final AtomicLong remaining,
+      final AtomicLong splitsRemaining) {
     return new LongSupplierSpliterator(remaining, splitsRemaining, supplier);
   }
 
   @Override
-  protected void internalSupplyAndAccept(LongConsumer action) {
+  protected void internalSupplyAndAccept(final LongConsumer action) {
     action.accept(supplier.getAsLong());
   }
 }

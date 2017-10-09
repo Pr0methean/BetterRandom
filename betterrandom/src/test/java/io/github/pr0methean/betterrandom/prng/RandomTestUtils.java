@@ -99,7 +99,7 @@ public enum RandomTestUtils {
     final Stream<? extends Number> streamToUse = (expectedCount < 0)
         ? stream.sequential().limit(20)
         : stream;
-    long count = streamToUse.mapToLong((number) -> {
+    final long count = streamToUse.mapToLong((number) -> {
       assertGreaterOrEqual(origin, number.doubleValue());
       assertLess(bound, number.doubleValue());
       if (checkEntropyCount && !(streamToUse.isParallel())) {
@@ -260,12 +260,7 @@ public enum RandomTestUtils {
   }
 
   public static void assertMonteCarloPiEstimateSane(final Random rng) {
-    assertMonteCarloPiEstimateSane(rng, 100000);
-  }
-
-  private static void assertMonteCarloPiEstimateSane(
-      final Random rng, final int iterations) {
-    final double pi = calculateMonteCarloValueForPi(rng, iterations);
+    final double pi = calculateMonteCarloValueForPi(rng, 100000);
     Reporter.log("Monte Carlo value for Pi: " + pi);
     assertEquals(pi, Math.PI, 0.01 * Math.PI,
         "Monte Carlo value for Pi is outside acceptable range:" + pi);

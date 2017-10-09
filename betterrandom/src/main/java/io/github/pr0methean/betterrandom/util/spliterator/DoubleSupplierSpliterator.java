@@ -26,19 +26,19 @@ public class DoubleSupplierSpliterator extends
     super(size, supplier);
   }
 
-  private DoubleSupplierSpliterator(AtomicLong remaining, AtomicLong splitsRemaining,
-      DoubleSupplier doubleSupplier) {
+  private DoubleSupplierSpliterator(final AtomicLong remaining, final AtomicLong splitsRemaining,
+      final DoubleSupplier doubleSupplier) {
     super(remaining, splitsRemaining, doubleSupplier, false);
   }
 
   @Override
-  protected DoubleSupplierSpliterator internalSplit(AtomicLong remaining,
-      AtomicLong splitsRemaining) {
+  protected DoubleSupplierSpliterator internalSplit(final AtomicLong remaining,
+      final AtomicLong splitsRemaining) {
     return new DoubleSupplierSpliterator(remaining, splitsRemaining, supplier);
   }
 
   @Override
-  protected void internalSupplyAndAccept(DoubleConsumer action) {
+  protected void internalSupplyAndAccept(final DoubleConsumer action) {
     action.accept(supplier.getAsDouble());
   }
 }

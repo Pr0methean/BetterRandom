@@ -22,14 +22,14 @@ public enum TestUtils {
    * @param test The consumer to pass the instances to.
    * @param <T> {@code clazz} as a type.
    */
-  public static <T> void testAllPublicConstructors(Class<T> clazz, Map<Class<?>, Object> params,
-      Consumer<T> test) {
-    for (Constructor<?> constructor : clazz.getDeclaredConstructors()) {
+  public static <T> void testAllPublicConstructors(final Class<T> clazz, final Map<Class<?>, Object> params,
+      final Consumer<T> test) {
+    for (final Constructor<?> constructor : clazz.getDeclaredConstructors()) {
       if (Modifier.isPublic(constructor.getModifiers())) {
         try {
-          int nParams = constructor.getParameterCount();
-          Class[] parameterTypes = constructor.getParameterTypes();
-          Object[] constructorParams = new Object[nParams];
+          final int nParams = constructor.getParameterCount();
+          final Class<?>[] parameterTypes = constructor.getParameterTypes();
+          final Object[] constructorParams = new Object[nParams];
           for (int i = 0; i < nParams; i++) {
             constructorParams[i] = params.get(parameterTypes[i]);
           }

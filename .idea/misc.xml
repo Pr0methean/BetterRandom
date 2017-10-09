@@ -10,6 +10,10 @@
     <pattern value="java.io.Serializable" hierarchically="true" method="readObjectNoData" />
     <pattern value="java.io.Serializable" hierarchically="true" method="writeObject" />
     <pattern value="java.io.Serializable" hierarchically="true" method="writeReplace" />
+    <pattern value="io.github.pr0methean.betterrandom.util.spliterator.AbstractSupplierSpliterator" method="tryAdvance" />
+    <pattern value="io.github.pr0methean.betterrandom.util.spliterator.AbstractSupplierSpliterator" method="characteristics" />
+    <pattern value="io.github.pr0methean.betterrandom.util.spliterator.AbstractSupplierSpliterator" method="estimateSize" />
+    <pattern value="io.github.pr0methean.betterrandom.util.spliterator.AbstractSupplierSpliterator" method="trySplit" />
   </component>
   <component name="MavenProjectsManager">
     <option name="originalFiles">

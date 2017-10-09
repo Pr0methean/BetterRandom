@@ -37,7 +37,7 @@ public abstract class AbstractSupplierSpliterator<TSupplier, TConsumer, TSplitIn
    * @param size The maximum number of values to output.
    * @param supplier The supplier to wrap.
    */
-  public AbstractSupplierSpliterator(final long size, final TSupplier supplier) {
+  protected AbstractSupplierSpliterator(final long size, final TSupplier supplier) {
     // Set the number of splits to the log2, rounded up, of the size.
     // Some methods in JDK8 will split a spliterator endlessly if allowed.
     this(new AtomicLong(size), new AtomicLong(Long.SIZE - Long.numberOfLeadingZeros(size)),
@@ -58,7 +58,7 @@ public abstract class AbstractSupplierSpliterator<TSupplier, TConsumer, TSplitIn
    */
   protected AbstractSupplierSpliterator(final AtomicLong remaining,
       final AtomicLong splitsRemaining,
-      final TSupplier supplier, boolean sized) {
+      final TSupplier supplier, final boolean sized) {
     this.remaining = remaining;
     this.splitsRemaining = splitsRemaining;
     this.supplier = supplier;

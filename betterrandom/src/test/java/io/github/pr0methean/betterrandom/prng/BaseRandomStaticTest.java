@@ -20,12 +20,10 @@ import org.testng.annotations.Test;
  */
 public class BaseRandomStaticTest {
 
-  private static final String SWITCHEROO_NAME = Switcheroo.class.getName();
-
   @TestingDeficiency // FIXME: The switcheroo isn't happening!
   @Test(enabled = false)
   public void testReadObjectNoData() throws IOException, ClassNotFoundException {
-    BaseRandom switchedRandom;
+    final BaseRandom switchedRandom;
     try (
         ByteArrayOutputStream byteOutStream = new ByteArrayOutputStream();
         ObjectOutputStream objectOutStream = new ObjectOutputStream(byteOutStream)) {
@@ -67,19 +65,15 @@ public class BaseRandomStaticTest {
 
   private static class SwitcherooInputStream extends ObjectInputStream {
 
-    public SwitcherooInputStream(InputStream in) throws IOException {
+    public SwitcherooInputStream(final InputStream in) throws IOException {
       super(in);
     }
 
     @Override
-    protected Class<?> resolveClass(ObjectStreamClass desc)
+    protected Class<?> resolveClass(final ObjectStreamClass desc)
         throws IOException, ClassNotFoundException {
-      if (Switcheroo.serialVersionUID == desc
-          .getSerialVersionUID()) {
-        return AesCounterRandom.class;
-      } else {
-        return super.resolveClass(desc);
-      }
+      return Switcheroo.serialVersionUID == desc.getSerialVersionUID()
+          ? AesCounterRandom.class : super.resolveClass(desc);
     }
   }
 }
