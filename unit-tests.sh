@@ -35,8 +35,7 @@ if [ "$STATUS" = 0 ]; then
       git push
     done
     mvn jacoco:merge jacoco:report
-    mv target/jacoco.exec ../../target
-    mv target/jacoco.xml ../../target
+    mv target/* ../../target
     cd ../..
     if [ "$TRAVIS" = "true" ]; then
       # Coveralls doesn't seem to work in non-.NET Appveyor yet
