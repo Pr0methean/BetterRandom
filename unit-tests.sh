@@ -44,7 +44,7 @@ if [ "$STATUS" = 0 ]; then
       
       # Send coverage to Codacy
       wget 'https://github.com/codacy/codacy-coverage-reporter/releases/download/2.0.0/codacy-coverage-reporter-2.0.0-assembly.jar'
-      java -jar codacy-coverage-reporter-2.0.0-assembly.jar -l Java -r target/jacoco.xml
+      java -jar codacy-coverage-reporter-2.0.0-assembly.jar -l Java -r target/site/jacoco/jacoco.xml
     fi
   fi
   mvn -DskipTests $MAYBE_ANDROID_FLAG package && (
