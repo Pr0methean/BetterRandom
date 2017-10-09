@@ -34,8 +34,9 @@ if [ "$STATUS" = 0 ]; then
       git pull --commit  # Merge
       git push
     done
-    mvn jacoco:merge
+    mvn jacoco:merge jacoco:report
     mv target/jacoco.exec ../../target
+    mv target/jacoco.xml ../../target
     cd ../..
     if [ "$TRAVIS" = "true" ]; then
       # Coveralls doesn't seem to work in non-.NET Appveyor yet
@@ -44,7 +45,7 @@ if [ "$STATUS" = 0 ]; then
       
       # Send coverage to Codacy
       wget 'https://github.com/codacy/codacy-coverage-reporter/releases/download/2.0.0/codacy-coverage-reporter-2.0.0-assembly.jar'
-      java -jar codacy-coverage-reporter-2.0.0-assembly.jar -l Java -r target/jacoco.exec
+      java -jar codacy-coverage-reporter-2.0.0-assembly.jar -l Java -r target/jacoco.xml
     fi
   fi
   mvn -DskipTests $MAYBE_ANDROID_FLAG package && (
