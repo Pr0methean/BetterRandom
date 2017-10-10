@@ -15,8 +15,6 @@
 // ============================================================================
 package io.github.pr0methean.betterrandom.prng;
 
-import static org.checkerframework.checker.nullness.NullnessUtil.castNonNull;
-
 import com.google.common.base.MoreObjects.ToStringHelper;
 import io.github.pr0methean.betterrandom.seed.DefaultSeedGenerator;
 import io.github.pr0methean.betterrandom.seed.SeedException;
@@ -24,8 +22,6 @@ import io.github.pr0methean.betterrandom.seed.SeedGenerator;
 import io.github.pr0methean.betterrandom.util.BinaryUtils;
 import java.util.Arrays;
 import java.util.Random;
-import org.checkerframework.checker.initialization.qual.UnknownInitialization;
-import org.checkerframework.checker.nullness.qual.EnsuresNonNull;
 
 /**
  * <p>Random number generator based on the <a href="http://www.math.sci.hiroshima-u.ac.jp/~m-mat/MT/emt.html"
@@ -84,7 +80,6 @@ public class MersenneTwisterRandom extends BaseRandom {
    */
   public MersenneTwisterRandom(final byte[] seed) {
     super(seed);
-    mt = castNonNull(mt);
   }
 
   /**
@@ -111,14 +106,13 @@ public class MersenneTwisterRandom extends BaseRandom {
    * @param seed ignored
    */
   @Override
-  public synchronized void setSeed(@UnknownInitialization(Random.class)MersenneTwisterRandom this,
+  public synchronized void setSeed(MersenneTwisterRandom this,
       final long seed) {
     fallbackSetSeed();
   }
 
   @Override
-  @EnsuresNonNull({"lock", "mt"})
-  protected void initTransientFields(@UnknownInitialization MersenneTwisterRandom this) {
+  protected void initTransientFields(MersenneTwisterRandom this) {
     super.initTransientFields();
     if (mt == null) {
       mt = new int[N];
@@ -127,11 +121,10 @@ public class MersenneTwisterRandom extends BaseRandom {
 
   @Override
   protected void setSeedInternal(
-      @UnknownInitialization(Random.class)MersenneTwisterRandom this, final byte[] seed) {
+      MersenneTwisterRandom this, final byte[] seed) {
     if ((seed == null) || (seed.length != SEED_SIZE_BYTES)) {
       throw new IllegalArgumentException("Mersenne Twister RNG requires a 128-bit (16-byte) seed.");
     }
-    mt = castNonNull(mt);
     super.setSeedInternal(seed);
     final int[] seedInts = BinaryUtils.convertBytesToInts(seed);
 
@@ -206,7 +199,7 @@ public class MersenneTwisterRandom extends BaseRandom {
 
   /** Returns the only supported seed length. */
   @Override
-  public int getNewSeedLength(@UnknownInitialization MersenneTwisterRandom this) {
+  public int getNewSeedLength(MersenneTwisterRandom this) {
     return SEED_SIZE_BYTES;
   }
 }

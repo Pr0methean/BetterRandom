@@ -27,7 +27,8 @@ public class LogPreFormatter {
   private void format(final Level level, final int depthFromRealSource, final String formatString,
       final Object... args) {
     if (logger.isLoggable(level)) {
-      final StackTraceElement realSource = Thread.currentThread().getStackTrace()[depthFromRealSource];
+      final StackTraceElement realSource = Thread.currentThread()
+          .getStackTrace()[depthFromRealSource];
       logger.logp(level, realSource.getClassName(), realSource.getMethodName(),
           String.format(formatString, (Object[]) args));
     }
@@ -71,7 +72,8 @@ public class LogPreFormatter {
    */
   public void logStackTrace(final Level level, final StackTraceElement[] stackTrace) {
     if (logger.isLoggable(level)) {
-      final StringBuilder stackTraceBuilder = new StringBuilder(stackTrace.length * ESTIMATED_STE_SIZE);
+      final StringBuilder stackTraceBuilder = new StringBuilder(
+          stackTrace.length * ESTIMATED_STE_SIZE);
       for (final StackTraceElement element : stackTrace) {
         stackTraceBuilder.append(String.format("  %s%n", element));
       }

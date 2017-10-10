@@ -1,7 +1,5 @@
 package io.github.pr0methean.betterrandom.seed;
 
-import static org.checkerframework.checker.nullness.NullnessUtil.castNonNull;
-
 import io.github.pr0methean.betterrandom.ByteArrayReseedableRandom;
 import io.github.pr0methean.betterrandom.EntropyCountingRandom;
 import io.github.pr0methean.betterrandom.util.LogPreFormatter;
@@ -22,10 +20,6 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.locks.Condition;
 import java.util.logging.Level;
-import org.checkerframework.checker.initialization.qual.UnderInitialization;
-import org.checkerframework.checker.lock.qual.GuardedBy;
-import org.checkerframework.checker.nullness.qual.EnsuresNonNull;
-import org.checkerframework.checker.nullness.qual.RequiresNonNull;
 
 /**
  * Thread that loops over {@link Random} instances and reseeds them. No {@link
@@ -39,17 +33,17 @@ public final class RandomSeederThread extends LooperThread {
   private static final ExecutorService WAKER_UPPER = Executors.newSingleThreadExecutor();
   private static final LogPreFormatter LOG = new LogPreFormatter(RandomSeederThread.class);
   @SuppressWarnings("StaticCollection")
-  private static final @GuardedBy("<self>") Map<SeedGenerator, RandomSeederThread> INSTANCES =
+  private static final Map<SeedGenerator, RandomSeederThread> INSTANCES =
       Collections.synchronizedMap(new WeakHashMap<>(1));
   private static final long serialVersionUID = 5229976461051217528L;
   private final SeedGenerator seedGenerator;
   private final byte[] longSeedArray = new byte[8];
   // WeakHashMap-based Set can't be serialized, so read & write this copy instead
   private final Set<Random> prngsSerial = new HashSet<>();
-  private transient @GuardedBy("<self>") Set<Random> prngs;
+  private transient Set<Random> prngs;
   private transient ByteBuffer longSeedBuffer;
-  private transient @GuardedBy("lock") Condition waitWhileEmpty;
-  private transient @GuardedBy("lock") Condition waitForEntropyDrain;
+  private transient Condition waitWhileEmpty;
+  private transient Condition waitForEntropyDrain;
   private transient Set<Random> prngsThisIteration;
   private transient WeakHashMap<ByteArrayReseedableRandom, byte[]> seedArrays;
 
@@ -103,11 +97,7 @@ public final class RandomSeederThread extends LooperThread {
     }
   }
 
-  @EnsuresNonNull(
-      {"prngs", "seedArrays", "waitWhileEmpty",
-          "waitForEntropyDrain", "prngsThisIteration"})
-  @RequiresNonNull("lock")
-  private void initTransientFields(@UnderInitialization RandomSeederThread this) {
+  private void initTransientFields(RandomSeederThread this) {
     prngs = Collections.synchronizedSet(
         Collections.newSetFromMap(new WeakHashMap<>(1)));
     longSeedBuffer = ByteBuffer.wrap(longSeedArray);
@@ -122,7 +112,7 @@ public final class RandomSeederThread extends LooperThread {
     return getInstance(seedGenerator);
   }
 
-  private void readObject(@UnderInitialization RandomSeederThread this, final ObjectInputStream in)
+  private void readObject(RandomSeederThread this, final ObjectInputStream in)
       throws IOException, ClassNotFoundException {
     in.defaultReadObject();
     initTransientFields();
@@ -130,11 +120,11 @@ public final class RandomSeederThread extends LooperThread {
       synchronized (prngs) {
         prngs.addAll(prngsSerial);
       }
-      castNonNull(lock).lock();
+      lock.lock();
       try {
         waitWhileEmpty.signalAll();
       } finally {
-        castNonNull(lock).unlock();
+        lock.unlock();
       }
       prngsSerial.clear();
     }

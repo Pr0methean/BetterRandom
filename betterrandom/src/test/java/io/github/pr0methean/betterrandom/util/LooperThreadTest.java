@@ -19,8 +19,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.net.MalformedURLException;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicLong;
-import org.checkerframework.checker.nullness.qual.Nullable;
-import org.checkerframework.checker.nullness.qual.RequiresNonNull;
+import javax.annotation.Nullable;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
@@ -227,7 +226,6 @@ public class LooperThreadTest {
       super(group, target, name, stackSize);
     }
 
-    @RequiresNonNull({"serialGroup", "target", "name"})
     @Override
     protected LooperThread readResolveConstructorWrapper() throws InvalidObjectException {
       return new SkeletonLooperThread(serialGroup, target, name, stackSize);

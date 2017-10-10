@@ -32,7 +32,8 @@ public class IntSupplierSpliterator extends
   }
 
   @Override
-  protected IntSupplierSpliterator internalSplit(final AtomicLong remaining, final AtomicLong splitsRemaining) {
+  protected IntSupplierSpliterator internalSplit(final AtomicLong remaining,
+      final AtomicLong splitsRemaining) {
     return new IntSupplierSpliterator(remaining, splitsRemaining, supplier);
   }
 
