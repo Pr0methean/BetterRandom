@@ -115,8 +115,10 @@ public class SplittableRandomAdapterDemo {
 ```
 # Supported environments
 
-BetterRandom requires many Java 8 features, but should work on any JVM that has them. Continuous
-integration takes place in the following environments:
+BetterRandom requires many Java 8 features, but should work on any JVM that has them. Compilation
+with Maven must currently be done on a Java 8 compiler because of a Proguard bug.
+
+Continuous integration takes place in the following environments:
 
 * Linux (on Travis): OpenJDK 8, Oracle JDK 8/9
 * OS X (on Travis): JDK 8 (unclear whether Oracle or OpenJDK)

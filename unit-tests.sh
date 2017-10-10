@@ -5,6 +5,9 @@ else
   MAYBE_ANDROID_FLAG=""
 fi
 cd betterrandom
+if [ "$TRAVIS_JDK_VERSION" = "oraclejdk9" ]; then
+  mv pom9.xml pom.xml
+fi
 # Coverage test
 mvn $MAYBE_ANDROID_FLAG clean jacoco:prepare-agent test jacoco:report -e
 STATUS=$?
@@ -47,11 +50,7 @@ if [ "$STATUS" = 0 ]; then
       java -jar codacy-coverage-reporter-2.0.0-assembly.jar -l Java -r target/site/jacoco/jacoco.xml
     fi
   fi
-  if [ "$TRAVIS_JDK_VERSION" != "oraclejdk9" ]; then
-    # Proguard is disabled on JDK9 due to:
-    # https://sourceforge.net/p/proguard/feature-requests/181/
-    # https://sourceforge.net/p/proguard/bugs/551/
-    mvn -DskipTests $MAYBE_ANDROID_FLAG package && (
+  mvn -DskipTests $MAYBE_ANDROID_FLAG package && (
     # Post-Proguard test (verifies Proguard settings)
     mvn $MAYBE_ANDROID_FLAG test -e)
     STATUS=$?
