@@ -1,7 +1,5 @@
 # 1.0.2
 * Fixed a crash on Java 9 when reseeding an AesCounterRandom.
-* Removed Checker Framework, since it was breaking Proguard when building from source on a Java 9
-  compiler.
 
 # 1.0.1
 * Fixed a bug involving uncaught-exception handlers for a `LooperThread`.
