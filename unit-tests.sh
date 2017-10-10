@@ -47,14 +47,15 @@ if [ "$STATUS" = 0 ]; then
       java -jar codacy-coverage-reporter-2.0.0-assembly.jar -l Java -r target/site/jacoco/jacoco.xml
     fi
   fi
-  if [ "$TRAVIS_JDK_VERSION" == "oraclejdk9" ]; then
-    # Work around https://sourceforge.net/p/proguard/bugs/551/
-    sudo mv travis-resources/empty-jar-1.6.4.jar /usr/lib/jvm/java-9-oracle/lib/rt.jar
+  if [ "$TRAVIS_JDK_VERSION" != "oraclejdk9" ]; then
+    # Proguard is disabled on JDK9 due to:
+    # https://sourceforge.net/p/proguard/feature-requests/181/
+    # https://sourceforge.net/p/proguard/bugs/551/
+    mvn -DskipTests $MAYBE_ANDROID_FLAG package && (
+    # Post-Proguard test (verifies Proguard settings)
+    mvn $MAYBE_ANDROID_FLAG test -e)
+    STATUS=$?
   fi
-  mvn -DskipTests $MAYBE_ANDROID_FLAG package && (
-  # Post-Proguard test (verifies Proguard settings)
-  mvn $MAYBE_ANDROID_FLAG test -e)
-  STATUS=$?
 fi
 cd ..
 exit "$STATUS"
