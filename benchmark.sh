@@ -8,9 +8,9 @@ cd betterrandom
 if [ "$TRAVIS_JDK_VERSION" = "oraclejdk9" ]; then
   mv pom9.xml pom.xml
 fi
-mvn -DskipTests $MAYBE_ANDROID_FLAG clean package install &&\
+mvn -DskipTests -Darguments=-DskipTests -Dmaven.test.skip=true $MAYBE_ANDROID_FLAG clean package install &&\
 cd ../benchmark &&\
-mvn -DskipTests $MAYBE_ANDROID_FLAG clean package &&\
+mvn -DskipTests ${MAYBE_ANDROID_FLAG} clean package &&\
 cd target &&\
 if [ "$TRAVIS" = "true" ]; then
     java -jar benchmarks.jar -f 1 -t 1 -foe true &&\
