@@ -223,7 +223,7 @@ public class RandomWrapper extends BaseRandom {
           asByteArrayReseedable.setSeed(seed);
           unknownSeed = false;
         } else {
-          getWrapped().setSeed(BinaryUtils.convertBytesToLong(seed));
+          wrapped.setSeed(BinaryUtils.convertBytesToLong(seed));
           unknownSeed = false;
         }
       }
