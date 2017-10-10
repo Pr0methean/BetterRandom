@@ -80,5 +80,4 @@ public class ThreadLocalRandomWrapperTest extends BaseRandomTest {
     rng2.nextBytes(output2);
     assertFalse(Arrays.equals(output1, output2));
   }
-
 }

@@ -123,6 +123,7 @@ public class SplittableRandomAdapter extends DirectSplittableRandomAdapter {
 
   /**
    * Not supported, because this class uses a thread-local seed.
+   *
    * @param thread ignored.
    * @throws UnsupportedOperationException always.
    */
@@ -134,17 +135,6 @@ public class SplittableRandomAdapter extends DirectSplittableRandomAdapter {
   @Override
   public byte[] getSeed() {
     return seeds.get();
-  }
-
-  /**
-   * {@inheritDoc} Applies only to the calling thread.
-   */
-  @Override
-  public void setSeed(SplittableRandomAdapter this, final byte[] seed) {
-    if (seed.length != Long.BYTES) {
-      throw new IllegalArgumentException("SplittableRandomAdapter requires an 8-byte seed");
-    }
-    setSeed(convertBytesToLong(seed));
   }
 
   /**
@@ -166,5 +156,16 @@ public class SplittableRandomAdapter extends DirectSplittableRandomAdapter {
         seeds.set(BinaryUtils.convertLongToBytes(seed));
       }
     }
+  }
+
+  /**
+   * {@inheritDoc} Applies only to the calling thread.
+   */
+  @Override
+  public void setSeed(SplittableRandomAdapter this, final byte[] seed) {
+    if (seed.length != Long.BYTES) {
+      throw new IllegalArgumentException("SplittableRandomAdapter requires an 8-byte seed");
+    }
+    setSeed(convertBytesToLong(seed));
   }
 }
