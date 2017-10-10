@@ -140,6 +140,17 @@ public class SplittableRandomAdapter extends DirectSplittableRandomAdapter {
   /**
    * {@inheritDoc} Applies only to the calling thread.
    */
+  @Override
+  public void setSeed(SplittableRandomAdapter this, final byte[] seed) {
+    if (seed.length != Long.BYTES) {
+      throw new IllegalArgumentException("SplittableRandomAdapter requires an 8-byte seed");
+    }
+    setSeed(convertBytesToLong(seed));
+  }
+
+  /**
+   * {@inheritDoc} Applies only to the calling thread.
+   */
   @SuppressWarnings("contracts.postcondition.not.satisfied")
   @Override
   public void setSeed(SplittableRandomAdapter this,
@@ -156,16 +167,5 @@ public class SplittableRandomAdapter extends DirectSplittableRandomAdapter {
         seeds.set(BinaryUtils.convertLongToBytes(seed));
       }
     }
-  }
-
-  /**
-   * {@inheritDoc} Applies only to the calling thread.
-   */
-  @Override
-  public void setSeed(SplittableRandomAdapter this, final byte[] seed) {
-    if (seed.length != Long.BYTES) {
-      throw new IllegalArgumentException("SplittableRandomAdapter requires an 8-byte seed");
-    }
-    setSeed(convertBytesToLong(seed));
   }
 }
