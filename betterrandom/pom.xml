@@ -73,10 +73,17 @@
       <version>3.6.1</version>
       <scope>test</scope>
     </dependency>
+    <!-- https://mvnrepository.com/artifact/com.google.guava/guava -->
     <dependency>
-      <groupId>org.checkerframework</groupId>
-      <artifactId>checker-qual</artifactId>
-      <version>2.2.1</version>
+      <groupId>com.google.guava</groupId>
+      <artifactId>guava</artifactId>
+      <version>23.1-jre</version>
+    </dependency>
+    <!-- https://mvnrepository.com/artifact/com.google.code.findbugs/jsr305 -->
+    <dependency>
+      <groupId>com.google.code.findbugs</groupId>
+      <artifactId>jsr305</artifactId>
+      <version>3.0.2</version>
     </dependency>
     <dependency>
       <groupId>org.apache.maven.plugins</groupId>
@@ -343,38 +350,6 @@
           <artifactId>maven-release-plugin</artifactId>
           <version>2.5.3</version>
           <dependencies>
-            <!-- https://mvnrepository.com/artifact/com.google.guava/guava -->
-            <dependency>
-              <groupId>com.google.guava</groupId>
-              <artifactId>guava</artifactId>
-              <version>23.1-jre</version>
-            </dependency>
-            <dependency>
-              <!-- https://mvnrepository.com/artifact/org.apache.maven.plugins/maven-deploy-plugin -->
-              <groupId>org.apache.maven.plugins</groupId>
-              <artifactId>maven-deploy-plugin</artifactId>
-              <version>2.8.2</version>
-            </dependency>
-            <dependency>
-              <!-- Overrides transitive dep on 5.2.1 -->
-              <groupId>net.sf.proguard</groupId>
-              <artifactId>proguard-base</artifactId>
-              <version>5.3.3</version>
-              <scope>runtime</scope>
-            </dependency>
-            <dependency>
-              <groupId>org.testng</groupId>
-              <artifactId>testng</artifactId>
-              <version>6.11</version>
-              <scope>test</scope>
-            </dependency>
-            <!-- https://mvnrepository.com/artifact/org.apache.commons/commons-math3 -->
-            <dependency>
-              <groupId>org.apache.commons</groupId>
-              <artifactId>commons-math3</artifactId>
-              <version>3.6.1</version>
-              <scope>test</scope>
-            </dependency>
             <!-- https://mvnrepository.com/artifact/com.google.code.findbugs/jsr305 -->
             <dependency>
               <groupId>com.google.code.findbugs</groupId>
