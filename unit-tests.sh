@@ -23,13 +23,13 @@ if [ "$STATUS" = 0 ]; then
       git config --global user.email "appveyor@appveyor.com"
     fi
     mkdir -p "$COMMIT/target"
-    cp ../target/jacoco.exec "$COMMIT/target/$JOBID.exec"
-    cp ../../travis-resources/jacoco_merge.xml $COMMIT/pom.xml
+    mv ../target/jacoco.exec "$COMMIT/target/$JOBID.exec"
     cd "$COMMIT"
     git add .
     git commit -m "Coverage report from job $JOBID"
     git remote add originauth "https://${GH_TOKEN}@github.com/Pr0methean/betterrandom-coverage.git"
     git push --set-upstream originauth master
+    mv ../../travis-resources/jacoco_merge.xml $COMMIT/pom.xml
     while [ ! $? ]; do
       git pull --commit  # Merge
       git push
