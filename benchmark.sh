@@ -5,6 +5,9 @@ else
   MAYBE_ANDROID_FLAG=""
 fi
 cd betterrandom
+if [ "$TRAVIS_JDK_VERSION" = "oraclejdk9" ]; then
+  mv pom9.xml pom.xml
+fi
 mvn -DskipTests $MAYBE_ANDROID_FLAG clean package install &&\
 cd ../benchmark &&\
 mvn -DskipTests $MAYBE_ANDROID_FLAG clean package &&\
