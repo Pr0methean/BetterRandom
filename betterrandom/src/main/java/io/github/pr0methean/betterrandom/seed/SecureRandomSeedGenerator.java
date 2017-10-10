@@ -41,6 +41,9 @@ public enum SecureRandomSeedGenerator implements SeedGenerator {
 
   @Override
   public byte[] generateSeed(final int length) {
+    if (length <= 0) {
+      return EMPTY_SEED;
+    }
     return SOURCE.generateSeed(length);
   }
 
