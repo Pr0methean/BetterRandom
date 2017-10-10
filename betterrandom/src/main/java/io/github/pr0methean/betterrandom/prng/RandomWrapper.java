@@ -111,7 +111,7 @@ public class RandomWrapper extends BaseRandom {
 
   @Override
   protected int next(final int bits) {
-    return (bits >= 32) ? wrapped.nextInt() : wrapped.nextInt(1 << bits);
+    return (bits >= 32) ? getWrapped().nextInt() : getWrapped().nextInt(1 << bits);
   }
 
   /**
@@ -187,7 +187,7 @@ public class RandomWrapper extends BaseRandom {
    */
   @SuppressWarnings("LockAcquiredButNotSafelyReleased")
   @Override
-  public void setSeedInternal(RandomWrapper this,
+  protected void setSeedInternal(RandomWrapper this,
       final byte[] seed) {
     if (seed == null) {
       throw new IllegalArgumentException("Seed must not be null");
@@ -223,7 +223,7 @@ public class RandomWrapper extends BaseRandom {
           asByteArrayReseedable.setSeed(seed);
           unknownSeed = false;
         } else {
-          wrapped.setSeed(BinaryUtils.convertBytesToLong(seed));
+          getWrapped().setSeed(BinaryUtils.convertBytesToLong(seed));
           unknownSeed = false;
         }
       }
@@ -260,53 +260,53 @@ public class RandomWrapper extends BaseRandom {
 
   @Override
   public void nextBytes(final byte[] bytes) {
-    wrapped.nextBytes(bytes);
+    getWrapped().nextBytes(bytes);
     recordEntropySpent(bytes.length * (long) (Byte.SIZE));
   }
 
   @Override
   public int nextInt() {
-    final int result = wrapped.nextInt();
+    final int result = getWrapped().nextInt();
     recordEntropySpent(Integer.SIZE);
     return result;
   }
 
   @Override
   public int nextInt(final int bound) {
-    final int result = wrapped.nextInt(bound);
+    final int result = getWrapped().nextInt(bound);
     recordEntropySpent(entropyOfInt(0, bound));
     return result;
   }
 
   @Override
   protected long nextLongNoEntropyDebit() {
-    return wrapped.nextLong();
+    return getWrapped().nextLong();
   }
 
   @Override
   public boolean nextBoolean() {
-    final boolean result = wrapped.nextBoolean();
+    final boolean result = getWrapped().nextBoolean();
     recordEntropySpent(1);
     return result;
   }
 
   @Override
   public float nextFloat() {
-    final float result = wrapped.nextFloat();
+    final float result = getWrapped().nextFloat();
     recordEntropySpent(ENTROPY_OF_FLOAT);
     return result;
   }
 
   @Override
   public double nextDouble() {
-    final double result = wrapped.nextDouble();
+    final double result = getWrapped().nextDouble();
     recordEntropySpent(ENTROPY_OF_DOUBLE);
     return result;
   }
 
   @Override
   public double nextGaussian() {
-    final double result = wrapped.nextGaussian();
+    final double result = getWrapped().nextGaussian();
 
     // Upper bound. 2 Gaussians are generated from 2 nextDouble calls, which once made are either
     // used or rerolled.
