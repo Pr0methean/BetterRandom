@@ -14,8 +14,7 @@
   <artifactId>BetterRandom</artifactId>
   <version>1.0.2-SNAPSHOT</version>
   <name>BetterRandom</name>
-  <description>BetterRandom is a library designed to help improve the quality and performance of
-    random-number generation on Java.
+  <description>BetterRandom is a library designed to help improve the quality and performance of random-number generation on Java.
   </description>
   <url>https://github.com/Pr0methean/BetterRandom</url>
 
@@ -344,6 +343,12 @@
           <artifactId>maven-release-plugin</artifactId>
           <version>2.5.3</version>
           <dependencies>
+            <!-- https://mvnrepository.com/artifact/com.google.code.findbugs/jsr305 -->
+            <dependency>
+              <groupId>com.google.code.findbugs</groupId>
+              <artifactId>jsr305</artifactId>
+              <version>3.0.2</version>
+            </dependency>
             <!-- https://stackoverflow.com/questions/15166781/mvn-releaseprepare-not-committing-changes-to-pom-xml -->
             <dependency>
               <groupId>org.apache.maven.scm</groupId>
