@@ -56,7 +56,7 @@ public abstract class BaseRandom extends Random implements ByteArrayReseedableRa
    * taken and {@link #getEntropyBits()} called immediately afterward would return zero or
    * negative.
    */
-  protected final AtomicReference<@Nullable RandomSeederThread> seederThread = new AtomicReference<>(
+  protected final AtomicReference<RandomSeederThread> seederThread = new AtomicReference<>(
       null);
   private final AtomicLong nextNextGaussian = new AtomicLong(
       NAN_LONG_BITS); // Stored as a long since there's no atomic double
