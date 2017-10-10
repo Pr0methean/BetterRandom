@@ -18,7 +18,7 @@ import javax.annotation.Nullable;
  * Wraps a {@link ThreadLocal}&lt;{@link BaseRandom}&gt; in order to provide concurrency that most
  * implementations of {@link BaseRandom} can't implement naturally.
  */
-public class ThreadLocalRandomWrapper extends BaseRandom {
+public class ThreadLocalRandomWrapper extends RandomWrapper {
 
   private static final long serialVersionUID = 1199235201518562359L;
   private transient ThreadLocal<BaseRandom> threadLocal;
@@ -26,17 +26,22 @@ public class ThreadLocalRandomWrapper extends BaseRandom {
   private final @Nullable
   Integer explicitSeedSize;
 
+  @Override
+  public Random getWrapped() {
+    return threadLocal.get();
+  }
+
   private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
     in.defaultReadObject();
     threadLocal = ThreadLocal.withInitial(initializer);
   }
 
   /**
-   * Uses this class and {@link RandomWrapper}, this can be used to decorate any implementation of
-   * {@link Random} that can be constructed from a {@code long} seed into a fully-concurrent one.
+   * Uses this class and {@link RandomWrapper} to decorate any implementation of {@link Random} that
+   * can be constructed from a {@code long} seed into a fully-concurrent one.
    *
-   * @param legacyCreator a function that provides the {@link Random} that underlies the returned
-   *     wrapper on each thread.
+   * @param legacyCreator a function that provides the {@link Random} that underlies the
+   *     returned wrapper on each thread.
    * @return a ThreadLocalRandomWrapper decorating instances created by {@code legacyCreator}.
    * @throws SeedException should never happen.
    */
@@ -50,8 +55,8 @@ public class ThreadLocalRandomWrapper extends BaseRandom {
    * Wraps the given {@link Supplier}. This ThreadLocalRandomWrapper will be serializable if the
    * {@link Supplier} is serializable.
    *
-   * @param initializer a supplier that will be called to provide the initial {@link BaseRandom} for
-   * each thread.
+   * @param initializer a supplier that will be called to provide the initial {@link BaseRandom}
+   *     for each thread.
    * @throws SeedException should never happen.
    */
   public ThreadLocalRandomWrapper(Supplier<BaseRandom> initializer) throws SeedException {
@@ -67,8 +72,8 @@ public class ThreadLocalRandomWrapper extends BaseRandom {
    * @param seedSize the size of seed arrays to generate.
    * @param seedGenerator The seed generation strategy that will provide the seed value for each
    *     thread's {@link BaseRandom}.
-   * @param creator a {@link Function} that creates a {@link BaseRandom} from each seed. Probably a
-   *     constructor reference.
+   * @param creator a {@link Function} that creates a {@link BaseRandom} from each seed.
+   *     Probably a constructor reference.
    * @throws SeedException should never happen.
    */
   public ThreadLocalRandomWrapper(int seedSize, SeedGenerator seedGenerator,
@@ -102,11 +107,6 @@ public class ThreadLocalRandomWrapper extends BaseRandom {
   }
 
   @Override
-  protected int next(int bits) {
-    return threadLocal.get().next(bits);
-  }
-
-  @Override
   protected ToStringHelper addSubclassFields(ToStringHelper original) {
     return original.add("threadLocal", threadLocal);
   }
@@ -118,6 +118,7 @@ public class ThreadLocalRandomWrapper extends BaseRandom {
 
   @Override
   protected void setSeedInternal(byte[] seed) {
+    super.setSeedInternal(seed);
     if (threadLocal != null) {
       threadLocal.get().setSeed(seed);
     }
