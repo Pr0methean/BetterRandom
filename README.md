@@ -263,10 +263,8 @@ seederThread.add(myRandom);
 # Build scripts
 
 * `benchmark.sh`: Compile and run benchmarks. Output will be in `benchmark/target`.
-* `coverage.sh`: Compile and run unit tests and generate coverage reports. Upload them to Coveralls
-  if running in Travis-CI.
-* `test-proguard.sh`: Compile and run unit tests against Proguarded jar.
-* `unit-tests.sh`: Combined functions of `coverage.sh` and `test-proguard.sh`.
+* `unit-tests.sh`: Compile and run unit tests and generate coverage reports. Upload them to Coveralls
+  if running in Travis-CI. If tests pass, run Proguard and then test again.
 * `release.sh`: Used to perform new releases.
 * `publish-javadoc.sh`: Used to release updated Javadocs to github.io.
 * `prepare-workspace.sh`: Install necessary packages on a fresh Ubuntu Trusty Tahr workspace, such
