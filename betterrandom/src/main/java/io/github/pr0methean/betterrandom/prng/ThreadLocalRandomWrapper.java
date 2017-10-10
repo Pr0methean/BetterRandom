@@ -131,6 +131,8 @@ public class ThreadLocalRandomWrapper extends RandomWrapper {
 
   @Override
   public int getNewSeedLength() {
-    return (explicitSeedSize == null) ? threadLocal.get().getNewSeedLength() : explicitSeedSize;
+    return (threadLocal == null) ? 0
+        : (explicitSeedSize == null) ? threadLocal.get().getNewSeedLength()
+        : explicitSeedSize;
   }
 }
