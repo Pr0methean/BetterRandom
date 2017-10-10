@@ -706,7 +706,7 @@ public abstract class BaseRandom extends Random implements ByteArrayReseedableRa
   @EnsuresNonNull({"this.seed", "entropyBits"})
   protected void setSeedInternal(@UnknownInitialization(Random.class)BaseRandom this,
       final byte[] seed) {
-    if (this.seed == null) {
+    if (this.seed == null || this.seed.length != seed.length) {
       this.seed = seed.clone();
     } else {
       System.arraycopy(seed, 0, this.seed, 0, seed.length);
