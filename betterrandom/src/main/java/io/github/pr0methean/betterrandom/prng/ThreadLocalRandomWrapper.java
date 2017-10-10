@@ -138,6 +138,6 @@ public class ThreadLocalRandomWrapper extends RandomWrapper {
   public int getNewSeedLength() {
     return (threadLocal == null) ? Long.BYTES // required for superclass
         : (explicitSeedSize == null) ? getWrapped().getNewSeedLength()
-        : explicitSeedSize;
+            : explicitSeedSize;
   }
 }

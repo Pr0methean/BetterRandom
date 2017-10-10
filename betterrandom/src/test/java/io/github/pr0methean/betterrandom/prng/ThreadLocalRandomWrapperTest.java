@@ -5,7 +5,6 @@ import static org.testng.Assert.assertFalse;
 
 import io.github.pr0methean.betterrandom.seed.DefaultSeedGenerator;
 import io.github.pr0methean.betterrandom.seed.SeedException;
-import io.github.pr0methean.betterrandom.seed.SeedGenerator;
 import io.github.pr0methean.betterrandom.util.CloneViaSerialization;
 import java.io.IOException;
 import java.io.Serializable;
@@ -17,6 +16,14 @@ import java.util.function.Supplier;
 import org.testng.annotations.Test;
 
 public class ThreadLocalRandomWrapperTest extends BaseRandomTest {
+
+  private static BaseRandom createUnderlying() {
+    try {
+      return new AesCounterRandom();
+    } catch (SeedException e) {
+      throw new RuntimeException(e);
+    }
+  }
 
   @Override
   public void testSerializable() throws IOException, ClassNotFoundException, SeedException {
@@ -40,14 +47,6 @@ public class ThreadLocalRandomWrapperTest extends BaseRandomTest {
   @Test(timeOut = 15000, expectedExceptions = IllegalArgumentException.class)
   public void testNullSeed() throws SeedException {
     createRng().setSeed(null);
-  }
-
-  private static BaseRandom createUnderlying() {
-    try {
-      return new AesCounterRandom();
-    } catch (SeedException e) {
-      throw new RuntimeException(e);
-    }
   }
 
   @Override
