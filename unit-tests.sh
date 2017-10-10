@@ -9,7 +9,7 @@ cd betterrandom
 mvn $MAYBE_ANDROID_FLAG clean jacoco:prepare-agent test jacoco:report -e
 STATUS=$?
 if [ "$STATUS" = 0 ]; then
-  if ([ "$TRAVIS" = "true" ] || [ "$APPVEYOR" != "" ] ); then
+  if (([ "$TRAVIS" = "true" ] && [ "$TRAVIS_JDK_VERSION" != "oraclejdk9" ]) || [ "$APPVEYOR" != "" ] ); then
     git clone https://github.com/Pr0methean/betterrandom-coverage.git
     cd betterrandom-coverage
     if [ "$TRAVIS" = "true" ]; then
