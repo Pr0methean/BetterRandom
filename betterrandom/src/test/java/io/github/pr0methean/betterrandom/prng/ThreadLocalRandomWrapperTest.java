@@ -3,7 +3,6 @@ package io.github.pr0methean.betterrandom.prng;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertFalse;
 
-import io.github.pr0methean.betterrandom.prng.adapter.SplittableRandomAdapter;
 import io.github.pr0methean.betterrandom.seed.DefaultSeedGenerator;
 import io.github.pr0methean.betterrandom.seed.SeedException;
 import java.io.Serializable;
@@ -26,6 +25,12 @@ public class ThreadLocalRandomWrapperTest extends BaseRandomTest {
   @Override
   protected Class<? extends BaseRandom> getClassUnderTest() {
     return ThreadLocalRandomWrapper.class;
+  }
+
+  @Override
+  @Test(enabled = false)
+  public void testRepeatability() throws SeedException {
+    // No-op: ThreadLocalRandomWrapper isn't repeatable.
   }
 
   @Override
