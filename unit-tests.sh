@@ -9,7 +9,7 @@ if [ "$TRAVIS_JDK_VERSION" = "oraclejdk9" ]; then
   mv pom9.xml pom.xml
 fi
 # Coverage test
-mvn $MAYBE_ANDROID_FLAG clean jacoco:prepare-agent test jacoco:report -e
+mvn ${MAYBE_ANDROID_FLAG} clean jacoco:prepare-agent test jacoco:report -e
 STATUS=$?
 if [ "$STATUS" = 0 ]; then
   if (([ "$TRAVIS" = "true" ] && [ "$TRAVIS_JDK_VERSION" != "oraclejdk9" ]) || [ "$APPVEYOR" != "" ] ); then
@@ -17,19 +17,19 @@ if [ "$STATUS" = 0 ]; then
     cd betterrandom-coverage
     if [ "$TRAVIS" = "true" ]; then
       COMMIT="$TRAVIS_COMMIT"
-      JOBID="travis_$TRAVIS_JOB_NUMBER"
+      JOB_ID="travis_$TRAVIS_JOB_NUMBER"
       git config --global user.email "travis@travis-ci.org"
     else
       GH_TOKEN=`powershell 'Write-Host ($env:access_token) -NoNewLine' `
       COMMIT="$APPVEYOR_REPO_COMMIT"
-      JOBID="appveyor_$APPVEYOR_JOB_NUMBER"
+      JOB_ID="appveyor_$APPVEYOR_JOB_NUMBER"
       git config --global user.email "appveyor@appveyor.com"
     fi
     mkdir -p "$COMMIT/target"
-    mv ../target/jacoco.exec "$COMMIT/target/$JOBID.exec"
+    mv ../target/jacoco.exec "$COMMIT/target/$JOB_ID.exec"
     cd "$COMMIT"
     git add .
-    git commit -m "Coverage report from job $JOBID"
+    git commit -m "Coverage report from job $JOB_ID"
     git remote add originauth "https://${GH_TOKEN}@github.com/Pr0methean/betterrandom-coverage.git"
     git push --set-upstream originauth master
     mv ../../travis-resources/jacoco_merge.xml $COMMIT/pom.xml
@@ -50,9 +50,9 @@ if [ "$STATUS" = 0 ]; then
       java -jar codacy-coverage-reporter-2.0.0-assembly.jar -l Java -r target/site/jacoco/jacoco.xml
     fi
   fi
-  mvn -DskipTests $MAYBE_ANDROID_FLAG package && (
+  mvn -DskipTests ${MAYBE_ANDROID_FLAG} package && (
     # Post-Proguard test (verifies Proguard settings)
-    mvn $MAYBE_ANDROID_FLAG test -e
+    mvn ${MAYBE_ANDROID_FLAG} test -e
   )
   STATUS=$?
 fi
