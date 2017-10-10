@@ -19,6 +19,7 @@ import org.openjdk.jmh.runner.RunnerException;
 import org.openjdk.jmh.runner.options.ChainedOptionsBuilder;
 import org.openjdk.jmh.runner.options.OptionsBuilder;
 
+@EntryPoint
 @State(Scope.Benchmark)
 abstract class AbstractRandomBenchmark {
 
@@ -28,7 +29,6 @@ abstract class AbstractRandomBenchmark {
   private final byte[][] bytes = new byte[COLUMNS][ROWS];
   protected Random prng;
 
-  @EntryPoint
   protected AbstractRandomBenchmark() {
   }
 

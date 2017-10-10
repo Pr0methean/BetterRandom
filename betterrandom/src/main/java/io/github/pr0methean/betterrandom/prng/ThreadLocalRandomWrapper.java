@@ -21,35 +21,10 @@ import javax.annotation.Nullable;
 public class ThreadLocalRandomWrapper extends RandomWrapper {
 
   private static final long serialVersionUID = 1199235201518562359L;
-  private transient ThreadLocal<BaseRandom> threadLocal;
   private final Supplier<BaseRandom> initializer;
   private final @Nullable
   Integer explicitSeedSize;
-
-  @Override
-  public Random getWrapped() {
-    return threadLocal.get();
-  }
-
-  private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
-    in.defaultReadObject();
-    threadLocal = ThreadLocal.withInitial(initializer);
-  }
-
-  /**
-   * Uses this class and {@link RandomWrapper} to decorate any implementation of {@link Random} that
-   * can be constructed from a {@code long} seed into a fully-concurrent one.
-   *
-   * @param legacyCreator a function that provides the {@link Random} that underlies the
-   *     returned wrapper on each thread.
-   * @return a ThreadLocalRandomWrapper decorating instances created by {@code legacyCreator}.
-   * @throws SeedException should never happen.
-   */
-  public static ThreadLocalRandomWrapper wrapLegacy(
-      LongFunction<Random> legacyCreator, SeedGenerator seedGenerator) throws SeedException {
-    return new ThreadLocalRandomWrapper(Long.BYTES, seedGenerator, bytes ->
-        new RandomWrapper(legacyCreator.apply(BinaryUtils.convertBytesToLong(bytes))));
-  }
+  private transient ThreadLocal<BaseRandom> threadLocal;
 
   /**
    * Wraps the given {@link Supplier}. This ThreadLocalRandomWrapper will be serializable if the
@@ -87,6 +62,31 @@ public class ThreadLocalRandomWrapper extends RandomWrapper {
         throw new RuntimeException(e);
       }
     });
+    threadLocal = ThreadLocal.withInitial(initializer);
+  }
+
+  /**
+   * Uses this class and {@link RandomWrapper} to decorate any implementation of {@link Random} that
+   * can be constructed from a {@code long} seed into a fully-concurrent one.
+   *
+   * @param legacyCreator a function that provides the {@link Random} that underlies the
+   *     returned wrapper on each thread.
+   * @return a ThreadLocalRandomWrapper decorating instances created by {@code legacyCreator}.
+   * @throws SeedException should never happen.
+   */
+  public static ThreadLocalRandomWrapper wrapLegacy(
+      LongFunction<Random> legacyCreator, SeedGenerator seedGenerator) throws SeedException {
+    return new ThreadLocalRandomWrapper(Long.BYTES, seedGenerator, bytes ->
+        new RandomWrapper(legacyCreator.apply(BinaryUtils.convertBytesToLong(bytes))));
+  }
+
+  @Override
+  public Random getWrapped() {
+    return threadLocal.get();
+  }
+
+  private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
+    in.defaultReadObject();
     threadLocal = ThreadLocal.withInitial(initializer);
   }
 
