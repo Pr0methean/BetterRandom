@@ -52,9 +52,9 @@ if [ "$STATUS" = 0 ]; then
   fi
   mvn -DskipTests $MAYBE_ANDROID_FLAG package && (
     # Post-Proguard test (verifies Proguard settings)
-    mvn $MAYBE_ANDROID_FLAG test -e)
-    STATUS=$?
-  fi
+    mvn $MAYBE_ANDROID_FLAG test -e
+  )
+  STATUS=$?
 fi
 cd ..
 exit "$STATUS"
