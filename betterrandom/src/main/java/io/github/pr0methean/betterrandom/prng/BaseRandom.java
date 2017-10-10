@@ -160,7 +160,7 @@ public abstract class BaseRandom extends Random implements ByteArrayReseedableRa
    * @return true if this PRNG should create parallel streams; false otherwise.
    */
   protected boolean useParallelStreams() {
-    return true;
+    return false;
   }
 
   /**

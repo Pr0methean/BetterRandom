@@ -35,6 +35,10 @@ public class ReseedingSplittableRandomAdapter extends BaseSplittableRandomAdapte
       "InstanceVariableMayNotBeInitializedByReadObject"})
   private transient ThreadLocal<SingleThreadSplittableRandomAdapter> threadLocal;
 
+  @Override
+  protected boolean useParallelStreams() {
+    return true;
+  }
   /**
    * Single instance per SeedGenerator.
    *

@@ -60,16 +60,6 @@ public class SingleThreadSplittableRandomAdapter extends DirectSplittableRandomA
     super(seed);
   }
 
-  /**
-   * Returns false, since parallel streams would require thread-safety that we don't have.
-   *
-   * @return false.
-   */
-  @Override
-  protected boolean useParallelStreams() {
-    return false;
-  }
-
   @Override
   protected ToStringHelper addSubclassFields(final ToStringHelper original) {
     return super.addSubclassFields(original)
