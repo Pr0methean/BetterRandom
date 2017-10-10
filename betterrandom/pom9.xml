@@ -237,9 +237,6 @@
               <Xmaxerrs>10000</Xmaxerrs>
               <Xmaxwarns>10000</Xmaxwarns>
             </compilerArguments>
-            <compilerArgs>
-              <arg>-Xbootclasspath/p:${annotatedJdk}</arg>
-            </compilerArgs>
           </configuration>
         </plugin>
         <plugin>
