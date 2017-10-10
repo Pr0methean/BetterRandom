@@ -8,7 +8,6 @@ import java.io.Serializable;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 import javax.annotation.Nullable;
-import org.checkerframework.checker.nullness.qual.MonotonicNonNull;
 
 /**
  * <p>Thread that loops a given task until interrupted (or until JVM shutdown, if it {@link
@@ -61,7 +60,7 @@ public class LooperThread extends Thread implements Serializable, Cloneable {
   /**
    * The name of this thread, if it has a non-default name. Held for serialization purposes.
    */
-  protected @MonotonicNonNull String name = null;
+  protected @Nullable String name = null;
   @SuppressWarnings("InstanceVariableMayNotBeInitializedByReadObject")
   private transient boolean alreadyTerminatedWhenDeserialized = false;
   private boolean interrupted = false;
