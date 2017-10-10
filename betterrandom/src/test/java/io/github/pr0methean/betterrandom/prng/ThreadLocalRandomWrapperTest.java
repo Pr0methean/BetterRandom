@@ -102,7 +102,7 @@ public class ThreadLocalRandomWrapperTest extends BaseRandomTest {
     rng1.nextBytes(output1);
     final byte[] output2 = new byte[20];
     rng2.nextBytes(output2);
-    rng1.setSeed(DefaultSeedGenerator.DEFAULT_SEED_GENERATOR.generateSeed(8));
+    rng1.setSeed(DefaultSeedGenerator.DEFAULT_SEED_GENERATOR.generateSeed(16));
     rng1.nextBytes(output1);
     rng2.nextBytes(output2);
     assertFalse(Arrays.equals(output1, output2));
