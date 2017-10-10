@@ -5,7 +5,14 @@ else
   MAYBE_ANDROID_FLAG=""
 fi
 cd betterrandom
+if [ "$TRAVIS_JDK_VERSION" = "oraclejdk9" ]; then
+  OLD_TRAVIS_JDK_VERSION = "oraclejdk9"
+  jdk_switcher use oraclejdk8
+fi
 mvn -DskipTests $MAYBE_ANDROID_FLAG clean package install &&\
+if [ "$OLD_TRAVIS_JDK_VERSION" = "oraclejdk9" ]; then
+  jdk_switcher use oraclejdk9
+fi
 cd ../benchmark &&\
 mvn -DskipTests $MAYBE_ANDROID_FLAG clean package &&\
 cd target &&\
