@@ -374,7 +374,7 @@ public class LooperThread extends Thread implements Serializable, Cloneable {
     return CloneViaSerialization.clone(this);
   }
 
-  private static class DummyTarget implements @Nullable Runnable {
+  private static class DummyTarget implements Runnable {
 
     @Override
     public void run() {
