@@ -52,6 +52,11 @@ public class SplittableRandomAdapter extends DirectSplittableRandomAdapter {
     initSubclassTransientFields();
   }
 
+  @Override
+  protected boolean useParallelStreams() {
+    return true;
+  }
+
   /**
    * Use the {@link DefaultSeedGenerator} to generate a seed for the master {@link
    * SplittableRandom}, which will be split to generate an instance for each thread.
