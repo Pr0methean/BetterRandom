@@ -118,7 +118,7 @@ public class ThreadLocalRandomWrapper extends BaseRandom {
 
   @Override
   protected void setSeedInternal(byte[] seed) {
-    if (superConstructorFinished) {
+    if (threadLocal != null) {
       threadLocal.get().setSeed(seed);
     }
   }
