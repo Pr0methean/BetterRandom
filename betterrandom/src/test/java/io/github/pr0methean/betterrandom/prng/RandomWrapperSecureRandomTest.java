@@ -10,14 +10,12 @@ import java.security.GeneralSecurityException;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import java.util.Random;
-import org.jetbrains.annotations.NotNull;
 import org.testng.annotations.Test;
 
 public class RandomWrapperSecureRandomTest extends BaseRandomTest {
 
   private static final SecureRandom SEED_GEN = new SecureRandom();
 
-  @NotNull
   private static RandomWrapper createRngInternal() {
     try {
       return new RandomWrapper(SecureRandom.getInstance("SHA1PRNG"));
