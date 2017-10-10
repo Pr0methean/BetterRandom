@@ -22,7 +22,8 @@ public enum TestUtils {
    * @param test The consumer to pass the instances to.
    * @param <T> {@code clazz} as a type.
    */
-  public static <T> void testAllPublicConstructors(final Class<T> clazz, final Map<Class<?>, Object> params,
+  public static <T> void testAllPublicConstructors(final Class<T> clazz,
+      final Map<Class<?>, Object> params,
       final Consumer<T> test) {
     for (final Constructor<?> constructor : clazz.getDeclaredConstructors()) {
       if (Modifier.isPublic(constructor.getModifiers())) {

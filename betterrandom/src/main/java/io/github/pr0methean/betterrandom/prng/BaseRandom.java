@@ -1,7 +1,6 @@
 package io.github.pr0methean.betterrandom.prng;
 
 import static java.lang.Integer.toUnsignedLong;
-import static org.checkerframework.checker.nullness.NullnessUtil.castNonNull;
 
 import com.google.common.base.MoreObjects;
 import com.google.common.base.MoreObjects.ToStringHelper;
@@ -33,10 +32,7 @@ import java.util.stream.DoubleStream;
 import java.util.stream.IntStream;
 import java.util.stream.LongStream;
 import java.util.stream.StreamSupport;
-import org.checkerframework.checker.initialization.qual.UnderInitialization;
-import org.checkerframework.checker.initialization.qual.UnknownInitialization;
-import org.checkerframework.checker.nullness.qual.EnsuresNonNull;
-import org.checkerframework.checker.nullness.qual.Nullable;
+import javax.annotation.Nullable;
 
 /**
  * Abstract {@link Random} with a seed field and an implementation of entropy counting.
@@ -104,7 +100,8 @@ public abstract class BaseRandom extends Random implements ByteArrayReseedableRa
    * @param seedLength The seed length in bytes.
    * @throws SeedException If there is a problem generating a seed.
    */
-  protected BaseRandom(final SeedGenerator seedGenerator, final int seedLength) throws SeedException {
+  protected BaseRandom(final SeedGenerator seedGenerator, final int seedLength)
+      throws SeedException {
     this(seedGenerator.generateSeed(seedLength));
     entropyBits = new AtomicLong(0);
   }
@@ -114,7 +111,6 @@ public abstract class BaseRandom extends Random implements ByteArrayReseedableRa
    *
    * @param seed the seed.
    */
-  @EnsuresNonNull("this.seed")
   protected BaseRandom(final byte[] seed) {
     superConstructorFinished = true;
     if (seed == null) {
@@ -631,7 +627,6 @@ public abstract class BaseRandom extends Random implements ByteArrayReseedableRa
     }
   }
 
-  @EnsuresNonNull({"this.seed", "entropyBits"})
   @Override
   public void setSeed(final byte[] seed) {
     lock.lock();
@@ -650,9 +645,8 @@ public abstract class BaseRandom extends Random implements ByteArrayReseedableRa
    * input with the existing seed as {@link java.security.SecureRandom#setSeed(long)} does.
    */
   @SuppressWarnings("method.invocation.invalid")
-  @EnsuresNonNull({"this.seed", "entropyBits"})
   @Override
-  public synchronized void setSeed(@UnknownInitialization(Random.class)BaseRandom this,
+  public synchronized void setSeed(BaseRandom this,
       final long seed) {
     final byte[] seedBytes = BinaryUtils.convertLongToBytes(seed);
     if (superConstructorFinished) {
@@ -703,8 +697,7 @@ public abstract class BaseRandom extends Random implements ByteArrayReseedableRa
    *
    * @param seed The new seed.
    */
-  @EnsuresNonNull({"this.seed", "entropyBits"})
-  protected void setSeedInternal(@UnknownInitialization(Random.class)BaseRandom this,
+  protected void setSeedInternal(BaseRandom this,
       final byte[] seed) {
     if (this.seed == null || this.seed.length != seed.length) {
       this.seed = seed.clone();
@@ -721,20 +714,18 @@ public abstract class BaseRandom extends Random implements ByteArrayReseedableRa
   /**
    * Called in constructor and readObject to initialize transient fields.
    */
-  @EnsuresNonNull("lock")
-  protected void initTransientFields(@UnknownInitialization BaseRandom this) {
+  protected void initTransientFields(BaseRandom this) {
     if (lock == null) {
       lock = new ReentrantLock();
     }
     superConstructorFinished = true;
   }
 
-  @EnsuresNonNull({"lock", "seed", "entropyBits"})
-  private void readObject(@UnderInitialization(BaseRandom.class)BaseRandom this,
+  private void readObject(BaseRandom this,
       final ObjectInputStream in) throws IOException, ClassNotFoundException {
     in.defaultReadObject();
     initTransientFields();
-    setSeedInternal(castNonNull(seed));
+    setSeedInternal(seed);
   }
 
   @Override
@@ -768,7 +759,6 @@ public abstract class BaseRandom extends Random implements ByteArrayReseedableRa
    *
    * @throws InvalidObjectException if the {@link DefaultSeedGenerator} fails.
    */
-  @EnsuresNonNull({"lock", "seed", "entropyBits"})
   @SuppressWarnings("OverriddenMethodCallDuringObjectConstruction")
   private void readObjectNoData() throws InvalidObjectException {
     LOG.warn("BaseRandom.readObjectNoData() invoked; using DefaultSeedGenerator");
@@ -789,8 +779,7 @@ public abstract class BaseRandom extends Random implements ByteArrayReseedableRa
    * subclasses that can't actually use an 8-byte seed. Also used in {@link #readObjectNoData()}.
    */
   @SuppressWarnings("LockAcquiredButNotSafelyReleased")
-  @EnsuresNonNull({"seed", "entropyBits"})
-  protected void fallbackSetSeed(@UnknownInitialization BaseRandom this) {
+  protected void fallbackSetSeed(BaseRandom this) {
     boolean locked = false;
     if (lock != null) {
       lock.lock();
@@ -815,5 +804,5 @@ public abstract class BaseRandom extends Random implements ByteArrayReseedableRa
   }
 
   @Override
-  public abstract int getNewSeedLength(@UnknownInitialization BaseRandom this);
+  public abstract int getNewSeedLength(BaseRandom this);
 }

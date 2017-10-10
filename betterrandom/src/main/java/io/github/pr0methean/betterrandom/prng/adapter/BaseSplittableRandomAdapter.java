@@ -1,10 +1,8 @@
 package io.github.pr0methean.betterrandom.prng.adapter;
 
 import io.github.pr0methean.betterrandom.prng.BaseRandom;
-import java.util.Random;
 import java.util.SplittableRandom;
 import java.util.function.DoubleSupplier;
-import org.checkerframework.checker.initialization.qual.UnknownInitialization;
 
 /**
  * Abstract class for implementations of {@link BaseRandom} that wrap one or more {@link
@@ -36,7 +34,7 @@ public abstract class BaseSplittableRandomAdapter extends BaseRandom {
 
   @Override
   protected void setSeedInternal(
-      @UnknownInitialization(Random.class)BaseSplittableRandomAdapter this, final byte[] seed) {
+      BaseSplittableRandomAdapter this, final byte[] seed) {
     super.setSeedInternal(seed);
   }
 
@@ -192,7 +190,7 @@ public abstract class BaseSplittableRandomAdapter extends BaseRandom {
 
   /** Returns the only supported seed length. */
   @Override
-  public int getNewSeedLength(@UnknownInitialization BaseSplittableRandomAdapter this) {
+  public int getNewSeedLength(BaseSplittableRandomAdapter this) {
     return Long.BYTES;
   }
 }

@@ -26,8 +26,7 @@ import io.github.pr0methean.betterrandom.util.BinaryUtils;
 import io.github.pr0methean.betterrandom.util.EntryPoint;
 import java.security.SecureRandom;
 import java.util.Random;
-import org.checkerframework.checker.initialization.qual.UnknownInitialization;
-import org.checkerframework.checker.nullness.qual.Nullable;
+import javax.annotation.Nullable;
 
 /**
  * <p>Wraps any {@link Random} as a {@link RepeatableRandom} and {@link ByteArrayReseedableRandom}.
@@ -149,7 +148,7 @@ public class RandomWrapper extends BaseRandom {
   }
 
   private void readEntropyOfWrapped(
-      @UnknownInitialization(BaseRandom.class)RandomWrapper this,
+      RandomWrapper this,
       final Random wrapped) {
     entropyBits.set((wrapped instanceof EntropyCountingRandom)
         ? ((EntropyCountingRandom) wrapped).getEntropyBits()
@@ -188,7 +187,7 @@ public class RandomWrapper extends BaseRandom {
    */
   @SuppressWarnings("LockAcquiredButNotSafelyReleased")
   @Override
-  public void setSeedInternal(@UnknownInitialization(Random.class)RandomWrapper this,
+  public void setSeedInternal(RandomWrapper this,
       final byte[] seed) {
     if (seed == null) {
       throw new IllegalArgumentException("Seed must not be null");
@@ -243,7 +242,7 @@ public class RandomWrapper extends BaseRandom {
   /** */
   @SuppressWarnings("LockAcquiredButNotSafelyReleased")
   @Override
-  public int getNewSeedLength(@UnknownInitialization RandomWrapper this) {
+  public int getNewSeedLength(RandomWrapper this) {
     boolean locked = false;
     if (lock != null) {
       lock.lock();

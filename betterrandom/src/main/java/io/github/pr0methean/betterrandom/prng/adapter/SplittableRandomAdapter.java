@@ -1,7 +1,6 @@
 package io.github.pr0methean.betterrandom.prng.adapter;
 
 import static io.github.pr0methean.betterrandom.util.BinaryUtils.convertBytesToLong;
-import static org.checkerframework.checker.nullness.NullnessUtil.castNonNull;
 
 import com.google.common.base.MoreObjects.ToStringHelper;
 import io.github.pr0methean.betterrandom.seed.DefaultSeedGenerator;
@@ -12,9 +11,6 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.util.SplittableRandom;
 import java.util.concurrent.atomic.AtomicLong;
-import org.checkerframework.checker.initialization.qual.UnknownInitialization;
-import org.checkerframework.checker.nullness.qual.EnsuresNonNull;
-import org.checkerframework.checker.nullness.qual.RequiresNonNull;
 
 /**
  * Thread-safe PRNG that wraps a {@link ThreadLocal}&lt;{@link SplittableRandom}&gt;. Reseeding this
@@ -79,8 +75,6 @@ public class SplittableRandomAdapter extends DirectSplittableRandomAdapter {
 
   private void readObject(final ObjectInputStream in) throws IOException, ClassNotFoundException {
     in.defaultReadObject();
-    lock = castNonNull(lock);
-    underlying = castNonNull(underlying);
     initSubclassTransientFields();
   }
 
@@ -95,10 +89,8 @@ public class SplittableRandomAdapter extends DirectSplittableRandomAdapter {
     entropyBits.get().addAndGet(-bits);
   }
 
-  @EnsuresNonNull({"splittableRandoms", "entropyBits", "seeds"})
-  @RequiresNonNull({"lock", "underlying"})
   private void initSubclassTransientFields(
-      @UnknownInitialization(BaseSplittableRandomAdapter.class)SplittableRandomAdapter this) {
+      SplittableRandomAdapter this) {
     lock.lock();
     try {
       splittableRandoms = ThreadLocal.withInitial(underlying::split);
@@ -110,9 +102,6 @@ public class SplittableRandomAdapter extends DirectSplittableRandomAdapter {
       lock.unlock();
     }
     // WTF Checker Framework? Why is this needed?
-    splittableRandoms = castNonNull(splittableRandoms);
-    entropyBits = castNonNull(entropyBits);
-    seeds = castNonNull(seeds);
   }
 
   @Override
@@ -134,7 +123,7 @@ public class SplittableRandomAdapter extends DirectSplittableRandomAdapter {
    * {@inheritDoc} Applies only to the calling thread.
    */
   @Override
-  public void setSeed(@UnknownInitialization SplittableRandomAdapter this, final byte[] seed) {
+  public void setSeed(SplittableRandomAdapter this, final byte[] seed) {
     if (seed.length != Long.BYTES) {
       throw new IllegalArgumentException("SplittableRandomAdapter requires an 8-byte seed");
     }
@@ -146,7 +135,7 @@ public class SplittableRandomAdapter extends DirectSplittableRandomAdapter {
    */
   @SuppressWarnings("contracts.postcondition.not.satisfied")
   @Override
-  public void setSeed(@UnknownInitialization SplittableRandomAdapter this,
+  public void setSeed(SplittableRandomAdapter this,
       final long seed) {
     if (this.seed == null) {
       super.setSeed(seed);

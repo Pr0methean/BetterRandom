@@ -1,7 +1,5 @@
 package io.github.pr0methean.betterrandom.util;
 
-import static org.checkerframework.checker.nullness.NullnessUtil.castNonNull;
-
 import java.io.IOException;
 import java.io.InvalidObjectException;
 import java.io.ObjectInputStream;
@@ -9,10 +7,8 @@ import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
-import org.checkerframework.checker.initialization.qual.UnderInitialization;
+import javax.annotation.Nullable;
 import org.checkerframework.checker.nullness.qual.MonotonicNonNull;
-import org.checkerframework.checker.nullness.qual.Nullable;
-import org.checkerframework.checker.nullness.qual.RequiresNonNull;
 
 /**
  * <p>Thread that loops a given task until interrupted (or until JVM shutdown, if it {@link
@@ -55,11 +51,13 @@ public class LooperThread extends Thread implements Serializable, Cloneable {
   /**
    * The {@link ThreadGroup} this thread belongs to, if any. Held for serialization purposes.
    */
-  protected @Nullable ThreadGroup serialGroup;
+  protected @Nullable
+  ThreadGroup serialGroup;
   /**
    * The {@link Runnable} that was passed into this thread's constructor, if any.
    */
-  protected transient @Nullable Runnable target;
+  protected transient @Nullable
+  Runnable target;
   /**
    * The name of this thread, if it has a non-default name. Held for serialization purposes.
    */
@@ -70,9 +68,12 @@ public class LooperThread extends Thread implements Serializable, Cloneable {
   private boolean daemon = false;
   private int priority = Thread.NORM_PRIORITY;
   private State state = State.NEW;
-  private @Nullable ClassLoader contextClassLoader = null;
-  private @Nullable Runnable serialTarget;
-  private @Nullable UncaughtExceptionHandler serialUncaughtExceptionHandler;
+  private @Nullable
+  ClassLoader contextClassLoader = null;
+  private @Nullable
+  Runnable serialTarget;
+  private @Nullable
+  UncaughtExceptionHandler serialUncaughtExceptionHandler;
 
   /**
    * Constructs a LooperThread with all properties as defaults. Protected because it does not set a
@@ -193,14 +194,15 @@ public class LooperThread extends Thread implements Serializable, Cloneable {
     this.stackSize = stackSize;
   }
 
-  private static @Nullable <T> T serializableOrNull(final @Nullable T object) {
+  private static @Nullable
+  <T> T serializableOrNull(final @Nullable T object) {
     if (!(object instanceof Serializable)) {
       return null;
     }
     return object;
   }
 
-  private void setGroup(@UnderInitialization LooperThread this,
+  private void setGroup(LooperThread this,
       final @Nullable ThreadGroup group) {
     serialGroup = (group instanceof Serializable) ? group : null;
   }
@@ -235,7 +237,7 @@ public class LooperThread extends Thread implements Serializable, Cloneable {
       target = new DummyTarget();
     }
     if (serialGroup == null) {
-      serialGroup = castNonNull(Thread.currentThread().getThreadGroup());
+      serialGroup = currentThread().getThreadGroup();
     }
     final LooperThread t = readResolveConstructorWrapper();
     t.setDaemon(daemon);
@@ -278,7 +280,6 @@ public class LooperThread extends Thread implements Serializable, Cloneable {
    * @return the new LooperThread.
    * @throws InvalidObjectException if this LooperThread's serial form is invalid.
    */
-  @RequiresNonNull({"serialGroup", "name"})
   protected LooperThread readResolveConstructorWrapper()
       throws InvalidObjectException {
     return new LooperThread(serialGroup, target, name, stackSize);
