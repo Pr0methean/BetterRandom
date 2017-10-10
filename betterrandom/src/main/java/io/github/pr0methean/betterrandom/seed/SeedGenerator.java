@@ -28,6 +28,8 @@ import java.io.Serializable;
 @FunctionalInterface
 public interface SeedGenerator extends Serializable {
 
+  byte[] EMPTY_SEED = {};
+
   /**
    * Generates a seed value for a random number generator in an existing array.
    *
@@ -44,6 +46,9 @@ public interface SeedGenerator extends Serializable {
    * @throws SeedException If a seed cannot be generated for any reason.
    */
   default byte[] generateSeed(final int length) throws SeedException {
+    if (length <= 0) {
+      return EMPTY_SEED;
+    }
     final byte[] output = new byte[length];
     generateSeed(output);
     return output;
