@@ -18,7 +18,6 @@ import io.github.pr0methean.betterrandom.util.LogPreFormatter;
 import java.io.IOException;
 import java.io.InvalidObjectException;
 import java.io.ObjectInputStream;
-import java.util.Collections;
 import java.util.List;
 import java.util.Random;
 import java.util.concurrent.atomic.AtomicLong;
@@ -464,7 +463,8 @@ public abstract class BaseRandom extends Random implements ByteArrayReseedableRa
   @Override
   public IntStream ints(final long streamSize, final int randomNumberOrigin,
       final int randomNumberBound) {
-    return streamOfSize(streamSize).mapToInt(ignored -> nextInt(randomNumberOrigin, randomNumberBound));
+    return streamOfSize(streamSize)
+        .mapToInt(ignored -> nextInt(randomNumberOrigin, randomNumberBound));
   }
 
   /**
@@ -610,6 +610,16 @@ public abstract class BaseRandom extends Random implements ByteArrayReseedableRa
     }
   }
 
+  @Override
+  public void setSeed(final byte[] seed) {
+    lock.lock();
+    try {
+      setSeedInternal(seed);
+    } finally {
+      lock.unlock();
+    }
+  }
+
   /**
    * Sets the seed of this random number generator using a single long seed, if this implementation
    * supports that. If it is capable of using 64 bits or less of seed data (i.e. if {@code {@link
@@ -626,16 +636,6 @@ public abstract class BaseRandom extends Random implements ByteArrayReseedableRa
       setSeed(seedBytes);
     } else {
       setSeedInternal(seedBytes);
-    }
-  }
-
-  @Override
-  public void setSeed(final byte[] seed) {
-    lock.lock();
-    try {
-      setSeedInternal(seed);
-    } finally {
-      lock.unlock();
     }
   }
 
