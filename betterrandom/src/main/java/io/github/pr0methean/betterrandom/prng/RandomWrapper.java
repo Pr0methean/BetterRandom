@@ -36,7 +36,7 @@ import javax.annotation.Nullable;
  */
 public class RandomWrapper extends BaseRandom {
 
-  private static final byte[] DUMMY_SEED = new byte[8];
+  protected static final byte[] DUMMY_SEED = new byte[8];
   private static final long serialVersionUID = -6526304552538799385L;
   private Random wrapped;
   private boolean unknownSeed = true;
