@@ -5,6 +5,7 @@ import static org.testng.Assert.assertEquals;
 import io.github.pr0methean.betterrandom.seed.DefaultSeedGenerator;
 import io.github.pr0methean.betterrandom.seed.SeedException;
 import java.lang.reflect.InvocationTargetException;
+import java.util.Random;
 import org.testng.annotations.Test;
 
 public class ThreadLocalRandomWrapperTest extends BaseRandomTest {
@@ -33,6 +34,12 @@ public class ThreadLocalRandomWrapperTest extends BaseRandomTest {
   public void testExplicitSeedSize() throws SeedException {
     assertEquals(new ThreadLocalRandomWrapper(200, DefaultSeedGenerator.DEFAULT_SEED_GENERATOR,
         AesCounterRandom::new).getNewSeedLength(), 200);
+  }
+
+  @Test
+  public void testWrapLegacy() throws SeedException {
+    ThreadLocalRandomWrapper.wrapLegacy(Random::new, DefaultSeedGenerator.DEFAULT_SEED_GENERATOR)
+        .nextInt();
   }
 
   @Override

@@ -4,19 +4,19 @@ import com.google.common.base.MoreObjects.ToStringHelper;
 import io.github.pr0methean.betterrandom.seed.RandomSeederThread;
 import io.github.pr0methean.betterrandom.seed.SeedException;
 import io.github.pr0methean.betterrandom.seed.SeedGenerator;
+import io.github.pr0methean.betterrandom.util.BinaryUtils;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.Serializable;
 import java.util.Random;
 import java.util.function.Function;
+import java.util.function.LongFunction;
 import java.util.function.Supplier;
 import javax.annotation.Nullable;
 
 /**
  * Wraps a {@link ThreadLocal}&lt;{@link BaseRandom}&gt; in order to provide concurrency that most
- * implementations of {@link BaseRandom} can't implement naturally. When the input {@link Supplier}
- * creates a {@link RandomWrapper}, this can be used to decorate any implementation of {@link
- * Random} into a fully-concurrent one.
+ * implementations of {@link BaseRandom} can't implement naturally.
  */
 public class ThreadLocalRandomWrapper extends BaseRandom {
 
@@ -29,6 +29,21 @@ public class ThreadLocalRandomWrapper extends BaseRandom {
   private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
     in.defaultReadObject();
     threadLocal = ThreadLocal.withInitial(initializer);
+  }
+
+  /**
+   * Uses this class and {@link RandomWrapper}, this can be used to decorate any implementation of
+   * {@link Random} that can be constructed from a {@code long} seed into a fully-concurrent one.
+   *
+   * @param legacyCreator a function that provides the {@link Random} that underlies the returned
+   *     wrapper on each thread.
+   * @return a ThreadLocalRandomWrapper decorating instances created by {@code legacyCreator}.
+   * @throws SeedException should never happen.
+   */
+  public static ThreadLocalRandomWrapper wrapLegacy(
+      LongFunction<Random> legacyCreator, SeedGenerator seedGenerator) throws SeedException {
+    return new ThreadLocalRandomWrapper(Long.BYTES, seedGenerator, bytes ->
+        new RandomWrapper(legacyCreator.apply(BinaryUtils.convertBytesToLong(bytes))));
   }
 
   /**
