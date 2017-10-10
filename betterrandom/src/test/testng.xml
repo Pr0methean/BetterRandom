@@ -28,7 +28,7 @@
       <class name="io.github.pr0methean.betterrandom.util.BinaryUtilsTest"/>
       <class name="io.github.pr0methean.betterrandom.seed.RandomSeederThreadTest"/>
       <class name="io.github.pr0methean.betterrandom.prng.BaseRandomStaticTest"/>
-      <class name="io.github.pr0methean.betterrandom.prng.RandomWrapperAesCounterRandomTest"/>
+      <class name="io.github.pr0methean.betterrandom.prng.RandomWrapperMersenneTwisterRandomTest"/>
       <class name="io.github.pr0methean.betterrandom.prng.ThreadLocalRandomWrapperTest"/>
     </classes>
   </test>

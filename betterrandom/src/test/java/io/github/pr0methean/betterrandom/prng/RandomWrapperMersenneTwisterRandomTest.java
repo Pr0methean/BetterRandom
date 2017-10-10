@@ -4,7 +4,7 @@ import io.github.pr0methean.betterrandom.seed.SeedException;
 import java.lang.reflect.InvocationTargetException;
 import org.testng.annotations.Test;
 
-public class RandomWrapperAesCounterRandomTest extends AesCounterRandom128Test {
+public class RandomWrapperMersenneTwisterRandomTest extends BaseRandomTest {
 
   @Override
   protected Class<? extends BaseRandom> getClassUnderTest() {
@@ -20,11 +20,11 @@ public class RandomWrapperAesCounterRandomTest extends AesCounterRandom128Test {
 
   @Override
   protected RandomWrapper tryCreateRng() throws SeedException {
-    return new RandomWrapper(new AesCounterRandom());
+    return new RandomWrapper(new MersenneTwisterRandom());
   }
 
   @Override
   protected RandomWrapper createRng(final byte[] seed) throws SeedException {
-    return new RandomWrapper(new AesCounterRandom(seed));
+    return new RandomWrapper(new MersenneTwisterRandom(seed));
   }
 }
