@@ -15,8 +15,6 @@
 // ============================================================================
 package io.github.pr0methean.betterrandom.prng;
 
-import static org.checkerframework.checker.nullness.NullnessUtil.castNonNull;
-
 import com.google.common.base.MoreObjects.ToStringHelper;
 import io.github.pr0methean.betterrandom.seed.DefaultSeedGenerator;
 import io.github.pr0methean.betterrandom.seed.SeedException;
@@ -34,8 +32,6 @@ import java.util.Random;
 import javax.crypto.Cipher;
 import javax.crypto.NoSuchPaddingException;
 import javax.crypto.spec.SecretKeySpec;
-import org.checkerframework.checker.initialization.qual.UnknownInitialization;
-import org.checkerframework.checker.nullness.qual.EnsuresNonNull;
 
 /**
  * <p>Non-linear random number generator based on the AES block cipher in counter mode. Uses the
@@ -177,9 +173,8 @@ public class AesCounterRandom extends BaseRandom {
   }
 
   @Override
-  @EnsuresNonNull({"counter", "counterInput", "cipher", "lock"})
   protected void initTransientFields(
-      @UnknownInitialization AesCounterRandom this) {
+      AesCounterRandom this) {
     super.initTransientFields();
     if (counter == null) {
       counter = new byte[COUNTER_SIZE_BYTES];
@@ -290,7 +285,6 @@ public class AesCounterRandom extends BaseRandom {
     } catch (final NoSuchAlgorithmException e) {
       throw new RuntimeException(e);
     }
-    this.seed = castNonNull(this.seed);
   }
 
   /**
@@ -298,16 +292,15 @@ public class AesCounterRandom extends BaseRandom {
    */
   @Override
   @SuppressWarnings("contracts.postcondition.not.satisfied")
-  public synchronized void setSeed(@UnknownInitialization(Random.class)AesCounterRandom this,
+  public synchronized void setSeed(AesCounterRandom this,
       final long seed) {
     if (superConstructorFinished) {
       super.setSeed(seed);
     }
   }
 
-  @EnsuresNonNull({"counter", "this.seed", "entropyBits"})
   @Override
-  protected void setSeedInternal(@UnknownInitialization(Random.class)AesCounterRandom this,
+  protected void setSeedInternal(AesCounterRandom this,
       final byte[] seed) {
     final int seedLength = seed.length;
     if ((seedLength < 16) || (seedLength > MAX_TOTAL_SEED_LENGTH_BYTES)) {
@@ -322,7 +315,7 @@ public class AesCounterRandom extends BaseRandom {
     counter = new byte[COUNTER_SIZE_BYTES];
     System.arraycopy(seed, keyLength, counter, 0, seedLength - keyLength);
     try {
-      castNonNull(cipher).init(Cipher.ENCRYPT_MODE, new SecretKeySpec(key, ALGORITHM));
+      cipher.init(Cipher.ENCRYPT_MODE, new SecretKeySpec(key, ALGORITHM));
     } catch (final InvalidKeyException e) {
       throw new RuntimeException("Invalid key: " + Arrays.toString(key), e);
     }
@@ -331,7 +324,7 @@ public class AesCounterRandom extends BaseRandom {
 
   /** Returns the longest supported seed length. */
   @Override
-  public int getNewSeedLength(@UnknownInitialization AesCounterRandom this) {
+  public int getNewSeedLength(AesCounterRandom this) {
     return MAX_TOTAL_SEED_LENGTH_BYTES;
   }
 }

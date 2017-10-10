@@ -23,10 +23,6 @@ import io.github.pr0methean.betterrandom.seed.SeedException;
 import io.github.pr0methean.betterrandom.seed.SeedGenerator;
 import io.github.pr0methean.betterrandom.util.BinaryUtils;
 import java.util.Arrays;
-import java.util.Random;
-import org.checkerframework.checker.initialization.qual.UnknownInitialization;
-import org.checkerframework.checker.nullness.qual.EnsuresNonNull;
-import org.checkerframework.checker.nullness.qual.RequiresNonNull;
 
 /**
  * Java port of the <a href="http://home.southernct.edu/~pasqualonia1/ca/report.html"
@@ -133,9 +129,7 @@ public class CellularAutomatonRandom extends BaseRandom {
         .add("currentCellIndex", currentCellIndex);
   }
 
-  @EnsuresNonNull("cells")
-  @RequiresNonNull("seed")
-  private void copySeedToCellsAndPreEvolve(@UnknownInitialization CellularAutomatonRandom this) {
+  private void copySeedToCellsAndPreEvolve(CellularAutomatonRandom this) {
     cells = new int[AUTOMATON_LENGTH];
     // Set initial cell states using seed.
     cells[AUTOMATON_LENGTH - 1] = seed[0] + 128;
@@ -158,8 +152,7 @@ public class CellularAutomatonRandom extends BaseRandom {
     }
   }
 
-  @RequiresNonNull("cells")
-  private int internalNext(@UnknownInitialization CellularAutomatonRandom this, final int bits) {
+  private int internalNext(CellularAutomatonRandom this, final int bits) {
     // Set cell addresses using address of current cell.
     final int cellC = currentCellIndex - 1;
 
@@ -193,7 +186,7 @@ public class CellularAutomatonRandom extends BaseRandom {
   }
 
   @Override
-  public synchronized void setSeed(@UnknownInitialization(Random.class)CellularAutomatonRandom this,
+  public synchronized void setSeed(CellularAutomatonRandom this,
       final long seed) {
     final byte[] shortenedSeed = convertIntToBytes(((Long) seed).hashCode());
     if (superConstructorFinished) {
@@ -204,7 +197,7 @@ public class CellularAutomatonRandom extends BaseRandom {
   }
 
   @Override
-  protected void setSeedInternal(@UnknownInitialization(Random.class)CellularAutomatonRandom this,
+  protected void setSeedInternal(CellularAutomatonRandom this,
       final byte[] seed) {
     if (seed.length != SEED_SIZE_BYTES) {
       throw new IllegalArgumentException("Cellular Automaton RNG requires a 32-bit (4-byte) seed.");
@@ -216,7 +209,7 @@ public class CellularAutomatonRandom extends BaseRandom {
 
   /** Returns the only supported seed length. */
   @Override
-  public int getNewSeedLength(@UnknownInitialization CellularAutomatonRandom this) {
+  public int getNewSeedLength(CellularAutomatonRandom this) {
     return SEED_SIZE_BYTES;
   }
 }

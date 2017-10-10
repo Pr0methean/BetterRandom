@@ -15,8 +15,6 @@
 // ============================================================================
 package io.github.pr0methean.betterrandom.prng;
 
-import static org.checkerframework.checker.nullness.NullnessUtil.castNonNull;
-
 import com.google.common.base.MoreObjects.ToStringHelper;
 import io.github.pr0methean.betterrandom.seed.DefaultSeedGenerator;
 import io.github.pr0methean.betterrandom.seed.SeedException;
@@ -25,8 +23,6 @@ import io.github.pr0methean.betterrandom.util.BinaryUtils;
 import io.github.pr0methean.betterrandom.util.EntryPoint;
 import java.util.Arrays;
 import java.util.Random;
-import org.checkerframework.checker.initialization.qual.UnknownInitialization;
-import org.checkerframework.checker.nullness.qual.EnsuresNonNull;
 
 /**
  * <p>A Java version of George Marsaglia's <a href="http://school.anhb.uwa.edu.au/personalpages/kwessen/shared/Marsaglia03.html">Complementary
@@ -82,7 +78,6 @@ public class Cmwc4096Random extends BaseRandom {
    */
   public Cmwc4096Random(final byte[] seed) {
     super(seed);
-    state = castNonNull(state);
   }
 
   @Override
@@ -102,14 +97,13 @@ public class Cmwc4096Random extends BaseRandom {
    * @param seed ignored
    */
   @Override
-  public synchronized void setSeed(@UnknownInitialization(Random.class)Cmwc4096Random this,
+  public synchronized void setSeed(Cmwc4096Random this,
       final long seed) {
     fallbackSetSeed();
   }
 
-  @EnsuresNonNull({"this.seed", "state", "entropyBits"})
   @Override
-  protected void setSeedInternal(@UnknownInitialization(Random.class)Cmwc4096Random this,
+  protected void setSeedInternal(Cmwc4096Random this,
       final byte[] seed) {
     if ((seed == null) || (seed.length != SEED_SIZE_BYTES)) {
       throw new IllegalArgumentException("CMWC RNG requires 16kb of seed data.");
@@ -142,7 +136,7 @@ public class Cmwc4096Random extends BaseRandom {
 
   /** Returns the only supported seed length. */
   @Override
-  public int getNewSeedLength(@UnknownInitialization Cmwc4096Random this) {
+  public int getNewSeedLength(Cmwc4096Random this) {
     return SEED_SIZE_BYTES;
   }
 }

@@ -1,7 +1,5 @@
 package io.github.pr0methean.betterrandom.prng.adapter;
 
-import static org.checkerframework.checker.nullness.NullnessUtil.castNonNull;
-
 import com.google.common.base.MoreObjects.ToStringHelper;
 import io.github.pr0methean.betterrandom.seed.DefaultSeedGenerator;
 import io.github.pr0methean.betterrandom.seed.RandomSeederThread;
@@ -14,9 +12,7 @@ import java.util.Map;
 import java.util.SplittableRandom;
 import java.util.WeakHashMap;
 import java.util.concurrent.atomic.AtomicLong;
-import org.checkerframework.checker.initialization.qual.UnknownInitialization;
-import org.checkerframework.checker.nullness.qual.EnsuresNonNull;
-import org.checkerframework.checker.nullness.qual.Nullable;
+import javax.annotation.Nullable;
 
 /**
  * Like {@link SplittableRandomAdapter}, but uses a {@link RandomSeederThread} to replace each
@@ -112,25 +108,24 @@ public class ReseedingSplittableRandomAdapter extends BaseSplittableRandomAdapte
     }
   }
 
-  @EnsuresNonNull({"threadLocal", "seederThread"})
   private void initSubclassTransientFields(
-      @UnknownInitialization(BaseSplittableRandomAdapter.class)ReseedingSplittableRandomAdapter this) {
+      ReseedingSplittableRandomAdapter this) {
     if (threadLocal == null) {
       threadLocal = ThreadLocal.withInitial(() -> {
         try {
-          return new SingleThreadSplittableRandomAdapter(castNonNull(seedGenerator));
+          return new SingleThreadSplittableRandomAdapter(seedGenerator);
         } catch (final SeedException e) {
           throw new RuntimeException(e);
         }
       });
     }
-    seederThread.set(RandomSeederThread.getInstance(castNonNull(seedGenerator)));
+    seederThread.set(RandomSeederThread.getInstance(seedGenerator));
   }
 
   @Override
   protected SplittableRandom getSplittableRandom() {
     final SingleThreadSplittableRandomAdapter adapterForThread = threadLocal.get();
-    castNonNull(seederThread.get()).add(adapterForThread);
+    seederThread.get().add(adapterForThread);
     return adapterForThread.getSplittableRandom();
   }
 
@@ -142,7 +137,7 @@ public class ReseedingSplittableRandomAdapter extends BaseSplittableRandomAdapte
   }
 
   @Override
-  protected void setSeedInternal(@UnknownInitialization ReseedingSplittableRandomAdapter this,
+  protected void setSeedInternal(ReseedingSplittableRandomAdapter this,
       final byte[] seed) {
     this.seed = seed.clone();
     if (entropyBits == null) {

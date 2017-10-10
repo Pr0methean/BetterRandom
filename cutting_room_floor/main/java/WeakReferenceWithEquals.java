@@ -2,7 +2,7 @@ package io.github.pr0methean.betterrandom.util;
 
 import java.lang.ref.WeakReference;
 import java.util.Objects;
-import org.checkerframework.checker.nullness.qual.Nullable;
+import javax.annotation.Nullable;
 
 /**
  * A {@link WeakReference}&lt;T&gt; that compares the object it refers to when implementing {@link

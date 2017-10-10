@@ -7,7 +7,7 @@ import static java.util.Spliterator.SIZED;
 import java.util.Spliterator;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicLong;
-import org.checkerframework.checker.nullness.qual.Nullable;
+import javax.annotation.Nullable;
 
 /**
  * An unordered, concurrent spliterator (possibly unboxed) that invokes a supplier (possibly
@@ -70,7 +70,8 @@ public abstract class AbstractSupplierSpliterator<TSupplier, TConsumer, TSplitIn
    * @see Spliterator#trySplit()
    */
   @SuppressWarnings("override.return.invalid") // actually is nullable in the interface
-  public @Nullable TSplitInto trySplit() {
+  public @Nullable
+  TSplitInto trySplit() {
     if ((splitsRemaining.getAndDecrement() <= 0) || (remaining.get() <= 0)) {
       return null;
     } else {

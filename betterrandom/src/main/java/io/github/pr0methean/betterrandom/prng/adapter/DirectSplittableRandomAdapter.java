@@ -5,10 +5,7 @@ import io.github.pr0methean.betterrandom.util.BinaryUtils;
 import io.github.pr0methean.betterrandom.util.EntryPoint;
 import java.io.IOException;
 import java.io.ObjectInputStream;
-import java.util.Random;
 import java.util.SplittableRandom;
-import org.checkerframework.checker.initialization.qual.UnknownInitialization;
-import org.checkerframework.checker.nullness.qual.EnsuresNonNull;
 
 /**
  * Abstract subclass of {@link BaseSplittableRandomAdapter} where {@link #setSeed(long)} and {@link
@@ -64,10 +61,9 @@ public abstract class DirectSplittableRandomAdapter extends BaseSplittableRandom
   /**
    * Replaces {@link #underlying} with a new {@link SplittableRandom} that uses the given seed.
    */
-  @EnsuresNonNull({"this.seed", "underlying", "entropyBits"})
   @Override
   protected void setSeedInternal(
-      @UnknownInitialization(Random.class)DirectSplittableRandomAdapter this,
+      DirectSplittableRandomAdapter this,
       final byte[] seed) {
     if (seed.length != Long.BYTES) {
       throw new IllegalArgumentException("DirectSplittableRandomAdapter requires an 8-byte seed");
@@ -80,7 +76,7 @@ public abstract class DirectSplittableRandomAdapter extends BaseSplittableRandom
    * Replaces {@link #underlying} with a new {@link SplittableRandom} that uses the given seed.
    */
   @Override
-  public void setSeed(@UnknownInitialization DirectSplittableRandomAdapter this,
+  public void setSeed(DirectSplittableRandomAdapter this,
       final long seed) {
     super.setSeedInternal(BinaryUtils.convertLongToBytes(seed));
     underlying = new SplittableRandom(seed);

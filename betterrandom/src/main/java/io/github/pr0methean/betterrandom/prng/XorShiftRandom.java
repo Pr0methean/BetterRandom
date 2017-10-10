@@ -21,7 +21,6 @@ import io.github.pr0methean.betterrandom.seed.SeedException;
 import io.github.pr0methean.betterrandom.seed.SeedGenerator;
 import io.github.pr0methean.betterrandom.util.BinaryUtils;
 import java.util.Random;
-import org.checkerframework.checker.initialization.qual.UnknownInitialization;
 
 /**
  * <p>Very fast pseudo random number generator.  See <a href="http://school.anhb.uwa.edu.au/personalpages/kwessen/shared/Marsaglia03.html">this
@@ -93,13 +92,13 @@ public class XorShiftRandom extends BaseRandom {
    * @param seed ignored
    */
   @Override
-  public synchronized void setSeed(@UnknownInitialization(Random.class)XorShiftRandom this,
+  public synchronized void setSeed(XorShiftRandom this,
       final long seed) {
     fallbackSetSeed();
   }
 
   @Override
-  protected void setSeedInternal(@UnknownInitialization(Random.class)XorShiftRandom this,
+  protected void setSeedInternal(XorShiftRandom this,
       final byte[] seed) {
     if (seed.length != SEED_SIZE_BYTES) {
       throw new IllegalArgumentException("XorShiftRandom requires a 20-byte seed");
@@ -131,7 +130,7 @@ public class XorShiftRandom extends BaseRandom {
   }
 
   @Override
-  public int getNewSeedLength(@UnknownInitialization XorShiftRandom this) {
+  public int getNewSeedLength(XorShiftRandom this) {
     return SEED_SIZE_BYTES;
   }
 }
