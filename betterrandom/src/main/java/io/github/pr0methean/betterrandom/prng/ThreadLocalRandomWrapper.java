@@ -81,7 +81,7 @@ public class ThreadLocalRandomWrapper extends RandomWrapper {
   }
 
   @Override
-  public Random getWrapped() {
+  public BaseRandom getWrapped() {
     return threadLocal.get();
   }
 
@@ -113,26 +113,31 @@ public class ThreadLocalRandomWrapper extends RandomWrapper {
 
   @Override
   public byte[] getSeed() {
-    return threadLocal.get().getSeed();
+    return getWrapped().getSeed();
   }
 
   @Override
   protected void setSeedInternal(byte[] seed) {
     super.setSeedInternal(seed);
     if (threadLocal != null) {
-      threadLocal.get().setSeed(seed);
+      getWrapped().setSeed(seed);
     }
   }
 
   @Override
+  protected void recordEntropySpent(long bits) {
+    getWrapped().recordEntropySpent(bits);
+  }
+
+  @Override
   public long getEntropyBits() {
-    return threadLocal.get().getEntropyBits();
+    return getWrapped().getEntropyBits();
   }
 
   @Override
   public int getNewSeedLength() {
-    return (threadLocal == null) ? 0
-        : (explicitSeedSize == null) ? threadLocal.get().getNewSeedLength()
+    return (threadLocal == null) ? Long.BYTES // required for superclass
+        : (explicitSeedSize == null) ? getWrapped().getNewSeedLength()
         : explicitSeedSize;
   }
 }
