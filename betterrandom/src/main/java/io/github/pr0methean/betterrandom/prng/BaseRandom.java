@@ -15,9 +15,6 @@ import io.github.pr0methean.betterrandom.util.BinaryUtils;
 import io.github.pr0methean.betterrandom.util.Dumpable;
 import io.github.pr0methean.betterrandom.util.EntryPoint;
 import io.github.pr0methean.betterrandom.util.LogPreFormatter;
-import io.github.pr0methean.betterrandom.util.spliterator.DoubleSupplierSpliterator;
-import io.github.pr0methean.betterrandom.util.spliterator.IntSupplierSpliterator;
-import io.github.pr0methean.betterrandom.util.spliterator.LongSupplierSpliterator;
 import java.io.IOException;
 import java.io.InvalidObjectException;
 import java.io.ObjectInputStream;
@@ -28,10 +25,10 @@ import java.util.concurrent.atomic.AtomicReference;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 import java.util.function.DoubleSupplier;
+import java.util.stream.BaseStream;
 import java.util.stream.DoubleStream;
 import java.util.stream.IntStream;
 import java.util.stream.LongStream;
-import java.util.stream.StreamSupport;
 import javax.annotation.Nullable;
 
 /**
@@ -322,34 +319,34 @@ public abstract class BaseRandom extends Random implements ByteArrayReseedableRa
     return out;
   }
 
+  private <T extends BaseStream<?, T>> T maybeParallel(T in) {
+    return useParallelStreams() ? in.parallel() : in;
+  }
+
   /**
    * <p>Returns a stream producing an effectively unlimited number of pseudorandom doubles, each
    * conforming to the given origin (inclusive) and bound (exclusive). This implementation uses
-   * {@link #nextDouble(double, double)} to generate these numbers.</p> <p>If the returned stream is
-   * a parallel stream, consuming it in parallel after calling {@link DoubleStream#limit(long)} may
-   * cause extra entropy to be spuriously consumed.</p>
+   * {@link #nextDouble(double, double)} to generate these numbers.</p>
    */
   @Override
   public DoubleStream doubles(final double randomNumberOrigin, final double randomNumberBound) {
-    return doubles(Long.MAX_VALUE, randomNumberOrigin, randomNumberBound);
+    return maybeParallel(
+        DoubleStream.generate(() -> nextDouble(randomNumberOrigin, randomNumberBound)));
   }
 
   /**
    * <p>Returns a stream producing an effectively unlimited number of pseudorandom doubles, each
    * between 0.0 (inclusive) and 1.0 (exclusive). This implementation uses {@link #nextDouble()} to
-   * generate these numbers.</p> <p>If the returned stream is a parallel stream, consuming it in
-   * parallel after calling {@link DoubleStream#limit(long)} may cause extra entropy to be
-   * spuriously consumed.</p>
+   * generate these numbers.</p>
    */
   @Override
   public DoubleStream doubles() {
-    return doubles(Long.MAX_VALUE);
+    return maybeParallel(DoubleStream.generate(this::nextDouble));
   }
 
   @Override
   public DoubleStream doubles(final long streamSize) {
-    return StreamSupport.doubleStream(new DoubleSupplierSpliterator(streamSize, this::nextDouble),
-        useParallelStreams());
+    return maybeParallel(DoubleStream.generate(this::nextDouble).limit(streamSize));
   }
 
   /**
@@ -360,21 +357,20 @@ public abstract class BaseRandom extends Random implements ByteArrayReseedableRa
   @Override
   public DoubleStream doubles(final long streamSize, final double randomNumberOrigin,
       final double randomNumberBound) {
-    return StreamSupport.doubleStream(new DoubleSupplierSpliterator(streamSize,
-        () -> nextDouble(randomNumberOrigin, randomNumberBound)), useParallelStreams());
+    return maybeParallel(
+        DoubleStream.generate(() -> nextDouble(randomNumberOrigin, randomNumberBound))
+            .limit(streamSize));
   }
 
   /**
    * <p>Returns a stream producing an effectively unlimited number of pseudorandom doubles that are
    * normally distributed with mean 0.0 and standard deviation 1.0. This implementation uses {@link
-   * #nextGaussian()}.</p> <p>If the returned stream is a parallel stream, consuming it in parallel
-   * after calling {@link DoubleStream#limit(long)} may cause extra entropy to be spuriously
-   * consumed.</p>
+   * #nextGaussian()}.</p>
    *
    * @return a stream of normally-distributed random doubles.
    */
   public DoubleStream gaussians() {
-    return gaussians(Long.MAX_VALUE);
+    return maybeParallel(DoubleStream.generate(this::nextGaussian));
   }
 
   /**
@@ -386,8 +382,7 @@ public abstract class BaseRandom extends Random implements ByteArrayReseedableRa
    * @return a stream of {@code streamSize} normally-distributed random doubles.
    */
   public DoubleStream gaussians(final long streamSize) {
-    return StreamSupport.doubleStream(new DoubleSupplierSpliterator(streamSize, this::nextGaussian),
-        useParallelStreams());
+    return maybeParallel(DoubleStream.generate(this::nextGaussian).limit(streamSize));
   }
 
   @Override
@@ -449,18 +444,12 @@ public abstract class BaseRandom extends Random implements ByteArrayReseedableRa
 
   @Override
   public IntStream ints(final long streamSize) {
-    return StreamSupport.intStream(new IntSupplierSpliterator(streamSize, this::nextInt),
-        useParallelStreams());
+    return maybeParallel(IntStream.generate(this::nextInt).limit(streamSize));
   }
 
-  /**
-   * <p>{@inheritDoc}</p> <p>If the returned stream is a parallel stream, consuming it in parallel
-   * after calling {@link DoubleStream#limit(long)} may cause extra entropy to be spuriously
-   * consumed.</p>
-   */
   @Override
   public IntStream ints() {
-    return ints(Long.MAX_VALUE);
+    return maybeParallel(IntStream.generate(this::nextInt));
   }
 
   /**
@@ -471,9 +460,8 @@ public abstract class BaseRandom extends Random implements ByteArrayReseedableRa
   @Override
   public IntStream ints(final long streamSize, final int randomNumberOrigin,
       final int randomNumberBound) {
-    return StreamSupport.intStream(new IntSupplierSpliterator(streamSize,
-            () -> nextInt(randomNumberOrigin, randomNumberBound)),
-        useParallelStreams());
+    return maybeParallel(
+        IntStream.generate(() -> nextInt(randomNumberOrigin, randomNumberBound)).limit(streamSize));
   }
 
   /**
@@ -509,19 +497,16 @@ public abstract class BaseRandom extends Random implements ByteArrayReseedableRa
   /**
    * <p>Returns a stream producing an effectively unlimited number of pseudorandom ints, each
    * conforming to the given origin (inclusive) and bound (exclusive). This implementation uses
-   * {@link #nextInt(int, int)} to generate these numbers.</p> <p>If the returned stream is a
-   * parallel stream, consuming it in parallel after calling {@link DoubleStream#limit(long)} may
-   * cause extra entropy to be spuriously consumed.</p>
+   * {@link #nextInt(int, int)} to generate these numbers.</p>
    */
   @Override
   public IntStream ints(final int randomNumberOrigin, final int randomNumberBound) {
-    return ints(Long.MAX_VALUE, randomNumberOrigin, randomNumberBound);
+    return maybeParallel(IntStream.generate(() -> nextInt(randomNumberOrigin, randomNumberBound)));
   }
 
   @Override
   public LongStream longs(final long streamSize) {
-    return StreamSupport.longStream(new LongSupplierSpliterator(streamSize, this::nextLong),
-        useParallelStreams());
+    return maybeParallel(LongStream.generate(this::nextLong).limit(streamSize));
   }
 
   /**
@@ -531,22 +516,19 @@ public abstract class BaseRandom extends Random implements ByteArrayReseedableRa
    */
   @Override
   public LongStream longs() {
-    return longs(Long.MAX_VALUE);
+    return maybeParallel(LongStream.generate(this::nextLong));
   }
 
   /**
    * <p>Returns a stream producing the given number of pseudorandom longs, each conforming to the
    * given origin (inclusive) and bound (exclusive). This implementation uses {@link #nextLong(long,
-   * long)} to generate these numbers.</p><p>If the returned stream is a parallel stream, consuming
-   * it in parallel after calling {@link DoubleStream#limit(long)} may cause extra entropy to be
-   * spuriously consumed.</p>
+   * long)} to generate these numbers.</p>
    */
   @Override
   public LongStream longs(final long streamSize, final long randomNumberOrigin,
       final long randomNumberBound) {
-    return StreamSupport.longStream(new LongSupplierSpliterator(streamSize,
-            () -> nextLong(randomNumberOrigin, randomNumberBound)),
-        useParallelStreams());
+    return maybeParallel(LongStream.generate(() -> nextLong(randomNumberOrigin, randomNumberBound))
+        .limit(streamSize));
   }
 
   /**
@@ -594,13 +576,12 @@ public abstract class BaseRandom extends Random implements ByteArrayReseedableRa
   /**
    * <p>Returns a stream producing an effectively unlimited number of pseudorandom longs, each
    * conforming to the given origin (inclusive) and bound (exclusive). This implementation uses
-   * {@link #nextLong(long, long)} to generate these numbers.</p> <p>If the returned stream is a
-   * parallel stream, consuming it in parallel after calling {@link DoubleStream#limit(long)} may
-   * cause extra entropy to be spuriously consumed.</p>
+   * {@link #nextLong(long, long)} to generate these numbers.</p>
    */
   @Override
   public LongStream longs(final long randomNumberOrigin, final long randomNumberBound) {
-    return longs(Long.MAX_VALUE, randomNumberOrigin, randomNumberBound);
+    return maybeParallel(
+        LongStream.generate(() -> nextLong(randomNumberOrigin, randomNumberBound)));
   }
 
   @Override
@@ -627,16 +608,6 @@ public abstract class BaseRandom extends Random implements ByteArrayReseedableRa
     }
   }
 
-  @Override
-  public void setSeed(final byte[] seed) {
-    lock.lock();
-    try {
-      setSeedInternal(seed);
-    } finally {
-      lock.unlock();
-    }
-  }
-
   /**
    * Sets the seed of this random number generator using a single long seed, if this implementation
    * supports that. If it is capable of using 64 bits or less of seed data (i.e. if {@code {@link
@@ -653,6 +624,16 @@ public abstract class BaseRandom extends Random implements ByteArrayReseedableRa
       setSeed(seedBytes);
     } else {
       setSeedInternal(seedBytes);
+    }
+  }
+
+  @Override
+  public void setSeed(final byte[] seed) {
+    lock.lock();
+    try {
+      setSeedInternal(seed);
+    } finally {
+      lock.unlock();
     }
   }
 
