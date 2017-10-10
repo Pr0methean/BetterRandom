@@ -4,6 +4,7 @@ import static io.github.pr0methean.betterrandom.util.BinaryUtils.convertBytesToL
 
 import com.google.common.base.MoreObjects.ToStringHelper;
 import io.github.pr0methean.betterrandom.seed.DefaultSeedGenerator;
+import io.github.pr0methean.betterrandom.seed.RandomSeederThread;
 import io.github.pr0methean.betterrandom.seed.SeedException;
 import io.github.pr0methean.betterrandom.seed.SeedGenerator;
 import io.github.pr0methean.betterrandom.util.BinaryUtils;
@@ -11,6 +12,7 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.util.SplittableRandom;
 import java.util.concurrent.atomic.AtomicLong;
+import javax.annotation.Nullable;
 
 /**
  * Thread-safe PRNG that wraps a {@link ThreadLocal}&lt;{@link SplittableRandom}&gt;. Reseeding this
@@ -52,11 +54,6 @@ public class SplittableRandomAdapter extends DirectSplittableRandomAdapter {
     initSubclassTransientFields();
   }
 
-  @Override
-  protected boolean useParallelStreams() {
-    return true;
-  }
-
   /**
    * Use the {@link DefaultSeedGenerator} to generate a seed for the master {@link
    * SplittableRandom}, which will be split to generate an instance for each thread.
@@ -76,6 +73,11 @@ public class SplittableRandomAdapter extends DirectSplittableRandomAdapter {
   public SplittableRandomAdapter(final long seed) {
     super(seed);
     initSubclassTransientFields();
+  }
+
+  @Override
+  protected boolean useParallelStreams() {
+    return true;
   }
 
   private void readObject(final ObjectInputStream in) throws IOException, ClassNotFoundException {
@@ -119,9 +121,30 @@ public class SplittableRandomAdapter extends DirectSplittableRandomAdapter {
     return original.add("splittableRandoms", splittableRandoms);
   }
 
+  /**
+   * Not supported, because this class uses a thread-local seed.
+   * @param thread ignored.
+   * @throws UnsupportedOperationException always.
+   */
+  @Override
+  public void setSeederThread(@Nullable RandomSeederThread thread) {
+    throw new UnsupportedOperationException("Use ReseedingSplittableRandomAdapter instead");
+  }
+
   @Override
   public byte[] getSeed() {
     return seeds.get();
+  }
+
+  /**
+   * {@inheritDoc} Applies only to the calling thread.
+   */
+  @Override
+  public void setSeed(SplittableRandomAdapter this, final byte[] seed) {
+    if (seed.length != Long.BYTES) {
+      throw new IllegalArgumentException("SplittableRandomAdapter requires an 8-byte seed");
+    }
+    setSeed(convertBytesToLong(seed));
   }
 
   /**
@@ -143,16 +166,5 @@ public class SplittableRandomAdapter extends DirectSplittableRandomAdapter {
         seeds.set(BinaryUtils.convertLongToBytes(seed));
       }
     }
-  }
-
-  /**
-   * {@inheritDoc} Applies only to the calling thread.
-   */
-  @Override
-  public void setSeed(SplittableRandomAdapter this, final byte[] seed) {
-    if (seed.length != Long.BYTES) {
-      throw new IllegalArgumentException("SplittableRandomAdapter requires an 8-byte seed");
-    }
-    setSeed(convertBytesToLong(seed));
   }
 }
