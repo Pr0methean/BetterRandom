@@ -178,6 +178,9 @@ public class ThreadLocalRandomWrapper extends RandomWrapper {
 
   @Override
   protected void setSeedInternal(byte[] seed) {
+    if (seed == null) {
+      throw new IllegalArgumentException("Seed must not be null");
+    }
     super.setSeedInternal(DUMMY_SEED);
     if (threadLocal != null) {
       getWrapped().setSeed(seed);

@@ -19,7 +19,7 @@ public class ThreadLocalRandomWrapperTest extends BaseRandomTest {
 
   private static BaseRandom createUnderlying() {
     try {
-      return new AesCounterRandom();
+      return new MersenneTwisterRandom();
     } catch (SeedException e) {
       throw new RuntimeException(e);
     }
@@ -34,7 +34,7 @@ public class ThreadLocalRandomWrapperTest extends BaseRandomTest {
   @Override
   @Test(timeOut = 15000, expectedExceptions = IllegalArgumentException.class)
   public void testSeedTooLong() throws GeneralSecurityException, SeedException {
-    createRng().setSeed(DefaultSeedGenerator.DEFAULT_SEED_GENERATOR.generateSeed(49));
+    createRng().setSeed(DefaultSeedGenerator.DEFAULT_SEED_GENERATOR.generateSeed(17));
   }
 
   @Override
