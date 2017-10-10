@@ -60,7 +60,8 @@ public class LooperThread extends Thread implements Serializable, Cloneable {
   /**
    * The name of this thread, if it has a non-default name. Held for serialization purposes.
    */
-  protected @Nullable String name = null;
+  protected @Nullable
+  String name = null;
   @SuppressWarnings("InstanceVariableMayNotBeInitializedByReadObject")
   private transient boolean alreadyTerminatedWhenDeserialized = false;
   private boolean interrupted = false;
