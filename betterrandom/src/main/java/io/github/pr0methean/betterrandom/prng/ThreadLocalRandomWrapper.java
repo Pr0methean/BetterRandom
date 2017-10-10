@@ -81,6 +81,26 @@ public class ThreadLocalRandomWrapper extends RandomWrapper {
   }
 
   @Override
+  protected boolean withProbabilityInternal(double probability) {
+    return getWrapped().withProbabilityInternal(probability);
+  }
+
+  @Override
+  public long nextLong(long bound) {
+    return getWrapped().nextLong(bound);
+  }
+
+  @Override
+  public int nextInt(int origin, int bound) {
+    return getWrapped().nextInt(origin, bound);
+  }
+
+  @Override
+  public long nextLong(long origin, long bound) {
+    return getWrapped().nextLong(origin, bound);
+  }
+
+  @Override
   public BaseRandom getWrapped() {
     return threadLocal.get();
   }
@@ -158,7 +178,7 @@ public class ThreadLocalRandomWrapper extends RandomWrapper {
 
   @Override
   protected void setSeedInternal(byte[] seed) {
-    super.setSeedInternal(seed);
+    super.setSeedInternal(DUMMY_SEED);
     if (threadLocal != null) {
       getWrapped().setSeed(seed);
     }
@@ -176,7 +196,7 @@ public class ThreadLocalRandomWrapper extends RandomWrapper {
 
   @Override
   public int getNewSeedLength() {
-    return (threadLocal == null) ? Long.BYTES // required for superclass
+    return (threadLocal == null) ? 0
         : (explicitSeedSize == null) ? getWrapped().getNewSeedLength()
             : explicitSeedSize;
   }
