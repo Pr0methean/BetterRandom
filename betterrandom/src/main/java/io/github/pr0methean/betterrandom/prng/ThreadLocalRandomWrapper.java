@@ -90,6 +90,46 @@ public class ThreadLocalRandomWrapper extends RandomWrapper {
     threadLocal = ThreadLocal.withInitial(initializer);
   }
 
+  @Override
+  public void nextBytes(byte[] bytes) {
+    getWrapped().nextBytes(bytes);
+  }
+
+  @Override
+  public int nextInt() {
+    return getWrapped().nextInt();
+  }
+
+  @Override
+  public int nextInt(int bound) {
+    return getWrapped().nextInt(bound);
+  }
+
+  @Override
+  protected long nextLongNoEntropyDebit() {
+    return getWrapped().nextLongNoEntropyDebit();
+  }
+
+  @Override
+  public boolean nextBoolean() {
+    return getWrapped().nextBoolean();
+  }
+
+  @Override
+  public float nextFloat() {
+    return getWrapped().nextFloat();
+  }
+
+  @Override
+  public double nextDouble() {
+    return getWrapped().nextDouble();
+  }
+
+  @Override
+  public double nextGaussian() {
+    return getWrapped().nextGaussian();
+  }
+
   /**
    * Not supported, because this class uses a thread-local seed.
    *
