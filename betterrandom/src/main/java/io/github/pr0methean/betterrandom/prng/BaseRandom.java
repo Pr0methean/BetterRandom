@@ -18,6 +18,7 @@ import io.github.pr0methean.betterrandom.util.LogPreFormatter;
 import java.io.IOException;
 import java.io.InvalidObjectException;
 import java.io.ObjectInputStream;
+import java.util.Collections;
 import java.util.List;
 import java.util.Random;
 import java.util.concurrent.atomic.AtomicLong;
@@ -346,7 +347,11 @@ public abstract class BaseRandom extends Random implements ByteArrayReseedableRa
 
   @Override
   public DoubleStream doubles(final long streamSize) {
-    return maybeParallel(DoubleStream.generate(this::nextDouble).limit(streamSize));
+    return streamOfSize(streamSize).mapToDouble(ignored -> nextDouble());
+  }
+
+  private LongStream streamOfSize(long streamSize) {
+    return maybeParallel(LongStream.range(0, streamSize).unordered());
   }
 
   /**
@@ -357,9 +362,8 @@ public abstract class BaseRandom extends Random implements ByteArrayReseedableRa
   @Override
   public DoubleStream doubles(final long streamSize, final double randomNumberOrigin,
       final double randomNumberBound) {
-    return maybeParallel(
-        DoubleStream.generate(() -> nextDouble(randomNumberOrigin, randomNumberBound))
-            .limit(streamSize));
+    return streamOfSize(streamSize)
+        .mapToDouble(ignored -> nextDouble(randomNumberOrigin, randomNumberBound));
   }
 
   /**
@@ -382,7 +386,7 @@ public abstract class BaseRandom extends Random implements ByteArrayReseedableRa
    * @return a stream of {@code streamSize} normally-distributed random doubles.
    */
   public DoubleStream gaussians(final long streamSize) {
-    return maybeParallel(DoubleStream.generate(this::nextGaussian).limit(streamSize));
+    return streamOfSize(streamSize).mapToDouble(ignored -> nextGaussian());
   }
 
   @Override
@@ -444,7 +448,7 @@ public abstract class BaseRandom extends Random implements ByteArrayReseedableRa
 
   @Override
   public IntStream ints(final long streamSize) {
-    return maybeParallel(IntStream.generate(this::nextInt).limit(streamSize));
+    return streamOfSize(streamSize).mapToInt(ignored -> nextInt());
   }
 
   @Override
@@ -460,8 +464,7 @@ public abstract class BaseRandom extends Random implements ByteArrayReseedableRa
   @Override
   public IntStream ints(final long streamSize, final int randomNumberOrigin,
       final int randomNumberBound) {
-    return maybeParallel(
-        IntStream.generate(() -> nextInt(randomNumberOrigin, randomNumberBound)).limit(streamSize));
+    return streamOfSize(streamSize).mapToInt(ignored -> nextInt(randomNumberOrigin, randomNumberBound));
   }
 
   /**
@@ -506,7 +509,7 @@ public abstract class BaseRandom extends Random implements ByteArrayReseedableRa
 
   @Override
   public LongStream longs(final long streamSize) {
-    return maybeParallel(LongStream.generate(this::nextLong).limit(streamSize));
+    return streamOfSize(streamSize).map(ignored -> nextLong());
   }
 
   /**
@@ -527,8 +530,7 @@ public abstract class BaseRandom extends Random implements ByteArrayReseedableRa
   @Override
   public LongStream longs(final long streamSize, final long randomNumberOrigin,
       final long randomNumberBound) {
-    return maybeParallel(LongStream.generate(() -> nextLong(randomNumberOrigin, randomNumberBound))
-        .limit(streamSize));
+    return streamOfSize(streamSize).map(ignored -> nextLong(randomNumberOrigin, randomNumberBound));
   }
 
   /**
