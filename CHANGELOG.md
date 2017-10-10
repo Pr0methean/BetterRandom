@@ -1,3 +1,6 @@
+# 1.0.2
+* Fixed a crash on Java 9 when reseeding an AesCounterRandom.
+
 # 1.0.1
 * Fixed a bug involving uncaught-exception handlers for a `LooperThread`.
 * Added several useful new constructor overloads.
