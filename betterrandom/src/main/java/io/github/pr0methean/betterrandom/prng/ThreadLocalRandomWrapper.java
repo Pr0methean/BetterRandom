@@ -188,6 +188,11 @@ public class ThreadLocalRandomWrapper extends RandomWrapper {
   }
 
   @Override
+  public boolean preferSeedWithLong() {
+    return getWrapped().preferSeedWithLong();
+  }
+
+  @Override
   protected void recordEntropySpent(long bits) {
     getWrapped().recordEntropySpent(bits);
   }
