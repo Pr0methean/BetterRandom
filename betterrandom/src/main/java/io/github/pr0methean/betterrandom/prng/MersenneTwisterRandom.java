@@ -123,7 +123,8 @@ public class MersenneTwisterRandom extends BaseRandom {
   protected void setSeedInternal(
       MersenneTwisterRandom this, final byte[] seed) {
     if ((seed == null) || (seed.length != SEED_SIZE_BYTES)) {
-      throw new IllegalArgumentException("Mersenne Twister RNG requires a 128-bit (16-byte) seed.");
+      throw new IllegalArgumentException("Mersenne Twister RNG requires a 128-bit (16-byte) seed;"
+          + "input seed is " + BinaryUtils.convertBytesToHexString(seed));
     }
     super.setSeedInternal(seed);
     final int[] seedInts = BinaryUtils.convertBytesToInts(seed);
