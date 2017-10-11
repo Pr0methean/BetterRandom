@@ -18,6 +18,7 @@ package io.github.pr0methean.betterrandom.util;
 import static java.lang.ThreadLocal.withInitial;
 
 import java.nio.ByteBuffer;
+import javax.annotation.Nullable;
 
 /**
  * Utility methods for working with binary and hex data.
@@ -49,7 +50,10 @@ public enum BinaryUtils {
    * @param data An array of bytes to convert to a String.
    * @return A hexadecimal String representation of the data.
    */
-  public static String convertBytesToHexString(final byte[] data) {
+  public static String convertBytesToHexString(@Nullable final byte[] data) {
+    if (data == null) {
+      return "null";
+    }
     final StringBuilder buffer = new StringBuilder(data.length * 2);
     for (final byte b : data) {
       buffer.append(HEX_CHARS[(b >>> 4) & 0x0F]);
