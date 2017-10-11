@@ -12,8 +12,9 @@ fi
 mvn ${MAYBE_ANDROID_FLAG} clean jacoco:prepare-agent test jacoco:report -e
 STATUS=$?
 if [ "$STATUS" = 0 ]; then
-  if (([ "$TRAVIS" = "true" ] && [ "$TRAVIS_JDK_VERSION" != "oraclejdk9" ]) || [ "$APPVEYOR" != "" ] ); then
-    if [ "$TRAVIS" = "true" ]; then
+  PUSH_JACOCO="true"
+  if [ "$TRAVIS" = "true" ]; then
+    if [ "$TRAVIS_JDK_VERSION" != "oraclejdk9" ]; then
       # Coveralls doesn't seem to work in non-.NET Appveyor yet
       # so we have to hope Appveyor pushes its Jacoco reports before Travis does! :(
       mvn coveralls:report
@@ -21,15 +22,19 @@ if [ "$STATUS" = 0 ]; then
       # Send coverage to Codacy
       wget 'https://github.com/codacy/codacy-coverage-reporter/releases/download/2.0.0/codacy-coverage-reporter-2.0.0-assembly.jar'
       java -jar codacy-coverage-reporter-2.0.0-assembly.jar -l Java -r target/site/jacoco/jacoco.xml
-      COMMIT="$TRAVIS_COMMIT"
-      JOB_ID="travis_$TRAVIS_JOB_NUMBER"
-      git config --global user.email "travis@travis-ci.org"
-    else
-      GH_TOKEN=`powershell 'Write-Host ($env:access_token) -NoNewLine' `
-      COMMIT="$APPVEYOR_REPO_COMMIT"
-      JOB_ID="appveyor_$APPVEYOR_JOB_NUMBER"
-      git config --global user.email "appveyor@appveyor.com"
     fi
+    COMMIT="$TRAVIS_COMMIT"
+    JOB_ID="travis_$TRAVIS_JOB_NUMBER"
+    git config --global user.email "travis@travis-ci.org"
+  elif [ "$APPVEYOR" != "" ]; then
+    GH_TOKEN=`powershell 'Write-Host ($env:access_token) -NoNewLine' `
+    COMMIT="$APPVEYOR_REPO_COMMIT"
+    JOB_ID="appveyor_$APPVEYOR_JOB_NUMBER"
+    git config --global user.email "appveyor@appveyor.com"
+  else
+    PUSH_JACOCO="false"
+  fi
+  if [ "$PUSH_JACOCO" = "true" ]; then
     git clone https://github.com/Pr0methean/betterrandom-coverage.git
     cd betterrandom-coverage
     mkdir -p "$COMMIT"
