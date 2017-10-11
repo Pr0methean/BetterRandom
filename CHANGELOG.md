@@ -1,3 +1,10 @@
+# 1.1
+* Random-number streams are no longer falsely advertised as parallel.
+* Fixed a crash when reseeding a `RandomWrapper` whose underlying `Random` is a
+  `ByteArrayReseedableRandom` that doesn't accept 8-byte seeds.
+* Eliminated `io.github.pr0methean.betterrandom.util.spliterator`.
+* Reduced the memory and class-loading footprint of random-number streams.
+
 # 1.0.2
 * Fixed a crash on Java 9 when reseeding an AesCounterRandom.
 
