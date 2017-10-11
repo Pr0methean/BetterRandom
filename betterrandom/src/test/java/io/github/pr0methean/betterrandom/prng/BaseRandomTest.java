@@ -209,7 +209,7 @@ public abstract class BaseRandomTest {
         RandomSeederThread.getInstance(DefaultSeedGenerator.DEFAULT_SEED_GENERATOR));
     final byte[] oldSeed = rng.getSeed();
     rng.nextBytes(new byte[oldSeed.length + 1]);
-    Thread.sleep(3000 + (oldSeed.length / 2));
+    Thread.sleep(1000 + (oldSeed.length / 2));
     final byte[] newSeed = rng.getSeed();
     assertFalse(Arrays.equals(oldSeed, newSeed));
     rng.setSeederThread(null);
