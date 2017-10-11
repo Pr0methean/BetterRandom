@@ -670,7 +670,7 @@ public abstract class BaseRandom extends Random implements ByteArrayReseedableRa
 
   @Override
   public boolean preferSeedWithLong() {
-    return getNewSeedLength() <= 8;
+    return getNewSeedLength() <= Long.BYTES;
   }
 
   /**
