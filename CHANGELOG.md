@@ -1,5 +1,7 @@
 # 1.1.0
 * Random-number streams are no longer falsely advertised as parallel.
+* Added `ThreadLocalRandomWrapper`, which is a thread-local PRNG backed by any
+  `Supplier<BaseRandom>`. It does create parallel streams.
 * Fixed a crash when reseeding a `RandomWrapper` whose underlying `Random` is a
   `ByteArrayReseedableRandom` that doesn't accept 8-byte seeds.
 * Eliminated `io.github.pr0methean.betterrandom.util.spliterator`.
