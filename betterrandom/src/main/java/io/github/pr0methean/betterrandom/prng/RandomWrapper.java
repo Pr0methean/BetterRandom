@@ -50,6 +50,11 @@ public class RandomWrapper extends BaseRandom {
     this(DefaultSeedGenerator.DEFAULT_SEED_GENERATOR.generateSeed(Long.BYTES));
   }
 
+  @Override
+  protected boolean useParallelStreams() {
+    return getWrapped().longs().isParallel();
+  }
+
   /**
    * Wraps a {@link Random} and seeds it using the provided seedArray generation strategy.
    *
