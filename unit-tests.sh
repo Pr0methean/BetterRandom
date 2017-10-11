@@ -32,12 +32,10 @@ if [ "$STATUS" = 0 ]; then
     git commit -m "Coverage report from job $JOB_ID"
     git remote add originauth "https://${GH_TOKEN}@github.com/Pr0methean/betterrandom-coverage.git"
     git push --set-upstream originauth master
-    mv ../../travis-resources/jacoco_merge.xml $COMMIT/pom.xml
     while [ ! $? ]; do
       git pull --commit  # Merge
       git push
     done
-    mvn jacoco:merge jacoco:report
     mv target/* ../../target
     cd ../..
     if [ "$TRAVIS" = "true" ]; then
