@@ -236,7 +236,9 @@ public class RandomWrapper extends BaseRandom {
 
   @Override
   public boolean preferSeedWithLong() {
-    return true;
+    Random wrapped = getWrapped();
+    return !(wrapped instanceof ByteArrayReseedableRandom) || ((ByteArrayReseedableRandom) wrapped)
+        .preferSeedWithLong();
   }
 
   /** */
