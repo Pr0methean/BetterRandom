@@ -4,8 +4,11 @@ if [ "$ANDROID" = 1 ]; then
 else
   MAYBE_ANDROID_FLAG=""
 fi
+if ([ "$TRAVIS_JDK_VERSION" = "oraclejdk9" ] || [ "$TRAVIS_JDK_VERSION" = "openjdk9" ]); then
+  JAVA9="true"
+fi
 cd betterrandom
-if [ "$TRAVIS_JDK_VERSION" = "oraclejdk9" ]; then
+if [ $JAVA9 = "true" ]; then
   mv pom9.xml pom.xml
 fi
 # Coverage test
@@ -14,7 +17,7 @@ STATUS=$?
 if [ "$STATUS" = 0 ]; then
   PUSH_JACOCO="true"
   if [ "$TRAVIS" = "true" ]; then
-    if [ "$TRAVIS_JDK_VERSION" != "oraclejdk9" ]; then
+    if [ $JAVA9 != "true" ]; then
       # Coveralls doesn't seem to work in non-.NET Appveyor yet
       # so we have to hope Appveyor pushes its Jacoco reports before Travis does! :(
       mvn coveralls:report

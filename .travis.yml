@@ -10,6 +10,11 @@ jobs:
   include:
   - language: java
     os: linux
+    jdk: openjdk9
+    env: OP=unit-tests
+    stage: unit-tests
+  - language: java
+    os: linux
     jdk: oraclejdk9
     env: OP=unit-tests
     stage: unit-tests
@@ -58,6 +63,11 @@ jobs:
     jdk: openjdk8
     env: OP=unit-tests ANDROID=1
     stage: unit-tests
+  - language: java
+    os: linux
+    jdk: openjdk9
+    env: OP=benchmark
+    stage: benchmark
   - language: java
     os: linux
     jdk: oraclejdk9
