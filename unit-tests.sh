@@ -15,7 +15,7 @@ fi
 mvn ${MAYBE_ANDROID_FLAG} clean jacoco:prepare-agent test jacoco:report -e
 STATUS=$?
 if [ "$STATUS" = 0 ]; then
-  bash <(curl -s https://codecov.io/bash) -t repository-upload-token
+  source <(curl -s https://codecov.io/bash) -t repository-upload-token
   PUSH_JACOCO="true"
   if [ "$TRAVIS" = "true" ]; then
     if [ $JAVA9 != "true" ]; then
