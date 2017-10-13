@@ -51,9 +51,10 @@ if [ "$STATUS" = 0 ]; then
       git pull --commit  # Merge
       git push
     done
+    mv *.exec ../../target/
     cd ../..
   fi
-  mvn -DskipTests ${MAYBE_ANDROID_FLAG} package && (
+  mvn -DskipTests ${MAYBE_ANDROID_FLAG} jacoco:report-aggregate package && (
     # Post-Proguard test (verifies Proguard settings)
     mvn ${MAYBE_ANDROID_FLAG} test -e
   )
