@@ -54,7 +54,7 @@ if [ "$STATUS" = 0 ]; then
     mv *.exec ../../target/
     cd ../..
   fi
-  mvn -DskipTests ${MAYBE_ANDROID_FLAG} jacoco:report-aggregate package && (
+  mvn -DskipTests -Dmaven.test.skip=true ${MAYBE_ANDROID_FLAG} jacoco:report-aggregate package && (
     # Post-Proguard test (verifies Proguard settings)
     mvn ${MAYBE_ANDROID_FLAG} test -e
   )
