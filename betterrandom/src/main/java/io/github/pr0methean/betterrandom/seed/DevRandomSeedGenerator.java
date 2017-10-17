@@ -40,6 +40,7 @@ public enum DevRandomSeedGenerator implements SeedGenerator {
   private static final String DEV_RANDOM_STRING = "/dev/random";
   private static final File DEV_RANDOM = new File(DEV_RANDOM_STRING);
   private static final AtomicBoolean DEV_RANDOM_DOES_NOT_EXIST = new AtomicBoolean(false);
+  private static FileInputStream inputStream;
 
   /**
    * @throws SeedException if {@literal /dev/random} does not exist or is not accessible.
@@ -50,11 +51,14 @@ public enum DevRandomSeedGenerator implements SeedGenerator {
       throw new SeedException(DEV_RANDOM_STRING + " did not exist when previously checked for");
     }
 
-    try (FileInputStream file = new FileInputStream(DEV_RANDOM)) {
+    try {
+      if (inputStream == null) {
+        inputStream = new FileInputStream(DEV_RANDOM);
+      }
       final int length = randomSeed.length;
       int count = 0;
       while (count < length) {
-        final int bytesRead = file.read(randomSeed, count, length - count);
+        final int bytesRead = inputStream.read(randomSeed, count, length - count);
         if (bytesRead == -1) {
           throw new SeedException("EOF encountered reading random data.");
         }
