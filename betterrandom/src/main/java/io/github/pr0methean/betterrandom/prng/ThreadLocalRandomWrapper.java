@@ -65,12 +65,12 @@ public class ThreadLocalRandomWrapper extends RandomWrapper {
    * can be constructed from a {@code long} seed into a fully-concurrent one.
    *
    * @param legacyCreator a function that provides the {@link Random} that underlies the
-   *     returned wrapper on each thread.
+   *     returned wrapper on each thread, taking a seed as input.
+   * @param seedGenerator the seed generator whose output will be fed to {@code legacyCreator}.
    * @return a ThreadLocalRandomWrapper decorating instances created by {@code legacyCreator}.
-   * @throws SeedException should never happen.
    */
   public static ThreadLocalRandomWrapper wrapLegacy(
-      LongFunction<Random> legacyCreator, SeedGenerator seedGenerator) throws SeedException {
+      LongFunction<Random> legacyCreator, SeedGenerator seedGenerator) {
     return new ThreadLocalRandomWrapper(Long.BYTES, seedGenerator, bytes ->
         new RandomWrapper(legacyCreator.apply(BinaryUtils.convertBytesToLong(bytes))));
   }
