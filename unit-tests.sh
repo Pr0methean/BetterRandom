@@ -17,7 +17,7 @@ STATUS=$?
 if [ "$STATUS" = 0 ]; then
   PUSH_JACOCO="true"
   if [ "$TRAVIS" = "true" ]; then
-    if [ $JAVA9 != "true" ]; then
+    if [ "$JAVA9" != "true" ]; then
       # Coveralls doesn't seem to work in non-.NET Appveyor yet
       # so we have to hope Appveyor pushes its Jacoco reports before Travis does! :(
       mvn coveralls:report
