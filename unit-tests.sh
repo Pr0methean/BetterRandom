@@ -30,9 +30,9 @@ if [ "$STATUS" = 0 ]; then
     JOB_ID="travis_$TRAVIS_JOB_NUMBER"
     git config --global user.email "travis@travis-ci.org"
   elif [ "$APPVEYOR" != "" ]; then
-    GH_TOKEN=`powershell 'Write-Host ($env:access_token) -NoNewLine' `
+    GH_TOKEN=$(powershell 'Write-Host ($env:access_token) -NoNewLine')
     COMMIT="$APPVEYOR_REPO_COMMIT"
-    JOB_ID="appveyor_$APPVEYOR_JOB_NUMBER"
+    JOB_ID="appveyor_$(date +%Y%m%d)_$APPVEYOR_JOB_NUMBER"
     git config --global user.email "appveyor@appveyor.com"
   else
     PUSH_JACOCO="false"
