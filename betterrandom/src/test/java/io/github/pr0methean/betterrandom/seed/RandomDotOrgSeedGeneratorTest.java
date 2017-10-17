@@ -19,6 +19,7 @@ import static io.github.pr0methean.betterrandom.TestUtils.canRunRandomDotOrgLarg
 import static io.github.pr0methean.betterrandom.TestUtils.isNotAppveyor;
 import static org.testng.Assert.assertEquals;
 
+import java.util.UUID;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
@@ -26,10 +27,16 @@ import org.testng.annotations.Test;
  * Unit test for the seed generator that connects to random.org to get seed data.
  *
  * @author Daniel Dyer
+ * @author Chris Hennick
  */
 public class RandomDotOrgSeedGeneratorTest {
 
   public static final int SMALL_REQUEST_SIZE = 32;
+
+  private static void setApiKey() {
+    String apiKeyString = System.getenv("RANDOM_DOT_ORG_KEY");
+    RandomDotOrgSeedGenerator.setApiKey((apiKeyString == null) ? null : UUID.fromString(apiKeyString));
+  }
 
   @BeforeClass
   public void setUp() {
@@ -39,10 +46,17 @@ public class RandomDotOrgSeedGeneratorTest {
   }
 
   @Test(timeOut = 120000)
-  public void testGenerator() throws SeedException {
+  public void testGeneratorOldApi() throws SeedException {
     if (isNotAppveyor()) {
+      RandomDotOrgSeedGenerator.setApiKey(null);
       SeedTestUtils.testGenerator(RandomDotOrgSeedGenerator.RANDOM_DOT_ORG_SEED_GENERATOR);
     }
+  }
+
+  @Test(timeOut = 120000)
+  public void testGeneratorNewApi() throws SeedException {
+    setApiKey();
+    SeedTestUtils.testGenerator(RandomDotOrgSeedGenerator.RANDOM_DOT_ORG_SEED_GENERATOR);
   }
 
   /**
@@ -51,12 +65,11 @@ public class RandomDotOrgSeedGeneratorTest {
    */
   @Test(timeOut = 120000)
   public void testLargeRequest() throws SeedException {
-    if (canRunRandomDotOrgLargeTest()) {
-      // Request more bytes than are cached internally.
-      final int seedLength = 1025;
-      final SeedGenerator generator = RandomDotOrgSeedGenerator.RANDOM_DOT_ORG_SEED_GENERATOR;
-      assertEquals(generator.generateSeed(seedLength).length, seedLength,
-          "Failed to generate seed of length " + seedLength);
-    }
+    setApiKey();
+    // Request more bytes than are cached internally.
+    final int seedLength = 1025;
+    final SeedGenerator generator = RandomDotOrgSeedGenerator.RANDOM_DOT_ORG_SEED_GENERATOR;
+    assertEquals(generator.generateSeed(seedLength).length, seedLength,
+        "Failed to generate seed of length " + seedLength);
   }
 }
