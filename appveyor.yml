@@ -12,6 +12,8 @@ environment:
       RUNNER: cygwin64
   access_token:
     secure: UrMOuu5SzFyDvmnIwDu4EJol6YwyLJJ3yAAvA8URK7x8cmssL4106Wr8MmS01GGL
+  random_dot_org_key:
+    secure: oEzLHkQe7i+1TVfjGPzZi9p+Cry5p9zEbKPpgEz59prO7kfFakO1DDQNUFA1wEpz
 install:
   # Log versions for debugging
   - java -version
