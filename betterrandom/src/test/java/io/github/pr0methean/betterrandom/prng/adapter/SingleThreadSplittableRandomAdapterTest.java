@@ -20,14 +20,14 @@ public class SingleThreadSplittableRandomAdapterTest extends BaseRandomTest {
    * {@inheritDoc} Overridden in subclasses, so that subclassing the test can test the subclasses.
    */
   @Override
-  protected BaseSplittableRandomAdapter tryCreateRng() throws SeedException {
+  protected BaseSplittableRandomAdapter createRng() throws SeedException {
     return new SingleThreadSplittableRandomAdapter(
         DefaultSeedGenerator.DEFAULT_SEED_GENERATOR);
   }
 
   @Override
   protected BaseRandom createRng(final byte[] seed) throws SeedException {
-    final BaseSplittableRandomAdapter adapter = tryCreateRng();
+    final BaseSplittableRandomAdapter adapter = createRng();
     adapter.setSeed(seed);
     return adapter;
   }
@@ -40,7 +40,7 @@ public class SingleThreadSplittableRandomAdapterTest extends BaseRandomTest {
   @Override
   @Test
   public void testSerializable() throws SeedException {
-    final BaseSplittableRandomAdapter adapter = tryCreateRng();
+    final BaseSplittableRandomAdapter adapter = createRng();
     // May change when serialized and deserialized, but deserializing twice should yield same object
     // and deserialization should be idempotent
     final BaseSplittableRandomAdapter adapter2 = CloneViaSerialization.clone(adapter);

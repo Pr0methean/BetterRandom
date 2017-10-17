@@ -14,7 +14,7 @@ import org.testng.annotations.Test;
 public class ReseedingSplittableRandomAdapterTest extends SingleThreadSplittableRandomAdapterTest {
 
   @Override
-  protected ReseedingSplittableRandomAdapter tryCreateRng() throws SeedException {
+  protected ReseedingSplittableRandomAdapter createRng() throws SeedException {
     return ReseedingSplittableRandomAdapter.getDefaultInstance();
   }
 
@@ -34,7 +34,7 @@ public class ReseedingSplittableRandomAdapterTest extends SingleThreadSplittable
 
   @Override
   public void testSerializable() throws SeedException {
-    final BaseSplittableRandomAdapter adapter = tryCreateRng();
+    final BaseSplittableRandomAdapter adapter = createRng();
     assertEquals(adapter, CloneViaSerialization.clone(adapter));
   }
 

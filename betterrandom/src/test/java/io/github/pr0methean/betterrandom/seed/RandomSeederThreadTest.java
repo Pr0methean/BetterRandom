@@ -53,7 +53,7 @@ public class RandomSeederThreadTest {
     thread.remove(prng);
     thread.stopIfEmpty();
     Thread.sleep(1000);
-    assertEquals(State.TERMINATED, thread.getState());
+    assertEquals(thread.getState(), State.TERMINATED);
   }
 
   @Test

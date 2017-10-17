@@ -610,6 +610,16 @@ public abstract class BaseRandom extends Random implements ByteArrayReseedableRa
     }
   }
 
+  @Override
+  public void setSeed(final byte[] seed) {
+    lock.lock();
+    try {
+      setSeedInternal(seed);
+    } finally {
+      lock.unlock();
+    }
+  }
+
   /**
    * Sets the seed of this random number generator using a single long seed, if this implementation
    * supports that. If it is capable of using 64 bits or less of seed data (i.e. if {@code {@link
@@ -626,16 +636,6 @@ public abstract class BaseRandom extends Random implements ByteArrayReseedableRa
       setSeed(seedBytes);
     } else {
       setSeedInternal(seedBytes);
-    }
-  }
-
-  @Override
-  public void setSeed(final byte[] seed) {
-    lock.lock();
-    try {
-      setSeedInternal(seed);
-    } finally {
-      lock.unlock();
     }
   }
 
@@ -770,11 +770,7 @@ public abstract class BaseRandom extends Random implements ByteArrayReseedableRa
     }
     try {
       if (seed == null) {
-        try {
-          seed = DefaultSeedGenerator.DEFAULT_SEED_GENERATOR.generateSeed(getNewSeedLength());
-        } catch (final SeedException e) {
-          throw new RuntimeException(e);
-        }
+        seed = DefaultSeedGenerator.DEFAULT_SEED_GENERATOR.generateSeed(getNewSeedLength());
       }
       if (entropyBits == null) {
         entropyBits = new AtomicLong(seed.length * 8L);
