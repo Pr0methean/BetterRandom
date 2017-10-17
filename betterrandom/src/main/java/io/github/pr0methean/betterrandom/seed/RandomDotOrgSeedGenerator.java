@@ -191,6 +191,7 @@ public enum RandomDotOrgSeedGenerator implements SeedGenerator {
       } else {
         // Use JSON API.
         HttpsURLConnection postRequest = (HttpsURLConnection) JSON_REQUEST_URL.openConnection();
+        postRequest.setDoOutput(true);
         postRequest.setRequestMethod("POST");
         postRequest.setRequestProperty("User-Agent", USER_AGENT);
         try (OutputStream out = postRequest.getOutputStream()) {
