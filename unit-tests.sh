@@ -7,6 +7,9 @@ fi
 if ([ "$TRAVIS_JDK_VERSION" = "oraclejdk9" ] || [ "$TRAVIS_JDK_VERSION" = "openjdk9" ]); then
   JAVA9="true"
 fi
+if [ "$APPVEYOR" != "" ]; then
+  RANDOM_DOT_ORG_KEY=$(powershell 'Write-Host ($env:random_dot_org_key) -NoNewLine')
+fi
 cd betterrandom
 if [ "$JAVA9" = "true" ]; then
   mv pom9.xml pom.xml
