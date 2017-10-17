@@ -51,11 +51,6 @@ public class RandomWrapper extends BaseRandom {
     this(DefaultSeedGenerator.DEFAULT_SEED_GENERATOR.generateSeed(Long.BYTES));
   }
 
-  @Override
-  protected boolean useParallelStreams() {
-    return haveParallelStreams;
-  }
-
   /**
    * Wraps a {@link Random} and seeds it using the provided seedArray generation strategy.
    *
@@ -117,6 +112,11 @@ public class RandomWrapper extends BaseRandom {
   private static byte[] getSeedOrDummy(final Random wrapped) {
     return (wrapped instanceof RepeatableRandom) ? ((RepeatableRandom) wrapped).getSeed()
         : DUMMY_SEED;
+  }
+
+  @Override
+  protected boolean useParallelStreams() {
+    return haveParallelStreams;
   }
 
   @Override
@@ -247,7 +247,7 @@ public class RandomWrapper extends BaseRandom {
 
   @Override
   public boolean preferSeedWithLong() {
-    Random wrapped = getWrapped();
+    final Random wrapped = getWrapped();
     return !(wrapped instanceof ByteArrayReseedableRandom) || ((ByteArrayReseedableRandom) wrapped)
         .preferSeedWithLong();
   }

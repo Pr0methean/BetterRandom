@@ -1,6 +1,5 @@
 package io.github.pr0methean.betterrandom.prng;
 
-import io.github.pr0methean.betterrandom.seed.SeedException;
 import java.security.NoSuchAlgorithmException;
 import javax.crypto.Cipher;
 
@@ -24,11 +23,7 @@ public class AesCounterRandom384Test extends AesCounterRandom256Test {
   @Override
   public BaseRandom createRng() {
     if (UNLIMITED_STRENGTH_CRYPTO) {
-      try {
-        return new AesCounterRandom(48);
-      } catch (final SeedException e) {
-        throw new RuntimeException(e);
-      }
+      return new AesCounterRandom(48);
     } else {
       return super.createRng();
     }

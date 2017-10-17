@@ -88,7 +88,7 @@ public class RandomWrapperSecureRandomTest extends BaseRandomTest {
   }
 
   @Override
-  protected BaseRandom tryCreateRng() throws SeedException {
+  protected BaseRandom createRng() throws SeedException {
     final RandomWrapper wrapper = createRngInternal();
     wrapper.setSeed(SEED_GEN.nextLong());
     return wrapper;

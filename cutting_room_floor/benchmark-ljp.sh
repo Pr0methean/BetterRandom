@@ -5,9 +5,9 @@ else
   MAYBE_ANDROID_FLAG=""
 fi
 cd betterrandom
-mvn -DskipTests $MAYBE_ANDROID_FLAG clean package proguard:proguard install &&\
+mvn -DskipTests ${MAYBE_ANDROID_FLAG} clean package proguard:proguard install &&\
 cd ../benchmark &&\
-mvn -DskipTests $MAYBE_ANDROID_FLAG clean package &&\
+mvn -DskipTests ${MAYBE_ANDROID_FLAG} clean package &&\
 cd target &&\
 java -jar benchmarks.jar -f 1 -t 1 -foe true -v EXTRA \
     -jvmArgsPrepend "-agentpath:/home/ubuntu/lightweight-java-profiler/build-64/liblagent.so" 2>&1|\

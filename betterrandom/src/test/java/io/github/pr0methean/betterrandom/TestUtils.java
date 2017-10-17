@@ -22,6 +22,7 @@ public enum TestUtils {
    * @param test The consumer to pass the instances to.
    * @param <T> {@code clazz} as a type.
    */
+  @SuppressWarnings("ObjectAllocationInLoop")
   public static <T> void testAllPublicConstructors(final Class<T> clazz,
       final Map<Class<?>, Object> params,
       final Consumer<T> test) {

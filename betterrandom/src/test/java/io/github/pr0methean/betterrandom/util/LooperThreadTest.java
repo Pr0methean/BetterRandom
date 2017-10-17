@@ -82,8 +82,8 @@ public class LooperThreadTest {
   public void testSerializable_notStarted() {
     final LooperThread thread = new SkeletonLooperThread();
     final LooperThread copy = CloneViaSerialization.clone(thread);
-    assertNotSame(thread, copy);
-    assertEquals(State.NEW, copy.getState());
+    assertNotSame(copy, thread);
+    assertEquals(copy.getState(), State.NEW);
   }
 
   @Test
@@ -95,8 +95,8 @@ public class LooperThreadTest {
     } catch (final InterruptedException expected) {
     }
     final LooperThread copy = CloneViaSerialization.clone(thread);
-    assertNotSame(thread, copy);
-    assertEquals(State.TERMINATED, copy.getState());
+    assertNotSame(copy, thread);
+    assertEquals(copy.getState(), State.TERMINATED);
     try {
       copy.start();
       fail("Shouldn't be able to start a thread that's already terminated");
@@ -135,12 +135,12 @@ public class LooperThreadTest {
     assertNotSame(copy, thread);
     assertTrue(copy.getContextClassLoader() instanceof SerializableClassLoader);
     assertTrue(copy.getUncaughtExceptionHandler() instanceof SerializableUncaughtExceptionHandler);
-    assertEquals(2, copy.getPriority());
+    assertEquals(copy.getPriority(), 2);
     assertTrue(copy.isDaemon());
-    assertEquals(THREAD_NAME, copy.getName());
+    assertEquals(copy.getName(), THREAD_NAME);
     assertTrue(copy.getThreadGroup() instanceof SerializableThreadGroup);
-    assertEquals(GROUP_NAME, copy.getThreadGroup().getName());
-    assertEquals(STACK_SIZE, THREAD_STACK_SIZE.get(copy));
+    assertEquals(copy.getThreadGroup().getName(), GROUP_NAME);
+    assertEquals(THREAD_STACK_SIZE.get(copy), STACK_SIZE);
     shouldThrow.set(true);
     copy.start();
     copy.join();

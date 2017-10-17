@@ -55,13 +55,8 @@ public class ThreadLocalRandomWrapper extends RandomWrapper {
       Function<byte[], BaseRandom> creator) throws SeedException {
     super(0);
     explicitSeedSize = seedSize;
-    initializer = (Serializable & Supplier<BaseRandom>) (() -> {
-      try {
-        return creator.apply(seedGenerator.generateSeed(seedSize));
-      } catch (SeedException e) {
-        throw new RuntimeException(e);
-      }
-    });
+    initializer = (Serializable & Supplier<BaseRandom>) (() -> creator
+        .apply(seedGenerator.generateSeed(seedSize)));
     threadLocal = ThreadLocal.withInitial(initializer);
   }
 

@@ -34,7 +34,7 @@ public class SplittableRandomAdapterTest extends SingleThreadSplittableRandomAda
   }
 
   @Override
-  protected SplittableRandomAdapter tryCreateRng() throws SeedException {
+  protected SplittableRandomAdapter createRng() throws SeedException {
     return new SplittableRandomAdapter(DefaultSeedGenerator.DEFAULT_SEED_GENERATOR);
   }
 

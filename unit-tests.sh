@@ -8,7 +8,7 @@ if ([ "$TRAVIS_JDK_VERSION" = "oraclejdk9" ] || [ "$TRAVIS_JDK_VERSION" = "openj
   JAVA9="true"
 fi
 cd betterrandom
-if [ $JAVA9 = "true" ]; then
+if [ ${JAVA9} = "true" ]; then
   mv pom9.xml pom.xml
 fi
 # Coverage test
@@ -17,7 +17,7 @@ STATUS=$?
 if [ "$STATUS" = 0 ]; then
   PUSH_JACOCO="true"
   if [ "$TRAVIS" = "true" ]; then
-    if [ $JAVA9 != "true" ]; then
+    if [ ${JAVA9} != "true" ]; then
       # Coveralls doesn't seem to work in non-.NET Appveyor yet
       # so we have to hope Appveyor pushes its Jacoco reports before Travis does! :(
       mvn coveralls:report

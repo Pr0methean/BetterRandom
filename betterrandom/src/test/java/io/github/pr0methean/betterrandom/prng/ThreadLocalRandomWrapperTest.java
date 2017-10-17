@@ -17,14 +17,6 @@ import org.testng.annotations.Test;
 
 public class ThreadLocalRandomWrapperTest extends BaseRandomTest {
 
-  private static BaseRandom createUnderlying() {
-    try {
-      return new MersenneTwisterRandom();
-    } catch (SeedException e) {
-      throw new RuntimeException(e);
-    }
-  }
-
   @Override
   public void testSerializable() throws IOException, ClassNotFoundException, SeedException {
     // May change after serialization, so test only that it still works at all afterward
@@ -80,14 +72,14 @@ public class ThreadLocalRandomWrapperTest extends BaseRandomTest {
   }
 
   @Override
-  protected BaseRandom tryCreateRng() throws SeedException {
+  protected BaseRandom createRng() throws SeedException {
     return new ThreadLocalRandomWrapper((Serializable & Supplier<BaseRandom>)
-        ThreadLocalRandomWrapperTest::createUnderlying);
+        MersenneTwisterRandom::new);
   }
 
   @Override
-  protected BaseRandom createRng(byte[] seed) throws SeedException {
-    return tryCreateRng();
+  protected BaseRandom createRng(final byte[] seed) throws SeedException {
+    return createRng();
   }
 
   /**
