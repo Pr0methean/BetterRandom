@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="EntryPointsManager">
-    <list size="2">
+    <list size="3">
       <item index="0" class="java.lang.String" itemvalue="io.github.pr0methean.betterrandom.util.EntryPoint" />
       <item index="1" class="java.lang.String" itemvalue="org.openjdk.jmh.annotations.Benchmark" />
+      <item index="2" class="java.lang.String" itemvalue="org.openjdk.jmh.annotations.Setup" />
     </list>
     <pattern value="java.io.Serializable" hierarchically="true" method="readObject" />
     <pattern value="java.io.Serializable" hierarchically="true" method="readResolve" />
