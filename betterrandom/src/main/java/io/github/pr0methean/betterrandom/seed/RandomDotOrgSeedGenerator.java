@@ -28,6 +28,7 @@ import java.text.MessageFormat;
 import java.time.Clock;
 import java.time.Duration;
 import java.time.Instant;
+import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.atomic.AtomicReference;
@@ -35,7 +36,9 @@ import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 import javax.annotation.Nullable;
 import javax.json.Json;
-import javax.json.JsonReader;
+import javax.json.JsonArray;
+import javax.json.JsonObject;
+import javax.json.stream.JsonParser;
 import javax.net.ssl.HttpsURLConnection;
 
 /**
@@ -72,7 +75,7 @@ public enum RandomDotOrgSeedGenerator implements SeedGenerator {
 
   private static final String JSON_REQUEST_FORMAT =
       "{ 'jsonrpc': '2.0'," +
-          "  'method': 'generateSignedIntegers'," +
+          "  'method': 'generateIntegers'," +
           "  'params': {" +
           "    'apiKey': '%s'," +
           "    'n': %d," +
@@ -88,6 +91,7 @@ public enum RandomDotOrgSeedGenerator implements SeedGenerator {
 
   /**
    * Sets the API key. If not null, random.org's JSON API is used. Otherwise, the old API is used.
+   *
    * @param apiKey An API key obtained from random.org.
    */
   public static void setApiKey(@Nullable UUID apiKey) {
@@ -194,8 +198,19 @@ public enum RandomDotOrgSeedGenerator implements SeedGenerator {
               REQUEST_ID.incrementAndGet()).getBytes(UTF8));
         }
         try (InputStream in = postRequest.getInputStream();
-            JsonReader parser = Json.createParser(in)) {
-
+            JsonParser parser = Json.createParser(in)) {
+          JsonObject response = parser.getObject();
+          JsonArray values = response.getJsonObject("random").getJsonArray("data");
+          for (int index = 0; index < numberOfBytes; index++) {
+            cache[index] = (byte) values.getInt(index);
+          }
+          long advisoryDelayMs = response.getInt("advisoryDelay", 0);
+          if (advisoryDelayMs > 0) {
+            Duration advisoryDelay = Duration.ofMillis(advisoryDelayMs);
+            // Wait RETRY_DELAY or the advisory delay, whichever is shorter
+            EARLIEST_NEXT_ATTEMPT = CLOCK.instant().plus((advisoryDelay.compareTo(RETRY_DELAY) > 0)
+                ? RETRY_DELAY : advisoryDelay);
+          }
         }
       }
     } finally {
