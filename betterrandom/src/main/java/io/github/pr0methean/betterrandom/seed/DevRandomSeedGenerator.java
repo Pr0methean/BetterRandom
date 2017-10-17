@@ -16,13 +16,10 @@
 package io.github.pr0methean.betterrandom.seed;
 
 import io.github.pr0methean.betterrandom.util.LogPreFormatter;
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.nio.file.FileSystems;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.util.concurrent.atomic.AtomicBoolean;
-import javax.annotation.Nullable;
 
 /**
  * RNG seed strategy that gets data from {@code /dev/random} on systems that provide it (e.g.
@@ -32,7 +29,6 @@ import javax.annotation.Nullable;
  * that it still doesn't exist.
  *
  * @author Daniel Dyer
- * @author Chris Hennick
  */
 public enum DevRandomSeedGenerator implements SeedGenerator {
 
@@ -40,37 +36,32 @@ public enum DevRandomSeedGenerator implements SeedGenerator {
   DEV_RANDOM_SEED_GENERATOR;
 
   private static final LogPreFormatter LOG = new LogPreFormatter(DevRandomSeedGenerator.class);
-  private static final Path DEV_RANDOM = FileSystems.getDefault().getPath("dev", "random");
-  private static final String DEV_RANDOM_STRING = DEV_RANDOM.toString();
-  @Nullable
-  private static InputStream devRandomStream;
+  @SuppressWarnings("HardcodedFileSeparator")
+  private static final String DEV_RANDOM_STRING = "/dev/random";
+  private static final File DEV_RANDOM = new File(DEV_RANDOM_STRING);
   private static final AtomicBoolean DEV_RANDOM_DOES_NOT_EXIST = new AtomicBoolean(false);
 
   /**
    * @throws SeedException if {@literal /dev/random} does not exist or is not accessible.
    */
-  @SuppressWarnings("AssignmentToStaticFieldFromInstanceMethod")
   @Override
   public void generateSeed(final byte[] randomSeed) throws SeedException {
     if (!isWorthTrying()) {
       throw new SeedException(DEV_RANDOM_STRING + " did not exist when previously checked for");
     }
 
-    try {
-      if (devRandomStream == null) {
-        devRandomStream = Files.newInputStream(DEV_RANDOM);
-      }
+    try (FileInputStream file = new FileInputStream(DEV_RANDOM)) {
       final int length = randomSeed.length;
       int count = 0;
       while (count < length) {
-        final int bytesRead = devRandomStream.read(randomSeed, count, length - count);
+        final int bytesRead = file.read(randomSeed, count, length - count);
         if (bytesRead == -1) {
           throw new SeedException("EOF encountered reading random data.");
         }
         count += bytesRead;
       }
     } catch (final IOException ex) {
-      if (!Files.exists(DEV_RANDOM)) {
+      if (!DEV_RANDOM.exists()) {
         LOG.error(DEV_RANDOM_STRING + " does not exist");
         DEV_RANDOM_DOES_NOT_EXIST.lazySet(true);
       }
