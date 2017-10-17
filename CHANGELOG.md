@@ -1,3 +1,6 @@
+# 1.1.2
+* Improved performance of DevRandomSeedGenerator by reusing the FileInputStream.
+
 # 1.1.1
 * SeedException is now a RuntimeException rather than a checked exception.
 
