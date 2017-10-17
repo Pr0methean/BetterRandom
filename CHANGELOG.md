@@ -1,3 +1,6 @@
+# 1.1.1
+* SeedException is now a RuntimeException rather than a checked exception.
+
 # 1.1.0
 * Random-number streams are no longer falsely advertised as parallel.
 * Added `ThreadLocalRandomWrapper`, which is a thread-local PRNG backed by any
