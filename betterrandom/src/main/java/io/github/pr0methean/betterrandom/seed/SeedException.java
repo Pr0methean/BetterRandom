@@ -21,7 +21,7 @@ package io.github.pr0methean.betterrandom.seed;
  *
  * @author Daniel Dyer
  */
-public class SeedException extends Exception {
+public class SeedException extends RuntimeException {
 
   private static final long serialVersionUID = -6151013676983010168L;
 

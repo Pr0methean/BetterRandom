@@ -30,7 +30,7 @@ public class Cmwc4096RandomTest extends BaseRandomTest {
   }
 
   @Override
-  protected BaseRandom tryCreateRng() throws SeedException {
+  protected BaseRandom createRng() throws SeedException {
     return new Cmwc4096Random();
   }
 

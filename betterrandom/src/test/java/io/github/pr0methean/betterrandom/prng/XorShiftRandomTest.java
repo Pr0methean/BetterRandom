@@ -30,7 +30,7 @@ public class XorShiftRandomTest extends BaseRandomTest {
   }
 
   @Override
-  protected BaseRandom tryCreateRng() throws SeedException {
+  protected BaseRandom createRng() throws SeedException {
     return new XorShiftRandom();
   }
 

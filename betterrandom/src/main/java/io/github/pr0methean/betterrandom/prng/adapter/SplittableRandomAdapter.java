@@ -16,9 +16,8 @@ import javax.annotation.Nullable;
 
 /**
  * Thread-safe PRNG that wraps a {@link ThreadLocal}&lt;{@link SplittableRandom}&gt;. Reseeding this
- * will only affect the calling thread, so this can't be used with a {@link
- * io.github.pr0methean.betterrandom.seed.RandomSeederThread}. Instead, use a {@link
- * ReseedingSplittableRandomAdapter}.
+ * will only affect the calling thread, so this can't be used with a {@link RandomSeederThread}.
+ * Instead, use a {@link ReseedingSplittableRandomAdapter}.
  *
  * @author Chris Hennick
  */
@@ -128,13 +127,24 @@ public class SplittableRandomAdapter extends DirectSplittableRandomAdapter {
    * @throws UnsupportedOperationException always.
    */
   @Override
-  public void setSeederThread(@Nullable RandomSeederThread thread) {
+  public void setSeederThread(@Nullable final RandomSeederThread thread) {
     throw new UnsupportedOperationException("Use ReseedingSplittableRandomAdapter instead");
   }
 
   @Override
   public byte[] getSeed() {
     return seeds.get();
+  }
+
+  /**
+   * {@inheritDoc} Applies only to the calling thread.
+   */
+  @Override
+  public void setSeed(SplittableRandomAdapter this, final byte[] seed) {
+    if (seed.length != Long.BYTES) {
+      throw new IllegalArgumentException("SplittableRandomAdapter requires an 8-byte seed");
+    }
+    setSeed(convertBytesToLong(seed));
   }
 
   /**
@@ -156,16 +166,5 @@ public class SplittableRandomAdapter extends DirectSplittableRandomAdapter {
         seeds.set(BinaryUtils.convertLongToBytes(seed));
       }
     }
-  }
-
-  /**
-   * {@inheritDoc} Applies only to the calling thread.
-   */
-  @Override
-  public void setSeed(SplittableRandomAdapter this, final byte[] seed) {
-    if (seed.length != Long.BYTES) {
-      throw new IllegalArgumentException("SplittableRandomAdapter requires an 8-byte seed");
-    }
-    setSeed(convertBytesToLong(seed));
   }
 }

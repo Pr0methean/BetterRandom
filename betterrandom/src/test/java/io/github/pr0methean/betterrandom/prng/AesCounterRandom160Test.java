@@ -22,10 +22,6 @@ public class AesCounterRandom160Test extends AesCounterRandom128Test {
 
   @Override
   public BaseRandom createRng() {
-    try {
-      return new AesCounterRandom(20);
-    } catch (final SeedException e) {
-      throw new RuntimeException(e);
-    }
+    return new AesCounterRandom(20);
   }
 }

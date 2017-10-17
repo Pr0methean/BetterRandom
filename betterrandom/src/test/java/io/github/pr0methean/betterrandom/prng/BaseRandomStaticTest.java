@@ -72,7 +72,7 @@ public class BaseRandomStaticTest {
     @Override
     protected Class<?> resolveClass(final ObjectStreamClass desc)
         throws IOException, ClassNotFoundException {
-      return Switcheroo.serialVersionUID == desc.getSerialVersionUID()
+      return (Switcheroo.serialVersionUID == desc.getSerialVersionUID())
           ? AesCounterRandom.class : super.resolveClass(desc);
     }
   }

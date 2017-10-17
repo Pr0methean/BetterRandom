@@ -19,7 +19,7 @@ public class RandomWrapperMersenneTwisterRandomTest extends BaseRandomTest {
   }
 
   @Override
-  protected RandomWrapper tryCreateRng() throws SeedException {
+  protected RandomWrapper createRng() throws SeedException {
     return new RandomWrapper(new MersenneTwisterRandom());
   }
 

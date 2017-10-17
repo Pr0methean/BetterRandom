@@ -99,9 +99,9 @@ public abstract class BaseRandomTest {
             .generateSeed(getNewSeedLength(createRng()) + 1)); // Should throw an exception.
   }
 
-  protected abstract BaseRandom tryCreateRng() throws SeedException;
+  protected abstract BaseRandom createRng();
 
-  protected abstract BaseRandom createRng(byte[] seed) throws SeedException;
+  protected abstract BaseRandom createRng(byte[] seed);
 
   /**
    * Test to ensure that the output from the RNG is broadly as expected.  This will not detect the
@@ -192,14 +192,6 @@ public abstract class BaseRandomTest {
   @Test(timeOut = 15000)
   public void testDump() throws SeedException {
     assertNotEquals(createRng().dump(), createRng().dump());
-  }
-
-  protected BaseRandom createRng() {
-    try {
-      return tryCreateRng();
-    } catch (final SeedException e) {
-      throw new RuntimeException(e);
-    }
   }
 
   @Test(timeOut = 20000, retryAnalyzer = FlakyTestRetrier.class)

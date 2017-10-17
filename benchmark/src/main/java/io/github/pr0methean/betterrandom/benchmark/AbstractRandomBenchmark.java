@@ -54,11 +54,7 @@ abstract class AbstractRandomBenchmark {
 
   @Setup(Level.Trial)
   public void setUp() {
-    try {
-      prng = createPrng();
-    } catch (final SeedException e) {
-      throw new AssertionError(e);
-    }
+    prng = createPrng();
   }
 
   protected abstract Random createPrng() throws SeedException;

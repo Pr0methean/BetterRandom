@@ -19,7 +19,7 @@ public class RandomWrapperAesCounterRandomTest extends AesCounterRandom128Test {
   }
 
   @Override
-  protected RandomWrapper tryCreateRng() throws SeedException {
+  protected RandomWrapper createRng() throws SeedException {
     return new RandomWrapper(new AesCounterRandom());
   }
 
