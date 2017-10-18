@@ -28,7 +28,6 @@ import java.text.MessageFormat;
 import java.time.Clock;
 import java.time.Duration;
 import java.time.Instant;
-import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.atomic.AtomicReference;
@@ -39,7 +38,6 @@ import javax.json.Json;
 import javax.json.JsonArray;
 import javax.json.JsonObject;
 import javax.json.JsonReader;
-import javax.json.stream.JsonParser;
 import javax.net.ssl.HttpsURLConnection;
 
 /**
@@ -204,7 +202,17 @@ public enum RandomDotOrgSeedGenerator implements SeedGenerator {
             JsonReader reader = Json.createReader(in)) {
           response = reader.readObject();
         }
-        JsonArray values = response.getJsonObject("random").getJsonArray("data");
+        JsonObject error = response.getJsonObject("error");
+        if (error != null) {
+          throw new SeedException(error.toString());
+        }
+        JsonObject random = checkedGetObject(checkedGetObject(response, "result"), "random");
+        JsonArray values = random.getJsonArray("data");
+        if (values == null) {
+          throw new SeedException("'values' missing from 'random': " + random);
+        } else if (values.size() < numberOfBytes) {
+          throw new SeedException("'values' array too short: " + values);
+        }
         for (int index = 0; index < numberOfBytes; index++) {
           cache[index] = (byte) values.getInt(index);
         }
@@ -219,6 +227,14 @@ public enum RandomDotOrgSeedGenerator implements SeedGenerator {
     } finally {
       cacheLock.unlock();
     }
+  }
+
+  private static JsonObject checkedGetObject(JsonObject response, String key) {
+    JsonObject random = response.getJsonObject(key);
+    if (random == null) {
+      throw new SeedException("No '" + key + "' in: " + response);
+    }
+    return random;
   }
 
   /**
