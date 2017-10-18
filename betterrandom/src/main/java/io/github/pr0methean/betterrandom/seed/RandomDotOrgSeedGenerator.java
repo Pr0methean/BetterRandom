@@ -38,6 +38,7 @@ import javax.annotation.Nullable;
 import javax.json.Json;
 import javax.json.JsonArray;
 import javax.json.JsonObject;
+import javax.json.JsonReader;
 import javax.json.stream.JsonParser;
 import javax.net.ssl.HttpsURLConnection;
 
@@ -198,20 +199,21 @@ public enum RandomDotOrgSeedGenerator implements SeedGenerator {
           out.write(String.format(JSON_REQUEST_FORMAT, currentApiKey, numberOfBytes,
               REQUEST_ID.incrementAndGet()).getBytes(UTF8));
         }
+        JsonObject response;
         try (InputStream in = postRequest.getInputStream();
-            JsonParser parser = Json.createParser(in)) {
-          JsonObject response = parser.getObject();
-          JsonArray values = response.getJsonObject("random").getJsonArray("data");
-          for (int index = 0; index < numberOfBytes; index++) {
-            cache[index] = (byte) values.getInt(index);
-          }
-          long advisoryDelayMs = response.getInt("advisoryDelay", 0);
-          if (advisoryDelayMs > 0) {
-            Duration advisoryDelay = Duration.ofMillis(advisoryDelayMs);
-            // Wait RETRY_DELAY or the advisory delay, whichever is shorter
-            EARLIEST_NEXT_ATTEMPT = CLOCK.instant().plus((advisoryDelay.compareTo(RETRY_DELAY) > 0)
-                ? RETRY_DELAY : advisoryDelay);
-          }
+            JsonReader reader = Json.createReader(in)) {
+          response = reader.readObject();
+        }
+        JsonArray values = response.getJsonObject("random").getJsonArray("data");
+        for (int index = 0; index < numberOfBytes; index++) {
+          cache[index] = (byte) values.getInt(index);
+        }
+        long advisoryDelayMs = response.getInt("advisoryDelay", 0);
+        if (advisoryDelayMs > 0) {
+          Duration advisoryDelay = Duration.ofMillis(advisoryDelayMs);
+          // Wait RETRY_DELAY or the advisory delay, whichever is shorter
+          EARLIEST_NEXT_ATTEMPT = CLOCK.instant().plus((advisoryDelay.compareTo(RETRY_DELAY) > 0)
+              ? RETRY_DELAY : advisoryDelay);
         }
       }
     } finally {
