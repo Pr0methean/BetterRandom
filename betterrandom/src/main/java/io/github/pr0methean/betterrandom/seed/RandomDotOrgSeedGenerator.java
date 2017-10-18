@@ -105,7 +105,7 @@ public enum RandomDotOrgSeedGenerator implements SeedGenerator {
    * considerations involved in this choice of clock.
    */
   private static final Clock CLOCK = Clock.systemUTC();
-  private static final int MAX_CACHE_SIZE = 1024;
+  private static final int MAX_CACHE_SIZE = 625; // 5000 bits = 1/50 daily limit per API key
   private static final String BASE_URL = "https://www.random.org";
   /**
    * The URL from which the random bytes are retrieved.
