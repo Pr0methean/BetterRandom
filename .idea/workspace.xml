@@ -4,7 +4,11 @@
     <option name="SPLITTER_PROPORTION" value="0.35899514" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="8d34e3fe-111b-4f5b-b1bf-5875a1f8c255" name="Default" comment="" />
+    <list default="true" id="8d34e3fe-111b-4f5b-b1bf-5875a1f8c255" name="Default" comment="">
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/betterrandom/src/test/java/io/github/pr0methean/betterrandom/TestUtils.java" afterPath="$PROJECT_DIR$/betterrandom/src/test/java/io/github/pr0methean/betterrandom/TestUtils.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/betterrandom/src/test/java/io/github/pr0methean/betterrandom/seed/RandomDotOrgSeedGeneratorTest.java" afterPath="$PROJECT_DIR$/betterrandom/src/test/java/io/github/pr0methean/betterrandom/seed/RandomDotOrgSeedGeneratorTest.java" />
+    </list>
     <ignored path="$PROJECT_DIR$/out/" />
     <ignored path="$PROJECT_DIR$/target/" />
     <ignored path="$PROJECT_DIR$/test/target/" />
@@ -46,22 +50,25 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="appveyor.yml" pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/appveyor.yml">
+      <file leaf-file-name="RandomDotOrgSeedGeneratorTest.java" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/betterrandom/src/test/java/io/github/pr0methean/betterrandom/seed/RandomDotOrgSeedGeneratorTest.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="300">
-              <caret line="15" column="76" lean-forward="false" selection-start-line="15" selection-start-column="76" selection-end-line="15" selection-end-column="76" />
+            <state relative-caret-position="400">
+              <caret line="40" column="18" lean-forward="false" selection-start-line="40" selection-start-column="18" selection-end-line="40" selection-end-column="18" />
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="RandomDotOrgSeedGeneratorTest.java" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/betterrandom/src/test/java/io/github/pr0methean/betterrandom/seed/RandomDotOrgSeedGeneratorTest.java">
+      <file leaf-file-name="TestUtils.java" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/betterrandom/src/test/java/io/github/pr0methean/betterrandom/TestUtils.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="254">
-              <caret line="60" column="30" lean-forward="false" selection-start-line="60" selection-start-column="30" selection-end-line="60" selection-end-column="30" />
-              <folding />
+            <state relative-caret-position="262">
+              <caret line="61" column="95" lean-forward="false" selection-start-line="61" selection-start-column="95" selection-end-line="61" selection-end-column="95" />
+              <folding>
+                <element signature="e#2641#2642#0" expanded="true" />
+                <element signature="e#2691#2692#0" expanded="true" />
+              </folding>
             </state>
           </provider>
         </entry>
@@ -184,7 +191,6 @@
         <option value="$PROJECT_DIR$/betterrandom/src/main/java/io/github/pr0methean/betterrandom/prng/adapter/ReseedingSplittableRandomAdapter.java" />
         <option value="$PROJECT_DIR$/betterrandom/src/main/java/io/github/pr0methean/betterrandom/util/LooperThread.java" />
         <option value="$PROJECT_DIR$/betterrandom/src/test/java/io/github/pr0methean/betterrandom/prng/ThreadLocalRandomWrapperTest.java" />
-        <option value="$PROJECT_DIR$/betterrandom/src/test/java/io/github/pr0methean/betterrandom/TestUtils.java" />
         <option value="$PROJECT_DIR$/betterrandom/src/main/java/io/github/pr0methean/betterrandom/prng/adapter/SplittableRandomAdapter.java" />
         <option value="$PROJECT_DIR$/betterrandom/src/main/java/io/github/pr0methean/betterrandom/seed/DevRandomSeedGenerator.java" />
         <option value="$PROJECT_DIR$/benchmark.sh" />
@@ -192,8 +198,9 @@
         <option value="$PROJECT_DIR$/betterrandom/pom.xml" />
         <option value="$PROJECT_DIR$/betterrandom/pom9.xml" />
         <option value="$PROJECT_DIR$/betterrandom/src/main/java/io/github/pr0methean/betterrandom/seed/RandomDotOrgSeedGenerator.java" />
-        <option value="$PROJECT_DIR$/betterrandom/src/test/java/io/github/pr0methean/betterrandom/seed/RandomDotOrgSeedGeneratorTest.java" />
         <option value="$PROJECT_DIR$/appveyor.yml" />
+        <option value="$PROJECT_DIR$/betterrandom/src/test/java/io/github/pr0methean/betterrandom/seed/RandomDotOrgSeedGeneratorTest.java" />
+        <option value="$PROJECT_DIR$/betterrandom/src/test/java/io/github/pr0methean/betterrandom/TestUtils.java" />
       </list>
     </option>
   </component>
@@ -204,7 +211,7 @@
       </MavenImportingSettings>
     </option>
   </component>
-  <component name="ProjectFrameBounds" extendedState="7">
+  <component name="ProjectFrameBounds" extendedState="6">
     <option name="x" value="-9" />
     <option name="width" value="1280" />
     <option name="height" value="720" />
@@ -926,7 +933,7 @@
     </todo-panel>
   </component>
   <component name="ToolWindowManager">
-    <frame x="-9" y="-9" width="1384" height="738" extended-state="7" />
+    <frame x="-9" y="-9" width="1384" height="738" extended-state="6" />
     <editor active="true" />
     <layout>
       <window_info id="Palette" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
@@ -1187,14 +1194,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/betterrandom/src/test/java/io/github/pr0methean/betterrandom/TestUtils.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="580">
-          <caret line="33" column="49" lean-forward="false" selection-start-line="33" selection-start-column="49" selection-end-line="33" selection-end-column="49" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/release.sh">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="180">
@@ -1407,10 +1406,10 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/betterrandom/src/test/java/io/github/pr0methean/betterrandom/seed/RandomDotOrgSeedGeneratorTest.java">
+    <entry file="file://$PROJECT_DIR$/appveyor.yml">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="254">
-          <caret line="60" column="30" lean-forward="false" selection-start-line="60" selection-start-column="30" selection-end-line="60" selection-end-column="30" />
+        <state relative-caret-position="300">
+          <caret line="15" column="76" lean-forward="false" selection-start-line="15" selection-start-column="76" selection-end-line="15" selection-end-column="76" />
           <folding />
         </state>
       </provider>
@@ -1432,11 +1431,22 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/appveyor.yml">
+    <entry file="file://$PROJECT_DIR$/betterrandom/src/test/java/io/github/pr0methean/betterrandom/seed/RandomDotOrgSeedGeneratorTest.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="300">
-          <caret line="15" column="76" lean-forward="false" selection-start-line="15" selection-start-column="76" selection-end-line="15" selection-end-column="76" />
+        <state relative-caret-position="400">
+          <caret line="40" column="18" lean-forward="false" selection-start-line="40" selection-start-column="18" selection-end-line="40" selection-end-column="18" />
           <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/betterrandom/src/test/java/io/github/pr0methean/betterrandom/TestUtils.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="262">
+          <caret line="61" column="95" lean-forward="false" selection-start-line="61" selection-start-column="95" selection-end-line="61" selection-end-column="95" />
+          <folding>
+            <element signature="e#2641#2642#0" expanded="true" />
+            <element signature="e#2691#2692#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
