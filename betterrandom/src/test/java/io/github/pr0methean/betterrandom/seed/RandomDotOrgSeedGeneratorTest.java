@@ -46,8 +46,10 @@ public class RandomDotOrgSeedGeneratorTest {
 
   @Test(timeOut = 120000)
   public void testGeneratorNewApi() throws SeedException {
-    setApiKey();
-    SeedTestUtils.testGenerator(RandomDotOrgSeedGenerator.RANDOM_DOT_ORG_SEED_GENERATOR);
+    if (isNotAppveyor()) {
+      setApiKey();
+      SeedTestUtils.testGenerator(RandomDotOrgSeedGenerator.RANDOM_DOT_ORG_SEED_GENERATOR);
+    }
   }
 
   /**
@@ -56,11 +58,13 @@ public class RandomDotOrgSeedGeneratorTest {
    */
   @Test(timeOut = 120000)
   public void testLargeRequest() throws SeedException {
-    setApiKey();
-    // Request more bytes than are cached internally.
-    final int seedLength = 626;
-    final SeedGenerator generator = RandomDotOrgSeedGenerator.RANDOM_DOT_ORG_SEED_GENERATOR;
-    assertEquals(generator.generateSeed(seedLength).length, seedLength,
-        "Failed to generate seed of length " + seedLength);
+    if (isNotAppveyor()) {
+      setApiKey();
+      // Request more bytes than are cached internally.
+      final int seedLength = 626;
+      final SeedGenerator generator = RandomDotOrgSeedGenerator.RANDOM_DOT_ORG_SEED_GENERATOR;
+      assertEquals(generator.generateSeed(seedLength).length, seedLength,
+          "Failed to generate seed of length " + seedLength);
+    }
   }
 }
