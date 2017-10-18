@@ -34,11 +34,11 @@ import java.util.concurrent.atomic.AtomicReference;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 import javax.annotation.Nullable;
-import javax.json.Json;
-import javax.json.JsonArray;
-import javax.json.JsonObject;
-import javax.json.JsonReader;
 import javax.net.ssl.HttpsURLConnection;
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
 
 /**
  * <p>Connects to <a href="https://www.random.org/clients/http/" target="_top">random.org's old
@@ -87,6 +87,7 @@ public enum RandomDotOrgSeedGenerator implements SeedGenerator {
 
   private static final AtomicLong REQUEST_ID = new AtomicLong(0);
   private static final AtomicReference<UUID> API_KEY = new AtomicReference<>(null);
+  private static final JSONParser JSON_PARSER = new JSONParser();
 
   /**
    * Sets the API key. If not null, random.org's JSON API is used. Otherwise, the old API is used.
@@ -197,28 +198,30 @@ public enum RandomDotOrgSeedGenerator implements SeedGenerator {
           out.write(String.format(JSON_REQUEST_FORMAT, currentApiKey, numberOfBytes,
               REQUEST_ID.incrementAndGet()).getBytes(UTF8));
         }
-        JsonObject response;
+        JSONObject response;
         try (InputStream in = postRequest.getInputStream();
-            JsonReader reader = Json.createReader(in)) {
-          response = reader.readObject();
+            InputStreamReader reader = new InputStreamReader(in)) {
+          response = (JSONObject) JSON_PARSER.parse(reader);
+        } catch (ParseException e) {
+          throw new SeedException("Unparseable JSON response from random.org", e);
         }
-        JsonObject error = response.getJsonObject("error");
+        JSONObject error = (JSONObject) response.get("error");
         if (error != null) {
           throw new SeedException(error.toString());
         }
-        JsonObject random = checkedGetObject(checkedGetObject(response, "result"), "random");
-        JsonArray values = random.getJsonArray("data");
+        JSONObject random = checkedGetObject(checkedGetObject(response, "result"), "random");
+        JSONArray values = (JSONArray) random.get("data");
         if (values == null) {
           throw new SeedException("'values' missing from 'random': " + random);
         } else if (values.size() < numberOfBytes) {
           throw new SeedException("'values' array too short: " + values);
         }
         for (int index = 0; index < numberOfBytes; index++) {
-          cache[index] = (byte) values.getInt(index);
+          cache[index] = (byte) ((int) values.get(index));
         }
-        long advisoryDelayMs = response.getInt("advisoryDelay", 0);
-        if (advisoryDelayMs > 0) {
-          Duration advisoryDelay = Duration.ofMillis(advisoryDelayMs);
+        Number advisoryDelayMs = (Number) response.get("advisoryDelay");
+        if (advisoryDelayMs != null) {
+          Duration advisoryDelay = Duration.ofMillis(advisoryDelayMs.longValue());
           // Wait RETRY_DELAY or the advisory delay, whichever is shorter
           EARLIEST_NEXT_ATTEMPT = CLOCK.instant().plus((advisoryDelay.compareTo(RETRY_DELAY) > 0)
               ? RETRY_DELAY : advisoryDelay);
@@ -229,12 +232,12 @@ public enum RandomDotOrgSeedGenerator implements SeedGenerator {
     }
   }
 
-  private static JsonObject checkedGetObject(JsonObject response, String key) {
-    JsonObject random = response.getJsonObject(key);
-    if (random == null) {
-      throw new SeedException("No '" + key + "' in: " + response);
+  private static JSONObject checkedGetObject(JSONObject parent, String key) {
+    JSONObject child = (JSONObject) parent.get(key);
+    if (child == null) {
+      throw new SeedException("No '" + key + "' in: " + parent);
     }
-    return random;
+    return child;
   }
 
   /**
