@@ -30,7 +30,14 @@ import org.testng.annotations.Test;
  * @author Chris Hennick
  */
 public class RandomDotOrgSeedGeneratorTest {
+  public static final int SMALL_REQUEST_SIZE = 32;
 
+  @BeforeClass
+  public void setUp() {
+    if (!canRunRandomDotOrgLargeTest()) {
+      RandomDotOrgSeedGenerator.setMaxRequestSize(SMALL_REQUEST_SIZE);
+    }
+  }
   private static void setApiKey() {
     String apiKeyString = System.getenv("RANDOM_DOT_ORG_KEY");
     RandomDotOrgSeedGenerator.setApiKey((apiKeyString == null) ? null : UUID.fromString(apiKeyString));
