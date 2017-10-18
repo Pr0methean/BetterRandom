@@ -73,16 +73,16 @@ public enum RandomDotOrgSeedGenerator implements SeedGenerator {
   DELAYED_RETRY(true);
 
   private static final String JSON_REQUEST_FORMAT =
-      "{ 'jsonrpc': '2.0'," +
-          "  'method': 'generateIntegers'," +
-          "  'params': {" +
-          "    'apiKey': '%s'," +
-          "    'n': %d," +
-          "    'min': 0," +
-          "    'max': 255," +
-          "    'base': 10" +
+      "{\"jsonrpc\": \"2.0\"," +
+          "  \"method\": \"generateIntegers\"," +
+          "  \"params\": {" +
+          "    \"apiKey\": \"%s\"," +
+          "    \"n\": %d," +
+          "    \"min\": 0," +
+          "    \"max\": 255," +
+          "    \"base\": 10" +
           "  }," +
-          "  'id': %d" +
+          "  \"id\": %d" +
           '}';
 
   private static final AtomicLong REQUEST_ID = new AtomicLong(0);
