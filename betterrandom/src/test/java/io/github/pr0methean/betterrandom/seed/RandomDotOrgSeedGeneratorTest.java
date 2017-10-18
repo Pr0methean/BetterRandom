@@ -31,18 +31,9 @@ import org.testng.annotations.Test;
  */
 public class RandomDotOrgSeedGeneratorTest {
 
-  public static final int SMALL_REQUEST_SIZE = 32;
-
   private static void setApiKey() {
     String apiKeyString = System.getenv("RANDOM_DOT_ORG_KEY");
     RandomDotOrgSeedGenerator.setApiKey((apiKeyString == null) ? null : UUID.fromString(apiKeyString));
-  }
-
-  @BeforeClass
-  public void setUp() {
-    if (!canRunRandomDotOrgLargeTest()) {
-      RandomDotOrgSeedGenerator.setMaxRequestSize(SMALL_REQUEST_SIZE);
-    }
   }
 
   @Test(timeOut = 120000)
@@ -67,7 +58,7 @@ public class RandomDotOrgSeedGeneratorTest {
   public void testLargeRequest() throws SeedException {
     setApiKey();
     // Request more bytes than are cached internally.
-    final int seedLength = 1025;
+    final int seedLength = 626;
     final SeedGenerator generator = RandomDotOrgSeedGenerator.RANDOM_DOT_ORG_SEED_GENERATOR;
     assertEquals(generator.generateSeed(seedLength).length, seedLength,
         "Failed to generate seed of length " + seedLength);
