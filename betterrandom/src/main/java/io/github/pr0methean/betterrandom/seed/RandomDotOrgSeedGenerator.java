@@ -28,6 +28,7 @@ import java.text.MessageFormat;
 import java.time.Clock;
 import java.time.Duration;
 import java.time.Instant;
+import java.util.Base64;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.atomic.AtomicReference;
@@ -74,13 +75,11 @@ public enum RandomDotOrgSeedGenerator implements SeedGenerator {
 
   private static final String JSON_REQUEST_FORMAT =
       "{\"jsonrpc\": \"2.0\"," +
-          "  \"method\": \"generateIntegers\"," +
+          "  \"method\": \"generateBlobs\"," +
           "  \"params\": {" +
           "    \"apiKey\": \"%s\"," +
-          "    \"n\": %d," +
-          "    \"min\": 0," +
-          "    \"max\": 255," +
-          "    \"base\": 10" +
+          "    \"n\": 1," +
+          "    \"size\": %d," +
           "  }," +
           "  \"id\": %d" +
           '}';
@@ -88,6 +87,7 @@ public enum RandomDotOrgSeedGenerator implements SeedGenerator {
   private static final AtomicLong REQUEST_ID = new AtomicLong(0);
   private static final AtomicReference<UUID> API_KEY = new AtomicReference<>(null);
   private static final JSONParser JSON_PARSER = new JSONParser();
+  private static final Base64.Decoder BASE64 = Base64.getDecoder();
 
   /**
    * Sets the API key. If not null, random.org's JSON API is used. Otherwise, the old API is used.
@@ -209,17 +209,19 @@ public enum RandomDotOrgSeedGenerator implements SeedGenerator {
         if (error != null) {
           throw new SeedException(error.toString());
         }
-        JSONObject random = checkedGetObject(checkedGetObject(response, "result"), "random");
-        JSONArray values = (JSONArray) random.get("data");
-        if (values == null) {
+        JSONObject result = checkedGetObject(response, "result");
+        JSONObject random = checkedGetObject(result, "random");
+        String base64seed = (String) random.get("data");
+        if (base64seed == null) {
           throw new SeedException("'values' missing from 'random': " + random);
-        } else if (values.size() < numberOfBytes) {
-          throw new SeedException("'values' array too short: " + values);
+        } else {
+          byte[] decodedSeed = BASE64.decode(base64seed);
+          if (decodedSeed.length < numberOfBytes) {
+            throw new SeedException("Too few bytes returned: requested " + numberOfBytes + ", got " + base64seed);
+          }
+          System.arraycopy(decodedSeed, 0, cache, 0, numberOfBytes);
         }
-        for (int index = 0; index < numberOfBytes; index++) {
-          cache[index] = (byte) ((int) values.get(index));
-        }
-        Number advisoryDelayMs = (Number) response.get("advisoryDelay");
+        Number advisoryDelayMs = (Number) result.get("advisoryDelay");
         if (advisoryDelayMs != null) {
           Duration advisoryDelay = Duration.ofMillis(advisoryDelayMs.longValue());
           // Wait RETRY_DELAY or the advisory delay, whichever is shorter
