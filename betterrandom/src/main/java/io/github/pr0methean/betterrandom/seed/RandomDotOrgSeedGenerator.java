@@ -36,6 +36,7 @@ import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 import javax.annotation.Nullable;
 import javax.net.ssl.HttpsURLConnection;
+import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
@@ -207,7 +208,7 @@ public enum RandomDotOrgSeedGenerator implements SeedGenerator {
         }
         JSONObject result = checkedGetObject(response, "result");
         JSONObject random = checkedGetObject(result, "random");
-        String base64seed = (String) random.get("data");
+        String base64seed = (String) ((JSONArray) (random.get("data"))).get(0);
         if (base64seed == null) {
           throw new SeedException("'values' missing from 'random': " + random);
         } else {
