@@ -32,13 +32,13 @@
       <file leaf-file-name="RandomDotOrgSeedGenerator.java" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/betterrandom/src/main/java/io/github/pr0methean/betterrandom/seed/RandomDotOrgSeedGenerator.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="2592">
-              <caret line="194" column="34" lean-forward="false" selection-start-line="194" selection-start-column="34" selection-end-line="194" selection-end-column="34" />
+            <state relative-caret-position="272">
+              <caret line="211" column="33" lean-forward="true" selection-start-line="211" selection-start-column="33" selection-end-line="211" selection-end-column="33" />
               <folding>
                 <element signature="imports" expanded="true" />
-                <marker date="1508454009771" expanded="false" signature="4909:4952" ph="/HardcodedFileSeparator/" />
-                <marker date="1508454009771" expanded="false" signature="6766:6816" ph="/NumericCastThatLosesPrecision/" />
-                <marker date="1508454009771" expanded="false" signature="11518:11580" ph="/AssignmentToStaticFieldFromInstanceMethod/" />
+                <marker date="1508454185132" expanded="false" signature="4943:4986" ph="/HardcodedFileSeparator/" />
+                <marker date="1508454185132" expanded="false" signature="6800:6850" ph="/NumericCastThatLosesPrecision/" />
+                <marker date="1508454185132" expanded="false" signature="11575:11637" ph="/AssignmentToStaticFieldFromInstanceMethod/" />
               </folding>
             </state>
           </provider>
@@ -205,7 +205,7 @@
       </MavenImportingSettings>
     </option>
   </component>
-  <component name="ProjectFrameBounds" extendedState="6">
+  <component name="ProjectFrameBounds" extendedState="7">
     <option name="x" value="-9" />
     <option name="width" value="1280" />
     <option name="height" value="720" />
@@ -827,7 +827,7 @@
     </todo-panel>
   </component>
   <component name="ToolWindowManager">
-    <frame x="-9" y="-9" width="1384" height="738" extended-state="6" />
+    <frame x="-9" y="-9" width="1384" height="738" extended-state="7" />
     <editor active="true" />
     <layout>
       <window_info id="Palette" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
@@ -1313,13 +1313,13 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/betterrandom/src/main/java/io/github/pr0methean/betterrandom/seed/RandomDotOrgSeedGenerator.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="2592">
-          <caret line="194" column="34" lean-forward="false" selection-start-line="194" selection-start-column="34" selection-end-line="194" selection-end-column="34" />
+        <state relative-caret-position="272">
+          <caret line="211" column="33" lean-forward="true" selection-start-line="211" selection-start-column="33" selection-end-line="211" selection-end-column="33" />
           <folding>
             <element signature="imports" expanded="true" />
-            <marker date="1508454009771" expanded="false" signature="4909:4952" ph="/HardcodedFileSeparator/" />
-            <marker date="1508454009771" expanded="false" signature="6766:6816" ph="/NumericCastThatLosesPrecision/" />
-            <marker date="1508454009771" expanded="false" signature="11518:11580" ph="/AssignmentToStaticFieldFromInstanceMethod/" />
+            <marker date="1508454185132" expanded="false" signature="4943:4986" ph="/HardcodedFileSeparator/" />
+            <marker date="1508454185132" expanded="false" signature="6800:6850" ph="/NumericCastThatLosesPrecision/" />
+            <marker date="1508454185132" expanded="false" signature="11575:11637" ph="/AssignmentToStaticFieldFromInstanceMethod/" />
           </folding>
         </state>
       </provider>
