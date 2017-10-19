@@ -36,7 +36,6 @@ import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 import javax.annotation.Nullable;
 import javax.net.ssl.HttpsURLConnection;
-import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
@@ -73,16 +72,8 @@ public enum RandomDotOrgSeedGenerator implements SeedGenerator {
    */
   DELAYED_RETRY(true);
 
-  private static final String JSON_REQUEST_FORMAT =
-      "{\"jsonrpc\": \"2.0\"," +
-          "  \"method\": \"generateBlobs\"," +
-          "  \"params\": {" +
-          "    \"apiKey\": \"%s\"," +
-          "    \"n\": 1," +
-          "    \"size\": %d," +
-          "  }," +
-          "  \"id\": %d" +
-          '}';
+  private static final String JSON_REQUEST_FORMAT = "{\"jsonrpc\":\"2.0\","
+      + "\"method\":\"generateBlobs\",\"params\":{\"apiKey\":\"%s\",\"n\":1,\"size\":%d},\"id\":%d}";
 
   private static final AtomicLong REQUEST_ID = new AtomicLong(0);
   private static final AtomicReference<UUID> API_KEY = new AtomicReference<>(null);
@@ -195,8 +186,13 @@ public enum RandomDotOrgSeedGenerator implements SeedGenerator {
         postRequest.setRequestMethod("POST");
         postRequest.setRequestProperty("User-Agent", USER_AGENT);
         try (OutputStream out = postRequest.getOutputStream()) {
-          out.write(String.format(JSON_REQUEST_FORMAT, currentApiKey, numberOfBytes * Byte.SIZE,
-              REQUEST_ID.incrementAndGet()).getBytes(UTF8));
+          out.write(
+              String.format(
+                  JSON_REQUEST_FORMAT,
+                  currentApiKey,
+                  numberOfBytes * Byte.SIZE,
+                  REQUEST_ID.incrementAndGet())
+                  .getBytes(UTF8));
         }
         JSONObject response;
         try (InputStream in = postRequest.getInputStream();
@@ -217,7 +213,8 @@ public enum RandomDotOrgSeedGenerator implements SeedGenerator {
         } else {
           byte[] decodedSeed = BASE64.decode(base64seed);
           if (decodedSeed.length < numberOfBytes) {
-            throw new SeedException("Too few bytes returned: requested " + numberOfBytes + ", got " + base64seed);
+            throw new SeedException(
+                "Too few bytes returned: requested " + numberOfBytes + ", got " + base64seed);
           }
           System.arraycopy(decodedSeed, 0, cache, 0, numberOfBytes);
         }
