@@ -195,7 +195,7 @@ public enum RandomDotOrgSeedGenerator implements SeedGenerator {
         postRequest.setRequestMethod("POST");
         postRequest.setRequestProperty("User-Agent", USER_AGENT);
         try (OutputStream out = postRequest.getOutputStream()) {
-          out.write(String.format(JSON_REQUEST_FORMAT, currentApiKey, numberOfBytes,
+          out.write(String.format(JSON_REQUEST_FORMAT, currentApiKey, numberOfBytes * Byte.SIZE,
               REQUEST_ID.incrementAndGet()).getBytes(UTF8));
         }
         JSONObject response;
