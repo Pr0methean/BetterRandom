@@ -35,6 +35,7 @@ import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
+import java.util.logging.Level;
 import javax.annotation.Nullable;
 import javax.net.ssl.HttpsURLConnection;
 import org.json.simple.JSONArray;
@@ -194,6 +195,7 @@ public enum RandomDotOrgSeedGenerator implements SeedGenerator {
             numberOfBytes * Byte.SIZE,
             REQUEST_ID.incrementAndGet());
         LOG.info("Sending request: %s", requestBody);
+        LOG.logStackTrace(Level.INFO, Thread.currentThread().getStackTrace());
         try (OutputStream out = postRequest.getOutputStream()) {
           out.write(requestBody.getBytes(UTF8));
         }
@@ -225,6 +227,7 @@ public enum RandomDotOrgSeedGenerator implements SeedGenerator {
         }
         Number advisoryDelayMs = (Number) result.get("advisoryDelay");
         if (advisoryDelayMs != null) {
+          LOG.info("Advisory delay of %d ms", advisoryDelayMs);
           Duration advisoryDelay = Duration.ofMillis(advisoryDelayMs.longValue());
           // Wait RETRY_DELAY or the advisory delay, whichever is shorter
           EARLIEST_NEXT_ATTEMPT = CLOCK.instant().plus((advisoryDelay.compareTo(RETRY_DELAY) > 0)
