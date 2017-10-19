@@ -32,13 +32,13 @@
       <file leaf-file-name="RandomDotOrgSeedGenerator.java" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/betterrandom/src/main/java/io/github/pr0methean/betterrandom/seed/RandomDotOrgSeedGenerator.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="157">
-              <caret line="197" column="95" lean-forward="false" selection-start-line="197" selection-start-column="95" selection-end-line="197" selection-end-column="95" />
+            <state relative-caret-position="2592">
+              <caret line="194" column="34" lean-forward="false" selection-start-line="194" selection-start-column="34" selection-end-line="194" selection-end-column="34" />
               <folding>
                 <element signature="imports" expanded="true" />
-                <marker date="1508453429141" expanded="false" signature="5086:5129" ph="/HardcodedFileSeparator/" />
-                <marker date="1508453429141" expanded="false" signature="6943:6993" ph="/NumericCastThatLosesPrecision/" />
-                <marker date="1508453429141" expanded="false" signature="11585:11647" ph="/AssignmentToStaticFieldFromInstanceMethod/" />
+                <marker date="1508454009771" expanded="false" signature="4909:4952" ph="/HardcodedFileSeparator/" />
+                <marker date="1508454009771" expanded="false" signature="6766:6816" ph="/NumericCastThatLosesPrecision/" />
+                <marker date="1508454009771" expanded="false" signature="11518:11580" ph="/AssignmentToStaticFieldFromInstanceMethod/" />
               </folding>
             </state>
           </provider>
@@ -839,7 +839,7 @@
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32982457" sideWeight="0.5" order="8" side_tool="false" content_ui="tabs" />
       <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="9" side_tool="false" content_ui="tabs" />
       <window_info id="Designer" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
-      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.23088685" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.101681955" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.16437308" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="UI Designer" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
@@ -1313,13 +1313,13 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/betterrandom/src/main/java/io/github/pr0methean/betterrandom/seed/RandomDotOrgSeedGenerator.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="157">
-          <caret line="197" column="95" lean-forward="false" selection-start-line="197" selection-start-column="95" selection-end-line="197" selection-end-column="95" />
+        <state relative-caret-position="2592">
+          <caret line="194" column="34" lean-forward="false" selection-start-line="194" selection-start-column="34" selection-end-line="194" selection-end-column="34" />
           <folding>
             <element signature="imports" expanded="true" />
-            <marker date="1508453429141" expanded="false" signature="5086:5129" ph="/HardcodedFileSeparator/" />
-            <marker date="1508453429141" expanded="false" signature="6943:6993" ph="/NumericCastThatLosesPrecision/" />
-            <marker date="1508453429141" expanded="false" signature="11585:11647" ph="/AssignmentToStaticFieldFromInstanceMethod/" />
+            <marker date="1508454009771" expanded="false" signature="4909:4952" ph="/HardcodedFileSeparator/" />
+            <marker date="1508454009771" expanded="false" signature="6766:6816" ph="/NumericCastThatLosesPrecision/" />
+            <marker date="1508454009771" expanded="false" signature="11518:11580" ph="/AssignmentToStaticFieldFromInstanceMethod/" />
           </folding>
         </state>
       </provider>
