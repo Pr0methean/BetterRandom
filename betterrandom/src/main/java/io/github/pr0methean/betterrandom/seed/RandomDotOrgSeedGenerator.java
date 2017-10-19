@@ -15,6 +15,7 @@
 // ============================================================================
 package io.github.pr0methean.betterrandom.seed;
 
+import io.github.pr0methean.betterrandom.util.LogPreFormatter;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -73,6 +74,7 @@ public enum RandomDotOrgSeedGenerator implements SeedGenerator {
    */
   DELAYED_RETRY(true);
 
+  private static final LogPreFormatter LOG = new LogPreFormatter(RandomDotOrgSeedGenerator.class);
   private static final String JSON_REQUEST_FORMAT = "{\"jsonrpc\":\"2.0\","
       + "\"method\":\"generateBlobs\",\"params\":{\"apiKey\":\"%s\",\"n\":1,\"size\":%d},\"id\":%d}";
 
@@ -186,14 +188,14 @@ public enum RandomDotOrgSeedGenerator implements SeedGenerator {
         postRequest.setDoOutput(true);
         postRequest.setRequestMethod("POST");
         postRequest.setRequestProperty("User-Agent", USER_AGENT);
+        String requestBody = String.format(
+            JSON_REQUEST_FORMAT,
+            currentApiKey,
+            numberOfBytes * Byte.SIZE,
+            REQUEST_ID.incrementAndGet());
+        LOG.info("Sending request: %s", requestBody);
         try (OutputStream out = postRequest.getOutputStream()) {
-          out.write(
-              String.format(
-                  JSON_REQUEST_FORMAT,
-                  currentApiKey,
-                  numberOfBytes * Byte.SIZE,
-                  REQUEST_ID.incrementAndGet())
-                  .getBytes(UTF8));
+          out.write(requestBody.getBytes(UTF8));
         }
         JSONObject response;
         try (InputStream in = postRequest.getInputStream();
@@ -208,10 +210,12 @@ public enum RandomDotOrgSeedGenerator implements SeedGenerator {
         }
         JSONObject result = checkedGetObject(response, "result");
         JSONObject random = checkedGetObject(result, "random");
-        String base64seed = (String) ((JSONArray) (random.get("data"))).get(0);
-        if (base64seed == null) {
-          throw new SeedException("'values' missing from 'random': " + random);
+        Object data = random.get("data");
+        if (data == null) {
+          throw new SeedException("'data' missing from 'random': " + random);
         } else {
+          String base64seed = (data instanceof JSONArray ? ((JSONArray) data).get(0) : data)
+              .toString();
           byte[] decodedSeed = BASE64.decode(base64seed);
           if (decodedSeed.length < numberOfBytes) {
             throw new SeedException(
