@@ -181,7 +181,6 @@ public enum RandomDotOrgSeedGenerator implements SeedGenerator {
           if (index < (cache.length - 1)) {
             throw new IOException("Insufficient data received.");
           }
-          cacheOffset = 0;
         }
       } else {
         // Use JSON API.
@@ -234,6 +233,7 @@ public enum RandomDotOrgSeedGenerator implements SeedGenerator {
               ? RETRY_DELAY : advisoryDelay);
         }
       }
+      cacheOffset = 0;
     } finally {
       cacheLock.unlock();
     }
