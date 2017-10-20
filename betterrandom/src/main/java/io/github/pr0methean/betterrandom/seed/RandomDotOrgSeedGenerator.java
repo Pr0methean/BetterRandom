@@ -34,9 +34,11 @@ import java.util.concurrent.atomic.AtomicReference;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 import javax.annotation.Nullable;
-import javax.json.Json;
-import javax.json.JsonReader;
 import javax.net.ssl.HttpsURLConnection;
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
 
 /**
  * <p>Connects to <a href="https://www.random.org/clients/http/" target="_top">random.org's old
@@ -71,23 +73,25 @@ public enum RandomDotOrgSeedGenerator implements SeedGenerator {
   DELAYED_RETRY(true);
 
   private static final String JSON_REQUEST_FORMAT =
-      "{ 'jsonrpc': '2.0'," +
-          "  'method': 'generateSignedIntegers'," +
-          "  'params': {" +
-          "    'apiKey': '%s'," +
-          "    'n': %d," +
-          "    'min': 0," +
-          "    'max': 255," +
-          "    'base': 10" +
+      "{\"jsonrpc\": \"2.0\"," +
+          "  \"method\": \"generateIntegers\"," +
+          "  \"params\": {" +
+          "    \"apiKey\": \"%s\"," +
+          "    \"n\": %d," +
+          "    \"min\": 0," +
+          "    \"max\": 255," +
+          "    \"base\": 10" +
           "  }," +
-          "  'id': %d" +
+          "  \"id\": %d" +
           '}';
 
   private static final AtomicLong REQUEST_ID = new AtomicLong(0);
   private static final AtomicReference<UUID> API_KEY = new AtomicReference<>(null);
+  private static final JSONParser JSON_PARSER = new JSONParser();
 
   /**
    * Sets the API key. If not null, random.org's JSON API is used. Otherwise, the old API is used.
+   *
    * @param apiKey An API key obtained from random.org.
    */
   public static void setApiKey(@Nullable UUID apiKey) {
@@ -102,7 +106,7 @@ public enum RandomDotOrgSeedGenerator implements SeedGenerator {
    * considerations involved in this choice of clock.
    */
   private static final Clock CLOCK = Clock.systemUTC();
-  private static final int MAX_CACHE_SIZE = 1024;
+  private static final int MAX_CACHE_SIZE = 625; // 5000 bits = 1/50 daily limit per API key
   private static final String BASE_URL = "https://www.random.org";
   /**
    * The URL from which the random bytes are retrieved.
@@ -187,20 +191,53 @@ public enum RandomDotOrgSeedGenerator implements SeedGenerator {
       } else {
         // Use JSON API.
         HttpsURLConnection postRequest = (HttpsURLConnection) JSON_REQUEST_URL.openConnection();
+        postRequest.setDoOutput(true);
         postRequest.setRequestMethod("POST");
         postRequest.setRequestProperty("User-Agent", USER_AGENT);
         try (OutputStream out = postRequest.getOutputStream()) {
           out.write(String.format(JSON_REQUEST_FORMAT, currentApiKey, numberOfBytes,
               REQUEST_ID.incrementAndGet()).getBytes(UTF8));
         }
+        JSONObject response;
         try (InputStream in = postRequest.getInputStream();
-            JsonReader parser = Json.createParser(in)) {
-
+            InputStreamReader reader = new InputStreamReader(in)) {
+          response = (JSONObject) JSON_PARSER.parse(reader);
+        } catch (ParseException e) {
+          throw new SeedException("Unparseable JSON response from random.org", e);
+        }
+        JSONObject error = (JSONObject) response.get("error");
+        if (error != null) {
+          throw new SeedException(error.toString());
+        }
+        JSONObject random = checkedGetObject(checkedGetObject(response, "result"), "random");
+        JSONArray values = (JSONArray) random.get("data");
+        if (values == null) {
+          throw new SeedException("'values' missing from 'random': " + random);
+        } else if (values.size() < numberOfBytes) {
+          throw new SeedException("'values' array too short: " + values);
+        }
+        for (int index = 0; index < numberOfBytes; index++) {
+          cache[index] = (byte) ((int) values.get(index));
+        }
+        Number advisoryDelayMs = (Number) response.get("advisoryDelay");
+        if (advisoryDelayMs != null) {
+          Duration advisoryDelay = Duration.ofMillis(advisoryDelayMs.longValue());
+          // Wait RETRY_DELAY or the advisory delay, whichever is shorter
+          EARLIEST_NEXT_ATTEMPT = CLOCK.instant().plus((advisoryDelay.compareTo(RETRY_DELAY) > 0)
+              ? RETRY_DELAY : advisoryDelay);
         }
       }
     } finally {
       cacheLock.unlock();
     }
+  }
+
+  private static JSONObject checkedGetObject(JSONObject parent, String key) {
+    JSONObject child = (JSONObject) parent.get(key);
+    if (child == null) {
+      throw new SeedException("No '" + key + "' in: " + parent);
+    }
+    return child;
   }
 
   /**
