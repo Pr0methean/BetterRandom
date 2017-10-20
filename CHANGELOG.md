@@ -1,3 +1,6 @@
+# 1.2.0
+* Added support for random.org's new JSON API.
+
 # 1.1.2
 * Improved performance of DevRandomSeedGenerator by reusing the FileInputStream.
 
