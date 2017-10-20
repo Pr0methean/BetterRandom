@@ -75,7 +75,6 @@ public enum RandomDotOrgSeedGenerator implements SeedGenerator {
    */
   DELAYED_RETRY(true);
 
-  private static final LogPreFormatter LOG = new LogPreFormatter(RandomDotOrgSeedGenerator.class);
   private static final String JSON_REQUEST_FORMAT = "{\"jsonrpc\":\"2.0\","
       + "\"method\":\"generateBlobs\",\"params\":{\"apiKey\":\"%s\",\"n\":1,\"size\":%d},\"id\":%d}";
 
@@ -188,15 +187,12 @@ public enum RandomDotOrgSeedGenerator implements SeedGenerator {
         postRequest.setDoOutput(true);
         postRequest.setRequestMethod("POST");
         postRequest.setRequestProperty("User-Agent", USER_AGENT);
-        String requestBody = String.format(
-            JSON_REQUEST_FORMAT,
-            currentApiKey,
-            numberOfBytes * Byte.SIZE,
-            REQUEST_ID.incrementAndGet());
-        LOG.info("Sending request: %s", requestBody);
-        LOG.logStackTrace(Level.INFO, Thread.currentThread().getStackTrace());
         try (OutputStream out = postRequest.getOutputStream()) {
-          out.write(requestBody.getBytes(UTF8));
+          out.write(String.format(
+              JSON_REQUEST_FORMAT,
+              currentApiKey,
+              numberOfBytes * Byte.SIZE,
+              REQUEST_ID.incrementAndGet()).getBytes(UTF8));
         }
         JSONObject response;
         try (InputStream in = postRequest.getInputStream();
@@ -226,7 +222,6 @@ public enum RandomDotOrgSeedGenerator implements SeedGenerator {
         }
         Number advisoryDelayMs = (Number) result.get("advisoryDelay");
         if (advisoryDelayMs != null) {
-          LOG.info("Advisory delay of %d ms", advisoryDelayMs);
           Duration advisoryDelay = Duration.ofMillis(advisoryDelayMs.longValue());
           // Wait RETRY_DELAY or the advisory delay, whichever is shorter
           EARLIEST_NEXT_ATTEMPT = CLOCK.instant().plus((advisoryDelay.compareTo(RETRY_DELAY) > 0)
