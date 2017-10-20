@@ -28,6 +28,7 @@ import java.text.MessageFormat;
 import java.time.Clock;
 import java.time.Duration;
 import java.time.Instant;
+import java.util.Base64;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.atomic.AtomicReference;
@@ -45,17 +46,24 @@ import org.json.simple.parser.ParseException;
  * API</a> (via HTTPS) and downloads a set of random bits to use as seed data.  It is generally
  * better to use the {@link DevRandomSeedGenerator} where possible, as it should be much quicker.
  * This seed generator is most useful on Microsoft Windows without Cygwin, and other platforms that
- * do not provide {@literal /dev/random}.</p> <p>Random.org collects randomness from atmospheric
- * noise using 9 radios, located at undisclosed addresses in Dublin and Copenhagen and tuned to
- * undisclosed AM/FM frequencies. (The secrecy is intended to help prevent tampering with the output
- * using a well-placed radio transmitter, and the use of AM/FM helps ensure that any such tampering
- * would cause illegal interference with broadcasts and quickly attract regulatory attention.) Note
- * that random.org limits the supply of free random numbers to any one IP address; if you operate
- * from a fixed address (at least if you use IPv4), you can <a href="https://www.random.org/quota/">check
- * your quota and buy more</a>.
+ * do not provide {@literal /dev/random}.</p>
+ * <p>Random.org collects randomness from atmospheric noise using 9 radios, located at undisclosed
+ * addresses in Dublin and Copenhagen and tuned to undisclosed AM/FM frequencies. (The secrecy is
+ * intended to help prevent tampering with the output using a well-placed radio transmitter, and the
+ * use of AM/FM helps ensure that any such tampering would cause illegal interference with
+ * broadcasts and quickly attract regulatory attention.)</p>
+ * <p>Random.org has two APIs: an <a href="https://www.random.org/clients/http/">old API</a> and a
+ * <a href="https://api.random.org/json-rpc/1/">newer JSON-RPC API</a>. Since the new one requires
+ * a key obtained from random.org, the old one is used by default. However, if you have a key, you
+ * can provide it by calling {@link #setApiKey(UUID)}, and the new API will then be used.</p>
+ * <p>Note that when using the old API, random.org limits the supply of free random numbers to any
+ * one IP address; if you operate from a fixed address (at least if you use IPv4), you can <a
+ * href="https://www.random.org/quota/">check
+ * your quota and buy more</a>. On the new API, the quota is per key rather than per IP, and
+ * commercial service tiers are to come in early 2018, shortly after the new API leaves beta.</p>
  *
- * @author Daniel Dyer
- * @author Chris Hennick
+ * @author Daniel Dyer (old API)
+ * @author Chris Hennick (new API)
  */
 public enum RandomDotOrgSeedGenerator implements SeedGenerator {
   /**
@@ -72,22 +80,13 @@ public enum RandomDotOrgSeedGenerator implements SeedGenerator {
    */
   DELAYED_RETRY(true);
 
-  private static final String JSON_REQUEST_FORMAT =
-      "{\"jsonrpc\": \"2.0\"," +
-          "  \"method\": \"generateIntegers\"," +
-          "  \"params\": {" +
-          "    \"apiKey\": \"%s\"," +
-          "    \"n\": %d," +
-          "    \"min\": 0," +
-          "    \"max\": 255," +
-          "    \"base\": 10" +
-          "  }," +
-          "  \"id\": %d" +
-          '}';
+  private static final String JSON_REQUEST_FORMAT = "{\"jsonrpc\":\"2.0\","
+      + "\"method\":\"generateBlobs\",\"params\":{\"apiKey\":\"%s\",\"n\":1,\"size\":%d},\"id\":%d}";
 
   private static final AtomicLong REQUEST_ID = new AtomicLong(0);
   private static final AtomicReference<UUID> API_KEY = new AtomicReference<>(null);
   private static final JSONParser JSON_PARSER = new JSONParser();
+  private static final Base64.Decoder BASE64 = Base64.getDecoder();
 
   /**
    * Sets the API key. If not null, random.org's JSON API is used. Otherwise, the old API is used.
@@ -186,7 +185,6 @@ public enum RandomDotOrgSeedGenerator implements SeedGenerator {
           if (index < (cache.length - 1)) {
             throw new IOException("Insufficient data received.");
           }
-          cacheOffset = 0;
         }
       } else {
         // Use JSON API.
@@ -195,7 +193,10 @@ public enum RandomDotOrgSeedGenerator implements SeedGenerator {
         postRequest.setRequestMethod("POST");
         postRequest.setRequestProperty("User-Agent", USER_AGENT);
         try (OutputStream out = postRequest.getOutputStream()) {
-          out.write(String.format(JSON_REQUEST_FORMAT, currentApiKey, numberOfBytes,
+          out.write(String.format(
+              JSON_REQUEST_FORMAT,
+              currentApiKey,
+              numberOfBytes * Byte.SIZE,
               REQUEST_ID.incrementAndGet()).getBytes(UTF8));
         }
         JSONObject response;
@@ -209,17 +210,22 @@ public enum RandomDotOrgSeedGenerator implements SeedGenerator {
         if (error != null) {
           throw new SeedException(error.toString());
         }
-        JSONObject random = checkedGetObject(checkedGetObject(response, "result"), "random");
-        JSONArray values = (JSONArray) random.get("data");
-        if (values == null) {
-          throw new SeedException("'values' missing from 'random': " + random);
-        } else if (values.size() < numberOfBytes) {
-          throw new SeedException("'values' array too short: " + values);
+        JSONObject result = checkedGetObject(response, "result");
+        JSONObject random = checkedGetObject(result, "random");
+        Object data = random.get("data");
+        if (data == null) {
+          throw new SeedException("'data' missing from 'random': " + random);
+        } else {
+          String base64seed = (data instanceof JSONArray ? ((JSONArray) data).get(0) : data)
+              .toString();
+          byte[] decodedSeed = BASE64.decode(base64seed);
+          if (decodedSeed.length < numberOfBytes) {
+            throw new SeedException(
+                "Too few bytes returned: requested " + numberOfBytes + ", got " + base64seed);
+          }
+          System.arraycopy(decodedSeed, 0, cache, 0, numberOfBytes);
         }
-        for (int index = 0; index < numberOfBytes; index++) {
-          cache[index] = (byte) ((int) values.get(index));
-        }
-        Number advisoryDelayMs = (Number) response.get("advisoryDelay");
+        Number advisoryDelayMs = (Number) result.get("advisoryDelay");
         if (advisoryDelayMs != null) {
           Duration advisoryDelay = Duration.ofMillis(advisoryDelayMs.longValue());
           // Wait RETRY_DELAY or the advisory delay, whichever is shorter
@@ -227,6 +233,7 @@ public enum RandomDotOrgSeedGenerator implements SeedGenerator {
               ? RETRY_DELAY : advisoryDelay);
         }
       }
+      cacheOffset = 0;
     } finally {
       cacheLock.unlock();
     }

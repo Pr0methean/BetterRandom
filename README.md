@@ -219,15 +219,14 @@ the seed sources cannot be parallelized. They include:
 
 * `DevRandomSeedGenerator.DEV_RANDOM_SEED_GENERATOR`: Works only on Unix-like systems; reads seeds
   from `/dev/random`.
-* `RandomDotOrgSeedGenerator.RANDOM_DOT_ORG_SEED_GENERATOR`: Uses the
-  [random.org old API](https://www.random.org/clients/http/) to retrieve random numbers over HTTPS.
+* `RandomDotOrgSeedGenerator.RANDOM_DOT_ORG_SEED_GENERATOR`: Connects to
+  [random.org](https://www.random.org) to retrieve random numbers over HTTPS.
   Random.org collects randomness from atmospheric noise using 9 radios, located at undisclosed
   addresses in Dublin and Copenhagen and tuned to undisclosed AM/FM frequencies. (The secrecy is
   intended to help prevent tampering with the output using a well-placed radio transmitter, and the
   use of AM/FM helps ensure that any such tampering would cause illegal interference with broadcasts
-  and quickly attract regulatory attention.) Note that random.org limits the supply of free random
-  numbers to any one IP address; if you operate from a fixed address (at least if you use IPv4), you
-  can [check your quota and buy more](https://www.random.org/quota/).
+  and quickly attract regulatory attention.) Uses the legacy API by default, but can be configured
+  to use the JSON-RPC API.
   * `RandomDotOrgSeedGenerator.RATE_LIMITED_ON_FAIL`: Avoids spamming Random.org or your router, by
     instantly reporting failure for 10 seconds after every I/O or HTTP error.
 * `SecureRandomSeedGenerator.SECURE_RANDOM_SEED_GENERATOR`: Uses
