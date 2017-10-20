@@ -15,7 +15,6 @@
 // ============================================================================
 package io.github.pr0methean.betterrandom.seed;
 
-import io.github.pr0methean.betterrandom.util.LogPreFormatter;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -35,7 +34,6 @@ import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
-import java.util.logging.Level;
 import javax.annotation.Nullable;
 import javax.net.ssl.HttpsURLConnection;
 import org.json.simple.JSONArray;
@@ -48,17 +46,24 @@ import org.json.simple.parser.ParseException;
  * API</a> (via HTTPS) and downloads a set of random bits to use as seed data.  It is generally
  * better to use the {@link DevRandomSeedGenerator} where possible, as it should be much quicker.
  * This seed generator is most useful on Microsoft Windows without Cygwin, and other platforms that
- * do not provide {@literal /dev/random}.</p> <p>Random.org collects randomness from atmospheric
- * noise using 9 radios, located at undisclosed addresses in Dublin and Copenhagen and tuned to
- * undisclosed AM/FM frequencies. (The secrecy is intended to help prevent tampering with the output
- * using a well-placed radio transmitter, and the use of AM/FM helps ensure that any such tampering
- * would cause illegal interference with broadcasts and quickly attract regulatory attention.) Note
- * that random.org limits the supply of free random numbers to any one IP address; if you operate
- * from a fixed address (at least if you use IPv4), you can <a href="https://www.random.org/quota/">check
- * your quota and buy more</a>.
+ * do not provide {@literal /dev/random}.</p>
+ * <p>Random.org collects randomness from atmospheric noise using 9 radios, located at undisclosed
+ * addresses in Dublin and Copenhagen and tuned to undisclosed AM/FM frequencies. (The secrecy is
+ * intended to help prevent tampering with the output using a well-placed radio transmitter, and the
+ * use of AM/FM helps ensure that any such tampering would cause illegal interference with
+ * broadcasts and quickly attract regulatory attention.)</p>
+ * <p>Random.org has two APIs: an <a href="https://www.random.org/clients/http/">old API</a> and a
+ * <a href="https://api.random.org/json-rpc/1/">newer JSON-RPC API</a>. Since the new one requires
+ * a key obtained from random.org, the old one is used by default. However, if you have a key, you
+ * can provide it by calling {@link #setApiKey(UUID)}, and the new API will then be used.</p>
+ * <p>Note that when using the old API, random.org limits the supply of free random numbers to any
+ * one IP address; if you operate from a fixed address (at least if you use IPv4), you can <a
+ * href="https://www.random.org/quota/">check
+ * your quota and buy more</a>. On the new API, the quota is per key rather than per IP, and
+ * commercial service tiers are to come in early 2018, shortly after the new API leaves beta.</p>
  *
- * @author Daniel Dyer
- * @author Chris Hennick
+ * @author Daniel Dyer (old API)
+ * @author Chris Hennick (new API)
  */
 public enum RandomDotOrgSeedGenerator implements SeedGenerator {
   /**
