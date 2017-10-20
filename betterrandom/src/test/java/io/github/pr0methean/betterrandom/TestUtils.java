@@ -59,7 +59,7 @@ public enum TestUtils {
   }
 
   /**
-   * Appveyor doesn't seem to be allowed any random.org usage at all.
+   * Appveyor doesn't seem to be allowed any random.org usage at all, even with a valid API key.
    *
    * @return true if we're not running on Appveyor, false if we are.
    */

@@ -32,13 +32,22 @@
 package io.github.pr0methean.betterrandom.benchmark;
 
 import io.github.pr0methean.betterrandom.seed.DefaultSeedGenerator;
+import io.github.pr0methean.betterrandom.seed.RandomDotOrgSeedGenerator;
 import io.github.pr0methean.betterrandom.seed.RandomSeederThread;
+import java.util.UUID;
 import org.openjdk.jmh.annotations.Benchmark;
 import org.openjdk.jmh.annotations.Scope;
+import org.openjdk.jmh.annotations.Setup;
 import org.openjdk.jmh.annotations.State;
 
 @State(Scope.Benchmark)
 public abstract class AbstractRandomBenchmarkWithReseeding extends AbstractRandomBenchmark {
+
+  @Setup
+  public void setApiKey() {
+    String apiKeyString = System.getenv("RANDOM_DOT_ORG_KEY");
+    RandomDotOrgSeedGenerator.setApiKey((apiKeyString == null) ? null : UUID.fromString(apiKeyString));
+  }
 
   protected static final RandomSeederThread seederThread = RandomSeederThread.getInstance(
       DefaultSeedGenerator.DEFAULT_SEED_GENERATOR);
