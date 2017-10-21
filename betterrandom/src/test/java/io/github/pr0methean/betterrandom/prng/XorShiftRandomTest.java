@@ -19,23 +19,19 @@ import io.github.pr0methean.betterrandom.seed.SeedException;
 
 /**
  * Unit test for the cellular automaton RNG.
- *
  * @author Daniel Dyer
  */
 public class XorShiftRandomTest extends BaseRandomTest {
 
-  @Override
-  protected Class<? extends BaseRandom> getClassUnderTest() {
+  @Override protected Class<? extends BaseRandom> getClassUnderTest() {
     return XorShiftRandom.class;
   }
 
-  @Override
-  protected BaseRandom createRng() throws SeedException {
+  @Override protected BaseRandom createRng() throws SeedException {
     return new XorShiftRandom();
   }
 
-  @Override
-  protected BaseRandom createRng(final byte[] seed) throws SeedException {
+  @Override protected BaseRandom createRng(final byte[] seed) throws SeedException {
     return new XorShiftRandom(seed);
   }
 }

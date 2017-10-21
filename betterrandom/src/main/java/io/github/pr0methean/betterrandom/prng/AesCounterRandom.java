@@ -42,7 +42,6 @@ import javax.crypto.spec.SecretKeySpec;
  * GeneralSecurityException} will be thrown.</p> <p><em>NOTE: Because instances of this class
  * require 128-bit seeds, it is not possible to seed this RNG using the {@link #setSeed(long)}
  * method inherited from {@link Random} until the seed array has been set.</em></p>
- *
  * @author Daniel Dyer
  * @author Chris Hennick
  */
@@ -58,8 +57,8 @@ public class AesCounterRandom extends BaseRandom {
    * Java nor OpenJDK provides any implementation of the part of Rijndael that isn't AES.
    */
   private static final String ALGORITHM = "AES";
-  @SuppressWarnings("HardcodedFileSeparator")
-  private static final String ALGORITHM_MODE = ALGORITHM + "/ECB/NoPadding";
+  @SuppressWarnings("HardcodedFileSeparator") private static final String ALGORITHM_MODE =
+      ALGORITHM + "/ECB/NoPadding";
   /**
    * 128-bit counter. Note to forkers: when running a cipher in ECB mode, this counter's length
    * should equal the cipher's block size.
@@ -74,8 +73,7 @@ public class AesCounterRandom extends BaseRandom {
   private static final int BLOCKS_AT_ONCE = 16;
   private static final String HASH_ALGORITHM = "SHA-256";
   private static final int MAX_TOTAL_SEED_LENGTH_BYTES;
-  @SuppressWarnings("CanBeFinal")
-  private static int MAX_KEY_LENGTH_BYTES = 0;
+  @SuppressWarnings("CanBeFinal") private static int MAX_KEY_LENGTH_BYTES = 0;
 
   static {
     try {
@@ -90,8 +88,8 @@ public class AesCounterRandom extends BaseRandom {
 
   private final byte[] currentBlock;
   // WARNING: Don't initialize any instance fields at declaration; they may be initialized too late!
-  @SuppressWarnings("InstanceVariableMayNotBeInitializedByReadObject")
-  private transient Cipher cipher;
+  @SuppressWarnings("InstanceVariableMayNotBeInitializedByReadObject") private transient Cipher
+      cipher;
   private byte[] counter;
   private byte[] counterInput;
   private boolean seeded;
@@ -99,7 +97,6 @@ public class AesCounterRandom extends BaseRandom {
 
   /**
    * Creates a new RNG and seeds it using 256 bits from the {@link DefaultSeedGenerator}.
-   *
    * @throws SeedException if the {@link DefaultSeedGenerator} fails to generate a seed.
    */
   public AesCounterRandom() throws SeedException {
@@ -108,7 +105,6 @@ public class AesCounterRandom extends BaseRandom {
 
   /**
    * Seed the RNG using the provided seed generation strategy to create a 256-bit seed.
-   *
    * @param seedGenerator The seed generation strategy that will provide the seed value for this
    *     RNG.
    * @throws SeedException if there is a problem generating a seed.
@@ -119,7 +115,6 @@ public class AesCounterRandom extends BaseRandom {
 
   /**
    * Seed the RNG using the {@link DefaultSeedGenerator} to create a seed of the specified size.
-   *
    * @param seedSizeBytes The number of bytes to use for seed data. Valid values range from 16
    *     to {@link #getMaxKeyLengthBytes()} + 16.
    * @throws SeedException if the {@link DefaultSeedGenerator} fails to generate a seed.
@@ -130,7 +125,6 @@ public class AesCounterRandom extends BaseRandom {
 
   /**
    * Creates an RNG and seeds it with the specified seed data.
-   *
    * @param seed The seed data used to initialise the RNG. Length must be at least 16 and no
    *     more than {@link #getMaxKeyLengthBytes()} + 16.
    */
@@ -147,7 +141,6 @@ public class AesCounterRandom extends BaseRandom {
    * Math.min(Cipher.getMaxAllowedKeyLength("AES/ECB/NoPadding") / 8, 32)}. If the seed is longer
    * than this, part of it becomes the counter's initial value. Otherwise, the full seed becomes the
    * AES key and the counter is initially zero.
-   *
    * @return the maximum length in bytes of an AES key.
    */
   public static int getMaxKeyLengthBytes() {
@@ -159,10 +152,8 @@ public class AesCounterRandom extends BaseRandom {
         : ((input.length >= 24) ? 24 : 16);
   }
 
-  @Override
-  public ToStringHelper addSubclassFields(final ToStringHelper original) {
-    return original
-        .add("counter", BinaryUtils.convertBytesToHexString(counter))
+  @Override public ToStringHelper addSubclassFields(final ToStringHelper original) {
+    return original.add("counter", BinaryUtils.convertBytesToHexString(counter))
         .add("cipher", cipher);
   }
 
@@ -172,9 +163,7 @@ public class AesCounterRandom extends BaseRandom {
     setSeedInternal(seed);
   }
 
-  @Override
-  protected void initTransientFields(
-      AesCounterRandom this) {
+  @Override protected void initTransientFields(AesCounterRandom this) {
     super.initTransientFields();
     if (counter == null) {
       counter = new byte[COUNTER_SIZE_BYTES];
@@ -201,7 +190,6 @@ public class AesCounterRandom extends BaseRandom {
 
   /**
    * Generates BLOCKS_AT_ONCE 128-bit (16-byte) blocks. Copies them to currentBlock.
-   *
    * @throws GeneralSecurityException If there is a problem with the cipher that generates the
    *     random data.
    */
@@ -214,8 +202,7 @@ public class AesCounterRandom extends BaseRandom {
     cipher.doFinal(counterInput, 0, totalBytes, currentBlock);
   }
 
-  @Override
-  protected final int next(final int bits) {
+  @Override protected final int next(final int bits) {
     lock.lock();
     int result;
     try {
@@ -241,8 +228,7 @@ public class AesCounterRandom extends BaseRandom {
    * {@inheritDoc} If the seed is not of the maximum length, it is combined with the existing seed
    * using SHA-256.
    */
-  @Override
-  public void setSeed(final byte[] seed) {
+  @Override public void setSeed(final byte[] seed) {
     if (seed.length > MAX_TOTAL_SEED_LENGTH_BYTES) {
       throw new IllegalArgumentException(
           "Seed too long: maximum " + MAX_TOTAL_SEED_LENGTH_BYTES + " bytes");
@@ -290,22 +276,19 @@ public class AesCounterRandom extends BaseRandom {
   /**
    * Combines the given seed with the existing seed using SHA-256.
    */
-  @Override
-  @SuppressWarnings("contracts.postcondition.not.satisfied")
-  public synchronized void setSeed(AesCounterRandom this,
-      final long seed) {
+  @Override @SuppressWarnings("contracts.postcondition.not.satisfied")
+  public synchronized void setSeed(AesCounterRandom this, final long seed) {
     if (superConstructorFinished) {
       super.setSeed(seed);
     }
   }
 
-  @Override
-  protected void setSeedInternal(AesCounterRandom this,
-      final byte[] seed) {
+  @Override protected void setSeedInternal(AesCounterRandom this, final byte[] seed) {
     final int seedLength = seed.length;
     if ((seedLength < 16) || (seedLength > MAX_TOTAL_SEED_LENGTH_BYTES)) {
-      throw new IllegalArgumentException(String.format(
-          "Seed length is %d bytes; need 16 to %d bytes", seedLength, MAX_TOTAL_SEED_LENGTH_BYTES));
+      throw new IllegalArgumentException(String
+          .format("Seed length is %d bytes; need 16 to %d bytes", seedLength,
+              MAX_TOTAL_SEED_LENGTH_BYTES));
     }
     super.setSeedInternal(seed);
     // determine how much of seed can go to key
@@ -323,8 +306,7 @@ public class AesCounterRandom extends BaseRandom {
   }
 
   /** Returns the longest supported seed length. */
-  @Override
-  public int getNewSeedLength(AesCounterRandom this) {
+  @Override public int getNewSeedLength(AesCounterRandom this) {
     return MAX_TOTAL_SEED_LENGTH_BYTES;
   }
 }

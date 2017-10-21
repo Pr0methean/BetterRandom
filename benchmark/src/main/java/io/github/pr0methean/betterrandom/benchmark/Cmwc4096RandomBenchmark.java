@@ -6,9 +6,7 @@ import java.util.Random;
 
 public class Cmwc4096RandomBenchmark extends AbstractRandomBenchmarkWithReseeding {
 
-  @Override
-  protected Random createPrng()
-      throws SeedException {
+  @Override protected Random createPrng() throws SeedException {
     return new Cmwc4096Random();
   }
 }

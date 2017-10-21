@@ -25,35 +25,28 @@ abstract class AbstractRandomBenchmark {
 
   private static final int COLUMNS = 2;
   private static final int ROWS = 50_000;
-  @SuppressWarnings("MismatchedReadAndWriteOfArray")
-  private final byte[][] bytes = new byte[COLUMNS][ROWS];
+  @SuppressWarnings("MismatchedReadAndWriteOfArray") private final byte[][] bytes =
+      new byte[COLUMNS][ROWS];
   protected Random prng;
 
   protected AbstractRandomBenchmark() {
   }
 
-  @SuppressWarnings("ObjectAllocationInLoop")
-  public static void main(final String[] args) throws RunnerException {
-    final ChainedOptionsBuilder options = new OptionsBuilder()
-        .addProfiler(HotspotThreadProfiler.class)
-        .addProfiler(HotspotRuntimeProfiler.class)
-        .addProfiler(HotspotMemoryProfiler.class)
-        .addProfiler(GCProfiler.class)
-        .addProfiler(StackProfiler.class)
-        .shouldFailOnError(true)
-        .forks(1)
-        .resultFormat(ResultFormatType.CSV)
-        .detectJvmArgs();
+  @SuppressWarnings("ObjectAllocationInLoop") public static void main(final String[] args)
+      throws RunnerException {
+    final ChainedOptionsBuilder options =
+        new OptionsBuilder().addProfiler(HotspotThreadProfiler.class)
+            .addProfiler(HotspotRuntimeProfiler.class).addProfiler(HotspotMemoryProfiler.class)
+            .addProfiler(GCProfiler.class).addProfiler(StackProfiler.class).shouldFailOnError(true)
+            .forks(1).resultFormat(ResultFormatType.CSV).detectJvmArgs();
     for (int nThreads = 1; nThreads <= 2; nThreads++) {
-      new Runner(options
-          .threads(nThreads)
-          .output(String.format("%d-thread_bench_results.csv", nThreads))
-          .build()).run();
+      new Runner(
+          options.threads(nThreads).output(String.format("%d-thread_bench_results.csv", nThreads))
+              .build()).run();
     }
   }
 
-  @Setup(Level.Trial)
-  public void setUp() {
+  @Setup(Level.Trial) public void setUp() {
     prng = createPrng();
   }
 
@@ -66,8 +59,7 @@ abstract class AbstractRandomBenchmark {
     return bytes[prng.nextInt(COLUMNS)][prng.nextInt(ROWS)];
   }
 
-  @Benchmark
-  public byte testBytesSequential() {
+  @Benchmark public byte testBytesSequential() {
     return innerTestBytesSequential();
   }
 }

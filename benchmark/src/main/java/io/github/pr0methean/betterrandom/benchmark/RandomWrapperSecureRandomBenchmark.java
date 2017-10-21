@@ -7,8 +7,7 @@ import java.util.Random;
 
 public class RandomWrapperSecureRandomBenchmark extends AbstractRandomBenchmark {
 
-  @Override
-  protected Random createPrng() throws SeedException {
+  @Override protected Random createPrng() throws SeedException {
     return new RandomWrapper(new SecureRandom());
   }
 }

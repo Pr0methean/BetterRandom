@@ -4,12 +4,9 @@ import io.github.pr0methean.betterrandom.prng.adapter.ReseedingSplittableRandomA
 import io.github.pr0methean.betterrandom.seed.SeedException;
 import java.util.Random;
 
-public class ReseedingSplittableRandomAdapterBenchmark extends
-    AbstractRandomBenchmark {
+public class ReseedingSplittableRandomAdapterBenchmark extends AbstractRandomBenchmark {
 
-  @Override
-  protected Random createPrng()
-      throws SeedException {
+  @Override protected Random createPrng() throws SeedException {
     return ReseedingSplittableRandomAdapter.getDefaultInstance();
   }
 }

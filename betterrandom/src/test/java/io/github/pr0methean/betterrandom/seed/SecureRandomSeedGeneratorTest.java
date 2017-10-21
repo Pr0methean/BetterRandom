@@ -20,13 +20,11 @@ import org.testng.annotations.Test;
 /**
  * Unit test for the seed generator that uses {@link java.security.SecureRandom} to produce seed
  * data.
- *
  * @author Daniel Dyer
  */
 public class SecureRandomSeedGeneratorTest {
 
-  @Test(timeOut = 15000)
-  public void testGenerator() throws SeedException {
+  @Test(timeOut = 15000) public void testGenerator() throws SeedException {
     SeedTestUtils.testGenerator(SecureRandomSeedGenerator.SECURE_RANDOM_SEED_GENERATOR);
   }
 }

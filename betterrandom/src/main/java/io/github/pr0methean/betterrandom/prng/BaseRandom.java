@@ -33,11 +33,10 @@ import javax.annotation.Nullable;
 
 /**
  * Abstract {@link Random} with a seed field and an implementation of entropy counting.
- *
  * @author Chris Hennick
  */
-public abstract class BaseRandom extends Random implements ByteArrayReseedableRandom,
-    RepeatableRandom, Dumpable, EntropyCountingRandom {
+public abstract class BaseRandom extends Random
+    implements ByteArrayReseedableRandom, RepeatableRandom, Dumpable, EntropyCountingRandom {
 
   /** The number of pseudorandom bits in {@link #nextFloat()}. */
   protected static final int ENTROPY_OF_FLOAT = 24;
@@ -53,10 +52,9 @@ public abstract class BaseRandom extends Random implements ByteArrayReseedableRa
    * taken and {@link #getEntropyBits()} called immediately afterward would return zero or
    * negative.
    */
-  protected final AtomicReference<RandomSeederThread> seederThread = new AtomicReference<>(
-      null);
-  private final AtomicLong nextNextGaussian = new AtomicLong(
-      NAN_LONG_BITS); // Stored as a long since there's no atomic double
+  protected final AtomicReference<RandomSeederThread> seederThread = new AtomicReference<>(null);
+  private final AtomicLong nextNextGaussian = new AtomicLong(NAN_LONG_BITS);
+      // Stored as a long since there's no atomic double
   /**
    * The seed this PRNG was seeded with, as a byte array. Used by {@link #getSeed()} even if the
    * actual internal state of the PRNG is stored elsewhere (since otherwise getSeed() would require
@@ -64,8 +62,8 @@ public abstract class BaseRandom extends Random implements ByteArrayReseedableRa
    */
   protected byte[] seed;
   /** Lock to prevent concurrent modification of the RNG's internal state. */
-  @SuppressWarnings("InstanceVariableMayNotBeInitializedByReadObject")
-  protected transient Lock lock;
+  @SuppressWarnings("InstanceVariableMayNotBeInitializedByReadObject") protected transient Lock
+      lock;
   /**
    * Set by the constructor once either {@link Random#Random()} or {@link Random#Random(long)} has
    * returned. Intended for {@link #setSeed(long)}, which may have to ignore calls while this is
@@ -73,14 +71,13 @@ public abstract class BaseRandom extends Random implements ByteArrayReseedableRa
    * subclass fields.
    */
   @SuppressWarnings({"InstanceVariableMayNotBeInitializedByReadObject",
-      "FieldAccessedSynchronizedAndUnsynchronized"})
-  protected transient boolean superConstructorFinished = false;
+      "FieldAccessedSynchronizedAndUnsynchronized"}) protected transient boolean
+      superConstructorFinished = false;
   /** Stores the entropy estimate backing {@link #getEntropyBits()}. */
   protected AtomicLong entropyBits;
 
   /**
    * Seed the RNG using the {@link DefaultSeedGenerator} to create a seed of the specified size.
-   *
    * @param seedSizeBytes The number of bytes to use for seed data.
    * @throws SeedException if the {@link DefaultSeedGenerator} fails to generate a seed.
    */
@@ -91,7 +88,6 @@ public abstract class BaseRandom extends Random implements ByteArrayReseedableRa
 
   /**
    * Creates a new RNG and seeds it using the provided seed generation strategy.
-   *
    * @param seedGenerator The seed generation strategy that will provide the seed value for this
    *     RNG.
    * @param seedLength The seed length in bytes.
@@ -105,7 +101,6 @@ public abstract class BaseRandom extends Random implements ByteArrayReseedableRa
 
   /**
    * Creates a new RNG with the provided seed.
-   *
    * @param seed the seed.
    */
   protected BaseRandom(final byte[] seed) {
@@ -121,7 +116,6 @@ public abstract class BaseRandom extends Random implements ByteArrayReseedableRa
   /**
    * Creates a new RNG with the provided seed. Only works in subclasses that can accept an 8-byte or
    * shorter seed.
-   *
    * @param seed the seed.
    */
   protected BaseRandom(final long seed) {
@@ -131,7 +125,6 @@ public abstract class BaseRandom extends Random implements ByteArrayReseedableRa
   /**
    * Calculates the entropy in bits, rounded up, of a random {@code int} between {@code origin}
    * (inclusive) and {@code bound} (exclusive).
-   *
    * @param origin the minimum, inclusive.
    * @param bound the maximum, exclusive.
    * @return the entropy.
@@ -143,7 +136,6 @@ public abstract class BaseRandom extends Random implements ByteArrayReseedableRa
   /**
    * Calculates the entropy in bits, rounded up, of a random {@code long} between {@code origin}
    * (inclusive) and {@code bound} (exclusive).
-   *
    * @param origin the minimum, inclusive.
    * @param bound the maximum, exclusive.
    * @return the entropy.
@@ -153,9 +145,7 @@ public abstract class BaseRandom extends Random implements ByteArrayReseedableRa
   }
 
   /**
-   * Returns true if streams created by {@link #doubles(long, double, double)}, {@link #ints(long,
-   * int, int)}, {@link #longs(long, long, long)} and their overloads should be parallel streams.
-   *
+   * Returns true if streams created by {@link #doubles(long, double, double)}, {@link #ints(long, * int, int)}, {@link #longs(long, long, long)} and their overloads should be parallel streams.
    * @return true if this PRNG should create parallel streams; false otherwise.
    */
   protected boolean useParallelStreams() {
@@ -166,7 +156,6 @@ public abstract class BaseRandom extends Random implements ByteArrayReseedableRa
    * <p>Returns true with the given probability, and records that only 1 bit of entropy is being
    * spent.</p> <p>When {@code probability <= 0}, instantly returns false without recording any
    * entropy spent. Likewise, instantly returns true when {@code probability >= 1}.</p>
-   *
    * @param probability The probability of returning true.
    * @return True with probability equal to the {@code probability} parameter; false otherwise.
    */
@@ -177,7 +166,6 @@ public abstract class BaseRandom extends Random implements ByteArrayReseedableRa
   /**
    * Called by {@link #withProbability(double)} to generate a boolean with a specified probability
    * of returning true, after checking that {@code probability} is strictly between 0 and 1.
-   *
    * @param probability The probability (between 0 and 1 exclusive) of returning true.
    * @return True with probability equal to the {@code probability} parameter; false otherwise.
    */
@@ -190,7 +178,6 @@ public abstract class BaseRandom extends Random implements ByteArrayReseedableRa
 
   /**
    * Chooses a random element from the given array.
-   *
    * @param array A non-empty array to choose from.
    * @param <E> The element type of {@code array}; usually inferred by the compiler.
    * @return An element chosen from {@code array} at random, with all elements having equal
@@ -202,7 +189,6 @@ public abstract class BaseRandom extends Random implements ByteArrayReseedableRa
 
   /**
    * Chooses a random element from the given list.
-   *
    * @param list A non-empty {@link List} to choose from.
    * @param <E> The element type of {@code list}; usually inferred by the compiler.
    * @return An element chosen from {@code list} at random, with all elements having equal
@@ -214,7 +200,6 @@ public abstract class BaseRandom extends Random implements ByteArrayReseedableRa
 
   /**
    * Chooses a random value of the given enum class.
-   *
    * @param enumClass An enum class having at least one value.
    * @param <E> The type of {@code enumClass}; usually inferred by the compiler.
    * @return A value of {@code enumClass} chosen at random, with all elements having equal
@@ -230,31 +215,27 @@ public abstract class BaseRandom extends Random implements ByteArrayReseedableRa
    * amount they actually output (see for example {@link #withProbability(double)}, which uses 53
    * random bits but outputs only one, and thus debits only 1 bit of entropy).
    */
-  @Override
-  protected abstract int next(int bits);
+  @Override protected abstract int next(int bits);
 
   /**
    * Generates random bytes and places them into a user-supplied byte array. The number of random
    * bytes produced is equal to the length of the byte array. Reimplemented for entropy-counting
    * purposes.
    */
-  @SuppressWarnings("NumericCastThatLosesPrecision")
-  @Override
-  public void nextBytes(final byte[] bytes) {
+  @SuppressWarnings("NumericCastThatLosesPrecision") @Override public void nextBytes(
+      final byte[] bytes) {
     for (int i = 0; i < bytes.length; i++) {
       bytes[i] = (byte) next(Byte.SIZE);
       recordEntropySpent(Byte.SIZE);
     }
   }
 
-  @Override
-  public int nextInt() {
+  @Override public int nextInt() {
     recordEntropySpent(Integer.SIZE);
     return super.nextInt();
   }
 
-  @Override
-  public int nextInt(final int bound) {
+  @Override public int nextInt(final int bound) {
     recordEntropySpent(entropyOfInt(0, bound));
     return super.nextInt(bound);
   }
@@ -264,8 +245,7 @@ public abstract class BaseRandom extends Random implements ByteArrayReseedableRa
    * generator's sequence. Unlike the inherited implementation in {@link Random#nextLong()}, ones in
    * BetterRandom generally <i>can</i> be expected to return all 2<sup>64</sup> possible values.
    */
-  @Override
-  public final long nextLong() {
+  @Override public final long nextLong() {
     recordEntropySpent(Long.SIZE);
     return nextLongNoEntropyDebit();
   }
@@ -273,7 +253,6 @@ public abstract class BaseRandom extends Random implements ByteArrayReseedableRa
   /**
    * Returns a pseudorandom {@code long} value between zero (inclusive) and the specified bound
    * (exclusive).
-   *
    * @param bound the upper bound (exclusive).  Must be positive.
    * @return a pseudorandom {@code long} value between zero (inclusive) and the bound (exclusive)
    * @throws IllegalArgumentException if {@code bound} is not positive
@@ -285,20 +264,17 @@ public abstract class BaseRandom extends Random implements ByteArrayReseedableRa
   /**
    * Returns a pseudorandom {@code double} value between 0.0 (inclusive) and the specified bound
    * (exclusive).
-   *
    * @param bound the upper bound (exclusive).  Must be positive.
    * @return a pseudorandom {@code double} value between zero (inclusive) and the bound (exclusive)
    * @throws IllegalArgumentException if {@code bound} is not positive
    */
-  @EntryPoint
-  public double nextDouble(final double bound) {
+  @EntryPoint public double nextDouble(final double bound) {
     return nextDouble(0.0, bound);
   }
 
   /**
    * Returns a pseudorandom {@code double} value between the specified origin (inclusive) and bound
    * (exclusive).
-   *
    * @param origin the least value returned
    * @param bound the upper bound (exclusive)
    * @return a pseudorandom {@code double} value between the origin (inclusive) and the bound
@@ -308,8 +284,8 @@ public abstract class BaseRandom extends Random implements ByteArrayReseedableRa
    */
   public double nextDouble(final double origin, final double bound) {
     if (bound < origin) {
-      throw new IllegalArgumentException(String.format("Bound %f must be greater than origin %f",
-          bound, origin));
+      throw new IllegalArgumentException(
+          String.format("Bound %f must be greater than origin %f", bound, origin));
     }
     final double out = (nextDouble() * (bound - origin)) + origin;
     if (out >= bound) {
@@ -319,7 +295,7 @@ public abstract class BaseRandom extends Random implements ByteArrayReseedableRa
     return out;
   }
 
-  private <T extends BaseStream<?, T>> T maybeParallel(T in) {
+  private <T extends BaseStream<?, T>> T maybeParallel(final T in) {
     return useParallelStreams() ? in.parallel() : in;
   }
 
@@ -328,8 +304,8 @@ public abstract class BaseRandom extends Random implements ByteArrayReseedableRa
    * conforming to the given origin (inclusive) and bound (exclusive). This implementation uses
    * {@link #nextDouble(double, double)} to generate these numbers.</p>
    */
-  @Override
-  public DoubleStream doubles(final double randomNumberOrigin, final double randomNumberBound) {
+  @Override public DoubleStream doubles(final double randomNumberOrigin,
+      final double randomNumberBound) {
     return maybeParallel(
         DoubleStream.generate(() -> nextDouble(randomNumberOrigin, randomNumberBound)));
   }
@@ -339,17 +315,15 @@ public abstract class BaseRandom extends Random implements ByteArrayReseedableRa
    * between 0.0 (inclusive) and 1.0 (exclusive). This implementation uses {@link #nextDouble()} to
    * generate these numbers.</p>
    */
-  @Override
-  public DoubleStream doubles() {
+  @Override public DoubleStream doubles() {
     return maybeParallel(DoubleStream.generate(this::nextDouble));
   }
 
-  @Override
-  public DoubleStream doubles(final long streamSize) {
+  @Override public DoubleStream doubles(final long streamSize) {
     return streamOfSize(streamSize).mapToDouble(ignored -> nextDouble());
   }
 
-  private LongStream streamOfSize(long streamSize) {
+  private LongStream streamOfSize(final long streamSize) {
     return maybeParallel(LongStream.range(0, streamSize).unordered());
   }
 
@@ -358,8 +332,7 @@ public abstract class BaseRandom extends Random implements ByteArrayReseedableRa
    * given origin (inclusive) and bound (exclusive). This implementation uses {@link
    * #nextDouble(double, double)} to generate these numbers.
    */
-  @Override
-  public DoubleStream doubles(final long streamSize, final double randomNumberOrigin,
+  @Override public DoubleStream doubles(final long streamSize, final double randomNumberOrigin,
       final double randomNumberBound) {
     return streamOfSize(streamSize)
         .mapToDouble(ignored -> nextDouble(randomNumberOrigin, randomNumberBound));
@@ -369,7 +342,6 @@ public abstract class BaseRandom extends Random implements ByteArrayReseedableRa
    * <p>Returns a stream producing an effectively unlimited number of pseudorandom doubles that are
    * normally distributed with mean 0.0 and standard deviation 1.0. This implementation uses {@link
    * #nextGaussian()}.</p>
-   *
    * @return a stream of normally-distributed random doubles.
    */
   public DoubleStream gaussians() {
@@ -380,7 +352,6 @@ public abstract class BaseRandom extends Random implements ByteArrayReseedableRa
    * Returns a stream producing the given number of pseudorandom doubles that are normally
    * distributed with mean 0.0 and standard deviation 1.0. This implementation uses {@link
    * #nextGaussian()}.
-   *
    * @param streamSize the number of doubles to generate.
    * @return a stream of {@code streamSize} normally-distributed random doubles.
    */
@@ -388,20 +359,17 @@ public abstract class BaseRandom extends Random implements ByteArrayReseedableRa
     return streamOfSize(streamSize).mapToDouble(ignored -> nextGaussian());
   }
 
-  @Override
-  public boolean nextBoolean() {
+  @Override public boolean nextBoolean() {
     recordEntropySpent(1);
     return super.nextBoolean();
   }
 
-  @Override
-  public float nextFloat() {
+  @Override public float nextFloat() {
     recordEntropySpent(ENTROPY_OF_FLOAT);
     return super.nextFloat();
   }
 
-  @Override
-  public double nextDouble() {
+  @Override public double nextDouble() {
     recordEntropySpent(ENTROPY_OF_DOUBLE);
     return super.nextDouble();
   }
@@ -411,8 +379,7 @@ public abstract class BaseRandom extends Random implements ByteArrayReseedableRa
    * standard deviation 1.0 from this random number generator's sequence. Unlike the one in {@link
    * Random}, this implementation is lockless.
    */
-  @Override
-  public double nextGaussian() {
+  @Override public double nextGaussian() {
     // Upper bound. 2 Gaussians are generated from 2 nextDouble calls, which once made are either
     // used or rerolled.
     recordEntropySpent(ENTROPY_OF_DOUBLE);
@@ -421,13 +388,12 @@ public abstract class BaseRandom extends Random implements ByteArrayReseedableRa
 
   /**
    * Core of a lockless reimplementation of {@link #nextGaussian()}.
-   *
    * @param nextDouble shall return a random number between 0 and 1, like {@link #nextDouble()},
    *     but shall not debit the entropy count.
    * @return a random number that is normally distributed with mean 0 and standard deviation 1.
    */
-  @SuppressWarnings("LocalVariableHidesMemberVariable")
-  protected final double internalNextGaussian(final DoubleSupplier nextDouble) {
+  @SuppressWarnings("LocalVariableHidesMemberVariable") protected final double internalNextGaussian(
+      final DoubleSupplier nextDouble) {
     // See Knuth, ACP, Section 3.4.1 Algorithm C.
     final double out = Double.longBitsToDouble(nextNextGaussian.getAndSet(NAN_LONG_BITS));
     if (Double.isNaN(out)) {
@@ -445,13 +411,11 @@ public abstract class BaseRandom extends Random implements ByteArrayReseedableRa
     }
   }
 
-  @Override
-  public IntStream ints(final long streamSize) {
+  @Override public IntStream ints(final long streamSize) {
     return streamOfSize(streamSize).mapToInt(ignored -> nextInt());
   }
 
-  @Override
-  public IntStream ints() {
+  @Override public IntStream ints() {
     return maybeParallel(IntStream.generate(this::nextInt));
   }
 
@@ -460,8 +424,7 @@ public abstract class BaseRandom extends Random implements ByteArrayReseedableRa
    * origin (inclusive) and bound (exclusive). This implementation uses {@link #nextInt(int, int)}
    * to generate these numbers.
    */
-  @Override
-  public IntStream ints(final long streamSize, final int randomNumberOrigin,
+  @Override public IntStream ints(final long streamSize, final int randomNumberOrigin,
       final int randomNumberBound) {
     return streamOfSize(streamSize)
         .mapToInt(ignored -> nextInt(randomNumberOrigin, randomNumberBound));
@@ -470,7 +433,6 @@ public abstract class BaseRandom extends Random implements ByteArrayReseedableRa
   /**
    * Returns a pseudorandom {@code int} value between the specified origin (inclusive) and the
    * specified bound (exclusive).
-   *
    * @param origin the least value returned
    * @param bound the upper bound (exclusive)
    * @return a pseudorandom {@code int} value between the origin (inclusive) and the bound
@@ -480,8 +442,8 @@ public abstract class BaseRandom extends Random implements ByteArrayReseedableRa
    */
   public int nextInt(final int origin, final int bound) {
     if (bound <= origin) {
-      throw new IllegalArgumentException(String.format("Bound %d must be greater than origin %d",
-          bound, origin));
+      throw new IllegalArgumentException(
+          String.format("Bound %d must be greater than origin %d", bound, origin));
     }
     final int range = bound - origin;
     if (range > 0) {
@@ -502,13 +464,11 @@ public abstract class BaseRandom extends Random implements ByteArrayReseedableRa
    * conforming to the given origin (inclusive) and bound (exclusive). This implementation uses
    * {@link #nextInt(int, int)} to generate these numbers.</p>
    */
-  @Override
-  public IntStream ints(final int randomNumberOrigin, final int randomNumberBound) {
+  @Override public IntStream ints(final int randomNumberOrigin, final int randomNumberBound) {
     return maybeParallel(IntStream.generate(() -> nextInt(randomNumberOrigin, randomNumberBound)));
   }
 
-  @Override
-  public LongStream longs(final long streamSize) {
+  @Override public LongStream longs(final long streamSize) {
     return streamOfSize(streamSize).map(ignored -> nextLong());
   }
 
@@ -517,18 +477,15 @@ public abstract class BaseRandom extends Random implements ByteArrayReseedableRa
    * after calling {@link DoubleStream#limit(long)} may cause extra entropy to be spuriously
    * consumed.</p>
    */
-  @Override
-  public LongStream longs() {
+  @Override public LongStream longs() {
     return maybeParallel(LongStream.generate(this::nextLong));
   }
 
   /**
    * <p>Returns a stream producing the given number of pseudorandom longs, each conforming to the
-   * given origin (inclusive) and bound (exclusive). This implementation uses {@link #nextLong(long,
-   * long)} to generate these numbers.</p>
+   * given origin (inclusive) and bound (exclusive). This implementation uses {@link #nextLong(long, * long)} to generate these numbers.</p>
    */
-  @Override
-  public LongStream longs(final long streamSize, final long randomNumberOrigin,
+  @Override public LongStream longs(final long streamSize, final long randomNumberOrigin,
       final long randomNumberBound) {
     return streamOfSize(streamSize).map(ignored -> nextLong(randomNumberOrigin, randomNumberBound));
   }
@@ -536,7 +493,6 @@ public abstract class BaseRandom extends Random implements ByteArrayReseedableRa
   /**
    * Returns a pseudorandom {@code long} value between the specified origin (inclusive) and the
    * specified bound (exclusive).
-   *
    * @param origin the least value returned
    * @param bound the upper bound (exclusive)
    * @return a pseudorandom {@code long} value between the origin (inclusive) and the bound
@@ -546,8 +502,8 @@ public abstract class BaseRandom extends Random implements ByteArrayReseedableRa
    */
   public long nextLong(final long origin, final long bound) {
     if (bound <= origin) {
-      throw new IllegalArgumentException(String.format("Bound %d must be greater than origin %d",
-          bound, origin));
+      throw new IllegalArgumentException(
+          String.format("Bound %d must be greater than origin %d", bound, origin));
     }
     final long range = bound - origin;
     long output;
@@ -557,8 +513,7 @@ public abstract class BaseRandom extends Random implements ByteArrayReseedableRa
       } else {
         final int bits = entropyOfLong(origin, bound);
         output = origin;
-        output += (bits > 32)
-            ? (toUnsignedLong(next(32)) | (toUnsignedLong(next(bits - 32)) << 32))
+        output += (bits > 32) ? (toUnsignedLong(next(32)) | (toUnsignedLong(next(bits - 32)) << 32))
             : next(bits);
       }
     } while ((output < origin) || (output >= bound));
@@ -568,7 +523,6 @@ public abstract class BaseRandom extends Random implements ByteArrayReseedableRa
 
   /**
    * Returns the next random {@code long}, but does not debit entropy.
-   *
    * @return a pseudorandom {@code long} with all possible values equally likely.
    */
   protected long nextLongNoEntropyDebit() {
@@ -580,41 +534,26 @@ public abstract class BaseRandom extends Random implements ByteArrayReseedableRa
    * conforming to the given origin (inclusive) and bound (exclusive). This implementation uses
    * {@link #nextLong(long, long)} to generate these numbers.</p>
    */
-  @Override
-  public LongStream longs(final long randomNumberOrigin, final long randomNumberBound) {
+  @Override public LongStream longs(final long randomNumberOrigin, final long randomNumberBound) {
     return maybeParallel(
         LongStream.generate(() -> nextLong(randomNumberOrigin, randomNumberBound)));
   }
 
-  @Override
-  public String dump() {
+  @Override public String dump() {
     lock.lock();
     try {
-      return addSubclassFields(MoreObjects.toStringHelper(this)
-          .add("seed", BinaryUtils.convertBytesToHexString(seed))
-          .add("entropyBits", entropyBits.get())
-          .add("seederThread", seederThread))
-          .toString();
+      return addSubclassFields(
+          MoreObjects.toStringHelper(this).add("seed", BinaryUtils.convertBytesToHexString(seed))
+              .add("entropyBits", entropyBits.get()).add("seederThread", seederThread)).toString();
     } finally {
       lock.unlock();
     }
   }
 
-  @Override
-  public byte[] getSeed() {
+  @Override public byte[] getSeed() {
     lock.lock();
     try {
       return seed.clone();
-    } finally {
-      lock.unlock();
-    }
-  }
-
-  @Override
-  public void setSeed(final byte[] seed) {
-    lock.lock();
-    try {
-      setSeedInternal(seed);
     } finally {
       lock.unlock();
     }
@@ -627,10 +566,8 @@ public abstract class BaseRandom extends Random implements ByteArrayReseedableRa
    * {@link Random#setSeed(long)} does; otherwise, it shall either be a no-op, or shall combine the
    * input with the existing seed as {@link java.security.SecureRandom#setSeed(long)} does.
    */
-  @SuppressWarnings("method.invocation.invalid")
-  @Override
-  public synchronized void setSeed(BaseRandom this,
-      final long seed) {
+  @SuppressWarnings("method.invocation.invalid") @Override public synchronized void setSeed(
+      BaseRandom this, final long seed) {
     final byte[] seedBytes = BinaryUtils.convertLongToBytes(seed);
     if (superConstructorFinished) {
       setSeed(seedBytes);
@@ -639,10 +576,18 @@ public abstract class BaseRandom extends Random implements ByteArrayReseedableRa
     }
   }
 
+  @Override public void setSeed(final byte[] seed) {
+    lock.lock();
+    try {
+      setSeedInternal(seed);
+    } finally {
+      lock.unlock();
+    }
+  }
+
   /**
    * Adds the fields that were not inherited from {@link BaseRandom} to the given {@link
    * ToStringHelper} for dumping.
-   *
    * @param original a {@link ToStringHelper} object.
    * @return {@code original} with the fields not inherited from {@link BaseRandom} written to it.
    */
@@ -652,11 +597,10 @@ public abstract class BaseRandom extends Random implements ByteArrayReseedableRa
    * Registers this PRNG with the given {@link RandomSeederThread} to schedule reseeding when we run
    * out of entropy. Unregisters this PRNG with the previous {@link RandomSeederThread} if it had a
    * different one.
-   *
    * @param thread a {@link RandomSeederThread} that will be used to reseed this PRNG.
    */
   @SuppressWarnings({"ObjectEquality", "EqualityOperatorComparesObjects"})
-  public void setSeederThread(final @Nullable RandomSeederThread thread) {
+  public void setSeederThread(@Nullable final RandomSeederThread thread) {
     final RandomSeederThread oldThread = seederThread.getAndSet(thread);
     if (thread != oldThread) {
       if (oldThread != null) {
@@ -668,8 +612,7 @@ public abstract class BaseRandom extends Random implements ByteArrayReseedableRa
     }
   }
 
-  @Override
-  public boolean preferSeedWithLong() {
+  @Override public boolean preferSeedWithLong() {
     return getNewSeedLength() <= Long.BYTES;
   }
 
@@ -677,12 +620,10 @@ public abstract class BaseRandom extends Random implements ByteArrayReseedableRa
    * Sets the seed, and should be overridden to set other state that derives from the seed. Called
    * by {@link #setSeed(byte[])}, constructors, {@link #readObject(ObjectInputStream)} and {@link
    * #fallbackSetSeed()}. When called after initialization, the {@link #lock} is always held.
-   *
    * @param seed The new seed.
    */
-  protected void setSeedInternal(BaseRandom this,
-      final byte[] seed) {
-    if (this.seed == null || this.seed.length != seed.length) {
+  protected void setSeedInternal(BaseRandom this, final byte[] seed) {
+    if ((this.seed == null) || (this.seed.length != seed.length)) {
       this.seed = seed.clone();
     } else {
       System.arraycopy(seed, 0, this.seed, 0, seed.length);
@@ -704,22 +645,20 @@ public abstract class BaseRandom extends Random implements ByteArrayReseedableRa
     superConstructorFinished = true;
   }
 
-  private void readObject(BaseRandom this,
-      final ObjectInputStream in) throws IOException, ClassNotFoundException {
+  private void readObject(BaseRandom this, final ObjectInputStream in)
+      throws IOException, ClassNotFoundException {
     in.defaultReadObject();
     initTransientFields();
     setSeedInternal(seed);
   }
 
-  @Override
-  public long getEntropyBits() {
+  @Override public long getEntropyBits() {
     return entropyBits.get();
   }
 
   /**
    * Record that entropy has been spent, and schedule a reseeding if this PRNG has now spent as much
    * as it's been seeded with.
-   *
    * @param bits The number of bits of entropy spent.
    */
   protected void recordEntropySpent(final long bits) {
@@ -739,18 +678,16 @@ public abstract class BaseRandom extends Random implements ByteArrayReseedableRa
    * Used to deserialize a subclass instance that wasn't a subclass instance when it was serialized.
    * Since that means we can't deserialize our seed, we generate a new one with the {@link
    * DefaultSeedGenerator}.
-   *
    * @throws InvalidObjectException if the {@link DefaultSeedGenerator} fails.
    */
-  @SuppressWarnings("OverriddenMethodCallDuringObjectConstruction")
-  private void readObjectNoData() throws InvalidObjectException {
+  @SuppressWarnings("OverriddenMethodCallDuringObjectConstruction") private void readObjectNoData()
+      throws InvalidObjectException {
     LOG.warn("BaseRandom.readObjectNoData() invoked; using DefaultSeedGenerator");
     try {
       fallbackSetSeed();
     } catch (final RuntimeException e) {
       throw (InvalidObjectException) (new InvalidObjectException(
-          "Failed to deserialize or generate a seed")
-          .initCause(e.getCause()));
+          "Failed to deserialize or generate a seed").initCause(e.getCause()));
     }
     initTransientFields();
     setSeedInternal(seed);
@@ -761,8 +698,8 @@ public abstract class BaseRandom extends Random implements ByteArrayReseedableRa
    * handling a {@link #setSeed(long)} call from the super constructor {@link Random#Random()} in
    * subclasses that can't actually use an 8-byte seed. Also used in {@link #readObjectNoData()}.
    */
-  @SuppressWarnings("LockAcquiredButNotSafelyReleased")
-  protected void fallbackSetSeed(BaseRandom this) {
+  @SuppressWarnings("LockAcquiredButNotSafelyReleased") protected void fallbackSetSeed(
+      BaseRandom this) {
     boolean locked = false;
     if (lock != null) {
       lock.lock();
@@ -782,6 +719,5 @@ public abstract class BaseRandom extends Random implements ByteArrayReseedableRa
     }
   }
 
-  @Override
-  public abstract int getNewSeedLength(BaseRandom this);
+  @Override public abstract int getNewSeedLength(BaseRandom this);
 }

@@ -11,35 +11,28 @@ import org.testng.annotations.Test;
 
 public class SingleThreadSplittableRandomAdapterTest extends BaseRandomTest {
 
-  @Override
-  protected Class<? extends BaseRandom> getClassUnderTest() {
+  @Override protected Class<? extends BaseRandom> getClassUnderTest() {
     return SingleThreadSplittableRandomAdapter.class;
   }
 
   /**
    * {@inheritDoc} Overridden in subclasses, so that subclassing the test can test the subclasses.
    */
-  @Override
-  protected BaseSplittableRandomAdapter createRng() throws SeedException {
-    return new SingleThreadSplittableRandomAdapter(
-        DefaultSeedGenerator.DEFAULT_SEED_GENERATOR);
+  @Override protected BaseSplittableRandomAdapter createRng() throws SeedException {
+    return new SingleThreadSplittableRandomAdapter(DefaultSeedGenerator.DEFAULT_SEED_GENERATOR);
   }
 
-  @Override
-  protected BaseRandom createRng(final byte[] seed) throws SeedException {
+  @Override protected BaseRandom createRng(final byte[] seed) throws SeedException {
     final BaseSplittableRandomAdapter adapter = createRng();
     adapter.setSeed(seed);
     return adapter;
   }
 
-  @Test
-  public void testGetSplittableRandom() throws Exception {
+  @Test public void testGetSplittableRandom() throws Exception {
     // TODO
   }
 
-  @Override
-  @Test
-  public void testSerializable() throws SeedException {
+  @Override @Test public void testSerializable() throws SeedException {
     final BaseSplittableRandomAdapter adapter = createRng();
     // May change when serialized and deserialized, but deserializing twice should yield same object
     // and deserialization should be idempotent
@@ -50,21 +43,15 @@ public class SingleThreadSplittableRandomAdapterTest extends BaseRandomTest {
     testEquivalence(adapter2, adapter4, 20);
   }
 
-  @Override
-  @Test
-  public void testNullSeed() {
+  @Override @Test public void testNullSeed() {
     // No-op.
   }
 
-  @Override
-  @Test(enabled = false)
-  public void testEquals() {
+  @Override @Test(enabled = false) public void testEquals() {
     // No-op.
   }
 
-  @Override
-  @Test(enabled = false)
-  public void testHashCode() {
+  @Override @Test(enabled = false) public void testHashCode() {
     // No-op.
   }
 }

@@ -22,19 +22,17 @@ public class ThreadLocalRandomWrapper extends RandomWrapper {
 
   private static final long serialVersionUID = 1199235201518562359L;
   private final Supplier<BaseRandom> initializer;
-  private final @Nullable
-  Integer explicitSeedSize;
+  @Nullable private final Integer explicitSeedSize;
   private transient ThreadLocal<BaseRandom> threadLocal;
 
   /**
    * Wraps the given {@link Supplier}. This ThreadLocalRandomWrapper will be serializable if the
    * {@link Supplier} is serializable.
-   *
    * @param initializer a supplier that will be called to provide the initial {@link BaseRandom}
    *     for each thread.
    * @throws SeedException should never happen.
    */
-  public ThreadLocalRandomWrapper(Supplier<BaseRandom> initializer) throws SeedException {
+  public ThreadLocalRandomWrapper(final Supplier<BaseRandom> initializer) throws SeedException {
     super(0);
     this.initializer = initializer;
     threadLocal = ThreadLocal.withInitial(initializer);
@@ -43,7 +41,6 @@ public class ThreadLocalRandomWrapper extends RandomWrapper {
 
   /**
    * Wraps a seed generator and a function that takes a seed byte array as input.
-   *
    * @param seedSize the size of seed arrays to generate.
    * @param seedGenerator The seed generation strategy that will provide the seed value for each
    *     thread's {@link BaseRandom}.
@@ -51,8 +48,8 @@ public class ThreadLocalRandomWrapper extends RandomWrapper {
    *     Probably a constructor reference.
    * @throws SeedException should never happen.
    */
-  public ThreadLocalRandomWrapper(int seedSize, SeedGenerator seedGenerator,
-      Function<byte[], BaseRandom> creator) throws SeedException {
+  public ThreadLocalRandomWrapper(final int seedSize, final SeedGenerator seedGenerator,
+      final Function<byte[], BaseRandom> creator) throws SeedException {
     super(0);
     explicitSeedSize = seedSize;
     initializer = (Serializable & Supplier<BaseRandom>) (() -> creator
@@ -63,116 +60,97 @@ public class ThreadLocalRandomWrapper extends RandomWrapper {
   /**
    * Uses this class and {@link RandomWrapper} to decorate any implementation of {@link Random} that
    * can be constructed from a {@code long} seed into a fully-concurrent one.
-   *
    * @param legacyCreator a function that provides the {@link Random} that underlies the
    *     returned wrapper on each thread, taking a seed as input.
    * @param seedGenerator the seed generator whose output will be fed to {@code legacyCreator}.
    * @return a ThreadLocalRandomWrapper decorating instances created by {@code legacyCreator}.
    */
-  public static ThreadLocalRandomWrapper wrapLegacy(
-      LongFunction<Random> legacyCreator, SeedGenerator seedGenerator) {
-    return new ThreadLocalRandomWrapper(Long.BYTES, seedGenerator, bytes ->
-        new RandomWrapper(legacyCreator.apply(BinaryUtils.convertBytesToLong(bytes))));
+  public static ThreadLocalRandomWrapper wrapLegacy(final LongFunction<Random> legacyCreator,
+      final SeedGenerator seedGenerator) {
+    return new ThreadLocalRandomWrapper(Long.BYTES, seedGenerator,
+        bytes -> new RandomWrapper(legacyCreator.apply(BinaryUtils.convertBytesToLong(bytes))));
   }
 
-  @Override
-  protected boolean withProbabilityInternal(double probability) {
+  @Override protected boolean withProbabilityInternal(final double probability) {
     return getWrapped().withProbabilityInternal(probability);
   }
 
-  @Override
-  public long nextLong(long bound) {
+  @Override public long nextLong(final long bound) {
     return getWrapped().nextLong(bound);
   }
 
-  @Override
-  public int nextInt(int origin, int bound) {
+  @Override public int nextInt(final int origin, final int bound) {
     return getWrapped().nextInt(origin, bound);
   }
 
-  @Override
-  public long nextLong(long origin, long bound) {
+  @Override public long nextLong(final long origin, final long bound) {
     return getWrapped().nextLong(origin, bound);
   }
 
-  @Override
-  public BaseRandom getWrapped() {
+  @Override public BaseRandom getWrapped() {
     return threadLocal.get();
   }
 
-  private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
+  private void readObject(final ObjectInputStream in) throws IOException, ClassNotFoundException {
     in.defaultReadObject();
     threadLocal = ThreadLocal.withInitial(initializer);
   }
 
-  @Override
-  public void nextBytes(byte[] bytes) {
+  @Override public void nextBytes(final byte[] bytes) {
     getWrapped().nextBytes(bytes);
   }
 
-  @Override
-  public int nextInt() {
+  @Override public int nextInt() {
     return getWrapped().nextInt();
   }
 
-  @Override
-  public int nextInt(int bound) {
+  @Override public int nextInt(final int bound) {
     return getWrapped().nextInt(bound);
   }
 
-  @Override
-  protected long nextLongNoEntropyDebit() {
+  @Override protected long nextLongNoEntropyDebit() {
     return getWrapped().nextLongNoEntropyDebit();
   }
 
-  @Override
-  public boolean nextBoolean() {
+  @Override public boolean nextBoolean() {
     return getWrapped().nextBoolean();
   }
 
-  @Override
-  public float nextFloat() {
+  @Override public float nextFloat() {
     return getWrapped().nextFloat();
   }
 
-  @Override
-  public double nextDouble() {
+  @Override public double nextDouble() {
     return getWrapped().nextDouble();
   }
 
-  @Override
-  public double nextGaussian() {
+  @Override public double nextGaussian() {
     return getWrapped().nextGaussian();
   }
 
   /**
    * Not supported, because this class uses a thread-local seed.
-   *
    * @param thread ignored.
    * @throws UnsupportedOperationException always.
    */
-  @Override
-  public void setSeederThread(@Nullable RandomSeederThread thread) {
+  @Override public void setSeederThread(@Nullable final RandomSeederThread thread) {
     throw new UnsupportedOperationException("This can't be reseeded by a RandomSeederThread");
   }
 
-  @Override
-  protected boolean useParallelStreams() {
+  @Override protected boolean useParallelStreams() {
     return true;
   }
 
-  @Override
-  protected ToStringHelper addSubclassFields(ToStringHelper original) {
+  @Override protected ToStringHelper addSubclassFields(final ToStringHelper original) {
     return original.add("threadLocal", threadLocal);
   }
 
-  @Override
-  public byte[] getSeed() {
+  @Override public byte[] getSeed() {
     return getWrapped().getSeed();
   }
 
-  @Override
-  protected void setSeedInternal(byte[] seed) {
+  @SuppressWarnings("VariableNotUsedInsideIf") @Override
+  protected void setSeedInternal(final byte[] seed) {
     if (seed == null) {
       throw new IllegalArgumentException("Seed must not be null");
     }
@@ -182,20 +160,16 @@ public class ThreadLocalRandomWrapper extends RandomWrapper {
     }
   }
 
-  @Override
-  protected void recordEntropySpent(long bits) {
+  @Override protected void recordEntropySpent(final long bits) {
     getWrapped().recordEntropySpent(bits);
   }
 
-  @Override
-  public long getEntropyBits() {
+  @Override public long getEntropyBits() {
     return getWrapped().getEntropyBits();
   }
 
-  @Override
-  public int getNewSeedLength() {
+  @SuppressWarnings("VariableNotUsedInsideIf") @Override public int getNewSeedLength() {
     return (threadLocal == null) ? 0
-        : (explicitSeedSize == null) ? getWrapped().getNewSeedLength()
-            : explicitSeedSize;
+        : ((explicitSeedSize == null) ? getWrapped().getNewSeedLength() : explicitSeedSize);
   }
 }

@@ -12,7 +12,6 @@ import java.util.SplittableRandom;
  * #setSeed(byte[])} replace the {@link SplittableRandom} that's used in the context in which they
  * are called. See {@link ReseedingSplittableRandomAdapter} for an example of when it does
  * <i>not</i> make sense to extend this class.
- *
  * @author Chris Hennick
  */
 public abstract class DirectSplittableRandomAdapter extends BaseSplittableRandomAdapter {
@@ -29,7 +28,6 @@ public abstract class DirectSplittableRandomAdapter extends BaseSplittableRandom
 
   /**
    * Wraps a {@link SplittableRandom} with the specified seed.
-   *
    * @param seed 8 bytes of seed data used to initialise the RNG.
    */
   protected DirectSplittableRandomAdapter(final byte[] seed) {
@@ -39,17 +37,14 @@ public abstract class DirectSplittableRandomAdapter extends BaseSplittableRandom
 
   /**
    * Wraps a {@link SplittableRandom} with the specified seed.
-   *
    * @param seed the seed.
    */
-  @EntryPoint
-  protected DirectSplittableRandomAdapter(final long seed) {
+  @EntryPoint protected DirectSplittableRandomAdapter(final long seed) {
     super(seed);
     setSeed(seed);
   }
 
-  @Override
-  protected ToStringHelper addSubclassFields(final ToStringHelper original) {
+  @Override protected ToStringHelper addSubclassFields(final ToStringHelper original) {
     return original.add("underlying", underlying);
   }
 
@@ -61,10 +56,7 @@ public abstract class DirectSplittableRandomAdapter extends BaseSplittableRandom
   /**
    * Replaces {@link #underlying} with a new {@link SplittableRandom} that uses the given seed.
    */
-  @Override
-  protected void setSeedInternal(
-      DirectSplittableRandomAdapter this,
-      final byte[] seed) {
+  @Override protected void setSeedInternal(DirectSplittableRandomAdapter this, final byte[] seed) {
     if (seed.length != Long.BYTES) {
       throw new IllegalArgumentException("DirectSplittableRandomAdapter requires an 8-byte seed");
     }
@@ -75,9 +67,7 @@ public abstract class DirectSplittableRandomAdapter extends BaseSplittableRandom
   /**
    * Replaces {@link #underlying} with a new {@link SplittableRandom} that uses the given seed.
    */
-  @Override
-  public void setSeed(DirectSplittableRandomAdapter this,
-      final long seed) {
+  @Override public void setSeed(DirectSplittableRandomAdapter this, final long seed) {
     super.setSeedInternal(BinaryUtils.convertLongToBytes(seed));
     underlying = new SplittableRandom(seed);
   }

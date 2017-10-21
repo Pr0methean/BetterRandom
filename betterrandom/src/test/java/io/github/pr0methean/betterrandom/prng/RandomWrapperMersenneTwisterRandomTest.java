@@ -6,25 +6,21 @@ import org.testng.annotations.Test;
 
 public class RandomWrapperMersenneTwisterRandomTest extends BaseRandomTest {
 
-  @Override
-  protected Class<? extends BaseRandom> getClassUnderTest() {
+  @Override protected Class<? extends BaseRandom> getClassUnderTest() {
     return RandomWrapper.class;
   }
 
-  @Override
-  @Test(enabled = false)
-  public void testAllPublicConstructors()
-      throws SeedException, IllegalAccessException, InstantiationException, InvocationTargetException {
+  @Override @Test(enabled = false) public void testAllPublicConstructors()
+      throws SeedException, IllegalAccessException, InstantiationException,
+      InvocationTargetException {
     // No-op: redundant to super insofar as it works.
   }
 
-  @Override
-  protected RandomWrapper createRng() throws SeedException {
+  @Override protected RandomWrapper createRng() throws SeedException {
     return new RandomWrapper(new MersenneTwisterRandom());
   }
 
-  @Override
-  protected RandomWrapper createRng(final byte[] seed) throws SeedException {
+  @Override protected RandomWrapper createRng(final byte[] seed) throws SeedException {
     return new RandomWrapper(new MersenneTwisterRandom(seed));
   }
 }

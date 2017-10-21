@@ -6,8 +6,7 @@ import java.util.Random;
 
 public class AesCounterRandom128Benchmark extends AbstractRandomBenchmarkWithReseeding {
 
-  @Override
-  protected Random createPrng() throws SeedException {
+  @Override protected Random createPrng() throws SeedException {
     return new AesCounterRandom(16);
   }
 }

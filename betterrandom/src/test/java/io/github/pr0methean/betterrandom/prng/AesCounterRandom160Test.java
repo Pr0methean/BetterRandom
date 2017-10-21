@@ -7,21 +7,17 @@ import org.testng.annotations.Test;
 
 public class AesCounterRandom160Test extends AesCounterRandom128Test {
 
-  @Override
-  protected int getNewSeedLength(final BaseRandom basePrng) {
+  @Override protected int getNewSeedLength(final BaseRandom basePrng) {
     return 20;
   }
 
-  @Override
-  @Test(timeOut = 15000, expectedExceptions = IllegalArgumentException.class)
+  @Override @Test(timeOut = 15000, expectedExceptions = IllegalArgumentException.class)
   public void testSeedTooLong() throws GeneralSecurityException, SeedException {
     createRng(
-        DefaultSeedGenerator.DEFAULT_SEED_GENERATOR
-            .generateSeed(49)); // Should throw an exception.
+        DefaultSeedGenerator.DEFAULT_SEED_GENERATOR.generateSeed(49)); // Should throw an exception.
   }
 
-  @Override
-  public BaseRandom createRng() {
+  @Override public BaseRandom createRng() {
     return new AesCounterRandom(20);
   }
 }
