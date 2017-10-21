@@ -15,13 +15,11 @@ public class AesCounterRandom384Test extends AesCounterRandom256Test {
     }
   }
 
-  @Override
-  protected int getNewSeedLength(final BaseRandom basePrng) {
+  @Override protected int getNewSeedLength(final BaseRandom basePrng) {
     return UNLIMITED_STRENGTH_CRYPTO ? 48 : 32;
   }
 
-  @Override
-  public BaseRandom createRng() {
+  @Override public BaseRandom createRng() {
     if (UNLIMITED_STRENGTH_CRYPTO) {
       return new AesCounterRandom(48);
     } else {

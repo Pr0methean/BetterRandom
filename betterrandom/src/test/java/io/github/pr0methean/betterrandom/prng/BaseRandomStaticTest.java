@@ -21,11 +21,10 @@ import org.testng.annotations.Test;
 public class BaseRandomStaticTest {
 
   @TestingDeficiency // FIXME: The switcheroo isn't happening!
-  @Test(enabled = false)
-  public void testReadObjectNoData() throws IOException, ClassNotFoundException {
+  @Test(enabled = false) public void testReadObjectNoData()
+      throws IOException, ClassNotFoundException {
     final BaseRandom switchedRandom;
-    try (
-        ByteArrayOutputStream byteOutStream = new ByteArrayOutputStream();
+    try (ByteArrayOutputStream byteOutStream = new ByteArrayOutputStream();
         ObjectOutputStream objectOutStream = new ObjectOutputStream(byteOutStream)) {
       objectOutStream.writeObject(new Switcheroo());
       final byte[] serialCopy = byteOutStream.toByteArray();
@@ -38,8 +37,7 @@ public class BaseRandomStaticTest {
     switchedRandom.nextInt();
   }
 
-  @Test
-  public void testEntropyOfInt() {
+  @Test public void testEntropyOfInt() {
     assertEquals(entropyOfInt(0, 1), 0);
     assertEquals(entropyOfInt(0, 2), 1);
     assertEquals(entropyOfInt(0, 1 << 24), 24);
@@ -48,8 +46,7 @@ public class BaseRandomStaticTest {
     assertEquals(entropyOfInt(-(1 << 24), 1), 25);
   }
 
-  @Test
-  public void testEntropyOfLong() {
+  @Test public void testEntropyOfLong() {
     assertEquals(entropyOfLong(0, 1), 0);
     assertEquals(entropyOfLong(0, 2), 1);
     assertEquals(entropyOfLong(0, 1L << 42), 42);
@@ -69,11 +66,10 @@ public class BaseRandomStaticTest {
       super(in);
     }
 
-    @Override
-    protected Class<?> resolveClass(final ObjectStreamClass desc)
+    @Override protected Class<?> resolveClass(final ObjectStreamClass desc)
         throws IOException, ClassNotFoundException {
-      return (Switcheroo.serialVersionUID == desc.getSerialVersionUID())
-          ? AesCounterRandom.class : super.resolveClass(desc);
+      return (Switcheroo.serialVersionUID == desc.getSerialVersionUID()) ? AesCounterRandom.class
+          : super.resolveClass(desc);
     }
   }
 }

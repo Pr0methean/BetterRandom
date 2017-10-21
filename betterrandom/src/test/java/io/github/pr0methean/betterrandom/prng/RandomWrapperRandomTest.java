@@ -26,51 +26,43 @@ import org.testng.annotations.Test;
 
 /**
  * Unit test for the JDK RNG.
- *
  * @author Daniel Dyer
  */
 public class RandomWrapperRandomTest extends BaseRandomTest {
 
-  @Override
-  protected Class<? extends BaseRandom> getClassUnderTest() {
+  @Override protected Class<? extends BaseRandom> getClassUnderTest() {
     return RandomWrapper.class;
   }
 
-  @Override
-  public void testAllPublicConstructors()
-      throws SeedException, IllegalAccessException, InstantiationException, InvocationTargetException {
+  @Override public void testAllPublicConstructors()
+      throws SeedException, IllegalAccessException, InstantiationException,
+      InvocationTargetException {
     final BaseRandom basePrng = createRng();
     final int seedLength = getNewSeedLength(basePrng);
-    TestUtils.testAllPublicConstructors(getClassUnderTest(), ImmutableMap.of(
-        int.class, seedLength,
-        long.class, TEST_SEED,
-        byte[].class, DefaultSeedGenerator.DEFAULT_SEED_GENERATOR.generateSeed(seedLength),
-        SeedGenerator.class, DefaultSeedGenerator.DEFAULT_SEED_GENERATOR,
-        Random.class, new Random()
-    ), BaseRandom::nextInt);
+    TestUtils.testAllPublicConstructors(getClassUnderTest(), ImmutableMap
+        .of(int.class, seedLength, long.class, TEST_SEED, byte[].class,
+            DefaultSeedGenerator.DEFAULT_SEED_GENERATOR.generateSeed(seedLength),
+            SeedGenerator.class, DefaultSeedGenerator.DEFAULT_SEED_GENERATOR, Random.class,
+            new Random()), BaseRandom::nextInt);
   }
 
   /**
    * Test to ensure that two distinct RNGs with the same seed return the same sequence of numbers.
    */
-  @Override
-  @Test(timeOut = 15000)
-  public void testRepeatability() throws SeedException {
+  @Override @Test(timeOut = 15000) public void testRepeatability() throws SeedException {
     // Create an RNG using the default seeding strategy.
     final RandomWrapper rng = new RandomWrapper();
     // Create second RNG using same seed.
     final RandomWrapper duplicateRNG = new RandomWrapper(rng.getSeed());
-    assert RandomTestUtils
-        .testEquivalence(rng, duplicateRNG, 1000) : "Generated sequences do not match.";
+    assert RandomTestUtils.testEquivalence(rng, duplicateRNG, 1000)
+        : "Generated sequences do not match.";
   }
 
-  @Override
-  protected BaseRandom createRng() throws SeedException {
+  @Override protected BaseRandom createRng() throws SeedException {
     return new RandomWrapper();
   }
 
-  @Override
-  protected BaseRandom createRng(final byte[] seed) throws SeedException {
+  @Override protected BaseRandom createRng(final byte[] seed) throws SeedException {
     return new RandomWrapper(seed);
   }
 }

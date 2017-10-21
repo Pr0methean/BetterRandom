@@ -14,27 +14,23 @@ public class SplittableRandomAdapterTest extends SingleThreadSplittableRandomAda
 
   private static final SeedGenerator FAKE_SEED_GENERATOR = new FakeSeedGenerator();
 
-  @Override
-  protected Class<? extends BaseRandom> getClassUnderTest() {
+  @Override protected Class<? extends BaseRandom> getClassUnderTest() {
     return SplittableRandomAdapter.class;
   }
 
   /** SplittableRandomAdapter isn't repeatable until its seed has been specified. */
-  @Override
-  public void testRepeatability() throws SeedException {
+  @Override public void testRepeatability() throws SeedException {
     final BaseRandom rng = createRng();
     rng.setSeed(TEST_SEED);
     // Create second RNG using same seed.
     final BaseRandom duplicateRNG = createRng();
     duplicateRNG.setSeed(TEST_SEED);
-    assert RandomTestUtils
-        .testEquivalence(rng, duplicateRNG, 1000) :
-        String.format("Generated sequences do not match between:%n%s%nand:%n%s", rng.dump(),
+    assert RandomTestUtils.testEquivalence(rng, duplicateRNG, 1000) : String
+        .format("Generated sequences do not match between:%n%s%nand:%n%s", rng.dump(),
             duplicateRNG.dump());
   }
 
-  @Override
-  protected SplittableRandomAdapter createRng() throws SeedException {
+  @Override protected SplittableRandomAdapter createRng() throws SeedException {
     return new SplittableRandomAdapter(DefaultSeedGenerator.DEFAULT_SEED_GENERATOR);
   }
 
@@ -42,8 +38,7 @@ public class SplittableRandomAdapterTest extends SingleThreadSplittableRandomAda
    * Since reseeding is thread-local, we can't use a {@link io.github.pr0methean.betterrandom.seed.RandomSeederThread}
    * for this test.
    */
-  @Override
-  public void testReseeding() throws SeedException {
+  @Override public void testReseeding() throws SeedException {
     final byte[] output1 = new byte[20];
     final SplittableRandomAdapter rng1 = new SplittableRandomAdapter(FAKE_SEED_GENERATOR);
     final SplittableRandomAdapter rng2 = new SplittableRandomAdapter(FAKE_SEED_GENERATOR);

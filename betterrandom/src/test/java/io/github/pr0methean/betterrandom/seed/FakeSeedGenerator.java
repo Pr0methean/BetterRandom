@@ -4,8 +4,7 @@ public class FakeSeedGenerator implements SeedGenerator {
 
   private static final long serialVersionUID = 2310664903337315190L;
 
-  @Override
-  public void generateSeed(final byte[] output) throws SeedException {
+  @Override public void generateSeed(final byte[] output) throws SeedException {
     // No-op.
   }
 }

@@ -17,68 +17,57 @@ import org.testng.annotations.Test;
 
 public class ThreadLocalRandomWrapperTest extends BaseRandomTest {
 
-  @Override
-  public void testSerializable() throws IOException, ClassNotFoundException, SeedException {
+  @Override public void testSerializable()
+      throws IOException, ClassNotFoundException, SeedException {
     // May change after serialization, so test only that it still works at all afterward
     CloneViaSerialization.clone(createRng()).nextInt();
   }
 
-  @Override
-  @Test(timeOut = 15000, expectedExceptions = IllegalArgumentException.class)
+  @Override @Test(timeOut = 15000, expectedExceptions = IllegalArgumentException.class)
   public void testSeedTooLong() throws GeneralSecurityException, SeedException {
     createRng().setSeed(DefaultSeedGenerator.DEFAULT_SEED_GENERATOR.generateSeed(17));
   }
 
-  @Override
-  @Test(timeOut = 15000, expectedExceptions = IllegalArgumentException.class)
+  @Override @Test(timeOut = 15000, expectedExceptions = IllegalArgumentException.class)
   public void testSeedTooShort() throws SeedException {
     createRng().setSeed(new byte[]{1, 2, 3});
   }
 
-  @Override
-  @Test(timeOut = 15000, expectedExceptions = IllegalArgumentException.class)
+  @Override @Test(timeOut = 15000, expectedExceptions = IllegalArgumentException.class)
   public void testNullSeed() throws SeedException {
     createRng().setSeed(null);
   }
 
-  @Override
-  protected Class<? extends BaseRandom> getClassUnderTest() {
+  @Override protected Class<? extends BaseRandom> getClassUnderTest() {
     return ThreadLocalRandomWrapper.class;
   }
 
-  @Override
-  @Test(enabled = false)
-  public void testRepeatability() throws SeedException {
+  @Override @Test(enabled = false) public void testRepeatability() throws SeedException {
     // No-op: ThreadLocalRandomWrapper isn't repeatable.
   }
 
-  @Override
-  @Test(enabled = false)
-  public void testAllPublicConstructors()
-      throws SeedException, IllegalAccessException, InstantiationException, InvocationTargetException {
+  @Override @Test(enabled = false) public void testAllPublicConstructors()
+      throws SeedException, IllegalAccessException, InstantiationException,
+      InvocationTargetException {
     // No-op: only 2 ctors, both tested elsewhere.
   }
 
-  @Test
-  public void testExplicitSeedSize() throws SeedException {
+  @Test public void testExplicitSeedSize() throws SeedException {
     assertEquals(new ThreadLocalRandomWrapper(200, DefaultSeedGenerator.DEFAULT_SEED_GENERATOR,
         AesCounterRandom::new).getNewSeedLength(), 200);
   }
 
-  @Test
-  public void testWrapLegacy() throws SeedException {
+  @Test public void testWrapLegacy() throws SeedException {
     ThreadLocalRandomWrapper.wrapLegacy(Random::new, DefaultSeedGenerator.DEFAULT_SEED_GENERATOR)
         .nextInt();
   }
 
-  @Override
-  protected BaseRandom createRng() throws SeedException {
-    return new ThreadLocalRandomWrapper((Serializable & Supplier<BaseRandom>)
-        MersenneTwisterRandom::new);
+  @Override protected BaseRandom createRng() throws SeedException {
+    return new ThreadLocalRandomWrapper(
+        (Serializable & Supplier<BaseRandom>) MersenneTwisterRandom::new);
   }
 
-  @Override
-  protected BaseRandom createRng(final byte[] seed) throws SeedException {
+  @Override protected BaseRandom createRng(final byte[] seed) throws SeedException {
     return createRng();
   }
 
@@ -86,8 +75,7 @@ public class ThreadLocalRandomWrapperTest extends BaseRandomTest {
    * Since reseeding is thread-local, we can't use a {@link io.github.pr0methean.betterrandom.seed.RandomSeederThread}
    * for this test.
    */
-  @Override
-  public void testReseeding() throws SeedException {
+  @Override public void testReseeding() throws SeedException {
     final byte[] output1 = new byte[20];
     final ThreadLocalRandomWrapper rng1 = (ThreadLocalRandomWrapper) createRng();
     final ThreadLocalRandomWrapper rng2 = (ThreadLocalRandomWrapper) createRng();

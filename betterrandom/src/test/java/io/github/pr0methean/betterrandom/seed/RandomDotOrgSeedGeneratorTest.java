@@ -25,34 +25,33 @@ import org.testng.annotations.Test;
 
 /**
  * Unit test for the seed generator that connects to random.org to get seed data.
- *
  * @author Daniel Dyer
  * @author Chris Hennick
  */
 public class RandomDotOrgSeedGeneratorTest {
+
   public static final int SMALL_REQUEST_SIZE = 32;
 
-  @BeforeClass
-  public void setUp() {
+  private static void setApiKey() {
+    final String apiKeyString = System.getenv("RANDOM_DOT_ORG_KEY");
+    RandomDotOrgSeedGenerator
+        .setApiKey((apiKeyString == null) ? null : UUID.fromString(apiKeyString));
+  }
+
+  @BeforeClass public void setUp() {
     if (!canRunRandomDotOrgLargeTest()) {
       RandomDotOrgSeedGenerator.setMaxRequestSize(SMALL_REQUEST_SIZE);
     }
   }
-  private static void setApiKey() {
-    String apiKeyString = System.getenv("RANDOM_DOT_ORG_KEY");
-    RandomDotOrgSeedGenerator.setApiKey((apiKeyString == null) ? null : UUID.fromString(apiKeyString));
-  }
 
-  @Test(timeOut = 120000)
-  public void testGeneratorOldApi() throws SeedException {
+  @Test(timeOut = 120000) public void testGeneratorOldApi() throws SeedException {
     if (isNotAppveyor()) {
       RandomDotOrgSeedGenerator.setApiKey(null);
       SeedTestUtils.testGenerator(RandomDotOrgSeedGenerator.RANDOM_DOT_ORG_SEED_GENERATOR);
     }
   }
 
-  @Test(timeOut = 120000)
-  public void testGeneratorNewApi() throws SeedException {
+  @Test(timeOut = 120000) public void testGeneratorNewApi() throws SeedException {
     if (isNotAppveyor()) {
       setApiKey();
       SeedTestUtils.testGenerator(RandomDotOrgSeedGenerator.RANDOM_DOT_ORG_SEED_GENERATOR);
@@ -63,8 +62,7 @@ public class RandomDotOrgSeedGeneratorTest {
    * Try to acquire a large number of bytes, more than are cached internally by the seed generator
    * implementation.
    */
-  @Test(timeOut = 120000)
-  public void testLargeRequest() throws SeedException {
+  @Test(timeOut = 120000) public void testLargeRequest() throws SeedException {
     if (isNotAppveyor()) {
       setApiKey();
       // Request more bytes than are cached internally.

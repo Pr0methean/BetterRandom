@@ -61,7 +61,6 @@ import org.json.simple.parser.ParseException;
  * href="https://www.random.org/quota/">check
  * your quota and buy more</a>. On the new API, the quota is per key rather than per IP, and
  * commercial service tiers are to come in early 2018, shortly after the new API leaves beta.</p>
- *
  * @author Daniel Dyer (old API)
  * @author Chris Hennick (new API)
  */
@@ -87,16 +86,6 @@ public enum RandomDotOrgSeedGenerator implements SeedGenerator {
   private static final AtomicReference<UUID> API_KEY = new AtomicReference<>(null);
   private static final JSONParser JSON_PARSER = new JSONParser();
   private static final Base64.Decoder BASE64 = Base64.getDecoder();
-
-  /**
-   * Sets the API key. If not null, random.org's JSON API is used. Otherwise, the old API is used.
-   *
-   * @param apiKey An API key obtained from random.org.
-   */
-  public static void setApiKey(@Nullable UUID apiKey) {
-    API_KEY.set(apiKey);
-  }
-
   /**
    * Measures the retry delay. A ten-second delay might become either nothing or an hour if we used
    * local time during the start or end of Daylight Saving Time, but it's fine if we occasionally
@@ -110,11 +99,24 @@ public enum RandomDotOrgSeedGenerator implements SeedGenerator {
   /**
    * The URL from which the random bytes are retrieved.
    */
-  @SuppressWarnings("HardcodedFileSeparator")
-  private static final String RANDOM_URL =
+  @SuppressWarnings("HardcodedFileSeparator") private static final String RANDOM_URL =
       BASE_URL + "/integers/?num={0,number,0}&min=0&max=255&col=1&base=16&format=plain&rnd=new";
-
   private static final URL JSON_REQUEST_URL;
+  /**
+   * Used to identify the client to the random.org service.
+   */
+  private static final String USER_AGENT = RandomDotOrgSeedGenerator.class.getName();
+  /**
+   * Random.org does not allow requests for more than 10k integers at once.
+   */
+  private static final int GLOBAL_MAX_REQUEST_SIZE = 10000;
+  private static final Duration RETRY_DELAY = Duration.ofSeconds(10);
+  private static final Lock cacheLock = new ReentrantLock();
+  private static final Charset UTF8 = Charset.forName("UTF-8");
+  private static Instant EARLIEST_NEXT_ATTEMPT = Instant.MIN;
+  private static byte[] cache = new byte[MAX_CACHE_SIZE];
+  private static int cacheOffset = cache.length;
+  private static int maxRequestSize = GLOBAL_MAX_REQUEST_SIZE;
 
   static {
     try {
@@ -126,22 +128,6 @@ public enum RandomDotOrgSeedGenerator implements SeedGenerator {
   }
 
   /**
-   * Used to identify the client to the random.org service.
-   */
-  private static final String USER_AGENT = RandomDotOrgSeedGenerator.class.getName();
-  /**
-   * Random.org does not allow requests for more than 10k integers at once.
-   */
-  private static final int GLOBAL_MAX_REQUEST_SIZE = 10000;
-  private static final Duration RETRY_DELAY = Duration.ofSeconds(10);
-  private static final Lock cacheLock = new ReentrantLock();
-  private static Instant EARLIEST_NEXT_ATTEMPT = Instant.MIN;
-  private static byte[] cache = new byte[MAX_CACHE_SIZE];
-  private static int cacheOffset = cache.length;
-  private static int maxRequestSize = GLOBAL_MAX_REQUEST_SIZE;
-  private static final Charset UTF8 = Charset.forName("UTF-8");
-
-  /**
    * If true, don't attempt to contact random.org again for RETRY_DELAY after an IOException
    */
   private final boolean useRetryDelay;
@@ -151,14 +137,22 @@ public enum RandomDotOrgSeedGenerator implements SeedGenerator {
   }
 
   /**
+   * Sets the API key. If not null, random.org's JSON API is used. Otherwise, the old API is used.
+   * @param apiKey An API key obtained from random.org.
+   */
+  public static void setApiKey(@Nullable UUID apiKey) {
+    API_KEY.set(apiKey);
+  }
+
+  /**
    * @param requiredBytes The preferred number of bytes to request from random.org. The
    *     implementation may request more and cache the excess (to avoid making lots of small
    *     requests). Alternatively, it may request fewer if the required number is greater than that
    *     permitted by random.org for a single request.
    * @throws IOException If there is a problem downloading the random bits.
    */
-  @SuppressWarnings("NumericCastThatLosesPrecision")
-  private static void refreshCache(final int requiredBytes) throws IOException {
+  @SuppressWarnings("NumericCastThatLosesPrecision") private static void refreshCache(
+      final int requiredBytes) throws IOException {
     cacheLock.lock();
     try {
       int numberOfBytes = Math.max(requiredBytes, cache.length);
@@ -193,10 +187,7 @@ public enum RandomDotOrgSeedGenerator implements SeedGenerator {
         postRequest.setRequestMethod("POST");
         postRequest.setRequestProperty("User-Agent", USER_AGENT);
         try (OutputStream out = postRequest.getOutputStream()) {
-          out.write(String.format(
-              JSON_REQUEST_FORMAT,
-              currentApiKey,
-              numberOfBytes * Byte.SIZE,
+          out.write(String.format(JSON_REQUEST_FORMAT, currentApiKey, numberOfBytes * Byte.SIZE,
               REQUEST_ID.incrementAndGet()).getBytes(UTF8));
         }
         JSONObject response;
@@ -216,8 +207,8 @@ public enum RandomDotOrgSeedGenerator implements SeedGenerator {
         if (data == null) {
           throw new SeedException("'data' missing from 'random': " + random);
         } else {
-          String base64seed = (data instanceof JSONArray ? ((JSONArray) data).get(0) : data)
-              .toString();
+          String base64seed =
+              (data instanceof JSONArray ? ((JSONArray) data).get(0) : data).toString();
           byte[] decodedSeed = BASE64.decode(base64seed);
           if (decodedSeed.length < numberOfBytes) {
             throw new SeedException(
@@ -229,8 +220,8 @@ public enum RandomDotOrgSeedGenerator implements SeedGenerator {
         if (advisoryDelayMs != null) {
           Duration advisoryDelay = Duration.ofMillis(advisoryDelayMs.longValue());
           // Wait RETRY_DELAY or the advisory delay, whichever is shorter
-          EARLIEST_NEXT_ATTEMPT = CLOCK.instant().plus((advisoryDelay.compareTo(RETRY_DELAY) > 0)
-              ? RETRY_DELAY : advisoryDelay);
+          EARLIEST_NEXT_ATTEMPT = CLOCK.instant()
+              .plus((advisoryDelay.compareTo(RETRY_DELAY) > 0) ? RETRY_DELAY : advisoryDelay);
         }
       }
       cacheOffset = 0;
@@ -250,7 +241,6 @@ public enum RandomDotOrgSeedGenerator implements SeedGenerator {
   /**
    * Sets the maximum request size that we will expect random.org to allow. If more than {@link
    * #GLOBAL_MAX_REQUEST_SIZE}, will be set to that value instead.
-   *
    * @param maxRequestSize the new maximum request size in bytes.
    */
   public static void setMaxRequestSize(int maxRequestSize) {
@@ -271,8 +261,7 @@ public enum RandomDotOrgSeedGenerator implements SeedGenerator {
     }
   }
 
-  @Override
-  @SuppressWarnings("AssignmentToStaticFieldFromInstanceMethod")
+  @Override @SuppressWarnings("AssignmentToStaticFieldFromInstanceMethod")
   public void generateSeed(final byte[] seedData) throws SeedException {
     if (!isWorthTrying()) {
       throw new SeedException("Not retrying so soon after an IOException");
@@ -302,8 +291,7 @@ public enum RandomDotOrgSeedGenerator implements SeedGenerator {
     }
   }
 
-  @Override
-  public boolean isWorthTrying() {
+  @Override public boolean isWorthTrying() {
     return !useRetryDelay || !EARLIEST_NEXT_ATTEMPT.isAfter(CLOCK.instant());
   }
 
@@ -311,8 +299,7 @@ public enum RandomDotOrgSeedGenerator implements SeedGenerator {
    * Returns "https://www.random.org (with retry delay)" or "https://www.random.org (without retry
    * delay)".
    */
-  @Override
-  public String toString() {
+  @Override public String toString() {
     return BASE_URL + (useRetryDelay ? " (with retry delay)" : " (without retry delay)");
   }
 }
