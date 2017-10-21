@@ -22,21 +22,19 @@ import org.testng.annotations.Test;
 /**
  * Unit test for the seed generator that reads data from /dev/random (on platforms that provide
  * it).
- *
  * @author Daniel Dyer
  */
 @SuppressWarnings("HardcodedFileSeparator")
 public class DevRandomSeedGeneratorTest {
 
-  @Test(timeOut = 15000)
-  public void testGenerator() {
+  @Test(timeOut = 15000) public void testGenerator() {
     try {
       SeedTestUtils.testGenerator(DevRandomSeedGenerator.DEV_RANDOM_SEED_GENERATOR);
     } catch (final SeedException ex) {
       // This exception is OK, but only if we are running on a platform that
       // does not provide /dev/random.
-      assert !new File("/dev/random")
-          .exists() : "Seed generator failed even though /dev/random exists.";
+      assert !new File("/dev/random").exists()
+          : "Seed generator failed even though /dev/random exists.";
       Reporter.log("/dev/random does not exist on this platform.");
     }
   }

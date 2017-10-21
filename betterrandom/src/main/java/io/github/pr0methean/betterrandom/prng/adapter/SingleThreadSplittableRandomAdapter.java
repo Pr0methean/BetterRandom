@@ -11,7 +11,6 @@ import java.util.SplittableRandom;
 /**
  * Simple, non-thread-safe implementation of {@link io.github.pr0methean.betterrandom.prng.BaseRandom}
  * that wraps a {@link SplittableRandom}.
- *
  * @author Chris Hennick
  */
 public class SingleThreadSplittableRandomAdapter extends DirectSplittableRandomAdapter {
@@ -22,7 +21,6 @@ public class SingleThreadSplittableRandomAdapter extends DirectSplittableRandomA
   /**
    * Use the provided seed generation strategy to create the seed for the underlying {@link
    * SplittableRandom}.
-   *
    * @param seedGenerator The seed generation strategy that will provide the seed value for this
    *     RNG.
    * @throws SeedException if there is a problem generating a seed.
@@ -35,7 +33,6 @@ public class SingleThreadSplittableRandomAdapter extends DirectSplittableRandomA
   /**
    * Use the {@link DefaultSeedGenerator} to create the seed for the underlying {@link
    * SplittableRandom}.
-   *
    * @throws SeedException if the {@link DefaultSeedGenerator} fails to generate a seed.
    */
   public SingleThreadSplittableRandomAdapter() throws SeedException {
@@ -44,7 +41,6 @@ public class SingleThreadSplittableRandomAdapter extends DirectSplittableRandomA
 
   /**
    * Use the provided seed for the underlying {@link SplittableRandom}.
-   *
    * @param seed The seed. Must be 8 bytes.
    */
   public SingleThreadSplittableRandomAdapter(final byte[] seed) {
@@ -53,26 +49,22 @@ public class SingleThreadSplittableRandomAdapter extends DirectSplittableRandomA
 
   /**
    * Use the provided seed for the underlying {@link SplittableRandom}.
-   *
    * @param seed The seed.
    */
   public SingleThreadSplittableRandomAdapter(final long seed) {
     super(seed);
   }
 
-  @Override
-  protected ToStringHelper addSubclassFields(final ToStringHelper original) {
+  @Override protected ToStringHelper addSubclassFields(final ToStringHelper original) {
     return super.addSubclassFields(original)
         .add("deserializedAndNotUsedSince", deserializedAndNotUsedSince);
   }
 
   /**
    * Returns this SingleThreadSplittableRandomAdapter's only {@link SplittableRandom}.
-   *
    * @return {@link #underlying}
    */
-  @Override
-  protected SplittableRandom getSplittableRandom() {
+  @Override protected SplittableRandom getSplittableRandom() {
     deserializedAndNotUsedSince = false;
     return underlying;
   }

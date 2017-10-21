@@ -6,7 +6,6 @@ import java.util.logging.Logger;
 /**
  * Wrapper around {@link Logger} that calls {@link String#format(String, Object...)}, but only if
  * the log statement is actually eligible to go to an appender.
- *
  * @author Chris Hennick
  */
 public class LogPreFormatter {
@@ -17,7 +16,6 @@ public class LogPreFormatter {
 
   /**
    * <p>Creates a LogPreFormatter for the given class.</p>
-   *
    * @param clazz The class that will use this LogPreFormatter.
    */
   public LogPreFormatter(final Class<?> clazz) {
@@ -27,8 +25,8 @@ public class LogPreFormatter {
   private void format(final Level level, final int depthFromRealSource, final String formatString,
       final Object... args) {
     if (logger.isLoggable(level)) {
-      final StackTraceElement realSource = Thread.currentThread()
-          .getStackTrace()[depthFromRealSource];
+      final StackTraceElement realSource =
+          Thread.currentThread().getStackTrace()[depthFromRealSource];
       logger.logp(level, realSource.getClassName(), realSource.getMethodName(),
           String.format(formatString, (Object[]) args));
     }
@@ -36,7 +34,6 @@ public class LogPreFormatter {
 
   /**
    * <p>Log a formatted string at {@link Level#SEVERE}.</p>
-   *
    * @param formatString The format string.
    * @param args The values to be formatted.
    */
@@ -46,7 +43,6 @@ public class LogPreFormatter {
 
   /**
    * <p>Log a formatted string at {@link Level#WARNING}.</p>
-   *
    * @param formatString The format string.
    * @param args The values to be formatted.
    */
@@ -56,7 +52,6 @@ public class LogPreFormatter {
 
   /**
    * <p>Log a formatted string at {@link Level#INFO}.</p>
-   *
    * @param formatString The format string.
    * @param args The values to be formatted.
    */
@@ -66,14 +61,13 @@ public class LogPreFormatter {
 
   /**
    * Log the given stack trace.
-   *
    * @param level the level to log at.
    * @param stackTrace the stack trace to log.
    */
   public void logStackTrace(final Level level, final StackTraceElement[] stackTrace) {
     if (logger.isLoggable(level)) {
-      final StringBuilder stackTraceBuilder = new StringBuilder(
-          stackTrace.length * ESTIMATED_STE_SIZE);
+      final StringBuilder stackTraceBuilder =
+          new StringBuilder(stackTrace.length * ESTIMATED_STE_SIZE);
       for (final StackTraceElement element : stackTrace) {
         stackTraceBuilder.append(String.format("  %s%n", element));
       }

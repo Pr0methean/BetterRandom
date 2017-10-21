@@ -30,7 +30,6 @@ import javax.annotation.Nullable;
  * #getState()} == {@link State#TIMED_WAITING}</li> <li>{@link #getState()} == {@link
  * State#WAITING}</li> <li>{@link #getState()} == {@link State#BLOCKED}</li> <li>{@link
  * #getId()}</li> <li>{@link #holdsLock(Object)}</li> </ul>
- *
  * @author Chris Hennick
  */
 @SuppressWarnings("AccessingNonPublicFieldOfAnotherObject")
@@ -50,30 +49,24 @@ public class LooperThread extends Thread implements Serializable, Cloneable {
   /**
    * The {@link ThreadGroup} this thread belongs to, if any. Held for serialization purposes.
    */
-  protected @Nullable
-  ThreadGroup serialGroup;
+  @Nullable protected ThreadGroup serialGroup;
   /**
    * The {@link Runnable} that was passed into this thread's constructor, if any.
    */
-  protected transient @Nullable
-  Runnable target;
+  @Nullable protected transient Runnable target;
   /**
    * The name of this thread, if it has a non-default name. Held for serialization purposes.
    */
-  protected @Nullable
-  String name = null;
-  @SuppressWarnings("InstanceVariableMayNotBeInitializedByReadObject")
-  private transient boolean alreadyTerminatedWhenDeserialized = false;
+  @Nullable protected String name = null;
+  @SuppressWarnings("InstanceVariableMayNotBeInitializedByReadObject") private transient boolean
+      alreadyTerminatedWhenDeserialized = false;
   private boolean interrupted = false;
   private boolean daemon = false;
   private int priority = Thread.NORM_PRIORITY;
   private State state = State.NEW;
-  private @Nullable
-  ClassLoader contextClassLoader = null;
-  private @Nullable
-  Runnable serialTarget;
-  private @Nullable
-  UncaughtExceptionHandler serialUncaughtExceptionHandler;
+  @Nullable private ClassLoader contextClassLoader = null;
+  @Nullable private Runnable serialTarget;
+  @Nullable private UncaughtExceptionHandler serialUncaughtExceptionHandler;
 
   /**
    * Constructs a LooperThread with all properties as defaults. Protected because it does not set a
@@ -86,12 +79,10 @@ public class LooperThread extends Thread implements Serializable, Cloneable {
   /**
    * Constructs a LooperThread with the given target. {@code target} should only be null if called
    * from a subclass that overrides {@link #iterate()}.
-   *
    * @param target If not null, the target this thread will run in {@link #iterate()}.
    */
-  @SuppressWarnings("argument.type.incompatible")
-  @EntryPoint
-  public LooperThread(final @Nullable Runnable target) {
+  @SuppressWarnings("argument.type.incompatible") @EntryPoint public LooperThread(
+      @Nullable final Runnable target) {
     super(target);
     this.target = target;
     stackSize = 0;
@@ -101,13 +92,11 @@ public class LooperThread extends Thread implements Serializable, Cloneable {
    * Constructs a LooperThread that belongs to the given {@link ThreadGroup} and has the given
    * target. {@code target} should only be null if called from a subclass that overrides {@link
    * #iterate()}.
-   *
    * @param group The ThreadGroup this thread will belong to.
    * @param target If not null, the target this thread will run in {@link #iterate()}.
    */
-  @SuppressWarnings("argument.type.incompatible")
-  @EntryPoint
-  public LooperThread(final ThreadGroup group, final @Nullable Runnable target) {
+  @SuppressWarnings("argument.type.incompatible") @EntryPoint public LooperThread(
+      final ThreadGroup group, @Nullable final Runnable target) {
     super(group, target);
     this.target = target;
     stackSize = 0;
@@ -116,11 +105,9 @@ public class LooperThread extends Thread implements Serializable, Cloneable {
   /**
    * Constructs a LooperThread with the given name. Protected because it does not set a target, and
    * thus should only be used in subclasses that override {@link #iterate()}.
-   *
    * @param name the thread name
    */
-  @EntryPoint
-  protected LooperThread(final String name) {
+  @EntryPoint protected LooperThread(final String name) {
     super(name);
     stackSize = 0;
   }
@@ -129,12 +116,10 @@ public class LooperThread extends Thread implements Serializable, Cloneable {
    * Constructs a LooperThread with the given name and belonging to the given {@link ThreadGroup}.
    * Protected because it does not set a target, and thus should only be used in subclasses that
    * override {@link #iterate()}.
-   *
    * @param group The ThreadGroup this thread will belong to.
    * @param name the thread name
    */
-  @EntryPoint
-  protected LooperThread(final ThreadGroup group, final String name) {
+  @EntryPoint protected LooperThread(final ThreadGroup group, final String name) {
     super(group, name);
     setGroup(group);
     stackSize = 0;
@@ -143,13 +128,11 @@ public class LooperThread extends Thread implements Serializable, Cloneable {
   /**
    * Constructs a LooperThread with the given name and target. {@code target} should only be null if
    * called from a subclass that overrides {@link #iterate()}.
-   *
    * @param name the thread name
    * @param target If not null, the target this thread will run in {@link #iterate()}.
    */
-  @SuppressWarnings("argument.type.incompatible")
-  @EntryPoint
-  public LooperThread(final @Nullable Runnable target, final String name) {
+  @SuppressWarnings("argument.type.incompatible") @EntryPoint public LooperThread(
+      @Nullable final Runnable target, final String name) {
     super(target, name);
     this.target = target;
     stackSize = 0;
@@ -159,14 +142,12 @@ public class LooperThread extends Thread implements Serializable, Cloneable {
    * Constructs a LooperThread with the given name and target, belonging to the given {@link
    * ThreadGroup}. {@code target} should only be null if called from a subclass that overrides
    * {@link #iterate()}.
-   *
    * @param group The ThreadGroup this thread will belong to.
    * @param target If not null, the target this thread will run in {@link #iterate()}.
    * @param name the thread name
    */
-  @SuppressWarnings("argument.type.incompatible")
-  @EntryPoint
-  public LooperThread(final ThreadGroup group, final @Nullable Runnable target, final String name) {
+  @SuppressWarnings("argument.type.incompatible") @EntryPoint public LooperThread(
+      final ThreadGroup group, @Nullable final Runnable target, final String name) {
     super(group, target, name);
     this.target = target;
     setGroup(group);
@@ -176,40 +157,34 @@ public class LooperThread extends Thread implements Serializable, Cloneable {
   /**
    * Constructs a LooperThread with the given name and target, belonging to the given {@link
    * ThreadGroup} and having the given preferred stack size. {@code target} should only be null if
-   * called from a subclass that overrides {@link #iterate()}. See {@link Thread#Thread(ThreadGroup,
-   * Runnable, String, long)} for caveats about specifying the stack size.
-   *
+   * called from a subclass that overrides {@link #iterate()}. See {@link Thread#Thread(ThreadGroup, * Runnable, String, long)} for caveats about specifying the stack size.
    * @param group The ThreadGroup this thread will belong to.
    * @param target If not null, the target this thread will run in {@link #iterate()}.
    * @param name the thread name
    * @param stackSize the desired stack size for the new thread, or zero to indicate that this
    *     parameter is to be ignored.
    */
-  @SuppressWarnings("argument.type.incompatible")
-  public LooperThread(final ThreadGroup group, final @Nullable Runnable target, final String name,
-      final long stackSize) {
+  @SuppressWarnings("argument.type.incompatible") public LooperThread(final ThreadGroup group,
+      @Nullable final Runnable target, final String name, final long stackSize) {
     super(group, target, name, stackSize);
     this.target = target;
     setGroup(group);
     this.stackSize = stackSize;
   }
 
-  private static @Nullable
-  <T> T serializableOrNull(final @Nullable T object) {
+  @Nullable private static <T> T serializableOrNull(@Nullable final T object) {
     if (!(object instanceof Serializable)) {
       return null;
     }
     return object;
   }
 
-  private void setGroup(LooperThread this,
-      final @Nullable ThreadGroup group) {
+  private void setGroup(LooperThread this, @Nullable final ThreadGroup group) {
     serialGroup = (group instanceof Serializable) ? group : null;
   }
 
   /**
    * Used only to prepare subclasses before readResolve.
-   *
    * @param in The {@link ObjectInputStream} we're being read from.
    * @throws IOException When thrown by {@link ObjectInputStream#defaultReadObject}.
    * @throws ClassNotFoundException When thrown by {@link ObjectInputStream#defaultReadObject}.
@@ -223,12 +198,10 @@ public class LooperThread extends Thread implements Serializable, Cloneable {
    * Deserialization uses readResolve rather than {@link #readObject(ObjectInputStream)} alone,
    * because the API of {@link Thread} only lets us set preferred stack size and thread serialGroup
    * during construction and not update them afterwards.
-   *
    * @return A LooperThread that will replace this one during deserialization.
    * @throws InvalidObjectException if this LooperThread's serial form is invalid.
    */
-  protected Object readResolve()
-      throws InvalidObjectException {
+  protected Object readResolve() throws InvalidObjectException {
     target = serialTarget;
     if (name == null) {
       name = getName();
@@ -276,12 +249,10 @@ public class LooperThread extends Thread implements Serializable, Cloneable {
    * #stackSize}, and that has its subclass fields copied from this one if it does not have a {@link
    * #readResolve()} override that will populate them before deserialization completes. Must be
    * overridden in <em>all</em> subclasses to fulfill this contract.
-   *
    * @return the new LooperThread.
    * @throws InvalidObjectException if this LooperThread's serial form is invalid.
    */
-  protected LooperThread readResolveConstructorWrapper()
-      throws InvalidObjectException {
+  protected LooperThread readResolveConstructorWrapper() throws InvalidObjectException {
     return new LooperThread(serialGroup, target, name, stackSize);
   }
 
@@ -297,14 +268,13 @@ public class LooperThread extends Thread implements Serializable, Cloneable {
    * The task that will be iterated until it returns false. Cannot be abstract for serialization
    * reasons, but must be overridden in subclasses if they are instantiated without a target {@link
    * Runnable}.
-   *
    * @return true if this thread should iterate again.
    * @throws InterruptedException if interrupted in mid-execution.
    * @throws UnsupportedOperationException if this method has not been overridden and {@link
    *     #target} was not set to non-null during construction.
    */
-  @SuppressWarnings("BooleanMethodIsAlwaysInverted")
-  protected boolean iterate() throws InterruptedException {
+  @SuppressWarnings("BooleanMethodIsAlwaysInverted") protected boolean iterate()
+      throws InterruptedException {
     if ((target == null) || (target instanceof DummyTarget)) {
       throw new UnsupportedOperationException("This method should be overridden, or else this "
           + "thread should have been created with a Serializable target!");
@@ -317,8 +287,7 @@ public class LooperThread extends Thread implements Serializable, Cloneable {
   /**
    * Runs {@link #iterate()} until either it returns false or this thread is interrupted.
    */
-  @Override
-  public final void run() {
+  @Override public final void run() {
     while (true) {
       try {
         lock.lockInterruptibly();
@@ -336,13 +305,11 @@ public class LooperThread extends Thread implements Serializable, Cloneable {
     }
   }
 
-  @Override
-  public State getState() {
+  @Override public State getState() {
     return alreadyTerminatedWhenDeserialized ? State.TERMINATED : super.getState();
   }
 
-  @Override
-  public synchronized void start() {
+  @Override public synchronized void start() {
     if (alreadyTerminatedWhenDeserialized) {
       throw new IllegalThreadStateException(
           "This thread was deserialized from one that had already terminated");
@@ -369,16 +336,13 @@ public class LooperThread extends Thread implements Serializable, Cloneable {
   }
 
   /** Clones this LooperThread using {@link CloneViaSerialization#clone(Serializable)}. */
-  @SuppressWarnings("MethodDoesntCallSuperMethod")
-  @Override
-  public LooperThread clone() {
+  @SuppressWarnings("MethodDoesntCallSuperMethod") @Override public LooperThread clone() {
     return CloneViaSerialization.clone(this);
   }
 
   private static class DummyTarget implements Runnable {
 
-    @Override
-    public void run() {
+    @Override public void run() {
       throw new UnsupportedOperationException("Dummy target");
     }
   }

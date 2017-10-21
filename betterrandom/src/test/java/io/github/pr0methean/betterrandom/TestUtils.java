@@ -16,16 +16,13 @@ public enum TestUtils {
   /**
    * Reflectively calls all public constructors of the given class with the given parameters, and
    * passes each constructed instance to a consumer.
-   *
    * @param clazz The class whose constructors are to be tested.
    * @param params A map of parameter types to values.
    * @param test The consumer to pass the instances to.
    * @param <T> {@code clazz} as a type.
    */
-  @SuppressWarnings("ObjectAllocationInLoop")
-  public static <T> void testAllPublicConstructors(final Class<T> clazz,
-      final Map<Class<?>, Object> params,
-      final Consumer<T> test) {
+  @SuppressWarnings("ObjectAllocationInLoop") public static <T> void testAllPublicConstructors(
+      final Class<T> clazz, final Map<Class<?>, Object> params, final Consumer<T> test) {
     for (final Constructor<?> constructor : clazz.getDeclaredConstructors()) {
       if (Modifier.isPublic(constructor.getModifiers())) {
         try {
@@ -48,23 +45,18 @@ public enum TestUtils {
    * Appveyor and the OSX environment on Travis-CI don't currently use enough IP addresses to get
    * heavy random.org usage allowed, so tests that are sufficiently demanding of random.org won't
    * run on those environments.
-   *
    * @return true if we're not running on Appveyor or a Travis-CI OSX instance, false if we are.
    */
-  @SuppressWarnings("CallToSystemGetenv")
-  @TestingDeficiency
+  @SuppressWarnings("CallToSystemGetenv") @TestingDeficiency
   public static boolean canRunRandomDotOrgLargeTest() {
-    return isNotAppveyor()
-        && !("osx".equals(System.getenv("TRAVIS_OS_NAME")));
+    return isNotAppveyor() && !("osx".equals(System.getenv("TRAVIS_OS_NAME")));
   }
 
   /**
    * Appveyor doesn't seem to be allowed any random.org usage at all, even with a valid API key.
-   *
    * @return true if we're not running on Appveyor, false if we are.
    */
-  @SuppressWarnings("CallToSystemGetenv")
-  public static boolean isNotAppveyor() {
+  @SuppressWarnings("CallToSystemGetenv") public static boolean isNotAppveyor() {
     return System.getenv("APPVEYOR") == null;
   }
 }

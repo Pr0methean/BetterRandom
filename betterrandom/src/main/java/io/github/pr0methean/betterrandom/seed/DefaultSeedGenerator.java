@@ -20,7 +20,6 @@ package io.github.pr0methean.betterrandom.seed;
  * best one available at any moment. Uses, in order of preference: <ol> <li>{@link
  * DevRandomSeedGenerator}</li> <li>{@link RandomDotOrgSeedGenerator#DELAYED_RETRY}</li> <li>{@link
  * SecureRandomSeedGenerator}</li> </ol>
- *
  * @author Daniel Dyer
  */
 public enum DefaultSeedGenerator implements SeedGenerator {
@@ -33,11 +32,9 @@ public enum DefaultSeedGenerator implements SeedGenerator {
   /**
    * Delegate generators.
    */
-  private static final SeedGenerator[] GENERATORS = {
-      DevRandomSeedGenerator.DEV_RANDOM_SEED_GENERATOR,
-      RandomDotOrgSeedGenerator.DELAYED_RETRY,
-      SecureRandomSeedGenerator.SECURE_RANDOM_SEED_GENERATOR
-  };
+  private static final SeedGenerator[] GENERATORS =
+      {DevRandomSeedGenerator.DEV_RANDOM_SEED_GENERATOR, RandomDotOrgSeedGenerator.DELAYED_RETRY,
+          SecureRandomSeedGenerator.SECURE_RANDOM_SEED_GENERATOR};
 
   /**
    * {@inheritDoc}
@@ -46,8 +43,7 @@ public enum DefaultSeedGenerator implements SeedGenerator {
    * the most suitable strategy first and eventually degrades to the least suitable (but guaranteed
    * to work) strategy.
    */
-  @Override
-  public void generateSeed(final byte[] output) throws SeedException {
+  @Override public void generateSeed(final byte[] output) throws SeedException {
     for (final SeedGenerator generator : GENERATORS) {
       if (generator.isWorthTrying()) {
         try {

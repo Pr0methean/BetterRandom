@@ -18,14 +18,12 @@ public class RandomSeederThreadTest {
   private static final long TEST_SEED = 0x0123456789ABCDEFL;
   private static final int TEST_OUTPUT_SIZE = 20;
 
-  @Test
-  public void testGetInstance() throws Exception {
+  @Test public void testGetInstance() throws Exception {
     assertNotSame(getInstance(RandomDotOrgSeedGenerator.DELAYED_RETRY),
         getInstance(RandomDotOrgSeedGenerator.RANDOM_DOT_ORG_SEED_GENERATOR));
   }
 
-  @Test
-  public void testAddRemoveAndIsEmpty() throws Exception {
+  @Test public void testAddRemoveAndIsEmpty() throws Exception {
     final Random prng = new Random(TEST_SEED);
     final byte[] bytesWithOldSeed = new byte[TEST_OUTPUT_SIZE];
     prng.nextBytes(bytesWithOldSeed);
@@ -43,8 +41,7 @@ public class RandomSeederThreadTest {
     assertFalse(Arrays.equals(bytesWithOldSeed, bytesWithNewSeed));
   }
 
-  @Test
-  public void testStopIfEmpty() throws Exception {
+  @Test public void testStopIfEmpty() throws Exception {
     final RandomSeederThread thread = getInstance(new FakeSeedGenerator());
     final Random prng = new Random();
     thread.add(prng);
@@ -56,8 +53,7 @@ public class RandomSeederThreadTest {
     assertEquals(thread.getState(), State.TERMINATED);
   }
 
-  @Test
-  public void testStopAllEmpty() throws Exception {
+  @Test public void testStopAllEmpty() throws Exception {
     final RandomSeederThread neverAddedTo = getInstance(new FakeSeedGenerator());
     final RandomSeederThread addedToAndRemoved = getInstance(new FakeSeedGenerator());
     final RandomSeederThread addedToAndLeft = getInstance(new FakeSeedGenerator());
@@ -74,8 +70,7 @@ public class RandomSeederThreadTest {
     System.out.println(addedAndLeft.nextInt()); // prevent GC before this point
   }
 
-  @AfterClass
-  public void classTearDown() {
+  @AfterClass public void classTearDown() {
     System.gc();
     stopAllEmpty();
   }

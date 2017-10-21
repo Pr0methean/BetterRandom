@@ -24,32 +24,27 @@ public class RandomWrapperSecureRandomTest extends BaseRandomTest {
     }
   }
 
-  @Override
-  protected Class<? extends BaseRandom> getClassUnderTest() {
+  @Override protected Class<? extends BaseRandom> getClassUnderTest() {
     return RandomWrapper.class;
   }
 
-  @Override
-  public void testAllPublicConstructors()
-      throws SeedException, IllegalAccessException, InstantiationException, InvocationTargetException {
+  @Override public void testAllPublicConstructors()
+      throws SeedException, IllegalAccessException, InstantiationException,
+      InvocationTargetException {
     final BaseRandom basePrng = createRng();
     final int seedLength = getNewSeedLength(basePrng);
-    TestUtils.testAllPublicConstructors(getClassUnderTest(), ImmutableMap.of(
-        int.class, seedLength,
-        long.class, TEST_SEED,
-        byte[].class, DefaultSeedGenerator.DEFAULT_SEED_GENERATOR.generateSeed(seedLength),
-        SeedGenerator.class, DefaultSeedGenerator.DEFAULT_SEED_GENERATOR,
-        Random.class, new SecureRandom()
-    ), BaseRandom::nextInt);
+    TestUtils.testAllPublicConstructors(getClassUnderTest(), ImmutableMap
+        .of(int.class, seedLength, long.class, TEST_SEED, byte[].class,
+            DefaultSeedGenerator.DEFAULT_SEED_GENERATOR.generateSeed(seedLength),
+            SeedGenerator.class, DefaultSeedGenerator.DEFAULT_SEED_GENERATOR, Random.class,
+            new SecureRandom()), BaseRandom::nextInt);
   }
 
   /**
    * {@link SecureRandom#setSeed(byte[])} has no length restriction, so disinherit {@link
    * Test#expectedExceptions()}.
    */
-  @Override
-  @Test
-  public void testSeedTooLong() throws GeneralSecurityException, SeedException {
+  @Override @Test public void testSeedTooLong() throws GeneralSecurityException, SeedException {
     super.testSeedTooLong();
   }
 
@@ -57,15 +52,11 @@ public class RandomWrapperSecureRandomTest extends BaseRandomTest {
    * {@link SecureRandom#setSeed(byte[])} has no length restriction, so disinherit {@link
    * Test#expectedExceptions()}.
    */
-  @Override
-  @Test
-  public void testSeedTooShort() throws SeedException {
+  @Override @Test public void testSeedTooShort() throws SeedException {
     super.testSeedTooShort();
   }
 
-  @Override
-  @Test(enabled = false)
-  public void testNullSeed() throws SeedException {
+  @Override @Test(enabled = false) public void testNullSeed() throws SeedException {
     // No-op.
   }
 
@@ -73,29 +64,24 @@ public class RandomWrapperSecureRandomTest extends BaseRandomTest {
    * Only test for crashes, since {@link SecureRandom#setSeed(long)} doesn't completely replace the
    * existing seed.
    */
-  @Override
-  public void testSetSeed() throws SeedException {
+  @Override public void testSetSeed() throws SeedException {
     final BaseRandom prng = createRng();
     prng.nextLong();
     prng.setSeed(DefaultSeedGenerator.DEFAULT_SEED_GENERATOR.generateSeed(8));
     prng.nextLong();
   }
 
-  @Override
-  @Test(enabled = false)
-  public void testRepeatability() throws SeedException {
+  @Override @Test(enabled = false) public void testRepeatability() throws SeedException {
     // No-op.
   }
 
-  @Override
-  protected BaseRandom createRng() throws SeedException {
+  @Override protected BaseRandom createRng() throws SeedException {
     final RandomWrapper wrapper = createRngInternal();
     wrapper.setSeed(SEED_GEN.nextLong());
     return wrapper;
   }
 
-  @Override
-  protected BaseRandom createRng(final byte[] seed) throws SeedException {
+  @Override protected BaseRandom createRng(final byte[] seed) throws SeedException {
     final RandomWrapper wrapper = createRngInternal();
     wrapper.setSeed(seed);
     return wrapper;

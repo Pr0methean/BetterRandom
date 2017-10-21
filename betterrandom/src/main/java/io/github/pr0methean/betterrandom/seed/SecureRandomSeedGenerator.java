@@ -21,7 +21,8 @@ import java.security.SecureRandom;
  * <p>{@link SeedGenerator} implementation that uses Java's bundled {@link SecureRandom} RNG to
  * generate random seed data.</p> <p>The advantage of using SecureRandom for seeding but not as the
  * primary RNG is that we can use it to seed RNGs that are much faster than SecureRandom.</p>
- * <p>This is the only seeding strategy that is guaranteed to work on all platforms and therefore is
+ * <p>This is the only seeding strategy that is guaranteed to work on all platforms and therefore
+ * is
  * provided as a fall-back option should none of the other provided {@link SeedGenerator}
  * implementations be usable.</p> <p>On Oracle and OpenJDK, SecureRandom uses <a
  * href="http://hg.openjdk.java.net/jdk8/jdk8/jdk/file/tip/src/share/classes/sun/security/provider/SeedGenerator.java">{@code
@@ -29,7 +30,6 @@ import java.security.SecureRandom;
  * SeedGenerator class in turn uses the timing of newly-launched threads as a source of randomness,
  * relying on the unpredictable interactions between different configurations of hardware and
  * software and their workloads.</p>
- *
  * @author Daniel Dyer
  */
 public enum SecureRandomSeedGenerator implements SeedGenerator {
@@ -39,21 +39,18 @@ public enum SecureRandomSeedGenerator implements SeedGenerator {
   /** The {@link SecureRandom} that generates the seeds. */
   private static final SecureRandom SOURCE = new SecureRandom();
 
-  @Override
-  public byte[] generateSeed(final int length) {
+  @Override public byte[] generateSeed(final int length) {
     if (length <= 0) {
       return EMPTY_SEED;
     }
     return SOURCE.generateSeed(length);
   }
 
-  @Override
-  public void generateSeed(final byte[] output) {
+  @Override public void generateSeed(final byte[] output) {
     System.arraycopy(SOURCE.generateSeed(output.length), 0, output, 0, output.length);
   }
 
-  @Override
-  public String toString() {
+  @Override public String toString() {
     return "java.security.SecureRandom";
   }
 }

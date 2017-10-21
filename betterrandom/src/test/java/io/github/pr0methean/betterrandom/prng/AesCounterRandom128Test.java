@@ -23,19 +23,16 @@ import org.testng.annotations.Test;
 
 /**
  * Unit test for the AES RNG.
- *
  * @author Daniel Dyer
  */
 public class AesCounterRandom128Test extends BaseRandomTest {
 
-  @SuppressWarnings("ObjectAllocationInLoop")
-  @Override
-  @Test(timeOut = 30000)
+  @SuppressWarnings("ObjectAllocationInLoop") @Override @Test(timeOut = 30000)
   public void testSetSeed() throws SeedException {
     // can't use a real SeedGenerator since we need longs, so use a Random
     final Random masterRNG = new Random();
-    final long[] seeds = {masterRNG.nextLong(), masterRNG.nextLong(),
-        masterRNG.nextLong(), masterRNG.nextLong()};
+    final long[] seeds =
+        {masterRNG.nextLong(), masterRNG.nextLong(), masterRNG.nextLong(), masterRNG.nextLong()};
     final long otherSeed = masterRNG.nextLong();
     final AesCounterRandom[] rngs = {new AesCounterRandom(16), new AesCounterRandom(16)};
     for (int i = 0; i < 2; i++) {
@@ -48,42 +45,33 @@ public class AesCounterRandom128Test extends BaseRandomTest {
         rngReseededOther.setSeed(otherSeed);
         assert !(rngs[i].equals(rngReseeded));
         assert !(rngReseededOther.equals(rngReseeded));
-        assert rngs[i].nextLong() != rngReseeded.nextLong()
-            : "setSeed had no effect";
+        assert rngs[i].nextLong() != rngReseeded.nextLong() : "setSeed had no effect";
         rngs[i] = rngReseeded;
       }
     }
-    assert rngs[0].nextLong() != rngs[1].nextLong()
-        : "RNGs converged after 4 setSeed calls";
+    assert rngs[0].nextLong() != rngs[1].nextLong() : "RNGs converged after 4 setSeed calls";
   }
 
-  @Override
-  @Test(timeOut = 30000)
-  public void testReseeding() throws Exception {
+  @Override @Test(timeOut = 30000) public void testReseeding() throws Exception {
     // May need a longer timeout on Cloud9.
     super.testReseeding();
   }
 
-  @Test(timeOut = 15000)
-  public void testMaxSeedLengthOk() {
-    assert AesCounterRandom.getMaxKeyLengthBytes() >= 16 :
-        "Should allow a 16-byte key";
-    assert AesCounterRandom.getMaxKeyLengthBytes() <= 32 :
-        "Shouldn't allow a key longer than 32 bytes";
+  @Test(timeOut = 15000) public void testMaxSeedLengthOk() {
+    assert AesCounterRandom.getMaxKeyLengthBytes() >= 16 : "Should allow a 16-byte key";
+    assert AesCounterRandom.getMaxKeyLengthBytes() <= 32
+        : "Shouldn't allow a key longer than 32 bytes";
   }
 
-  @Override
-  protected Class<? extends BaseRandom> getClassUnderTest() {
+  @Override protected Class<? extends BaseRandom> getClassUnderTest() {
     return AesCounterRandom.class;
   }
 
-  @Override
-  protected BaseRandom createRng() throws SeedException {
+  @Override protected BaseRandom createRng() throws SeedException {
     return new AesCounterRandom(16);
   }
 
-  @Override
-  protected BaseRandom createRng(final byte[] seed) throws SeedException {
+  @Override protected BaseRandom createRng(final byte[] seed) throws SeedException {
     return new AesCounterRandom(seed);
   }
 }

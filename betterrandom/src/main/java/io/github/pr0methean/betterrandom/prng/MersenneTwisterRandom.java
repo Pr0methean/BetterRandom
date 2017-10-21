@@ -29,15 +29,17 @@ import java.util.Random;
  * Nishimura.</p> <p>This is a very fast random number generator with good statistical properties
  * (it passes the full DIEHARD suite).  This is the best RNG for most experiments.  If a non-linear
  * generator is required, use the slower {@link AesCounterRandom} RNG.</p> <p>This PRNG is
- * deterministic, which can be advantageous for testing purposes since the output is repeatable.  If
+ * deterministic, which can be advantageous for testing purposes since the output is repeatable.
+ * If
  * multiple instances of this class are created with the same seed they will all have identical
  * output.</p> <p>This code is translated from the original C version and assumes that we will
- * always seed from an array of bytes.  I don't pretend to know the meanings of the magic numbers or
+ * always seed from an array of bytes.  I don't pretend to know the meanings of the magic numbers
+ * or
  * how it works, it just does.</p> <p><em>NOTE: Because instances of this class require 128-bit
- * seeds, it is not possible to seed this RNG using the {@link #setSeed(long)} method inherited from
+ * seeds, it is not possible to seed this RNG using the {@link #setSeed(long)} method inherited
+ * from
  * {@link Random}.  Calls to this method will have no effect. Instead the seed must be set by a
  * constructor.</em></p>
- *
  * @author Makoto Matsumoto and Takuji Nishimura (original C version)
  * @author Daniel Dyer (Java port)
  */
@@ -66,7 +68,6 @@ public class MersenneTwisterRandom extends BaseRandom {
 
   /**
    * Creates a new RNG and seeds it using the default seeding strategy.
-   *
    * @throws SeedException if any.
    */
   public MersenneTwisterRandom() throws SeedException {
@@ -75,7 +76,6 @@ public class MersenneTwisterRandom extends BaseRandom {
 
   /**
    * Creates an RNG and seeds it with the specified seed data.
-   *
    * @param seed 16 bytes of seed data used to initialise the RNG.
    */
   public MersenneTwisterRandom(final byte[] seed) {
@@ -84,7 +84,6 @@ public class MersenneTwisterRandom extends BaseRandom {
 
   /**
    * Seed the RNG using the provided seed generation strategy.
-   *
    * @param seedGenerator The seed generation strategy that will provide the seed value for this
    *     RNG.
    * @throws SeedException If there is a problem generating a seed.
@@ -93,38 +92,30 @@ public class MersenneTwisterRandom extends BaseRandom {
     this(seedGenerator.generateSeed(SEED_SIZE_BYTES));
   }
 
-  @Override
-  protected ToStringHelper addSubclassFields(final ToStringHelper original) {
-    return original
-        .add("mt", Arrays.toString(mt))
-        .add("mtIndex", mtIndex);
+  @Override protected ToStringHelper addSubclassFields(final ToStringHelper original) {
+    return original.add("mt", Arrays.toString(mt)).add("mtIndex", mtIndex);
   }
 
   /**
    * No-op.
-   *
    * @param seed ignored
    */
-  @Override
-  public synchronized void setSeed(MersenneTwisterRandom this,
-      final long seed) {
+  @Override public synchronized void setSeed(MersenneTwisterRandom this, final long seed) {
     fallbackSetSeed();
   }
 
-  @Override
-  protected void initTransientFields(MersenneTwisterRandom this) {
+  @Override protected void initTransientFields(MersenneTwisterRandom this) {
     super.initTransientFields();
     if (mt == null) {
       mt = new int[N];
     }
   }
 
-  @Override
-  protected void setSeedInternal(
-      MersenneTwisterRandom this, final byte[] seed) {
+  @Override protected void setSeedInternal(MersenneTwisterRandom this, final byte[] seed) {
     if ((seed == null) || (seed.length != SEED_SIZE_BYTES)) {
-      throw new IllegalArgumentException("Mersenne Twister RNG requires a 128-bit (16-byte) seed;"
-          + " input seed is " + BinaryUtils.convertBytesToHexString(seed));
+      throw new IllegalArgumentException(
+          "Mersenne Twister RNG requires a 128-bit (16-byte) seed;" + " input seed is "
+              + BinaryUtils.convertBytesToHexString(seed));
     }
     super.setSeedInternal(seed);
     final int[] seedInts = BinaryUtils.convertBytesToInts(seed);
@@ -132,9 +123,7 @@ public class MersenneTwisterRandom extends BaseRandom {
     // This section is translated from the init_genrand code in the C version.
     mt[0] = BOOTSTRAP_SEED;
     for (mtIndex = 1; mtIndex < N; mtIndex++) {
-      mt[mtIndex] = ((BOOTSTRAP_FACTOR
-          * (mt[mtIndex - 1] ^ (mt[mtIndex - 1] >>> 30)))
-          + mtIndex);
+      mt[mtIndex] = ((BOOTSTRAP_FACTOR * (mt[mtIndex - 1] ^ (mt[mtIndex - 1] >>> 30))) + mtIndex);
     }
 
     // This section is translated from the init_by_array code in the C version.
@@ -163,8 +152,7 @@ public class MersenneTwisterRandom extends BaseRandom {
     mt[0] = UPPER_MASK; // Most significant bit is 1 - guarantees non-zero initial array.
   }
 
-  @Override
-  protected final int next(final int bits) {
+  @Override protected final int next(final int bits) {
     lock.lock();
     int y;
     try {
@@ -199,8 +187,7 @@ public class MersenneTwisterRandom extends BaseRandom {
   }
 
   /** Returns the only supported seed length. */
-  @Override
-  public int getNewSeedLength(MersenneTwisterRandom this) {
+  @Override public int getNewSeedLength(MersenneTwisterRandom this) {
     return SEED_SIZE_BYTES;
   }
 }

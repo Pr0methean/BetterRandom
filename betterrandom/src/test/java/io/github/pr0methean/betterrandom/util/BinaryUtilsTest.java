@@ -22,7 +22,6 @@ import org.testng.annotations.Test;
 
 /**
  * Unit test for binary/hex utility methods.
- *
  * @author Daniel Dyer
  */
 public class BinaryUtilsTest {
@@ -34,27 +33,23 @@ public class BinaryUtilsTest {
   private static final byte[] INT_BYTES = {8, 4, 2, 1};
   private static final int INT = 134480385;
 
-  @Test
-  public void testConvertLongToBytes() throws Exception {
+  @Test public void testConvertLongToBytes() throws Exception {
     assert Arrays.equals(LONG_BYTES, BinaryUtils.convertLongToBytes(LONG));
   }
 
-  @Test
-  public void testConvertIntToBytes() throws Exception {
+  @Test public void testConvertIntToBytes() throws Exception {
     assert Arrays.equals(INT_BYTES, BinaryUtils.convertIntToBytes(INT));
   }
 
-  @Test(timeOut = 1000)
-  public void testConvertBytesToHexString() {
+  @Test(timeOut = 1000) public void testConvertBytesToHexString() {
     final String generatedHex = BinaryUtils.convertBytesToHexString(TEST_HEX_BYTES);
     assert generatedHex.equals(TEST_HEX_STRING) : "Wrong hex string: " + generatedHex;
   }
 
-  @Test(timeOut = 1000)
-  public void testConvertHexStringToBytes() {
+  @Test(timeOut = 1000) public void testConvertHexStringToBytes() {
     final byte[] generatedData = BinaryUtils.convertHexStringToBytes(TEST_HEX_STRING);
-    assert Arrays.equals(generatedData, TEST_HEX_BYTES) :
-        "Wrong byte array: " + Arrays.toString(generatedData);
+    assert Arrays.equals(generatedData, TEST_HEX_BYTES) : "Wrong byte array: " + Arrays
+        .toString(generatedData);
   }
 
   @Test(timeOut = 1000, expectedExceptions = IllegalArgumentException.class)
@@ -68,8 +63,7 @@ public class BinaryUtilsTest {
    * Make sure that the conversion method correctly converts 4 bytes to an integer assuming
    * big-endian convention.
    */
-  @Test(timeOut = 1000)
-  public void testConvertBytesToInt() {
+  @Test(timeOut = 1000) public void testConvertBytesToInt() {
     final int result = BinaryUtils.convertBytesToInt(INT_BYTES, 0);
     assert INT == result : "Expected " + INT + ", was " + result;
   }
@@ -78,8 +72,7 @@ public class BinaryUtilsTest {
    * Make sure that the conversion method correctly converts multiples of 4 bytes to an array of
    * integers assuming big-endian convention.
    */
-  @Test(timeOut = 1000)
-  public void testConvertBytesToInts() {
+  @Test(timeOut = 1000) public void testConvertBytesToInts() {
     final int expected1 = 16;
     final int[] result = BinaryUtils.convertBytesToInts(LONG_BYTES);
     assert expected1 == result[0] : "Expected first int to be " + expected1 + ", was " + result[0];
@@ -101,8 +94,7 @@ public class BinaryUtilsTest {
    * Make sure that the conversion method correctly converts 8 bytes to a long assuming big-endian
    * convention.
    */
-  @Test(timeOut = 1000)
-  public void testConvertBytesToLong() {
+  @Test(timeOut = 1000) public void testConvertBytesToLong() {
     final long result = convertBytesToLong(LONG_BYTES);
     assert LONG == result : "Expected " + LONG + ", was " + result;
   }
@@ -110,8 +102,7 @@ public class BinaryUtilsTest {
   /**
    * Regression test for failure to correctly convert values that contain negative bytes.
    */
-  @Test(timeOut = 1000)
-  public void testConvertNegativeBytesToLong() {
+  @Test(timeOut = 1000) public void testConvertNegativeBytesToLong() {
     final byte[] bytes = {-121, 30, 107, -100, -76, -8, 53, 81};
     final long expected = -510639L;
     final long result = convertBytesToLong(bytes);

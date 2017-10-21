@@ -19,23 +19,19 @@ import io.github.pr0methean.betterrandom.seed.SeedException;
 
 /**
  * Unit test for the Complementary Multiply With Carry (CMWC) RNG.
- *
  * @author Daniel Dyer
  */
 public class Cmwc4096RandomTest extends BaseRandomTest {
 
-  @Override
-  protected Class<? extends BaseRandom> getClassUnderTest() {
+  @Override protected Class<? extends BaseRandom> getClassUnderTest() {
     return Cmwc4096Random.class;
   }
 
-  @Override
-  protected BaseRandom createRng() throws SeedException {
+  @Override protected BaseRandom createRng() throws SeedException {
     return new Cmwc4096Random();
   }
 
-  @Override
-  protected BaseRandom createRng(final byte[] seed) throws SeedException {
+  @Override protected BaseRandom createRng(final byte[] seed) throws SeedException {
     return new Cmwc4096Random(seed);
   }
 }

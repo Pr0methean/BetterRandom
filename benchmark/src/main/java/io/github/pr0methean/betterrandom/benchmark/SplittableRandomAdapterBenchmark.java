@@ -7,8 +7,7 @@ import java.util.Random;
 
 public class SplittableRandomAdapterBenchmark extends AbstractRandomBenchmark {
 
-  @Override
-  protected Random createPrng() throws SeedException {
+  @Override protected Random createPrng() throws SeedException {
     return new SplittableRandomAdapter(DefaultSeedGenerator.DEFAULT_SEED_GENERATOR);
   }
 }

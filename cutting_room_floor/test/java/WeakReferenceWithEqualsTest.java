@@ -10,8 +10,7 @@ public class WeakReferenceWithEqualsTest {
   private static final String S1 = "foo";
   private static final String S2 = "bar";
 
-  @Test
-  public void testHashCode() throws Exception {
+  @Test public void testHashCode() throws Exception {
     WeakReferenceWithEquals<String> ref1S1 = new WeakReferenceWithEquals<>(S1);
     WeakReferenceWithEquals<String> ref2S1 = new WeakReferenceWithEquals<>(S1);
     WeakReferenceWithEquals<String> refS2 = new WeakReferenceWithEquals<>(S2);
@@ -20,8 +19,7 @@ public class WeakReferenceWithEqualsTest {
     assertNotEquals(ref2S1.hashCode(), refS2.hashCode());
   }
 
-  @Test
-  public void testEquals() throws Exception {
+  @Test public void testEquals() throws Exception {
     WeakReferenceWithEquals<String> ref1S1 = new WeakReferenceWithEquals<>(S1);
     WeakReferenceWithEquals<String> ref2S1 = new WeakReferenceWithEquals<>(S1);
     WeakReferenceWithEquals<String> refS2 = new WeakReferenceWithEquals<>(S2);

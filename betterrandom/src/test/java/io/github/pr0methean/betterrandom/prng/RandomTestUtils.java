@@ -30,7 +30,6 @@ import org.testng.Reporter;
 
 /**
  * Provides methods used for testing the operation of RNG implementations.
- *
  * @author Daniel Dyer
  */
 public enum RandomTestUtils {
@@ -43,34 +42,26 @@ public enum RandomTestUtils {
    * @param origin Minimum expected value, inclusive.
    * @param bound Maximum expected value, exclusive.
    */
-  public static void checkRangeAndEntropy(
-      final BaseRandom prng,
-      final long expectedEntropySpent,
-      final Supplier<? extends Number> numberSupplier,
-      final double origin,
-      final double bound,
+  public static void checkRangeAndEntropy(final BaseRandom prng, final long expectedEntropySpent,
+      final Supplier<? extends Number> numberSupplier, final double origin, final double bound,
       final boolean checkEntropy) {
     checkRangeAndEntropy(prng, expectedEntropySpent, numberSupplier, origin, bound,
         checkEntropy ? EntropyCheckMode.EXACT : EntropyCheckMode.OFF);
   }
 
-  public static void checkRangeAndEntropy(
-      final BaseRandom prng,
-      final long expectedEntropySpent,
-      final Supplier<? extends Number> numberSupplier,
-      final double origin,
-      final double bound,
+  public static void checkRangeAndEntropy(final BaseRandom prng, final long expectedEntropySpent,
+      final Supplier<? extends Number> numberSupplier, final double origin, final double bound,
       final EntropyCheckMode entropyCheckMode) {
     final long oldEntropy = prng.getEntropyBits();
     final Number output = numberSupplier.get();
     assertTrue(output.doubleValue() >= origin);
     assertTrue(output.doubleValue() < bound);
-    if ((entropyCheckMode == EntropyCheckMode.EXACT)
-        || (entropyCheckMode == EntropyCheckMode.UPPER_BOUND)) {
+    if ((entropyCheckMode == EntropyCheckMode.EXACT) || (entropyCheckMode
+        == EntropyCheckMode.UPPER_BOUND)) {
       assertGreaterOrEqual(oldEntropy - expectedEntropySpent, prng.getEntropyBits());
     }
-    if ((entropyCheckMode == EntropyCheckMode.EXACT)
-        || (entropyCheckMode == EntropyCheckMode.LOWER_BOUND)) {
+    if ((entropyCheckMode == EntropyCheckMode.EXACT) || (entropyCheckMode
+        == EntropyCheckMode.LOWER_BOUND)) {
       assertLessOrEqual(oldEntropy - expectedEntropySpent, prng.getEntropyBits());
     }
   }
@@ -87,18 +78,12 @@ public enum RandomTestUtils {
    * @param origin Minimum expected value, inclusive.
    * @param bound Maximum expected value, exclusive.
    */
-  public static void checkStream(
-      final BaseRandom prng,
-      final long maxEntropySpentPerNumber,
-      final Stream<? extends Number> stream,
-      final int expectedCount,
-      final double origin,
-      final double bound,
-      final boolean checkEntropyCount) {
+  public static void checkStream(final BaseRandom prng, final long maxEntropySpentPerNumber,
+      final Stream<? extends Number> stream, final int expectedCount, final double origin,
+      final double bound, final boolean checkEntropyCount) {
     final AtomicLong entropy = new AtomicLong(prng.getEntropyBits());
-    final Stream<? extends Number> streamToUse = (expectedCount < 0)
-        ? stream.sequential().limit(20)
-        : stream;
+    final Stream<? extends Number> streamToUse =
+        (expectedCount < 0) ? stream.sequential().limit(20) : stream;
     final long count = streamToUse.mapToLong((number) -> {
       assertGreaterOrEqual(origin, number.doubleValue());
       assertLess(bound, number.doubleValue());
@@ -167,14 +152,12 @@ public enum RandomTestUtils {
   /**
    * Test to ensure that two distinct RNGs with the same seed return the same sequence of numbers
    * and compare as equal.
-   *
    * @param rng1 The first RNG.  Its output is compared to that of {@code rng2}.
    * @param rng2 The second RNG.  Its output is compared to that of {@code rng1}.
    * @param iterations The number of values to generate from each RNG and compare.
    * @return true if the two RNGs produce the same sequence of values, false otherwise.
    */
-  public static boolean testEquivalence(final Random rng1,
-      final Random rng2,
+  public static boolean testEquivalence(final Random rng1, final Random rng2,
       final int iterations) {
     for (int i = 0; i < iterations; i++) {
       if (rng1.nextInt() != rng2.nextInt()) {
@@ -188,7 +171,6 @@ public enum RandomTestUtils {
    * This is a rudimentary check to ensure that the output of a given RNG is approximately uniformly
    * distributed.  If the RNG output is not uniformly distributed, this method will return a poor
    * estimate for the value of pi.
-   *
    * @param rng The RNG to test.
    * @param iterations The number of random points to generate for use in the calculation.  This
    *     value needs to be sufficiently large in order to produce a reasonably accurate result
@@ -196,8 +178,7 @@ public enum RandomTestUtils {
    *     be sufficient.
    * @return An approximation of pi generated using the provided RNG.
    */
-  private static double calculateMonteCarloValueForPi(final Random rng,
-      final int iterations) {
+  private static double calculateMonteCarloValueForPi(final Random rng, final int iterations) {
     // Assumes a quadrant of a circle of radius 1, bounded by a box with
     // sides of length 1.  The area of the square is therefore 1 square unit
     // and the area of the quadrant is (pi * r^2) / 4.
@@ -220,7 +201,6 @@ public enum RandomTestUtils {
   /**
    * Uses Pythagoras' theorem to determine whether the specified coordinates fall within the area of
    * the quadrant of a circle of radius 1 that is centered on the origin.
-   *
    * @param x The x-coordinate of the point (must be between 0 and 1).
    * @param y The y-coordinate of the point (must be between 0 and 1).
    * @return True if the point is within the quadrant, false otherwise.
@@ -233,7 +213,6 @@ public enum RandomTestUtils {
   /**
    * Generates a sequence of integers from a given random number generator and then calculates the
    * standard deviation of the sample.
-   *
    * @param rng The RNG to use.
    * @param maxValue The maximum value for generated integers (values will be in the range [0,
    *     maxValue)).
@@ -241,8 +220,7 @@ public enum RandomTestUtils {
    *     calculation.
    * @return The standard deviation of the generated sample.
    */
-  public static double calculateSampleStandardDeviation(final Random rng,
-      final int maxValue,
+  public static double calculateSampleStandardDeviation(final Random rng, final int maxValue,
       final int iterations) {
     final DescriptiveStatistics stats = new DescriptiveStatistics();
     for (int i = 0; i < iterations; i++) {

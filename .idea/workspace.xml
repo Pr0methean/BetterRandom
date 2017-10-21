@@ -5,8 +5,86 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="8d34e3fe-111b-4f5b-b1bf-5875a1f8c255" name="Default" comment="">
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/README.md" afterPath="$PROJECT_DIR$/README.md" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/inspectionProfiles/Project_Default.xml" afterPath="$PROJECT_DIR$/.idea/inspectionProfiles/Project_Default.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/benchmark/src/main/java/io/github/pr0methean/betterrandom/benchmark/AbstractRandomBenchmark.java" afterPath="$PROJECT_DIR$/benchmark/src/main/java/io/github/pr0methean/betterrandom/benchmark/AbstractRandomBenchmark.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/benchmark/src/main/java/io/github/pr0methean/betterrandom/benchmark/AbstractRandomBenchmarkWithReseeding.java" afterPath="$PROJECT_DIR$/benchmark/src/main/java/io/github/pr0methean/betterrandom/benchmark/AbstractRandomBenchmarkWithReseeding.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/benchmark/src/main/java/io/github/pr0methean/betterrandom/benchmark/AesCounterRandom128Benchmark.java" afterPath="$PROJECT_DIR$/benchmark/src/main/java/io/github/pr0methean/betterrandom/benchmark/AesCounterRandom128Benchmark.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/benchmark/src/main/java/io/github/pr0methean/betterrandom/benchmark/AesCounterRandom256Benchmark.java" afterPath="$PROJECT_DIR$/benchmark/src/main/java/io/github/pr0methean/betterrandom/benchmark/AesCounterRandom256Benchmark.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/benchmark/src/main/java/io/github/pr0methean/betterrandom/benchmark/CellularAutomatonRandomBenchmark.java" afterPath="$PROJECT_DIR$/benchmark/src/main/java/io/github/pr0methean/betterrandom/benchmark/CellularAutomatonRandomBenchmark.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/benchmark/src/main/java/io/github/pr0methean/betterrandom/benchmark/Cmwc4096RandomBenchmark.java" afterPath="$PROJECT_DIR$/benchmark/src/main/java/io/github/pr0methean/betterrandom/benchmark/Cmwc4096RandomBenchmark.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/benchmark/src/main/java/io/github/pr0methean/betterrandom/benchmark/MersenneTwisterRandomBenchmark.java" afterPath="$PROJECT_DIR$/benchmark/src/main/java/io/github/pr0methean/betterrandom/benchmark/MersenneTwisterRandomBenchmark.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/benchmark/src/main/java/io/github/pr0methean/betterrandom/benchmark/RandomWrapperBenchmark.java" afterPath="$PROJECT_DIR$/benchmark/src/main/java/io/github/pr0methean/betterrandom/benchmark/RandomWrapperBenchmark.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/benchmark/src/main/java/io/github/pr0methean/betterrandom/benchmark/RandomWrapperSecureRandomBenchmark.java" afterPath="$PROJECT_DIR$/benchmark/src/main/java/io/github/pr0methean/betterrandom/benchmark/RandomWrapperSecureRandomBenchmark.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/benchmark/src/main/java/io/github/pr0methean/betterrandom/benchmark/ReseedingSplittableRandomAdapterBenchmark.java" afterPath="$PROJECT_DIR$/benchmark/src/main/java/io/github/pr0methean/betterrandom/benchmark/ReseedingSplittableRandomAdapterBenchmark.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/benchmark/src/main/java/io/github/pr0methean/betterrandom/benchmark/SplittableRandomAdapterBenchmark.java" afterPath="$PROJECT_DIR$/benchmark/src/main/java/io/github/pr0methean/betterrandom/benchmark/SplittableRandomAdapterBenchmark.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/benchmark/src/main/java/io/github/pr0methean/betterrandom/benchmark/ThreadLocalRandomWrapperAesCounterRandom128Benchmark.java" afterPath="$PROJECT_DIR$/benchmark/src/main/java/io/github/pr0methean/betterrandom/benchmark/ThreadLocalRandomWrapperAesCounterRandom128Benchmark.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/benchmark/src/main/java/io/github/pr0methean/betterrandom/benchmark/VanillaJavaRandomBenchmark.java" afterPath="$PROJECT_DIR$/benchmark/src/main/java/io/github/pr0methean/betterrandom/benchmark/VanillaJavaRandomBenchmark.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/benchmark/src/main/java/io/github/pr0methean/betterrandom/benchmark/VanillaJavaSecureRandomBenchmark.java" afterPath="$PROJECT_DIR$/benchmark/src/main/java/io/github/pr0methean/betterrandom/benchmark/VanillaJavaSecureRandomBenchmark.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/benchmark/src/main/java/io/github/pr0methean/betterrandom/benchmark/XorShiftRandomBenchmark.java" afterPath="$PROJECT_DIR$/benchmark/src/main/java/io/github/pr0methean/betterrandom/benchmark/XorShiftRandomBenchmark.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/betterrandom/pom.xml" afterPath="$PROJECT_DIR$/betterrandom/pom.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/betterrandom/src/main/java/io/github/pr0methean/betterrandom/ByteArrayReseedableRandom.java" afterPath="$PROJECT_DIR$/betterrandom/src/main/java/io/github/pr0methean/betterrandom/ByteArrayReseedableRandom.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/betterrandom/src/main/java/io/github/pr0methean/betterrandom/EntropyCountingRandom.java" afterPath="$PROJECT_DIR$/betterrandom/src/main/java/io/github/pr0methean/betterrandom/EntropyCountingRandom.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/betterrandom/src/main/java/io/github/pr0methean/betterrandom/RepeatableRandom.java" afterPath="$PROJECT_DIR$/betterrandom/src/main/java/io/github/pr0methean/betterrandom/RepeatableRandom.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/betterrandom/src/main/java/io/github/pr0methean/betterrandom/prng/AesCounterRandom.java" afterPath="$PROJECT_DIR$/betterrandom/src/main/java/io/github/pr0methean/betterrandom/prng/AesCounterRandom.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/betterrandom/src/main/java/io/github/pr0methean/betterrandom/prng/BaseRandom.java" afterPath="$PROJECT_DIR$/betterrandom/src/main/java/io/github/pr0methean/betterrandom/prng/BaseRandom.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/betterrandom/src/main/java/io/github/pr0methean/betterrandom/prng/CellularAutomatonRandom.java" afterPath="$PROJECT_DIR$/betterrandom/src/main/java/io/github/pr0methean/betterrandom/prng/CellularAutomatonRandom.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/betterrandom/src/main/java/io/github/pr0methean/betterrandom/prng/Cmwc4096Random.java" afterPath="$PROJECT_DIR$/betterrandom/src/main/java/io/github/pr0methean/betterrandom/prng/Cmwc4096Random.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/betterrandom/src/main/java/io/github/pr0methean/betterrandom/prng/MersenneTwisterRandom.java" afterPath="$PROJECT_DIR$/betterrandom/src/main/java/io/github/pr0methean/betterrandom/prng/MersenneTwisterRandom.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/betterrandom/src/main/java/io/github/pr0methean/betterrandom/prng/RandomWrapper.java" afterPath="$PROJECT_DIR$/betterrandom/src/main/java/io/github/pr0methean/betterrandom/prng/RandomWrapper.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/betterrandom/src/main/java/io/github/pr0methean/betterrandom/prng/ThreadLocalRandomWrapper.java" afterPath="$PROJECT_DIR$/betterrandom/src/main/java/io/github/pr0methean/betterrandom/prng/ThreadLocalRandomWrapper.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/betterrandom/src/main/java/io/github/pr0methean/betterrandom/prng/XorShiftRandom.java" afterPath="$PROJECT_DIR$/betterrandom/src/main/java/io/github/pr0methean/betterrandom/prng/XorShiftRandom.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/betterrandom/src/main/java/io/github/pr0methean/betterrandom/prng/adapter/BaseSplittableRandomAdapter.java" afterPath="$PROJECT_DIR$/betterrandom/src/main/java/io/github/pr0methean/betterrandom/prng/adapter/BaseSplittableRandomAdapter.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/betterrandom/src/main/java/io/github/pr0methean/betterrandom/prng/adapter/DirectSplittableRandomAdapter.java" afterPath="$PROJECT_DIR$/betterrandom/src/main/java/io/github/pr0methean/betterrandom/prng/adapter/DirectSplittableRandomAdapter.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/betterrandom/src/main/java/io/github/pr0methean/betterrandom/prng/adapter/ReseedingSplittableRandomAdapter.java" afterPath="$PROJECT_DIR$/betterrandom/src/main/java/io/github/pr0methean/betterrandom/prng/adapter/ReseedingSplittableRandomAdapter.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/betterrandom/src/main/java/io/github/pr0methean/betterrandom/prng/adapter/SingleThreadSplittableRandomAdapter.java" afterPath="$PROJECT_DIR$/betterrandom/src/main/java/io/github/pr0methean/betterrandom/prng/adapter/SingleThreadSplittableRandomAdapter.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/betterrandom/src/main/java/io/github/pr0methean/betterrandom/prng/adapter/SplittableRandomAdapter.java" afterPath="$PROJECT_DIR$/betterrandom/src/main/java/io/github/pr0methean/betterrandom/prng/adapter/SplittableRandomAdapter.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/betterrandom/src/main/java/io/github/pr0methean/betterrandom/seed/DefaultSeedGenerator.java" afterPath="$PROJECT_DIR$/betterrandom/src/main/java/io/github/pr0methean/betterrandom/seed/DefaultSeedGenerator.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/betterrandom/src/main/java/io/github/pr0methean/betterrandom/seed/DevRandomSeedGenerator.java" afterPath="$PROJECT_DIR$/betterrandom/src/main/java/io/github/pr0methean/betterrandom/seed/DevRandomSeedGenerator.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/betterrandom/src/main/java/io/github/pr0methean/betterrandom/seed/RandomDotOrgSeedGenerator.java" afterPath="$PROJECT_DIR$/betterrandom/src/main/java/io/github/pr0methean/betterrandom/seed/RandomDotOrgSeedGenerator.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/betterrandom/src/main/java/io/github/pr0methean/betterrandom/seed/RandomSeederThread.java" afterPath="$PROJECT_DIR$/betterrandom/src/main/java/io/github/pr0methean/betterrandom/seed/RandomSeederThread.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/betterrandom/src/main/java/io/github/pr0methean/betterrandom/seed/SecureRandomSeedGenerator.java" afterPath="$PROJECT_DIR$/betterrandom/src/main/java/io/github/pr0methean/betterrandom/seed/SecureRandomSeedGenerator.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/betterrandom/src/main/java/io/github/pr0methean/betterrandom/seed/SeedException.java" afterPath="$PROJECT_DIR$/betterrandom/src/main/java/io/github/pr0methean/betterrandom/seed/SeedException.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/betterrandom/src/main/java/io/github/pr0methean/betterrandom/seed/SeedGenerator.java" afterPath="$PROJECT_DIR$/betterrandom/src/main/java/io/github/pr0methean/betterrandom/seed/SeedGenerator.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/betterrandom/src/main/java/io/github/pr0methean/betterrandom/util/BinaryUtils.java" afterPath="$PROJECT_DIR$/betterrandom/src/main/java/io/github/pr0methean/betterrandom/util/BinaryUtils.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/betterrandom/src/main/java/io/github/pr0methean/betterrandom/util/CloneViaSerialization.java" afterPath="$PROJECT_DIR$/betterrandom/src/main/java/io/github/pr0methean/betterrandom/util/CloneViaSerialization.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/betterrandom/src/main/java/io/github/pr0methean/betterrandom/util/Dumpable.java" afterPath="$PROJECT_DIR$/betterrandom/src/main/java/io/github/pr0methean/betterrandom/util/Dumpable.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/betterrandom/src/main/java/io/github/pr0methean/betterrandom/util/LogPreFormatter.java" afterPath="$PROJECT_DIR$/betterrandom/src/main/java/io/github/pr0methean/betterrandom/util/LogPreFormatter.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/betterrandom/src/main/java/io/github/pr0methean/betterrandom/util/LooperThread.java" afterPath="$PROJECT_DIR$/betterrandom/src/main/java/io/github/pr0methean/betterrandom/util/LooperThread.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/betterrandom/src/test/java/io/github/pr0methean/betterrandom/TestUtils.java" afterPath="$PROJECT_DIR$/betterrandom/src/test/java/io/github/pr0methean/betterrandom/TestUtils.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/betterrandom/src/test/java/io/github/pr0methean/betterrandom/prng/AesCounterRandom128Test.java" afterPath="$PROJECT_DIR$/betterrandom/src/test/java/io/github/pr0methean/betterrandom/prng/AesCounterRandom128Test.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/betterrandom/src/test/java/io/github/pr0methean/betterrandom/prng/AesCounterRandom160Test.java" afterPath="$PROJECT_DIR$/betterrandom/src/test/java/io/github/pr0methean/betterrandom/prng/AesCounterRandom160Test.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/betterrandom/src/test/java/io/github/pr0methean/betterrandom/prng/AesCounterRandom256Test.java" afterPath="$PROJECT_DIR$/betterrandom/src/test/java/io/github/pr0methean/betterrandom/prng/AesCounterRandom256Test.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/betterrandom/src/test/java/io/github/pr0methean/betterrandom/prng/AesCounterRandom384Test.java" afterPath="$PROJECT_DIR$/betterrandom/src/test/java/io/github/pr0methean/betterrandom/prng/AesCounterRandom384Test.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/betterrandom/src/test/java/io/github/pr0methean/betterrandom/prng/AesCounterRandomDemoTest.java" afterPath="$PROJECT_DIR$/betterrandom/src/test/java/io/github/pr0methean/betterrandom/prng/AesCounterRandomDemoTest.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/betterrandom/src/test/java/io/github/pr0methean/betterrandom/prng/BaseRandomStaticTest.java" afterPath="$PROJECT_DIR$/betterrandom/src/test/java/io/github/pr0methean/betterrandom/prng/BaseRandomStaticTest.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/betterrandom/src/test/java/io/github/pr0methean/betterrandom/prng/BaseRandomTest.java" afterPath="$PROJECT_DIR$/betterrandom/src/test/java/io/github/pr0methean/betterrandom/prng/BaseRandomTest.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/betterrandom/src/test/java/io/github/pr0methean/betterrandom/prng/CellularAutomatonRandomTest.java" afterPath="$PROJECT_DIR$/betterrandom/src/test/java/io/github/pr0methean/betterrandom/prng/CellularAutomatonRandomTest.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/betterrandom/src/test/java/io/github/pr0methean/betterrandom/prng/Cmwc4096RandomTest.java" afterPath="$PROJECT_DIR$/betterrandom/src/test/java/io/github/pr0methean/betterrandom/prng/Cmwc4096RandomTest.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/betterrandom/src/test/java/io/github/pr0methean/betterrandom/prng/MersenneTwisterRandomTest.java" afterPath="$PROJECT_DIR$/betterrandom/src/test/java/io/github/pr0methean/betterrandom/prng/MersenneTwisterRandomTest.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/betterrandom/src/test/java/io/github/pr0methean/betterrandom/prng/RandomTestUtils.java" afterPath="$PROJECT_DIR$/betterrandom/src/test/java/io/github/pr0methean/betterrandom/prng/RandomTestUtils.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/betterrandom/src/test/java/io/github/pr0methean/betterrandom/prng/RandomWrapperAesCounterRandomTest.java" afterPath="$PROJECT_DIR$/betterrandom/src/test/java/io/github/pr0methean/betterrandom/prng/RandomWrapperAesCounterRandomTest.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/betterrandom/src/test/java/io/github/pr0methean/betterrandom/prng/RandomWrapperMersenneTwisterRandomTest.java" afterPath="$PROJECT_DIR$/betterrandom/src/test/java/io/github/pr0methean/betterrandom/prng/RandomWrapperMersenneTwisterRandomTest.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/betterrandom/src/test/java/io/github/pr0methean/betterrandom/prng/RandomWrapperRandomTest.java" afterPath="$PROJECT_DIR$/betterrandom/src/test/java/io/github/pr0methean/betterrandom/prng/RandomWrapperRandomTest.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/betterrandom/src/test/java/io/github/pr0methean/betterrandom/prng/RandomWrapperSecureRandomTest.java" afterPath="$PROJECT_DIR$/betterrandom/src/test/java/io/github/pr0methean/betterrandom/prng/RandomWrapperSecureRandomTest.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/betterrandom/src/test/java/io/github/pr0methean/betterrandom/prng/ThreadLocalRandomWrapperTest.java" afterPath="$PROJECT_DIR$/betterrandom/src/test/java/io/github/pr0methean/betterrandom/prng/ThreadLocalRandomWrapperTest.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/betterrandom/src/test/java/io/github/pr0methean/betterrandom/prng/XorShiftRandomTest.java" afterPath="$PROJECT_DIR$/betterrandom/src/test/java/io/github/pr0methean/betterrandom/prng/XorShiftRandomTest.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/betterrandom/src/test/java/io/github/pr0methean/betterrandom/prng/adapter/ReseedingSplittableRandomAdapterDemo.java" afterPath="$PROJECT_DIR$/betterrandom/src/test/java/io/github/pr0methean/betterrandom/prng/adapter/ReseedingSplittableRandomAdapterDemo.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/betterrandom/src/test/java/io/github/pr0methean/betterrandom/prng/adapter/ReseedingSplittableRandomAdapterDemoTest.java" afterPath="$PROJECT_DIR$/betterrandom/src/test/java/io/github/pr0methean/betterrandom/prng/adapter/ReseedingSplittableRandomAdapterDemoTest.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/betterrandom/src/test/java/io/github/pr0methean/betterrandom/prng/adapter/ReseedingSplittableRandomAdapterTest.java" afterPath="$PROJECT_DIR$/betterrandom/src/test/java/io/github/pr0methean/betterrandom/prng/adapter/ReseedingSplittableRandomAdapterTest.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/betterrandom/src/test/java/io/github/pr0methean/betterrandom/prng/adapter/SingleThreadSplittableRandomAdapterTest.java" afterPath="$PROJECT_DIR$/betterrandom/src/test/java/io/github/pr0methean/betterrandom/prng/adapter/SingleThreadSplittableRandomAdapterTest.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/betterrandom/src/test/java/io/github/pr0methean/betterrandom/prng/adapter/SplittableRandomAdapterTest.java" afterPath="$PROJECT_DIR$/betterrandom/src/test/java/io/github/pr0methean/betterrandom/prng/adapter/SplittableRandomAdapterTest.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/betterrandom/src/test/java/io/github/pr0methean/betterrandom/seed/DefaultSeedGeneratorTest.java" afterPath="$PROJECT_DIR$/betterrandom/src/test/java/io/github/pr0methean/betterrandom/seed/DefaultSeedGeneratorTest.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/betterrandom/src/test/java/io/github/pr0methean/betterrandom/seed/DevRandomSeedGeneratorTest.java" afterPath="$PROJECT_DIR$/betterrandom/src/test/java/io/github/pr0methean/betterrandom/seed/DevRandomSeedGeneratorTest.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/betterrandom/src/test/java/io/github/pr0methean/betterrandom/seed/FakeSeedGenerator.java" afterPath="$PROJECT_DIR$/betterrandom/src/test/java/io/github/pr0methean/betterrandom/seed/FakeSeedGenerator.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/betterrandom/src/test/java/io/github/pr0methean/betterrandom/seed/RandomDotOrgSeedGeneratorTest.java" afterPath="$PROJECT_DIR$/betterrandom/src/test/java/io/github/pr0methean/betterrandom/seed/RandomDotOrgSeedGeneratorTest.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/betterrandom/src/test/java/io/github/pr0methean/betterrandom/seed/RandomSeederThreadTest.java" afterPath="$PROJECT_DIR$/betterrandom/src/test/java/io/github/pr0methean/betterrandom/seed/RandomSeederThreadTest.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/betterrandom/src/test/java/io/github/pr0methean/betterrandom/seed/SecureRandomSeedGeneratorTest.java" afterPath="$PROJECT_DIR$/betterrandom/src/test/java/io/github/pr0methean/betterrandom/seed/SecureRandomSeedGeneratorTest.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/betterrandom/src/test/java/io/github/pr0methean/betterrandom/seed/SeedTestUtils.java" afterPath="$PROJECT_DIR$/betterrandom/src/test/java/io/github/pr0methean/betterrandom/seed/SeedTestUtils.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/betterrandom/src/test/java/io/github/pr0methean/betterrandom/util/BinaryUtilsTest.java" afterPath="$PROJECT_DIR$/betterrandom/src/test/java/io/github/pr0methean/betterrandom/util/BinaryUtilsTest.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/betterrandom/src/test/java/io/github/pr0methean/betterrandom/util/LooperThreadTest.java" afterPath="$PROJECT_DIR$/betterrandom/src/test/java/io/github/pr0methean/betterrandom/util/LooperThreadTest.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/cutting_room_floor/main/java/DeadlockWatchdogThread.java" afterPath="$PROJECT_DIR$/cutting_room_floor/main/java/DeadlockWatchdogThread.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/cutting_room_floor/main/java/WeakReferenceWithEquals.java" afterPath="$PROJECT_DIR$/cutting_room_floor/main/java/WeakReferenceWithEquals.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/cutting_room_floor/test/java/WeakReferenceWithEqualsTest.java" afterPath="$PROJECT_DIR$/cutting_room_floor/test/java/WeakReferenceWithEqualsTest.java" />
     </list>
     <ignored path="$PROJECT_DIR$/out/" />
     <ignored path="$PROJECT_DIR$/target/" />
@@ -30,11 +108,31 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="375">
-      <file leaf-file-name="release.sh" pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/release.sh">
+      <file leaf-file-name="AesCounterRandom.java" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/betterrandom/src/main/java/io/github/pr0methean/betterrandom/prng/AesCounterRandom.java">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="180">
-              <caret line="9" column="0" lean-forward="false" selection-start-line="9" selection-start-column="0" selection-end-line="9" selection-end-column="0" />
+              <caret line="47" column="13" lean-forward="false" selection-start-line="47" selection-start-column="13" selection-end-line="47" selection-end-column="13" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="DevRandomSeedGenerator.java" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/betterrandom/src/main/java/io/github/pr0methean/betterrandom/seed/DevRandomSeedGenerator.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="66">
+              <caret line="54" column="8" lean-forward="false" selection-start-line="54" selection-start-column="8" selection-end-line="54" selection-end-column="8" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="remove_unlimited_crypto.sh" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/remove_unlimited_crypto.sh">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="20">
+              <caret line="1" column="11" lean-forward="false" selection-start-line="1" selection-start-column="11" selection-end-line="1" selection-end-column="11" />
               <folding />
             </state>
           </provider>
@@ -43,29 +141,67 @@
       <file leaf-file-name="RandomSeederThread.java" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/betterrandom/src/main/java/io/github/pr0methean/betterrandom/seed/RandomSeederThread.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="1557">
-              <caret line="210" column="26" lean-forward="false" selection-start-line="210" selection-start-column="26" selection-end-line="210" selection-end-column="26" />
+            <state relative-caret-position="76">
+              <caret line="243" column="12" lean-forward="false" selection-start-line="243" selection-start-column="12" selection-end-line="243" selection-end-column="12" />
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name=".travis.yml" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/.travis.yml">
+      <file leaf-file-name="BaseSplittableRandomAdapter.java" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/betterrandom/src/main/java/io/github/pr0methean/betterrandom/prng/adapter/BaseSplittableRandomAdapter.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="166">
-              <caret line="122" column="696" lean-forward="false" selection-start-line="122" selection-start-column="696" selection-end-line="122" selection-end-column="696" />
+            <state relative-caret-position="66">
+              <caret line="27" column="2" lean-forward="false" selection-start-line="27" selection-start-column="2" selection-end-line="27" selection-end-column="2" />
+              <folding>
+                <element signature="e#636#637#0" expanded="true" />
+                <element signature="e#657#658#0" expanded="true" />
+                <element signature="e#805#806#0" expanded="true" />
+                <element signature="e#826#827#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="AbstractRandomBenchmarkWithReseeding.java" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/benchmark/src/main/java/io/github/pr0methean/betterrandom/benchmark/AbstractRandomBenchmarkWithReseeding.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="66">
+              <caret line="50" column="39" lean-forward="false" selection-start-line="50" selection-start-column="39" selection-end-line="50" selection-end-column="39" />
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="DefaultSeedGenerator.java" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/betterrandom/src/main/java/io/github/pr0methean/betterrandom/seed/DefaultSeedGenerator.java">
+      <file leaf-file-name="ThreadLocalRandomWrapper.java" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/betterrandom/src/main/java/io/github/pr0methean/betterrandom/prng/ThreadLocalRandomWrapper.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="117">
-              <caret line="37" column="6" lean-forward="false" selection-start-line="37" selection-start-column="6" selection-end-line="37" selection-end-column="6" />
+            <state relative-caret-position="1146">
+              <caret line="157" column="8" lean-forward="false" selection-start-line="157" selection-start-column="8" selection-end-line="157" selection-end-column="8" />
               <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="LooperThread.java" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/betterrandom/src/main/java/io/github/pr0methean/betterrandom/util/LooperThread.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="196">
+              <caret line="55" column="41" lean-forward="false" selection-start-line="55" selection-start-column="41" selection-end-line="55" selection-end-column="41" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="RandomWrapper.java" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/betterrandom/src/main/java/io/github/pr0methean/betterrandom/prng/RandomWrapper.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="200">
+              <caret line="43" column="5" lean-forward="false" selection-start-line="43" selection-start-column="5" selection-end-line="43" selection-end-column="5" />
+              <folding>
+                <element signature="e#6650#6703#0" expanded="true" />
+                <element signature="e#8607#8660#0" expanded="true" />
+              </folding>
             </state>
           </provider>
         </entry>
@@ -73,11 +209,9 @@
       <file leaf-file-name="RandomDotOrgSeedGeneratorTest.java" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/betterrandom/src/test/java/io/github/pr0methean/betterrandom/seed/RandomDotOrgSeedGeneratorTest.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="228">
-              <caret line="71" column="38" lean-forward="false" selection-start-line="71" selection-start-column="38" selection-end-line="71" selection-end-column="38" />
-              <folding>
-                <element signature="imports" expanded="true" />
-              </folding>
+            <state relative-caret-position="76">
+              <caret line="35" column="39" lean-forward="false" selection-start-line="35" selection-start-column="39" selection-end-line="35" selection-end-column="39" />
+              <folding />
             </state>
           </provider>
         </entry>
@@ -149,18 +283,12 @@
     </option>
   </component>
   <component name="HighlightingSettingsPerFile">
-    <setting file="file://$PROJECT_DIR$/betterrandom/src/main/java/io/github/pr0methean/betterrandom/seed/RandomSeederThread.java" root0="SKIP_INSPECTION" />
-    <setting file="file://$PROJECT_DIR$/betterrandom/src/main/java/io/github/pr0methean/betterrandom/prng/ThreadLocalRandomWrapper.java" root0="SKIP_INSPECTION" />
-    <setting file="file://$PROJECT_DIR$/betterrandom/src/main/java/io/github/pr0methean/betterrandom/util/LooperThread.java" root0="SKIP_INSPECTION" />
-    <setting file="file://$PROJECT_DIR$/betterrandom/src/main/java/io/github/pr0methean/betterrandom/prng/adapter/ReseedingSplittableRandomAdapter.java" root0="SKIP_INSPECTION" />
     <setting file="file://$PROJECT_DIR$/betterrandom/src/main/java/io/github/pr0methean/betterrandom/seed/RandomDotOrgSeedGenerator.java" root0="SKIP_INSPECTION" />
-    <setting file="file://$PROJECT_DIR$/betterrandom/src/main/java/io/github/pr0methean/betterrandom/prng/adapter/BaseSplittableRandomAdapter.java" root0="SKIP_INSPECTION" />
-    <setting file="file://$PROJECT_DIR$/betterrandom/src/main/java/io/github/pr0methean/betterrandom/prng/BaseRandom.java" root0="SKIP_INSPECTION" />
+    <setting file="file://$PROJECT_DIR$/betterrandom/src/main/java/io/github/pr0methean/betterrandom/prng/RandomWrapper.java" root0="SKIP_INSPECTION" />
   </component>
   <component name="IdeDocumentHistory">
     <option name="CHANGED_PATHS">
       <list>
-        <option value="$PROJECT_DIR$/betterrandom/src/main/java/io/github/pr0methean/betterrandom/prng/ThreadLocalBaseRandomWrapper.java" />
         <option value="$PROJECT_DIR$/betterrandom/src/test/java/io/github/pr0methean/betterrandom/prng/ThreadLocalBaseRandomWrapperTest.java" />
         <option value="$PROJECT_DIR$/betterrandom/src/main/java/io/github/pr0methean/betterrandom/util/EntryPoint.java" />
         <option value="$PROJECT_DIR$/benchmark/src/main/java/io/github/pr0methean/betterrandom/benchmark/AesCounterRandom128Benchmark.java" />
@@ -186,8 +314,6 @@
         <option value="$PROJECT_DIR$/.travis.yml" />
         <option value="$PROJECT_DIR$/betterrandom/src/main/java/io/github/pr0methean/betterrandom/util/BinaryUtils.java" />
         <option value="$PROJECT_DIR$/betterrandom/src/main/java/io/github/pr0methean/betterrandom/prng/MersenneTwisterRandom.java" />
-        <option value="$PROJECT_DIR$/betterrandom/src/main/java/io/github/pr0methean/betterrandom/seed/RandomSeederThread.java" />
-        <option value="$PROJECT_DIR$/betterrandom/src/main/java/io/github/pr0methean/betterrandom/prng/RandomWrapper.java" />
         <option value="$PROJECT_DIR$/betterrandom/src/main/java/io/github/pr0methean/betterrandom/seed/SeedException.java" />
         <option value="$PROJECT_DIR$/benchmark/src/main/java/io/github/pr0methean/betterrandom/benchmark/AbstractRandomBenchmark.java" />
         <option value="$PROJECT_DIR$/betterrandom/src/test/java/io/github/pr0methean/betterrandom/prng/AesCounterRandom160Test.java" />
@@ -195,14 +321,11 @@
         <option value="$PROJECT_DIR$/betterrandom/src/test/java/io/github/pr0methean/betterrandom/prng/AesCounterRandom384Test.java" />
         <option value="$PROJECT_DIR$/betterrandom/src/main/java/io/github/pr0methean/betterrandom/prng/BaseRandom.java" />
         <option value="$PROJECT_DIR$/betterrandom/src/test/java/io/github/pr0methean/betterrandom/prng/BaseRandomTest.java" />
-        <option value="$PROJECT_DIR$/betterrandom/src/main/java/io/github/pr0methean/betterrandom/prng/ThreadLocalRandomWrapper.java" />
         <option value="$PROJECT_DIR$/betterrandom/src/main/java/io/github/pr0methean/betterrandom/prng/adapter/ReseedingSplittableRandomAdapter.java" />
         <option value="$PROJECT_DIR$/betterrandom/src/main/java/io/github/pr0methean/betterrandom/util/LooperThread.java" />
         <option value="$PROJECT_DIR$/betterrandom/src/test/java/io/github/pr0methean/betterrandom/prng/ThreadLocalRandomWrapperTest.java" />
         <option value="$PROJECT_DIR$/betterrandom/src/main/java/io/github/pr0methean/betterrandom/prng/adapter/SplittableRandomAdapter.java" />
-        <option value="$PROJECT_DIR$/betterrandom/src/main/java/io/github/pr0methean/betterrandom/seed/DevRandomSeedGenerator.java" />
         <option value="$PROJECT_DIR$/benchmark.sh" />
-        <option value="$PROJECT_DIR$/benchmark/src/main/java/io/github/pr0methean/betterrandom/benchmark/AbstractRandomBenchmarkWithReseeding.java" />
         <option value="$PROJECT_DIR$/appveyor.yml" />
         <option value="$PROJECT_DIR$/betterrandom/src/test/java/io/github/pr0methean/betterrandom/TestUtils.java" />
         <option value="$PROJECT_DIR$/betterrandom/proguard.conf" />
@@ -211,6 +334,12 @@
         <option value="$PROJECT_DIR$/betterrandom/src/test/java/io/github/pr0methean/betterrandom/seed/RandomDotOrgSeedGeneratorTest.java" />
         <option value="$PROJECT_DIR$/README.md" />
         <option value="$PROJECT_DIR$/betterrandom/src/main/java/io/github/pr0methean/betterrandom/seed/RandomDotOrgSeedGenerator.java" />
+        <option value="$PROJECT_DIR$/betterrandom/src/main/java/io/github/pr0methean/betterrandom/seed/DevRandomSeedGenerator.java" />
+        <option value="$PROJECT_DIR$/betterrandom/src/main/java/io/github/pr0methean/betterrandom/seed/RandomSeederThread.java" />
+        <option value="$PROJECT_DIR$/betterrandom/src/main/java/io/github/pr0methean/betterrandom/prng/adapter/BaseSplittableRandomAdapter.java" />
+        <option value="$PROJECT_DIR$/benchmark/src/main/java/io/github/pr0methean/betterrandom/benchmark/AbstractRandomBenchmarkWithReseeding.java" />
+        <option value="$PROJECT_DIR$/betterrandom/src/main/java/io/github/pr0methean/betterrandom/prng/ThreadLocalRandomWrapper.java" />
+        <option value="$PROJECT_DIR$/betterrandom/src/main/java/io/github/pr0methean/betterrandom/prng/RandomWrapper.java" />
       </list>
     </option>
   </component>
@@ -291,6 +420,9 @@
             <id>Pattern Validation</id>
           </State>
           <State>
+            <id>Portability issuesJava</id>
+          </State>
+          <State>
             <id>Probable bugsKotlin</id>
           </State>
           <State>
@@ -317,7 +449,7 @@
         </expanded-state>
         <selected-state>
           <State>
-            <id>UndeclaredTests</id>
+            <id>SystemGetenv</id>
           </State>
         </selected-state>
       </profile-state>
@@ -341,8 +473,9 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
-      <pane id="Scratches" />
       <pane id="Scope" />
+      <pane id="PackagesPane" />
+      <pane id="Scratches" />
       <pane id="ProjectPane">
         <subPane>
           <expand>
@@ -354,6 +487,46 @@
               <item name="BetterRandom" type="b2602c69:ProjectViewProjectNode" />
               <item name="BetterRandom" type="462c0819:PsiDirectoryNode" />
               <item name="betterrandom" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="BetterRandom" type="b2602c69:ProjectViewProjectNode" />
+              <item name="BetterRandom" type="462c0819:PsiDirectoryNode" />
+              <item name="betterrandom" type="462c0819:PsiDirectoryNode" />
+              <item name="src" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="BetterRandom" type="b2602c69:ProjectViewProjectNode" />
+              <item name="BetterRandom" type="462c0819:PsiDirectoryNode" />
+              <item name="betterrandom" type="462c0819:PsiDirectoryNode" />
+              <item name="src" type="462c0819:PsiDirectoryNode" />
+              <item name="main" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="BetterRandom" type="b2602c69:ProjectViewProjectNode" />
+              <item name="BetterRandom" type="462c0819:PsiDirectoryNode" />
+              <item name="betterrandom" type="462c0819:PsiDirectoryNode" />
+              <item name="src" type="462c0819:PsiDirectoryNode" />
+              <item name="main" type="462c0819:PsiDirectoryNode" />
+              <item name="java" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="BetterRandom" type="b2602c69:ProjectViewProjectNode" />
+              <item name="BetterRandom" type="462c0819:PsiDirectoryNode" />
+              <item name="betterrandom" type="462c0819:PsiDirectoryNode" />
+              <item name="src" type="462c0819:PsiDirectoryNode" />
+              <item name="main" type="462c0819:PsiDirectoryNode" />
+              <item name="java" type="462c0819:PsiDirectoryNode" />
+              <item name="betterrandom" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="BetterRandom" type="b2602c69:ProjectViewProjectNode" />
+              <item name="BetterRandom" type="462c0819:PsiDirectoryNode" />
+              <item name="betterrandom" type="462c0819:PsiDirectoryNode" />
+              <item name="src" type="462c0819:PsiDirectoryNode" />
+              <item name="main" type="462c0819:PsiDirectoryNode" />
+              <item name="java" type="462c0819:PsiDirectoryNode" />
+              <item name="betterrandom" type="462c0819:PsiDirectoryNode" />
+              <item name="prng" type="462c0819:PsiDirectoryNode" />
             </path>
             <path>
               <item name="BetterRandom" type="b2602c69:ProjectViewProjectNode" />
@@ -400,7 +573,6 @@
           <select />
         </subPane>
       </pane>
-      <pane id="PackagesPane" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -844,50 +1016,33 @@
   </component>
   <component name="ToolWindowManager">
     <frame x="-9" y="-9" width="1384" height="738" extended-state="7" />
-    <editor active="true" />
     <layout>
       <window_info id="Palette" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32982457" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
       <window_info id="Palette&#9;" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4105263" sideWeight="0.44189602" order="10" side_tool="true" content_ui="tabs" />
       <window_info id="Maven Projects" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
-      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32982457" sideWeight="0.558104" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32982457" sideWeight="0.5" order="8" side_tool="false" content_ui="tabs" />
+      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32982457" sideWeight="0.558104" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="9" side_tool="false" content_ui="tabs" />
       <window_info id="Designer" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
-      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.22018349" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
-      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.32982457" sideWeight="0.49082568" order="1" side_tool="false" content_ui="tabs" />
+      <window_info id="Project" active="true" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.26987767" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Inspection Results" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.23333333" sideWeight="0.496337" order="13" side_tool="false" content_ui="tabs" />
+      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.5350877" sideWeight="0.49082568" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.16437308" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="UI Designer" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
-      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="true" content_ui="tabs" />
+      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
-      <window_info id="Palette" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Code explorer" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
       <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
-      <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4105263" sideWeight="0.44189602" order="10" side_tool="true" content_ui="tabs" />
       <window_info id="Analyze Dataflow to" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.44983277" sideWeight="0.5" order="11" side_tool="false" content_ui="tabs" />
-      <window_info id="Maven Projects" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Dependency Viewer" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.2736842" sideWeight="0.5" order="12" side_tool="false" content_ui="tabs" />
       <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="2" side_tool="false" content_ui="combo" />
-      <window_info id="Designer" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
-      <window_info id="Inspection Results" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.67192984" sideWeight="0.496337" order="13" side_tool="false" content_ui="tabs" />
-      <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.16437308" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
-      <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
-      <window_info id="UI Designer" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
-      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
-      <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32982457" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
       <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4403509" sideWeight="0.45718655" order="7" side_tool="false" content_ui="tabs" />
-      <window_info id="Palette&#9;" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
       <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
-      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32982457" sideWeight="0.558104" order="2" side_tool="false" content_ui="tabs" />
-      <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32982457" sideWeight="0.5" order="8" side_tool="false" content_ui="tabs" />
-      <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="9" side_tool="false" content_ui="tabs" />
-      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.101681955" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
-      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.32982457" sideWeight="0.49082568" order="1" side_tool="false" content_ui="tabs" />
-      <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="true" content_ui="tabs" />
     </layout>
     <layout-to-restore>
       <window_info id="Palette" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
@@ -937,7 +1092,7 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/betterrandom/src/test/java/io/github/pr0methean/betterrandom/prng/AesCounterRandom128Test.java</url>
-          <line>30</line>
+          <line>29</line>
           <properties />
           <option name="timeStamp" value="8" />
         </line-breakpoint>
@@ -965,7 +1120,7 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-method">
           <url>file://$PROJECT_DIR$/betterrandom/src/test/java/io/github/pr0methean/betterrandom/prng/BaseRandomStaticTest.java</url>
-          <line>72</line>
+          <line>68</line>
           <properties class="io.github.pr0methean.betterrandom.prng.BaseRandomStaticTest.SwitcherooInputStream" method="resolveClass">
             <option name="EMULATED" value="true" />
           </properties>
@@ -977,69 +1132,12 @@
     <watches-manager />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/betterrandom/src/test/java/io/github/pr0methean/betterrandom/prng/AesCounterRandom160Test.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="113">
-          <caret line="25" column="1" lean-forward="false" selection-start-line="25" selection-start-column="1" selection-end-line="25" selection-end-column="1" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/betterrandom/src/test/java/io/github/pr0methean/betterrandom/prng/AesCounterRandom256Test.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="53">
-          <caret line="22" column="0" lean-forward="false" selection-start-line="22" selection-start-column="0" selection-end-line="22" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/betterrandom/src/test/java/io/github/pr0methean/betterrandom/prng/AesCounterRandom384Test.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="53">
-          <caret line="27" column="0" lean-forward="false" selection-start-line="27" selection-start-column="0" selection-end-line="27" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/betterrandom/src/main/java/io/github/pr0methean/betterrandom/prng/BaseRandom.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="200">
-          <caret line="772" column="92" lean-forward="false" selection-start-line="772" selection-start-column="92" selection-end-line="772" selection-end-column="92" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/betterrandom/src/test/java/io/github/pr0methean/betterrandom/prng/BaseRandomTest.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="348">
-          <caret line="103" column="54" lean-forward="false" selection-start-line="103" selection-start-column="54" selection-end-line="103" selection-end-column="54" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/betterrandom/src/main/java/io/github/pr0methean/betterrandom/prng/ThreadLocalRandomWrapper.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="118">
-          <caret line="58" column="34" lean-forward="true" selection-start-line="58" selection-start-column="34" selection-end-line="58" selection-end-column="34" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/betterrandom/src/main/java/io/github/pr0methean/betterrandom/seed/SeedException.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="180">
-          <caret line="23" column="22" lean-forward="true" selection-start-line="23" selection-start-column="22" selection-end-line="23" selection-end-column="22" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/betterrandom/src/test/java/io/github/pr0methean/betterrandom/seed/DevRandomSeedGeneratorTest.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="67">
-          <caret line="34" column="19" lean-forward="false" selection-start-line="34" selection-start-column="19" selection-end-line="34" selection-end-column="19" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/betterrandom/src/main/java/io/github/pr0methean/betterrandom/prng/adapter/ReseedingSplittableRandomAdapter.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="72">
-          <caret line="73" column="93" lean-forward="false" selection-start-line="73" selection-start-column="93" selection-end-line="73" selection-end-column="93" />
-        </state>
-      </provider>
-    </entry>
+    <entry file="file://$PROJECT_DIR$/betterrandom/src/test/java/io/github/pr0methean/betterrandom/prng/AesCounterRandom384Test.java" />
+    <entry file="file://$PROJECT_DIR$/betterrandom/src/main/java/io/github/pr0methean/betterrandom/prng/BaseRandom.java" />
+    <entry file="file://$PROJECT_DIR$/betterrandom/src/test/java/io/github/pr0methean/betterrandom/prng/BaseRandomTest.java" />
+    <entry file="file://$PROJECT_DIR$/betterrandom/src/main/java/io/github/pr0methean/betterrandom/seed/SeedException.java" />
+    <entry file="file://$PROJECT_DIR$/betterrandom/src/test/java/io/github/pr0methean/betterrandom/seed/DevRandomSeedGeneratorTest.java" />
+    <entry file="file://$PROJECT_DIR$/betterrandom/src/main/java/io/github/pr0methean/betterrandom/prng/adapter/ReseedingSplittableRandomAdapter.java" />
     <entry file="file://$PROJECT_DIR$/betterrandom/src/test/java/io/github/pr0methean/betterrandom/util/LooperThreadTest.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="82">
@@ -1048,38 +1146,11 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/betterrandom/src/main/java/io/github/pr0methean/betterrandom/util/LooperThread.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="92">
-          <caret line="283" column="10" lean-forward="true" selection-start-line="283" selection-start-column="10" selection-end-line="283" selection-end-column="10" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/betterrandom/src/test/java/io/github/pr0methean/betterrandom/prng/ThreadLocalRandomWrapperTest.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1260">
-          <caret line="76" column="8" lean-forward="false" selection-start-line="76" selection-start-column="8" selection-end-line="76" selection-end-column="8" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/remove_unlimited_crypto.sh">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="60">
-          <caret line="3" column="0" lean-forward="false" selection-start-line="3" selection-start-column="0" selection-end-line="3" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
+    <entry file="file://$PROJECT_DIR$/betterrandom/src/test/java/io/github/pr0methean/betterrandom/prng/ThreadLocalRandomWrapperTest.java" />
     <entry file="file://$PROJECT_DIR$/cutting_room_floor/benchmark-ljp.sh">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="180">
           <caret line="9" column="0" lean-forward="false" selection-start-line="9" selection-start-column="0" selection-end-line="9" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/betterrandom/src/main/java/io/github/pr0methean/betterrandom/prng/RandomWrapper.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="4440">
-          <caret line="249" column="17" lean-forward="false" selection-start-line="249" selection-start-column="17" selection-end-line="249" selection-end-column="17" />
         </state>
       </provider>
     </entry>
@@ -1091,13 +1162,7 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/betterrandom/src/main/java/io/github/pr0methean/betterrandom/prng/adapter/SplittableRandomAdapter.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="20">
-          <caret line="18" column="79" lean-forward="false" selection-start-line="18" selection-start-column="79" selection-end-line="18" selection-end-column="79" />
-        </state>
-      </provider>
-    </entry>
+    <entry file="file://$PROJECT_DIR$/betterrandom/src/main/java/io/github/pr0methean/betterrandom/prng/adapter/SplittableRandomAdapter.java" />
     <entry file="jar://C:/Program Files/Java/jdk1.8.0_131/jre/lib/rt.jar!/sun/nio/fs/WindowsFileSystem.class">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="420">
@@ -1137,13 +1202,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="380">
           <caret line="80" column="26" lean-forward="false" selection-start-line="80" selection-start-column="26" selection-end-line="80" selection-end-column="26" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/betterrandom/src/main/java/io/github/pr0methean/betterrandom/seed/DevRandomSeedGenerator.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="234">
-          <caret line="55" column="54" lean-forward="false" selection-start-line="55" selection-start-column="54" selection-end-line="55" selection-end-column="54" />
         </state>
       </provider>
     </entry>
@@ -1189,20 +1247,7 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/benchmark/src/main/java/io/github/pr0methean/betterrandom/benchmark/AbstractRandomBenchmark.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="60">
-          <caret line="20" column="0" lean-forward="true" selection-start-line="20" selection-start-column="0" selection-end-line="20" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/benchmark/src/main/java/io/github/pr0methean/betterrandom/benchmark/AbstractRandomBenchmarkWithReseeding.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="260">
-          <caret line="46" column="17" lean-forward="true" selection-start-line="46" selection-start-column="17" selection-end-line="46" selection-end-column="17" />
-        </state>
-      </provider>
-    </entry>
+    <entry file="file://$PROJECT_DIR$/benchmark/src/main/java/io/github/pr0methean/betterrandom/benchmark/AbstractRandomBenchmark.java" />
     <entry file="jar://C:/Program Files/Java/jdk1.8.0_131/src.zip!/java/net/URLConnection.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="900">
@@ -1231,17 +1276,7 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/betterrandom/src/test/java/io/github/pr0methean/betterrandom/TestUtils.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="202">
-          <caret line="58" column="3" lean-forward="false" selection-start-line="58" selection-start-column="3" selection-end-line="58" selection-end-column="3" />
-          <folding>
-            <element signature="e#2641#2642#0" expanded="false" />
-            <element signature="e#2691#2692#0" expanded="false" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
+    <entry file="file://$PROJECT_DIR$/betterrandom/src/test/java/io/github/pr0methean/betterrandom/TestUtils.java" />
     <entry file="file://$PROJECT_DIR$/betterrandom/proguard.conf">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="420">
@@ -1279,7 +1314,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="1180">
           <caret line="71" column="16" lean-forward="false" selection-start-line="71" selection-start-column="16" selection-end-line="71" selection-end-column="16" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -1297,40 +1331,7 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/betterrandom/src/main/java/io/github/pr0methean/betterrandom/seed/DefaultSeedGenerator.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="117">
-          <caret line="37" column="6" lean-forward="false" selection-start-line="37" selection-start-column="6" selection-end-line="37" selection-end-column="6" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/.travis.yml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="166">
-          <caret line="122" column="696" lean-forward="false" selection-start-line="122" selection-start-column="696" selection-end-line="122" selection-end-column="696" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/betterrandom/src/test/java/io/github/pr0methean/betterrandom/seed/RandomDotOrgSeedGeneratorTest.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="228">
-          <caret line="71" column="38" lean-forward="false" selection-start-line="71" selection-start-column="38" selection-end-line="71" selection-end-column="38" />
-          <folding>
-            <element signature="imports" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/betterrandom/src/main/java/io/github/pr0methean/betterrandom/seed/RandomSeederThread.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1557">
-          <caret line="210" column="26" lean-forward="false" selection-start-line="210" selection-start-column="26" selection-end-line="210" selection-end-column="26" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
+    <entry file="file://$PROJECT_DIR$/betterrandom/src/main/java/io/github/pr0methean/betterrandom/seed/DefaultSeedGenerator.java" />
     <entry file="file://$PROJECT_DIR$/README.md">
       <provider selected="true" editor-type-id="split-provider[text-editor;markdown-preview-editor]">
         <state split_layout="FIRST">
@@ -1348,18 +1349,111 @@
           <caret line="54" column="45" lean-forward="false" selection-start-line="54" selection-start-column="45" selection-end-line="54" selection-end-column="45" />
           <folding>
             <element signature="imports" expanded="true" />
-            <marker date="1508459697482" expanded="false" signature="5550:5593" ph="/HardcodedFileSeparator/" />
-            <marker date="1508459697482" expanded="false" signature="7407:7457" ph="/NumericCastThatLosesPrecision/" />
-            <marker date="1508459697482" expanded="false" signature="12202:12264" ph="/AssignmentToStaticFieldFromInstanceMethod/" />
           </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/release.sh">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="180">
-          <caret line="9" column="0" lean-forward="false" selection-start-line="9" selection-start-column="0" selection-end-line="9" selection-end-column="0" />
+        <state relative-caret-position="240">
+          <caret line="12" column="20" lean-forward="false" selection-start-line="12" selection-start-column="20" selection-end-line="12" selection-end-column="20" />
           <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/.travis.yml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="354">
+          <caret line="122" column="696" lean-forward="false" selection-start-line="122" selection-start-column="696" selection-end-line="122" selection-end-column="696" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/betterrandom/src/main/java/io/github/pr0methean/betterrandom/prng/AesCounterRandom.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="180">
+          <caret line="47" column="13" lean-forward="false" selection-start-line="47" selection-start-column="13" selection-end-line="47" selection-end-column="13" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/betterrandom/src/main/java/io/github/pr0methean/betterrandom/seed/DevRandomSeedGenerator.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="66">
+          <caret line="54" column="8" lean-forward="false" selection-start-line="54" selection-start-column="8" selection-end-line="54" selection-end-column="8" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/remove_unlimited_crypto.sh">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="20">
+          <caret line="1" column="11" lean-forward="false" selection-start-line="1" selection-start-column="11" selection-end-line="1" selection-end-column="11" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/betterrandom/src/main/java/io/github/pr0methean/betterrandom/seed/RandomSeederThread.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="76">
+          <caret line="243" column="12" lean-forward="false" selection-start-line="243" selection-start-column="12" selection-end-line="243" selection-end-column="12" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/betterrandom/src/main/java/io/github/pr0methean/betterrandom/prng/adapter/BaseSplittableRandomAdapter.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="66">
+          <caret line="27" column="2" lean-forward="false" selection-start-line="27" selection-start-column="2" selection-end-line="27" selection-end-column="2" />
+          <folding>
+            <element signature="e#636#637#0" expanded="true" />
+            <element signature="e#657#658#0" expanded="true" />
+            <element signature="e#805#806#0" expanded="true" />
+            <element signature="e#826#827#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/betterrandom/src/test/java/io/github/pr0methean/betterrandom/seed/RandomDotOrgSeedGeneratorTest.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="76">
+          <caret line="35" column="39" lean-forward="false" selection-start-line="35" selection-start-column="39" selection-end-line="35" selection-end-column="39" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/benchmark/src/main/java/io/github/pr0methean/betterrandom/benchmark/AbstractRandomBenchmarkWithReseeding.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="66">
+          <caret line="50" column="39" lean-forward="false" selection-start-line="50" selection-start-column="39" selection-end-line="50" selection-end-column="39" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/betterrandom/src/main/java/io/github/pr0methean/betterrandom/prng/ThreadLocalRandomWrapper.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1146">
+          <caret line="157" column="8" lean-forward="false" selection-start-line="157" selection-start-column="8" selection-end-line="157" selection-end-column="8" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/betterrandom/src/main/java/io/github/pr0methean/betterrandom/util/LooperThread.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="196">
+          <caret line="55" column="41" lean-forward="false" selection-start-line="55" selection-start-column="41" selection-end-line="55" selection-end-column="41" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/betterrandom/src/main/java/io/github/pr0methean/betterrandom/prng/RandomWrapper.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="200">
+          <caret line="43" column="5" lean-forward="false" selection-start-line="43" selection-start-column="5" selection-end-line="43" selection-end-column="5" />
+          <folding>
+            <element signature="e#6650#6703#0" expanded="true" />
+            <element signature="e#8607#8660#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>

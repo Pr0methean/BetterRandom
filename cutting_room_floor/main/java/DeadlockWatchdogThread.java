@@ -27,8 +27,7 @@ public class DeadlockWatchdogThread extends LooperThread {
     }
   }
 
-  @Override
-  public boolean iterate() throws InterruptedException {
+  @Override public boolean iterate() throws InterruptedException {
     boolean deadlockFound = false;
     long[] threadsOfInterest;
     Level logLevel;

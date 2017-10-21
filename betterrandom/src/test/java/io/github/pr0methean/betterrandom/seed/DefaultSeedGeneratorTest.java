@@ -20,13 +20,11 @@ import org.testng.annotations.Test;
 
 /**
  * Unit test for {@link DefaultSeedGenerator}.
- *
  * @author Daniel Dyer
  */
 public class DefaultSeedGeneratorTest {
 
-  @Test
-  public void testBasicFunction() throws SeedException {
+  @Test public void testBasicFunction() throws SeedException {
     SeedTestUtils.testGenerator(DefaultSeedGenerator.DEFAULT_SEED_GENERATOR);
   }
 
@@ -34,8 +32,7 @@ public class DefaultSeedGeneratorTest {
    * Check that the default seed generator gracefully falls back to an alternative generation
    * strategy when the security manager prevents it from using its first choice.
    */
-  @SuppressWarnings("CallToSystemSetSecurityManager")
-  @Test(timeOut = 120000)
+  @SuppressWarnings("CallToSystemSetSecurityManager") @Test(timeOut = 120000)
   public void testRestrictedEnvironment() throws SeedException {
     final Thread affectedThread = Thread.currentThread();
     final SecurityManager securityManager = System.getSecurityManager();
@@ -64,24 +61,21 @@ public class DefaultSeedGeneratorTest {
       this.affectedThread = affectedThread;
     }
 
-    @SuppressWarnings({"ObjectEquality", "HardcodedFileSeparator"})
-    @Override
+    @SuppressWarnings({"ObjectEquality", "HardcodedFileSeparator"}) @Override
     public void checkRead(final String file) {
       if ((Thread.currentThread() == affectedThread) && "/dev/random".equals(file)) {
         throw new SecurityException("Test not permitted to access /dev/random");
       }
     }
 
-    @SuppressWarnings("ObjectEquality")
-    @Override
+    @SuppressWarnings("ObjectEquality") @Override
     public void checkConnect(final String host, final int port) {
       if (Thread.currentThread() == affectedThread) {
         throw new SecurityException("Test not permitted to connect to " + host + ':' + port);
       }
     }
 
-    @Override
-    public void checkPermission(final Permission permission) {
+    @Override public void checkPermission(final Permission permission) {
       // Allow everything.
     }
   }

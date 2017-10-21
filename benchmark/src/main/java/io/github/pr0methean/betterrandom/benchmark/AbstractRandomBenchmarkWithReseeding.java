@@ -40,20 +40,20 @@ import org.openjdk.jmh.annotations.Scope;
 import org.openjdk.jmh.annotations.Setup;
 import org.openjdk.jmh.annotations.State;
 
+@SuppressWarnings("MethodMayBeStatic")
 @State(Scope.Benchmark)
 public abstract class AbstractRandomBenchmarkWithReseeding extends AbstractRandomBenchmark {
 
-  @Setup
-  public void setApiKey() {
-    String apiKeyString = System.getenv("RANDOM_DOT_ORG_KEY");
-    RandomDotOrgSeedGenerator.setApiKey((apiKeyString == null) ? null : UUID.fromString(apiKeyString));
+  protected static final RandomSeederThread seederThread =
+      RandomSeederThread.getInstance(DefaultSeedGenerator.DEFAULT_SEED_GENERATOR);
+
+  @Setup public void setApiKey() {
+    final String apiKeyString = System.getenv("RANDOM_DOT_ORG_KEY");
+    RandomDotOrgSeedGenerator
+        .setApiKey((apiKeyString == null) ? null : UUID.fromString(apiKeyString));
   }
 
-  protected static final RandomSeederThread seederThread = RandomSeederThread.getInstance(
-      DefaultSeedGenerator.DEFAULT_SEED_GENERATOR);
-
-  @Benchmark
-  public byte testBytesSequentialReseeding() {
+  @Benchmark public byte testBytesSequentialReseeding() {
     seederThread.add(prng);
     final byte b = innerTestBytesSequential();
     seederThread.remove(prng);
