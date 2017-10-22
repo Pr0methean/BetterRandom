@@ -1,3 +1,7 @@
+# 1.2.1
+* Bugfix: `RandomWrapper.wrapped` needs to be volatile, despite its lock guard, because it may be
+  accessed from multiple threads.
+
 # 1.2.0
 * Added support for random.org's new JSON API.
 
