@@ -74,9 +74,9 @@ THE POSSIBILITY OF SUCH DAMAGE.
       <scope>provided</scope>
     </dependency>
     <dependency>
-      <artifactId>BetterRandom</artifactId>
+      <artifactId>BetterRandom-Java7</artifactId>
       <groupId>io.github.pr0methean.betterrandom</groupId>
-      <version>1.2.1</version>
+      <version>1.2.2-SNAPSHOT</version>
     </dependency>
     <!-- https://mvnrepository.com/artifact/com.google.code.java-allocation-instrumenter/java-allocation-instrumenter -->
     <dependency>
