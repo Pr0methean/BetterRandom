@@ -4,6 +4,7 @@ import com.google.common.base.MoreObjects.ToStringHelper;
 import io.github.pr0methean.betterrandom.seed.DefaultSeedGenerator;
 import io.github.pr0methean.betterrandom.seed.SeedException;
 import io.github.pr0methean.betterrandom.seed.SeedGenerator;
+import io.github.pr0methean.betterrandom.util.Java8Constants;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java8.util.SplittableRandom;

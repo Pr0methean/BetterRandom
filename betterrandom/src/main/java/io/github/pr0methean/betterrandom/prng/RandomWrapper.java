@@ -24,6 +24,7 @@ import io.github.pr0methean.betterrandom.seed.SeedException;
 import io.github.pr0methean.betterrandom.seed.SeedGenerator;
 import io.github.pr0methean.betterrandom.util.BinaryUtils;
 import io.github.pr0methean.betterrandom.util.EntryPoint;
+import io.github.pr0methean.betterrandom.util.Java8Constants;
 import java.security.SecureRandom;
 import java.util.Random;
 import javax.annotation.Nullable;
@@ -59,7 +60,7 @@ public class RandomWrapper extends BaseRandom {
     super(seedGenerator, Java8Constants.LONG_BYTES);
     wrapped = new Random(BinaryUtils.convertBytesToLong(seed));
     unknownSeed = false;
-    haveParallelStreams = wrapped.longs().isParallel();
+    haveParallelStreams = hasParallelStreams(wrapped);
   }
 
   /**
@@ -74,7 +75,12 @@ public class RandomWrapper extends BaseRandom {
     }
     wrapped = new Random(BinaryUtils.convertBytesToLong(seed));
     unknownSeed = false;
-    haveParallelStreams = wrapped.longs().isParallel();
+    haveParallelStreams = hasParallelStreams(wrapped);
+  }
+
+  private static boolean hasParallelStreams(Random wrapped) {
+    return (wrapped instanceof BaseRandom && ((BaseRandom) wrapped).useParallelStreams())
+        || (wrapped instanceof Java8CompatRandom && ((Java8CompatRandom) wrapped).longs().isParallel());
   }
 
   /**
@@ -85,7 +91,7 @@ public class RandomWrapper extends BaseRandom {
     super(seed);
     wrapped = new Random(seed);
     unknownSeed = false;
-    haveParallelStreams = wrapped.longs().isParallel();
+    haveParallelStreams = hasParallelStreams(wrapped);
   }
 
   /**
@@ -97,7 +103,7 @@ public class RandomWrapper extends BaseRandom {
     unknownSeed = !(wrapped instanceof RepeatableRandom);
     readEntropyOfWrapped(wrapped);
     this.wrapped = wrapped;
-    haveParallelStreams = wrapped.longs().isParallel();
+    haveParallelStreams = hasParallelStreams(wrapped);
   }
 
   private static byte[] getSeedOrDummy(final Random wrapped) {
@@ -137,7 +143,7 @@ public class RandomWrapper extends BaseRandom {
       readEntropyOfWrapped(wrapped);
       seed = getSeedOrDummy(wrapped);
       unknownSeed = !(wrapped instanceof RepeatableRandom);
-      haveParallelStreams = wrapped.longs().isParallel();
+      haveParallelStreams = hasParallelStreams(wrapped);
     } finally {
       lock.unlock();
     }
