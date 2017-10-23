@@ -15,6 +15,8 @@ environment:
   random_dot_org_key:
     secure: SdVpsz4/hDKlxV/jEehj9kEUmbIrrq5yvDOWYrHyxN+WE1z8CNeeTnv8BuQ6XsnN
 install:
+  - SET JAVA_HOME=C:\Program Files\Java\jdk1.7.0
+  - SET PATH=%JAVA_HOME%\bin;%PATH%
   # Log versions for debugging
   - java -version
   - mvn --version
