@@ -145,7 +145,6 @@ public abstract class BaseRandom extends Random
   }
 
   /**
-   * Returns true if streams created by {@link #doubles(long, double, double)}, {@link #ints(long, * int, int)}, {@link #longs(long, long, long)} and their overloads should be parallel streams.
    * @return true if this PRNG should create parallel streams; false otherwise.
    */
   protected boolean useParallelStreams() {
@@ -483,7 +482,7 @@ public abstract class BaseRandom extends Random
 
   /**
    * <p>Returns a stream producing the given number of pseudorandom longs, each conforming to the
-   * given origin (inclusive) and bound (exclusive). This implementation uses {@link #nextLong(long, * long)} to generate these numbers.</p>
+   * given origin (inclusive) and bound (exclusive). This implementation uses {@link #nextLong(long, long)} to generate these numbers.</p>
    */
   @Override public LongStream longs(final long streamSize, final long randomNumberOrigin,
       final long randomNumberBound) {
