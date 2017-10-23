@@ -22,6 +22,7 @@ import io.github.pr0methean.betterrandom.seed.SeedException;
 import io.github.pr0methean.betterrandom.seed.SeedGenerator;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Random;
+import java8.util.function.Consumer;
 import org.testng.annotations.Test;
 
 /**
@@ -40,10 +41,14 @@ public class RandomWrapperRandomTest extends BaseRandomTest {
     final BaseRandom basePrng = createRng();
     final int seedLength = getNewSeedLength(basePrng);
     TestUtils.testAllPublicConstructors(getClassUnderTest(), ImmutableMap
-        .of(int.class, seedLength, long.class, TEST_SEED, byte[].class,
+        .<Class<?>,Object>of(int.class, seedLength, long.class, TEST_SEED, byte[].class,
             DefaultSeedGenerator.DEFAULT_SEED_GENERATOR.generateSeed(seedLength),
             SeedGenerator.class, DefaultSeedGenerator.DEFAULT_SEED_GENERATOR, Random.class,
-            new Random()), baseRandom -> baseRandom.nextInt());
+            new Random()), new Consumer<BaseRandom>() {
+      @Override public void accept(BaseRandom baseRandom) {
+        baseRandom.nextInt();
+      }
+    });
   }
 
   /**
