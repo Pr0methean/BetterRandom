@@ -12,7 +12,7 @@
   </properties>
   <groupId>io.github.pr0methean.betterrandom</groupId>
   <artifactId>BetterRandom</artifactId>
-  <version>1.2.1</version>
+  <version>1.2.1-SNAPSHOT</version>
   <name>BetterRandom</name>
   <description>BetterRandom is a library designed to help improve the quality and performance of
     random-number generation on Java.
@@ -499,7 +499,7 @@
     <developer>
       <id>Pr0methean</id>
       <name>Chris Hennick</name>
-      <email>chrishennick1@gmail.com</email>
+      <email>seahen123@gmail.com</email>
       <url>https://github.com/Pr0methean</url>
     </developer>
   </developers>
