@@ -92,7 +92,7 @@ public final class RandomSeederThread extends LooperThread {
     }
   }
 
-  private void initTransientFields(RandomSeederThread this) {
+  private void initTransientFields() {
     prngs = Collections.synchronizedSet(Collections.newSetFromMap(new WeakHashMap<>(1)));
     longSeedBuffer = ByteBuffer.wrap(longSeedArray);
     waitWhileEmpty = lock.newCondition();
@@ -105,7 +105,7 @@ public final class RandomSeederThread extends LooperThread {
     return getInstance(seedGenerator);
   }
 
-  private void readObject(RandomSeederThread this, final ObjectInputStream in)
+  private void readObject(final ObjectInputStream in)
       throws IOException, ClassNotFoundException {
     in.defaultReadObject();
     initTransientFields();

@@ -29,7 +29,7 @@ public abstract class BaseSplittableRandomAdapter extends BaseRandom {
     super(seed);
   }
 
-  @Override protected void setSeedInternal(BaseSplittableRandomAdapter this, final byte[] seed) {
+  @Override protected void setSeedInternal(final byte[] seed) {
     super.setSeedInternal(seed);
   }
 
@@ -167,7 +167,7 @@ public abstract class BaseSplittableRandomAdapter extends BaseRandom {
   }
 
   /** Returns the only supported seed length. */
-  @Override public int getNewSeedLength(BaseSplittableRandomAdapter this) {
+  @Override public int getNewSeedLength() {
     return Long.BYTES;
   }
 }

@@ -82,11 +82,11 @@ public class XorShiftRandom extends BaseRandom {
    * No-op.
    * @param seed ignored
    */
-  @Override public synchronized void setSeed(XorShiftRandom this, final long seed) {
+  @Override public synchronized void setSeed(final long seed) {
     fallbackSetSeed();
   }
 
-  @Override protected void setSeedInternal(XorShiftRandom this, final byte[] seed) {
+  @Override protected void setSeedInternal(final byte[] seed) {
     if (seed.length != SEED_SIZE_BYTES) {
       throw new IllegalArgumentException("XorShiftRandom requires a 20-byte seed");
     }
@@ -115,7 +115,7 @@ public class XorShiftRandom extends BaseRandom {
     }
   }
 
-  @Override public int getNewSeedLength(XorShiftRandom this) {
+  @Override public int getNewSeedLength() {
     return SEED_SIZE_BYTES;
   }
 }

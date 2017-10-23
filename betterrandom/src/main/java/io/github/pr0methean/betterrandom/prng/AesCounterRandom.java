@@ -163,7 +163,7 @@ public class AesCounterRandom extends BaseRandom {
     setSeedInternal(seed);
   }
 
-  @Override protected void initTransientFields(AesCounterRandom this) {
+  @Override protected void initTransientFields() {
     super.initTransientFields();
     if (counter == null) {
       counter = new byte[COUNTER_SIZE_BYTES];
@@ -277,13 +277,13 @@ public class AesCounterRandom extends BaseRandom {
    * Combines the given seed with the existing seed using SHA-256.
    */
   @Override @SuppressWarnings("contracts.postcondition.not.satisfied")
-  public synchronized void setSeed(AesCounterRandom this, final long seed) {
+  public synchronized void setSeed(final long seed) {
     if (superConstructorFinished) {
       super.setSeed(seed);
     }
   }
 
-  @Override protected void setSeedInternal(AesCounterRandom this, final byte[] seed) {
+  @Override protected void setSeedInternal(final byte[] seed) {
     final int seedLength = seed.length;
     if ((seedLength < 16) || (seedLength > MAX_TOTAL_SEED_LENGTH_BYTES)) {
       throw new IllegalArgumentException(String
@@ -306,7 +306,7 @@ public class AesCounterRandom extends BaseRandom {
   }
 
   /** Returns the longest supported seed length. */
-  @Override public int getNewSeedLength(AesCounterRandom this) {
+  @Override public int getNewSeedLength() {
     return MAX_TOTAL_SEED_LENGTH_BYTES;
   }
 }
