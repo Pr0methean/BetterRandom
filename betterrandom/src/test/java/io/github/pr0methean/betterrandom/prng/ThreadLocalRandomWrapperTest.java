@@ -6,6 +6,7 @@ import static org.testng.Assert.assertFalse;
 import io.github.pr0methean.betterrandom.seed.DefaultSeedGenerator;
 import io.github.pr0methean.betterrandom.seed.SeedException;
 import io.github.pr0methean.betterrandom.util.CloneViaSerialization;
+import io.github.pr0methean.betterrandom.util.SerializableSupplier;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.security.GeneralSecurityException;
@@ -72,7 +73,9 @@ public class ThreadLocalRandomWrapperTest extends BaseRandomTest {
   }
 
   @Override protected BaseRandom createRng() throws SeedException {
-    return new ThreadLocalRandomWrapper(new Supplier<BaseRandom>() {
+    return new ThreadLocalRandomWrapper(new SerializableSupplier<BaseRandom>() {
+      private static final long serialVersionUID = 1604096907005208929L;
+
       @Override public BaseRandom get() {
         return new MersenneTwisterRandom();
       }
