@@ -34,6 +34,12 @@ import org.testng.util.RetryAnalyzerCount;
 
 public abstract class BaseRandomTest {
 
+  protected static final Consumer<BaseRandom> VERIFY_NEXT_INT_NO_CRASH = new Consumer<BaseRandom>() {
+    @Override public void accept(BaseRandom prng) {
+      prng.nextInt();
+    }
+  };
+
   /**
    * The square root of 12, rounded from an extended-precision calculation that was done by Wolfram
    * Alpha (and thus at least as accurate as {@code StrictMath.sqrt(12.0)}).
@@ -69,11 +75,7 @@ public abstract class BaseRandomTest {
             .<Class<?>, Object>of(int.class, seedLength, long.class, TEST_SEED, byte[].class,
                 DefaultSeedGenerator.DEFAULT_SEED_GENERATOR.generateSeed(seedLength),
                 SeedGenerator.class, DefaultSeedGenerator.DEFAULT_SEED_GENERATOR),
-        new Consumer<BaseRandom>() {
-          @Override public void accept(BaseRandom prng) {
-            prng.nextInt();
-          }
-        });
+        VERIFY_NEXT_INT_NO_CRASH);
   }
 
   protected int getNewSeedLength(final BaseRandom basePrng) {
