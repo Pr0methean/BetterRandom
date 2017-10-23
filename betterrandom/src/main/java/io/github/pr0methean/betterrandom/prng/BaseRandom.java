@@ -700,10 +700,14 @@ public abstract class BaseRandom extends Random
     if (entropyBits == null) {
       entropyBits = new AtomicLong(0);
     }
+    creditEntropyForNewSeed(seed.length);
+  }
+
+  protected void creditEntropyForNewSeed(int seedLength) {
     long oldCount;
     do {
       oldCount = entropyBits.get();
-    } while (!entropyBits.compareAndSet(oldCount, Math.max(oldCount, Math.min(seed.length, getNewSeedLength()) * 8L)));
+    } while (!entropyBits.compareAndSet(oldCount, Math.max(oldCount, Math.min(seedLength, getNewSeedLength()) * 8L)));
   }
 
   /**

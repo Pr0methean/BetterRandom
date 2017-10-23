@@ -143,7 +143,7 @@ public class RandomWrapper extends BaseRandom {
     }
   }
 
-  private void readEntropyOfWrapped(RandomWrapper this, final Random wrapped) {
+  private void readEntropyOfWrapped(final Random wrapped) {
     entropyBits.set((wrapped instanceof EntropyCountingRandom) ? ((EntropyCountingRandom) wrapped)
         .getEntropyBits()
         : ((wrapped instanceof RepeatableRandom) ? (((RepeatableRandom) wrapped).getSeed().length
@@ -175,7 +175,7 @@ public class RandomWrapper extends BaseRandom {
    * @param seed The new seed.
    */
   @SuppressWarnings("LockAcquiredButNotSafelyReleased") @Override protected void setSeedInternal(
-      RandomWrapper this, final byte[] seed) {
+      final byte[] seed) {
     if (seed == null) {
       throw new IllegalArgumentException("Seed must not be null");
     }
@@ -230,7 +230,7 @@ public class RandomWrapper extends BaseRandom {
 
   /** */
   @SuppressWarnings("LockAcquiredButNotSafelyReleased") @Override public int getNewSeedLength(
-      RandomWrapper this) {
+      ) {
     boolean locked = false;
     if (lock != null) {
       lock.lock();

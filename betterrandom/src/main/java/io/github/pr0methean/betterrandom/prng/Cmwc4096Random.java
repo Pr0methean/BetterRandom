@@ -88,11 +88,11 @@ public class Cmwc4096Random extends BaseRandom {
    * No-op.
    * @param seed ignored
    */
-  @Override public synchronized void setSeed(Cmwc4096Random this, final long seed) {
+  @Override public synchronized void setSeed(final long seed) {
     fallbackSetSeed();
   }
 
-  @Override protected void setSeedInternal(Cmwc4096Random this, final byte[] seed) {
+  @Override protected void setSeedInternal(final byte[] seed) {
     if ((seed == null) || (seed.length != SEED_SIZE_BYTES)) {
       throw new IllegalArgumentException("CMWC RNG requires 16kb of seed data.");
     }
@@ -121,7 +121,7 @@ public class Cmwc4096Random extends BaseRandom {
   }
 
   /** Returns the only supported seed length. */
-  @Override public int getNewSeedLength(Cmwc4096Random this) {
+  @Override public int getNewSeedLength() {
     return SEED_SIZE_BYTES;
   }
 }

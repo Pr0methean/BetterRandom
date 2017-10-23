@@ -306,7 +306,7 @@ public class AesCounterRandom extends BaseRandom {
   }
 
   /** Returns the longest supported seed length. */
-  @Override public int getNewSeedLength(AesCounterRandom this) {
+  @Override public int getNewSeedLength() {
     return MAX_TOTAL_SEED_LENGTH_BYTES;
   }
 }

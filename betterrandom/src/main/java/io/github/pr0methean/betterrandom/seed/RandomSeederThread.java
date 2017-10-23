@@ -69,20 +69,20 @@ public final class RandomSeederThread extends LooperThread {
    * @return a RandomSeederThread that is running and is backed by {@code seedGenerator}.
    */
   public static RandomSeederThread getInstance(final SeedGenerator seedGenerator) {
+    RandomSeederThread instance;
     synchronized (INSTANCES) {
-      return INSTANCES.computeIfAbsent(seedGenerator,
-          new Function<SeedGenerator, RandomSeederThread>() {
-            @Override public RandomSeederThread apply(SeedGenerator seedGen) {
-              LOG.info("Creating a RandomSeederThread for %s", seedGen);
-              final RandomSeederThread thread = new RandomSeederThread(seedGen);
-              thread.setName("RandomSeederThread for " + seedGen);
-              thread.setDaemon(true);
-              thread.setPriority(Thread.MIN_PRIORITY);
-              thread.start();
-              return thread;
-            }
-          });
+      instance = INSTANCES.get(seedGenerator);
+      if (instance == null) {
+        LOG.info("Creating a RandomSeederThread for %s", seedGenerator);
+        instance = new RandomSeederThread(seedGenerator);
+        instance.setName("RandomSeederThread for " + seedGenerator);
+        instance.setDaemon(true);
+        instance.setPriority(Thread.MIN_PRIORITY);
+        instance.start();
+      }
+      INSTANCES.put(seedGenerator, instance);
     }
+    return instance;
   }
 
   /**
@@ -194,12 +194,11 @@ public final class RandomSeederThread extends LooperThread {
         if ((random instanceof ByteArrayReseedableRandom) && !((ByteArrayReseedableRandom) random)
             .preferSeedWithLong()) {
           final ByteArrayReseedableRandom reseedable = (ByteArrayReseedableRandom) random;
-          final byte[] seedArray = seedArrays
-              .computeIfAbsent(reseedable, new Function<ByteArrayReseedableRandom, byte[]>() {
-                @Override public byte[] apply(ByteArrayReseedableRandom random_) {
-                  return new byte[random_.getNewSeedLength()];
-                }
-              });
+          byte[] seedArray = seedArrays.get(reseedable);
+          if (seedArray == null) {
+            seedArray = new byte[reseedable.getNewSeedLength()];
+            seedArrays.put(reseedable, seedArray);
+          }
           seedGenerator.generateSeed(seedArray);
           reseedable.setSeed(seedArray);
         } else {

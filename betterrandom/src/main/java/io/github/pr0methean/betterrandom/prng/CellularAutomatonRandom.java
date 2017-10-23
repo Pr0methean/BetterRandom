@@ -112,7 +112,7 @@ public class CellularAutomatonRandom extends BaseRandom {
     return original.add("cells", Arrays.toString(cells)).add("currentCellIndex", currentCellIndex);
   }
 
-  private void copySeedToCellsAndPreEvolve(CellularAutomatonRandom this) {
+  private void copySeedToCellsAndPreEvolve() {
     cells = new int[AUTOMATON_LENGTH];
     // Set initial cell states using seed.
     cells[AUTOMATON_LENGTH - 1] = seed[0] + 128;
@@ -186,7 +186,7 @@ public class CellularAutomatonRandom extends BaseRandom {
   }
 
   /** Returns the only supported seed length. */
-  @Override public int getNewSeedLength(CellularAutomatonRandom this) {
+  @Override public int getNewSeedLength() {
     return SEED_SIZE_BYTES;
   }
 }

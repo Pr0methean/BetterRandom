@@ -8,6 +8,7 @@ import io.github.pr0methean.betterrandom.seed.RandomSeederThread;
 import io.github.pr0methean.betterrandom.seed.SeedException;
 import io.github.pr0methean.betterrandom.seed.SeedGenerator;
 import io.github.pr0methean.betterrandom.util.BinaryUtils;
+import io.github.pr0methean.betterrandom.util.Java8Constants;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java8.util.SplittableRandom;
@@ -89,26 +90,26 @@ public class SplittableRandomAdapter extends DirectSplittableRandomAdapter {
     entropyBits.get().addAndGet(-bits);
   }
 
-  private void initSubclassTransientFields(SplittableRandomAdapter this) {
+  private void initSubclassTransientFields() {
     lock.lock();
     try {
-      splittableRandoms = ThreadLocal.withInitial(new Supplier<SplittableRandom>() {
-        @Override public SplittableRandom get() {
+      splittableRandoms = new ThreadLocal<SplittableRandom>() {
+        @Override public SplittableRandom initialValue() {
           return underlying.split();
         }
-      });
-      entropyBits = ThreadLocal.withInitial(new Supplier<AtomicLong>() {
-        @Override public AtomicLong get() {
+      };
+      entropyBits = new ThreadLocal<AtomicLong>() {
+        @Override public AtomicLong initialValue() {
           return new AtomicLong(SEED_LENGTH_BITS);
         }
-      });
+      };
 
       // getSeed() will return the master seed on each thread where setSeed() hasn't yet been called
-      seeds = ThreadLocal.withInitial(new Supplier<byte[]>() {
-        @Override public byte[] get() {
+      seeds = new ThreadLocal<byte[]>() {
+        @Override public byte[] initialValue() {
           return seed;
         }
-      });
+      };
     } finally {
       lock.unlock();
     }
@@ -140,18 +141,14 @@ public class SplittableRandomAdapter extends DirectSplittableRandomAdapter {
    * {@inheritDoc} Applies only to the calling thread.
    */
   @SuppressWarnings("contracts.postcondition.not.satisfied") @Override public void setSeed(
-      SplittableRandomAdapter this, final long seed) {
+      final long seed) {
     if (this.seed == null) {
       super.setSeed(seed);
     }
     if (splittableRandoms != null) {
       splittableRandoms.set(new SplittableRandom(seed));
       if (entropyBits != null) {
-        entropyBits.get().updateAndGet(new LongUnaryOperator() {
-          @Override public long applyAsLong(long oldValue) {
-            return Math.max(oldValue, SEED_LENGTH_BITS);
-          }
-        });
+        creditEntropyForNewSeed(Java8Constants.LONG_BYTES);
       }
       if (seeds != null) {
         seeds.set(BinaryUtils.convertLongToBytes(seed));
@@ -162,8 +159,8 @@ public class SplittableRandomAdapter extends DirectSplittableRandomAdapter {
   /**
    * {@inheritDoc} Applies only to the calling thread.
    */
-  @Override public void setSeed(SplittableRandomAdapter this, final byte[] seed) {
-    if (seed.length != Java8Constants.LONG_BYTES) {
+  @Override public void setSeed(final byte[] seed) {
+        if (seed.length != Java8Constants.LONG_BYTES) {
       throw new IllegalArgumentException("SplittableRandomAdapter requires an 8-byte seed");
     }
     setSeed(convertBytesToLong(seed));
