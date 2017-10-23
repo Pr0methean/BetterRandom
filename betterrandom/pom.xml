@@ -549,7 +549,8 @@
           <show>protected</show>
           <links>
             <link>https://docs.oracle.com/javase/8/docs/api</link>
-            <link>https://google.github.io/guava/releases/19.0/api/docs</link>
+            <link>https://google.github.io/guava/releases/23.2-android/api/docs</link>
+            <link>http://www.javadoc.io/doc/net.sourceforge.streamsupport/streamsupport/1.5.6</link>
           </links>
           <tags>
             <tag>
