@@ -112,7 +112,7 @@ public class CellularAutomatonRandom extends BaseRandom {
     return original.add("cells", Arrays.toString(cells)).add("currentCellIndex", currentCellIndex);
   }
 
-  private void copySeedToCellsAndPreEvolve(CellularAutomatonRandom this) {
+  private void copySeedToCellsAndPreEvolve() {
     cells = new int[AUTOMATON_LENGTH];
     // Set initial cell states using seed.
     cells[AUTOMATON_LENGTH - 1] = seed[0] + 128;
@@ -135,7 +135,7 @@ public class CellularAutomatonRandom extends BaseRandom {
     }
   }
 
-  private int internalNext(CellularAutomatonRandom this, final int bits) {
+  private int internalNext(final int bits) {
     // Set cell addresses using address of current cell.
     final int cellC = currentCellIndex - 1;
 
@@ -167,7 +167,7 @@ public class CellularAutomatonRandom extends BaseRandom {
     }
   }
 
-  @Override public synchronized void setSeed(CellularAutomatonRandom this, final long seed) {
+  @Override public synchronized void setSeed(final long seed) {
     final byte[] shortenedSeed = convertIntToBytes(((Long) seed).hashCode());
     if (superConstructorFinished) {
       setSeedInternal(shortenedSeed);
@@ -176,7 +176,7 @@ public class CellularAutomatonRandom extends BaseRandom {
     }
   }
 
-  @Override protected void setSeedInternal(CellularAutomatonRandom this, final byte[] seed) {
+  @Override protected void setSeedInternal(final byte[] seed) {
     if (seed.length != SEED_SIZE_BYTES) {
       throw new IllegalArgumentException("Cellular Automaton RNG requires a 32-bit (4-byte) seed.");
     }
@@ -186,7 +186,7 @@ public class CellularAutomatonRandom extends BaseRandom {
   }
 
   /** Returns the only supported seed length. */
-  @Override public int getNewSeedLength(CellularAutomatonRandom this) {
+  @Override public int getNewSeedLength() {
     return SEED_SIZE_BYTES;
   }
 }

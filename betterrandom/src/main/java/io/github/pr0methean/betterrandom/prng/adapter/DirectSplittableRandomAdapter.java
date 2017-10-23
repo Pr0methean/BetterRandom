@@ -56,7 +56,7 @@ public abstract class DirectSplittableRandomAdapter extends BaseSplittableRandom
   /**
    * Replaces {@link #underlying} with a new {@link SplittableRandom} that uses the given seed.
    */
-  @Override protected void setSeedInternal(DirectSplittableRandomAdapter this, final byte[] seed) {
+  @Override protected void setSeedInternal(final byte[] seed) {
     if (seed.length != Long.BYTES) {
       throw new IllegalArgumentException("DirectSplittableRandomAdapter requires an 8-byte seed");
     }
@@ -67,7 +67,7 @@ public abstract class DirectSplittableRandomAdapter extends BaseSplittableRandom
   /**
    * Replaces {@link #underlying} with a new {@link SplittableRandom} that uses the given seed.
    */
-  @Override public void setSeed(DirectSplittableRandomAdapter this, final long seed) {
+  @Override public void setSeed(final long seed) {
     super.setSeedInternal(BinaryUtils.convertLongToBytes(seed));
     underlying = new SplittableRandom(seed);
   }

@@ -87,7 +87,7 @@ public class ReseedingSplittableRandomAdapter extends BaseSplittableRandomAdapte
     return getInstance(seedGenerator);
   }
 
-  private void initSubclassTransientFields(ReseedingSplittableRandomAdapter this) {
+  private void initSubclassTransientFields() {
     if (threadLocal == null) {
       threadLocal =
           ThreadLocal.withInitial(() -> new SingleThreadSplittableRandomAdapter(seedGenerator));
@@ -107,7 +107,7 @@ public class ReseedingSplittableRandomAdapter extends BaseSplittableRandomAdapte
   }
 
   @Override
-  protected void setSeedInternal(ReseedingSplittableRandomAdapter this, final byte[] seed) {
+  protected void setSeedInternal(final byte[] seed) {
     this.seed = seed.clone();
     if (entropyBits == null) {
       entropyBits = new AtomicLong(0);

@@ -566,7 +566,7 @@ public abstract class BaseRandom extends Random
    * input with the existing seed as {@link java.security.SecureRandom#setSeed(long)} does.
    */
   @SuppressWarnings("method.invocation.invalid") @Override public synchronized void setSeed(
-      BaseRandom this, final long seed) {
+      final long seed) {
     final byte[] seedBytes = BinaryUtils.convertLongToBytes(seed);
     if (superConstructorFinished) {
       setSeed(seedBytes);
@@ -621,7 +621,7 @@ public abstract class BaseRandom extends Random
    * #fallbackSetSeed()}. When called after initialization, the {@link #lock} is always held.
    * @param seed The new seed.
    */
-  protected void setSeedInternal(BaseRandom this, final byte[] seed) {
+  protected void setSeedInternal(final byte[] seed) {
     if ((this.seed == null) || (this.seed.length != seed.length)) {
       this.seed = seed.clone();
     } else {
@@ -637,14 +637,14 @@ public abstract class BaseRandom extends Random
   /**
    * Called in constructor and readObject to initialize transient fields.
    */
-  protected void initTransientFields(BaseRandom this) {
+  protected void initTransientFields() {
     if (lock == null) {
       lock = new ReentrantLock();
     }
     superConstructorFinished = true;
   }
 
-  private void readObject(BaseRandom this, final ObjectInputStream in)
+  private void readObject(final ObjectInputStream in)
       throws IOException, ClassNotFoundException {
     in.defaultReadObject();
     initTransientFields();
@@ -697,8 +697,7 @@ public abstract class BaseRandom extends Random
    * handling a {@link #setSeed(long)} call from the super constructor {@link Random#Random()} in
    * subclasses that can't actually use an 8-byte seed. Also used in {@link #readObjectNoData()}.
    */
-  @SuppressWarnings("LockAcquiredButNotSafelyReleased") protected void fallbackSetSeed(
-      BaseRandom this) {
+  @SuppressWarnings("LockAcquiredButNotSafelyReleased") protected void fallbackSetSeed() {
     boolean locked = false;
     if (lock != null) {
       lock.lock();
@@ -718,5 +717,5 @@ public abstract class BaseRandom extends Random
     }
   }
 
-  @Override public abstract int getNewSeedLength(BaseRandom this);
+  @Override public abstract int getNewSeedLength();
 }
