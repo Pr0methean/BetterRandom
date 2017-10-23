@@ -73,13 +73,7 @@ public class ThreadLocalRandomWrapperTest extends BaseRandomTest {
   }
 
   @Override protected BaseRandom createRng() throws SeedException {
-    return new ThreadLocalRandomWrapper(new SerializableSupplier<BaseRandom>() {
-      private static final long serialVersionUID = 1604096907005208929L;
-
-      @Override public BaseRandom get() {
-        return new MersenneTwisterRandom();
-      }
-    });
+    return new ThreadLocalRandomWrapper(new TestSerializableSupplier());
   }
 
   @Override protected BaseRandom createRng(final byte[] seed) throws SeedException {
@@ -101,5 +95,14 @@ public class ThreadLocalRandomWrapperTest extends BaseRandomTest {
     rng1.nextBytes(output1);
     rng2.nextBytes(output2);
     assertFalse(Arrays.equals(output1, output2));
+  }
+
+  private static class TestSerializableSupplier implements SerializableSupplier<BaseRandom> {
+
+    private static final long serialVersionUID = 1604096907005208929L;
+
+    @Override public BaseRandom get() {
+      return new MersenneTwisterRandom();
+    }
   }
 }
