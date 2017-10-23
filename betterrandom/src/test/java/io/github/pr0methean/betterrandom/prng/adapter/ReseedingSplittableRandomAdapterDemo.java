@@ -2,13 +2,13 @@ package io.github.pr0methean.betterrandom.prng.adapter;
 
 import static io.github.pr0methean.betterrandom.seed.DefaultSeedGenerator.DEFAULT_SEED_GENERATOR;
 
+import com.google.common.base.Joiner;
 import io.github.pr0methean.betterrandom.seed.SeedException;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
-import java8.util.function.Supplier;
 
 public enum ReseedingSplittableRandomAdapterDemo {
   ;
@@ -16,6 +16,7 @@ public enum ReseedingSplittableRandomAdapterDemo {
   private static final String[] VALUE_LABELS =
       {"A", "K", "Q", "J", "10", "9", "8", "7", "6", "5", "4", "3", "2"};
   private static final String[] SUIT_LABELS = {"♥️", "♣️", "♦️", "♠️"};
+  private static final Joiner COMMA_JOINER = Joiner.on(',');
 
   public static void main(final String[] args) throws SeedException, InterruptedException {
     final String[] cards = new String[52];
@@ -26,12 +27,11 @@ public enum ReseedingSplittableRandomAdapterDemo {
         i++;
       }
     }
-    final ThreadLocal<List<String>> deckCopies =
-        ThreadLocal.withInitial(new Supplier<List<String>>() {
-          @Override public List<String> get() {
+    final ThreadLocal<List<String>> deckCopies = new ThreadLocal<List<String>>() {
+          @Override public List<String> initialValue() {
             return Arrays.asList(cards.clone());
           }
-        });
+        };
     final ScheduledThreadPoolExecutor executor = new ScheduledThreadPoolExecutor(4);
     final ReseedingSplittableRandomAdapter random =
         ReseedingSplittableRandomAdapter.getInstance(DEFAULT_SEED_GENERATOR);
@@ -41,8 +41,8 @@ public enum ReseedingSplittableRandomAdapterDemo {
           final List<String> deck = deckCopies.get();
           Collections.shuffle(deck, random);
           System.out.format("North: %s%nEast: %s%nSouth: %s%nWest: %s%n%n",
-              String.join(",", deck.subList(0, 13)), String.join(",", deck.subList(13, 26)),
-              String.join(",", deck.subList(26, 39)), String.join(",", deck.subList(39, 52)));
+              COMMA_JOINER.join(deck.subList(0, 13)), COMMA_JOINER.join(deck.subList(13, 26)),
+              COMMA_JOINER.join(deck.subList(26, 39)), COMMA_JOINER.join(deck.subList(39, 52)));
         }
       });
     }
