@@ -8,6 +8,7 @@ import io.github.pr0methean.betterrandom.seed.SeedException;
 import io.github.pr0methean.betterrandom.seed.SeedGenerator;
 import io.github.pr0methean.betterrandom.util.BinaryUtils;
 import io.github.pr0methean.betterrandom.util.Java8Constants;
+import io.github.pr0methean.betterrandom.util.SerializableSupplier;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.Serializable;
@@ -55,7 +56,7 @@ public class ThreadLocalRandomWrapper extends RandomWrapper {
       final Function<byte[], BaseRandom> creator) throws SeedException {
     super(0);
     explicitSeedSize = seedSize;
-    initializer = new Supplier<BaseRandom>() {
+    initializer = new SerializableSupplier<BaseRandom>() {
       @Override public BaseRandom get() {
         return creator.apply(seedGenerator.generateSeed(seedSize));
       }
