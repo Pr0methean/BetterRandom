@@ -179,7 +179,7 @@ public class LooperThread extends Thread implements Serializable, Cloneable {
     return object;
   }
 
-  private void setGroup(LooperThread this, @Nullable final ThreadGroup group) {
+  private void setGroup(@Nullable final ThreadGroup group) {
     serialGroup = (group instanceof Serializable) ? group : null;
   }
 

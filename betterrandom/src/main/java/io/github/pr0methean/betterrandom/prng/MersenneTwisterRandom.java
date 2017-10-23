@@ -100,18 +100,18 @@ public class MersenneTwisterRandom extends BaseRandom {
    * No-op.
    * @param seed ignored
    */
-  @Override public synchronized void setSeed(MersenneTwisterRandom this, final long seed) {
+  @Override public synchronized void setSeed(final long seed) {
     fallbackSetSeed();
   }
 
-  @Override protected void initTransientFields(MersenneTwisterRandom this) {
+  @Override protected void initTransientFields() {
     super.initTransientFields();
     if (mt == null) {
       mt = new int[N];
     }
   }
 
-  @Override protected void setSeedInternal(MersenneTwisterRandom this, final byte[] seed) {
+  @Override protected void setSeedInternal(final byte[] seed) {
     if ((seed == null) || (seed.length != SEED_SIZE_BYTES)) {
       throw new IllegalArgumentException(
           "Mersenne Twister RNG requires a 128-bit (16-byte) seed;" + " input seed is "
@@ -187,7 +187,7 @@ public class MersenneTwisterRandom extends BaseRandom {
   }
 
   /** Returns the only supported seed length. */
-  @Override public int getNewSeedLength(MersenneTwisterRandom this) {
+  @Override public int getNewSeedLength() {
     return SEED_SIZE_BYTES;
   }
 }
