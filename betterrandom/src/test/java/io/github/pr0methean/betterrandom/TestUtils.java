@@ -4,7 +4,7 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Modifier;
 import java.util.Map;
-import java.util.function.Consumer;
+import java8.util.function.Consumer;
 
 /**
  * Utility methods used only for testing, but by both {@link io.github.pr0methean.betterrandom.prng}
@@ -22,12 +22,12 @@ public enum TestUtils {
    * @param <T> {@code clazz} as a type.
    */
   @SuppressWarnings("ObjectAllocationInLoop") public static <T> void testAllPublicConstructors(
-      final Class<T> clazz, final Map<Class<?>, Object> params, final Consumer<T> test) {
+      final Class<T> clazz, final Map<Class<?>, Object> params, final Consumer<? super T> test) {
     for (final Constructor<?> constructor : clazz.getDeclaredConstructors()) {
       if (Modifier.isPublic(constructor.getModifiers())) {
         try {
-          final int nParams = constructor.getParameterCount();
           final Class<?>[] parameterTypes = constructor.getParameterTypes();
+          final int nParams = parameterTypes.length;
           final Object[] constructorParams = new Object[nParams];
           for (int i = 0; i < nParams; i++) {
             constructorParams[i] = params.get(parameterTypes[i]);

@@ -199,7 +199,7 @@ AES-NI.
 
 ## SplittableRandom adapters
 
-These classes use `java.util.SplittableRandom` instances to implement the methods of `Random`,
+These classes use `java8.util.SplittableRandom` instances to implement the methods of `Random`,
 despite that the two classes are unrelated and have slightly different method signatures. Several
 adapters are available:
 

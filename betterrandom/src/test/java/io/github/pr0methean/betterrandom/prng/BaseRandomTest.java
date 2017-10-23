@@ -23,7 +23,9 @@ import java.security.GeneralSecurityException;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-import java.util.function.Supplier;
+import java.util.Random;
+import java8.util.function.Consumer;
+import java8.util.function.Supplier;
 import org.testng.ITestResult;
 import org.testng.Reporter;
 import org.testng.annotations.AfterClass;
@@ -64,9 +66,14 @@ public abstract class BaseRandomTest {
       InvocationTargetException {
     final int seedLength = getNewSeedLength(createRng());
     TestUtils.testAllPublicConstructors(getClassUnderTest(), ImmutableMap
-        .of(int.class, seedLength, long.class, TEST_SEED, byte[].class,
-            DefaultSeedGenerator.DEFAULT_SEED_GENERATOR.generateSeed(seedLength),
-            SeedGenerator.class, DefaultSeedGenerator.DEFAULT_SEED_GENERATOR), BaseRandom::nextInt);
+            .<Class<?>, Object>of(int.class, seedLength, long.class, TEST_SEED, byte[].class,
+                DefaultSeedGenerator.DEFAULT_SEED_GENERATOR.generateSeed(seedLength),
+                SeedGenerator.class, DefaultSeedGenerator.DEFAULT_SEED_GENERATOR),
+        new Consumer<BaseRandom>() {
+          @Override public void accept(BaseRandom prng) {
+            prng.nextInt();
+          }
+        });
   }
 
   protected int getNewSeedLength(final BaseRandom basePrng) {
@@ -166,12 +173,19 @@ public abstract class BaseRandomTest {
   }
 
   @Test(timeOut = 15000) public void testEquals() throws SeedException {
-    RandomTestUtils.doEqualsSanityChecks(this::createRng);
+    RandomTestUtils.doEqualsSanityChecks(new Supplier<Random>() {
+      @Override public Random get() {
+        return BaseRandomTest.this.createRng();
+      }
+    });
   }
 
   @Test(timeOut = 60000) public void testHashCode() throws Exception {
-    assert RandomTestUtils.testHashCodeDistribution(this::createRng)
-        : "Too many hashCode collisions";
+    assert RandomTestUtils.testHashCodeDistribution(new Supplier<Random>() {
+      @Override public Random get() {
+        return BaseRandomTest.this.createRng();
+      }
+    }) : "Too many hashCode collisions";
   }
 
   /**
@@ -201,7 +215,11 @@ public abstract class BaseRandomTest {
     assertFalse(prng.withProbability(0.0));
     assertTrue(prng.withProbability(1.0));
     assertEquals(originalEntropy, prng.getEntropyBits());
-    checkRangeAndEntropy(prng, 1, () -> prng.withProbability(0.7) ? 0 : 1, 0, 2, true);
+    checkRangeAndEntropy(prng, 1, new Supplier<Number>() {
+      @Override public Number get() {
+        return prng.withProbability(0.7) ? 0 : 1;
+      }
+    }, 0, 2, true);
   }
 
   @Test public void testNextBytes() throws Exception {
@@ -215,7 +233,11 @@ public abstract class BaseRandomTest {
 
   @Test public void testNextInt1() throws Exception {
     final BaseRandom prng = createRng();
-    checkRangeAndEntropy(prng, 31, () -> prng.nextInt(3 << 29), 0, 3 << 29, true);
+    checkRangeAndEntropy(prng, 31, new Supplier<Number>() {
+      @Override public Number get() {
+        return prng.nextInt(3 << 29);
+      }
+    }, 0, 3 << 29, true);
   }
 
   @Test(expectedExceptions = IllegalArgumentException.class)
@@ -225,12 +247,20 @@ public abstract class BaseRandomTest {
 
   @Test public void testNextInt() throws Exception {
     final BaseRandom prng = createRng();
-    checkRangeAndEntropy(prng, 32, prng::nextInt, Integer.MIN_VALUE, Integer.MAX_VALUE + 1L, true);
+    checkRangeAndEntropy(prng, 32, new Supplier<Number>() {
+      @Override public Number get() {
+        return prng.nextInt();
+      }
+    }, Integer.MIN_VALUE, Integer.MAX_VALUE + 1L, true);
   }
 
   @Test public void testNextInt2() throws Exception {
     final BaseRandom prng = createRng();
-    checkRangeAndEntropy(prng, 29, () -> prng.nextInt(1 << 27, 1 << 29), 1 << 27, 1 << 29, true);
+    checkRangeAndEntropy(prng, 29, new Supplier<Number>() {
+      @Override public Number get() {
+        return prng.nextInt(1 << 27, 1 << 29);
+      }
+    }, 1 << 27, 1 << 29, true);
   }
 
   @Test(expectedExceptions = IllegalArgumentException.class)
@@ -240,18 +270,29 @@ public abstract class BaseRandomTest {
 
   @Test public void testNextInt2HugeRange() throws Exception {
     final BaseRandom prng = createRng();
-    checkRangeAndEntropy(prng, 32, () -> prng.nextInt(Integer.MIN_VALUE, 1 << 29),
-        Integer.MIN_VALUE, 1 << 29, true);
+    checkRangeAndEntropy(prng, 32, new Supplier<Number>() {
+      @Override public Number get() {
+        return prng.nextInt(Integer.MIN_VALUE, 1 << 29);
+      }
+    }, Integer.MIN_VALUE, 1 << 29, true);
   }
 
   @Test public void testNextLong() throws Exception {
     final BaseRandom prng = createRng();
-    checkRangeAndEntropy(prng, 64, prng::nextLong, Long.MIN_VALUE, Long.MAX_VALUE + 1.0, true);
+    checkRangeAndEntropy(prng, 64, new Supplier<Number>() {
+      @Override public Number get() {
+        return prng.nextLong();
+      }
+    }, Long.MIN_VALUE, Long.MAX_VALUE + 1.0, true);
   }
 
   @Test public void testNextLong1() throws Exception {
     final BaseRandom prng = createRng();
-    checkRangeAndEntropy(prng, 42, () -> prng.nextLong(1L << 42), 0, 1L << 42, true);
+    checkRangeAndEntropy(prng, 42, new Supplier<Number>() {
+      @Override public Number get() {
+        return prng.nextLong(1L << 42);
+      }
+    }, 0, 1L << 42, true);
   }
 
   @Test(expectedExceptions = IllegalArgumentException.class)
@@ -261,8 +302,11 @@ public abstract class BaseRandomTest {
 
   @Test public void testNextLong2() throws Exception {
     final BaseRandom prng = createRng();
-    checkRangeAndEntropy(prng, 42, () -> prng.nextLong(1L << 40, 1L << 42), 1L << 40, 1L << 42,
-        true);
+    checkRangeAndEntropy(prng, 42, new Supplier<Number>() {
+      @Override public Number get() {
+        return prng.nextLong(1L << 40, 1L << 42);
+      }
+    }, 1L << 40, 1L << 42, true);
   }
 
   @Test(expectedExceptions = IllegalArgumentException.class)
@@ -272,18 +316,29 @@ public abstract class BaseRandomTest {
 
   @Test public void testNextLong2HugeRange() throws Exception {
     final BaseRandom prng = createRng();
-    checkRangeAndEntropy(prng, 64, () -> prng.nextLong(Long.MIN_VALUE, 1 << 29), Long.MIN_VALUE,
-        1 << 29, true);
+    checkRangeAndEntropy(prng, 64, new Supplier<Number>() {
+      @Override public Number get() {
+        return prng.nextLong(Long.MIN_VALUE, 1 << 29);
+      }
+    }, Long.MIN_VALUE, 1 << 29, true);
   }
 
   @Test public void testNextDouble() throws Exception {
     final BaseRandom prng = createRng();
-    checkRangeAndEntropy(prng, ENTROPY_OF_DOUBLE, prng::nextDouble, 0.0, 1.0, true);
+    checkRangeAndEntropy(prng, ENTROPY_OF_DOUBLE, new Supplier<Number>() {
+      @Override public Number get() {
+        return prng.nextDouble();
+      }
+    }, 0.0, 1.0, true);
   }
 
   @Test public void testNextDouble1() throws Exception {
     final BaseRandom prng = createRng();
-    checkRangeAndEntropy(prng, ENTROPY_OF_DOUBLE, () -> prng.nextDouble(13.37), 0.0, 13.37, true);
+    checkRangeAndEntropy(prng, ENTROPY_OF_DOUBLE, new Supplier<Number>() {
+      @Override public Number get() {
+        return prng.nextDouble(13.37);
+      }
+    }, 0.0, 13.37, true);
   }
 
   @Test(expectedExceptions = IllegalArgumentException.class)
@@ -293,8 +348,11 @@ public abstract class BaseRandomTest {
 
   @Test public void testNextDouble2() throws Exception {
     final BaseRandom prng = createRng();
-    checkRangeAndEntropy(prng, ENTROPY_OF_DOUBLE, () -> prng.nextDouble(-1.0, 13.37), -1.0, 13.37,
-        true);
+    checkRangeAndEntropy(prng, ENTROPY_OF_DOUBLE, new Supplier<Number>() {
+      @Override public Number get() {
+        return prng.nextDouble(-1.0, 13.37);
+      }
+    }, -1.0, 13.37, true);
   }
 
   @Test(expectedExceptions = IllegalArgumentException.class)
@@ -306,14 +364,20 @@ public abstract class BaseRandomTest {
     final BaseRandom prng = createRng();
     // TODO: Find out the actual Shannon entropy of nextGaussian() and adjust the entropy count to
     // it in a wrapper function.
-    checkRangeAndEntropy(prng, 2 * ENTROPY_OF_DOUBLE,
-        () -> prng.nextGaussian() + prng.nextGaussian(), -Double.MAX_VALUE, Double.MAX_VALUE,
-        EntropyCheckMode.EXACT);
+    checkRangeAndEntropy(prng, 2 * ENTROPY_OF_DOUBLE, new Supplier<Number>() {
+      @Override public Number get() {
+        return prng.nextGaussian() + prng.nextGaussian();
+      }
+    }, -Double.MAX_VALUE, Double.MAX_VALUE, EntropyCheckMode.EXACT);
   }
 
   @Test public void testNextBoolean() throws Exception {
     final BaseRandom prng = createRng();
-    checkRangeAndEntropy(prng, 1, () -> prng.nextBoolean() ? 0 : 1, 0, 2, true);
+    checkRangeAndEntropy(prng, 1, new Supplier<Number>() {
+      @Override public Number get() {
+        return prng.nextBoolean() ? 0 : 1;
+      }
+    }, 0, 2, true);
   }
 
   @Test public void testInts() throws Exception {
@@ -403,18 +467,29 @@ public abstract class BaseRandomTest {
 
   @Test public void testNextElementArray() {
     final BaseRandom prng = createRng();
-    testGeneratesAll(() -> prng.nextElement(STRING_ARRAY), STRING_ARRAY);
+    testGeneratesAll(new Supplier<String>() {
+      @Override public String get() {
+        return prng.nextElement(STRING_ARRAY);
+      }
+    }, STRING_ARRAY);
   }
 
   @Test public void testNextElementList() {
     final BaseRandom prng = createRng();
-    testGeneratesAll(() -> prng.nextElement(STRING_LIST), STRING_ARRAY);
+    testGeneratesAll(new Supplier<String>() {
+      @Override public String get() {
+        return prng.nextElement(STRING_LIST);
+      }
+    }, STRING_ARRAY);
   }
 
   @Test public void testNextEnum() {
     final BaseRandom prng = createRng();
-    testGeneratesAll(() -> prng.nextEnum(TestEnum.class), TestEnum.RED, TestEnum.YELLOW,
-        TestEnum.BLUE);
+    testGeneratesAll(new Supplier<TestEnum>() {
+      @Override public TestEnum get() {
+        return prng.nextEnum(TestEnum.class);
+      }
+    }, TestEnum.RED, TestEnum.YELLOW, TestEnum.BLUE);
   }
 
   @AfterClass public void classTearDown() {

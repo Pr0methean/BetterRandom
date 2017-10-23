@@ -51,7 +51,7 @@
     <dependency>
       <groupId>net.sourceforge.streamsupport</groupId>
       <artifactId>streamsupport</artifactId>
-      <version>1.1.2</version>
+      <version>1.5.6</version>
     </dependency>
     <dependency>
       <!-- https://mvnrepository.com/artifact/org.apache.maven.plugins/maven-deploy-plugin -->

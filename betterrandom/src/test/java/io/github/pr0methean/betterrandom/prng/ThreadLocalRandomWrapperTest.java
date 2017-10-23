@@ -12,7 +12,9 @@ import java.lang.reflect.InvocationTargetException;
 import java.security.GeneralSecurityException;
 import java.util.Arrays;
 import java.util.Random;
-import java.util.function.Supplier;
+import java8.util.function.Function;
+import java8.util.function.LongFunction;
+import java8.util.function.Supplier;
 import org.testng.annotations.Test;
 
 public class ThreadLocalRandomWrapperTest extends BaseRandomTest {
@@ -54,17 +56,28 @@ public class ThreadLocalRandomWrapperTest extends BaseRandomTest {
 
   @Test public void testExplicitSeedSize() throws SeedException {
     assertEquals(new ThreadLocalRandomWrapper(200, DefaultSeedGenerator.DEFAULT_SEED_GENERATOR,
-        AesCounterRandom::new).getNewSeedLength(), 200);
+        new Function<byte[], BaseRandom>() {
+          @Override public BaseRandom apply(byte[] seed) {
+            return new AesCounterRandom(seed);
+          }
+        }).getNewSeedLength(), 200);
   }
 
   @Test public void testWrapLegacy() throws SeedException {
-    ThreadLocalRandomWrapper.wrapLegacy(Random::new, DefaultSeedGenerator.DEFAULT_SEED_GENERATOR)
+    ThreadLocalRandomWrapper.wrapLegacy(new LongFunction<Random>() {
+      @Override public Random apply(long seed) {
+        return new Random(seed);
+      }
+    }, DefaultSeedGenerator.DEFAULT_SEED_GENERATOR)
         .nextInt();
   }
 
   @Override protected BaseRandom createRng() throws SeedException {
-    return new ThreadLocalRandomWrapper(
-        (Serializable & Supplier<BaseRandom>) MersenneTwisterRandom::new);
+    return new ThreadLocalRandomWrapper(new Supplier<BaseRandom>() {
+      @Override public BaseRandom get() {
+        return new MersenneTwisterRandom();
+      }
+    });
   }
 
   @Override protected BaseRandom createRng(final byte[] seed) throws SeedException {

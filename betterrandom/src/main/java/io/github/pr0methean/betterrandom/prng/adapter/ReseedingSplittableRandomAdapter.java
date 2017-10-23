@@ -5,13 +5,16 @@ import io.github.pr0methean.betterrandom.seed.DefaultSeedGenerator;
 import io.github.pr0methean.betterrandom.seed.RandomSeederThread;
 import io.github.pr0methean.betterrandom.seed.SeedException;
 import io.github.pr0methean.betterrandom.seed.SeedGenerator;
+import io.github.pr0methean.betterrandom.util.Java8Constants;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.util.Collections;
 import java.util.Map;
-import java.util.SplittableRandom;
+import java8.util.SplittableRandom;
 import java.util.WeakHashMap;
 import java.util.concurrent.atomic.AtomicLong;
+import java8.util.function.Function;
+import java8.util.function.Supplier;
 import javax.annotation.Nullable;
 
 /**
@@ -25,7 +28,7 @@ public class ReseedingSplittableRandomAdapter extends BaseSplittableRandomAdapte
   private static final long serialVersionUID = 6301096404034224037L;
   @SuppressWarnings("StaticCollection")
   private static final Map<SeedGenerator, ReseedingSplittableRandomAdapter> INSTANCES =
-      Collections.synchronizedMap(new WeakHashMap<>(1));
+      Collections.synchronizedMap(new WeakHashMap<SeedGenerator, ReseedingSplittableRandomAdapter>(1));
   /**
    * The {@link SeedGenerator} whose associated {@link RandomSeederThread} is used to reseed this.
    */
@@ -39,7 +42,7 @@ public class ReseedingSplittableRandomAdapter extends BaseSplittableRandomAdapte
    * @param seedGenerator The seed generator this adapter will use.
    */
   private ReseedingSplittableRandomAdapter(final SeedGenerator seedGenerator) throws SeedException {
-    super(seedGenerator.generateSeed(Long.BYTES));
+    super(seedGenerator.generateSeed(Java8Constants.LONG_BYTES));
     this.seedGenerator = seedGenerator;
     initSubclassTransientFields();
   }
@@ -66,7 +69,12 @@ public class ReseedingSplittableRandomAdapter extends BaseSplittableRandomAdapte
   public static ReseedingSplittableRandomAdapter getInstance(final SeedGenerator seedGenerator)
       throws SeedException {
     synchronized (INSTANCES) {
-      return INSTANCES.computeIfAbsent(seedGenerator, ReseedingSplittableRandomAdapter::new);
+      ReseedingSplittableRandomAdapter instance = INSTANCES.get(seedGenerator);
+      if (instance == null) {
+        instance = new ReseedingSplittableRandomAdapter(seedGenerator);
+        INSTANCES.put(seedGenerator, instance);
+      }
+      return instance;
     }
   }
 
@@ -87,10 +95,14 @@ public class ReseedingSplittableRandomAdapter extends BaseSplittableRandomAdapte
     return getInstance(seedGenerator);
   }
 
-  private void initSubclassTransientFields(ReseedingSplittableRandomAdapter this) {
+  private void initSubclassTransientFields() {
     if (threadLocal == null) {
-      threadLocal =
-          ThreadLocal.withInitial(() -> new SingleThreadSplittableRandomAdapter(seedGenerator));
+      threadLocal = new
+          ThreadLocal<SingleThreadSplittableRandomAdapter>() {
+            @Override public SingleThreadSplittableRandomAdapter initialValue() {
+              return new SingleThreadSplittableRandomAdapter(seedGenerator);
+            }
+          };
     }
     seederThread.set(RandomSeederThread.getInstance(seedGenerator));
   }
@@ -107,7 +119,7 @@ public class ReseedingSplittableRandomAdapter extends BaseSplittableRandomAdapte
   }
 
   @Override
-  protected void setSeedInternal(ReseedingSplittableRandomAdapter this, final byte[] seed) {
+  protected void setSeedInternal(final byte[] seed) {
     this.seed = seed.clone();
     if (entropyBits == null) {
       entropyBits = new AtomicLong(0);

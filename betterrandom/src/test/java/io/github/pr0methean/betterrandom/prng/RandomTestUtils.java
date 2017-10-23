@@ -23,8 +23,9 @@ import io.github.pr0methean.betterrandom.util.CloneViaSerialization;
 import java.util.HashSet;
 import java.util.Random;
 import java.util.concurrent.atomic.AtomicLong;
-import java.util.function.Supplier;
-import java.util.stream.Stream;
+import java8.util.function.Supplier;
+import java8.util.function.ToLongFunction;
+import java8.util.stream.Stream;
 import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
 import org.testng.Reporter;
 
@@ -84,14 +85,16 @@ public enum RandomTestUtils {
     final AtomicLong entropy = new AtomicLong(prng.getEntropyBits());
     final Stream<? extends Number> streamToUse =
         (expectedCount < 0) ? stream.sequential().limit(20) : stream;
-    final long count = streamToUse.mapToLong((number) -> {
-      assertGreaterOrEqual(origin, number.doubleValue());
-      assertLess(bound, number.doubleValue());
-      if (checkEntropyCount && !(streamToUse.isParallel())) {
-        long newEntropy = prng.getEntropyBits();
-        assertGreaterOrEqual(entropy.getAndSet(newEntropy) - maxEntropySpentPerNumber, newEntropy);
+    final long count = streamToUse.mapToLong(new ToLongFunction<Number>() {
+      @Override public long applyAsLong(Number number) {
+        assertGreaterOrEqual(origin, number.doubleValue());
+        assertLess(bound, number.doubleValue());
+        if (checkEntropyCount && !(streamToUse.isParallel())) {
+          long newEntropy = prng.getEntropyBits();
+          assertGreaterOrEqual(entropy.getAndSet(newEntropy) - maxEntropySpentPerNumber, newEntropy);
+        }
+        return 1;
       }
-      return 1;
     }).sum();
     if (expectedCount >= 0) {
       assertEquals(count, expectedCount);

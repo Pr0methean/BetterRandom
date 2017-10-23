@@ -46,7 +46,7 @@ public class RandomWrapper extends BaseRandom {
    * @throws SeedException if any.
    */
   public RandomWrapper() throws SeedException {
-    this(DefaultSeedGenerator.DEFAULT_SEED_GENERATOR.generateSeed(Long.BYTES));
+    this(DefaultSeedGenerator.DEFAULT_SEED_GENERATOR.generateSeed(Java8Constants.LONG_BYTES));
   }
 
   /**
@@ -56,7 +56,7 @@ public class RandomWrapper extends BaseRandom {
    * @throws SeedException If there is a problem generating a seedArray.
    */
   @EntryPoint public RandomWrapper(final SeedGenerator seedGenerator) throws SeedException {
-    super(seedGenerator, Long.BYTES);
+    super(seedGenerator, Java8Constants.LONG_BYTES);
     wrapped = new Random(BinaryUtils.convertBytesToLong(seed));
     unknownSeed = false;
     haveParallelStreams = wrapped.longs().isParallel();
@@ -68,7 +68,7 @@ public class RandomWrapper extends BaseRandom {
    */
   public RandomWrapper(final byte[] seed) {
     super(seed);
-    if (seed.length != Long.BYTES) {
+    if (seed.length != Java8Constants.LONG_BYTES) {
       throw new IllegalArgumentException(
           "RandomWrapper requires an 8-byte seed when defaulting to java.util.Random");
     }
@@ -193,7 +193,8 @@ public class RandomWrapper extends BaseRandom {
         @Nullable ByteArrayReseedableRandom asByteArrayReseedable = null;
         if (wrapped instanceof ByteArrayReseedableRandom) {
           asByteArrayReseedable = (ByteArrayReseedableRandom) wrapped;
-          if (asByteArrayReseedable.preferSeedWithLong() && (seed.length == Long.BYTES)) {
+          if (asByteArrayReseedable.preferSeedWithLong() && (seed.length
+              == Java8Constants.LONG_BYTES)) {
             asByteArrayReseedable = null;
           }
         } else if (wrapped instanceof SecureRandom) {
@@ -202,7 +203,7 @@ public class RandomWrapper extends BaseRandom {
           ((SecureRandom) wrapped).setSeed(seed);
           unknownSeed = false;
           return;
-        } else if (seed.length != Long.BYTES) {
+        } else if (seed.length != Java8Constants.LONG_BYTES) {
           throw new IllegalArgumentException(
               "RandomWrapper requires an 8-byte seed when not wrapping a ByteArrayReseedableRandom");
         }
@@ -237,7 +238,7 @@ public class RandomWrapper extends BaseRandom {
     }
     try {
       return (wrapped instanceof ByteArrayReseedableRandom) ? ((ByteArrayReseedableRandom) wrapped)
-          .getNewSeedLength() : Long.BYTES;
+          .getNewSeedLength() : Java8Constants.LONG_BYTES;
     } finally {
       if (locked) {
         lock.unlock();

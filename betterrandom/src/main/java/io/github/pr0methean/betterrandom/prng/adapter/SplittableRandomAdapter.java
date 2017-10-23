@@ -10,8 +10,10 @@ import io.github.pr0methean.betterrandom.seed.SeedGenerator;
 import io.github.pr0methean.betterrandom.util.BinaryUtils;
 import java.io.IOException;
 import java.io.ObjectInputStream;
-import java.util.SplittableRandom;
+import java8.util.SplittableRandom;
 import java.util.concurrent.atomic.AtomicLong;
+import java8.util.function.LongUnaryOperator;
+import java8.util.function.Supplier;
 import javax.annotation.Nullable;
 
 /**
@@ -23,7 +25,7 @@ import javax.annotation.Nullable;
 @SuppressWarnings("ThreadLocalNotStaticFinal")
 public class SplittableRandomAdapter extends DirectSplittableRandomAdapter {
 
-  private static final int SEED_LENGTH_BITS = Long.BYTES * 8;
+  private static final int SEED_LENGTH_BITS = Java8Constants.LONG_BYTES * 8;
   private static final long serialVersionUID = 2190439512972880590L;
   private transient ThreadLocal<SplittableRandom> splittableRandoms;
   private transient ThreadLocal<AtomicLong> entropyBits;
@@ -37,7 +39,7 @@ public class SplittableRandomAdapter extends DirectSplittableRandomAdapter {
    * @throws SeedException if there is a problem generating a seed.
    */
   public SplittableRandomAdapter(final SeedGenerator seedGenerator) throws SeedException {
-    this(seedGenerator.generateSeed(Long.BYTES));
+    this(seedGenerator.generateSeed(Java8Constants.LONG_BYTES));
   }
 
   /**
@@ -56,7 +58,7 @@ public class SplittableRandomAdapter extends DirectSplittableRandomAdapter {
    * @throws SeedException if the {@link DefaultSeedGenerator} fails to generate a seed.
    */
   public SplittableRandomAdapter() throws SeedException {
-    this(DefaultSeedGenerator.DEFAULT_SEED_GENERATOR.generateSeed(Long.BYTES));
+    this(DefaultSeedGenerator.DEFAULT_SEED_GENERATOR.generateSeed(Java8Constants.LONG_BYTES));
   }
 
   /**
@@ -90,11 +92,23 @@ public class SplittableRandomAdapter extends DirectSplittableRandomAdapter {
   private void initSubclassTransientFields(SplittableRandomAdapter this) {
     lock.lock();
     try {
-      splittableRandoms = ThreadLocal.withInitial(underlying::split);
-      entropyBits = ThreadLocal.withInitial(() -> new AtomicLong(SEED_LENGTH_BITS));
+      splittableRandoms = ThreadLocal.withInitial(new Supplier<SplittableRandom>() {
+        @Override public SplittableRandom get() {
+          return underlying.split();
+        }
+      });
+      entropyBits = ThreadLocal.withInitial(new Supplier<AtomicLong>() {
+        @Override public AtomicLong get() {
+          return new AtomicLong(SEED_LENGTH_BITS);
+        }
+      });
 
       // getSeed() will return the master seed on each thread where setSeed() hasn't yet been called
-      seeds = ThreadLocal.withInitial(() -> seed);
+      seeds = ThreadLocal.withInitial(new Supplier<byte[]>() {
+        @Override public byte[] get() {
+          return seed;
+        }
+      });
     } finally {
       lock.unlock();
     }
@@ -133,7 +147,11 @@ public class SplittableRandomAdapter extends DirectSplittableRandomAdapter {
     if (splittableRandoms != null) {
       splittableRandoms.set(new SplittableRandom(seed));
       if (entropyBits != null) {
-        entropyBits.get().updateAndGet(oldValue -> Math.max(oldValue, SEED_LENGTH_BITS));
+        entropyBits.get().updateAndGet(new LongUnaryOperator() {
+          @Override public long applyAsLong(long oldValue) {
+            return Math.max(oldValue, SEED_LENGTH_BITS);
+          }
+        });
       }
       if (seeds != null) {
         seeds.set(BinaryUtils.convertLongToBytes(seed));
@@ -145,7 +163,7 @@ public class SplittableRandomAdapter extends DirectSplittableRandomAdapter {
    * {@inheritDoc} Applies only to the calling thread.
    */
   @Override public void setSeed(SplittableRandomAdapter this, final byte[] seed) {
-    if (seed.length != Long.BYTES) {
+    if (seed.length != Java8Constants.LONG_BYTES) {
       throw new IllegalArgumentException("SplittableRandomAdapter requires an 8-byte seed");
     }
     setSeed(convertBytesToLong(seed));

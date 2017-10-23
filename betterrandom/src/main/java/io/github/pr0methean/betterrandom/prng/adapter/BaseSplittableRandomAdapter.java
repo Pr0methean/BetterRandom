@@ -1,8 +1,9 @@
 package io.github.pr0methean.betterrandom.prng.adapter;
 
 import io.github.pr0methean.betterrandom.prng.BaseRandom;
-import java.util.SplittableRandom;
-import java.util.function.DoubleSupplier;
+import io.github.pr0methean.betterrandom.util.Java8Constants;
+import java8.util.SplittableRandom;
+import java8.util.function.DoubleSupplier;
 
 /**
  * Abstract class for implementations of {@link BaseRandom} that wrap one or more {@link
@@ -29,7 +30,7 @@ public abstract class BaseSplittableRandomAdapter extends BaseRandom {
     super(seed);
   }
 
-  @Override protected void setSeedInternal(BaseSplittableRandomAdapter this, final byte[] seed) {
+  @Override protected void setSeedInternal(final byte[] seed) {
     super.setSeedInternal(seed);
   }
 
@@ -148,7 +149,11 @@ public abstract class BaseSplittableRandomAdapter extends BaseRandom {
     // used or rerolled.
     recordEntropySpent(ENTROPY_OF_DOUBLE);
 
-    return internalNextGaussian(() -> getSplittableRandom().nextDouble());
+    return internalNextGaussian(new DoubleSupplier() {
+      @Override public double getAsDouble() {
+        return BaseSplittableRandomAdapter.this.getSplittableRandom().nextDouble();
+      }
+    });
   }
 
   /** Delegates to {@link SplittableRandom#nextBoolean()}. */
@@ -167,7 +172,7 @@ public abstract class BaseSplittableRandomAdapter extends BaseRandom {
   }
 
   /** Returns the only supported seed length. */
-  @Override public int getNewSeedLength(BaseSplittableRandomAdapter this) {
-    return Long.BYTES;
+  @Override public int getNewSeedLength() {
+    return Java8Constants.LONG_BYTES;
   }
 }

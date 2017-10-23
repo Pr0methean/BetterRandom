@@ -1,6 +1,6 @@
 package io.github.pr0methean.betterrandom.prng;
 
-import static java.lang.Integer.toUnsignedLong;
+import static java8.lang.Integers.toUnsignedLong;
 
 import com.google.common.base.MoreObjects;
 import com.google.common.base.MoreObjects.ToStringHelper;
@@ -14,6 +14,7 @@ import io.github.pr0methean.betterrandom.seed.SeedGenerator;
 import io.github.pr0methean.betterrandom.util.BinaryUtils;
 import io.github.pr0methean.betterrandom.util.Dumpable;
 import io.github.pr0methean.betterrandom.util.EntryPoint;
+import io.github.pr0methean.betterrandom.util.Java8Constants;
 import io.github.pr0methean.betterrandom.util.LogPreFormatter;
 import java.io.IOException;
 import java.io.InvalidObjectException;
@@ -24,11 +25,19 @@ import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
-import java.util.function.DoubleSupplier;
-import java.util.stream.BaseStream;
-import java.util.stream.DoubleStream;
-import java.util.stream.IntStream;
-import java.util.stream.LongStream;
+import java8.util.function.DoubleSupplier;
+import java8.util.function.IntSupplier;
+import java8.util.function.LongSupplier;
+import java8.util.function.LongToDoubleFunction;
+import java8.util.function.LongToIntFunction;
+import java8.util.function.LongUnaryOperator;
+import java8.util.stream.BaseStream;
+import java8.util.stream.DoubleStream;
+import java8.util.stream.IntStream;
+import java8.util.stream.IntStreams;
+import java8.util.stream.LongStream;
+import java8.util.stream.DoubleStreams;
+import java8.util.stream.LongStreams;
 import javax.annotation.Nullable;
 
 /**
@@ -36,7 +45,8 @@ import javax.annotation.Nullable;
  * @author Chris Hennick
  */
 public abstract class BaseRandom extends Random
-    implements ByteArrayReseedableRandom, RepeatableRandom, Dumpable, EntropyCountingRandom {
+    implements ByteArrayReseedableRandom, RepeatableRandom, Dumpable, EntropyCountingRandom,
+    Java8CompatRandom {
 
   /** The number of pseudorandom bits in {@link #nextFloat()}. */
   protected static final int ENTROPY_OF_FLOAT = 24;
@@ -306,7 +316,11 @@ public abstract class BaseRandom extends Random
   @Override public DoubleStream doubles(final double randomNumberOrigin,
       final double randomNumberBound) {
     return maybeParallel(
-        DoubleStream.generate(() -> nextDouble(randomNumberOrigin, randomNumberBound)));
+        DoubleStreams.generate(new DoubleSupplier() {
+          @Override public double getAsDouble() {
+            return nextDouble(randomNumberOrigin, randomNumberBound);
+          }
+        }));
   }
 
   /**
@@ -315,15 +329,23 @@ public abstract class BaseRandom extends Random
    * generate these numbers.</p>
    */
   @Override public DoubleStream doubles() {
-    return maybeParallel(DoubleStream.generate(this::nextDouble));
+    return maybeParallel(DoubleStreams.generate(new DoubleSupplier() {
+      @Override public double getAsDouble() {
+        return nextDouble();
+      }
+    }));
   }
 
   @Override public DoubleStream doubles(final long streamSize) {
-    return streamOfSize(streamSize).mapToDouble(ignored -> nextDouble());
+    return streamOfSize(streamSize).mapToDouble(new LongToDoubleFunction() {
+      @Override public double applyAsDouble(long l) {
+        return nextDouble();
+      }
+    });
   }
 
   private LongStream streamOfSize(final long streamSize) {
-    return maybeParallel(LongStream.range(0, streamSize).unordered());
+    return maybeParallel(LongStreams.range(0, streamSize).unordered());
   }
 
   /**
@@ -334,7 +356,11 @@ public abstract class BaseRandom extends Random
   @Override public DoubleStream doubles(final long streamSize, final double randomNumberOrigin,
       final double randomNumberBound) {
     return streamOfSize(streamSize)
-        .mapToDouble(ignored -> nextDouble(randomNumberOrigin, randomNumberBound));
+        .mapToDouble(new LongToDoubleFunction() {
+          @Override public double applyAsDouble(long l) {
+            return nextDouble(randomNumberOrigin, randomNumberBound);
+          }
+        });
   }
 
   /**
@@ -344,7 +370,11 @@ public abstract class BaseRandom extends Random
    * @return a stream of normally-distributed random doubles.
    */
   public DoubleStream gaussians() {
-    return maybeParallel(DoubleStream.generate(this::nextGaussian));
+    return maybeParallel(DoubleStreams.generate(new DoubleSupplier() {
+      @Override public double getAsDouble() {
+        return nextGaussian();
+      }
+    }));
   }
 
   /**
@@ -355,7 +385,11 @@ public abstract class BaseRandom extends Random
    * @return a stream of {@code streamSize} normally-distributed random doubles.
    */
   public DoubleStream gaussians(final long streamSize) {
-    return streamOfSize(streamSize).mapToDouble(ignored -> nextGaussian());
+    return streamOfSize(streamSize).mapToDouble(new LongToDoubleFunction() {
+      @Override public double applyAsDouble(long l) {
+        return nextGaussian();
+      }
+    });
   }
 
   @Override public boolean nextBoolean() {
@@ -382,7 +416,11 @@ public abstract class BaseRandom extends Random
     // Upper bound. 2 Gaussians are generated from 2 nextDouble calls, which once made are either
     // used or rerolled.
     recordEntropySpent(ENTROPY_OF_DOUBLE);
-    return internalNextGaussian(super::nextDouble);
+    return internalNextGaussian(new DoubleSupplier() {
+      @Override public double getAsDouble() {
+        return BaseRandom.super.nextDouble();
+      }
+    });
   }
 
   /**
@@ -411,11 +449,19 @@ public abstract class BaseRandom extends Random
   }
 
   @Override public IntStream ints(final long streamSize) {
-    return streamOfSize(streamSize).mapToInt(ignored -> nextInt());
+    return streamOfSize(streamSize).mapToInt(new LongToIntFunction() {
+      @Override public int applyAsInt(long l) {
+        return nextInt();
+      }
+    });
   }
 
   @Override public IntStream ints() {
-    return maybeParallel(IntStream.generate(this::nextInt));
+    return maybeParallel(IntStreams.generate(new IntSupplier() {
+      @Override public int getAsInt() {
+        return nextInt();
+      }
+    }));
   }
 
   /**
@@ -426,7 +472,11 @@ public abstract class BaseRandom extends Random
   @Override public IntStream ints(final long streamSize, final int randomNumberOrigin,
       final int randomNumberBound) {
     return streamOfSize(streamSize)
-        .mapToInt(ignored -> nextInt(randomNumberOrigin, randomNumberBound));
+        .mapToInt(new LongToIntFunction() {
+          @Override public int applyAsInt(long l) {
+            return nextInt(randomNumberOrigin, randomNumberBound);
+          }
+        });
   }
 
   /**
@@ -464,11 +514,19 @@ public abstract class BaseRandom extends Random
    * {@link #nextInt(int, int)} to generate these numbers.</p>
    */
   @Override public IntStream ints(final int randomNumberOrigin, final int randomNumberBound) {
-    return maybeParallel(IntStream.generate(() -> nextInt(randomNumberOrigin, randomNumberBound)));
+    return maybeParallel(IntStreams.generate(new IntSupplier() {
+      @Override public int getAsInt() {
+        return nextInt(randomNumberOrigin, randomNumberBound);
+      }
+    }));
   }
 
   @Override public LongStream longs(final long streamSize) {
-    return streamOfSize(streamSize).map(ignored -> nextLong());
+    return streamOfSize(streamSize).map(new LongUnaryOperator() {
+      @Override public long applyAsLong(long l) {
+        return nextLong();
+      }
+    });
   }
 
   /**
@@ -477,7 +535,11 @@ public abstract class BaseRandom extends Random
    * consumed.</p>
    */
   @Override public LongStream longs() {
-    return maybeParallel(LongStream.generate(this::nextLong));
+    return maybeParallel(LongStreams.generate(new LongSupplier() {
+      @Override public long getAsLong() {
+        return nextLong();
+      }
+    }));
   }
 
   /**
@@ -486,7 +548,11 @@ public abstract class BaseRandom extends Random
    */
   @Override public LongStream longs(final long streamSize, final long randomNumberOrigin,
       final long randomNumberBound) {
-    return streamOfSize(streamSize).map(ignored -> nextLong(randomNumberOrigin, randomNumberBound));
+    return streamOfSize(streamSize).map(new LongUnaryOperator() {
+      @Override public long applyAsLong(long l) {
+        return nextLong(randomNumberOrigin, randomNumberBound);
+      }
+    });
   }
 
   /**
@@ -535,7 +601,11 @@ public abstract class BaseRandom extends Random
    */
   @Override public LongStream longs(final long randomNumberOrigin, final long randomNumberBound) {
     return maybeParallel(
-        LongStream.generate(() -> nextLong(randomNumberOrigin, randomNumberBound)));
+        LongStreams.generate(new LongSupplier() {
+          @Override public long getAsLong() {
+            return nextLong(randomNumberOrigin, randomNumberBound);
+          }
+        }));
   }
 
   @Override public String dump() {
@@ -566,7 +636,7 @@ public abstract class BaseRandom extends Random
    * input with the existing seed as {@link java.security.SecureRandom#setSeed(long)} does.
    */
   @SuppressWarnings("method.invocation.invalid") @Override public synchronized void setSeed(
-      BaseRandom this, final long seed) {
+      final long seed) {
     final byte[] seedBytes = BinaryUtils.convertLongToBytes(seed);
     if (superConstructorFinished) {
       setSeed(seedBytes);
@@ -612,7 +682,7 @@ public abstract class BaseRandom extends Random
   }
 
   @Override public boolean preferSeedWithLong() {
-    return getNewSeedLength() <= Long.BYTES;
+    return getNewSeedLength() <= Java8Constants.LONG_BYTES;
   }
 
   /**
@@ -621,7 +691,7 @@ public abstract class BaseRandom extends Random
    * #fallbackSetSeed()}. When called after initialization, the {@link #lock} is always held.
    * @param seed The new seed.
    */
-  protected void setSeedInternal(BaseRandom this, final byte[] seed) {
+  protected void setSeedInternal(final byte[] seed) {
     if ((this.seed == null) || (this.seed.length != seed.length)) {
       this.seed = seed.clone();
     } else {
@@ -630,21 +700,23 @@ public abstract class BaseRandom extends Random
     if (entropyBits == null) {
       entropyBits = new AtomicLong(0);
     }
-    entropyBits.updateAndGet(
-        oldCount -> Math.max(oldCount, Math.min(seed.length, getNewSeedLength()) * 8L));
+    long oldCount;
+    do {
+      oldCount = entropyBits.get();
+    } while (!entropyBits.compareAndSet(oldCount, Math.max(oldCount, Math.min(seed.length, getNewSeedLength()) * 8L)));
   }
 
   /**
    * Called in constructor and readObject to initialize transient fields.
    */
-  protected void initTransientFields(BaseRandom this) {
+  protected void initTransientFields(){
     if (lock == null) {
       lock = new ReentrantLock();
     }
     superConstructorFinished = true;
   }
 
-  private void readObject(BaseRandom this, final ObjectInputStream in)
+  private void readObject(final ObjectInputStream in)
       throws IOException, ClassNotFoundException {
     in.defaultReadObject();
     initTransientFields();
@@ -697,8 +769,7 @@ public abstract class BaseRandom extends Random
    * handling a {@link #setSeed(long)} call from the super constructor {@link Random#Random()} in
    * subclasses that can't actually use an 8-byte seed. Also used in {@link #readObjectNoData()}.
    */
-  @SuppressWarnings("LockAcquiredButNotSafelyReleased") protected void fallbackSetSeed(
-      BaseRandom this) {
+  @SuppressWarnings("LockAcquiredButNotSafelyReleased") protected void fallbackSetSeed() {
     boolean locked = false;
     if (lock != null) {
       lock.lock();
@@ -718,5 +789,5 @@ public abstract class BaseRandom extends Random
     }
   }
 
-  @Override public abstract int getNewSeedLength(BaseRandom this);
+  @Override public abstract int getNewSeedLength();
 }

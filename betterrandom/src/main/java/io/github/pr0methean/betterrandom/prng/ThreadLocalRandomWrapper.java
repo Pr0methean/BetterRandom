@@ -1,5 +1,7 @@
 package io.github.pr0methean.betterrandom.prng;
 
+import static io.github.pr0methean.betterrandom.util.BinaryUtils.convertBytesToLong;
+
 import com.google.common.base.MoreObjects.ToStringHelper;
 import io.github.pr0methean.betterrandom.seed.RandomSeederThread;
 import io.github.pr0methean.betterrandom.seed.SeedException;
@@ -9,9 +11,9 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.Serializable;
 import java.util.Random;
-import java.util.function.Function;
-import java.util.function.LongFunction;
-import java.util.function.Supplier;
+import java8.util.function.Function;
+import java8.util.function.LongFunction;
+import java8.util.function.Supplier;
 import javax.annotation.Nullable;
 
 /**
@@ -52,8 +54,11 @@ public class ThreadLocalRandomWrapper extends RandomWrapper {
       final Function<byte[], BaseRandom> creator) throws SeedException {
     super(0);
     explicitSeedSize = seedSize;
-    initializer = (Serializable & Supplier<BaseRandom>) (() -> creator
-        .apply(seedGenerator.generateSeed(seedSize)));
+    initializer = (Serializable & Supplier<BaseRandom>) (new Supplier<BaseRandom>() {
+      @Override public BaseRandom get() {
+        return creator.apply(seedGenerator.generateSeed(seedSize));
+      }
+    });
     threadLocal = ThreadLocal.withInitial(initializer);
   }
 
@@ -67,8 +72,12 @@ public class ThreadLocalRandomWrapper extends RandomWrapper {
    */
   public static ThreadLocalRandomWrapper wrapLegacy(final LongFunction<Random> legacyCreator,
       final SeedGenerator seedGenerator) {
-    return new ThreadLocalRandomWrapper(Long.BYTES, seedGenerator,
-        bytes -> new RandomWrapper(legacyCreator.apply(BinaryUtils.convertBytesToLong(bytes))));
+    return new ThreadLocalRandomWrapper(Java8Constants.LONG_BYTES, seedGenerator,
+        new Function<byte[], BaseRandom>() {
+          @Override public BaseRandom apply(byte[] bytes) {
+            return new RandomWrapper(legacyCreator.apply(convertBytesToLong(bytes)));
+          }
+        });
   }
 
   @Override protected boolean withProbabilityInternal(final double probability) {

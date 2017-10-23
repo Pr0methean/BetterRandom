@@ -19,6 +19,7 @@ import java.util.WeakHashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.locks.Condition;
+import java8.util.function.Function;
 import java.util.logging.Level;
 
 /**
@@ -32,7 +33,7 @@ public final class RandomSeederThread extends LooperThread {
   private static final ExecutorService WAKER_UPPER = Executors.newSingleThreadExecutor();
   private static final LogPreFormatter LOG = new LogPreFormatter(RandomSeederThread.class);
   @SuppressWarnings("StaticCollection") private static final Map<SeedGenerator, RandomSeederThread>
-      INSTANCES = Collections.synchronizedMap(new WeakHashMap<>(1));
+      INSTANCES = Collections.synchronizedMap(new WeakHashMap<SeedGenerator, RandomSeederThread>(1));
   private static final long serialVersionUID = 5229976461051217528L;
   private final SeedGenerator seedGenerator;
   private final byte[] longSeedArray = new byte[8];
@@ -69,15 +70,18 @@ public final class RandomSeederThread extends LooperThread {
    */
   public static RandomSeederThread getInstance(final SeedGenerator seedGenerator) {
     synchronized (INSTANCES) {
-      return INSTANCES.computeIfAbsent(seedGenerator, seedGen -> {
-        LOG.info("Creating a RandomSeederThread for %s", seedGen);
-        final RandomSeederThread thread = new RandomSeederThread(seedGen);
-        thread.setName("RandomSeederThread for " + seedGen);
-        thread.setDaemon(true);
-        thread.setPriority(Thread.MIN_PRIORITY);
-        thread.start();
-        return thread;
-      });
+      return INSTANCES.computeIfAbsent(seedGenerator,
+          new Function<SeedGenerator, RandomSeederThread>() {
+            @Override public RandomSeederThread apply(SeedGenerator seedGen) {
+              LOG.info("Creating a RandomSeederThread for %s", seedGen);
+              final RandomSeederThread thread = new RandomSeederThread(seedGen);
+              thread.setName("RandomSeederThread for " + seedGen);
+              thread.setDaemon(true);
+              thread.setPriority(Thread.MIN_PRIORITY);
+              thread.start();
+              return thread;
+            }
+          });
     }
   }
 
@@ -92,8 +96,8 @@ public final class RandomSeederThread extends LooperThread {
     }
   }
 
-  private void initTransientFields(RandomSeederThread this) {
-    prngs = Collections.synchronizedSet(Collections.newSetFromMap(new WeakHashMap<>(1)));
+  private void initTransientFields() {
+    prngs = Collections.synchronizedSet(Collections.newSetFromMap(new WeakHashMap<Random, Boolean>(1)));
     longSeedBuffer = ByteBuffer.wrap(longSeedArray);
     waitWhileEmpty = lock.newCondition();
     waitForEntropyDrain = lock.newCondition();
@@ -105,7 +109,7 @@ public final class RandomSeederThread extends LooperThread {
     return getInstance(seedGenerator);
   }
 
-  private void readObject(RandomSeederThread this, final ObjectInputStream in)
+  private void readObject(final ObjectInputStream in)
       throws IOException, ClassNotFoundException {
     in.defaultReadObject();
     initTransientFields();
@@ -147,12 +151,14 @@ public final class RandomSeederThread extends LooperThread {
       eligible = prngs.contains(random);
     }
     if (eligible) {
-      WAKER_UPPER.submit(() -> {
-        lock.lock();
-        try {
-          waitForEntropyDrain.signalAll();
-        } finally {
-          lock.unlock();
+      WAKER_UPPER.submit(new Runnable() {
+        @Override public void run() {
+          lock.lock();
+          try {
+            waitForEntropyDrain.signalAll();
+          } finally {
+            lock.unlock();
+          }
         }
       });
       return true;
@@ -189,7 +195,11 @@ public final class RandomSeederThread extends LooperThread {
             .preferSeedWithLong()) {
           final ByteArrayReseedableRandom reseedable = (ByteArrayReseedableRandom) random;
           final byte[] seedArray = seedArrays
-              .computeIfAbsent(reseedable, random_ -> new byte[random_.getNewSeedLength()]);
+              .computeIfAbsent(reseedable, new Function<ByteArrayReseedableRandom, byte[]>() {
+                @Override public byte[] apply(ByteArrayReseedableRandom random_) {
+                  return new byte[random_.getNewSeedLength()];
+                }
+              });
           seedGenerator.generateSeed(seedArray);
           reseedable.setSeed(seedArray);
         } else {

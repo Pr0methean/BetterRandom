@@ -19,6 +19,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.net.MalformedURLException;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicLong;
+import java8.util.function.Consumer;
 import javax.annotation.Nullable;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
@@ -34,11 +35,13 @@ public class LooperThreadTest {
   private static final AtomicLong iterationsRun = new AtomicLong();
   private static final AtomicBoolean shouldThrow = new AtomicBoolean(false);
   private static final AtomicBoolean exceptionHandlerRun = new AtomicBoolean(false);
-  private static final Runnable TARGET = (Serializable & Runnable) () -> {
-    if (shouldThrow.get()) {
-      throw new MockException();
+  private static final Runnable TARGET = new Runnable() {
+    @Override public void run() {
+      if (shouldThrow.get()) {
+        throw new MockException();
+      }
+      iterationsRun.addAndGet(1);
     }
-    iterationsRun.addAndGet(1);
   };
 
   static {
@@ -58,8 +61,11 @@ public class LooperThreadTest {
     // also covered
     TestUtils.testAllPublicConstructors(SkeletonLooperThread.class, ImmutableMap
             .of(ThreadGroup.class, new SerializableThreadGroup(), Runnable.class, TARGET, String.class,
-                "Test LooperThread", long.class, STACK_SIZE),
-        thread -> CloneViaSerialization.clone(thread).start());
+                "Test LooperThread", long.class, STACK_SIZE), new Consumer<SkeletonLooperThread>() {
+      @Override public void accept(SkeletonLooperThread thread) {
+        CloneViaSerialization.clone(thread).start();
+      }
+    });
   }
 
   @BeforeTest public void setUp() {
@@ -101,10 +107,16 @@ public class LooperThreadTest {
   @SuppressWarnings("argument.type.incompatible") @Test
   public void testSerializable_nonSerializableState()
       throws InterruptedException, MalformedURLException, IllegalAccessException {
-    final LooperThread thread = new SkeletonLooperThread(() -> {
+    final LooperThread thread = new SkeletonLooperThread(new Runnable() {
+      @Override public void run() {
+      }
     });
     thread.setContextClassLoader(new MockClassLoader());
-    thread.setUncaughtExceptionHandler((thread_, throwable) -> exceptionHandlerRun.set(true));
+    thread.setUncaughtExceptionHandler(new UncaughtExceptionHandler() {
+      @Override public void uncaughtException(Thread thread_, Throwable throwable) {
+        exceptionHandlerRun.set(true);
+      }
+    });
     final LooperThread copy = CloneViaSerialization.clone(thread);
     assertNotSame(copy, thread);
     assertSame(copy.getContextClassLoader(), Thread.currentThread().getContextClassLoader());
@@ -143,8 +155,11 @@ public class LooperThreadTest {
     final AtomicBoolean defaultHandlerCalled = new AtomicBoolean(false);
     final UncaughtExceptionHandler oldHandler = Thread.getDefaultUncaughtExceptionHandler();
     try {
-      Thread.setDefaultUncaughtExceptionHandler(
-          (thread, throwable) -> defaultHandlerCalled.set(true));
+      Thread.setDefaultUncaughtExceptionHandler(new UncaughtExceptionHandler() {
+        @Override public void uncaughtException(Thread thread, Throwable throwable) {
+          defaultHandlerCalled.set(true);
+        }
+      });
       final FailingLooperThread failingThread = new FailingLooperThread();
       failingThread.start();
       failingThread.join();

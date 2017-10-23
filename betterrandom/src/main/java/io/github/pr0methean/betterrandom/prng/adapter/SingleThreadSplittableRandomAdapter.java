@@ -6,7 +6,7 @@ import io.github.pr0methean.betterrandom.seed.SeedException;
 import io.github.pr0methean.betterrandom.seed.SeedGenerator;
 import java.io.IOException;
 import java.io.ObjectInputStream;
-import java.util.SplittableRandom;
+import java8.util.SplittableRandom;
 
 /**
  * Simple, non-thread-safe implementation of {@link io.github.pr0methean.betterrandom.prng.BaseRandom}
@@ -27,7 +27,7 @@ public class SingleThreadSplittableRandomAdapter extends DirectSplittableRandomA
    */
   public SingleThreadSplittableRandomAdapter(final SeedGenerator seedGenerator)
       throws SeedException {
-    this(seedGenerator.generateSeed(Long.BYTES));
+    this(seedGenerator.generateSeed(Java8Constants.LONG_BYTES));
   }
 
   /**
@@ -36,7 +36,7 @@ public class SingleThreadSplittableRandomAdapter extends DirectSplittableRandomA
    * @throws SeedException if the {@link DefaultSeedGenerator} fails to generate a seed.
    */
   public SingleThreadSplittableRandomAdapter() throws SeedException {
-    this(DefaultSeedGenerator.DEFAULT_SEED_GENERATOR.generateSeed(Long.BYTES));
+    this(DefaultSeedGenerator.DEFAULT_SEED_GENERATOR.generateSeed(Java8Constants.LONG_BYTES));
   }
 
   /**
