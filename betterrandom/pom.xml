@@ -6,16 +6,15 @@
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <prefix />
-    <maven.compiler.source>1.8</maven.compiler.source>
-    <maven.compiler.target>1.8</maven.compiler.target>
+    <maven.compiler.source>1.7</maven.compiler.source>
+    <maven.compiler.target>1.7</maven.compiler.target>
     <github.global.server>github</github.global.server>
   </properties>
   <groupId>io.github.pr0methean.betterrandom</groupId>
   <artifactId>BetterRandom</artifactId>
   <version>1.2.2-SNAPSHOT</version>
   <name>BetterRandom</name>
-  <description>BetterRandom is a library designed to help improve the quality and performance of
-    random-number generation on Java.
+  <description>BetterRandom is a library designed to help improve the quality and performance of random-number generation on Java.
   </description>
   <url>https://github.com/Pr0methean/BetterRandom</url>
 
@@ -48,6 +47,12 @@
   </distributionManagement>
 
   <dependencies>
+    <!-- https://mvnrepository.com/artifact/net.sourceforge.streamsupport/streamsupport -->
+    <dependency>
+      <groupId>net.sourceforge.streamsupport</groupId>
+      <artifactId>streamsupport</artifactId>
+      <version>1.1.2</version>
+    </dependency>
     <dependency>
       <!-- https://mvnrepository.com/artifact/org.apache.maven.plugins/maven-deploy-plugin -->
       <groupId>org.apache.maven.plugins</groupId>
