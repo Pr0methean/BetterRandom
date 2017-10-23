@@ -7,6 +7,7 @@ import io.github.pr0methean.betterrandom.seed.RandomSeederThread;
 import io.github.pr0methean.betterrandom.seed.SeedException;
 import io.github.pr0methean.betterrandom.seed.SeedGenerator;
 import io.github.pr0methean.betterrandom.util.BinaryUtils;
+import io.github.pr0methean.betterrandom.util.Java8Constants;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.Serializable;
@@ -37,7 +38,7 @@ public class ThreadLocalRandomWrapper extends RandomWrapper {
   public ThreadLocalRandomWrapper(final Supplier<BaseRandom> initializer) throws SeedException {
     super(0);
     this.initializer = initializer;
-    threadLocal = ThreadLocal.withInitial(initializer);
+    initSubclassTransientFields();
     explicitSeedSize = null;
   }
 
@@ -54,12 +55,20 @@ public class ThreadLocalRandomWrapper extends RandomWrapper {
       final Function<byte[], BaseRandom> creator) throws SeedException {
     super(0);
     explicitSeedSize = seedSize;
-    initializer = (Serializable & Supplier<BaseRandom>) (new Supplier<BaseRandom>() {
+    initializer = new Supplier<BaseRandom>() {
       @Override public BaseRandom get() {
         return creator.apply(seedGenerator.generateSeed(seedSize));
       }
-    });
-    threadLocal = ThreadLocal.withInitial(initializer);
+    };
+    initSubclassTransientFields();
+  }
+
+  private void initSubclassTransientFields() {
+    threadLocal = new ThreadLocal<BaseRandom>() {
+      @Override protected BaseRandom initialValue() {
+        return initializer.get();
+      }
+    };
   }
 
   /**
@@ -102,7 +111,7 @@ public class ThreadLocalRandomWrapper extends RandomWrapper {
 
   private void readObject(final ObjectInputStream in) throws IOException, ClassNotFoundException {
     in.defaultReadObject();
-    threadLocal = ThreadLocal.withInitial(initializer);
+    initSubclassTransientFields();
   }
 
   @Override public void nextBytes(final byte[] bytes) {

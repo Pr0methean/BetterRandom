@@ -5,6 +5,10 @@ import java8.util.stream.DoubleStream;
 import java8.util.stream.IntStream;
 import java8.util.stream.LongStream;
 
+/**
+ * This interface contains all the stream methods of {@link java.util.Random} backported from Java
+ * 8.
+ */
 public interface Java8CompatRandom extends Serializable {
 
   @SuppressWarnings("NumericCastThatLosesPrecision") void nextBytes(byte[] bytes);
@@ -47,5 +51,5 @@ public interface Java8CompatRandom extends Serializable {
 
   LongStream longs(long randomNumberOrigin, long randomNumberBound);
 
-  @SuppressWarnings("method.invocation.invalid") void setSeed(BaseRandom this, long seed);
+  @SuppressWarnings("method.invocation.invalid") void setSeed(long seed);
 }

@@ -15,6 +15,8 @@
 // ============================================================================
 package io.github.pr0methean.betterrandom.seed;
 
+import static java.util.Calendar.YEAR;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -25,10 +27,10 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.nio.charset.Charset;
 import java.text.MessageFormat;
-import java.time.Clock;
-import java.time.Duration;
-import java.time.Instant;
-import java.util.Base64;
+import java.util.Date;
+import javax.xml.bind.DatatypeConverter;
+import java.util.Calendar;
+import java.util.TimeZone;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.atomic.AtomicReference;
@@ -85,15 +87,6 @@ public enum RandomDotOrgSeedGenerator implements SeedGenerator {
   private static final AtomicLong REQUEST_ID = new AtomicLong(0);
   private static final AtomicReference<UUID> API_KEY = new AtomicReference<>(null);
   private static final JSONParser JSON_PARSER = new JSONParser();
-  private static final Base64.Decoder BASE64 = Base64.getDecoder();
-  /**
-   * Measures the retry delay. A ten-second delay might become either nothing or an hour if we used
-   * local time during the start or end of Daylight Saving Time, but it's fine if we occasionally
-   * wait 9 or 11 seconds instead of 10 because of a leap-second adjustment. See <a
-   * href="https://www.youtube.com/watch?v=-5wpm-gesOY">Tom Scott's video</a> about the various
-   * considerations involved in this choice of clock.
-   */
-  private static final Clock CLOCK = Clock.systemUTC();
   private static final int MAX_CACHE_SIZE = 625; // 5000 bits = 1/50 daily limit per API key
   private static final String BASE_URL = "https://www.random.org";
   /**
@@ -110,10 +103,14 @@ public enum RandomDotOrgSeedGenerator implements SeedGenerator {
    * Random.org does not allow requests for more than 10k integers at once.
    */
   private static final int GLOBAL_MAX_REQUEST_SIZE = 10000;
-  private static final Duration RETRY_DELAY = Duration.ofSeconds(10);
+  private static final int RETRY_DELAY_MS = 10_000;
   private static final Lock cacheLock = new ReentrantLock();
   private static final Charset UTF8 = Charset.forName("UTF-8");
-  private static Instant EARLIEST_NEXT_ATTEMPT = Instant.MIN;
+  private static final TimeZone UTC = TimeZone.getTimeZone("UTC");
+  private static Calendar EARLIEST_NEXT_ATTEMPT = Calendar.getInstance(UTC);
+  static {
+    EARLIEST_NEXT_ATTEMPT.add(YEAR, -1);
+  }
   private static byte[] cache = new byte[MAX_CACHE_SIZE];
   private static int cacheOffset = cache.length;
   private static int maxRequestSize = GLOBAL_MAX_REQUEST_SIZE;
@@ -209,7 +206,7 @@ public enum RandomDotOrgSeedGenerator implements SeedGenerator {
         } else {
           String base64seed =
               (data instanceof JSONArray ? ((JSONArray) data).get(0) : data).toString();
-          byte[] decodedSeed = BASE64.decode(base64seed);
+          byte[] decodedSeed = DatatypeConverter.parseBase64Binary(base64seed);
           if (decodedSeed.length < numberOfBytes) {
             throw new SeedException(
                 "Too few bytes returned: requested " + numberOfBytes + ", got " + base64seed);
@@ -218,10 +215,10 @@ public enum RandomDotOrgSeedGenerator implements SeedGenerator {
         }
         Number advisoryDelayMs = (Number) result.get("advisoryDelay");
         if (advisoryDelayMs != null) {
-          Duration advisoryDelay = Duration.ofMillis(advisoryDelayMs.longValue());
           // Wait RETRY_DELAY or the advisory delay, whichever is shorter
-          EARLIEST_NEXT_ATTEMPT = CLOCK.instant()
-              .plus((advisoryDelay.compareTo(RETRY_DELAY) > 0) ? RETRY_DELAY : advisoryDelay);
+          EARLIEST_NEXT_ATTEMPT.setTime(new Date());
+          EARLIEST_NEXT_ATTEMPT.add(Calendar.MILLISECOND, Math.min(advisoryDelayMs.intValue(),
+              RETRY_DELAY_MS));
         }
       }
       cacheOffset = 0;
@@ -281,7 +278,8 @@ public enum RandomDotOrgSeedGenerator implements SeedGenerator {
         }
       }
     } catch (final IOException ex) {
-      EARLIEST_NEXT_ATTEMPT = CLOCK.instant().plus(RETRY_DELAY);
+      EARLIEST_NEXT_ATTEMPT.setTime(new Date());
+      EARLIEST_NEXT_ATTEMPT.add(Calendar.MILLISECOND, RETRY_DELAY_MS);
       throw new SeedException("Failed downloading bytes from " + BASE_URL, ex);
     } catch (final SecurityException ex) {
       // Might be thrown if resource access is restricted (such as in an applet sandbox).
@@ -291,8 +289,15 @@ public enum RandomDotOrgSeedGenerator implements SeedGenerator {
     }
   }
 
+  /**
+     * Returns true if we cannot determine quickly (i.e. without I/O calls) that this SeedGenerator
+     * would throw a {@link SeedException} if {@link #generateSeed(int)} or {@link
+     * #generateSeed(byte[])} were being called right now.
+     * @return true if this SeedGenerator will get as far as an I/O call or other slow operation in
+     *     attempting to generate a seed immediately.
+     */
   @Override public boolean isWorthTrying() {
-    return !useRetryDelay || !EARLIEST_NEXT_ATTEMPT.isAfter(CLOCK.instant());
+    return !useRetryDelay || !EARLIEST_NEXT_ATTEMPT.after(Calendar.getInstance(UTC));
   }
 
   /**
@@ -301,5 +306,20 @@ public enum RandomDotOrgSeedGenerator implements SeedGenerator {
    */
   @Override public String toString() {
     return BASE_URL + (useRetryDelay ? " (with retry delay)" : " (without retry delay)");
+  }
+
+  /**
+   * Generates and returns a seed value for a random number generator as a new array.
+   * @param length The length of the seed to generate (in bytes).
+   * @return A byte array containing the seed data.
+   * @throws SeedException If a seed cannot be generated for any reason.
+   */
+  @Override public byte[] generateSeed(final int length) throws SeedException {
+    if (length <= 0) {
+      return EMPTY_SEED;
+    }
+    final byte[] output = new byte[length];
+    generateSeed(output);
+    return output;
   }
 }

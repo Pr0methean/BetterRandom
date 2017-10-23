@@ -76,6 +76,13 @@ public enum DevRandomSeedGenerator implements SeedGenerator {
     }
   }
 
+  /**
+     * Returns true if we cannot determine quickly (i.e. without I/O calls) that this SeedGenerator
+     * would throw a {@link SeedException} if {@link #generateSeed(int)} or {@link
+     * #generateSeed(byte[])} were being called right now.
+     * @return true if this SeedGenerator will get as far as an I/O call or other slow operation in
+     *     attempting to generate a seed immediately.
+     */
   @Override public boolean isWorthTrying() {
     return !(DEV_RANDOM_DOES_NOT_EXIST.get());
   }
@@ -83,5 +90,20 @@ public enum DevRandomSeedGenerator implements SeedGenerator {
   /** Returns "/dev/random". */
   @Override public String toString() {
     return DEV_RANDOM_STRING;
+  }
+
+  /**
+   * Generates and returns a seed value for a random number generator as a new array.
+   * @param length The length of the seed to generate (in bytes).
+   * @return A byte array containing the seed data.
+   * @throws SeedException If a seed cannot be generated for any reason.
+   */
+  @Override public byte[] generateSeed(final int length) throws SeedException {
+    if (length <= 0) {
+      return EMPTY_SEED;
+    }
+    final byte[] output = new byte[length];
+    generateSeed(output);
+    return output;
   }
 }

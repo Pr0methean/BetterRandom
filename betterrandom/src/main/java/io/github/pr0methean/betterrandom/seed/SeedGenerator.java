@@ -24,7 +24,6 @@ import java.io.Serializable;
  * @author Daniel Dyer
  * @author Chris Hennick
  */
-@FunctionalInterface
 public interface SeedGenerator extends Serializable {
 
   byte[] EMPTY_SEED = {};
@@ -42,14 +41,7 @@ public interface SeedGenerator extends Serializable {
    * @return A byte array containing the seed data.
    * @throws SeedException If a seed cannot be generated for any reason.
    */
-  default byte[] generateSeed(final int length) throws SeedException {
-    if (length <= 0) {
-      return EMPTY_SEED;
-    }
-    final byte[] output = new byte[length];
-    generateSeed(output);
-    return output;
-  }
+  byte[] generateSeed(int length) throws SeedException;
 
   /**
    * Returns true if we cannot determine quickly (i.e. without I/O calls) that this SeedGenerator
@@ -58,7 +50,5 @@ public interface SeedGenerator extends Serializable {
    * @return true if this SeedGenerator will get as far as an I/O call or other slow operation in
    *     attempting to generate a seed immediately.
    */
-  default boolean isWorthTrying() {
-    return true;
-  }
+  boolean isWorthTrying();
 }

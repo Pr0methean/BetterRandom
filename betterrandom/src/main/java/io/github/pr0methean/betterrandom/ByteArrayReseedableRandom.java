@@ -27,7 +27,5 @@ public interface ByteArrayReseedableRandom /* extends BaseRandom */ {
    * @return true if {@link java.util.Random#setSeed(long)} will tend to perform better than {@link
    *     #setSeed(byte[])}.
    */
-  default boolean preferSeedWithLong() {
-    return false;
-  }
+  boolean preferSeedWithLong();
 }
