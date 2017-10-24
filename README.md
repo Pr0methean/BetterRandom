@@ -25,8 +25,11 @@ generation on Java. It includes:
 * Get the latest version from
 [Maven Central]([https://search.maven.org/#search%7Cga%7C1%7Ca%3A%22BetterRandom%22]).
 * Get dependency codes for Maven, Gradle, SBT, Ivy, Grape, Leiningen and Buildr from
-  [mvnrepository.com](https://mvnrepository.com/artifact/io.github.pr0methean.betterrandom/BetterRandom)
+  [mvnrepository.com](https://mvnrepository.com/artifact/io.github.pr0methean.betterrandom)
   (more full-featured than Maven Central, but not always up-to-date).
+
+At both links, choose **BetterRandom** if using Java 8+ and Android API 24+ at both compile-time and
+runtime. Otherwise, choose **BetterRandom-Java7**.
 
 # Full javadocs
 
@@ -115,8 +118,12 @@ public class SplittableRandomAdapterDemo {
 ```
 # Supported environments
 
-BetterRandom requires many Java 8 features, but should work on any JVM that has them. Compilation
-with Maven on a Java 9 compiler requires using `pom9.xml` because of a Proguard bug.
+BetterRandom has 2 versions, one for Java 7 -- including Android API levels below 24 -- and one for 
+Java 8 and newer.
+
+## Java 8 (master branch)
+
+Compilation with Maven on a Java 9 compiler requires using `pom9.xml` because of a Proguard bug.
 
 Continuous integration takes place in the following environments:
 
@@ -125,9 +132,26 @@ Continuous integration takes place in the following environments:
 * Cygwin (on Appveyor): JDK 8 (unclear whether Oracle or OpenJDK)
 * MinGW (on Appveyor): JDK 8 (unclear whether Oracle or OpenJDK)
 
-CI on BSD or Android isn't likely any time soon, since
-no free providers of BSD CI seem to be integrated with GitHub, and there seems to be no
-actively-maintained Android-app wrapper for TestNG suites.
+CI on BSD or Android isn't likely any time soon, since no free providers of BSD CI seem to be
+integrated with GitHub, and there seems to be no actively-maintained Android-app wrapper for TestNG
+suites. However, Android API levels 24 and up (required as both source and target) should work.
+
+## Java 7 (java7 branch)
+
+This branch is mainly intended to support Android API levels 19 through 23; support for other
+environments is best-efforts. Active development on this branch is likely to end once 80% of Android
+devices have API level 24 or newer, as
+[measured by Google](https://developer.android.com/about/dashboards/index.html#Platform), *and* Java
+18.09 LTS has been released (which will mean Java 7 will be *two* major long-term-support versions
+out of date).
+
+Continuous integration takes place in the following environments:
+
+* Linux (on Travis): OpenJDK 7
+* Cygwin (on Appveyor): JDK 7 (unclear whether Oracle or OpenJDK)
+* MinGW (on Appveyor): JDK 7 (unclear whether Oracle or OpenJDK)
+
+Testing on Oracle JDK 7 is a work in progress.
 
 # Alternative random number generators
 
