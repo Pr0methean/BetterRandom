@@ -66,17 +66,17 @@ public class Pcg64Random extends BaseRandom
     // with Arbitrary Stride,", Transactions of the American Nuclear
     // Society (Nov. 1994).  The algorithm is very similar to fast
     // exponentiation.
-    long cur_mult = MULTIPLIER;
-    long cur_plus = INCREMENT;
-    long acc_mult = 1;
-    long acc_plus = 0;
+    long curMult = MULTIPLIER;
+    long curPlus = INCREMENT;
+    long accMult = 1;
+    long accPlus = 0;
     while (delta != 0) {
       if ((delta & 1) == 1) {
         accMult *= curMult;
         accPlus = (accPlus * curMult) + curPlus;
       }
-      cur_plus = (cur_mult + 1) * cur_plus;
-      cur_mult *= cur_mult;
+      curPlus = (curMult + 1) * curPlus;
+      curMult *= curMult;
       delta >>>= 1;
     }
     final long finalAccMult = accMult;
