@@ -115,6 +115,9 @@ public class Pcg64Random extends BaseRandom
     int result = (int) (newInternal >> ROTATION2);
     final int ampRot = rot & MASK;
     result >>= (ampRot + (result << (Integer.SIZE - ampRot)));
+    if (bits < 32) {
+      result &= (1 << bits) - 1;
+    }
     return result;
   }
 
