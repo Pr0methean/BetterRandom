@@ -5,7 +5,6 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="5cfcc489-45e1-48cf-a1ae-7b2e5d28efac" name="Default" comment="">
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/betterrandom/src/main/java/io/github/pr0methean/betterrandom/prng/BaseRandom.java" afterPath="$PROJECT_DIR$/betterrandom/src/main/java/io/github/pr0methean/betterrandom/prng/BaseRandom.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/betterrandom/src/main/java/io/github/pr0methean/betterrandom/prng/Pcg64Random.java" afterPath="$PROJECT_DIR$/betterrandom/src/main/java/io/github/pr0methean/betterrandom/prng/Pcg64Random.java" />
     </list>
     <ignored path="$PROJECT_DIR$/out/" />
@@ -43,13 +42,13 @@
       <file leaf-file-name="Pcg64Random.java" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/betterrandom/src/main/java/io/github/pr0methean/betterrandom/prng/Pcg64Random.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-1513">
-              <caret line="37" column="9" lean-forward="false" selection-start-line="37" selection-start-column="9" selection-end-line="37" selection-end-column="9" />
+            <state relative-caret-position="107">
+              <caret line="89" column="0" lean-forward="false" selection-start-line="89" selection-start-column="0" selection-end-line="89" selection-end-column="0" />
               <folding>
                 <element signature="imports" expanded="true" />
                 <element signature="e#3414#3483#0" expanded="true" />
-                <marker date="1509059513051" expanded="false" signature="4735:4742" ph=" { " />
-                <marker date="1509059513051" expanded="false" signature="4760:4764" ph=" }" />
+                <marker date="1509059827629" expanded="false" signature="4746:4753" ph=" { " />
+                <marker date="1509059827629" expanded="false" signature="4771:4775" ph=" }" />
               </folding>
             </state>
           </provider>
@@ -93,9 +92,11 @@
       <file leaf-file-name="BaseRandom.java" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/betterrandom/src/main/java/io/github/pr0methean/betterrandom/prng/BaseRandom.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="201">
-              <caret line="579" column="57" lean-forward="false" selection-start-line="579" selection-start-column="57" selection-end-line="579" selection-end-column="57" />
-              <folding />
+            <state relative-caret-position="161">
+              <caret line="567" column="84" lean-forward="false" selection-start-line="567" selection-start-column="84" selection-end-line="567" selection-end-column="84" />
+              <folding>
+                <element signature="e#22876#22922#0" expanded="true" />
+              </folding>
             </state>
           </provider>
         </entry>
@@ -1603,14 +1604,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/betterrandom/src/main/java/io/github/pr0methean/betterrandom/prng/BaseRandom.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="201">
-          <caret line="579" column="57" lean-forward="false" selection-start-line="579" selection-start-column="57" selection-end-line="579" selection-end-column="57" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/betterrandom/src/main/java/io/github/pr0methean/betterrandom/prng/AesCounterRandom.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="2411">
@@ -1619,15 +1612,25 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/betterrandom/src/main/java/io/github/pr0methean/betterrandom/prng/BaseRandom.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="161">
+          <caret line="567" column="84" lean-forward="false" selection-start-line="567" selection-start-column="84" selection-end-line="567" selection-end-column="84" />
+          <folding>
+            <element signature="e#22876#22922#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/betterrandom/src/main/java/io/github/pr0methean/betterrandom/prng/Pcg64Random.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-1513">
-          <caret line="37" column="9" lean-forward="false" selection-start-line="37" selection-start-column="9" selection-end-line="37" selection-end-column="9" />
+        <state relative-caret-position="107">
+          <caret line="89" column="0" lean-forward="false" selection-start-line="89" selection-start-column="0" selection-end-line="89" selection-end-column="0" />
           <folding>
             <element signature="imports" expanded="true" />
             <element signature="e#3414#3483#0" expanded="true" />
-            <marker date="1509059513051" expanded="false" signature="4735:4742" ph=" { " />
-            <marker date="1509059513051" expanded="false" signature="4760:4764" ph=" }" />
+            <marker date="1509059827629" expanded="false" signature="4746:4753" ph=" { " />
+            <marker date="1509059827629" expanded="false" signature="4771:4775" ph=" }" />
           </folding>
         </state>
       </provider>
