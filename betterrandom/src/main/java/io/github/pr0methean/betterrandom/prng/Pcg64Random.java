@@ -66,21 +66,18 @@ public class Pcg64Random extends BaseRandom
     // with Arbitrary Stride,", Transactions of the American Nuclear
     // Society (Nov. 1994).  The algorithm is very similar to fast
     // exponentiation.
-    //
-    // Even though delta is an unsigned integer, we can pass a
-    // signed integer to go backwards, it just goes "the long way round".
     long cur_mult = MULTIPLIER;
     long cur_plus = INCREMENT;
     long acc_mult = 1;
     long acc_plus = 0;
-    while (delta > 0) {
+    while (delta != 0) {
       if ((delta & 1) == 1) {
         acc_mult *= cur_mult;
         acc_plus = (acc_plus * cur_mult) + cur_plus;
       }
       cur_plus = (cur_mult + 1) * cur_plus;
       cur_mult *= cur_mult;
-      delta >>= 1;
+      delta >>>= 1;
     }
     long finalAcc_mult = acc_mult;
     long finalAcc_plus = acc_plus;
