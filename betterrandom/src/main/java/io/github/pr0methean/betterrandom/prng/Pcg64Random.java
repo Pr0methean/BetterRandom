@@ -23,7 +23,8 @@ import java.util.concurrent.atomic.AtomicLong;
  * @author M.E. O'Neill (algorithm and C++ implementation)
  * @author Chris Hennick (Java port)
  */
-public class Pcg64Random extends BaseRandom {
+public class Pcg64Random extends BaseRandom
+    implements io.github.pr0methean.betterrandom.SeekableRandom {
 
   private static final long serialVersionUID = 1677405697790847137L;
   private static final long MULTIPLIER = 6364136223846793005L;
@@ -60,11 +61,7 @@ public class Pcg64Random extends BaseRandom {
     internal = new AtomicLong(seed);
   }
 
-  /**
-   * Advances the generator forward {@code delta} steps, but does so in logarithmic time.
-   * @param delta the number of steps to advance; can be negative
-   */
-  public void advance(long delta) {
+  @Override public void advance(long delta) {
     // The method used here is based on Brown, "Random Number Generation
     // with Arbitrary Stride,", Transactions of the American Nuclear
     // Society (Nov. 1994).  The algorithm is very similar to fast
