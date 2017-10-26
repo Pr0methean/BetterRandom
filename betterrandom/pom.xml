@@ -163,6 +163,12 @@
             <trimStackTrace>false</trimStackTrace>
             <parallel>methods</parallel>
             <forkedProcessTimeoutInSeconds>600</forkedProcessTimeoutInSeconds>
+                      <properties>
+            <property>
+              <name>surefire.testng.verbose</name>
+              <value>10</value>
+            </property>
+          </properties>
           </configuration>
         </plugin>
         <plugin>
