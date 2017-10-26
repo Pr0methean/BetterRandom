@@ -31,6 +31,7 @@
       <class name="io.github.pr0methean.betterrandom.prng.RandomWrapperAesCounterRandomTest"/>
       <class name="io.github.pr0methean.betterrandom.prng.RandomWrapperMersenneTwisterRandomTest"/>
       <class name="io.github.pr0methean.betterrandom.prng.ThreadLocalRandomWrapperTest"/>
+      <class name="io.github.pr0methean.betterrandom.prng.Pcg64RandomTest"/>
     </classes>
   </test>
 </suite>
