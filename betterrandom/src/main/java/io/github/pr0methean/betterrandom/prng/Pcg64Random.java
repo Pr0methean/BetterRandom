@@ -114,7 +114,7 @@ public class Pcg64Random extends BaseRandom
     int rot = (int) (oldInternal >> (Long.SIZE - WANTED_OP_BITS)) & MASK;
     int result = (int) (newInternal >> ROTATION2);
     final int ampRot = rot & MASK;
-    result >>= (ampRot + (result << (Integer.SIZE - ampRot)));
+    result = (result >> ampRot) + (result << (Integer.SIZE - ampRot));
     if (bits < 32) {
       result &= (1 << bits) - 1;
     }
