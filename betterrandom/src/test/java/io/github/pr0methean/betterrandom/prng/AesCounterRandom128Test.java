@@ -17,6 +17,7 @@ package io.github.pr0methean.betterrandom.prng;
 
 import static org.testng.Assert.assertTrue;
 
+import io.github.pr0methean.betterrandom.SeekableRandom;
 import io.github.pr0methean.betterrandom.seed.SeedException;
 import java.util.Random;
 import org.testng.annotations.Test;
@@ -26,6 +27,8 @@ import org.testng.annotations.Test;
  * @author Daniel Dyer
  */
 public class AesCounterRandom128Test extends BaseRandomTest {
+
+  private static final int ITERATIONS = 8;
 
   @SuppressWarnings("ObjectAllocationInLoop") @Override @Test(timeOut = 30000)
   public void testSetSeed() throws SeedException {
@@ -50,6 +53,28 @@ public class AesCounterRandom128Test extends BaseRandomTest {
       }
     }
     assert rngs[0].nextLong() != rngs[1].nextLong() : "RNGs converged after 4 setSeed calls";
+  }
+
+  @Test
+  public void testAdvanceForward() {
+    SeekableRandom copy1 = (SeekableRandom) createRng();
+    SeekableRandom copy2 = (SeekableRandom) createRng(copy1.getSeed());
+    for (int i=0; i < ITERATIONS; i++) {
+      ((Random) copy1).nextInt();
+    }
+    copy2.advance(ITERATIONS);
+    RandomTestUtils.testEquivalence(copy1, copy2, 20);
+  }
+
+  @Test
+  public void testAdvanceBackward() {
+    Pcg64Random copy1 = createRng();
+    Pcg64Random copy2 = createRng(copy1.getSeed());
+    for (int i=0; i < ITERATIONS; i++) {
+      copy1.nextInt();
+    }
+    copy1.advance(-ITERATIONS);
+    RandomTestUtils.testEquivalence(copy1, copy2, 20);
   }
 
   @Override @Test(timeOut = 30000) public void testReseeding() throws Exception {
