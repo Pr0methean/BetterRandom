@@ -44,7 +44,7 @@ public class Pcg64Random extends BaseRandom {
   }
 
   @EntryPoint public Pcg64Random(SeedGenerator seedGenerator) throws SeedException {
-    super(seedGenerator, Long.BYTES);
+    this(seedGenerator.generateSeed(Long.BYTES));
   }
 
   @EntryPoint public Pcg64Random(byte[] seed) {
