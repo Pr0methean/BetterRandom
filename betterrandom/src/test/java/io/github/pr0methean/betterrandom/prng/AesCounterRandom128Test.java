@@ -58,23 +58,27 @@ public class AesCounterRandom128Test extends BaseRandomTest {
   @Test
   public void testAdvanceForward() {
     SeekableRandom copy1 = (SeekableRandom) createRng();
+    Random copy1AsRandom = (Random) copy1;
     SeekableRandom copy2 = (SeekableRandom) createRng(copy1.getSeed());
+    Random copy2AsRandom = (Random) copy2;
     for (int i=0; i < ITERATIONS; i++) {
-      ((Random) copy1).nextInt();
+      copy1AsRandom.nextInt();
     }
     copy2.advance(ITERATIONS);
-    RandomTestUtils.testEquivalence(copy1, copy2, 20);
+    RandomTestUtils.testEquivalence(copy1AsRandom, copy2AsRandom, 20);
   }
 
   @Test
   public void testAdvanceBackward() {
-    Pcg64Random copy1 = createRng();
-    Pcg64Random copy2 = createRng(copy1.getSeed());
+    SeekableRandom copy1 = (SeekableRandom) createRng();
+    Random copy1AsRandom = (Random) copy1;
+    SeekableRandom copy2 = (SeekableRandom) createRng(copy1.getSeed());
+    Random copy2AsRandom = (Random) copy2;
     for (int i=0; i < ITERATIONS; i++) {
-      copy1.nextInt();
+      copy1AsRandom.nextInt();
     }
     copy1.advance(-ITERATIONS);
-    RandomTestUtils.testEquivalence(copy1, copy2, 20);
+    RandomTestUtils.testEquivalence(copy1AsRandom, copy2AsRandom, 20);
   }
 
   @Override @Test(timeOut = 30000) public void testReseeding() throws Exception {
