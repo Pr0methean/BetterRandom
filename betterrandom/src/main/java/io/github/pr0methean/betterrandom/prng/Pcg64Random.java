@@ -1,6 +1,7 @@
 package io.github.pr0methean.betterrandom.prng;
 
 import com.google.common.base.MoreObjects.ToStringHelper;
+import io.github.pr0methean.betterrandom.SeekableRandom;
 import io.github.pr0methean.betterrandom.seed.DefaultSeedGenerator;
 import io.github.pr0methean.betterrandom.seed.SeedException;
 import io.github.pr0methean.betterrandom.seed.SeedGenerator;
@@ -25,7 +26,7 @@ import java.util.concurrent.atomic.AtomicLong;
  * @author Chris Hennick (Java port)
  */
 public class Pcg64Random extends BaseRandom
-    implements io.github.pr0methean.betterrandom.SeekableRandom {
+    implements SeekableRandom {
 
   private static final long serialVersionUID = 1677405697790847137L;
   private static final long MULTIPLIER = 6364136223846793005L;
