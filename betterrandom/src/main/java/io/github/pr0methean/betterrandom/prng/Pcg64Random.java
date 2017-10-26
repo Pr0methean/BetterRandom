@@ -87,7 +87,6 @@ public class Pcg64Random extends BaseRandom
 
   @SuppressWarnings("NonSynchronizedMethodOverridesSynchronizedMethod") @Override
   public void setSeed(long seed) {
-    super.setSeed(seed);
     if (internal != null) {
       internal.set(seed);
     }
@@ -98,7 +97,9 @@ public class Pcg64Random extends BaseRandom
     if (seed.length != Long.BYTES) {
       throw new IllegalArgumentException("Pcg64Random requires an 8-byte seed");
     }
-    internal.set(BinaryUtils.convertBytesToLong(seed));
+    if (internal != null) {
+      internal.set(BinaryUtils.convertBytesToLong(seed));
+    }
   }
 
   @Override protected int next(int bits) {
