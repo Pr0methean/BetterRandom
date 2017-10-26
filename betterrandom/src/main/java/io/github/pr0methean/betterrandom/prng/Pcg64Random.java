@@ -107,7 +107,7 @@ public class Pcg64Random extends BaseRandom
     long oldInternal;
     long newInternal;
     do {
-      oldInternal = internal.get();
+      oldInternal = internal.updateAndGet(old -> (MULTIPLIER * old) + INCREMENT);
       newInternal = oldInternal;
       newInternal ^= oldInternal >> ROTATION1;
     } while (!internal.compareAndSet(oldInternal, newInternal));
