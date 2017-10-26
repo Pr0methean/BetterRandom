@@ -92,8 +92,8 @@ public class Pcg64Random extends BaseRandom
     }
   }
 
-  @Override public void setSeed(byte[] seed) {
-    super.setSeed(seed);
+  @Override public void setSeedInternal(byte[] seed) {
+    super.setSeedInternal(seed);
     if (seed.length != Long.BYTES) {
       throw new IllegalArgumentException("Pcg64Random requires an 8-byte seed");
     }
