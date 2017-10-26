@@ -66,22 +66,23 @@ public class Pcg64Random extends BaseRandom
     // with Arbitrary Stride,", Transactions of the American Nuclear
     // Society (Nov. 1994).  The algorithm is very similar to fast
     // exponentiation.
+<<<<<<< HEAD
     long cur_mult = MULTIPLIER;
     long cur_plus = INCREMENT;
     long acc_mult = 1;
     long acc_plus = 0;
     while (delta != 0) {
       if ((delta & 1) == 1) {
-        acc_mult *= cur_mult;
-        acc_plus = (acc_plus * cur_mult) + cur_plus;
+        accMult *= curMult;
+        accPlus = (accPlus * curMult) + curPlus;
       }
       cur_plus = (cur_mult + 1) * cur_plus;
       cur_mult *= cur_mult;
       delta >>>= 1;
     }
-    long finalAcc_mult = acc_mult;
-    long finalAcc_plus = acc_plus;
-    internal.updateAndGet(old -> (finalAcc_mult * old) + finalAcc_plus);
+    final long finalAccMult = accMult;
+    final long finalAccPlus = accPlus;
+    internal.updateAndGet(old -> (finalAccMult * old) + finalAccPlus);
   }
 
   @SuppressWarnings("NonSynchronizedMethodOverridesSynchronizedMethod")
@@ -101,17 +102,18 @@ public class Pcg64Random extends BaseRandom
   }
 
   @Override protected int next(int bits) {
+    internal.updateAndGet(old -> (MULTIPLIER * old) + INCREMENT);
     long oldInternal;
     long newInternal;
     do {
-      oldInternal = internal.updateAndGet(old -> (MULTIPLIER * old) + INCREMENT);
+      oldInternal = internal.get();
       newInternal = oldInternal;
-      newInternal ^= oldInternal >> ROTATION1;
+      newInternal ^= oldInternal >>> ROTATION1;
     } while (!internal.compareAndSet(oldInternal, newInternal));
-    int rot = (int) (oldInternal >> (Long.SIZE - WANTED_OP_BITS)) & MASK;
-    int result = (int) (newInternal >> ROTATION2);
+    int rot = (int) (oldInternal >>> (Long.SIZE - WANTED_OP_BITS)) & MASK;
+    int result = (int) (newInternal >>> ROTATION2);
     final int ampRot = rot & MASK;
-    result = (result >> ampRot) + (result << (Integer.SIZE - ampRot));
+    result = (result >>> ampRot) + (result << (Integer.SIZE - ampRot));
     if (bits < 32) {
       result &= (1 << bits) - 1;
     }
