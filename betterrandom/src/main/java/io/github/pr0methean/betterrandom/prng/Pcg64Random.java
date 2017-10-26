@@ -6,6 +6,8 @@ import io.github.pr0methean.betterrandom.seed.SeedException;
 import io.github.pr0methean.betterrandom.seed.SeedGenerator;
 import io.github.pr0methean.betterrandom.util.BinaryUtils;
 import io.github.pr0methean.betterrandom.util.EntryPoint;
+import java.io.IOException;
+import java.io.ObjectOutputStream;
 import java.util.concurrent.atomic.AtomicLong;
 
 /**
@@ -19,7 +21,6 @@ import java.util.concurrent.atomic.AtomicLong;
  * AtomicLong#compareAndSet(long, long)}. Thus, sharing a single instance across threads isn't
  * recommended unless memory is too constrained to use with a {@link ThreadLocalRandomWrapper}.
  * </p>
- *
  * @author M.E. O'Neill (algorithm and C++ implementation)
  * @author Chris Hennick (Java port)
  */
@@ -84,8 +85,8 @@ public class Pcg64Random extends BaseRandom
     internal.updateAndGet(old -> (finalAccMult * old) + finalAccPlus);
   }
 
-  @SuppressWarnings("NonSynchronizedMethodOverridesSynchronizedMethod")
-  @Override public void setSeed(long seed) {
+  @SuppressWarnings("NonSynchronizedMethodOverridesSynchronizedMethod") @Override
+  public void setSeed(long seed) {
     super.setSeed(seed);
     if (internal != null) {
       internal.set(seed);
@@ -125,5 +126,11 @@ public class Pcg64Random extends BaseRandom
 
   @Override public int getNewSeedLength() {
     return Long.BYTES;
+  }
+
+  private void writeObject(ObjectOutputStream out) throws IOException {
+    // Copy the long seed back to the array seed
+    System.arraycopy(BinaryUtils.convertLongToBytes(internal.get()), 0, seed, 0, Long.BYTES);
+    out.defaultWriteObject();
   }
 }
