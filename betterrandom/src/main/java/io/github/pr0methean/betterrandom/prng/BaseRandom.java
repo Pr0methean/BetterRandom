@@ -575,6 +575,10 @@ public abstract class BaseRandom extends Random
     }
   }
 
+  /**
+   * {@inheritDoc}<p>Most subclasses should override {@link #setSeedInternal(byte[])} instead of
+   * this method, so that they will deserialize properly.</p>
+   */
   @Override public void setSeed(final byte[] seed) {
     lock.lock();
     try {
