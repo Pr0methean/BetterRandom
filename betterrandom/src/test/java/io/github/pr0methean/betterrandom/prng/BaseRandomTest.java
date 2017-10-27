@@ -193,6 +193,7 @@ public abstract class BaseRandomTest {
       Thread.sleep(1000 + (oldSeed.length / 2));
       final byte[] newSeed = rng.getSeed();
       assertFalse(Arrays.equals(oldSeed, newSeed));
+      assertTrue(rng.getEntropyBits() >= newSeed.length * 8L);
     } finally {
       rng.setSeederThread(null);
     }
