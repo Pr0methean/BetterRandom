@@ -4,7 +4,6 @@ import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertFalse;
 
 import io.github.pr0methean.betterrandom.seed.DefaultSeedGenerator;
-import io.github.pr0methean.betterrandom.seed.RandomSeederThread;
 import io.github.pr0methean.betterrandom.seed.SeedException;
 import io.github.pr0methean.betterrandom.util.CloneViaSerialization;
 import java.io.IOException;
@@ -47,11 +46,6 @@ public class ThreadLocalRandomWrapperTest extends BaseRandomTest {
     // No-op: ThreadLocalRandomWrapper isn't repeatable.
   }
 
-  /** Seeding of this PRNG is thread-local, so setSeederThread makes no sense. */
-  @Override @Test(expectedExceptions = UnsupportedOperationException.class) public void testRandomSeederThreadIntegration() throws Exception {
-    createRng().setSeederThread(RandomSeederThread.getInstance(DefaultSeedGenerator.DEFAULT_SEED_GENERATOR));
-  }
-
   @Override @Test(enabled = false) public void testAllPublicConstructors()
       throws SeedException, IllegalAccessException, InstantiationException,
       InvocationTargetException {
@@ -75,5 +69,22 @@ public class ThreadLocalRandomWrapperTest extends BaseRandomTest {
 
   @Override protected BaseRandom createRng(final byte[] seed) throws SeedException {
     return createRng();
+  }
+
+  /**
+   * Since reseeding is thread-local, we can't use a {@link io.github.pr0methean.betterrandom.seed.RandomSeederThread}
+   * for this test.
+   */
+  @Override public void testReseeding() throws SeedException {
+    final byte[] output1 = new byte[20];
+    final ThreadLocalRandomWrapper rng1 = (ThreadLocalRandomWrapper) createRng();
+    final ThreadLocalRandomWrapper rng2 = (ThreadLocalRandomWrapper) createRng();
+    rng1.nextBytes(output1);
+    final byte[] output2 = new byte[20];
+    rng2.nextBytes(output2);
+    rng1.setSeed(DefaultSeedGenerator.DEFAULT_SEED_GENERATOR.generateSeed(16));
+    rng1.nextBytes(output1);
+    rng2.nextBytes(output2);
+    assertFalse(Arrays.equals(output1, output2));
   }
 }

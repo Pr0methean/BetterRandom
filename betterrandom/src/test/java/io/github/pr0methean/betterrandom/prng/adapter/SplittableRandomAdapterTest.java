@@ -6,11 +6,9 @@ import io.github.pr0methean.betterrandom.prng.BaseRandom;
 import io.github.pr0methean.betterrandom.prng.RandomTestUtils;
 import io.github.pr0methean.betterrandom.seed.DefaultSeedGenerator;
 import io.github.pr0methean.betterrandom.seed.FakeSeedGenerator;
-import io.github.pr0methean.betterrandom.seed.RandomSeederThread;
 import io.github.pr0methean.betterrandom.seed.SeedException;
 import io.github.pr0methean.betterrandom.seed.SeedGenerator;
 import java.util.Arrays;
-import org.testng.annotations.Test;
 
 public class SplittableRandomAdapterTest extends SingleThreadSplittableRandomAdapterTest {
 
@@ -36,9 +34,21 @@ public class SplittableRandomAdapterTest extends SingleThreadSplittableRandomAda
     return new SplittableRandomAdapter(DefaultSeedGenerator.DEFAULT_SEED_GENERATOR);
   }
 
-  /** Seeding of this PRNG is thread-local, so setSeederThread makes no sense. */
-  @Override @Test(expectedExceptions = UnsupportedOperationException.class) public void testRandomSeederThreadIntegration() throws Exception {
-    createRng().setSeederThread(RandomSeederThread.getInstance(DefaultSeedGenerator.DEFAULT_SEED_GENERATOR));
+  /**
+   * Since reseeding is thread-local, we can't use a {@link io.github.pr0methean.betterrandom.seed.RandomSeederThread}
+   * for this test.
+   */
+  @Override public void testReseeding() throws SeedException {
+    final byte[] output1 = new byte[20];
+    final SplittableRandomAdapter rng1 = new SplittableRandomAdapter(FAKE_SEED_GENERATOR);
+    final SplittableRandomAdapter rng2 = new SplittableRandomAdapter(FAKE_SEED_GENERATOR);
+    rng1.nextBytes(output1);
+    final byte[] output2 = new byte[20];
+    rng2.nextBytes(output2);
+    rng1.setSeed(DefaultSeedGenerator.DEFAULT_SEED_GENERATOR.generateSeed(8));
+    rng1.nextBytes(output1);
+    rng2.nextBytes(output2);
+    assertFalse(Arrays.equals(output1, output2));
   }
 
   // TODO: Override or add tests for thread-safety.
