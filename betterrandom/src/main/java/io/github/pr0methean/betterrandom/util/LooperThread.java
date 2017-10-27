@@ -5,6 +5,8 @@ import java.io.InvalidObjectException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 import javax.annotation.Nullable;
@@ -46,6 +48,7 @@ public class LooperThread extends Thread implements Serializable, Cloneable {
    * #iterate()} called by {@link #run()}.
    */
   protected transient Lock lock = new ReentrantLock();
+  private transient Condition endOfIteration = lock.newCondition();
   /**
    * The {@link ThreadGroup} this thread belongs to, if any. Held for serialization purposes.
    */
@@ -157,7 +160,7 @@ public class LooperThread extends Thread implements Serializable, Cloneable {
   /**
    * Constructs a LooperThread with the given name and target, belonging to the given {@link
    * ThreadGroup} and having the given preferred stack size. {@code target} should only be null if
-   * called from a subclass that overrides {@link #iterate()}. See {@link Thread#Thread(ThreadGroup, Runnable, String, long)} for caveats about specifying the stack size.
+   * called from a subclass that overrides {@link #iterate()}. See {@link Thread#Thread(ThreadGroup, * Runnable, String, long)} for caveats about specifying the stack size.
    * @param group The ThreadGroup this thread will belong to.
    * @param target If not null, the target this thread will run in {@link #iterate()}.
    * @param name the thread name
@@ -192,6 +195,7 @@ public class LooperThread extends Thread implements Serializable, Cloneable {
   private void readObject(final ObjectInputStream in) throws IOException, ClassNotFoundException {
     in.defaultReadObject();
     lock = new ReentrantLock();
+    endOfIteration = lock.newCondition();
   }
 
   /**
@@ -297,6 +301,13 @@ public class LooperThread extends Thread implements Serializable, Cloneable {
           }
         } finally {
           lock.unlock();
+          // Switch to uninterruptible locking to signal endOfIteration
+          lock.lock();
+          try {
+            endOfIteration.signalAll();
+          } finally {
+            lock.unlock();
+          }
         }
       } catch (final InterruptedException ignored) {
         interrupt();
@@ -338,6 +349,32 @@ public class LooperThread extends Thread implements Serializable, Cloneable {
   /** Clones this LooperThread using {@link CloneViaSerialization#clone(Serializable)}. */
   @SuppressWarnings("MethodDoesntCallSuperMethod") @Override public LooperThread clone() {
     return CloneViaSerialization.clone(this);
+  }
+
+  /** Wait for the next iteration to finish. */
+  public void awaitIteration() throws InterruptedException {
+    lock.lock();
+    try {
+      endOfIteration.await();
+    } finally {
+      lock.unlock();
+    }
+  }
+
+  /**
+   * Wait for the next iteration to finish, with a timeout.
+   * @param time the maximum time to wait
+   * @param unit the time unit of the {@code time} argument
+   * @return {@code false} if the waiting time detectably elapsed before an iteration finished, else
+   *     {@code true}
+   */
+  public boolean awaitIteration(final long time, final TimeUnit unit) throws InterruptedException {
+    lock.lock();
+    try {
+      return endOfIteration.await(time, unit);
+    } finally {
+      lock.unlock();
+    }
   }
 
   private static class DummyTarget implements Runnable {
