@@ -27,7 +27,7 @@ public class ReseedingSplittableRandomAdapterTest extends SingleThreadSplittable
     super.testStandardDeviation();
   }
 
-  @Override public void testSerializable() throws SeedException {
+  @Override @Test public void testSerializable() throws SeedException {
     final BaseSplittableRandomAdapter adapter = createRng();
     assertEquals(adapter, CloneViaSerialization.clone(adapter));
   }
@@ -45,7 +45,7 @@ public class ReseedingSplittableRandomAdapterTest extends SingleThreadSplittable
   }
 
   /** Test for crashes only, since setSeed is a no-op. */
-  @Override public void testSetSeed() throws SeedException {
+  @Override @Test public void testSetSeed() throws SeedException {
     final BaseRandom prng = createRng();
     prng.nextLong();
     prng.setSeed(DEFAULT_SEED_GENERATOR.generateSeed(8));
@@ -61,7 +61,7 @@ public class ReseedingSplittableRandomAdapterTest extends SingleThreadSplittable
     // No-op.
   }
 
-  @Override public void testDump() throws SeedException {
+  @Override @Test public void testDump() throws SeedException {
     assertNotEquals(ReseedingSplittableRandomAdapter.getInstance(DEFAULT_SEED_GENERATOR).dump(),
         ReseedingSplittableRandomAdapter.getInstance(new FakeSeedGenerator()).dump());
   }
