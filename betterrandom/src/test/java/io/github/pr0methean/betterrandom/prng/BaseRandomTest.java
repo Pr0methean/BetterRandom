@@ -458,7 +458,7 @@ public abstract class BaseRandomTest {
     }
 
     @Override public boolean retryMethod(final ITestResult iTestResult) {
-      return true;
+      return !(iTestResult.isSuccess());
     }
   }
 }
