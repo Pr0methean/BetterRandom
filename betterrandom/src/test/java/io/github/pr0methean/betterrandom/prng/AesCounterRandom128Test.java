@@ -81,11 +81,6 @@ public class AesCounterRandom128Test extends BaseRandomTest {
     RandomTestUtils.testEquivalence(copy1AsRandom, copy2AsRandom, 20);
   }
 
-  @Override @Test(timeOut = 30000) public void testReseeding() throws Exception {
-    // May need a longer timeout on Cloud9.
-    super.testReseeding();
-  }
-
   @Test(timeOut = 15000) public void testMaxSeedLengthOk() {
     assert AesCounterRandom.getMaxKeyLengthBytes() >= 16 : "Should allow a 16-byte key";
     assert AesCounterRandom.getMaxKeyLengthBytes() <= 32
