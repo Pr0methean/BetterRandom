@@ -1,6 +1,7 @@
 package io.github.pr0methean.betterrandom.prng;
 
 import static org.testng.Assert.assertFalse;
+import static org.testng.Assert.assertTrue;
 
 import io.github.pr0methean.betterrandom.seed.DefaultSeedGenerator;
 import io.github.pr0methean.betterrandom.seed.RandomSeederThread;
@@ -37,6 +38,7 @@ public class Pcg64RandomTest extends BaseRandomTest {
       final byte[] newSeed = rng.getSeed();
       LOG.info("new seed: %s%nrng dump: %s", newSeed, rng.dump());
       assertFalse(Arrays.equals(oldSeed, newSeed));
+      assertTrue(rng.getEntropyBits() >= newSeed.length * 8L);
     } finally {
       rng.setSeederThread(null);
     }
