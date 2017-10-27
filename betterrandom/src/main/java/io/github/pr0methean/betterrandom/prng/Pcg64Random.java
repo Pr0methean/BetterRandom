@@ -91,6 +91,7 @@ public class Pcg64Random extends BaseRandom
     if (internal != null) {
       internal.set(seed);
     }
+    creditEntropyForNewSeed(Long.BYTES);
   }
 
   @Override public void setSeedInternal(byte[] seed) {
