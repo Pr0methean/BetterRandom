@@ -23,6 +23,7 @@ import java.security.GeneralSecurityException;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 import java.util.function.Supplier;
 import org.testng.ITestResult;
 import org.testng.Reporter;
@@ -182,15 +183,15 @@ public abstract class BaseRandomTest {
     assertNotEquals(createRng().dump(), createRng().dump());
   }
 
-  @Test(timeOut = 20000, retryAnalyzer = FlakyTestRetrier.class) public void testReseeding()
+  @Test(timeOut = 20000) public void testReseeding()
       throws Exception {
+    final RandomSeederThread seederThread = RandomSeederThread.getInstance(DefaultSeedGenerator.DEFAULT_SEED_GENERATOR);
     final BaseRandom rng = createRng();
-    rng.setSeederThread(
-        RandomSeederThread.getInstance(DefaultSeedGenerator.DEFAULT_SEED_GENERATOR));
+    rng.setSeederThread(seederThread);
     try {
       final byte[] oldSeed = rng.getSeed();
       rng.nextBytes(new byte[oldSeed.length + 1]);
-      Thread.sleep(1000 + (oldSeed.length / 2));
+      seederThread.awaitIteration(10, TimeUnit.SECONDS);
       final byte[] newSeed = rng.getSeed();
       assertFalse(Arrays.equals(oldSeed, newSeed));
       assertTrue(rng.getEntropyBits() >= newSeed.length * 8L);
