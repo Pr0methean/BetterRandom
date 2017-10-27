@@ -4,11 +4,14 @@ import static org.testng.Assert.assertFalse;
 
 import io.github.pr0methean.betterrandom.seed.DefaultSeedGenerator;
 import io.github.pr0methean.betterrandom.seed.RandomSeederThread;
+import io.github.pr0methean.betterrandom.util.BinaryUtils;
+import io.github.pr0methean.betterrandom.util.LogPreFormatter;
 import java.util.Arrays;
 import org.testng.annotations.Test;
 
 public class Pcg64RandomTest extends BaseRandomTest {
 
+  private static final LogPreFormatter LOG = new LogPreFormatter(Pcg64RandomTest.class);
   private static final int ITERATIONS = 8;
 
   @Test
@@ -27,9 +30,11 @@ public class Pcg64RandomTest extends BaseRandomTest {
     rng.setSeederThread(
         RandomSeederThread.getInstance(DefaultSeedGenerator.DEFAULT_SEED_GENERATOR));
     final byte[] oldSeed = rng.getSeed();
+    LOG.info("old seed: %s%nrng dump: %s", oldSeed, rng.dump());
     rng.nextBytes(new byte[oldSeed.length + 1]);
     Thread.sleep(5000);
     final byte[] newSeed = rng.getSeed();
+    LOG.info("new seed: %s%nrng dump: %s", newSeed, rng.dump());
     assertFalse(Arrays.equals(oldSeed, newSeed));
     rng.setSeederThread(null);
   }
