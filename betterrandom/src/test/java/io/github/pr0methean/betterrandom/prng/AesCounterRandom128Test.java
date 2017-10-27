@@ -81,7 +81,7 @@ public class AesCounterRandom128Test extends BaseRandomTest {
     RandomTestUtils.testEquivalence(copy1AsRandom, copy2AsRandom, 20);
   }
 
-  @Override @Test(timeOut = 30000, retryAnalyzer = FlakyTestRetrier.class) public void testReseeding() throws Exception {
+  @Override @Test(timeOut = 30000) public void testReseeding() throws Exception {
     // May need a longer timeout on Cloud9.
     super.testReseeding();
   }
