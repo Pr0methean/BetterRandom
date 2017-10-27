@@ -16,7 +16,6 @@
 package io.github.pr0methean.betterrandom.prng;
 
 import com.google.common.base.MoreObjects.ToStringHelper;
-import io.github.pr0methean.betterrandom.SeekableRandom;
 import io.github.pr0methean.betterrandom.seed.DefaultSeedGenerator;
 import io.github.pr0methean.betterrandom.seed.SeedException;
 import io.github.pr0methean.betterrandom.seed.SeedGenerator;
@@ -46,7 +45,7 @@ import javax.crypto.spec.SecretKeySpec;
  * @author Daniel Dyer
  * @author Chris Hennick
  */
-public class AesCounterRandom extends BaseRandom implements SeekableRandom {
+public class AesCounterRandom extends BaseRandom {
 
   private static final long serialVersionUID = 5949778642428995210L;
   private static final LogPreFormatter LOG = new LogPreFormatter(AesCounterRandom.class);
@@ -309,28 +308,5 @@ public class AesCounterRandom extends BaseRandom implements SeekableRandom {
   /** Returns the longest supported seed length. */
   @Override public int getNewSeedLength() {
     return MAX_TOTAL_SEED_LENGTH_BYTES;
-  }
-
-  @Override public void advance(long delta) {
-    lock.lock();
-    try {
-      byte[] addendDigits = new byte[counter.length];
-      System.arraycopy(BinaryUtils.convertLongToBytes(delta), 0, addendDigits,
-          counter.length - Long.BYTES, Long.BYTES);
-      if (delta < 0) {
-        // Sign extend
-        for (int i = 0; i < counter.length - Long.BYTES; i++) {
-          addendDigits[i] = -1;
-        }
-      }
-      boolean carry = false;
-      for (int i = 0; i < counter.length; i++) {
-        byte oldCounter = counter[i];
-        counter[i] += addendDigits[counter.length - i - 1] + (carry ? 1 : 0);
-        carry = (counter[i] < oldCounter || (carry && counter[i] == oldCounter));
-      }
-    } finally {
-      lock.unlock();
-    }
   }
 }

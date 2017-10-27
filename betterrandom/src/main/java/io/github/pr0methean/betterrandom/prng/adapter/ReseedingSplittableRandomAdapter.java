@@ -34,10 +34,6 @@ public class ReseedingSplittableRandomAdapter extends BaseSplittableRandomAdapte
       {"ThreadLocalNotStaticFinal", "InstanceVariableMayNotBeInitializedByReadObject"})
   private transient ThreadLocal<SingleThreadSplittableRandomAdapter> threadLocal;
 
-  @Override public void setSeederThread(@Nullable RandomSeederThread thread) {
-    throw new UnsupportedOperationException("ReseedingSplittableRandomAdapter's binding to RandomSeederThread is immutable");
-  }
-
   /**
    * Single instance per SeedGenerator.
    * @param seedGenerator The seed generator this adapter will use.

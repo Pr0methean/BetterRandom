@@ -1,6 +1,5 @@
 package io.github.pr0methean.betterrandom.prng;
 
-import static io.github.pr0methean.betterrandom.TestUtils.assertGreaterOrEqual;
 import static io.github.pr0methean.betterrandom.prng.BaseRandom.ENTROPY_OF_DOUBLE;
 import static io.github.pr0methean.betterrandom.prng.RandomTestUtils.assertMonteCarloPiEstimateSane;
 import static io.github.pr0methean.betterrandom.prng.RandomTestUtils.checkRangeAndEntropy;
@@ -24,7 +23,6 @@ import java.security.GeneralSecurityException;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 import java.util.function.Supplier;
 import org.testng.ITestResult;
 import org.testng.Reporter;
@@ -184,39 +182,17 @@ public abstract class BaseRandomTest {
     assertNotEquals(createRng().dump(), createRng().dump());
   }
 
-  @Test public void testReseeding() throws SeedException {
-    final byte[] output1 = new byte[20];
-    final BaseRandom rng1 = createRng();
-    final BaseRandom rng2 = createRng();
-    rng1.nextBytes(output1);
-    final byte[] output2 = new byte[20];
-    rng2.nextBytes(output2);
-    final int seedLength = rng1.getNewSeedLength();
-    rng1.setSeed(DefaultSeedGenerator.DEFAULT_SEED_GENERATOR.generateSeed(seedLength));
-    assertGreaterOrEqual(seedLength * 8L, rng1.getEntropyBits());
-    rng1.nextBytes(output1);
-    rng2.nextBytes(output2);
-    assertFalse(Arrays.equals(output1, output2));
-  }
-
-  @Test(timeOut = 60000, retryAnalyzer = FlakyTestRetrier.class) public void testRandomSeederThreadIntegration()
+  @Test(timeOut = 20000, retryAnalyzer = FlakyTestRetrier.class) public void testReseeding()
       throws Exception {
-    final RandomSeederThread seederThread = RandomSeederThread.getInstance(DefaultSeedGenerator.DEFAULT_SEED_GENERATOR);
     final BaseRandom rng = createRng();
-    rng.setSeederThread(seederThread);
-    try {
-      final byte[] oldSeed = rng.getSeed();
-      rng.nextBytes(new byte[oldSeed.length + 1]);
-      // wait for 2 iterations if possible
-      if (seederThread.awaitIteration(5, TimeUnit.SECONDS)) {
-        seederThread.awaitIteration(5, TimeUnit.SECONDS);
-      }
-      final byte[] newSeed = rng.getSeed();
-      assertFalse(Arrays.equals(oldSeed, newSeed));
-      assertGreaterOrEqual(newSeed.length * 8L, rng.getEntropyBits());
-    } finally {
-      rng.setSeederThread(null);
-    }
+    rng.setSeederThread(
+        RandomSeederThread.getInstance(DefaultSeedGenerator.DEFAULT_SEED_GENERATOR));
+    final byte[] oldSeed = rng.getSeed();
+    rng.nextBytes(new byte[oldSeed.length + 1]);
+    Thread.sleep(1000 + (oldSeed.length / 2));
+    final byte[] newSeed = rng.getSeed();
+    assertFalse(Arrays.equals(oldSeed, newSeed));
+    rng.setSeederThread(null);
   }
 
   @Test(timeOut = 3000) public void testWithProbability() {
@@ -452,14 +428,14 @@ public abstract class BaseRandomTest {
     BLUE
   }
 
-  protected static final class FlakyTestRetrier extends RetryAnalyzerCount {
+  private static final class FlakyTestRetrier extends RetryAnalyzerCount {
 
     @EntryPoint public FlakyTestRetrier() {
       setCount(FLAKY_TEST_RETRIES);
     }
 
     @Override public boolean retryMethod(final ITestResult iTestResult) {
-      return !(iTestResult.isSuccess());
+      return true;
     }
   }
 }
