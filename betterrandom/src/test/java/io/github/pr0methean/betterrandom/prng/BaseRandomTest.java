@@ -185,8 +185,8 @@ public abstract class BaseRandomTest {
 
   @Test public void testReseeding() throws SeedException {
     final byte[] output1 = new byte[20];
-    final ThreadLocalRandomWrapper rng1 = (ThreadLocalRandomWrapper) createRng();
-    final ThreadLocalRandomWrapper rng2 = (ThreadLocalRandomWrapper) createRng();
+    final BaseRandom rng1 = createRng();
+    final BaseRandom rng2 = createRng();
     rng1.nextBytes(output1);
     final byte[] output2 = new byte[20];
     rng2.nextBytes(output2);
