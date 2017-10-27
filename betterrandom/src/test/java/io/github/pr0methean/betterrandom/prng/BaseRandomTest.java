@@ -187,12 +187,15 @@ public abstract class BaseRandomTest {
     final BaseRandom rng = createRng();
     rng.setSeederThread(
         RandomSeederThread.getInstance(DefaultSeedGenerator.DEFAULT_SEED_GENERATOR));
-    final byte[] oldSeed = rng.getSeed();
-    rng.nextBytes(new byte[oldSeed.length + 1]);
-    Thread.sleep(1000 + (oldSeed.length / 2));
-    final byte[] newSeed = rng.getSeed();
-    assertFalse(Arrays.equals(oldSeed, newSeed));
-    rng.setSeederThread(null);
+    try {
+      final byte[] oldSeed = rng.getSeed();
+      rng.nextBytes(new byte[oldSeed.length + 1]);
+      Thread.sleep(1000 + (oldSeed.length / 2));
+      final byte[] newSeed = rng.getSeed();
+      assertFalse(Arrays.equals(oldSeed, newSeed));
+    } finally {
+      rng.setSeederThread(null);
+    }
   }
 
   @Test(timeOut = 3000) public void testWithProbability() {
