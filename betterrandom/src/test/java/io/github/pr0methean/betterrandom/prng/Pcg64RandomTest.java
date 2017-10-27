@@ -32,11 +32,9 @@ public class Pcg64RandomTest extends BaseRandomTest {
         RandomSeederThread.getInstance(DefaultSeedGenerator.DEFAULT_SEED_GENERATOR));
     try {
       final byte[] oldSeed = rng.getSeed();
-      System.out.format("%nold seed: %s%nrng dump: %s%n", BinaryUtils.convertBytesToHexString(oldSeed), rng.dump());
       rng.nextBytes(new byte[oldSeed.length + 1]);
       Thread.sleep(5000);
       final byte[] newSeed = rng.getSeed();
-      System.out.format("%nnew seed: %s%nrng dump: %s%n", BinaryUtils.convertBytesToHexString(newSeed), rng.dump());
       assertFalse(Arrays.equals(oldSeed, newSeed));
       assertTrue(rng.getEntropyBits() >= (newSeed.length * 8L));
     } finally {
