@@ -7,7 +7,6 @@ import io.github.pr0methean.betterrandom.seed.SeedException;
 import io.github.pr0methean.betterrandom.seed.SeedGenerator;
 import io.github.pr0methean.betterrandom.util.BinaryUtils;
 import io.github.pr0methean.betterrandom.util.EntryPoint;
-import io.github.pr0methean.betterrandom.util.LogPreFormatter;
 import java.io.IOException;
 import java.io.ObjectOutputStream;
 import java.util.concurrent.atomic.AtomicLong;
@@ -26,10 +25,8 @@ import java.util.concurrent.atomic.AtomicLong;
  * @author M.E. O'Neill (algorithm and C++ implementation)
  * @author Chris Hennick (Java port)
  */
-public class Pcg64Random extends BaseRandom
-    implements SeekableRandom {
+public class Pcg64Random extends BaseRandom implements SeekableRandom {
 
-  private static final LogPreFormatter LOG = new LogPreFormatter(Pcg64Random.class);
   private static final long serialVersionUID = 1677405697790847137L;
   private static final long MULTIPLIER = 6364136223846793005L;
   private static final long INCREMENT = 1442695040888963407L;
@@ -45,9 +42,7 @@ public class Pcg64Random extends BaseRandom
   }
 
   @Override public byte[] getSeed() {
-    long currentSeed = internal.get();
-    LOG.info("Dump: %s%nCurrent seed: %x", dump(), currentSeed);
-    return BinaryUtils.convertLongToBytes(currentSeed).clone();
+    return BinaryUtils.convertLongToBytes(internal.get()).clone();
   }
 
   @EntryPoint public Pcg64Random(SeedGenerator seedGenerator) throws SeedException {
