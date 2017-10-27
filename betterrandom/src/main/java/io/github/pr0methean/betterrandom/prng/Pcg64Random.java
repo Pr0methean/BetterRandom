@@ -47,7 +47,7 @@ public class Pcg64Random extends BaseRandom
   @Override public byte[] getSeed() {
     long currentSeed = internal.get();
     LOG.info("Dump: %s%nCurrent seed: %x", dump(), currentSeed);
-    return BinaryUtils.convertLongToBytes(currentSeed);
+    return BinaryUtils.convertLongToBytes(currentSeed).clone();
   }
 
   @EntryPoint public Pcg64Random(SeedGenerator seedGenerator) throws SeedException {
