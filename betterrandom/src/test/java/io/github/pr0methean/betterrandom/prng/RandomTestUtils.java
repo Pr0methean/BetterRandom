@@ -19,7 +19,6 @@ import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotSame;
 import static org.testng.Assert.assertTrue;
 
-import io.github.pr0methean.betterrandom.TestUtils;
 import io.github.pr0methean.betterrandom.util.CloneViaSerialization;
 import java.util.HashSet;
 import java.util.Random;
@@ -59,11 +58,18 @@ public enum RandomTestUtils {
     assertTrue(output.doubleValue() < bound);
     if ((entropyCheckMode == EntropyCheckMode.EXACT) || (entropyCheckMode
         == EntropyCheckMode.UPPER_BOUND)) {
-      TestUtils.assertGreaterOrEqual(oldEntropy - expectedEntropySpent, prng.getEntropyBits());
+      assertGreaterOrEqual(oldEntropy - expectedEntropySpent, prng.getEntropyBits());
     }
     if ((entropyCheckMode == EntropyCheckMode.EXACT) || (entropyCheckMode
         == EntropyCheckMode.LOWER_BOUND)) {
-      TestUtils.assertLessOrEqual(oldEntropy - expectedEntropySpent, prng.getEntropyBits());
+      assertLessOrEqual(oldEntropy - expectedEntropySpent, prng.getEntropyBits());
+    }
+  }
+
+  private static void assertLessOrEqual(final long expected, final long actual) {
+    if (actual > expected) {
+      throw new AssertionError(
+          String.format("Expected no more than %d but found %d", expected, actual));
     }
   }
 
@@ -79,11 +85,11 @@ public enum RandomTestUtils {
     final Stream<? extends Number> streamToUse =
         (expectedCount < 0) ? stream.sequential().limit(20) : stream;
     final long count = streamToUse.mapToLong((number) -> {
-      TestUtils.assertGreaterOrEqual(origin, number.doubleValue());
-      TestUtils.assertLess(bound, number.doubleValue());
+      assertGreaterOrEqual(origin, number.doubleValue());
+      assertLess(bound, number.doubleValue());
       if (checkEntropyCount && !(streamToUse.isParallel())) {
         long newEntropy = prng.getEntropyBits();
-        TestUtils.assertGreaterOrEqual(entropy.getAndSet(newEntropy) - maxEntropySpentPerNumber, newEntropy);
+        assertGreaterOrEqual(entropy.getAndSet(newEntropy) - maxEntropySpentPerNumber, newEntropy);
       }
       return 1;
     }).sum();
@@ -91,8 +97,29 @@ public enum RandomTestUtils {
       assertEquals(count, expectedCount);
     }
     if (checkEntropyCount && streamToUse.isParallel()) {
-      TestUtils.assertGreaterOrEqual(entropy.get() - (maxEntropySpentPerNumber * count),
+      assertGreaterOrEqual(entropy.get() - (maxEntropySpentPerNumber * count),
           prng.getEntropyBits());
+    }
+  }
+
+  private static void assertGreaterOrEqual(final long expected, final long actual) {
+    if (actual < expected) {
+      throw new AssertionError(
+          String.format("Expected at least %d but found %d", expected, actual));
+    }
+  }
+
+  private static void assertGreaterOrEqual(final double expected, final double actual) {
+    if (actual < expected) {
+      throw new AssertionError(
+          String.format("Expected at least %f but found %f", expected, actual));
+    }
+  }
+
+  private static void assertLess(final double expected, final double actual) {
+    if (actual >= expected) {
+      throw new AssertionError(
+          String.format("Expected less than %f but found %f", expected, actual));
     }
   }
 

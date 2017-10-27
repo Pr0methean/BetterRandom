@@ -1,6 +1,5 @@
 package io.github.pr0methean.betterrandom.util;
 
-import java.util.Arrays;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -25,11 +24,6 @@ public class LogPreFormatter {
 
   private void format(final Level level, final int depthFromRealSource, final String formatString,
       final Object... args) {
-    for (int i = 0; i < args.length; i++) {
-      if (args[i] instanceof byte[]) {
-        args[i] = BinaryUtils.convertBytesToHexString((byte[]) args[i]);
-      }
-    }
     if (logger.isLoggable(level)) {
       final StackTraceElement realSource =
           Thread.currentThread().getStackTrace()[depthFromRealSource];
