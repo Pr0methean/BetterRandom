@@ -1,5 +1,6 @@
 package io.github.pr0methean.betterrandom.prng;
 
+import static io.github.pr0methean.betterrandom.TestUtils.assertGreaterOrEqual;
 import static io.github.pr0methean.betterrandom.prng.BaseRandom.ENTROPY_OF_DOUBLE;
 import static io.github.pr0methean.betterrandom.prng.RandomTestUtils.assertMonteCarloPiEstimateSane;
 import static io.github.pr0methean.betterrandom.prng.RandomTestUtils.checkRangeAndEntropy;
@@ -192,7 +193,7 @@ public abstract class BaseRandomTest {
     rng2.nextBytes(output2);
     final int seedLength = rng1.getNewSeedLength();
     rng1.setSeed(DefaultSeedGenerator.DEFAULT_SEED_GENERATOR.generateSeed(seedLength));
-    assertTrue(rng1.getEntropyBits() >= seedLength * 8L);
+    assertGreaterOrEqual(seedLength * 8L, rng1.getEntropyBits());
     rng1.nextBytes(output1);
     rng2.nextBytes(output2);
     assertFalse(Arrays.equals(output1, output2));
@@ -212,7 +213,7 @@ public abstract class BaseRandomTest {
       }
       final byte[] newSeed = rng.getSeed();
       assertFalse(Arrays.equals(oldSeed, newSeed));
-      assertTrue(rng.getEntropyBits() >= newSeed.length * 8L);
+      assertGreaterOrEqual(newSeed.length * 8L, rng.getEntropyBits());
     } finally {
       rng.setSeederThread(null);
     }
