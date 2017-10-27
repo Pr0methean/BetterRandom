@@ -432,7 +432,7 @@ public abstract class BaseRandomTest {
     BLUE
   }
 
-  private static final class FlakyTestRetrier extends RetryAnalyzerCount {
+  protected static final class FlakyTestRetrier extends RetryAnalyzerCount {
 
     @EntryPoint public FlakyTestRetrier() {
       setCount(FLAKY_TEST_RETRIES);
