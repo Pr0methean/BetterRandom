@@ -183,7 +183,22 @@ public abstract class BaseRandomTest {
     assertNotEquals(createRng().dump(), createRng().dump());
   }
 
-  @Test(timeOut = 30000) public void testReseeding()
+  @Test public void testReseeding() throws SeedException {
+    final byte[] output1 = new byte[20];
+    final ThreadLocalRandomWrapper rng1 = (ThreadLocalRandomWrapper) createRng();
+    final ThreadLocalRandomWrapper rng2 = (ThreadLocalRandomWrapper) createRng();
+    rng1.nextBytes(output1);
+    final byte[] output2 = new byte[20];
+    rng2.nextBytes(output2);
+    final int seedLength = rng1.getNewSeedLength();
+    rng1.setSeed(DefaultSeedGenerator.DEFAULT_SEED_GENERATOR.generateSeed(seedLength));
+    assertTrue(rng1.getEntropyBits() >= seedLength * 8L);
+    rng1.nextBytes(output1);
+    rng2.nextBytes(output2);
+    assertFalse(Arrays.equals(output1, output2));
+  }
+
+  @Test(timeOut = 60000, retryAnalyzer = FlakyTestRetrier.class) public void testRandomSeederThreadIntegration()
       throws Exception {
     final RandomSeederThread seederThread = RandomSeederThread.getInstance(DefaultSeedGenerator.DEFAULT_SEED_GENERATOR);
     final BaseRandom rng = createRng();
@@ -191,8 +206,10 @@ public abstract class BaseRandomTest {
     try {
       final byte[] oldSeed = rng.getSeed();
       rng.nextBytes(new byte[oldSeed.length + 1]);
-      seederThread.awaitIteration(10, TimeUnit.SECONDS);
-      seederThread.awaitIteration(10, TimeUnit.SECONDS);
+      // wait for 2 iterations if possible
+      if (seederThread.awaitIteration(5, TimeUnit.SECONDS)) {
+        seederThread.awaitIteration(5, TimeUnit.SECONDS);
+      }
       final byte[] newSeed = rng.getSeed();
       assertFalse(Arrays.equals(oldSeed, newSeed));
       assertTrue(rng.getEntropyBits() >= newSeed.length * 8L);
