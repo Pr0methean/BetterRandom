@@ -27,7 +27,7 @@ public class LogPreFormatter {
       final Object... args) {
     for (int i = 0; i < args.length; i++) {
       if (args[i] instanceof byte[]) {
-        args[i] = BinaryUtils.convertBytesToHexString(args[i]);
+        args[i] = BinaryUtils.convertBytesToHexString((byte[]) args[i]);
       }
     }
     if (logger.isLoggable(level)) {
