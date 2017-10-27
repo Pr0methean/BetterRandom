@@ -1,18 +1,9 @@
 package io.github.pr0methean.betterrandom.prng;
 
-import static org.testng.Assert.assertFalse;
-import static org.testng.Assert.assertTrue;
-
-import io.github.pr0methean.betterrandom.seed.DefaultSeedGenerator;
-import io.github.pr0methean.betterrandom.seed.RandomSeederThread;
-import io.github.pr0methean.betterrandom.util.BinaryUtils;
-import io.github.pr0methean.betterrandom.util.LogPreFormatter;
-import java.util.Arrays;
 import org.testng.annotations.Test;
 
 public class Pcg64RandomTest extends BaseRandomTest {
 
-  private static final LogPreFormatter LOG = new LogPreFormatter(Pcg64RandomTest.class);
   private static final int ITERATIONS = 8;
 
   @Test
@@ -24,22 +15,6 @@ public class Pcg64RandomTest extends BaseRandomTest {
     }
     copy2.advance(ITERATIONS);
     RandomTestUtils.testEquivalence(copy1, copy2, 20);
-  }
-
-  @Override @Test public void testReseeding() throws Exception {
-    final BaseRandom rng = createRng();
-    rng.setSeederThread(
-        RandomSeederThread.getInstance(DefaultSeedGenerator.DEFAULT_SEED_GENERATOR));
-    try {
-      final byte[] oldSeed = rng.getSeed();
-      rng.nextBytes(new byte[oldSeed.length + 1]);
-      Thread.sleep(5000);
-      final byte[] newSeed = rng.getSeed();
-      assertFalse(Arrays.equals(oldSeed, newSeed));
-      assertTrue(rng.getEntropyBits() >= (newSeed.length * 8L));
-    } finally {
-      rng.setSeederThread(null);
-    }
   }
 
   @Test

@@ -184,7 +184,6 @@ public final class RandomSeederThread extends LooperThread {
       } else {
         entropyConsumed = true;
       }
-      LOG.info("Generating seed for %s", random);
       try {
         if ((random instanceof ByteArrayReseedableRandom) && !((ByteArrayReseedableRandom) random)
             .preferSeedWithLong()) {
@@ -192,13 +191,10 @@ public final class RandomSeederThread extends LooperThread {
           final byte[] seedArray = seedArrays
               .computeIfAbsent(reseedable, random_ -> new byte[random_.getNewSeedLength()]);
           seedGenerator.generateSeed(seedArray);
-          LOG.info("Setting %s seed to %s", reseedable, seedArray);
           reseedable.setSeed(seedArray);
         } else {
           seedGenerator.generateSeed(longSeedArray);
-          long newSeed = longSeedBuffer.getLong(0);
-          LOG.info("Setting %s seed to %X", random, newSeed);
-          random.setSeed(newSeed);
+          random.setSeed(longSeedBuffer.getLong(0));
         }
       } catch (final Throwable t) {
         LOG.error("%s", t);
