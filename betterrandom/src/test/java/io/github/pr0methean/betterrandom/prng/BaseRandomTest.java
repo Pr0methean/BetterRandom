@@ -183,7 +183,7 @@ public abstract class BaseRandomTest {
     assertNotEquals(createRng().dump(), createRng().dump());
   }
 
-  @Test(timeOut = 20000) public void testReseeding()
+  @Test(timeOut = 30000) public void testReseeding()
       throws Exception {
     final RandomSeederThread seederThread = RandomSeederThread.getInstance(DefaultSeedGenerator.DEFAULT_SEED_GENERATOR);
     final BaseRandom rng = createRng();
