@@ -192,6 +192,7 @@ public abstract class BaseRandomTest {
       final byte[] oldSeed = rng.getSeed();
       rng.nextBytes(new byte[oldSeed.length + 1]);
       seederThread.awaitIteration(10, TimeUnit.SECONDS);
+      seederThread.awaitIteration(10, TimeUnit.SECONDS);
       final byte[] newSeed = rng.getSeed();
       assertFalse(Arrays.equals(oldSeed, newSeed));
       assertTrue(rng.getEntropyBits() >= newSeed.length * 8L);
