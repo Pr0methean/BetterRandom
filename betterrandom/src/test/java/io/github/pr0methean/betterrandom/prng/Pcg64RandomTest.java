@@ -26,7 +26,7 @@ public class Pcg64RandomTest extends BaseRandomTest {
     RandomTestUtils.testEquivalence(copy1, copy2, 20);
   }
 
-  @Override public void testReseeding() throws Exception {
+  @Override @Test public void testReseeding() throws Exception {
     final BaseRandom rng = createRng();
     rng.setSeederThread(
         RandomSeederThread.getInstance(DefaultSeedGenerator.DEFAULT_SEED_GENERATOR));
