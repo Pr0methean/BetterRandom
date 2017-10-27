@@ -196,7 +196,9 @@ public final class RandomSeederThread extends LooperThread {
           reseedable.setSeed(seedArray);
         } else {
           seedGenerator.generateSeed(longSeedArray);
-          random.setSeed(longSeedBuffer.getLong(0));
+          long newSeed = longSeedBuffer.getLong(0);
+          LOG.info("Setting %s seed to %X", random, newSeed);
+          random.setSeed(newSeed);
         }
       } catch (final Throwable t) {
         LOG.error("%s", t);

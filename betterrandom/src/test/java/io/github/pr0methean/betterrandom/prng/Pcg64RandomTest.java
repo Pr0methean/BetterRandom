@@ -29,14 +29,17 @@ public class Pcg64RandomTest extends BaseRandomTest {
     final BaseRandom rng = createRng();
     rng.setSeederThread(
         RandomSeederThread.getInstance(DefaultSeedGenerator.DEFAULT_SEED_GENERATOR));
-    final byte[] oldSeed = rng.getSeed();
-    LOG.info("old seed: %s%nrng dump: %s", oldSeed, rng.dump());
-    rng.nextBytes(new byte[oldSeed.length + 1]);
-    Thread.sleep(5000);
-    final byte[] newSeed = rng.getSeed();
-    LOG.info("new seed: %s%nrng dump: %s", newSeed, rng.dump());
-    assertFalse(Arrays.equals(oldSeed, newSeed));
-    rng.setSeederThread(null);
+    try {
+      final byte[] oldSeed = rng.getSeed();
+      LOG.info("old seed: %s%nrng dump: %s", oldSeed, rng.dump());
+      rng.nextBytes(new byte[oldSeed.length + 1]);
+      Thread.sleep(5000);
+      final byte[] newSeed = rng.getSeed();
+      LOG.info("new seed: %s%nrng dump: %s", newSeed, rng.dump());
+      assertFalse(Arrays.equals(oldSeed, newSeed));
+    } finally {
+      rng.setSeederThread(null);
+    }
   }
 
   @Test
