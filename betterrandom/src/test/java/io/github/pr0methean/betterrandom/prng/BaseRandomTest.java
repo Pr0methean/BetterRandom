@@ -206,11 +206,11 @@ public abstract class BaseRandomTest {
     rng.setSeederThread(seederThread);
     try {
       final byte[] oldSeed = rng.getSeed();
-      rng.nextBytes(new byte[oldSeed.length + 1]);
-      // wait for 2 iterations if possible
-      if (seederThread.awaitIteration(5, TimeUnit.SECONDS)) {
-        seederThread.awaitIteration(5, TimeUnit.SECONDS);
+      while (rng.getEntropyBits() > 0) {
+        rng.nextInt(1 << 8);
       }
+      // wait for an iteration in case it hasn't happened already
+      seederThread.awaitIteration(5, TimeUnit.SECONDS);
       final byte[] newSeed = rng.getSeed();
       assertFalse(Arrays.equals(oldSeed, newSeed));
       assertGreaterOrEqual(newSeed.length * 8L, rng.getEntropyBits());
