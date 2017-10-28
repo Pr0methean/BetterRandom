@@ -234,7 +234,6 @@ public class AesCounterRandom extends BaseRandom implements SeekableRandom {
       throw new IllegalArgumentException(
           "Seed too long: maximum " + MAX_TOTAL_SEED_LENGTH_BYTES + " bytes");
     }
-    super.setSeedInternal(seed);
     try {
       final byte[] key;
       if (seed.length == MAX_KEY_LENGTH_BYTES) {
@@ -267,6 +266,7 @@ public class AesCounterRandom extends BaseRandom implements SeekableRandom {
       lock.lock();
       try {
         setSeedInternal(key);
+        entropyBits.addAndGet(8L * (seed.length - key.length));
       } finally {
         lock.unlock();
       }
@@ -292,6 +292,7 @@ public class AesCounterRandom extends BaseRandom implements SeekableRandom {
           .format("Seed length is %d bytes; need 16 to %d bytes", seedLength,
               MAX_TOTAL_SEED_LENGTH_BYTES));
     }
+    super.setSeedInternal(seed);
     // determine how much of seed can go to key
     final int keyLength = getKeyLength(seed);
     final byte[] key = Arrays.copyOfRange(seed, 0, keyLength);
