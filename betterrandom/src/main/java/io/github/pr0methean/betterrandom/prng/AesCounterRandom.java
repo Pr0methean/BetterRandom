@@ -266,6 +266,7 @@ public class AesCounterRandom extends BaseRandom implements SeekableRandom {
       lock.lock();
       try {
         setSeedInternal(key);
+        entropyBits.addAndGet(8L * (seed.length - key.length));
       } finally {
         lock.unlock();
       }
