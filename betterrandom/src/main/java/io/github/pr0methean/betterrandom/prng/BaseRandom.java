@@ -640,7 +640,7 @@ public abstract class BaseRandom extends Random
    *
    * @param seedLength the length of the new seed in bytes
    */
-  protected final void creditEntropyForNewSeed(int seedLength) {
+  protected void creditEntropyForNewSeed(int seedLength) {
     if (entropyBits == null) {
       entropyBits = new AtomicLong(0);
     }
