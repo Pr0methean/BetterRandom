@@ -104,7 +104,7 @@ public abstract class BaseRandomTest {
    * subtle statistical anomalies that would be picked up by Diehard, but it provides a simple check
    * for major problems with the output.
    */
-  @Test(timeOut = 20000, groups = "non-deterministic", retryAnalyzer = FlakyTestRetrier.class)
+  @Test(timeOut = 20000, groups = "non-deterministic")
   public void testDistribution() throws SeedException {
     final BaseRandom rng = createRng();
     assertMonteCarloPiEstimateSane(rng);
@@ -115,7 +115,7 @@ public abstract class BaseRandomTest {
    * subtle statistical anomalies that would be picked up by Diehard, but it provides a simple check
    * for major problems with the output.
    */
-  @Test(timeOut = 20000, groups = "non-deterministic", retryAnalyzer = FlakyTestRetrier.class)
+  @Test(timeOut = 20000, groups = "non-deterministic")
   public void testStandardDeviation() throws SeedException {
     final BaseRandom rng = createRng();
     // Expected standard deviation for a uniformly distributed population of values in the range 0..n
@@ -199,7 +199,7 @@ public abstract class BaseRandomTest {
     assertFalse(Arrays.equals(output1, output2));
   }
 
-  @Test(timeOut = 60000, retryAnalyzer = FlakyTestRetrier.class) public void testRandomSeederThreadIntegration()
+  @Test(timeOut = 60000) public void testRandomSeederThreadIntegration()
       throws Exception {
     final RandomSeederThread seederThread = RandomSeederThread.getInstance(DefaultSeedGenerator.DEFAULT_SEED_GENERATOR);
     final BaseRandom rng = createRng();
@@ -450,16 +450,5 @@ public abstract class BaseRandomTest {
     RED,
     YELLOW,
     BLUE
-  }
-
-  protected static final class FlakyTestRetrier extends RetryAnalyzerCount {
-
-    @EntryPoint public FlakyTestRetrier() {
-      setCount(FLAKY_TEST_RETRIES);
-    }
-
-    @Override public boolean retryMethod(final ITestResult iTestResult) {
-      return !(iTestResult.isSuccess());
-    }
   }
 }
