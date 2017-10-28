@@ -1,3 +1,6 @@
+# 1.3.1
+* Fix a javadoc error.
+
 # 1.3.0
 * New algorithm: `Pcg64Random`.
 * Bugfix: `AesCounterRandom` was not crediting enough entropy after being reseeded.
