@@ -15,10 +15,13 @@
 // ============================================================================
 package io.github.pr0methean.betterrandom.prng;
 
+import static io.github.pr0methean.betterrandom.TestUtils.assertGreaterOrEqual;
+import static io.github.pr0methean.betterrandom.TestUtils.assertLess;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotSame;
 import static org.testng.Assert.assertTrue;
 
+import io.github.pr0methean.betterrandom.TestUtils;
 import io.github.pr0methean.betterrandom.util.CloneViaSerialization;
 import java.util.HashSet;
 import java.util.Random;
@@ -63,14 +66,7 @@ public enum RandomTestUtils {
     }
     if ((entropyCheckMode == EntropyCheckMode.EXACT) || (entropyCheckMode
         == EntropyCheckMode.LOWER_BOUND)) {
-      assertLessOrEqual(oldEntropy - expectedEntropySpent, prng.getEntropyBits());
-    }
-  }
-
-  private static void assertLessOrEqual(final long expected, final long actual) {
-    if (actual > expected) {
-      throw new AssertionError(
-          String.format("Expected no more than %d but found %d", expected, actual));
+      TestUtils.assertLessOrEqual(oldEntropy - expectedEntropySpent, prng.getEntropyBits());
     }
   }
 
@@ -102,27 +98,6 @@ public enum RandomTestUtils {
     if (checkEntropyCount && streamToUse.isParallel()) {
       assertGreaterOrEqual(entropy.get() - (maxEntropySpentPerNumber * count),
           prng.getEntropyBits());
-    }
-  }
-
-  private static void assertGreaterOrEqual(final long expected, final long actual) {
-    if (actual < expected) {
-      throw new AssertionError(
-          String.format("Expected at least %d but found %d", expected, actual));
-    }
-  }
-
-  private static void assertGreaterOrEqual(final double expected, final double actual) {
-    if (actual < expected) {
-      throw new AssertionError(
-          String.format("Expected at least %f but found %f", expected, actual));
-    }
-  }
-
-  private static void assertLess(final double expected, final double actual) {
-    if (actual >= expected) {
-      throw new AssertionError(
-          String.format("Expected less than %f but found %f", expected, actual));
     }
   }
 
