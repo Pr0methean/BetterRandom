@@ -40,7 +40,7 @@ public abstract class BaseRandomTest {
    */
   protected static final double SQRT_12 = 3.4641016151377546;
   protected static final long TEST_SEED = 0x0123456789ABCDEFL;
-  private static final int FLAKY_TEST_RETRIES = 3;
+  private static final int FLAKY_TEST_RETRIES = 2;
   private static final int TEST_BYTE_ARRAY_LENGTH = 20;
   private static final String HELLO = "Hello";
   private static final String HOW_ARE_YOU = "How are you?";
