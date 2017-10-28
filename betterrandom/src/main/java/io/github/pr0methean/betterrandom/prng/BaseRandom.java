@@ -644,8 +644,9 @@ public abstract class BaseRandom extends Random
     if (entropyBits == null) {
       entropyBits = new AtomicLong(0);
     }
-    entropyBits.updateAndGet(
+    long newEntropy = entropyBits.updateAndGet(
         oldCount -> Math.max(oldCount, Math.min(seedLength, getNewSeedLength()) * 8L));
+    LOG.info("creditEntropyForNewSeed(%d): new entropy %d", seedLength, newEntropy);
   }
 
   /**
@@ -675,7 +676,9 @@ public abstract class BaseRandom extends Random
    * @param bits The number of bits of entropy spent.
    */
   protected void recordEntropySpent(final long bits) {
-    if (entropyBits.addAndGet(-bits) <= 0) {
+    long newEntropy = entropyBits.addAndGet(-bits);
+    LOG.info("recordEntropySpent(%d): new entropy %d", bits, newEntropy);
+    if (newEntropy <= 0) {
       asyncReseedIfPossible();
     }
   }
