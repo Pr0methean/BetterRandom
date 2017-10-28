@@ -1,5 +1,7 @@
 package io.github.pr0methean.betterrandom.prng;
 
+import static io.github.pr0methean.betterrandom.util.Java8Constants.LONG_BYTES;
+
 import com.google.common.base.MoreObjects.ToStringHelper;
 import io.github.pr0methean.betterrandom.SeekableRandom;
 import io.github.pr0methean.betterrandom.seed.DefaultSeedGenerator;
@@ -46,12 +48,12 @@ public class Pcg64Random extends BaseRandom implements SeekableRandom {
   }
 
   @EntryPoint public Pcg64Random(SeedGenerator seedGenerator) throws SeedException {
-    this(seedGenerator.generateSeed(Long.BYTES));
+    this(seedGenerator.generateSeed(LONG_BYTES));
   }
 
   @EntryPoint public Pcg64Random(byte[] seed) {
     super(seed);
-    if (seed.length != Long.BYTES) {
+    if (seed.length != LONG_BYTES) {
       throw new IllegalArgumentException("Pcg64Random requires an 8-byte seed");
     }
     internal = new AtomicLong(BinaryUtils.convertBytesToLong(seed));
@@ -82,7 +84,16 @@ public class Pcg64Random extends BaseRandom implements SeekableRandom {
     }
     final long finalAccMult = accMult;
     final long finalAccPlus = accPlus;
-    internal.updateAndGet(old -> (finalAccMult * old) + finalAccPlus);
+    multiplyAndAddInternal(finalAccMult, finalAccPlus);
+  }
+
+  private void multiplyAndAddInternal(long multiply, long add) {
+    long oldInternal;
+    long newInternal;
+    do {
+      oldInternal = internal.get();
+      newInternal = oldInternal * multiply + add;
+    } while (!internal.compareAndSet(oldInternal, newInternal));
   }
 
   @SuppressWarnings("NonSynchronizedMethodOverridesSynchronizedMethod") @Override
@@ -90,12 +101,12 @@ public class Pcg64Random extends BaseRandom implements SeekableRandom {
     if (internal != null) {
       internal.set(seed);
     }
-    creditEntropyForNewSeed(Long.BYTES);
+    creditEntropyForNewSeed(LONG_BYTES);
   }
 
   @Override public void setSeedInternal(byte[] seed) {
     super.setSeedInternal(seed);
-    if (seed.length != Long.BYTES) {
+    if (seed.length != LONG_BYTES) {
       throw new IllegalArgumentException("Pcg64Random requires an 8-byte seed");
     }
     if (internal != null) {
@@ -104,7 +115,7 @@ public class Pcg64Random extends BaseRandom implements SeekableRandom {
   }
 
   @Override protected int next(int bits) {
-    internal.updateAndGet(old -> (MULTIPLIER * old) + INCREMENT);
+    multiplyAndAddInternal(MULTIPLIER, INCREMENT);
     long oldInternal;
     long newInternal;
     do {
@@ -127,12 +138,12 @@ public class Pcg64Random extends BaseRandom implements SeekableRandom {
   }
 
   @Override public int getNewSeedLength() {
-    return Long.BYTES;
+    return LONG_BYTES;
   }
 
   private void writeObject(ObjectOutputStream out) throws IOException {
     // Copy the long seed back to the array seed
-    System.arraycopy(BinaryUtils.convertLongToBytes(internal.get()), 0, seed, 0, Long.BYTES);
+    System.arraycopy(BinaryUtils.convertLongToBytes(internal.get()), 0, seed, 0, LONG_BYTES);
     out.defaultWriteObject();
   }
 }
