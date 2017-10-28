@@ -158,9 +158,11 @@ public class LooperThread extends Thread implements Serializable, Cloneable {
   }
 
   /**
-   * Constructs a LooperThread with the given name and target, belonging to the given {@link
+   * <p>Constructs a LooperThread with the given name and target, belonging to the given {@link
    * ThreadGroup} and having the given preferred stack size. {@code target} should only be null if
-   * called from a subclass that overrides {@link #iterate()}. See {@link Thread#Thread(ThreadGroup, * Runnable, String, long)} for caveats about specifying the stack size.
+   * called from a subclass that overrides {@link #iterate()}.</p>
+   * <p>See {@link Thread#Thread(ThreadGroup, * Runnable, String, long)} for caveats about
+   * specifying the stack size.</p>
    * @param group The ThreadGroup this thread will belong to.
    * @param target If not null, the target this thread will run in {@link #iterate()}.
    * @param name the thread name
@@ -351,7 +353,10 @@ public class LooperThread extends Thread implements Serializable, Cloneable {
     return CloneViaSerialization.clone(this);
   }
 
-  /** Wait for the next iteration to finish. */
+  /**
+   * Wait for the next iteration to finish.
+   * @throws InterruptedException if thrown by {@link Condition#await()}
+   */
   public void awaitIteration() throws InterruptedException {
     lock.lock();
     try {
@@ -367,6 +372,7 @@ public class LooperThread extends Thread implements Serializable, Cloneable {
    * @param unit the time unit of the {@code time} argument
    * @return {@code false} if the waiting time detectably elapsed before an iteration finished, else
    *     {@code true}
+   * @throws InterruptedException if thrown by {@link Condition#await(long, TimeUnit)}
    */
   public boolean awaitIteration(final long time, final TimeUnit unit) throws InterruptedException {
     lock.lock();

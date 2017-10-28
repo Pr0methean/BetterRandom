@@ -17,6 +17,7 @@ import java.lang.Thread.UncaughtExceptionHandler;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.net.MalformedURLException;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicLong;
 import javax.annotation.Nullable;
@@ -155,6 +156,18 @@ public class LooperThreadTest {
     }
   }
 
+  @Test public void testAwaitIteration() throws InterruptedException {
+    SleepingLooperThread sleepingThread = new SleepingLooperThread();
+    sleepingThread.start();
+    sleepingThread.awaitIteration();
+  }
+
+  @Test public void testAwaitIterationTimeout() throws InterruptedException {
+    SleepingLooperThread sleepingThread = new SleepingLooperThread();
+    sleepingThread.start();
+    sleepingThread.awaitIteration(5, TimeUnit.SECONDS);
+  }
+
   /**
    * Intermediate used to give {@link SerializableThreadGroup} a parameterless super constructor for
    * deserialization purposes.
@@ -233,6 +246,20 @@ public class LooperThreadTest {
 
     @Override public boolean iterate() {
       throw new MockException();
+    }
+  }
+
+  private static class SleepingLooperThread extends LooperThread {
+
+    private static final long serialVersionUID = -2726985092790511416L;
+
+    public SleepingLooperThread() {
+      super("SleepingLooperThread");
+    }
+
+    @Override public boolean iterate() throws InterruptedException {
+      sleep(1000);
+      return false;
     }
   }
 
