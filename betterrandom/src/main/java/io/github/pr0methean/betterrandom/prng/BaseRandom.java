@@ -575,6 +575,10 @@ public abstract class BaseRandom extends Random
     }
   }
 
+  /**
+   * {@inheritDoc}<p>Most subclasses should override {@link #setSeedInternal(byte[])} instead of
+   * this method, so that they will deserialize properly.</p>
+   */
   @Override public void setSeed(final byte[] seed) {
     lock.lock();
     try {
@@ -627,11 +631,21 @@ public abstract class BaseRandom extends Random
     } else {
       System.arraycopy(seed, 0, this.seed, 0, seed.length);
     }
+    creditEntropyForNewSeed(seed.length);
+  }
+
+  /**
+   * Updates the entropy count to reflect a reseeding. Sets it to the seed length or the internal
+   * state size, whichever is shorter, but never less than the existing entropy count.
+   *
+   * @param seedLength the length of the new seed in bytes
+   */
+  protected final void creditEntropyForNewSeed(int seedLength) {
     if (entropyBits == null) {
       entropyBits = new AtomicLong(0);
     }
     entropyBits.updateAndGet(
-        oldCount -> Math.max(oldCount, Math.min(seed.length, getNewSeedLength()) * 8L));
+        oldCount -> Math.max(oldCount, Math.min(seedLength, getNewSeedLength()) * 8L));
   }
 
   /**
