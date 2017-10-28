@@ -161,7 +161,7 @@ public class LooperThread extends Thread implements Serializable, Cloneable {
    * <p>Constructs a LooperThread with the given name and target, belonging to the given {@link
    * ThreadGroup} and having the given preferred stack size. {@code target} should only be null if
    * called from a subclass that overrides {@link #iterate()}.</p>
-   * <p>See {@link Thread#Thread(ThreadGroup, * Runnable, String, long)} for caveats about
+   * <p>See {@link Thread#Thread(ThreadGroup, Runnable, String, long)} for caveats about
    * specifying the stack size.</p>
    * @param group The ThreadGroup this thread will belong to.
    * @param target If not null, the target this thread will run in {@link #iterate()}.
