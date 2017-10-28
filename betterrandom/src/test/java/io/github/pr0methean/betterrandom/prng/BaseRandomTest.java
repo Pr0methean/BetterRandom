@@ -1,6 +1,7 @@
 package io.github.pr0methean.betterrandom.prng;
 
 import static io.github.pr0methean.betterrandom.TestUtils.assertGreaterOrEqual;
+import static io.github.pr0methean.betterrandom.TestUtils.isNotAppveyor;
 import static io.github.pr0methean.betterrandom.prng.BaseRandom.ENTROPY_OF_DOUBLE;
 import static io.github.pr0methean.betterrandom.prng.RandomTestUtils.assertMonteCarloPiEstimateSane;
 import static io.github.pr0methean.betterrandom.prng.RandomTestUtils.checkRangeAndEntropy;
@@ -40,7 +41,7 @@ public abstract class BaseRandomTest {
    */
   protected static final double SQRT_12 = 3.4641016151377546;
   protected static final long TEST_SEED = 0x0123456789ABCDEFL;
-  private static final int FLAKY_TEST_RETRIES = 3;
+  private static final int FLAKY_TEST_RETRIES = 2;
   private static final int TEST_BYTE_ARRAY_LENGTH = 20;
   private static final String HELLO = "Hello";
   private static final String HOW_ARE_YOU = "How are you?";
@@ -104,7 +105,7 @@ public abstract class BaseRandomTest {
    * subtle statistical anomalies that would be picked up by Diehard, but it provides a simple check
    * for major problems with the output.
    */
-  @Test(timeOut = 20000, groups = "non-deterministic", retryAnalyzer = FlakyTestRetrier.class)
+  @Test(timeOut = 20000, groups = "non-deterministic")
   public void testDistribution() throws SeedException {
     final BaseRandom rng = createRng();
     assertMonteCarloPiEstimateSane(rng);
@@ -115,7 +116,7 @@ public abstract class BaseRandomTest {
    * subtle statistical anomalies that would be picked up by Diehard, but it provides a simple check
    * for major problems with the output.
    */
-  @Test(timeOut = 20000, groups = "non-deterministic", retryAnalyzer = FlakyTestRetrier.class)
+  @Test(timeOut = 20000, groups = "non-deterministic")
   public void testStandardDeviation() throws SeedException {
     final BaseRandom rng = createRng();
     // Expected standard deviation for a uniformly distributed population of values in the range 0..n
@@ -199,18 +200,22 @@ public abstract class BaseRandomTest {
     assertFalse(Arrays.equals(output1, output2));
   }
 
-  @Test(timeOut = 60000, retryAnalyzer = FlakyTestRetrier.class) public void testRandomSeederThreadIntegration()
+  @Test(timeOut = 60000) public void testRandomSeederThreadIntegration()
       throws Exception {
     final RandomSeederThread seederThread = RandomSeederThread.getInstance(DefaultSeedGenerator.DEFAULT_SEED_GENERATOR);
     final BaseRandom rng = createRng();
     rng.setSeederThread(seederThread);
     try {
       final byte[] oldSeed = rng.getSeed();
-      rng.nextBytes(new byte[oldSeed.length + 1]);
-      // wait for 2 iterations if possible
-      if (seederThread.awaitIteration(5, TimeUnit.SECONDS)) {
-        seederThread.awaitIteration(5, TimeUnit.SECONDS);
+      while (rng.getEntropyBits() >= Long.SIZE) {
+        rng.nextLong();
       }
+      while (rng.getEntropyBits() > 0) {
+        rng.nextInt(1 << 8);
+      }
+      // wait for two iterations, in case an iteration was in progress when the reseed was triggered
+      seederThread.awaitIteration(5, TimeUnit.SECONDS);
+      seederThread.awaitIteration(5, TimeUnit.SECONDS);
       final byte[] newSeed = rng.getSeed();
       assertFalse(Arrays.equals(oldSeed, newSeed));
       assertGreaterOrEqual(newSeed.length * 8L, rng.getEntropyBits());
@@ -450,16 +455,5 @@ public abstract class BaseRandomTest {
     RED,
     YELLOW,
     BLUE
-  }
-
-  protected static final class FlakyTestRetrier extends RetryAnalyzerCount {
-
-    @EntryPoint public FlakyTestRetrier() {
-      setCount(FLAKY_TEST_RETRIES);
-    }
-
-    @Override public boolean retryMethod(final ITestResult iTestResult) {
-      return !(iTestResult.isSuccess());
-    }
   }
 }
