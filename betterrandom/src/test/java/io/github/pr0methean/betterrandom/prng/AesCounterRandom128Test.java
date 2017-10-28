@@ -30,31 +30,6 @@ public class AesCounterRandom128Test extends BaseRandomTest {
 
   private static final int ITERATIONS = 8;
 
-  @SuppressWarnings("ObjectAllocationInLoop") @Override @Test(timeOut = 30000)
-  public void testSetSeed() throws SeedException {
-    // can't use a real SeedGenerator since we need longs, so use a Random
-    final Random masterRNG = new Random();
-    final long[] seeds =
-        {masterRNG.nextLong(), masterRNG.nextLong(), masterRNG.nextLong(), masterRNG.nextLong()};
-    final long otherSeed = masterRNG.nextLong();
-    final AesCounterRandom[] rngs = {new AesCounterRandom(16), new AesCounterRandom(16)};
-    for (int i = 0; i < 2; i++) {
-      for (final long seed : seeds) {
-        final byte[] originalSeed = rngs[i].getSeed();
-        assertTrue(originalSeed.length >= 16);
-        final AesCounterRandom rngReseeded = new AesCounterRandom(originalSeed);
-        final AesCounterRandom rngReseededOther = new AesCounterRandom(originalSeed);
-        rngReseeded.setSeed(seed);
-        rngReseededOther.setSeed(otherSeed);
-        assert !(rngs[i].equals(rngReseeded));
-        assert !(rngReseededOther.equals(rngReseeded));
-        assert rngs[i].nextLong() != rngReseeded.nextLong() : "setSeed had no effect";
-        rngs[i] = rngReseeded;
-      }
-    }
-    assert rngs[0].nextLong() != rngs[1].nextLong() : "RNGs converged after 4 setSeed calls";
-  }
-
   @Test
   public void testAdvanceForward() {
     SeekableRandom copy1 = (SeekableRandom) createRng();
