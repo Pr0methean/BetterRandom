@@ -1,3 +1,7 @@
+# 1.3.0
+* New algorithm: `Pcg64Random`.
+* Bugfix: `AesCounterRandom` was not crediting enough entropy after being reseeded.
+
 # 1.2.1
 * Bugfix: `RandomWrapper.wrapped` needs to be volatile, despite its lock guard, because it may be
   accessed from multiple threads.
