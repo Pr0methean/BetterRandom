@@ -5,7 +5,9 @@ import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotEquals;
 
 import io.github.pr0methean.betterrandom.prng.BaseRandom;
+import io.github.pr0methean.betterrandom.seed.DefaultSeedGenerator;
 import io.github.pr0methean.betterrandom.seed.FakeSeedGenerator;
+import io.github.pr0methean.betterrandom.seed.RandomSeederThread;
 import io.github.pr0methean.betterrandom.seed.SeedException;
 import io.github.pr0methean.betterrandom.util.BinaryUtils;
 import io.github.pr0methean.betterrandom.util.CloneViaSerialization;
@@ -27,7 +29,7 @@ public class ReseedingSplittableRandomAdapterTest extends SingleThreadSplittable
     super.testStandardDeviation();
   }
 
-  @Override public void testSerializable() throws SeedException {
+  @Override @Test public void testSerializable() throws SeedException {
     final BaseSplittableRandomAdapter adapter = createRng();
     assertEquals(adapter, CloneViaSerialization.clone(adapter));
   }
@@ -45,12 +47,17 @@ public class ReseedingSplittableRandomAdapterTest extends SingleThreadSplittable
   }
 
   /** Test for crashes only, since setSeed is a no-op. */
-  @Override public void testSetSeed() throws SeedException {
+  @Override @Test public void testSetSeed() throws SeedException {
     final BaseRandom prng = createRng();
     prng.nextLong();
     prng.setSeed(DEFAULT_SEED_GENERATOR.generateSeed(8));
     prng.setSeed(BinaryUtils.convertBytesToLong(DEFAULT_SEED_GENERATOR.generateSeed(8)));
     prng.nextLong();
+  }
+
+  /** This class manages its own interaction with a RandomSeederThread, so setSeederThread makes no sense. */
+  @Override @Test(expectedExceptions = UnsupportedOperationException.class) public void testRandomSeederThreadIntegration() throws Exception {
+    createRng().setSeederThread(RandomSeederThread.getInstance(DefaultSeedGenerator.DEFAULT_SEED_GENERATOR));
   }
 
   @Override @Test(enabled = false) public void testSeedTooShort() {
@@ -61,7 +68,7 @@ public class ReseedingSplittableRandomAdapterTest extends SingleThreadSplittable
     // No-op.
   }
 
-  @Override public void testDump() throws SeedException {
+  @Override @Test public void testDump() throws SeedException {
     assertNotEquals(ReseedingSplittableRandomAdapter.getInstance(DEFAULT_SEED_GENERATOR).dump(),
         ReseedingSplittableRandomAdapter.getInstance(new FakeSeedGenerator()).dump());
   }
