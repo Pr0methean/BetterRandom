@@ -454,6 +454,9 @@
       <option name="ignoreInModuleStatements" value="true" />
     </inspection_tool>
     <inspection_tool class="UnnecessaryInheritDoc" enabled="true" level="WARNING" enabled_by_default="true" />
+    <inspection_tool class="UnnecessaryJavaDocLink" enabled="true" level="WARNING" enabled_by_default="true">
+      <option name="ignoreInlineLinkToSuper" value="true" />
+    </inspection_tool>
     <inspection_tool class="UnnecessaryParentheses" enabled="false" level="WARNING" enabled_by_default="false">
       <option name="ignoreClarifyingParentheses" value="false" />
       <option name="ignoreParenthesesOnConditionals" value="false" />
