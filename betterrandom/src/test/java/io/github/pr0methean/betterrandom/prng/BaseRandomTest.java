@@ -211,7 +211,7 @@ public abstract class BaseRandomTest {
         rng.nextInt(1 << 8);
       }
       // wait for an iteration in case it hasn't happened already
-      seederThread.awaitIteration(isNotAppveyor() ? 5 : 15, TimeUnit.SECONDS);
+      seederThread.awaitIteration(15, TimeUnit.SECONDS);
       final byte[] newSeed = rng.getSeed();
       assertFalse(Arrays.equals(oldSeed, newSeed));
       assertGreaterOrEqual(newSeed.length * 8L, rng.getEntropyBits());
