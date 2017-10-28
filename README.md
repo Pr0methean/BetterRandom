@@ -196,37 +196,6 @@ replacements for `java.util.Random`.
 * `setSeederThread(RandomSeederThread)`: Reseeds the PRNG whenever its entropy is spent, but only
   as long as a seed generator can keep up. See below.
 
-## Summary
-
-| Class                   | Seed size (bytes)  | Period (bits)      |  Speed | Speed with RandomSeederThread | Effect of `setSeed(long)`                     | `getSeed()` rewinds? | Algorithm author
-|-------------------------|--------------------|--------------------|--------|-------------------------------|-----------------------------------------------|----------------------|--------------------
-| AesCounterRandom        |  16-48<sup>*</sup> | 2<sup>135</sup>    |   Slow |                          Slow | Combines with existing seed                   | No                   | [NIST](http://csrc.nist.gov/groups/ST/toolkit/documents/rng/BlockCipherDRBGs.pdf)
-| CellularAutomatonRandom |                  4 | ?                  | Medium |                     Very slow | Replaces existing seed                        | Yes                  | [Anthony Pasqualoni](http://web.archive.org/web/20160413212616/http://home.southernct.edu/~pasqualonia1/ca/report.html)
-| Cmwc4096Random          |              16384 | 2<sup>131104</sup> | Medium |                     Very slow | Not supported                                 | Yes                  | [George Marsaglia](http://school.anhb.uwa.edu.au/personalpages/kwessen/shared/Marsaglia03.html)
-| MersenneTwisterRandom   |                 16 | 2<sup>19937</sup>  | Medium |                        Medium | Not supported                                 | Yes                  | [Makoto Matsumoto](http://www.math.sci.hiroshima-u.ac.jp/~m-mat/MT/emt.html)
-| XorShiftRandom          |                 20 | ~2<sup>160</sup>   | Medium |                        Medium | Not supported                                 | Yes                  | [George Marsaglia](http://www.jstatsoft.org/v08/i14/paper)
-| SplittableRandomAdapter |     8<sup>**</sup> | 2<sup>64</sup>     |   Fast |              Fast<sup>†</sup> | Replaces existing seed (calling thread only)  | Yes                  | [Guy Steele and Doug Lea](http://hg.openjdk.java.net/jdk8/jdk8/jdk/file/687fd7c7986d/src/share/classes/java/util/SplittableRandom.java)
-
-<sup>*</sup>Seed sizes above 32 for AesCounterRandom require jurisdiction policy files that allow
-192- and 256-bit AES seeds.
-
-<sup>**</sup>Can be reseeded independently on each thread, affecting only that thread.
-
-<sup>†</sup>Use specialized subclass ReseedingSplittableRandomAdapter.
-
-## AesCounterRandom
-
-Retrieving the internal state of an `AesCounterRandom` instance from its output is considered
-equivalent to breaking the AES cipher.
-
-AesCounterRandom only generates a *permutation* of the space of 128-bit integers, so if it is used
-to generate about 2<sup>64</sup> 128-bit strings without reseeding, its statistical properties will
-begin to differ from those of `/dev/random` in that it won't have
-[generated the same string twice](https://en.wikipedia.org/wiki/Birthday_problem). This could be
-prevented by using a hash function rather than a reversible cipher, but the hash functions in
-standard JVMs are less cryptographically secure than AES and won't run as fast on hardware featuring
-AES-NI.
-
 ## SplittableRandom adapters
 
 These classes use `java8.util.SplittableRandom` instances to implement the methods of `Random`,
@@ -239,6 +208,39 @@ adapters are available:
 * `ReseedingSplittableRandomAdapter`: Also backed by a `ThreadLocal<SplittableRandom>`, this
   registers each thread's `SplittableRandom` instance with a `RandomSeederThread` (see below). This
   is probably the best PRNG implementation that allows concurrent access from multiple threads.
+
+## Other algorithms
+
+| Class                   | Seed size (bytes)  | Period (bits)      |  Speed | Speed with RandomSeederThread | Effect of `setSeed(long)`                     | `getSeed()` rewinds? | Algorithm author
+|-------------------------|--------------------|--------------------|--------|-------------------------------|-----------------------------------------------|----------------------|--------------------
+| AesCounterRandom        |  16-48<sup>*</sup> | 2<sup>135</sup>    |   Slow |                          Slow | Combines with existing seed                   | No                   | [NIST](http://csrc.nist.gov/groups/ST/toolkit/documents/rng/BlockCipherDRBGs.pdf)
+| CellularAutomatonRandom |                  4 | ?                  | Medium |                     Very slow | Replaces existing seed                        | Yes                  | [Anthony Pasqualoni](http://web.archive.org/web/20160413212616/http://home.southernct.edu/~pasqualonia1/ca/report.html)
+| Cmwc4096Random          |              16384 | 2<sup>131104</sup> | Medium |                     Very slow | Not supported                                 | Yes                  | [George Marsaglia](http://school.anhb.uwa.edu.au/personalpages/kwessen/shared/Marsaglia03.html)
+| MersenneTwisterRandom   |                 16 | 2<sup>19937</sup>  | Medium |                        Medium | Not supported                                 | Yes                  | [Makoto Matsumoto](http://www.math.sci.hiroshima-u.ac.jp/~m-mat/MT/emt.html)
+| XorShiftRandom          |                 20 | ~2<sup>160</sup>   | Medium |                        Medium | Not supported                                 | Yes                  | [George Marsaglia](http://www.jstatsoft.org/v08/i14/paper)
+| SplittableRandomAdapter |     8<sup>**</sup> | 2<sup>64</sup>     |   Fast |              Fast<sup>†</sup> | Replaces existing seed (calling thread only)  | Yes                  | [Guy Steele and Doug Lea](http://hg.openjdk.java.net/jdk8/jdk8/jdk/file/687fd7c7986d/src/share/classes/java/util/SplittableRandom.java)
+| Pcg64Random             |                  8 | 2<sup>62</sup>     |   Fast |                          Fast | Replaces existing seed                        | Yes                  | [M. E. O'Neill](http://www.pcg-random.org/)
+
+<sup>*</sup>Seed sizes above 32 for AesCounterRandom require jurisdiction policy files that allow
+192- and 256-bit AES seeds.
+
+<sup>**</sup>Can be reseeded independently on each thread, affecting only that thread.
+
+<sup>†</sup>Use specialized subclass ReseedingSplittableRandomAdapter.
+
+### AesCounterRandom
+
+Retrieving the internal state of an `AesCounterRandom` instance from its output is considered
+equivalent to breaking the AES cipher. Thus, this class should be able to replace `SecureRandom` in
+many applications, such as generating session keys or erasing files on a magnetic disk or tape.
+
+AesCounterRandom only generates a *permutation* of the space of 128-bit integers, so if it is used
+to generate about 2<sup>64</sup> 128-bit strings without reseeding, its statistical properties will
+begin to differ from those of `/dev/random` in that it won't have
+[generated the same string twice](https://en.wikipedia.org/wiki/Birthday_problem). This could be
+prevented by using a hash function rather than a reversible cipher, but the hash functions in
+standard JVMs are less cryptographically secure than AES and won't run as fast on hardware featuring
+AES-NI.
 
 # Reseeding
 
