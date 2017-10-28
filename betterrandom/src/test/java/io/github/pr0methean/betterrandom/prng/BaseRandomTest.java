@@ -210,8 +210,9 @@ public abstract class BaseRandomTest {
       while (rng.getEntropyBits() > 0) {
         rng.nextInt(1 << 8);
       }
-      // wait for an iteration in case it hasn't happened already
-      seederThread.awaitIteration(15, TimeUnit.SECONDS);
+      // wait for two iterations, in case an iteration was in progress when the reseed was triggered
+      seederThread.awaitIteration(10, TimeUnit.SECONDS);
+      seederThread.awaitIteration(5, TimeUnit.SECONDS);
       final byte[] newSeed = rng.getSeed();
       assertFalse(Arrays.equals(oldSeed, newSeed));
       assertGreaterOrEqual(newSeed.length * 8L, rng.getEntropyBits());
