@@ -119,7 +119,7 @@ public class SplittableRandomAdapter extends DirectSplittableRandomAdapter {
   }
 
   @Override public byte[] getSeed() {
-    return seeds.get();
+    return seeds.get().clone();
   }
 
   /**
