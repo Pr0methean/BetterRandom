@@ -15,6 +15,8 @@
 // ============================================================================
 package io.github.pr0methean.betterrandom.prng;
 
+import static io.github.pr0methean.betterrandom.util.Java8Constants.LONG_BYTES;
+
 import com.google.common.base.MoreObjects.ToStringHelper;
 import io.github.pr0methean.betterrandom.SeekableRandom;
 import io.github.pr0methean.betterrandom.seed.DefaultSeedGenerator;
@@ -317,10 +319,10 @@ public class AesCounterRandom extends BaseRandom implements SeekableRandom {
     try {
       byte[] addendDigits = new byte[counter.length];
       System.arraycopy(BinaryUtils.convertLongToBytes(delta), 0, addendDigits,
-          counter.length - Long.BYTES, Long.BYTES);
+          counter.length - LONG_BYTES, LONG_BYTES);
       if (delta < 0) {
         // Sign extend
-        for (int i = 0; i < counter.length - Long.BYTES; i++) {
+        for (int i = 0; i < counter.length - LONG_BYTES; i++) {
           addendDigits[i] = -1;
         }
       }
