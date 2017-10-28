@@ -89,7 +89,8 @@ public class SplittableRandomAdapter extends DirectSplittableRandomAdapter {
   }
 
   @Override protected void creditEntropyForNewSeed(int seedLength) {
-    entropyBits.get().updateAndGet(oldCount -> Math.max(oldCount, Math.min(seedLength, getNewSeedLength()) * 8L));
+    // Kludge for Java 7's lack of updateAndGet. Should be safe since entropyBits is thread-local.
+    entropyBits.get().set(seedLength * 8L);
   }
 
   private void initSubclassTransientFields() {
