@@ -1,6 +1,7 @@
 package io.github.pr0methean.betterrandom.prng;
 
 import static io.github.pr0methean.betterrandom.TestUtils.assertGreaterOrEqual;
+import static io.github.pr0methean.betterrandom.TestUtils.isNotAppveyor;
 import static io.github.pr0methean.betterrandom.prng.BaseRandom.ENTROPY_OF_DOUBLE;
 import static io.github.pr0methean.betterrandom.prng.RandomTestUtils.assertMonteCarloPiEstimateSane;
 import static io.github.pr0methean.betterrandom.prng.RandomTestUtils.checkRangeAndEntropy;
@@ -210,7 +211,7 @@ public abstract class BaseRandomTest {
         rng.nextInt(1 << 8);
       }
       // wait for an iteration in case it hasn't happened already
-      seederThread.awaitIteration(5, TimeUnit.SECONDS);
+      seederThread.awaitIteration(isNotAppveyor() ? 5 : 15, TimeUnit.SECONDS);
       final byte[] newSeed = rng.getSeed();
       assertFalse(Arrays.equals(oldSeed, newSeed));
       assertGreaterOrEqual(newSeed.length * 8L, rng.getEntropyBits());
