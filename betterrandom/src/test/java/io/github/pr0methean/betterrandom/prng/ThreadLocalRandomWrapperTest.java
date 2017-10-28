@@ -1,7 +1,6 @@
 package io.github.pr0methean.betterrandom.prng;
 
 import static org.testng.Assert.assertEquals;
-import static org.testng.Assert.assertFalse;
 
 import io.github.pr0methean.betterrandom.seed.DefaultSeedGenerator;
 import io.github.pr0methean.betterrandom.seed.RandomSeederThread;
@@ -11,11 +10,9 @@ import io.github.pr0methean.betterrandom.util.SerializableSupplier;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.security.GeneralSecurityException;
-import java.util.Arrays;
 import java.util.Random;
 import java8.util.function.Function;
 import java8.util.function.LongFunction;
-import java8.util.function.Supplier;
 import org.testng.annotations.Test;
 
 public class ThreadLocalRandomWrapperTest extends BaseRandomTest {
@@ -50,8 +47,10 @@ public class ThreadLocalRandomWrapperTest extends BaseRandomTest {
   }
 
   /** Seeding of this PRNG is thread-local, so setSeederThread makes no sense. */
-  @Override @Test(expectedExceptions = UnsupportedOperationException.class) public void testRandomSeederThreadIntegration() throws Exception {
-    createRng().setSeederThread(RandomSeederThread.getInstance(DefaultSeedGenerator.DEFAULT_SEED_GENERATOR));
+  @Override @Test(expectedExceptions = UnsupportedOperationException.class)
+  public void testRandomSeederThreadIntegration() throws Exception {
+    createRng().setSeederThread(
+        RandomSeederThread.getInstance(DefaultSeedGenerator.DEFAULT_SEED_GENERATOR));
   }
 
   @Override @Test(enabled = false) public void testAllPublicConstructors()
@@ -74,8 +73,7 @@ public class ThreadLocalRandomWrapperTest extends BaseRandomTest {
       @Override public Random apply(long seed) {
         return new Random(seed);
       }
-    }, DefaultSeedGenerator.DEFAULT_SEED_GENERATOR)
-        .nextInt();
+    }, DefaultSeedGenerator.DEFAULT_SEED_GENERATOR).nextInt();
   }
 
   @Override protected BaseRandom createRng() throws SeedException {

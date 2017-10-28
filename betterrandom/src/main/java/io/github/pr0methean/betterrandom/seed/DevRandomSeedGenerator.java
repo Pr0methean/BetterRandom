@@ -77,12 +77,12 @@ public enum DevRandomSeedGenerator implements SeedGenerator {
   }
 
   /**
-     * Returns true if we cannot determine quickly (i.e. without I/O calls) that this SeedGenerator
-     * would throw a {@link SeedException} if {@link #generateSeed(int)} or {@link
-     * #generateSeed(byte[])} were being called right now.
-     * @return true if this SeedGenerator will get as far as an I/O call or other slow operation in
-     *     attempting to generate a seed immediately.
-     */
+   * Returns true if we cannot determine quickly (i.e. without I/O calls) that this SeedGenerator
+   * would throw a {@link SeedException} if {@link #generateSeed(int)} or {@link
+   * #generateSeed(byte[])} were being called right now.
+   * @return true if this SeedGenerator will get as far as an I/O call or other slow operation in
+   *     attempting to generate a seed immediately.
+   */
   @Override public boolean isWorthTrying() {
     return !(DEV_RANDOM_DOES_NOT_EXIST.get());
   }

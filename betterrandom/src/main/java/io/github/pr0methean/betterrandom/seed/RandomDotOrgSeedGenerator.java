@@ -27,9 +27,8 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.nio.charset.Charset;
 import java.text.MessageFormat;
-import java.util.Date;
-import javax.xml.bind.DatatypeConverter;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.TimeZone;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicLong;
@@ -38,6 +37,7 @@ import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 import javax.annotation.Nullable;
 import javax.net.ssl.HttpsURLConnection;
+import javax.xml.bind.DatatypeConverter;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
@@ -108,12 +108,13 @@ public enum RandomDotOrgSeedGenerator implements SeedGenerator {
   private static final Charset UTF8 = Charset.forName("UTF-8");
   private static final TimeZone UTC = TimeZone.getTimeZone("UTC");
   private static Calendar EARLIEST_NEXT_ATTEMPT = Calendar.getInstance(UTC);
-  static {
-    EARLIEST_NEXT_ATTEMPT.add(YEAR, -1);
-  }
   private static byte[] cache = new byte[MAX_CACHE_SIZE];
   private static int cacheOffset = cache.length;
   private static int maxRequestSize = GLOBAL_MAX_REQUEST_SIZE;
+
+  static {
+    EARLIEST_NEXT_ATTEMPT.add(YEAR, -1);
+  }
 
   static {
     try {
@@ -217,8 +218,8 @@ public enum RandomDotOrgSeedGenerator implements SeedGenerator {
         if (advisoryDelayMs != null) {
           // Wait RETRY_DELAY or the advisory delay, whichever is shorter
           EARLIEST_NEXT_ATTEMPT.setTime(new Date());
-          EARLIEST_NEXT_ATTEMPT.add(Calendar.MILLISECOND, Math.min(advisoryDelayMs.intValue(),
-              RETRY_DELAY_MS));
+          EARLIEST_NEXT_ATTEMPT
+              .add(Calendar.MILLISECOND, Math.min(advisoryDelayMs.intValue(), RETRY_DELAY_MS));
         }
       }
       cacheOffset = 0;
@@ -290,12 +291,12 @@ public enum RandomDotOrgSeedGenerator implements SeedGenerator {
   }
 
   /**
-     * Returns true if we cannot determine quickly (i.e. without I/O calls) that this SeedGenerator
-     * would throw a {@link SeedException} if {@link #generateSeed(int)} or {@link
-     * #generateSeed(byte[])} were being called right now.
-     * @return true if this SeedGenerator will get as far as an I/O call or other slow operation in
-     *     attempting to generate a seed immediately.
-     */
+   * Returns true if we cannot determine quickly (i.e. without I/O calls) that this SeedGenerator
+   * would throw a {@link SeedException} if {@link #generateSeed(int)} or {@link
+   * #generateSeed(byte[])} were being called right now.
+   * @return true if this SeedGenerator will get as far as an I/O call or other slow operation in
+   *     attempting to generate a seed immediately.
+   */
   @Override public boolean isWorthTrying() {
     return !useRetryDelay || !EARLIEST_NEXT_ATTEMPT.after(Calendar.getInstance(UTC));
   }

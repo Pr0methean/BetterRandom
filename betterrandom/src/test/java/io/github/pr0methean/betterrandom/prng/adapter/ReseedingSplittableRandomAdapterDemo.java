@@ -28,10 +28,10 @@ public enum ReseedingSplittableRandomAdapterDemo {
       }
     }
     final ThreadLocal<List<String>> deckCopies = new ThreadLocal<List<String>>() {
-          @Override public List<String> initialValue() {
-            return Arrays.asList(cards.clone());
-          }
-        };
+      @Override public List<String> initialValue() {
+        return Arrays.asList(cards.clone());
+      }
+    };
     final ScheduledThreadPoolExecutor executor = new ScheduledThreadPoolExecutor(4);
     final ReseedingSplittableRandomAdapter random =
         ReseedingSplittableRandomAdapter.getInstance(DEFAULT_SEED_GENERATOR);

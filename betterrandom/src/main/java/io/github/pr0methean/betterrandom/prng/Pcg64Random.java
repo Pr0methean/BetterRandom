@@ -43,10 +43,6 @@ public class Pcg64Random extends BaseRandom implements SeekableRandom {
     this(DefaultSeedGenerator.DEFAULT_SEED_GENERATOR);
   }
 
-  @Override public byte[] getSeed() {
-    return BinaryUtils.convertLongToBytes(internal.get()).clone();
-  }
-
   @EntryPoint public Pcg64Random(SeedGenerator seedGenerator) throws SeedException {
     this(seedGenerator.generateSeed(LONG_BYTES));
   }
@@ -62,6 +58,18 @@ public class Pcg64Random extends BaseRandom implements SeekableRandom {
   @EntryPoint public Pcg64Random(long seed) {
     super(seed);
     internal = new AtomicLong(seed);
+  }
+
+  @Override public byte[] getSeed() {
+    return BinaryUtils.convertLongToBytes(internal.get()).clone();
+  }
+
+  @SuppressWarnings("NonSynchronizedMethodOverridesSynchronizedMethod") @Override
+  public void setSeed(long seed) {
+    if (internal != null) {
+      internal.set(seed);
+    }
+    creditEntropyForNewSeed(LONG_BYTES);
   }
 
   @Override public void advance(long delta) {
@@ -94,14 +102,6 @@ public class Pcg64Random extends BaseRandom implements SeekableRandom {
       oldInternal = internal.get();
       newInternal = oldInternal * multiply + add;
     } while (!internal.compareAndSet(oldInternal, newInternal));
-  }
-
-  @SuppressWarnings("NonSynchronizedMethodOverridesSynchronizedMethod") @Override
-  public void setSeed(long seed) {
-    if (internal != null) {
-      internal.set(seed);
-    }
-    creditEntropyForNewSeed(LONG_BYTES);
   }
 
   @Override public void setSeedInternal(byte[] seed) {

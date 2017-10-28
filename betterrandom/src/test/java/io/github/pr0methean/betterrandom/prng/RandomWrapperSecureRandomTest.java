@@ -33,9 +33,9 @@ public class RandomWrapperSecureRandomTest extends BaseRandomTest {
       InvocationTargetException {
     final BaseRandom basePrng = createRng();
     final int seedLength = getNewSeedLength(basePrng);
-    TestUtils.testAllPublicConstructors(getClassUnderTest(), ImmutableMap
-        .<Class<?>,Object>of(int.class, seedLength, long.class, TEST_SEED, byte[].class,
-            DefaultSeedGenerator.DEFAULT_SEED_GENERATOR.generateSeed(seedLength),
+    TestUtils.testAllPublicConstructors(getClassUnderTest(),
+        ImmutableMap.<Class<?>, Object>of(int.class, seedLength, long.class, TEST_SEED,
+            byte[].class, DefaultSeedGenerator.DEFAULT_SEED_GENERATOR.generateSeed(seedLength),
             SeedGenerator.class, DefaultSeedGenerator.DEFAULT_SEED_GENERATOR, Random.class,
             new SecureRandom()), VERIFY_NEXT_INT_NO_CRASH);
   }

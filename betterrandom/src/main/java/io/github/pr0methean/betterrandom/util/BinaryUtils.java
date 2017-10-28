@@ -18,7 +18,6 @@ package io.github.pr0methean.betterrandom.util;
 import static io.github.pr0methean.betterrandom.util.Java8Constants.LONG_BYTES;
 
 import java.nio.ByteBuffer;
-import java8.util.function.Supplier;
 import javax.annotation.Nullable;
 
 /**
@@ -28,30 +27,26 @@ import javax.annotation.Nullable;
 public enum BinaryUtils {
   ;
 
-  private static final ThreadLocal<byte[]> LONG_BYTE_ARRAY =
-      new ThreadLocal<byte[]>() {
-        @Override public byte[] initialValue() {
-          return new byte[LONG_BYTES];
-        }
-      };
-  private static final ThreadLocal<ByteBuffer> LONG_BYTE_BUFFER =
-      new ThreadLocal<ByteBuffer>() {
-        @Override public ByteBuffer initialValue() {
-          return ByteBuffer.wrap(LONG_BYTE_ARRAY.get());
-        }
-      };
-  private static final ThreadLocal<byte[]> INT_BYTE_ARRAY =
-      new ThreadLocal<byte[]>() {
-        @Override public byte[] initialValue() {
-          return new byte[Java8Constants.INT_BYTES];
-        }
-      };
-  private static final ThreadLocal<ByteBuffer> INT_BYTE_BUFFER =
-      new ThreadLocal<ByteBuffer>() {
-        @Override public ByteBuffer initialValue() {
-          return ByteBuffer.wrap(INT_BYTE_ARRAY.get());
-        }
-      };
+  private static final ThreadLocal<byte[]> LONG_BYTE_ARRAY = new ThreadLocal<byte[]>() {
+    @Override public byte[] initialValue() {
+      return new byte[LONG_BYTES];
+    }
+  };
+  private static final ThreadLocal<ByteBuffer> LONG_BYTE_BUFFER = new ThreadLocal<ByteBuffer>() {
+    @Override public ByteBuffer initialValue() {
+      return ByteBuffer.wrap(LONG_BYTE_ARRAY.get());
+    }
+  };
+  private static final ThreadLocal<byte[]> INT_BYTE_ARRAY = new ThreadLocal<byte[]>() {
+    @Override public byte[] initialValue() {
+      return new byte[Java8Constants.INT_BYTES];
+    }
+  };
+  private static final ThreadLocal<ByteBuffer> INT_BYTE_BUFFER = new ThreadLocal<ByteBuffer>() {
+    @Override public ByteBuffer initialValue() {
+      return ByteBuffer.wrap(INT_BYTE_ARRAY.get());
+    }
+  };
 
   // Mask for casting a byte to an int, bit-by-bit (with
   // bitwise AND) with no special consideration for the sign bit.

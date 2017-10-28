@@ -11,10 +11,8 @@ import io.github.pr0methean.betterrandom.util.BinaryUtils;
 import io.github.pr0methean.betterrandom.util.Java8Constants;
 import java.io.IOException;
 import java.io.ObjectInputStream;
-import java8.util.SplittableRandom;
 import java.util.concurrent.atomic.AtomicLong;
-import java8.util.function.LongUnaryOperator;
-import java8.util.function.Supplier;
+import java8.util.SplittableRandom;
 import javax.annotation.Nullable;
 
 /**
@@ -140,6 +138,16 @@ public class SplittableRandomAdapter extends DirectSplittableRandomAdapter {
   /**
    * {@inheritDoc} Applies only to the calling thread.
    */
+  @Override public void setSeed(final byte[] seed) {
+    if (seed.length != Java8Constants.LONG_BYTES) {
+      throw new IllegalArgumentException("SplittableRandomAdapter requires an 8-byte seed");
+    }
+    setSeed(convertBytesToLong(seed));
+  }
+
+  /**
+   * {@inheritDoc} Applies only to the calling thread.
+   */
   @SuppressWarnings("contracts.postcondition.not.satisfied") @Override public void setSeed(
       final long seed) {
     if (this.seed == null) {
@@ -154,15 +162,5 @@ public class SplittableRandomAdapter extends DirectSplittableRandomAdapter {
         seeds.set(BinaryUtils.convertLongToBytes(seed));
       }
     }
-  }
-
-  /**
-   * {@inheritDoc} Applies only to the calling thread.
-   */
-  @Override public void setSeed(final byte[] seed) {
-        if (seed.length != Java8Constants.LONG_BYTES) {
-      throw new IllegalArgumentException("SplittableRandomAdapter requires an 8-byte seed");
-    }
-    setSeed(convertBytesToLong(seed));
   }
 }

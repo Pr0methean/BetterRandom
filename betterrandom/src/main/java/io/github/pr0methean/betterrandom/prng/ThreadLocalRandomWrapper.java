@@ -6,12 +6,10 @@ import com.google.common.base.MoreObjects.ToStringHelper;
 import io.github.pr0methean.betterrandom.seed.RandomSeederThread;
 import io.github.pr0methean.betterrandom.seed.SeedException;
 import io.github.pr0methean.betterrandom.seed.SeedGenerator;
-import io.github.pr0methean.betterrandom.util.BinaryUtils;
 import io.github.pr0methean.betterrandom.util.Java8Constants;
 import io.github.pr0methean.betterrandom.util.SerializableSupplier;
 import java.io.IOException;
 import java.io.ObjectInputStream;
-import java.io.Serializable;
 import java.util.Random;
 import java8.util.function.Function;
 import java8.util.function.LongFunction;
@@ -64,14 +62,6 @@ public class ThreadLocalRandomWrapper extends RandomWrapper {
     initSubclassTransientFields();
   }
 
-  private void initSubclassTransientFields() {
-    threadLocal = new ThreadLocal<BaseRandom>() {
-      @Override protected BaseRandom initialValue() {
-        return initializer.get();
-      }
-    };
-  }
-
   /**
    * Uses this class and {@link RandomWrapper} to decorate any implementation of {@link Random} that
    * can be constructed from a {@code long} seed into a fully-concurrent one.
@@ -88,6 +78,14 @@ public class ThreadLocalRandomWrapper extends RandomWrapper {
             return new RandomWrapper(legacyCreator.apply(convertBytesToLong(bytes)));
           }
         });
+  }
+
+  private void initSubclassTransientFields() {
+    threadLocal = new ThreadLocal<BaseRandom>() {
+      @Override protected BaseRandom initialValue() {
+        return initializer.get();
+      }
+    };
   }
 
   @Override protected boolean withProbabilityInternal(final double probability) {

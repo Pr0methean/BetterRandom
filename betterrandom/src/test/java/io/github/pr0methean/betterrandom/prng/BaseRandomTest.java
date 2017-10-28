@@ -1,7 +1,6 @@
 package io.github.pr0methean.betterrandom.prng;
 
 import static io.github.pr0methean.betterrandom.TestUtils.assertGreaterOrEqual;
-import static io.github.pr0methean.betterrandom.TestUtils.isNotAppveyor;
 import static io.github.pr0methean.betterrandom.prng.BaseRandom.ENTROPY_OF_DOUBLE;
 import static io.github.pr0methean.betterrandom.prng.RandomTestUtils.assertMonteCarloPiEstimateSane;
 import static io.github.pr0methean.betterrandom.prng.RandomTestUtils.checkRangeAndEntropy;
@@ -18,7 +17,6 @@ import io.github.pr0methean.betterrandom.seed.DefaultSeedGenerator;
 import io.github.pr0methean.betterrandom.seed.RandomSeederThread;
 import io.github.pr0methean.betterrandom.seed.SeedException;
 import io.github.pr0methean.betterrandom.seed.SeedGenerator;
-import io.github.pr0methean.betterrandom.util.EntryPoint;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.security.GeneralSecurityException;
@@ -26,22 +24,21 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Random;
+import java.util.concurrent.TimeUnit;
 import java8.util.function.Consumer;
 import java8.util.function.Supplier;
-import java.util.concurrent.TimeUnit;
-import org.testng.ITestResult;
 import org.testng.Reporter;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.Test;
-import org.testng.util.RetryAnalyzerCount;
 
 public abstract class BaseRandomTest {
 
-  protected static final Consumer<BaseRandom> VERIFY_NEXT_INT_NO_CRASH = new Consumer<BaseRandom>() {
-    @Override public void accept(BaseRandom prng) {
-      prng.nextInt();
-    }
-  };
+  protected static final Consumer<BaseRandom> VERIFY_NEXT_INT_NO_CRASH =
+      new Consumer<BaseRandom>() {
+        @Override public void accept(BaseRandom prng) {
+          prng.nextInt();
+        }
+      };
 
   /**
    * The square root of 12, rounded from an extended-precision calculation that was done by Wolfram
@@ -74,10 +71,10 @@ public abstract class BaseRandomTest {
       throws SeedException, IllegalAccessException, InstantiationException,
       InvocationTargetException {
     final int seedLength = getNewSeedLength(createRng());
-    TestUtils.testAllPublicConstructors(getClassUnderTest(), ImmutableMap
-            .<Class<?>, Object>of(int.class, seedLength, long.class, TEST_SEED, byte[].class,
-                DefaultSeedGenerator.DEFAULT_SEED_GENERATOR.generateSeed(seedLength),
-                SeedGenerator.class, DefaultSeedGenerator.DEFAULT_SEED_GENERATOR),
+    TestUtils.testAllPublicConstructors(getClassUnderTest(),
+        ImmutableMap.<Class<?>, Object>of(int.class, seedLength, long.class, TEST_SEED,
+            byte[].class, DefaultSeedGenerator.DEFAULT_SEED_GENERATOR.generateSeed(seedLength),
+            SeedGenerator.class, DefaultSeedGenerator.DEFAULT_SEED_GENERATOR),
         VERIFY_NEXT_INT_NO_CRASH);
   }
 
@@ -114,8 +111,8 @@ public abstract class BaseRandomTest {
    * subtle statistical anomalies that would be picked up by Diehard, but it provides a simple check
    * for major problems with the output.
    */
-  @Test(timeOut = 20000, groups = "non-deterministic")
-  public void testDistribution() throws SeedException {
+  @Test(timeOut = 20000, groups = "non-deterministic") public void testDistribution()
+      throws SeedException {
     final BaseRandom rng = createRng();
     assertMonteCarloPiEstimateSane(rng);
   }
@@ -125,8 +122,8 @@ public abstract class BaseRandomTest {
    * subtle statistical anomalies that would be picked up by Diehard, but it provides a simple check
    * for major problems with the output.
    */
-  @Test(timeOut = 20000, groups = "non-deterministic")
-  public void testStandardDeviation() throws SeedException {
+  @Test(timeOut = 20000, groups = "non-deterministic") public void testStandardDeviation()
+      throws SeedException {
     final BaseRandom rng = createRng();
     // Expected standard deviation for a uniformly distributed population of values in the range 0..n
     // approaches n/sqrt(12).
@@ -216,9 +213,9 @@ public abstract class BaseRandomTest {
     assertFalse(Arrays.equals(output1, output2));
   }
 
-  @Test(timeOut = 60000) public void testRandomSeederThreadIntegration()
-      throws Exception {
-    final RandomSeederThread seederThread = RandomSeederThread.getInstance(DefaultSeedGenerator.DEFAULT_SEED_GENERATOR);
+  @Test(timeOut = 60000) public void testRandomSeederThreadIntegration() throws Exception {
+    final RandomSeederThread seederThread =
+        RandomSeederThread.getInstance(DefaultSeedGenerator.DEFAULT_SEED_GENERATOR);
     final BaseRandom rng = createRng();
     rng.setSeederThread(seederThread);
     try {

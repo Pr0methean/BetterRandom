@@ -60,8 +60,8 @@ public class LooperThreadTest {
     // Test SkeletonLooperThread instead of LooperThread so that protected ctors in LooperThread are
     // also covered
     TestUtils.testAllPublicConstructors(SkeletonLooperThread.class, ImmutableMap
-            .of(ThreadGroup.class, new SerializableThreadGroup(), Runnable.class, TARGET, String.class,
-                "Test LooperThread", long.class, STACK_SIZE), new Consumer<SkeletonLooperThread>() {
+        .of(ThreadGroup.class, new SerializableThreadGroup(), Runnable.class, TARGET, String.class,
+            "Test LooperThread", long.class, STACK_SIZE), new Consumer<SkeletonLooperThread>() {
       @Override public void accept(SkeletonLooperThread thread) {
         CloneViaSerialization.clone(thread).start();
       }

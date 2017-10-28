@@ -19,7 +19,6 @@ import java.util.WeakHashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.locks.Condition;
-import java8.util.function.Function;
 import java.util.logging.Level;
 
 /**
@@ -33,7 +32,8 @@ public final class RandomSeederThread extends LooperThread {
   private static final ExecutorService WAKER_UPPER = Executors.newSingleThreadExecutor();
   private static final LogPreFormatter LOG = new LogPreFormatter(RandomSeederThread.class);
   @SuppressWarnings("StaticCollection") private static final Map<SeedGenerator, RandomSeederThread>
-      INSTANCES = Collections.synchronizedMap(new WeakHashMap<SeedGenerator, RandomSeederThread>(1));
+      INSTANCES =
+      Collections.synchronizedMap(new WeakHashMap<SeedGenerator, RandomSeederThread>(1));
   private static final long serialVersionUID = 5229976461051217528L;
   private final SeedGenerator seedGenerator;
   private final byte[] longSeedArray = new byte[8];
@@ -97,7 +97,8 @@ public final class RandomSeederThread extends LooperThread {
   }
 
   private void initTransientFields() {
-    prngs = Collections.synchronizedSet(Collections.newSetFromMap(new WeakHashMap<Random, Boolean>(1)));
+    prngs =
+        Collections.synchronizedSet(Collections.newSetFromMap(new WeakHashMap<Random, Boolean>(1)));
     longSeedBuffer = ByteBuffer.wrap(longSeedArray);
     waitWhileEmpty = lock.newCondition();
     waitForEntropyDrain = lock.newCondition();
@@ -109,8 +110,7 @@ public final class RandomSeederThread extends LooperThread {
     return getInstance(seedGenerator);
   }
 
-  private void readObject(final ObjectInputStream in)
-      throws IOException, ClassNotFoundException {
+  private void readObject(final ObjectInputStream in) throws IOException, ClassNotFoundException {
     in.defaultReadObject();
     initTransientFields();
     if (!prngsSerial.isEmpty()) {

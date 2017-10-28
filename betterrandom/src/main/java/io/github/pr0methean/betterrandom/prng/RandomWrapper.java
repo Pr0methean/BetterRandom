@@ -78,11 +78,6 @@ public class RandomWrapper extends BaseRandom {
     haveParallelStreams = hasParallelStreams(wrapped);
   }
 
-  private static boolean hasParallelStreams(Random wrapped) {
-    return (wrapped instanceof BaseRandom && ((BaseRandom) wrapped).useParallelStreams())
-        || (wrapped instanceof Java8CompatRandom && ((Java8CompatRandom) wrapped).longs().isParallel());
-  }
-
   /**
    * Wraps a new {@link Random} seeded with the specified seed.
    * @param seed seed used to initialise the {@link Random}.
@@ -104,6 +99,11 @@ public class RandomWrapper extends BaseRandom {
     readEntropyOfWrapped(wrapped);
     this.wrapped = wrapped;
     haveParallelStreams = hasParallelStreams(wrapped);
+  }
+
+  private static boolean hasParallelStreams(Random wrapped) {
+    return (wrapped instanceof BaseRandom && ((BaseRandom) wrapped).useParallelStreams()) || (
+        wrapped instanceof Java8CompatRandom && ((Java8CompatRandom) wrapped).longs().isParallel());
   }
 
   private static byte[] getSeedOrDummy(final Random wrapped) {
@@ -235,8 +235,7 @@ public class RandomWrapper extends BaseRandom {
   }
 
   /** */
-  @SuppressWarnings("LockAcquiredButNotSafelyReleased") @Override public int getNewSeedLength(
-      ) {
+  @SuppressWarnings("LockAcquiredButNotSafelyReleased") @Override public int getNewSeedLength() {
     boolean locked = false;
     if (lock != null) {
       lock.lock();

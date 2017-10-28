@@ -40,11 +40,11 @@ public enum SecureRandomSeedGenerator implements SeedGenerator {
   private static final SecureRandom SOURCE = new SecureRandom();
 
   /**
-     * Generates and returns a seed value for a random number generator as a new array.
-     * @param length The length of the seed to generate (in bytes).
-     * @return A byte array containing the seed data.
-     * @throws SeedException If a seed cannot be generated for any reason.
-     */
+   * Generates and returns a seed value for a random number generator as a new array.
+   * @param length The length of the seed to generate (in bytes).
+   * @return A byte array containing the seed data.
+   * @throws SeedException If a seed cannot be generated for any reason.
+   */
   @Override public byte[] generateSeed(final int length) {
     if (length <= 0) {
       return EMPTY_SEED;

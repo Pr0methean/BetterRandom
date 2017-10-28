@@ -9,4 +9,5 @@ import java8.util.function.Supplier;
  * @param <T> the type of object supplied.
  */
 public interface SerializableSupplier<T> extends Supplier<T>, Serializable {
+
 }
