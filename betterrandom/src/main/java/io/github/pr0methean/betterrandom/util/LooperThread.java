@@ -355,12 +355,17 @@ public class LooperThread extends Thread implements Serializable, Cloneable {
 
   /**
    * Wait for the next iteration to finish.
+   * @return {@code false} if the thread has already finished, else {@code true}
    * @throws InterruptedException if thrown by {@link Condition#await()}
    */
-  public void awaitIteration() throws InterruptedException {
+  public boolean awaitIteration() throws InterruptedException {
     lock.lock();
     try {
+      if (getState() == State.TERMINATED) {
+        return false;
+      }
       endOfIteration.await();
+      return true;
     } finally {
       lock.unlock();
     }
@@ -377,7 +382,7 @@ public class LooperThread extends Thread implements Serializable, Cloneable {
   public boolean awaitIteration(final long time, final TimeUnit unit) throws InterruptedException {
     lock.lock();
     try {
-      return endOfIteration.await(time, unit);
+      return (getState() != State.TERMINATED) && endOfIteration.await(time, unit);
     } finally {
       lock.unlock();
     }
