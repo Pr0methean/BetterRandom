@@ -302,10 +302,11 @@ public class LooperThread extends Thread implements Serializable, Cloneable {
             break;
           }
         } finally {
-          lock.unlock();
           // Switch to uninterruptible locking to signal endOfIteration
+          lock.unlock();
           lock.lock();
           try {
+            System.out.println("Signaling endOfIteration");
             endOfIteration.signalAll();
           } finally {
             lock.unlock();
