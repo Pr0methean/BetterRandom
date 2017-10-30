@@ -160,7 +160,7 @@ public class LooperThreadTest {
     SleepingLooperThread sleepingThread = new SleepingLooperThread();
     sleepingThread.start();
     try {
-      sleepingThread.awaitIteration();
+      assertTrue(sleepingThread.awaitIteration());
     } finally {
       sleepingThread.interrupt();
     }
@@ -170,7 +170,7 @@ public class LooperThreadTest {
     SleepingLooperThread sleepingThread = new SleepingLooperThread();
     sleepingThread.start();
     try {
-      sleepingThread.awaitIteration(5, TimeUnit.SECONDS);
+      assertTrue(sleepingThread.awaitIteration(5, TimeUnit.SECONDS));
     } finally {
       sleepingThread.interrupt();
     }
