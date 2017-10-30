@@ -302,18 +302,19 @@ public class LooperThread extends Thread implements Serializable, Cloneable {
             break;
           }
         } finally {
-          // Switch to uninterruptible locking to signal endOfIteration
           lock.unlock();
-          lock.lock();
-          try {
-            endOfIteration.signalAll();
-          } finally {
-            lock.unlock();
-          }
         }
       } catch (final InterruptedException ignored) {
         interrupt();
         break;
+      } finally {
+        // Switch to uninterruptible locking to signal endOfIteration
+        lock.lock();
+        try {
+          endOfIteration.signalAll();
+        } finally {
+          lock.unlock();
+        }
       }
     }
   }
