@@ -70,6 +70,7 @@ public class LooperThread extends Thread implements Serializable, Cloneable {
   @Nullable private ClassLoader contextClassLoader = null;
   @Nullable private Runnable serialTarget;
   @Nullable private UncaughtExceptionHandler serialUncaughtExceptionHandler;
+  private transient long finishedIterations = 0;
 
   /**
    * Constructs a LooperThread with all properties as defaults. Protected because it does not set a
@@ -298,7 +299,9 @@ public class LooperThread extends Thread implements Serializable, Cloneable {
       try {
         lock.lockInterruptibly();
         try {
-          if (!iterate()) {
+          boolean shouldContinue = iterate();
+          finishedIterations++;
+          if (!shouldContinue) {
             break;
           }
         } finally {
@@ -356,17 +359,19 @@ public class LooperThread extends Thread implements Serializable, Cloneable {
 
   /**
    * Wait for the next iteration to finish.
-   * @return {@code false} if the thread has already finished, else {@code true}
+   * @return {@code false} if the thread has already finished or is interrupted while we're waiting,
+   *     else {@code true}
    * @throws InterruptedException if thrown by {@link Condition#await()}
    */
   public boolean awaitIteration() throws InterruptedException {
     lock.lock();
     try {
-      if (getState() == State.TERMINATED) {
-        return false;
+      final long previousFinishedIterations = finishedIterations;
+      while ((getState() != State.TERMINATED)
+          && (finishedIterations == previousFinishedIterations)) {
+        endOfIteration.await();
       }
-      endOfIteration.await();
-      return true;
+      return finishedIterations != previousFinishedIterations;
     } finally {
       lock.unlock();
     }
@@ -376,14 +381,19 @@ public class LooperThread extends Thread implements Serializable, Cloneable {
    * Wait for the next iteration to finish, with a timeout.
    * @param time the maximum time to wait
    * @param unit the time unit of the {@code time} argument
-   * @return {@code false} if the waiting time detectably elapsed before an iteration finished, else
+   * @return {@code false}  the waiting time detectably elapsed before an iteration finished, else
    *     {@code true}
    * @throws InterruptedException if thrown by {@link Condition#await(long, TimeUnit)}
    */
   public boolean awaitIteration(final long time, final TimeUnit unit) throws InterruptedException {
     lock.lock();
     try {
-      return (getState() != State.TERMINATED) && endOfIteration.await(time, unit);
+      final long previousFinishedIterations = finishedIterations;
+      while ((getState() != State.TERMINATED)
+          && (finishedIterations == previousFinishedIterations)) {
+        endOfIteration.await(time, unit);
+      }
+      return finishedIterations != previousFinishedIterations;
     } finally {
       lock.unlock();
     }
