@@ -8,6 +8,7 @@ import static org.testng.Assert.assertTrue;
 import static org.testng.Assert.fail;
 
 import com.google.common.collect.ImmutableMap;
+import io.github.pr0methean.betterrandom.DeadlockWatchdogThread;
 import io.github.pr0methean.betterrandom.MockException;
 import io.github.pr0methean.betterrandom.TestUtils;
 import java.io.InvalidObjectException;
