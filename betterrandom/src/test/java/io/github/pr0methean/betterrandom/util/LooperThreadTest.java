@@ -158,9 +158,9 @@ public class LooperThreadTest {
 
   @Test public void testAwaitIteration() throws InterruptedException {
     SleepingLooperThread sleepingThread = new SleepingLooperThread();
-    sleepingThread.awaitIteration();
+    sleepingThread.start();
     try {
-      sleepingThread.start();
+      sleepingThread.awaitIteration();
     } finally {
       sleepingThread.interrupt();
     }

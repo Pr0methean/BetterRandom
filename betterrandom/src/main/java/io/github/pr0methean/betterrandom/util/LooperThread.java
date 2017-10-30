@@ -306,7 +306,7 @@ public class LooperThread extends Thread implements Serializable, Cloneable {
           lock.unlock();
           lock.lock();
           try {
-            System.out.println("Signaling endOfIteration");
+            System.out.println("Signaling endOfIteration from " + this);
             endOfIteration.signalAll();
           } finally {
             lock.unlock();
