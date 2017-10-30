@@ -296,28 +296,19 @@ public class LooperThread extends Thread implements Serializable, Cloneable {
    */
   @Override public final void run() {
     while (true) {
+      lock.lock();
       try {
-        lock.lockInterruptibly();
-        try {
-          boolean shouldContinue = iterate();
-          finishedIterations++;
-          if (!shouldContinue) {
-            break;
-          }
-        } finally {
-          lock.unlock();
+        boolean shouldContinue = iterate();
+        finishedIterations++;
+        if (!shouldContinue) {
+          break;
         }
       } catch (final InterruptedException ignored) {
         interrupt();
         break;
       } finally {
-        // Switch to uninterruptible locking to signal endOfIteration
-        lock.lock();
-        try {
-          endOfIteration.signalAll();
-        } finally {
-          lock.unlock();
-        }
+        endOfIteration.signalAll();
+        lock.unlock();
       }
     }
   }
@@ -367,8 +358,8 @@ public class LooperThread extends Thread implements Serializable, Cloneable {
     lock.lock();
     try {
       final long previousFinishedIterations = finishedIterations;
-      while ((getState() != State.TERMINATED)
-          && (finishedIterations == previousFinishedIterations)) {
+      while ((getState() != State.TERMINATED) && (finishedIterations
+          == previousFinishedIterations)) {
         endOfIteration.await();
       }
       return finishedIterations != previousFinishedIterations;
@@ -389,8 +380,8 @@ public class LooperThread extends Thread implements Serializable, Cloneable {
     lock.lock();
     try {
       final long previousFinishedIterations = finishedIterations;
-      while ((getState() != State.TERMINATED)
-          && (finishedIterations == previousFinishedIterations)) {
+      while ((getState() != State.TERMINATED) && (finishedIterations
+          == previousFinishedIterations)) {
         endOfIteration.await(time, unit);
       }
       return finishedIterations != previousFinishedIterations;
