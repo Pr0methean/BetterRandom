@@ -77,8 +77,7 @@ public class LogPreFormatter {
       for (final StackTraceElement element : stackTrace) {
         stackTraceBuilder.append(String.format("  %s%n", element));
       }
-      logger.logp(level, stackTrace[2].getClassName(), stackTrace[2].getMethodName(),
-          stackTraceBuilder.toString());
+      logger.log(level, stackTraceBuilder.toString());
     }
   }
 }
