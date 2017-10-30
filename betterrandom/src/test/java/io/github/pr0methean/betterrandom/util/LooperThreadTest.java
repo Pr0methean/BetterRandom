@@ -21,12 +21,13 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicLong;
 import javax.annotation.Nullable;
+import org.testng.annotations.AfterClass;
+import org.testng.annotations.BeforeClass;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
 @SuppressWarnings("ClassLoaderInstantiation")
 public class LooperThreadTest {
-
   private static final String THREAD_NAME = "LooperThread for serialization test";
   private static final String GROUP_NAME = SerializableThreadGroup.class.getSimpleName();
   private static final long STACK_SIZE = 1_234_567;
@@ -61,6 +62,14 @@ public class LooperThreadTest {
             .of(ThreadGroup.class, new SerializableThreadGroup(), Runnable.class, TARGET, String.class,
                 "Test LooperThread", long.class, STACK_SIZE),
         thread -> CloneViaSerialization.clone(thread).start());
+  }
+
+  @BeforeClass public void setUpClass() {
+    DeadlockWatchdogThread.ensureStarted();
+  }
+
+  @AfterClass public void tearDownClass() {
+    DeadlockWatchdogThread.stopInstance();
   }
 
   @BeforeTest public void setUp() {
