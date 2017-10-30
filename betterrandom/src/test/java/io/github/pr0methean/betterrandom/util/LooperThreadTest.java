@@ -266,7 +266,6 @@ public class LooperThreadTest {
     }
 
     @Override public boolean iterate() throws InterruptedException {
-      System.out.println("Iterating in SleepingLooperThread");
       sleep(500);
       TARGET.run();
       return iterationsRun.get() < 25;
