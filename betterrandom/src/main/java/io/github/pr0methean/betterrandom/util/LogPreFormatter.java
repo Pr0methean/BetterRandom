@@ -23,7 +23,7 @@ public class LogPreFormatter {
     logger = Logger.getLogger(clazz.getName());
   }
 
-  private void format(final Level level, final int depthFromRealSource, final String formatString,
+  public void format(final Level level, final int depthFromRealSource, final String formatString,
       final Object... args) {
     for (int i = 0; i < args.length; i++) {
       if (args[i] instanceof byte[]) {
