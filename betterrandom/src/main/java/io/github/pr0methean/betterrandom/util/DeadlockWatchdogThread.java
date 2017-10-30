@@ -1,7 +1,5 @@
-package io.github.pr0methean.betterrandom;
+package io.github.pr0methean.betterrandom.util;
 
-import io.github.pr0methean.betterrandom.util.LogPreFormatter;
-import io.github.pr0methean.betterrandom.util.LooperThread;
 import java.lang.management.ManagementFactory;
 import java.lang.management.ThreadInfo;
 import java.lang.management.ThreadMXBean;
@@ -9,7 +7,7 @@ import java.util.logging.Level;
 
 public class DeadlockWatchdogThread extends LooperThread {
 
-  public static final DeadlockWatchdogThread INSTANCE = new DeadlockWatchdogThread();
+  public static DeadlockWatchdogThread INSTANCE = new DeadlockWatchdogThread();
   public static final ThreadMXBean THREAD_MX_BEAN = ManagementFactory.getThreadMXBean();
   private static final LogPreFormatter LOG = new LogPreFormatter(DeadlockWatchdogThread.class);
   private static final int MAX_STACK_DEPTH = 20;
@@ -19,12 +17,17 @@ public class DeadlockWatchdogThread extends LooperThread {
     super("DeadlockWatchdogThread");
   }
 
-  public static void ensureStarted() {
+  public static synchronized void ensureStarted() {
     if (INSTANCE.getState() == State.NEW) {
       INSTANCE.setDaemon(true);
       INSTANCE.setPriority(Thread.MAX_PRIORITY);
       INSTANCE.start();
     }
+  }
+
+  public static synchronized void stopInstance() {
+    INSTANCE.interrupt();
+    INSTANCE = new DeadlockWatchdogThread();
   }
 
   @Override public boolean iterate() throws InterruptedException {
@@ -46,7 +49,7 @@ public class DeadlockWatchdogThread extends LooperThread {
     }
     for (long id : threadsOfInterest) {
       ThreadInfo threadInfo = THREAD_MX_BEAN.getThreadInfo(id, MAX_STACK_DEPTH);
-      LOG.format(logLevel, threadInfo.getThreadName());
+      LOG.format(logLevel, 0, threadInfo.getThreadName());
       StackTraceElement[] stackTrace = threadInfo.getStackTrace();
       LOG.logStackTrace(logLevel, stackTrace);
     }
