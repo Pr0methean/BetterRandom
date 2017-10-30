@@ -258,8 +258,9 @@ public class LooperThreadTest {
     }
 
     @Override public boolean iterate() throws InterruptedException {
-      sleep(1000);
-      return false;
+      sleep(500);
+      TARGET.run();
+      return iterationsRun.get() < 10;
     }
   }
 
