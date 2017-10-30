@@ -358,7 +358,7 @@ public class LooperThread extends Thread implements Serializable, Cloneable {
     lock.lock();
     try {
       final long previousFinishedIterations = finishedIterations;
-      while ((getState() != State.TERMINATED) && (finishedIterations
+      while (!isInterrupted() && (getState() != State.TERMINATED) && (finishedIterations
           == previousFinishedIterations)) {
         endOfIteration.await();
       }
@@ -380,7 +380,7 @@ public class LooperThread extends Thread implements Serializable, Cloneable {
     lock.lock();
     try {
       final long previousFinishedIterations = finishedIterations;
-      while ((getState() != State.TERMINATED) && (finishedIterations
+      while (!isInterrupted() && (getState() != State.TERMINATED) && (finishedIterations
           == previousFinishedIterations)) {
         endOfIteration.await(time, unit);
       }
