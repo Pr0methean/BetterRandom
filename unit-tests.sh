@@ -28,6 +28,9 @@ if [ "$STATUS" = 0 ]; then
       # Send coverage to Codacy
       wget 'https://github.com/codacy/codacy-coverage-reporter/releases/download/2.0.0/codacy-coverage-reporter-2.0.0-assembly.jar'
       java -jar codacy-coverage-reporter-2.0.0-assembly.jar -l Java -r target/site/jacoco/jacoco.xml
+
+      # Send coverage to Codecov
+      bash <(curl -s https://codecov.io/bash)
     fi
     COMMIT="$TRAVIS_COMMIT"
     JOB_ID="travis_$TRAVIS_JOB_NUMBER"
