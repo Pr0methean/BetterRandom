@@ -168,17 +168,6 @@ public class LooperThreadTest {
     sleepingThread.start();
     try {
       System.out.println("Waiting for an iteration...");
-      assertTrue(sleepingThread.awaitIteration());
-    } finally {
-      sleepingThread.interrupt();
-    }
-  }
-
-  @Test public void testAwaitIterationTimeout() throws InterruptedException {
-    SleepingLooperThread sleepingThread = new SleepingLooperThread();
-    sleepingThread.start();
-    try {
-      System.out.println("Waiting for an iteration...");
       assertTrue(sleepingThread.awaitIteration(5, TimeUnit.SECONDS));
     } finally {
       sleepingThread.interrupt();
