@@ -207,16 +207,12 @@ public abstract class BaseRandomTest {
     }
     rng.setSeederThread(seederThread);
     try {
-      do {
+      byte[] newSeed = new byte[0];
+      while (!Arrays.equals(oldSeed, newSeed)) {
         System.out.format("Current entropy of %s is %d%n", rng, rng.getEntropyBits());
         rng.nextInt();
-      } while (!seederThread.awaitIteration(100, TimeUnit.MILLISECONDS));
-      do {
-        System.out.format("Current entropy of %s is %d%n", rng, rng.getEntropyBits());
-        rng.nextInt();
-      } while (!seederThread.awaitIteration(100, TimeUnit.MILLISECONDS));
-      final byte[] newSeed = rng.getSeed();
-      assertFalse(Arrays.equals(oldSeed, newSeed));
+        newSeed = rng.getSeed();
+      }
       assertGreaterOrEqual(newSeed.length * 8L, rng.getEntropyBits());
     } finally {
       rng.setSeederThread(null);
