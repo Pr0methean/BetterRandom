@@ -6,22 +6,20 @@ public class Pcg64RandomTest extends BaseRandomTest {
 
   private static final int ITERATIONS = 8;
 
-  @Test
-  public void testAdvanceForward() {
+  @Test public void testAdvanceForward() {
     Pcg64Random copy1 = createRng();
     Pcg64Random copy2 = createRng(copy1.getSeed());
-    for (int i=0; i < ITERATIONS; i++) {
+    for (int i = 0; i < ITERATIONS; i++) {
       copy1.nextInt();
     }
     copy2.advance(ITERATIONS);
     RandomTestUtils.testEquivalence(copy1, copy2, 20);
   }
 
-  @Test
-  public void testAdvanceBackward() {
+  @Test public void testAdvanceBackward() {
     Pcg64Random copy1 = createRng();
     Pcg64Random copy2 = createRng(copy1.getSeed());
-    for (int i=0; i < ITERATIONS; i++) {
+    for (int i = 0; i < ITERATIONS; i++) {
       copy1.nextInt();
     }
     copy1.advance(-ITERATIONS);

@@ -55,26 +55,24 @@ public class AesCounterRandom128Test extends BaseRandomTest {
     assert rngs[0].nextLong() != rngs[1].nextLong() : "RNGs converged after 4 setSeed calls";
   }
 
-  @Test
-  public void testAdvanceForward() {
+  @Test public void testAdvanceForward() {
     SeekableRandom copy1 = (SeekableRandom) createRng();
     Random copy1AsRandom = (Random) copy1;
     SeekableRandom copy2 = (SeekableRandom) createRng(copy1.getSeed());
     Random copy2AsRandom = (Random) copy2;
-    for (int i=0; i < ITERATIONS; i++) {
+    for (int i = 0; i < ITERATIONS; i++) {
       copy1AsRandom.nextInt();
     }
     copy2.advance(ITERATIONS);
     RandomTestUtils.testEquivalence(copy1AsRandom, copy2AsRandom, 20);
   }
 
-  @Test
-  public void testAdvanceBackward() {
+  @Test public void testAdvanceBackward() {
     SeekableRandom copy1 = (SeekableRandom) createRng();
     Random copy1AsRandom = (Random) copy1;
     SeekableRandom copy2 = (SeekableRandom) createRng(copy1.getSeed());
     Random copy2AsRandom = (Random) copy2;
-    for (int i=0; i < ITERATIONS; i++) {
+    for (int i = 0; i < ITERATIONS; i++) {
       copy1AsRandom.nextInt();
     }
     copy1.advance(-ITERATIONS);
