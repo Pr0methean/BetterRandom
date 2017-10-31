@@ -297,7 +297,12 @@ public class LooperThread extends Thread implements Serializable, Cloneable {
    */
   @Override public final void run() {
     while (true) {
-      lock.lock();
+      try {
+        lock.lockInterruptibly();
+      } catch (InterruptedException e) {
+        interrupt();
+        break;
+      }
       try {
         boolean shouldContinue = iterate();
         finishedIterations.getAndIncrement();
