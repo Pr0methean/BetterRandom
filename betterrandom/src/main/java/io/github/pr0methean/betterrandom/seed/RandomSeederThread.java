@@ -18,6 +18,7 @@ import java.util.Set;
 import java.util.WeakHashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.Condition;
 import java.util.logging.Level;
 
@@ -35,6 +36,7 @@ public final class RandomSeederThread extends LooperThread {
       INSTANCES =
       Collections.synchronizedMap(new WeakHashMap<SeedGenerator, RandomSeederThread>(1));
   private static final long serialVersionUID = 5229976461051217528L;
+  private static final long POLL_INTERVAL = 60;
   private final SeedGenerator seedGenerator;
   private final byte[] longSeedArray = new byte[8];
   // WeakHashMap-based Set can't be serialized, so read & write this copy instead
@@ -169,7 +171,6 @@ public final class RandomSeederThread extends LooperThread {
 
   @SuppressWarnings({"InfiniteLoopStatement", "ObjectAllocationInLoop", "AwaitNotInLoop"}) @Override
   public boolean iterate() throws InterruptedException {
-    LOG.info("Starting iteration");
     while (true) {
       synchronized (prngs) {
         prngsThisIteration.addAll(prngs);
@@ -189,7 +190,6 @@ public final class RandomSeederThread extends LooperThread {
           ((EntropyCountingRandom) random).getEntropyBits() > 0)) {
         continue;
       } else {
-        LOG.info("Entropy consumed by " + random);
         entropyConsumed = true;
       }
       try {
@@ -214,8 +214,7 @@ public final class RandomSeederThread extends LooperThread {
       }
     }
     if (!entropyConsumed) {
-      LOG.info("No entropy consumed; waiting on waitForEntropyDrain");
-      waitForEntropyDrain.await();
+      waitForEntropyDrain.await(POLL_INTERVAL, TimeUnit.SECONDS);
     }
     return true;
   }

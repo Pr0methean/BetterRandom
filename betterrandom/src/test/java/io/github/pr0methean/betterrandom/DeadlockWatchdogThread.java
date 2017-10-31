@@ -7,6 +7,7 @@ import java.lang.management.ThreadInfo;
 import java.lang.management.ThreadMXBean;
 import java.util.logging.Level;
 
+@SuppressWarnings("unused") // intermittently needed for debugging
 public class DeadlockWatchdogThread extends LooperThread {
 
   private static final ThreadMXBean THREAD_MX_BEAN = ManagementFactory.getThreadMXBean();

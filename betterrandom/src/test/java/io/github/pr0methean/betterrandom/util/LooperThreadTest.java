@@ -8,7 +8,6 @@ import static org.testng.Assert.assertTrue;
 import static org.testng.Assert.fail;
 
 import com.google.common.collect.ImmutableMap;
-import io.github.pr0methean.betterrandom.DeadlockWatchdogThread;
 import io.github.pr0methean.betterrandom.MockException;
 import io.github.pr0methean.betterrandom.TestUtils;
 import java.io.InvalidObjectException;
@@ -22,8 +21,6 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java8.util.function.Consumer;
 import javax.annotation.Nullable;
-import org.testng.annotations.AfterClass;
-import org.testng.annotations.BeforeClass;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
@@ -67,14 +64,6 @@ public class LooperThreadTest {
         CloneViaSerialization.clone(thread).start();
       }
     });
-  }
-
-  @BeforeClass public void setUpClass() {
-    DeadlockWatchdogThread.ensureStarted();
-  }
-
-  @AfterClass public void tearDownClass() {
-    DeadlockWatchdogThread.stopInstance();
   }
 
   @BeforeTest public void setUp() {
@@ -179,16 +168,6 @@ public class LooperThreadTest {
   }
 
   @Test public void testAwaitIteration() throws InterruptedException {
-    SleepingLooperThread sleepingThread = new SleepingLooperThread();
-    sleepingThread.start();
-    try {
-      assertTrue(sleepingThread.awaitIteration());
-    } finally {
-      sleepingThread.interrupt();
-    }
-  }
-
-  @Test public void testAwaitIterationTimeout() throws InterruptedException {
     SleepingLooperThread sleepingThread = new SleepingLooperThread();
     sleepingThread.start();
     try {
