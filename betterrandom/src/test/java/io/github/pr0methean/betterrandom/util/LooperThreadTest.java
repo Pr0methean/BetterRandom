@@ -42,7 +42,6 @@ public class LooperThreadTest {
       if (shouldThrow.get()) {
         throw new MockException();
       }
-      iterationsRun.addAndGet(1);
     }
   };
 
