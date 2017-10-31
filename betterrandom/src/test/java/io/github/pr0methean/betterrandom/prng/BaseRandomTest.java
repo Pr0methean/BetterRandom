@@ -210,7 +210,8 @@ public abstract class BaseRandomTest {
       byte[] newSeed = new byte[0];
       while (!Arrays.equals(oldSeed, newSeed)) {
         System.out.format("Current entropy of %s is %d%n", rng, rng.getEntropyBits());
-        rng.nextInt();
+        rng.nextBoolean();
+        Thread.sleep(100);
         newSeed = rng.getSeed();
       }
       assertGreaterOrEqual(newSeed.length * 8L, rng.getEntropyBits());
