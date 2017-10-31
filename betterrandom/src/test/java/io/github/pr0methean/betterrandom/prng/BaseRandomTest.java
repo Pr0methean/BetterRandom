@@ -205,15 +205,9 @@ public abstract class BaseRandomTest {
     DeadlockWatchdogThread.ensureStarted();
     try {
       final byte[] oldSeed = rng.getSeed();
-      while (rng.getEntropyBits() >= Long.SIZE) {
-        rng.nextLong();
-      }
-      while (rng.getEntropyBits() > 0) {
-        rng.nextInt(1 << 8);
-      }
-      // wait for two iterations, in case an iteration was in progress when the reseed was triggered
-      seederThread.awaitIteration(5, TimeUnit.SECONDS);
-      seederThread.awaitIteration(5, TimeUnit.SECONDS);
+      do {
+        rng.nextInt();
+      } while (!seederThread.awaitIteration(100, TimeUnit.MILLISECONDS));
       final byte[] newSeed = rng.getSeed();
       assertFalse(Arrays.equals(oldSeed, newSeed));
       assertGreaterOrEqual(newSeed.length * 8L, rng.getEntropyBits());
