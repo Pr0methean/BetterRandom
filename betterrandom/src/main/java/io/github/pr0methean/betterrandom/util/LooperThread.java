@@ -355,26 +355,6 @@ public class LooperThread extends Thread implements Serializable, Cloneable {
   }
 
   /**
-   * Wait for the next iteration to finish.
-   * @return {@code false} if the thread has already finished or is interrupted while we're waiting,
-   *     else {@code true}
-   * @throws InterruptedException if thrown by {@link Condition#await()}
-   */
-  public boolean awaitIteration() throws InterruptedException {
-    lock.lock();
-    try {
-      final long previousFinishedIterations = finishedIterations.get();
-      while (!isInterrupted() && (getState() != State.TERMINATED) && (finishedIterations.get()
-          == previousFinishedIterations)) {
-        endOfIteration.await();
-      }
-      return finishedIterations.get() != previousFinishedIterations;
-    } finally {
-      lock.unlock();
-    }
-  }
-
-  /**
    * Wait for the next iteration to finish, with a timeout.
    * @param time the maximum time to wait
    * @param unit the time unit of the {@code time} argument
