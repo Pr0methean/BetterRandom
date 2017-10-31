@@ -55,9 +55,14 @@ public class ReseedingSplittableRandomAdapterTest extends SingleThreadSplittable
     prng.nextLong();
   }
 
-  /** This class manages its own interaction with a RandomSeederThread, so setSeederThread makes no sense. */
-  @Override @Test(expectedExceptions = UnsupportedOperationException.class) public void testRandomSeederThreadIntegration() throws Exception {
-    createRng().setSeederThread(RandomSeederThread.getInstance(DefaultSeedGenerator.DEFAULT_SEED_GENERATOR));
+  /**
+   * This class manages its own interaction with a RandomSeederThread, so setSeederThread makes no
+   * sense.
+   */
+  @Override @Test(expectedExceptions = UnsupportedOperationException.class)
+  public void testRandomSeederThreadIntegration() throws Exception {
+    createRng().setSeederThread(
+        RandomSeederThread.getInstance(DefaultSeedGenerator.DEFAULT_SEED_GENERATOR));
   }
 
   @Override @Test(enabled = false) public void testSeedTooShort() {

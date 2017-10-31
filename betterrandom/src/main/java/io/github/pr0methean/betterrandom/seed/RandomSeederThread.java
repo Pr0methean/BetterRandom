@@ -105,8 +105,7 @@ public final class RandomSeederThread extends LooperThread {
     return getInstance(seedGenerator);
   }
 
-  private void readObject(final ObjectInputStream in)
-      throws IOException, ClassNotFoundException {
+  private void readObject(final ObjectInputStream in) throws IOException, ClassNotFoundException {
     in.defaultReadObject();
     initTransientFields();
     if (!prngsSerial.isEmpty()) {

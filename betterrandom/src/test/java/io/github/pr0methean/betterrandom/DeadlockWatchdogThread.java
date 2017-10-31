@@ -9,11 +9,11 @@ import java.util.logging.Level;
 
 public class DeadlockWatchdogThread extends LooperThread {
 
-  private static DeadlockWatchdogThread INSTANCE = new DeadlockWatchdogThread();
   private static final ThreadMXBean THREAD_MX_BEAN = ManagementFactory.getThreadMXBean();
   private static final LogPreFormatter LOG = new LogPreFormatter(DeadlockWatchdogThread.class);
   private static final int MAX_STACK_DEPTH = 20;
   private static final long serialVersionUID = 9118178318042580320L;
+  private static DeadlockWatchdogThread INSTANCE = new DeadlockWatchdogThread();
 
   private DeadlockWatchdogThread() {
     super("DeadlockWatchdogThread");

@@ -34,10 +34,6 @@ public class ReseedingSplittableRandomAdapter extends BaseSplittableRandomAdapte
       {"ThreadLocalNotStaticFinal", "InstanceVariableMayNotBeInitializedByReadObject"})
   private transient ThreadLocal<SingleThreadSplittableRandomAdapter> threadLocal;
 
-  @Override public void setSeederThread(@Nullable RandomSeederThread thread) {
-    throw new UnsupportedOperationException("ReseedingSplittableRandomAdapter's binding to RandomSeederThread is immutable");
-  }
-
   /**
    * Single instance per SeedGenerator.
    * @param seedGenerator The seed generator this adapter will use.
@@ -72,6 +68,11 @@ public class ReseedingSplittableRandomAdapter extends BaseSplittableRandomAdapte
     synchronized (INSTANCES) {
       return INSTANCES.computeIfAbsent(seedGenerator, ReseedingSplittableRandomAdapter::new);
     }
+  }
+
+  @Override public void setSeederThread(@Nullable RandomSeederThread thread) {
+    throw new UnsupportedOperationException(
+        "ReseedingSplittableRandomAdapter's binding to RandomSeederThread is immutable");
   }
 
   @Override protected boolean useParallelStreams() {
@@ -110,8 +111,7 @@ public class ReseedingSplittableRandomAdapter extends BaseSplittableRandomAdapte
         .equals(((ReseedingSplittableRandomAdapter) o).seedGenerator));
   }
 
-  @Override
-  protected void setSeedInternal(final byte[] seed) {
+  @Override protected void setSeedInternal(final byte[] seed) {
     this.seed = seed.clone();
     if (entropyBits == null) {
       entropyBits = new AtomicLong(0);
