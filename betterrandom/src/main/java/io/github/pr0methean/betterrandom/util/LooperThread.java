@@ -6,6 +6,7 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
@@ -70,7 +71,7 @@ public class LooperThread extends Thread implements Serializable, Cloneable {
   @Nullable private ClassLoader contextClassLoader = null;
   @Nullable private Runnable serialTarget;
   @Nullable private UncaughtExceptionHandler serialUncaughtExceptionHandler;
-  protected long finishedIterations = 0;
+  protected final AtomicLong finishedIterations = new AtomicLong(0);
 
   /**
    * Constructs a LooperThread with all properties as defaults. Protected because it does not set a
@@ -299,7 +300,7 @@ public class LooperThread extends Thread implements Serializable, Cloneable {
       lock.lock();
       try {
         boolean shouldContinue = iterate();
-        finishedIterations++;
+        finishedIterations.getAndIncrement();
         if (!shouldContinue) {
           break;
         }
@@ -357,12 +358,12 @@ public class LooperThread extends Thread implements Serializable, Cloneable {
   public boolean awaitIteration() throws InterruptedException {
     lock.lock();
     try {
-      final long previousFinishedIterations = finishedIterations;
-      while (!isInterrupted() && (getState() != State.TERMINATED) && (finishedIterations
+      final long previousFinishedIterations = finishedIterations.get();
+      while (!isInterrupted() && (getState() != State.TERMINATED) && (finishedIterations.get()
           == previousFinishedIterations)) {
         endOfIteration.await();
       }
-      return finishedIterations != previousFinishedIterations;
+      return finishedIterations.get() != previousFinishedIterations;
     } finally {
       lock.unlock();
     }
@@ -377,15 +378,15 @@ public class LooperThread extends Thread implements Serializable, Cloneable {
    * @throws InterruptedException if thrown by {@link Condition#await(long, TimeUnit)}
    */
   public boolean awaitIteration(final long time, final TimeUnit unit) throws InterruptedException {
+    final long previousFinishedIterations = finishedIterations.get();
     lock.lock();
     try {
-      final long previousFinishedIterations = finishedIterations;
-      while (!isInterrupted() && (getState() != State.TERMINATED) && (finishedIterations
+      while (!isInterrupted() && (getState() != State.TERMINATED) && (finishedIterations.get()
           == previousFinishedIterations)) {
         System.out.format("%d iterations finished so far%n", previousFinishedIterations);
         endOfIteration.await(time, unit);
       }
-      return finishedIterations != previousFinishedIterations;
+      return finishedIterations.get() != previousFinishedIterations;
     } finally {
       lock.unlock();
     }
