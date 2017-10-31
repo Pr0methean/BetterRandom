@@ -18,6 +18,7 @@ import java.util.Set;
 import java.util.WeakHashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.Condition;
 import java.util.logging.Level;
 
@@ -34,6 +35,7 @@ public final class RandomSeederThread extends LooperThread {
   @SuppressWarnings("StaticCollection") private static final Map<SeedGenerator, RandomSeederThread>
       INSTANCES = Collections.synchronizedMap(new WeakHashMap<>(1));
   private static final long serialVersionUID = 5229976461051217528L;
+  private static final long POLL_INTERVAL = 60;
   private final SeedGenerator seedGenerator;
   private final byte[] longSeedArray = new byte[8];
   // WeakHashMap-based Set can't be serialized, so read & write this copy instead
@@ -205,7 +207,7 @@ public final class RandomSeederThread extends LooperThread {
     }
     if (!entropyConsumed) {
       LOG.info("No entropy consumed; waiting on waitForEntropyDrain");
-      waitForEntropyDrain.await();
+      waitForEntropyDrain.await(POLL_INTERVAL, TimeUnit.SECONDS);
     }
     return true;
   }
