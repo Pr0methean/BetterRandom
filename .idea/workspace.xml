@@ -5,7 +5,6 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="5cfcc489-45e1-48cf-a1ae-7b2e5d28efac" name="Default" comment="">
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/betterrandom/src/main/java/io/github/pr0methean/betterrandom/seed/RandomSeederThread.java" afterPath="$PROJECT_DIR$/betterrandom/src/main/java/io/github/pr0methean/betterrandom/seed/RandomSeederThread.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/betterrandom/src/test/java/io/github/pr0methean/betterrandom/prng/BaseRandomTest.java" afterPath="$PROJECT_DIR$/betterrandom/src/test/java/io/github/pr0methean/betterrandom/prng/BaseRandomTest.java" />
     </list>
     <ignored path="$PROJECT_DIR$/out/" />
@@ -34,7 +33,7 @@
         <entry file="file://$PROJECT_DIR$/betterrandom/src/test/java/io/github/pr0methean/betterrandom/prng/BaseRandomTest.java">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="274">
-              <caret line="210" column="50" lean-forward="false" selection-start-line="210" selection-start-column="50" selection-end-line="210" selection-end-column="50" />
+              <caret line="210" column="63" lean-forward="false" selection-start-line="210" selection-start-column="63" selection-end-line="210" selection-end-column="63" />
               <folding />
             </state>
           </provider>
@@ -1412,7 +1411,7 @@
     <entry file="file://$PROJECT_DIR$/betterrandom/src/test/java/io/github/pr0methean/betterrandom/prng/BaseRandomTest.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="274">
-          <caret line="210" column="50" lean-forward="false" selection-start-line="210" selection-start-column="50" selection-end-line="210" selection-end-column="50" />
+          <caret line="210" column="63" lean-forward="false" selection-start-line="210" selection-start-column="63" selection-end-line="210" selection-end-column="63" />
           <folding />
         </state>
       </provider>
