@@ -388,7 +388,6 @@ public class LooperThread extends Thread implements Serializable, Cloneable {
     try {
       while (!isInterrupted() && (getState() != State.TERMINATED) && (finishedIterations.get()
           == previousFinishedIterations)) {
-        System.out.format("%d iterations finished so far%n", previousFinishedIterations);
         endOfIteration.await(time, unit);
       }
       return finishedIterations.get() != previousFinishedIterations;
