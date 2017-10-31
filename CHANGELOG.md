@@ -1,12 +1,16 @@
+# 1.3.2
+* Bug fixes for `LooperThread`, mainly affecting `awaitIteration`.
+* Tests should no longer be flaky on OSX.
+
 # 1.3.1
 * Fix a javadoc error.
 
 # 1.3.0
 * New algorithm: `Pcg64Random`.
-* Bugfix: `AesCounterRandom` was not crediting enough entropy after being reseeded.
+* Bug fix: `AesCounterRandom` was not crediting enough entropy after being reseeded.
 
 # 1.2.1
-* Bugfix: `RandomWrapper.wrapped` needs to be volatile, despite its lock guard, because it may be
+* Bug fix: `RandomWrapper.wrapped` needs to be volatile, despite its lock guard, because it may be
   accessed from multiple threads.
 
 # 1.2.0
