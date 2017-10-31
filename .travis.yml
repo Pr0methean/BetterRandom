@@ -29,27 +29,17 @@ jobs:
     stage: unit-tests
   - language: java
     os: osx
+    osx_image: xcode9.1
+    env: OP=unit-tests
+    stage: unit-tests
+  - language: java
+    os: osx
     osx_image: xcode9
     env: OP=unit-tests
     stage: unit-tests
   - language: java
     os: osx
     osx_image: xcode8.3
-    env: OP=unit-tests
-    stage: unit-tests
-  - language: java
-    os: osx
-    osx_image: xcode8.2
-    env: OP=unit-tests
-    stage: unit-tests
-  - language: java
-    os: osx
-    osx_image: xcode8.1
-    env: OP=unit-tests
-    stage: unit-tests
-  - language: java
-    os: osx
-    osx_image: xcode8
     env: OP=unit-tests
     stage: unit-tests
   - language: java
@@ -84,27 +74,17 @@ jobs:
     stage: benchmark
   - language: java
     os: osx
+    osx_image: xcode9.1
+    env: OP=benchmark
+    stage: benchmark
+  - language: java
+    os: osx
     osx_image: xcode9
     env: OP=benchmark
     stage: benchmark
   - language: java
     os: osx
     osx_image: xcode8.3
-    env: OP=benchmark
-    stage: benchmark
-  - language: java
-    os: osx
-    osx_image: xcode8.2
-    env: OP=benchmark
-    stage: benchmark
-  - language: java
-    os: osx
-    osx_image: xcode8.1
-    env: OP=benchmark
-    stage: benchmark
-  - language: java
-    os: osx
-    osx_image: xcode8
     env: OP=benchmark
     stage: benchmark
   - language: java
