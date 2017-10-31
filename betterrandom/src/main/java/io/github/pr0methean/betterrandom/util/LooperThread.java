@@ -355,7 +355,8 @@ public class LooperThread extends Thread implements Serializable, Cloneable {
   }
 
   /**
-   * Wait for the next iteration to finish, with a timeout.
+   * Wait for the next iteration to finish, with a timeout. May wait longer in the event of a
+   * spurious wakeup.
    * @param time the maximum time to wait
    * @param unit the time unit of the {@code time} argument
    * @return {@code false}  the waiting time detectably elapsed before an iteration finished, else
