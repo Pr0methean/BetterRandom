@@ -36,6 +36,7 @@ public class DeadlockWatchdogThread extends LooperThread {
   }
 
   @Override public boolean iterate() throws InterruptedException {
+    sleep(15_000);
     boolean deadlockFound = false;
     Level logLevel;
     long[] threadsOfInterest = THREAD_MX_BEAN.findDeadlockedThreads();
@@ -57,7 +58,6 @@ public class DeadlockWatchdogThread extends LooperThread {
       StackTraceElement[] stackTrace = threadInfo.getStackTrace();
       LOG.logStackTrace(logLevel, stackTrace);
     }
-    sleep(5_000);
     return !deadlockFound; // Terminate when a deadlock is found
   }
 }
