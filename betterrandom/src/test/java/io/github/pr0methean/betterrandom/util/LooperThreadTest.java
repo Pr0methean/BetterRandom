@@ -8,7 +8,6 @@ import static org.testng.Assert.assertTrue;
 import static org.testng.Assert.fail;
 
 import com.google.common.collect.ImmutableMap;
-import io.github.pr0methean.betterrandom.DeadlockWatchdogThread;
 import io.github.pr0methean.betterrandom.MockException;
 import io.github.pr0methean.betterrandom.TestUtils;
 import java.io.InvalidObjectException;
@@ -21,8 +20,6 @@ import java.net.MalformedURLException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 import javax.annotation.Nullable;
-import org.testng.annotations.AfterClass;
-import org.testng.annotations.BeforeClass;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
@@ -61,14 +58,6 @@ public class LooperThreadTest {
             .of(ThreadGroup.class, new SerializableThreadGroup(), Runnable.class, TARGET, String.class,
                 "Test LooperThread", long.class, STACK_SIZE),
         thread -> CloneViaSerialization.clone(thread).start());
-  }
-
-  @BeforeClass public void setUpClass() {
-    DeadlockWatchdogThread.ensureStarted();
-  }
-
-  @AfterClass public void tearDownClass() {
-    DeadlockWatchdogThread.stopInstance();
   }
 
   @BeforeTest public void setUp() {
@@ -167,7 +156,6 @@ public class LooperThreadTest {
     SleepingLooperThread sleepingThread = new SleepingLooperThread();
     sleepingThread.start();
     try {
-      System.out.println("Waiting for an iteration...");
       assertTrue(sleepingThread.awaitIteration(5, TimeUnit.SECONDS));
     } finally {
       sleepingThread.interrupt();
@@ -264,7 +252,6 @@ public class LooperThreadTest {
     }
 
     @Override public boolean iterate() throws InterruptedException {
-      System.out.println("SleepingLooperThread iterating");
       sleep(500);
       TARGET.run();
       return finishedIterations.get() < 25;
