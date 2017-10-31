@@ -201,14 +201,14 @@ public abstract class BaseRandomTest {
       throws Exception {
     final RandomSeederThread seederThread = RandomSeederThread.getInstance(DefaultSeedGenerator.DEFAULT_SEED_GENERATOR);
     final BaseRandom rng = createRng();
+    final byte[] oldSeed = rng.getSeed();
+    while (rng.getEntropyBits() > Long.SIZE) {
+      rng.nextLong();
+    }
+    rng.setSeederThread(seederThread);
     try {
-      final byte[] oldSeed = rng.getSeed();
-      while (rng.getEntropyBits() > Long.SIZE) {
-        rng.nextLong();
-      }
-      rng.setSeederThread(seederThread);
-      DeadlockWatchdogThread.ensureStarted();
       do {
+        System.out.format("Current entropy is %d%n", rng.getEntropyBits());
         rng.nextInt();
       } while (!seederThread.awaitIteration(100, TimeUnit.MILLISECONDS));
       final byte[] newSeed = rng.getSeed();
@@ -216,7 +216,6 @@ public abstract class BaseRandomTest {
       assertGreaterOrEqual(newSeed.length * 8L, rng.getEntropyBits());
     } finally {
       rng.setSeederThread(null);
-      DeadlockWatchdogThread.stopInstance();
     }
   }
 
