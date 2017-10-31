@@ -83,7 +83,8 @@ public enum RandomTestUtils {
       TestUtils.assertLess(bound, number.doubleValue());
       if (checkEntropyCount && !(streamToUse.isParallel())) {
         long newEntropy = prng.getEntropyBits();
-        TestUtils.assertGreaterOrEqual(entropy.getAndSet(newEntropy) - maxEntropySpentPerNumber, newEntropy);
+        TestUtils.assertGreaterOrEqual(entropy.getAndSet(newEntropy) - maxEntropySpentPerNumber,
+            newEntropy);
       }
       return 1;
     }).sum();

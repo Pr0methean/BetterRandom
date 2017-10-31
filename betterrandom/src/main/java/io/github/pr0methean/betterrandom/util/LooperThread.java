@@ -44,12 +44,12 @@ public class LooperThread extends Thread implements Serializable, Cloneable {
    * otherwise. Held for serialization purposes.
    */
   protected final long stackSize;
+  protected final AtomicLong finishedIterations = new AtomicLong(0);
   /**
    * The thread holds this lock whenever it is being serialized or cloned or is running {@link
    * #iterate()} called by {@link #run()}.
    */
   protected transient Lock lock = new ReentrantLock();
-  private transient Condition endOfIteration = lock.newCondition();
   /**
    * The {@link ThreadGroup} this thread belongs to, if any. Held for serialization purposes.
    */
@@ -62,6 +62,7 @@ public class LooperThread extends Thread implements Serializable, Cloneable {
    * The name of this thread, if it has a non-default name. Held for serialization purposes.
    */
   @Nullable protected String name = null;
+  private transient Condition endOfIteration = lock.newCondition();
   @SuppressWarnings("InstanceVariableMayNotBeInitializedByReadObject") private transient boolean
       alreadyTerminatedWhenDeserialized = false;
   private boolean interrupted = false;
@@ -71,7 +72,6 @@ public class LooperThread extends Thread implements Serializable, Cloneable {
   @Nullable private ClassLoader contextClassLoader = null;
   @Nullable private Runnable serialTarget;
   @Nullable private UncaughtExceptionHandler serialUncaughtExceptionHandler;
-  protected final AtomicLong finishedIterations = new AtomicLong(0);
 
   /**
    * Constructs a LooperThread with all properties as defaults. Protected because it does not set a

@@ -6,7 +6,6 @@ import org.testng.annotations.Test;
 
 public class RandomWrapperAesCounterRandomTest extends AesCounterRandom128Test {
 
-
   @Override @Test(enabled = false) public void testAdvanceForward() {
     // No-op: RandomWrapper isn't seekable
   }

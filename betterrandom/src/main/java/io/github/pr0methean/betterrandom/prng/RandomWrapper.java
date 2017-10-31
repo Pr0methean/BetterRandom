@@ -35,16 +35,11 @@ import javax.annotation.Nullable;
  */
 public class RandomWrapper extends BaseRandom {
 
-  @Override public String toString() {
-    return String.format("RandomWrapper (currently around %s)", wrapped);
-  }
-
   protected static final byte[] DUMMY_SEED = new byte[8];
   private static final long serialVersionUID = -6526304552538799385L;
   private volatile Random wrapped;
   private boolean unknownSeed = true;
   private boolean haveParallelStreams;
-
   /**
    * Wraps a {@link Random} and seeds it using the default seeding strategy.
    * @throws SeedException if any.
@@ -107,6 +102,10 @@ public class RandomWrapper extends BaseRandom {
   private static byte[] getSeedOrDummy(final Random wrapped) {
     return (wrapped instanceof RepeatableRandom) ? ((RepeatableRandom) wrapped).getSeed()
         : DUMMY_SEED;
+  }
+
+  @Override public String toString() {
+    return String.format("RandomWrapper (currently around %s)", wrapped);
   }
 
   @Override protected boolean useParallelStreams() {
@@ -232,8 +231,7 @@ public class RandomWrapper extends BaseRandom {
   }
 
   /** */
-  @SuppressWarnings("LockAcquiredButNotSafelyReleased") @Override public int getNewSeedLength(
-      ) {
+  @SuppressWarnings("LockAcquiredButNotSafelyReleased") @Override public int getNewSeedLength() {
     boolean locked = false;
     if (lock != null) {
       lock.lock();
