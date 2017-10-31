@@ -164,7 +164,6 @@ public final class RandomSeederThread extends LooperThread {
 
   @SuppressWarnings({"InfiniteLoopStatement", "ObjectAllocationInLoop", "AwaitNotInLoop"}) @Override
   public boolean iterate() throws InterruptedException {
-    LOG.info("Starting iteration");
     while (true) {
       synchronized (prngs) {
         prngsThisIteration.addAll(prngs);
@@ -184,7 +183,6 @@ public final class RandomSeederThread extends LooperThread {
           ((EntropyCountingRandom) random).getEntropyBits() > 0)) {
         continue;
       } else {
-        LOG.info("Entropy consumed by " + random);
         entropyConsumed = true;
       }
       try {
@@ -206,7 +204,6 @@ public final class RandomSeederThread extends LooperThread {
       }
     }
     if (!entropyConsumed) {
-      LOG.info("No entropy consumed; waiting on waitForEntropyDrain");
       waitForEntropyDrain.await(POLL_INTERVAL, TimeUnit.SECONDS);
     }
     return true;
