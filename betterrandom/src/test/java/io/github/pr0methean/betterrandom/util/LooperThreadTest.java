@@ -247,7 +247,7 @@ public class LooperThreadTest {
 
     @Override public boolean iterate() throws InterruptedException {
       TARGET.run();
-      return finishedIterations < 100;
+      return finishedIterations.get() < 100;
     }
   }
 
@@ -276,7 +276,7 @@ public class LooperThreadTest {
       System.out.println("SleepingLooperThread iterating");
       sleep(500);
       TARGET.run();
-      return finishedIterations < 25;
+      return finishedIterations.get() < 25;
     }
   }
 
