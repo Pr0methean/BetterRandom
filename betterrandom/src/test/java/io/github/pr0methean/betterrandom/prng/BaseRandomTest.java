@@ -205,6 +205,9 @@ public abstract class BaseRandomTest {
     DeadlockWatchdogThread.ensureStarted();
     try {
       final byte[] oldSeed = rng.getSeed();
+      while (rng.getEntropyBits() > Long.SIZE) {
+        rng.nextLong();
+      }
       do {
         rng.nextInt();
       } while (!seederThread.awaitIteration(100, TimeUnit.MILLISECONDS));
