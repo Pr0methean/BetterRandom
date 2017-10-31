@@ -67,7 +67,7 @@ public class RandomSeederThreadTest {
     assertEquals(neverAddedTo.getState(), State.TERMINATED);
     assertEquals(addedToAndRemoved.getState(), State.TERMINATED);
     assertTrue(addedToAndLeft.isAlive());
-    System.out.println(addedAndLeft.nextInt()); // prevent GC before this point
+    addedAndLeft.nextInt(); // prevent GC before this point
   }
 
   @AfterClass public void classTearDown() {
