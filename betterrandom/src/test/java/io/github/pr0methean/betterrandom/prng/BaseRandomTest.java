@@ -208,7 +208,7 @@ public abstract class BaseRandomTest {
     rng.setSeederThread(seederThread);
     try {
       do {
-        System.out.format("Current entropy is %d%n", rng.getEntropyBits());
+        System.out.format("Current entropy of %s is %d%n", rng, rng.getEntropyBits());
         rng.nextInt();
       } while (!seederThread.awaitIteration(100, TimeUnit.MILLISECONDS));
       final byte[] newSeed = rng.getSeed();
