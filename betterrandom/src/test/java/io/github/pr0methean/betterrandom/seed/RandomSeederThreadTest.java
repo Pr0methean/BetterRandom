@@ -63,11 +63,11 @@ public class RandomSeederThreadTest {
     addedToAndRemoved.remove(addedAndRemoved);
     addedToAndLeft.add(addedAndLeft);
     stopAllEmpty();
-    Thread.sleep(100);
+    Thread.sleep(500);
     assertEquals(neverAddedTo.getState(), State.TERMINATED);
     assertEquals(addedToAndRemoved.getState(), State.TERMINATED);
     assertTrue(addedToAndLeft.isAlive());
-    System.out.println(addedAndLeft.nextInt()); // prevent GC before this point
+    addedAndLeft.nextInt(); // prevent GC before this point
   }
 
   @AfterClass public void classTearDown() {

@@ -8,6 +8,7 @@ import static org.testng.Assert.assertTrue;
 import static org.testng.Assert.fail;
 
 import com.google.common.collect.ImmutableMap;
+import io.github.pr0methean.betterrandom.DeadlockWatchdogThread;
 import io.github.pr0methean.betterrandom.MockException;
 import io.github.pr0methean.betterrandom.TestUtils;
 import java.io.InvalidObjectException;
@@ -22,18 +23,18 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicLong;
 import java8.util.function.Consumer;
 import javax.annotation.Nullable;
+import org.testng.annotations.AfterClass;
+import org.testng.annotations.BeforeClass;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
 @SuppressWarnings("ClassLoaderInstantiation")
 public class LooperThreadTest {
-
   private static final String THREAD_NAME = "LooperThread for serialization test";
   private static final String GROUP_NAME = SerializableThreadGroup.class.getSimpleName();
   private static final long STACK_SIZE = 1_234_567;
   private static final Field THREAD_STACK_SIZE;
   private static final Field THREAD_TARGET;
-  private static final AtomicLong iterationsRun = new AtomicLong();
   private static final AtomicBoolean shouldThrow = new AtomicBoolean(false);
   private static final AtomicBoolean exceptionHandlerRun = new AtomicBoolean(false);
   private static final Runnable TARGET = new Runnable() {
@@ -69,8 +70,15 @@ public class LooperThreadTest {
     });
   }
 
+  @BeforeClass public void setUpClass() {
+    DeadlockWatchdogThread.ensureStarted();
+  }
+
+  @AfterClass public void tearDownClass() {
+    DeadlockWatchdogThread.stopInstance();
+  }
+
   @BeforeTest public void setUp() {
-    iterationsRun.set(0);
     shouldThrow.set(false);
     exceptionHandlerRun.set(false);
   }
@@ -174,13 +182,21 @@ public class LooperThreadTest {
   @Test public void testAwaitIteration() throws InterruptedException {
     SleepingLooperThread sleepingThread = new SleepingLooperThread();
     sleepingThread.start();
-    sleepingThread.awaitIteration();
+    try {
+      assertTrue(sleepingThread.awaitIteration());
+    } finally {
+      sleepingThread.interrupt();
+    }
   }
 
   @Test public void testAwaitIterationTimeout() throws InterruptedException {
     SleepingLooperThread sleepingThread = new SleepingLooperThread();
     sleepingThread.start();
-    sleepingThread.awaitIteration(5, TimeUnit.SECONDS);
+    try {
+      assertTrue(sleepingThread.awaitIteration(5, TimeUnit.SECONDS));
+    } finally {
+      sleepingThread.interrupt();
+    }
   }
 
   /**
@@ -247,7 +263,7 @@ public class LooperThreadTest {
 
     @Override public boolean iterate() throws InterruptedException {
       TARGET.run();
-      return iterationsRun.get() < 100;
+      return finishedIterations.get() < 100;
     }
   }
 
@@ -273,8 +289,9 @@ public class LooperThreadTest {
     }
 
     @Override public boolean iterate() throws InterruptedException {
-      sleep(1000);
-      return false;
+      sleep(500);
+      TARGET.run();
+      return finishedIterations.get() < 25;
     }
   }
 

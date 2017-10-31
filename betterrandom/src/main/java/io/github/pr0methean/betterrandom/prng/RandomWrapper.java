@@ -36,6 +36,10 @@ import javax.annotation.Nullable;
  */
 public class RandomWrapper extends BaseRandom {
 
+  @Override public String toString() {
+    return String.format("RandomWrapper (currently around %s)", wrapped);
+  }
+
   protected static final byte[] DUMMY_SEED = new byte[8];
   private static final long serialVersionUID = -6526304552538799385L;
   private volatile Random wrapped;

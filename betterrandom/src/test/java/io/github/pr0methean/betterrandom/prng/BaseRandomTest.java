@@ -11,6 +11,7 @@ import static org.testng.Assert.assertNotEquals;
 import static org.testng.Assert.assertTrue;
 
 import com.google.common.collect.ImmutableMap;
+import io.github.pr0methean.betterrandom.DeadlockWatchdogThread;
 import io.github.pr0methean.betterrandom.TestUtils;
 import io.github.pr0methean.betterrandom.prng.RandomTestUtils.EntropyCheckMode;
 import io.github.pr0methean.betterrandom.seed.DefaultSeedGenerator;
@@ -217,21 +218,19 @@ public abstract class BaseRandomTest {
     final RandomSeederThread seederThread =
         RandomSeederThread.getInstance(DefaultSeedGenerator.DEFAULT_SEED_GENERATOR);
     final BaseRandom rng = createRng();
+    final byte[] oldSeed = rng.getSeed();
+    while (rng.getEntropyBits() > Long.SIZE) {
+      rng.nextLong();
+    }
     rng.setSeederThread(seederThread);
     try {
-      final byte[] oldSeed = rng.getSeed();
-      while (rng.getEntropyBits() >= Long.SIZE) {
-        rng.nextLong();
-      }
-      while (rng.getEntropyBits() > 0) {
-        rng.nextInt(1 << 8);
-      }
-      // wait for two iterations, in case an iteration was in progress when the reseed was triggered
-      seederThread.awaitIteration(5, TimeUnit.SECONDS);
-      seederThread.awaitIteration(5, TimeUnit.SECONDS);
-      final byte[] newSeed = rng.getSeed();
-      assertFalse(Arrays.equals(oldSeed, newSeed));
-      assertGreaterOrEqual(newSeed.length * 8L, rng.getEntropyBits());
+      byte[] newSeed;
+      do {
+        rng.nextBoolean();
+        Thread.sleep(100);
+        newSeed = rng.getSeed();
+      } while (Arrays.equals(newSeed, oldSeed));
+      assertGreaterOrEqual(newSeed.length * 8L - 1, rng.getEntropyBits());
     } finally {
       rng.setSeederThread(null);
     }

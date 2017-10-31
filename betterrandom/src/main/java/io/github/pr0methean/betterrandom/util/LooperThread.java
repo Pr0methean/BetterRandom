@@ -6,6 +6,7 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
@@ -70,6 +71,7 @@ public class LooperThread extends Thread implements Serializable, Cloneable {
   @Nullable private ClassLoader contextClassLoader = null;
   @Nullable private Runnable serialTarget;
   @Nullable private UncaughtExceptionHandler serialUncaughtExceptionHandler;
+  protected final AtomicLong finishedIterations = new AtomicLong(0);
 
   /**
    * Constructs a LooperThread with all properties as defaults. Protected because it does not set a
@@ -297,23 +299,22 @@ public class LooperThread extends Thread implements Serializable, Cloneable {
     while (true) {
       try {
         lock.lockInterruptibly();
-        try {
-          if (!iterate()) {
-            break;
-          }
-        } finally {
-          lock.unlock();
-          // Switch to uninterruptible locking to signal endOfIteration
-          lock.lock();
-          try {
-            endOfIteration.signalAll();
-          } finally {
-            lock.unlock();
-          }
+      } catch (InterruptedException e) {
+        interrupt();
+        break;
+      }
+      try {
+        boolean shouldContinue = iterate();
+        finishedIterations.getAndIncrement();
+        if (!shouldContinue) {
+          break;
         }
       } catch (final InterruptedException ignored) {
         interrupt();
         break;
+      } finally {
+        endOfIteration.signalAll();
+        lock.unlock();
       }
     }
   }
@@ -355,12 +356,19 @@ public class LooperThread extends Thread implements Serializable, Cloneable {
 
   /**
    * Wait for the next iteration to finish.
+   * @return {@code false} if the thread has already finished or is interrupted while we're waiting,
+   *     else {@code true}
    * @throws InterruptedException if thrown by {@link Condition#await()}
    */
-  public void awaitIteration() throws InterruptedException {
+  public boolean awaitIteration() throws InterruptedException {
     lock.lock();
     try {
-      endOfIteration.await();
+      final long previousFinishedIterations = finishedIterations.get();
+      while (!isInterrupted() && (getState() != State.TERMINATED) && (finishedIterations.get()
+          == previousFinishedIterations)) {
+        endOfIteration.await();
+      }
+      return finishedIterations.get() != previousFinishedIterations;
     } finally {
       lock.unlock();
     }
@@ -370,14 +378,19 @@ public class LooperThread extends Thread implements Serializable, Cloneable {
    * Wait for the next iteration to finish, with a timeout.
    * @param time the maximum time to wait
    * @param unit the time unit of the {@code time} argument
-   * @return {@code false} if the waiting time detectably elapsed before an iteration finished, else
+   * @return {@code false}  the waiting time detectably elapsed before an iteration finished, else
    *     {@code true}
    * @throws InterruptedException if thrown by {@link Condition#await(long, TimeUnit)}
    */
   public boolean awaitIteration(final long time, final TimeUnit unit) throws InterruptedException {
+    final long previousFinishedIterations = finishedIterations.get();
     lock.lock();
     try {
-      return endOfIteration.await(time, unit);
+      while (!isInterrupted() && (getState() != State.TERMINATED) && (finishedIterations.get()
+          == previousFinishedIterations)) {
+        endOfIteration.await(time, unit);
+      }
+      return finishedIterations.get() != previousFinishedIterations;
     } finally {
       lock.unlock();
     }

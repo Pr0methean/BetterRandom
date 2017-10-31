@@ -9,8 +9,8 @@ import java.util.logging.Level;
 
 public class DeadlockWatchdogThread extends LooperThread {
 
-  public static final DeadlockWatchdogThread INSTANCE = new DeadlockWatchdogThread();
-  public static final ThreadMXBean THREAD_MX_BEAN = ManagementFactory.getThreadMXBean();
+  private static DeadlockWatchdogThread INSTANCE = new DeadlockWatchdogThread();
+  private static final ThreadMXBean THREAD_MX_BEAN = ManagementFactory.getThreadMXBean();
   private static final LogPreFormatter LOG = new LogPreFormatter(DeadlockWatchdogThread.class);
   private static final int MAX_STACK_DEPTH = 20;
   private static final long serialVersionUID = 9118178318042580320L;
@@ -19,7 +19,10 @@ public class DeadlockWatchdogThread extends LooperThread {
     super("DeadlockWatchdogThread");
   }
 
-  public static void ensureStarted() {
+  public static synchronized void ensureStarted() {
+    if (INSTANCE.getState() == State.TERMINATED) {
+      INSTANCE = new DeadlockWatchdogThread();
+    }
     if (INSTANCE.getState() == State.NEW) {
       INSTANCE.setDaemon(true);
       INSTANCE.setPriority(Thread.MAX_PRIORITY);
@@ -27,12 +30,17 @@ public class DeadlockWatchdogThread extends LooperThread {
     }
   }
 
+  public static synchronized void stopInstance() {
+    INSTANCE.interrupt();
+    INSTANCE = new DeadlockWatchdogThread();
+  }
+
   @Override public boolean iterate() throws InterruptedException {
+    sleep(15_000);
     boolean deadlockFound = false;
-    long[] threadsOfInterest;
     Level logLevel;
-    threadsOfInterest = THREAD_MX_BEAN.findDeadlockedThreads();
-    if (threadsOfInterest.length > 0) {
+    long[] threadsOfInterest = THREAD_MX_BEAN.findDeadlockedThreads();
+    if (threadsOfInterest != null && threadsOfInterest.length > 0) {
       LOG.error("DEADLOCKED THREADS FOUND");
       logLevel = Level.SEVERE;
       deadlockFound = true;
@@ -46,11 +54,10 @@ public class DeadlockWatchdogThread extends LooperThread {
     }
     for (long id : threadsOfInterest) {
       ThreadInfo threadInfo = THREAD_MX_BEAN.getThreadInfo(id, MAX_STACK_DEPTH);
-      LOG.format(logLevel, threadInfo.getThreadName());
+      LOG.format(logLevel, 0, threadInfo.getThreadName());
       StackTraceElement[] stackTrace = threadInfo.getStackTrace();
       LOG.logStackTrace(logLevel, stackTrace);
     }
-    sleep(5_000);
     return !deadlockFound; // Terminate when a deadlock is found
   }
 }
