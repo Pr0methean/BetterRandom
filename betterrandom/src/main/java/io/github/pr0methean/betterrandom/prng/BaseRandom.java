@@ -541,8 +541,8 @@ public abstract class BaseRandom extends Random
 
   /**
    * <p>Returns a stream producing the given number of pseudorandom longs, each conforming to the
-   * given origin (inclusive) and bound (exclusive). This implementation uses {@link #nextLong(long,
-   * * long)} to generate these numbers.</p>
+   * given origin (inclusive) and bound (exclusive). This implementation uses
+   * {@link #nextLong(long, long)} to generate these numbers.</p>
    */
   @Override public LongStream longs(final long streamSize, final long randomNumberOrigin,
       final long randomNumberBound) {
@@ -626,6 +626,19 @@ public abstract class BaseRandom extends Random
   }
 
   /**
+   * {@inheritDoc}<p>Most subclasses should override {@link #setSeedInternal(byte[])} instead of
+   * this method, so that they will deserialize properly.</p>
+   */
+  @Override public void setSeed(final byte[] seed) {
+    lock.lock();
+    try {
+      setSeedInternal(seed);
+    } finally {
+      lock.unlock();
+    }
+  }
+
+  /**
    * Sets the seed of this random number generator using a single long seed, if this implementation
    * supports that. If it is capable of using 64 bits or less of seed data (i.e. if {@code {@link
    * #getNewSeedLength()} <= {@link Long#BYTES}}), then this method shall replace the entire seed as
@@ -639,19 +652,6 @@ public abstract class BaseRandom extends Random
       setSeed(seedBytes);
     } else {
       setSeedInternal(seedBytes);
-    }
-  }
-
-  /**
-   * {@inheritDoc}<p>Most subclasses should override {@link #setSeedInternal(byte[])} instead of
-   * this method, so that they will deserialize properly.</p>
-   */
-  @Override public void setSeed(final byte[] seed) {
-    lock.lock();
-    try {
-      setSeedInternal(seed);
-    } finally {
-      lock.unlock();
     }
   }
 
