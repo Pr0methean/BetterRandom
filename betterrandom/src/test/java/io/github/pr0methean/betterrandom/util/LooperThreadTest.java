@@ -34,14 +34,12 @@ public class LooperThreadTest {
   private static final long STACK_SIZE = 1_234_567;
   private static final Field THREAD_STACK_SIZE;
   private static final Field THREAD_TARGET;
-  private static final AtomicLong iterationsRun = new AtomicLong();
   private static final AtomicBoolean shouldThrow = new AtomicBoolean(false);
   private static final AtomicBoolean exceptionHandlerRun = new AtomicBoolean(false);
   private static final Runnable TARGET = (Serializable & Runnable) () -> {
     if (shouldThrow.get()) {
       throw new MockException();
     }
-    iterationsRun.addAndGet(1);
   };
 
   static {
@@ -74,7 +72,6 @@ public class LooperThreadTest {
   }
 
   @BeforeTest public void setUp() {
-    iterationsRun.set(0);
     shouldThrow.set(false);
     exceptionHandlerRun.set(false);
   }
@@ -250,7 +247,7 @@ public class LooperThreadTest {
 
     @Override public boolean iterate() throws InterruptedException {
       TARGET.run();
-      return iterationsRun.get() < 100;
+      return finishedIterations < 100;
     }
   }
 
@@ -279,7 +276,7 @@ public class LooperThreadTest {
       System.out.println("SleepingLooperThread iterating");
       sleep(500);
       TARGET.run();
-      return iterationsRun.get() < 25;
+      return finishedIterations < 25;
     }
   }
 

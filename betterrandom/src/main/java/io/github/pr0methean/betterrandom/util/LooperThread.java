@@ -70,7 +70,7 @@ public class LooperThread extends Thread implements Serializable, Cloneable {
   @Nullable private ClassLoader contextClassLoader = null;
   @Nullable private Runnable serialTarget;
   @Nullable private UncaughtExceptionHandler serialUncaughtExceptionHandler;
-  private transient long finishedIterations = 0;
+  protected long finishedIterations = 0;
 
   /**
    * Constructs a LooperThread with all properties as defaults. Protected because it does not set a
