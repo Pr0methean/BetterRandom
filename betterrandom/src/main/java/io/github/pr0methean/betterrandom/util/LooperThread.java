@@ -44,6 +44,7 @@ public class LooperThread extends Thread implements Serializable, Cloneable {
    * otherwise. Held for serialization purposes.
    */
   protected final long stackSize;
+  protected final AtomicLong finishedIterations = new AtomicLong(0);
   /**
    * The thread holds this lock whenever it is being serialized or cloned or is running {@link
    * #iterate()} called by {@link #run()}.
@@ -71,7 +72,6 @@ public class LooperThread extends Thread implements Serializable, Cloneable {
   @Nullable private ClassLoader contextClassLoader = null;
   @Nullable private Runnable serialTarget;
   @Nullable private UncaughtExceptionHandler serialUncaughtExceptionHandler;
-  protected final AtomicLong finishedIterations = new AtomicLong(0);
 
   /**
    * Constructs a LooperThread with all properties as defaults. Protected because it does not set a

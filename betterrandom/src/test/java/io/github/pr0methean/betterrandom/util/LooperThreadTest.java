@@ -20,7 +20,6 @@ import java.lang.reflect.InvocationTargetException;
 import java.net.MalformedURLException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.concurrent.atomic.AtomicLong;
 import java8.util.function.Consumer;
 import javax.annotation.Nullable;
 import org.testng.annotations.AfterClass;
@@ -30,6 +29,7 @@ import org.testng.annotations.Test;
 
 @SuppressWarnings("ClassLoaderInstantiation")
 public class LooperThreadTest {
+
   private static final String THREAD_NAME = "LooperThread for serialization test";
   private static final String GROUP_NAME = SerializableThreadGroup.class.getSimpleName();
   private static final long STACK_SIZE = 1_234_567;
