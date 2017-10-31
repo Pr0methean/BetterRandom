@@ -482,7 +482,8 @@ public abstract class BaseRandom extends Random
 
   /**
    * <p>Returns a stream producing the given number of pseudorandom longs, each conforming to the
-   * given origin (inclusive) and bound (exclusive). This implementation uses {@link #nextLong(long, * long)} to generate these numbers.</p>
+   * given origin (inclusive) and bound (exclusive). This implementation uses
+   * {@link #nextLong(long, long)} to generate these numbers.</p>
    */
   @Override public LongStream longs(final long streamSize, final long randomNumberOrigin,
       final long randomNumberBound) {
