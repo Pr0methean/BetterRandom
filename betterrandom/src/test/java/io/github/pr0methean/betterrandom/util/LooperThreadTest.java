@@ -167,6 +167,7 @@ public class LooperThreadTest {
     SleepingLooperThread sleepingThread = new SleepingLooperThread();
     sleepingThread.start();
     try {
+      System.out.println("Waiting for an iteration...");
       assertTrue(sleepingThread.awaitIteration());
     } finally {
       sleepingThread.interrupt();
@@ -177,6 +178,7 @@ public class LooperThreadTest {
     SleepingLooperThread sleepingThread = new SleepingLooperThread();
     sleepingThread.start();
     try {
+      System.out.println("Waiting for an iteration...");
       assertTrue(sleepingThread.awaitIteration(5, TimeUnit.SECONDS));
     } finally {
       sleepingThread.interrupt();
