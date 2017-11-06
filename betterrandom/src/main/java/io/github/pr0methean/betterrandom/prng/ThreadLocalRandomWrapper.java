@@ -30,7 +30,6 @@ public class ThreadLocalRandomWrapper extends RandomWrapper {
    * {@link Supplier} is serializable.
    * @param initializer a supplier that will be called to provide the initial {@link BaseRandom}
    *     for each thread.
-   * @throws SeedException should never happen.
    */
   public ThreadLocalRandomWrapper(final Supplier<BaseRandom> initializer) throws SeedException {
     super(0);
@@ -46,7 +45,6 @@ public class ThreadLocalRandomWrapper extends RandomWrapper {
    *     thread's {@link BaseRandom}.
    * @param creator a {@link Function} that creates a {@link BaseRandom} from each seed.
    *     Probably a constructor reference.
-   * @throws SeedException should never happen.
    */
   public ThreadLocalRandomWrapper(final int seedSize, final SeedGenerator seedGenerator,
       final Function<byte[], BaseRandom> creator) throws SeedException {
