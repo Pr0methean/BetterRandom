@@ -33,6 +33,7 @@
       <w>prng</w>
       <w>prngs</w>
       <w>pseudorandom</w>
+      <w>reentrant</w>
       <w>reseedable</w>
       <w>reseeder</w>
       <w>retrier</w>
