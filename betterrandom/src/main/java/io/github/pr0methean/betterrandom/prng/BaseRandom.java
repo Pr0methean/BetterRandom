@@ -53,17 +53,16 @@ public abstract class BaseRandom extends Random
    * negative.
    */
   protected final AtomicReference<RandomSeederThread> seederThread = new AtomicReference<>(null);
-  private final AtomicLong nextNextGaussian = new AtomicLong(NAN_LONG_BITS);
+  /** Lock to prevent concurrent modification of the RNG's internal state. */
+  protected final Lock lock = new ReentrantLock();
   // Stored as a long since there's no atomic double
+  private final AtomicLong nextNextGaussian = new AtomicLong(NAN_LONG_BITS);
   /**
    * The seed this PRNG was seeded with, as a byte array. Used by {@link #getSeed()} even if the
    * actual internal state of the PRNG is stored elsewhere (since otherwise getSeed() would require
    * a slow type conversion).
    */
   protected byte[] seed;
-  /** Lock to prevent concurrent modification of the RNG's internal state. */
-  @SuppressWarnings("InstanceVariableMayNotBeInitializedByReadObject") protected transient Lock
-      lock;
   /**
    * Set by the constructor once either {@link Random#Random()} or {@link Random#Random(long)} has
    * returned. Intended for {@link #setSeed(long)}, which may have to ignore calls while this is
@@ -104,7 +103,6 @@ public abstract class BaseRandom extends Random
    * @param seed the seed.
    */
   protected BaseRandom(final byte[] seed) {
-    superConstructorFinished = true;
     if (seed == null) {
       throw new IllegalArgumentException("Seed must not be null");
     }
@@ -560,19 +558,6 @@ public abstract class BaseRandom extends Random
   }
 
   /**
-   * {@inheritDoc}<p>Most subclasses should override {@link #setSeedInternal(byte[])} instead of
-   * this method, so that they will deserialize properly.</p>
-   */
-  @Override public void setSeed(final byte[] seed) {
-    lock.lock();
-    try {
-      setSeedInternal(seed);
-    } finally {
-      lock.unlock();
-    }
-  }
-
-  /**
    * Sets the seed of this random number generator using a single long seed, if this implementation
    * supports that. If it is capable of using 64 bits or less of seed data (i.e. if {@code {@link
    * #getNewSeedLength()} <= {@link Long#BYTES}}), then this method shall replace the entire seed as
@@ -586,6 +571,19 @@ public abstract class BaseRandom extends Random
       setSeed(seedBytes);
     } else {
       setSeedInternal(seedBytes);
+    }
+  }
+
+  /**
+   * {@inheritDoc}<p>Most subclasses should override {@link #setSeedInternal(byte[])} instead of
+   * this method, so that they will deserialize properly.</p>
+   */
+  @Override public void setSeed(final byte[] seed) {
+    lock.lock();
+    try {
+      setSeedInternal(seed);
+    } finally {
+      lock.unlock();
     }
   }
 
@@ -652,9 +650,6 @@ public abstract class BaseRandom extends Random
    * Called in constructor and readObject to initialize transient fields.
    */
   protected void initTransientFields() {
-    if (lock == null) {
-      lock = new ReentrantLock();
-    }
     superConstructorFinished = true;
   }
 
