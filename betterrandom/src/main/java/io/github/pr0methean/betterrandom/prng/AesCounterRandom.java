@@ -135,7 +135,6 @@ public class AesCounterRandom extends BaseRandom implements SeekableRandom {
     super(seed);
     currentBlock = new byte[COUNTER_SIZE_BYTES * BLOCKS_AT_ONCE];
     index = currentBlock.length; // force generation of first block on demand
-    initTransientFields();
     setSeedInternal(seed);
   }
 
