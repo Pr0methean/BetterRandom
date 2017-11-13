@@ -15,13 +15,6 @@ public class ReseedingThreadLocalRandomWrapperTest extends ThreadLocalRandomWrap
         .wrapLegacy(Random::new, FailingSeedGenerator.FAILING_SEED_GENERATOR).nextInt();
   }
 
-  @Override public Map<Class<?>, Object> constructorParams() {
-    // testNextLong may fail spuriously if a real seed generator replenishes the entropy too fast
-    Map<Class<?>, Object> params = super.constructorParams();
-    params.put(SeedGenerator.class, FailingSeedGenerator.FAILING_SEED_GENERATOR);
-    return params;
-  }
-
   @Override protected Class<? extends BaseRandom> getClassUnderTest() {
     return super.getClassUnderTest();
   }
