@@ -228,9 +228,11 @@ public final class RandomSeederThread extends LooperThread {
           random.setSeed(longSeedBuffer.getLong(0));
         }
       } catch (final Throwable t) {
+        lock.unlock();
         LOG.error("%s", t);
         LOG.logStackTrace(Level.SEVERE, t.getStackTrace());
         interrupt();
+        return false;
       }
     }
     if (!entropyConsumed) {
