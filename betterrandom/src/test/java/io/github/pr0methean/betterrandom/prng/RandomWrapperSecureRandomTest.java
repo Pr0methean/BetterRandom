@@ -1,6 +1,7 @@
 package io.github.pr0methean.betterrandom.prng;
 
 import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.ImmutableMap.Builder;
 import io.github.pr0methean.betterrandom.TestUtils;
 import io.github.pr0methean.betterrandom.seed.DefaultSeedGenerator;
 import io.github.pr0methean.betterrandom.seed.SeedException;
@@ -28,16 +29,8 @@ public class RandomWrapperSecureRandomTest extends BaseRandomTest {
     return RandomWrapper.class;
   }
 
-  @Override public void testAllPublicConstructors()
-      throws SeedException, IllegalAccessException, InstantiationException,
-      InvocationTargetException {
-    final BaseRandom basePrng = createRng();
-    final int seedLength = getNewSeedLength(basePrng);
-    TestUtils.testAllPublicConstructors(getClassUnderTest(), ImmutableMap
-        .of(int.class, seedLength, long.class, TEST_SEED, byte[].class,
-            DefaultSeedGenerator.DEFAULT_SEED_GENERATOR.generateSeed(seedLength),
-            SeedGenerator.class, DefaultSeedGenerator.DEFAULT_SEED_GENERATOR, Random.class,
-            new SecureRandom()), BaseRandom::nextInt);
+  @Override public Builder<Class<?>, Object> constructorParams() {
+    return super.constructorParams().put(Random.class, new SecureRandom());
   }
 
   /**

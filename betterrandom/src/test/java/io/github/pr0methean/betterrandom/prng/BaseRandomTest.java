@@ -23,6 +23,7 @@ import java.security.GeneralSecurityException;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.function.Supplier;
 import org.testng.Reporter;
 import org.testng.annotations.AfterClass;
@@ -60,11 +61,17 @@ public abstract class BaseRandomTest {
   @Test public void testAllPublicConstructors()
       throws SeedException, IllegalAccessException, InstantiationException,
       InvocationTargetException {
-    final int seedLength = getNewSeedLength(createRng());
-    TestUtils.testAllPublicConstructors(getClassUnderTest(), ImmutableMap
-        .of(int.class, seedLength, long.class, TEST_SEED, byte[].class,
-            DefaultSeedGenerator.DEFAULT_SEED_GENERATOR.generateSeed(seedLength),
-            SeedGenerator.class, DefaultSeedGenerator.DEFAULT_SEED_GENERATOR), BaseRandom::nextInt);
+    TestUtils.testAllPublicConstructors(getClassUnderTest(), constructorParams().build(),
+        BaseRandom::nextInt);
+  }
+
+  protected ImmutableMap.Builder<Class<?>, Object> constructorParams() {
+    int seedLength = getNewSeedLength(createRng());
+    return ImmutableMap.<Class<?>, Object>builder()
+        .put(int.class, seedLength)
+        .put(long.class, TEST_SEED)
+        .put(byte[].class, DefaultSeedGenerator.DEFAULT_SEED_GENERATOR.generateSeed(seedLength))
+        .put(SeedGenerator.class, DefaultSeedGenerator.DEFAULT_SEED_GENERATOR);
   }
 
   protected int getNewSeedLength(final BaseRandom basePrng) {
