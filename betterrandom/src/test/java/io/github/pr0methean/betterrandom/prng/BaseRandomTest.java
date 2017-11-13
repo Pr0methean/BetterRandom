@@ -11,6 +11,7 @@ import static org.testng.Assert.assertNotEquals;
 import static org.testng.Assert.assertTrue;
 
 import com.google.common.collect.ImmutableMap;
+import io.github.pr0methean.betterrandom.DeadlockWatchdogThread;
 import io.github.pr0methean.betterrandom.TestUtils;
 import io.github.pr0methean.betterrandom.prng.RandomTestUtils.EntropyCheckMode;
 import io.github.pr0methean.betterrandom.seed.DefaultSeedGenerator;
@@ -28,9 +29,20 @@ import java.util.Map;
 import java.util.function.Supplier;
 import org.testng.Reporter;
 import org.testng.annotations.AfterClass;
+import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
 public abstract class BaseRandomTest {
+
+  @BeforeClass
+  public void setUp() {
+    DeadlockWatchdogThread.ensureStarted();
+  }
+
+  @AfterClass
+  public void tearDown() {
+    DeadlockWatchdogThread.stopInstance();
+  }
 
   /**
    * The square root of 12, rounded from an extended-precision calculation that was done by Wolfram

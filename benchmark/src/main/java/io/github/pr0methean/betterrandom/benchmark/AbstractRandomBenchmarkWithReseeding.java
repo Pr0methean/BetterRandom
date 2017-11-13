@@ -44,9 +44,6 @@ import org.openjdk.jmh.annotations.State;
 @State(Scope.Benchmark)
 public abstract class AbstractRandomBenchmarkWithReseeding extends AbstractRandomBenchmark {
 
-  protected static final RandomSeederThread seederThread =
-      RandomSeederThread.getInstance(DefaultSeedGenerator.DEFAULT_SEED_GENERATOR);
-
   @Setup public void setApiKey() {
     final String apiKeyString = System.getenv("RANDOM_DOT_ORG_KEY");
     RandomDotOrgSeedGenerator

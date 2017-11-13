@@ -69,7 +69,10 @@ public final class RandomSeederThread extends LooperThread {
    * @param seedGenerator the {@link SeedGenerator} to use to seed PRNGs registered with this
    *     RandomSeederThread.
    * @return a RandomSeederThread that is running and is backed by {@code seedGenerator}.
+   * @deprecated Relying on a specific instance causes issues if the {@link SeedGenerator} can ever
+   * throw a {@link SeedException}.
    */
+  @Deprecated
   public static RandomSeederThread getInstance(final SeedGenerator seedGenerator) {
     synchronized (INSTANCES) {
       return INSTANCES.computeIfAbsent(seedGenerator, seedGen -> {
