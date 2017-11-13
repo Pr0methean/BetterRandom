@@ -54,9 +54,9 @@ public abstract class AbstractRandomBenchmarkWithReseeding extends AbstractRando
   }
 
   @Benchmark public byte testBytesSequentialReseeding() {
-    seederThread.add(prng);
+    RandomSeederThread.add(DefaultSeedGenerator.DEFAULT_SEED_GENERATOR, prng);
     final byte b = innerTestBytesSequential();
-    seederThread.remove(prng);
+    RandomSeederThread.remove(DefaultSeedGenerator.DEFAULT_SEED_GENERATOR, prng);
     return b;
   }
   

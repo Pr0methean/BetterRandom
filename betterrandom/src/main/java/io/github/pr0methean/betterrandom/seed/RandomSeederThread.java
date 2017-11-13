@@ -240,12 +240,25 @@ public final class RandomSeederThread extends LooperThread {
   }
 
   /**
+   * Add one or more {@link Random} instances to the thread for the given {@link SeedGenerator}.
+   * @param seedGenerator The {@link SeedGenerator} that will reseed the {@code randoms}
+   * @param randoms One or more {@link Random} instances to be reseeded
+   */
+  public static void add(SeedGenerator seedGenerator, final Random... randoms) {
+    synchronized (INSTANCES) {
+      getInstance(seedGenerator).add(randoms);
+    }
+  }
+
+  /**
    * Add one or more {@link Random} instances. The caller must not hold locks on any of these
    * instances that are also acquired during {@link Random#setSeed(long)} or {@link
    * ByteArrayReseedableRandom#setSeed(byte[])}, as one of those methods may be called immediately
    * and this would cause a circular deadlock.
-   * @param randoms a {@link Random} object.
+   * @param randoms One or more {@link Random} instances to be reseeded.
+   * @deprecated Causes weird race conditions.
    */
+  @Deprecated
   public void add(final Random... randoms) {
     lock.lock();
     if (getState() == State.TERMINATED || isInterrupted()) {
@@ -261,10 +274,27 @@ public final class RandomSeederThread extends LooperThread {
   }
 
   /**
+   * Remove one or more {@link Random} instances from the thread for the given {@link SeedGenerator}
+   * if such a thread exists and contains them.
+   * @param seedGenerator The {@link SeedGenerator} that will reseed the {@code randoms}
+   * @param randoms One or more {@link Random} instances to be reseeded
+   */
+  public static void remove(SeedGenerator seedGenerator, final Random... randoms) {
+    synchronized (INSTANCES) {
+      RandomSeederThread thread = INSTANCES.get(seedGenerator);
+      if (thread != null) {
+        thread.remove(randoms);
+      }
+    }
+  }
+
+  /**
    * Remove one or more {@link Random} instances. If this is called while {@link #getState()} ==
    * {@link State#RUNNABLE}, they may still be reseeded once more.
    * @param randoms the {@link Random} instances to remove.
+   * @deprecated Causes weird race conditions.
    */
+  @Deprecated
   public void remove(final Random... randoms) {
     prngs.removeAll(Arrays.asList(randoms));
   }
