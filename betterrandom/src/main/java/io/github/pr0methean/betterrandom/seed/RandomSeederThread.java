@@ -8,6 +8,7 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.nio.ByteBuffer;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
@@ -87,11 +88,22 @@ public final class RandomSeederThread extends LooperThread {
    * Shut down all instances with which no {@link Random} instances are registered.
    */
   public static void stopAllEmpty() {
-    synchronized (INSTANCES) {
-      for (final RandomSeederThread instance : INSTANCES.values()) {
+    ArrayList<RandomSeederThread> toStop;
+    do {
+      toStop = new ArrayList<>();
+      synchronized (INSTANCES) {
+        // This method is complicated because stopIfEmpty can't be called from inside this loop due
+        // to SynchronizedMap limitations.
+        for (final RandomSeederThread instance : INSTANCES.values()) {
+          if (instance.isEmpty()) {
+            toStop.add(instance);
+          }
+        }
+      }
+      for (RandomSeederThread instance : toStop) {
         instance.stopIfEmpty();
       }
-    }
+    } while (!toStop.isEmpty());
   }
 
   private void initTransientFields() {
