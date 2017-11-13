@@ -22,7 +22,7 @@ public enum TestUtils {
    * @param <T> {@code clazz} as a type.
    */
   @SuppressWarnings("ObjectAllocationInLoop") public static <T> void testAllPublicConstructors(
-      final Class<T> clazz, final Map<Class<?>, Object> params, final Consumer<? super T> test) {
+      final Class<? extends T> clazz, final Map<Class<?>, Object> params, final Consumer<? super T> test) {
     for (final Constructor<?> constructor : clazz.getDeclaredConstructors()) {
       if (Modifier.isPublic(constructor.getModifiers())) {
         try {

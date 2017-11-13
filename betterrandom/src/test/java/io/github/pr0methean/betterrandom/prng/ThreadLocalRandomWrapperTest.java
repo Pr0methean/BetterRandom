@@ -8,11 +8,14 @@ import io.github.pr0methean.betterrandom.seed.SeedException;
 import io.github.pr0methean.betterrandom.util.CloneViaSerialization;
 import io.github.pr0methean.betterrandom.util.SerializableSupplier;
 import java.io.IOException;
+import java.io.Serializable;
 import java.lang.reflect.InvocationTargetException;
 import java.security.GeneralSecurityException;
+import java.util.Map;
 import java.util.Random;
 import java8.util.function.Function;
 import java8.util.function.LongFunction;
+import java8.util.function.Supplier;
 import org.testng.annotations.Test;
 
 public class ThreadLocalRandomWrapperTest extends BaseRandomTest {
@@ -49,14 +52,15 @@ public class ThreadLocalRandomWrapperTest extends BaseRandomTest {
   /** Seeding of this PRNG is thread-local, so setSeederThread makes no sense. */
   @Override @Test(expectedExceptions = UnsupportedOperationException.class)
   public void testRandomSeederThreadIntegration() throws Exception {
-    createRng().setSeederThread(
-        RandomSeederThread.getInstance(DefaultSeedGenerator.DEFAULT_SEED_GENERATOR));
+    createRng().setSeedGenerator(DefaultSeedGenerator.DEFAULT_SEED_GENERATOR);
   }
 
-  @Override @Test(enabled = false) public void testAllPublicConstructors()
-      throws SeedException, IllegalAccessException, InstantiationException,
-      InvocationTargetException {
-    // No-op: only 2 ctors, both tested elsewhere.
+  @Override public Map<Class<?>, Object> constructorParams() {
+    Map<Class<?>, Object> params = super.constructorParams();
+    params.put(Supplier.class, (Supplier<MersenneTwisterRandom>) MersenneTwisterRandom::new);
+    params
+        .put(Function.class, (Function<byte[], MersenneTwisterRandom>) MersenneTwisterRandom::new);
+    return params;
   }
 
   @Test public void testExplicitSeedSize() throws SeedException {

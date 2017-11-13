@@ -1,3 +1,9 @@
+# 1.3.3
+* Fixes bugs affecting `RandomSeederThread` when a `SeedGenerator` throws a `SeedException`.
+* Adds new static methods to `RandomSeederThread` and deprecates several instance methods, since
+  these were causing race conditions when a `SeedException` occurred.
+* Refactorings to slightly speed up construction and deserialization and slightly shrink the jar.
+
 # 1.3.2
 * Bug fixes for `LooperThread`, mainly affecting `awaitIteration`.
 * Tests should no longer be flaky on OSX.

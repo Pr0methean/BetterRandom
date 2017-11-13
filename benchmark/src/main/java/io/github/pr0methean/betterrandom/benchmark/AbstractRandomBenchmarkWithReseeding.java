@@ -44,9 +44,6 @@ import org.openjdk.jmh.annotations.State;
 @State(Scope.Benchmark)
 public abstract class AbstractRandomBenchmarkWithReseeding extends AbstractRandomBenchmark {
 
-  protected static final RandomSeederThread seederThread =
-      RandomSeederThread.getInstance(DefaultSeedGenerator.DEFAULT_SEED_GENERATOR);
-
   @Setup public void setApiKey() {
     final String apiKeyString = System.getenv("RANDOM_DOT_ORG_KEY");
     RandomDotOrgSeedGenerator
@@ -54,9 +51,9 @@ public abstract class AbstractRandomBenchmarkWithReseeding extends AbstractRando
   }
 
   @Benchmark public byte testBytesSequentialReseeding() {
-    seederThread.add(prng);
+    RandomSeederThread.add(DefaultSeedGenerator.DEFAULT_SEED_GENERATOR, prng);
     final byte b = innerTestBytesSequential();
-    seederThread.remove(prng);
+    RandomSeederThread.remove(DefaultSeedGenerator.DEFAULT_SEED_GENERATOR, prng);
     return b;
   }
   
@@ -65,9 +62,9 @@ public abstract class AbstractRandomBenchmarkWithReseeding extends AbstractRando
   @Group("contended")
   public byte testBytesContendedReseeding()
       throws SeedException, InterruptedException {
-    seederThread.add(prng);
+    seedGenerator.add(prng);
     final byte b = innerTestBytesContended();
-    seederThread.remove(prng);
+    seedGenerator.remove(prng);
     return b;
   }
   */

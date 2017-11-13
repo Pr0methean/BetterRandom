@@ -62,7 +62,7 @@ public abstract class BaseRandom extends Random
    * taken and {@link #getEntropyBits()} called immediately afterward would return zero or
    * negative.
    */
-  protected final AtomicReference<RandomSeederThread> seederThread = new AtomicReference<>(null);
+  protected final AtomicReference<SeedGenerator> seedGenerator = new AtomicReference<>(null);
   /** Lock to prevent concurrent modification of the RNG's internal state. */
   protected final Lock lock = new ReentrantLock();
   // Stored as a long since there's no atomic double
@@ -608,7 +608,7 @@ public abstract class BaseRandom extends Random
     try {
       return addSubclassFields(
           MoreObjects.toStringHelper(this).add("seed", BinaryUtils.convertBytesToHexString(seed))
-              .add("entropyBits", entropyBits.get()).add("seederThread", seederThread)).toString();
+              .add("entropyBits", entropyBits.get()).add("seedGenerator", seedGenerator)).toString();
     } finally {
       lock.unlock();
     }
@@ -666,16 +666,28 @@ public abstract class BaseRandom extends Random
    * out of entropy. Unregisters this PRNG with the previous {@link RandomSeederThread} if it had a
    * different one.
    * @param thread a {@link RandomSeederThread} that will be used to reseed this PRNG.
+   * @deprecated See the deprecation note for {@link RandomSeederThread#add(Random...)}.
    */
   @SuppressWarnings({"ObjectEquality", "EqualityOperatorComparesObjects"})
+  @Deprecated
   public void setSeederThread(@Nullable final RandomSeederThread thread) {
-    final RandomSeederThread oldThread = seederThread.getAndSet(thread);
-    if (thread != oldThread) {
-      if (oldThread != null) {
-        oldThread.remove(this);
+    setSeedGenerator(thread.getSeedGenerator());
+  }
+
+  /**
+   * Registers this PRNG with the {@link RandomSeederThread} for the corresponding {@link
+   * SeedGenerator}, to schedule reseeding when we run out of entropy. Unregisters this PRNG with
+   * the previous {@link RandomSeederThread} if it had a different one.
+   * @param thread a {@link RandomSeederThread} that will be used to reseed this PRNG.
+   */
+  public void setSeedGenerator(SeedGenerator seedGenerator) {
+    final SeedGenerator oldSeedGenerator = this.seedGenerator.getAndSet(seedGenerator);
+    if (seedGenerator != oldSeedGenerator) {
+      if (oldSeedGenerator != null) {
+        RandomSeederThread.remove(oldSeedGenerator, this);
       }
-      if (thread != null) {
-        thread.add(this);
+      if (seedGenerator != null) {
+        RandomSeederThread.add(seedGenerator, this);
       }
     }
   }
@@ -744,9 +756,9 @@ public abstract class BaseRandom extends Random
   }
 
   private void asyncReseedIfPossible() {
-    final RandomSeederThread thread = seederThread.get();
-    if (thread != null) {
-      thread.asyncReseed(this);
+    final SeedGenerator currentSeedGenerator = seedGenerator.get();
+    if (currentSeedGenerator != null) {
+      RandomSeederThread.asyncReseed(currentSeedGenerator, this);
     }
   }
 

@@ -23,9 +23,9 @@ import javax.annotation.Nullable;
 public class ThreadLocalRandomWrapper extends RandomWrapper {
 
   private static final long serialVersionUID = 1199235201518562359L;
-  private final Supplier<BaseRandom> initializer;
+  protected final Supplier<? extends BaseRandom> initializer;
   @Nullable private final Integer explicitSeedSize;
-  private transient ThreadLocal<BaseRandom> threadLocal;
+  protected transient ThreadLocal<BaseRandom> threadLocal;
 
   /**
    * Wraps the given {@link Supplier}. This ThreadLocalRandomWrapper will be serializable if the
@@ -33,7 +33,8 @@ public class ThreadLocalRandomWrapper extends RandomWrapper {
    * @param initializer a supplier that will be called to provide the initial {@link BaseRandom}
    *     for each thread.
    */
-  public ThreadLocalRandomWrapper(final Supplier<BaseRandom> initializer) throws SeedException {
+  public ThreadLocalRandomWrapper(final Supplier<? extends BaseRandom> initializer)
+      throws SeedException {
     super(0);
     this.initializer = initializer;
     initSubclassTransientFields();
@@ -41,7 +42,8 @@ public class ThreadLocalRandomWrapper extends RandomWrapper {
   }
 
   /**
-   * Wraps a seed generator and a function that takes a seed byte array as input.
+   * Wraps a seed generator and a function that takes a seed byte array as input. This
+   * ThreadLocalRandomWrapper will be serializable if the {@link Function} is serializable.
    * @param seedSize the size of seed arrays to generate.
    * @param seedGenerator The seed generation strategy that will provide the seed value for each
    *     thread's {@link BaseRandom}.
@@ -49,7 +51,7 @@ public class ThreadLocalRandomWrapper extends RandomWrapper {
    *     Probably a constructor reference.
    */
   public ThreadLocalRandomWrapper(final int seedSize, final SeedGenerator seedGenerator,
-      final Function<byte[], BaseRandom> creator) throws SeedException {
+      final Function<byte[], ? extends BaseRandom> creator) throws SeedException {
     super(0);
     explicitSeedSize = seedSize;
     initializer = new SerializableSupplier<BaseRandom>() {
@@ -58,6 +60,15 @@ public class ThreadLocalRandomWrapper extends RandomWrapper {
       }
     };
     initSubclassTransientFields();
+  }
+
+  /**
+   * Not supported, because this class uses a thread-local seed.
+   * @param thread ignored.
+   * @throws UnsupportedOperationException always.
+   */
+  @Override public void setSeedGenerator(SeedGenerator seedGenerator) {
+    throw new UnsupportedOperationException("This can't be reseeded by a RandomSeederThread");
   }
 
   /**

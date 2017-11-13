@@ -13,6 +13,7 @@ import java.util.Map;
 import java.util.WeakHashMap;
 import java.util.concurrent.atomic.AtomicLong;
 import java8.util.SplittableRandom;
+import java.util.concurrent.atomic.AtomicReference;
 import javax.annotation.Nullable;
 
 /**
@@ -25,12 +26,8 @@ public class ReseedingSplittableRandomAdapter extends BaseSplittableRandomAdapte
 
   private static final long serialVersionUID = 6301096404034224037L;
   @SuppressWarnings("StaticCollection")
-  private static final Map<SeedGenerator, ReseedingSplittableRandomAdapter> INSTANCES = Collections
-      .synchronizedMap(new WeakHashMap<SeedGenerator, ReseedingSplittableRandomAdapter>(1));
-  /**
-   * The {@link SeedGenerator} whose associated {@link RandomSeederThread} is used to reseed this.
-   */
-  protected final SeedGenerator seedGenerator;
+  private static final Map<SeedGenerator, ReseedingSplittableRandomAdapter> INSTANCES =
+      Collections.synchronizedMap(new WeakHashMap<>(1));
   @SuppressWarnings(
       {"ThreadLocalNotStaticFinal", "InstanceVariableMayNotBeInitializedByReadObject"})
   private transient ThreadLocal<SingleThreadSplittableRandomAdapter> threadLocal;
@@ -41,7 +38,7 @@ public class ReseedingSplittableRandomAdapter extends BaseSplittableRandomAdapte
    */
   private ReseedingSplittableRandomAdapter(final SeedGenerator seedGenerator) throws SeedException {
     super(seedGenerator.generateSeed(Java8Constants.LONG_BYTES));
-    this.seedGenerator = seedGenerator;
+    this.seedGenerator.set(seedGenerator);
     initSubclassTransientFields();
   }
 
@@ -81,6 +78,11 @@ public class ReseedingSplittableRandomAdapter extends BaseSplittableRandomAdapte
         "ReseedingSplittableRandomAdapter's binding to RandomSeederThread is immutable");
   }
 
+  @Override public void setSeedGenerator(SeedGenerator seedGenerator) {
+    throw new UnsupportedOperationException(
+        "ReseedingSplittableRandomAdapter's binding to RandomSeederThread is immutable");
+  }
+
   @Override protected boolean useParallelStreams() {
     return true;
   }
@@ -95,7 +97,7 @@ public class ReseedingSplittableRandomAdapter extends BaseSplittableRandomAdapte
   }
 
   private ReseedingSplittableRandomAdapter readResolve() {
-    return getInstance(seedGenerator);
+    return getInstance(seedGenerator.get());
   }
 
   private void initSubclassTransientFields() {
@@ -106,18 +108,17 @@ public class ReseedingSplittableRandomAdapter extends BaseSplittableRandomAdapte
         }
       };
     }
-    seederThread.set(RandomSeederThread.getInstance(seedGenerator));
   }
 
   @Override protected SplittableRandom getSplittableRandom() {
     final SingleThreadSplittableRandomAdapter adapterForThread = threadLocal.get();
-    seederThread.get().add(adapterForThread);
+    RandomSeederThread.add(seedGenerator.get(), adapterForThread);
     return adapterForThread.getSplittableRandom();
   }
 
   @Override public boolean equals(@Nullable final Object o) {
-    return (this == o) || ((o instanceof ReseedingSplittableRandomAdapter) && seedGenerator
-        .equals(((ReseedingSplittableRandomAdapter) o).seedGenerator));
+    return (this == o) || ((o instanceof ReseedingSplittableRandomAdapter) && seedGenerator.get()
+        .equals(((ReseedingSplittableRandomAdapter) o).seedGenerator.get()));
   }
 
   @Override protected void setSeedInternal(final byte[] seed) {
@@ -128,7 +129,7 @@ public class ReseedingSplittableRandomAdapter extends BaseSplittableRandomAdapte
   }
 
   @Override public int hashCode() {
-    return seedGenerator.hashCode() + 1;
+    return seedGenerator.get().hashCode() + 1;
   }
 
   @Override public String toString() {

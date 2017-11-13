@@ -11,6 +11,7 @@ import static org.testng.Assert.assertNotEquals;
 import static org.testng.Assert.assertTrue;
 
 import com.google.common.collect.ImmutableMap;
+import io.github.pr0methean.betterrandom.DeadlockWatchdogThread;
 import io.github.pr0methean.betterrandom.TestUtils;
 import io.github.pr0methean.betterrandom.prng.RandomTestUtils.EntropyCheckMode;
 import io.github.pr0methean.betterrandom.seed.DefaultSeedGenerator;
@@ -22,12 +23,15 @@ import java.lang.reflect.InvocationTargetException;
 import java.security.GeneralSecurityException;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
 import java8.util.function.Consumer;
 import java8.util.function.Supplier;
 import org.testng.Reporter;
 import org.testng.annotations.AfterClass;
+import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
 public abstract class BaseRandomTest {
@@ -69,12 +73,19 @@ public abstract class BaseRandomTest {
   @Test public void testAllPublicConstructors()
       throws SeedException, IllegalAccessException, InstantiationException,
       InvocationTargetException {
-    final int seedLength = getNewSeedLength(createRng());
-    TestUtils.testAllPublicConstructors(getClassUnderTest(),
-        ImmutableMap.<Class<?>, Object>of(int.class, seedLength, long.class, TEST_SEED,
-            byte[].class, DefaultSeedGenerator.DEFAULT_SEED_GENERATOR.generateSeed(seedLength),
-            SeedGenerator.class, DefaultSeedGenerator.DEFAULT_SEED_GENERATOR),
-        VERIFY_NEXT_INT_NO_CRASH);
+    TestUtils
+        .testAllPublicConstructors(getClassUnderTest(), ImmutableMap.copyOf(constructorParams()),
+            BaseRandom::nextInt);
+  }
+
+  protected Map<Class<?>, Object> constructorParams() {
+    int seedLength = getNewSeedLength(createRng());
+    HashMap<Class<?>, Object> params = new HashMap<>();
+    params.put(int.class, seedLength);
+    params.put(long.class, TEST_SEED);
+    params.put(byte[].class, DefaultSeedGenerator.DEFAULT_SEED_GENERATOR.generateSeed(seedLength));
+    params.put(SeedGenerator.class, DefaultSeedGenerator.DEFAULT_SEED_GENERATOR);
+    return params;
   }
 
   protected int getNewSeedLength(final BaseRandom basePrng) {
@@ -213,14 +224,12 @@ public abstract class BaseRandomTest {
   }
 
   @Test(timeOut = 60000) public void testRandomSeederThreadIntegration() throws Exception {
-    final RandomSeederThread seederThread =
-        RandomSeederThread.getInstance(DefaultSeedGenerator.DEFAULT_SEED_GENERATOR);
     final BaseRandom rng = createRng();
     final byte[] oldSeed = rng.getSeed();
     while (rng.getEntropyBits() > Long.SIZE) {
       rng.nextLong();
     }
-    rng.setSeederThread(seederThread);
+    rng.setSeedGenerator(DefaultSeedGenerator.DEFAULT_SEED_GENERATOR);
     try {
       byte[] newSeed;
       do {
@@ -230,7 +239,7 @@ public abstract class BaseRandomTest {
       } while (Arrays.equals(newSeed, oldSeed));
       assertGreaterOrEqual(newSeed.length * 8L - 1, rng.getEntropyBits());
     } finally {
-      rng.setSeederThread(null);
+      rng.setSeedGenerator(null);
     }
   }
 
