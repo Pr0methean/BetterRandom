@@ -58,6 +58,15 @@ public class ThreadLocalRandomWrapper extends RandomWrapper {
   }
 
   /**
+   * Not supported, because this class uses a thread-local seed.
+   * @param thread ignored.
+   * @throws UnsupportedOperationException always.
+   */
+  @Override public void setSeedGenerator(SeedGenerator seedGenerator) {
+    throw new UnsupportedOperationException("This can't be reseeded by a RandomSeederThread");
+  }
+
+  /**
    * Uses this class and {@link RandomWrapper} to decorate any implementation of {@link Random} that
    * can be constructed from a {@code long} seed into a fully-concurrent one.
    * @param legacyCreator a function that provides the {@link Random} that underlies the
