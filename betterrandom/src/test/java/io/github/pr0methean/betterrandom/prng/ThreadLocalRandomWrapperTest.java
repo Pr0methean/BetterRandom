@@ -2,18 +2,14 @@ package io.github.pr0methean.betterrandom.prng;
 
 import static org.testng.Assert.assertEquals;
 
-import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.ImmutableMap.Builder;
-import io.github.pr0methean.betterrandom.TestUtils;
 import io.github.pr0methean.betterrandom.seed.DefaultSeedGenerator;
 import io.github.pr0methean.betterrandom.seed.RandomSeederThread;
 import io.github.pr0methean.betterrandom.seed.SeedException;
-import io.github.pr0methean.betterrandom.seed.SeedGenerator;
 import io.github.pr0methean.betterrandom.util.CloneViaSerialization;
 import java.io.IOException;
 import java.io.Serializable;
-import java.lang.reflect.InvocationTargetException;
 import java.security.GeneralSecurityException;
+import java.util.Map;
 import java.util.Random;
 import java.util.function.Function;
 import java.util.function.Supplier;
@@ -57,11 +53,12 @@ public class ThreadLocalRandomWrapperTest extends BaseRandomTest {
         RandomSeederThread.getInstance(DefaultSeedGenerator.DEFAULT_SEED_GENERATOR));
   }
 
-  @Override public Builder<Class<?>, Object> constructorParams() {
-    return super.constructorParams()
-        .put(Supplier.class, (Supplier<MersenneTwisterRandom>) MersenneTwisterRandom::new)
-        .put(Function.class,
-            (Function<byte[], MersenneTwisterRandom>) MersenneTwisterRandom::new);
+  @Override public Map<Class<?>, Object> constructorParams() {
+    Map<Class<?>, Object> params = super.constructorParams();
+    params.put(Supplier.class, (Supplier<MersenneTwisterRandom>) MersenneTwisterRandom::new);
+    params
+        .put(Function.class, (Function<byte[], MersenneTwisterRandom>) MersenneTwisterRandom::new);
+    return params;
   }
 
   @Test public void testExplicitSeedSize() throws SeedException {
