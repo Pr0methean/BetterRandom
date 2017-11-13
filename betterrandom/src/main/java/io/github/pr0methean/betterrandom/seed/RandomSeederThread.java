@@ -247,11 +247,11 @@ public final class RandomSeederThread extends LooperThread {
    * @param randoms a {@link Random} object.
    */
   public void add(final Random... randoms) {
+    lock.lock();
     if (getState() == State.TERMINATED || isInterrupted()) {
       throw new IllegalStateException("Already shut down");
     }
     Collections.addAll(prngs, randoms);
-    lock.lock();
     try {
       waitForEntropyDrain.signalAll();
       waitWhileEmpty.signalAll();
@@ -273,9 +273,14 @@ public final class RandomSeederThread extends LooperThread {
    * Shut down this thread if no {@link Random} instances are registered with it.
    */
   public void stopIfEmpty() {
-    if (isEmpty()) {
-      LOG.info("Stopping empty RandomSeederThread for %s", seedGenerator);
-      interrupt();
+    lock.lock();
+    try {
+      if (isEmpty()) {
+        LOG.info("Stopping empty RandomSeederThread for %s", seedGenerator);
+        interrupt();
+      }
+    } finally {
+      lock.unlock();
     }
   }
 }
