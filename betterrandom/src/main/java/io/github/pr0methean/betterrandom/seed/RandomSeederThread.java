@@ -209,6 +209,11 @@ public final class RandomSeederThread extends LooperThread {
     return true;
   }
 
+  @Override public void interrupt() {
+    INSTANCES.remove(seedGenerator); // Unregister the dying instance
+    super.interrupt();
+  }
+
   /**
    * Returns true if no {@link Random} instances are registered with this RandomSeederThread.
    * @return true if no {@link Random} instances are registered with this RandomSeederThread.
