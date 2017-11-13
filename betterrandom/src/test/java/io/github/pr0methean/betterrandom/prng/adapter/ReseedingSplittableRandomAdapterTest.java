@@ -61,8 +61,7 @@ public class ReseedingSplittableRandomAdapterTest extends SingleThreadSplittable
    */
   @Override @Test(expectedExceptions = UnsupportedOperationException.class)
   public void testRandomSeederThreadIntegration() throws Exception {
-    createRng().setSeederThread(
-        RandomSeederThread.getInstance(DefaultSeedGenerator.DEFAULT_SEED_GENERATOR));
+    createRng().setSeedGenerator(DEFAULT_SEED_GENERATOR);
   }
 
   @Override @Test(enabled = false) public void testSeedTooShort() {
