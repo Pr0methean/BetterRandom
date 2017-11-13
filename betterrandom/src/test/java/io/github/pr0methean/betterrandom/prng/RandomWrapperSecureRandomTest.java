@@ -1,15 +1,11 @@
 package io.github.pr0methean.betterrandom.prng;
 
-import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.ImmutableMap.Builder;
-import io.github.pr0methean.betterrandom.TestUtils;
 import io.github.pr0methean.betterrandom.seed.DefaultSeedGenerator;
 import io.github.pr0methean.betterrandom.seed.SeedException;
-import io.github.pr0methean.betterrandom.seed.SeedGenerator;
-import java.lang.reflect.InvocationTargetException;
 import java.security.GeneralSecurityException;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
+import java.util.Map;
 import java.util.Random;
 import org.testng.annotations.Test;
 
@@ -29,8 +25,10 @@ public class RandomWrapperSecureRandomTest extends BaseRandomTest {
     return RandomWrapper.class;
   }
 
-  @Override public Builder<Class<?>, Object> constructorParams() {
-    return super.constructorParams().put(Random.class, new SecureRandom());
+  @Override public Map<Class<?>, Object> constructorParams() {
+    Map<Class<?>, Object> params = super.constructorParams();
+    params.put(Random.class, new SecureRandom());
+    return params;
   }
 
   /**
