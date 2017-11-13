@@ -1,5 +1,6 @@
 package io.github.pr0methean.betterrandom.prng;
 
+import io.github.pr0methean.betterrandom.seed.DefaultSeedGenerator;
 import io.github.pr0methean.betterrandom.seed.FailingSeedGenerator;
 import io.github.pr0methean.betterrandom.seed.SeedException;
 import io.github.pr0methean.betterrandom.seed.SeedGenerator;
@@ -12,7 +13,7 @@ public class ReseedingThreadLocalRandomWrapperTest extends ThreadLocalRandomWrap
 
   @Override public void testWrapLegacy() throws SeedException {
     ReseedingThreadLocalRandomWrapper
-        .wrapLegacy(Random::new, FailingSeedGenerator.FAILING_SEED_GENERATOR).nextInt();
+        .wrapLegacy(Random::new, DefaultSeedGenerator.DEFAULT_SEED_GENERATOR).nextInt();
   }
 
   @Override protected Class<? extends BaseRandom> getClassUnderTest() {
