@@ -26,8 +26,8 @@ public enum TestUtils {
       final Class<? extends T> clazz, final Map<Class<?>, Object> params, final Consumer<? super T> test) {
     for (final Constructor<?> constructor : clazz.getDeclaredConstructors()) {
       if (Modifier.isPublic(constructor.getModifiers())) {
-        final int nParams = constructor.getParameterCount();
         final Class<?>[] parameterTypes = constructor.getParameterTypes();
+        final int nParams = parameterTypes.length;
         final Object[] constructorParams = new Object[nParams];
         try {
           for (int i = 0; i < nParams; i++) {
