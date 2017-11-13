@@ -27,7 +27,7 @@ public class ReseedingSplittableRandomAdapter extends BaseSplittableRandomAdapte
   private static final long serialVersionUID = 6301096404034224037L;
   @SuppressWarnings("StaticCollection")
   private static final Map<SeedGenerator, ReseedingSplittableRandomAdapter> INSTANCES =
-      Collections.synchronizedMap(new WeakHashMap<>(1));
+      Collections.synchronizedMap(new WeakHashMap<SeedGenerator, ReseedingSplittableRandomAdapter>(1));
   @SuppressWarnings(
       {"ThreadLocalNotStaticFinal", "InstanceVariableMayNotBeInitializedByReadObject"})
   private transient ThreadLocal<SingleThreadSplittableRandomAdapter> threadLocal;
@@ -104,7 +104,7 @@ public class ReseedingSplittableRandomAdapter extends BaseSplittableRandomAdapte
     if (threadLocal == null) {
       threadLocal = new ThreadLocal<SingleThreadSplittableRandomAdapter>() {
         @Override public SingleThreadSplittableRandomAdapter initialValue() {
-          return new SingleThreadSplittableRandomAdapter(seedGenerator);
+          return new SingleThreadSplittableRandomAdapter(seedGenerator.get());
         }
       };
     }

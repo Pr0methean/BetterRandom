@@ -15,7 +15,6 @@ import java8.util.function.Function;
 import java8.util.function.LongFunction;
 import java8.util.function.Supplier;
 import javax.annotation.Nullable;
-import org.jetbrains.annotations.NotNull;
 
 /**
  * Wraps a {@link ThreadLocal}&lt;{@link BaseRandom}&gt; in order to provide concurrency that most
@@ -65,10 +64,10 @@ public class ThreadLocalRandomWrapper extends RandomWrapper {
 
   /**
    * Not supported, because this class uses a thread-local seed.
-   * @param thread ignored.
+   * @param seedGenerator ignored.
    * @throws UnsupportedOperationException always.
    */
-  @Override public void setSeedGenerator(SeedGenerator seedGenerator) {
+  @Override public void setSeedGenerator(final SeedGenerator seedGenerator) {
     throw new UnsupportedOperationException("This can't be reseeded by a RandomSeederThread");
   }
 
@@ -86,7 +85,7 @@ public class ThreadLocalRandomWrapper extends RandomWrapper {
         wrapLongCreatorAsByteArrayCreator(legacyCreator));
   }
 
-  @NotNull protected static Function<byte[], BaseRandom> wrapLongCreatorAsByteArrayCreator(
+  protected static Function<byte[], BaseRandom> wrapLongCreatorAsByteArrayCreator(
       final LongFunction<Random> legacyCreator) {
     return new Function<byte[], BaseRandom>() {
       @Override public BaseRandom apply(byte[] bytes) {
