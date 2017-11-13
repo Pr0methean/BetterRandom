@@ -3,13 +3,10 @@ package io.github.pr0methean.betterrandom.prng;
 import static org.testng.Assert.assertEquals;
 
 import io.github.pr0methean.betterrandom.seed.DefaultSeedGenerator;
-import io.github.pr0methean.betterrandom.seed.RandomSeederThread;
 import io.github.pr0methean.betterrandom.seed.SeedException;
 import io.github.pr0methean.betterrandom.util.CloneViaSerialization;
 import io.github.pr0methean.betterrandom.util.SerializableSupplier;
 import java.io.IOException;
-import java.io.Serializable;
-import java.lang.reflect.InvocationTargetException;
 import java.security.GeneralSecurityException;
 import java.util.Map;
 import java.util.Random;
@@ -59,7 +56,7 @@ public class ThreadLocalRandomWrapperTest extends BaseRandomTest {
     Map<Class<?>, Object> params = super.constructorParams();
     params.put(Supplier.class, new MersenneTwisterRandomColonColonNew());
     params
-        .put(Function.class, new RandomColonColonNewForByteArray());
+        .put(Function.class, new ByteArrayRandomConstructor());
     return params;
   }
 
@@ -96,10 +93,10 @@ public class ThreadLocalRandomWrapperTest extends BaseRandomTest {
     }
   }
 
-  protected static class RandomColonColonNewForByteArray implements LongFunction<Random> {
+  private static class ByteArrayRandomConstructor implements Function<byte[], BaseRandom> {
 
-    @Override public Random apply(long seed) {
-      return new Random(seed);
+    @Override public BaseRandom apply(byte[] seed) {
+      return new MersenneTwisterRandom(seed);
     }
   }
 }
