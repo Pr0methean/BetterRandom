@@ -108,8 +108,8 @@ public class ReseedingSplittableRandomAdapter extends BaseSplittableRandomAdapte
   }
 
   @Override public boolean equals(@Nullable final Object o) {
-    return (this == o) || ((o instanceof ReseedingSplittableRandomAdapter) && seedGenerator
-        .equals(((ReseedingSplittableRandomAdapter) o).seedGenerator));
+    return (this == o) || ((o instanceof ReseedingSplittableRandomAdapter) && seedGenerator.get()
+        .equals(((ReseedingSplittableRandomAdapter) o).seedGenerator.get()));
   }
 
   @Override protected void setSeedInternal(final byte[] seed) {
@@ -120,7 +120,7 @@ public class ReseedingSplittableRandomAdapter extends BaseSplittableRandomAdapte
   }
 
   @Override public int hashCode() {
-    return seedGenerator.hashCode() + 1;
+    return seedGenerator.get().hashCode() + 1;
   }
 
   @Override public String toString() {
