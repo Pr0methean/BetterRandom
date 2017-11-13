@@ -14,6 +14,7 @@ public class DeadlockWatchdogThread extends LooperThread {
   private static final LogPreFormatter LOG = new LogPreFormatter(DeadlockWatchdogThread.class);
   private static final int MAX_STACK_DEPTH = 20;
   private static final long serialVersionUID = 9118178318042580320L;
+  private static final int DEADLOCK_STATUS = 0xDEAD10CC;
   private static DeadlockWatchdogThread INSTANCE = new DeadlockWatchdogThread();
 
   private DeadlockWatchdogThread() {
@@ -58,6 +59,10 @@ public class DeadlockWatchdogThread extends LooperThread {
       LOG.format(logLevel, 0, threadInfo.getThreadName());
       StackTraceElement[] stackTrace = threadInfo.getStackTrace();
       LOG.logStackTrace(logLevel, stackTrace);
+    }
+    if (deadlockFound) {
+      // Fail fast if current context allows
+      System.exit(DEADLOCK_STATUS);
     }
     return !deadlockFound; // Terminate when a deadlock is found
   }
