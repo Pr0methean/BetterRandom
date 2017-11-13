@@ -146,10 +146,25 @@ public final class RandomSeederThread extends LooperThread {
 
   /**
    * Asynchronously triggers reseeding of the given {@link EntropyCountingRandom} if it is
+   * associated with a live RandomSeederThread corresponding to the given {@link SeedGenerator}.
+   * @param seedGenerator the {@link SeedGenerator} that should reseed {@code random}
+   * @param random a {@link Random} to be reseeded
+   * @return Whether or not the reseed was successfully scheduled.
+   */
+  public static boolean asyncReseed(final SeedGenerator seedGenerator, final Random random) {
+    synchronized (INSTANCES) {
+      return getInstance(seedGenerator).asyncReseed(random);
+    }
+  }
+
+  /**
+   * Asynchronously triggers reseeding of the given {@link EntropyCountingRandom} if it is
    * associated with a live RandomSeederThread.
    * @param random a {@link Random} object.
    * @return Whether or not the reseed was successfully scheduled.
+   * @deprecated Causes weird race conditions
    */
+  @Deprecated
   @SuppressWarnings("UnusedReturnValue") public boolean asyncReseed(final Random random) {
     if (!(random instanceof EntropyCountingRandom)) {
       // Reseed of non-entropy-counting Random happens every iteration anyway
@@ -312,5 +327,13 @@ public final class RandomSeederThread extends LooperThread {
     } finally {
       lock.unlock();
     }
+  }
+
+  /**
+   * Use this to transition old methods away from the deprecated instance methods.
+   * @return the {@link SeedGenerator} that this thread uses
+   */
+  public SeedGenerator getSeedGenerator() {
+    return seedGenerator;
   }
 }

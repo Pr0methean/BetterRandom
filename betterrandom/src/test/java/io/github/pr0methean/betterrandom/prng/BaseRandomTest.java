@@ -206,14 +206,12 @@ public abstract class BaseRandomTest {
   }
 
   @Test(timeOut = 60000) public void testRandomSeederThreadIntegration() throws Exception {
-    final RandomSeederThread seederThread =
-        RandomSeederThread.getInstance(DefaultSeedGenerator.DEFAULT_SEED_GENERATOR);
     final BaseRandom rng = createRng();
     final byte[] oldSeed = rng.getSeed();
     while (rng.getEntropyBits() > Long.SIZE) {
       rng.nextLong();
     }
-    rng.setSeederThread(seederThread);
+    rng.setSeedGenerator(DefaultSeedGenerator.DEFAULT_SEED_GENERATOR);
     try {
       byte[] newSeed;
       do {
@@ -223,7 +221,7 @@ public abstract class BaseRandomTest {
       } while (Arrays.equals(newSeed, oldSeed));
       assertGreaterOrEqual(newSeed.length * 8L - 1, rng.getEntropyBits());
     } finally {
-      rng.setSeederThread(null);
+      rng.setSeedGenerator(null);
     }
   }
 

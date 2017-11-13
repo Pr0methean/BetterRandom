@@ -12,6 +12,7 @@ import java.util.Map;
 import java.util.SplittableRandom;
 import java.util.WeakHashMap;
 import java.util.concurrent.atomic.AtomicLong;
+import java.util.concurrent.atomic.AtomicReference;
 import javax.annotation.Nullable;
 
 /**
@@ -26,10 +27,6 @@ public class ReseedingSplittableRandomAdapter extends BaseSplittableRandomAdapte
   @SuppressWarnings("StaticCollection")
   private static final Map<SeedGenerator, ReseedingSplittableRandomAdapter> INSTANCES =
       Collections.synchronizedMap(new WeakHashMap<>(1));
-  /**
-   * The {@link SeedGenerator} whose associated {@link RandomSeederThread} is used to reseed this.
-   */
-  protected final SeedGenerator seedGenerator;
   @SuppressWarnings(
       {"ThreadLocalNotStaticFinal", "InstanceVariableMayNotBeInitializedByReadObject"})
   private transient ThreadLocal<SingleThreadSplittableRandomAdapter> threadLocal;
@@ -40,7 +37,7 @@ public class ReseedingSplittableRandomAdapter extends BaseSplittableRandomAdapte
    */
   private ReseedingSplittableRandomAdapter(final SeedGenerator seedGenerator) throws SeedException {
     super(seedGenerator.generateSeed(Long.BYTES));
-    this.seedGenerator = seedGenerator;
+    this.seedGenerator.set(seedGenerator);
     initSubclassTransientFields();
   }
 
@@ -75,6 +72,11 @@ public class ReseedingSplittableRandomAdapter extends BaseSplittableRandomAdapte
         "ReseedingSplittableRandomAdapter's binding to RandomSeederThread is immutable");
   }
 
+  @Override public void setSeedGenerator(SeedGenerator seedGenerator) {
+    throw new UnsupportedOperationException(
+        "ReseedingSplittableRandomAdapter's binding to RandomSeederThread is immutable");
+  }
+
   @Override protected boolean useParallelStreams() {
     return true;
   }
@@ -89,20 +91,19 @@ public class ReseedingSplittableRandomAdapter extends BaseSplittableRandomAdapte
   }
 
   private ReseedingSplittableRandomAdapter readResolve() {
-    return getInstance(seedGenerator);
+    return getInstance(seedGenerator.get());
   }
 
   private void initSubclassTransientFields() {
     if (threadLocal == null) {
       threadLocal =
-          ThreadLocal.withInitial(() -> new SingleThreadSplittableRandomAdapter(seedGenerator));
+          ThreadLocal.withInitial(() -> new SingleThreadSplittableRandomAdapter(seedGenerator.get()));
     }
-    seederThread.set(RandomSeederThread.getInstance(seedGenerator));
   }
 
   @Override protected SplittableRandom getSplittableRandom() {
     final SingleThreadSplittableRandomAdapter adapterForThread = threadLocal.get();
-    seederThread.get().add(adapterForThread);
+    RandomSeederThread.add(seedGenerator.get(), adapterForThread);
     return adapterForThread.getSplittableRandom();
   }
 
