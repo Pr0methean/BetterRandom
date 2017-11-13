@@ -11,7 +11,6 @@ import static org.testng.Assert.assertNotEquals;
 import static org.testng.Assert.assertTrue;
 
 import com.google.common.collect.ImmutableMap;
-import io.github.pr0methean.betterrandom.DeadlockWatchdogThread;
 import io.github.pr0methean.betterrandom.TestUtils;
 import io.github.pr0methean.betterrandom.prng.RandomTestUtils.EntropyCheckMode;
 import io.github.pr0methean.betterrandom.seed.DefaultSeedGenerator;
@@ -31,7 +30,6 @@ import java8.util.function.Consumer;
 import java8.util.function.Supplier;
 import org.testng.Reporter;
 import org.testng.annotations.AfterClass;
-import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
 public abstract class BaseRandomTest {
@@ -75,7 +73,11 @@ public abstract class BaseRandomTest {
       InvocationTargetException {
     TestUtils
         .testAllPublicConstructors(getClassUnderTest(), ImmutableMap.copyOf(constructorParams()),
-            BaseRandom::nextInt);
+            new Consumer<BaseRandom>() {
+              @Override public void accept(BaseRandom baseRandom) {
+                baseRandom.nextInt();
+              }
+            });
   }
 
   protected Map<Class<?>, Object> constructorParams() {

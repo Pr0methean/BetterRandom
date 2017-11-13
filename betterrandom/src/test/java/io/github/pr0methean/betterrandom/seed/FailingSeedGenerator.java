@@ -5,6 +5,9 @@ package io.github.pr0methean.betterrandom.seed;
  */
 public enum FailingSeedGenerator implements SeedGenerator {
   FAILING_SEED_GENERATOR;
+  @Override public byte[] generateSeed(int length) throws SeedException {
+    throw new SeedException("This is the FailingSeedGenerator");
+  }
 
   @Override public void generateSeed(byte[] output) throws SeedException {
     throw new SeedException("This is the FailingSeedGenerator");

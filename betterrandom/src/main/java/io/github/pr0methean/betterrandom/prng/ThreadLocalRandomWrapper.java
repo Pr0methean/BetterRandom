@@ -15,6 +15,7 @@ import java8.util.function.Function;
 import java8.util.function.LongFunction;
 import java8.util.function.Supplier;
 import javax.annotation.Nullable;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * Wraps a {@link ThreadLocal}&lt;{@link BaseRandom}&gt; in order to provide concurrency that most
@@ -82,11 +83,16 @@ public class ThreadLocalRandomWrapper extends RandomWrapper {
   public static ThreadLocalRandomWrapper wrapLegacy(final LongFunction<Random> legacyCreator,
       final SeedGenerator seedGenerator) {
     return new ThreadLocalRandomWrapper(Java8Constants.LONG_BYTES, seedGenerator,
-        new Function<byte[], BaseRandom>() {
-          @Override public BaseRandom apply(byte[] bytes) {
-            return new RandomWrapper(legacyCreator.apply(convertBytesToLong(bytes)));
-          }
-        });
+        wrapLongCreatorAsByteArrayCreator(legacyCreator));
+  }
+
+  @NotNull protected static Function<byte[], BaseRandom> wrapLongCreatorAsByteArrayCreator(
+      final LongFunction<Random> legacyCreator) {
+    return new Function<byte[], BaseRandom>() {
+      @Override public BaseRandom apply(byte[] bytes) {
+        return new RandomWrapper(legacyCreator.apply(convertBytesToLong(bytes)));
+      }
+    };
   }
 
   private void initSubclassTransientFields() {

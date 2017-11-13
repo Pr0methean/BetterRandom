@@ -4,11 +4,14 @@ import io.github.pr0methean.betterrandom.seed.RandomSeederThread;
 import io.github.pr0methean.betterrandom.seed.SeedException;
 import io.github.pr0methean.betterrandom.seed.SeedGenerator;
 import io.github.pr0methean.betterrandom.util.BinaryUtils;
+import io.github.pr0methean.betterrandom.util.Java8Constants;
+import io.github.pr0methean.betterrandom.util.SerializableFunction;
+import io.github.pr0methean.betterrandom.util.SerializableSupplier;
 import java.io.Serializable;
 import java.util.Random;
-import java.util.function.Function;
-import java.util.function.LongFunction;
-import java.util.function.Supplier;
+import java8.util.function.Function;
+import java8.util.function.LongFunction;
+import java8.util.function.Supplier;
 
 /**
  * A {@link ThreadLocalRandomWrapper} that reseeds all its instances using the
@@ -29,10 +32,12 @@ public class ReseedingThreadLocalRandomWrapper extends ThreadLocalRandomWrapper 
    */
   public ReseedingThreadLocalRandomWrapper(final SeedGenerator seedGenerator,
       final Supplier<? extends BaseRandom> initializer) throws SeedException {
-    super((Serializable & Supplier<? extends BaseRandom>) () -> {
-      BaseRandom out = initializer.get();
-      RandomSeederThread.add(seedGenerator, out);
-      return out;
+    super(new SerializableSupplier<BaseRandom>() {
+      @Override public BaseRandom get() {
+        BaseRandom out = initializer.get();
+        RandomSeederThread.add(seedGenerator, out);
+        return out;
+      }
     });
   }
 
@@ -49,12 +54,12 @@ public class ReseedingThreadLocalRandomWrapper extends ThreadLocalRandomWrapper 
    */
   public ReseedingThreadLocalRandomWrapper(final int seedSize, final SeedGenerator seedGenerator,
       final Function<byte[], ? extends BaseRandom> creator) throws SeedException {
-    super(seedSize, seedGenerator,
-        (Serializable & Function<byte[], ? extends BaseRandom>) (seed) -> {
-          BaseRandom out = creator.apply(seed);
-          RandomSeederThread.add(seedGenerator, out);
-          return out;
-        });
+    super(seedSize, seedGenerator, new SerializableFunction<byte[], BaseRandom>() {
+      @Override public BaseRandom apply(byte[] seed) {
+        BaseRandom out = creator.apply(seed);
+        RandomSeederThread.add(seedGenerator, out);
+        return out;      }
+    });
   }
 
   /**
@@ -67,7 +72,7 @@ public class ReseedingThreadLocalRandomWrapper extends ThreadLocalRandomWrapper 
    */
   public static ReseedingThreadLocalRandomWrapper wrapLegacy(
       final LongFunction<Random> legacyCreator, final SeedGenerator seedGenerator) {
-    return new ReseedingThreadLocalRandomWrapper(Long.BYTES, seedGenerator,
-        bytes -> new RandomWrapper(legacyCreator.apply(BinaryUtils.convertBytesToLong(bytes))));
+    return new ReseedingThreadLocalRandomWrapper(Java8Constants.LONG_BYTES, seedGenerator,
+        wrapLongCreatorAsByteArrayCreator(legacyCreator));
   }
 }

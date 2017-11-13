@@ -57,9 +57,9 @@ public class ThreadLocalRandomWrapperTest extends BaseRandomTest {
 
   @Override public Map<Class<?>, Object> constructorParams() {
     Map<Class<?>, Object> params = super.constructorParams();
-    params.put(Supplier.class, (Supplier<MersenneTwisterRandom>) MersenneTwisterRandom::new);
+    params.put(Supplier.class, new MersenneTwisterRandomColonColonNew());
     params
-        .put(Function.class, (Function<byte[], MersenneTwisterRandom>) MersenneTwisterRandom::new);
+        .put(Function.class, new RandomColonColonNewForByteArray());
     return params;
   }
 
@@ -81,19 +81,25 @@ public class ThreadLocalRandomWrapperTest extends BaseRandomTest {
   }
 
   @Override protected BaseRandom createRng() throws SeedException {
-    return new ThreadLocalRandomWrapper(new TestSerializableSupplier());
+    return new ThreadLocalRandomWrapper(new MersenneTwisterRandomColonColonNew());
   }
 
   @Override protected BaseRandom createRng(final byte[] seed) throws SeedException {
     return createRng();
   }
 
-  private static class TestSerializableSupplier implements SerializableSupplier<BaseRandom> {
+  protected static class MersenneTwisterRandomColonColonNew
+      implements SerializableSupplier<MersenneTwisterRandom> {
 
-    private static final long serialVersionUID = 1604096907005208929L;
-
-    @Override public BaseRandom get() {
+    @Override public MersenneTwisterRandom get() {
       return new MersenneTwisterRandom();
+    }
+  }
+
+  protected static class RandomColonColonNewForByteArray implements LongFunction<Random> {
+
+    @Override public Random apply(long seed) {
+      return new Random(seed);
     }
   }
 }
