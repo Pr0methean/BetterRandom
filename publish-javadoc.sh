@@ -1,6 +1,6 @@
 #!/bin/sh
 rm -r betterrandom/target/site/apidocs
-rm -r docs/io
+rm -r docs/betterrandom/io
 echo '<!DOCTYPE html><html><head /><body style="font-family: sans-serif;">' > betterrandom/src/main/javadoc/overview.html
 ruby ./render-readme-for-javadoc.rb >> betterrandom/src/main/javadoc/overview.html
 echo '</body></html>' >> betterrandom/src/main/javadoc/overview.html
@@ -8,8 +8,8 @@ cd betterrandom
 mvn javadoc:javadoc
 rm src/main/javadoc/overview.html # Only needed temporarily
 cd ..
-cp -r betterrandom/target/site/apidocs/* docs
-cd docs
+cp -r betterrandom/target/site/apidocs/* docs/betterrandom
+cd docs/betterrandom
 
 # Disable frames, step 1
 mv overview-summary.html index.html
