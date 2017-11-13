@@ -228,6 +228,7 @@ public final class RandomSeederThread extends LooperThread {
           random.setSeed(longSeedBuffer.getLong(0));
         }
       } catch (final Throwable t) {
+        // Must unlock before interrupt; otherwise we somehow get a deadlock
         lock.unlock();
         LOG.error("%s", t);
         LOG.logStackTrace(Level.SEVERE, t.getStackTrace());
