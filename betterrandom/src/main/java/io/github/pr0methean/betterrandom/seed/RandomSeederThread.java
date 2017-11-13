@@ -212,7 +212,7 @@ public final class RandomSeederThread extends LooperThread {
   @Override public void interrupt() {
     synchronized (INSTANCES) {
       // Ensure dying instance is unregistered
-      INSTANCES.replace(seedGenerator, this, null);
+      INSTANCES.remove(seedGenerator, this);
     }
     super.interrupt();
   }
