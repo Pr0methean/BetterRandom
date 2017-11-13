@@ -3,6 +3,7 @@ package io.github.pr0methean.betterrandom;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Modifier;
+import java.util.Arrays;
 import java.util.Map;
 import java8.util.function.Consumer;
 
@@ -25,16 +26,17 @@ public enum TestUtils {
       final Class<? extends T> clazz, final Map<Class<?>, Object> params, final Consumer<? super T> test) {
     for (final Constructor<?> constructor : clazz.getDeclaredConstructors()) {
       if (Modifier.isPublic(constructor.getModifiers())) {
+        final int nParams = constructor.getParameterCount();
+        final Class<?>[] parameterTypes = constructor.getParameterTypes();
+        final Object[] constructorParams = new Object[nParams];
         try {
-          final Class<?>[] parameterTypes = constructor.getParameterTypes();
-          final int nParams = parameterTypes.length;
-          final Object[] constructorParams = new Object[nParams];
           for (int i = 0; i < nParams; i++) {
             constructorParams[i] = params.get(parameterTypes[i]);
           }
           test.accept((T) constructor.newInstance(constructorParams));
         } catch (IllegalAccessException | InstantiationException | InvocationTargetException | IllegalArgumentException e) {
-          throw new AssertionError("Failed to call constructor " + constructor.toGenericString(),
+          throw new AssertionError(String.format("Failed to call%n%s%nwith parameters%n%s",
+              constructor.toGenericString(), Arrays.toString(constructorParams)),
               e);
         }
       }
