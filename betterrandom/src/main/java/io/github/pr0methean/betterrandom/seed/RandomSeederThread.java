@@ -243,6 +243,8 @@ public final class RandomSeederThread extends LooperThread {
         LOG.error("%s", t);
         LOG.logStackTrace(Level.SEVERE, t.getStackTrace());
         interrupt();
+        // Must lock again before returning, so we can notify conditions
+        lock.lock();
         return false;
       }
     }
