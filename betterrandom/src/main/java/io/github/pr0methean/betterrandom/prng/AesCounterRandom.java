@@ -21,6 +21,7 @@ import io.github.pr0methean.betterrandom.seed.DefaultSeedGenerator;
 import io.github.pr0methean.betterrandom.seed.SeedException;
 import io.github.pr0methean.betterrandom.seed.SeedGenerator;
 import io.github.pr0methean.betterrandom.util.BinaryUtils;
+import io.github.pr0methean.betterrandom.util.ByteArrayArithmetic;
 import io.github.pr0methean.betterrandom.util.LogPreFormatter;
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -314,21 +315,7 @@ public class AesCounterRandom extends BaseRandom implements SeekableRandom {
   @Override public void advance(long delta) {
     lock.lock();
     try {
-      byte[] addendDigits = new byte[counter.length];
-      System.arraycopy(BinaryUtils.convertLongToBytes(delta), 0, addendDigits,
-          counter.length - Long.BYTES, Long.BYTES);
-      if (delta < 0) {
-        // Sign extend
-        for (int i = 0; i < counter.length - Long.BYTES; i++) {
-          addendDigits[i] = -1;
-        }
-      }
-      boolean carry = false;
-      for (int i = 0; i < counter.length; i++) {
-        byte oldCounter = counter[i];
-        counter[i] += addendDigits[counter.length - i - 1] + (carry ? 1 : 0);
-        carry = (counter[i] < oldCounter || (carry && counter[i] == oldCounter));
-      }
+      ByteArrayArithmetic.addLongToByteArrayInteger(delta, counter);
     } finally {
       lock.unlock();
     }
