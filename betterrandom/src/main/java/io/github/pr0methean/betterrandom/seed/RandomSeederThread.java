@@ -271,7 +271,7 @@ public final class RandomSeederThread extends LooperThread {
 
   public static boolean isEmpty(SeedGenerator seedGenerator) {
     synchronized (INSTANCES) {
-      return hasInstance(seedGenerator) && getInstance(seedGenerator).isEmpty();
+      return (!hasInstance(seedGenerator)) || getInstance(seedGenerator).isEmpty();
     }
   }
 
