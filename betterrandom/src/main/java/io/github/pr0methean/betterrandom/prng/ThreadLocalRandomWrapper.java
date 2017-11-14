@@ -1,7 +1,6 @@
 package io.github.pr0methean.betterrandom.prng;
 
 import com.google.common.base.MoreObjects.ToStringHelper;
-import io.github.pr0methean.betterrandom.seed.RandomSeederThread;
 import io.github.pr0methean.betterrandom.seed.SeedException;
 import io.github.pr0methean.betterrandom.seed.SeedGenerator;
 import io.github.pr0methean.betterrandom.util.BinaryUtils;
@@ -137,15 +136,6 @@ public class ThreadLocalRandomWrapper extends RandomWrapper {
     return getWrapped().nextGaussian();
   }
 
-  /**
-   * Not supported, because this class uses a thread-local seed.
-   * @param thread ignored.
-   * @throws UnsupportedOperationException always.
-   */
-  @Override public void setSeederThread(@Nullable final RandomSeederThread thread) {
-    throw new UnsupportedOperationException("This can't be reseeded by a RandomSeederThread");
-  }
-
   @Override protected boolean useParallelStreams() {
     return true;
   }
@@ -169,8 +159,8 @@ public class ThreadLocalRandomWrapper extends RandomWrapper {
     }
   }
 
-  @Override protected void recordEntropySpent(final long bits) {
-    getWrapped().recordEntropySpent(bits);
+  @Override protected void debitEntropy(final long bits) {
+    getWrapped().debitEntropy(bits);
   }
 
   @Override public long getEntropyBits() {
