@@ -37,9 +37,6 @@ public class Pcg128Random extends BaseRandom implements SeekableRandom {
   private static final int ROTATION2 = (Long.SIZE - WANTED_OP_BITS);
   private static final int MASK = (1 << WANTED_OP_BITS) - 1;
 
-  private long internalHi;
-  private long internalLo;
-
   public Pcg128Random() {
     this(DefaultSeedGenerator.DEFAULT_SEED_GENERATOR);
   }
@@ -53,20 +50,20 @@ public class Pcg128Random extends BaseRandom implements SeekableRandom {
     if (seed.length != SEED_SIZE_BYTES) {
       throw new IllegalArgumentException("Pcg64Random requires a 16-byte seed");
     }
-    internalHi = BinaryUtils.convertBytesToLong(seed, 0);
-    internalLo = BinaryUtils.convertBytesToLong(seed, 8);
-  }
-
-  @Override public byte[] getSeed() {
-    return BinaryUtils.convertLongToBytes(internalHi.get()).clone();
   }
 
   @SuppressWarnings("NonSynchronizedMethodOverridesSynchronizedMethod") @Override
   public void setSeed(long seed) {
-    internalHi = seed;
-    creditEntropyForNewSeed(Long.BYTES);
+    lock.lock();
+    try {
+      System.arraycopy(BinaryUtils.convertLongToBytes(seed), 0, this.seed, 0, Long.BYTES);
+      creditEntropyForNewSeed(Long.BYTES);
+    } finally {
+      lock.unlock();
+    }
   }
 
+  // TODO: convert to 128 bits
   @Override public void advance(long delta) {
     // The method used here is based on Brown, "Random Number Generation
     // with Arbitrary Stride,", Transactions of the American Nuclear
@@ -93,13 +90,11 @@ public class Pcg128Random extends BaseRandom implements SeekableRandom {
   @Override public void setSeedInternal(byte[] seed) {
     super.setSeedInternal(seed);
     if (seed.length != Long.BYTES) {
-      throw new IllegalArgumentException("Pcg64Random requires an 8-byte seed");
-    }
-    if (internalHi != null) {
-      internalHi.set(BinaryUtils.convertBytesToLong(seed));
+      throw new IllegalArgumentException("Pcg64Random requires a 16-byte seed");
     }
   }
 
+  // TODO: convert to 128 bits
   @Override protected int next(int bits) {
     internalHi.updateAndGet(old -> (MULTIPLIER * old) + INCREMENT);
     long oldInternal;
@@ -120,16 +115,10 @@ public class Pcg128Random extends BaseRandom implements SeekableRandom {
   }
 
   @Override protected ToStringHelper addSubclassFields(ToStringHelper original) {
-    return original.add("internalHi", internalHi.get());
+    return original;
   }
 
   @Override public int getNewSeedLength() {
-    return Long.BYTES;
-  }
-
-  private void writeObject(ObjectOutputStream out) throws IOException {
-    // Copy the long seed back to the array seed
-    System.arraycopy(BinaryUtils.convertLongToBytes(internalHi.get()), 0, seed, 0, Long.BYTES);
-    out.defaultWriteObject();
+    return SEED_SIZE_BYTES;
   }
 }
