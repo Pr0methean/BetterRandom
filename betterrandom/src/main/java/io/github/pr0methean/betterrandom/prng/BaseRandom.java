@@ -29,7 +29,6 @@ import java.util.stream.BaseStream;
 import java.util.stream.DoubleStream;
 import java.util.stream.IntStream;
 import java.util.stream.LongStream;
-import javax.annotation.Nullable;
 
 /**
  * Abstract {@link Random} with a seed field and an implementation of entropy counting.
@@ -169,7 +168,7 @@ public abstract class BaseRandom extends Random
   protected boolean withProbabilityInternal(final double probability) {
     final boolean result = super.nextDouble() < probability;
     // We're only outputting one bit
-    recordEntropySpent(1);
+    debitEntropy(1);
     return result;
   }
 
@@ -223,17 +222,17 @@ public abstract class BaseRandom extends Random
       final byte[] bytes) {
     for (int i = 0; i < bytes.length; i++) {
       bytes[i] = (byte) next(Byte.SIZE);
-      recordEntropySpent(Byte.SIZE);
+      debitEntropy(Byte.SIZE);
     }
   }
 
   @Override public int nextInt() {
-    recordEntropySpent(Integer.SIZE);
+    debitEntropy(Integer.SIZE);
     return super.nextInt();
   }
 
   @Override public int nextInt(final int bound) {
-    recordEntropySpent(entropyOfInt(0, bound));
+    debitEntropy(entropyOfInt(0, bound));
     return super.nextInt(bound);
   }
 
@@ -243,7 +242,7 @@ public abstract class BaseRandom extends Random
    * BetterRandom generally <i>can</i> be expected to return all 2<sup>64</sup> possible values.
    */
   @Override public final long nextLong() {
-    recordEntropySpent(Long.SIZE);
+    debitEntropy(Long.SIZE);
     return nextLongNoEntropyDebit();
   }
 
@@ -357,17 +356,17 @@ public abstract class BaseRandom extends Random
   }
 
   @Override public boolean nextBoolean() {
-    recordEntropySpent(1);
+    debitEntropy(1);
     return super.nextBoolean();
   }
 
   @Override public float nextFloat() {
-    recordEntropySpent(ENTROPY_OF_FLOAT);
+    debitEntropy(ENTROPY_OF_FLOAT);
     return super.nextFloat();
   }
 
   @Override public double nextDouble() {
-    recordEntropySpent(ENTROPY_OF_DOUBLE);
+    debitEntropy(ENTROPY_OF_DOUBLE);
     return super.nextDouble();
   }
 
@@ -379,7 +378,7 @@ public abstract class BaseRandom extends Random
   @Override public double nextGaussian() {
     // Upper bound. 2 Gaussians are generated from 2 nextDouble calls, which once made are either
     // used or rerolled.
-    recordEntropySpent(ENTROPY_OF_DOUBLE);
+    debitEntropy(ENTROPY_OF_DOUBLE);
     return internalNextGaussian(super::nextDouble);
   }
 
@@ -451,7 +450,7 @@ public abstract class BaseRandom extends Random
       do {
         output = super.nextInt();
       } while ((output < origin) || (output >= bound));
-      recordEntropySpent(entropyOfInt(origin, bound));
+      debitEntropy(entropyOfInt(origin, bound));
       return output;
     }
   }
@@ -515,7 +514,7 @@ public abstract class BaseRandom extends Random
             : next(bits);
       }
     } while ((output < origin) || (output >= bound));
-    recordEntropySpent(entropyOfLong(origin, bound));
+    debitEntropy(entropyOfLong(origin, bound));
     return output;
   }
 
@@ -596,19 +595,6 @@ public abstract class BaseRandom extends Random
   protected abstract ToStringHelper addSubclassFields(ToStringHelper original);
 
   /**
-   * Registers this PRNG with the given {@link RandomSeederThread} to schedule reseeding when we run
-   * out of entropy. Unregisters this PRNG with the previous {@link RandomSeederThread} if it had a
-   * different one.
-   * @param thread a {@link RandomSeederThread} that will be used to reseed this PRNG.
-   * @deprecated See the deprecation note for {@link RandomSeederThread#add(Random...)}.
-   */
-  @SuppressWarnings({"ObjectEquality", "EqualityOperatorComparesObjects"})
-  @Deprecated
-  public void setSeederThread(@Nullable final RandomSeederThread thread) {
-    setSeedGenerator(thread.getSeedGenerator());
-  }
-
-  /**
    * Registers this PRNG with the {@link RandomSeederThread} for the corresponding {@link
    * SeedGenerator}, to schedule reseeding when we run out of entropy. Unregisters this PRNG with
    * the previous {@link RandomSeederThread} if it had a different one.
@@ -620,9 +606,9 @@ public abstract class BaseRandom extends Random
       if (oldSeedGenerator != null) {
         RandomSeederThread.remove(oldSeedGenerator, this);
       }
-      if (seedGenerator != null) {
-        RandomSeederThread.add(seedGenerator, this);
-      }
+    }
+    if (seedGenerator != null) {
+      RandomSeederThread.add(seedGenerator, this);
     }
   }
 
@@ -680,7 +666,7 @@ public abstract class BaseRandom extends Random
    * as it's been seeded with.
    * @param bits The number of bits of entropy spent.
    */
-  protected void recordEntropySpent(final long bits) {
+  protected void debitEntropy(final long bits) {
     if (entropyBits.addAndGet(-bits) <= 0) {
       asyncReseedIfPossible();
     }
