@@ -63,9 +63,7 @@ public class Pcg128Random extends BaseRandom implements SeekableRandom {
 
   @SuppressWarnings("NonSynchronizedMethodOverridesSynchronizedMethod") @Override
   public void setSeed(long seed) {
-    if (internalHi != null) {
-      internalHi.set(seed);
-    }
+    internalHi = seed;
     creditEntropyForNewSeed(Long.BYTES);
   }
 
