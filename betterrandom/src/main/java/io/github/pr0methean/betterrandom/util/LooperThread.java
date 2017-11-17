@@ -24,14 +24,14 @@ import javax.annotation.Nullable;
  * that WILL be restored includes that retrievable by: </p> <ul> <li>{@link #getName()}</li>
  * <li>{@link #getPriority()}</li> <li>{@link #getState()} == {@link Thread.State#NEW}</li> <li>{@link
  * #getState()} == {@link Thread.State#TERMINATED}</li> <li>{@link #isInterrupted()}</li> <li>{@link
- * #isDaemon()}</li> </ul><p> Thread state that will be restored ONLY if its values are {@link
+ * #isDaemon()}</li> </ul><p>Thread state that will be restored ONLY if its values are {@link
  * Serializable} includes that retrievable by: </p><ul> <li>{@link #getThreadGroup()}</li>
  * <li>{@link #getUncaughtExceptionHandler()}</li> <li>{@link #getContextClassLoader()}</li>
  * </ul><p> Thread state that will NEVER be restored includes: </p><ul> <li>Program counter, call
  * stack, and local variables. Serialization will block until it can happen between iterations of
  * {@link #iterate()}.</li> <li>Suspended status (see {@link Thread#suspend()}).</li> <li>{@link
  * #getState()} == {@link Thread.State#TIMED_WAITING}</li> <li>{@link #getState()} == {@link
- * State#WAITING}</li> <li>{@link #getState()} == {@link Thread.State#BLOCKED}</li> <li>{@link
+ * Thread.State#WAITING}</li> <li>{@link #getState()} == {@link Thread.State#BLOCKED}</li> <li>{@link
  * #getId()}</li> <li>{@link #holdsLock(Object)}</li> </ul>
  * @author Chris Hennick
  */
