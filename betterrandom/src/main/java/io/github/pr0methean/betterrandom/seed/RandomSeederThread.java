@@ -72,6 +72,7 @@ public final class RandomSeederThread extends LooperThread {
    * @return a RandomSeederThread that is running and is backed by {@code seedGenerator}.
    */
   private static RandomSeederThread getInstance(final SeedGenerator seedGenerator) {
+    RandomSeederThread instance;
     synchronized (INSTANCES) {
       instance = INSTANCES.get(seedGenerator);
       if (instance == null) {
