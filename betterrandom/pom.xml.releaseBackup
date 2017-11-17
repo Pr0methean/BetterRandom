@@ -6,23 +6,32 @@
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <prefix />
-    <maven.compiler.source>1.7</maven.compiler.source>
-    <maven.compiler.target>1.7</maven.compiler.target>
+    <maven.compiler.source>1.8</maven.compiler.source>
+    <maven.compiler.target>1.8</maven.compiler.target>
     <github.global.server>github</github.global.server>
   </properties>
   <groupId>io.github.pr0methean.betterrandom</groupId>
-  <artifactId>BetterRandom-Java7</artifactId>
+  <artifactId>BetterRandom</artifactId>
   <version>2.0.0-SNAPSHOT</version>
   <name>BetterRandom</name>
-  <description>BetterRandom port for Java 7, and for Android API below 24.
+  <description>BetterRandom is a library designed to help improve the quality and performance of
+    random-number generation on Java.
   </description>
-  <url>https://github.com/Pr0methean/betterrandom/tree/java7</url>
+  <url>https://github.com/Pr0methean/BetterRandom</url>
+
+  <licenses>
+    <license>
+      <name>Apache License, Version 2.0</name>
+      <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+      <distribution>repo</distribution>
+    </license>
+  </licenses>
+
   <scm>
     <url>https://github.com/Pr0methean/BetterRandom</url>
     <connection>scm:git:git://github.com/Pr0methean/BetterRandom.git</connection>
     <developerConnection>scm:git:git@github.com:Pr0methean/BetterRandom.git</developerConnection>
-    <tag>BetterRandom-Java7-2.0.0-SNAPSHOT</tag>
-
+    <tag>BetterRandom-2.0.0-SNAPSHOT</tag>
   </scm>
 
   <distributionManagement>
@@ -39,12 +48,6 @@
   </distributionManagement>
 
   <dependencies>
-    <!-- https://mvnrepository.com/artifact/net.sourceforge.streamsupport/streamsupport -->
-    <dependency>
-      <groupId>net.sourceforge.streamsupport</groupId>
-      <artifactId>streamsupport</artifactId>
-      <version>1.5.6</version>
-    </dependency>
     <dependency>
       <!-- https://mvnrepository.com/artifact/org.apache.maven.plugins/maven-deploy-plugin -->
       <groupId>org.apache.maven.plugins</groupId>
@@ -63,13 +66,6 @@
       <artifactId>json-simple</artifactId>
       <version>1.1.1</version>
     </dependency>
-    <!-- https://mvnrepository.com/artifact/com.beust/jcommander -->
-    <dependency>
-      <groupId>com.beust</groupId>
-      <artifactId>jcommander</artifactId>
-      <version>1.72</version>
-    </dependency>
-
     <dependency>
       <groupId>org.testng</groupId>
       <artifactId>testng</artifactId>
@@ -87,7 +83,7 @@
     <dependency>
       <groupId>com.google.guava</groupId>
       <artifactId>guava</artifactId>
-      <version>23.4-android</version>
+      <version>23.4-jre</version>
     </dependency>
     <!-- https://mvnrepository.com/artifact/com.google.code.findbugs/jsr305 -->
     <dependency>
@@ -128,9 +124,8 @@
             <links>
               <link>http://checkstyle-addons.github.io/jsr305-javadoc/3.0.1</link>
               <link>https://checkerframework.org/api</link>
-              <link>https://docs.oracle.com/javase/7/docs/api</link>
+              <link>https://docs.oracle.com/javase/8/docs/api</link>
               <link>https://google.github.io/guava/releases/23.0/api/docs</link>
-              <link>https://static.javadoc.io/doc/net.sourceforge.streamsupport/streamsupport/1.5.6</link>
             </links>
             <tags>
               <tag>
@@ -421,28 +416,7 @@
               </rules>
             </configuration>
           </execution>
-          <execution>
-            <id>enforce-bytecode-version</id>
-            <goals>
-              <goal>enforce</goal>
-            </goals>
-            <configuration>
-              <rules>
-                <enforceBytecodeVersion>
-                  <maxJdkVersion>1.7</maxJdkVersion>
-                </enforceBytecodeVersion>
-              </rules>
-              <fail>true</fail>
-            </configuration>
-          </execution>
         </executions>
-        <dependencies>
-          <dependency>
-            <groupId>org.codehaus.mojo</groupId>
-            <artifactId>extra-enforcer-rules</artifactId>
-            <version>1.0-beta-6</version>
-          </dependency>
-        </dependencies>
       </plugin>
       <plugin>
         <groupId>com.github.wvengen</groupId>
@@ -547,11 +521,8 @@
           <notimestamp>true</notimestamp>
           <show>protected</show>
           <links>
-            <link>http://checkstyle-addons.github.io/jsr305-javadoc/3.0.1</link>
-            <link>https://checkerframework.org/api</link>
-            <link>https://docs.oracle.com/javase/7/docs/api</link>
-            <link>https://google.github.io/guava/releases/23.0/api/docs</link>
-            <link>https://static.javadoc.io/doc/net.sourceforge.streamsupport/streamsupport/1.5.6</link>
+            <link>https://docs.oracle.com/javase/8/docs/api</link>
+            <link>https://google.github.io/guava/releases/19.0/api/docs</link>
           </links>
           <tags>
             <tag>
