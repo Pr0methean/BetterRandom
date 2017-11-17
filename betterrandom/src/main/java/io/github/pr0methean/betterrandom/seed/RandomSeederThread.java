@@ -70,12 +70,8 @@ public final class RandomSeederThread extends LooperThread {
    * @param seedGenerator the {@link SeedGenerator} to use to seed PRNGs registered with this
    *     RandomSeederThread.
    * @return a RandomSeederThread that is running and is backed by {@code seedGenerator}.
-   * @deprecated Relying on a specific instance causes issues if the {@link SeedGenerator} can ever
-   * throw a {@link SeedException}.
    */
-  @Deprecated
-  public static RandomSeederThread getInstance(final SeedGenerator seedGenerator) {
-    RandomSeederThread instance;
+  private static RandomSeederThread getInstance(final SeedGenerator seedGenerator) {
     synchronized (INSTANCES) {
       instance = INSTANCES.get(seedGenerator);
       if (instance == null) {
@@ -89,6 +85,18 @@ public final class RandomSeederThread extends LooperThread {
       INSTANCES.put(seedGenerator, instance);
     }
     return instance;
+  }
+
+  /**
+   * Returns whether a RandomSeederThread using the given {@link SeedGenerator} is running or not.
+   * @param seedGenerator
+   * @return true if a RandomSeederThread using the given {@link SeedGenerator} is running; false
+   *     otherwise.
+   */
+  public static boolean hasInstance(final SeedGenerator seedGenerator) {
+    synchronized (INSTANCES) {
+      return INSTANCES.containsKey(seedGenerator);
+    }
   }
 
   /**
@@ -170,10 +178,8 @@ public final class RandomSeederThread extends LooperThread {
    * associated with a live RandomSeederThread.
    * @param random a {@link Random} object.
    * @return Whether or not the reseed was successfully scheduled.
-   * @deprecated Causes weird race conditions
    */
-  @Deprecated
-  @SuppressWarnings("UnusedReturnValue") public boolean asyncReseed(final Random random) {
+  private boolean asyncReseed(final Random random) {
     if (!(random instanceof EntropyCountingRandom)) {
       // Reseed of non-entropy-counting Random happens every iteration anyway
       return prngs.contains(random);
@@ -200,7 +206,7 @@ public final class RandomSeederThread extends LooperThread {
   }
 
   @SuppressWarnings({"InfiniteLoopStatement", "ObjectAllocationInLoop", "AwaitNotInLoop"}) @Override
-  public boolean iterate() throws InterruptedException {
+  protected boolean iterate() throws InterruptedException {
     while (true) {
       synchronized (prngs) {
         prngsThisIteration.addAll(prngs);
@@ -268,9 +274,15 @@ public final class RandomSeederThread extends LooperThread {
    * Returns true if no {@link Random} instances are registered with this RandomSeederThread.
    * @return true if no {@link Random} instances are registered with this RandomSeederThread.
    */
-  public boolean isEmpty() {
+  private boolean isEmpty() {
     synchronized (prngs) {
       return prngs.isEmpty();
+    }
+  }
+
+  public static boolean isEmpty(SeedGenerator seedGenerator) {
+    synchronized (INSTANCES) {
+      return (!hasInstance(seedGenerator)) || getInstance(seedGenerator).isEmpty();
     }
   }
 
@@ -291,10 +303,8 @@ public final class RandomSeederThread extends LooperThread {
    * ByteArrayReseedableRandom#setSeed(byte[])}, as one of those methods may be called immediately
    * and this would cause a circular deadlock.
    * @param randoms One or more {@link Random} instances to be reseeded.
-   * @deprecated Causes weird race conditions.
    */
-  @Deprecated
-  public void add(final Random... randoms) {
+  private void add(final Random... randoms) {
     lock.lock();
     if (getState() == State.TERMINATED || isInterrupted()) {
       throw new IllegalStateException("Already shut down");
@@ -327,17 +337,15 @@ public final class RandomSeederThread extends LooperThread {
    * Remove one or more {@link Random} instances. If this is called while {@link #getState()} ==
    * {@link State#RUNNABLE}, they may still be reseeded once more.
    * @param randoms the {@link Random} instances to remove.
-   * @deprecated Causes weird race conditions.
    */
-  @Deprecated
-  public void remove(final Random... randoms) {
+  private void remove(final Random... randoms) {
     prngs.removeAll(Arrays.asList(randoms));
   }
 
   /**
    * Shut down this thread if no {@link Random} instances are registered with it.
    */
-  public void stopIfEmpty() {
+  private void stopIfEmpty() {
     lock.lock();
     try {
       if (isEmpty()) {
@@ -349,11 +357,11 @@ public final class RandomSeederThread extends LooperThread {
     }
   }
 
-  /**
-   * Use this to transition old methods away from the deprecated instance methods.
-   * @return the {@link SeedGenerator} that this thread uses
-   */
-  public SeedGenerator getSeedGenerator() {
-    return seedGenerator;
+  public static void stopIfEmpty(SeedGenerator seedGenerator) {
+    synchronized (INSTANCES) {
+      if (hasInstance(seedGenerator)) {
+        getInstance(seedGenerator).stopIfEmpty();
+      }
+    }
   }
 }

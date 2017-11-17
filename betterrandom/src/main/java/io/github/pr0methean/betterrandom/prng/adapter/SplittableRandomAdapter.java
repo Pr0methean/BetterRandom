@@ -84,7 +84,7 @@ public class SplittableRandomAdapter extends DirectSplittableRandomAdapter {
     return entropyBits.get().get();
   }
 
-  @Override protected void recordEntropySpent(final long bits) {
+  @Override protected void debitEntropy(final long bits) {
     entropyBits.get().addAndGet(-bits);
   }
 
@@ -127,15 +127,6 @@ public class SplittableRandomAdapter extends DirectSplittableRandomAdapter {
 
   @Override protected ToStringHelper addSubclassFields(final ToStringHelper original) {
     return original.add("splittableRandoms", splittableRandoms);
-  }
-
-  /**
-   * Not supported, because this class uses a thread-local seed.
-   * @param thread ignored.
-   * @throws UnsupportedOperationException always.
-   */
-  @Override public void setSeederThread(@Nullable final RandomSeederThread thread) {
-    throw new UnsupportedOperationException("Use ReseedingSplittableRandomAdapter instead");
   }
 
   /**

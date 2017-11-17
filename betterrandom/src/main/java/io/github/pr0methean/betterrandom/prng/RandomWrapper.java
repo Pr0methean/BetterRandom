@@ -256,18 +256,18 @@ public class RandomWrapper extends BaseRandom {
 
   @Override public void nextBytes(final byte[] bytes) {
     getWrapped().nextBytes(bytes);
-    recordEntropySpent(bytes.length * (long) (Byte.SIZE));
+    debitEntropy(bytes.length * (long) (Byte.SIZE));
   }
 
   @Override public int nextInt() {
     final int result = getWrapped().nextInt();
-    recordEntropySpent(Integer.SIZE);
+    debitEntropy(Integer.SIZE);
     return result;
   }
 
   @Override public int nextInt(final int bound) {
     final int result = getWrapped().nextInt(bound);
-    recordEntropySpent(entropyOfInt(0, bound));
+    debitEntropy(entropyOfInt(0, bound));
     return result;
   }
 
@@ -277,19 +277,19 @@ public class RandomWrapper extends BaseRandom {
 
   @Override public boolean nextBoolean() {
     final boolean result = getWrapped().nextBoolean();
-    recordEntropySpent(1);
+    debitEntropy(1);
     return result;
   }
 
   @Override public float nextFloat() {
     final float result = getWrapped().nextFloat();
-    recordEntropySpent(ENTROPY_OF_FLOAT);
+    debitEntropy(ENTROPY_OF_FLOAT);
     return result;
   }
 
   @Override public double nextDouble() {
     final double result = getWrapped().nextDouble();
-    recordEntropySpent(ENTROPY_OF_DOUBLE);
+    debitEntropy(ENTROPY_OF_DOUBLE);
     return result;
   }
 
@@ -298,7 +298,7 @@ public class RandomWrapper extends BaseRandom {
 
     // Upper bound. 2 Gaussians are generated from 2 nextDouble calls, which once made are either
     // used or rerolled.
-    recordEntropySpent(ENTROPY_OF_DOUBLE);
+    debitEntropy(ENTROPY_OF_DOUBLE);
 
     return result;
   }

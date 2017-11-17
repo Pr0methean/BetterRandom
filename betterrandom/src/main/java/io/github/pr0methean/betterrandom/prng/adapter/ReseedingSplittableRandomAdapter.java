@@ -12,8 +12,8 @@ import java.util.Collections;
 import java.util.Map;
 import java.util.WeakHashMap;
 import java.util.concurrent.atomic.AtomicLong;
-import java8.util.SplittableRandom;
 import java.util.concurrent.atomic.AtomicReference;
+import java8.util.SplittableRandom;
 import javax.annotation.Nullable;
 
 /**
@@ -71,11 +71,6 @@ public class ReseedingSplittableRandomAdapter extends BaseSplittableRandomAdapte
       }
       return instance;
     }
-  }
-
-  @Override public void setSeederThread(@Nullable RandomSeederThread thread) {
-    throw new UnsupportedOperationException(
-        "ReseedingSplittableRandomAdapter's binding to RandomSeederThread is immutable");
   }
 
   @Override public void setSeedGenerator(SeedGenerator seedGenerator) {

@@ -1,7 +1,8 @@
-# 1.4.0
+# 2.0.0
 * Fixes bugs affecting `RandomSeederThread` when a `SeedGenerator` throws a `SeedException`.
-* Deprecates most of the instance methods of `RandomSeederThread` and adds static replacements, to
-  fix race conditions that can occur when a `RandomSeederThread` shuts down.
+* Removes the non-inherited instance methods of `RandomSeederThread` and replaces them with static
+  ones, to fix race conditions that can occur when a `RandomSeederThread` shuts down.
+* Rename `recordEntropySpent` to `debitEntropy`
 * Refactorings to slightly speed up construction and deserialization and slightly shrink the jar.
 
 # 1.3.2
