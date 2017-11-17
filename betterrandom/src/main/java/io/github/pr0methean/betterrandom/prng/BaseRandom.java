@@ -665,7 +665,7 @@ public abstract class BaseRandom extends Random
    * Registers this PRNG with the {@link RandomSeederThread} for the corresponding {@link
    * SeedGenerator}, to schedule reseeding when we run out of entropy. Unregisters this PRNG with
    * the previous {@link RandomSeederThread} if it had a different one.
-   * @param seedGenerator a {@link SeedGnerator} whose {@link RandomSeederThread} will be used to
+   * @param seedGenerator a {@link SeedGenerator} whose {@link RandomSeederThread} will be used to
    *     reseed this PRNG.
    */
   public void setSeedGenerator(SeedGenerator seedGenerator) {

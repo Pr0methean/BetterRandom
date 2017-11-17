@@ -90,7 +90,7 @@ public final class RandomSeederThread extends LooperThread {
 
   /**
    * Returns whether a RandomSeederThread using the given {@link SeedGenerator} is running or not.
-   * @param seedGenerator
+   * @param seedGenerator a {@link SeedGenerator} to find an instance for.
    * @return true if a RandomSeederThread using the given {@link SeedGenerator} is running; false
    *     otherwise.
    */
