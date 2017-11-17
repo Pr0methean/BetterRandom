@@ -17,6 +17,12 @@
   <description>BetterRandom port for Java 7, and for Android API below 24.
   </description>
   <url>https://github.com/Pr0methean/betterrandom/tree/java7</url>
+  <licenses>		
+    <license>		
+      <name>Apache License, Version 2.0</name>		
+      <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>		      <distribution>repo</distribution>		
+    </license>		
+  </licenses>
   <scm>
     <url>https://github.com/Pr0methean/BetterRandom</url>
     <connection>scm:git:git://github.com/Pr0methean/BetterRandom.git</connection>
