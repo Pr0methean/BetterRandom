@@ -58,7 +58,7 @@ public class ThreadLocalRandomWrapper extends RandomWrapper {
 
   /**
    * Not supported, because this class uses a thread-local seed.
-   * @param thread ignored.
+   * @param seedGenerator ignored.
    * @throws UnsupportedOperationException always.
    */
   @Override public void setSeedGenerator(SeedGenerator seedGenerator) {
