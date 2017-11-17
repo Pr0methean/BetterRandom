@@ -146,6 +146,18 @@
                 <head>Implementation Requirements:</head>
               </tag>
               <tag>
+                <name>spec</name>
+                <placement>a</placement>
+
+                <head>Specification:</head>
+              </tag>
+              <tag>
+                <name>revised</name>
+                <placement>a</placement>
+
+                <head>Revised in Version:</head>
+              </tag>
+              <tag>
                 <name>implNote</name>
                 <placement>a</placement>
 
