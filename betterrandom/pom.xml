@@ -415,14 +415,10 @@
         <version>1.2.4</version>
         <configuration>
           <threads>2</threads>
-          <coverageThreshold>0.75</coverageThreshold>
-          <mutationThreshold>0.5<!-- TODO: increase if routinely far exceeded --></mutationThreshold>
+          <coverageThreshold>80</coverageThreshold>
+          <mutationThreshold>70<!-- TODO: increase if routinely far exceeded --></mutationThreshold>
           <historyInputFile>${user.home}/.m2/pitest-history</historyInputFile>
           <historyOutputFile>${user.home}/.m2/pitest-history</historyOutputFile>
-          <avoidCallsTo>
-            <avoidCallsTo>java.util.logging</avoidCallsTo>
-            <avoidCallsTo>io.github.pr0methean.betterrandom.util.LogPreFormatter</avoidCallsTo>
-          </avoidCallsTo>
         </configuration>
       </plugin>
       <plugin>
