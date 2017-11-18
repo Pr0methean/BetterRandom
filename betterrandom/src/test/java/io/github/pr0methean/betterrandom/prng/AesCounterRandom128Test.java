@@ -67,6 +67,15 @@ public class AesCounterRandom128Test extends BaseRandomTest {
     RandomTestUtils.testEquivalence(copy1AsRandom, copy2AsRandom, 20);
   }
 
+  @Test public void testAdvanceZero() {
+    SeekableRandom copy1 = (SeekableRandom) createRng();
+    Random copy1AsRandom = (Random) copy1;
+    SeekableRandom copy2 = (SeekableRandom) createRng(copy1.getSeed());
+    Random copy2AsRandom = (Random) copy2;
+    copy2.advance(0);
+    RandomTestUtils.testEquivalence(copy1AsRandom, copy2AsRandom, 20);
+  }
+
   @Test public void testAdvanceBackward() {
     SeekableRandom copy1 = (SeekableRandom) createRng();
     Random copy1AsRandom = (Random) copy1;
