@@ -417,6 +417,8 @@
           <threads>2</threads>
           <coverageThreshold>0.75</coverageThreshold>
           <mutationThreshold>0.5<!-- TODO: increase if routinely far exceeded --></mutationThreshold>
+          <historyInputFile>${user.home}/.m2/pitest-history</historyInputFile>
+          <historyOutputFile>${user.home}/.m2/pitest-history</historyOutputFile>
         </configuration>
       </plugin>
       <plugin>
