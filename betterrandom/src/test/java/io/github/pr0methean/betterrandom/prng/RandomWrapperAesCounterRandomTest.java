@@ -14,6 +14,10 @@ public class RandomWrapperAesCounterRandomTest extends AesCounterRandom128Test {
     // No-op: RandomWrapper isn't seekable
   }
 
+  @Override @Test(enabled = false) public void testAdvanceZero() {
+    // No-op: RandomWrapper isn't seekable
+  }
+
   @Override protected Class<? extends BaseRandom> getClassUnderTest() {
     return RandomWrapper.class;
   }
