@@ -419,6 +419,10 @@
           <mutationThreshold>0.5<!-- TODO: increase if routinely far exceeded --></mutationThreshold>
           <historyInputFile>${user.home}/.m2/pitest-history</historyInputFile>
           <historyOutputFile>${user.home}/.m2/pitest-history</historyOutputFile>
+          <avoidCallsTo>
+            <avoidCallsTo>java.util.logging</avoidCallsTo>
+            <avoidCallsTo>io.github.pr0methean.betterrandom.util.LogPreFormatter</avoidCallsTo>
+          </avoidCallsTo>
         </configuration>
       </plugin>
       <plugin>
