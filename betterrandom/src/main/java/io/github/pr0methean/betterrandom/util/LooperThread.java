@@ -17,22 +17,30 @@ import javax.annotation.Nullable;
  * #isDaemon() is a daemon thread}), with the iterations being transactional. Because of these
  * constraints, it can be serialized and cloned. Subclasses must override {@link #iterate()} if
  * instantiated without a target {@link Runnable}; the only reason this class is concrete is that
- * temporary instances are needed during deserialization.</p> <p> Subclasses should override the
+ * temporary instances are needed during deserialization.</p><p> Subclasses should override the
  * {@link #readResolveConstructorWrapper()} method to ensure they are deserialized as a subclass
  * instance. </p> <p>{@link #iterate()}'s body should be reasonably short, since it will block
  * serialization and cloning that would otherwise catch it in mid-iteration. </p><p> Thread state
- * that WILL be restored includes that retrievable by: </p> <ul> <li>{@link #getName()}</li>
- * <li>{@link #getPriority()}</li> <li>{@link #getState()} == {@link Thread.State#NEW}</li> <li>{@link
- * #getState()} == {@link Thread.State#TERMINATED}</li> <li>{@link #isInterrupted()}</li> <li>{@link
- * #isDaemon()}</li> </ul><p>Thread state that will be restored ONLY if its values are {@link
- * Serializable} includes that retrievable by: </p><ul> <li>{@link #getThreadGroup()}</li>
+ * that WILL be restored includes the output of:</p><ul>
+ * <li>{@link #getName()}</li>
+ * <li>{@link #getPriority()}</li>
+ * <li>{@link #getState()} == {@link java.lang.Thread.State#NEW}</li>
+ * <li>{@link #getState()} == {@link java.lang.Thread.State#TERMINATED}</li>
+ * <li>{@link #isInterrupted()}</li>
+ * <li>{@link #isDaemon()}</li>
+ * </ul><p>Thread state that will be restored ONLY if its values are {@link
+ * Serializable} includes the output of:</p><ul>
+ * <li>{@link #getThreadGroup()}</li>
  * <li>{@link #getUncaughtExceptionHandler()}</li> <li>{@link #getContextClassLoader()}</li>
- * </ul><p> Thread state that will NEVER be restored includes: </p><ul> <li>Program counter, call
- * stack, and local variables. Serialization will block until it can happen between iterations of
- * {@link #iterate()}.</li> <li>Suspended status (see {@link Thread#suspend()}).</li> <li>{@link
- * #getState()} == {@link Thread.State#TIMED_WAITING}</li> <li>{@link #getState()} == {@link
- * Thread.State#WAITING}</li> <li>{@link #getState()} == {@link Thread.State#BLOCKED}</li> <li>{@link
- * #getId()}</li> <li>{@link #holdsLock(Object)}</li> </ul>
+ * </ul><p>Thread state that will NEVER be restored includes:</p><ul>
+ * <li>Program counter, call stack, and local variables. (Serialization will block until it can
+ * happen between iterations of {@link #iterate()}.)</li>
+ * <li>Suspended status (see {@link Thread#suspend()}).</li>
+ * <li>{@link #getState()} == {@link java.lang.Thread.State#TIMED_WAITING}</li>
+ * <li>{@link #getState()} == {@link java.lang.Thread.State#WAITING}</li>
+ * <li>{@link #getState()} == {@link java.lang.Thread.State#BLOCKED}</li>
+ * <li>{@link #getId()}</li>
+ * <li>{@link #holdsLock(Object)}</li></ul>
  * @author Chris Hennick
  */
 @SuppressWarnings("AccessingNonPublicFieldOfAnotherObject")

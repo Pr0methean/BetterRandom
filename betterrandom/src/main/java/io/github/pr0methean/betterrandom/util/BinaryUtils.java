@@ -162,7 +162,7 @@ public enum BinaryUtils {
 
   /**
    * Convert a byte array to a long, reversing {@link #convertLongToBytes(long)}.
-   * @param bytes a byte array of length {@link LONG_BYTES}.
+   * @param bytes a byte array of length {@link Java8Constants.LONG_BYTES}.
    * @return {@code bytes} as a long.
    */
   public static long convertBytesToLong(final byte[] bytes) {
