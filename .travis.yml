@@ -42,6 +42,11 @@ jobs:
     jdk: openjdk7
     env: OP=benchmark ANDROID=1
     stage: long tests
+  - language: java
+    os: linux
+    jdk: openjdk8
+    env: OP=mutation
+    stage: long tests
   allow_failures:
   - language: android
   - jdk: oraclejdk7 # Currently sets ${JAVA_HOME} incorrectly
