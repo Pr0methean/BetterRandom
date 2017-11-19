@@ -99,6 +99,7 @@ jobs:
     stage: long tests
   allow_failures:
   - language: android
+  - env: OP=mutation # FIXME: Delete once timeouts are fixed
   fast_finish: true
 script:
 - "./remove_unlimited_crypto.sh"
