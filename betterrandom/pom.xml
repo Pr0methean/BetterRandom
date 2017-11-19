@@ -140,7 +140,7 @@
             <offlineLinks>
               <offlineLink>
                 <url>https://static.javadoc.io/net.sourceforge.streamsupport/streamsupport/1.5.6</url>
-                <location>${basedir}/../travis-resources/package-list</location>
+                <location>${basedir}/../travis-resources</location>
               </offlineLink>
             </offlineLinks>
             <tags>
