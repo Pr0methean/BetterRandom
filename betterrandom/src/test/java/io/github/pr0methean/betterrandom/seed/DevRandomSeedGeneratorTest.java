@@ -15,6 +15,9 @@
 // ============================================================================
 package io.github.pr0methean.betterrandom.seed;
 
+import static org.testng.Assert.assertFalse;
+import static org.testng.Assert.assertTrue;
+
 import java.io.File;
 import org.testng.Reporter;
 import org.testng.annotations.Test;
@@ -30,9 +33,11 @@ public class DevRandomSeedGeneratorTest {
   @Test(timeOut = 15000) public void testGenerator() {
     try {
       SeedTestUtils.testGenerator(DevRandomSeedGenerator.DEV_RANDOM_SEED_GENERATOR);
+      assertTrue(DevRandomSeedGenerator.DEV_RANDOM_SEED_GENERATOR.isWorthTrying());
     } catch (final SeedException ex) {
       // This exception is OK, but only if we are running on a platform that
       // does not provide /dev/random.
+      assertFalse(DevRandomSeedGenerator.DEV_RANDOM_SEED_GENERATOR.isWorthTrying());
       assert !new File("/dev/random").exists()
           : "Seed generator failed even though /dev/random exists.";
       Reporter.log("/dev/random does not exist on this platform.");
