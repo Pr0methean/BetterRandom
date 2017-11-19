@@ -314,6 +314,9 @@ public class AesCounterRandom extends BaseRandom implements SeekableRandom {
   }
 
   @Override public void advance(long delta) {
+    if (delta == 0) {
+      return;
+    }
     lock.lock();
     try {
       byte[] addendDigits = new byte[counter.length];

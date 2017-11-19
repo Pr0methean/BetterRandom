@@ -73,6 +73,9 @@ public class Pcg64Random extends BaseRandom implements SeekableRandom {
   }
 
   @Override public void advance(long delta) {
+    if (delta == 0) {
+      return;
+    }
     // The method used here is based on Brown, "Random Number Generation
     // with Arbitrary Stride,", Transactions of the American Nuclear
     // Society (Nov. 1994).  The algorithm is very similar to fast

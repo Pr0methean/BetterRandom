@@ -8,40 +8,40 @@ serialGroup: edge
 git:
   submodules: false
 stages:
-- unit-tests
-- benchmark
+- unit tests
+- long tests
 jobs:
   include:
   - language: java
     os: linux
     jdk: openjdk7
     env: OP=unit-tests
-    stage: unit-tests
+    stage: unit tests
   - language: java
     os: linux
     jdk: oraclejdk7
     env: OP=unit-tests
-    stage: unit-tests
+    stage: unit tests
   - language: android
     os: linux
     jdk: openjdk7
     env: OP=unit-tests ANDROID=1
-    stage: unit-tests
+    stage: unit tests
   - language: java
     os: linux
     jdk: openjdk7
     env: OP=benchmark
-    stage: benchmark
+    stage: long tests
   - language: java
     os: linux
     jdk: oraclejdk7
     env: OP=benchmark
-    stage: benchmark
+    stage: long tests
   - language: android
     os: linux
     jdk: openjdk7
     env: OP=benchmark ANDROID=1
-    stage: benchmark
+    stage: long tests
   allow_failures:
   - language: android
   - jdk: oraclejdk7 # Currently sets ${JAVA_HOME} incorrectly
