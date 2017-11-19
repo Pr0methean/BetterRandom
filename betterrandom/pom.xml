@@ -136,7 +136,7 @@
               <link>https://checkerframework.org/api</link>
               <link>https://docs.oracle.com/javase/7/docs/api</link>
               <link>https://google.github.io/guava/releases/23.0/api/docs</link>
-              <link>https://static.javadoc.io/doc/net.sourceforge.streamsupport/streamsupport/1.5.6</link>
+              <link>https://static.javadoc.io/net.sourceforge.streamsupport/streamsupport/1.5.6</link>
             </links>
             <tags>
               <tag>
