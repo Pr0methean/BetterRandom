@@ -416,7 +416,7 @@
         <configuration>
           <threads>2</threads>
           <coverageThreshold>80</coverageThreshold>
-          <mutationThreshold>70<!-- TODO: increase if routinely far exceeded --></mutationThreshold>
+          <mutationThreshold>60<!-- TODO: increase if routinely far exceeded --></mutationThreshold>
         </configuration>
       </plugin>
       <plugin>
