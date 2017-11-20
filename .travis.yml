@@ -5,6 +5,8 @@ cache:
 sudo: required
 dist: trusty
 serialGroup: edge
+git:
+  submodules: false
 stages:
 - unit tests
 - long tests
@@ -98,6 +100,8 @@ jobs:
   allow_failures:
   - language: android
   - env: OP=mutation # FIXME: Delete once timeouts are fixed
+  - git:
+      submodules: true
   fast_finish: true
 script:
 - "./remove_unlimited_crypto.sh"
