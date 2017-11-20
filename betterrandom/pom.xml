@@ -415,8 +415,8 @@
         <version>1.2.4</version>
         <configuration>
           <threads>4</threads>
-          <coverageThreshold>0.8</coverageThreshold>
-          <mutationThreshold>0.6</mutationThreshold>
+          <coverageThreshold>80</coverageThreshold>
+          <mutationThreshold>60</mutationThreshold>
           <avoidCallsTo>
             <avoidCallsTo>java.util.logging</avoidCallsTo>
             <avoidCallsTo>io.github.pr0methean.betterrandom.util.LogPreFormatter</avoidCallsTo>
