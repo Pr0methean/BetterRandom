@@ -5,8 +5,6 @@ cache:
 sudo: required
 dist: trusty
 serialGroup: edge
-git:
-  submodules: false
 stages:
 - unit tests
 - long tests
