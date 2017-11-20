@@ -414,9 +414,13 @@
         <artifactId>pitest-maven</artifactId>
         <version>1.2.4</version>
         <configuration>
-          <threads>2</threads>
-          <coverageThreshold>80</coverageThreshold>
-          <mutationThreshold>60<!-- TODO: increase if routinely far exceeded --></mutationThreshold>
+          <threads>4</threads>
+          <coverageThreshold>0.8</coverageThreshold>
+          <mutationThreshold>0.6</mutationThreshold>
+          <avoidCallsTo>
+            <avoidCallsTo>java.util.logging</avoidCallsTo>
+            <avoidCallsTo>io.github.pr0methean.betterrandom.util.LogPreFormatter</avoidCallsTo>
+          </avoidCallsTo>
         </configuration>
       </plugin>
       <plugin>
