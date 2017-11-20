@@ -8,10 +8,13 @@ mvn compile test-compile org.pitest:pitest-maven:mutationCoverage
 cd ..
 git checkout https://github.com/Pr0methean/pr0methean.github.io docs
 cd docs
-git pull
 rm -rf docs/betterrandom-pit-reports
 mv ../betterrandom/target/pit-reports betterrandom-pit-reports
 git add betterrandom-pit-reports
 git commit -m "Update PIT mutation reports"
 git remote add originauth "https://${GH_TOKEN}@github.com/Pr0methean/betterrandom-coverage.git"
 git push --set-upstream originauth master
+while [ ! $? ]; do
+  git pull --rebase  # Merge
+  git push
+done
