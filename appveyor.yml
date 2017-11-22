@@ -10,6 +10,7 @@ environment:
       RUNNER: MinGW\msys\1.0
     - OP: benchmark
       RUNNER: cygwin64
+      ALLOW_FAILURE: true # https://github.com/appveyor/ci/issues/1956
   access_token:
     secure: UrMOuu5SzFyDvmnIwDu4EJol6YwyLJJ3yAAvA8URK7x8cmssL4106Wr8MmS01GGL
   random_dot_org_key:
@@ -28,3 +29,5 @@ cache:
   - C:\Users\appveyor\.m2
 matrix:
   fast_finish: true
+  allow_failures:
+    - ALLOW_FAILURE: true
