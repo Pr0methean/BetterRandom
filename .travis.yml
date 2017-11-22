@@ -6,7 +6,7 @@ sudo: required
 dist: trusty
 serialGroup: edge
 git:
-  submodules: false
+  submodules: true # Travis FIXME: Should be overridable in jobs[x]
 stages:
 - unit tests
 - long tests
