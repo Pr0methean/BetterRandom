@@ -17,6 +17,8 @@ environment:
     secure: UrMOuu5SzFyDvmnIwDu4EJol6YwyLJJ3yAAvA8URK7x8cmssL4106Wr8MmS01GGL
   random_dot_org_key:
     secure: SdVpsz4/hDKlxV/jEehj9kEUmbIrrq5yvDOWYrHyxN+WE1z8CNeeTnv8BuQ6XsnN
+  APPVEYOR_RDP_PASSWORD:
+    secure: prROYXFdZ1WD7poOqYxXuRIF6KkKWjAWAWZX5PaHABM=
 install:
   # Log versions for debugging
   - java -version
