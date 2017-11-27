@@ -20,6 +20,7 @@ import java.util.WeakHashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.locks.Condition;
 import java.util.logging.Level;
 
@@ -47,6 +48,11 @@ public final class RandomSeederThread extends LooperThread {
   private transient Condition waitForEntropyDrain;
   private transient Set<Random> prngsThisIteration;
   private transient WeakHashMap<ByteArrayReseedableRandom, byte[]> seedArrays;
+  private static final AtomicBoolean loggingEnabled = new AtomicBoolean(true);
+
+  public static void setLoggingEnabled(boolean enabled) {
+    loggingEnabled.set(enabled);
+  }
 
   public RandomSeederThread(final ThreadGroup group, final Runnable target, final String name,
       final long stackSize, final SeedGenerator seedGenerator) {
@@ -73,7 +79,9 @@ public final class RandomSeederThread extends LooperThread {
   private static RandomSeederThread getInstance(final SeedGenerator seedGenerator) {
     synchronized (INSTANCES) {
       return INSTANCES.computeIfAbsent(seedGenerator, seedGen -> {
-        LOG.info("Creating a RandomSeederThread for %s", seedGen);
+        if (loggingEnabled.get()) {
+          LOG.info("Creating a RandomSeederThread for %s", seedGen);
+        }
         final RandomSeederThread thread = new RandomSeederThread(seedGen);
         thread.setName("RandomSeederThread for " + seedGen);
         thread.setDaemon(true);
@@ -237,8 +245,10 @@ public final class RandomSeederThread extends LooperThread {
       } catch (final Throwable t) {
         // Must unlock before interrupt; otherwise we somehow get a deadlock
         lock.unlock();
-        LOG.error("%s", t);
-        LOG.logStackTrace(Level.SEVERE, t.getStackTrace());
+        if (loggingEnabled.get()) {
+          LOG.error("%s", t);
+          LOG.logStackTrace(Level.SEVERE, t.getStackTrace());
+        }
         interrupt();
         // Must lock again before returning, so we can notify conditions
         lock.lock();
@@ -338,7 +348,9 @@ public final class RandomSeederThread extends LooperThread {
     lock.lock();
     try {
       if (isEmpty()) {
-        LOG.info("Stopping empty RandomSeederThread for %s", seedGenerator);
+        if (loggingEnabled.get()) {
+          LOG.info("Stopping empty RandomSeederThread for %s", seedGenerator);
+        }
         interrupt();
       }
     } finally {
