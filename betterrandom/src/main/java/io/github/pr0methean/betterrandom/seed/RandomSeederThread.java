@@ -50,6 +50,10 @@ public final class RandomSeederThread extends LooperThread {
   private transient WeakHashMap<ByteArrayReseedableRandom, byte[]> seedArrays;
   private static final AtomicBoolean loggingEnabled = new AtomicBoolean(true);
 
+  /**
+   * Controls whether or not to log new instance creation and errors.
+   * @param enabled whether to enable logging
+   */
   public static void setLoggingEnabled(boolean enabled) {
     loggingEnabled.set(enabled);
   }
