@@ -30,9 +30,15 @@ import java.util.function.Supplier;
 import org.testng.Reporter;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
+import org.testng.annotations.BeforeSuite;
 import org.testng.annotations.Test;
 
 public abstract class BaseRandomTest {
+
+  @BeforeClass
+  public void setUp() {
+    RandomSeederThread.setLoggingEnabled(false);
+  }
 
   /**
    * The square root of 12, rounded from an extended-precision calculation that was done by Wolfram
