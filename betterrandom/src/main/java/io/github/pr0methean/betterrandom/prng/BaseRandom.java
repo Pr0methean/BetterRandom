@@ -366,10 +366,18 @@ public abstract class BaseRandom extends Random
     return super.nextFloat();
   }
 
-  @Override public double nextDouble() {
+  @Override public final double nextDouble() {
+    debitEntropy(ENTROPY_OF_DOUBLE);
+    return nextDoubleNoEntropyDebit();
+  }
+
+  /**
+   * Returns the next random {@code double} between 0.0 (inclusive) and 1.0 (exclusive), but does
+   * not debit entropy. @return a pseudorandom {@code double}.
+   */
+  protected double nextDoubleNoEntropyDebit() {
     lock.lock();
     try {
-      debitEntropy(ENTROPY_OF_DOUBLE);
       return super.nextDouble();
     } finally {
       lock.unlock();
@@ -385,7 +393,7 @@ public abstract class BaseRandom extends Random
     // Upper bound. 2 Gaussians are generated from 2 nextDouble calls, which once made are either
     // used or rerolled.
     debitEntropy(ENTROPY_OF_DOUBLE);
-    return internalNextGaussian(super::nextDouble);
+    return internalNextGaussian(this::nextDoubleNoEntropyDebit);
   }
 
   /**

@@ -280,10 +280,8 @@ public class RandomWrapper extends BaseRandom {
     return result;
   }
 
-  @Override public double nextDouble() {
-    final double result = getWrapped().nextDouble();
-    debitEntropy(ENTROPY_OF_DOUBLE);
-    return result;
+  @Override public double nextDoubleNoEntropyDebit() {
+    return getWrapped().nextDouble();
   }
 
   @Override public double nextGaussian() {
