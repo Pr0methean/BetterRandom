@@ -3,6 +3,7 @@ package io.github.pr0methean.betterrandom.prng;
 import static io.github.pr0methean.betterrandom.TestUtils.assertGreaterOrEqual;
 import static io.github.pr0methean.betterrandom.TestUtils.assertLessOrEqual;
 import static io.github.pr0methean.betterrandom.prng.BaseRandom.ENTROPY_OF_DOUBLE;
+import static io.github.pr0methean.betterrandom.prng.BaseRandom.ENTROPY_OF_FLOAT;
 import static io.github.pr0methean.betterrandom.prng.RandomTestUtils.assertMonteCarloPiEstimateSane;
 import static io.github.pr0methean.betterrandom.prng.RandomTestUtils.checkRangeAndEntropy;
 import static io.github.pr0methean.betterrandom.prng.RandomTestUtils.checkStream;
@@ -359,6 +360,11 @@ public abstract class BaseRandomTest {
   @Test public void testNextDouble() throws Exception {
     final BaseRandom prng = createRng();
     checkRangeAndEntropy(prng, ENTROPY_OF_DOUBLE, prng::nextDouble, 0.0, 1.0, true);
+  }
+
+  @Test public void testNextFloat() throws Exception {
+    final BaseRandom prng = createRng();
+    checkRangeAndEntropy(prng, ENTROPY_OF_FLOAT, prng::nextFloat, 0.0, 1.0, true);
   }
 
   @Test public void testNextDouble1() throws Exception {
