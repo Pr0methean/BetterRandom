@@ -5,7 +5,8 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="5cfcc489-45e1-48cf-a1ae-7b2e5d28efac" name="Default" comment="">
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/betterrandom/src/test/java/io/github/pr0methean/betterrandom/prng/Pcg64RandomTest.java" afterPath="$PROJECT_DIR$/betterrandom/src/test/java/io/github/pr0methean/betterrandom/prng/Pcg64RandomTest.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/betterrandom/pom.xml" afterPath="$PROJECT_DIR$/betterrandom/pom.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/mutation.sh" afterPath="$PROJECT_DIR$/mutation.sh" />
     </list>
     <ignored path="$PROJECT_DIR$/out/" />
     <ignored path="$PROJECT_DIR$/target/" />
@@ -29,58 +30,22 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="375">
-      <file leaf-file-name="RandomWrapper.java" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/betterrandom/src/main/java/io/github/pr0methean/betterrandom/prng/RandomWrapper.java">
+      <file leaf-file-name="pom.xml" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/betterrandom/pom.xml">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="2400">
-              <caret line="231" column="0" lean-forward="false" selection-start-line="231" selection-start-column="0" selection-end-line="231" selection-end-column="0" />
-              <folding>
-                <element signature="e#9997#9998#0" expanded="true" />
-                <element signature="e#10039#10040#0" expanded="true" />
-                <marker date="1511856551025" expanded="true" signature="5350:5436" ph="{...}" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="RandomWrapperRandomTest.java" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/betterrandom/src/test/java/io/github/pr0methean/betterrandom/prng/RandomWrapperRandomTest.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-86">
-              <caret line="52" column="76" lean-forward="false" selection-start-line="52" selection-start-column="76" selection-end-line="52" selection-end-column="76" />
+            <state relative-caret-position="157">
+              <caret line="418" column="30" lean-forward="false" selection-start-line="418" selection-start-column="30" selection-end-line="418" selection-end-column="30" />
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="SplittableRandomAdapterTest.java" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/betterrandom/src/test/java/io/github/pr0methean/betterrandom/prng/adapter/SplittableRandomAdapterTest.java">
+      <file leaf-file-name="mutation.sh" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/mutation.sh">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="212">
-              <caret line="45" column="0" lean-forward="false" selection-start-line="45" selection-start-column="0" selection-end-line="56" selection-end-column="76" />
+            <state relative-caret-position="320">
+              <caret line="16" column="24" lean-forward="false" selection-start-line="16" selection-start-column="24" selection-end-line="16" selection-end-column="24" />
               <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="BaseRandomTest.java" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/betterrandom/src/test/java/io/github/pr0methean/betterrandom/prng/BaseRandomTest.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="254">
-              <caret line="504" column="28" lean-forward="true" selection-start-line="504" selection-start-column="28" selection-end-line="504" selection-end-column="28" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="Pcg64RandomTest.java" pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/betterrandom/src/test/java/io/github/pr0methean/betterrandom/prng/Pcg64RandomTest.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="294">
-              <caret line="39" column="89" lean-forward="false" selection-start-line="39" selection-start-column="89" selection-end-line="39" selection-end-column="89" />
-              <folding>
-                <element signature="imports" expanded="true" />
-              </folding>
             </state>
           </provider>
         </entry>
@@ -101,7 +66,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>XSH RR</find>
       <find>base_generate</find>
       <find>multiplier(</find>
       <find>result &gt;&gt;</find>
@@ -131,6 +95,7 @@
       <find>already</find>
       <find>nextLong</find>
       <find>nextdouble</find>
+      <find>60&lt;</find>
     </findStrings>
     <replaceStrings>
       <replace>timeOut = 1000</replace>
@@ -172,7 +137,6 @@
   <component name="IdeDocumentHistory">
     <option name="CHANGED_PATHS">
       <list>
-        <option value="$PROJECT_DIR$/betterrandom/src/main/java/io/github/pr0methean/betterrandom/seed/DevRandomSeedGenerator.java" />
         <option value="$PROJECT_DIR$/betterrandom/src/main/java/io/github/pr0methean/betterrandom/prng/adapter/DirectSplittableRandomAdapter.java" />
         <option value="$PROJECT_DIR$/betterrandom/src/main/java/io/github/pr0methean/betterrandom/prng/CellularAutomatonRandom.java" />
         <option value="$PROJECT_DIR$/betterrandom/src/main/java/io/github/pr0methean/betterrandom/prng/MersenneTwisterRandom.java" />
@@ -198,7 +162,6 @@
         <option value="$PROJECT_DIR$/betterrandom/src/test/java/io/github/pr0methean/betterrandom/DeadlockWatchdogThread.java" />
         <option value="$PROJECT_DIR$/betterrandom/src/test/java/io/github/pr0methean/betterrandom/seed/RandomSeederThreadTest.java" />
         <option value="$PROJECT_DIR$/betterrandom/src/test/java/io/github/pr0methean/betterrandom/prng/AesCounterRandom128Test.java" />
-        <option value="$PROJECT_DIR$/betterrandom/pom.xml" />
         <option value="$PROJECT_DIR$/betterrandom/src/test/java/io/github/pr0methean/betterrandom/seed/SecureRandomSeedGeneratorTest.java" />
         <option value="$PROJECT_DIR$/betterrandom/src/test/java/io/github/pr0methean/betterrandom/seed/DefaultSeedGeneratorTest.java" />
         <option value="$PROJECT_DIR$/betterrandom/src/test/java/io/github/pr0methean/betterrandom/seed/DevRandomSeedGeneratorTest.java" />
@@ -223,6 +186,8 @@
         <option value="$PROJECT_DIR$/betterrandom/src/main/java/io/github/pr0methean/betterrandom/prng/RandomWrapper.java" />
         <option value="$PROJECT_DIR$/betterrandom/src/test/java/io/github/pr0methean/betterrandom/prng/RandomWrapperRandomTest.java" />
         <option value="$PROJECT_DIR$/betterrandom/src/test/java/io/github/pr0methean/betterrandom/prng/Pcg64RandomTest.java" />
+        <option value="$PROJECT_DIR$/betterrandom/pom.xml" />
+        <option value="$PROJECT_DIR$/mutation.sh" />
       </list>
     </option>
   </component>
@@ -386,129 +351,6 @@
               <item name="betterrandom" type="462c0819:PsiDirectoryNode" />
               <item name="src" type="462c0819:PsiDirectoryNode" />
               <item name="main" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="BetterRandom" type="b2602c69:ProjectViewProjectNode" />
-              <item name="BetterRandom" type="462c0819:PsiDirectoryNode" />
-              <item name="betterrandom" type="462c0819:PsiDirectoryNode" />
-              <item name="src" type="462c0819:PsiDirectoryNode" />
-              <item name="main" type="462c0819:PsiDirectoryNode" />
-              <item name="java" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="BetterRandom" type="b2602c69:ProjectViewProjectNode" />
-              <item name="BetterRandom" type="462c0819:PsiDirectoryNode" />
-              <item name="betterrandom" type="462c0819:PsiDirectoryNode" />
-              <item name="src" type="462c0819:PsiDirectoryNode" />
-              <item name="main" type="462c0819:PsiDirectoryNode" />
-              <item name="java" type="462c0819:PsiDirectoryNode" />
-              <item name="betterrandom" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="BetterRandom" type="b2602c69:ProjectViewProjectNode" />
-              <item name="BetterRandom" type="462c0819:PsiDirectoryNode" />
-              <item name="betterrandom" type="462c0819:PsiDirectoryNode" />
-              <item name="src" type="462c0819:PsiDirectoryNode" />
-              <item name="main" type="462c0819:PsiDirectoryNode" />
-              <item name="java" type="462c0819:PsiDirectoryNode" />
-              <item name="betterrandom" type="462c0819:PsiDirectoryNode" />
-              <item name="prng" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="BetterRandom" type="b2602c69:ProjectViewProjectNode" />
-              <item name="BetterRandom" type="462c0819:PsiDirectoryNode" />
-              <item name="betterrandom" type="462c0819:PsiDirectoryNode" />
-              <item name="src" type="462c0819:PsiDirectoryNode" />
-              <item name="main" type="462c0819:PsiDirectoryNode" />
-              <item name="java" type="462c0819:PsiDirectoryNode" />
-              <item name="betterrandom" type="462c0819:PsiDirectoryNode" />
-              <item name="prng" type="462c0819:PsiDirectoryNode" />
-              <item name="adapter" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="BetterRandom" type="b2602c69:ProjectViewProjectNode" />
-              <item name="BetterRandom" type="462c0819:PsiDirectoryNode" />
-              <item name="betterrandom" type="462c0819:PsiDirectoryNode" />
-              <item name="src" type="462c0819:PsiDirectoryNode" />
-              <item name="main" type="462c0819:PsiDirectoryNode" />
-              <item name="java" type="462c0819:PsiDirectoryNode" />
-              <item name="betterrandom" type="462c0819:PsiDirectoryNode" />
-              <item name="seed" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="BetterRandom" type="b2602c69:ProjectViewProjectNode" />
-              <item name="BetterRandom" type="462c0819:PsiDirectoryNode" />
-              <item name="betterrandom" type="462c0819:PsiDirectoryNode" />
-              <item name="src" type="462c0819:PsiDirectoryNode" />
-              <item name="main" type="462c0819:PsiDirectoryNode" />
-              <item name="java" type="462c0819:PsiDirectoryNode" />
-              <item name="betterrandom" type="462c0819:PsiDirectoryNode" />
-              <item name="util" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="BetterRandom" type="b2602c69:ProjectViewProjectNode" />
-              <item name="BetterRandom" type="462c0819:PsiDirectoryNode" />
-              <item name="betterrandom" type="462c0819:PsiDirectoryNode" />
-              <item name="src" type="462c0819:PsiDirectoryNode" />
-              <item name="test" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="BetterRandom" type="b2602c69:ProjectViewProjectNode" />
-              <item name="BetterRandom" type="462c0819:PsiDirectoryNode" />
-              <item name="betterrandom" type="462c0819:PsiDirectoryNode" />
-              <item name="src" type="462c0819:PsiDirectoryNode" />
-              <item name="test" type="462c0819:PsiDirectoryNode" />
-              <item name="java" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="BetterRandom" type="b2602c69:ProjectViewProjectNode" />
-              <item name="BetterRandom" type="462c0819:PsiDirectoryNode" />
-              <item name="betterrandom" type="462c0819:PsiDirectoryNode" />
-              <item name="src" type="462c0819:PsiDirectoryNode" />
-              <item name="test" type="462c0819:PsiDirectoryNode" />
-              <item name="java" type="462c0819:PsiDirectoryNode" />
-              <item name="betterrandom" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="BetterRandom" type="b2602c69:ProjectViewProjectNode" />
-              <item name="BetterRandom" type="462c0819:PsiDirectoryNode" />
-              <item name="betterrandom" type="462c0819:PsiDirectoryNode" />
-              <item name="src" type="462c0819:PsiDirectoryNode" />
-              <item name="test" type="462c0819:PsiDirectoryNode" />
-              <item name="java" type="462c0819:PsiDirectoryNode" />
-              <item name="betterrandom" type="462c0819:PsiDirectoryNode" />
-              <item name="prng" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="BetterRandom" type="b2602c69:ProjectViewProjectNode" />
-              <item name="BetterRandom" type="462c0819:PsiDirectoryNode" />
-              <item name="betterrandom" type="462c0819:PsiDirectoryNode" />
-              <item name="src" type="462c0819:PsiDirectoryNode" />
-              <item name="test" type="462c0819:PsiDirectoryNode" />
-              <item name="java" type="462c0819:PsiDirectoryNode" />
-              <item name="betterrandom" type="462c0819:PsiDirectoryNode" />
-              <item name="prng" type="462c0819:PsiDirectoryNode" />
-              <item name="adapter" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="BetterRandom" type="b2602c69:ProjectViewProjectNode" />
-              <item name="BetterRandom" type="462c0819:PsiDirectoryNode" />
-              <item name="betterrandom" type="462c0819:PsiDirectoryNode" />
-              <item name="src" type="462c0819:PsiDirectoryNode" />
-              <item name="test" type="462c0819:PsiDirectoryNode" />
-              <item name="java" type="462c0819:PsiDirectoryNode" />
-              <item name="betterrandom" type="462c0819:PsiDirectoryNode" />
-              <item name="seed" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="BetterRandom" type="b2602c69:ProjectViewProjectNode" />
-              <item name="BetterRandom" type="462c0819:PsiDirectoryNode" />
-              <item name="betterrandom" type="462c0819:PsiDirectoryNode" />
-              <item name="src" type="462c0819:PsiDirectoryNode" />
-              <item name="test" type="462c0819:PsiDirectoryNode" />
-              <item name="java" type="462c0819:PsiDirectoryNode" />
-              <item name="betterrandom" type="462c0819:PsiDirectoryNode" />
-              <item name="util" type="462c0819:PsiDirectoryNode" />
             </path>
           </expand>
           <select />
@@ -1078,13 +920,6 @@
     <watches-manager />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/betterrandom/src/main/java/io/github/pr0methean/betterrandom/prng/XorShiftRandom.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="166">
-          <caret line="36" column="13" lean-forward="false" selection-start-line="36" selection-start-column="13" selection-end-line="36" selection-end-column="13" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/betterrandom/src/main/java/io/github/pr0methean/betterrandom/seed/DefaultSeedGenerator.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="166">
@@ -1168,14 +1003,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="212">
           <caret line="69" column="0" lean-forward="false" selection-start-line="69" selection-start-column="0" selection-end-line="76" selection-end-column="3" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/betterrandom/pom.xml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="377">
-          <caret line="430" column="35" lean-forward="true" selection-start-line="430" selection-start-column="35" selection-end-line="430" selection-end-column="35" />
           <folding />
         </state>
       </provider>
@@ -1338,7 +1165,7 @@
         <state relative-caret-position="1240">
           <caret line="74" column="16" lean-forward="false" selection-start-line="74" selection-start-column="16" selection-end-line="74" selection-end-column="16" />
           <folding>
-            <element signature="e#3196#3197#0" expanded="true" />
+            <element signature="e#3196#3197#0" expanded="false" />
             <marker date="1511848220302" expanded="true" signature="3214:3218" ph=" }" />
             <marker date="1511848220302" expanded="true" signature="3306:3364" ph="{...}" />
             <marker date="1511848220302" expanded="true" signature="3463:3531" ph="{...}" />
@@ -1402,8 +1229,8 @@
         <state relative-caret-position="94">
           <caret line="72" column="16" lean-forward="false" selection-start-line="72" selection-start-column="16" selection-end-line="72" selection-end-column="16" />
           <folding>
-            <element signature="e#2972#2973#0" expanded="true" />
-            <element signature="e#2993#2994#0" expanded="true" />
+            <element signature="e#2972#2973#0" expanded="false" />
+            <element signature="e#2993#2994#0" expanded="false" />
           </folding>
         </state>
       </provider>
@@ -1437,10 +1264,10 @@
         <state relative-caret-position="320">
           <caret line="175" column="20" lean-forward="false" selection-start-line="175" selection-start-column="20" selection-end-line="175" selection-end-column="20" />
           <folding>
-            <element signature="e#5962#5963#0" expanded="true" />
-            <element signature="e#5995#5996#0" expanded="true" />
-            <element signature="e#6049#6050#0" expanded="true" />
-            <element signature="e#6084#6085#0" expanded="true" />
+            <element signature="e#5962#5963#0" expanded="false" />
+            <element signature="e#5995#5996#0" expanded="false" />
+            <element signature="e#6049#6050#0" expanded="false" />
+            <element signature="e#6084#6085#0" expanded="false" />
           </folding>
         </state>
       </provider>
@@ -1450,11 +1277,11 @@
         <state relative-caret-position="240">
           <caret line="400" column="43" lean-forward="false" selection-start-line="400" selection-start-column="43" selection-end-line="400" selection-end-column="43" />
           <folding>
-            <element signature="e#3308#3430#0" expanded="true" />
-            <element signature="e#17611#17612#0" expanded="true" />
-            <element signature="e#17632#17633#0" expanded="true" />
-            <element signature="e#17748#17749#0" expanded="true" />
-            <element signature="e#17771#17772#0" expanded="true" />
+            <element signature="e#3308#3430#0" expanded="false" />
+            <element signature="e#17611#17612#0" expanded="false" />
+            <element signature="e#17632#17633#0" expanded="false" />
+            <element signature="e#17748#17749#0" expanded="false" />
+            <element signature="e#17771#17772#0" expanded="false" />
           </folding>
         </state>
       </provider>
@@ -1502,6 +1329,22 @@
           <folding>
             <element signature="imports" expanded="true" />
           </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/betterrandom/pom.xml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="157">
+          <caret line="418" column="30" lean-forward="false" selection-start-line="418" selection-start-column="30" selection-end-line="418" selection-end-column="30" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/mutation.sh">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="320">
+          <caret line="16" column="24" lean-forward="false" selection-start-line="16" selection-start-column="24" selection-end-line="16" selection-end-column="24" />
+          <folding />
         </state>
       </provider>
     </entry>
