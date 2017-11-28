@@ -25,6 +25,7 @@ import java.util.HashSet;
 import java.util.Random;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.function.Supplier;
+import java.util.stream.BaseStream;
 import java.util.stream.Stream;
 import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
 import org.testng.Reporter;
@@ -197,10 +198,9 @@ public enum RandomTestUtils {
   public static DescriptiveStatistics summaryStats(final Random rng, final long maxValue,
       final int iterations) {
     final DescriptiveStatistics stats = new DescriptiveStatistics();
-    for (int i = 0; i < iterations; i++) {
-      stats.addValue(maxValue <= Integer.MAX_VALUE ? rng.nextInt((int) maxValue)
-          : rng.nextLong(maxValue));
-    }
+    BaseStream<? extends Number, ?> stream;
+    stream = (maxValue <= Integer.MAX_VALUE) ? rng.ints(iterations, 0, (int) maxValue) : rng.longs(iterations, 0, maxValue);
+    stream.spliterator().forEachRemaining(n -> stats.addValue(n.doubleValue()));
     return stats;
   }
 
