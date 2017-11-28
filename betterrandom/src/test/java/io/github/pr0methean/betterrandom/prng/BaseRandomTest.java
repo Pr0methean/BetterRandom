@@ -36,6 +36,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.function.Function;
 import java.util.function.Supplier;
 import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
+import org.apache.commons.math3.stat.descriptive.SynchronizedDescriptiveStatistics;
 import org.testng.Reporter;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
@@ -145,7 +146,8 @@ public abstract class BaseRandomTest {
     // approaches n/sqrt(12).
     for (long n : new long[] {100, 1L << 32, Long.MAX_VALUE}) {
       final int iterations = 10000;
-      final DescriptiveStatistics stats = RandomTestUtils.summaryStats(rng, n, iterations);
+      final SynchronizedDescriptiveStatistics
+          stats = RandomTestUtils.summaryStats(rng, n, iterations);
       final double observedSD = stats.getStandardDeviation();
       final double expectedSD = n / SQRT_12;
       Reporter.log("Expected SD: " + expectedSD + ", observed SD: " + observedSD);
