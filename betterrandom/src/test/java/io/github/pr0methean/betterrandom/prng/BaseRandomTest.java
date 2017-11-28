@@ -501,6 +501,10 @@ public abstract class BaseRandomTest {
     ConcurrentSkipListSet<Double> parallelDoubles = new ConcurrentSkipListSet<>();
     runSequentialAndParallel(sequentialDoubles, parallelDoubles, Random::nextDouble);
     assertEquals(parallelDoubles, sequentialDoubles);
+    sequentialDoubles.clear();
+    parallelDoubles.clear();
+    runSequentialAndParallel(sequentialDoubles, parallelDoubles, Random::nextGaussian);
+    assertEquals(parallelDoubles, sequentialDoubles);
     ConcurrentSkipListSet<Integer> sequentialInts = new ConcurrentSkipListSet<>();
     ConcurrentSkipListSet<Integer> parallelInts = new ConcurrentSkipListSet<>();
     runSequentialAndParallel(sequentialInts, parallelInts, Random::nextInt);
