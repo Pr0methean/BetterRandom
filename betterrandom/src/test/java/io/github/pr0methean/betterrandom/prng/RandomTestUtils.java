@@ -59,11 +59,11 @@ public enum RandomTestUtils {
     assertTrue(output.doubleValue() < bound);
     if ((entropyCheckMode == EntropyCheckMode.EXACT) || (entropyCheckMode
         == EntropyCheckMode.UPPER_BOUND)) {
-      TestUtils.assertGreaterOrEqual(oldEntropy - expectedEntropySpent, prng.getEntropyBits());
+      TestUtils.assertGreaterOrEqual(prng.getEntropyBits(), oldEntropy - expectedEntropySpent);
     }
     if ((entropyCheckMode == EntropyCheckMode.EXACT) || (entropyCheckMode
         == EntropyCheckMode.LOWER_BOUND)) {
-      TestUtils.assertLessOrEqual(oldEntropy - expectedEntropySpent, prng.getEntropyBits());
+      TestUtils.assertLessOrEqual(prng.getEntropyBits(), oldEntropy - expectedEntropySpent);
     }
   }
 
@@ -79,12 +79,12 @@ public enum RandomTestUtils {
     final Stream<? extends Number> streamToUse =
         (expectedCount < 0) ? stream.sequential().limit(20) : stream;
     final long count = streamToUse.mapToLong((number) -> {
-      TestUtils.assertGreaterOrEqual(origin, number.doubleValue());
-      TestUtils.assertLess(bound, number.doubleValue());
+      TestUtils.assertGreaterOrEqual(number.doubleValue(), origin);
+      TestUtils.assertLess(number.doubleValue(), bound);
       if (checkEntropyCount && !(streamToUse.isParallel())) {
         long newEntropy = prng.getEntropyBits();
-        TestUtils.assertGreaterOrEqual(entropy.getAndSet(newEntropy) - maxEntropySpentPerNumber,
-            newEntropy);
+        TestUtils.assertGreaterOrEqual(newEntropy,
+            entropy.getAndSet(newEntropy) - maxEntropySpentPerNumber);
       }
       return 1;
     }).sum();
@@ -92,8 +92,8 @@ public enum RandomTestUtils {
       assertEquals(count, expectedCount);
     }
     if (checkEntropyCount && streamToUse.isParallel()) {
-      TestUtils.assertGreaterOrEqual(entropy.get() - (maxEntropySpentPerNumber * count),
-          prng.getEntropyBits());
+      TestUtils.assertGreaterOrEqual(prng.getEntropyBits(),
+          entropy.get() - (maxEntropySpentPerNumber * count));
     }
   }
 
@@ -194,13 +194,14 @@ public enum RandomTestUtils {
    *     calculation.
    * @return The standard deviation of the generated sample.
    */
-  public static double calculateSampleStandardDeviation(final Random rng, final int maxValue,
+  public static DescriptiveStatistics summaryStats(final Random rng, final long maxValue,
       final int iterations) {
     final DescriptiveStatistics stats = new DescriptiveStatistics();
     for (int i = 0; i < iterations; i++) {
-      stats.addValue(rng.nextInt(maxValue));
+      stats.addValue(maxValue <= Integer.MAX_VALUE ? rng.nextInt((int) maxValue)
+          : rng.nextLong(maxValue));
     }
-    return stats.getStandardDeviation();
+    return stats;
   }
 
   @SuppressWarnings("unchecked")
