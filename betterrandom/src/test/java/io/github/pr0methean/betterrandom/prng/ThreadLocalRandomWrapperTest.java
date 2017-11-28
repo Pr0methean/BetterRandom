@@ -55,9 +55,18 @@ public class ThreadLocalRandomWrapperTest extends BaseRandomTest {
 
   /** Assertion-free because thread-local. */
   @Override @Test public void testThreadSafety() {
-    ConcurrentSkipListSet<Long> sequentialOutput = new ConcurrentSkipListSet<>();
-    ConcurrentSkipListSet<Long> parallelOutput = new ConcurrentSkipListSet<>();
-    runSequentialAndParallel(sequentialOutput, parallelOutput);
+    ConcurrentSkipListSet<Long> sequentialLongs = new ConcurrentSkipListSet<>();
+    ConcurrentSkipListSet<Long> parallelLongs = new ConcurrentSkipListSet<>();
+    runSequentialAndParallel(sequentialLongs, parallelLongs, Random::nextLong);
+    ConcurrentSkipListSet<Double> sequentialDoubles = new ConcurrentSkipListSet<>();
+    ConcurrentSkipListSet<Double> parallelDoubles = new ConcurrentSkipListSet<>();
+    runSequentialAndParallel(sequentialDoubles, parallelDoubles, Random::nextDouble);
+    sequentialDoubles.clear();
+    parallelDoubles.clear();
+    runSequentialAndParallel(sequentialDoubles, parallelDoubles, Random::nextGaussian);
+    ConcurrentSkipListSet<Integer> sequentialInts = new ConcurrentSkipListSet<>();
+    ConcurrentSkipListSet<Integer> parallelInts = new ConcurrentSkipListSet<>();
+    runSequentialAndParallel(sequentialInts, parallelInts, Random::nextInt);
   }
 
   @Override public Map<Class<?>, Object> constructorParams() {
