@@ -397,8 +397,8 @@ public abstract class BaseRandom extends Random
   }
 
   /**
-   * Core of a reimplementation of {@link #nextGaussian()} whose locking is overridable and only
-   * happens every other call.
+   * Core of a reimplementation of {@link #nextGaussian()} whose locking is overridable and doesn't
+   * happen when a value is already stored.
    * @param nextDouble shall return a random number between 0 and 1, like {@link #nextDouble()},
    *     but shall not debit the entropy count.
    * @return a random number that is normally distributed with mean 0 and standard deviation 1.
@@ -406,11 +406,16 @@ public abstract class BaseRandom extends Random
   @SuppressWarnings("LocalVariableHidesMemberVariable") protected double internalNextGaussian(
       final DoubleSupplier nextDouble) {
     // See Knuth, ACP, Section 3.4.1 Algorithm C.
-    final double out = Double.longBitsToDouble(nextNextGaussian.getAndSet(NAN_LONG_BITS));
-    if (Double.isNaN(out)) {
+    final double firstTryOut = Double.longBitsToDouble(nextNextGaussian.getAndSet(NAN_LONG_BITS));
+    if (Double.isNaN(firstTryOut)) {
       double v1, v2, s;
       lockForNextGaussian();
       try {
+        // Another output may have become available while we waited for the lock
+        final double secondTryOut = Double.longBitsToDouble(nextNextGaussian.getAndSet(NAN_LONG_BITS));
+        if (!Double.isNaN(secondTryOut)) {
+          return secondTryOut;
+        }
         do {
           v1 = (2 * nextDouble.getAsDouble()) - 1; // between -1 and 1
           v2 = (2 * nextDouble.getAsDouble()) - 1; // between -1 and 1
@@ -423,7 +428,7 @@ public abstract class BaseRandom extends Random
         unlockForNextGaussian();
       }
     } else {
-      return out;
+      return firstTryOut;
     }
   }
 
