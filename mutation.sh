@@ -4,7 +4,9 @@ if ([ "$TRAVIS_JDK_VERSION" = "oraclejdk9" ] || [ "$TRAVIS_JDK_VERSION" = "openj
   mv pom9.xml pom.xml
 fi
 unset RANDOM_DOT_ORG_KEY # Would probably exhaust even our 5Mbit/day limit
-mvn compile test-compile org.pitest:pitest-maven:mutationCoverage
+# mvn compile test-compile org.pitest:pitest-maven:mutationCoverage
+mkdir target/pit-reports
+echo "test file" >> target/pit-reports/test.txt
 cd ../docs
 git remote add originauth "https://${GH_TOKEN}@github.com/Pr0methean/betterrandom-coverage.git"
 git branch --set-upstream-to originauth/master
