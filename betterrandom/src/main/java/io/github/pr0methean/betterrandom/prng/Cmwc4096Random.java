@@ -89,11 +89,17 @@ public class Cmwc4096Random extends BaseRandom {
    * @param seed ignored
    */
   @Override public synchronized void setSeed(final long seed) {
-    lock.lock();
+    boolean locked = false;
+    if (lock != null) {
+      lock.lock();
+      locked = true;
+    }
     try {
       fallbackSetSeed();
     } finally {
-      lock.unlock();
+      if (locked) {
+        lock.unlock();
+      }
     }
   }
 

@@ -179,7 +179,7 @@ public abstract class BaseRandomTest {
     assertGreaterOrEqual(observedSD, 0.98);
     assertLessOrEqual(observedSD, 1.02);
     assertGreaterOrEqual(stats.getMax(), 2.0);
-    assertGreaterOrEqual(stats.getMin(), -2.0);
+    assertLessOrEqual(stats.getMin(), -2.0);
     assertGreaterOrEqual(stats.getMean(), -0.05);
     assertLessOrEqual(stats.getMean(), 0.05);
     final double median = stats.getElement(iterations / 2);
