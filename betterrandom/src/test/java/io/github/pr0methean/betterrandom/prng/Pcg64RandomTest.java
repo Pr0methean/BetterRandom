@@ -2,8 +2,10 @@ package io.github.pr0methean.betterrandom.prng;
 
 import static org.testng.Assert.assertEquals;
 
+import com.google.common.collect.ImmutableList;
 import java.util.Random;
 import java.util.concurrent.ConcurrentSkipListSet;
+import java.util.function.Function;
 import org.testng.annotations.Test;
 
 public class Pcg64RandomTest extends BaseRandomTest {
@@ -37,27 +39,12 @@ public class Pcg64RandomTest extends BaseRandomTest {
     RandomTestUtils.testEquivalence(copy1, copy2, 20);
   }
 
-  // Has a disabled assertion due to https://github.com/Pr0methean/BetterRandom/issues/13
+  // nextInt is excluded from assertion due to https://github.com/Pr0methean/BetterRandom/issues/13
   @Override public void testThreadSafety() {
-    for (int i=0; i<5; i++) {
-      // This loop is necessary to control the false pass rate, especially during mutation testing.
-      ConcurrentSkipListSet<Long> sequentialLongs = new ConcurrentSkipListSet<>();
-      ConcurrentSkipListSet<Long> parallelLongs = new ConcurrentSkipListSet<>();
-      runSequentialAndParallel(sequentialLongs, parallelLongs, Random::nextLong);
-      assertEquals(parallelLongs, sequentialLongs);
-      ConcurrentSkipListSet<Double> sequentialDoubles = new ConcurrentSkipListSet<>();
-      ConcurrentSkipListSet<Double> parallelDoubles = new ConcurrentSkipListSet<>();
-      runSequentialAndParallel(sequentialDoubles, parallelDoubles, Random::nextDouble);
-      assertEquals(parallelDoubles, sequentialDoubles);
-      sequentialDoubles.clear();
-      parallelDoubles.clear();
-      runSequentialAndParallel(sequentialDoubles, parallelDoubles, Random::nextGaussian);
-      assertEquals(parallelDoubles, sequentialDoubles);
-      ConcurrentSkipListSet<Integer> sequentialInts = new ConcurrentSkipListSet<>();
-      ConcurrentSkipListSet<Integer> parallelInts = new ConcurrentSkipListSet<>();
-      runSequentialAndParallel(sequentialInts, parallelInts, Random::nextInt);
-      // assertEquals(parallelInts, sequentialInts);
-    }
+    testThreadSafety(ImmutableList.of(Random::nextLong, Random::nextGaussian, Random::nextDouble));
+    testThreadSafetyVsCrashesOnly(ImmutableList.of(Random::nextInt, Random::nextLong));
+    testThreadSafetyVsCrashesOnly(ImmutableList.of(Random::nextInt, Random::nextGaussian));
+    testThreadSafetyVsCrashesOnly(ImmutableList.of(Random::nextInt, Random::nextDouble));
   }
 
   @Override protected Class<? extends BaseRandom> getClassUnderTest() {
