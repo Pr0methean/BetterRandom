@@ -22,6 +22,11 @@ public class RandomWrapperAesCounterRandomTest extends AesCounterRandom128Test {
     return RandomWrapper.class;
   }
 
+  // https://github.com/Pr0methean/BetterRandom/issues/11
+  @Override @Test(enabled = false) public void testThreadSafety() {
+    super.testThreadSafety();
+  }
+
   @Override @Test(enabled = false) public void testAllPublicConstructors()
       throws SeedException, IllegalAccessException, InstantiationException,
       InvocationTargetException {
