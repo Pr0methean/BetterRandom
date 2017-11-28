@@ -23,8 +23,8 @@ public class ReseedingSplittableRandomAdapterTest extends SingleThreadSplittable
   }
 
   // FIXME: Why does this need more time than other PRNGs?!
-  @Test(timeOut = 120_000) @Override public void testSummaryStats() throws SeedException {
-    super.testSummaryStats();
+  @Test(timeOut = 120_000) @Override public void testIntegerSummaryStats() throws SeedException {
+    super.testIntegerSummaryStats();
   }
 
   @Override @Test public void testSerializable() throws SeedException {
