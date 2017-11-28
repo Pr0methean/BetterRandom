@@ -76,10 +76,10 @@ public class Pcg64Random extends BaseRandom implements SeekableRandom {
     }
   }
 
-  @Override public double nextDouble(double origin, double bound) {
+  @Override public double nextDoubleNoEntropyDebit() {
     lock.writeLock().lock();
     try {
-      return super.nextDouble(origin, bound);
+      return super.nextDoubleNoEntropyDebit();
     } finally {
       lock.writeLock().unlock();
     }
