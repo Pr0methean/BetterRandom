@@ -72,7 +72,7 @@ public enum TestUtils {
   public static void assertLessOrEqual(final double actual, final double expected) {
     if (actual > expected) {
       throw new AssertionError(
-          String.format("Expected no more than %d but found %d", expected, actual));
+          String.format("Expected no more than %f but found %f", expected, actual));
     }
   }
 
