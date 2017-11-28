@@ -41,10 +41,10 @@ public class Pcg64RandomTest extends BaseRandomTest {
 
   // nextInt is excluded from assertion due to https://github.com/Pr0methean/BetterRandom/issues/13
   @Override public void testThreadSafety() {
-    testThreadSafety(ImmutableList.of(Random::nextLong, Random::nextGaussian, Random::nextDouble));
-    testThreadSafetyVsCrashesOnly(ImmutableList.of(Random::nextInt, Random::nextLong));
-    testThreadSafetyVsCrashesOnly(ImmutableList.of(Random::nextInt, Random::nextGaussian));
-    testThreadSafetyVsCrashesOnly(ImmutableList.of(Random::nextInt, Random::nextDouble));
+    testThreadSafety(ImmutableList.of(NEXT_LONG, Random::nextGaussian, Random::nextDouble));
+    testThreadSafetyVsCrashesOnly(ImmutableList.of(NEXT_INT, NEXT_LONG));
+    testThreadSafetyVsCrashesOnly(ImmutableList.of(NEXT_INT, Random::nextGaussian));
+    testThreadSafetyVsCrashesOnly(ImmutableList.of(NEXT_INT, Random::nextDouble));
   }
 
   @Override protected Class<? extends BaseRandom> getClassUnderTest() {

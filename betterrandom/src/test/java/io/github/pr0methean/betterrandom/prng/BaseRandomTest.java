@@ -494,29 +494,31 @@ public abstract class BaseRandomTest {
   }
 
   protected final ForkJoinPool pool = new ForkJoinPool(2);
-  protected final ConcurrentSkipListSet<Number> sequentialOutput = new ConcurrentSkipListSet<>();
-  protected final ConcurrentSkipListSet<Number> parallelOutput = new ConcurrentSkipListSet<>();
-  protected static final List<Function<Random, Number>> FUNCTIONS_FOR_THREAD_SAFETY_TEST =
-      ImmutableList.of(Random::nextLong, Random::nextDouble, Random::nextGaussian, Random::nextInt);
+  protected final ConcurrentSkipListSet<Double> sequentialOutput = new ConcurrentSkipListSet<>();
+  protected final ConcurrentSkipListSet<Double> parallelOutput = new ConcurrentSkipListSet<>();
+  protected static final Function<Random, Double> NEXT_LONG = random -> (double)random.nextLong();
+  protected static final Function<Random, Double> NEXT_INT = random -> (double)random.nextInt();
+  protected static final List<Function<Random, Double>> FUNCTIONS_FOR_THREAD_SAFETY_TEST =
+      ImmutableList.of(NEXT_LONG, Random::nextDouble, Random::nextGaussian, NEXT_INT);
 
   @Test public void testThreadSafety() {
     testThreadSafety(FUNCTIONS_FOR_THREAD_SAFETY_TEST);
   }
 
-  protected void testThreadSafetyVsCrashesOnly(List<Function<Random, Number>> functions) {
+  protected void testThreadSafetyVsCrashesOnly(List<Function<Random, Double>> functions) {
     int seedLength = createRng().getNewSeedLength();
     byte[] seed = DefaultSeedGenerator.DEFAULT_SEED_GENERATOR.generateSeed(seedLength);
-    for (Function<Random, Number> supplier1 : functions) {
-      for (Function<Random, Number> supplier2 : functions) {
+    for (Function<Random, Double> supplier1 : functions) {
+      for (Function<Random, Double> supplier2 : functions) {
        runParallel(supplier1, supplier2, seed);
       }
     }
   }
 
-  protected void testThreadSafety(List<Function<Random, Number>> functions) {
+  protected void testThreadSafety(List<Function<Random, Double>> functions) {
     int seedLength = createRng().getNewSeedLength();
     byte[] seed = DefaultSeedGenerator.DEFAULT_SEED_GENERATOR.generateSeed(seedLength);
-    for (Function<Random, Number> supplier : functions) {
+    for (Function<Random, Double> supplier : functions) {
       for (int i=0; i<3; i++) {
         // This loop is necessary to control the false pass rate, especially during mutation testing.
         runSequential(supplier, supplier, seed);
@@ -528,8 +530,8 @@ public abstract class BaseRandomTest {
     // Check, for each distinct pair, that it doesn't matter what order they start in
     for (int i=0; i < functions.size(); i++) {
       for (int j = i + 1; j < functions.size(); j++) {
-        Function<Random, Number> supplier1 = functions.get(i);
-        Function<Random, Number> supplier2 = functions.get(j);
+        Function<Random, Double> supplier1 = functions.get(i);
+        Function<Random, Double> supplier2 = functions.get(j);
         runSequential(supplier1, supplier2, seed);
         runParallel(supplier2, supplier1, seed);
         assertEquals(sequentialOutput, parallelOutput);
@@ -540,7 +542,7 @@ public abstract class BaseRandomTest {
     }
   }
 
-  protected void runParallel(Function<Random, Number> supplier1, Function<Random, Number> supplier2,
+  protected void runParallel(Function<Random, Double> supplier1, Function<Random, Double> supplier2,
       byte[] seed) {
     Random parallelPrng = createRng(seed);
     parallelOutput.clear();
@@ -549,7 +551,7 @@ public abstract class BaseRandomTest {
     assertTrue(pool.awaitQuiescence(10, TimeUnit.SECONDS));
   }
 
-  protected void runSequential(Function<Random, Number> supplier1, Function<Random, Number> supplier2,
+  protected void runSequential(Function<Random, Double> supplier1, Function<Random, Double> supplier2,
       byte[] seed) {
     Random sequentialPrng = createRng(seed);
     sequentialOutput.clear();
