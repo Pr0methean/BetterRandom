@@ -1,6 +1,7 @@
 package io.github.pr0methean.betterrandom.prng;
 
 import static io.github.pr0methean.betterrandom.TestUtils.assertGreaterOrEqual;
+import static io.github.pr0methean.betterrandom.TestUtils.assertLessOrEqual;
 import static io.github.pr0methean.betterrandom.prng.BaseRandom.ENTROPY_OF_DOUBLE;
 import static io.github.pr0methean.betterrandom.prng.RandomTestUtils.assertMonteCarloPiEstimateSane;
 import static io.github.pr0methean.betterrandom.prng.RandomTestUtils.checkRangeAndEntropy;
@@ -24,17 +25,16 @@ import java.security.GeneralSecurityException;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
-import java.util.Set;
 import java.util.concurrent.ConcurrentSkipListSet;
 import java.util.concurrent.ForkJoinPool;
 import java.util.concurrent.ForkJoinTask;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Function;
 import java.util.function.Supplier;
+import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
 import org.testng.Reporter;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
@@ -135,19 +135,31 @@ public abstract class BaseRandomTest {
    * subtle statistical anomalies that would be picked up by Diehard, but it provides a simple check
    * for major problems with the output.
    */
-  @Test(timeOut = 20000, groups = "non-deterministic") public void testStandardDeviation()
+  @Test(timeOut = 30_000, groups = "non-deterministic") public void testSummaryStats()
       throws SeedException {
     final BaseRandom rng = createRng();
     // Expected standard deviation for a uniformly distributed population of values in the range 0..n
     // approaches n/sqrt(12).
     // Expected standard deviation for a uniformly distributed population of values in the range 0..n
     // approaches n/sqrt(12).
-    final int n = 100;
-    final double observedSD = RandomTestUtils.calculateSampleStandardDeviation(rng, n, 10000);
-    final double expectedSD = n / SQRT_12;
-    Reporter.log("Expected SD: " + expectedSD + ", observed SD: " + observedSD);
-    assertEquals(observedSD, expectedSD, 0.02 * expectedSD,
-        "Standard deviation is outside acceptable range: " + observedSD);
+    for (long n : new long[] {100, 1L << 32, Long.MAX_VALUE}) {
+      final int iterations = 10000;
+      final DescriptiveStatistics stats = RandomTestUtils.summaryStats(rng, n, iterations);
+      final double observedSD = stats.getStandardDeviation();
+      final double expectedSD = n / SQRT_12;
+      Reporter.log("Expected SD: " + expectedSD + ", observed SD: " + observedSD);
+      assertGreaterOrEqual(observedSD, 0.98 * expectedSD);
+      assertLessOrEqual(observedSD, 1.02 * expectedSD);
+      assertGreaterOrEqual(stats.getMax(), 0.9 * n);
+      assertLessOrEqual(stats.getMax(), n - 1);
+      assertGreaterOrEqual(stats.getMin(), 0);
+      assertLessOrEqual(stats.getMin(), 0.1 * n);
+      assertGreaterOrEqual(stats.getMean(), 0.4 * n);
+      assertLessOrEqual(stats.getMean(), 0.6 * n);
+      final double median = stats.getElement(iterations / 2);
+      assertGreaterOrEqual(median, 0.4 * n);
+      assertLessOrEqual(median, 0.6 * n);
+    }
   }
 
   /**
@@ -213,7 +225,7 @@ public abstract class BaseRandomTest {
     rng2.nextBytes(output2);
     final int seedLength = rng1.getNewSeedLength();
     rng1.setSeed(DefaultSeedGenerator.DEFAULT_SEED_GENERATOR.generateSeed(seedLength));
-    assertGreaterOrEqual(seedLength * 8L, rng1.getEntropyBits());
+    assertGreaterOrEqual(rng1.getEntropyBits(), seedLength * 8L);
     rng1.nextBytes(output1);
     rng2.nextBytes(output2);
     assertFalse(Arrays.equals(output1, output2));
@@ -233,7 +245,7 @@ public abstract class BaseRandomTest {
         Thread.sleep(100);
         newSeed = rng.getSeed();
       } while (Arrays.equals(newSeed, oldSeed));
-      assertGreaterOrEqual(newSeed.length * 8L - 1, rng.getEntropyBits());
+      assertGreaterOrEqual(rng.getEntropyBits(), newSeed.length * 8L - 1);
     } finally {
       rng.setSeedGenerator(null);
     }
@@ -246,6 +258,18 @@ public abstract class BaseRandomTest {
     assertTrue(prng.withProbability(1.0));
     assertEquals(originalEntropy, prng.getEntropyBits());
     checkRangeAndEntropy(prng, 1, () -> prng.withProbability(0.7) ? 0 : 1, 0, 2, true);
+  }
+
+  @Test(timeOut = 20_000, groups = "non-deterministic") public void testWithProbabilityStatistically() {
+    final BaseRandom prng = createRng();
+    int trues = 0;
+    for (int i=0; i<3000; i++) {
+      if (prng.withProbability(0.6)) {
+        trues++;
+      }
+    }
+    assertGreaterOrEqual(trues, 1700);
+    assertLessOrEqual(trues, 1900);
   }
 
   @Test public void testNextBytes() throws Exception {

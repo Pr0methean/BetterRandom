@@ -9,9 +9,6 @@ import io.github.pr0methean.betterrandom.seed.FakeSeedGenerator;
 import io.github.pr0methean.betterrandom.seed.SeedException;
 import io.github.pr0methean.betterrandom.util.BinaryUtils;
 import io.github.pr0methean.betterrandom.util.CloneViaSerialization;
-import java.util.Random;
-import java.util.concurrent.ConcurrentSkipListSet;
-import java.util.function.Function;
 import org.testng.annotations.Test;
 
 public class ReseedingSplittableRandomAdapterTest extends SingleThreadSplittableRandomAdapterTest {
@@ -26,8 +23,8 @@ public class ReseedingSplittableRandomAdapterTest extends SingleThreadSplittable
   }
 
   // FIXME: Why does this need more time than other PRNGs?!
-  @Test(timeOut = 120_000) @Override public void testStandardDeviation() throws SeedException {
-    super.testStandardDeviation();
+  @Test(timeOut = 120_000) @Override public void testSummaryStats() throws SeedException {
+    super.testSummaryStats();
   }
 
   @Override @Test public void testSerializable() throws SeedException {
