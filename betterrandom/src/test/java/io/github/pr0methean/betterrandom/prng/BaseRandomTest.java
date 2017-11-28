@@ -42,8 +42,7 @@ import org.testng.annotations.Test;
 
 public abstract class BaseRandomTest {
 
-  @BeforeClass
-  public void setUp() {
+  @BeforeClass public void setUp() {
     RandomSeederThread.setLoggingEnabled(false);
   }
 
@@ -466,6 +465,7 @@ public abstract class BaseRandomTest {
    * ForkJoinTask that reads random longs and adds them to the set.
    */
   protected static final class GeneratorForkJoinTask<T> extends ForkJoinTask<Void> {
+
     private final Random prng;
     private final ConcurrentSkipListSet<T> set;
     private final Function<Random, T> function;
@@ -486,7 +486,7 @@ public abstract class BaseRandomTest {
     }
 
     @Override protected boolean exec() {
-      for (int i=0; i<1000; i++) {
+      for (int i = 0; i < 1000; i++) {
         set.add(function.apply(prng));
       }
       return true;
@@ -496,63 +496,95 @@ public abstract class BaseRandomTest {
   protected final ForkJoinPool pool = new ForkJoinPool(2);
   protected final ConcurrentSkipListSet<Double> sequentialOutput = new ConcurrentSkipListSet<>();
   protected final ConcurrentSkipListSet<Double> parallelOutput = new ConcurrentSkipListSet<>();
-  protected static final Function<Random, Double> NEXT_LONG = random -> (double)random.nextLong();
-  protected static final Function<Random, Double> NEXT_INT = random -> (double)random.nextInt();
-  protected static final List<Function<Random, Double>> FUNCTIONS_FOR_THREAD_SAFETY_TEST =
-      ImmutableList.of(NEXT_LONG, Random::nextDouble, Random::nextGaussian, NEXT_INT);
+
+  protected static final class NamedFunction<T, R> implements Function<T, R> {
+
+    private final Function<T, R> function;
+    private final String name;
+
+    @Override public R apply(T t) {
+      return function.apply(t);
+    }
+
+    public NamedFunction(Function<T, R> function, String name) {
+      this.function = function;
+      this.name = name;
+    }
+
+    @Override public String toString() {
+      return name;
+    }
+  }
+
+  protected static final NamedFunction<Random, Double> NEXT_LONG =
+      new NamedFunction<>(random -> (double) random.nextLong(), "Random::nextLong");
+  protected static final NamedFunction<Random, Double> NEXT_INT =
+      new NamedFunction<>(random -> (double) random.nextInt(), "Random::nextInt");
+  protected static final NamedFunction<Random, Double> NEXT_DOUBLE =
+      new NamedFunction<>(Random::nextDouble, "Random::nextDouble");
+  protected static final NamedFunction<Random, Double> NEXT_GAUSSIAN =
+      new NamedFunction<>(Random::nextGaussian, "Random::nextGaussian");
+  protected static final List<NamedFunction<Random, Double>> FUNCTIONS_FOR_THREAD_SAFETY_TEST =
+      ImmutableList.of(NEXT_LONG, NEXT_INT, NEXT_DOUBLE, NEXT_GAUSSIAN);
 
   @Test public void testThreadSafety() {
     testThreadSafety(FUNCTIONS_FOR_THREAD_SAFETY_TEST);
   }
 
-  protected void testThreadSafetyVsCrashesOnly(List<Function<Random, Double>> functions) {
+  protected void testThreadSafetyVsCrashesOnly(List<NamedFunction<Random, Double>> functions) {
     int seedLength = createRng().getNewSeedLength();
     byte[] seed = DefaultSeedGenerator.DEFAULT_SEED_GENERATOR.generateSeed(seedLength);
-    for (Function<Random, Double> supplier1 : functions) {
-      for (Function<Random, Double> supplier2 : functions) {
-       runParallel(supplier1, supplier2, seed);
+    for (NamedFunction<Random, Double> supplier1 : functions) {
+      for (NamedFunction<Random, Double> supplier2 : functions) {
+        runParallel(supplier1, supplier2, seed);
       }
     }
   }
 
-  protected void testThreadSafety(List<Function<Random, Double>> functions) {
+  protected void testThreadSafety(List<NamedFunction<Random, Double>> functions) {
     int seedLength = createRng().getNewSeedLength();
     byte[] seed = DefaultSeedGenerator.DEFAULT_SEED_GENERATOR.generateSeed(seedLength);
-    for (Function<Random, Double> supplier : functions) {
-      for (int i=0; i<3; i++) {
+    for (NamedFunction<Random, Double> supplier : functions) {
+      for (int i = 0; i < 3; i++) {
         // This loop is necessary to control the false pass rate, especially during mutation testing.
         runSequential(supplier, supplier, seed);
         runParallel(supplier, supplier, seed);
-        assertEquals(sequentialOutput, parallelOutput);
+        assertEquals(sequentialOutput, parallelOutput,
+            "output differs between sequential/parallel calls to " + supplier);
       }
     }
 
     // Check, for each distinct pair, that it doesn't matter what order they start in
-    for (int i=0; i < functions.size(); i++) {
+    for (int i = 0; i < functions.size(); i++) {
       for (int j = i + 1; j < functions.size(); j++) {
-        Function<Random, Double> supplier1 = functions.get(i);
-        Function<Random, Double> supplier2 = functions.get(j);
+        NamedFunction<Random, Double> supplier1 = functions.get(i);
+        NamedFunction<Random, Double> supplier2 = functions.get(j);
         runSequential(supplier1, supplier2, seed);
         runParallel(supplier2, supplier1, seed);
-        assertEquals(sequentialOutput, parallelOutput);
+        assertEquals(sequentialOutput, parallelOutput, String
+            .format("output differs between sequential/parallel calls to %s and %s", supplier1,
+                supplier2));
         Set<Number> switchedParallelOutput = new HashSet<>(parallelOutput);
         runParallel(supplier1, supplier2, seed);
-        assertEquals(switchedParallelOutput, parallelOutput);
+        assertEquals(switchedParallelOutput, parallelOutput, String
+            .format("parallel output differs between %s and %s depending on the order they start",
+                supplier1, supplier2));
       }
     }
   }
 
-  protected void runParallel(Function<Random, Double> supplier1, Function<Random, Double> supplier2,
-      byte[] seed) {
+  protected void runParallel(NamedFunction<Random, Double> supplier1,
+      NamedFunction<Random, Double> supplier2, byte[] seed) {
     Random parallelPrng = createRng(seed);
     parallelOutput.clear();
     pool.execute(new GeneratorForkJoinTask(parallelPrng, parallelOutput, supplier1));
     pool.execute(new GeneratorForkJoinTask(parallelPrng, parallelOutput, supplier2));
-    assertTrue(pool.awaitQuiescence(10, TimeUnit.SECONDS));
+    assertTrue(pool.awaitQuiescence(10, TimeUnit.SECONDS),
+        String.format("Timed out waiting for %s and %s to finish", supplier1, supplier2));
   }
 
-  protected void runSequential(Function<Random, Double> supplier1, Function<Random, Double> supplier2,
-      byte[] seed) {
+  protected void runSequential(NamedFunction<Random, Double> supplier1,
+      NamedFunction<Random, Double> supplier2, byte[] seed) {
     Random sequentialPrng = createRng(seed);
     sequentialOutput.clear();
     new GeneratorForkJoinTask(sequentialPrng, sequentialOutput, supplier1).exec();
