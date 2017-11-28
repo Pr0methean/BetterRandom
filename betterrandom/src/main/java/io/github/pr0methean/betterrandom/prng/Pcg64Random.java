@@ -59,7 +59,7 @@ public class Pcg64Random extends BaseRandom implements SeekableRandom {
   }
 
   @Override protected long nextLongNoEntropyDebit() {
-    return (((long) next(32)) << 32L) | next(32);
+    return ((long)(next(32)) << 32) + next(32);
   }
 
   @Override public byte[] getSeed() {
