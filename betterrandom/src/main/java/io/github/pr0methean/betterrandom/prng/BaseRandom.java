@@ -367,8 +367,13 @@ public abstract class BaseRandom extends Random
   }
 
   @Override public double nextDouble() {
-    debitEntropy(ENTROPY_OF_DOUBLE);
-    return super.nextDouble();
+    lock.lock();
+    try {
+      debitEntropy(ENTROPY_OF_DOUBLE);
+      return super.nextDouble();
+    } finally {
+      lock.unlock();
+    }
   }
 
   /**
