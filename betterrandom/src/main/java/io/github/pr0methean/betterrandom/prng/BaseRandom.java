@@ -397,28 +397,44 @@ public abstract class BaseRandom extends Random
   }
 
   /**
-   * Core of a lockless reimplementation of {@link #nextGaussian()}.
+   * Core of a reimplementation of {@link #nextGaussian()} whose locking is overridable and slightly
+   * shorter.
    * @param nextDouble shall return a random number between 0 and 1, like {@link #nextDouble()},
    *     but shall not debit the entropy count.
    * @return a random number that is normally distributed with mean 0 and standard deviation 1.
    */
-  @SuppressWarnings("LocalVariableHidesMemberVariable") protected final double internalNextGaussian(
+  @SuppressWarnings("LocalVariableHidesMemberVariable") protected double internalNextGaussian(
       final DoubleSupplier nextDouble) {
     // See Knuth, ACP, Section 3.4.1 Algorithm C.
     final double out = Double.longBitsToDouble(nextNextGaussian.getAndSet(NAN_LONG_BITS));
     if (Double.isNaN(out)) {
       double v1, v2, s;
-      do {
-        v1 = (2 * nextDouble.getAsDouble()) - 1; // between -1 and 1
-        v2 = (2 * nextDouble.getAsDouble()) - 1; // between -1 and 1
-        s = (v1 * v1) + (v2 * v2);
-      } while ((s >= 1) || (s == 0));
+      lockForNextGaussian();
+      try {
+        do {
+          v1 = (2 * nextDouble.getAsDouble()) - 1; // between -1 and 1
+          v2 = (2 * nextDouble.getAsDouble()) - 1; // between -1 and 1
+          s = (v1 * v1) + (v2 * v2);
+        } while ((s >= 1) || (s == 0));
+      } finally {
+        unlockForNextGaussian();
+      }
       final double multiplier = StrictMath.sqrt((-2 * StrictMath.log(s)) / s);
       nextNextGaussian.set(Double.doubleToRawLongBits(v2 * multiplier));
       return v1 * multiplier;
     } else {
       return out;
     }
+  }
+
+  /** Performs whatever locking is needed by {@link #nextGaussian()}. */
+  protected void lockForNextGaussian() {
+    lock.lock();
+  }
+
+  /** Releases the locks acquired by {@link #lockForNextGaussian()}. */
+  protected void unlockForNextGaussian() {
+    lock.unlock();
   }
 
   @Override public IntStream ints(final long streamSize) {

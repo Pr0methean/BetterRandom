@@ -149,6 +149,14 @@ public abstract class BaseSplittableRandomAdapter extends BaseRandom {
     return internalNextGaussian(() -> getSplittableRandom().nextDouble());
   }
 
+  @Override protected void lockForNextGaussian() {
+    // No-op.
+  }
+
+  @Override protected void unlockForNextGaussian() {
+    // No-op.
+  }
+
   /** Delegates to {@link SplittableRandom#nextBoolean()}. */
   @Override public boolean nextBoolean() {
     final boolean out = getSplittableRandom().nextBoolean();
