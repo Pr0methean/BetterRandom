@@ -10,12 +10,12 @@ mkdir target/pit-reports
 echo "test file" >> target/pit-reports/test.txt
 cd ../docs
 git remote add originauth "https://${GH_TOKEN}@github.com/Pr0methean/pr0methean.github.io.git"
-git pull --rebase --set-upstream originauth/master
+git pull --rebase originauth/master
 rm -rf docs/betterrandom-pit-reports
 mv ../betterrandom/target/pit-reports betterrandom-pit-reports
 git add betterrandom-pit-reports
 git commit -m "Update PIT mutation reports"
-git push
+git push --set-upstream originauth/master
 while [ ! $? ]; do
   git pull --rebase # Merge
   git push
