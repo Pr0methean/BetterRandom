@@ -272,6 +272,18 @@ public abstract class BaseRandomTest {
     assertLessOrEqual(trues, 1900);
   }
 
+  @Test(timeOut = 20_000, groups = "non-deterministic") public void testNextBooleanStatistically() {
+    final BaseRandom prng = createRng();
+    int trues = 0;
+    for (int i=0; i<3000; i++) {
+      if (prng.nextBoolean()) {
+        trues++;
+      }
+    }
+    assertGreaterOrEqual(trues, 1400);
+    assertLessOrEqual(trues, 1600);
+  }
+
   @Test public void testNextBytes() throws Exception {
     final byte[] testBytes = new byte[TEST_BYTE_ARRAY_LENGTH];
     final BaseRandom prng = createRng();
@@ -367,7 +379,7 @@ public abstract class BaseRandomTest {
 
   @Test(expectedExceptions = IllegalArgumentException.class)
   public void testNextDouble2InvalidBound() {
-    createRng().nextDouble(3.5, 3.4);
+    createRng().nextDouble(3.5, 3.5);
   }
 
   @Test public void testNextGaussian() throws Exception {

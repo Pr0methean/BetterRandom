@@ -156,7 +156,16 @@ public abstract class BaseRandom extends Random
    * @return True with probability equal to the {@code probability} parameter; false otherwise.
    */
   public final boolean withProbability(final double probability) {
-    return (probability >= 1) || ((probability > 0) && withProbabilityInternal(probability));
+    if (probability >= 1) {
+      return true;
+    }
+    if (probability <= 0) {
+      return false;
+    }
+    if (probability == 0.5) {
+      return nextBoolean();
+    }
+    return withProbabilityInternal(probability);
   }
 
   /**
@@ -280,7 +289,7 @@ public abstract class BaseRandom extends Random
    *     bound}
    */
   public double nextDouble(final double origin, final double bound) {
-    if (bound < origin) {
+    if (bound <= origin) {
       throw new IllegalArgumentException(
           String.format("Bound %f must be greater than origin %f", bound, origin));
     }
