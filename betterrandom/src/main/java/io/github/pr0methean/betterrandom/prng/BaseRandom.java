@@ -242,8 +242,9 @@ public abstract class BaseRandom extends Random
    * BetterRandom generally <i>can</i> be expected to return all 2<sup>64</sup> possible values.
    */
   @Override public final long nextLong() {
+    long out = nextLongNoEntropyDebit();
     debitEntropy(Long.SIZE);
-    return nextLongNoEntropyDebit();
+    return out;
   }
 
   /**
