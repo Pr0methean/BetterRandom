@@ -176,6 +176,15 @@ public class Pcg64Random extends BaseRandom implements SeekableRandom {
     return original.add("internal", internal.get());
   }
 
+  @Override public double nextGaussian() {
+    lock.writeLock().lock();
+    try {
+      return super.nextGaussian();
+    } finally {
+      lock.writeLock().unlock();
+    }
+  }
+
   @Override public int getNewSeedLength() {
     return Long.BYTES;
   }
