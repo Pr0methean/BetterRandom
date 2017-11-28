@@ -157,7 +157,7 @@ public abstract class BaseRandomTest {
       assertLessOrEqual(stats.getMin(), 0.1 * n);
       assertGreaterOrEqual(stats.getMean(), 0.4 * n);
       assertLessOrEqual(stats.getMean(), 0.6 * n);
-      final double median = stats.getSortedValues()[iterations / 2];
+      final double median = stats.getPercentile(50);
       assertGreaterOrEqual(median, 0.4 * n);
       assertLessOrEqual(median, 0.6 * n);
     }
@@ -182,7 +182,7 @@ public abstract class BaseRandomTest {
     assertLessOrEqual(stats.getMin(), -2.0);
     assertGreaterOrEqual(stats.getMean(), -0.05);
     assertLessOrEqual(stats.getMean(), 0.05);
-    final double median = stats.getSortedValues()[iterations / 2];
+    final double median = stats.getPercentile(50);
     assertGreaterOrEqual(median, -0.05);
     assertLessOrEqual(median, 0.05);
   }
