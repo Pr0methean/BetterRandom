@@ -1,4 +1,6 @@
-# 2.0.1
+# 2.1.0
+* Fixes many bugs that were affecting reproducibility when concurrent access occurred, especially
+  for longs and doubles.
 * Logging in `RandomSeederThread` can now be disabled.
 
 # 2.0.0
