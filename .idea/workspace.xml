@@ -5,7 +5,6 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="5cfcc489-45e1-48cf-a1ae-7b2e5d28efac" name="Default" comment="">
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/betterrandom/src/test/java/io/github/pr0methean/betterrandom/prng/BaseRandomTest.java" afterPath="$PROJECT_DIR$/betterrandom/src/test/java/io/github/pr0methean/betterrandom/prng/BaseRandomTest.java" />
     </list>
     <ignored path="$PROJECT_DIR$/out/" />
@@ -85,8 +84,8 @@
       <file leaf-file-name="BaseRandomTest.java" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/betterrandom/src/test/java/io/github/pr0methean/betterrandom/prng/BaseRandomTest.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="269">
-              <caret line="570" column="65" lean-forward="false" selection-start-line="570" selection-start-column="65" selection-end-line="570" selection-end-column="65" />
+            <state relative-caret-position="397">
+              <caret line="580" column="8" lean-forward="false" selection-start-line="580" selection-start-column="8" selection-end-line="580" selection-end-column="8" />
               <folding>
                 <element signature="e#19685#19686#0" expanded="true" />
                 <element signature="e#19723#19724#0" expanded="true" />
@@ -1463,8 +1462,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/betterrandom/src/test/java/io/github/pr0methean/betterrandom/prng/BaseRandomTest.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="269">
-          <caret line="570" column="65" lean-forward="false" selection-start-line="570" selection-start-column="65" selection-end-line="570" selection-end-column="65" />
+        <state relative-caret-position="397">
+          <caret line="580" column="8" lean-forward="false" selection-start-line="580" selection-start-column="8" selection-end-line="580" selection-end-column="8" />
           <folding>
             <element signature="e#19685#19686#0" expanded="true" />
             <element signature="e#19723#19724#0" expanded="true" />
