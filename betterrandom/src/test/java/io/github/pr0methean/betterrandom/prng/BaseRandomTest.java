@@ -546,7 +546,7 @@ public abstract class BaseRandomTest {
     int seedLength = createRng().getNewSeedLength();
     byte[] seed = DefaultSeedGenerator.DEFAULT_SEED_GENERATOR.generateSeed(seedLength);
     for (NamedFunction<Random, Double> supplier : functions) {
-      for (int i = 0; i < 3; i++) {
+      for (int i = 0; i < 5; i++) {
         // This loop is necessary to control the false pass rate, especially during mutation testing.
         runSequential(supplier, supplier, seed);
         runParallel(supplier, supplier, seed);
