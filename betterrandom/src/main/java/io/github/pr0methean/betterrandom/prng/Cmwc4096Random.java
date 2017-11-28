@@ -85,7 +85,7 @@ public class Cmwc4096Random extends BaseRandom {
   }
 
   /**
-   * No-op.
+   * Reseeds this PRNG using the {@link DefaultSeedGenerator}.
    * @param seed ignored
    */
   @Override public synchronized void setSeed(final long seed) {
@@ -100,6 +100,15 @@ public class Cmwc4096Random extends BaseRandom {
     state = BinaryUtils.convertBytesToInts(seed);
     carry = 362436; // TODO: This should be randomly generated.
     index = 4095;
+  }
+
+  @Override protected long nextLongNoEntropyDebit() {
+    lock.lock();
+    try {
+      return super.nextLongNoEntropyDebit();
+    } finally {
+      lock.unlock();
+    }
   }
 
   @SuppressWarnings("NumericCastThatLosesPrecision") @Override protected int next(final int bits) {

@@ -306,6 +306,15 @@ public class AesCounterRandom extends BaseRandom implements SeekableRandom {
     seeded = true;
   }
 
+  @Override protected long nextLongNoEntropyDebit() {
+    lock.lock();
+    try {
+      return super.nextLongNoEntropyDebit();
+    } finally {
+      lock.unlock();
+    }
+  }
+
   /** Returns the longest supported seed length. */
   @Override public int getNewSeedLength() {
     return MAX_TOTAL_SEED_LENGTH_BYTES;
