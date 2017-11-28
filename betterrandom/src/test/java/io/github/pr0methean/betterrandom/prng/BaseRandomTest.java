@@ -178,8 +178,8 @@ public abstract class BaseRandomTest {
     }
     final double observedSD = stats.getStandardDeviation();
     Reporter.log("Expected SD for Gaussians: 1, observed SD: " + observedSD);
-    assertGreaterOrEqual(observedSD, 0.98);
-    assertLessOrEqual(observedSD, 1.02);
+    assertGreaterOrEqual(observedSD, 0.97);
+    assertLessOrEqual(observedSD, 1.03);
     assertGreaterOrEqual(stats.getMax(), 2.0);
     assertLessOrEqual(stats.getMin(), -2.0);
     assertGreaterOrEqual(stats.getMean(), -0.05);
