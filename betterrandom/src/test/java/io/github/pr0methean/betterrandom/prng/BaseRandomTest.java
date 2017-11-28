@@ -238,7 +238,9 @@ public abstract class BaseRandomTest {
    * for two independently-generated instances to give unequal dumps.
    */
   @Test(timeOut = 15000) public void testDump() throws SeedException {
-    assertNotEquals(createRng().dump(), createRng().dump());
+    final BaseRandom rng = createRng();
+    assertNotEquals(rng.dump(), createRng().dump());
+    rng.nextLong(); // Kill a mutant where dump doesn't unlock the lock
   }
 
   @Test public void testReseeding() throws SeedException {
@@ -325,7 +327,7 @@ public abstract class BaseRandomTest {
 
   @Test(expectedExceptions = IllegalArgumentException.class)
   public void testNextInt1InvalidBound() {
-    createRng().nextInt(-1);
+    createRng().nextInt(0);
   }
 
   @Test public void testNextInt() throws Exception {
@@ -340,7 +342,7 @@ public abstract class BaseRandomTest {
 
   @Test(expectedExceptions = IllegalArgumentException.class)
   public void testNextInt2InvalidBound() {
-    createRng().nextInt(10, 9);
+    createRng().nextInt(1, 1);
   }
 
   @Test public void testNextInt2HugeRange() throws Exception {
