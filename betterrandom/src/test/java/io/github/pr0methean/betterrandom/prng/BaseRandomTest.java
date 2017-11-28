@@ -136,7 +136,7 @@ public abstract class BaseRandomTest {
    * subtle statistical anomalies that would be picked up by Diehard, but it provides a simple check
    * for major problems with the output.
    */
-  @Test(timeOut = 30_000, groups = "non-deterministic") public void testSummaryStats()
+  @Test(timeOut = 30_000, groups = "non-deterministic") public void testIntegerSummaryStats()
       throws SeedException {
     final BaseRandom rng = createRng();
     // Expected standard deviation for a uniformly distributed population of values in the range 0..n
@@ -161,6 +161,30 @@ public abstract class BaseRandomTest {
       assertGreaterOrEqual(median, 0.4 * n);
       assertLessOrEqual(median, 0.6 * n);
     }
+  }
+
+  /**
+   * Test to ensure that the output from nextGaussian is broadly as expected.
+   */
+  @Test(timeOut = 20_000, groups = "non-deterministic") public void testNextGaussianStatistically()
+      throws SeedException {
+    final BaseRandom rng = createRng();
+    final int iterations = 10000;
+    final DescriptiveStatistics stats = new DescriptiveStatistics();
+    for (int i=0; i<iterations; i++) {
+      stats.addValue(rng.nextGaussian());
+    }
+    final double observedSD = stats.getStandardDeviation();
+    Reporter.log("Expected SD for Gaussians: 1, observed SD: " + observedSD);
+    assertGreaterOrEqual(observedSD, 0.98);
+    assertLessOrEqual(observedSD, 1.02);
+    assertGreaterOrEqual(stats.getMax(), 2.0);
+    assertGreaterOrEqual(stats.getMin(), -2.0);
+    assertGreaterOrEqual(stats.getMean(), -0.05);
+    assertLessOrEqual(stats.getMean(), 0.05);
+    final double median = stats.getElement(iterations / 2);
+    assertGreaterOrEqual(median, -0.05);
+    assertLessOrEqual(median, 0.05);
   }
 
   /**
