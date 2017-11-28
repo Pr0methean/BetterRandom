@@ -3,7 +3,6 @@ package io.github.pr0methean.betterrandom.prng;
 import static org.testng.Assert.assertEquals;
 
 import io.github.pr0methean.betterrandom.seed.DefaultSeedGenerator;
-import io.github.pr0methean.betterrandom.seed.RandomSeederThread;
 import io.github.pr0methean.betterrandom.seed.SeedException;
 import io.github.pr0methean.betterrandom.util.CloneViaSerialization;
 import java.io.IOException;
@@ -55,18 +54,7 @@ public class ThreadLocalRandomWrapperTest extends BaseRandomTest {
 
   /** Assertion-free because thread-local. */
   @Override @Test public void testThreadSafety() {
-    ConcurrentSkipListSet<Long> sequentialLongs = new ConcurrentSkipListSet<>();
-    ConcurrentSkipListSet<Long> parallelLongs = new ConcurrentSkipListSet<>();
-    runSequentialAndParallel(sequentialLongs, parallelLongs, Random::nextLong);
-    ConcurrentSkipListSet<Double> sequentialDoubles = new ConcurrentSkipListSet<>();
-    ConcurrentSkipListSet<Double> parallelDoubles = new ConcurrentSkipListSet<>();
-    runSequentialAndParallel(sequentialDoubles, parallelDoubles, Random::nextDouble);
-    sequentialDoubles.clear();
-    parallelDoubles.clear();
-    runSequentialAndParallel(sequentialDoubles, parallelDoubles, Random::nextGaussian);
-    ConcurrentSkipListSet<Integer> sequentialInts = new ConcurrentSkipListSet<>();
-    ConcurrentSkipListSet<Integer> parallelInts = new ConcurrentSkipListSet<>();
-    runSequentialAndParallel(sequentialInts, parallelInts, Random::nextInt);
+    testThreadSafetyVsCrashesOnly(FUNCTIONS_FOR_THREAD_SAFETY_TEST);
   }
 
   @Override public Map<Class<?>, Object> constructorParams() {
