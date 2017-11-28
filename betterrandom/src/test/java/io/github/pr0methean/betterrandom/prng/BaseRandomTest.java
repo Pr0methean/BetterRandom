@@ -493,22 +493,25 @@ public abstract class BaseRandomTest {
   protected final ForkJoinPool pool = new ForkJoinPool(2);
 
   @Test public void testThreadSafety() {
+    for (int i=0; i<5; i++) {
+      // This loop is necessary to control the false pass rate, especially during mutation testing.
       ConcurrentSkipListSet<Long> sequentialLongs = new ConcurrentSkipListSet<>();
       ConcurrentSkipListSet<Long> parallelLongs = new ConcurrentSkipListSet<>();
       runSequentialAndParallel(sequentialLongs, parallelLongs, Random::nextLong);
       assertEquals(parallelLongs, sequentialLongs);
-    ConcurrentSkipListSet<Double> sequentialDoubles = new ConcurrentSkipListSet<>();
-    ConcurrentSkipListSet<Double> parallelDoubles = new ConcurrentSkipListSet<>();
-    runSequentialAndParallel(sequentialDoubles, parallelDoubles, Random::nextDouble);
-    assertEquals(parallelDoubles, sequentialDoubles);
-    sequentialDoubles.clear();
-    parallelDoubles.clear();
-    runSequentialAndParallel(sequentialDoubles, parallelDoubles, Random::nextGaussian);
-    assertEquals(parallelDoubles, sequentialDoubles);
-    ConcurrentSkipListSet<Integer> sequentialInts = new ConcurrentSkipListSet<>();
-    ConcurrentSkipListSet<Integer> parallelInts = new ConcurrentSkipListSet<>();
-    runSequentialAndParallel(sequentialInts, parallelInts, Random::nextInt);
-    assertEquals(parallelInts, sequentialInts);
+      ConcurrentSkipListSet<Double> sequentialDoubles = new ConcurrentSkipListSet<>();
+      ConcurrentSkipListSet<Double> parallelDoubles = new ConcurrentSkipListSet<>();
+      runSequentialAndParallel(sequentialDoubles, parallelDoubles, Random::nextDouble);
+      assertEquals(parallelDoubles, sequentialDoubles);
+      sequentialDoubles.clear();
+      parallelDoubles.clear();
+      runSequentialAndParallel(sequentialDoubles, parallelDoubles, Random::nextGaussian);
+      assertEquals(parallelDoubles, sequentialDoubles);
+      ConcurrentSkipListSet<Integer> sequentialInts = new ConcurrentSkipListSet<>();
+      ConcurrentSkipListSet<Integer> parallelInts = new ConcurrentSkipListSet<>();
+      runSequentialAndParallel(sequentialInts, parallelInts, Random::nextInt);
+      assertEquals(parallelInts, sequentialInts);
+    }
   }
 
   protected <T> void runSequentialAndParallel(ConcurrentSkipListSet<T> sequentialOutput,
