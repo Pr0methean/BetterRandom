@@ -172,7 +172,7 @@ public abstract class BaseRandomTest {
       throws SeedException {
     final BaseRandom rng = createRng();
     final int iterations = 10000;
-    final DescriptiveStatistics stats = new DescriptiveStatistics();
+    final SynchronizedDescriptiveStatistics stats = new SynchronizedDescriptiveStatistics();
     for (int i=0; i<iterations; i++) {
       stats.addValue(rng.nextGaussian());
     }
