@@ -172,6 +172,14 @@ public class Pcg64Random extends BaseRandom implements SeekableRandom {
     return result;
   }
 
+  @Override protected void lockForNextGaussian() {
+    lock.writeLock().lock();
+  }
+
+  @Override protected void unlockForNextGaussian() {
+    lock.writeLock().unlock();
+  }
+
   @Override protected ToStringHelper addSubclassFields(ToStringHelper original) {
     return original.add("internal", internal.get());
   }
