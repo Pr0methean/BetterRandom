@@ -10,8 +10,6 @@ import io.github.pr0methean.betterrandom.util.EntryPoint;
 import java.io.IOException;
 import java.io.ObjectOutputStream;
 import java.util.concurrent.atomic.AtomicLong;
-import java.util.concurrent.locks.ReadWriteLock;
-import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 /**
  * <p>From the original description, "PCG is a family of simple fast space-efficient statistically
@@ -38,14 +36,6 @@ public class Pcg64Random extends BaseRandom implements SeekableRandom {
 
   private final AtomicLong internal;
 
-  /**
-   * Needed to maintain reproducibility for {@link #nextLongNoEntropyDebit()} and {@link
-   * #nextDouble()}, whose calls to
-   * {@link #next(int)} might otherwise interleave. {@link #nextLongNoEntropyDebit()} is a "write";
-   * each other operation that modifies state is a "read" since we're using an AtomicLong.
-   */
-  private final ReadWriteLock lock = new ReentrantReadWriteLock();
-
   public Pcg64Random() {
     this(DefaultSeedGenerator.DEFAULT_SEED_GENERATOR);
   }
@@ -68,20 +58,20 @@ public class Pcg64Random extends BaseRandom implements SeekableRandom {
   }
 
   @Override protected long nextLongNoEntropyDebit() {
-    lock.writeLock().lock();
+    lock.lock();
     try {
       return ((long) (next(32)) << 32) + next(32);
     } finally {
-      lock.writeLock().unlock();
+      lock.unlock();
     }
   }
 
   @Override public double nextDoubleNoEntropyDebit() {
-    lock.writeLock().lock();
+    lock.lock();
     try {
       return super.nextDoubleNoEntropyDebit();
     } finally {
-      lock.writeLock().unlock();
+      lock.unlock();
     }
   }
 
@@ -92,11 +82,11 @@ public class Pcg64Random extends BaseRandom implements SeekableRandom {
   @SuppressWarnings("NonSynchronizedMethodOverridesSynchronizedMethod") @Override
   public void setSeed(long seed) {
     if (internal != null) {
-      lock.readLock().lock();
+      lock.lock();
       try {
         internal.set(seed);
       } finally {
-        lock.readLock().unlock();
+        lock.unlock();
       }
     }
     creditEntropyForNewSeed(Long.BYTES);
@@ -125,11 +115,11 @@ public class Pcg64Random extends BaseRandom implements SeekableRandom {
     }
     final long finalAccMult = accMult;
     final long finalAccPlus = accPlus;
-    lock.readLock().lock();
+    lock.lock();
     try {
       internal.updateAndGet(old -> (finalAccMult * old) + finalAccPlus);
     } finally {
-      lock.readLock().unlock();
+      lock.unlock();
     }
   }
 
@@ -139,29 +129,24 @@ public class Pcg64Random extends BaseRandom implements SeekableRandom {
       throw new IllegalArgumentException("Pcg64Random requires an 8-byte seed");
     }
     if (internal != null) {
-      lock.readLock().lock();
+      lock.lock();
       try {
         internal.set(BinaryUtils.convertBytesToLong(seed));
       } finally {
-        lock.readLock().unlock();
+        lock.unlock();
       }
     }
   }
 
   @Override protected int next(int bits) {
-    lock.readLock().lock();
     long oldInternal;
     long newInternal;
-    try {
-      internal.updateAndGet(old -> (MULTIPLIER * old) + INCREMENT);
-      do {
-        oldInternal = internal.get();
-        newInternal = oldInternal;
-        newInternal ^= oldInternal >>> ROTATION1;
-      } while (!internal.compareAndSet(oldInternal, newInternal));
-    } finally {
-      lock.readLock().unlock();
-    }
+    internal.updateAndGet(old -> (MULTIPLIER * old) + INCREMENT);
+    do {
+      oldInternal = internal.get();
+      newInternal = oldInternal;
+      newInternal ^= oldInternal >>> ROTATION1;
+    } while (!internal.compareAndSet(oldInternal, newInternal));
     int rot = (int) (oldInternal >>> (Long.SIZE - WANTED_OP_BITS)) & MASK;
     int result = (int) (newInternal >>> ROTATION2);
     final int ampRot = rot & MASK;
@@ -172,24 +157,16 @@ public class Pcg64Random extends BaseRandom implements SeekableRandom {
     return result;
   }
 
-  @Override protected void lockForNextGaussian() {
-    lock.writeLock().lock();
-  }
-
-  @Override protected void unlockForNextGaussian() {
-    lock.writeLock().unlock();
-  }
-
   @Override protected ToStringHelper addSubclassFields(ToStringHelper original) {
     return original.add("internal", internal.get());
   }
 
   @Override public double nextGaussian() {
-    lock.writeLock().lock();
+    lock.lock();
     try {
       return super.nextGaussian();
     } finally {
-      lock.writeLock().unlock();
+      lock.unlock();
     }
   }
 
