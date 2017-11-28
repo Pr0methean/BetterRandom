@@ -14,6 +14,6 @@ git commit -m "Update PIT mutation reports"
 git remote add originauth "https://${GH_TOKEN}@github.com/Pr0methean/betterrandom-coverage.git"
 git push --set-upstream originauth master
 while [ ! $? ]; do
-  git pull origin master --rebase # Merge
+  git pull --rebase # Merge
   git push
 done
