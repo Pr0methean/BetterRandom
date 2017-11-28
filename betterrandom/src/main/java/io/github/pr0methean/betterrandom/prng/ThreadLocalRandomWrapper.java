@@ -128,8 +128,8 @@ public class ThreadLocalRandomWrapper extends RandomWrapper {
     return getWrapped().nextFloat();
   }
 
-  @Override public double nextDouble() {
-    return getWrapped().nextDouble();
+  @Override public double nextDoubleNoEntropyDebit() {
+    return getWrapped().nextDoubleNoEntropyDebit();
   }
 
   @Override public double nextGaussian() {
