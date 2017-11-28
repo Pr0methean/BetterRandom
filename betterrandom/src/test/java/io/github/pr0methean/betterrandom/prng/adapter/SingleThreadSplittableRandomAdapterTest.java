@@ -17,7 +17,7 @@ public class SingleThreadSplittableRandomAdapterTest extends BaseRandomTest {
   }
 
 
-  @Override @Test public void testThreadSafety() {
+  @Override @Test(enabled = false) public void testThreadSafety() {
     // No-op because this class isn't thread-safe.
   }
 
