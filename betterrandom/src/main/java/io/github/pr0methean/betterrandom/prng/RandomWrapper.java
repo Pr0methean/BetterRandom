@@ -230,7 +230,6 @@ public class RandomWrapper extends BaseRandom {
         || ((ByteArrayReseedableRandom) currentWrapped).preferSeedWithLong();
   }
 
-  /** */
   @SuppressWarnings("LockAcquiredButNotSafelyReleased") @Override public int getNewSeedLength() {
     boolean locked = false;
     if (lock != null) {
