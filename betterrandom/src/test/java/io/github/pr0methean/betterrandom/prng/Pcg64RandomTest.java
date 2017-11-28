@@ -3,9 +3,6 @@ package io.github.pr0methean.betterrandom.prng;
 import static org.testng.Assert.assertEquals;
 
 import com.google.common.collect.ImmutableList;
-import java.util.Random;
-import java.util.concurrent.ConcurrentSkipListSet;
-import java.util.function.Function;
 import org.testng.annotations.Test;
 
 public class Pcg64RandomTest extends BaseRandomTest {
@@ -41,7 +38,8 @@ public class Pcg64RandomTest extends BaseRandomTest {
 
   // nextInt is excluded from assertion due to https://github.com/Pr0methean/BetterRandom/issues/13
   @Override public void testThreadSafety() {
-    testThreadSafety(ImmutableList.of(NEXT_LONG, NEXT_GAUSSIAN, NEXT_DOUBLE));
+    testThreadSafety(ImmutableList.of(NEXT_LONG, NEXT_GAUSSIAN, NEXT_DOUBLE),
+        FUNCTIONS_FOR_THREAD_SAFETY_TEST_PAIRWISE);
     testThreadSafetyVsCrashesOnly(ImmutableList.of(NEXT_INT, NEXT_LONG));
     testThreadSafetyVsCrashesOnly(ImmutableList.of(NEXT_INT, NEXT_GAUSSIAN));
     testThreadSafetyVsCrashesOnly(ImmutableList.of(NEXT_INT, NEXT_DOUBLE));

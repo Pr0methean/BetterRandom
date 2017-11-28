@@ -526,9 +526,15 @@ public abstract class BaseRandomTest {
       new NamedFunction<>(Random::nextGaussian, "Random::nextGaussian");
   protected static final List<NamedFunction<Random, Double>> FUNCTIONS_FOR_THREAD_SAFETY_TEST =
       ImmutableList.of(NEXT_LONG, NEXT_INT, NEXT_DOUBLE, NEXT_GAUSSIAN);
+  /**
+   * Interleaving calls to nextLong and nextInt is not reproducible, because the longs will no
+   * longer be 64-bit-aligned within the pseudorandom-bit stream.
+   */
+  protected static final List<NamedFunction<Random, Double>> FUNCTIONS_FOR_THREAD_SAFETY_TEST_PAIRWISE =
+      ImmutableList.of(NEXT_LONG, NEXT_DOUBLE, NEXT_GAUSSIAN);
 
   @Test public void testThreadSafety() {
-    testThreadSafety(FUNCTIONS_FOR_THREAD_SAFETY_TEST);
+    testThreadSafety(FUNCTIONS_FOR_THREAD_SAFETY_TEST, FUNCTIONS_FOR_THREAD_SAFETY_TEST_PAIRWISE);
   }
 
   protected void testThreadSafetyVsCrashesOnly(List<NamedFunction<Random, Double>> functions) {
@@ -541,7 +547,8 @@ public abstract class BaseRandomTest {
     }
   }
 
-  protected void testThreadSafety(List<NamedFunction<Random, Double>> functions) {
+  protected void testThreadSafety(List<NamedFunction<Random, Double>> functions,
+      List<NamedFunction<Random, Double>> pairwiseFunctions) {
     int seedLength = createRng().getNewSeedLength();
     byte[] seed = DefaultSeedGenerator.DEFAULT_SEED_GENERATOR.generateSeed(seedLength);
     for (NamedFunction<Random, Double> supplier : functions) {
@@ -555,10 +562,10 @@ public abstract class BaseRandomTest {
     }
 
     // Check, for each distinct pair, that it doesn't matter what order they start in
-    for (int i = 0; i < functions.size(); i++) {
-      for (int j = i + 1; j < functions.size(); j++) {
-        NamedFunction<Random, Double> supplier1 = functions.get(i);
-        NamedFunction<Random, Double> supplier2 = functions.get(j);
+    for (int i = 0; i < pairwiseFunctions.size(); i++) {
+      for (int j = i + 1; j < pairwiseFunctions.size(); j++) {
+        NamedFunction<Random, Double> supplier1 = pairwiseFunctions.get(i);
+        NamedFunction<Random, Double> supplier2 = pairwiseFunctions.get(j);
         runSequential(supplier1, supplier2, seed);
         runParallel(supplier2, supplier1, seed);
         assertEquals(sequentialOutput, parallelOutput, String
