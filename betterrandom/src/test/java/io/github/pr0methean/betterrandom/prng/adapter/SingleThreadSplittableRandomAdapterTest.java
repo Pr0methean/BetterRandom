@@ -7,12 +7,18 @@ import io.github.pr0methean.betterrandom.prng.BaseRandomTest;
 import io.github.pr0methean.betterrandom.seed.DefaultSeedGenerator;
 import io.github.pr0methean.betterrandom.seed.SeedException;
 import io.github.pr0methean.betterrandom.util.CloneViaSerialization;
+import java.util.concurrent.ConcurrentSkipListSet;
 import org.testng.annotations.Test;
 
 public class SingleThreadSplittableRandomAdapterTest extends BaseRandomTest {
 
   @Override protected Class<? extends BaseRandom> getClassUnderTest() {
     return SingleThreadSplittableRandomAdapter.class;
+  }
+
+
+  @Override @Test public void testThreadSafety() {
+    // No-op because this class isn't thread-safe.
   }
 
   /**

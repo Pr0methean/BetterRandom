@@ -11,6 +11,7 @@ import java.io.Serializable;
 import java.security.GeneralSecurityException;
 import java.util.Map;
 import java.util.Random;
+import java.util.concurrent.ConcurrentSkipListSet;
 import java.util.function.Function;
 import java.util.function.Supplier;
 import org.testng.annotations.Test;
@@ -50,6 +51,13 @@ public class ThreadLocalRandomWrapperTest extends BaseRandomTest {
   @Override @Test(expectedExceptions = UnsupportedOperationException.class)
   public void testRandomSeederThreadIntegration() throws Exception {
     createRng().setSeedGenerator(DefaultSeedGenerator.DEFAULT_SEED_GENERATOR);
+  }
+
+  /** Assertion-free because thread-local. */
+  @Override @Test public void testThreadSafety() {
+    ConcurrentSkipListSet<Long> sequentialOutput = new ConcurrentSkipListSet<>();
+    ConcurrentSkipListSet<Long> parallelOutput = new ConcurrentSkipListSet<>();
+    runSequentialAndParallel(sequentialOutput, parallelOutput);
   }
 
   @Override public Map<Class<?>, Object> constructorParams() {

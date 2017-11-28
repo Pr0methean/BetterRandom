@@ -11,6 +11,7 @@ import io.github.pr0methean.betterrandom.seed.RandomSeederThread;
 import io.github.pr0methean.betterrandom.seed.SeedException;
 import io.github.pr0methean.betterrandom.util.BinaryUtils;
 import io.github.pr0methean.betterrandom.util.CloneViaSerialization;
+import java.util.concurrent.ConcurrentSkipListSet;
 import org.testng.annotations.Test;
 
 public class ReseedingSplittableRandomAdapterTest extends SingleThreadSplittableRandomAdapterTest {
@@ -80,5 +81,12 @@ public class ReseedingSplittableRandomAdapterTest extends SingleThreadSplittable
   @Test public void testFinalize() throws SeedException {
     ReseedingSplittableRandomAdapter.getInstance(new FakeSeedGenerator());
     Runtime.getRuntime().runFinalization();
+  }
+
+  /** Assertion-free because thread-local. */
+  @Override @Test public void testThreadSafety() {
+    ConcurrentSkipListSet<Long> sequentialOutput = new ConcurrentSkipListSet<>();
+    ConcurrentSkipListSet<Long> parallelOutput = new ConcurrentSkipListSet<>();
+    runSequentialAndParallel(sequentialOutput, parallelOutput);
   }
 }
