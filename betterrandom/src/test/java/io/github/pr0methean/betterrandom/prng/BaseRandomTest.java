@@ -486,16 +486,20 @@ public abstract class BaseRandomTest {
     }
   }
 
+  protected final ForkJoinPool pool = new ForkJoinPool(2);
+
   @Test public void testThreadSafety() {
-    ConcurrentSkipListSet<Long> sequentialOutput = new ConcurrentSkipListSet<>();
-    ConcurrentSkipListSet<Long> parallelOutput = new ConcurrentSkipListSet<>();
-    runSequentialAndParallel(sequentialOutput, parallelOutput);
-    assertEquals(parallelOutput, sequentialOutput);
+    // This loop is intended to reduce the rate of false passes.
+    for (int i=0; i<5; i++) {
+      ConcurrentSkipListSet<Long> sequentialOutput = new ConcurrentSkipListSet<>();
+      ConcurrentSkipListSet<Long> parallelOutput = new ConcurrentSkipListSet<>();
+      runSequentialAndParallel(sequentialOutput, parallelOutput);
+      assertEquals(parallelOutput, sequentialOutput);
+    }
   }
 
   protected void runSequentialAndParallel(ConcurrentSkipListSet<Long> sequentialOutput,
       ConcurrentSkipListSet<Long> parallelOutput) {
-    ForkJoinPool pool = new ForkJoinPool(2);
     int seedLength = createRng().getNewSeedLength();
     byte[] seed = DefaultSeedGenerator.DEFAULT_SEED_GENERATOR.generateSeed(seedLength);
     BaseRandom sequentialPrng = createRng(seed);
