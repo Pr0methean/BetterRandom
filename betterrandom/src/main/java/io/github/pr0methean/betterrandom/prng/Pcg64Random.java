@@ -58,6 +58,10 @@ public class Pcg64Random extends BaseRandom implements SeekableRandom {
     internal = new AtomicLong(seed);
   }
 
+  @Override protected long nextLongNoEntropyDebit() {
+    return (((long) nextInt()) << 32L) | nextInt();
+  }
+
   @Override public byte[] getSeed() {
     return BinaryUtils.convertLongToBytes(internal.get()).clone();
   }

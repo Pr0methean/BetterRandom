@@ -524,7 +524,12 @@ public abstract class BaseRandom extends Random
    * @return a pseudorandom {@code long} with all possible values equally likely.
    */
   protected long nextLongNoEntropyDebit() {
-    return super.nextLong();
+    lock.lock();
+    try {
+      return super.nextLong();
+    } finally {
+      lock.unlock();
+    }
   }
 
   /**
