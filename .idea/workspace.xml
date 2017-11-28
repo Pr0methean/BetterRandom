@@ -5,10 +5,7 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="5cfcc489-45e1-48cf-a1ae-7b2e5d28efac" name="Default" comment="">
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/betterrandom/src/test/java/io/github/pr0methean/betterrandom/prng/RandomWrapperSecureRandomTest.java" afterPath="$PROJECT_DIR$/betterrandom/src/test/java/io/github/pr0methean/betterrandom/prng/RandomWrapperSecureRandomTest.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/betterrandom/src/test/java/io/github/pr0methean/betterrandom/prng/ThreadLocalRandomWrapperTest.java" afterPath="$PROJECT_DIR$/betterrandom/src/test/java/io/github/pr0methean/betterrandom/prng/ThreadLocalRandomWrapperTest.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/betterrandom/src/test/java/io/github/pr0methean/betterrandom/prng/adapter/ReseedingSplittableRandomAdapterTest.java" afterPath="$PROJECT_DIR$/betterrandom/src/test/java/io/github/pr0methean/betterrandom/prng/adapter/ReseedingSplittableRandomAdapterTest.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/betterrandom/src/test/java/io/github/pr0methean/betterrandom/prng/adapter/SplittableRandomAdapterTest.java" afterPath="$PROJECT_DIR$/betterrandom/src/test/java/io/github/pr0methean/betterrandom/prng/adapter/SplittableRandomAdapterTest.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/betterrandom/src/main/java/io/github/pr0methean/betterrandom/prng/BaseRandom.java" afterPath="$PROJECT_DIR$/betterrandom/src/main/java/io/github/pr0methean/betterrandom/prng/BaseRandom.java" />
     </list>
     <ignored path="$PROJECT_DIR$/out/" />
     <ignored path="$PROJECT_DIR$/target/" />
@@ -35,80 +32,13 @@
       <file leaf-file-name="BaseRandom.java" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/betterrandom/src/main/java/io/github/pr0methean/betterrandom/prng/BaseRandom.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="0">
-              <caret line="146" column="0" lean-forward="false" selection-start-line="146" selection-start-column="0" selection-end-line="146" selection-end-column="0" />
+            <state relative-caret-position="-383">
+              <caret line="374" column="20" lean-forward="true" selection-start-line="374" selection-start-column="20" selection-end-line="374" selection-end-column="20" />
               <folding>
-                <marker date="1511848231865" expanded="true" signature="6011:6076" ph="/**...*/" />
-                <marker date="1511848231865" expanded="true" signature="12112:12147" ph="{...}" />
-                <marker date="1511848231865" expanded="true" signature="12151:12425" ph="/**...*/" />
-                <marker date="1511848231865" expanded="true" signature="12537:12657" ph="{...}" />
-                <marker date="1511848231865" expanded="true" signature="12661:12900" ph="/**...*/" />
-                <marker date="1511848231865" expanded="true" signature="12943:13015" ph="{...}" />
-                <marker date="1511848231865" expanded="true" signature="13080:13159" ph="{...}" />
-                <marker date="1511848231865" expanded="true" signature="13218:13294" ph="{...}" />
-                <marker date="1511848231865" expanded="true" signature="13298:13550" ph="/**...*/" />
-                <marker date="1511848231865" expanded="true" signature="13685:13810" ph="{...}" />
-                <marker date="1511848231865" expanded="true" signature="13814:14112" ph="/**...*/" />
-                <marker date="1511848231865" expanded="true" signature="14147:14221" ph="{...}" />
-                <marker date="1511848231865" expanded="true" signature="14225:14578" ph="/**...*/" />
-                <marker date="1511848231865" expanded="true" signature="14634:14715" ph="{...}" />
-                <marker date="1511848231865" expanded="true" signature="14758:14816" ph="{...}" />
-                <marker date="1511848231865" expanded="true" signature="14855:14926" ph="{...}" />
-                <marker date="1511848231865" expanded="true" signature="14967:15040" ph="{...}" />
-                <marker date="1511848231865" expanded="true" signature="15044:15300" ph="/**...*/" />
-                <marker date="1511848231865" expanded="true" signature="15342:15559" ph="{...}" />
-                <marker date="1511848231865" expanded="true" signature="15348:15466" ph="//..." />
-                <marker date="1511848231865" expanded="true" signature="15563:15882" ph="/**...*/" />
-                <marker date="1511848231865" expanded="true" signature="16023:16663" ph="{...}" />
-                <marker date="1511848231865" expanded="true" signature="16722:16795" ph="{...}" />
-                <marker date="1511848231865" expanded="false" signature="16832:16839" ph=" { " />
-                <marker date="1511848231865" expanded="false" signature="16895:16899" ph=" }" />
-                <marker date="1511848231865" expanded="true" signature="16903:17143" ph="/**...*/" />
-                <marker date="1511848231865" expanded="true" signature="17266:17385" ph="{...}" />
-                <marker date="1511848231865" expanded="true" signature="17389:17836" ph="/**...*/" />
-                <marker date="1511848231865" expanded="true" signature="17893:18411" ph="{...}" />
-                <marker date="1511848231865" expanded="true" signature="18415:18677" ph="/**...*/" />
-                <marker date="1511848231865" expanded="true" signature="18771:18876" ph="{...}" />
-                <marker date="1511848231865" expanded="true" signature="18937:19006" ph="{...}" />
-                <marker date="1511848231865" expanded="true" signature="19010:19230" ph="/**...*/" />
-                <marker date="1511848231865" expanded="false" signature="19268:19275" ph=" { " />
-                <marker date="1511848231865" expanded="false" signature="19333:19337" ph=" }" />
-                <marker date="1511848231865" expanded="true" signature="19341:19592" ph="/**...*/" />
-                <marker date="1511848231865" expanded="true" signature="19719:19825" ph="{...}" />
-                <marker date="1511848231865" expanded="true" signature="19829:20278" ph="/**...*/" />
-                <marker date="1511848231865" expanded="true" signature="20339:20985" ph="{...}" />
-                <marker date="1511848231865" expanded="true" signature="20989:21151" ph="/**...*/" />
-                <marker date="1511848231865" expanded="true" signature="21194:21300" ph="{...}" />
-                <marker date="1511848231865" expanded="true" signature="21304:21570" ph="/**...*/" />
-                <marker date="1511848231865" expanded="true" signature="21668:21784" ph="{...}" />
-                <marker date="1511848231865" expanded="true" signature="21819:22126" ph="{...}" />
-                <marker date="1511848231865" expanded="true" signature="22164:22266" ph="{...}" />
-                <marker date="1511848231865" expanded="true" signature="22270:22770" ph="/**...*/" />
-                <marker date="1511848231865" expanded="true" signature="22887:23074" ph="{...}" />
-                <marker date="1511848231865" expanded="true" signature="23078:23246" ph="/**...*/" />
-                <marker date="1511848231865" expanded="true" signature="23298:23402" ph="{...}" />
-                <marker date="1511848231865" expanded="true" signature="23406:23691" ph="/**...*/" />
-                <marker date="1511848231865" expanded="true" signature="23775:24170" ph="/**...*/" />
-                <marker date="1511848231865" expanded="true" signature="24231:24570" ph="{...}" />
-                <marker date="1511848231865" expanded="false" signature="24619:24626" ph=" { " />
-                <marker date="1511848231865" expanded="false" signature="24666:24670" ph=" }" />
-                <marker date="1511848231865" expanded="true" signature="24674:25005" ph="/**...*/" />
-                <marker date="1511848231865" expanded="true" signature="25058:25284" ph="{...}" />
-                <marker date="1511848231865" expanded="true" signature="25288:25541" ph="/**...*/" />
-                <marker date="1511848231865" expanded="true" signature="25599:25798" ph="{...}" />
-                <marker date="1511848231865" expanded="true" signature="25802:25885" ph="/**...*/" />
-                <marker date="1511848231865" expanded="false" signature="25924:25931" ph=" { " />
-                <marker date="1511848231865" expanded="false" signature="25963:25967" ph=" }" />
-                <marker date="1511848231865" expanded="true" signature="26066:26153" ph="{...}" />
-                <marker date="1511848231865" expanded="false" signature="26195:26202" ph=" { " />
-                <marker date="1511848231865" expanded="false" signature="26227:26231" ph=" }" />
-                <marker date="1511848231865" expanded="true" signature="26235:26430" ph="/**...*/" />
-                <marker date="1511848231865" expanded="true" signature="26478:26565" ph="{...}" />
-                <marker date="1511848231865" expanded="true" signature="26606:26791" ph="{...}" />
-                <marker date="1511848231865" expanded="true" signature="26795:27103" ph="/**...*/" />
-                <marker date="1511848231865" expanded="true" signature="27240:27610" ph="{...}" />
-                <marker date="1511848231865" expanded="true" signature="27614:27913" ph="/**...*/" />
-                <marker date="1511848231865" expanded="true" signature="28003:28413" ph="{...}" />
+                <element signature="e#6142#6143#0" expanded="true" />
+                <element signature="e#6164#6165#0" expanded="true" />
+                <element signature="e#11087#11088#0" expanded="true" />
+                <element signature="e#11126#11127#0" expanded="true" />
               </folding>
             </state>
           </provider>
@@ -117,30 +47,11 @@
       <file leaf-file-name="SplittableRandomAdapter.java" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/betterrandom/src/main/java/io/github/pr0methean/betterrandom/prng/adapter/SplittableRandomAdapter.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="1200">
+            <state relative-caret-position="94">
               <caret line="72" column="16" lean-forward="false" selection-start-line="72" selection-start-column="16" selection-end-line="72" selection-end-column="16" />
               <folding>
                 <element signature="e#2972#2973#0" expanded="true" />
-                <marker date="1511848224114" expanded="true" signature="2990:2994" ph=" }" />
-                <marker date="1511848224114" expanded="true" signature="3093:3161" ph="{...}" />
-                <marker date="1511848224114" expanded="true" signature="3165:3254" ph="/**...*/" />
-                <marker date="1511848224114" expanded="false" signature="3295:3302" ph=" { " />
-                <marker date="1511848224114" expanded="false" signature="3333:3337" ph=" }" />
-                <marker date="1511848224114" expanded="false" signature="3395:3402" ph=" { " />
-                <marker date="1511848224114" expanded="false" signature="3437:3441" ph=" }" />
-                <marker date="1511848224114" expanded="true" signature="3510:3680" ph="{...}" />
-                <marker date="1511848224114" expanded="true" signature="3727:4160" ph="{...}" />
-                <marker date="1511848224114" expanded="false" signature="4222:4229" ph=" { " />
-                <marker date="1511848224114" expanded="false" signature="4260:4264" ph=" }" />
-                <marker date="1511848224114" expanded="true" signature="4352:4422" ph="{...}" />
-                <marker date="1511848224114" expanded="true" signature="4426:4586" ph="/**...*/" />
-                <marker date="1511848224114" expanded="true" signature="4673:4771" ph="{...}" />
-                <marker date="1511848224114" expanded="false" signature="4808:4815" ph=" { " />
-                <marker date="1511848224114" expanded="false" signature="4842:4846" ph=" }" />
-                <marker date="1511848224114" expanded="true" signature="4850:4914" ph="/**...*/" />
-                <marker date="1511848224114" expanded="true" signature="4966:5146" ph="{...}" />
-                <marker date="1511848224114" expanded="true" signature="5150:5214" ph="/**...*/" />
-                <marker date="1511848224114" expanded="true" signature="5330:5720" ph="{...}" />
+                <element signature="e#2993#2994#0" expanded="true" />
               </folding>
             </state>
           </provider>
@@ -149,7 +60,7 @@
       <file leaf-file-name="Random.java" pinned="false" current-in-tab="false">
         <entry file="jar://C:/Program Files/Java/jdk1.8.0_131/src.zip!/java/util/Random.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="9740">
+            <state relative-caret-position="20">
               <caret line="530" column="18" lean-forward="false" selection-start-line="530" selection-start-column="18" selection-end-line="530" selection-end-column="18" />
               <folding>
                 <element signature="e#21068#21069#0" expanded="true" />
@@ -159,20 +70,20 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="BaseRandomTest.java" pinned="false" current-in-tab="false">
+      <file leaf-file-name="BaseRandomTest.java" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/betterrandom/src/test/java/io/github/pr0methean/betterrandom/prng/BaseRandomTest.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="170">
-              <caret line="494" column="20" lean-forward="false" selection-start-line="494" selection-start-column="20" selection-end-line="494" selection-end-column="20" />
+            <state relative-caret-position="294">
+              <caret line="503" column="76" lean-forward="true" selection-start-line="503" selection-start-column="76" selection-end-line="503" selection-end-column="76" />
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="ThreadLocalRandomWrapperTest.java" pinned="false" current-in-tab="true">
+      <file leaf-file-name="ThreadLocalRandomWrapperTest.java" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/betterrandom/src/test/java/io/github/pr0methean/betterrandom/prng/ThreadLocalRandomWrapperTest.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="440">
+            <state relative-caret-position="320">
               <caret line="69" column="3" lean-forward="false" selection-start-line="69" selection-start-column="3" selection-end-line="69" selection-end-column="3" />
               <folding />
             </state>
@@ -229,7 +140,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>advance(</find>
       <find>XSH RR</find>
       <find>base_generate</find>
       <find>multiplier(</find>
@@ -259,6 +169,7 @@
       <find>LOG.</find>
       <find>already</find>
       <find>nextLong</find>
+      <find>nextdouble</find>
     </findStrings>
     <replaceStrings>
       <replace>timeOut = 1000</replace>
@@ -340,7 +251,6 @@
         <option value="$PROJECT_DIR$/betterrandom/src/test/java/io/github/pr0methean/betterrandom/prng/RandomWrapperAesCounterRandomTest.java" />
         <option value="$PROJECT_DIR$/betterrandom/src/main/java/io/github/pr0methean/betterrandom/prng/Cmwc4096Random.java" />
         <option value="$PROJECT_DIR$/betterrandom/src/main/java/io/github/pr0methean/betterrandom/prng/AesCounterRandom.java" />
-        <option value="$PROJECT_DIR$/betterrandom/src/main/java/io/github/pr0methean/betterrandom/prng/BaseRandom.java" />
         <option value="$PROJECT_DIR$/betterrandom/src/main/java/io/github/pr0methean/betterrandom/prng/RandomWrapper.java" />
         <option value="$PROJECT_DIR$/betterrandom/src/main/java/io/github/pr0methean/betterrandom/prng/ThreadLocalRandomWrapper.java" />
         <option value="$PROJECT_DIR$/betterrandom/src/main/java/io/github/pr0methean/betterrandom/prng/adapter/ReseedingSplittableRandomAdapter.java" />
@@ -351,6 +261,7 @@
         <option value="$PROJECT_DIR$/betterrandom/src/test/java/io/github/pr0methean/betterrandom/prng/adapter/ReseedingSplittableRandomAdapterTest.java" />
         <option value="$PROJECT_DIR$/betterrandom/src/test/java/io/github/pr0methean/betterrandom/prng/adapter/SplittableRandomAdapterTest.java" />
         <option value="$PROJECT_DIR$/betterrandom/src/test/java/io/github/pr0methean/betterrandom/prng/ThreadLocalRandomWrapperTest.java" />
+        <option value="$PROJECT_DIR$/betterrandom/src/main/java/io/github/pr0methean/betterrandom/prng/BaseRandom.java" />
       </list>
     </option>
   </component>
@@ -487,6 +398,9 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
+      <pane id="PackagesPane" />
+      <pane id="Scratches" />
+      <pane id="Scope" />
       <pane id="ProjectPane">
         <subPane>
           <expand>
@@ -639,9 +553,6 @@
           <select />
         </subPane>
       </pane>
-      <pane id="PackagesPane" />
-      <pane id="Scope" />
-      <pane id="Scratches" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -1311,6 +1222,7 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="377">
           <caret line="430" column="35" lean-forward="true" selection-start-line="430" selection-start-column="35" selection-end-line="430" selection-end-column="35" />
+          <folding />
         </state>
       </provider>
     </entry>
@@ -1467,8 +1379,8 @@
         <state relative-caret-position="210">
           <caret line="116" column="3" lean-forward="true" selection-start-line="116" selection-start-column="3" selection-end-line="116" selection-end-column="3" />
           <folding>
-            <element signature="e#3934#3935#0" expanded="true" />
-            <element signature="e#3983#3984#0" expanded="true" />
+            <element signature="e#3934#3935#0" expanded="false" />
+            <element signature="e#3983#3984#0" expanded="false" />
           </folding>
         </state>
       </provider>
@@ -1478,10 +1390,10 @@
         <state relative-caret-position="13460">
           <caret line="725" column="20" lean-forward="false" selection-start-line="725" selection-start-column="20" selection-end-line="725" selection-end-column="20" />
           <folding>
-            <element signature="e#7757#7758#0" expanded="true" />
-            <element signature="e#7784#7785#0" expanded="true" />
-            <element signature="e#27298#27299#0" expanded="true" />
-            <element signature="e#27343#27344#0" expanded="true" />
+            <element signature="e#7757#7758#0" expanded="false" />
+            <element signature="e#7784#7785#0" expanded="false" />
+            <element signature="e#27298#27299#0" expanded="false" />
+            <element signature="e#27343#27344#0" expanded="false" />
           </folding>
         </state>
       </provider>
@@ -1556,127 +1468,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/betterrandom/src/main/java/io/github/pr0methean/betterrandom/prng/BaseRandom.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="146" column="0" lean-forward="false" selection-start-line="146" selection-start-column="0" selection-end-line="146" selection-end-column="0" />
-          <folding>
-            <marker date="1511848231865" expanded="true" signature="6011:6076" ph="/**...*/" />
-            <marker date="1511848231865" expanded="true" signature="12112:12147" ph="{...}" />
-            <marker date="1511848231865" expanded="true" signature="12151:12425" ph="/**...*/" />
-            <marker date="1511848231865" expanded="true" signature="12537:12657" ph="{...}" />
-            <marker date="1511848231865" expanded="true" signature="12661:12900" ph="/**...*/" />
-            <marker date="1511848231865" expanded="true" signature="12943:13015" ph="{...}" />
-            <marker date="1511848231865" expanded="true" signature="13080:13159" ph="{...}" />
-            <marker date="1511848231865" expanded="true" signature="13218:13294" ph="{...}" />
-            <marker date="1511848231865" expanded="true" signature="13298:13550" ph="/**...*/" />
-            <marker date="1511848231865" expanded="true" signature="13685:13810" ph="{...}" />
-            <marker date="1511848231865" expanded="true" signature="13814:14112" ph="/**...*/" />
-            <marker date="1511848231865" expanded="true" signature="14147:14221" ph="{...}" />
-            <marker date="1511848231865" expanded="true" signature="14225:14578" ph="/**...*/" />
-            <marker date="1511848231865" expanded="true" signature="14634:14715" ph="{...}" />
-            <marker date="1511848231865" expanded="true" signature="14758:14816" ph="{...}" />
-            <marker date="1511848231865" expanded="true" signature="14855:14926" ph="{...}" />
-            <marker date="1511848231865" expanded="true" signature="14967:15040" ph="{...}" />
-            <marker date="1511848231865" expanded="true" signature="15044:15300" ph="/**...*/" />
-            <marker date="1511848231865" expanded="true" signature="15342:15559" ph="{...}" />
-            <marker date="1511848231865" expanded="true" signature="15348:15466" ph="//..." />
-            <marker date="1511848231865" expanded="true" signature="15563:15882" ph="/**...*/" />
-            <marker date="1511848231865" expanded="true" signature="16023:16663" ph="{...}" />
-            <marker date="1511848231865" expanded="true" signature="16722:16795" ph="{...}" />
-            <marker date="1511848231865" expanded="false" signature="16832:16839" ph=" { " />
-            <marker date="1511848231865" expanded="false" signature="16895:16899" ph=" }" />
-            <marker date="1511848231865" expanded="true" signature="16903:17143" ph="/**...*/" />
-            <marker date="1511848231865" expanded="true" signature="17266:17385" ph="{...}" />
-            <marker date="1511848231865" expanded="true" signature="17389:17836" ph="/**...*/" />
-            <marker date="1511848231865" expanded="true" signature="17893:18411" ph="{...}" />
-            <marker date="1511848231865" expanded="true" signature="18415:18677" ph="/**...*/" />
-            <marker date="1511848231865" expanded="true" signature="18771:18876" ph="{...}" />
-            <marker date="1511848231865" expanded="true" signature="18937:19006" ph="{...}" />
-            <marker date="1511848231865" expanded="true" signature="19010:19230" ph="/**...*/" />
-            <marker date="1511848231865" expanded="false" signature="19268:19275" ph=" { " />
-            <marker date="1511848231865" expanded="false" signature="19333:19337" ph=" }" />
-            <marker date="1511848231865" expanded="true" signature="19341:19592" ph="/**...*/" />
-            <marker date="1511848231865" expanded="true" signature="19719:19825" ph="{...}" />
-            <marker date="1511848231865" expanded="true" signature="19829:20278" ph="/**...*/" />
-            <marker date="1511848231865" expanded="true" signature="20339:20985" ph="{...}" />
-            <marker date="1511848231865" expanded="true" signature="20989:21151" ph="/**...*/" />
-            <marker date="1511848231865" expanded="true" signature="21194:21300" ph="{...}" />
-            <marker date="1511848231865" expanded="true" signature="21304:21570" ph="/**...*/" />
-            <marker date="1511848231865" expanded="true" signature="21668:21784" ph="{...}" />
-            <marker date="1511848231865" expanded="true" signature="21819:22126" ph="{...}" />
-            <marker date="1511848231865" expanded="true" signature="22164:22266" ph="{...}" />
-            <marker date="1511848231865" expanded="true" signature="22270:22770" ph="/**...*/" />
-            <marker date="1511848231865" expanded="true" signature="22887:23074" ph="{...}" />
-            <marker date="1511848231865" expanded="true" signature="23078:23246" ph="/**...*/" />
-            <marker date="1511848231865" expanded="true" signature="23298:23402" ph="{...}" />
-            <marker date="1511848231865" expanded="true" signature="23406:23691" ph="/**...*/" />
-            <marker date="1511848231865" expanded="true" signature="23775:24170" ph="/**...*/" />
-            <marker date="1511848231865" expanded="true" signature="24231:24570" ph="{...}" />
-            <marker date="1511848231865" expanded="false" signature="24619:24626" ph=" { " />
-            <marker date="1511848231865" expanded="false" signature="24666:24670" ph=" }" />
-            <marker date="1511848231865" expanded="true" signature="24674:25005" ph="/**...*/" />
-            <marker date="1511848231865" expanded="true" signature="25058:25284" ph="{...}" />
-            <marker date="1511848231865" expanded="true" signature="25288:25541" ph="/**...*/" />
-            <marker date="1511848231865" expanded="true" signature="25599:25798" ph="{...}" />
-            <marker date="1511848231865" expanded="true" signature="25802:25885" ph="/**...*/" />
-            <marker date="1511848231865" expanded="false" signature="25924:25931" ph=" { " />
-            <marker date="1511848231865" expanded="false" signature="25963:25967" ph=" }" />
-            <marker date="1511848231865" expanded="true" signature="26066:26153" ph="{...}" />
-            <marker date="1511848231865" expanded="false" signature="26195:26202" ph=" { " />
-            <marker date="1511848231865" expanded="false" signature="26227:26231" ph=" }" />
-            <marker date="1511848231865" expanded="true" signature="26235:26430" ph="/**...*/" />
-            <marker date="1511848231865" expanded="true" signature="26478:26565" ph="{...}" />
-            <marker date="1511848231865" expanded="true" signature="26606:26791" ph="{...}" />
-            <marker date="1511848231865" expanded="true" signature="26795:27103" ph="/**...*/" />
-            <marker date="1511848231865" expanded="true" signature="27240:27610" ph="{...}" />
-            <marker date="1511848231865" expanded="true" signature="27614:27913" ph="/**...*/" />
-            <marker date="1511848231865" expanded="true" signature="28003:28413" ph="{...}" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/betterrandom/src/main/java/io/github/pr0methean/betterrandom/prng/adapter/SplittableRandomAdapter.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1200">
-          <caret line="72" column="16" lean-forward="false" selection-start-line="72" selection-start-column="16" selection-end-line="72" selection-end-column="16" />
-          <folding>
-            <element signature="e#2972#2973#0" expanded="true" />
-            <marker date="1511848224114" expanded="true" signature="2990:2994" ph=" }" />
-            <marker date="1511848224114" expanded="true" signature="3093:3161" ph="{...}" />
-            <marker date="1511848224114" expanded="true" signature="3165:3254" ph="/**...*/" />
-            <marker date="1511848224114" expanded="false" signature="3295:3302" ph=" { " />
-            <marker date="1511848224114" expanded="false" signature="3333:3337" ph=" }" />
-            <marker date="1511848224114" expanded="false" signature="3395:3402" ph=" { " />
-            <marker date="1511848224114" expanded="false" signature="3437:3441" ph=" }" />
-            <marker date="1511848224114" expanded="true" signature="3510:3680" ph="{...}" />
-            <marker date="1511848224114" expanded="true" signature="3727:4160" ph="{...}" />
-            <marker date="1511848224114" expanded="false" signature="4222:4229" ph=" { " />
-            <marker date="1511848224114" expanded="false" signature="4260:4264" ph=" }" />
-            <marker date="1511848224114" expanded="true" signature="4352:4422" ph="{...}" />
-            <marker date="1511848224114" expanded="true" signature="4426:4586" ph="/**...*/" />
-            <marker date="1511848224114" expanded="true" signature="4673:4771" ph="{...}" />
-            <marker date="1511848224114" expanded="false" signature="4808:4815" ph=" { " />
-            <marker date="1511848224114" expanded="false" signature="4842:4846" ph=" }" />
-            <marker date="1511848224114" expanded="true" signature="4850:4914" ph="/**...*/" />
-            <marker date="1511848224114" expanded="true" signature="4966:5146" ph="{...}" />
-            <marker date="1511848224114" expanded="true" signature="5150:5214" ph="/**...*/" />
-            <marker date="1511848224114" expanded="true" signature="5330:5720" ph="{...}" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="jar://C:/Program Files/Java/jdk1.8.0_131/src.zip!/java/util/Random.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="9740">
-          <caret line="530" column="18" lean-forward="false" selection-start-line="530" selection-start-column="18" selection-end-line="530" selection-end-column="18" />
-          <folding>
-            <element signature="e#21068#21069#0" expanded="true" />
-            <element signature="e#21142#21143#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/betterrandom/src/test/java/io/github/pr0methean/betterrandom/prng/Pcg64RandomTest.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="400">
@@ -1729,18 +1520,53 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/betterrandom/src/test/java/io/github/pr0methean/betterrandom/prng/BaseRandomTest.java">
+    <entry file="file://$PROJECT_DIR$/betterrandom/src/test/java/io/github/pr0methean/betterrandom/prng/ThreadLocalRandomWrapperTest.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="170">
-          <caret line="494" column="20" lean-forward="false" selection-start-line="494" selection-start-column="20" selection-end-line="494" selection-end-column="20" />
+        <state relative-caret-position="320">
+          <caret line="69" column="3" lean-forward="false" selection-start-line="69" selection-start-column="3" selection-end-line="69" selection-end-column="3" />
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/betterrandom/src/test/java/io/github/pr0methean/betterrandom/prng/ThreadLocalRandomWrapperTest.java">
+    <entry file="jar://C:/Program Files/Java/jdk1.8.0_131/src.zip!/java/util/Random.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="440">
-          <caret line="69" column="3" lean-forward="false" selection-start-line="69" selection-start-column="3" selection-end-line="69" selection-end-column="3" />
+        <state relative-caret-position="20">
+          <caret line="530" column="18" lean-forward="false" selection-start-line="530" selection-start-column="18" selection-end-line="530" selection-end-column="18" />
+          <folding>
+            <element signature="e#21068#21069#0" expanded="true" />
+            <element signature="e#21142#21143#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/betterrandom/src/main/java/io/github/pr0methean/betterrandom/prng/BaseRandom.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-383">
+          <caret line="374" column="20" lean-forward="true" selection-start-line="374" selection-start-column="20" selection-end-line="374" selection-end-column="20" />
+          <folding>
+            <element signature="e#6142#6143#0" expanded="true" />
+            <element signature="e#6164#6165#0" expanded="true" />
+            <element signature="e#11087#11088#0" expanded="true" />
+            <element signature="e#11126#11127#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/betterrandom/src/main/java/io/github/pr0methean/betterrandom/prng/adapter/SplittableRandomAdapter.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="94">
+          <caret line="72" column="16" lean-forward="false" selection-start-line="72" selection-start-column="16" selection-end-line="72" selection-end-column="16" />
+          <folding>
+            <element signature="e#2972#2973#0" expanded="true" />
+            <element signature="e#2993#2994#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/betterrandom/src/test/java/io/github/pr0methean/betterrandom/prng/BaseRandomTest.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="294">
+          <caret line="503" column="76" lean-forward="true" selection-start-line="503" selection-start-column="76" selection-end-line="503" selection-end-column="76" />
           <folding />
         </state>
       </provider>
