@@ -11,6 +11,7 @@ import io.github.pr0methean.betterrandom.seed.RandomSeederThread;
 import io.github.pr0methean.betterrandom.seed.SeedException;
 import io.github.pr0methean.betterrandom.util.BinaryUtils;
 import io.github.pr0methean.betterrandom.util.CloneViaSerialization;
+import java.util.Random;
 import java.util.concurrent.ConcurrentSkipListSet;
 import org.testng.annotations.Test;
 
@@ -85,8 +86,17 @@ public class ReseedingSplittableRandomAdapterTest extends SingleThreadSplittable
 
   /** Assertion-free because thread-local. */
   @Override @Test public void testThreadSafety() {
-    ConcurrentSkipListSet<Long> sequentialOutput = new ConcurrentSkipListSet<>();
-    ConcurrentSkipListSet<Long> parallelOutput = new ConcurrentSkipListSet<>();
-    runSequentialAndParallel(sequentialOutput, parallelOutput);
+    ConcurrentSkipListSet<Long> sequentialLongs = new ConcurrentSkipListSet<>();
+    ConcurrentSkipListSet<Long> parallelLongs = new ConcurrentSkipListSet<>();
+    runSequentialAndParallel(sequentialLongs, parallelLongs, Random::nextLong);
+    ConcurrentSkipListSet<Double> sequentialDoubles = new ConcurrentSkipListSet<>();
+    ConcurrentSkipListSet<Double> parallelDoubles = new ConcurrentSkipListSet<>();
+    runSequentialAndParallel(sequentialDoubles, parallelDoubles, Random::nextDouble);
+    sequentialDoubles.clear();
+    parallelDoubles.clear();
+    runSequentialAndParallel(sequentialDoubles, parallelDoubles, Random::nextGaussian);
+    ConcurrentSkipListSet<Integer> sequentialInts = new ConcurrentSkipListSet<>();
+    ConcurrentSkipListSet<Integer> parallelInts = new ConcurrentSkipListSet<>();
+    runSequentialAndParallel(sequentialInts, parallelInts, Random::nextInt);
   }
 }
