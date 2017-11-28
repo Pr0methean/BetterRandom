@@ -1,7 +1,5 @@
 package io.github.pr0methean.betterrandom.prng;
 
-import static java.lang.Integer.toUnsignedLong;
-
 import com.google.common.base.MoreObjects;
 import com.google.common.base.MoreObjects.ToStringHelper;
 import io.github.pr0methean.betterrandom.ByteArrayReseedableRandom;
@@ -421,7 +419,8 @@ public abstract class BaseRandom extends Random
       lockForNextGaussian();
       try {
         // Another output may have become available while we waited for the lock
-        final double secondTryOut = Double.longBitsToDouble(nextNextGaussian.getAndSet(NAN_LONG_BITS));
+        final double secondTryOut =
+            Double.longBitsToDouble(nextNextGaussian.getAndSet(NAN_LONG_BITS));
         if (!Double.isNaN(secondTryOut)) {
           return secondTryOut;
         }
@@ -533,7 +532,8 @@ public abstract class BaseRandom extends Random
 
   /**
    * Returns a pseudorandom {@code long} value between the specified origin (inclusive) and the
-   * specified bound (exclusive).
+   * specified bound (exclusive). This implementation is adapted from
+   * {@link Random#internalNextLong(long, long)}.
    * @param origin the least value returned
    * @param bound the upper bound (exclusive)
    * @return a pseudorandom {@code long} value between the origin (inclusive) and the bound
@@ -542,24 +542,28 @@ public abstract class BaseRandom extends Random
    *     bound}
    */
   public long nextLong(final long origin, final long bound) {
-    if (bound <= origin) {
-      throw new IllegalArgumentException(
-          String.format("Bound %d must be greater than origin %d", bound, origin));
-    }
-    final long range = bound - origin;
-    long output;
-    do {
-      if (range < 0) {
-        output = nextLongNoEntropyDebit();
-      } else {
-        final int bits = entropyOfLong(origin, bound);
-        output = origin;
-        output += (bits > 32) ? (toUnsignedLong(next(32)) | (toUnsignedLong(next(bits - 32)) << 32))
-            : next(bits);
+    long r = nextLong();
+    if (origin < bound) {
+      long n = bound - origin, m = n - 1;
+      if ((n & m) == 0L)  // power of two
+      {
+        r = (r & m) + origin;
+      } else if (n > 0L) {  // reject over-represented candidates
+        for (long u = r >>> 1;            // ensure nonnegative
+            u + m - (r = u % n) < 0L;    // rejection check
+            u = nextLong() >>> 1) // retry
+        {
+          ;
+        }
+        r += origin;
+      } else {              // range not representable as long
+        while (r < origin || r >= bound) {
+          r = nextLong();
+        }
       }
-    } while ((output < origin) || (output >= bound));
+    }
     debitEntropy(entropyOfLong(origin, bound));
-    return output;
+    return r;
   }
 
   /**
@@ -590,7 +594,8 @@ public abstract class BaseRandom extends Random
     try {
       return addSubclassFields(
           MoreObjects.toStringHelper(this).add("seed", BinaryUtils.convertBytesToHexString(seed))
-              .add("entropyBits", entropyBits.get()).add("seedGenerator", seedGenerator)).toString();
+              .add("entropyBits", entropyBits.get()).add("seedGenerator", seedGenerator))
+          .toString();
     } finally {
       lock.unlock();
     }
@@ -647,7 +652,8 @@ public abstract class BaseRandom extends Random
    * Registers this PRNG with the {@link RandomSeederThread} for the corresponding {@link
    * SeedGenerator}, to schedule reseeding when we run out of entropy. Unregisters this PRNG with
    * the previous {@link RandomSeederThread} if it had a different one.
-   * @param seedGenerator a {@link SeedGenerator} whose {@link RandomSeederThread} will be used to
+   * @param seedGenerator a {@link SeedGenerator} whose {@link RandomSeederThread} will be used
+   *     to
    *     reseed this PRNG.
    */
   public void setSeedGenerator(SeedGenerator seedGenerator) {
