@@ -8,96 +8,97 @@ serialGroup: edge
 git:
   submodules: true # Travis FIXME: Should be overridable in jobs[x]
 stages:
-- short tests
-- medium tests
-- long tests
+- linux unit tests
+- OSX unit tests
+- linux long tests
+- OSX long tests
 jobs:
   include:
   - language: java
     os: linux
     jdk: oraclejdk9
     env: OP=unit-tests
-    stage: short tests
+    stage: linux unit tests
   - language: java
     os: linux
     jdk: oraclejdk8
     env: OP=unit-tests
-    stage: short tests
+    stage: linux unit tests
   - language: java
     os: linux
     jdk: openjdk8
     env: OP=unit-tests
-    stage: short tests
+    stage: linux unit tests
   - language: java
     os: osx
     osx_image: xcode9.1
     env: OP=unit-tests
-    stage: medium tests
+    stage: OSX unit tests
   - language: java
     os: osx
     osx_image: xcode9
     env: OP=unit-tests
-    stage: medium tests
+    stage: OSX unit tests
   - language: java
     os: osx
     osx_image: xcode8.3
     env: OP=unit-tests
-    stage: medium tests
+    stage: OSX unit tests
   - language: java
     os: osx
     osx_image: xcode7.3
     env: OP=unit-tests
-    stage: medium tests
+    stage: OSX unit tests
   - language: android
     os: linux
     jdk: openjdk8
     env: OP=unit-tests ANDROID=1
-    stage: short tests
+    stage: linux unit tests
   - language: java
     os: linux
     jdk: oraclejdk9
     env: OP=mutation
-    stage: medium tests
+    stage: linux long tests
   - language: java
     os: linux
     jdk: oraclejdk9
     env: OP=benchmark
-    stage: medium tests
+    stage: linux long tests
   - language: java
     os: linux
     jdk: oraclejdk8
     env: OP=benchmark
-    stage: medium tests
+    stage: linux long tests
   - language: java
     os: linux
     jdk: openjdk8
     env: OP=benchmark
-    stage: medium tests
+    stage: linux long tests
   - language: android
     os: linux
     jdk: openjdk8
     env: OP=benchmark ANDROID=1
-    stage: medium tests
+    stage: linux long tests
   - language: java
     os: osx
     osx_image: xcode9.1
     env: OP=benchmark
-    stage: long tests
+    stage: OSX long tests
   - language: java
     os: osx
     osx_image: xcode9
     env: OP=benchmark
-    stage: long tests
+    stage: OSX long tests
   - language: java
     os: osx
     osx_image: xcode8.3
     env: OP=benchmark
-    stage: long tests
+    stage: OSX long tests
   - language: java
     os: osx
     osx_image: xcode7.3
     env: OP=benchmark
-    stage: long tests
+    stage: OSX long tests
   allow_failures:
   - language: android
   - git:
