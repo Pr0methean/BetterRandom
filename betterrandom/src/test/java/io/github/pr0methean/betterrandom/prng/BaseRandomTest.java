@@ -526,15 +526,9 @@ public abstract class BaseRandomTest {
       new NamedFunction<>(Random::nextGaussian, "Random::nextGaussian");
   protected static final List<NamedFunction<Random, Double>> FUNCTIONS_FOR_THREAD_SAFETY_TEST =
       ImmutableList.of(NEXT_LONG, NEXT_INT, NEXT_DOUBLE, NEXT_GAUSSIAN);
-  /**
-   * Interleaving calls to nextLong and nextInt is not reproducible, because the longs will no
-   * longer be 64-bit-aligned within the pseudorandom-bit stream.
-   */
-  protected static final List<NamedFunction<Random, Double>> FUNCTIONS_FOR_THREAD_SAFETY_TEST_PAIRWISE =
-      ImmutableList.of(NEXT_LONG, NEXT_DOUBLE, NEXT_GAUSSIAN);
 
   @Test public void testThreadSafety() {
-    testThreadSafety(FUNCTIONS_FOR_THREAD_SAFETY_TEST, FUNCTIONS_FOR_THREAD_SAFETY_TEST_PAIRWISE);
+    testThreadSafety(FUNCTIONS_FOR_THREAD_SAFETY_TEST, FUNCTIONS_FOR_THREAD_SAFETY_TEST);
   }
 
   protected void testThreadSafetyVsCrashesOnly(List<NamedFunction<Random, Double>> functions) {
@@ -561,24 +555,14 @@ public abstract class BaseRandomTest {
       }
     }
 
-    // Check, for each distinct pair, that it doesn't matter what order they start in
-    for (int i = 0; i < pairwiseFunctions.size(); i++) {
-      for (int j = i + 1; j < pairwiseFunctions.size(); j++) {
-        NamedFunction<Random, Double> supplier1 = pairwiseFunctions.get(i);
-        NamedFunction<Random, Double> supplier2 = pairwiseFunctions.get(j);
-        runParallel(supplier2, supplier1, seed);
-        // Uncomment once this bug is fixed: https://github.com/Pr0methean/BetterRandom/issues/14
-        /*
-        runSequential(supplier1, supplier2, seed);
-        assertEquals(sequentialOutput, parallelOutput, String
-            .format("output differs between sequential/parallel calls to %s and %s", supplier1,
-                supplier2));
-        Set<Number> switchedParallelOutput = new HashSet<>(parallelOutput);
-        runParallel(supplier1, supplier2, seed);
-        assertEquals(switchedParallelOutput, parallelOutput, String
-            .format("parallel output differs between %s and %s depending on the order they start",
-                supplier1, supplier2));
-        */
+    // Check that each pair won't crash no matter which order they start in
+    // (this part is assertion-free because we can't tell whether A-bits-as-long and
+    // B-bits-as-double come from the same bit stream as vice-versa).
+    for (NamedFunction<Random, Double> supplier1 : pairwiseFunctions) {
+      for (NamedFunction<Random, Double> supplier2 : pairwiseFunctions) {
+        if (supplier1 != supplier2) {
+          runParallel(supplier2, supplier1, seed);
+        }
       }
     }
   }
