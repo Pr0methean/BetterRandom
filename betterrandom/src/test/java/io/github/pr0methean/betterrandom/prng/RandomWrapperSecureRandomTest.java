@@ -7,6 +7,7 @@ import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import java.util.Map;
 import java.util.Random;
+import java.util.concurrent.ConcurrentSkipListSet;
 import org.testng.annotations.Test;
 
 public class RandomWrapperSecureRandomTest extends BaseRandomTest {
@@ -76,5 +77,12 @@ public class RandomWrapperSecureRandomTest extends BaseRandomTest {
     final RandomWrapper wrapper = createRngInternal();
     wrapper.setSeed(seed);
     return wrapper;
+  }
+
+  /** Assertion-free because SecureRandom isn't necessarily reproducible. */
+  @Override @Test public void testThreadSafety() {
+    ConcurrentSkipListSet<Long> sequentialOutput = new ConcurrentSkipListSet<>();
+    ConcurrentSkipListSet<Long> parallelOutput = new ConcurrentSkipListSet<>();
+    runSequentialAndParallel(sequentialOutput, parallelOutput);
   }
 }
