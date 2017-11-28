@@ -30,6 +30,7 @@ import java.util.concurrent.ConcurrentSkipListSet;
 import java.util.concurrent.ForkJoinPool;
 import java.util.concurrent.ForkJoinTask;
 import java.util.concurrent.TimeUnit;
+import java.util.function.Function;
 import java.util.function.Supplier;
 import org.testng.Reporter;
 import org.testng.annotations.AfterClass;
@@ -461,13 +462,16 @@ public abstract class BaseRandomTest {
   /**
    * ForkJoinTask that reads random longs and adds them to the set.
    */
-  protected static final class GeneratorForkJoinTask extends ForkJoinTask<Void> {
-    private final Random prng;
-    private final ConcurrentSkipListSet<Long> set;
+  protected static final class GeneratorForkJoinTask<T> extends ForkJoinTask<Void> {
+    private final BaseRandom prng;
+    private final ConcurrentSkipListSet<T> set;
+    private final Function<BaseRandom, T> function;
 
-    public GeneratorForkJoinTask(Random prng, ConcurrentSkipListSet<Long> set) {
+    public GeneratorForkJoinTask(BaseRandom prng, ConcurrentSkipListSet<T> set,
+        Function<BaseRandom, T> function) {
       this.prng = prng;
       this.set = set;
+      this.function = function;
     }
 
     @Override public Void getRawResult() {
@@ -480,7 +484,7 @@ public abstract class BaseRandomTest {
 
     @Override protected boolean exec() {
       for (int i=0; i<1000; i++) {
-        set.add(prng.nextLong());
+        set.add(function.apply(prng));
       }
       return true;
     }
@@ -489,25 +493,30 @@ public abstract class BaseRandomTest {
   protected final ForkJoinPool pool = new ForkJoinPool(2);
 
   @Test public void testThreadSafety() {
-    // This loop is intended to reduce the rate of false passes.
-    for (int i=0; i<5; i++) {
-      ConcurrentSkipListSet<Long> sequentialOutput = new ConcurrentSkipListSet<>();
-      ConcurrentSkipListSet<Long> parallelOutput = new ConcurrentSkipListSet<>();
-      runSequentialAndParallel(sequentialOutput, parallelOutput);
-      assertEquals(parallelOutput, sequentialOutput);
-    }
+      ConcurrentSkipListSet<Long> sequentialLongs = new ConcurrentSkipListSet<>();
+      ConcurrentSkipListSet<Long> parallelLongs = new ConcurrentSkipListSet<>();
+      runSequentialAndParallel(sequentialLongs, parallelLongs, Random::nextLong);
+      assertEquals(parallelLongs, sequentialLongs);
+    ConcurrentSkipListSet<Double> sequentialDoubles = new ConcurrentSkipListSet<>();
+    ConcurrentSkipListSet<Double> parallelDoubles = new ConcurrentSkipListSet<>();
+    runSequentialAndParallel(sequentialDoubles, parallelDoubles, Random::nextDouble);
+    assertEquals(parallelDoubles, sequentialDoubles);
+    ConcurrentSkipListSet<Integer> sequentialInts = new ConcurrentSkipListSet<>();
+    ConcurrentSkipListSet<Integer> parallelInts = new ConcurrentSkipListSet<>();
+    runSequentialAndParallel(sequentialInts, parallelInts, Random::nextInt);
+    assertEquals(parallelInts, sequentialInts);
   }
 
-  protected void runSequentialAndParallel(ConcurrentSkipListSet<Long> sequentialOutput,
-      ConcurrentSkipListSet<Long> parallelOutput) {
+  protected <T> void runSequentialAndParallel(ConcurrentSkipListSet<T> sequentialOutput,
+      ConcurrentSkipListSet<T> parallelOutput, Function<BaseRandom, T> supplier) {
     int seedLength = createRng().getNewSeedLength();
     byte[] seed = DefaultSeedGenerator.DEFAULT_SEED_GENERATOR.generateSeed(seedLength);
     BaseRandom sequentialPrng = createRng(seed);
-    new GeneratorForkJoinTask(sequentialPrng, sequentialOutput).exec();
-    new GeneratorForkJoinTask(sequentialPrng, sequentialOutput).exec();
+    new GeneratorForkJoinTask(sequentialPrng, sequentialOutput, supplier).exec();
+    new GeneratorForkJoinTask(sequentialPrng, sequentialOutput, supplier).exec();
     BaseRandom parallelPrng = createRng(seed);
-    pool.execute(new GeneratorForkJoinTask(parallelPrng, parallelOutput));
-    pool.execute(new GeneratorForkJoinTask(parallelPrng, parallelOutput));
+    pool.execute(new GeneratorForkJoinTask(parallelPrng, parallelOutput, supplier));
+    pool.execute(new GeneratorForkJoinTask(parallelPrng, parallelOutput, supplier));
     assertTrue(pool.awaitQuiescence(10, TimeUnit.SECONDS));
   }
 
