@@ -195,7 +195,7 @@ public enum RandomTestUtils {
    *     calculation.
    * @return The standard deviation of the generated sample.
    */
-  public static DescriptiveStatistics summaryStats(final Random rng, final long maxValue,
+  public static DescriptiveStatistics summaryStats(final BaseRandom rng, final long maxValue,
       final int iterations) {
     final DescriptiveStatistics stats = new DescriptiveStatistics();
     BaseStream<? extends Number, ?> stream;
