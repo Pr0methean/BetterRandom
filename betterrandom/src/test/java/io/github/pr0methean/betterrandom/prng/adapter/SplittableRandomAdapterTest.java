@@ -7,6 +7,7 @@ import io.github.pr0methean.betterrandom.seed.FakeSeedGenerator;
 import io.github.pr0methean.betterrandom.seed.RandomSeederThread;
 import io.github.pr0methean.betterrandom.seed.SeedException;
 import io.github.pr0methean.betterrandom.seed.SeedGenerator;
+import java.util.concurrent.ConcurrentSkipListSet;
 import org.testng.annotations.Test;
 
 public class SplittableRandomAdapterTest extends SingleThreadSplittableRandomAdapterTest {
@@ -39,5 +40,10 @@ public class SplittableRandomAdapterTest extends SingleThreadSplittableRandomAda
     createRng().setSeedGenerator(DefaultSeedGenerator.DEFAULT_SEED_GENERATOR);
   }
 
-  // TODO: Override or add tests for thread-safety.
+  /** Assertion-free because thread-local. */
+  @Override @Test public void testThreadSafety() {
+    ConcurrentSkipListSet<Long> sequentialOutput = new ConcurrentSkipListSet<>();
+    ConcurrentSkipListSet<Long> parallelOutput = new ConcurrentSkipListSet<>();
+    runSequentialAndParallel(sequentialOutput, parallelOutput);
+  }
 }

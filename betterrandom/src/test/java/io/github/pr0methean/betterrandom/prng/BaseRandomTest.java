@@ -11,7 +11,6 @@ import static org.testng.Assert.assertNotEquals;
 import static org.testng.Assert.assertTrue;
 
 import com.google.common.collect.ImmutableMap;
-import io.github.pr0methean.betterrandom.DeadlockWatchdogThread;
 import io.github.pr0methean.betterrandom.TestUtils;
 import io.github.pr0methean.betterrandom.prng.RandomTestUtils.EntropyCheckMode;
 import io.github.pr0methean.betterrandom.seed.DefaultSeedGenerator;
@@ -26,11 +25,15 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
+import java.util.concurrent.ConcurrentSkipListSet;
+import java.util.concurrent.ForkJoinPool;
+import java.util.concurrent.ForkJoinTask;
+import java.util.concurrent.TimeUnit;
 import java.util.function.Supplier;
 import org.testng.Reporter;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
-import org.testng.annotations.BeforeSuite;
 import org.testng.annotations.Test;
 
 public abstract class BaseRandomTest {
@@ -453,6 +456,55 @@ public abstract class BaseRandomTest {
     final BaseRandom prng = createRng();
     testGeneratesAll(() -> prng.nextEnum(TestEnum.class), TestEnum.RED, TestEnum.YELLOW,
         TestEnum.BLUE);
+  }
+
+  /**
+   * ForkJoinTask that reads random longs and adds them to the set.
+   */
+  protected static final class GeneratorForkJoinTask extends ForkJoinTask<Void> {
+    private final Random prng;
+    private final ConcurrentSkipListSet<Long> set;
+
+    public GeneratorForkJoinTask(Random prng, ConcurrentSkipListSet<Long> set) {
+      this.prng = prng;
+      this.set = set;
+    }
+
+    @Override public Void getRawResult() {
+      return null;
+    }
+
+    @Override protected void setRawResult(Void value) {
+      // No-op.
+    }
+
+    @Override protected boolean exec() {
+      for (int i=0; i<1000; i++) {
+        set.add(prng.nextLong());
+      }
+      return true;
+    }
+  }
+
+  @Test public void testThreadSafety() {
+    ConcurrentSkipListSet<Long> sequentialOutput = new ConcurrentSkipListSet<>();
+    ConcurrentSkipListSet<Long> parallelOutput = new ConcurrentSkipListSet<>();
+    runSequentialAndParallel(sequentialOutput, parallelOutput);
+    assertEquals(parallelOutput, sequentialOutput);
+  }
+
+  protected void runSequentialAndParallel(ConcurrentSkipListSet<Long> sequentialOutput,
+      ConcurrentSkipListSet<Long> parallelOutput) {
+    ForkJoinPool pool = new ForkJoinPool(2);
+    int seedLength = createRng().getNewSeedLength();
+    byte[] seed = DefaultSeedGenerator.DEFAULT_SEED_GENERATOR.generateSeed(seedLength);
+    BaseRandom sequentialPrng = createRng(seed);
+    new GeneratorForkJoinTask(sequentialPrng, sequentialOutput).exec();
+    new GeneratorForkJoinTask(sequentialPrng, sequentialOutput).exec();
+    BaseRandom parallelPrng = createRng(seed);
+    pool.execute(new GeneratorForkJoinTask(parallelPrng, parallelOutput));
+    pool.execute(new GeneratorForkJoinTask(parallelPrng, parallelOutput));
+    assertTrue(pool.awaitQuiescence(10, TimeUnit.SECONDS));
   }
 
   @AfterClass public void classTearDown() {
