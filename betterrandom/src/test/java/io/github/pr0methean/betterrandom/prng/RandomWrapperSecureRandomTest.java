@@ -10,6 +10,7 @@ import java.security.SecureRandom;
 import java.util.Map;
 import java.util.Random;
 import java.util.concurrent.ConcurrentSkipListSet;
+import java.util.function.Function;
 import org.testng.annotations.Test;
 
 public class RandomWrapperSecureRandomTest extends BaseRandomTest {
@@ -83,17 +84,6 @@ public class RandomWrapperSecureRandomTest extends BaseRandomTest {
 
   /** Assertion-free because SecureRandom isn't necessarily reproducible. */
   @Override @Test public void testThreadSafety() {
-    ConcurrentSkipListSet<Long> sequentialLongs = new ConcurrentSkipListSet<>();
-    ConcurrentSkipListSet<Long> parallelLongs = new ConcurrentSkipListSet<>();
-    runSequentialAndParallel(sequentialLongs, parallelLongs, Random::nextLong);
-    ConcurrentSkipListSet<Double> sequentialDoubles = new ConcurrentSkipListSet<>();
-    ConcurrentSkipListSet<Double> parallelDoubles = new ConcurrentSkipListSet<>();
-    runSequentialAndParallel(sequentialDoubles, parallelDoubles, Random::nextDouble);
-    sequentialDoubles.clear();
-    parallelDoubles.clear();
-    runSequentialAndParallel(sequentialDoubles, parallelDoubles, Random::nextGaussian);
-    ConcurrentSkipListSet<Integer> sequentialInts = new ConcurrentSkipListSet<>();
-    ConcurrentSkipListSet<Integer> parallelInts = new ConcurrentSkipListSet<>();
-    runSequentialAndParallel(sequentialInts, parallelInts, Random::nextInt);
+    testThreadSafetyVsCrashesOnly(FUNCTIONS_FOR_THREAD_SAFETY_TEST);
   }
 }
