@@ -566,8 +566,12 @@ public abstract class BaseRandomTest {
       for (int j = i + 1; j < pairwiseFunctions.size(); j++) {
         NamedFunction<Random, Double> supplier1 = pairwiseFunctions.get(i);
         NamedFunction<Random, Double> supplier2 = pairwiseFunctions.get(j);
-        runSequential(supplier1, supplier2, seed);
         runParallel(supplier2, supplier1, seed);
+        if (supplier1 == NEXT_LONG && supplier2 == NEXT_DOUBLE) {
+          // https://github.com/Pr0methean/BetterRandom/issues/14
+          continue;
+        }
+        runSequential(supplier1, supplier2, seed);
         assertEquals(sequentialOutput, parallelOutput, String
             .format("output differs between sequential/parallel calls to %s and %s", supplier1,
                 supplier2));
