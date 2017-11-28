@@ -28,6 +28,7 @@ import java.util.function.Supplier;
 import java.util.stream.BaseStream;
 import java.util.stream.Stream;
 import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
+import org.apache.commons.math3.stat.descriptive.SynchronizedDescriptiveStatistics;
 import org.testng.Reporter;
 
 /**
@@ -195,9 +196,9 @@ public enum RandomTestUtils {
    *     calculation.
    * @return The standard deviation of the generated sample.
    */
-  public static DescriptiveStatistics summaryStats(final BaseRandom rng, final long maxValue,
+  public static SynchronizedDescriptiveStatistics summaryStats(final BaseRandom rng, final long maxValue,
       final int iterations) {
-    final DescriptiveStatistics stats = new DescriptiveStatistics();
+    final SynchronizedDescriptiveStatistics stats = new SynchronizedDescriptiveStatistics();
     BaseStream<? extends Number, ?> stream;
     stream = (maxValue <= Integer.MAX_VALUE) ? rng.ints(iterations, 0, (int) maxValue) : rng.longs(iterations, 0, maxValue);
     stream.spliterator().forEachRemaining(n -> stats.addValue(n.doubleValue()));
