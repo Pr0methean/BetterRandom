@@ -486,7 +486,7 @@ public abstract class BaseRandom extends Random
           String.format("Bound %d must be greater than origin %d", bound, origin));
     }
     final int range = bound - origin;
-    if (range > 0) {
+    if (range >= 0) {
       // range is no more than Integer.MAX_VALUE
       return nextInt(range) + origin;
     } else {
@@ -752,24 +752,14 @@ public abstract class BaseRandom extends Random
    * Generates a seed using the default seed generator if there isn't one already. For use in
    * handling a {@link #setSeed(long)} call from the super constructor {@link Random#Random()} in
    * subclasses that can't actually use an 8-byte seed. Also used in {@link #readObjectNoData()}.
+   * Does not acquire the lock, because it's normally called from an initializer.
    */
-  @SuppressWarnings("LockAcquiredButNotSafelyReleased") protected void fallbackSetSeed() {
-    boolean locked = false;
-    if (lock != null) {
-      lock.lock();
-      locked = true;
+  protected void fallbackSetSeed() {
+    if (seed == null) {
+      seed = DefaultSeedGenerator.DEFAULT_SEED_GENERATOR.generateSeed(getNewSeedLength());
     }
-    try {
-      if (seed == null) {
-        seed = DefaultSeedGenerator.DEFAULT_SEED_GENERATOR.generateSeed(getNewSeedLength());
-      }
-      if (entropyBits == null) {
-        entropyBits = new AtomicLong(seed.length * 8L);
-      }
-    } finally {
-      if (locked) {
-        lock.unlock();
-      }
+    if (entropyBits == null) {
+      entropyBits = new AtomicLong(seed.length * 8L);
     }
   }
 
