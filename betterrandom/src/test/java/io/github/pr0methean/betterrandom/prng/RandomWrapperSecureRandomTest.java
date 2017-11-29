@@ -1,7 +1,5 @@
 package io.github.pr0methean.betterrandom.prng;
 
-import static org.testng.Assert.assertEquals;
-
 import io.github.pr0methean.betterrandom.seed.DefaultSeedGenerator;
 import io.github.pr0methean.betterrandom.seed.SeedException;
 import java.security.GeneralSecurityException;
@@ -9,8 +7,6 @@ import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import java.util.Map;
 import java.util.Random;
-import java.util.concurrent.ConcurrentSkipListSet;
-import java.util.function.Function;
 import org.testng.annotations.Test;
 
 public class RandomWrapperSecureRandomTest extends BaseRandomTest {

@@ -35,7 +35,6 @@ import java.util.concurrent.ForkJoinTask;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Function;
 import java.util.function.Supplier;
-import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
 import org.apache.commons.math3.stat.descriptive.SynchronizedDescriptiveStatistics;
 import org.testng.Reporter;
 import org.testng.annotations.AfterClass;
@@ -44,16 +43,22 @@ import org.testng.annotations.Test;
 
 public abstract class BaseRandomTest {
 
-  @BeforeClass public void setUp() {
-    RandomSeederThread.setLoggingEnabled(false);
-  }
-
   /**
    * The square root of 12, rounded from an extended-precision calculation that was done by Wolfram
    * Alpha (and thus at least as accurate as {@code StrictMath.sqrt(12.0)}).
    */
   protected static final double SQRT_12 = 3.4641016151377546;
   protected static final long TEST_SEED = 0x0123456789ABCDEFL;
+  protected static final NamedFunction<Random, Double> NEXT_LONG =
+      new NamedFunction<>(random -> (double) random.nextLong(), "Random::nextLong");
+  protected static final NamedFunction<Random, Double> NEXT_INT =
+      new NamedFunction<>(random -> (double) random.nextInt(), "Random::nextInt");
+  protected static final NamedFunction<Random, Double> NEXT_DOUBLE =
+      new NamedFunction<>(Random::nextDouble, "Random::nextDouble");
+  protected static final NamedFunction<Random, Double> NEXT_GAUSSIAN =
+      new NamedFunction<>(Random::nextGaussian, "Random::nextGaussian");
+  protected static final List<NamedFunction<Random, Double>> FUNCTIONS_FOR_THREAD_SAFETY_TEST =
+      ImmutableList.of(NEXT_LONG, NEXT_INT, NEXT_DOUBLE, NEXT_GAUSSIAN);
   private static final int FLAKY_TEST_RETRIES = 2;
   private static final int TEST_BYTE_ARRAY_LENGTH = 20;
   private static final String HELLO = "Hello";
@@ -65,6 +70,9 @@ public abstract class BaseRandomTest {
   private static final int ELEMENTS = 100;
   private static final double UPPER_BOUND_FOR_ROUNDING_TEST =
       Double.longBitsToDouble(Double.doubleToLongBits(1.0) + 4);
+  protected final ForkJoinPool pool = new ForkJoinPool(2);
+  protected final ConcurrentSkipListSet<Double> sequentialOutput = new ConcurrentSkipListSet<>();
+  protected final ConcurrentSkipListSet<Double> parallelOutput = new ConcurrentSkipListSet<>();
 
   @SafeVarargs
   private static <E> void testGeneratesAll(final Supplier<E> generator, final E... expected) {
@@ -73,6 +81,10 @@ public abstract class BaseRandomTest {
       selected[i] = generator.get();
     }
     assertTrue(Arrays.asList(selected).containsAll(Arrays.asList(expected)));
+  }
+
+  @BeforeClass public void setUp() {
+    RandomSeederThread.setLoggingEnabled(false);
   }
 
   @Test public void testAllPublicConstructors()
@@ -144,10 +156,10 @@ public abstract class BaseRandomTest {
     // approaches n/sqrt(12).
     // Expected standard deviation for a uniformly distributed population of values in the range 0..n
     // approaches n/sqrt(12).
-    for (long n : new long[] {100, 1L << 32, Long.MAX_VALUE}) {
+    for (long n : new long[]{100, 1L << 32, Long.MAX_VALUE}) {
       final int iterations = 10000;
-      final SynchronizedDescriptiveStatistics
-          stats = RandomTestUtils.summaryStats(rng, n, iterations);
+      final SynchronizedDescriptiveStatistics stats =
+          RandomTestUtils.summaryStats(rng, n, iterations);
       final double observedSD = stats.getStandardDeviation();
       final double expectedSD = n / SQRT_12;
       Reporter.log("Expected SD: " + expectedSD + ", observed SD: " + observedSD);
@@ -173,7 +185,7 @@ public abstract class BaseRandomTest {
     final BaseRandom rng = createRng();
     final int iterations = 10000;
     final SynchronizedDescriptiveStatistics stats = new SynchronizedDescriptiveStatistics();
-    for (int i=0; i<iterations; i++) {
+    for (int i = 0; i < iterations; i++) {
       stats.addValue(rng.nextGaussian());
     }
     final double observedSD = stats.getStandardDeviation();
@@ -289,10 +301,11 @@ public abstract class BaseRandomTest {
     checkRangeAndEntropy(prng, 1, () -> prng.withProbability(0.7) ? 0 : 1, 0, 2, true);
   }
 
-  @Test(timeOut = 20_000, groups = "non-deterministic") public void testWithProbabilityStatistically() {
+  @Test(timeOut = 20_000, groups = "non-deterministic")
+  public void testWithProbabilityStatistically() {
     final BaseRandom prng = createRng();
     int trues = 0;
-    for (int i=0; i<3000; i++) {
+    for (int i = 0; i < 3000; i++) {
       if (prng.withProbability(0.6)) {
         trues++;
       }
@@ -304,7 +317,7 @@ public abstract class BaseRandomTest {
   @Test(timeOut = 20_000, groups = "non-deterministic") public void testNextBooleanStatistically() {
     final BaseRandom prng = createRng();
     int trues = 0;
-    for (int i=0; i<3000; i++) {
+    for (int i = 0; i < 3000; i++) {
       if (prng.nextBoolean()) {
         trues++;
       }
@@ -531,72 +544,6 @@ public abstract class BaseRandomTest {
         TestEnum.BLUE);
   }
 
-  /**
-   * ForkJoinTask that reads random longs and adds them to the set.
-   */
-  protected static final class GeneratorForkJoinTask<T> extends ForkJoinTask<Void> {
-
-    private final Random prng;
-    private final ConcurrentSkipListSet<T> set;
-    private final Function<Random, T> function;
-
-    public GeneratorForkJoinTask(Random prng, ConcurrentSkipListSet<T> set,
-        Function<Random, T> function) {
-      this.prng = prng;
-      this.set = set;
-      this.function = function;
-    }
-
-    @Override public Void getRawResult() {
-      return null;
-    }
-
-    @Override protected void setRawResult(Void value) {
-      // No-op.
-    }
-
-    @Override protected boolean exec() {
-      for (int i = 0; i < 1000; i++) {
-        set.add(function.apply(prng));
-      }
-      return true;
-    }
-  }
-
-  protected final ForkJoinPool pool = new ForkJoinPool(2);
-  protected final ConcurrentSkipListSet<Double> sequentialOutput = new ConcurrentSkipListSet<>();
-  protected final ConcurrentSkipListSet<Double> parallelOutput = new ConcurrentSkipListSet<>();
-
-  protected static final class NamedFunction<T, R> implements Function<T, R> {
-
-    private final Function<T, R> function;
-    private final String name;
-
-    @Override public R apply(T t) {
-      return function.apply(t);
-    }
-
-    public NamedFunction(Function<T, R> function, String name) {
-      this.function = function;
-      this.name = name;
-    }
-
-    @Override public String toString() {
-      return name;
-    }
-  }
-
-  protected static final NamedFunction<Random, Double> NEXT_LONG =
-      new NamedFunction<>(random -> (double) random.nextLong(), "Random::nextLong");
-  protected static final NamedFunction<Random, Double> NEXT_INT =
-      new NamedFunction<>(random -> (double) random.nextInt(), "Random::nextInt");
-  protected static final NamedFunction<Random, Double> NEXT_DOUBLE =
-      new NamedFunction<>(Random::nextDouble, "Random::nextDouble");
-  protected static final NamedFunction<Random, Double> NEXT_GAUSSIAN =
-      new NamedFunction<>(Random::nextGaussian, "Random::nextGaussian");
-  protected static final List<NamedFunction<Random, Double>> FUNCTIONS_FOR_THREAD_SAFETY_TEST =
-      ImmutableList.of(NEXT_LONG, NEXT_INT, NEXT_DOUBLE, NEXT_GAUSSIAN);
-
   @Test public void testThreadSafety() {
     testThreadSafety(FUNCTIONS_FOR_THREAD_SAFETY_TEST, FUNCTIONS_FOR_THREAD_SAFETY_TEST);
   }
@@ -664,5 +611,56 @@ public abstract class BaseRandomTest {
     RED,
     YELLOW,
     BLUE
+  }
+
+  /**
+   * ForkJoinTask that reads random longs and adds them to the set.
+   */
+  protected static final class GeneratorForkJoinTask<T> extends ForkJoinTask<Void> {
+
+    private final Random prng;
+    private final ConcurrentSkipListSet<T> set;
+    private final Function<Random, T> function;
+
+    public GeneratorForkJoinTask(Random prng, ConcurrentSkipListSet<T> set,
+        Function<Random, T> function) {
+      this.prng = prng;
+      this.set = set;
+      this.function = function;
+    }
+
+    @Override public Void getRawResult() {
+      return null;
+    }
+
+    @Override protected void setRawResult(Void value) {
+      // No-op.
+    }
+
+    @Override protected boolean exec() {
+      for (int i = 0; i < 1000; i++) {
+        set.add(function.apply(prng));
+      }
+      return true;
+    }
+  }
+
+  protected static final class NamedFunction<T, R> implements Function<T, R> {
+
+    private final Function<T, R> function;
+    private final String name;
+
+    public NamedFunction(Function<T, R> function, String name) {
+      this.function = function;
+      this.name = name;
+    }
+
+    @Override public R apply(T t) {
+      return function.apply(t);
+    }
+
+    @Override public String toString() {
+      return name;
+    }
   }
 }

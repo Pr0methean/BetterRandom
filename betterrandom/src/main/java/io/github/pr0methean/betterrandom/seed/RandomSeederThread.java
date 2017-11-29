@@ -38,6 +38,7 @@ public final class RandomSeederThread extends LooperThread {
       INSTANCES = Collections.synchronizedMap(new WeakHashMap<>(1));
   private static final long serialVersionUID = 5229976461051217528L;
   private static final long POLL_INTERVAL = 60;
+  private static final AtomicBoolean loggingEnabled = new AtomicBoolean(true);
   private final SeedGenerator seedGenerator;
   private final byte[] longSeedArray = new byte[8];
   // WeakHashMap-based Set can't be serialized, so read & write this copy instead
@@ -48,15 +49,6 @@ public final class RandomSeederThread extends LooperThread {
   private transient Condition waitForEntropyDrain;
   private transient Set<Random> prngsThisIteration;
   private transient WeakHashMap<ByteArrayReseedableRandom, byte[]> seedArrays;
-  private static final AtomicBoolean loggingEnabled = new AtomicBoolean(true);
-
-  /**
-   * Controls whether or not to log new instance creation and errors.
-   * @param enabled whether to enable logging
-   */
-  public static void setLoggingEnabled(boolean enabled) {
-    loggingEnabled.set(enabled);
-  }
 
   public RandomSeederThread(final ThreadGroup group, final Runnable target, final String name,
       final long stackSize, final SeedGenerator seedGenerator) {
@@ -71,6 +63,14 @@ public final class RandomSeederThread extends LooperThread {
   private RandomSeederThread(final SeedGenerator seedGenerator) {
     this.seedGenerator = seedGenerator;
     initTransientFields();
+  }
+
+  /**
+   * Controls whether or not to log new instance creation and errors.
+   * @param enabled whether to enable logging
+   */
+  public static void setLoggingEnabled(boolean enabled) {
+    loggingEnabled.set(enabled);
   }
 
   /**
@@ -130,6 +130,59 @@ public final class RandomSeederThread extends LooperThread {
     } while (!toStop.isEmpty());
   }
 
+  /**
+   * Asynchronously triggers reseeding of the given {@link EntropyCountingRandom} if it is
+   * associated with a live RandomSeederThread corresponding to the given {@link SeedGenerator}.
+   * @param seedGenerator the {@link SeedGenerator} that should reseed {@code random}
+   * @param random a {@link Random} to be reseeded
+   * @return Whether or not the reseed was successfully scheduled.
+   */
+  public static boolean asyncReseed(final SeedGenerator seedGenerator, final Random random) {
+    synchronized (INSTANCES) {
+      return getInstance(seedGenerator).asyncReseed(random);
+    }
+  }
+
+  public static boolean isEmpty(SeedGenerator seedGenerator) {
+    synchronized (INSTANCES) {
+      return (!hasInstance(seedGenerator)) || getInstance(seedGenerator).isEmpty();
+    }
+  }
+
+  /**
+   * Add one or more {@link Random} instances to the thread for the given {@link SeedGenerator}.
+   * @param seedGenerator The {@link SeedGenerator} that will reseed the {@code randoms}
+   * @param randoms One or more {@link Random} instances to be reseeded
+   */
+  public static void add(SeedGenerator seedGenerator, final Random... randoms) {
+    synchronized (INSTANCES) {
+      getInstance(seedGenerator).add(randoms);
+    }
+  }
+
+  /**
+   * Remove one or more {@link Random} instances from the thread for the given {@link SeedGenerator}
+   * if such a thread exists and contains them.
+   * @param seedGenerator The {@link SeedGenerator} that will reseed the {@code randoms}
+   * @param randoms One or more {@link Random} instances to be reseeded
+   */
+  public static void remove(SeedGenerator seedGenerator, final Random... randoms) {
+    synchronized (INSTANCES) {
+      RandomSeederThread thread = INSTANCES.get(seedGenerator);
+      if (thread != null) {
+        thread.remove(randoms);
+      }
+    }
+  }
+
+  public static void stopIfEmpty(SeedGenerator seedGenerator) {
+    synchronized (INSTANCES) {
+      if (hasInstance(seedGenerator)) {
+        getInstance(seedGenerator).stopIfEmpty();
+      }
+    }
+  }
+
   private void initTransientFields() {
     prngs = Collections.synchronizedSet(Collections.newSetFromMap(new WeakHashMap<>(1)));
     longSeedBuffer = ByteBuffer.wrap(longSeedArray);
@@ -166,19 +219,6 @@ public final class RandomSeederThread extends LooperThread {
     }
     out.defaultWriteObject();
     prngsSerial.clear();
-  }
-
-  /**
-   * Asynchronously triggers reseeding of the given {@link EntropyCountingRandom} if it is
-   * associated with a live RandomSeederThread corresponding to the given {@link SeedGenerator}.
-   * @param seedGenerator the {@link SeedGenerator} that should reseed {@code random}
-   * @param random a {@link Random} to be reseeded
-   * @return Whether or not the reseed was successfully scheduled.
-   */
-  public static boolean asyncReseed(final SeedGenerator seedGenerator, final Random random) {
-    synchronized (INSTANCES) {
-      return getInstance(seedGenerator).asyncReseed(random);
-    }
   }
 
   /**
@@ -283,23 +323,6 @@ public final class RandomSeederThread extends LooperThread {
     }
   }
 
-  public static boolean isEmpty(SeedGenerator seedGenerator) {
-    synchronized (INSTANCES) {
-      return (!hasInstance(seedGenerator)) || getInstance(seedGenerator).isEmpty();
-    }
-  }
-
-  /**
-   * Add one or more {@link Random} instances to the thread for the given {@link SeedGenerator}.
-   * @param seedGenerator The {@link SeedGenerator} that will reseed the {@code randoms}
-   * @param randoms One or more {@link Random} instances to be reseeded
-   */
-  public static void add(SeedGenerator seedGenerator, final Random... randoms) {
-    synchronized (INSTANCES) {
-      getInstance(seedGenerator).add(randoms);
-    }
-  }
-
   /**
    * Add one or more {@link Random} instances. The caller must not hold locks on any of these
    * instances that are also acquired during {@link Random#setSeed(long)} or {@link
@@ -318,21 +341,6 @@ public final class RandomSeederThread extends LooperThread {
       waitWhileEmpty.signalAll();
     } finally {
       lock.unlock();
-    }
-  }
-
-  /**
-   * Remove one or more {@link Random} instances from the thread for the given {@link SeedGenerator}
-   * if such a thread exists and contains them.
-   * @param seedGenerator The {@link SeedGenerator} that will reseed the {@code randoms}
-   * @param randoms One or more {@link Random} instances to be reseeded
-   */
-  public static void remove(SeedGenerator seedGenerator, final Random... randoms) {
-    synchronized (INSTANCES) {
-      RandomSeederThread thread = INSTANCES.get(seedGenerator);
-      if (thread != null) {
-        thread.remove(randoms);
-      }
     }
   }
 
@@ -359,14 +367,6 @@ public final class RandomSeederThread extends LooperThread {
       }
     } finally {
       lock.unlock();
-    }
-  }
-
-  public static void stopIfEmpty(SeedGenerator seedGenerator) {
-    synchronized (INSTANCES) {
-      if (hasInstance(seedGenerator)) {
-        getInstance(seedGenerator).stopIfEmpty();
-      }
     }
   }
 }
