@@ -31,6 +31,10 @@ public class ReseedingSplittableRandomAdapter extends BaseSplittableRandomAdapte
   private transient ThreadLocal<SingleThreadSplittableRandomAdapter> threadLocal;
   private final SeedGenerator seedGenerator;
 
+  @Override public byte[] getSeed() {
+    return threadLocal.get().getSeed();
+  }
+
   /**
    * Single instance per SeedGenerator.
    * @param seedGenerator The seed generator this adapter will use.
