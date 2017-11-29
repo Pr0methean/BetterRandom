@@ -1,14 +1,17 @@
 package io.github.pr0methean.betterrandom.prng.adapter;
 
+import static io.github.pr0methean.betterrandom.TestUtils.assertGreaterOrEqual;
 import static io.github.pr0methean.betterrandom.seed.DefaultSeedGenerator.DEFAULT_SEED_GENERATOR;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotEquals;
 
 import io.github.pr0methean.betterrandom.prng.BaseRandom;
+import io.github.pr0methean.betterrandom.seed.DefaultSeedGenerator;
 import io.github.pr0methean.betterrandom.seed.FakeSeedGenerator;
 import io.github.pr0methean.betterrandom.seed.SeedException;
 import io.github.pr0methean.betterrandom.util.BinaryUtils;
 import io.github.pr0methean.betterrandom.util.CloneViaSerialization;
+import java.util.Arrays;
 import org.testng.annotations.Test;
 
 public class ReseedingSplittableRandomAdapterTest extends SingleThreadSplittableRandomAdapterTest {
@@ -40,11 +43,27 @@ public class ReseedingSplittableRandomAdapterTest extends SingleThreadSplittable
     // No-op.
   }
 
+  // https://github.com/Pr0methean/BetterRandom/issues/16
   @Override @Test(enabled = false) public void testReseeding() {
-    // No-op.
+    final BaseRandom rng = createRng();
+    final byte[] oldSeed = rng.getSeed();
+    while (rng.getEntropyBits() > Long.SIZE) {
+      rng.nextLong();
+    }
+    try {
+      byte[] newSeed;
+      do {
+        rng.nextBoolean();
+        Thread.sleep(100);
+        newSeed = rng.getSeed();
+      } while (Arrays.equals(newSeed, oldSeed));
+      assertGreaterOrEqual(rng.getEntropyBits(), newSeed.length * 8L - 1);
+    } catch (InterruptedException e) {
+      throw new RuntimeException(e);
+    }
   }
 
-  /** Test for crashes only, since setSeed is a no-op. */
+    /** Test for crashes only, since setSeed is a no-op. */
   @Override @Test public void testSetSeed() throws SeedException {
     final BaseRandom prng = createRng();
     prng.nextLong();

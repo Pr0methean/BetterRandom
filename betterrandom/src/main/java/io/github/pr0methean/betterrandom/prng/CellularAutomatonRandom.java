@@ -91,7 +91,6 @@ public class CellularAutomatonRandom extends BaseRandom {
    */
   public CellularAutomatonRandom(final int seed) {
     super(convertIntToBytes(seed));
-    copySeedToCellsAndPreEvolve();
   }
 
   /**
@@ -100,7 +99,6 @@ public class CellularAutomatonRandom extends BaseRandom {
    */
   public CellularAutomatonRandom(final byte[] seed) {
     super(seed);
-    copySeedToCellsAndPreEvolve();
   }
 
   private static int convertCellsToInt(final int[] cells, final int offset) {

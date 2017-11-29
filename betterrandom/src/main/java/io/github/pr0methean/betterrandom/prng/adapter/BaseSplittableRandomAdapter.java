@@ -30,10 +30,6 @@ public abstract class BaseSplittableRandomAdapter extends BaseRandom {
     super(seed);
   }
 
-  @Override protected void setSeedInternal(final byte[] seed) {
-    super.setSeedInternal(seed);
-  }
-
   /**
    * Returns the {@link SplittableRandom} that is to be used to generate random numbers for the
    * current thread. ({@link SplittableRandom} isn't thread-safe.) Called by all the {@code next*}

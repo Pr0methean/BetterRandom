@@ -24,15 +24,19 @@ import org.testng.annotations.Test;
  * Unit test for {@link DefaultSeedGenerator}.
  * @author Daniel Dyer
  */
-public class DefaultSeedGeneratorTest {
+public class DefaultSeedGeneratorTest extends AbstractSeedGeneratorTest {
+
+  public DefaultSeedGeneratorTest() {
+    super(DefaultSeedGenerator.DEFAULT_SEED_GENERATOR);
+  }
 
   @Test public void testBasicFunction() throws SeedException {
-    SeedTestUtils.testGenerator(DefaultSeedGenerator.DEFAULT_SEED_GENERATOR);
+    SeedTestUtils.testGenerator(seedGenerator);
   }
 
   @Test public void testIsWorthTrying() {
     // Should always be true
-    assertTrue(SecureRandomSeedGenerator.SECURE_RANDOM_SEED_GENERATOR.isWorthTrying());
+    assertTrue(seedGenerator.isWorthTrying());
   }
 
   /**
@@ -46,7 +50,7 @@ public class DefaultSeedGeneratorTest {
     try {
       // Don't allow file system or network access.
       System.setSecurityManager(new RestrictedSecurityManager(affectedThread));
-      DefaultSeedGenerator.DEFAULT_SEED_GENERATOR.generateSeed(new byte[4]);
+      seedGenerator.generateSeed(new byte[4]);
       // Should get to here without exceptions.
     } finally {
       // Restore the original security manager so that we don't

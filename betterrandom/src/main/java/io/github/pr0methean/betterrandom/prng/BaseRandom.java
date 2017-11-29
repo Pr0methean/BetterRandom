@@ -748,6 +748,18 @@ public abstract class BaseRandom extends Random
     return getNewSeedLength() <= Java8Constants.LONG_BYTES;
   }
 
+  protected void fallbackSetSeedIfInitialized() {
+    if (!superConstructorFinished) {
+      return;
+    }
+    lock.lock();
+    try {
+      setSeedInternal(DefaultSeedGenerator.DEFAULT_SEED_GENERATOR.generateSeed(getNewSeedLength()));
+    } finally {
+      lock.unlock();
+    }
+  }
+
   /**
    * Sets the seed, and should be overridden to set other state that derives from the seed. Called
    * by {@link #setSeed(byte[])}, constructors, {@link #readObject(ObjectInputStream)} and {@link
@@ -790,6 +802,10 @@ public abstract class BaseRandom extends Random
     in.defaultReadObject();
     initTransientFields();
     setSeedInternal(seed);
+    SeedGenerator seedGenerator = this.seedGenerator.get();
+    if (seedGenerator != null) {
+      RandomSeederThread.add(seedGenerator, this);
+    }
   }
 
   @Override public long getEntropyBits() {

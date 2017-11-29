@@ -28,16 +28,20 @@ import org.testng.annotations.Test;
  * @author Daniel Dyer
  */
 @SuppressWarnings("HardcodedFileSeparator")
-public class DevRandomSeedGeneratorTest {
+public class DevRandomSeedGeneratorTest extends AbstractSeedGeneratorTest {
+
+  public DevRandomSeedGeneratorTest() {
+    super(DevRandomSeedGenerator.DEV_RANDOM_SEED_GENERATOR);
+  }
 
   @Test(timeOut = 15000) public void testGenerator() {
     try {
-      SeedTestUtils.testGenerator(DevRandomSeedGenerator.DEV_RANDOM_SEED_GENERATOR);
-      assertTrue(DevRandomSeedGenerator.DEV_RANDOM_SEED_GENERATOR.isWorthTrying());
+      SeedTestUtils.testGenerator(seedGenerator);
+      assertTrue(seedGenerator.isWorthTrying());
     } catch (final SeedException ex) {
       // This exception is OK, but only if we are running on a platform that
       // does not provide /dev/random.
-      assertFalse(DevRandomSeedGenerator.DEV_RANDOM_SEED_GENERATOR.isWorthTrying());
+      assertFalse(seedGenerator.isWorthTrying());
       assert !new File("/dev/random").exists()
           : "Seed generator failed even though /dev/random exists.";
       Reporter.log("/dev/random does not exist on this platform.");
