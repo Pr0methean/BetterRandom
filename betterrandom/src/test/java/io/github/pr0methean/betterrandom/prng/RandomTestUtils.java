@@ -60,7 +60,7 @@ public enum RandomTestUtils {
     if (bound - 1.0 == bound) {
       // Can't do a strict check because of floating-point rounding
       assertTrue(output.doubleValue() <= bound);
-    else {
+    } else {
       assertTrue(output.doubleValue() < bound);
     }
     if ((entropyCheckMode == EntropyCheckMode.EXACT) || (entropyCheckMode
