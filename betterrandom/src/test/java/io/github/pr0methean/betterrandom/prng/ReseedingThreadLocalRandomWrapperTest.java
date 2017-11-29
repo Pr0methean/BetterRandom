@@ -2,6 +2,7 @@ package io.github.pr0methean.betterrandom.prng;
 
 import static io.github.pr0methean.betterrandom.TestUtils.assertGreaterOrEqual;
 
+import io.github.pr0methean.betterrandom.DeadlockWatchdogThread;
 import io.github.pr0methean.betterrandom.seed.DefaultSeedGenerator;
 import io.github.pr0methean.betterrandom.seed.RandomSeederThread;
 import io.github.pr0methean.betterrandom.seed.SeedException;
@@ -17,6 +18,7 @@ import org.testng.annotations.Test;
 public class ReseedingThreadLocalRandomWrapperTest extends ThreadLocalRandomWrapperTest {
 
   @BeforeMethod public void setUp() {
+    DeadlockWatchdogThread.ensureStarted();
     RandomSeederThread.setLoggingEnabled(true);
   }
 
