@@ -779,5 +779,17 @@ public abstract class BaseRandom extends Random
     }
   }
 
+  protected void fallbackSetSeedIfInitialized() {
+    if (!superConstructorFinished) {
+      return;
+    }
+    lock.lock();
+    try {
+      setSeedInternal(DefaultSeedGenerator.DEFAULT_SEED_GENERATOR.generateSeed(getNewSeedLength()));
+    } finally {
+      lock.unlock();
+    }
+  }
+
   @Override public abstract int getNewSeedLength();
 }
