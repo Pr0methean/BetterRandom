@@ -10,11 +10,13 @@ import java.util.Arrays;
 import java.util.Random;
 import java.util.function.Supplier;
 import org.testng.annotations.BeforeClass;
+import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
 public class ReseedingThreadLocalRandomWrapperTest extends ThreadLocalRandomWrapperTest {
 
-  @BeforeClass @Override public void setUp() {
+  @BeforeMethod public void setUp() {
     RandomSeederThread.setLoggingEnabled(true);
   }
 
