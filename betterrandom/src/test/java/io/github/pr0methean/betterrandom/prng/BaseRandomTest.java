@@ -532,7 +532,7 @@ public abstract class BaseRandomTest {
         return prng.nextDouble(5.0, 13.37);
       }
     }, 5.0, 13.37, true);
-    checkRangeAndEntropy(prng, ENTROPY_OF_DOUBLE,
+    checkRangeAndEntropy(prng, ENTROPY_OF_DOUBLE, new Supplier<Number>() {
       @Override public Number get() {
         return prng.nextDouble(1.0, UPPER_BOUND_FOR_ROUNDING_TEST);
       }
