@@ -19,7 +19,7 @@ public class ReseedingThreadLocalRandomWrapperTest extends ThreadLocalRandomWrap
   }
 
   @Override protected Class<? extends BaseRandom> getClassUnderTest() {
-    return super.getClassUnderTest();
+    return ReseedingThreadLocalRandomWrapper.class;
   }
 
   @Override @Test public void testReseeding() {
