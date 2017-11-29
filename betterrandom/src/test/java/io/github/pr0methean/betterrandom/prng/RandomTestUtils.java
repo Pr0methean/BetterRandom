@@ -56,12 +56,12 @@ public enum RandomTestUtils {
       final EntropyCheckMode entropyCheckMode) {
     final long oldEntropy = prng.getEntropyBits();
     final Number output = numberSupplier.get();
-    assertTrue(output.doubleValue() >= origin);
+    TestUtils.assertGreaterOrEqual(output.doubleValue(), origin);
     if (bound - 1.0 == bound) {
       // Can't do a strict check because of floating-point rounding
-      assertTrue(output.doubleValue() <= bound);
+      TestUtils.assertLessOrEqual(output.doubleValue(), bound);
     } else {
-      assertTrue(output.doubleValue() < bound);
+      TestUtils.assertLess(output.doubleValue(), bound);
     }
     if ((entropyCheckMode == EntropyCheckMode.EXACT) || (entropyCheckMode
         == EntropyCheckMode.UPPER_BOUND)) {
