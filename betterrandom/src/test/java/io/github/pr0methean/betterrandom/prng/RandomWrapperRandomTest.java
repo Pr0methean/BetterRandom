@@ -15,7 +15,9 @@
 // ============================================================================
 package io.github.pr0methean.betterrandom.prng;
 
+import com.google.common.collect.ImmutableList;
 import io.github.pr0methean.betterrandom.seed.SeedException;
+import java.util.Collections;
 import java.util.Map;
 import java.util.Random;
 import org.testng.annotations.Test;
@@ -36,8 +38,13 @@ public class RandomWrapperRandomTest extends BaseRandomTest {
     return params;
   }
 
-  // Currently assertion-free because of https://github.com/Pr0methean/BetterRandom/issues/12
+  /**
+   * Assertion-free with respect to the long/double methods because, contrary to its contract to be
+   * thread-safe, {@link Random#nextLong()} is not transactional. Rather, it uses two calls to
+   * {@link Random#next(int)} that can interleave with calls from other threads.
+   */
   @Override public void testThreadSafety() {
+    testThreadSafety(ImmutableList.of(NEXT_INT), Collections.emptyList());
     testThreadSafetyVsCrashesOnly(FUNCTIONS_FOR_THREAD_SAFETY_TEST);
   }
 
