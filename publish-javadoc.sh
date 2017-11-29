@@ -9,7 +9,10 @@ mvn javadoc:javadoc
 rm src/main/javadoc/overview.html # Only needed temporarily
 cd ..
 cp -r betterrandom/target/site/apidocs/* docs/betterrandom-java7
-cd docs/betterrandom-java7
+cd docs
+git checkout master
+git pull
+cd betterrandom-java7
 
 # Disable frames, step 1
 mv overview-summary.html index.html
