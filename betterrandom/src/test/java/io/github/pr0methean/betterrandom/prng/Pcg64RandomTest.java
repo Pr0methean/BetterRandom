@@ -1,7 +1,5 @@
 package io.github.pr0methean.betterrandom.prng;
 
-import static org.testng.Assert.assertEquals;
-
 import com.google.common.collect.ImmutableList;
 import org.testng.annotations.Test;
 

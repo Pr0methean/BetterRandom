@@ -2,11 +2,8 @@ package io.github.pr0methean.betterrandom.seed;
 
 import static io.github.pr0methean.betterrandom.seed.RandomSeederThread.stopAllEmpty;
 import static org.testng.Assert.assertFalse;
-import static org.testng.Assert.assertNotSame;
 import static org.testng.Assert.assertTrue;
-import static org.testng.AssertJUnit.assertEquals;
 
-import java.lang.Thread.State;
 import java.util.Arrays;
 import java.util.Random;
 import org.testng.annotations.AfterClass;

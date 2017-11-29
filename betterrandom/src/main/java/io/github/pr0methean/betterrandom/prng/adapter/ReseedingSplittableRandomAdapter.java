@@ -90,8 +90,8 @@ public class ReseedingSplittableRandomAdapter extends BaseSplittableRandomAdapte
 
   private void initSubclassTransientFields() {
     if (threadLocal == null) {
-      threadLocal =
-          ThreadLocal.withInitial(() -> new SingleThreadSplittableRandomAdapter(seedGenerator.get()));
+      threadLocal = ThreadLocal
+          .withInitial(() -> new SingleThreadSplittableRandomAdapter(seedGenerator.get()));
     }
   }
 

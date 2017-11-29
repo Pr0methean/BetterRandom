@@ -23,7 +23,8 @@ public enum TestUtils {
    * @param <T> {@code clazz} as a type.
    */
   @SuppressWarnings("ObjectAllocationInLoop") public static <T> void testAllPublicConstructors(
-      final Class<? extends T> clazz, final Map<Class<?>, Object> params, final Consumer<? super T> test) {
+      final Class<? extends T> clazz, final Map<Class<?>, Object> params,
+      final Consumer<? super T> test) {
     for (final Constructor<?> constructor : clazz.getDeclaredConstructors()) {
       if (Modifier.isPublic(constructor.getModifiers())) {
         final int nParams = constructor.getParameterCount();
@@ -35,9 +36,9 @@ public enum TestUtils {
           }
           test.accept((T) constructor.newInstance(constructorParams));
         } catch (IllegalAccessException | InstantiationException | InvocationTargetException | IllegalArgumentException e) {
-          throw new AssertionError(String.format("Failed to call%n%s%nwith parameters%n%s",
-              constructor.toGenericString(), Arrays.toString(constructorParams)),
-              e);
+          throw new AssertionError(String
+              .format("Failed to call%n%s%nwith parameters%n%s", constructor.toGenericString(),
+                  Arrays.toString(constructorParams)), e);
         }
       }
     }
