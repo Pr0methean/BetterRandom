@@ -546,35 +546,28 @@ public abstract class BaseRandom extends Random
       throw new IllegalArgumentException(
           String.format("Bound %d must be greater than origin %d", bound, origin));
     }
-    long r;
     lock.lock();
     try {
-      r = nextLongNoEntropyDebit();
-      long n = bound - origin;
-      if (n >= 0) {
-        long m = n - 1;
-        if ((n & m) == 0L)  // power of two
-        {
-          r = (r & m) + origin;
-        } else if (n > 0L) {  // reject over-represented candidates
-          for (long u = r >>> 1;            // ensure nonnegative
-              u + m - (r = u % n) < 0L;    // rejection check
-              u = nextLongNoEntropyDebit() >>> 1) // retry
-          {
-            ;
-          }
-          r += origin;
-        } else {              // range not representable as long
-          while (r < origin || r >= bound) {
-            r = nextLongNoEntropyDebit();
-          }
-        }
+      long r = nextLongNoEntropyDebit();
+      long n = bound - origin, m = n - 1;
+      if ((n & m) == 0L)  // power of two
+        r = (r & m) + origin;
+      else if (n > 0L) {  // reject over-represented candidates
+        for (long u = r >>> 1;            // ensure nonnegative
+            u + m - (r = u % n) < 0L;    // rejection check
+            u = nextLongNoEntropyDebit() >>> 1) // retry
+           ;
+       r += origin;
       }
+      else {              // range not representable as long
+       while (r < origin || r >= bound)
+         r = nextLongNoEntropyDebit();
+      }
+      return r;
     } finally {
       lock.unlock();
+      debitEntropy(entropyOfLong(origin, bound));
     }
-    debitEntropy(entropyOfLong(origin, bound));
-    return r;
   }
 
   /**
