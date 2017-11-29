@@ -44,7 +44,7 @@ jobs:
     stage: long tests
   - language: java
     os: linux
-    jdk: oraclejdk7
+    jdk: openjdk7
     env: OP=mutation
     stage: long tests
   allow_failures:
