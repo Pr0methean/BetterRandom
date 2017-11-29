@@ -145,7 +145,6 @@ public class Pcg64Random extends BaseRandom implements SeekableRandom {
   }
 
   @Override protected int next(int bits) {
-    multiplyAndAddInternal(MULTIPLIER, INCREMENT);
     long oldInternal;
     long newInternal;
     do {
