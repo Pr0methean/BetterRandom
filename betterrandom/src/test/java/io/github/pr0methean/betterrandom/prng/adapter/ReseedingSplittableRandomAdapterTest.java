@@ -49,7 +49,6 @@ public class ReseedingSplittableRandomAdapterTest extends SingleThreadSplittable
     while (rng.getEntropyBits() > Long.SIZE) {
       rng.nextLong();
     }
-    rng.setSeedGenerator(DefaultSeedGenerator.DEFAULT_SEED_GENERATOR);
     try {
       byte[] newSeed;
       do {
