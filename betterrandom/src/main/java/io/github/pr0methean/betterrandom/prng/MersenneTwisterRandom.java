@@ -100,16 +100,8 @@ public class MersenneTwisterRandom extends BaseRandom {
    * Reseeds this PRNG using the {@link DefaultSeedGenerator}, since it needs a longer seed.
    * @param seed ignored
    */
-  @Override public synchronized void setSeed(final long seed) {
-    if (!superConstructorFinished) {
-      return;
-    }
-    lock.lock();
-    try {
-      setSeedInternal(DefaultSeedGenerator.DEFAULT_SEED_GENERATOR.generateSeed(SEED_SIZE_BYTES));
-    } finally {
-      lock.unlock();
-    }
+  @Override public void setSeed(final long seed) {
+    fallbackSetSeedIfInitialized();
   }
 
   @Override protected void initTransientFields() {
