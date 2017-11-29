@@ -550,8 +550,9 @@ public abstract class BaseRandom extends Random
     lock.lock();
     try {
       r = nextLongNoEntropyDebit();
-      if (bound - origin >= 0) {
-        long n = bound - origin, m = n - 1;
+      long n = bound - origin;
+      if (n >= 0) {
+        long m = n - 1;
         if ((n & m) == 0L)  // power of two
         {
           r = (r & m) + origin;
