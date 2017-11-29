@@ -437,6 +437,8 @@ public abstract class BaseRandomTest {
     final BaseRandom prng = createRng();
     checkRangeAndEntropy(prng, ENTROPY_OF_DOUBLE, () -> prng.nextDouble(-1.0, 13.37), -1.0, 13.37,
         true);
+    checkRangeAndEntropy(prng, ENTROPY_OF_DOUBLE, () -> prng.nextDouble(5.0, 13.37), 5.0, 13.37,
+        true);
   }
 
   @Test(expectedExceptions = IllegalArgumentException.class)
