@@ -141,7 +141,8 @@ public class ThreadLocalRandomWrapper extends RandomWrapper {
   }
 
   @Override protected ToStringHelper addSubclassFields(final ToStringHelper original) {
-    return original.add("threadLocal", threadLocal);
+    return original.add("threadLocal", threadLocal)
+        .add("wrapped on this thread", getWrapped());
   }
 
   @Override public byte[] getSeed() {
