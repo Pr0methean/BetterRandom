@@ -29,6 +29,7 @@ public class ReseedingSplittableRandomAdapter extends BaseSplittableRandomAdapte
   @SuppressWarnings(
       {"ThreadLocalNotStaticFinal", "InstanceVariableMayNotBeInitializedByReadObject"})
   private transient ThreadLocal<SingleThreadSplittableRandomAdapter> threadLocal;
+  private final SeedGenerator seedGenerator;
 
   /**
    * Single instance per SeedGenerator.
@@ -36,7 +37,7 @@ public class ReseedingSplittableRandomAdapter extends BaseSplittableRandomAdapte
    */
   private ReseedingSplittableRandomAdapter(final SeedGenerator seedGenerator) throws SeedException {
     super(seedGenerator.generateSeed(Long.BYTES));
-    this.seedGenerator.set(seedGenerator);
+    this.seedGenerator = seedGenerator;
     initSubclassTransientFields();
   }
 
@@ -85,25 +86,25 @@ public class ReseedingSplittableRandomAdapter extends BaseSplittableRandomAdapte
   }
 
   private ReseedingSplittableRandomAdapter readResolve() {
-    return getInstance(seedGenerator.get());
+    return getInstance(seedGenerator);
   }
 
   private void initSubclassTransientFields() {
     if (threadLocal == null) {
       threadLocal = ThreadLocal
-          .withInitial(() -> new SingleThreadSplittableRandomAdapter(seedGenerator.get()));
+          .withInitial(() -> new SingleThreadSplittableRandomAdapter(seedGenerator));
     }
   }
 
   @Override protected SplittableRandom getSplittableRandom() {
     final SingleThreadSplittableRandomAdapter adapterForThread = threadLocal.get();
-    RandomSeederThread.add(seedGenerator.get(), adapterForThread);
+    RandomSeederThread.add(seedGenerator, adapterForThread);
     return adapterForThread.getSplittableRandom();
   }
 
   @Override public boolean equals(@Nullable final Object o) {
-    return (this == o) || ((o instanceof ReseedingSplittableRandomAdapter) && seedGenerator.get()
-        .equals(((ReseedingSplittableRandomAdapter) o).seedGenerator.get()));
+    return (this == o) || ((o instanceof ReseedingSplittableRandomAdapter)
+        && seedGenerator.equals(((ReseedingSplittableRandomAdapter) o).seedGenerator));
   }
 
   @Override protected void setSeedInternal(final byte[] seed) {
@@ -114,7 +115,7 @@ public class ReseedingSplittableRandomAdapter extends BaseSplittableRandomAdapte
   }
 
   @Override public int hashCode() {
-    return seedGenerator.get().hashCode() + 1;
+    return seedGenerator.hashCode() + 1;
   }
 
   @Override public String toString() {

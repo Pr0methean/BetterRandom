@@ -733,6 +733,10 @@ public abstract class BaseRandom extends Random
     in.defaultReadObject();
     initTransientFields();
     setSeedInternal(seed);
+    SeedGenerator seedGenerator = this.seedGenerator.get();
+    if (seedGenerator != null) {
+      RandomSeederThread.add(seedGenerator, this);
+    }
   }
 
   @Override public long getEntropyBits() {
