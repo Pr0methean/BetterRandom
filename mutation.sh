@@ -9,7 +9,7 @@ cd ../docs
 git remote add originauth "https://${GH_TOKEN}@github.com/Pr0methean/pr0methean.github.io.git"
 git pull --rebase originauth master
 git checkout originauth/master
-rm -rf docs/betterrandom-pit-reports
+rm -rf betterrandom-pit-reports
 mv ../betterrandom/target/pit-reports betterrandom-pit-reports
 git add betterrandom-pit-reports
 git commit -m "Update PIT mutation reports"
