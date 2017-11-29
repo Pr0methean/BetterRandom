@@ -36,13 +36,10 @@ public final class RandomSeederThread extends LooperThread {
   private static final LogPreFormatter LOG = new LogPreFormatter(RandomSeederThread.class);
   @SuppressWarnings("StaticCollection") private static final Map<SeedGenerator, RandomSeederThread>
       INSTANCES = Collections.synchronizedMap(new WeakHashMap<>(1));
-  private static final long serialVersionUID = 5229976461051217528L;
   private static final long POLL_INTERVAL = 60;
   private static final AtomicBoolean loggingEnabled = new AtomicBoolean(true);
   private final SeedGenerator seedGenerator;
   private final byte[] longSeedArray = new byte[8];
-  // WeakHashMap-based Set can't be serialized, so read & write this copy instead
-  private final Set<Random> prngsSerial = new HashSet<>();
   private transient Set<Random> prngs;
   private transient ByteBuffer longSeedBuffer;
   private transient Condition waitWhileEmpty;
@@ -183,35 +180,6 @@ public final class RandomSeederThread extends LooperThread {
     waitForEntropyDrain = lock.newCondition();
     prngsThisIteration = new HashSet<>(1);
     seedArrays = new WeakHashMap<>(1);
-  }
-
-  @Override protected Object readResolve() {
-    return getInstance(seedGenerator);
-  }
-
-  private void readObject(final ObjectInputStream in) throws IOException, ClassNotFoundException {
-    in.defaultReadObject();
-    initTransientFields();
-    if (!prngsSerial.isEmpty()) {
-      synchronized (prngs) {
-        prngs.addAll(prngsSerial);
-      }
-      lock.lock();
-      try {
-        waitWhileEmpty.signalAll();
-      } finally {
-        lock.unlock();
-      }
-      prngsSerial.clear();
-    }
-  }
-
-  private void writeObject(final ObjectOutputStream out) throws IOException {
-    synchronized (prngs) {
-      prngsSerial.addAll(prngs);
-    }
-    out.defaultWriteObject();
-    prngsSerial.clear();
   }
 
   /**

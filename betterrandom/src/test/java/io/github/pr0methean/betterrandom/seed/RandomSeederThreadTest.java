@@ -4,6 +4,8 @@ import static io.github.pr0methean.betterrandom.seed.RandomSeederThread.stopAllE
 import static org.testng.Assert.assertFalse;
 import static org.testng.Assert.assertTrue;
 
+import io.github.pr0methean.betterrandom.TestUtils;
+import io.github.pr0methean.betterrandom.util.CloneViaSerialization;
 import java.util.Arrays;
 import java.util.Random;
 import org.testng.annotations.AfterClass;
