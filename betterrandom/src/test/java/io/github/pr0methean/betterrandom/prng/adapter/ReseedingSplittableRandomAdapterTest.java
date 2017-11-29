@@ -43,7 +43,8 @@ public class ReseedingSplittableRandomAdapterTest extends SingleThreadSplittable
     // No-op.
   }
 
-  @Override @Test public void testReseeding() {
+  // https://github.com/Pr0methean/BetterRandom/issues/16
+  @Override @Test(enabled = false) public void testReseeding() {
     final BaseRandom rng = createRng();
     final byte[] oldSeed = rng.getSeed();
     while (rng.getEntropyBits() > Long.SIZE) {
