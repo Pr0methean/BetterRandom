@@ -101,8 +101,6 @@ jobs:
     stage: OSX long tests
   allow_failures:
   - language: android
-  - git:
-      submodules: true
   fast_finish: true
 script:
 - "./remove_unlimited_crypto.sh"
