@@ -313,10 +313,10 @@ public class AesCounterRandom extends BaseRandom implements SeekableRandom {
     }
     byte[] addendDigits = new byte[counter.length];
     System.arraycopy(BinaryUtils.convertLongToBytes(delta), 0, addendDigits,
-        counter.length - Long.BYTES, Long.BYTES);
+        counter.length - LONG_BYTES, LONG_BYTES);
     if (delta < 0) {
       // Sign extend
-      for (int i = 0; i < counter.length - Long.BYTES; i++) {
+      for (int i = 0; i < counter.length - LONG_BYTES; i++) {
         addendDigits[i] = -1;
       }
     }
