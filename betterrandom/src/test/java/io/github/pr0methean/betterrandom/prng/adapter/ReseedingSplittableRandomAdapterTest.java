@@ -5,9 +5,7 @@ import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotEquals;
 
 import io.github.pr0methean.betterrandom.prng.BaseRandom;
-import io.github.pr0methean.betterrandom.seed.DefaultSeedGenerator;
 import io.github.pr0methean.betterrandom.seed.FakeSeedGenerator;
-import io.github.pr0methean.betterrandom.seed.RandomSeederThread;
 import io.github.pr0methean.betterrandom.seed.SeedException;
 import io.github.pr0methean.betterrandom.util.BinaryUtils;
 import io.github.pr0methean.betterrandom.util.CloneViaSerialization;
@@ -25,8 +23,8 @@ public class ReseedingSplittableRandomAdapterTest extends SingleThreadSplittable
   }
 
   // FIXME: Why does this need more time than other PRNGs?!
-  @Test(timeOut = 120_000) @Override public void testStandardDeviation() throws SeedException {
-    super.testStandardDeviation();
+  @Test(timeOut = 120_000) @Override public void testIntegerSummaryStats() throws SeedException {
+    super.testIntegerSummaryStats();
   }
 
   @Override @Test public void testSerializable() throws SeedException {
@@ -80,5 +78,10 @@ public class ReseedingSplittableRandomAdapterTest extends SingleThreadSplittable
   @Test public void testFinalize() throws SeedException {
     ReseedingSplittableRandomAdapter.getInstance(new FakeSeedGenerator());
     Runtime.getRuntime().runFinalization();
+  }
+
+  /** Assertion-free because thread-local. */
+  @Override @Test public void testThreadSafety() {
+    testThreadSafetyVsCrashesOnly(FUNCTIONS_FOR_THREAD_SAFETY_TEST);
   }
 }

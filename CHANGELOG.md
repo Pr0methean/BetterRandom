@@ -1,3 +1,8 @@
+# 2.1.0
+* Fixes many bugs that were affecting reproducibility when concurrent access occurred, especially
+  for longs and doubles.
+* Logging in `RandomSeederThread` can now be disabled.
+
 # 2.0.0
 * Fixes bugs affecting `RandomSeederThread` when a `SeedGenerator` throws a `SeedException`.
 * Removes the non-inherited instance methods of `RandomSeederThread` and replaces them with static

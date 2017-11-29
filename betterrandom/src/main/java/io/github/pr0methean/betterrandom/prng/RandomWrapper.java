@@ -237,7 +237,6 @@ public class RandomWrapper extends BaseRandom {
         || ((ByteArrayReseedableRandom) currentWrapped).preferSeedWithLong();
   }
 
-  /** */
   @SuppressWarnings("LockAcquiredButNotSafelyReleased") @Override public int getNewSeedLength() {
     boolean locked = false;
     if (lock != null) {
@@ -287,10 +286,8 @@ public class RandomWrapper extends BaseRandom {
     return result;
   }
 
-  @Override public double nextDouble() {
-    final double result = getWrapped().nextDouble();
-    debitEntropy(ENTROPY_OF_DOUBLE);
-    return result;
+  @Override public double nextDoubleNoEntropyDebit() {
+    return getWrapped().nextDouble();
   }
 
   @Override public double nextGaussian() {

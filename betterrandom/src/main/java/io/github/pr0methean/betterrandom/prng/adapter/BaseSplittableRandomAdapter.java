@@ -135,10 +135,8 @@ public abstract class BaseSplittableRandomAdapter extends BaseRandom {
   }
 
   /** Delegates to {@link SplittableRandom#nextDouble()}. */
-  @Override public double nextDouble() {
-    final double out = getSplittableRandom().nextDouble();
-    debitEntropy(ENTROPY_OF_DOUBLE);
-    return out;
+  @Override protected double nextDoubleNoEntropyDebit() {
+    return getSplittableRandom().nextDouble();
   }
 
   /**
@@ -154,6 +152,14 @@ public abstract class BaseSplittableRandomAdapter extends BaseRandom {
         return BaseSplittableRandomAdapter.this.getSplittableRandom().nextDouble();
       }
     });
+  }
+
+  @Override protected void lockForNextGaussian() {
+    // No-op.
+  }
+
+  @Override protected void unlockForNextGaussian() {
+    // No-op.
   }
 
   /** Delegates to {@link SplittableRandom#nextBoolean()}. */

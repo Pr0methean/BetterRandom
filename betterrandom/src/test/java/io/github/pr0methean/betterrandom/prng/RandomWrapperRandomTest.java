@@ -18,6 +18,8 @@ package io.github.pr0methean.betterrandom.prng;
 import io.github.pr0methean.betterrandom.seed.SeedException;
 import java.util.Map;
 import java.util.Random;
+import java.util.concurrent.ConcurrentSkipListSet;
+import java.util.function.Function;
 import org.testng.annotations.Test;
 
 /**
@@ -34,6 +36,11 @@ public class RandomWrapperRandomTest extends BaseRandomTest {
     Map<Class<?>, Object> params = super.constructorParams();
     params.put(Random.class, new Random());
     return params;
+  }
+
+  // Currently assertion-free because of https://github.com/Pr0methean/BetterRandom/issues/12
+  @Override public void testThreadSafety() {
+    testThreadSafetyVsCrashesOnly(FUNCTIONS_FOR_THREAD_SAFETY_TEST);
   }
 
   /**

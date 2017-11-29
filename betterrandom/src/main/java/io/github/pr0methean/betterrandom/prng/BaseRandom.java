@@ -167,7 +167,16 @@ public abstract class BaseRandom extends Random
    * @return True with probability equal to the {@code probability} parameter; false otherwise.
    */
   public final boolean withProbability(final double probability) {
-    return (probability >= 1) || ((probability > 0) && withProbabilityInternal(probability));
+    if (probability >= 1) {
+      return true;
+    }
+    if (probability <= 0) {
+      return false;
+    }
+    if (probability == 0.5) {
+      return nextBoolean();
+    }
+    return withProbabilityInternal(probability);
   }
 
   /**
@@ -253,8 +262,9 @@ public abstract class BaseRandom extends Random
    * BetterRandom generally <i>can</i> be expected to return all 2<sup>64</sup> possible values.
    */
   @Override public final long nextLong() {
+    long out = nextLongNoEntropyDebit();
     debitEntropy(Long.SIZE);
-    return nextLongNoEntropyDebit();
+    return out;
   }
 
   /**
@@ -290,7 +300,7 @@ public abstract class BaseRandom extends Random
    *     bound}
    */
   public double nextDouble(final double origin, final double bound) {
-    if (bound < origin) {
+    if (bound <= origin) {
       throw new IllegalArgumentException(
           String.format("Bound %f must be greater than origin %f", bound, origin));
     }
@@ -398,9 +408,22 @@ public abstract class BaseRandom extends Random
     return super.nextFloat();
   }
 
-  @Override public double nextDouble() {
+  @Override public final double nextDouble() {
     debitEntropy(ENTROPY_OF_DOUBLE);
-    return super.nextDouble();
+    return nextDoubleNoEntropyDebit();
+  }
+
+  /**
+   * Returns the next random {@code double} between 0.0 (inclusive) and 1.0 (exclusive), but does
+   * not debit entropy. @return a pseudorandom {@code double}.
+   */
+  protected double nextDoubleNoEntropyDebit() {
+    lock.lock();
+    try {
+      return super.nextDouble();
+    } finally {
+      lock.unlock();
+    }
   }
 
   /**
@@ -414,34 +437,56 @@ public abstract class BaseRandom extends Random
      debitEntropy(ENTROPY_OF_DOUBLE);
      return internalNextGaussian(new DoubleSupplier() {
       @Override public double getAsDouble() {
-        return BaseRandom.super.nextDouble();
+        return nextDoubleNoEntropyDebit();
       }
     });
   }
 
   /**
-   * Core of a lockless reimplementation of {@link #nextGaussian()}.
+   * Core of a reimplementation of {@link #nextGaussian()} whose locking is overridable and doesn't
+   * happen when a value is already stored.
    * @param nextDouble shall return a random number between 0 and 1, like {@link #nextDouble()},
    *     but shall not debit the entropy count.
    * @return a random number that is normally distributed with mean 0 and standard deviation 1.
    */
-  @SuppressWarnings("LocalVariableHidesMemberVariable") protected final double internalNextGaussian(
+  @SuppressWarnings("LocalVariableHidesMemberVariable") protected double internalNextGaussian(
       final DoubleSupplier nextDouble) {
     // See Knuth, ACP, Section 3.4.1 Algorithm C.
-    final double out = Double.longBitsToDouble(nextNextGaussian.getAndSet(NAN_LONG_BITS));
-    if (Double.isNaN(out)) {
+    final double firstTryOut = Double.longBitsToDouble(nextNextGaussian.getAndSet(NAN_LONG_BITS));
+    if (Double.isNaN(firstTryOut)) {
       double v1, v2, s;
-      do {
-        v1 = (2 * nextDouble.getAsDouble()) - 1; // between -1 and 1
-        v2 = (2 * nextDouble.getAsDouble()) - 1; // between -1 and 1
-        s = (v1 * v1) + (v2 * v2);
-      } while ((s >= 1) || (s == 0));
-      final double multiplier = StrictMath.sqrt((-2 * StrictMath.log(s)) / s);
-      nextNextGaussian.set(Double.doubleToRawLongBits(v2 * multiplier));
-      return v1 * multiplier;
+      lockForNextGaussian();
+      try {
+        // Another output may have become available while we waited for the lock
+        final double secondTryOut =
+            Double.longBitsToDouble(nextNextGaussian.getAndSet(NAN_LONG_BITS));
+        if (!Double.isNaN(secondTryOut)) {
+          return secondTryOut;
+        }
+        do {
+          v1 = (2 * nextDouble.getAsDouble()) - 1; // between -1 and 1
+          v2 = (2 * nextDouble.getAsDouble()) - 1; // between -1 and 1
+          s = (v1 * v1) + (v2 * v2);
+        } while ((s >= 1) || (s == 0));
+        final double multiplier = StrictMath.sqrt((-2 * StrictMath.log(s)) / s);
+        nextNextGaussian.set(Double.doubleToRawLongBits(v2 * multiplier));
+        return v1 * multiplier;
+      } finally {
+        unlockForNextGaussian();
+      }
     } else {
-      return out;
+      return firstTryOut;
     }
+  }
+
+  /** Performs whatever locking is needed by {@link #nextGaussian()}. */
+  protected void lockForNextGaussian() {
+    lock.lock();
+  }
+
+  /** Releases the locks acquired by {@link #lockForNextGaussian()}. */
+  protected void unlockForNextGaussian() {
+    lock.unlock();
   }
 
   @Override public IntStream ints(final long streamSize) {
@@ -490,7 +535,7 @@ public abstract class BaseRandom extends Random
           String.format("Bound %d must be greater than origin %d", bound, origin));
     }
     final int range = bound - origin;
-    if (range > 0) {
+    if (range >= 0) {
       // range is no more than Integer.MAX_VALUE
       return nextInt(range) + origin;
     } else {
@@ -553,7 +598,8 @@ public abstract class BaseRandom extends Random
 
   /**
    * Returns a pseudorandom {@code long} value between the specified origin (inclusive) and the
-   * specified bound (exclusive).
+   * specified bound (exclusive). This implementation is adapted from
+   * {@link Random#internalNextLong(long, long)}.
    * @param origin the least value returned
    * @param bound the upper bound (exclusive)
    * @return a pseudorandom {@code long} value between the origin (inclusive) and the bound
@@ -566,20 +612,34 @@ public abstract class BaseRandom extends Random
       throw new IllegalArgumentException(
           String.format("Bound %d must be greater than origin %d", bound, origin));
     }
-    final long range = bound - origin;
-    long output;
-    do {
-      if (range < 0) {
-        output = nextLongNoEntropyDebit();
-      } else {
-        final int bits = entropyOfLong(origin, bound);
-        output = origin;
-        output += (bits > 32) ? (toUnsignedLong(next(32)) | (toUnsignedLong(next(bits - 32)) << 32))
-            : next(bits);
+    long r;
+    lock.lock();
+    try {
+      r = nextLongNoEntropyDebit();
+      if (origin < bound) {
+        long n = bound - origin, m = n - 1;
+        if ((n & m) == 0L)  // power of two
+        {
+          r = (r & m) + origin;
+        } else if (n > 0L) {  // reject over-represented candidates
+          for (long u = r >>> 1;            // ensure nonnegative
+              u + m - (r = u % n) < 0L;    // rejection check
+              u = nextLongNoEntropyDebit() >>> 1) // retry
+          {
+            ;
+          }
+          r += origin;
+        } else {              // range not representable as long
+          while (r < origin || r >= bound) {
+            r = nextLongNoEntropyDebit();
+          }
+        }
       }
-    } while ((output < origin) || (output >= bound));
+    } finally {
+      lock.unlock();
+    }
     debitEntropy(entropyOfLong(origin, bound));
-    return output;
+    return r;
   }
 
   /**
@@ -587,7 +647,12 @@ public abstract class BaseRandom extends Random
    * @return a pseudorandom {@code long} with all possible values equally likely.
    */
   protected long nextLongNoEntropyDebit() {
-    return super.nextLong();
+    lock.lock();
+    try {
+      return super.nextLong();
+    } finally {
+      lock.unlock();
+    }
   }
 
   /**
@@ -608,7 +673,8 @@ public abstract class BaseRandom extends Random
     try {
       return addSubclassFields(
           MoreObjects.toStringHelper(this).add("seed", BinaryUtils.convertBytesToHexString(seed))
-              .add("entropyBits", entropyBits.get()).add("seedGenerator", seedGenerator)).toString();
+              .add("entropyBits", entropyBits.get()).add("seedGenerator", seedGenerator))
+          .toString();
     } finally {
       lock.unlock();
     }
@@ -665,7 +731,8 @@ public abstract class BaseRandom extends Random
    * Registers this PRNG with the {@link RandomSeederThread} for the corresponding {@link
    * SeedGenerator}, to schedule reseeding when we run out of entropy. Unregisters this PRNG with
    * the previous {@link RandomSeederThread} if it had a different one.
-   * @param seedGenerator a {@link SeedGenerator} whose {@link RandomSeederThread} will be used to
+   * @param seedGenerator a {@link SeedGenerator} whose {@link RandomSeederThread} will be used
+   *     to
    *     reseed this PRNG.
    */
   public void setSeedGenerator(SeedGenerator seedGenerator) {
@@ -773,24 +840,14 @@ public abstract class BaseRandom extends Random
    * Generates a seed using the default seed generator if there isn't one already. For use in
    * handling a {@link #setSeed(long)} call from the super constructor {@link Random#Random()} in
    * subclasses that can't actually use an 8-byte seed. Also used in {@link #readObjectNoData()}.
+   * Does not acquire the lock, because it's normally called from an initializer.
    */
-  @SuppressWarnings("LockAcquiredButNotSafelyReleased") protected void fallbackSetSeed() {
-    boolean locked = false;
-    if (lock != null) {
-      lock.lock();
-      locked = true;
+  protected void fallbackSetSeed() {
+    if (seed == null) {
+      seed = DefaultSeedGenerator.DEFAULT_SEED_GENERATOR.generateSeed(getNewSeedLength());
     }
-    try {
-      if (seed == null) {
-        seed = DefaultSeedGenerator.DEFAULT_SEED_GENERATOR.generateSeed(getNewSeedLength());
-      }
-      if (entropyBits == null) {
-        entropyBits = new AtomicLong(seed.length * 8L);
-      }
-    } finally {
-      if (locked) {
-        lock.unlock();
-      }
+    if (entropyBits == null) {
+      entropyBits = new AtomicLong(seed.length * 8L);
     }
   }
 

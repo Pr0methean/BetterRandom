@@ -20,8 +20,7 @@ import java.util.concurrent.atomic.AtomicLong;
  * href="http://www.pcg-random.org/">http://www.pcg-random.org/</a>. Period is 2<sup>62</sup> bits.
  * This PRNG is seekable.
  * </p><p>
- * Concurrency is lockless, but contention is still possible due to a retry loop of {@link
- * AtomicLong#compareAndSet(long, long)}. Thus, sharing a single instance across threads isn't
+ * Sharing a single instance across threads that are frequently using it concurrently isn't
  * recommended unless memory is too constrained to use with a {@link ThreadLocalRandomWrapper}.
  * </p>
  * @author M.E. O'Neill (algorithm and C++ implementation)
@@ -37,7 +36,7 @@ public class Pcg64Random extends BaseRandom implements SeekableRandom {
   private static final int ROTATION2 = (Long.SIZE - Integer.SIZE - WANTED_OP_BITS);
   private static final int MASK = (1 << WANTED_OP_BITS) - 1;
 
-  private AtomicLong internal;
+  private final AtomicLong internal;
 
   public Pcg64Random() {
     this(DefaultSeedGenerator.DEFAULT_SEED_GENERATOR);
@@ -60,6 +59,24 @@ public class Pcg64Random extends BaseRandom implements SeekableRandom {
     internal = new AtomicLong(seed);
   }
 
+  @Override protected long nextLongNoEntropyDebit() {
+    lock.lock();
+    try {
+      return ((long) (next(32)) << 32) + next(32);
+    } finally {
+      lock.unlock();
+    }
+  }
+
+  @Override public double nextDoubleNoEntropyDebit() {
+    lock.lock();
+    try {
+      return super.nextDoubleNoEntropyDebit();
+    } finally {
+      lock.unlock();
+    }
+  }
+
   @Override public byte[] getSeed() {
     return BinaryUtils.convertLongToBytes(internal.get()).clone();
   }
@@ -67,7 +84,12 @@ public class Pcg64Random extends BaseRandom implements SeekableRandom {
   @SuppressWarnings("NonSynchronizedMethodOverridesSynchronizedMethod") @Override
   public void setSeed(long seed) {
     if (internal != null) {
-      internal.set(seed);
+      lock.lock();
+      try {
+        internal.set(seed);
+      } finally {
+        lock.unlock();
+      }
     }
     creditEntropyForNewSeed(LONG_BYTES);
   }
@@ -113,12 +135,17 @@ public class Pcg64Random extends BaseRandom implements SeekableRandom {
       throw new IllegalArgumentException("Pcg64Random requires an 8-byte seed");
     }
     if (internal != null) {
-      internal.set(BinaryUtils.convertBytesToLong(seed));
+      lock.lock();
+      try {
+        internal.set(BinaryUtils.convertBytesToLong(seed));
+      } finally {
+        lock.unlock();
+      }
     }
   }
 
   @Override protected int next(int bits) {
-    multiplyAndAddInternal(MULTIPLIER, INCREMENT);
+    multiplyAndAddInternal (MULTIPLIER, INCREMENT);
     long oldInternal;
     long newInternal;
     do {
@@ -138,6 +165,15 @@ public class Pcg64Random extends BaseRandom implements SeekableRandom {
 
   @Override protected ToStringHelper addSubclassFields(ToStringHelper original) {
     return original.add("internal", internal.get());
+  }
+
+  @Override public double nextGaussian() {
+    lock.lock();
+    try {
+      return super.nextGaussian();
+    } finally {
+      lock.unlock();
+    }
   }
 
   @Override public int getNewSeedLength() {

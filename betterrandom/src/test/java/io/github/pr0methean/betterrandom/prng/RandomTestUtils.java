@@ -26,10 +26,13 @@ import io.github.pr0methean.betterrandom.util.CloneViaSerialization;
 import java.util.HashSet;
 import java.util.Random;
 import java.util.concurrent.atomic.AtomicLong;
+import java8.util.function.Consumer;
 import java8.util.function.Supplier;
 import java8.util.function.ToLongFunction;
 import java8.util.stream.Stream;
+import java8.util.stream.BaseStream;
 import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
+import org.apache.commons.math3.stat.descriptive.SynchronizedDescriptiveStatistics;
 import org.testng.Reporter;
 
 /**
@@ -62,11 +65,11 @@ public enum RandomTestUtils {
     assertTrue(output.doubleValue() < bound);
     if ((entropyCheckMode == EntropyCheckMode.EXACT) || (entropyCheckMode
         == EntropyCheckMode.UPPER_BOUND)) {
-      assertGreaterOrEqual(oldEntropy - expectedEntropySpent, prng.getEntropyBits());
+      TestUtils.assertGreaterOrEqual(prng.getEntropyBits(), oldEntropy - expectedEntropySpent);
     }
     if ((entropyCheckMode == EntropyCheckMode.EXACT) || (entropyCheckMode
         == EntropyCheckMode.LOWER_BOUND)) {
-      TestUtils.assertLessOrEqual(oldEntropy - expectedEntropySpent, prng.getEntropyBits());
+      TestUtils.assertLessOrEqual(prng.getEntropyBits(), oldEntropy - expectedEntropySpent);
     }
   }
 
@@ -83,12 +86,12 @@ public enum RandomTestUtils {
         (expectedCount < 0) ? stream.sequential().limit(20) : stream;
     final long count = streamToUse.mapToLong(new ToLongFunction<Number>() {
       @Override public long applyAsLong(Number number) {
-        assertGreaterOrEqual(origin, number.doubleValue());
-        assertLess(bound, number.doubleValue());
+        TestUtils.assertGreaterOrEqual(number.doubleValue(), origin);
+        TestUtils.assertLess(number.doubleValue(), bound);
         if (checkEntropyCount && !(streamToUse.isParallel())) {
           long newEntropy = prng.getEntropyBits();
-          assertGreaterOrEqual(entropy.getAndSet(newEntropy) - maxEntropySpentPerNumber,
-              newEntropy);
+          TestUtils.assertGreaterOrEqual(newEntropy,
+              entropy.getAndSet(newEntropy) - maxEntropySpentPerNumber);
         }
         return 1;
       }
@@ -97,8 +100,8 @@ public enum RandomTestUtils {
       assertEquals(count, expectedCount);
     }
     if (checkEntropyCount && streamToUse.isParallel()) {
-      assertGreaterOrEqual(entropy.get() - (maxEntropySpentPerNumber * count),
-          prng.getEntropyBits());
+      TestUtils.assertGreaterOrEqual(prng.getEntropyBits(),
+          entropy.get() - (maxEntropySpentPerNumber * count));
     }
   }
 
@@ -199,13 +202,17 @@ public enum RandomTestUtils {
    *     calculation.
    * @return The standard deviation of the generated sample.
    */
-  public static double calculateSampleStandardDeviation(final Random rng, final int maxValue,
+  public static SynchronizedDescriptiveStatistics summaryStats(final BaseRandom rng, final long maxValue,
       final int iterations) {
-    final DescriptiveStatistics stats = new DescriptiveStatistics();
-    for (int i = 0; i < iterations; i++) {
-      stats.addValue(rng.nextInt(maxValue));
-    }
-    return stats.getStandardDeviation();
+    final SynchronizedDescriptiveStatistics stats = new SynchronizedDescriptiveStatistics();
+    BaseStream<? extends Number, ?> stream;
+    stream = (maxValue <= Integer.MAX_VALUE) ? rng.ints(iterations, 0, (int) maxValue) : rng.longs(iterations, 0, maxValue);
+    stream.spliterator().forEachRemaining(new Consumer<Number>() {
+      @Override public void accept(Number number) {
+        stats.addValue(number.doubleValue());
+      }
+    });
+    return stats;
   }
 
   @SuppressWarnings("unchecked")

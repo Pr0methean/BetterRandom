@@ -62,28 +62,35 @@ public enum TestUtils {
     return System.getenv("APPVEYOR") == null;
   }
 
-  public static void assertLessOrEqual(final long expected, final long actual) {
+  public static void assertLessOrEqual(final long actual, final long expected) {
     if (actual > expected) {
       throw new AssertionError(
           String.format("Expected no more than %d but found %d", expected, actual));
     }
   }
 
-  public static void assertGreaterOrEqual(final long expected, final long actual) {
+  public static void assertLessOrEqual(final double actual, final double expected) {
+    if (actual > expected) {
+      throw new AssertionError(
+          String.format("Expected no more than %f but found %f", expected, actual));
+    }
+  }
+
+  public static void assertGreaterOrEqual(final long actual, final long expected) {
     if (actual < expected) {
       throw new AssertionError(
           String.format("Expected at least %d but found %d", expected, actual));
     }
   }
 
-  public static void assertGreaterOrEqual(final double expected, final double actual) {
+  public static void assertGreaterOrEqual(final double actual, final double expected) {
     if (actual < expected) {
       throw new AssertionError(
           String.format("Expected at least %f but found %f", expected, actual));
     }
   }
 
-  public static void assertLess(final double expected, final double actual) {
+  public static void assertLess(final double actual, final double expected) {
     if (actual >= expected) {
       throw new AssertionError(
           String.format("Expected less than %f but found %f", expected, actual));

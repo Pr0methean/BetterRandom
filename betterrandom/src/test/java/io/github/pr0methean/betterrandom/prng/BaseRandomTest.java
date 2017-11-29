@@ -1,7 +1,9 @@
 package io.github.pr0methean.betterrandom.prng;
 
 import static io.github.pr0methean.betterrandom.TestUtils.assertGreaterOrEqual;
+import static io.github.pr0methean.betterrandom.TestUtils.assertLessOrEqual;
 import static io.github.pr0methean.betterrandom.prng.BaseRandom.ENTROPY_OF_DOUBLE;
+import static io.github.pr0methean.betterrandom.prng.BaseRandom.ENTROPY_OF_FLOAT;
 import static io.github.pr0methean.betterrandom.prng.RandomTestUtils.assertMonteCarloPiEstimateSane;
 import static io.github.pr0methean.betterrandom.prng.RandomTestUtils.checkRangeAndEntropy;
 import static io.github.pr0methean.betterrandom.prng.RandomTestUtils.checkStream;
@@ -10,6 +12,7 @@ import static org.testng.Assert.assertFalse;
 import static org.testng.Assert.assertNotEquals;
 import static org.testng.Assert.assertTrue;
 
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import io.github.pr0methean.betterrandom.TestUtils;
 import io.github.pr0methean.betterrandom.prng.RandomTestUtils.EntropyCheckMode;
@@ -27,9 +30,16 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 import java8.util.function.Consumer;
+import java8.util.function.Function;
 import java8.util.function.Supplier;
+import java.util.concurrent.ConcurrentSkipListSet;
+import java8.util.concurrent.ForkJoinPool;
+import java8.util.concurrent.ForkJoinTask;
+import java.util.concurrent.TimeUnit;
+import org.apache.commons.math3.stat.descriptive.SynchronizedDescriptiveStatistics;
 import org.testng.Reporter;
 import org.testng.annotations.AfterClass;
+import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
 public abstract class BaseRandomTest {
@@ -40,6 +50,9 @@ public abstract class BaseRandomTest {
           prng.nextInt();
         }
       };
+  @BeforeClass public void setUp() {
+    RandomSeederThread.setLoggingEnabled(false);
+  }
 
   /**
    * The square root of 12, rounded from an extended-precision calculation that was done by Wolfram
@@ -134,19 +147,56 @@ public abstract class BaseRandomTest {
    * subtle statistical anomalies that would be picked up by Diehard, but it provides a simple check
    * for major problems with the output.
    */
-  @Test(timeOut = 20000, groups = "non-deterministic") public void testStandardDeviation()
+  @Test(timeOut = 30_000, groups = "non-deterministic") public void testIntegerSummaryStats()
       throws SeedException {
     final BaseRandom rng = createRng();
     // Expected standard deviation for a uniformly distributed population of values in the range 0..n
     // approaches n/sqrt(12).
     // Expected standard deviation for a uniformly distributed population of values in the range 0..n
     // approaches n/sqrt(12).
-    final int n = 100;
-    final double observedSD = RandomTestUtils.calculateSampleStandardDeviation(rng, n, 10000);
-    final double expectedSD = n / SQRT_12;
-    Reporter.log("Expected SD: " + expectedSD + ", observed SD: " + observedSD);
-    assertEquals(observedSD, expectedSD, 0.02 * expectedSD,
-        "Standard deviation is outside acceptable range: " + observedSD);
+    for (long n : new long[] {100, 1L << 32, Long.MAX_VALUE}) {
+      final int iterations = 10000;
+      final SynchronizedDescriptiveStatistics
+          stats = RandomTestUtils.summaryStats(rng, n, iterations);
+      final double observedSD = stats.getStandardDeviation();
+      final double expectedSD = n / SQRT_12;
+      Reporter.log("Expected SD: " + expectedSD + ", observed SD: " + observedSD);
+      assertGreaterOrEqual(observedSD, 0.98 * expectedSD);
+      assertLessOrEqual(observedSD, 1.02 * expectedSD);
+      assertGreaterOrEqual(stats.getMax(), 0.9 * n);
+      assertLessOrEqual(stats.getMax(), n - 1);
+      assertGreaterOrEqual(stats.getMin(), 0);
+      assertLessOrEqual(stats.getMin(), 0.1 * n);
+      assertGreaterOrEqual(stats.getMean(), 0.4 * n);
+      assertLessOrEqual(stats.getMean(), 0.6 * n);
+      final double median = stats.getPercentile(50);
+      assertGreaterOrEqual(median, 0.4 * n);
+      assertLessOrEqual(median, 0.6 * n);
+    }
+  }
+
+  /**
+   * Test to ensure that the output from nextGaussian is broadly as expected.
+   */
+  @Test(timeOut = 20_000, groups = "non-deterministic") public void testNextGaussianStatistically()
+      throws SeedException {
+    final BaseRandom rng = createRng();
+    final int iterations = 10000;
+    final SynchronizedDescriptiveStatistics stats = new SynchronizedDescriptiveStatistics();
+    for (int i=0; i<iterations; i++) {
+      stats.addValue(rng.nextGaussian());
+    }
+    final double observedSD = stats.getStandardDeviation();
+    Reporter.log("Expected SD for Gaussians: 1, observed SD: " + observedSD);
+    assertGreaterOrEqual(observedSD, 0.97);
+    assertLessOrEqual(observedSD, 1.03);
+    assertGreaterOrEqual(stats.getMax(), 2.0);
+    assertLessOrEqual(stats.getMin(), -2.0);
+    assertGreaterOrEqual(stats.getMean(), -0.05);
+    assertLessOrEqual(stats.getMean(), 0.05);
+    final double median = stats.getPercentile(50);
+    assertGreaterOrEqual(median, -0.05);
+    assertLessOrEqual(median, 0.05);
   }
 
   /**
@@ -207,7 +257,9 @@ public abstract class BaseRandomTest {
    * for two independently-generated instances to give unequal dumps.
    */
   @Test(timeOut = 15000) public void testDump() throws SeedException {
-    assertNotEquals(createRng().dump(), createRng().dump());
+    final BaseRandom rng = createRng();
+    assertNotEquals(rng.dump(), createRng().dump());
+    rng.nextLong(); // Kill a mutant where dump doesn't unlock the lock
   }
 
   @Test public void testReseeding() throws SeedException {
@@ -219,7 +271,7 @@ public abstract class BaseRandomTest {
     rng2.nextBytes(output2);
     final int seedLength = rng1.getNewSeedLength();
     rng1.setSeed(DefaultSeedGenerator.DEFAULT_SEED_GENERATOR.generateSeed(seedLength));
-    assertGreaterOrEqual(seedLength * 8L, rng1.getEntropyBits());
+    assertGreaterOrEqual(rng1.getEntropyBits(), seedLength * 8L);
     rng1.nextBytes(output1);
     rng2.nextBytes(output2);
     assertFalse(Arrays.equals(output1, output2));
@@ -239,7 +291,7 @@ public abstract class BaseRandomTest {
         Thread.sleep(100);
         newSeed = rng.getSeed();
       } while (Arrays.equals(newSeed, oldSeed));
-      assertGreaterOrEqual(newSeed.length * 8L - 1, rng.getEntropyBits());
+      assertGreaterOrEqual(rng.getEntropyBits(), newSeed.length * 8L - 1);
     } finally {
       rng.setSeedGenerator(null);
     }
@@ -256,6 +308,30 @@ public abstract class BaseRandomTest {
         return prng.withProbability(0.7) ? 0 : 1;
       }
     }, 0, 2, true);
+  }
+
+  @Test(timeOut = 20_000, groups = "non-deterministic") public void testWithProbabilityStatistically() {
+    final BaseRandom prng = createRng();
+    int trues = 0;
+    for (int i=0; i<3000; i++) {
+      if (prng.withProbability(0.6)) {
+        trues++;
+      }
+    }
+    assertGreaterOrEqual(trues, 1700);
+    assertLessOrEqual(trues, 1900);
+  }
+
+  @Test(timeOut = 20_000, groups = "non-deterministic") public void testNextBooleanStatistically() {
+    final BaseRandom prng = createRng();
+    int trues = 0;
+    for (int i=0; i<3000; i++) {
+      if (prng.nextBoolean()) {
+        trues++;
+      }
+    }
+    assertGreaterOrEqual(trues, 1400);
+    assertLessOrEqual(trues, 1600);
   }
 
   @Test public void testNextBytes() throws Exception {
@@ -278,7 +354,7 @@ public abstract class BaseRandomTest {
 
   @Test(expectedExceptions = IllegalArgumentException.class)
   public void testNextInt1InvalidBound() {
-    createRng().nextInt(-1);
+    createRng().nextInt(0);
   }
 
   @Test public void testNextInt() throws Exception {
@@ -301,7 +377,7 @@ public abstract class BaseRandomTest {
 
   @Test(expectedExceptions = IllegalArgumentException.class)
   public void testNextInt2InvalidBound() {
-    createRng().nextInt(10, 9);
+    createRng().nextInt(1, 1);
   }
 
   @Test public void testNextInt2HugeRange() throws Exception {
@@ -368,6 +444,15 @@ public abstract class BaseRandomTest {
     }, 0.0, 1.0, true);
   }
 
+  @Test public void testNextFloat() throws Exception {
+    final BaseRandom prng = createRng();
+    checkRangeAndEntropy(prng, ENTROPY_OF_FLOAT, new Supplier<Number>() {
+      @Override public Number get() {
+        return prng.nextFloat();
+      }
+    }, 0.0, 1.0, true);
+  }
+
   @Test public void testNextDouble1() throws Exception {
     final BaseRandom prng = createRng();
     checkRangeAndEntropy(prng, ENTROPY_OF_DOUBLE, new Supplier<Number>() {
@@ -393,7 +478,7 @@ public abstract class BaseRandomTest {
 
   @Test(expectedExceptions = IllegalArgumentException.class)
   public void testNextDouble2InvalidBound() {
-    createRng().nextDouble(3.5, 3.4);
+    createRng().nextDouble(3.5, 3.5);
   }
 
   @Test public void testNextGaussian() throws Exception {
@@ -526,6 +611,140 @@ public abstract class BaseRandomTest {
         return prng.nextEnum(TestEnum.class);
       }
     }, TestEnum.RED, TestEnum.YELLOW, TestEnum.BLUE);
+  }
+
+  /**
+   * ForkJoinTask that reads random longs and adds them to the set.
+   */
+  protected static final class GeneratorForkJoinTask<T> extends ForkJoinTask<Void> {
+
+    private final Random prng;
+    private final ConcurrentSkipListSet<T> set;
+    private final Function<Random, T> function;
+
+    public GeneratorForkJoinTask(Random prng, ConcurrentSkipListSet<T> set,
+        Function<Random, T> function) {
+      this.prng = prng;
+      this.set = set;
+      this.function = function;
+    }
+
+    @Override public Void getRawResult() {
+      return null;
+    }
+
+    @Override protected void setRawResult(Void value) {
+      // No-op.
+    }
+
+    @Override protected boolean exec() {
+      for (int i = 0; i < 1000; i++) {
+        set.add(function.apply(prng));
+      }
+      return true;
+    }
+  }
+
+  protected final ForkJoinPool pool = new ForkJoinPool(2);
+  protected final ConcurrentSkipListSet<Double> sequentialOutput = new ConcurrentSkipListSet<>();
+  protected final ConcurrentSkipListSet<Double> parallelOutput = new ConcurrentSkipListSet<>();
+
+  protected static abstract class NamedFunction<T, R> implements Function<T, R> {
+
+    private final String name;
+
+    public NamedFunction(String name) {
+      this.name = name;
+    }
+
+    @Override public String toString() {
+      return name;
+    }
+  }
+
+  protected static final NamedFunction<Random, Double> NEXT_LONG =
+      new NamedFunction<Random, Double>("Random::nextLong") {
+        @Override public Double apply(Random rng) {
+          return (double) (rng.nextLong());
+        }
+      };
+  protected static final NamedFunction<Random, Double> NEXT_INT =
+      new NamedFunction<Random, Double>("Random::nextInt") {
+        @Override public Double apply(Random rng) {
+          return Double.valueOf(rng.nextInt());
+        }
+      };
+  protected static final NamedFunction<Random, Double> NEXT_DOUBLE =
+      new NamedFunction<Random, Double>("Random::nextDouble") {
+        @Override public Double apply(Random rng) {
+          return rng.nextDouble();
+        }
+      };
+  protected static final NamedFunction<Random, Double> NEXT_GAUSSIAN =
+      new NamedFunction<Random, Double>("Random::nextGaussian") {
+        @Override public Double apply(Random rng) {
+          return rng.nextGaussian();
+        }
+      };
+  protected static final List<NamedFunction<Random, Double>> FUNCTIONS_FOR_THREAD_SAFETY_TEST =
+      ImmutableList.of(NEXT_LONG, NEXT_INT, NEXT_DOUBLE, NEXT_GAUSSIAN);
+
+  @Test public void testThreadSafety() {
+    testThreadSafety(FUNCTIONS_FOR_THREAD_SAFETY_TEST, FUNCTIONS_FOR_THREAD_SAFETY_TEST);
+  }
+
+  protected void testThreadSafetyVsCrashesOnly(List<NamedFunction<Random, Double>> functions) {
+    int seedLength = createRng().getNewSeedLength();
+    byte[] seed = DefaultSeedGenerator.DEFAULT_SEED_GENERATOR.generateSeed(seedLength);
+    for (NamedFunction<Random, Double> supplier1 : functions) {
+      for (NamedFunction<Random, Double> supplier2 : functions) {
+        runParallel(supplier1, supplier2, seed);
+      }
+    }
+  }
+
+  protected void testThreadSafety(List<NamedFunction<Random, Double>> functions,
+      List<NamedFunction<Random, Double>> pairwiseFunctions) {
+    int seedLength = createRng().getNewSeedLength();
+    byte[] seed = DefaultSeedGenerator.DEFAULT_SEED_GENERATOR.generateSeed(seedLength);
+    for (NamedFunction<Random, Double> supplier : functions) {
+      for (int i = 0; i < 5; i++) {
+        // This loop is necessary to control the false pass rate, especially during mutation testing.
+        runSequential(supplier, supplier, seed);
+        runParallel(supplier, supplier, seed);
+        assertEquals(sequentialOutput, parallelOutput,
+            "output differs between sequential/parallel calls to " + supplier);
+      }
+    }
+
+    // Check that each pair won't crash no matter which order they start in
+    // (this part is assertion-free because we can't tell whether A-bits-as-long and
+    // B-bits-as-double come from the same bit stream as vice-versa).
+    for (NamedFunction<Random, Double> supplier1 : pairwiseFunctions) {
+      for (NamedFunction<Random, Double> supplier2 : pairwiseFunctions) {
+        if (supplier1 != supplier2) {
+          runParallel(supplier2, supplier1, seed);
+        }
+      }
+    }
+  }
+
+  protected void runParallel(NamedFunction<Random, Double> supplier1,
+      NamedFunction<Random, Double> supplier2, byte[] seed) {
+    Random parallelPrng = createRng(seed);
+    parallelOutput.clear();
+    pool.execute(new GeneratorForkJoinTask(parallelPrng, parallelOutput, supplier1));
+    pool.execute(new GeneratorForkJoinTask(parallelPrng, parallelOutput, supplier2));
+    assertTrue(pool.awaitQuiescence(10, TimeUnit.SECONDS),
+        String.format("Timed out waiting for %s and %s to finish", supplier1, supplier2));
+  }
+
+  protected void runSequential(NamedFunction<Random, Double> supplier1,
+      NamedFunction<Random, Double> supplier2, byte[] seed) {
+    Random sequentialPrng = createRng(seed);
+    sequentialOutput.clear();
+    new GeneratorForkJoinTask(sequentialPrng, sequentialOutput, supplier1).exec();
+    new GeneratorForkJoinTask(sequentialPrng, sequentialOutput, supplier2).exec();
   }
 
   @AfterClass public void classTearDown() {

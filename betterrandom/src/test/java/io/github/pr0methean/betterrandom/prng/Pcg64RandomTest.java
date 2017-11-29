@@ -1,7 +1,8 @@
 package io.github.pr0methean.betterrandom.prng;
 
-import io.github.pr0methean.betterrandom.SeekableRandom;
-import java.util.Random;
+import static org.testng.Assert.assertEquals;
+
+import com.google.common.collect.ImmutableList;
 import org.testng.annotations.Test;
 
 public class Pcg64RandomTest extends BaseRandomTest {
@@ -33,6 +34,12 @@ public class Pcg64RandomTest extends BaseRandomTest {
     Pcg64Random copy2 = createRng(copy1.getSeed());
     copy2.advance(0);
     RandomTestUtils.testEquivalence(copy1, copy2, 20);
+  }
+
+  // nextInt is excluded from assertion due to https://github.com/Pr0methean/BetterRandom/issues/13
+  @Override public void testThreadSafety() {
+    testThreadSafety(ImmutableList.of(NEXT_LONG, NEXT_GAUSSIAN, NEXT_DOUBLE),
+        FUNCTIONS_FOR_THREAD_SAFETY_TEST);
   }
 
   @Override protected Class<? extends BaseRandom> getClassUnderTest() {

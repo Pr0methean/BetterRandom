@@ -433,7 +433,7 @@
         <configuration>
           <threads>4</threads>
           <coverageThreshold>80</coverageThreshold>
-         <mutationThreshold>60</mutationThreshold>
+          <mutationThreshold>50</mutationThreshold>
           <avoidCallsTo>
             <avoidCallsTo>java.util.logging</avoidCallsTo>
             <avoidCallsTo>io.github.pr0methean.betterrandom.util.LogPreFormatter</avoidCallsTo>

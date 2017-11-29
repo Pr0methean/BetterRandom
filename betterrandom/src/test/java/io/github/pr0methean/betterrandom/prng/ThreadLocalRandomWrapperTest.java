@@ -52,6 +52,11 @@ public class ThreadLocalRandomWrapperTest extends BaseRandomTest {
     createRng().setSeedGenerator(DefaultSeedGenerator.DEFAULT_SEED_GENERATOR);
   }
 
+  /** Assertion-free because thread-local. */
+  @Override @Test public void testThreadSafety() {
+    testThreadSafetyVsCrashesOnly(FUNCTIONS_FOR_THREAD_SAFETY_TEST);
+  }
+
   @Override public Map<Class<?>, Object> constructorParams() {
     Map<Class<?>, Object> params = super.constructorParams();
     params.put(Supplier.class, new MersenneTwisterRandomColonColonNew());
