@@ -150,7 +150,7 @@ public class Pcg64Random extends BaseRandom implements SeekableRandom {
     long newInternal;
     do {
       oldInternal = internal.get();
-      newInternal = oldInternal;
+      newInternal = oldInternal * MULTIPLIER + INCREMENT;
       newInternal ^= oldInternal >>> ROTATION1;
     } while (!internal.compareAndSet(oldInternal, newInternal));
     int rot = (int) (oldInternal >>> (Long.SIZE - WANTED_OP_BITS)) & MASK;
