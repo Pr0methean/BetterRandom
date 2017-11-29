@@ -3,15 +3,20 @@ package io.github.pr0methean.betterrandom.prng;
 import static io.github.pr0methean.betterrandom.TestUtils.assertGreaterOrEqual;
 
 import io.github.pr0methean.betterrandom.seed.DefaultSeedGenerator;
-import io.github.pr0methean.betterrandom.seed.FailingSeedGenerator;
+import io.github.pr0methean.betterrandom.seed.RandomSeederThread;
 import io.github.pr0methean.betterrandom.seed.SeedException;
 import java.io.Serializable;
 import java.util.Arrays;
 import java.util.Random;
 import java.util.function.Supplier;
+import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
 public class ReseedingThreadLocalRandomWrapperTest extends ThreadLocalRandomWrapperTest {
+
+  @BeforeClass @Override public void setUp() {
+    RandomSeederThread.setLoggingEnabled(true);
+  }
 
   @Override public void testWrapLegacy() throws SeedException {
     ReseedingThreadLocalRandomWrapper
