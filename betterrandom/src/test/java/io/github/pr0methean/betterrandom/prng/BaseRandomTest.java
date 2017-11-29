@@ -70,7 +70,7 @@ public abstract class BaseRandomTest {
       Collections.unmodifiableList(Arrays.asList(STRING_ARRAY));
   private static final int ELEMENTS = 100;
   private static final double UPPER_BOUND_FOR_ROUNDING_TEST =
-      Double.longBitsToDouble(Double.doubleToLongBits(1.0) + 4);
+      Double.longBitsToDouble(Double.doubleToLongBits(1.0) + 3);
   protected final ForkJoinPool pool = new ForkJoinPool(2);
   protected final ConcurrentSkipListSet<Double> sequentialOutput = new ConcurrentSkipListSet<>();
   protected final ConcurrentSkipListSet<Double> parallelOutput = new ConcurrentSkipListSet<>();
@@ -439,6 +439,9 @@ public abstract class BaseRandomTest {
         true);
     checkRangeAndEntropy(prng, ENTROPY_OF_DOUBLE, () -> prng.nextDouble(5.0, 13.37), 5.0, 13.37,
         true);
+    checkRangeAndEntropy(prng, ENTROPY_OF_DOUBLE,
+        () -> prng.nextDouble(1.0, UPPER_BOUND_FOR_ROUNDING_TEST), 1.0,
+        UPPER_BOUND_FOR_ROUNDING_TEST, true);
   }
 
   @Test(expectedExceptions = IllegalArgumentException.class)
