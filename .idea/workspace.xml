@@ -5,6 +5,7 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="5cfcc489-45e1-48cf-a1ae-7b2e5d28efac" name="Default" comment="">
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/betterrandom/src/main/java/io/github/pr0methean/betterrandom/prng/BaseRandom.java" afterPath="$PROJECT_DIR$/betterrandom/src/main/java/io/github/pr0methean/betterrandom/prng/BaseRandom.java" />
     </list>
     <ignored path="$PROJECT_DIR$/out/" />
@@ -32,14 +33,14 @@
       <file leaf-file-name="BaseRandom.java" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/betterrandom/src/main/java/io/github/pr0methean/betterrandom/prng/BaseRandom.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-308">
-              <caret line="547" column="6" lean-forward="true" selection-start-line="547" selection-start-column="6" selection-end-line="547" selection-end-column="6" />
+            <state relative-caret-position="160">
+              <caret line="543" column="61" lean-forward="false" selection-start-line="543" selection-start-column="61" selection-end-line="543" selection-end-column="61" />
               <folding>
                 <element signature="e#3259#3381#0" expanded="true" />
                 <element signature="e#10703#10704#0" expanded="true" />
                 <element signature="e#10738#10739#0" expanded="true" />
-                <element signature="e#26121#26122#0" expanded="true" />
-                <element signature="e#26170#26171#0" expanded="true" />
+                <element signature="e#26280#26281#0" expanded="true" />
+                <element signature="e#26329#26330#0" expanded="true" />
               </folding>
             </state>
           </provider>
@@ -923,7 +924,7 @@
       <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="9" side_tool="false" content_ui="tabs" />
       <window_info id="Designer" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.37767583" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
-      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.3859649" sideWeight="0.49082568" order="1" side_tool="false" content_ui="tabs" />
+      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.11929824" sideWeight="0.49082568" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.2117737" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="UI Designer" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
@@ -1444,14 +1445,14 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/betterrandom/src/main/java/io/github/pr0methean/betterrandom/prng/BaseRandom.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-308">
-          <caret line="547" column="6" lean-forward="true" selection-start-line="547" selection-start-column="6" selection-end-line="547" selection-end-column="6" />
+        <state relative-caret-position="160">
+          <caret line="543" column="61" lean-forward="false" selection-start-line="543" selection-start-column="61" selection-end-line="543" selection-end-column="61" />
           <folding>
             <element signature="e#3259#3381#0" expanded="true" />
             <element signature="e#10703#10704#0" expanded="true" />
             <element signature="e#10738#10739#0" expanded="true" />
-            <element signature="e#26121#26122#0" expanded="true" />
-            <element signature="e#26170#26171#0" expanded="true" />
+            <element signature="e#26280#26281#0" expanded="true" />
+            <element signature="e#26329#26330#0" expanded="true" />
           </folding>
         </state>
       </provider>
