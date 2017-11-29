@@ -409,8 +409,8 @@ public abstract class BaseRandomTest {
 
   @Test public void testNextLong2HugeRange() throws Exception {
     final BaseRandom prng = createRng();
-    checkRangeAndEntropy(prng, 64, () -> prng.nextLong(Long.MIN_VALUE, 1 << 29), Long.MIN_VALUE,
-        1 << 29, true);
+    checkRangeAndEntropy(prng, 64, () -> prng.nextLong(Long.MIN_VALUE, 1L << 62), Long.MIN_VALUE,
+        1L << 62, true);
   }
 
   @Test public void testNextDouble() throws Exception {
