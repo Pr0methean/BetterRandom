@@ -32,6 +32,11 @@ import javax.annotation.Nullable;
 /**
  * <p>Wraps any {@link Random} as a {@link RepeatableRandom} and {@link ByteArrayReseedableRandom}.
  * Can be used to encapsulate away a change of implementation in midstream.</p>
+ * <p>Caution: This depends on the underlying {@link Random} for thread-safety. When used with a
+ * vanilla {@link Random}, this means that its output for the same seed will vary when accessed
+ * concurrently from multiple threads, if the calls include e.g. {@link #nextLong()},
+ * {@link #nextGaussian()} or {@link #nextDouble()}. However, {@link #nextInt()} will still be
+ * transactional.</p>
  * @author Chris Hennick
  */
 public class RandomWrapper extends BaseRandom {
