@@ -542,9 +542,10 @@ public abstract class BaseRandom extends Random
    *     bound}
    */
   public long nextLong(final long origin, final long bound) {
+    long r;
     lock.lock();
     try {
-      long r = nextLongNoEntropyDebit();
+      r = nextLongNoEntropyDebit();
       if (origin < bound) {
         long n = bound - origin, m = n - 1;
         if ((n & m) == 0L)  // power of two
