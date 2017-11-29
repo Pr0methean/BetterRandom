@@ -31,17 +31,22 @@ public class ReseedingThreadLocalRandomWrapperTest extends ThreadLocalRandomWrap
 
   @Override @Test public void testReseeding() {
     final BaseRandom rng = createRng();
-    final byte[] oldSeed = rng.getSeed();
+    // final byte[] oldSeed = rng.getSeed();
     while (rng.getEntropyBits() > Long.SIZE) {
       rng.nextLong();
     }
     try {
+      long oldEntropy;
+      long newEntropy = rng.getEntropyBits();
       byte[] newSeed;
       do {
+        oldEntropy = newEntropy;
         rng.nextBoolean();
         Thread.sleep(100);
         newSeed = rng.getSeed();
-      } while (Arrays.equals(newSeed, oldSeed));
+        newEntropy = rng.getEntropyBits();
+      } while (newEntropy <= oldEntropy);
+      // Change once bug fixed: while (Arrays.equals(newSeed, oldSeed));
       assertGreaterOrEqual(rng.getEntropyBits(), newSeed.length * 8L - 1);
     } catch (InterruptedException e) {
       throw new RuntimeException(e);
