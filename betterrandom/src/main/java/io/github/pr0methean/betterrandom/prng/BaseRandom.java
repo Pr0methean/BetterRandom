@@ -542,6 +542,10 @@ public abstract class BaseRandom extends Random
    *     bound}
    */
   public long nextLong(final long origin, final long bound) {
+    if (bound <= origin) {
+      throw new IllegalArgumentException(
+          String.format("Bound %d must be greater than origin %d", bound, origin));
+    }
     long r;
     lock.lock();
     try {
