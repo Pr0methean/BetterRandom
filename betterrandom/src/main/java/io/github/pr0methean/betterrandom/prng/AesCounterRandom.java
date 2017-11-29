@@ -135,7 +135,6 @@ public class AesCounterRandom extends BaseRandom implements SeekableRandom {
     super(seed);
     currentBlock = new byte[COUNTER_SIZE_BYTES * BLOCKS_AT_ONCE];
     index = currentBlock.length; // force generation of first block on demand
-    setSeedInternal(seed);
   }
 
   /**
@@ -157,12 +156,6 @@ public class AesCounterRandom extends BaseRandom implements SeekableRandom {
   @Override public ToStringHelper addSubclassFields(final ToStringHelper original) {
     return original.add("counter", BinaryUtils.convertBytesToHexString(counter))
         .add("cipher", cipher);
-  }
-
-  private void readObject(final ObjectInputStream in) throws IOException, ClassNotFoundException {
-    in.defaultReadObject();
-    initTransientFields();
-    setSeedInternal(seed);
   }
 
   @Override protected void initTransientFields() {

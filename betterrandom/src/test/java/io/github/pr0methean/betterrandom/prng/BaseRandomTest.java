@@ -212,9 +212,8 @@ public abstract class BaseRandomTest {
     final BaseRandom rng = createRng();
     final int iterations = 10000;
     final SynchronizedDescriptiveStatistics stats = new SynchronizedDescriptiveStatistics();
-    for (int i = 0; i < iterations; i++) {
-      stats.addValue(rng.nextGaussian());
-    }
+    rng.gaussians(iterations).spliterator().forEachRemaining(stats::addValue);
+    
     final double observedSD = stats.getStandardDeviation();
     Reporter.log("Expected SD for Gaussians: 1, observed SD: " + observedSD);
     assertGreaterOrEqual(observedSD, 0.97);
@@ -351,6 +350,15 @@ public abstract class BaseRandomTest {
     // Significance test at p=3.15E-6 (unadjusted for the multiple subclasses and environments!)
     assertGreaterOrEqual(trues, 1675);
     assertLessOrEqual(trues, 1925);
+    trues = 0;
+    for (int i = 0; i < 3000; i++) {
+      if (withProbability(0.5)) {
+        trues++;
+      }
+    }
+    // Significance test at p=4.54E-6 (unadjusted for the multiple subclasses and environments!)
+    assertGreaterOrEqual(trues, 1375);
+    assertLessOrEqual(trues, 1625);
   }
 
   @Test(timeOut = 20_000, groups = "non-deterministic") public void testNextBooleanStatistically() {
@@ -432,6 +440,14 @@ public abstract class BaseRandomTest {
 
   @Test public void testNextLong1() throws Exception {
     final BaseRandom prng = createRng();
+    for (int i=0; i<20; i++) {
+      // check that the bound is exclusive, to kill an off-by-one mutant
+      checkRangeAndEntropy(prng, 1, new Supplier<Number>() {
+        @Override public Number get() {
+          return prng.nextLong(2);
+        }
+      }, 0, 2, true);
+    }
     checkRangeAndEntropy(prng, 42, new Supplier<Number>() {
       @Override public Number get() {
         return prng.nextLong(1L << 42);
