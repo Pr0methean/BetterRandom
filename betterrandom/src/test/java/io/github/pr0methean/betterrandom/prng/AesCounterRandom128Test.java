@@ -64,7 +64,7 @@ public class AesCounterRandom128Test extends BaseRandomTest {
       copy1AsRandom.nextInt();
     }
     copy2.advance(ITERATIONS);
-    RandomTestUtils.testEquivalence(copy1AsRandom, copy2AsRandom, 20);
+    RandomTestUtils.testEquivalence(copy1AsRandom, copy2AsRandom, ITERATIONS + 20);
   }
 
   @Test public void testAdvanceZero() {
@@ -73,7 +73,7 @@ public class AesCounterRandom128Test extends BaseRandomTest {
     SeekableRandom copy2 = (SeekableRandom) createRng(copy1.getSeed());
     Random copy2AsRandom = (Random) copy2;
     copy2.advance(0);
-    RandomTestUtils.testEquivalence(copy1AsRandom, copy2AsRandom, 20);
+    RandomTestUtils.testEquivalence(copy1AsRandom, copy2AsRandom, ITERATIONS + 20);
   }
 
   @Test public void testAdvanceBackward() {
@@ -85,7 +85,7 @@ public class AesCounterRandom128Test extends BaseRandomTest {
       copy1AsRandom.nextInt();
     }
     copy1.advance(-ITERATIONS);
-    RandomTestUtils.testEquivalence(copy1AsRandom, copy2AsRandom, 20);
+    RandomTestUtils.testEquivalence(copy1AsRandom, copy2AsRandom, ITERATIONS + 20);
   }
 
   @Test(timeOut = 15000) public void testMaxSeedLengthOk() {
