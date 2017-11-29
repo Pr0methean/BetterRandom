@@ -16,6 +16,11 @@ import org.testng.annotations.Test;
 
 public class ReseedingThreadLocalRandomWrapperTest extends ThreadLocalRandomWrapperTest {
 
+  @BeforeMethod public void setUp() {
+    DeadlockWatchdogThread.ensureStarted();
+    RandomSeederThread.setLoggingEnabled(true);
+  }
+
   @Override public void testWrapLegacy() throws SeedException {
     ReseedingThreadLocalRandomWrapper
         .wrapLegacy(Random::new, DefaultSeedGenerator.DEFAULT_SEED_GENERATOR).nextInt();
@@ -39,6 +44,7 @@ public class ReseedingThreadLocalRandomWrapperTest extends ThreadLocalRandomWrap
         rng.nextBoolean();
         Thread.sleep(100);
         newSeed = rng.getSeed();
+        System.out.println(rng.dump());
       } while (Arrays.equals(newSeed, oldSeed));
       assertGreaterOrEqual(rng.getEntropyBits(), newSeed.length * 8L - 1);
     } catch (InterruptedException e) {
