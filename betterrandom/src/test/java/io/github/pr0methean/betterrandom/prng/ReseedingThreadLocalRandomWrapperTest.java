@@ -3,9 +3,7 @@ package io.github.pr0methean.betterrandom.prng;
 import io.github.pr0methean.betterrandom.seed.DefaultSeedGenerator;
 import io.github.pr0methean.betterrandom.seed.FailingSeedGenerator;
 import io.github.pr0methean.betterrandom.seed.SeedException;
-import io.github.pr0methean.betterrandom.seed.SeedGenerator;
 import java.io.Serializable;
-import java.util.Map;
 import java.util.Random;
 import java.util.function.Supplier;
 
