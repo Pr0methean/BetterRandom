@@ -33,6 +33,7 @@ import java.util.concurrent.ConcurrentSkipListSet;
 import java.util.concurrent.ForkJoinPool;
 import java.util.concurrent.ForkJoinTask;
 import java.util.concurrent.TimeUnit;
+import java.util.function.DoubleConsumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
 import org.apache.commons.math3.stat.descriptive.SynchronizedDescriptiveStatistics;
@@ -185,7 +186,7 @@ public abstract class BaseRandomTest {
     final BaseRandom rng = createRng();
     final int iterations = 10000;
     final SynchronizedDescriptiveStatistics stats = new SynchronizedDescriptiveStatistics();
-    rng.gaussians(iterations).spliterator().forEachRemaining(stats::addValue);
+    rng.gaussians(iterations).spliterator().forEachRemaining((DoubleConsumer) stats::addValue);
     
     final double observedSD = stats.getStandardDeviation();
     Reporter.log("Expected SD for Gaussians: 1, observed SD: " + observedSD);
@@ -314,7 +315,7 @@ public abstract class BaseRandomTest {
     assertLessOrEqual(trues, 1925);
     trues = 0;
     for (int i = 0; i < 3000; i++) {
-      if (withProbability(0.5)) {
+      if (prng.withProbability(0.5)) {
         trues++;
       }
     }
