@@ -185,16 +185,22 @@ public class AesCounterRandom extends BaseRandom implements SeekableRandom {
 
   /**
    * Generates BLOCKS_AT_ONCE 128-bit (16-byte) blocks. Copies them to currentBlock.
-   * @throws GeneralSecurityException If there is a problem with the cipher that generates the
+   * @throws IllegalStateException If there is a problem with the cipher that generates the
    *     random data.
    */
-  private void nextBlock() throws GeneralSecurityException {
+  private void nextBlock() {
     for (int i = 0; i < BLOCKS_AT_ONCE; i++) {
       incrementCounter();
       System.arraycopy(counter, 0, counterInput, i * COUNTER_SIZE_BYTES, COUNTER_SIZE_BYTES);
     }
     final int totalBytes = COUNTER_SIZE_BYTES * BLOCKS_AT_ONCE;
-    cipher.doFinal(counterInput, 0, totalBytes, currentBlock);
+    try {
+      cipher.doFinal(counterInput, 0, totalBytes, currentBlock);
+    } catch (final GeneralSecurityException ex) {
+      // Should never happen.  If initialisation succeeds without exceptions
+      // we should be able to proceed indefinitely without exceptions.
+      throw new IllegalStateException("Failed creating next random block.", ex);
+    }
   }
 
   @Override protected final int next(final int bits) {
@@ -202,14 +208,8 @@ public class AesCounterRandom extends BaseRandom implements SeekableRandom {
     int result;
     try {
       if ((currentBlock.length - index) < 4) {
-        try {
-          nextBlock();
-          index = 0;
-        } catch (final GeneralSecurityException ex) {
-          // Should never happen.  If initialisation succeeds without exceptions
-          // we should be able to proceed indefinitely without exceptions.
-          throw new IllegalStateException("Failed creating next random block.", ex);
-        }
+        nextBlock();
+        index = 0;
       }
       result = BinaryUtils.convertBytesToInt(currentBlock, index);
       index += 4;
@@ -275,7 +275,8 @@ public class AesCounterRandom extends BaseRandom implements SeekableRandom {
   @Override @SuppressWarnings("contracts.postcondition.not.satisfied")
   public synchronized void setSeed(final long seed) {
     if (superConstructorFinished) {
-      super.setSeed(seed);
+      final byte[] seedBytes = BinaryUtils.convertLongToBytes(seed);
+      setSeed(seedBytes);
     }
   }
 
@@ -310,22 +311,23 @@ public class AesCounterRandom extends BaseRandom implements SeekableRandom {
     if (delta == 0) {
       return;
     }
+    byte[] addendDigits = new byte[counter.length];
+    System.arraycopy(BinaryUtils.convertLongToBytes(delta), 0, addendDigits,
+        counter.length - LONG_BYTES, LONG_BYTES);
+    if (delta < 0) {
+      // Sign extend
+      for (int i = 0; i < counter.length - LONG_BYTES; i++) {
+        addendDigits[i] = -1;
+      }
+    }
+    boolean carry = false;
     lock.lock();
     try {
-      byte[] addendDigits = new byte[counter.length];
-      System.arraycopy(BinaryUtils.convertLongToBytes(delta), 0, addendDigits,
-          counter.length - LONG_BYTES, LONG_BYTES);
-      if (delta < 0) {
-        // Sign extend
-        for (int i = 0; i < counter.length - LONG_BYTES; i++) {
-          addendDigits[i] = -1;
-        }
-      }
-      boolean carry = false;
       for (int i = 0; i < counter.length; i++) {
         byte oldCounter = counter[i];
         counter[i] += addendDigits[counter.length - i - 1] + (carry ? 1 : 0);
         carry = (counter[i] < oldCounter || (carry && counter[i] == oldCounter));
+        nextBlock();
       }
     } finally {
       lock.unlock();
