@@ -93,7 +93,7 @@ public abstract class BaseRandomTest {
       Collections.unmodifiableList(Arrays.asList(STRING_ARRAY));
   private static final int ELEMENTS = 100;
   private static final double UPPER_BOUND_FOR_ROUNDING_TEST =
-      Double.longBitsToDouble(Double.doubleToLongBits(1.0) + 4);
+      Double.longBitsToDouble(Double.doubleToLongBits(1.0) + 3);
   protected final ForkJoinPool pool = new ForkJoinPool(2);
   protected final ConcurrentSkipListSet<Double> sequentialOutput = new ConcurrentSkipListSet<>();
   protected final ConcurrentSkipListSet<Double> parallelOutput = new ConcurrentSkipListSet<>();
@@ -483,9 +483,9 @@ public abstract class BaseRandomTest {
     final BaseRandom prng = createRng();
     checkRangeAndEntropy(prng, 64, new Supplier<Number>() {
       @Override public Number get() {
-        return prng.nextLong(Long.MIN_VALUE, 1 << 29);
+        return prng.nextLong(Long.MIN_VALUE, 1 << 62);
       }
-    }, Long.MIN_VALUE, 1 << 29, true);
+    }, Long.MIN_VALUE, 1 << 62, true);
   }
 
   @Test public void testNextDouble() throws Exception {
@@ -527,6 +527,16 @@ public abstract class BaseRandomTest {
         return prng.nextDouble(-1.0, 13.37);
       }
     }, -1.0, 13.37, true);
+    checkRangeAndEntropy(prng, ENTROPY_OF_DOUBLE, new Supplier<Number>() {
+      @Override public Number get() {
+        return prng.nextDouble(5.0, 13.37);
+      }
+    }, 5.0, 13.37, true);
+    checkRangeAndEntropy(prng, ENTROPY_OF_DOUBLE,
+      @Override public Number get() {
+        return prng.nextDouble(1.0, UPPER_BOUND_FOR_ROUNDING_TEST);
+      }
+    }, 1.0, UPPER_BOUND_FOR_ROUNDING_TEST, true);
   }
 
   @Test(expectedExceptions = IllegalArgumentException.class)
