@@ -28,7 +28,6 @@ public class ReseedingThreadLocalRandomWrapperTest extends ThreadLocalRandomWrap
     while (rng.getEntropyBits() > Long.SIZE) {
       rng.nextLong();
     }
-    rng.setSeedGenerator(DefaultSeedGenerator.DEFAULT_SEED_GENERATOR);
     try {
       byte[] newSeed;
       do {
