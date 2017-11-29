@@ -44,7 +44,8 @@ public class RandomWrapperRandomTest extends BaseRandomTest {
    * {@link Random#next(int)} that can interleave with calls from other threads.
    */
   @Override public void testThreadSafety() {
-    testThreadSafety(ImmutableList.of(NEXT_INT), Collections.emptyList());
+    testThreadSafety(ImmutableList.of(NEXT_INT),
+        Collections.<NamedFunction<Random,Double>>emptyList());
     testThreadSafetyVsCrashesOnly(FUNCTIONS_FOR_THREAD_SAFETY_TEST);
   }
 
