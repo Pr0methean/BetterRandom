@@ -32,14 +32,14 @@
       <file leaf-file-name="BaseRandom.java" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/betterrandom/src/main/java/io/github/pr0methean/betterrandom/prng/BaseRandom.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="92">
-              <caret line="567" column="20" lean-forward="true" selection-start-line="567" selection-start-column="20" selection-end-line="567" selection-end-column="20" />
+            <state relative-caret-position="-308">
+              <caret line="547" column="6" lean-forward="true" selection-start-line="547" selection-start-column="6" selection-end-line="547" selection-end-column="6" />
               <folding>
                 <element signature="e#3259#3381#0" expanded="true" />
                 <element signature="e#10703#10704#0" expanded="true" />
                 <element signature="e#10738#10739#0" expanded="true" />
-                <element signature="e#26114#26115#0" expanded="true" />
-                <element signature="e#26163#26164#0" expanded="true" />
+                <element signature="e#26121#26122#0" expanded="true" />
+                <element signature="e#26170#26171#0" expanded="true" />
               </folding>
             </state>
           </provider>
@@ -1444,14 +1444,14 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/betterrandom/src/main/java/io/github/pr0methean/betterrandom/prng/BaseRandom.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="92">
-          <caret line="567" column="20" lean-forward="true" selection-start-line="567" selection-start-column="20" selection-end-line="567" selection-end-column="20" />
+        <state relative-caret-position="-308">
+          <caret line="547" column="6" lean-forward="true" selection-start-line="547" selection-start-column="6" selection-end-line="547" selection-end-column="6" />
           <folding>
             <element signature="e#3259#3381#0" expanded="true" />
             <element signature="e#10703#10704#0" expanded="true" />
             <element signature="e#10738#10739#0" expanded="true" />
-            <element signature="e#26114#26115#0" expanded="true" />
-            <element signature="e#26163#26164#0" expanded="true" />
+            <element signature="e#26121#26122#0" expanded="true" />
+            <element signature="e#26170#26171#0" expanded="true" />
           </folding>
         </state>
       </provider>
