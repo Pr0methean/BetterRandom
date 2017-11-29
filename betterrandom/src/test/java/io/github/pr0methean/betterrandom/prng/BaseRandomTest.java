@@ -348,8 +348,9 @@ public abstract class BaseRandomTest {
         trues++;
       }
     }
-    assertGreaterOrEqual(trues, 1700);
-    assertLessOrEqual(trues, 1900);
+    // Significance test at p=3.15E-6 (unadjusted for the multiple subclasses and environments!)
+    assertGreaterOrEqual(trues, 1675);
+    assertLessOrEqual(trues, 1925);
   }
 
   @Test(timeOut = 20_000, groups = "non-deterministic") public void testNextBooleanStatistically() {
@@ -360,8 +361,9 @@ public abstract class BaseRandomTest {
         trues++;
       }
     }
-    assertGreaterOrEqual(trues, 1400);
-    assertLessOrEqual(trues, 1600);
+    // Significance test at p=4.54E-6 (unadjusted for the multiple subclasses and environments!)
+    assertGreaterOrEqual(trues, 1375);
+    assertLessOrEqual(trues, 1625);
   }
 
   @Test public void testNextBytes() throws Exception {
