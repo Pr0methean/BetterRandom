@@ -50,13 +50,6 @@ public final class RandomSeederThread extends LooperThread {
   private transient Set<Random> prngsThisIteration;
   private transient WeakHashMap<ByteArrayReseedableRandom, byte[]> seedArrays;
 
-  public RandomSeederThread(final ThreadGroup group, final Runnable target, final String name,
-      final long stackSize, final SeedGenerator seedGenerator) {
-    super(group, target, name, stackSize);
-    this.seedGenerator = seedGenerator;
-    initTransientFields();
-  }
-
   /**
    * Private constructor because only one instance per seed source.
    */
