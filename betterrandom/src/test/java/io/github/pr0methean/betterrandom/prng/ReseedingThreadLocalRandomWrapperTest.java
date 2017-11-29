@@ -1,11 +1,15 @@
 package io.github.pr0methean.betterrandom.prng;
 
+import static io.github.pr0methean.betterrandom.TestUtils.assertGreaterOrEqual;
+
 import io.github.pr0methean.betterrandom.seed.DefaultSeedGenerator;
 import io.github.pr0methean.betterrandom.seed.FailingSeedGenerator;
 import io.github.pr0methean.betterrandom.seed.SeedException;
 import java.io.Serializable;
+import java.util.Arrays;
 import java.util.Random;
 import java.util.function.Supplier;
+import org.testng.annotations.Test;
 
 public class ReseedingThreadLocalRandomWrapperTest extends ThreadLocalRandomWrapperTest {
 
@@ -16,6 +20,26 @@ public class ReseedingThreadLocalRandomWrapperTest extends ThreadLocalRandomWrap
 
   @Override protected Class<? extends BaseRandom> getClassUnderTest() {
     return super.getClassUnderTest();
+  }
+
+  @Override @Test public void testReseeding() {
+    final BaseRandom rng = createRng();
+    final byte[] oldSeed = rng.getSeed();
+    while (rng.getEntropyBits() > Long.SIZE) {
+      rng.nextLong();
+    }
+    rng.setSeedGenerator(DefaultSeedGenerator.DEFAULT_SEED_GENERATOR);
+    try {
+      byte[] newSeed;
+      do {
+        rng.nextBoolean();
+        Thread.sleep(100);
+        newSeed = rng.getSeed();
+      } while (Arrays.equals(newSeed, oldSeed));
+      assertGreaterOrEqual(rng.getEntropyBits(), newSeed.length * 8L - 1);
+    } catch (InterruptedException e) {
+      throw new RuntimeException(e);
+    }
   }
 
   @Override protected BaseRandom createRng() throws SeedException {

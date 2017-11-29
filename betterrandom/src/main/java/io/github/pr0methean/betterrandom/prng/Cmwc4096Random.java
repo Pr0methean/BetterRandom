@@ -85,21 +85,18 @@ public class Cmwc4096Random extends BaseRandom {
   }
 
   /**
-   * Reseeds this PRNG using the {@link DefaultSeedGenerator}.
+   * Reseeds this PRNG using the {@link DefaultSeedGenerator}, since it needs a longer seed.
    * @param seed ignored
    */
   @Override public synchronized void setSeed(final long seed) {
-    boolean locked = false;
-    if (lock != null) {
-      lock.lock();
-      locked = true;
+    if (!superConstructorFinished) {
+      return;
     }
+    lock.lock();
     try {
-      fallbackSetSeed();
+      setSeedInternal(DefaultSeedGenerator.DEFAULT_SEED_GENERATOR.generateSeed(SEED_SIZE_BYTES));
     } finally {
-      if (locked) {
-        lock.unlock();
-      }
+      lock.unlock();
     }
   }
 
