@@ -1,11 +1,13 @@
 ﻿<?xml version="1.0" encoding="UTF-8"?>
 <!--suppress XmlHighlighting -->
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xmlns="http://maven.apache.org/POM/4.0.0"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <packaging>jar</packaging>
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <prefix />
+    <prefix/>
     <maven.compiler.source>1.7</maven.compiler.source>
     <maven.compiler.target>1.7</maven.compiler.target>
     <github.global.server>github</github.global.server>
@@ -17,11 +19,12 @@
   <description>BetterRandom port for Java 7, and for Android API below 24.
   </description>
   <url>https://github.com/Pr0methean/betterrandom/tree/java7</url>
-  <licenses>		
-    <license>		
-      <name>Apache License, Version 2.0</name>		
-      <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>		      <distribution>repo</distribution>		
-    </license>		
+  <licenses>
+    <license>
+      <name>Apache License, Version 2.0</name>
+      <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+      <distribution>repo</distribution>
+    </license>
   </licenses>
   <scm>
     <url>https://github.com/Pr0methean/BetterRandom</url>
@@ -139,7 +142,8 @@
             </links>
             <offlineLinks>
               <offlineLink>
-                <url>https://static.javadoc.io/net.sourceforge.streamsupport/streamsupport/1.5.6</url>
+                <url>https://static.javadoc.io/net.sourceforge.streamsupport/streamsupport/1.5.6
+                </url>
                 <location>${basedir}/../travis-resources</location>
               </offlineLink>
             </offlineLinks>
@@ -588,7 +592,8 @@
             <link>https://checkerframework.org/api</link>
             <link>https://docs.oracle.com/javase/7/docs/api</link>
             <link>https://google.github.io/guava/releases/23.0/api/docs</link>
-            <link>https://static.javadoc.io/doc/net.sourceforge.streamsupport/streamsupport/1.5.6</link>
+            <link>https://static.javadoc.io/doc/net.sourceforge.streamsupport/streamsupport/1.5.6
+            </link>
           </links>
           <tags>
             <tag>

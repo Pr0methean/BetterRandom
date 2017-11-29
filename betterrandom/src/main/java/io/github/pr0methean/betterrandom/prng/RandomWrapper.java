@@ -41,6 +41,7 @@ public class RandomWrapper extends BaseRandom {
   private volatile Random wrapped;
   private boolean unknownSeed = true;
   private boolean haveParallelStreams;
+
   /**
    * Wraps a {@link Random} and seeds it using the default seeding strategy.
    * @throws SeedException if any.

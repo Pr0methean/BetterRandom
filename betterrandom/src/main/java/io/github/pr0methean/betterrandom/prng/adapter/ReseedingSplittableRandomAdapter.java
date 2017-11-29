@@ -12,7 +12,6 @@ import java.util.Collections;
 import java.util.Map;
 import java.util.WeakHashMap;
 import java.util.concurrent.atomic.AtomicLong;
-import java.util.concurrent.atomic.AtomicReference;
 import java8.util.SplittableRandom;
 import javax.annotation.Nullable;
 
@@ -26,8 +25,8 @@ public class ReseedingSplittableRandomAdapter extends BaseSplittableRandomAdapte
 
   private static final long serialVersionUID = 6301096404034224037L;
   @SuppressWarnings("StaticCollection")
-  private static final Map<SeedGenerator, ReseedingSplittableRandomAdapter> INSTANCES =
-      Collections.synchronizedMap(new WeakHashMap<SeedGenerator, ReseedingSplittableRandomAdapter>(1));
+  private static final Map<SeedGenerator, ReseedingSplittableRandomAdapter> INSTANCES = Collections
+      .synchronizedMap(new WeakHashMap<SeedGenerator, ReseedingSplittableRandomAdapter>(1));
   @SuppressWarnings(
       {"ThreadLocalNotStaticFinal", "InstanceVariableMayNotBeInitializedByReadObject"})
   private transient ThreadLocal<SingleThreadSplittableRandomAdapter> threadLocal;

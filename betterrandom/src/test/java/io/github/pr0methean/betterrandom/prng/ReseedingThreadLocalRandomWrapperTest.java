@@ -10,7 +10,8 @@ public class ReseedingThreadLocalRandomWrapperTest extends ThreadLocalRandomWrap
 
   @Override public void testWrapLegacy() throws SeedException {
     ReseedingThreadLocalRandomWrapper
-        .wrapLegacy(new RandomColonColonNewForLong(), DefaultSeedGenerator.DEFAULT_SEED_GENERATOR).nextInt();
+        .wrapLegacy(new RandomColonColonNewForLong(), DefaultSeedGenerator.DEFAULT_SEED_GENERATOR)
+        .nextInt();
   }
 
   @Override protected Class<? extends BaseRandom> getClassUnderTest() {
@@ -23,6 +24,7 @@ public class ReseedingThreadLocalRandomWrapperTest extends ThreadLocalRandomWrap
   }
 
   private static class RandomColonColonNewForLong implements LongFunction<Random> {
+
     @Override public Random apply(long seed) {
       return new Random(seed);
     }

@@ -1,7 +1,5 @@
 package io.github.pr0methean.betterrandom.prng;
 
-import static java8.lang.Integers.toUnsignedLong;
-
 import com.google.common.base.MoreObjects;
 import com.google.common.base.MoreObjects.ToStringHelper;
 import io.github.pr0methean.betterrandom.ByteArrayReseedableRandom;
@@ -38,7 +36,6 @@ import java8.util.stream.IntStream;
 import java8.util.stream.IntStreams;
 import java8.util.stream.LongStream;
 import java8.util.stream.LongStreams;
-import javax.annotation.Nullable;
 
 /**
  * Abstract {@link Random} with a seed field and an implementation of entropy counting.
@@ -434,8 +431,8 @@ public abstract class BaseRandom extends Random
   @Override public double nextGaussian() {
     // Upper bound. 2 Gaussians are generated from 2 nextDouble calls, which once made are either
     // used or rerolled.
-     debitEntropy(ENTROPY_OF_DOUBLE);
-     return internalNextGaussian(new DoubleSupplier() {
+    debitEntropy(ENTROPY_OF_DOUBLE);
+    return internalNextGaussian(new DoubleSupplier() {
       @Override public double getAsDouble() {
         return nextDoubleNoEntropyDebit();
       }
@@ -690,6 +687,19 @@ public abstract class BaseRandom extends Random
   }
 
   /**
+   * {@inheritDoc}<p>Most subclasses should override {@link #setSeedInternal(byte[])} instead of
+   * this method, so that they will deserialize properly.</p>
+   */
+  @Override public void setSeed(final byte[] seed) {
+    lock.lock();
+    try {
+      setSeedInternal(seed);
+    } finally {
+      lock.unlock();
+    }
+  }
+
+  /**
    * Sets the seed of this random number generator using a single long seed, if this implementation
    * supports that. If it is capable of using 64 bits or less of seed data (i.e. if {@code {@link
    * #getNewSeedLength()} <= {@link Long#BYTES}}), then this method shall replace the entire seed as
@@ -703,19 +713,6 @@ public abstract class BaseRandom extends Random
       setSeed(seedBytes);
     } else {
       setSeedInternal(seedBytes);
-    }
-  }
-
-  /**
-   * {@inheritDoc}<p>Most subclasses should override {@link #setSeedInternal(byte[])} instead of
-   * this method, so that they will deserialize properly.</p>
-   */
-  @Override public void setSeed(final byte[] seed) {
-    lock.lock();
-    try {
-      setSeedInternal(seed);
-    } finally {
-      lock.unlock();
     }
   }
 

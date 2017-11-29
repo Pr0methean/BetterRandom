@@ -15,8 +15,6 @@
 // ============================================================================
 package io.github.pr0methean.betterrandom.prng;
 
-import static io.github.pr0methean.betterrandom.TestUtils.assertGreaterOrEqual;
-import static io.github.pr0methean.betterrandom.TestUtils.assertLess;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotSame;
 import static org.testng.Assert.assertTrue;
@@ -29,9 +27,8 @@ import java.util.concurrent.atomic.AtomicLong;
 import java8.util.function.Consumer;
 import java8.util.function.Supplier;
 import java8.util.function.ToLongFunction;
-import java8.util.stream.Stream;
 import java8.util.stream.BaseStream;
-import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
+import java8.util.stream.Stream;
 import org.apache.commons.math3.stat.descriptive.SynchronizedDescriptiveStatistics;
 import org.testng.Reporter;
 
@@ -202,11 +199,12 @@ public enum RandomTestUtils {
    *     calculation.
    * @return The standard deviation of the generated sample.
    */
-  public static SynchronizedDescriptiveStatistics summaryStats(final BaseRandom rng, final long maxValue,
-      final int iterations) {
+  public static SynchronizedDescriptiveStatistics summaryStats(final BaseRandom rng,
+      final long maxValue, final int iterations) {
     final SynchronizedDescriptiveStatistics stats = new SynchronizedDescriptiveStatistics();
     BaseStream<? extends Number, ?> stream;
-    stream = (maxValue <= Integer.MAX_VALUE) ? rng.ints(iterations, 0, (int) maxValue) : rng.longs(iterations, 0, maxValue);
+    stream = (maxValue <= Integer.MAX_VALUE) ? rng.ints(iterations, 0, (int) maxValue)
+        : rng.longs(iterations, 0, maxValue);
     stream.spliterator().forEachRemaining(new Consumer<Number>() {
       @Override public void accept(Number number) {
         stats.addValue(number.doubleValue());

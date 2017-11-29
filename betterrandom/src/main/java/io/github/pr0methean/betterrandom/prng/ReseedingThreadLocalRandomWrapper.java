@@ -3,11 +3,9 @@ package io.github.pr0methean.betterrandom.prng;
 import io.github.pr0methean.betterrandom.seed.RandomSeederThread;
 import io.github.pr0methean.betterrandom.seed.SeedException;
 import io.github.pr0methean.betterrandom.seed.SeedGenerator;
-import io.github.pr0methean.betterrandom.util.BinaryUtils;
 import io.github.pr0methean.betterrandom.util.Java8Constants;
 import io.github.pr0methean.betterrandom.util.SerializableFunction;
 import io.github.pr0methean.betterrandom.util.SerializableSupplier;
-import java.io.Serializable;
 import java.util.Random;
 import java8.util.function.Function;
 import java8.util.function.LongFunction;
@@ -58,7 +56,8 @@ public class ReseedingThreadLocalRandomWrapper extends ThreadLocalRandomWrapper 
       @Override public BaseRandom apply(byte[] seed) {
         BaseRandom out = creator.apply(seed);
         RandomSeederThread.add(seedGenerator, out);
-        return out;      }
+        return out;
+      }
     });
   }
 

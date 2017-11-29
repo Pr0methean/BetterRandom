@@ -18,8 +18,6 @@ package io.github.pr0methean.betterrandom.prng;
 import io.github.pr0methean.betterrandom.seed.SeedException;
 import java.util.Map;
 import java.util.Random;
-import java.util.concurrent.ConcurrentSkipListSet;
-import java.util.function.Function;
 import org.testng.annotations.Test;
 
 /**
