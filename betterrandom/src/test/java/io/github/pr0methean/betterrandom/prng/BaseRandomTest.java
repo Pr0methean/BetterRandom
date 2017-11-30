@@ -233,6 +233,11 @@ public abstract class BaseRandomTest {
     RandomTestUtils.assertEquivalentWhenSerializedAndDeserialized(rng);
   }
 
+  /** Assertion-free since many implementations have a fallback behavior. */
+  @Test(timeOut = 10000) public void testSetSeedLong() {
+    createRng().setSeed(0x0123456789ABCDEFL);
+  }
+
   @Test(timeOut = 15000) public void testSetSeed() throws SeedException {
     final byte[] seed =
         DefaultSeedGenerator.DEFAULT_SEED_GENERATOR.generateSeed(getNewSeedLength(createRng()));
