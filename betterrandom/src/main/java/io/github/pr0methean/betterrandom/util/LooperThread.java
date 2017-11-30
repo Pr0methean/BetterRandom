@@ -18,7 +18,7 @@ public class LooperThread extends Thread {
    * The thread holds this lock whenever it is being serialized or cloned or is running {@link
    * #iterate()} called by {@link #run()}.
    */
-  protected transient Lock lock = new ReentrantLock();
+  protected transient Lock lock = new ReentrantLock(true);
   /**
    * The {@link Runnable} that was passed into this thread's constructor, if any.
    */
