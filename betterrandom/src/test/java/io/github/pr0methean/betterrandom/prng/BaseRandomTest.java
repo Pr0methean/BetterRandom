@@ -338,6 +338,7 @@ public abstract class BaseRandomTest {
       if (waits >= 1000) {
         fail(String.format("Timed out waiting for %s to be reseeded!", rng));
       }
+      Thread.sleep(100); // entropy update may not be co-atomic with seed update
       assertGreaterOrEqual(rng.getEntropyBits(), newSeed.length * 8L - 1);
     } finally {
       rng.setSeedGenerator(null);
