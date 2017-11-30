@@ -3,8 +3,6 @@ package io.github.pr0methean.betterrandom.prng;
 import io.github.pr0methean.betterrandom.prng.RandomTestUtils.EntropyCheckMode;
 import io.github.pr0methean.betterrandom.seed.FailingSeedGenerator;
 import io.github.pr0methean.betterrandom.seed.SeedException;
-import java.io.Serializable;
-import java.util.function.Supplier;
 import org.testng.annotations.Test;
 
 public class ReseedingThreadLocalRandomWrapperFailingSeedGeneratorTest
