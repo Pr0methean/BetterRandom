@@ -458,7 +458,7 @@ public abstract class BaseRandomTest {
       @Override public Number get() {
         return prng.nextInt(Integer.MIN_VALUE, 1 << 29);
       }
-    }, Integer.MIN_VALUE, 1 << 29,  getEntropyCheckMode());
+    }, Integer.MIN_VALUE, 1 << 29, getEntropyCheckMode());
   }
 
   @Test public void testNextLong() throws Exception {
@@ -467,7 +467,7 @@ public abstract class BaseRandomTest {
       @Override public Number get() {
         return prng.nextLong();
       }
-    }, Long.MIN_VALUE, Long.MAX_VALUE + 1.0,  getEntropyCheckMode());
+    }, Long.MIN_VALUE, Long.MAX_VALUE + 1.0, getEntropyCheckMode());
   }
 
   @Test public void testNextLong1() throws Exception {
@@ -478,13 +478,13 @@ public abstract class BaseRandomTest {
         @Override public Number get() {
           return prng.nextLong(2);
         }
-      }, 0, 2,  getEntropyCheckMode());
+      }, 0, 2, getEntropyCheckMode());
     }
     checkRangeAndEntropy(prng, 42, new Supplier<Number>() {
       @Override public Number get() {
         return prng.nextLong(1L << 42);
       }
-    }, 0, 1L << 42,  getEntropyCheckMode());
+    }, 0, 1L << 42, getEntropyCheckMode());
   }
 
   @Test(expectedExceptions = IllegalArgumentException.class)
@@ -498,7 +498,7 @@ public abstract class BaseRandomTest {
       @Override public Number get() {
         return prng.nextLong(1L << 40, 1L << 42);
       }
-    }, 1L << 40, 1L << 42,  getEntropyCheckMode());
+    }, 1L << 40, 1L << 42, getEntropyCheckMode());
   }
 
   @Test(expectedExceptions = IllegalArgumentException.class)
@@ -512,7 +512,7 @@ public abstract class BaseRandomTest {
       @Override public Number get() {
         return prng.nextLong(Long.MIN_VALUE, 1 << 62);
       }
-    }, Long.MIN_VALUE, 1 << 62,  getEntropyCheckMode());
+    }, Long.MIN_VALUE, 1 << 62, getEntropyCheckMode());
   }
 
   @Test public void testNextDouble() throws Exception {
@@ -530,7 +530,7 @@ public abstract class BaseRandomTest {
       @Override public Number get() {
         return prng.nextFloat();
       }
-    }, 0.0, 1.0,  getEntropyCheckMode());
+    }, 0.0, 1.0, getEntropyCheckMode());
   }
 
   @Test public void testNextDouble1() throws Exception {
@@ -539,7 +539,7 @@ public abstract class BaseRandomTest {
       @Override public Number get() {
         return prng.nextDouble(13.37);
       }
-    }, 0.0, 13.37,  getEntropyCheckMode());
+    }, 0.0, 13.37, getEntropyCheckMode());
   }
 
   @Test(expectedExceptions = IllegalArgumentException.class)

@@ -31,6 +31,7 @@ public class ReseedingSplittableRandomAdapter extends BaseSplittableRandomAdapte
   @SuppressWarnings(
       {"ThreadLocalNotStaticFinal", "InstanceVariableMayNotBeInitializedByReadObject"})
   private transient ThreadLocal<SingleThreadSplittableRandomAdapter> threadLocal;
+
   /**
    * Single instance per SeedGenerator.
    * @param seedGenerator The seed generator this adapter will use.

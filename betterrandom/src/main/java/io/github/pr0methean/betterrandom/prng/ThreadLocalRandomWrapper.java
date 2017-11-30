@@ -6,7 +6,6 @@ import static io.github.pr0methean.betterrandom.util.Java8Constants.LONG_BYTES;
 import com.google.common.base.MoreObjects.ToStringHelper;
 import io.github.pr0methean.betterrandom.seed.SeedException;
 import io.github.pr0methean.betterrandom.seed.SeedGenerator;
-import io.github.pr0methean.betterrandom.util.Java8Constants;
 import io.github.pr0methean.betterrandom.util.SerializableSupplier;
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -176,6 +175,12 @@ public class ThreadLocalRandomWrapper extends RandomWrapper {
     return getWrapped().getSeed();
   }
 
+  @Override public synchronized void setSeed(long seed) {
+    if (threadLocal != null) {
+      getWrapped().setSeed(seed);
+    }
+  }
+
   @SuppressWarnings("VariableNotUsedInsideIf") @Override
   protected void setSeedInternal(final byte[] seed) {
     if (seed == null) {
@@ -186,12 +191,6 @@ public class ThreadLocalRandomWrapper extends RandomWrapper {
     }
     if (this.seed == null) {
       this.seed = seed; // Needed for serialization
-    }
-  }
-
-  @Override public synchronized void setSeed(long seed) {
-    if (threadLocal != null) {
-      getWrapped().setSeed(seed);
     }
   }
 

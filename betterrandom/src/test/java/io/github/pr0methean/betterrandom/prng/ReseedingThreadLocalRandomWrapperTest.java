@@ -14,8 +14,7 @@ public class ReseedingThreadLocalRandomWrapperTest extends ThreadLocalRandomWrap
 
   @Override public void testWrapLegacy() throws SeedException {
     ReseedingThreadLocalRandomWrapper
-        .wrapLegacy(new RandomColonColonNewForLong(), DEFAULT_SEED_GENERATOR)
-        .nextInt();
+        .wrapLegacy(new RandomColonColonNewForLong(), DEFAULT_SEED_GENERATOR).nextInt();
   }
 
   @Override protected EntropyCheckMode getEntropyCheckMode() {
@@ -27,9 +26,8 @@ public class ReseedingThreadLocalRandomWrapperTest extends ThreadLocalRandomWrap
   }
 
   @Override @Test public void testReseeding() {
-    final BaseRandom rng =
-        new ReseedingThreadLocalRandomWrapper(DEFAULT_SEED_GENERATOR,
-            new MersenneTwisterRandomColonColonNew());
+    final BaseRandom rng = new ReseedingThreadLocalRandomWrapper(DEFAULT_SEED_GENERATOR,
+        new MersenneTwisterRandomColonColonNew());
     rng.nextLong();
     try {
       Thread.sleep(1000);
