@@ -1,3 +1,6 @@
+# 2.1.1
+* Removes the class `LooperThread.DummyTarget`, which was only used for deserialization.
+
 # 2.1.0
 * Fixes many bugs that were affecting reproducibility when concurrent access occurred, especially
   for longs and doubles.
