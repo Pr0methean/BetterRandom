@@ -6,7 +6,6 @@ import static io.github.pr0methean.betterrandom.seed.DefaultSeedGenerator.DEFAUL
 import io.github.pr0methean.betterrandom.prng.RandomTestUtils.EntropyCheckMode;
 import io.github.pr0methean.betterrandom.seed.DefaultSeedGenerator;
 import io.github.pr0methean.betterrandom.seed.SeedException;
-import io.github.pr0methean.betterrandom.util.BinaryUtils;
 import java.io.Serializable;
 import java.util.Arrays;
 import java.util.Random;

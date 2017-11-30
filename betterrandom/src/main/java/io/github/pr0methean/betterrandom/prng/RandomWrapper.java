@@ -178,6 +178,14 @@ public class RandomWrapper extends BaseRandom {
     return super.getSeed();
   }
 
+  @Override public synchronized void setSeed(long seed) {
+    if (wrapped != null) {
+      wrapped.setSeed(seed);
+      super.setSeedInternal(BinaryUtils.convertLongToBytes(seed));
+      unknownSeed = false;
+    }
+  }
+
   /**
    * Delegates to one of {@link ByteArrayReseedableRandom#setSeed(byte[])}, {@link
    * SecureRandom#setSeed(byte[])} or {@link Random#setSeed(long)}.
@@ -230,14 +238,6 @@ public class RandomWrapper extends BaseRandom {
     }
   }
 
-  @Override public synchronized void setSeed(long seed) {
-    if (wrapped != null) {
-      wrapped.setSeed(seed);
-      super.setSeedInternal(BinaryUtils.convertLongToBytes(seed));
-      unknownSeed = false;
-    }
-  }
-
   @Override public boolean preferSeedWithLong() {
     if (lock == null) {
       return false; // safe default
@@ -245,7 +245,8 @@ public class RandomWrapper extends BaseRandom {
     lock.lock();
     try {
       final Random currentWrapped = getWrapped();
-      return !(currentWrapped instanceof ByteArrayReseedableRandom) || ((ByteArrayReseedableRandom) currentWrapped).preferSeedWithLong();
+      return !(currentWrapped instanceof ByteArrayReseedableRandom)
+          || ((ByteArrayReseedableRandom) currentWrapped).preferSeedWithLong();
     } finally {
       lock.unlock();
     }
