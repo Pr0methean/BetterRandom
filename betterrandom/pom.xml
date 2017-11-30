@@ -417,9 +417,9 @@
         <artifactId>pitest-maven</artifactId>
         <version>1.2.4</version>
         <configuration>
-          <threads>4</threads>
+          <threads>3</threads>
           <coverageThreshold>80</coverageThreshold>
-          <mutationThreshold>50</mutationThreshold>
+          <mutationThreshold>60</mutationThreshold>
           <avoidCallsTo>
             <avoidCallsTo>java.util.logging</avoidCallsTo>
             <avoidCallsTo>io.github.pr0methean.betterrandom.util.LogPreFormatter</avoidCallsTo>
