@@ -233,7 +233,7 @@ public class RandomWrapper extends BaseRandom {
   @Override public synchronized void setSeed(long seed) {
     if (wrapped != null) {
       wrapped.setSeed(seed);
-      super.setSeedInternal(seed);
+      super.setSeedInternal(BinaryUtils.convertLongToBytes(seed));
       unknownSeed = false;
     }
   }
