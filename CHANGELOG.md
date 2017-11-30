@@ -2,6 +2,7 @@
 * Fixes many bugs that were affecting reproducibility when concurrent access occurred, especially
   for longs and doubles.
 * Logging in `RandomSeederThread` can now be disabled.
+* `LooperThread` is no longer `Serializable`.
 
 # 2.0.0
 * Fixes bugs affecting `RandomSeederThread` when a `SeedGenerator` throws a `SeedException`.
