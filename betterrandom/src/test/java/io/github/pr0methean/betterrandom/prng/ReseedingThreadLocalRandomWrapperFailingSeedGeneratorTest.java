@@ -7,7 +7,8 @@ import java.io.Serializable;
 import java.util.function.Supplier;
 import org.testng.annotations.Test;
 
-public class ReseedingThreadLocalRandomWrapperFailingSeedGeneratorTest extends ReseedingThreadLocalRandomWrapperTest {
+public class ReseedingThreadLocalRandomWrapperFailingSeedGeneratorTest
+    extends ReseedingThreadLocalRandomWrapperTest {
 
   @Override protected EntropyCheckMode getEntropyCheckMode() {
     return EntropyCheckMode.EXACT;
@@ -16,6 +17,7 @@ public class ReseedingThreadLocalRandomWrapperFailingSeedGeneratorTest extends R
   @Override @Test(enabled = false) public void testReseeding() {
     // No-op.
   }
+
   @Override protected BaseRandom createRng() throws SeedException {
     return new ReseedingThreadLocalRandomWrapper(FailingSeedGenerator.FAILING_SEED_GENERATOR,
         (Serializable & Supplier<BaseRandom>) MersenneTwisterRandom::new);

@@ -31,11 +31,11 @@ import org.testng.annotations.Test;
  */
 public class RandomDotOrgSeedGeneratorTest extends AbstractSeedGeneratorTest {
 
+  public static final int SMALL_REQUEST_SIZE = 32;
+
   public RandomDotOrgSeedGeneratorTest() {
     super(RandomDotOrgSeedGenerator.RANDOM_DOT_ORG_SEED_GENERATOR);
   }
-
-  public static final int SMALL_REQUEST_SIZE = 32;
 
   private static void setApiKey() {
     final String apiKeyString = System.getenv("RANDOM_DOT_ORG_KEY");
@@ -77,8 +77,7 @@ public class RandomDotOrgSeedGeneratorTest extends AbstractSeedGeneratorTest {
     }
   }
 
-  @Override
-  public void testToString() {
+  @Override public void testToString() {
     super.testToString();
     Assert.assertNotNull(RandomDotOrgSeedGenerator.DELAYED_RETRY.toString());
   }

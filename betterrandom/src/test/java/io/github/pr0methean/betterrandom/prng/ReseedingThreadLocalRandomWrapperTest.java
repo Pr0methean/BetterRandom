@@ -3,9 +3,7 @@ package io.github.pr0methean.betterrandom.prng;
 import static io.github.pr0methean.betterrandom.TestUtils.assertGreaterOrEqual;
 
 import io.github.pr0methean.betterrandom.seed.DefaultSeedGenerator;
-import io.github.pr0methean.betterrandom.seed.FailingSeedGenerator;
 import io.github.pr0methean.betterrandom.seed.SeedException;
-import io.github.pr0methean.betterrandom.util.BinaryUtils;
 import java.io.Serializable;
 import java.util.Arrays;
 import java.util.Random;
@@ -13,7 +11,7 @@ import java.util.function.Supplier;
 import org.testng.annotations.Test;
 
 public class ReseedingThreadLocalRandomWrapperTest extends ThreadLocalRandomWrapperTest {
-  
+
   @Override public void testWrapLegacy() throws SeedException {
     ReseedingThreadLocalRandomWrapper
         .wrapLegacy(Random::new, DefaultSeedGenerator.DEFAULT_SEED_GENERATOR).nextInt();

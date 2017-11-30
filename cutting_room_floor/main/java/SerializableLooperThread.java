@@ -34,6 +34,7 @@ import javax.annotation.Nullable;
 @SuppressWarnings("AccessingNonPublicFieldOfAnotherObject")
 public class SerializableLooperThread extends LooperThread implements Serializable, Cloneable {
 
+  private static final long serialVersionUID = -4387051967625864310L;
   /**
    * The preferred stack size for this thread, in bytes, if it was specified during construction; 0
    * otherwise. Held for serialization purposes.
@@ -43,7 +44,6 @@ public class SerializableLooperThread extends LooperThread implements Serializab
    * The name of this thread, if it has a non-default name. Held for serialization purposes.
    */
   @Nullable protected String name = null;
-  private static final long serialVersionUID = -4387051967625864310L;
   /**
    * The {@link ThreadGroup} this thread belongs to, if any. Held for serialization purposes.
    */
@@ -153,8 +153,9 @@ public class SerializableLooperThread extends LooperThread implements Serializab
    * @param stackSize the desired stack size for the new thread, or zero to indicate that this
    *     parameter is to be ignored.
    */
-  @SuppressWarnings("argument.type.incompatible") public SerializableLooperThread(final ThreadGroup group,
-      @Nullable final Runnable target, final String name, final long stackSize) {
+  @SuppressWarnings("argument.type.incompatible") public SerializableLooperThread(
+      final ThreadGroup group, @Nullable final Runnable target, final String name,
+      final long stackSize) {
     super(group, target, name, stackSize);
     setGroup(group);
     this.stackSize = stackSize;

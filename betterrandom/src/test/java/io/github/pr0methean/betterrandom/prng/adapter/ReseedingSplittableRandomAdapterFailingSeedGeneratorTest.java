@@ -17,6 +17,7 @@ public class ReseedingSplittableRandomAdapterFailingSeedGeneratorTest
   }
 
   @Override protected ReseedingSplittableRandomAdapter createRng() throws SeedException {
-    return ReseedingSplittableRandomAdapter.getInstance(FailingSeedGenerator.FAILING_SEED_GENERATOR);
+    return ReseedingSplittableRandomAdapter
+        .getInstance(FailingSeedGenerator.FAILING_SEED_GENERATOR);
   }
 }

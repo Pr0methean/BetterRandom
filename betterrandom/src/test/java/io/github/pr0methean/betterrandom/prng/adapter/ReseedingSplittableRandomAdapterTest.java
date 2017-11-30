@@ -7,7 +7,6 @@ import static org.testng.Assert.assertNotEquals;
 
 import io.github.pr0methean.betterrandom.prng.BaseRandom;
 import io.github.pr0methean.betterrandom.prng.RandomTestUtils.EntropyCheckMode;
-import io.github.pr0methean.betterrandom.seed.DefaultSeedGenerator;
 import io.github.pr0methean.betterrandom.seed.FakeSeedGenerator;
 import io.github.pr0methean.betterrandom.seed.SeedException;
 import io.github.pr0methean.betterrandom.util.BinaryUtils;
@@ -67,7 +66,7 @@ public class ReseedingSplittableRandomAdapterTest extends SingleThreadSplittable
     }
   }
 
-    /** Test for crashes only, since setSeed is a no-op. */
+  /** Test for crashes only, since setSeed is a no-op. */
   @Override @Test public void testSetSeed() throws SeedException {
     final BaseRandom prng = createRng();
     prng.nextLong();
