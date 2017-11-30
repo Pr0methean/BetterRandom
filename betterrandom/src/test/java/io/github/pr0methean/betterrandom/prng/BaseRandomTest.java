@@ -11,6 +11,7 @@ import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertFalse;
 import static org.testng.Assert.assertNotEquals;
 import static org.testng.Assert.assertTrue;
+import static org.testng.Assert.fail;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
@@ -286,12 +287,17 @@ public abstract class BaseRandomTest {
     }
     rng.setSeedGenerator(DefaultSeedGenerator.DEFAULT_SEED_GENERATOR);
     try {
+      int waits = 0;
       byte[] newSeed;
       do {
         rng.nextBoolean();
-        Thread.sleep(100);
+        Thread.sleep(10);
+        waits++;
         newSeed = rng.getSeed();
-      } while (Arrays.equals(newSeed, oldSeed));
+      } while (Arrays.equals(newSeed, oldSeed) && waits < 1000);
+      if (waits >= 1000) {
+        fail(String.format("Timed out waiting for %s to be reseeded!", rng));
+      }
       assertGreaterOrEqual(rng.getEntropyBits(), newSeed.length * 8L - 1);
     } finally {
       rng.setSeedGenerator(null);
