@@ -236,20 +236,16 @@ public class RandomWrapper extends BaseRandom {
         || ((ByteArrayReseedableRandom) currentWrapped).preferSeedWithLong();
   }
 
-  @SuppressWarnings("LockAcquiredButNotSafelyReleased") @Override public int getNewSeedLength() {
-    final Random currentWrapped = getWrapped();
-    boolean locked = false;
-    if (lock != null) {
-      lock.lock();
-      locked = true;
+  @Override public int getNewSeedLength() {
+    if (wrapped == null) {
+      return 0; // can't use a seed yet
     }
+    lock.lock();
     try {
-      return (currentWrapped instanceof ByteArrayReseedableRandom) ? ((ByteArrayReseedableRandom) currentWrapped)
+      return (wrapped instanceof ByteArrayReseedableRandom) ? ((ByteArrayReseedableRandom) wrapped)
           .getNewSeedLength() : Long.BYTES;
     } finally {
-      if (locked) {
-        lock.unlock();
-      }
+      lock.unlock();
     }
   }
 
