@@ -20,7 +20,6 @@ import io.github.pr0methean.betterrandom.seed.SeedException;
 import java.util.Collections;
 import java.util.Map;
 import java.util.Random;
-import java.util.function.Function;
 import org.testng.annotations.Test;
 
 /**
@@ -29,7 +28,7 @@ import org.testng.annotations.Test;
  */
 public class RandomWrapperRandomTest extends BaseRandomTest {
 
-  private static final NamedFunction<Random,Double> SET_WRAPPED = new NamedFunction<>(random -> {
+  private static final NamedFunction<Random, Double> SET_WRAPPED = new NamedFunction<>(random -> {
     ((RandomWrapper) random).setWrapped(new Random());
     return 0.0;
   }, "setWrapped");
@@ -43,8 +42,6 @@ public class RandomWrapperRandomTest extends BaseRandomTest {
     params.put(Random.class, new Random());
     return params;
   }
-
-
 
   /**
    * Assertion-free with respect to the long/double methods because, contrary to its contract to be

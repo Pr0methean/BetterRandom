@@ -153,6 +153,12 @@ public class ThreadLocalRandomWrapper extends RandomWrapper {
     return getWrapped().getSeed();
   }
 
+  @Override public synchronized void setSeed(long seed) {
+    if (threadLocal != null) {
+      getWrapped().setSeed(seed);
+    }
+  }
+
   @SuppressWarnings("VariableNotUsedInsideIf") @Override
   protected void setSeedInternal(final byte[] seed) {
     if (seed == null) {
@@ -163,12 +169,6 @@ public class ThreadLocalRandomWrapper extends RandomWrapper {
     }
     if (this.seed == null) {
       this.seed = seed; // Needed for serialization
-    }
-  }
-
-  @Override public synchronized void setSeed(long seed) {
-    if (threadLocal != null) {
-      getWrapped().setSeed(seed);
     }
   }
 

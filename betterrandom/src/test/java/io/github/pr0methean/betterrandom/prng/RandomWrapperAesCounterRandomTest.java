@@ -3,7 +3,6 @@ package io.github.pr0methean.betterrandom.prng;
 import com.google.common.collect.ImmutableList;
 import io.github.pr0methean.betterrandom.seed.SeedException;
 import java.lang.reflect.InvocationTargetException;
-import java.security.SecureRandom;
 import java.util.Random;
 import org.testng.annotations.Test;
 
