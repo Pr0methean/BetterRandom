@@ -19,6 +19,14 @@ public class SingleThreadSplittableRandomAdapter extends DirectSplittableRandomA
   private boolean deserializedAndNotUsedSince = false;
 
   /**
+   * Must be redeclared in this package so that {@link ReseedingSplittableRandomAdapter} can access
+   * it.
+   */
+  @Override protected void debitEntropy(long bits) {
+    super.debitEntropy(bits);
+  }
+
+  /**
    * Use the provided seed generation strategy to create the seed for the underlying {@link
    * SplittableRandom}.
    * @param seedGenerator The seed generation strategy that will provide the seed value for this
