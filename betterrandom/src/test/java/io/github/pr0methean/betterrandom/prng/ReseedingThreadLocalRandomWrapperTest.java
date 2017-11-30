@@ -5,6 +5,7 @@ import static io.github.pr0methean.betterrandom.TestUtils.assertGreaterOrEqual;
 import io.github.pr0methean.betterrandom.seed.DefaultSeedGenerator;
 import io.github.pr0methean.betterrandom.seed.FailingSeedGenerator;
 import io.github.pr0methean.betterrandom.seed.SeedException;
+import io.github.pr0methean.betterrandom.util.BinaryUtils;
 import java.io.Serializable;
 import java.util.Arrays;
 import java.util.Random;
@@ -22,8 +23,7 @@ public class ReseedingThreadLocalRandomWrapperTest extends ThreadLocalRandomWrap
     return ReseedingThreadLocalRandomWrapper.class;
   }
 
-  // https://github.com/Pr0methean/BetterRandom/issues/16
-  @Override @Test(enabled = false) public void testReseeding() {
+  @Override @Test public void testReseeding() {
     final BaseRandom rng =
         new ReseedingThreadLocalRandomWrapper(DefaultSeedGenerator.DEFAULT_SEED_GENERATOR,
             (Serializable & Supplier<BaseRandom>) MersenneTwisterRandom::new);
@@ -34,13 +34,10 @@ public class ReseedingThreadLocalRandomWrapperTest extends ThreadLocalRandomWrap
       throw new RuntimeException(e);
     }
     final byte[] oldSeed = rng.getSeed();
-    while (rng.getEntropyBits() > Long.SIZE) {
-      rng.nextLong();
-    }
     try {
       byte[] newSeed;
       do {
-        rng.nextBoolean();
+        rng.nextLong();
         Thread.sleep(100);
         newSeed = rng.getSeed();
       } while (Arrays.equals(newSeed, oldSeed));
