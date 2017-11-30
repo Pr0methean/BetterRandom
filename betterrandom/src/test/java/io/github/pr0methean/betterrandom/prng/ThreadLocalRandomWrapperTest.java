@@ -74,6 +74,13 @@ public class ThreadLocalRandomWrapperTest extends BaseRandomTest {
         .nextInt();
   }
 
+  /** Test for crashes only, since setSeed is a no-op. */
+  @Test(expectedExceptions = IllegalArgumentException.class) public void testSetSeedLong() {
+    Random prng = createRng();
+    prng.nextLong(); // Ensure initialized
+    prng.setSeed(0x0123456789ABCDEFL);
+  }
+
   @Override protected BaseRandom createRng() throws SeedException {
     return new ThreadLocalRandomWrapper(
         (Serializable & Supplier<BaseRandom>) MersenneTwisterRandom::new);

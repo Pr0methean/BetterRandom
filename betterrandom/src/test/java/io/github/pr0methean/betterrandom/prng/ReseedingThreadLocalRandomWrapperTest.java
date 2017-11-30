@@ -60,11 +60,6 @@ public class ReseedingThreadLocalRandomWrapperTest extends ThreadLocalRandomWrap
     prng.nextLong();
   }
 
-  /** Test for crashes only, since setSeed is a no-op. */
-  @Test(expectedExceptions = IllegalArgumentException.class) public void testSetSeedLong() {
-    createRng().setSeed(0x0123456789ABCDEFL);
-  }
-
   @Override protected BaseRandom createRng() throws SeedException {
     return new ReseedingThreadLocalRandomWrapper(DefaultSeedGenerator.DEFAULT_SEED_GENERATOR,
         (Serializable & Supplier<BaseRandom>) MersenneTwisterRandom::new);
