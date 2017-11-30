@@ -106,6 +106,11 @@ public class ReseedingSplittableRandomAdapter extends BaseSplittableRandomAdapte
     return adapterForThread.getSplittableRandom();
   }
 
+  @Override protected void debitEntropy(long bits) {
+    // Necessary because our inherited next* methods read straight through to the SplittableRandom.
+    threadLocal.get().debitEntropy(bits);
+  }
+
   @Override public boolean equals(@Nullable final Object o) {
     return (this == o) || ((o instanceof ReseedingSplittableRandomAdapter)
         && seedGenerator.equals(((ReseedingSplittableRandomAdapter) o).seedGenerator));
