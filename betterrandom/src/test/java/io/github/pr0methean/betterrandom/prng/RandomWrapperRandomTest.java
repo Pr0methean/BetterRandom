@@ -20,6 +20,7 @@ import io.github.pr0methean.betterrandom.seed.SeedException;
 import java.util.Collections;
 import java.util.Map;
 import java.util.Random;
+import java.util.function.Function;
 import org.testng.annotations.Test;
 
 /**
@@ -27,6 +28,11 @@ import org.testng.annotations.Test;
  * @author Daniel Dyer
  */
 public class RandomWrapperRandomTest extends BaseRandomTest {
+
+  private static final NamedFunction<Random,Double> SET_WRAPPED = new NamedFunction<>(random -> {
+    ((RandomWrapper) random).setWrapped(new Random());
+    return 0.0;
+  }, "setWrapped");
 
   @Override protected Class<? extends BaseRandom> getClassUnderTest() {
     return RandomWrapper.class;
@@ -38,6 +44,8 @@ public class RandomWrapperRandomTest extends BaseRandomTest {
     return params;
   }
 
+
+
   /**
    * Assertion-free with respect to the long/double methods because, contrary to its contract to be
    * thread-safe, {@link Random#nextLong()} is not transactional. Rather, it uses two calls to
@@ -45,7 +53,8 @@ public class RandomWrapperRandomTest extends BaseRandomTest {
    */
   @Override public void testThreadSafety() {
     testThreadSafety(ImmutableList.of(NEXT_INT), Collections.emptyList());
-    testThreadSafetyVsCrashesOnly(FUNCTIONS_FOR_THREAD_SAFETY_TEST);
+    testThreadSafetyVsCrashesOnly(
+        ImmutableList.of(NEXT_LONG, NEXT_INT, NEXT_DOUBLE, NEXT_GAUSSIAN, SET_WRAPPED));
   }
 
   /**
