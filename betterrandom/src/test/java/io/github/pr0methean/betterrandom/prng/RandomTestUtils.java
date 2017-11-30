@@ -63,13 +63,17 @@ public enum RandomTestUtils {
     } else {
       TestUtils.assertLess(output.doubleValue(), bound);
     }
-    if ((entropyCheckMode == EntropyCheckMode.EXACT) || (entropyCheckMode
-        == EntropyCheckMode.UPPER_BOUND)) {
-      TestUtils.assertGreaterOrEqual(prng.getEntropyBits(), oldEntropy - expectedEntropySpent);
-    }
-    if ((entropyCheckMode == EntropyCheckMode.EXACT) || (entropyCheckMode
-        == EntropyCheckMode.LOWER_BOUND)) {
-      TestUtils.assertLessOrEqual(prng.getEntropyBits(), oldEntropy - expectedEntropySpent);
+    long entropy = prng.getEntropyBits();
+    long expectedEntropy = oldEntropy - expectedEntropySpent;
+    switch (entropyCheckMode) {
+      case EXACT:
+        assertEquals(entropy, expectedEntropy);
+        break;
+      case LOWER_BOUND:
+        TestUtils.assertGreaterOrEqual(entropy, expectedEntropy);
+        break;
+      case OFF:
+        break;
     }
   }
 
@@ -227,7 +231,6 @@ public enum RandomTestUtils {
 
   public enum EntropyCheckMode {
     EXACT,
-    UPPER_BOUND,
     LOWER_BOUND,
     OFF
   }
