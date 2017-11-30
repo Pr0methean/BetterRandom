@@ -6,6 +6,7 @@ import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotEquals;
 
 import io.github.pr0methean.betterrandom.prng.BaseRandom;
+import io.github.pr0methean.betterrandom.prng.RandomTestUtils.EntropyCheckMode;
 import io.github.pr0methean.betterrandom.seed.DefaultSeedGenerator;
 import io.github.pr0methean.betterrandom.seed.FakeSeedGenerator;
 import io.github.pr0methean.betterrandom.seed.SeedException;
@@ -15,6 +16,10 @@ import java.util.Arrays;
 import org.testng.annotations.Test;
 
 public class ReseedingSplittableRandomAdapterTest extends SingleThreadSplittableRandomAdapterTest {
+
+  @Override protected EntropyCheckMode getEntropyCheckMode() {
+    return EntropyCheckMode.LOWER_BOUND;
+  }
 
   @Override protected ReseedingSplittableRandomAdapter createRng() throws SeedException {
     return ReseedingSplittableRandomAdapter.getDefaultInstance();

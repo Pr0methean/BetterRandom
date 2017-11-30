@@ -44,6 +44,10 @@ import org.testng.annotations.Test;
 
 public abstract class BaseRandomTest {
 
+  protected EntropyCheckMode getEntropyCheckMode() {
+    return EntropyCheckMode.EXACT;
+  }
+
   /**
    * The square root of 12, rounded from an extended-precision calculation that was done by Wolfram
    * Alpha (and thus at least as accurate as {@code StrictMath.sqrt(12.0)}).
@@ -455,7 +459,7 @@ public abstract class BaseRandomTest {
     // it in a wrapper function.
     checkRangeAndEntropy(prng, 2 * ENTROPY_OF_DOUBLE,
         () -> prng.nextGaussian() + prng.nextGaussian(), -Double.MAX_VALUE, Double.MAX_VALUE,
-        EntropyCheckMode.EXACT);
+       getEntropyCheckMode());
   }
 
   @Test public void testNextBoolean() throws Exception {

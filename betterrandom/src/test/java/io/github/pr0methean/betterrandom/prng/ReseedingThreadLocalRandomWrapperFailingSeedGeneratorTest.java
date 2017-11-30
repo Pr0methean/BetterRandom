@@ -1,0 +1,23 @@
+package io.github.pr0methean.betterrandom.prng;
+
+import io.github.pr0methean.betterrandom.prng.RandomTestUtils.EntropyCheckMode;
+import io.github.pr0methean.betterrandom.seed.DefaultSeedGenerator;
+import io.github.pr0methean.betterrandom.seed.FailingSeedGenerator;
+import io.github.pr0methean.betterrandom.seed.SeedException;
+import java.io.Serializable;
+import java.util.function.Supplier;
+
+public class ReseedingThreadLocalRandomWrapperFailingSeedGeneratorTest extends ReseedingThreadLocalRandomWrapperTest {
+
+  @Override protected EntropyCheckMode getEntropyCheckMode() {
+    return EntropyCheckMode.EXACT;
+  }
+
+  @Override public void testReseeding() {
+    // No-op.
+  }
+  @Override protected BaseRandom createRng() throws SeedException {
+    return new ReseedingThreadLocalRandomWrapper(FailingSeedGenerator.FAILING_SEED_GENERATOR,
+        (Serializable & Supplier<BaseRandom>) MersenneTwisterRandom::new);
+  }
+}
