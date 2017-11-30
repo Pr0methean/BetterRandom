@@ -13,10 +13,13 @@ import org.testng.annotations.Test;
 public class RandomWrapperSecureRandomTest extends BaseRandomTest {
 
   private static final SecureRandom SEED_GEN = new SecureRandom();
-  private static final NamedFunction<Random, Double> SET_WRAPPED = new NamedFunction<>(random -> {
-    ((RandomWrapper) random).setWrapped(new SecureRandom());
-    return 0.0;
-  }, "setWrapped");
+  private static final NamedFunction<Random, Double> SET_WRAPPED =
+      new NamedFunction<Random, Double>("setWrapped") {
+        @Override public Double apply(Random random) {
+          ((RandomWrapper) random).setWrapped(new SecureRandom());
+          return 0.0;
+        }
+      };
 
   private static RandomWrapper createRngInternal() {
     try {

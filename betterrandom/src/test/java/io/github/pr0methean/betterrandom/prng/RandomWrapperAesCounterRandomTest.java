@@ -9,10 +9,13 @@ import org.testng.annotations.Test;
 
 public class RandomWrapperAesCounterRandomTest extends AesCounterRandom128Test {
 
-  private static final NamedFunction<Random, Double> SET_WRAPPED = new NamedFunction<>(random -> {
-    ((RandomWrapper) random).setWrapped(new AesCounterRandom());
-    return 0.0;
-  }, "setWrapped");
+  private static final NamedFunction<Random, Double> SET_WRAPPED =
+      new NamedFunction<Random, Double>("setWrapped") {
+        @Override public Double apply(Random random) {
+          ((RandomWrapper) random).setWrapped(new AesCounterRandom());
+          return 0.0;
+        }
+      };
 
   @Override public void testThreadSafety() {
     super.testThreadSafety();
