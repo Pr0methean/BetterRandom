@@ -128,7 +128,7 @@ public class LooperThread extends Thread {
    */
   @SuppressWarnings("BooleanMethodIsAlwaysInverted") protected boolean iterate()
       throws InterruptedException {
-    if ((target == null) || (target instanceof DummyTarget)) {
+    if (target == null) {
       throw new UnsupportedOperationException("This method should be overridden, or else this "
           + "thread should have been created with a Serializable target!");
     } else {
@@ -184,13 +184,6 @@ public class LooperThread extends Thread {
       return finishedIterations.get() != previousFinishedIterations;
     } finally {
       lock.unlock();
-    }
-  }
-
-  protected static class DummyTarget implements Runnable {
-
-    @Override public void run() {
-      throw new UnsupportedOperationException("Dummy target");
     }
   }
 }
