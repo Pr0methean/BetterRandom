@@ -91,10 +91,11 @@ public class LooperThreadTest {
     SleepingLooperThread sleepingThread = new SleepingLooperThread();
     sleepingThread.start();
     try {
+      System.out.println("Entering first assertion...");
       assertTrue(sleepingThread.awaitIteration(3, TimeUnit.SECONDS));
       // Now do so again, to ensure the thread still runs after returning
-      // Uncomment once https://github.com/Pr0methean/BetterRandom/issues/17 is fixed
-      // assertTrue(sleepingThread.awaitIteration(3, TimeUnit.SECONDS));
+      System.out.println("Entering second assertion...");
+      assertTrue(sleepingThread.awaitIteration(3, TimeUnit.SECONDS));
     } finally {
       sleepingThread.interrupt();
     }
@@ -118,9 +119,11 @@ public class LooperThreadTest {
     }
 
     @Override public boolean iterate() throws InterruptedException {
+      long iter = finishedIterations.get();
+      System.out.format("Starting iteration %d%n", iter);
       sleep(500);
-      TARGET.run();
-      return finishedIterations.get() < 50;
+      System.out.format("Ending iteration %d%n", iter);
+      return iter < 50;
     }
   }
 }
