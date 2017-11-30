@@ -93,8 +93,7 @@ public class LooperThreadTest {
     try {
       assertTrue(sleepingThread.awaitIteration(3, TimeUnit.SECONDS));
       // Now do so again, to ensure the thread still runs after returning
-      // Uncomment once https://github.com/Pr0methean/BetterRandom/issues/17 is fixed
-      // assertTrue(sleepingThread.awaitIteration(3, TimeUnit.SECONDS));
+      assertTrue(sleepingThread.awaitIteration(3, TimeUnit.SECONDS));
     } finally {
       sleepingThread.interrupt();
     }
@@ -118,8 +117,7 @@ public class LooperThreadTest {
     }
 
     @Override public boolean iterate() throws InterruptedException {
-      sleep(500);
-      TARGET.run();
+      sleep(100);
       return finishedIterations.get() < 50;
     }
   }
