@@ -52,6 +52,11 @@ public class ReseedingThreadLocalRandomWrapperTest extends ThreadLocalRandomWrap
     }
   }
 
+  /** Assertion-free since reseeding may cause divergent output. */
+  @Test(timeOut = 10000) public void testSetSeedLong() {
+    createRng().setSeed(0x0123456789ABCDEFL);
+  }
+
   /** Test for crashes only, since setSeed is a no-op. */
   @Override @Test public void testSetSeed() throws SeedException {
     final BaseRandom prng = createRng();
