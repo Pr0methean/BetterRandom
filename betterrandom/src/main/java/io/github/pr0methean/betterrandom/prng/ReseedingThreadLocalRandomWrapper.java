@@ -31,7 +31,7 @@ public class ReseedingThreadLocalRandomWrapper extends ThreadLocalRandomWrapper 
       final Supplier<? extends BaseRandom> initializer) throws SeedException {
     super((Serializable & Supplier<? extends BaseRandom>) () -> {
       BaseRandom out = initializer.get();
-      RandomSeederThread.add(seedGenerator, out);
+      out.setSeedGenerator(seedGenerator);
       return out;
     });
   }
@@ -52,7 +52,7 @@ public class ReseedingThreadLocalRandomWrapper extends ThreadLocalRandomWrapper 
     super(seedSize, seedGenerator,
         (Serializable & Function<byte[], ? extends BaseRandom>) (seed) -> {
           BaseRandom out = creator.apply(seed);
-          RandomSeederThread.add(seedGenerator, out);
+          out.setSeedGenerator(seedGenerator);
           return out;
         });
   }

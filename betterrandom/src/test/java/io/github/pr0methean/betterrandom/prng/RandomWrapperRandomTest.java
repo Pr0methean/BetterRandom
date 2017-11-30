@@ -15,7 +15,9 @@
 // ============================================================================
 package io.github.pr0methean.betterrandom.prng;
 
+import com.google.common.collect.ImmutableList;
 import io.github.pr0methean.betterrandom.seed.SeedException;
+import java.util.Collections;
 import java.util.Map;
 import java.util.Random;
 import org.testng.annotations.Test;
@@ -26,6 +28,11 @@ import org.testng.annotations.Test;
  */
 public class RandomWrapperRandomTest extends BaseRandomTest {
 
+  private static final NamedFunction<Random, Double> SET_WRAPPED = new NamedFunction<>(random -> {
+    ((RandomWrapper) random).setWrapped(new Random());
+    return 0.0;
+  }, "setWrapped");
+
   @Override protected Class<? extends BaseRandom> getClassUnderTest() {
     return RandomWrapper.class;
   }
@@ -34,6 +41,27 @@ public class RandomWrapperRandomTest extends BaseRandomTest {
     Map<Class<?>, Object> params = super.constructorParams();
     params.put(Random.class, new Random());
     return params;
+  }
+
+  /**
+   * Assertion-free with respect to the long/double methods because, contrary to its contract to be
+   * thread-safe, {@link Random#nextLong()} is not transactional. Rather, it uses two calls to
+   * {@link Random#next(int)} that can interleave with calls from other threads.
+   */
+  @Override public void testThreadSafety() {
+    testThreadSafety(ImmutableList.of(NEXT_INT), Collections.emptyList());
+    testThreadSafetyVsCrashesOnly(
+        ImmutableList.of(NEXT_LONG, NEXT_INT, NEXT_DOUBLE, NEXT_GAUSSIAN, SET_WRAPPED));
+  }
+
+  @Override public void testSetSeedLong() throws SeedException {
+    final BaseRandom rng = createRng();
+    final BaseRandom rng2 = createRng();
+    rng.nextLong(); // ensure they won't both be in initial state before reseeding
+    rng.setSeed(0x0123456789ABCDEFL);
+    rng2.setSeed(0x0123456789ABCDEFL);
+    assert RandomTestUtils.testEquivalence(rng, rng2, 20)
+        : "Output mismatch after reseeding with same seed";
   }
 
   /**

@@ -12,7 +12,6 @@ import java.util.Map;
 import java.util.SplittableRandom;
 import java.util.WeakHashMap;
 import java.util.concurrent.atomic.AtomicLong;
-import java.util.concurrent.atomic.AtomicReference;
 import javax.annotation.Nullable;
 
 /**
@@ -27,6 +26,7 @@ public class ReseedingSplittableRandomAdapter extends BaseSplittableRandomAdapte
   @SuppressWarnings("StaticCollection")
   private static final Map<SeedGenerator, ReseedingSplittableRandomAdapter> INSTANCES =
       Collections.synchronizedMap(new WeakHashMap<>(1));
+  private final SeedGenerator seedGenerator;
   @SuppressWarnings(
       {"ThreadLocalNotStaticFinal", "InstanceVariableMayNotBeInitializedByReadObject"})
   private transient ThreadLocal<SingleThreadSplittableRandomAdapter> threadLocal;
@@ -37,7 +37,7 @@ public class ReseedingSplittableRandomAdapter extends BaseSplittableRandomAdapte
    */
   private ReseedingSplittableRandomAdapter(final SeedGenerator seedGenerator) throws SeedException {
     super(seedGenerator.generateSeed(Long.BYTES));
-    this.seedGenerator.set(seedGenerator);
+    this.seedGenerator = seedGenerator;
     initSubclassTransientFields();
   }
 
@@ -67,9 +67,12 @@ public class ReseedingSplittableRandomAdapter extends BaseSplittableRandomAdapte
     }
   }
 
-  @Override public void setSeederThread(@Nullable RandomSeederThread thread) {
-    throw new UnsupportedOperationException(
-        "ReseedingSplittableRandomAdapter's binding to RandomSeederThread is immutable");
+  @Override public long getEntropyBits() {
+    return threadLocal.get().getEntropyBits();
+  }
+
+  @Override public byte[] getSeed() {
+    return threadLocal.get().getSeed();
   }
 
   @Override public void setSeedGenerator(SeedGenerator seedGenerator) {
@@ -91,25 +94,30 @@ public class ReseedingSplittableRandomAdapter extends BaseSplittableRandomAdapte
   }
 
   private ReseedingSplittableRandomAdapter readResolve() {
-    return getInstance(seedGenerator.get());
+    return getInstance(seedGenerator);
   }
 
   private void initSubclassTransientFields() {
     if (threadLocal == null) {
       threadLocal =
-          ThreadLocal.withInitial(() -> new SingleThreadSplittableRandomAdapter(seedGenerator.get()));
+          ThreadLocal.withInitial(() -> new SingleThreadSplittableRandomAdapter(seedGenerator));
     }
   }
 
   @Override protected SplittableRandom getSplittableRandom() {
     final SingleThreadSplittableRandomAdapter adapterForThread = threadLocal.get();
-    RandomSeederThread.add(seedGenerator.get(), adapterForThread);
+    RandomSeederThread.add(seedGenerator, adapterForThread);
     return adapterForThread.getSplittableRandom();
   }
 
+  @Override protected void debitEntropy(long bits) {
+    // Necessary because our inherited next* methods read straight through to the SplittableRandom.
+    threadLocal.get().debitEntropy(bits);
+  }
+
   @Override public boolean equals(@Nullable final Object o) {
-    return (this == o) || ((o instanceof ReseedingSplittableRandomAdapter) && seedGenerator.get()
-        .equals(((ReseedingSplittableRandomAdapter) o).seedGenerator.get()));
+    return (this == o) || ((o instanceof ReseedingSplittableRandomAdapter) && seedGenerator
+        .equals(((ReseedingSplittableRandomAdapter) o).seedGenerator));
   }
 
   @Override protected void setSeedInternal(final byte[] seed) {
@@ -120,7 +128,7 @@ public class ReseedingSplittableRandomAdapter extends BaseSplittableRandomAdapte
   }
 
   @Override public int hashCode() {
-    return seedGenerator.get().hashCode() + 1;
+    return seedGenerator.hashCode() + 1;
   }
 
   @Override public String toString() {

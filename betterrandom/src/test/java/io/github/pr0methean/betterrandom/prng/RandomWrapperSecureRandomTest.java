@@ -1,5 +1,6 @@
 package io.github.pr0methean.betterrandom.prng;
 
+import com.google.common.collect.ImmutableList;
 import io.github.pr0methean.betterrandom.seed.DefaultSeedGenerator;
 import io.github.pr0methean.betterrandom.seed.SeedException;
 import java.security.GeneralSecurityException;
@@ -12,6 +13,10 @@ import org.testng.annotations.Test;
 public class RandomWrapperSecureRandomTest extends BaseRandomTest {
 
   private static final SecureRandom SEED_GEN = new SecureRandom();
+  private static final NamedFunction<Random, Double> SET_WRAPPED = new NamedFunction<>(random -> {
+    ((RandomWrapper) random).setWrapped(new SecureRandom());
+    return 0.0;
+  }, "setWrapped");
 
   private static RandomWrapper createRngInternal() {
     try {
@@ -76,5 +81,11 @@ public class RandomWrapperSecureRandomTest extends BaseRandomTest {
     final RandomWrapper wrapper = createRngInternal();
     wrapper.setSeed(seed);
     return wrapper;
+  }
+
+  /** Assertion-free because SecureRandom isn't necessarily reproducible. */
+  @Override @Test public void testThreadSafety() {
+    testThreadSafetyVsCrashesOnly(
+        ImmutableList.of(NEXT_LONG, NEXT_INT, NEXT_DOUBLE, NEXT_GAUSSIAN, SET_WRAPPED));
   }
 }

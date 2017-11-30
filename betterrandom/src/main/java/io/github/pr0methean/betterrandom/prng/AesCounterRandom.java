@@ -23,8 +23,6 @@ import io.github.pr0methean.betterrandom.seed.SeedGenerator;
 import io.github.pr0methean.betterrandom.util.BinaryUtils;
 import io.github.pr0methean.betterrandom.util.ByteArrayArithmetic;
 import io.github.pr0methean.betterrandom.util.LogPreFormatter;
-import java.io.IOException;
-import java.io.ObjectInputStream;
 import java.security.GeneralSecurityException;
 import java.security.InvalidKeyException;
 import java.security.MessageDigest;
@@ -134,7 +132,6 @@ public class AesCounterRandom extends BaseRandom implements SeekableRandom {
     super(seed);
     currentBlock = new byte[COUNTER_SIZE_BYTES * BLOCKS_AT_ONCE];
     index = currentBlock.length; // force generation of first block on demand
-    setSeedInternal(seed);
   }
 
   /**
@@ -156,12 +153,6 @@ public class AesCounterRandom extends BaseRandom implements SeekableRandom {
   @Override public ToStringHelper addSubclassFields(final ToStringHelper original) {
     return original.add("counter", BinaryUtils.convertBytesToHexString(counter))
         .add("cipher", cipher);
-  }
-
-  private void readObject(final ObjectInputStream in) throws IOException, ClassNotFoundException {
-    in.defaultReadObject();
-    initTransientFields();
-    setSeedInternal(seed);
   }
 
   @Override protected void initTransientFields() {
@@ -191,16 +182,22 @@ public class AesCounterRandom extends BaseRandom implements SeekableRandom {
 
   /**
    * Generates BLOCKS_AT_ONCE 128-bit (16-byte) blocks. Copies them to currentBlock.
-   * @throws GeneralSecurityException If there is a problem with the cipher that generates the
+   * @throws IllegalStateException If there is a problem with the cipher that generates the
    *     random data.
    */
-  private void nextBlock() throws GeneralSecurityException {
+  private void nextBlock() {
     for (int i = 0; i < BLOCKS_AT_ONCE; i++) {
       incrementCounter();
       System.arraycopy(counter, 0, counterInput, i * COUNTER_SIZE_BYTES, COUNTER_SIZE_BYTES);
     }
     final int totalBytes = COUNTER_SIZE_BYTES * BLOCKS_AT_ONCE;
-    cipher.doFinal(counterInput, 0, totalBytes, currentBlock);
+    try {
+      cipher.doFinal(counterInput, 0, totalBytes, currentBlock);
+    } catch (final GeneralSecurityException ex) {
+      // Should never happen.  If initialisation succeeds without exceptions
+      // we should be able to proceed indefinitely without exceptions.
+      throw new IllegalStateException("Failed creating next random block.", ex);
+    }
   }
 
   @Override protected final int next(final int bits) {
@@ -208,14 +205,8 @@ public class AesCounterRandom extends BaseRandom implements SeekableRandom {
     int result;
     try {
       if ((currentBlock.length - index) < 4) {
-        try {
-          nextBlock();
-          index = 0;
-        } catch (final GeneralSecurityException ex) {
-          // Should never happen.  If initialisation succeeds without exceptions
-          // we should be able to proceed indefinitely without exceptions.
-          throw new IllegalStateException("Failed creating next random block.", ex);
-        }
+        nextBlock();
+        index = 0;
       }
       result = BinaryUtils.convertBytesToInt(currentBlock, index);
       index += 4;
@@ -281,7 +272,8 @@ public class AesCounterRandom extends BaseRandom implements SeekableRandom {
   @Override @SuppressWarnings("contracts.postcondition.not.satisfied")
   public synchronized void setSeed(final long seed) {
     if (superConstructorFinished) {
-      super.setSeed(seed);
+      final byte[] seedBytes = BinaryUtils.convertLongToBytes(seed);
+      setSeed(seedBytes);
     }
   }
 
@@ -313,6 +305,19 @@ public class AesCounterRandom extends BaseRandom implements SeekableRandom {
   }
 
   @Override public void advance(long delta) {
+    if (delta == 0) {
+      return;
+    }
+    byte[] addendDigits = new byte[counter.length];
+    System.arraycopy(BinaryUtils.convertLongToBytes(delta), 0, addendDigits,
+        counter.length - Long.BYTES, Long.BYTES);
+    if (delta < 0) {
+      // Sign extend
+      for (int i = 0; i < counter.length - Long.BYTES; i++) {
+        addendDigits[i] = -1;
+      }
+    }
+    boolean carry = false;
     lock.lock();
     try {
       ByteArrayArithmetic.addLongToByteArrayInteger(delta, counter);

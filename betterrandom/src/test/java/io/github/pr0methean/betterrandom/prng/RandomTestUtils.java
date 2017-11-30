@@ -17,7 +17,6 @@ package io.github.pr0methean.betterrandom.prng;
 
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotSame;
-import static org.testng.Assert.assertTrue;
 
 import io.github.pr0methean.betterrandom.TestUtils;
 import io.github.pr0methean.betterrandom.util.CloneViaSerialization;
@@ -25,8 +24,9 @@ import java.util.HashSet;
 import java.util.Random;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.function.Supplier;
+import java.util.stream.BaseStream;
 import java.util.stream.Stream;
-import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
+import org.apache.commons.math3.stat.descriptive.SynchronizedDescriptiveStatistics;
 import org.testng.Reporter;
 
 /**
@@ -39,31 +39,29 @@ public enum RandomTestUtils {
   private static final int INSTANCES_TO_HASH = 25;
   private static final int EXPECTED_UNIQUE_HASHES = (int) (0.8 * INSTANCES_TO_HASH);
 
-  /**
-   * @param origin Minimum expected value, inclusive.
-   * @param bound Maximum expected value, exclusive.
-   */
-  public static void checkRangeAndEntropy(final BaseRandom prng, final long expectedEntropySpent,
-      final Supplier<? extends Number> numberSupplier, final double origin, final double bound,
-      final boolean checkEntropy) {
-    checkRangeAndEntropy(prng, expectedEntropySpent, numberSupplier, origin, bound,
-        checkEntropy ? EntropyCheckMode.EXACT : EntropyCheckMode.OFF);
-  }
-
   public static void checkRangeAndEntropy(final BaseRandom prng, final long expectedEntropySpent,
       final Supplier<? extends Number> numberSupplier, final double origin, final double bound,
       final EntropyCheckMode entropyCheckMode) {
     final long oldEntropy = prng.getEntropyBits();
     final Number output = numberSupplier.get();
-    assertTrue(output.doubleValue() >= origin);
-    assertTrue(output.doubleValue() < bound);
-    if ((entropyCheckMode == EntropyCheckMode.EXACT) || (entropyCheckMode
-        == EntropyCheckMode.UPPER_BOUND)) {
-      TestUtils.assertGreaterOrEqual(oldEntropy - expectedEntropySpent, prng.getEntropyBits());
+    TestUtils.assertGreaterOrEqual(output.doubleValue(), origin);
+    if (bound - 1.0 == bound) {
+      // Can't do a strict check because of floating-point rounding
+      TestUtils.assertLessOrEqual(output.doubleValue(), bound);
+    } else {
+      TestUtils.assertLess(output.doubleValue(), bound);
     }
-    if ((entropyCheckMode == EntropyCheckMode.EXACT) || (entropyCheckMode
-        == EntropyCheckMode.LOWER_BOUND)) {
-      TestUtils.assertLessOrEqual(oldEntropy - expectedEntropySpent, prng.getEntropyBits());
+    long entropy = prng.getEntropyBits();
+    long expectedEntropy = oldEntropy - expectedEntropySpent;
+    switch (entropyCheckMode) {
+      case EXACT:
+        assertEquals(entropy, expectedEntropy);
+        break;
+      case LOWER_BOUND:
+        TestUtils.assertGreaterOrEqual(entropy, expectedEntropy);
+        break;
+      case OFF:
+        break;
     }
   }
 
@@ -79,12 +77,12 @@ public enum RandomTestUtils {
     final Stream<? extends Number> streamToUse =
         (expectedCount < 0) ? stream.sequential().limit(20) : stream;
     final long count = streamToUse.mapToLong((number) -> {
-      TestUtils.assertGreaterOrEqual(origin, number.doubleValue());
-      TestUtils.assertLess(bound, number.doubleValue());
+      TestUtils.assertGreaterOrEqual(number.doubleValue(), origin);
+      TestUtils.assertLess(number.doubleValue(), bound);
       if (checkEntropyCount && !(streamToUse.isParallel())) {
         long newEntropy = prng.getEntropyBits();
-        TestUtils.assertGreaterOrEqual(entropy.getAndSet(newEntropy) - maxEntropySpentPerNumber,
-            newEntropy);
+        TestUtils.assertGreaterOrEqual(newEntropy,
+            entropy.getAndSet(newEntropy) - maxEntropySpentPerNumber);
       }
       return 1;
     }).sum();
@@ -92,8 +90,8 @@ public enum RandomTestUtils {
       assertEquals(count, expectedCount);
     }
     if (checkEntropyCount && streamToUse.isParallel()) {
-      TestUtils.assertGreaterOrEqual(entropy.get() - (maxEntropySpentPerNumber * count),
-          prng.getEntropyBits());
+      TestUtils.assertGreaterOrEqual(prng.getEntropyBits(),
+          entropy.get() - (maxEntropySpentPerNumber * count));
     }
   }
 
@@ -194,13 +192,14 @@ public enum RandomTestUtils {
    *     calculation.
    * @return The standard deviation of the generated sample.
    */
-  public static double calculateSampleStandardDeviation(final Random rng, final int maxValue,
-      final int iterations) {
-    final DescriptiveStatistics stats = new DescriptiveStatistics();
-    for (int i = 0; i < iterations; i++) {
-      stats.addValue(rng.nextInt(maxValue));
-    }
-    return stats.getStandardDeviation();
+  public static SynchronizedDescriptiveStatistics summaryStats(final BaseRandom rng,
+      final long maxValue, final int iterations) {
+    final SynchronizedDescriptiveStatistics stats = new SynchronizedDescriptiveStatistics();
+    BaseStream<? extends Number, ?> stream;
+    stream = (maxValue <= Integer.MAX_VALUE) ? rng.ints(iterations, 0, (int) maxValue)
+        : rng.longs(iterations, 0, maxValue);
+    stream.spliterator().forEachRemaining(n -> stats.addValue(n.doubleValue()));
+    return stats;
   }
 
   @SuppressWarnings("unchecked")
@@ -220,7 +219,6 @@ public enum RandomTestUtils {
 
   public enum EntropyCheckMode {
     EXACT,
-    UPPER_BOUND,
     LOWER_BOUND,
     OFF
   }

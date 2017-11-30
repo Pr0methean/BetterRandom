@@ -4,7 +4,6 @@ import io.github.pr0methean.betterrandom.prng.BaseRandom;
 import io.github.pr0methean.betterrandom.prng.RandomTestUtils;
 import io.github.pr0methean.betterrandom.seed.DefaultSeedGenerator;
 import io.github.pr0methean.betterrandom.seed.FakeSeedGenerator;
-import io.github.pr0methean.betterrandom.seed.RandomSeederThread;
 import io.github.pr0methean.betterrandom.seed.SeedException;
 import io.github.pr0methean.betterrandom.seed.SeedGenerator;
 import org.testng.annotations.Test;
@@ -39,5 +38,8 @@ public class SplittableRandomAdapterTest extends SingleThreadSplittableRandomAda
     createRng().setSeedGenerator(DefaultSeedGenerator.DEFAULT_SEED_GENERATOR);
   }
 
-  // TODO: Override or add tests for thread-safety.
+  /** Assertion-free because thread-local. */
+  @Override @Test public void testThreadSafety() {
+    testThreadSafetyVsCrashesOnly(FUNCTIONS_FOR_THREAD_SAFETY_TEST);
+  }
 }
