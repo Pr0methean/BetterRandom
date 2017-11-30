@@ -170,16 +170,6 @@ public class AesCounterRandom extends BaseRandom implements SeekableRandom {
     }
   }
 
-  private void incrementCounter() {
-    for (int i = 0; i < counter.length; i++) {
-      ++counter[i];
-      if (counter[i] != 0) // Check whether we need to loop again to carry the one.
-      {
-        break;
-      }
-    }
-  }
-
   /**
    * Generates BLOCKS_AT_ONCE 128-bit (16-byte) blocks. Copies them to currentBlock.
    * @throws IllegalStateException If there is a problem with the cipher that generates the
@@ -187,7 +177,7 @@ public class AesCounterRandom extends BaseRandom implements SeekableRandom {
    */
   private void nextBlock() {
     for (int i = 0; i < BLOCKS_AT_ONCE; i++) {
-      incrementCounter();
+      ByteArrayArithmetic.addInto(counter, 1);
       System.arraycopy(counter, 0, counterInput, i * COUNTER_SIZE_BYTES, COUNTER_SIZE_BYTES);
     }
     final int totalBytes = COUNTER_SIZE_BYTES * BLOCKS_AT_ONCE;
@@ -308,19 +298,9 @@ public class AesCounterRandom extends BaseRandom implements SeekableRandom {
     if (delta == 0) {
       return;
     }
-    byte[] addendDigits = new byte[counter.length];
-    System.arraycopy(BinaryUtils.convertLongToBytes(delta), 0, addendDigits,
-        counter.length - Long.BYTES, Long.BYTES);
-    if (delta < 0) {
-      // Sign extend
-      for (int i = 0; i < counter.length - Long.BYTES; i++) {
-        addendDigits[i] = -1;
-      }
-    }
-    boolean carry = false;
     lock.lock();
     try {
-      ByteArrayArithmetic.addLongToByteArrayInteger(delta, counter);
+      ByteArrayArithmetic.addInto(counter, delta);
     } finally {
       lock.unlock();
     }

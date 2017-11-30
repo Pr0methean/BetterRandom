@@ -1,25 +1,26 @@
 package io.github.pr0methean.betterrandom.prng;
 
+import static io.github.pr0methean.betterrandom.util.ByteArrayArithmetic.addInto;
+import static io.github.pr0methean.betterrandom.util.ByteArrayArithmetic.multiplyInto;
+import static io.github.pr0methean.betterrandom.util.ByteArrayArithmetic.unsignedShiftRight;
+
 import com.google.common.base.MoreObjects.ToStringHelper;
 import io.github.pr0methean.betterrandom.SeekableRandom;
 import io.github.pr0methean.betterrandom.seed.DefaultSeedGenerator;
 import io.github.pr0methean.betterrandom.seed.SeedException;
 import io.github.pr0methean.betterrandom.seed.SeedGenerator;
 import io.github.pr0methean.betterrandom.util.BinaryUtils;
+import io.github.pr0methean.betterrandom.util.ByteArrayArithmetic;
 import io.github.pr0methean.betterrandom.util.EntryPoint;
-import java.io.IOException;
-import java.io.ObjectOutputStream;
-import java.util.concurrent.atomic.AtomicLong;
 
 /**
  * <p>From the original description, "PCG is a family of simple fast space-efficient statistically
  * good algorithms for random number generation. Unlike many general-purpose RNGs, they are also
- * hard to predict." This is a Java port of the "XSH RR 64/32" generator presented at <a
- * href="http://www.pcg-random.org/">http://www.pcg-random.org/</a>. Period is 2<sup>62</sup> bits.
+ * hard to predict." This is a Java port of the "XSH RR 128/32" generator presented at <a
+ * href="http://www.pcg-random.org/">http://www.pcg-random.org/</a>. Period is 2<sup>126</sup> bits.
  * This PRNG is seekable.
  * </p><p>
- * Concurrency is lockless, but contention is still possible due to a retry loop of {@link
- * AtomicLong#compareAndSet(long, long)}. Thus, sharing a single instance across threads isn't
+ * Sharing a single instance across threads that are frequently using it concurrently isn't
  * recommended unless memory is too constrained to use with a {@link ThreadLocalRandomWrapper}.
  * </p>
  * @author M.E. O'Neill (algorithm and C++ implementation)
@@ -28,10 +29,16 @@ import java.util.concurrent.atomic.AtomicLong;
 public class Pcg128Random extends BaseRandom implements SeekableRandom {
 
   private static final int SEED_SIZE_BYTES = 2 * Long.BYTES;
-  private static final long MULTIPLIER_HI = 2549297995355413924L;
-  private static final long MULTIPLIER_LO = 4865540595714422341L;
-  private static final long INCREMENT_HI = 6364136223846793005L;
-  private static final long INCREMENT_LO = 1442695040888963407L;
+  private static final byte[] MULTIPLIER =
+      {0x00000023, 0x00000060, 0xffffffed, 0x00000005, 0x0000001f, 0xffffffc6, 0x0000005d,
+          0xffffffa4, 0x00000043, 0xffffff85, 0xffffffdf, 0x00000064, 0xffffff9f, 0xffffffcc,
+          0xfffffff6, 0x00000045};
+  private static final byte[] INCREMENT =
+      {0x00000058, 0x00000051, 0xfffffff4, 0x0000002d, 0x0000004c, 0xffffff95, 0x0000007f,
+          0x0000002d, 0x00000014, 0x00000005, 0x0000007b, 0x0000007e, 0xfffffff7, 0x00000067,
+          0xffffff81, 0x0000004f};
+  private static final byte[] ZERO = {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
+  private static final byte[] ONE = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1};
   private static final int WANTED_OP_BITS = 6;
   private static final int ROTATION1 = (WANTED_OP_BITS + Long.SIZE) / 2;
   private static final int ROTATION2 = (Long.SIZE - WANTED_OP_BITS);
@@ -54,64 +61,75 @@ public class Pcg128Random extends BaseRandom implements SeekableRandom {
 
   @SuppressWarnings("NonSynchronizedMethodOverridesSynchronizedMethod") @Override
   public void setSeed(long seed) {
+    fallbackSetSeedIfInitialized();
+  }
+
+  // TODO: convert to 128 bits
+  @Override public void advance(long delta) {
+    if (delta == 0) {
+      return;
+    }
+    // The method used here is based on Brown, "Random Number Generation
+    // with Arbitrary Stride,", Transactions of the American Nuclear
+    // Society (Nov. 1994).  The algorithm is very similar to fast
+    // exponentiation.
+    byte[] curMult = MULTIPLIER.clone();
+    byte[] curPlus = INCREMENT.clone();
+    byte[] accMult = ONE.clone();
+    byte[] accPlus = ZERO.clone();
+    while (delta != 0) {
+      if ((delta & 1) == 1) {
+        multiplyInto(accMult, curMult);
+        multiplyInto(accPlus, curMult);
+        addInto(accPlus, curPlus);
+      }
+      byte[] adjMult = curMult.clone();
+      addInto(adjMult, 1);
+      multiplyInto(curPlus, adjMult);
+      multiplyInto(curMult, curMult);
+      delta >>>= 1;
+    }
     lock.lock();
     try {
-      System.arraycopy(BinaryUtils.convertLongToBytes(seed), 0, this.seed, 0, Long.BYTES);
-      creditEntropyForNewSeed(Long.BYTES);
+      multiplyInto(seed, accMult);
+      addInto(seed, accPlus);
     } finally {
       lock.unlock();
     }
   }
 
-  // TODO: convert to 128 bits
-  @Override public void advance(long delta) {
-    // The method used here is based on Brown, "Random Number Generation
-    // with Arbitrary Stride,", Transactions of the American Nuclear
-    // Society (Nov. 1994).  The algorithm is very similar to fast
-    // exponentiation.
-    long curMult = MULTIPLIER;
-    long curPlus = INCREMENT;
-    long accMult = 1;
-    long accPlus = 0;
-    while (delta != 0) {
-      if ((delta & 1) == 1) {
-        accMult *= curMult;
-        accPlus = (accPlus * curMult) + curPlus;
-      }
-      curPlus = (curMult + 1) * curPlus;
-      curMult *= curMult;
-      delta >>>= 1;
-    }
-    final long finalAccMult = accMult;
-    final long finalAccPlus = accPlus;
-    internalHi.updateAndGet(old -> (finalAccMult * old) + finalAccPlus);
-  }
-
   @Override public void setSeedInternal(byte[] seed) {
-    super.setSeedInternal(seed);
-    if (seed.length != Long.BYTES) {
-      throw new IllegalArgumentException("Pcg64Random requires a 16-byte seed");
+    if (seed.length != SEED_SIZE_BYTES) {
+      throw new IllegalArgumentException("Pcg128Random requires a 16-byte seed");
     }
+    super.setSeedInternal(seed);
   }
 
   // TODO: convert to 128 bits
   @Override protected int next(int bits) {
-    internalHi.updateAndGet(old -> (MULTIPLIER * old) + INCREMENT);
-    long oldInternal;
-    long newInternal;
-    do {
-      oldInternal = internalHi.get();
-      newInternal = oldInternal;
-      newInternal ^= oldInternal >>> ROTATION1;
-    } while (!internalHi.compareAndSet(oldInternal, newInternal));
-    int rot = (int) (oldInternal >>> (Long.SIZE - WANTED_OP_BITS)) & MASK;
-    int result = (int) (newInternal >>> ROTATION2);
-    final int ampRot = rot & MASK;
-    result = (result >>> ampRot) + (result << (Integer.SIZE - ampRot));
-    if (bits < 32) {
-      result &= (1 << bits) - 1;
+    lock.lock();
+    byte[] rot;
+    byte[] result;
+    try {
+      rot = seed.clone();
+      byte[] shiftedOldSeed = seed.clone();
+      unsignedShiftRight(shiftedOldSeed, ROTATION1);
+      multiplyInto(seed, MULTIPLIER);
+      addInto(seed, INCREMENT);
+      ByteArrayArithmetic.xorInto(seed, shiftedOldSeed);
+      result = seed.clone();
+    } finally {
+      lock.unlock();
     }
-    return result;
+    unsignedShiftRight(rot, SEED_SIZE_BYTES * 8 - WANTED_OP_BITS);
+    unsignedShiftRight(result, ROTATION2);
+    final int ampRot = BinaryUtils.convertBytesToInt(rot, SEED_SIZE_BYTES - Integer.BYTES);
+    byte[] resultTerm1 = result.clone();
+    unsignedShiftRight(resultTerm1, ampRot);
+    byte[] resultTerm2 = result.clone();
+    ByteArrayArithmetic.unsignedShiftLeft(resultTerm2, Integer.SIZE - ampRot);
+    addInto(resultTerm2, resultTerm1);
+    return BinaryUtils.convertBytesToInt(resultTerm2, SEED_SIZE_BYTES - Integer.BYTES);
   }
 
   @Override protected ToStringHelper addSubclassFields(ToStringHelper original) {
