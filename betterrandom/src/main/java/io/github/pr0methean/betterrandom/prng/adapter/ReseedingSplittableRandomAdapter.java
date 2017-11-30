@@ -27,15 +27,10 @@ public class ReseedingSplittableRandomAdapter extends BaseSplittableRandomAdapte
   @SuppressWarnings("StaticCollection")
   private static final Map<SeedGenerator, ReseedingSplittableRandomAdapter> INSTANCES = Collections
       .synchronizedMap(new WeakHashMap<SeedGenerator, ReseedingSplittableRandomAdapter>(1));
+  private final SeedGenerator seedGenerator;
   @SuppressWarnings(
       {"ThreadLocalNotStaticFinal", "InstanceVariableMayNotBeInitializedByReadObject"})
   private transient ThreadLocal<SingleThreadSplittableRandomAdapter> threadLocal;
-  private final SeedGenerator seedGenerator;
-
-  @Override public byte[] getSeed() {
-    return threadLocal.get().getSeed();
-  }
-
   /**
    * Single instance per SeedGenerator.
    * @param seedGenerator The seed generator this adapter will use.
@@ -77,6 +72,14 @@ public class ReseedingSplittableRandomAdapter extends BaseSplittableRandomAdapte
     }
   }
 
+  @Override public long getEntropyBits() {
+    return threadLocal.get().getEntropyBits();
+  }
+
+  @Override public byte[] getSeed() {
+    return threadLocal.get().getSeed();
+  }
+
   @Override public void setSeedGenerator(SeedGenerator seedGenerator) {
     throw new UnsupportedOperationException(
         "ReseedingSplittableRandomAdapter's binding to RandomSeederThread is immutable");
@@ -115,9 +118,14 @@ public class ReseedingSplittableRandomAdapter extends BaseSplittableRandomAdapte
     return adapterForThread.getSplittableRandom();
   }
 
+  @Override protected void debitEntropy(long bits) {
+    // Necessary because our inherited next* methods read straight through to the SplittableRandom.
+    threadLocal.get().debitEntropy(bits);
+  }
+
   @Override public boolean equals(@Nullable final Object o) {
-    return (this == o) || ((o instanceof ReseedingSplittableRandomAdapter)
-        && seedGenerator.equals(((ReseedingSplittableRandomAdapter) o).seedGenerator));
+    return (this == o) || ((o instanceof ReseedingSplittableRandomAdapter) && seedGenerator
+        .equals(((ReseedingSplittableRandomAdapter) o).seedGenerator));
   }
 
   @Override protected void setSeedInternal(final byte[] seed) {

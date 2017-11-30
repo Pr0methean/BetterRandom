@@ -237,25 +237,40 @@ public class RandomWrapper extends BaseRandom {
     }
   }
 
-  @Override public boolean preferSeedWithLong() {
-    final Random currentWrapped = getWrapped();
-    return !(currentWrapped instanceof ByteArrayReseedableRandom)
-        || ((ByteArrayReseedableRandom) currentWrapped).preferSeedWithLong();
+  @Override public synchronized void setSeed(long seed) {
+    if (wrapped != null) {
+      wrapped.setSeed(seed);
+      super.setSeedInternal(BinaryUtils.convertLongToBytes(seed));
+      unknownSeed = false;
+    }
   }
 
-  @SuppressWarnings("LockAcquiredButNotSafelyReleased") @Override public int getNewSeedLength() {
-    boolean locked = false;
-    if (lock != null) {
-      lock.lock();
-      locked = true;
+  @Override public boolean preferSeedWithLong() {
+    if (lock == null) {
+      return false; // safe default
     }
+    lock.lock();
     try {
+      final Random currentWrapped = getWrapped();
+      return !(currentWrapped instanceof ByteArrayReseedableRandom) || ((ByteArrayReseedableRandom) currentWrapped).preferSeedWithLong();
+    } finally {
+      lock.unlock();
+    }
+  }
+
+  @Override public int getNewSeedLength() {
+    if (lock == null) {
+      return 0; // can't use a seed yet
+    }
+    lock.lock();
+    try {
+      if (wrapped == null) {
+        return 0;
+      }
       return (wrapped instanceof ByteArrayReseedableRandom) ? ((ByteArrayReseedableRandom) wrapped)
           .getNewSeedLength() : Java8Constants.LONG_BYTES;
     } finally {
-      if (locked) {
-        lock.unlock();
-      }
+      lock.unlock();
     }
   }
 

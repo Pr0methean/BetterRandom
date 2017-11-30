@@ -614,17 +614,20 @@ public abstract class BaseRandom extends Random
       long r = nextLongNoEntropyDebit();
       long n = bound - origin, m = n - 1;
       if ((n & m) == 0L)  // power of two
+      {
         r = (r & m) + origin;
-      else if (n > 0L) {  // reject over-represented candidates
+      } else if (n > 0L) {  // reject over-represented candidates
         for (long u = r >>> 1;            // ensure nonnegative
             u + m - (r = u % n) < 0L;    // rejection check
             u = nextLongNoEntropyDebit() >>> 1) // retry
-           ;
-       r += origin;
-      }
-      else {              // range not representable as long
-       while (r < origin || r >= bound)
-         r = nextLongNoEntropyDebit();
+        {
+          ;
+        }
+        r += origin;
+      } else {              // range not representable as long
+        while (r < origin || r >= bound) {
+          r = nextLongNoEntropyDebit();
+        }
       }
       return r;
     } finally {
@@ -681,19 +684,6 @@ public abstract class BaseRandom extends Random
   }
 
   /**
-   * {@inheritDoc}<p>Most subclasses should override {@link #setSeedInternal(byte[])} instead of
-   * this method, so that they will deserialize properly.</p>
-   */
-  @Override public void setSeed(final byte[] seed) {
-    lock.lock();
-    try {
-      setSeedInternal(seed);
-    } finally {
-      lock.unlock();
-    }
-  }
-
-  /**
    * Sets the seed of this random number generator using a single long seed, if this implementation
    * supports that. If it is capable of using 64 bits or less of seed data (i.e. if {@code {@link
    * #getNewSeedLength()} <= {@link Long#BYTES}}), then this method shall replace the entire seed as
@@ -707,6 +697,19 @@ public abstract class BaseRandom extends Random
       setSeed(seedBytes);
     } else {
       setSeedInternal(seedBytes);
+    }
+  }
+
+  /**
+   * {@inheritDoc}<p>Most subclasses should override {@link #setSeedInternal(byte[])} instead of
+   * this method, so that they will deserialize properly.</p>
+   */
+  @Override public void setSeed(final byte[] seed) {
+    lock.lock();
+    try {
+      setSeedInternal(seed);
+    } finally {
+      lock.unlock();
     }
   }
 

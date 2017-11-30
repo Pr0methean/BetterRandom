@@ -17,7 +17,6 @@ package io.github.pr0methean.betterrandom.prng;
 
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotSame;
-import static org.testng.Assert.assertTrue;
 
 import io.github.pr0methean.betterrandom.TestUtils;
 import io.github.pr0methean.betterrandom.util.CloneViaSerialization;
@@ -42,17 +41,6 @@ public enum RandomTestUtils {
   private static final int INSTANCES_TO_HASH = 25;
   private static final int EXPECTED_UNIQUE_HASHES = (int) (0.8 * INSTANCES_TO_HASH);
 
-  /**
-   * @param origin Minimum expected value, inclusive.
-   * @param bound Maximum expected value, exclusive.
-   */
-  public static void checkRangeAndEntropy(final BaseRandom prng, final long expectedEntropySpent,
-      final Supplier<? extends Number> numberSupplier, final double origin, final double bound,
-      final boolean checkEntropy) {
-    checkRangeAndEntropy(prng, expectedEntropySpent, numberSupplier, origin, bound,
-        checkEntropy ? EntropyCheckMode.EXACT : EntropyCheckMode.OFF);
-  }
-
   public static void checkRangeAndEntropy(final BaseRandom prng, final long expectedEntropySpent,
       final Supplier<? extends Number> numberSupplier, final double origin, final double bound,
       final EntropyCheckMode entropyCheckMode) {
@@ -65,13 +53,17 @@ public enum RandomTestUtils {
     } else {
       TestUtils.assertLess(output.doubleValue(), bound);
     }
-    if ((entropyCheckMode == EntropyCheckMode.EXACT) || (entropyCheckMode
-        == EntropyCheckMode.UPPER_BOUND)) {
-      TestUtils.assertGreaterOrEqual(prng.getEntropyBits(), oldEntropy - expectedEntropySpent);
-    }
-    if ((entropyCheckMode == EntropyCheckMode.EXACT) || (entropyCheckMode
-        == EntropyCheckMode.LOWER_BOUND)) {
-      TestUtils.assertLessOrEqual(prng.getEntropyBits(), oldEntropy - expectedEntropySpent);
+    long entropy = prng.getEntropyBits();
+    long expectedEntropy = oldEntropy - expectedEntropySpent;
+    switch (entropyCheckMode) {
+      case EXACT:
+        assertEquals(entropy, expectedEntropy);
+        break;
+      case LOWER_BOUND:
+        TestUtils.assertGreaterOrEqual(entropy, expectedEntropy);
+        break;
+      case OFF:
+        break;
     }
   }
 
@@ -235,7 +227,6 @@ public enum RandomTestUtils {
 
   public enum EntropyCheckMode {
     EXACT,
-    UPPER_BOUND,
     LOWER_BOUND,
     OFF
   }

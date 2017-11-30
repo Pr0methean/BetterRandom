@@ -166,6 +166,11 @@ public class ThreadLocalRandomWrapper extends RandomWrapper {
     return original.add("wrapped on this thread", getWrapped().dump());
   }
 
+  @Override public boolean preferSeedWithLong() {
+    final int newSeedLength = getNewSeedLength();
+    return (newSeedLength > 0) && (newSeedLength <= Long.BYTES);
+  }
+
   @Override public byte[] getSeed() {
     return getWrapped().getSeed();
   }
@@ -175,7 +180,15 @@ public class ThreadLocalRandomWrapper extends RandomWrapper {
     if (seed == null) {
       throw new IllegalArgumentException("Seed must not be null");
     }
-    super.setSeedInternal(DUMMY_SEED);
+    if (threadLocal != null) {
+      getWrapped().setSeed(seed);
+    }
+    if (this.seed == null) {
+      this.seed = seed; // Needed for serialization
+    }
+  }
+
+  @Override public synchronized void setSeed(long seed) {
     if (threadLocal != null) {
       getWrapped().setSeed(seed);
     }

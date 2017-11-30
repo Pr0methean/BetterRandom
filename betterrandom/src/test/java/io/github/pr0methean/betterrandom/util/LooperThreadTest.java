@@ -1,22 +1,13 @@
 package io.github.pr0methean.betterrandom.util;
 
-import static org.testng.Assert.assertEquals;
-import static org.testng.Assert.assertFalse;
-import static org.testng.Assert.assertNotSame;
-import static org.testng.Assert.assertSame;
 import static org.testng.Assert.assertTrue;
-import static org.testng.Assert.fail;
 
 import com.google.common.collect.ImmutableMap;
 import io.github.pr0methean.betterrandom.MockException;
 import io.github.pr0methean.betterrandom.TestUtils;
-import java.io.InvalidObjectException;
-import java.io.Serializable;
-import java.lang.Thread.State;
 import java.lang.Thread.UncaughtExceptionHandler;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
-import java.net.MalformedURLException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java8.util.function.Consumer;
@@ -149,6 +140,7 @@ new Consumer<SkeletonLooperThread>() {
   }
 
   private static class FailingLooperThread extends LooperThread {
+
     public FailingLooperThread() {
       super("FailingLooperThread");
     }

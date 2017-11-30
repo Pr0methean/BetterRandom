@@ -28,6 +28,14 @@ import org.testng.annotations.Test;
  */
 public class RandomWrapperRandomTest extends BaseRandomTest {
 
+  private static final NamedFunction<Random, Double> SET_WRAPPED =
+      new NamedFunction<Random, Double>("setWrapped") {
+        @Override public Double apply(Random random) {
+          ((RandomWrapper) random).setWrapped(new Random());
+          return 0.0;
+        }
+      };
+
   @Override protected Class<? extends BaseRandom> getClassUnderTest() {
     return RandomWrapper.class;
   }
@@ -45,8 +53,19 @@ public class RandomWrapperRandomTest extends BaseRandomTest {
    */
   @Override public void testThreadSafety() {
     testThreadSafety(ImmutableList.of(NEXT_INT),
-        Collections.<NamedFunction<Random,Double>>emptyList());
-    testThreadSafetyVsCrashesOnly(FUNCTIONS_FOR_THREAD_SAFETY_TEST);
+        Collections.<NamedFunction<Random, Double>>emptyList());
+    testThreadSafetyVsCrashesOnly(
+        ImmutableList.of(NEXT_LONG, NEXT_INT, NEXT_DOUBLE, NEXT_GAUSSIAN, SET_WRAPPED));
+  }
+
+  @Override public void testSetSeedLong() throws SeedException {
+    final BaseRandom rng = createRng();
+    final BaseRandom rng2 = createRng();
+    rng.nextLong(); // ensure they won't both be in initial state before reseeding
+    rng.setSeed(0x0123456789ABCDEFL);
+    rng2.setSeed(0x0123456789ABCDEFL);
+    assert RandomTestUtils.testEquivalence(rng, rng2, 20)
+        : "Output mismatch after reseeding with same seed";
   }
 
   /**

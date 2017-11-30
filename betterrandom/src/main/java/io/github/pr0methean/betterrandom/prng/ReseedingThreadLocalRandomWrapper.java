@@ -33,7 +33,7 @@ public class ReseedingThreadLocalRandomWrapper extends ThreadLocalRandomWrapper 
     super(new SerializableSupplier<BaseRandom>() {
       @Override public BaseRandom get() {
         BaseRandom out = initializer.get();
-        RandomSeederThread.add(seedGenerator, out);
+        out.setSeedGenerator(seedGenerator);
         return out;
       }
     });
@@ -55,7 +55,7 @@ public class ReseedingThreadLocalRandomWrapper extends ThreadLocalRandomWrapper 
     super(seedSize, seedGenerator, new SerializableFunction<byte[], BaseRandom>() {
       @Override public BaseRandom apply(byte[] seed) {
         BaseRandom out = creator.apply(seed);
-        RandomSeederThread.add(seedGenerator, out);
+        out.setSeedGenerator(seedGenerator);
         return out;
       }
     });

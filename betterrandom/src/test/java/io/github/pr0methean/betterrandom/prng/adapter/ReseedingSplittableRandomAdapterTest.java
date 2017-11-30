@@ -6,7 +6,7 @@ import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotEquals;
 
 import io.github.pr0methean.betterrandom.prng.BaseRandom;
-import io.github.pr0methean.betterrandom.seed.DefaultSeedGenerator;
+import io.github.pr0methean.betterrandom.prng.RandomTestUtils.EntropyCheckMode;
 import io.github.pr0methean.betterrandom.seed.FakeSeedGenerator;
 import io.github.pr0methean.betterrandom.seed.SeedException;
 import io.github.pr0methean.betterrandom.util.BinaryUtils;
@@ -15,6 +15,10 @@ import java.util.Arrays;
 import org.testng.annotations.Test;
 
 public class ReseedingSplittableRandomAdapterTest extends SingleThreadSplittableRandomAdapterTest {
+
+  @Override protected EntropyCheckMode getEntropyCheckMode() {
+    return EntropyCheckMode.LOWER_BOUND;
+  }
 
   @Override protected ReseedingSplittableRandomAdapter createRng() throws SeedException {
     return ReseedingSplittableRandomAdapter.getDefaultInstance();
@@ -43,8 +47,7 @@ public class ReseedingSplittableRandomAdapterTest extends SingleThreadSplittable
     // No-op.
   }
 
-  // https://github.com/Pr0methean/BetterRandom/issues/16
-  @Override @Test(enabled = false) public void testReseeding() {
+  @Override @Test public void testReseeding() {
     final BaseRandom rng = createRng();
     final byte[] oldSeed = rng.getSeed();
     while (rng.getEntropyBits() > Long.SIZE) {
@@ -54,7 +57,7 @@ public class ReseedingSplittableRandomAdapterTest extends SingleThreadSplittable
       byte[] newSeed;
       do {
         rng.nextBoolean();
-        Thread.sleep(100);
+        Thread.sleep(10);
         newSeed = rng.getSeed();
       } while (Arrays.equals(newSeed, oldSeed));
       assertGreaterOrEqual(rng.getEntropyBits(), newSeed.length * 8L - 1);
@@ -63,13 +66,18 @@ public class ReseedingSplittableRandomAdapterTest extends SingleThreadSplittable
     }
   }
 
-    /** Test for crashes only, since setSeed is a no-op. */
+  /** Test for crashes only, since setSeed is a no-op. */
   @Override @Test public void testSetSeed() throws SeedException {
     final BaseRandom prng = createRng();
     prng.nextLong();
     prng.setSeed(DEFAULT_SEED_GENERATOR.generateSeed(8));
     prng.setSeed(BinaryUtils.convertBytesToLong(DEFAULT_SEED_GENERATOR.generateSeed(8)));
     prng.nextLong();
+  }
+
+  /** Assertion-free since reseeding may cause divergent output. */
+  @Test(timeOut = 10000) public void testSetSeedLong() {
+    createRng().setSeed(0x0123456789ABCDEFL);
   }
 
   /**
