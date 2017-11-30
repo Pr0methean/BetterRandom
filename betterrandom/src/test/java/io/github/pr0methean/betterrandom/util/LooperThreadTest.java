@@ -1,22 +1,14 @@
 package io.github.pr0methean.betterrandom.util;
 
-import static org.testng.Assert.assertEquals;
-import static org.testng.Assert.assertFalse;
-import static org.testng.Assert.assertNotSame;
-import static org.testng.Assert.assertSame;
 import static org.testng.Assert.assertTrue;
-import static org.testng.Assert.fail;
 
 import com.google.common.collect.ImmutableMap;
 import io.github.pr0methean.betterrandom.MockException;
 import io.github.pr0methean.betterrandom.TestUtils;
-import java.io.InvalidObjectException;
 import java.io.Serializable;
-import java.lang.Thread.State;
 import java.lang.Thread.UncaughtExceptionHandler;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
-import java.net.MalformedURLException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 import javax.annotation.Nullable;
@@ -54,9 +46,8 @@ public class LooperThreadTest {
     // Test SkeletonLooperThread instead of LooperThread so that protected ctors in LooperThread are
     // also covered
     TestUtils.testAllPublicConstructors(SkeletonLooperThread.class, ImmutableMap
-            .of(ThreadGroup.class, new ThreadGroup("Test ThreadGroup"), Runnable.class, TARGET, String.class,
-                "Test LooperThread", long.class, STACK_SIZE),
-        thread -> thread.start());
+        .of(ThreadGroup.class, new ThreadGroup("Test ThreadGroup"), Runnable.class, TARGET,
+            String.class, "Test LooperThread", long.class, STACK_SIZE), thread -> thread.start());
   }
 
   @BeforeTest public void setUp() {
@@ -139,6 +130,7 @@ public class LooperThreadTest {
   }
 
   private static class FailingLooperThread extends LooperThread {
+
     public FailingLooperThread() {
       super("FailingLooperThread");
     }

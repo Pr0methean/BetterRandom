@@ -44,10 +44,6 @@ import org.testng.annotations.Test;
 
 public abstract class BaseRandomTest {
 
-  protected EntropyCheckMode getEntropyCheckMode() {
-    return EntropyCheckMode.EXACT;
-  }
-
   /**
    * The square root of 12, rounded from an extended-precision calculation that was done by Wolfram
    * Alpha (and thus at least as accurate as {@code StrictMath.sqrt(12.0)}).
@@ -86,6 +82,10 @@ public abstract class BaseRandomTest {
       selected[i] = generator.get();
     }
     assertTrue(Arrays.asList(selected).containsAll(Arrays.asList(expected)));
+  }
+
+  protected EntropyCheckMode getEntropyCheckMode() {
+    return EntropyCheckMode.EXACT;
   }
 
   @BeforeClass public void setUp() {
@@ -191,7 +191,7 @@ public abstract class BaseRandomTest {
     final int iterations = 10000;
     final SynchronizedDescriptiveStatistics stats = new SynchronizedDescriptiveStatistics();
     rng.gaussians(iterations).spliterator().forEachRemaining((DoubleConsumer) stats::addValue);
-    
+
     final double observedSD = stats.getStandardDeviation();
     Reporter.log("Expected SD for Gaussians: 1, observed SD: " + observedSD);
     assertGreaterOrEqual(observedSD, 0.97);
@@ -388,7 +388,7 @@ public abstract class BaseRandomTest {
 
   @Test public void testNextLong1() throws Exception {
     final BaseRandom prng = createRng();
-    for (int i=0; i<20; i++) {
+    for (int i = 0; i < 20; i++) {
       // check that the bound is exclusive, to kill an off-by-one mutant
       checkRangeAndEntropy(prng, 1, () -> prng.nextLong(2), 0, 2, true);
     }
@@ -459,7 +459,7 @@ public abstract class BaseRandomTest {
     // it in a wrapper function.
     checkRangeAndEntropy(prng, 2 * ENTROPY_OF_DOUBLE,
         () -> prng.nextGaussian() + prng.nextGaussian(), -Double.MAX_VALUE, Double.MAX_VALUE,
-       getEntropyCheckMode());
+        getEntropyCheckMode());
   }
 
   @Test public void testNextBoolean() throws Exception {

@@ -22,23 +22,14 @@ import javax.annotation.Nullable;
  */
 public class ReseedingSplittableRandomAdapter extends BaseSplittableRandomAdapter {
 
-  @Override public long getEntropyBits() {
-    return threadLocal.get().getEntropyBits();
-  }
-
   private static final long serialVersionUID = 6301096404034224037L;
   @SuppressWarnings("StaticCollection")
   private static final Map<SeedGenerator, ReseedingSplittableRandomAdapter> INSTANCES =
       Collections.synchronizedMap(new WeakHashMap<>(1));
+  private final SeedGenerator seedGenerator;
   @SuppressWarnings(
       {"ThreadLocalNotStaticFinal", "InstanceVariableMayNotBeInitializedByReadObject"})
   private transient ThreadLocal<SingleThreadSplittableRandomAdapter> threadLocal;
-  private final SeedGenerator seedGenerator;
-
-  @Override public byte[] getSeed() {
-    return threadLocal.get().getSeed();
-  }
-
   /**
    * Single instance per SeedGenerator.
    * @param seedGenerator The seed generator this adapter will use.
@@ -75,6 +66,14 @@ public class ReseedingSplittableRandomAdapter extends BaseSplittableRandomAdapte
     }
   }
 
+  @Override public long getEntropyBits() {
+    return threadLocal.get().getEntropyBits();
+  }
+
+  @Override public byte[] getSeed() {
+    return threadLocal.get().getSeed();
+  }
+
   @Override public void setSeedGenerator(SeedGenerator seedGenerator) {
     throw new UnsupportedOperationException(
         "ReseedingSplittableRandomAdapter's binding to RandomSeederThread is immutable");
@@ -99,8 +98,8 @@ public class ReseedingSplittableRandomAdapter extends BaseSplittableRandomAdapte
 
   private void initSubclassTransientFields() {
     if (threadLocal == null) {
-      threadLocal = ThreadLocal
-          .withInitial(() -> new SingleThreadSplittableRandomAdapter(seedGenerator));
+      threadLocal =
+          ThreadLocal.withInitial(() -> new SingleThreadSplittableRandomAdapter(seedGenerator));
     }
   }
 
@@ -116,8 +115,8 @@ public class ReseedingSplittableRandomAdapter extends BaseSplittableRandomAdapte
   }
 
   @Override public boolean equals(@Nullable final Object o) {
-    return (this == o) || ((o instanceof ReseedingSplittableRandomAdapter)
-        && seedGenerator.equals(((ReseedingSplittableRandomAdapter) o).seedGenerator));
+    return (this == o) || ((o instanceof ReseedingSplittableRandomAdapter) && seedGenerator
+        .equals(((ReseedingSplittableRandomAdapter) o).seedGenerator));
   }
 
   @Override protected void setSeedInternal(final byte[] seed) {

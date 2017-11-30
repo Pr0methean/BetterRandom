@@ -1,6 +1,5 @@
 package io.github.pr0methean.betterrandom.prng;
 
-import com.google.common.collect.ImmutableList;
 import org.testng.annotations.Test;
 
 public class Pcg64RandomTest extends BaseRandomTest {
