@@ -161,6 +161,9 @@ public class ThreadLocalRandomWrapper extends RandomWrapper {
     if (threadLocal != null) {
       getWrapped().setSeed(seed);
     }
+    if (this.seed == null) {
+      this.seed = seed; // Needed for serialization
+    }
   }
 
   @Override public synchronized void setSeed(long seed) {
