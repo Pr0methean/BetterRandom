@@ -115,7 +115,6 @@ public abstract class BaseRandomTest {
 
   @BeforeClass public void setUp() {
     RandomSeederThread.setLoggingEnabled(false);
-    DeadlockWatchdogThread.ensureStarted();
   }
 
   @Test public void testAllPublicConstructors()
