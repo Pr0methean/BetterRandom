@@ -1,10 +1,12 @@
 package io.github.pr0methean.betterrandom.prng;
 
 import static io.github.pr0methean.betterrandom.TestUtils.assertGreaterOrEqual;
+import static io.github.pr0methean.betterrandom.seed.DefaultSeedGenerator.DEFAULT_SEED_GENERATOR;
 
 import io.github.pr0methean.betterrandom.prng.RandomTestUtils.EntropyCheckMode;
 import io.github.pr0methean.betterrandom.seed.DefaultSeedGenerator;
 import io.github.pr0methean.betterrandom.seed.SeedException;
+import io.github.pr0methean.betterrandom.util.BinaryUtils;
 import java.io.Serializable;
 import java.util.Arrays;
 import java.util.Random;
@@ -48,6 +50,15 @@ public class ReseedingThreadLocalRandomWrapperTest extends ThreadLocalRandomWrap
     } catch (InterruptedException e) {
       throw new RuntimeException(e);
     }
+  }
+
+  /** Test for crashes only, since setSeed is a no-op. */
+  @Override @Test public void testSetSeed() throws SeedException {
+    final BaseRandom prng = createRng();
+    prng.nextLong();
+    prng.setSeed(DEFAULT_SEED_GENERATOR.generateSeed(8));
+    prng.setSeed(BinaryUtils.convertBytesToLong(DEFAULT_SEED_GENERATOR.generateSeed(8)));
+    prng.nextLong();
   }
 
   @Override protected BaseRandom createRng() throws SeedException {
