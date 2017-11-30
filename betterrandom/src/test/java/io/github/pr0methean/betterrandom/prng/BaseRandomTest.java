@@ -14,6 +14,7 @@ import static org.testng.Assert.assertTrue;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
+import io.github.pr0methean.betterrandom.DeadlockWatchdogThread;
 import io.github.pr0methean.betterrandom.TestUtils;
 import io.github.pr0methean.betterrandom.prng.RandomTestUtils.EntropyCheckMode;
 import io.github.pr0methean.betterrandom.seed.DefaultSeedGenerator;
@@ -90,6 +91,7 @@ public abstract class BaseRandomTest {
 
   @BeforeClass public void setUp() {
     RandomSeederThread.setLoggingEnabled(false);
+    DeadlockWatchdogThread.ensureStarted();
   }
 
   @Test public void testAllPublicConstructors()
