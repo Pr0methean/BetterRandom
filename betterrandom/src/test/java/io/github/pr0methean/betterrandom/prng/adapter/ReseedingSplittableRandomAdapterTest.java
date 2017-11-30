@@ -52,8 +52,8 @@ public class ReseedingSplittableRandomAdapterTest extends SingleThreadSplittable
     try {
       byte[] newSeed;
       do {
-        rng.nextLong();
-        Thread.sleep(100);
+        rng.nextBoolean();
+        Thread.sleep(10);
         newSeed = rng.getSeed();
       } while (Arrays.equals(newSeed, oldSeed));
       assertGreaterOrEqual(rng.getEntropyBits(), newSeed.length * 8L - 1);

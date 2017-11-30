@@ -22,6 +22,10 @@ import javax.annotation.Nullable;
  */
 public class ReseedingSplittableRandomAdapter extends BaseSplittableRandomAdapter {
 
+  @Override public long getEntropyBits() {
+    return threadLocal.get().getEntropyBits();
+  }
+
   private static final long serialVersionUID = 6301096404034224037L;
   @SuppressWarnings("StaticCollection")
   private static final Map<SeedGenerator, ReseedingSplittableRandomAdapter> INSTANCES =
