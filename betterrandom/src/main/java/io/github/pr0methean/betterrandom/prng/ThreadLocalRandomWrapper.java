@@ -164,6 +164,12 @@ public class ThreadLocalRandomWrapper extends RandomWrapper {
     }
   }
 
+  @Override public synchronized void setSeed(long seed) {
+    if (threadLocal != null) {
+      getWrapped().setSeed(seed);
+    }
+  }
+
   @Override protected void debitEntropy(final long bits) {
     getWrapped().debitEntropy(bits);
   }
