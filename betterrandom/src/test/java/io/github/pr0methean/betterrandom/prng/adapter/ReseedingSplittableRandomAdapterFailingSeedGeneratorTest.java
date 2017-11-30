@@ -3,6 +3,7 @@ package io.github.pr0methean.betterrandom.prng.adapter;
 import io.github.pr0methean.betterrandom.prng.RandomTestUtils.EntropyCheckMode;
 import io.github.pr0methean.betterrandom.seed.FailingSeedGenerator;
 import io.github.pr0methean.betterrandom.seed.SeedException;
+import org.testng.annotations.Test;
 
 public class ReseedingSplittableRandomAdapterFailingSeedGeneratorTest
     extends ReseedingSplittableRandomAdapterTest {
@@ -11,7 +12,7 @@ public class ReseedingSplittableRandomAdapterFailingSeedGeneratorTest
     return EntropyCheckMode.EXACT;
   }
 
-  @Override public void testReseeding() {
+  @Override @Test(enabled = false) public void testReseeding() {
     // No-op.
   }
 
