@@ -229,11 +229,11 @@ public abstract class BaseRandomTest {
     assertLessOrEqual(observedSD, 1.03);
     assertGreaterOrEqual(stats.getMax(), 2.0);
     assertLessOrEqual(stats.getMin(), -2.0);
-    assertGreaterOrEqual(stats.getMean(), -0.05);
-    assertLessOrEqual(stats.getMean(), 0.05);
+    assertGreaterOrEqual(stats.getMean(), -0.1);
+    assertLessOrEqual(stats.getMean(), 0.1);
     final double median = stats.getPercentile(50);
-    assertGreaterOrEqual(median, -0.05);
-    assertLessOrEqual(median, 0.05);
+    assertGreaterOrEqual(median, -0.1);
+    assertLessOrEqual(median, 0.1);
   }
 
   /**
