@@ -1,6 +1,7 @@
 package io.github.pr0methean.betterrandom.prng;
 
 import static io.github.pr0methean.betterrandom.util.BinaryUtils.convertBytesToLong;
+import static io.github.pr0methean.betterrandom.util.Java8Constants.LONG_BYTES;
 
 import com.google.common.base.MoreObjects.ToStringHelper;
 import io.github.pr0methean.betterrandom.seed.SeedException;
@@ -71,7 +72,7 @@ public class ThreadLocalRandomWrapper extends RandomWrapper {
    */
   public static ThreadLocalRandomWrapper wrapLegacy(final LongFunction<Random> legacyCreator,
       final SeedGenerator seedGenerator) {
-    return new ThreadLocalRandomWrapper(Java8Constants.LONG_BYTES, seedGenerator,
+    return new ThreadLocalRandomWrapper(LONG_BYTES, seedGenerator,
         wrapLongCreatorAsByteArrayCreator(legacyCreator));
   }
 
@@ -168,7 +169,7 @@ public class ThreadLocalRandomWrapper extends RandomWrapper {
 
   @Override public boolean preferSeedWithLong() {
     final int newSeedLength = getNewSeedLength();
-    return (newSeedLength > 0) && (newSeedLength <= Long.BYTES);
+    return (newSeedLength > 0) && (newSeedLength <= LONG_BYTES);
   }
 
   @Override public byte[] getSeed() {
