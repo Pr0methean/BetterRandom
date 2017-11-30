@@ -39,17 +39,6 @@ public enum RandomTestUtils {
   private static final int INSTANCES_TO_HASH = 25;
   private static final int EXPECTED_UNIQUE_HASHES = (int) (0.8 * INSTANCES_TO_HASH);
 
-  /**
-   * @param origin Minimum expected value, inclusive.
-   * @param bound Maximum expected value, exclusive.
-   */
-  public static void checkRangeAndEntropy(final BaseRandom prng, final long expectedEntropySpent,
-      final Supplier<? extends Number> numberSupplier, final double origin, final double bound,
-      final boolean checkEntropy) {
-    checkRangeAndEntropy(prng, expectedEntropySpent, numberSupplier, origin, bound,
-        checkEntropy ? EntropyCheckMode.EXACT : EntropyCheckMode.OFF);
-  }
-
   public static void checkRangeAndEntropy(final BaseRandom prng, final long expectedEntropySpent,
       final Supplier<? extends Number> numberSupplier, final double origin, final double bound,
       final EntropyCheckMode entropyCheckMode) {
