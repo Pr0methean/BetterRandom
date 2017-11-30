@@ -49,7 +49,10 @@ public class BaseRandomStaticTest {
   @Test public void testEntropyOfLong() {
     assertEquals(entropyOfLong(0, 1), 0);
     assertEquals(entropyOfLong(0, 2), 1);
+    assertEquals(entropyOfLong(0, 1L << 32), 32);
     assertEquals(entropyOfLong(0, 1L << 42), 42);
+    assertEquals(entropyOfLong(0, Long.MAX_VALUE), 63);
+    assertEquals(entropyOfLong(Long.MIN_VALUE, Long.MAX_VALUE), 64);
     assertEquals(entropyOfLong(1 << 22, 1L << 42), 42);
     assertEquals(entropyOfLong(-(1L << 42), 0), 42);
     assertEquals(entropyOfLong(-(1L << 42), 1), 43);

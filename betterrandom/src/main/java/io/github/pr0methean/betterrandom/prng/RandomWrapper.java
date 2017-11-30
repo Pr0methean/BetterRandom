@@ -31,6 +31,11 @@ import javax.annotation.Nullable;
 /**
  * <p>Wraps any {@link Random} as a {@link RepeatableRandom} and {@link ByteArrayReseedableRandom}.
  * Can be used to encapsulate away a change of implementation in midstream.</p>
+ * <p>Caution: This depends on the underlying {@link Random} for thread-safety. When used with a
+ * vanilla {@link Random}, this means that its output for the same seed will vary when accessed
+ * concurrently from multiple threads, if the calls include e.g. {@link #nextLong()},
+ * {@link #nextGaussian()} or {@link #nextDouble()}. However, {@link #nextInt()} will still be
+ * transactional.</p>
  * @author Chris Hennick
  */
 public class RandomWrapper extends BaseRandom {
@@ -40,6 +45,7 @@ public class RandomWrapper extends BaseRandom {
   private volatile Random wrapped;
   private boolean unknownSeed = true;
   private boolean haveParallelStreams;
+
   /**
    * Wraps a {@link Random} and seeds it using the default seeding strategy.
    * @throws SeedException if any.
@@ -172,6 +178,14 @@ public class RandomWrapper extends BaseRandom {
     return super.getSeed();
   }
 
+  @Override public synchronized void setSeed(long seed) {
+    if (wrapped != null) {
+      wrapped.setSeed(seed);
+      super.setSeedInternal(BinaryUtils.convertLongToBytes(seed));
+      unknownSeed = false;
+    }
+  }
+
   /**
    * Delegates to one of {@link ByteArrayReseedableRandom#setSeed(byte[])}, {@link
    * SecureRandom#setSeed(byte[])} or {@link Random#setSeed(long)}.
@@ -225,42 +239,49 @@ public class RandomWrapper extends BaseRandom {
   }
 
   @Override public boolean preferSeedWithLong() {
-    final Random currentWrapped = getWrapped();
-    return !(currentWrapped instanceof ByteArrayReseedableRandom)
-        || ((ByteArrayReseedableRandom) currentWrapped).preferSeedWithLong();
+    if (lock == null) {
+      return false; // safe default
+    }
+    lock.lock();
+    try {
+      final Random currentWrapped = getWrapped();
+      return !(currentWrapped instanceof ByteArrayReseedableRandom)
+          || ((ByteArrayReseedableRandom) currentWrapped).preferSeedWithLong();
+    } finally {
+      lock.unlock();
+    }
   }
 
-  /** */
-  @SuppressWarnings("LockAcquiredButNotSafelyReleased") @Override public int getNewSeedLength() {
-    boolean locked = false;
-    if (lock != null) {
-      lock.lock();
-      locked = true;
+  @Override public int getNewSeedLength() {
+    if (lock == null) {
+      return 0; // can't use a seed yet
     }
+    lock.lock();
     try {
+      if (wrapped == null) {
+        return 0;
+      }
       return (wrapped instanceof ByteArrayReseedableRandom) ? ((ByteArrayReseedableRandom) wrapped)
           .getNewSeedLength() : Long.BYTES;
     } finally {
-      if (locked) {
-        lock.unlock();
-      }
+      lock.unlock();
     }
   }
 
   @Override public void nextBytes(final byte[] bytes) {
     getWrapped().nextBytes(bytes);
-    recordEntropySpent(bytes.length * (long) (Byte.SIZE));
+    debitEntropy(bytes.length * (long) (Byte.SIZE));
   }
 
   @Override public int nextInt() {
     final int result = getWrapped().nextInt();
-    recordEntropySpent(Integer.SIZE);
+    debitEntropy(Integer.SIZE);
     return result;
   }
 
   @Override public int nextInt(final int bound) {
     final int result = getWrapped().nextInt(bound);
-    recordEntropySpent(entropyOfInt(0, bound));
+    debitEntropy(entropyOfInt(0, bound));
     return result;
   }
 
@@ -270,20 +291,18 @@ public class RandomWrapper extends BaseRandom {
 
   @Override public boolean nextBoolean() {
     final boolean result = getWrapped().nextBoolean();
-    recordEntropySpent(1);
+    debitEntropy(1);
     return result;
   }
 
   @Override public float nextFloat() {
     final float result = getWrapped().nextFloat();
-    recordEntropySpent(ENTROPY_OF_FLOAT);
+    debitEntropy(ENTROPY_OF_FLOAT);
     return result;
   }
 
-  @Override public double nextDouble() {
-    final double result = getWrapped().nextDouble();
-    recordEntropySpent(ENTROPY_OF_DOUBLE);
-    return result;
+  @Override public double nextDoubleNoEntropyDebit() {
+    return getWrapped().nextDouble();
   }
 
   @Override public double nextGaussian() {
@@ -291,7 +310,7 @@ public class RandomWrapper extends BaseRandom {
 
     // Upper bound. 2 Gaussians are generated from 2 nextDouble calls, which once made are either
     // used or rerolled.
-    recordEntropySpent(ENTROPY_OF_DOUBLE);
+    debitEntropy(ENTROPY_OF_DOUBLE);
 
     return result;
   }

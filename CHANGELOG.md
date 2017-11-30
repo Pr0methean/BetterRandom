@@ -1,7 +1,16 @@
-# 1.4.0
+# 2.1.1
+* Removes the class `LooperThread.DummyTarget`, which was only used for deserialization.
+
+# 2.1.0
+* Fixes many bugs that were affecting reproducibility when concurrent access occurred, especially
+  for longs and doubles.
+* Logging in `RandomSeederThread` can now be disabled.
+* `LooperThread` is no longer `Serializable`.
+
+# 2.0.0
 * Fixes bugs affecting `RandomSeederThread` when a `SeedGenerator` throws a `SeedException`.
-* Deprecates most of the instance methods of `RandomSeederThread` and adds static replacements, to
-  fix race conditions that can occur when a `RandomSeederThread` shuts down.
+* Removes the non-inherited instance methods of `RandomSeederThread` and replaces them with static
+  ones, to fix race conditions that can occur when a `RandomSeederThread` shuts down.
 * Refactorings to slightly speed up construction and deserialization and slightly shrink the jar.
 
 # 1.3.2

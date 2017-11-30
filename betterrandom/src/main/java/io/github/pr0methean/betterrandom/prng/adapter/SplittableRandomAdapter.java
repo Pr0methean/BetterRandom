@@ -83,7 +83,7 @@ public class SplittableRandomAdapter extends DirectSplittableRandomAdapter {
     return entropyBits.get().get();
   }
 
-  @Override protected void recordEntropySpent(final long bits) {
+  @Override protected void debitEntropy(final long bits) {
     entropyBits.get().addAndGet(-bits);
   }
 
@@ -118,15 +118,6 @@ public class SplittableRandomAdapter extends DirectSplittableRandomAdapter {
 
   /**
    * Not supported, because this class uses a thread-local seed.
-   * @param thread ignored.
-   * @throws UnsupportedOperationException always.
-   */
-  @Override public void setSeederThread(@Nullable final RandomSeederThread thread) {
-    throw new UnsupportedOperationException("Use ReseedingSplittableRandomAdapter instead");
-  }
-
-  /**
-   * Not supported, because this class uses a thread-local seed.
    * @param seedGenerator ignored.
    * @throws UnsupportedOperationException always.
    */
@@ -136,16 +127,6 @@ public class SplittableRandomAdapter extends DirectSplittableRandomAdapter {
 
   @Override public byte[] getSeed() {
     return seeds.get().clone();
-  }
-
-  /**
-   * {@inheritDoc} Applies only to the calling thread.
-   */
-  @Override public void setSeed(final byte[] seed) {
-    if (seed.length != Long.BYTES) {
-      throw new IllegalArgumentException("SplittableRandomAdapter requires an 8-byte seed");
-    }
-    setSeed(convertBytesToLong(seed));
   }
 
   /**
@@ -165,5 +146,15 @@ public class SplittableRandomAdapter extends DirectSplittableRandomAdapter {
         seeds.set(BinaryUtils.convertLongToBytes(seed));
       }
     }
+  }
+
+  /**
+   * {@inheritDoc} Applies only to the calling thread.
+   */
+  @Override public void setSeed(final byte[] seed) {
+    if (seed.length != Long.BYTES) {
+      throw new IllegalArgumentException("SplittableRandomAdapter requires an 8-byte seed");
+    }
+    setSeed(convertBytesToLong(seed));
   }
 }

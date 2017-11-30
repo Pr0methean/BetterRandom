@@ -15,17 +15,21 @@ public enum TestUtils {
   ;
 
   /**
-   * Reflectively calls all public constructors of the given class with the given parameters, and
-   * passes each constructed instance to a consumer.
+   * Reflectively calls all public constructors, or all public and protected constructors, of the
+   * given class with the given parameters. Passes each constructed instance to a consumer.
+   * @param <T> {@code clazz} as a type.
    * @param clazz The class whose constructors are to be tested.
+   * @param includeProtected Whether to test protected constructors
    * @param params A map of parameter types to values.
    * @param test The consumer to pass the instances to.
-   * @param <T> {@code clazz} as a type.
    */
-  @SuppressWarnings("ObjectAllocationInLoop") public static <T> void testAllPublicConstructors(
-      final Class<? extends T> clazz, final Map<Class<?>, Object> params, final Consumer<? super T> test) {
+  @SuppressWarnings("ObjectAllocationInLoop") public static <T> void testConstructors(
+      final Class<? extends T> clazz, boolean includeProtected, final Map<Class<?>, Object> params,
+      final Consumer<? super T> test) {
     for (final Constructor<?> constructor : clazz.getDeclaredConstructors()) {
-      if (Modifier.isPublic(constructor.getModifiers())) {
+      int modifiers = constructor.getModifiers();
+      if (Modifier.isPublic(modifiers) || (includeProtected && Modifier.isProtected(modifiers))) {
+        constructor.setAccessible(true);
         final int nParams = constructor.getParameterCount();
         final Class<?>[] parameterTypes = constructor.getParameterTypes();
         final Object[] constructorParams = new Object[nParams];
@@ -35,9 +39,9 @@ public enum TestUtils {
           }
           test.accept((T) constructor.newInstance(constructorParams));
         } catch (IllegalAccessException | InstantiationException | InvocationTargetException | IllegalArgumentException e) {
-          throw new AssertionError(String.format("Failed to call%n%s%nwith parameters%n%s",
-              constructor.toGenericString(), Arrays.toString(constructorParams)),
-              e);
+          throw new AssertionError(String
+              .format("Failed to call%n%s%nwith parameters%n%s", constructor.toGenericString(),
+                  Arrays.toString(constructorParams)), e);
         }
       }
     }
@@ -62,28 +66,35 @@ public enum TestUtils {
     return System.getenv("APPVEYOR") == null;
   }
 
-  public static void assertLessOrEqual(final long expected, final long actual) {
+  public static void assertLessOrEqual(final long actual, final long expected) {
     if (actual > expected) {
       throw new AssertionError(
           String.format("Expected no more than %d but found %d", expected, actual));
     }
   }
 
-  public static void assertGreaterOrEqual(final long expected, final long actual) {
+  public static void assertLessOrEqual(final double actual, final double expected) {
+    if (actual > expected) {
+      throw new AssertionError(
+          String.format("Expected no more than %f but found %f", expected, actual));
+    }
+  }
+
+  public static void assertGreaterOrEqual(final long actual, final long expected) {
     if (actual < expected) {
       throw new AssertionError(
           String.format("Expected at least %d but found %d", expected, actual));
     }
   }
 
-  public static void assertGreaterOrEqual(final double expected, final double actual) {
+  public static void assertGreaterOrEqual(final double actual, final double expected) {
     if (actual < expected) {
       throw new AssertionError(
           String.format("Expected at least %f but found %f", expected, actual));
     }
   }
 
-  public static void assertLess(final double expected, final double actual) {
+  public static void assertLess(final double actual, final double expected) {
     if (actual >= expected) {
       throw new AssertionError(
           String.format("Expected less than %f but found %f", expected, actual));

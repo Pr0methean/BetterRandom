@@ -15,6 +15,8 @@
 // ============================================================================
 package io.github.pr0methean.betterrandom.seed;
 
+import static org.testng.Assert.assertTrue;
+
 import org.testng.annotations.Test;
 
 /**
@@ -22,9 +24,18 @@ import org.testng.annotations.Test;
  * data.
  * @author Daniel Dyer
  */
-public class SecureRandomSeedGeneratorTest {
+public class SecureRandomSeedGeneratorTest extends AbstractSeedGeneratorTest {
+
+  public SecureRandomSeedGeneratorTest() {
+    super(SecureRandomSeedGenerator.SECURE_RANDOM_SEED_GENERATOR);
+  }
 
   @Test(timeOut = 15000) public void testGenerator() throws SeedException {
-    SeedTestUtils.testGenerator(SecureRandomSeedGenerator.SECURE_RANDOM_SEED_GENERATOR);
+    SeedTestUtils.testGenerator(seedGenerator);
+  }
+
+  @Test public void testIsWorthTrying() {
+    // Should always be true
+    assertTrue(seedGenerator.isWorthTrying());
   }
 }

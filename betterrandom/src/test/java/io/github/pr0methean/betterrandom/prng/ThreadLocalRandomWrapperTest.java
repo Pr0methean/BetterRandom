@@ -3,7 +3,6 @@ package io.github.pr0methean.betterrandom.prng;
 import static org.testng.Assert.assertEquals;
 
 import io.github.pr0methean.betterrandom.seed.DefaultSeedGenerator;
-import io.github.pr0methean.betterrandom.seed.RandomSeederThread;
 import io.github.pr0methean.betterrandom.seed.SeedException;
 import io.github.pr0methean.betterrandom.util.CloneViaSerialization;
 import java.io.IOException;
@@ -50,6 +49,11 @@ public class ThreadLocalRandomWrapperTest extends BaseRandomTest {
   @Override @Test(expectedExceptions = UnsupportedOperationException.class)
   public void testRandomSeederThreadIntegration() throws Exception {
     createRng().setSeedGenerator(DefaultSeedGenerator.DEFAULT_SEED_GENERATOR);
+  }
+
+  /** Assertion-free because thread-local. */
+  @Override @Test public void testThreadSafety() {
+    testThreadSafetyVsCrashesOnly(FUNCTIONS_FOR_THREAD_SAFETY_TEST);
   }
 
   @Override public Map<Class<?>, Object> constructorParams() {

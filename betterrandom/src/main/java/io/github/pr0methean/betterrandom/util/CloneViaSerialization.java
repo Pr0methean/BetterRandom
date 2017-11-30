@@ -17,17 +17,30 @@ public enum CloneViaSerialization {
    * @return A clone of {@code object}.
    */
   @SuppressWarnings("unchecked") public static <T extends Serializable> T clone(final T object) {
-    try (ByteArrayOutputStream byteOutStream = new ByteArrayOutputStream();
-        ObjectOutputStream objectOutStream = new ObjectOutputStream(byteOutStream)) {
-      objectOutStream.writeObject(object);
-      final byte[] serialCopy = byteOutStream.toByteArray();
-      // Read the object back-in.
-      try (ObjectInputStream objectInStream = new ObjectInputStream(
-          new ByteArrayInputStream(serialCopy))) {
-        return (T) (objectInStream.readObject());
-      }
+    byte[] serialCopy;
+    serialCopy = toByteArray(object);
+    // Read the object back-in.
+    return fromByteArray(serialCopy);
+  }
+
+  public static <T extends Serializable> T fromByteArray(byte[] serialCopy) {
+    try (ObjectInputStream objectInStream = new ObjectInputStream(
+        new ByteArrayInputStream(serialCopy))) {
+      return (T) (objectInStream.readObject());
     } catch (IOException | ClassNotFoundException e) {
       throw new RuntimeException(e);
     }
+  }
+
+  public static <T extends Serializable> byte[] toByteArray(T object) {
+    byte[] serialCopy;
+    try (ByteArrayOutputStream byteOutStream = new ByteArrayOutputStream();
+        ObjectOutputStream objectOutStream = new ObjectOutputStream(byteOutStream)) {
+      objectOutStream.writeObject(object);
+      serialCopy = byteOutStream.toByteArray();
+    } catch (IOException e) {
+      throw new RuntimeException(e);
+    }
+    return serialCopy;
   }
 }

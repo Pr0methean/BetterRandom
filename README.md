@@ -300,6 +300,7 @@ seederThread.add(myRandom);
 * `unit-tests.sh`: Compile and run unit tests and generate coverage reports. Upload them to Coveralls
   if running in Travis-CI. If tests pass, run Proguard and then test again.  Won't work on JDK 9,
   except on Travis.
+* `mutation.sh`: Run mutation tests.
 * `release.sh`: Used to perform new releases.
 * `publish-javadoc.sh`: Used to release updated Javadocs to github.io.
 * `prepare-workspace.sh`: Install necessary packages on a fresh Ubuntu Trusty Tahr workspace, such

@@ -55,6 +55,14 @@ public class SingleThreadSplittableRandomAdapter extends DirectSplittableRandomA
     super(seed);
   }
 
+  /**
+   * Must be redeclared in this package so that {@link ReseedingSplittableRandomAdapter} can access
+   * it.
+   */
+  @Override protected void debitEntropy(long bits) {
+    super.debitEntropy(bits);
+  }
+
   @Override protected ToStringHelper addSubclassFields(final ToStringHelper original) {
     return super.addSubclassFields(original)
         .add("deserializedAndNotUsedSince", deserializedAndNotUsedSince);

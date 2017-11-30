@@ -20,6 +20,7 @@ import static io.github.pr0methean.betterrandom.TestUtils.isNotAppveyor;
 import static org.testng.Assert.assertEquals;
 
 import java.util.UUID;
+import org.testng.Assert;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
@@ -28,9 +29,13 @@ import org.testng.annotations.Test;
  * @author Daniel Dyer
  * @author Chris Hennick
  */
-public class RandomDotOrgSeedGeneratorTest {
+public class RandomDotOrgSeedGeneratorTest extends AbstractSeedGeneratorTest {
 
   public static final int SMALL_REQUEST_SIZE = 32;
+
+  public RandomDotOrgSeedGeneratorTest() {
+    super(RandomDotOrgSeedGenerator.RANDOM_DOT_ORG_SEED_GENERATOR);
+  }
 
   private static void setApiKey() {
     final String apiKeyString = System.getenv("RANDOM_DOT_ORG_KEY");
@@ -47,14 +52,14 @@ public class RandomDotOrgSeedGeneratorTest {
   @Test(timeOut = 120000) public void testGeneratorOldApi() throws SeedException {
     if (isNotAppveyor()) {
       RandomDotOrgSeedGenerator.setApiKey(null);
-      SeedTestUtils.testGenerator(RandomDotOrgSeedGenerator.RANDOM_DOT_ORG_SEED_GENERATOR);
+      SeedTestUtils.testGenerator(seedGenerator);
     }
   }
 
   @Test(timeOut = 120000) public void testGeneratorNewApi() throws SeedException {
     if (isNotAppveyor()) {
       setApiKey();
-      SeedTestUtils.testGenerator(RandomDotOrgSeedGenerator.RANDOM_DOT_ORG_SEED_GENERATOR);
+      SeedTestUtils.testGenerator(seedGenerator);
     }
   }
 
@@ -67,9 +72,13 @@ public class RandomDotOrgSeedGeneratorTest {
       setApiKey();
       // Request more bytes than are cached internally.
       final int seedLength = 626;
-      final SeedGenerator generator = RandomDotOrgSeedGenerator.RANDOM_DOT_ORG_SEED_GENERATOR;
-      assertEquals(generator.generateSeed(seedLength).length, seedLength,
+      assertEquals(seedGenerator.generateSeed(seedLength).length, seedLength,
           "Failed to generate seed of length " + seedLength);
     }
+  }
+
+  @Override public void testToString() {
+    super.testToString();
+    Assert.assertNotNull(RandomDotOrgSeedGenerator.DELAYED_RETRY.toString());
   }
 }

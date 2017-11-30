@@ -1,7 +1,6 @@
 package io.github.pr0methean.betterrandom.prng;
 
 import com.google.common.base.MoreObjects.ToStringHelper;
-import io.github.pr0methean.betterrandom.seed.RandomSeederThread;
 import io.github.pr0methean.betterrandom.seed.SeedException;
 import io.github.pr0methean.betterrandom.seed.SeedGenerator;
 import io.github.pr0methean.betterrandom.util.BinaryUtils;
@@ -58,15 +57,6 @@ public class ThreadLocalRandomWrapper extends RandomWrapper {
   }
 
   /**
-   * Not supported, because this class uses a thread-local seed.
-   * @param thread ignored.
-   * @throws UnsupportedOperationException always.
-   */
-  @Override public void setSeedGenerator(SeedGenerator seedGenerator) {
-    throw new UnsupportedOperationException("This can't be reseeded by a RandomSeederThread");
-  }
-
-  /**
    * Uses this class and {@link RandomWrapper} to decorate any implementation of {@link Random} that
    * can be constructed from a {@code long} seed into a fully-concurrent one.
    * @param legacyCreator a function that provides the {@link Random} that underlies the
@@ -78,6 +68,15 @@ public class ThreadLocalRandomWrapper extends RandomWrapper {
       final SeedGenerator seedGenerator) {
     return new ThreadLocalRandomWrapper(Long.BYTES, seedGenerator,
         bytes -> new RandomWrapper(legacyCreator.apply(BinaryUtils.convertBytesToLong(bytes))));
+  }
+
+  /**
+   * Not supported, because this class uses a thread-local seed.
+   * @param seedGenerator ignored.
+   * @throws UnsupportedOperationException always.
+   */
+  @Override public void setSeedGenerator(SeedGenerator seedGenerator) {
+    throw new UnsupportedOperationException("This can't be reseeded by a RandomSeederThread");
   }
 
   @Override protected boolean withProbabilityInternal(final double probability) {
@@ -129,21 +128,12 @@ public class ThreadLocalRandomWrapper extends RandomWrapper {
     return getWrapped().nextFloat();
   }
 
-  @Override public double nextDouble() {
-    return getWrapped().nextDouble();
+  @Override public double nextDoubleNoEntropyDebit() {
+    return getWrapped().nextDoubleNoEntropyDebit();
   }
 
   @Override public double nextGaussian() {
     return getWrapped().nextGaussian();
-  }
-
-  /**
-   * Not supported, because this class uses a thread-local seed.
-   * @param thread ignored.
-   * @throws UnsupportedOperationException always.
-   */
-  @Override public void setSeederThread(@Nullable final RandomSeederThread thread) {
-    throw new UnsupportedOperationException("This can't be reseeded by a RandomSeederThread");
   }
 
   @Override protected boolean useParallelStreams() {
@@ -151,11 +141,22 @@ public class ThreadLocalRandomWrapper extends RandomWrapper {
   }
 
   @Override protected ToStringHelper addSubclassFields(final ToStringHelper original) {
-    return original.add("threadLocal", threadLocal);
+    return original.add("wrapped on this thread", getWrapped().dump());
+  }
+
+  @Override public boolean preferSeedWithLong() {
+    final int newSeedLength = getNewSeedLength();
+    return (newSeedLength > 0) && (newSeedLength <= Long.BYTES);
   }
 
   @Override public byte[] getSeed() {
     return getWrapped().getSeed();
+  }
+
+  @Override public synchronized void setSeed(long seed) {
+    if (threadLocal != null) {
+      getWrapped().setSeed(seed);
+    }
   }
 
   @SuppressWarnings("VariableNotUsedInsideIf") @Override
@@ -163,14 +164,16 @@ public class ThreadLocalRandomWrapper extends RandomWrapper {
     if (seed == null) {
       throw new IllegalArgumentException("Seed must not be null");
     }
-    super.setSeedInternal(DUMMY_SEED);
     if (threadLocal != null) {
       getWrapped().setSeed(seed);
     }
+    if (this.seed == null) {
+      this.seed = seed; // Needed for serialization
+    }
   }
 
-  @Override protected void recordEntropySpent(final long bits) {
-    getWrapped().recordEntropySpent(bits);
+  @Override protected void debitEntropy(final long bits) {
+    getWrapped().debitEntropy(bits);
   }
 
   @Override public long getEntropyBits() {
