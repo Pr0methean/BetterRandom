@@ -101,8 +101,8 @@ public abstract class BaseRandomTest {
   }
 
   protected Map<Class<?>, Object> constructorParams() {
-    int seedLength = getNewSeedLength(createRng());
-    HashMap<Class<?>, Object> params = new HashMap<>();
+    final int seedLength = getNewSeedLength(createRng());
+    final HashMap<Class<?>, Object> params = new HashMap<>();
     params.put(int.class, seedLength);
     params.put(long.class, TEST_SEED);
     params.put(byte[].class, DefaultSeedGenerator.DEFAULT_SEED_GENERATOR.generateSeed(seedLength));
@@ -161,7 +161,7 @@ public abstract class BaseRandomTest {
     // approaches n/sqrt(12).
     // Expected standard deviation for a uniformly distributed population of values in the range 0..n
     // approaches n/sqrt(12).
-    for (long n : new long[]{100, 1L << 32, Long.MAX_VALUE}) {
+    for (final long n : new long[]{100, 1L << 32, Long.MAX_VALUE}) {
       final int iterations = 10000;
       final SynchronizedDescriptiveStatistics stats =
           RandomTestUtils.summaryStats(rng, n, iterations);
@@ -302,7 +302,8 @@ public abstract class BaseRandomTest {
     assertFalse(prng.withProbability(0.0));
     assertTrue(prng.withProbability(1.0));
     assertEquals(originalEntropy, prng.getEntropyBits());
-    checkRangeAndEntropy(prng, 1, () -> prng.withProbability(0.7) ? 0 : 1, 0, 2, true);
+    checkRangeAndEntropy(prng, 1, () -> prng.withProbability(0.7) ? 0 : 1, 0, 2,
+        getEntropyCheckMode());
   }
 
   @Test(timeOut = 20_000, groups = "non-deterministic")
@@ -352,7 +353,8 @@ public abstract class BaseRandomTest {
 
   @Test public void testNextInt1() throws Exception {
     final BaseRandom prng = createRng();
-    checkRangeAndEntropy(prng, 31, () -> prng.nextInt(3 << 29), 0, 3 << 29, true);
+    final Supplier<? extends Number> numberSupplier = () -> prng.nextInt(3 << 29);
+    checkRangeAndEntropy(prng, 31, numberSupplier, 0, (3 << 29), getEntropyCheckMode());
   }
 
   @Test(expectedExceptions = IllegalArgumentException.class)
@@ -362,12 +364,14 @@ public abstract class BaseRandomTest {
 
   @Test public void testNextInt() throws Exception {
     final BaseRandom prng = createRng();
-    checkRangeAndEntropy(prng, 32, prng::nextInt, Integer.MIN_VALUE, Integer.MAX_VALUE + 1L, true);
+    checkRangeAndEntropy(prng, 32, (Supplier<? extends Number>) prng::nextInt, Integer.MIN_VALUE,
+        (Integer.MAX_VALUE + 1L), getEntropyCheckMode());
   }
 
   @Test public void testNextInt2() throws Exception {
     final BaseRandom prng = createRng();
-    checkRangeAndEntropy(prng, 29, () -> prng.nextInt(1 << 27, 1 << 29), 1 << 27, 1 << 29, true);
+    final Supplier<? extends Number> numberSupplier = () -> prng.nextInt(1 << 27, 1 << 29);
+    checkRangeAndEntropy(prng, 29, numberSupplier, (1 << 27), (1 << 29), getEntropyCheckMode());
   }
 
   @Test(expectedExceptions = IllegalArgumentException.class)
@@ -377,22 +381,27 @@ public abstract class BaseRandomTest {
 
   @Test public void testNextInt2HugeRange() throws Exception {
     final BaseRandom prng = createRng();
-    checkRangeAndEntropy(prng, 32, () -> prng.nextInt(Integer.MIN_VALUE, 1 << 29),
-        Integer.MIN_VALUE, 1 << 29, true);
+    final Supplier<? extends Number> numberSupplier =
+        () -> prng.nextInt(Integer.MIN_VALUE, 1 << 29);
+    checkRangeAndEntropy(prng, 32, numberSupplier, Integer.MIN_VALUE, (1 << 29),
+        getEntropyCheckMode());
   }
 
   @Test public void testNextLong() throws Exception {
     final BaseRandom prng = createRng();
-    checkRangeAndEntropy(prng, 64, prng::nextLong, Long.MIN_VALUE, Long.MAX_VALUE + 1.0, true);
+    checkRangeAndEntropy(prng, 64, (Supplier<? extends Number>) prng::nextLong, Long.MIN_VALUE,
+        Long.MAX_VALUE + 1.0, getEntropyCheckMode());
   }
 
   @Test public void testNextLong1() throws Exception {
     final BaseRandom prng = createRng();
     for (int i = 0; i < 20; i++) {
       // check that the bound is exclusive, to kill an off-by-one mutant
-      checkRangeAndEntropy(prng, 1, () -> prng.nextLong(2), 0, 2, true);
+      final Supplier<? extends Number> numberSupplier = () -> prng.nextLong(2);
+      checkRangeAndEntropy(prng, 1, numberSupplier, 0, 2, getEntropyCheckMode());
     }
-    checkRangeAndEntropy(prng, 42, () -> prng.nextLong(1L << 42), 0, 1L << 42, true);
+    final Supplier<? extends Number> numberSupplier = () -> prng.nextLong(1L << 42);
+    checkRangeAndEntropy(prng, 42, numberSupplier, 0, (1L << 42), getEntropyCheckMode());
   }
 
   @Test(expectedExceptions = IllegalArgumentException.class)
@@ -402,8 +411,8 @@ public abstract class BaseRandomTest {
 
   @Test public void testNextLong2() throws Exception {
     final BaseRandom prng = createRng();
-    checkRangeAndEntropy(prng, 42, () -> prng.nextLong(1L << 40, 1L << 42), 1L << 40, 1L << 42,
-        true);
+    final Supplier<? extends Number> numberSupplier = () -> prng.nextLong(1L << 40, 1L << 42);
+    checkRangeAndEntropy(prng, 42, numberSupplier, (1L << 40), (1L << 42), getEntropyCheckMode());
   }
 
   @Test(expectedExceptions = IllegalArgumentException.class)
@@ -413,23 +422,28 @@ public abstract class BaseRandomTest {
 
   @Test public void testNextLong2HugeRange() throws Exception {
     final BaseRandom prng = createRng();
-    checkRangeAndEntropy(prng, 64, () -> prng.nextLong(Long.MIN_VALUE, 1L << 62), Long.MIN_VALUE,
-        1L << 62, true);
+    final Supplier<? extends Number> numberSupplier = () -> prng.nextLong(Long.MIN_VALUE, 1L << 62);
+    checkRangeAndEntropy(prng, 64, numberSupplier, Long.MIN_VALUE, (1L << 62),
+        getEntropyCheckMode());
   }
 
   @Test public void testNextDouble() throws Exception {
     final BaseRandom prng = createRng();
-    checkRangeAndEntropy(prng, ENTROPY_OF_DOUBLE, prng::nextDouble, 0.0, 1.0, true);
+    checkRangeAndEntropy(prng, ENTROPY_OF_DOUBLE, (Supplier<? extends Number>) prng::nextDouble,
+        0.0, 1.0, getEntropyCheckMode());
   }
 
   @Test public void testNextFloat() throws Exception {
     final BaseRandom prng = createRng();
-    checkRangeAndEntropy(prng, ENTROPY_OF_FLOAT, prng::nextFloat, 0.0, 1.0, true);
+    checkRangeAndEntropy(prng, ENTROPY_OF_FLOAT, (Supplier<? extends Number>) prng::nextFloat, 0.0,
+        1.0, getEntropyCheckMode());
   }
 
   @Test public void testNextDouble1() throws Exception {
     final BaseRandom prng = createRng();
-    checkRangeAndEntropy(prng, ENTROPY_OF_DOUBLE, () -> prng.nextDouble(13.37), 0.0, 13.37, true);
+    final Supplier<? extends Number> numberSupplier = () -> prng.nextDouble(13.37);
+    checkRangeAndEntropy(prng, ENTROPY_OF_DOUBLE, numberSupplier, 0.0, 13.37,
+        getEntropyCheckMode());
   }
 
   @Test(expectedExceptions = IllegalArgumentException.class)
@@ -439,13 +453,16 @@ public abstract class BaseRandomTest {
 
   @Test public void testNextDouble2() throws Exception {
     final BaseRandom prng = createRng();
-    checkRangeAndEntropy(prng, ENTROPY_OF_DOUBLE, () -> prng.nextDouble(-1.0, 13.37), -1.0, 13.37,
-        true);
-    checkRangeAndEntropy(prng, ENTROPY_OF_DOUBLE, () -> prng.nextDouble(5.0, 13.37), 5.0, 13.37,
-        true);
-    checkRangeAndEntropy(prng, ENTROPY_OF_DOUBLE,
-        () -> prng.nextDouble(1.0, UPPER_BOUND_FOR_ROUNDING_TEST), 1.0,
-        UPPER_BOUND_FOR_ROUNDING_TEST, true);
+    final Supplier<? extends Number> numberSupplier2 = () -> prng.nextDouble(-1.0, 13.37);
+    checkRangeAndEntropy(prng, ENTROPY_OF_DOUBLE, numberSupplier2, -1.0, 13.37,
+        getEntropyCheckMode());
+    final Supplier<? extends Number> numberSupplier1 = () -> prng.nextDouble(5.0, 13.37);
+    checkRangeAndEntropy(prng, ENTROPY_OF_DOUBLE, numberSupplier1, 5.0, 13.37,
+        getEntropyCheckMode());
+    final Supplier<? extends Number> numberSupplier =
+        () -> prng.nextDouble(1.0, UPPER_BOUND_FOR_ROUNDING_TEST);
+    checkRangeAndEntropy(prng, ENTROPY_OF_DOUBLE, numberSupplier, 1.0,
+        UPPER_BOUND_FOR_ROUNDING_TEST, getEntropyCheckMode());
   }
 
   @Test(expectedExceptions = IllegalArgumentException.class)
@@ -464,7 +481,8 @@ public abstract class BaseRandomTest {
 
   @Test public void testNextBoolean() throws Exception {
     final BaseRandom prng = createRng();
-    checkRangeAndEntropy(prng, 1, () -> prng.nextBoolean() ? 0 : 1, 0, 2, true);
+    final Supplier<? extends Number> numberSupplier = () -> prng.nextBoolean() ? 0 : 1;
+    checkRangeAndEntropy(prng, 1L, numberSupplier, 0, 2, getEntropyCheckMode());
   }
 
   @Test public void testInts() throws Exception {
@@ -508,7 +526,7 @@ public abstract class BaseRandomTest {
     checkStream(prng, 42, prng.longs(20, 1L << 40, 1L << 42).boxed(), 20, 1L << 40, 1L << 42, true);
   }
 
-  @Test(timeOut = 1000) public void testLongs3_smallRange() throws Exception {
+  @Test(timeOut = 1000) public void testLongs3SmallRange() throws Exception {
     final long bound = (1L << 40) + 2;
     final BaseRandom prng = createRng();
     checkStream(prng, 31, prng.longs(20, 1L << 40, bound).boxed(), 20, 1L << 40, bound, true);
@@ -572,21 +590,22 @@ public abstract class BaseRandomTest {
     testThreadSafety(FUNCTIONS_FOR_THREAD_SAFETY_TEST, FUNCTIONS_FOR_THREAD_SAFETY_TEST);
   }
 
-  protected void testThreadSafetyVsCrashesOnly(List<NamedFunction<Random, Double>> functions) {
-    int seedLength = createRng().getNewSeedLength();
-    byte[] seed = DefaultSeedGenerator.DEFAULT_SEED_GENERATOR.generateSeed(seedLength);
-    for (NamedFunction<Random, Double> supplier1 : functions) {
-      for (NamedFunction<Random, Double> supplier2 : functions) {
+  protected void testThreadSafetyVsCrashesOnly(
+      final List<NamedFunction<Random, Double>> functions) {
+    final int seedLength = createRng().getNewSeedLength();
+    final byte[] seed = DefaultSeedGenerator.DEFAULT_SEED_GENERATOR.generateSeed(seedLength);
+    for (final NamedFunction<Random, Double> supplier1 : functions) {
+      for (final NamedFunction<Random, Double> supplier2 : functions) {
         runParallel(supplier1, supplier2, seed);
       }
     }
   }
 
-  protected void testThreadSafety(List<NamedFunction<Random, Double>> functions,
-      List<NamedFunction<Random, Double>> pairwiseFunctions) {
-    int seedLength = createRng().getNewSeedLength();
-    byte[] seed = DefaultSeedGenerator.DEFAULT_SEED_GENERATOR.generateSeed(seedLength);
-    for (NamedFunction<Random, Double> supplier : functions) {
+  protected void testThreadSafety(final List<NamedFunction<Random, Double>> functions,
+      final List<NamedFunction<Random, Double>> pairwiseFunctions) {
+    final int seedLength = createRng().getNewSeedLength();
+    final byte[] seed = DefaultSeedGenerator.DEFAULT_SEED_GENERATOR.generateSeed(seedLength);
+    for (final NamedFunction<Random, Double> supplier : functions) {
       for (int i = 0; i < 5; i++) {
         // This loop is necessary to control the false pass rate, especially during mutation testing.
         runSequential(supplier, supplier, seed);
@@ -599,8 +618,8 @@ public abstract class BaseRandomTest {
     // Check that each pair won't crash no matter which order they start in
     // (this part is assertion-free because we can't tell whether A-bits-as-long and
     // B-bits-as-double come from the same bit stream as vice-versa).
-    for (NamedFunction<Random, Double> supplier1 : pairwiseFunctions) {
-      for (NamedFunction<Random, Double> supplier2 : pairwiseFunctions) {
+    for (final NamedFunction<Random, Double> supplier1 : pairwiseFunctions) {
+      for (final NamedFunction<Random, Double> supplier2 : pairwiseFunctions) {
         if (supplier1 != supplier2) {
           runParallel(supplier2, supplier1, seed);
         }
@@ -608,9 +627,9 @@ public abstract class BaseRandomTest {
     }
   }
 
-  protected void runParallel(NamedFunction<Random, Double> supplier1,
-      NamedFunction<Random, Double> supplier2, byte[] seed) {
-    Random parallelPrng = createRng(seed);
+  protected void runParallel(final NamedFunction<Random, Double> supplier1,
+      final NamedFunction<Random, Double> supplier2, final byte[] seed) {
+    final Random parallelPrng = createRng(seed);
     parallelOutput.clear();
     pool.execute(new GeneratorForkJoinTask(parallelPrng, parallelOutput, supplier1));
     pool.execute(new GeneratorForkJoinTask(parallelPrng, parallelOutput, supplier2));
@@ -618,9 +637,9 @@ public abstract class BaseRandomTest {
         String.format("Timed out waiting for %s and %s to finish", supplier1, supplier2));
   }
 
-  protected void runSequential(NamedFunction<Random, Double> supplier1,
-      NamedFunction<Random, Double> supplier2, byte[] seed) {
-    Random sequentialPrng = createRng(seed);
+  protected void runSequential(final NamedFunction<Random, Double> supplier1,
+      final NamedFunction<Random, Double> supplier2, final byte[] seed) {
+    final Random sequentialPrng = createRng(seed);
     sequentialOutput.clear();
     new GeneratorForkJoinTask(sequentialPrng, sequentialOutput, supplier1).exec();
     new GeneratorForkJoinTask(sequentialPrng, sequentialOutput, supplier2).exec();
@@ -646,8 +665,8 @@ public abstract class BaseRandomTest {
     private final ConcurrentSkipListSet<T> set;
     private final Function<Random, T> function;
 
-    public GeneratorForkJoinTask(Random prng, ConcurrentSkipListSet<T> set,
-        Function<Random, T> function) {
+    public GeneratorForkJoinTask(final Random prng, final ConcurrentSkipListSet<T> set,
+        final Function<Random, T> function) {
       this.prng = prng;
       this.set = set;
       this.function = function;
@@ -657,7 +676,7 @@ public abstract class BaseRandomTest {
       return null;
     }
 
-    @Override protected void setRawResult(Void value) {
+    @Override protected void setRawResult(final Void value) {
       // No-op.
     }
 
@@ -674,12 +693,12 @@ public abstract class BaseRandomTest {
     private final Function<T, R> function;
     private final String name;
 
-    public NamedFunction(Function<T, R> function, String name) {
+    public NamedFunction(final Function<T, R> function, final String name) {
       this.function = function;
       this.name = name;
     }
 
-    @Override public R apply(T t) {
+    @Override public R apply(final T t) {
       return function.apply(t);
     }
 
