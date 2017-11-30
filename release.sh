@@ -8,7 +8,7 @@ rm -rf ../../.m2/repository/io/github/pr0methean/betterrandom/ &&\
   STATUS=$?
   NEWVERSION=`mvn help:evaluate -Dexpression=project.version | sed -n -e '/^\[.*\]/ !{ /^[0-9]/ { p; q } }' | sed 's/version=//'`
   if [ ${STATUS} ]; then
-    sed -i "s/$OLDVERSION/$NEWVERSION/" ../benchmark/pom.xml
+    sed -i "s/${OLDVERSION}/${NEWVERSION}/" ../benchmark/pom.xml
     git add ../benchmark/pom.xml
     git commit -m "🤖 Update benchmark to use new snapshot version following release"
     git push
