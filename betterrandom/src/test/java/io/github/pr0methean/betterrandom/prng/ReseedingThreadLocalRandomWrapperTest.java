@@ -2,6 +2,7 @@ package io.github.pr0methean.betterrandom.prng;
 
 import static io.github.pr0methean.betterrandom.TestUtils.assertGreaterOrEqual;
 
+import io.github.pr0methean.betterrandom.prng.RandomTestUtils.EntropyCheckMode;
 import io.github.pr0methean.betterrandom.seed.DefaultSeedGenerator;
 import io.github.pr0methean.betterrandom.seed.SeedException;
 import java.io.Serializable;
@@ -15,6 +16,10 @@ public class ReseedingThreadLocalRandomWrapperTest extends ThreadLocalRandomWrap
   @Override public void testWrapLegacy() throws SeedException {
     ReseedingThreadLocalRandomWrapper
         .wrapLegacy(Random::new, DefaultSeedGenerator.DEFAULT_SEED_GENERATOR).nextInt();
+  }
+
+  @Override protected EntropyCheckMode getEntropyCheckMode() {
+    return EntropyCheckMode.LOWER_BOUND;
   }
 
   @Override protected Class<? extends BaseRandom> getClassUnderTest() {
