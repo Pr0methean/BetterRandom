@@ -120,7 +120,7 @@ public abstract class BaseRandomTest {
       throws SeedException, IllegalAccessException, InstantiationException,
       InvocationTargetException {
     TestUtils
-        .testAllPublicConstructors(getClassUnderTest(), ImmutableMap.copyOf(constructorParams()),
+        .testConstructors(getClassUnderTest(), false, ImmutableMap.copyOf(constructorParams()),
             new Consumer<BaseRandom>() {
               @Override public void accept(BaseRandom baseRandom) {
                 baseRandom.nextInt();
