@@ -12,6 +12,7 @@ import io.github.pr0methean.betterrandom.seed.SeedGenerator;
 import io.github.pr0methean.betterrandom.util.BinaryUtils;
 import io.github.pr0methean.betterrandom.util.ByteArrayArithmetic;
 import io.github.pr0methean.betterrandom.util.EntryPoint;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * <p>From the original description, "PCG is a family of simple fast space-efficient statistically
@@ -44,6 +45,27 @@ public class Pcg128Random extends BaseRandom implements SeekableRandom {
   private static final int ROTATION2 = (Long.SIZE - WANTED_OP_BITS);
   private static final int MASK = (1 << WANTED_OP_BITS) - 1;
 
+  private static ThreadLocal<byte[]> result = makeByteArrayThreadLocal();
+  private static ThreadLocal<byte[]> rot = makeByteArrayThreadLocal();
+  private static ThreadLocal<byte[]> shiftedOldSeed = makeByteArrayThreadLocal();
+  private static ThreadLocal<byte[]> resultTerm1 = makeByteArrayThreadLocal();
+  private static ThreadLocal<byte[]> resultTerm2 = makeByteArrayThreadLocal();
+  private static ThreadLocal<byte[]> curMult = makeByteArrayThreadLocal();
+  private static ThreadLocal<byte[]> curPlus = makeByteArrayThreadLocal();
+  private static ThreadLocal<byte[]> accMult = makeByteArrayThreadLocal();
+  private static ThreadLocal<byte[]> accPlus = makeByteArrayThreadLocal();
+  private static ThreadLocal<byte[]> adjMult = makeByteArrayThreadLocal();
+
+  private static ThreadLocal<byte[]> makeByteArrayThreadLocal() {
+    return ThreadLocal.withInitial(() -> ZERO.clone());
+  }
+
+  private static byte[] copyInto(ThreadLocal<byte[]> dest, byte[] src) {
+    byte[] out = dest.get();
+    System.arraycopy(src, 0, out, 0, src.length);
+    return out;
+  }
+
   public Pcg128Random() {
     this(DefaultSeedGenerator.DEFAULT_SEED_GENERATOR);
   }
@@ -73,17 +95,17 @@ public class Pcg128Random extends BaseRandom implements SeekableRandom {
     // with Arbitrary Stride,", Transactions of the American Nuclear
     // Society (Nov. 1994).  The algorithm is very similar to fast
     // exponentiation.
-    byte[] curMult = MULTIPLIER.clone();
-    byte[] curPlus = INCREMENT.clone();
-    byte[] accMult = ONE.clone();
-    byte[] accPlus = ZERO.clone();
+    byte[] curMult = copyInto(this.curMult, MULTIPLIER);
+    byte[] curPlus =copyInto(this.curPlus, INCREMENT);
+    byte[] accMult = copyInto(this.accMult, ONE);
+    byte[] accPlus = copyInto(this.accPlus, ZERO);
     while (delta != 0) {
       if ((delta & 1) == 1) {
         multiplyInto(accMult, curMult);
         multiplyInto(accPlus, curMult);
         addInto(accPlus, curPlus);
       }
-      byte[] adjMult = curMult.clone();
+      byte[] adjMult = copyInto(this.adjMult, curMult);
       addInto(adjMult, 1);
       multiplyInto(curPlus, adjMult);
       multiplyInto(curMult, curMult);
@@ -111,22 +133,22 @@ public class Pcg128Random extends BaseRandom implements SeekableRandom {
     byte[] rot;
     byte[] result;
     try {
-      rot = seed.clone();
-      byte[] shiftedOldSeed = seed.clone();
+      rot = copyInto(this.rot, seed);
+      byte[] shiftedOldSeed = copyInto(this.shiftedOldSeed, seed);
       unsignedShiftRight(shiftedOldSeed, ROTATION1);
       multiplyInto(seed, MULTIPLIER);
       addInto(seed, INCREMENT);
       ByteArrayArithmetic.xorInto(seed, shiftedOldSeed);
-      result = seed.clone();
+      result = copyInto(this.result, seed);
     } finally {
       lock.unlock();
     }
     unsignedShiftRight(rot, SEED_SIZE_BYTES * 8 - WANTED_OP_BITS);
     unsignedShiftRight(result, ROTATION2);
     final int ampRot = BinaryUtils.convertBytesToInt(rot, SEED_SIZE_BYTES - Integer.BYTES);
-    byte[] resultTerm1 = result.clone();
+    byte[] resultTerm1 = copyInto(this.resultTerm1, result);
     unsignedShiftRight(resultTerm1, ampRot);
-    byte[] resultTerm2 = result.clone();
+    byte[] resultTerm2 = copyInto(this.resultTerm2, result);
     ByteArrayArithmetic.unsignedShiftLeft(resultTerm2, Integer.SIZE - ampRot);
     addInto(resultTerm2, resultTerm1);
     return BinaryUtils.convertBytesToInt(resultTerm2, SEED_SIZE_BYTES - Integer.BYTES);
