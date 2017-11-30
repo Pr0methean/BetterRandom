@@ -96,9 +96,8 @@ public abstract class BaseRandomTest {
   @Test public void testAllPublicConstructors()
       throws SeedException, IllegalAccessException, InstantiationException,
       InvocationTargetException {
-    TestUtils
-        .testAllPublicConstructors(getClassUnderTest(), ImmutableMap.copyOf(constructorParams()),
-            BaseRandom::nextInt);
+    TestUtils.testConstructors(getClassUnderTest(), false, ImmutableMap.copyOf(constructorParams()),
+        BaseRandom::nextInt);
   }
 
   protected Map<Class<?>, Object> constructorParams() {

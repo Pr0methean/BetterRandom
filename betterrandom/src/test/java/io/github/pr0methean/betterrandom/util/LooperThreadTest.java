@@ -11,7 +11,6 @@ import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
-import javax.annotation.Nullable;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
@@ -27,6 +26,12 @@ public class LooperThreadTest {
   private static final Runnable TARGET = (Serializable & Runnable) () -> {
     if (shouldThrow.get()) {
       throw new MockException();
+    } else {
+      try {
+        Thread.sleep(1);
+      } catch (InterruptedException e) {
+        throw new RuntimeException(e);
+      }
     }
   };
 
@@ -41,13 +46,18 @@ public class LooperThreadTest {
     }
   }
 
-  @Test public void testAllPublicConstructors()
+  @Test public void testConstructors()
       throws IllegalAccessException, InstantiationException, InvocationTargetException {
-    // Test SkeletonLooperThread instead of LooperThread so that protected ctors in LooperThread are
-    // also covered
-    TestUtils.testAllPublicConstructors(SkeletonLooperThread.class, ImmutableMap
+    TestUtils.testConstructors(LooperThread.class, false, ImmutableMap
         .of(ThreadGroup.class, new ThreadGroup("Test ThreadGroup"), Runnable.class, TARGET,
-            String.class, "Test LooperThread", long.class, STACK_SIZE), thread -> thread.start());
+            String.class, "Test LooperThread", long.class, STACK_SIZE), thread -> {
+      thread.start();
+      try {
+        assertTrue(thread.awaitIteration(1, TimeUnit.SECONDS));
+      } catch (InterruptedException e) {
+        throw new RuntimeException(e);
+      }
+    });
   }
 
   @BeforeTest public void setUp() {
@@ -87,48 +97,6 @@ public class LooperThreadTest {
     }
   }
 
-  /** Must be public since ctors are accessed reflectively by {@link TestUtils} */
-  public static class SkeletonLooperThread extends LooperThread {
-
-    public SkeletonLooperThread() {
-    }
-
-    public SkeletonLooperThread(final Runnable target) {
-      super(target);
-    }
-
-    public SkeletonLooperThread(final ThreadGroup group, @Nullable final Runnable target) {
-      super(group, target);
-    }
-
-    public SkeletonLooperThread(final String name) {
-      super(name);
-    }
-
-    public SkeletonLooperThread(final ThreadGroup group, final String name) {
-      super(group, name);
-    }
-
-    public SkeletonLooperThread(@Nullable final Runnable target, final String name) {
-      super(target, name);
-    }
-
-    public SkeletonLooperThread(final ThreadGroup group, @Nullable final Runnable target,
-        final String name) {
-      super(group, target, name);
-    }
-
-    public SkeletonLooperThread(final ThreadGroup group, final Runnable target, final String name,
-        final long stackSize) {
-      super(group, target, name, stackSize);
-    }
-
-    @Override public boolean iterate() throws InterruptedException {
-      TARGET.run();
-      return finishedIterations.get() < 100;
-    }
-  }
-
   private static class FailingLooperThread extends LooperThread {
 
     public FailingLooperThread() {
@@ -151,10 +119,5 @@ public class LooperThreadTest {
       TARGET.run();
       return finishedIterations.get() < 25;
     }
-  }
-
-  @SuppressWarnings("CustomClassloader")
-  private static class MockClassLoader extends ClassLoader {
-
   }
 }
