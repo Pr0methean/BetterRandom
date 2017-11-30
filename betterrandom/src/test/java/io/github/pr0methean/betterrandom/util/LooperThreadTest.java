@@ -92,6 +92,8 @@ public class LooperThreadTest {
     sleepingThread.start();
     try {
       assertTrue(sleepingThread.awaitIteration(5, TimeUnit.SECONDS));
+      // Now do so again, to ensure the thread still runs after returning
+      assertTrue(sleepingThread.awaitIteration(5, TimeUnit.SECONDS));
     } finally {
       sleepingThread.interrupt();
     }
