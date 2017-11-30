@@ -144,6 +144,11 @@ public class ThreadLocalRandomWrapper extends RandomWrapper {
     return original.add("wrapped on this thread", getWrapped().dump());
   }
 
+  @Override public boolean preferSeedWithLong() {
+    final int newSeedLength = getNewSeedLength();
+    return (newSeedLength > 0) && (newSeedLength <= Long.BYTES);
+  }
+
   @Override public byte[] getSeed() {
     return getWrapped().getSeed();
   }
