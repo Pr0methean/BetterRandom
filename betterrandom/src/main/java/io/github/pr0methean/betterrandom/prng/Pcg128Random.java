@@ -12,7 +12,6 @@ import io.github.pr0methean.betterrandom.seed.SeedGenerator;
 import io.github.pr0methean.betterrandom.util.BinaryUtils;
 import io.github.pr0methean.betterrandom.util.ByteArrayArithmetic;
 import io.github.pr0methean.betterrandom.util.EntryPoint;
-import org.jetbrains.annotations.NotNull;
 
 /**
  * <p>From the original description, "PCG is a family of simple fast space-efficient statistically
