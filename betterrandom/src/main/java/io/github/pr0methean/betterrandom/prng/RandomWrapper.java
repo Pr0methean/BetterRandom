@@ -230,6 +230,12 @@ public class RandomWrapper extends BaseRandom {
     }
   }
 
+  @Override public synchronized void setSeed(long seed) {
+    if (wrapped != null) {
+      wrapped.setSeed(seed);
+    }
+  }
+
   @Override public boolean preferSeedWithLong() {
     final Random currentWrapped = getWrapped();
     return !(currentWrapped instanceof ByteArrayReseedableRandom)
