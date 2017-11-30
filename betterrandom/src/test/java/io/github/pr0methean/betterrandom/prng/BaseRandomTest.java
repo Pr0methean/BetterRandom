@@ -348,7 +348,18 @@ public abstract class BaseRandomTest {
     final long oldEntropy = prng.getEntropyBits();
     prng.nextBytes(testBytes);
     assertFalse(Arrays.equals(testBytes, new byte[TEST_BYTE_ARRAY_LENGTH]));
-    assertEquals(prng.getEntropyBits(), oldEntropy - (8 * TEST_BYTE_ARRAY_LENGTH));
+    long entropy = prng.getEntropyBits();
+    long expectedEntropy = oldEntropy - (8 * TEST_BYTE_ARRAY_LENGTH);
+    switch (getEntropyCheckMode()) {
+      case EXACT:
+        assertEquals(entropy, expectedEntropy);
+        break;
+      case LOWER_BOUND:
+        assertGreaterOrEqual(entropy, expectedEntropy);
+        break;
+      case OFF:
+        break;
+    }
   }
 
   @Test public void testNextInt1() throws Exception {
