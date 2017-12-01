@@ -35,6 +35,8 @@
       <class name="io.github.pr0methean.betterrandom.prng.ReseedingThreadLocalRandomWrapperTest"/>
       <class
         name="io.github.pr0methean.betterrandom.prng.ReseedingThreadLocalRandomWrapperFailingSeedGeneratorTest"/>
+      <class name="io.github.pr0methean.betterrandom.util.Byte16ArrayArithmeticTest"/>
+      <class name="io.github.pr0methean.betterrandom.prng.Pcg128RandomTest"/>
     </classes>
   </test>
 </suite>
