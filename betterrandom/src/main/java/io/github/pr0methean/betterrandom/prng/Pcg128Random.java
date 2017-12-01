@@ -1,8 +1,8 @@
 package io.github.pr0methean.betterrandom.prng;
 
-import static io.github.pr0methean.betterrandom.util.ByteArrayArithmetic.addInto;
-import static io.github.pr0methean.betterrandom.util.ByteArrayArithmetic.multiplyInto;
-import static io.github.pr0methean.betterrandom.util.ByteArrayArithmetic.unsignedShiftRight;
+import static io.github.pr0methean.betterrandom.util.Byte16ArrayArithmetic.addInto;
+import static io.github.pr0methean.betterrandom.util.Byte16ArrayArithmetic.multiplyInto;
+import static io.github.pr0methean.betterrandom.util.Byte16ArrayArithmetic.unsignedShiftRight;
 
 import com.google.common.base.MoreObjects.ToStringHelper;
 import io.github.pr0methean.betterrandom.SeekableRandom;
@@ -10,7 +10,7 @@ import io.github.pr0methean.betterrandom.seed.DefaultSeedGenerator;
 import io.github.pr0methean.betterrandom.seed.SeedException;
 import io.github.pr0methean.betterrandom.seed.SeedGenerator;
 import io.github.pr0methean.betterrandom.util.BinaryUtils;
-import io.github.pr0methean.betterrandom.util.ByteArrayArithmetic;
+import io.github.pr0methean.betterrandom.util.Byte16ArrayArithmetic;
 import io.github.pr0methean.betterrandom.util.EntryPoint;
 
 /**
@@ -37,33 +37,21 @@ public class Pcg128Random extends BaseRandom implements SeekableRandom {
       {0x00000058, 0x00000051, 0xfffffff4, 0x0000002d, 0x0000004c, 0xffffff95, 0x0000007f,
           0x0000002d, 0x00000014, 0x00000005, 0x0000007b, 0x0000007e, 0xfffffff7, 0x00000067,
           0xffffff81, 0x0000004f};
-  private static final byte[] ZERO = {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
-  private static final byte[] ONE = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1};
   private static final int WANTED_OP_BITS = 6;
   private static final int ROTATION1 = (WANTED_OP_BITS + Long.SIZE) / 2;
   private static final int ROTATION2 = (Long.SIZE - WANTED_OP_BITS);
   private static final int MASK = (1 << WANTED_OP_BITS) - 1;
 
-  private static ThreadLocal<byte[]> result = makeByteArrayThreadLocal();
-  private static ThreadLocal<byte[]> rot = makeByteArrayThreadLocal();
-  private static ThreadLocal<byte[]> shiftedOldSeed = makeByteArrayThreadLocal();
-  private static ThreadLocal<byte[]> resultTerm1 = makeByteArrayThreadLocal();
-  private static ThreadLocal<byte[]> resultTerm2 = makeByteArrayThreadLocal();
-  private static ThreadLocal<byte[]> curMult = makeByteArrayThreadLocal();
-  private static ThreadLocal<byte[]> curPlus = makeByteArrayThreadLocal();
-  private static ThreadLocal<byte[]> accMult = makeByteArrayThreadLocal();
-  private static ThreadLocal<byte[]> accPlus = makeByteArrayThreadLocal();
-  private static ThreadLocal<byte[]> adjMult = makeByteArrayThreadLocal();
-
-  private static ThreadLocal<byte[]> makeByteArrayThreadLocal() {
-    return ThreadLocal.withInitial(() -> ZERO.clone());
-  }
-
-  private static byte[] copyInto(ThreadLocal<byte[]> dest, byte[] src) {
-    byte[] out = dest.get();
-    System.arraycopy(src, 0, out, 0, src.length);
-    return out;
-  }
+  private static final ThreadLocal<byte[]> result = Byte16ArrayArithmetic.makeByteArrayThreadLocal();
+  private static final ThreadLocal<byte[]> rot = Byte16ArrayArithmetic.makeByteArrayThreadLocal();
+  private static final ThreadLocal<byte[]> shiftedOldSeed = Byte16ArrayArithmetic.makeByteArrayThreadLocal();
+  private static final ThreadLocal<byte[]> resultTerm1 = Byte16ArrayArithmetic.makeByteArrayThreadLocal();
+  private static final ThreadLocal<byte[]> resultTerm2 = Byte16ArrayArithmetic.makeByteArrayThreadLocal();
+  private static final ThreadLocal<byte[]> curMult = Byte16ArrayArithmetic.makeByteArrayThreadLocal();
+  private static final ThreadLocal<byte[]> curPlus = Byte16ArrayArithmetic.makeByteArrayThreadLocal();
+  private static final ThreadLocal<byte[]> accMult = Byte16ArrayArithmetic.makeByteArrayThreadLocal();
+  private static final ThreadLocal<byte[]> accPlus = Byte16ArrayArithmetic.makeByteArrayThreadLocal();
+  private static final ThreadLocal<byte[]> adjMult = Byte16ArrayArithmetic.makeByteArrayThreadLocal();
 
   public Pcg128Random() {
     this(DefaultSeedGenerator.DEFAULT_SEED_GENERATOR);
@@ -94,17 +82,17 @@ public class Pcg128Random extends BaseRandom implements SeekableRandom {
     // with Arbitrary Stride,", Transactions of the American Nuclear
     // Society (Nov. 1994).  The algorithm is very similar to fast
     // exponentiation.
-    byte[] curMult = copyInto(this.curMult, MULTIPLIER);
-    byte[] curPlus =copyInto(this.curPlus, INCREMENT);
-    byte[] accMult = copyInto(this.accMult, ONE);
-    byte[] accPlus = copyInto(this.accPlus, ZERO);
+    byte[] curMult = Byte16ArrayArithmetic.copyInto(this.curMult, MULTIPLIER);
+    byte[] curPlus = Byte16ArrayArithmetic.copyInto(this.curPlus, INCREMENT);
+    byte[] accMult = Byte16ArrayArithmetic.copyInto(this.accMult, Byte16ArrayArithmetic.ONE);
+    byte[] accPlus = Byte16ArrayArithmetic.copyInto(this.accPlus, Byte16ArrayArithmetic.ZERO);
     while (delta != 0) {
       if ((delta & 1) == 1) {
         multiplyInto(accMult, curMult);
         multiplyInto(accPlus, curMult);
         addInto(accPlus, curPlus);
       }
-      byte[] adjMult = copyInto(this.adjMult, curMult);
+      byte[] adjMult = Byte16ArrayArithmetic.copyInto(this.adjMult, curMult);
       addInto(adjMult, 1);
       multiplyInto(curPlus, adjMult);
       multiplyInto(curMult, curMult);
@@ -132,23 +120,23 @@ public class Pcg128Random extends BaseRandom implements SeekableRandom {
     byte[] rot;
     byte[] result;
     try {
-      rot = copyInto(this.rot, seed);
-      byte[] shiftedOldSeed = copyInto(this.shiftedOldSeed, seed);
+      rot = Byte16ArrayArithmetic.copyInto(this.rot, seed);
+      byte[] shiftedOldSeed = Byte16ArrayArithmetic.copyInto(this.shiftedOldSeed, seed);
       unsignedShiftRight(shiftedOldSeed, ROTATION1);
       multiplyInto(seed, MULTIPLIER);
       addInto(seed, INCREMENT);
-      ByteArrayArithmetic.xorInto(seed, shiftedOldSeed);
-      result = copyInto(this.result, seed);
+      Byte16ArrayArithmetic.xorInto(seed, shiftedOldSeed);
+      result = Byte16ArrayArithmetic.copyInto(this.result, seed);
     } finally {
       lock.unlock();
     }
     unsignedShiftRight(rot, SEED_SIZE_BYTES * 8 - WANTED_OP_BITS);
     unsignedShiftRight(result, ROTATION2);
     final int ampRot = BinaryUtils.convertBytesToInt(rot, SEED_SIZE_BYTES - Integer.BYTES);
-    byte[] resultTerm1 = copyInto(this.resultTerm1, result);
+    byte[] resultTerm1 = Byte16ArrayArithmetic.copyInto(this.resultTerm1, result);
     unsignedShiftRight(resultTerm1, ampRot);
-    byte[] resultTerm2 = copyInto(this.resultTerm2, result);
-    ByteArrayArithmetic.unsignedShiftLeft(resultTerm2, Integer.SIZE - ampRot);
+    byte[] resultTerm2 = Byte16ArrayArithmetic.copyInto(this.resultTerm2, result);
+    Byte16ArrayArithmetic.unsignedShiftLeft(resultTerm2, Integer.SIZE - ampRot);
     addInto(resultTerm2, resultTerm1);
     return BinaryUtils.convertBytesToInt(resultTerm2, SEED_SIZE_BYTES - Integer.BYTES);
   }
