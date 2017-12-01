@@ -61,8 +61,11 @@ public enum Byte16ArrayArithmetic {
     byte[] multiplicationStep = copyInto(Byte16ArrayArithmetic.multiplicationStep, ZERO);
     for (int multiplierDigit = 0; multiplierDigit < multiplier.length; multiplierDigit++) {
       for (int counterDigit = 0; counterDigit < counter.length; counterDigit++) {
+        int destDigit = multiplierDigit + counterDigit - counter.length;
+        if (destDigit < 0) {
+          continue;
+        }
         System.arraycopy(ZERO, 0, multiplicationStep, 0, multiplicationStep.length);
-        int destDigit = multiplierDigit - (counter.length - counterDigit);
         // Signed multiplication gives same result as unsigned, in the last 2 bytes
         int stepValue = multiplier[multiplierDigit] * counter[counterDigit];
         multiplicationStep[destDigit] = (byte) stepValue; // lower 8 bits
