@@ -16,7 +16,7 @@ import io.github.pr0methean.betterrandom.util.EntryPoint;
 /**
  * <p>From the original description, "PCG is a family of simple fast space-efficient statistically
  * good algorithms for random number generation. Unlike many general-purpose RNGs, they are also
- * hard to predict." This is a Java port of the "XSH RR 128/32" generator presented at <a
+ * hard to predict." This is a Java port of the "XSH RR 128/64" generator presented at <a
  * href="http://www.pcg-random.org/">http://www.pcg-random.org/</a>. Period is 2<sup>126</sup> bits.
  * This PRNG is seekable.
  * </p><p>
@@ -114,8 +114,17 @@ public class Pcg128Random extends BaseRandom implements SeekableRandom {
     super.setSeedInternal(seed);
   }
 
-  // TODO: convert to 128 bits
   @Override protected int next(int bits) {
+    byte[] result = internalNext();
+    return BinaryUtils.convertBytesToInt(result, SEED_SIZE_BYTES - Integer.BYTES);
+  }
+
+  @Override protected long nextLongNoEntropyDebit() {
+    byte[] result = internalNext();
+    return BinaryUtils.convertBytesToLong(result, SEED_SIZE_BYTES - Long.BYTES);
+  }
+
+  private byte[] internalNext() {
     lock.lock();
     byte[] rot;
     byte[] result;
@@ -138,7 +147,7 @@ public class Pcg128Random extends BaseRandom implements SeekableRandom {
     byte[] resultTerm2 = Byte16ArrayArithmetic.copyInto(this.resultTerm2, result);
     Byte16ArrayArithmetic.unsignedShiftLeft(resultTerm2, Integer.SIZE - ampRot);
     addInto(resultTerm2, resultTerm1);
-    return BinaryUtils.convertBytesToInt(resultTerm2, SEED_SIZE_BYTES - Integer.BYTES);
+    return resultTerm2;
   }
 
   @Override protected ToStringHelper addSubclassFields(ToStringHelper original) {
