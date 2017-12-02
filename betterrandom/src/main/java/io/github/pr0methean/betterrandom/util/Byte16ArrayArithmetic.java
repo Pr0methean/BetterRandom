@@ -42,10 +42,10 @@ public enum Byte16ArrayArithmetic {
 
   private static void addInto(byte[] counter, byte[] delta, int offset) {
     boolean carry = false;
-    for (int i = counter.length - offset - 1; i > 0; i--) {
+    for (int i = counter.length - offset - 1; i >= 0; i--) {
       final byte oldCounter = counter[i];
       counter[i] += delta[i + offset] + (carry ? 1 : 0);
-      carry = ((counter[i] < oldCounter) || (carry && (counter[i] == oldCounter)));
+      carry = ((counter[i] & 0xFF) < (oldCounter & 0xFF)) || (carry && (counter[i] == oldCounter));
     }
   }
 
@@ -60,14 +60,14 @@ public enum Byte16ArrayArithmetic {
         copyInto(Byte16ArrayArithmetic.multiplicationAccumulator, ZERO);
     byte[] multiplicationStep = copyInto(Byte16ArrayArithmetic.multiplicationStep, ZERO);
     for (int multiplierDigit = 0; multiplierDigit < multiplier.length; multiplierDigit++) {
-      for (int counterDigit = counter.length - multiplierDigit; counterDigit < counter.length; counterDigit++) {
-        int destDigit = multiplierDigit + counterDigit - counter.length;
+      for (int counterDigit = counter.length - multiplierDigit - 1; counterDigit < counter.length; counterDigit++) {
+        int destDigit = multiplierDigit + counterDigit - counter.length + 1;
         System.arraycopy(ZERO, 0, multiplicationStep, 0, multiplicationStep.length);
         // Signed multiplication gives same result as unsigned, in the last 2 bytes
-        int stepValue = multiplier[multiplierDigit] * counter[counterDigit];
+        int stepValue = (multiplier[multiplierDigit] & 0xFF) * (counter[counterDigit] & 0xFF);
         multiplicationStep[destDigit] = (byte) stepValue; // lower 8 bits
         if (destDigit > 0) {
-          multiplicationStep[destDigit - 1] = (byte) (stepValue >> 8);
+          multiplicationStep[destDigit - 1] = (byte) (stepValue >> 8); // upper 8 bits
         }
         addInto(multiplicationAccumulator, multiplicationStep);
       }
@@ -83,22 +83,46 @@ public enum Byte16ArrayArithmetic {
    * @author Patrick Favre-Bulle
    */
   public static void unsignedShiftRight(byte[] shifted, int bits) {
-    final int shiftMod = bits % 8;
-    final byte carryMask = (byte) (0xFF << (8 - shiftMod));
-    final int offsetBytes = (bits / 8);
-
-    int sourceIndex;
-    for (int i = shifted.length - 1; i >= 0; i--) {
-      sourceIndex = i - offsetBytes;
-      if (sourceIndex < 0) {
-        shifted[i] = 0;
-      } else {
-        byte src = shifted[sourceIndex];
-        byte dst = (byte) ((0xff & src) >>> shiftMod);
-        if (sourceIndex - 1 >= 0) {
-          dst |= shifted[sourceIndex - 1] << (8 - shiftMod) & carryMask;
+    if (bits == 0) {
+      return;
+    } else if (bits > 0) {
+      final int shiftMod = bits % 8;
+      final byte carryMask = (byte) (0xFF << (8 - shiftMod));
+      final int offsetBytes = (bits / 8);
+  
+      int sourceIndex;
+      for (int i = shifted.length - 1; i >= 0; i--) {
+        sourceIndex = i - offsetBytes;
+        if (sourceIndex < 0 || sourceIndex >= shifted.length) {
+          shifted[i] = 0;
+        } else {
+          byte src = shifted[sourceIndex];
+          byte dst = (byte) ((0xff & src) >>> shiftMod);
+          if (sourceIndex - 1 >= 0) {
+            dst |= shifted[sourceIndex - 1] << (8 - shiftMod) & carryMask;
+          }
+          shifted[i] = dst;
         }
-        shifted[i] = dst;
+      }
+    } else {
+      bits = -bits;
+      final int shiftMod = bits % 8;
+      final byte carryMask = (byte) ((1 << shiftMod) - 1);
+      final int offsetBytes = (bits / 8);
+
+      int sourceIndex;
+      for (int i = 0; i < shifted.length; i++) {
+          sourceIndex = i + offsetBytes;
+          if (sourceIndex >= shifted.length) {
+              shifted[i] = 0;
+          } else {
+              byte src = shifted[sourceIndex];
+              byte dst = (byte) (src << shiftMod);
+              if (sourceIndex + 1 < shifted.length) {
+                  dst |= shifted[sourceIndex + 1] >>> (8 - shiftMod) & carryMask;
+              }
+              shifted[i] = dst;
+          }
       }
     }
   }
