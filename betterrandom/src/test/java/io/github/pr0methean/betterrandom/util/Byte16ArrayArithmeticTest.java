@@ -3,6 +3,7 @@ package io.github.pr0methean.betterrandom.util;
 import static io.github.pr0methean.betterrandom.util.BinaryUtils.convertBytesToHexString;
 import static io.github.pr0methean.betterrandom.util.BinaryUtils.convertHexStringToBytes;
 import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertNotSame;
 import static org.testng.Assert.assertTrue;
 
 import java.util.Arrays;
@@ -71,6 +72,8 @@ public class Byte16ArrayArithmeticTest {
 
   @Test public void testCopyInto() throws Exception {
     ThreadLocal<byte[]> threadLocal = Byte16ArrayArithmetic.makeByteArrayThreadLocal();
-    assertTrue(Arrays.equals(Byte16ArrayArithmetic.copyInto(threadLocal, OPERAND1), OPERAND1));
+    byte[] copyOfOperand1 = Byte16ArrayArithmetic.copyInto(threadLocal, OPERAND1);
+    assertTrue(Arrays.equals(copyOfOperand1, OPERAND1));
+    assertNotSame(copyOfOperand1, OPERAND1);
   }
 }
