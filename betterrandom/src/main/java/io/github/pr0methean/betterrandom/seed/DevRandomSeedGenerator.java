@@ -51,8 +51,10 @@ public enum DevRandomSeedGenerator implements SeedGenerator {
     }
 
     try {
-      if (inputStream == null) {
-        inputStream = new FileInputStream(DEV_RANDOM);
+      synchronized (DevRandomSeedGenerator.class) {
+        if (inputStream == null) {
+          inputStream = new FileInputStream(DEV_RANDOM);
+        }
       }
       final int length = randomSeed.length;
       int count = 0;

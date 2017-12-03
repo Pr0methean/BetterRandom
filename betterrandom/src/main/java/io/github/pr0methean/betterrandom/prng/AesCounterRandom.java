@@ -191,9 +191,8 @@ public class AesCounterRandom extends BaseRandom implements SeekableRandom {
       incrementCounter();
       System.arraycopy(counter, 0, counterInput, i * COUNTER_SIZE_BYTES, COUNTER_SIZE_BYTES);
     }
-    final int totalBytes = COUNTER_SIZE_BYTES * BLOCKS_AT_ONCE;
     try {
-      cipher.doFinal(counterInput, 0, totalBytes, currentBlock);
+      cipher.doFinal(counterInput, 0, COUNTER_SIZE_BYTES * BLOCKS_AT_ONCE, currentBlock);
     } catch (final GeneralSecurityException ex) {
       // Should never happen.  If initialisation succeeds without exceptions
       // we should be able to proceed indefinitely without exceptions.
@@ -305,26 +304,26 @@ public class AesCounterRandom extends BaseRandom implements SeekableRandom {
     return MAX_TOTAL_SEED_LENGTH_BYTES;
   }
 
-  @Override public void advance(long delta) {
+  @Override public void advance(final long delta) {
     if (delta == 0) {
       return;
     }
-    byte[] addendDigits = new byte[counter.length];
+    final byte[] addendDigits = new byte[counter.length];
     System.arraycopy(BinaryUtils.convertLongToBytes(delta), 0, addendDigits,
         counter.length - LONG_BYTES, LONG_BYTES);
     if (delta < 0) {
       // Sign extend
-      for (int i = 0; i < counter.length - LONG_BYTES; i++) {
+      for (int i = 0; i < (counter.length - LONG_BYTES); i++) {
         addendDigits[i] = -1;
       }
     }
-    boolean carry = false;
     lock.lock();
     try {
+      boolean carry = false;
       for (int i = 0; i < counter.length; i++) {
-        byte oldCounter = counter[i];
+        final byte oldCounter = counter[i];
         counter[i] += addendDigits[counter.length - i - 1] + (carry ? 1 : 0);
-        carry = (counter[i] < oldCounter || (carry && counter[i] == oldCounter));
+        carry = ((counter[i] < oldCounter) || (carry && (counter[i] == oldCounter)));
         nextBlock();
       }
     } finally {

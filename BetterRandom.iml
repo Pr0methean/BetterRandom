@@ -15,5 +15,6 @@
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="library" name="net.sourceforge.streamsupport:streamsupport:1.5.6" level="project" />
+    <orderEntry type="library" name="com.google.guava:guava:23.5-jre" level="project" />
   </component>
 </module>

@@ -24,10 +24,10 @@ public enum TestUtils {
    * @param test The consumer to pass the instances to.
    */
   @SuppressWarnings("ObjectAllocationInLoop") public static <T> void testConstructors(
-      final Class<? extends T> clazz, boolean includeProtected, final Map<Class<?>, Object> params,
-      final Consumer<? super T> test) {
+      final Class<? extends T> clazz, final boolean includeProtected,
+      final Map<Class<?>, Object> params, final Consumer<? super T> test) {
     for (final Constructor<?> constructor : clazz.getDeclaredConstructors()) {
-      int modifiers = constructor.getModifiers();
+      final int modifiers = constructor.getModifiers();
       if (Modifier.isPublic(modifiers) || (includeProtected && Modifier.isProtected(modifiers))) {
         constructor.setAccessible(true);
         final Class<?>[] parameterTypes = constructor.getParameterTypes();
@@ -62,7 +62,7 @@ public enum TestUtils {
    * Appveyor doesn't seem to be allowed any random.org usage at all, even with a valid API key.
    * @return true if we're not running on Appveyor, false if we are.
    */
-  @SuppressWarnings("CallToSystemGetenv") public static boolean isNotAppveyor() {
+  @SuppressWarnings("CallToSystemGetenv") @TestingDeficiency public static boolean isNotAppveyor() {
     return System.getenv("APPVEYOR") == null;
   }
 

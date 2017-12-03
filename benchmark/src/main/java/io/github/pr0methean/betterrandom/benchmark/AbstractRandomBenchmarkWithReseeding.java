@@ -44,7 +44,7 @@ import org.openjdk.jmh.annotations.State;
 @State(Scope.Benchmark)
 public abstract class AbstractRandomBenchmarkWithReseeding extends AbstractRandomBenchmark {
 
-  @Setup public void setApiKey() {
+  @SuppressWarnings("CallToSystemGetenv") @Setup public void setApiKey() {
     final String apiKeyString = System.getenv("RANDOM_DOT_ORG_KEY");
     RandomDotOrgSeedGenerator
         .setApiKey((apiKeyString == null) ? null : UUID.fromString(apiKeyString));

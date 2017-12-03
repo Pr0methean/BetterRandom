@@ -21,7 +21,6 @@ import java.util.List;
 import java.util.Random;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.atomic.AtomicReference;
-import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 import java8.util.function.DoubleSupplier;
 import java8.util.function.IntSupplier;
@@ -61,7 +60,9 @@ public abstract class BaseRandom extends Random
    */
   protected final AtomicReference<SeedGenerator> seedGenerator = new AtomicReference<>(null);
   /** Lock to prevent concurrent modification of the RNG's internal state. */
-  protected final Lock lock = new ReentrantLock();
+  protected final ReentrantLock lock = new ReentrantLock();
+  /** Stores the entropy estimate backing {@link #getEntropyBits()}. */
+  protected final AtomicLong entropyBits;
   // Stored as a long since there's no atomic double
   private final AtomicLong nextNextGaussian = new AtomicLong(NAN_LONG_BITS);
   /**
@@ -79,8 +80,6 @@ public abstract class BaseRandom extends Random
   @SuppressWarnings({"InstanceVariableMayNotBeInitializedByReadObject",
       "FieldAccessedSynchronizedAndUnsynchronized"}) protected transient boolean
       superConstructorFinished = false;
-  /** Stores the entropy estimate backing {@link #getEntropyBits()}. */
-  protected AtomicLong entropyBits;
 
   /**
    * Seed the RNG using the {@link DefaultSeedGenerator} to create a seed of the specified size.
@@ -89,7 +88,6 @@ public abstract class BaseRandom extends Random
    */
   protected BaseRandom(final int seedSizeBytes) throws SeedException {
     this(DefaultSeedGenerator.DEFAULT_SEED_GENERATOR.generateSeed(seedSizeBytes));
-    entropyBits = new AtomicLong(0);
   }
 
   /**
@@ -102,7 +100,6 @@ public abstract class BaseRandom extends Random
   protected BaseRandom(final SeedGenerator seedGenerator, final int seedLength)
       throws SeedException {
     this(seedGenerator.generateSeed(seedLength));
-    entropyBits = new AtomicLong(0);
   }
 
   /**
@@ -113,9 +110,9 @@ public abstract class BaseRandom extends Random
     if (seed == null) {
       throw new IllegalArgumentException("Seed must not be null");
     }
+    entropyBits = new AtomicLong(0);
     initTransientFields();
     setSeedInternal(seed);
-    entropyBits = new AtomicLong(0);
   }
 
   /**
@@ -163,7 +160,8 @@ public abstract class BaseRandom extends Random
    * @param probability The probability of returning true.
    * @return True with probability equal to the {@code probability} parameter; false otherwise.
    */
-  public final boolean withProbability(final double probability) {
+  @SuppressWarnings("FloatingPointEquality") public final boolean withProbability(
+      final double probability) {
     if (probability >= 1) {
       return true;
     }
@@ -259,7 +257,7 @@ public abstract class BaseRandom extends Random
    * BetterRandom generally <i>can</i> be expected to return all 2<sup>64</sup> possible values.
    */
   @Override public final long nextLong() {
-    long out = nextLongNoEntropyDebit();
+    final long out = nextLongNoEntropyDebit();
     debitEntropy(Long.SIZE);
     return out;
   }
@@ -451,7 +449,6 @@ public abstract class BaseRandom extends Random
     // See Knuth, ACP, Section 3.4.1 Algorithm C.
     final double firstTryOut = Double.longBitsToDouble(nextNextGaussian.getAndSet(NAN_LONG_BITS));
     if (Double.isNaN(firstTryOut)) {
-      double v1, v2, s;
       lockForNextGaussian();
       try {
         // Another output may have become available while we waited for the lock
@@ -460,6 +457,9 @@ public abstract class BaseRandom extends Random
         if (!Double.isNaN(secondTryOut)) {
           return secondTryOut;
         }
+        double s;
+        double v1;
+        double v2;
         do {
           v1 = (2 * nextDouble.getAsDouble()) - 1; // between -1 and 1
           v2 = (2 * nextDouble.getAsDouble()) - 1; // between -1 and 1
@@ -604,7 +604,8 @@ public abstract class BaseRandom extends Random
    * @throws IllegalArgumentException if {@code origin} is greater than or equal to {@code
    *     bound}
    */
-  public long nextLong(final long origin, final long bound) {
+  @SuppressWarnings({"StatementWithEmptyBody", "NestedAssignment"}) public long nextLong(
+      final long origin, final long bound) {
     if (bound <= origin) {
       throw new IllegalArgumentException(
           String.format("Bound %d must be greater than origin %d", bound, origin));
@@ -612,20 +613,19 @@ public abstract class BaseRandom extends Random
     lock.lock();
     try {
       long r = nextLongNoEntropyDebit();
-      long n = bound - origin, m = n - 1;
+      final long n = bound - origin;
+      final long m = n - 1;
       if ((n & m) == 0L)  // power of two
       {
-        r = (r & m) + origin;
+        return (r & m) + origin;
       } else if (n > 0L) {  // reject over-represented candidates
         for (long u = r >>> 1;            // ensure nonnegative
-            u + m - (r = u % n) < 0L;    // rejection check
-            u = nextLongNoEntropyDebit() >>> 1) // retry
-        {
-          ;
-        }
+            ((u + m) - ((r = u % n))) < 0L;    // rejection check
+            u = nextLongNoEntropyDebit() >>> 1) {
+        } // retry
         r += origin;
       } else {              // range not representable as long
-        while (r < origin || r >= bound) {
+        while ((r < origin) || (r >= bound)) {
           r = nextLongNoEntropyDebit();
         }
       }
@@ -684,6 +684,22 @@ public abstract class BaseRandom extends Random
   }
 
   /**
+   * Sets the seed of this random number generator using a single long seed, if this implementation
+   * supports that. If it is capable of using 64 bits or less of seed data (i.e. if {@code {@link
+   * #getNewSeedLength()} <= {@link Long#BYTES}}), then this method shall replace the entire seed as
+   * {@link Random#setSeed(long)} does; otherwise, it shall either be a no-op, or shall combine the
+   * input with the existing seed as {@link java.security.SecureRandom#setSeed(long)} does.
+   */
+  @Override public synchronized void setSeed(final long seed) {
+    final byte[] seedBytes = BinaryUtils.convertLongToBytes(seed);
+    if (superConstructorFinished) {
+      setSeed(seedBytes);
+    } else {
+      setSeedInternal(seedBytes);
+    }
+  }
+
+  /**
    * {@inheritDoc}<p>Most subclasses should override {@link #setSeedInternal(byte[])} instead of
    * this method, so that they will deserialize properly.</p>
    */
@@ -697,27 +713,10 @@ public abstract class BaseRandom extends Random
   }
 
   /**
-   * Sets the seed of this random number generator using a single long seed, if this implementation
-   * supports that. If it is capable of using 64 bits or less of seed data (i.e. if {@code {@link
-   * #getNewSeedLength()} <= {@link Long#BYTES}}), then this method shall replace the entire seed as
-   * {@link Random#setSeed(long)} does; otherwise, it shall either be a no-op, or shall combine the
-   * input with the existing seed as {@link java.security.SecureRandom#setSeed(long)} does.
-   */
-  @SuppressWarnings("method.invocation.invalid") @Override public synchronized void setSeed(
-      final long seed) {
-    final byte[] seedBytes = BinaryUtils.convertLongToBytes(seed);
-    if (superConstructorFinished) {
-      setSeed(seedBytes);
-    } else {
-      setSeedInternal(seedBytes);
-    }
-  }
-
-  /**
-   * Adds the fields that were not inherited from {@link BaseRandom} to the given {@link
+   * Adds the fields that were not inherited from BaseRandom to the given {@link
    * ToStringHelper} for dumping.
    * @param original a {@link ToStringHelper} object.
-   * @return {@code original} with the fields not inherited from {@link BaseRandom} written to it.
+   * @return {@code original} with the fields not inherited from BaseRandom written to it.
    */
   protected abstract ToStringHelper addSubclassFields(ToStringHelper original);
 
@@ -729,7 +728,8 @@ public abstract class BaseRandom extends Random
    *     to
    *     reseed this PRNG.
    */
-  public void setSeedGenerator(SeedGenerator seedGenerator) {
+  @SuppressWarnings({"EqualityOperatorComparesObjects", "ObjectEquality"})
+  public void setSeedGenerator(final SeedGenerator seedGenerator) {
     final SeedGenerator oldSeedGenerator = this.seedGenerator.getAndSet(seedGenerator);
     if (seedGenerator != oldSeedGenerator) {
       if (oldSeedGenerator != null) {
@@ -766,9 +766,6 @@ public abstract class BaseRandom extends Random
    * @param seedLength the length of the new seed in bytes
    */
   protected void creditEntropyForNewSeed(int seedLength) {
-    if (entropyBits == null) {
-      entropyBits = new AtomicLong(0);
-    }
     long oldCount;
     do {
       oldCount = entropyBits.get();
@@ -839,9 +836,6 @@ public abstract class BaseRandom extends Random
   protected void fallbackSetSeed() {
     if (seed == null) {
       seed = DefaultSeedGenerator.DEFAULT_SEED_GENERATOR.generateSeed(getNewSeedLength());
-    }
-    if (entropyBits == null) {
-      entropyBits = new AtomicLong(seed.length * 8L);
     }
   }
 

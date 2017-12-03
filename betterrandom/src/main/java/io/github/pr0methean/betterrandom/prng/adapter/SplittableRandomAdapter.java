@@ -88,7 +88,7 @@ public class SplittableRandomAdapter extends DirectSplittableRandomAdapter {
     entropyBits.get().addAndGet(-bits);
   }
 
-  @Override protected void creditEntropyForNewSeed(int seedLength) {
+  @Override protected void creditEntropyForNewSeed(final int seedLength) {
     if (entropyBits != null) {
       // Kludge for Java 7's lack of updateAndGet. Should be safe since entropyBits is thread-local.
       entropyBits.get().set(seedLength * 8L);
@@ -155,8 +155,7 @@ public class SplittableRandomAdapter extends DirectSplittableRandomAdapter {
   /**
    * {@inheritDoc} Applies only to the calling thread.
    */
-  @SuppressWarnings("contracts.postcondition.not.satisfied") @Override public void setSeed(
-      final long seed) {
+  @Override public void setSeed(final long seed) {
     if (this.seed == null) {
       super.setSeed(seed);
     }

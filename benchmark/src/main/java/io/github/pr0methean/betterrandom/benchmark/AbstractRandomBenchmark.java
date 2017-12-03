@@ -50,7 +50,7 @@ abstract class AbstractRandomBenchmark {
     prng = createPrng();
   }
 
-  protected abstract Random createPrng() throws SeedException;
+  @EntryPoint protected abstract Random createPrng() throws SeedException;
 
   byte innerTestBytesSequential() {
     for (final byte[] column : bytes) {
