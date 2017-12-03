@@ -62,7 +62,7 @@ public abstract class BaseRandom extends Random
   /** Lock to prevent concurrent modification of the RNG's internal state. */
   protected final ReentrantLock lock = new ReentrantLock();
   /** Stores the entropy estimate backing {@link #getEntropyBits()}. */
-  protected final AtomicLong entropyBits;
+  protected final AtomicLong entropyBits = new AtomicLong(0);
   // Stored as a long since there's no atomic double
   private final AtomicLong nextNextGaussian = new AtomicLong(NAN_LONG_BITS);
   /**
@@ -110,7 +110,6 @@ public abstract class BaseRandom extends Random
     if (seed == null) {
       throw new IllegalArgumentException("Seed must not be null");
     }
-    entropyBits = new AtomicLong(0);
     initTransientFields();
     setSeedInternal(seed);
   }
