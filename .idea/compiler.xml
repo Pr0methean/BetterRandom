@@ -7,19 +7,15 @@
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
         <module name="benchmark" />
-      </profile>
-      <profile name="Annotation profile for root" enabled="true">
-        <sourceOutputDir name="target/generated-sources/annotations" />
-        <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
-        <outputRelativeToContentRoot value="true" />
-        <processor name="org.checkerframework.checker.nullness.NullnessChecker" />
-        <module name="BetterRandom (1)" />
+        <module name="BetterRandom" />
+        <module name="FifoFiller" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
       <module name="benchmark" target="1.8" />
       <module name="BetterRandom" target="1.8" />
       <module name="BetterRandom (1)" target="1.8" />
+      <module name="FifoFiller" target="1.5" />
       <module name="test" target="1.8" />
     </bytecodeTargetLevel>
   </component>
