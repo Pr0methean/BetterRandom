@@ -3,36 +3,7 @@ package io.github.pr0methean.betterrandom.prng;
 import io.github.pr0methean.betterrandom.seed.SeedException;
 import org.testng.annotations.Test;
 
-public class Pcg64RandomTest extends BaseRandomTest {
-
-  private static final int ITERATIONS = 8;
-
-  @Test public void testAdvanceForward() {
-    Pcg64Random copy1 = createRng();
-    Pcg64Random copy2 = createRng(copy1.getSeed());
-    for (int i = 0; i < ITERATIONS; i++) {
-      copy1.nextInt();
-    }
-    copy2.advance(ITERATIONS);
-    RandomTestUtils.testEquivalence(copy1, copy2, 20);
-  }
-
-  @Test public void testAdvanceBackward() {
-    Pcg64Random copy1 = createRng();
-    Pcg64Random copy2 = createRng(copy1.getSeed());
-    for (int i = 0; i < ITERATIONS; i++) {
-      copy1.nextInt();
-    }
-    copy1.advance(-ITERATIONS);
-    RandomTestUtils.testEquivalence(copy1, copy2, 20);
-  }
-
-  @Test public void testAdvanceZero() {
-    Pcg64Random copy1 = createRng();
-    Pcg64Random copy2 = createRng(copy1.getSeed());
-    copy2.advance(0);
-    RandomTestUtils.testEquivalence(copy1, copy2, 20);
-  }
+public class Pcg64RandomTest extends SeekableRandomTest {
 
   @Override public void testSetSeedLong() throws SeedException {
     final BaseRandom rng = createRng();
