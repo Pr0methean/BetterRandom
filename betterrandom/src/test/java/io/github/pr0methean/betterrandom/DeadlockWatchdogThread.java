@@ -13,7 +13,6 @@ public class DeadlockWatchdogThread extends LooperThread {
   private static final ThreadMXBean THREAD_MX_BEAN = ManagementFactory.getThreadMXBean();
   private static final LogPreFormatter LOG = new LogPreFormatter(DeadlockWatchdogThread.class);
   private static final int MAX_STACK_DEPTH = 20;
-  private static final long serialVersionUID = 9118178318042580320L;
   private static final int DEADLOCK_STATUS = 0xDEAD10CC;
   private static DeadlockWatchdogThread INSTANCE = new DeadlockWatchdogThread();
 
@@ -21,28 +20,33 @@ public class DeadlockWatchdogThread extends LooperThread {
     super("DeadlockWatchdogThread");
   }
 
-  public static synchronized void ensureStarted() {
-    if (INSTANCE.getState() == State.TERMINATED) {
+  public static void ensureStarted() {
+    synchronized (DeadlockWatchdogThread.class) {
+      if (INSTANCE.getState() == State.TERMINATED) {
+        INSTANCE = new DeadlockWatchdogThread();
+      }
+      if (INSTANCE.getState() == State.NEW) {
+        INSTANCE.setDaemon(true);
+        INSTANCE.setPriority(Thread.MAX_PRIORITY);
+        INSTANCE.start();
+      }
+    }
+  }
+
+  public static void stopInstance() {
+    synchronized (DeadlockWatchdogThread.class) {
+      INSTANCE.interrupt();
       INSTANCE = new DeadlockWatchdogThread();
     }
-    if (INSTANCE.getState() == State.NEW) {
-      INSTANCE.setDaemon(true);
-      INSTANCE.setPriority(Thread.MAX_PRIORITY);
-      INSTANCE.start();
-    }
   }
 
-  public static synchronized void stopInstance() {
-    INSTANCE.interrupt();
-    INSTANCE = new DeadlockWatchdogThread();
-  }
-
-  @Override public boolean iterate() throws InterruptedException {
+  @SuppressWarnings({"CallToSystemExit", "ConstantConditions"}) @Override public boolean iterate()
+      throws InterruptedException {
     sleep(60_000);
     boolean deadlockFound = false;
-    Level logLevel;
+    final Level logLevel;
     long[] threadsOfInterest = THREAD_MX_BEAN.findDeadlockedThreads();
-    if (threadsOfInterest != null && threadsOfInterest.length > 0) {
+    if ((threadsOfInterest != null) && (threadsOfInterest.length > 0)) {
       LOG.error("DEADLOCKED THREADS FOUND");
       logLevel = Level.SEVERE;
       deadlockFound = true;
@@ -54,10 +58,10 @@ public class DeadlockWatchdogThread extends LooperThread {
         return false;
       }
     }
-    for (long id : threadsOfInterest) {
-      ThreadInfo threadInfo = THREAD_MX_BEAN.getThreadInfo(id, MAX_STACK_DEPTH);
+    for (final long id : threadsOfInterest) {
+      final ThreadInfo threadInfo = THREAD_MX_BEAN.getThreadInfo(id, MAX_STACK_DEPTH);
       LOG.format(logLevel, 0, threadInfo.getThreadName());
-      StackTraceElement[] stackTrace = threadInfo.getStackTrace();
+      final StackTraceElement[] stackTrace = threadInfo.getStackTrace();
       LOG.logStackTrace(logLevel, stackTrace);
     }
     if (deadlockFound) {

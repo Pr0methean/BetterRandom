@@ -3,14 +3,10 @@ package io.github.pr0methean.betterrandom.prng.adapter;
 import io.github.pr0methean.betterrandom.prng.BaseRandom;
 import io.github.pr0methean.betterrandom.prng.RandomTestUtils;
 import io.github.pr0methean.betterrandom.seed.DefaultSeedGenerator;
-import io.github.pr0methean.betterrandom.seed.FakeSeedGenerator;
 import io.github.pr0methean.betterrandom.seed.SeedException;
-import io.github.pr0methean.betterrandom.seed.SeedGenerator;
 import org.testng.annotations.Test;
 
 public class SplittableRandomAdapterTest extends SingleThreadSplittableRandomAdapterTest {
-
-  private static final SeedGenerator FAKE_SEED_GENERATOR = new FakeSeedGenerator();
 
   @Override protected Class<? extends BaseRandom> getClassUnderTest() {
     return SplittableRandomAdapter.class;

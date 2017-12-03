@@ -1,7 +1,6 @@
 package io.github.pr0methean.betterrandom.prng;
 
 import io.github.pr0methean.betterrandom.seed.SeedException;
-import org.testng.annotations.Test;
 
 public class Pcg64RandomTest extends SeekableRandomTest {
 
@@ -23,7 +22,7 @@ public class Pcg64RandomTest extends SeekableRandomTest {
     return new Pcg64Random();
   }
 
-  @Override protected Pcg64Random createRng(byte[] seed) {
+  @Override protected Pcg64Random createRng(final byte[] seed) {
     return new Pcg64Random(seed);
   }
 }

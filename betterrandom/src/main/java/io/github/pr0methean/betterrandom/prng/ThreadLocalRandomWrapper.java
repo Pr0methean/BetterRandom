@@ -20,8 +20,10 @@ import javax.annotation.Nullable;
 public class ThreadLocalRandomWrapper extends RandomWrapper {
 
   private static final long serialVersionUID = 1199235201518562359L;
+  @SuppressWarnings("NonSerializableFieldInSerializableClass")
   protected final Supplier<? extends BaseRandom> initializer;
   @Nullable private final Integer explicitSeedSize;
+  @SuppressWarnings({"FieldAccessedSynchronizedAndUnsynchronized", "ThreadLocalNotStaticFinal"})
   protected transient ThreadLocal<BaseRandom> threadLocal;
 
   /**
@@ -75,7 +77,7 @@ public class ThreadLocalRandomWrapper extends RandomWrapper {
    * @param seedGenerator ignored.
    * @throws UnsupportedOperationException always.
    */
-  @Override public void setSeedGenerator(SeedGenerator seedGenerator) {
+  @Override public void setSeedGenerator(final SeedGenerator seedGenerator) {
     throw new UnsupportedOperationException("This can't be reseeded by a RandomSeederThread");
   }
 
@@ -153,7 +155,8 @@ public class ThreadLocalRandomWrapper extends RandomWrapper {
     return getWrapped().getSeed();
   }
 
-  @Override public synchronized void setSeed(long seed) {
+  @SuppressWarnings("VariableNotUsedInsideIf") @Override
+  public synchronized void setSeed(final long seed) {
     if (threadLocal != null) {
       getWrapped().setSeed(seed);
     }
@@ -168,7 +171,7 @@ public class ThreadLocalRandomWrapper extends RandomWrapper {
       getWrapped().setSeed(seed);
     }
     if (this.seed == null) {
-      this.seed = seed; // Needed for serialization
+      this.seed = seed.clone(); // Needed for serialization
     }
   }
 

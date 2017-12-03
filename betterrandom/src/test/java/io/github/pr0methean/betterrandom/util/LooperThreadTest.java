@@ -17,7 +17,6 @@ import org.testng.annotations.Test;
 @SuppressWarnings("ClassLoaderInstantiation")
 public class LooperThreadTest {
 
-  private static final String THREAD_NAME = "LooperThread for serialization test";
   private static final long STACK_SIZE = 1_234_567;
   private static final Field THREAD_STACK_SIZE;
   private static final Field THREAD_TARGET;
@@ -54,7 +53,7 @@ public class LooperThreadTest {
       thread.start();
       try {
         assertTrue(thread.awaitIteration(1, TimeUnit.SECONDS));
-      } catch (InterruptedException e) {
+      } catch (final InterruptedException e) {
         throw new RuntimeException(e);
       }
     });
@@ -88,7 +87,7 @@ public class LooperThreadTest {
   }
 
   @Test public void testAwaitIteration() throws InterruptedException {
-    SleepingLooperThread sleepingThread = new SleepingLooperThread();
+    final SleepingLooperThread sleepingThread = new SleepingLooperThread();
     sleepingThread.start();
     try {
       assertTrue(sleepingThread.awaitIteration(3, TimeUnit.SECONDS));

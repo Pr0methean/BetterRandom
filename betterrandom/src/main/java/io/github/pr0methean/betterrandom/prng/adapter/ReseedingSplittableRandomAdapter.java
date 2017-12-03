@@ -11,7 +11,6 @@ import java.util.Collections;
 import java.util.Map;
 import java.util.SplittableRandom;
 import java.util.WeakHashMap;
-import java.util.concurrent.atomic.AtomicLong;
 import javax.annotation.Nullable;
 
 /**
@@ -75,7 +74,7 @@ public class ReseedingSplittableRandomAdapter extends BaseSplittableRandomAdapte
     return threadLocal.get().getSeed();
   }
 
-  @Override public void setSeedGenerator(SeedGenerator seedGenerator) {
+  @Override public void setSeedGenerator(final SeedGenerator seedGenerator) {
     throw new UnsupportedOperationException(
         "ReseedingSplittableRandomAdapter's binding to RandomSeederThread is immutable");
   }
@@ -110,7 +109,7 @@ public class ReseedingSplittableRandomAdapter extends BaseSplittableRandomAdapte
     return adapterForThread.getSplittableRandom();
   }
 
-  @Override protected void debitEntropy(long bits) {
+  @Override protected void debitEntropy(final long bits) {
     // Necessary because our inherited next* methods read straight through to the SplittableRandom.
     threadLocal.get().debitEntropy(bits);
   }
@@ -122,9 +121,6 @@ public class ReseedingSplittableRandomAdapter extends BaseSplittableRandomAdapte
 
   @Override protected void setSeedInternal(final byte[] seed) {
     this.seed = seed.clone();
-    if (entropyBits == null) {
-      entropyBits = new AtomicLong(0);
-    }
   }
 
   @Override public int hashCode() {
