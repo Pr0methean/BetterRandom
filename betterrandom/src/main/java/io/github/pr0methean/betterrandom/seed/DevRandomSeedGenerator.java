@@ -15,11 +15,12 @@
 // ============================================================================
 package io.github.pr0methean.betterrandom.seed;
 
-import io.github.pr0methean.betterrandom.util.LogPreFormatter;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.concurrent.atomic.AtomicBoolean;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * RNG seed strategy that gets data from {@code /dev/random} on systems that provide it (e.g.
@@ -34,7 +35,7 @@ public enum DevRandomSeedGenerator implements SeedGenerator {
   /** Singleton instance. */
   DEV_RANDOM_SEED_GENERATOR;
 
-  private static final LogPreFormatter LOG = new LogPreFormatter(DevRandomSeedGenerator.class);
+  private static final Logger LOG = LoggerFactory.getLogger(DevRandomSeedGenerator.class);
   @SuppressWarnings("HardcodedFileSeparator") private static final String DEV_RANDOM_STRING =
       "/dev/random";
   private static final File DEV_RANDOM = new File(DEV_RANDOM_STRING);
@@ -67,7 +68,7 @@ public enum DevRandomSeedGenerator implements SeedGenerator {
       }
     } catch (final IOException ex) {
       if (!DEV_RANDOM.exists()) {
-        LOG.error(DEV_RANDOM_STRING + " does not exist");
+        LOG.error("{} does not exist", DEV_RANDOM_STRING);
         DEV_RANDOM_DOES_NOT_EXIST.lazySet(true);
       }
       throw new SeedException("Failed reading from " + DEV_RANDOM_STRING, ex);
