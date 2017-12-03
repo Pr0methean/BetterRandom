@@ -1,6 +1,7 @@
 # 2.1.1
 * Removes the class `LooperThread.DummyTarget`, which was only used for deserialization.
 * Performance refactors.
+* Fixes a bug in `Pcg64Random` that was biasing `nextBoolean` slightly toward false.
 
 # 2.1.0
 * Fixes many bugs that were affecting reproducibility when concurrent access occurred, especially
