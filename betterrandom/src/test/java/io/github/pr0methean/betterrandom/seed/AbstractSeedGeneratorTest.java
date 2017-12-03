@@ -7,7 +7,7 @@ public abstract class AbstractSeedGeneratorTest {
 
   protected final SeedGenerator seedGenerator;
 
-  public AbstractSeedGeneratorTest(SeedGenerator seedGenerator) {
+  protected AbstractSeedGeneratorTest(final SeedGenerator seedGenerator) {
     this.seedGenerator = seedGenerator;
   }
 

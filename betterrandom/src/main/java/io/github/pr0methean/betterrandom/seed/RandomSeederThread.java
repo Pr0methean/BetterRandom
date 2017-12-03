@@ -37,12 +37,12 @@ public final class RandomSeederThread extends LooperThread {
   private static final AtomicBoolean loggingEnabled = new AtomicBoolean(true);
   private final SeedGenerator seedGenerator;
   private final byte[] longSeedArray = new byte[8];
-  private transient Set<Random> prngs;
-  private transient ByteBuffer longSeedBuffer;
-  private transient Condition waitWhileEmpty;
-  private transient Condition waitForEntropyDrain;
-  private transient Set<Random> prngsThisIteration;
-  private transient WeakHashMap<ByteArrayReseedableRandom, byte[]> seedArrays;
+  private Set<Random> prngs;
+  private ByteBuffer longSeedBuffer;
+  private Condition waitWhileEmpty;
+  private Condition waitForEntropyDrain;
+  private Set<Random> prngsThisIteration;
+  private WeakHashMap<ByteArrayReseedableRandom, byte[]> seedArrays;
 
   /**
    * Private constructor because only one instance per seed source.
@@ -56,7 +56,7 @@ public final class RandomSeederThread extends LooperThread {
    * Controls whether or not to log new instance creation and errors.
    * @param enabled whether to enable logging
    */
-  public static void setLoggingEnabled(boolean enabled) {
+  public static void setLoggingEnabled(final boolean enabled) {
     loggingEnabled.set(enabled);
   }
 
@@ -99,9 +99,9 @@ public final class RandomSeederThread extends LooperThread {
    * Shut down all instances with which no {@link Random} instances are registered.
    */
   public static void stopAllEmpty() {
-    ArrayList<RandomSeederThread> toStop;
+    final ArrayList<RandomSeederThread> toStop = new ArrayList<>();
     do {
-      toStop = new ArrayList<>();
+      toStop.clear();
       synchronized (INSTANCES) {
         // This method is complicated because stopIfEmpty can't be called from inside this loop due
         // to SynchronizedMap limitations.
@@ -111,7 +111,7 @@ public final class RandomSeederThread extends LooperThread {
           }
         }
       }
-      for (RandomSeederThread instance : toStop) {
+      for (final RandomSeederThread instance : toStop) {
         instance.stopIfEmpty();
       }
     } while (!toStop.isEmpty());
@@ -130,7 +130,7 @@ public final class RandomSeederThread extends LooperThread {
     }
   }
 
-  public static boolean isEmpty(SeedGenerator seedGenerator) {
+  public static boolean isEmpty(final SeedGenerator seedGenerator) {
     synchronized (INSTANCES) {
       return (!hasInstance(seedGenerator)) || getInstance(seedGenerator).isEmpty();
     }
@@ -141,7 +141,7 @@ public final class RandomSeederThread extends LooperThread {
    * @param seedGenerator The {@link SeedGenerator} that will reseed the {@code randoms}
    * @param randoms One or more {@link Random} instances to be reseeded
    */
-  public static void add(SeedGenerator seedGenerator, final Random... randoms) {
+  public static void add(final SeedGenerator seedGenerator, final Random... randoms) {
     synchronized (INSTANCES) {
       getInstance(seedGenerator).add(randoms);
     }
@@ -153,16 +153,16 @@ public final class RandomSeederThread extends LooperThread {
    * @param seedGenerator The {@link SeedGenerator} that will reseed the {@code randoms}
    * @param randoms One or more {@link Random} instances to be reseeded
    */
-  public static void remove(SeedGenerator seedGenerator, final Random... randoms) {
+  public static void remove(final SeedGenerator seedGenerator, final Random... randoms) {
     synchronized (INSTANCES) {
-      RandomSeederThread thread = INSTANCES.get(seedGenerator);
+      final RandomSeederThread thread = INSTANCES.get(seedGenerator);
       if (thread != null) {
         thread.remove(randoms);
       }
     }
   }
 
-  public static void stopIfEmpty(SeedGenerator seedGenerator) {
+  public static void stopIfEmpty(final SeedGenerator seedGenerator) {
     synchronized (INSTANCES) {
       if (hasInstance(seedGenerator)) {
         getInstance(seedGenerator).stopIfEmpty();
@@ -290,7 +290,7 @@ public final class RandomSeederThread extends LooperThread {
    */
   private void add(final Random... randoms) {
     lock.lock();
-    if (getState() == State.TERMINATED || isInterrupted()) {
+    if ((getState() == State.TERMINATED) || isInterrupted()) {
       throw new IllegalStateException("Already shut down");
     }
     Collections.addAll(prngs, randoms);

@@ -20,10 +20,6 @@ public class AesCounterRandom384Test extends AesCounterRandom256Test {
   }
 
   @Override public BaseRandom createRng() {
-    if (UNLIMITED_STRENGTH_CRYPTO) {
-      return new AesCounterRandom(48);
-    } else {
-      return super.createRng();
-    }
+    return UNLIMITED_STRENGTH_CRYPTO ? new AesCounterRandom(48) : super.createRng();
   }
 }
