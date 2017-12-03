@@ -2,7 +2,6 @@ package io.github.pr0methean.betterrandom.seed;
 
 import io.github.pr0methean.betterrandom.ByteArrayReseedableRandom;
 import io.github.pr0methean.betterrandom.EntropyCountingRandom;
-import io.github.pr0methean.betterrandom.util.LogPreFormatter;
 import io.github.pr0methean.betterrandom.util.LooperThread;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
@@ -17,9 +16,9 @@ import java.util.WeakHashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.locks.Condition;
-import java.util.logging.Level;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Thread that loops over {@link Random} instances and reseeds them. No {@link
@@ -30,11 +29,10 @@ import java.util.logging.Level;
 public final class RandomSeederThread extends LooperThread {
 
   private static final ExecutorService WAKER_UPPER = Executors.newSingleThreadExecutor();
-  private static final LogPreFormatter LOG = new LogPreFormatter(RandomSeederThread.class);
+  private static final Logger LOG = LoggerFactory.getLogger(RandomSeederThread.class);
   @SuppressWarnings("StaticCollection") private static final Map<SeedGenerator, RandomSeederThread>
       INSTANCES = Collections.synchronizedMap(new WeakHashMap<>(1));
   private static final long POLL_INTERVAL = 60;
-  private static final AtomicBoolean loggingEnabled = new AtomicBoolean(true);
   private final SeedGenerator seedGenerator;
   private final byte[] longSeedArray = new byte[8];
   private Set<Random> prngs;
@@ -53,14 +51,6 @@ public final class RandomSeederThread extends LooperThread {
   }
 
   /**
-   * Controls whether or not to log new instance creation and errors.
-   * @param enabled whether to enable logging
-   */
-  public static void setLoggingEnabled(final boolean enabled) {
-    loggingEnabled.set(enabled);
-  }
-
-  /**
    * Obtain the instance for the given {@link SeedGenerator}, creating and starting it if it doesn't
    * exist.
    * @param seedGenerator the {@link SeedGenerator} to use to seed PRNGs registered with this
@@ -70,9 +60,7 @@ public final class RandomSeederThread extends LooperThread {
   private static RandomSeederThread getInstance(final SeedGenerator seedGenerator) {
     synchronized (INSTANCES) {
       return INSTANCES.computeIfAbsent(seedGenerator, seedGen -> {
-        if (loggingEnabled.get()) {
-          LOG.info("Creating a RandomSeederThread for %s", seedGen);
-        }
+        LOG.info("Creating a RandomSeederThread for {}", seedGen);
         final RandomSeederThread thread = new RandomSeederThread(seedGen);
         thread.setName("RandomSeederThread for " + seedGen);
         thread.setDaemon(true);
@@ -247,10 +235,7 @@ public final class RandomSeederThread extends LooperThread {
       } catch (final Throwable t) {
         // Must unlock before interrupt; otherwise we somehow get a deadlock
         lock.unlock();
-        if (loggingEnabled.get()) {
-          LOG.error("%s", t);
-          LOG.logStackTrace(Level.SEVERE, t.getStackTrace());
-        }
+        LOG.error("Error during reseeding", t);
         interrupt();
         // Must lock again before returning, so we can notify conditions
         lock.lock();
@@ -318,9 +303,7 @@ public final class RandomSeederThread extends LooperThread {
     lock.lock();
     try {
       if (isEmpty()) {
-        if (loggingEnabled.get()) {
-          LOG.info("Stopping empty RandomSeederThread for %s", seedGenerator);
-        }
+        LOG.info("Stopping empty RandomSeederThread for {}", seedGenerator);
         interrupt();
       }
     } finally {

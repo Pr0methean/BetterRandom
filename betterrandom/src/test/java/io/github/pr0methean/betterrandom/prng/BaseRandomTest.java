@@ -91,7 +91,6 @@ public abstract class BaseRandomTest {
   }
 
   @BeforeClass public void setUp() {
-    RandomSeederThread.setLoggingEnabled(false);
   }
 
   @Test public void testAllPublicConstructors()
