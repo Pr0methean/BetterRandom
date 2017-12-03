@@ -29,7 +29,7 @@ public class Pcg64Random extends BaseRandom implements SeekableRandom {
   private static final long serialVersionUID = 1677405697790847137L;
   private static final long MULTIPLIER = 6364136223846793005L;
   private static final long INCREMENT = 1442695040888963407L;
-  private static final int WANTED_OP_BITS = 5;
+  private static final int WANTED_OP_BITS = 4;
   private static final int ROTATION1 = (WANTED_OP_BITS + Integer.SIZE) / 2;
   private static final int ROTATION2 = (Long.SIZE - Integer.SIZE - WANTED_OP_BITS);
   private static final int MASK = (1 << WANTED_OP_BITS) - 1;
