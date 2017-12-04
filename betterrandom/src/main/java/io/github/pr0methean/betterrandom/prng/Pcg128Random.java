@@ -121,7 +121,7 @@ public class Pcg128Random extends BaseRandom implements SeekableRandom {
 
   @Override protected int next(int bits) {
     byte[] result = internalNext();
-    return convertBytesToInt(result, SEED_SIZE_BYTES - Integer.BYTES);
+    return convertBytesToInt(result, SEED_SIZE_BYTES - Integer.BYTES) >> (32 - bits);
   }
 
   @Override protected long nextLongNoEntropyDebit() {
