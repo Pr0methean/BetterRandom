@@ -378,7 +378,8 @@ public abstract class BaseRandom extends Random
 
   /**
    * Returns the next random {@code double} between 0.0 (inclusive) and 1.0 (exclusive), but does
-   * not debit entropy. @return a pseudorandom {@code double}.
+   * not debit entropy.
+   * @return a pseudorandom {@code double}.
    */
   protected double nextDoubleNoEntropyDebit() {
     lock.lock();
