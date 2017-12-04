@@ -55,8 +55,8 @@ public class Pcg128Random extends BaseRandom implements SeekableRandom {
   private static final ThreadLocal<byte[]> accMult = makeByteArrayThreadLocal();
   private static final ThreadLocal<byte[]> accPlus = makeByteArrayThreadLocal();
   private static final ThreadLocal<byte[]> adjMult = makeByteArrayThreadLocal();
-  private ThreadLocal<byte[]> shifted = makeByteArrayThreadLocal();
-  private ThreadLocal<byte[]> rshift = makeByteArrayThreadLocal();
+  private static final ThreadLocal<byte[]> shifted = makeByteArrayThreadLocal();
+  private static final ThreadLocal<byte[]> rshift = makeByteArrayThreadLocal();
 
   public Pcg128Random() {
     this(DefaultSeedGenerator.DEFAULT_SEED_GENERATOR);
@@ -121,7 +121,7 @@ public class Pcg128Random extends BaseRandom implements SeekableRandom {
 
   @Override protected int next(int bits) {
     byte[] result = internalNext();
-    return convertBytesToInt(result, SEED_SIZE_BYTES - Integer.BYTES) >> (32 - bits);
+    return convertBytesToInt(result, SEED_SIZE_BYTES - Integer.BYTES) >>> (32 - bits);
   }
 
   @Override protected long nextLongNoEntropyDebit() {
