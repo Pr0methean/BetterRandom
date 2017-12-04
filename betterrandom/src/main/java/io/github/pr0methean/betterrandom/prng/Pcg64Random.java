@@ -29,7 +29,7 @@ public class Pcg64Random extends BaseRandom implements SeekableRandom {
   private static final long serialVersionUID = 1677405697790847137L;
   private static final long MULTIPLIER = 6364136223846793005L;
   private static final long INCREMENT = 1442695040888963407L;
-  private static final int WANTED_OP_BITS = 5;
+  private static final int WANTED_OP_BITS = 4;
   private static final int ROTATION1 = (WANTED_OP_BITS + Integer.SIZE) / 2;
   private static final int ROTATION2 = (Long.SIZE - Integer.SIZE - WANTED_OP_BITS);
   private static final int MASK = (1 << WANTED_OP_BITS) - 1;
@@ -40,11 +40,11 @@ public class Pcg64Random extends BaseRandom implements SeekableRandom {
     this(DefaultSeedGenerator.DEFAULT_SEED_GENERATOR);
   }
 
-  @EntryPoint public Pcg64Random(SeedGenerator seedGenerator) throws SeedException {
+  @EntryPoint public Pcg64Random(final SeedGenerator seedGenerator) throws SeedException {
     this(seedGenerator.generateSeed(Long.BYTES));
   }
 
-  @EntryPoint public Pcg64Random(byte[] seed) {
+  @EntryPoint public Pcg64Random(final byte[] seed) {
     super(seed);
     if (seed.length != Long.BYTES) {
       throw new IllegalArgumentException("Pcg64Random requires an 8-byte seed");
@@ -52,7 +52,7 @@ public class Pcg64Random extends BaseRandom implements SeekableRandom {
     internal = new AtomicLong(BinaryUtils.convertBytesToLong(seed));
   }
 
-  @EntryPoint public Pcg64Random(long seed) {
+  @EntryPoint public Pcg64Random(final long seed) {
     super(seed);
     internal = new AtomicLong(seed);
   }
@@ -80,16 +80,16 @@ public class Pcg64Random extends BaseRandom implements SeekableRandom {
   }
 
   @SuppressWarnings("NonSynchronizedMethodOverridesSynchronizedMethod") @Override
-  public void setSeed(long seed) {
+  public void setSeed(final long seed) {
     if (internal != null) {
       lock.lock();
       try {
         internal.set(seed);
+        creditEntropyForNewSeed(Long.BYTES);
       } finally {
         lock.unlock();
       }
     }
-    creditEntropyForNewSeed(Long.BYTES);
   }
 
   @Override public void advance(long delta) {
@@ -123,7 +123,7 @@ public class Pcg64Random extends BaseRandom implements SeekableRandom {
     }
   }
 
-  @Override public void setSeedInternal(byte[] seed) {
+  @Override public void setSeedInternal(final byte[] seed) {
     super.setSeedInternal(seed);
     if (seed.length != Long.BYTES) {
       throw new IllegalArgumentException("Pcg64Random requires an 8-byte seed");
@@ -138,25 +138,20 @@ public class Pcg64Random extends BaseRandom implements SeekableRandom {
     }
   }
 
-  @Override protected int next(int bits) {
+  @SuppressWarnings("NumericCastThatLosesPrecision") @Override protected int next(final int bits) {
     long oldInternal;
     long newInternal;
     do {
       oldInternal = internal.get();
-      newInternal = oldInternal * MULTIPLIER + INCREMENT;
-      newInternal ^= oldInternal >>> ROTATION1;
+      newInternal = (oldInternal * MULTIPLIER) + INCREMENT;
     } while (!internal.compareAndSet(oldInternal, newInternal));
-    int rot = (int) (oldInternal >>> (Long.SIZE - WANTED_OP_BITS)) & MASK;
-    int result = (int) (newInternal >>> ROTATION2);
-    final int ampRot = rot & MASK;
-    result = (result >>> ampRot) + (result << (Integer.SIZE - ampRot));
-    if (bits < 32) {
-      result &= (1 << bits) - 1;
-    }
-    return result;
+    // Calculate output function (XSH RR), uses old state for max ILP
+    int xorshifted = (int) (((oldInternal >>> 18L) ^ oldInternal) >>> 27L);
+    int rot = (int) (oldInternal >>> 59L);
+    return ((xorshifted >>> rot) | (xorshifted << ((-rot) & 31))) >>> (Integer.SIZE - bits);
   }
 
-  @Override protected ToStringHelper addSubclassFields(ToStringHelper original) {
+  @Override protected ToStringHelper addSubclassFields(final ToStringHelper original) {
     return original.add("internal", internal.get());
   }
 
@@ -164,7 +159,7 @@ public class Pcg64Random extends BaseRandom implements SeekableRandom {
     return Long.BYTES;
   }
 
-  private void writeObject(ObjectOutputStream out) throws IOException {
+  private void writeObject(final ObjectOutputStream out) throws IOException {
     // Copy the long seed back to the array seed
     System.arraycopy(BinaryUtils.convertLongToBytes(internal.get()), 0, seed, 0, Long.BYTES);
     out.defaultWriteObject();

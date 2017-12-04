@@ -31,7 +31,7 @@ public class RandomWrapperSecureRandomTest extends BaseRandomTest {
   }
 
   @Override public Map<Class<?>, Object> constructorParams() {
-    Map<Class<?>, Object> params = super.constructorParams();
+    final Map<Class<?>, Object> params = super.constructorParams();
     params.put(Random.class, new SecureRandom());
     return params;
   }

@@ -12,10 +12,10 @@ public abstract class SeekableRandomTest extends BaseRandomTest {
   private static final int ITERATIONS = 37;
 
   @Test public void testAdvanceForward() {
-    Random copy1AsRandom = createRng();
-    SeekableRandom copy1 = (SeekableRandom) copy1AsRandom;
-    Random copy2AsRandom = createRng(copy1.getSeed());
-    SeekableRandom copy2 = (SeekableRandom) copy2AsRandom;
+    final Random copy1AsRandom = createRng();
+    final SeekableRandom copy1 = (SeekableRandom) copy1AsRandom;
+    final Random copy2AsRandom = createRng(copy1.getSeed());
+    final SeekableRandom copy2 = (SeekableRandom) copy2AsRandom;
     for (int i = 0; i < ITERATIONS; i++) {
       copy1AsRandom.nextInt();
     }
@@ -24,19 +24,18 @@ public abstract class SeekableRandomTest extends BaseRandomTest {
   }
 
   @Test public void testAdvanceZero() {
-    Random copy1AsRandom = createRng();
-    SeekableRandom copy1 = (SeekableRandom) copy1AsRandom;
-    Random copy2AsRandom = createRng(copy1.getSeed());
-    SeekableRandom copy2 = (SeekableRandom) copy2AsRandom;
+    final Random copy1AsRandom = createRng();
+    final SeekableRandom copy1 = (SeekableRandom) copy1AsRandom;
+    final Random copy2AsRandom = createRng(copy1.getSeed());
+    final SeekableRandom copy2 = (SeekableRandom) copy2AsRandom;
     copy2.advance(0);
     RandomTestUtils.testEquivalence(copy1AsRandom, copy2AsRandom, ITERATIONS);
   }
 
   @Test public void testAdvanceBackward() {
-    Random copy1AsRandom = createRng();
-    SeekableRandom copy1 = (SeekableRandom) copy1AsRandom;
-    Random copy2AsRandom = createRng(copy1.getSeed());
-    SeekableRandom copy2 = (SeekableRandom) copy2AsRandom;
+    final Random copy1AsRandom = createRng();
+    final SeekableRandom copy1 = (SeekableRandom) copy1AsRandom;
+    final Random copy2AsRandom = createRng(copy1.getSeed());
     for (int i = 0; i < ITERATIONS; i++) {
       copy1AsRandom.nextInt();
     }
