@@ -15,7 +15,7 @@
       <module name="benchmark" target="1.8" />
       <module name="BetterRandom" target="1.8" />
       <module name="BetterRandom (1)" target="1.8" />
-      <module name="FifoFiller" target="1.5" />
+      <module name="FifoFiller" target="1.8" />
       <module name="test" target="1.8" />
     </bytecodeTargetLevel>
   </component>
