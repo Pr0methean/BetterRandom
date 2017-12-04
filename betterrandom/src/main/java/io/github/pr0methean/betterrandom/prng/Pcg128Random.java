@@ -57,9 +57,10 @@ public class Pcg128Random extends BaseRandom implements SeekableRandom {
   private static final ThreadLocal<byte[]> accMult = makeByteArrayThreadLocal();
   private static final ThreadLocal<byte[]> accPlus = makeByteArrayThreadLocal();
   private static final ThreadLocal<byte[]> adjMult = makeByteArrayThreadLocal();
-  private static final ThreadLocal<byte[]> shifted = makeByteArrayThreadLocal();
-  private static final ThreadLocal<byte[]> shifted2 = makeByteArrayThreadLocal();
+  private static final ThreadLocal<byte[]> xorshifted = makeByteArrayThreadLocal();
+  private static final ThreadLocal<byte[]> xorshifted2 = makeByteArrayThreadLocal();
   private static final ThreadLocal<byte[]> rshift = makeByteArrayThreadLocal();
+  private static final ThreadLocal<byte[]> newSeed = makeByteArrayThreadLocal();
 
   public Pcg128Random() {
     this(DefaultSeedGenerator.DEFAULT_SEED_GENERATOR);
@@ -137,11 +138,11 @@ public class Pcg128Random extends BaseRandom implements SeekableRandom {
     byte[] newSeed;
     byte[] oldSeed;
     int rshift_int;
-    byte[] shifted;
+    byte[] xorshifted;
 
     try {
       oldSeed = copyInto(this.oldSeed, seed);
-      newSeed = copyInto(this.oldSeed, seed);
+      newSeed = copyInto(this.newSeed, seed);
       multiplyInto(newSeed, MULTIPLIER);
       addInto(newSeed, INCREMENT);
       System.arraycopy(newSeed, 0, seed, 0, seed.length);
@@ -150,22 +151,22 @@ public class Pcg128Random extends BaseRandom implements SeekableRandom {
     }
 
     // int xorshifted = (int) (((oldInternal >>> ROTATION1) ^ oldInternal) >>> ROTATION2);
-    shifted = copyInto(this.shifted, oldSeed);
-    byte[] shifted2 = copyInto(this.shifted2, oldSeed);
-    unsignedShiftRight(shifted2, ROTATION1);
-    xorInto(shifted, shifted2);
-    unsignedShiftRight(shifted, ROTATION2);
+    xorshifted = copyInto(this.xorshifted, oldSeed);
+    byte[] xorshifted2 = copyInto(this.xorshifted2, oldSeed);
+    unsignedShiftRight(xorshifted2, ROTATION1);
+    xorInto(xorshifted, xorshifted2);
+    unsignedShiftRight(xorshifted, ROTATION2);
 
     // int rot = (int) (oldInternal >>> ROTATION3);
     rot = copyInto(this.rot, oldSeed);
     unsignedShiftRight(rot, ROTATION3);
-    final int ampRot = convertBytesToInt(rot, SEED_SIZE_BYTES - Integer.BYTES);
+    final int nRot = convertBytesToInt(rot, SEED_SIZE_BYTES - Integer.BYTES);
 
     // return ((xorshifted >>> rot) | (xorshifted << ((-rot) & MASK)))
-    byte[] resultTerm1 = Byte16ArrayArithmetic.copyInto(this.resultTerm1, shifted);
-    unsignedShiftRight(resultTerm1, ampRot);
-    byte[] resultTerm2 = Byte16ArrayArithmetic.copyInto(this.resultTerm2, shifted);
-    Byte16ArrayArithmetic.unsignedShiftLeft(resultTerm2, 2 * Long.SIZE - ampRot);
+    byte[] resultTerm1 = Byte16ArrayArithmetic.copyInto(this.resultTerm1, xorshifted);
+    unsignedShiftRight(resultTerm1, nRot);
+    byte[] resultTerm2 = Byte16ArrayArithmetic.copyInto(this.resultTerm2, xorshifted);
+    Byte16ArrayArithmetic.unsignedShiftLeft(resultTerm2, 2 * Long.SIZE - nRot);
     orInto(resultTerm2, resultTerm1);
     return resultTerm2;
   }
