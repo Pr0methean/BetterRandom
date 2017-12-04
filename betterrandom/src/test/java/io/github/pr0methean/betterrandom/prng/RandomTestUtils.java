@@ -39,20 +39,21 @@ public enum RandomTestUtils {
   private static final int INSTANCES_TO_HASH = 25;
   private static final int EXPECTED_UNIQUE_HASHES = (int) (0.8 * INSTANCES_TO_HASH);
 
+  @SuppressWarnings("FloatingPointEquality")
   public static void checkRangeAndEntropy(final BaseRandom prng, final long expectedEntropySpent,
       final Supplier<? extends Number> numberSupplier, final double origin, final double bound,
       final EntropyCheckMode entropyCheckMode) {
     final long oldEntropy = prng.getEntropyBits();
     final Number output = numberSupplier.get();
     TestUtils.assertGreaterOrEqual(output.doubleValue(), origin);
-    if (bound - 1.0 == bound) {
+    if ((bound - 1.0) == bound) {
       // Can't do a strict check because of floating-point rounding
       TestUtils.assertLessOrEqual(output.doubleValue(), bound);
     } else {
       TestUtils.assertLess(output.doubleValue(), bound);
     }
-    long entropy = prng.getEntropyBits();
-    long expectedEntropy = oldEntropy - expectedEntropySpent;
+    final long entropy = prng.getEntropyBits();
+    final long expectedEntropy = oldEntropy - expectedEntropySpent;
     switch (entropyCheckMode) {
       case EXACT:
         assertEquals(entropy, expectedEntropy);
@@ -99,7 +100,7 @@ public enum RandomTestUtils {
    * Test that the given parameterless constructor, called twice, doesn't produce RNGs that compare
    * as equal. Also checks for compliance with basic parts of the Object.equals() contract.
    */
-  @SuppressWarnings({"EqualsWithItself", "ObjectEqualsNull", "argument.type.incompatible"})
+  @SuppressWarnings({"EqualsWithItself", "ObjectEqualsNull"})
   public static void doEqualsSanityChecks(final Supplier<? extends Random> ctor) {
     final Random rng = ctor.get();
     final Random rng2 = ctor.get();
@@ -195,9 +196,9 @@ public enum RandomTestUtils {
   public static SynchronizedDescriptiveStatistics summaryStats(final BaseRandom rng,
       final long maxValue, final int iterations) {
     final SynchronizedDescriptiveStatistics stats = new SynchronizedDescriptiveStatistics();
-    BaseStream<? extends Number, ?> stream;
-    stream = (maxValue <= Integer.MAX_VALUE) ? rng.ints(iterations, 0, (int) maxValue)
-        : rng.longs(iterations, 0, maxValue);
+    final BaseStream<? extends Number, ?> stream =
+        (maxValue <= Integer.MAX_VALUE) ? rng.ints(iterations, 0, (int) maxValue)
+            : rng.longs(iterations, 0, maxValue);
     stream.spliterator().forEachRemaining(n -> stats.addValue(n.doubleValue()));
     return stats;
   }

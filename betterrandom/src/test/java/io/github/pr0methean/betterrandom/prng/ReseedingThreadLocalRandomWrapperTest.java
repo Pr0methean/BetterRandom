@@ -4,7 +4,6 @@ import static io.github.pr0methean.betterrandom.TestUtils.assertGreaterOrEqual;
 import static io.github.pr0methean.betterrandom.seed.DefaultSeedGenerator.DEFAULT_SEED_GENERATOR;
 
 import io.github.pr0methean.betterrandom.prng.RandomTestUtils.EntropyCheckMode;
-import io.github.pr0methean.betterrandom.seed.DefaultSeedGenerator;
 import io.github.pr0methean.betterrandom.seed.SeedException;
 import java.io.Serializable;
 import java.util.Arrays;
@@ -15,8 +14,7 @@ import org.testng.annotations.Test;
 public class ReseedingThreadLocalRandomWrapperTest extends ThreadLocalRandomWrapperTest {
 
   @Override public void testWrapLegacy() throws SeedException {
-    ReseedingThreadLocalRandomWrapper
-        .wrapLegacy(Random::new, DefaultSeedGenerator.DEFAULT_SEED_GENERATOR).nextInt();
+    ReseedingThreadLocalRandomWrapper.wrapLegacy(Random::new, DEFAULT_SEED_GENERATOR).nextInt();
   }
 
   @Override protected EntropyCheckMode getEntropyCheckMode() {
@@ -27,14 +25,13 @@ public class ReseedingThreadLocalRandomWrapperTest extends ThreadLocalRandomWrap
     return ReseedingThreadLocalRandomWrapper.class;
   }
 
-  @Override @Test public void testReseeding() {
-    final BaseRandom rng =
-        new ReseedingThreadLocalRandomWrapper(DefaultSeedGenerator.DEFAULT_SEED_GENERATOR,
-            (Serializable & Supplier<BaseRandom>) MersenneTwisterRandom::new);
+  @SuppressWarnings("BusyWait") @Override @Test public void testReseeding() {
+    final BaseRandom rng = new ReseedingThreadLocalRandomWrapper(DEFAULT_SEED_GENERATOR,
+        (Serializable & Supplier<BaseRandom>) MersenneTwisterRandom::new);
     rng.nextLong();
     try {
       Thread.sleep(1000);
-    } catch (InterruptedException e) {
+    } catch (final InterruptedException e) {
       throw new RuntimeException(e);
     }
     final byte[] oldSeed = rng.getSeed();
@@ -45,14 +42,14 @@ public class ReseedingThreadLocalRandomWrapperTest extends ThreadLocalRandomWrap
         Thread.sleep(10);
         newSeed = rng.getSeed();
       } while (Arrays.equals(newSeed, oldSeed));
-      assertGreaterOrEqual(rng.getEntropyBits(), newSeed.length * 8L - 1);
-    } catch (InterruptedException e) {
+      assertGreaterOrEqual(rng.getEntropyBits(), (newSeed.length * 8L) - 1);
+    } catch (final InterruptedException e) {
       throw new RuntimeException(e);
     }
   }
 
   /** Assertion-free since reseeding may cause divergent output. */
-  @Test(timeOut = 10000) public void testSetSeedLong() {
+  @Override @Test(timeOut = 10000) public void testSetSeedLong() {
     createRng().setSeed(0x0123456789ABCDEFL);
   }
 
@@ -65,7 +62,7 @@ public class ReseedingThreadLocalRandomWrapperTest extends ThreadLocalRandomWrap
   }
 
   @Override protected BaseRandom createRng() throws SeedException {
-    return new ReseedingThreadLocalRandomWrapper(DefaultSeedGenerator.DEFAULT_SEED_GENERATOR,
+    return new ReseedingThreadLocalRandomWrapper(DEFAULT_SEED_GENERATOR,
         (Serializable & Supplier<BaseRandom>) MersenneTwisterRandom::new);
   }
 }

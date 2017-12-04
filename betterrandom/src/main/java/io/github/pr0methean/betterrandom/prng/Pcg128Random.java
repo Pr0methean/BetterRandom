@@ -41,7 +41,7 @@ public class Pcg128Random extends BaseRandom implements SeekableRandom {
       {0x00000058, 0x00000051, 0xfffffff4, 0x0000002d, 0x0000004c, 0xffffff95, 0x0000007f,
           0x0000002d, 0x00000014, 0x00000005, 0x0000007b, 0x0000007e, 0xfffffff7, 0x00000067,
           0xffffff81, 0x0000004f};
-  private static final int WANTED_OP_BITS = 5;
+  private static final int WANTED_OP_BITS = 6;
   public static final int ROTATION1 = Long.SIZE * 2 - WANTED_OP_BITS;
   private static final int ROTATION2 = (Long.SIZE - WANTED_OP_BITS);
   private static final int MASK = (1 << WANTED_OP_BITS) - 1;

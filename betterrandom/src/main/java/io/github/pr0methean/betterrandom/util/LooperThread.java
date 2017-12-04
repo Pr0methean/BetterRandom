@@ -18,13 +18,12 @@ public class LooperThread extends Thread {
    * The thread holds this lock whenever it is being serialized or cloned or is running {@link
    * #iterate()} called by {@link #run()}.
    */
-  protected transient Lock lock = new ReentrantLock(true);
+  protected final Lock lock = new ReentrantLock(true);
+  protected final Condition endOfIteration = lock.newCondition();
   /**
    * The {@link Runnable} that was passed into this thread's constructor, if any.
    */
-  @Nullable protected transient Runnable target;
-
-  protected transient Condition endOfIteration = lock.newCondition();
+  @Nullable protected Runnable target;
 
   /**
    * Constructs a LooperThread with the given name and target. {@code target} should only be null if
@@ -32,7 +31,7 @@ public class LooperThread extends Thread {
    * @param target If not null, the target this thread will run in {@link #iterate()}.
    * @param name the thread name
    */
-  public LooperThread(@Nullable final Runnable target, String name) {
+  public LooperThread(@Nullable final Runnable target, final String name) {
     super(target, name);
     this.target = target;
   }
@@ -44,7 +43,7 @@ public class LooperThread extends Thread {
    * @param group The ThreadGroup this thread will belong to.
    * @param target If not null, the target this thread will run in {@link #iterate()}.
    */
-  public LooperThread(ThreadGroup group, @Nullable final Runnable target) {
+  public LooperThread(final ThreadGroup group, @Nullable final Runnable target) {
     super(group, target);
     this.target = target;
   }
@@ -61,8 +60,8 @@ public class LooperThread extends Thread {
    * @param stackSize the desired stack size for the new thread, or zero to indicate that this
    *     parameter is to be ignored.
    */
-  public LooperThread(ThreadGroup group, @Nullable final Runnable target, String name,
-      long stackSize) {
+  public LooperThread(final ThreadGroup group, @Nullable final Runnable target, final String name,
+      final long stackSize) {
     super(group, target, name, stackSize);
     this.target = target;
   }
@@ -74,7 +73,7 @@ public class LooperThread extends Thread {
    * @param group The ThreadGroup this thread will belong to.
    * @param name the thread name
    */
-  protected LooperThread(ThreadGroup group, String name) {
+  protected LooperThread(final ThreadGroup group, final String name) {
     super(group, name);
   }
 
@@ -96,7 +95,7 @@ public class LooperThread extends Thread {
    * @param target If not null, the target this thread will run in {@link #iterate()}.
    * @param name the thread name
    */
-  public LooperThread(ThreadGroup group, @Nullable final Runnable target, String name) {
+  public LooperThread(final ThreadGroup group, @Nullable final Runnable target, final String name) {
     super(group, target, name);
     this.target = target;
   }
@@ -106,7 +105,7 @@ public class LooperThread extends Thread {
    * thus should only be used in subclasses that override {@link #iterate()}.
    * @param name the thread name
    */
-  protected LooperThread(String name) {
+  protected LooperThread(final String name) {
     super(name);
   }
 
@@ -144,22 +143,19 @@ public class LooperThread extends Thread {
     while (true) {
       try {
         lock.lockInterruptibly();
-      } catch (InterruptedException e) {
-        interrupt();
-        break;
-      }
-      try {
-        boolean shouldContinue = iterate();
-        finishedIterations.getAndIncrement();
-        if (!shouldContinue) {
-          break;
+        try {
+          final boolean shouldContinue = iterate();
+          finishedIterations.getAndIncrement();
+          if (!shouldContinue) {
+            break;
+          }
+        } finally {
+          endOfIteration.signalAll();
+          lock.unlock();
         }
       } catch (final InterruptedException ignored) {
         interrupt();
         break;
-      } finally {
-        endOfIteration.signalAll();
-        lock.unlock();
       }
     }
   }

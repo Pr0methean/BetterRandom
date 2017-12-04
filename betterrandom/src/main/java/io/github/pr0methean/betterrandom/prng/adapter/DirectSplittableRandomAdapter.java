@@ -32,7 +32,6 @@ public abstract class DirectSplittableRandomAdapter extends BaseSplittableRandom
    */
   protected DirectSplittableRandomAdapter(final byte[] seed) {
     super(seed);
-    setSeedInternal(seed);
   }
 
   /**
@@ -68,7 +67,9 @@ public abstract class DirectSplittableRandomAdapter extends BaseSplittableRandom
    * Replaces {@link #underlying} with a new {@link SplittableRandom} that uses the given seed.
    */
   @Override public void setSeed(final long seed) {
-    super.setSeedInternal(BinaryUtils.convertLongToBytes(seed));
-    underlying = new SplittableRandom(seed);
+    if (superConstructorFinished) {
+      super.setSeedInternal(BinaryUtils.convertLongToBytes(seed));
+      underlying = new SplittableRandom(seed);
+    }
   }
 }

@@ -22,6 +22,7 @@ import io.github.pr0methean.betterrandom.seed.RandomSeederThread;
 import io.github.pr0methean.betterrandom.seed.SeedException;
 import io.github.pr0methean.betterrandom.seed.SeedGenerator;
 import java.io.IOException;
+import java.io.Serializable;
 import java.lang.reflect.InvocationTargetException;
 import java.security.GeneralSecurityException;
 import java.util.Arrays;
@@ -59,9 +60,9 @@ public abstract class BaseRandomTest {
       new NamedFunction<>(Random::nextDouble, "Random::nextDouble");
   protected static final NamedFunction<Random, Double> NEXT_GAUSSIAN =
       new NamedFunction<>(Random::nextGaussian, "Random::nextGaussian");
-  protected static final List<NamedFunction<Random, Double>> FUNCTIONS_FOR_THREAD_SAFETY_TEST =
+  @SuppressWarnings("StaticCollection") protected static final List<NamedFunction<Random, Double>>
+      FUNCTIONS_FOR_THREAD_SAFETY_TEST =
       ImmutableList.of(NEXT_LONG, NEXT_INT, NEXT_DOUBLE, NEXT_GAUSSIAN);
-  private static final int FLAKY_TEST_RETRIES = 2;
   private static final int TEST_BYTE_ARRAY_LENGTH = 20;
   private static final String HELLO = "Hello";
   private static final String HOW_ARE_YOU = "How are you?";
@@ -90,7 +91,6 @@ public abstract class BaseRandomTest {
   }
 
   @BeforeClass public void setUp() {
-    RandomSeederThread.setLoggingEnabled(false);
   }
 
   @Test public void testAllPublicConstructors()
@@ -102,7 +102,7 @@ public abstract class BaseRandomTest {
 
   protected Map<Class<?>, Object> constructorParams() {
     final int seedLength = getNewSeedLength(createRng());
-    final HashMap<Class<?>, Object> params = new HashMap<>();
+    final HashMap<Class<?>, Object> params = new HashMap<>(4);
     params.put(int.class, seedLength);
     params.put(long.class, TEST_SEED);
     params.put(byte[].class, DefaultSeedGenerator.DEFAULT_SEED_GENERATOR.generateSeed(seedLength));
@@ -217,7 +217,6 @@ public abstract class BaseRandomTest {
   /**
    * RNG must not accept a null seed otherwise it will not be properly initialised.
    */
-  @SuppressWarnings("argument.type.incompatible")
   @Test(timeOut = 15000, expectedExceptions = IllegalArgumentException.class)
   public void testNullSeed() throws SeedException {
     createRng(null);
@@ -281,7 +280,8 @@ public abstract class BaseRandomTest {
     assertFalse(Arrays.equals(output1, output2));
   }
 
-  @Test(timeOut = 60000) public void testRandomSeederThreadIntegration() throws Exception {
+  @SuppressWarnings("BusyWait") @Test(timeOut = 60000)
+  public void testRandomSeederThreadIntegration() throws Exception {
     final BaseRandom rng = createRng();
     final byte[] oldSeed = rng.getSeed();
     while (rng.getEntropyBits() > Long.SIZE) {
@@ -296,12 +296,12 @@ public abstract class BaseRandomTest {
         Thread.sleep(10);
         waits++;
         newSeed = rng.getSeed();
-      } while (Arrays.equals(newSeed, oldSeed) && waits < 1000);
+      } while (Arrays.equals(newSeed, oldSeed) && (waits < 1000));
       if (waits >= 1000) {
         fail(String.format("Timed out waiting for %s to be reseeded!", rng));
       }
       Thread.sleep(100); // entropy update may not be co-atomic with seed update
-      assertGreaterOrEqual(rng.getEntropyBits(), newSeed.length * 8L - 1);
+      assertGreaterOrEqual(rng.getEntropyBits(), (newSeed.length * 8L) - 1);
     } finally {
       rng.setSeedGenerator(null);
     }
@@ -359,8 +359,8 @@ public abstract class BaseRandomTest {
     final long oldEntropy = prng.getEntropyBits();
     prng.nextBytes(testBytes);
     assertFalse(Arrays.equals(testBytes, new byte[TEST_BYTE_ARRAY_LENGTH]));
-    long entropy = prng.getEntropyBits();
-    long expectedEntropy = oldEntropy - (8 * TEST_BYTE_ARRAY_LENGTH);
+    final long entropy = prng.getEntropyBits();
+    final long expectedEntropy = oldEntropy - (8 * TEST_BYTE_ARRAY_LENGTH);
     switch (getEntropyCheckMode()) {
       case EXACT:
         assertEquals(entropy, expectedEntropy);
@@ -623,6 +623,7 @@ public abstract class BaseRandomTest {
     }
   }
 
+  @SuppressWarnings({"EqualityOperatorComparesObjects", "ObjectEquality"})
   protected void testThreadSafety(final List<NamedFunction<Random, Double>> functions,
       final List<NamedFunction<Random, Double>> pairwiseFunctions) {
     final int seedLength = createRng().getNewSeedLength();
@@ -633,7 +634,7 @@ public abstract class BaseRandomTest {
         runSequential(supplier, supplier, seed);
         runParallel(supplier, supplier, seed);
         assertEquals(sequentialOutput, parallelOutput,
-            "output differs between sequential/parallel calls to " + supplier);
+            "output differs between sequential & parallel calls to " + supplier);
       }
     }
 
@@ -683,12 +684,13 @@ public abstract class BaseRandomTest {
    */
   protected static final class GeneratorForkJoinTask<T> extends ForkJoinTask<Void> {
 
+    private static final long serialVersionUID = 9155874155769888368L;
     private final Random prng;
     private final ConcurrentSkipListSet<T> set;
-    private final Function<Random, T> function;
+    private final NamedFunction<Random, T> function;
 
     public GeneratorForkJoinTask(final Random prng, final ConcurrentSkipListSet<T> set,
-        final Function<Random, T> function) {
+        final NamedFunction<Random, T> function) {
       this.prng = prng;
       this.set = set;
       this.function = function;
@@ -710,7 +712,7 @@ public abstract class BaseRandomTest {
     }
   }
 
-  protected static final class NamedFunction<T, R> implements Function<T, R> {
+  protected static final class NamedFunction<T, R> implements Function<T, R>, Serializable {
 
     private final Function<T, R> function;
     private final String name;

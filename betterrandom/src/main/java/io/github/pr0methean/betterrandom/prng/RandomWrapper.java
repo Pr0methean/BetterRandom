@@ -43,7 +43,7 @@ public class RandomWrapper extends BaseRandom {
   protected static final byte[] DUMMY_SEED = new byte[8];
   private static final long serialVersionUID = -6526304552538799385L;
   private volatile Random wrapped;
-  private boolean unknownSeed = true;
+  private volatile boolean unknownSeed = true;
   private boolean haveParallelStreams;
 
   /**
@@ -178,7 +178,7 @@ public class RandomWrapper extends BaseRandom {
     return super.getSeed();
   }
 
-  @Override public synchronized void setSeed(long seed) {
+  @Override public synchronized void setSeed(final long seed) {
     if (wrapped != null) {
       wrapped.setSeed(seed);
       super.setSeedInternal(BinaryUtils.convertLongToBytes(seed));
