@@ -144,16 +144,11 @@ public class Pcg64Random extends BaseRandom implements SeekableRandom {
     do {
       oldInternal = internal.get();
       newInternal = (oldInternal * MULTIPLIER) + INCREMENT;
-      newInternal ^= oldInternal >>> ROTATION1;
     } while (!internal.compareAndSet(oldInternal, newInternal));
-    final int rot = (int) (oldInternal >>> (Long.SIZE - WANTED_OP_BITS)) & MASK;
-    int result = (int) (newInternal >>> ROTATION2);
-    final int ampRot = rot & MASK;
-    result = (result >>> ampRot) + (result << (Integer.SIZE - ampRot));
-    if (bits < 32) {
-      result &= (1 << bits) - 1;
-    }
-    return result;
+    // Calculate output function (XSH RR), uses old state for max ILP
+    int xorshifted = (int) (((oldInternal >> 18L) ^ oldInternal) >> 27L);
+    int rot = (int) (oldInternal >> 59L);
+    return (xorshifted >> rot) | (xorshiAfted << ((-rot) & 31));
   }
 
   @Override protected ToStringHelper addSubclassFields(final ToStringHelper original) {
