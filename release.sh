@@ -10,8 +10,8 @@ rm -rf ../../.m2/repository/io/github/pr0methean/betterrandom/ &&\
   if [ ${STATUS} ]; then
     sed -i "s/${OLDVERSION}/${NEWVERSION}/" ../benchmark/pom.xml
     sed -i "s/${OLDVERSION}/${NEWVERSION}/" ../FifoFiller/pom.xml
-    git add pom9.xml
     git add ../benchmark/pom.xml
+    git add ../FifoFiller/pom.xml
     git commit -m "🤖 Update benchmark to use new snapshot version following release"
     git push
   else
