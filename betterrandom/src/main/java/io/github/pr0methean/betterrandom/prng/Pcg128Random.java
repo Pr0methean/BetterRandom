@@ -73,8 +73,7 @@ public class Pcg128Random extends BaseRandom implements SeekableRandom {
     }
   }
 
-  @SuppressWarnings("NonSynchronizedMethodOverridesSynchronizedMethod") @Override
-  public void setSeed(long seed) {
+  public synchronized void setSeed(long seed) {
     fallbackSetSeedIfInitialized();
   }
 
@@ -136,7 +135,6 @@ public class Pcg128Random extends BaseRandom implements SeekableRandom {
     byte[] oldSeed;
     int rshift_int;
     byte[] shifted;
-    final int mask = (1 << WANTED_OP_BITS) - 1;
 
     try {
       oldSeed = copyInto(this.oldSeed, seed);
