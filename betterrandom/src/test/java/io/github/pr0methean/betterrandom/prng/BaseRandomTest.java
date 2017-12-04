@@ -167,9 +167,6 @@ public abstract class BaseRandomTest {
           RandomTestUtils.summaryStats(rng, n, iterations);
       final double observedSD = stats.getStandardDeviation();
       final double expectedSD = n / SQRT_12;
-      Reporter.log("Expected SD: " + expectedSD + ", observed SD: " + observedSD);
-      assertGreaterOrEqual(observedSD, 0.98 * expectedSD);
-      assertLessOrEqual(observedSD, 1.02 * expectedSD);
       assertGreaterOrEqual(stats.getMax(), 0.9 * n);
       assertLessOrEqual(stats.getMax(), n - 1);
       assertGreaterOrEqual(stats.getMin(), 0);
@@ -179,6 +176,9 @@ public abstract class BaseRandomTest {
       final double median = stats.getPercentile(50);
       assertGreaterOrEqual(median, 0.4 * n);
       assertLessOrEqual(median, 0.6 * n);
+      Reporter.log("Expected SD: " + expectedSD + ", observed SD: " + observedSD);
+      assertGreaterOrEqual(observedSD, 0.98 * expectedSD);
+      assertLessOrEqual(observedSD, 1.02 * expectedSD);
     }
   }
 
