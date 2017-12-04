@@ -50,6 +50,9 @@ public class Pcg128Random extends BaseRandom implements SeekableRandom {
 
   private static final ThreadLocal<byte[]> rot = makeByteArrayThreadLocal();
   private static final ThreadLocal<byte[]> oldSeed = makeByteArrayThreadLocal();
+  private static final ThreadLocal<byte[]> newSeed = makeByteArrayThreadLocal();
+  private static final ThreadLocal<byte[]> xorshifted = makeByteArrayThreadLocal();
+  private static final ThreadLocal<byte[]> xorshifted2 = makeByteArrayThreadLocal();
   private static final ThreadLocal<byte[]> resultTerm1 = makeByteArrayThreadLocal();
   private static final ThreadLocal<byte[]> resultTerm2 = makeByteArrayThreadLocal();
   private static final ThreadLocal<byte[]> curMult = makeByteArrayThreadLocal();
@@ -57,10 +60,6 @@ public class Pcg128Random extends BaseRandom implements SeekableRandom {
   private static final ThreadLocal<byte[]> accMult = makeByteArrayThreadLocal();
   private static final ThreadLocal<byte[]> accPlus = makeByteArrayThreadLocal();
   private static final ThreadLocal<byte[]> adjMult = makeByteArrayThreadLocal();
-  private static final ThreadLocal<byte[]> xorshifted = makeByteArrayThreadLocal();
-  private static final ThreadLocal<byte[]> xorshifted2 = makeByteArrayThreadLocal();
-  private static final ThreadLocal<byte[]> rshift = makeByteArrayThreadLocal();
-  private static final ThreadLocal<byte[]> newSeed = makeByteArrayThreadLocal();
 
   public Pcg128Random() {
     this(DefaultSeedGenerator.DEFAULT_SEED_GENERATOR);
@@ -134,15 +133,10 @@ public class Pcg128Random extends BaseRandom implements SeekableRandom {
 
   private byte[] internalNext() {
     lock.lock();
-    byte[] rot;
-    byte[] newSeed;
     byte[] oldSeed;
-    int rshift_int;
-    byte[] xorshifted;
-
     try {
       oldSeed = copyInto(this.oldSeed, seed);
-      newSeed = copyInto(this.newSeed, seed);
+      byte[] newSeed = copyInto(this.newSeed, seed);
       multiplyInto(newSeed, MULTIPLIER);
       addInto(newSeed, INCREMENT);
       System.arraycopy(newSeed, 0, seed, 0, seed.length);
@@ -151,14 +145,14 @@ public class Pcg128Random extends BaseRandom implements SeekableRandom {
     }
 
     // int xorshifted = (int) (((oldInternal >>> ROTATION1) ^ oldInternal) >>> ROTATION2);
-    xorshifted = copyInto(this.xorshifted, oldSeed);
+    byte[] xorshifted = copyInto(this.xorshifted, oldSeed);
     byte[] xorshifted2 = copyInto(this.xorshifted2, oldSeed);
     unsignedShiftRight(xorshifted2, ROTATION1);
     xorInto(xorshifted, xorshifted2);
     unsignedShiftRight(xorshifted, ROTATION2);
 
     // int rot = (int) (oldInternal >>> ROTATION3);
-    rot = copyInto(this.rot, oldSeed);
+    byte[] rot = copyInto(this.rot, oldSeed);
     unsignedShiftRight(rot, ROTATION3);
     final int nRot = convertBytesToInt(rot, SEED_SIZE_BYTES - Integer.BYTES);
 
