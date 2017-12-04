@@ -101,37 +101,37 @@ jobs:
     stage: OSX long tests
   - language: java
     os: linux
-    jdk: oraclejdk8
+    jdk: oraclejdk9
     env: OP=dieharder CLASS=AesCounterRandom
     stage: linux long tests
   - language: java
     os: linux
-    jdk: oraclejdk8
+    jdk: oraclejdk9
     env: OP=dieharder CLASS=CellularAutomatonRandom
     stage: linux long tests
   - language: java
     os: linux
-    jdk: oraclejdk8
+    jdk: oraclejdk9
     env: OP=dieharder CLASS=Cmwc4096Random
     stage: linux long tests
   - language: java
     os: linux
-    jdk: oraclejdk8
+    jdk: oraclejdk9
     env: OP=dieharder CLASS=MersenneTwisterRandom
     stage: linux long tests
   - language: java
     os: linux
-    jdk: oraclejdk8
+    jdk: oraclejdk9
     env: OP=dieharder CLASS=Pcg64Random
     stage: linux long tests
   - language: java
     os: linux
-    jdk: oraclejdk8
+    jdk: oraclejdk9
     env: OP=dieharder CLASS=XorShiftRandom
     stage: linux long tests
   - language: java
     os: linux
-    jdk: oraclejdk8
+    jdk: oraclejdk9
     env: OP=dieharder CLASS=adapter.SingleThreadSplittableRandomAdapter
     stage: linux long tests
   allow_failures:
