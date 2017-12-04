@@ -1,4 +1,8 @@
 #!/bin/sh
+if [ "$TRAVIS" = "true" ]; then
+  sudo apt-get -qq update
+  sudo apt-get install -y dieharder
+fi
 cd betterrandom
 if ([ "$TRAVIS_JDK_VERSION" = "oraclejdk9" ] || [ "$TRAVIS_JDK_VERSION" = "openjdk9" ]); then
   mv pom9.xml pom.xml
