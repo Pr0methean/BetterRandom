@@ -67,15 +67,6 @@ public class Pcg64Random extends BaseRandom implements SeekableRandom {
     }
   }
 
-  @Override public double nextDoubleNoEntropyDebit() {
-    lock.lock();
-    try {
-      return super.nextDoubleNoEntropyDebit();
-    } finally {
-      lock.unlock();
-    }
-  }
-
   @Override public byte[] getSeed() {
     return BinaryUtils.convertLongToBytes(internal.get()).clone();
   }
