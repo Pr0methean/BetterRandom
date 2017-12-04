@@ -139,6 +139,17 @@ public enum Byte16ArrayArithmetic {
   }
 
   /**
+   * {@code result |= operand}. Inputs must be the same length.
+   * @param result the first input and the result
+   * @param operand
+   */
+  public static void orInto(byte[] result, byte[] operand) {
+    for (int i = 0; i < result.length; i++) {
+      result[i] |= operand[i];
+    }
+  }
+
+  /**
    * {@code shifted <<= bits}
    * @param shifted the array input and the result
    * @param bits how many bits to shift by
