@@ -127,6 +127,11 @@ jobs:
   - language: java
     os: linux
     jdk: oraclejdk9
+    env: OP=dieharder CLASS=Pcg128Random
+    stage: linux long tests
+  - language: java
+    os: linux
+    jdk: oraclejdk9
     env: OP=dieharder CLASS=XorShiftRandom
     stage: linux long tests
   - language: java
