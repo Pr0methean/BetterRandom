@@ -1,5 +1,7 @@
-# 2.1.1
+# 2.2.0
+* Logging is now done through `slf4j`.
 * Removes the class `LooperThread.DummyTarget`, which was only used for deserialization.
+* Fixes a bug in `Pcg64Random` that was biasing `nextBoolean` slightly toward false.
 * Performance refactors.
 
 # 2.1.0

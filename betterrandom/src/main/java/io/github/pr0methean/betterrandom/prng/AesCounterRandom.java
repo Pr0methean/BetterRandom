@@ -23,7 +23,6 @@ import io.github.pr0methean.betterrandom.seed.DefaultSeedGenerator;
 import io.github.pr0methean.betterrandom.seed.SeedException;
 import io.github.pr0methean.betterrandom.seed.SeedGenerator;
 import io.github.pr0methean.betterrandom.util.BinaryUtils;
-import io.github.pr0methean.betterrandom.util.LogPreFormatter;
 import java.security.GeneralSecurityException;
 import java.security.InvalidKeyException;
 import java.security.MessageDigest;
@@ -33,6 +32,8 @@ import java.util.Random;
 import javax.crypto.Cipher;
 import javax.crypto.NoSuchPaddingException;
 import javax.crypto.spec.SecretKeySpec;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * <p>Non-linear random number generator based on the AES block cipher in counter mode. Uses the
@@ -49,7 +50,7 @@ import javax.crypto.spec.SecretKeySpec;
 public class AesCounterRandom extends BaseRandom implements SeekableRandom {
 
   private static final long serialVersionUID = 5949778642428995210L;
-  private static final LogPreFormatter LOG = new LogPreFormatter(AesCounterRandom.class);
+  private static final Logger LOG = LoggerFactory.getLogger(AesCounterRandom.class);
   private static final int DEFAULT_SEED_SIZE_BYTES = 32;
   /**
    * Theoretically, the Rijndael algorithm supports key sizes and block sizes of 16, 20, 24, 28 & 32
@@ -82,7 +83,7 @@ public class AesCounterRandom extends BaseRandom implements SeekableRandom {
     } catch (final GeneralSecurityException e) {
       throw new RuntimeException(e);
     }
-    LOG.info("Maximum allowed key length for AES is %d bytes", MAX_KEY_LENGTH_BYTES);
+    LOG.info("Maximum allowed key length for AES is {} bytes", MAX_KEY_LENGTH_BYTES);
     MAX_KEY_LENGTH_BYTES = Math.min(MAX_KEY_LENGTH_BYTES, 32);
     MAX_TOTAL_SEED_LENGTH_BYTES = MAX_KEY_LENGTH_BYTES + COUNTER_SIZE_BYTES;
   }

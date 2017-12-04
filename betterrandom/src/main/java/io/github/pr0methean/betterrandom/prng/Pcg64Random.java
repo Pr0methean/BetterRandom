@@ -31,7 +31,7 @@ public class Pcg64Random extends BaseRandom implements SeekableRandom {
   private static final long serialVersionUID = 1677405697790847137L;
   private static final long MULTIPLIER = 6364136223846793005L;
   private static final long INCREMENT = 1442695040888963407L;
-  private static final int WANTED_OP_BITS = 5;
+  private static final int WANTED_OP_BITS = 4;
   private static final int ROTATION1 = (WANTED_OP_BITS + Integer.SIZE) / 2;
   private static final int ROTATION2 = (Long.SIZE - Integer.SIZE - WANTED_OP_BITS);
   private static final int MASK = (1 << WANTED_OP_BITS) - 1;
@@ -150,16 +150,11 @@ public class Pcg64Random extends BaseRandom implements SeekableRandom {
     do {
       oldInternal = internal.get();
       newInternal = (oldInternal * MULTIPLIER) + INCREMENT;
-      newInternal ^= oldInternal >>> ROTATION1;
     } while (!internal.compareAndSet(oldInternal, newInternal));
-    final int rot = (int) (oldInternal >>> (Long.SIZE - WANTED_OP_BITS)) & MASK;
-    int result = (int) (newInternal >>> ROTATION2);
-    final int ampRot = rot & MASK;
-    result = (result >>> ampRot) + (result << (Integer.SIZE - ampRot));
-    if (bits < 32) {
-      result &= (1 << bits) - 1;
-    }
-    return result;
+    // Calculate output function (XSH RR), uses old state for max ILP
+    int xorshifted = (int) (((oldInternal >>> 18L) ^ oldInternal) >>> 27L);
+    int rot = (int) (oldInternal >>> 59L);
+    return ((xorshifted >>> rot) | (xorshifted << ((-rot) & 31))) >>> (Integer.SIZE - bits);
   }
 
   @Override protected ToStringHelper addSubclassFields(final ToStringHelper original) {

@@ -13,7 +13,6 @@ import io.github.pr0methean.betterrandom.util.BinaryUtils;
 import io.github.pr0methean.betterrandom.util.Dumpable;
 import io.github.pr0methean.betterrandom.util.EntryPoint;
 import io.github.pr0methean.betterrandom.util.Java8Constants;
-import io.github.pr0methean.betterrandom.util.LogPreFormatter;
 import java.io.IOException;
 import java.io.InvalidObjectException;
 import java.io.ObjectInputStream;
@@ -35,6 +34,8 @@ import java8.util.stream.IntStream;
 import java8.util.stream.IntStreams;
 import java8.util.stream.LongStream;
 import java8.util.stream.LongStreams;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Abstract {@link Random} with a seed field and an implementation of entropy counting.
@@ -51,7 +52,7 @@ public abstract class BaseRandom extends Random
   protected static final int ENTROPY_OF_DOUBLE = 53;
 
   private static final long NAN_LONG_BITS = Double.doubleToLongBits(Double.NaN);
-  private static final LogPreFormatter LOG = new LogPreFormatter(BaseRandom.class);
+  private static final Logger LOG = LoggerFactory.getLogger(BaseRandom.class);
   private static final long serialVersionUID = -1556392727255964947L;
   /**
    * If the referent is non-null, it will be invoked to reseed this PRNG whenever random output is
