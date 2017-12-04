@@ -148,28 +148,25 @@ public class Pcg128Random extends BaseRandom implements SeekableRandom {
     } finally {
       lock.unlock();
     }
-    //System.out.format("oldSeed = %s%n", BinaryUtils.convertBytesToHexString(oldSeed));
+
     // int xorshifted = (int) (((oldInternal >>> ROTATION1) ^ oldInternal) >>> ROTATION2);
     shifted = copyInto(this.shifted, oldSeed);
     byte[] shifted2 = copyInto(this.shifted2, oldSeed);
     unsignedShiftRight(shifted2, ROTATION1);
     xorInto(shifted, shifted2);
     unsignedShiftRight(shifted, ROTATION2);
+
     // int rot = (int) (oldInternal >>> ROTATION3);
     rot = copyInto(this.rot, oldSeed);
     unsignedShiftRight(rot, ROTATION3);
     final int ampRot = convertBytesToInt(rot, SEED_SIZE_BYTES - Integer.BYTES);
-    //System.out.format("ampRot = %d, (-ampRot) & MASK = %d%n", ampRot, (-ampRot) & MASK);
+
     // return ((xorshifted >>> rot) | (xorshifted << ((-rot) & MASK)))
     byte[] resultTerm1 = Byte16ArrayArithmetic.copyInto(this.resultTerm1, shifted);
     unsignedShiftRight(resultTerm1, ampRot);
     byte[] resultTerm2 = Byte16ArrayArithmetic.copyInto(this.resultTerm2, shifted);
     Byte16ArrayArithmetic.unsignedShiftLeft(resultTerm2, 2 * Long.SIZE - ampRot);
-    /*System.out.format("resultTerm1 = %s%nresultTerm2 = %s%n",
-        BinaryUtils.convertBytesToHexString(resultTerm1),
-        BinaryUtils.convertBytesToHexString(resultTerm2));*/
     orInto(resultTerm2, resultTerm1);
-    //System.out.format("result      = %s%n", BinaryUtils.convertBytesToHexString(resultTerm2));
     return resultTerm2;
   }
 
