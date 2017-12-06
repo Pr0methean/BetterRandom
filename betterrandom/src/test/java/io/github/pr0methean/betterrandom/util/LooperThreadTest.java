@@ -18,8 +18,6 @@ import org.testng.annotations.Test;
 public class LooperThreadTest {
 
   private static final long STACK_SIZE = 1_234_567;
-  private static final Field THREAD_STACK_SIZE;
-  private static final Field THREAD_TARGET;
   private static final AtomicBoolean shouldThrow = new AtomicBoolean(false);
   private static final AtomicBoolean exceptionHandlerRun = new AtomicBoolean(false);
   private static final Runnable TARGET = (Serializable & Runnable) () -> {
@@ -33,17 +31,6 @@ public class LooperThreadTest {
       }
     }
   };
-
-  static {
-    try {
-      THREAD_STACK_SIZE = Thread.class.getDeclaredField("stackSize");
-      THREAD_STACK_SIZE.setAccessible(true);
-      THREAD_TARGET = Thread.class.getDeclaredField("target");
-      THREAD_TARGET.setAccessible(true);
-    } catch (final NoSuchFieldException e) {
-      throw new RuntimeException(e);
-    }
-  }
 
   @Test public void testConstructors()
       throws IllegalAccessException, InstantiationException, InvocationTargetException {
