@@ -625,7 +625,8 @@ public abstract class BaseRandom extends Random
    * {@link Random#setSeed(long)} does; otherwise, it shall either be a no-op, or shall combine the
    * input with the existing seed as {@link java.security.SecureRandom#setSeed(long)} does.
    */
-  @Override public synchronized void setSeed(final long seed) {
+  @SuppressWarnings("NonSynchronizedMethodOverridesSynchronizedMethod")
+  @Override public void setSeed(final long seed) {
     final byte[] seedBytes = BinaryUtils.convertLongToBytes(seed);
     if (superConstructorFinished) {
       setSeed(seedBytes);
