@@ -11,6 +11,7 @@ import java.util.Random;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.Test;
 
+@Test(singleThreaded = true)
 public class RandomSeederThreadTest {
 
   private static final long TEST_SEED = 0x0123456789ABCDEFL;
