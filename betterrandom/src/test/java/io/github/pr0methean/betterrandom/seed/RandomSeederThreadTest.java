@@ -11,7 +11,6 @@ import java.util.Random;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.Test;
 
-@Test(singleThreaded = true)
 public class RandomSeederThreadTest {
 
   private static final long TEST_SEED = 0x0123456789ABCDEFL;
@@ -68,17 +67,16 @@ public class RandomSeederThreadTest {
   }
 
   @Test public void testSetDefaultPriority() {
-    stopAllEmpty();
-    assertFalse(RandomSeederThread.hasInstance(DEFAULT_SEED_GENERATOR));
     RandomSeederThread.setDefaultPriority(7);
+    final FakeSeedGenerator generator = new FakeSeedGenerator("testSetDefaultPriority");
     final Random prng = new Random();
-    RandomSeederThread.add(DEFAULT_SEED_GENERATOR, prng);
+    RandomSeederThread.add(generator, prng);
     boolean threadFound = false;
-    Thread[] threads = new Thread[10 + Thread.activeCount()];
-    int nThreads = Thread.enumerate(threads);
+    final Thread[] threads = new Thread[10 + Thread.activeCount()];
+    final int nThreads = Thread.enumerate(threads);
     for (int i = 0; i < nThreads; i++) {
       if ((threads[i] instanceof RandomSeederThread)
-          && threads[i].getName().equals("RandomSeederThread for " + DEFAULT_SEED_GENERATOR)) {
+          && "RandomSeederThread for testSetDefaultPriority".equals(threads[i].getName())) {
         assertEquals(threads[i].getPriority(), 7);
         threadFound = true;
         break;
@@ -86,18 +84,20 @@ public class RandomSeederThreadTest {
     }
     assertTrue(threadFound, "Couldn't find the seeder thread!");
     prng.nextInt(); // prevent GC before this point
+    RandomSeederThread.setDefaultPriority(Thread.NORM_PRIORITY);
   }
 
   @Test public void testSetPriority() {
     final Random prng = new Random();
-    RandomSeederThread.add(DEFAULT_SEED_GENERATOR, prng);
-    RandomSeederThread.setPriority(DEFAULT_SEED_GENERATOR, 7);
+    final FakeSeedGenerator generator = new FakeSeedGenerator("testSetPriority");
+    RandomSeederThread.add(generator, prng);
+    RandomSeederThread.setPriority(generator, 7);
     boolean threadFound = false;
     final Thread[] threads = new Thread[10 + Thread.activeCount()];
     final int nThreads = Thread.enumerate(threads);
     for (int i = 0; i < nThreads; i++) {
       if ((threads[i] instanceof RandomSeederThread)
-          && threads[i].getName().equals("RandomSeederThread for " + DEFAULT_SEED_GENERATOR)) {
+          && "RandomSeederThread for testSetPriority".equals(threads[i].getName())) {
         assertEquals(threads[i].getPriority(), 7);
         threadFound = true;
         break;
