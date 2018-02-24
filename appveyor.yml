@@ -8,6 +8,7 @@ environment:
      RUNNER: MinGW\msys\1.0
    - OP: unit-tests
      RUNNER: cygwin64
+     ALLOW_FAILURE: true # https://github.com/appveyor/ci/issues/1956
    - OP: benchmark
      RUNNER: MinGW\msys\1.0
    - OP: benchmark
