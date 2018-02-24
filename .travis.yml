@@ -138,6 +138,7 @@ jobs:
   - language: android
   fast_finish: true
 script:
+- ifconfig | grep inet
 - "./remove_unlimited_crypto.sh"
 - "./${OP}.sh"
 env:
