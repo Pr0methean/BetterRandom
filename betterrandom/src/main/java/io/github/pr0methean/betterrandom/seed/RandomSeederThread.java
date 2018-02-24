@@ -16,6 +16,7 @@ import java.util.WeakHashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.locks.Condition;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -41,6 +42,7 @@ public final class RandomSeederThread extends LooperThread {
   private Condition waitForEntropyDrain;
   private Set<Random> prngsThisIteration;
   private WeakHashMap<ByteArrayReseedableRandom, byte[]> seedArrays;
+  private static final AtomicInteger defaultPriority = new AtomicInteger(Thread.NORM_PRIORITY);
 
   /**
    * Private constructor because only one instance per seed source.
@@ -64,7 +66,7 @@ public final class RandomSeederThread extends LooperThread {
         final RandomSeederThread thread = new RandomSeederThread(seedGen);
         thread.setName("RandomSeederThread for " + seedGen);
         thread.setDaemon(true);
-        thread.setPriority(Thread.MIN_PRIORITY);
+        thread.setPriority(defaultPriority.get());
         thread.start();
         return thread;
       });
@@ -148,6 +150,25 @@ public final class RandomSeederThread extends LooperThread {
         thread.remove(randoms);
       }
     }
+  }
+
+  /**
+   * Sets the default priority for new random-seeder threads.
+   * @param priority the thread priority
+   * @see Thread#setPriority(int)
+   */
+  public static void setDefaultPriority(final int priority) {
+    defaultPriority.set(priority);
+  }
+
+  /**
+   * Sets the priority of a random-seeder thread, starting it if it's not already running.
+   * @param seedGenerator the {@link SeedGenerator} of the thread whose priority should change
+   * @param priority the thread priority
+   * @see Thread#setPriority(int)
+   */
+  public static void setPriority(final SeedGenerator seedGenerator, int priority) {
+    getInstance(seedGenerator).setPriority(priority);
   }
 
   public static void stopIfEmpty(final SeedGenerator seedGenerator) {
