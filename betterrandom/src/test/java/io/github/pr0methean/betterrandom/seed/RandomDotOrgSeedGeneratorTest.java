@@ -21,6 +21,8 @@ import static org.testng.Assert.assertEquals;
 
 import java.util.UUID;
 import org.testng.Assert;
+import org.testng.SkipException;
+import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
@@ -49,17 +51,26 @@ public class RandomDotOrgSeedGeneratorTest extends AbstractSeedGeneratorTest {
     }
   }
 
+  @AfterMethod
+  public void tearDown() {
+    RandomDotOrgSeedGenerator.setApiKey(null);
+  }
+
   @Test(timeOut = 120000) public void testGeneratorOldApi() throws SeedException {
-    if (isNotAppveyor()) {
+    if (canRunRandomDotOrgLargeTest()) {
       RandomDotOrgSeedGenerator.setApiKey(null);
       SeedTestUtils.testGenerator(seedGenerator);
+    } else {
+      throw new SkipException("Test can't run on this platform");
     }
   }
 
   @Test(timeOut = 120000) public void testGeneratorNewApi() throws SeedException {
-    if (isNotAppveyor()) {
+    if (canRunRandomDotOrgLargeTest()) {
       setApiKey();
       SeedTestUtils.testGenerator(seedGenerator);
+    } else {
+      throw new SkipException("Test can't run on this platform");
     }
   }
 
@@ -68,7 +79,7 @@ public class RandomDotOrgSeedGeneratorTest extends AbstractSeedGeneratorTest {
    * implementation.
    */
   @Test(timeOut = 120000) public void testLargeRequest() throws SeedException {
-    if (isNotAppveyor()) {
+    if (canRunRandomDotOrgLargeTest()) {
       setApiKey();
       // Request more bytes than are cached internally.
       final int seedLength = 626;
