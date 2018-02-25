@@ -39,12 +39,7 @@ public class RandomDotOrgSeedGeneratorTest extends AbstractSeedGeneratorTest {
 
   private static final int SMALL_REQUEST_SIZE = 32;
   private static final int TOR_PORT = 9050;
-  private static final Proxy PROXY = isAppveyor()
-      ? new Proxy(Type.HTTP,
-          new InetSocketAddress(System.getenv("APPVEYOR_HTTP_PROXY_IP"),
-          Integer.valueOf(System.getenv("APPVEYOR_HTTP_PROXY_PORT"))))
-      : new Proxy(Type.SOCKS, new InetSocketAddress("localhost", TOR_PORT));
-
+  private Proxy proxy;
 
   public RandomDotOrgSeedGeneratorTest() {
     super(RandomDotOrgSeedGenerator.RANDOM_DOT_ORG_SEED_GENERATOR);
@@ -57,6 +52,11 @@ public class RandomDotOrgSeedGeneratorTest extends AbstractSeedGeneratorTest {
   }
 
   @BeforeClass public void setUp() {
+    proxy = isAppveyor()
+        ? new Proxy(Type.HTTP,
+        new InetSocketAddress(System.getenv("APPVEYOR_HTTP_PROXY_IP"),
+            Integer.valueOf(System.getenv("APPVEYOR_HTTP_PROXY_PORT"))))
+        : new Proxy(Type.SOCKS, new InetSocketAddress("localhost", TOR_PORT));
     if (!canRunRandomDotOrgLargeTest()) {
       RandomDotOrgSeedGenerator.setMaxRequestSize(SMALL_REQUEST_SIZE);
     }
@@ -109,7 +109,7 @@ public class RandomDotOrgSeedGeneratorTest extends AbstractSeedGeneratorTest {
     if (!canRunRandomDotOrgLargeTest()) {
       throw new SkipException("Test can't run on this platform");
     }
-    RandomDotOrgSeedGenerator.setProxy(PROXY);
+    RandomDotOrgSeedGenerator.setProxy(proxy);
     try {
       SeedTestUtils.testGenerator(seedGenerator);
     } finally {
