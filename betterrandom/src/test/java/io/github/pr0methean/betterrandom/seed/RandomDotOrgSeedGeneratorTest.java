@@ -52,11 +52,12 @@ public class RandomDotOrgSeedGeneratorTest extends AbstractSeedGeneratorTest {
   }
 
   @BeforeClass public void setUp() {
-    proxy = isAppveyor()
+    proxy = /* FIXME once Appveyor adds proxies for all its IPs:
+        isAppveyor()
         ? new Proxy(Type.HTTP,
-        new InetSocketAddress(System.getenv("APPVEYOR_HTTP_PROXY_IP"),
+            new InetSocketAddress(System.getenv("APPVEYOR_HTTP_PROXY_IP"),
             Integer.valueOf(System.getenv("APPVEYOR_HTTP_PROXY_PORT"))))
-        : new Proxy(Type.SOCKS, new InetSocketAddress("localhost", TOR_PORT));
+        : */ new Proxy(Type.SOCKS, new InetSocketAddress("localhost", TOR_PORT));
     if (!canRunRandomDotOrgLargeTest()) {
       RandomDotOrgSeedGenerator.setMaxRequestSize(SMALL_REQUEST_SIZE);
     }
