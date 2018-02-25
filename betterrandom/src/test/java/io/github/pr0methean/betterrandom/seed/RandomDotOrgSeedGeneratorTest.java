@@ -16,13 +16,12 @@
 package io.github.pr0methean.betterrandom.seed;
 
 import static io.github.pr0methean.betterrandom.TestUtils.canRunRandomDotOrgLargeTest;
-import static io.github.pr0methean.betterrandom.TestUtils.isNotAppveyor;
+import static io.github.pr0methean.betterrandom.TestUtils.isAppveyor;
 import static org.testng.Assert.assertEquals;
 
 import java.net.InetSocketAddress;
 import java.net.Proxy;
 import java.net.Proxy.Type;
-import java.net.SocketAddress;
 import java.util.UUID;
 import org.testng.Assert;
 import org.testng.SkipException;
@@ -38,11 +37,13 @@ import org.testng.annotations.Test;
 @Test(singleThreaded = true)
 public class RandomDotOrgSeedGeneratorTest extends AbstractSeedGeneratorTest {
 
-  public static final int SMALL_REQUEST_SIZE = 32;
-  private static final Proxy PROXY = isNotAppveyor()
-      ? new Proxy(Type.SOCKS, new InetSocketAddress("localhost", 9050)) /* Tor */
-      : new Proxy(Type.HTTP, new InetSocketAddress(System.getenv("APPVEYOR_HTTP_PROXY_IP"),
-          Integer.valueOf(System.getenv("APPVEYOR_HTTP_PROXY_PORT"))));
+  private static final int SMALL_REQUEST_SIZE = 32;
+  private static final int TOR_PORT = 9050;
+  private static final Proxy PROXY = isAppveyor()
+      ? new Proxy(Type.HTTP,
+          new InetSocketAddress(System.getenv("APPVEYOR_HTTP_PROXY_IP"),
+          Integer.valueOf(System.getenv("APPVEYOR_HTTP_PROXY_PORT"))))
+      : new Proxy(Type.SOCKS, new InetSocketAddress("localhost", TOR_PORT));
 
 
   public RandomDotOrgSeedGeneratorTest() {
