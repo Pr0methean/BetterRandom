@@ -1,6 +1,5 @@
 package io.github.pr0methean.betterrandom.seed;
 
-import static io.github.pr0methean.betterrandom.seed.DefaultSeedGenerator.DEFAULT_SEED_GENERATOR;
 import static io.github.pr0methean.betterrandom.seed.RandomSeederThread.stopAllEmpty;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertFalse;
@@ -68,23 +67,26 @@ public class RandomSeederThreadTest {
 
   @Test public void testSetDefaultPriority() {
     RandomSeederThread.setDefaultPriority(7);
-    final FakeSeedGenerator generator = new FakeSeedGenerator("testSetDefaultPriority");
-    final Random prng = new Random();
-    RandomSeederThread.add(generator, prng);
-    boolean threadFound = false;
-    final Thread[] threads = new Thread[10 + Thread.activeCount()];
-    final int nThreads = Thread.enumerate(threads);
-    for (int i = 0; i < nThreads; i++) {
-      if ((threads[i] instanceof RandomSeederThread)
-          && "RandomSeederThread for testSetDefaultPriority".equals(threads[i].getName())) {
-        assertEquals(threads[i].getPriority(), 7);
-        threadFound = true;
-        break;
+    try {
+      final FakeSeedGenerator generator = new FakeSeedGenerator("testSetDefaultPriority");
+      final Random prng = new Random();
+      RandomSeederThread.add(generator, prng);
+      boolean threadFound = false;
+      final Thread[] threads = new Thread[10 + Thread.activeCount()];
+      final int nThreads = Thread.enumerate(threads);
+      for (int i = 0; i < nThreads; i++) {
+        if ((threads[i] instanceof RandomSeederThread)
+            && "RandomSeederThread for testSetDefaultPriority".equals(threads[i].getName())) {
+          assertEquals(threads[i].getPriority(), 7);
+          threadFound = true;
+          break;
+        }
       }
+      assertTrue(threadFound, "Couldn't find the seeder thread!");
+      prng.nextInt(); // prevent GC before this point
+    } finally {
+      RandomSeederThread.setDefaultPriority(Thread.NORM_PRIORITY);
     }
-    assertTrue(threadFound, "Couldn't find the seeder thread!");
-    prng.nextInt(); // prevent GC before this point
-    RandomSeederThread.setDefaultPriority(Thread.NORM_PRIORITY);
   }
 
   @Test public void testSetPriority() {

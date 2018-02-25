@@ -1,4 +1,5 @@
 #!/bin/sh
+sudo apt-get install tor
 if [ "$ANDROID" = 1 ]; then
   MAYBE_ANDROID_FLAG="-Pandroid"
 else

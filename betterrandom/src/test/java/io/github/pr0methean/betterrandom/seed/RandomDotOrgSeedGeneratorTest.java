@@ -19,6 +19,10 @@ import static io.github.pr0methean.betterrandom.TestUtils.canRunRandomDotOrgLarg
 import static io.github.pr0methean.betterrandom.TestUtils.isNotAppveyor;
 import static org.testng.Assert.assertEquals;
 
+import java.net.InetSocketAddress;
+import java.net.Proxy;
+import java.net.Proxy.Type;
+import java.net.SocketAddress;
 import java.util.UUID;
 import org.testng.Assert;
 import org.testng.SkipException;
@@ -31,9 +35,15 @@ import org.testng.annotations.Test;
  * @author Daniel Dyer
  * @author Chris Hennick
  */
+@Test(singleThreaded = true)
 public class RandomDotOrgSeedGeneratorTest extends AbstractSeedGeneratorTest {
 
   public static final int SMALL_REQUEST_SIZE = 32;
+  private static final Proxy PROXY = isNotAppveyor()
+      ? new Proxy(Type.SOCKS, new InetSocketAddress("localhost", 9050)) /* Tor */
+      : new Proxy(Type.HTTP, new InetSocketAddress(System.getenv("APPVEYOR_HTTP_PROXY_IP"),
+          Integer.valueOf(System.getenv("APPVEYOR_HTTP_PROXY_PORT"))));
+
 
   public RandomDotOrgSeedGeneratorTest() {
     super(RandomDotOrgSeedGenerator.RANDOM_DOT_ORG_SEED_GENERATOR);
@@ -91,5 +101,15 @@ public class RandomDotOrgSeedGeneratorTest extends AbstractSeedGeneratorTest {
   @Override public void testToString() {
     super.testToString();
     Assert.assertNotNull(RandomDotOrgSeedGenerator.DELAYED_RETRY.toString());
+  }
+
+  @Test
+  public void testSetProxy() throws Exception {
+    RandomDotOrgSeedGenerator.setProxy(PROXY);
+    try {
+      SeedTestUtils.testGenerator(seedGenerator);
+    } finally {
+      RandomDotOrgSeedGenerator.setProxy(null);
+    }
   }
 }
