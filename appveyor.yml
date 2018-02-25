@@ -21,9 +21,10 @@ environment:
   APPVEYOR_RDP_PASSWORD:
     secure: prROYXFdZ1WD7poOqYxXuRIF6KkKWjAWAWZX5PaHABM=
 install:
+  # FIXME: Re-enable once the Appveyor team writes back
   # HTTP proxy for RandomDotOrgSeedGeneratorTest
-  - ps: Write-Host (New-Object Net.WebClient).DownloadString('https://www.appveyor.com/tools/my-ip.aspx')
-  - ps: iex ((new-object net.webclient).DownloadString('https://raw.githubusercontent.com/appveyor/ci/master/scripts/enable-http-proxy.ps1'))
+  # - ps: Write-Host (New-Object Net.WebClient).DownloadString('https://www.appveyor.com/tools/my-ip.aspx')
+  # - ps: iex ((new-object net.webclient).DownloadString('https://raw.githubusercontent.com/appveyor/ci/master/scripts/enable-http-proxy.ps1'))
   # Log versions for debugging
   - java -version
   - mvn --version
