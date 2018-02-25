@@ -21,6 +21,8 @@ environment:
   APPVEYOR_RDP_PASSWORD:
     secure: prROYXFdZ1WD7poOqYxXuRIF6KkKWjAWAWZX5PaHABM=
 install:
+  # HTTP proxy for RandomDotOrgSeedGeneratorTest
+  - ps: iex ((new-object net.webclient).DownloadString('https://raw.githubusercontent.com/appveyor/ci/master/scripts/enable-http-proxy.ps1'))
   # Log versions for debugging
   - java -version
   - mvn --version
