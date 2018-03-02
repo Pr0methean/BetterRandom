@@ -410,7 +410,8 @@ public abstract class BaseRandom extends Random
 
   /**
    * Returns the next random {@code double} between 0.0 (inclusive) and 1.0 (exclusive), but does
-   * not debit entropy. @return a pseudorandom {@code double}.
+   * not debit entropy.
+   * @return a pseudorandom {@code double}.
    */
   protected double nextDoubleNoEntropyDebit() {
     lock.lock();
@@ -690,7 +691,8 @@ public abstract class BaseRandom extends Random
    * {@link Random#setSeed(long)} does; otherwise, it shall either be a no-op, or shall combine the
    * input with the existing seed as {@link java.security.SecureRandom#setSeed(long)} does.
    */
-  @Override public synchronized void setSeed(final long seed) {
+  @SuppressWarnings("NonSynchronizedMethodOverridesSynchronizedMethod")
+  @Override public void setSeed(final long seed) {
     final byte[] seedBytes = BinaryUtils.convertLongToBytes(seed);
     if (superConstructorFinished) {
       setSeed(seedBytes);

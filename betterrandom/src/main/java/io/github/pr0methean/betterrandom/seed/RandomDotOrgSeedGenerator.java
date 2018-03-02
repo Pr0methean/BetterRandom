@@ -23,6 +23,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.MalformedURLException;
+import java.net.Proxy;
 import java.net.URL;
 import java.net.URLConnection;
 import java.nio.charset.Charset;
@@ -111,6 +112,10 @@ public enum RandomDotOrgSeedGenerator implements SeedGenerator {
   private static byte[] cache = new byte[MAX_CACHE_SIZE];
   private static int cacheOffset = cache.length;
   private static int maxRequestSize = GLOBAL_MAX_REQUEST_SIZE;
+  /**
+   * The proxy to use with random.org, or null to use the JVM default.
+   */
+  private static final AtomicReference<Proxy> proxy = new AtomicReference<>(null);
 
   static {
     EARLIEST_NEXT_ATTEMPT.add(YEAR, -1);
@@ -140,6 +145,14 @@ public enum RandomDotOrgSeedGenerator implements SeedGenerator {
    */
   public static void setApiKey(@Nullable UUID apiKey) {
     API_KEY.set(apiKey);
+  }
+
+  /**
+   * Sets the proxy to use to connect to random.org. If null, the JVM default is used.
+   * @param proxy a proxy, or null for the JVM default
+   */
+  public static void setProxy(@Nullable final Proxy proxy) {
+    RandomDotOrgSeedGenerator.proxy.set(proxy);
   }
 
   /**

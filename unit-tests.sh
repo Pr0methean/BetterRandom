@@ -9,6 +9,8 @@ if ([ "$TRAVIS_JDK_VERSION" = "oraclejdk9" ] || [ "$TRAVIS_JDK_VERSION" = "openj
 fi
 if [ "$APPVEYOR" != "" ]; then
   RANDOM_DOT_ORG_KEY=$(powershell 'Write-Host ($env:random_dot_org_key) -NoNewLine')
+else
+  sudo apt-get install tor
 fi
 cd betterrandom
 if [ "$JAVA9" = "true" ]; then
