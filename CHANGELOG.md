@@ -1,4 +1,8 @@
-# 2.2
+# 2.3.0
+* `RandomDotOrgSeedGenerator` can now be configured with a proxy.
+* `RandomSeederThread` adds methods for setting thread priority.
+
+# 2.2.0
 * Logging is now done through `slf4j`.
 * Removes the class `LooperThread.DummyTarget`, which was only used for deserialization.
 * Performance refactors.
