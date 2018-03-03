@@ -24,6 +24,8 @@ public class FakeSeedGenerator implements SeedGenerator {
   @Override
   public String toString() {
     return name;
+  }
+  
   /**
    * Generates and returns a seed value for a random number generator as a new array.
    * @param length The length of the seed to generate (in bytes).
