@@ -53,6 +53,12 @@
       <version>1.6.1</version>
     </dependency>
     <dependency>
+      <!-- Works around an issue in newer versions of JCommander otherwise used by TestNG -->
+      <groupId>com.beust</groupId>
+      <artifactId>jcommander</artifactId>
+      <version>1.48</version>
+    </dependency>
+    <dependency>
       <groupId>org.slf4j</groupId>
       <artifactId>slf4j-api</artifactId>
       <version>1.7.25</version>
@@ -203,6 +209,8 @@
           <artifactId>maven-jar-plugin</artifactId>
           <version>3.0.2</version>
           <configuration>
+                        <source>1.7</source>
+            <target>1.7</target>
             <archive>
               <manifest>
                 <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
@@ -519,6 +527,10 @@
           <id>lemonade</id>
           <name>Lemonade Lab</name>
           <url>https://dl.bintray.com/lemonade/maven/</url>
+        </repository>
+        <repository>
+          <id>jcenter</id>
+          <url>https://dl.bintray.com/cbeust/maven/</url>
         </repository>
       </repositories>
       <properties>
