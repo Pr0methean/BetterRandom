@@ -11,7 +11,7 @@
     <github.global.server>github</github.global.server>
   </properties>
   <groupId>io.github.pr0methean.betterrandom</groupId>
-  <artifactId>BetterRandom</artifactId>
+  <artifactId>BetterRandom-Java7</artifactId>
   <version>2.3.0-SNAPSHOT</version>
   <name>BetterRandom</name>
   <description>BetterRandom is a library designed to help improve the quality and performance of random-number generation on Java.
