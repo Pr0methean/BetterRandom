@@ -1,25 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--suppress XmlHighlighting -->
-<!-- Proguard is disabled on JDK9 due to:
- https://sourceforge.net/p/proguard/feature-requests/181/
- https://sourceforge.net/p/proguard/bugs/551/
- Thus, a separate pom.xml is needed when building on JDK9.
--->
-<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xmlns="http://maven.apache.org/POM/4.0.0"
-  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <packaging>jar</packaging>
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <prefix/>
-    <maven.compiler.source>1.9</maven.compiler.source>
-    <maven.compiler.target>1.9</maven.compiler.target>
+    <prefix />
+    <maven.compiler.source>1.8</maven.compiler.source>
+    <maven.compiler.target>1.8</maven.compiler.target>
     <github.global.server>github</github.global.server>
   </properties>
   <groupId>io.github.pr0methean.betterrandom</groupId>
   <artifactId>BetterRandom</artifactId>
-  <version>2.2.1-SNAPSHOT</version>
+  <version>2.3.0-SNAPSHOT</version>
   <name>BetterRandom</name>
   <description>BetterRandom is a library designed to help improve the quality and performance of
     random-number generation on Java.
@@ -38,7 +31,7 @@
     <url>https://github.com/Pr0methean/BetterRandom</url>
     <connection>scm:git:git://github.com/Pr0methean/BetterRandom.git</connection>
     <developerConnection>scm:git:git@github.com:Pr0methean/BetterRandom.git</developerConnection>
-    <tag>BetterRandom-2.2.1-SNAPSHOT</tag>
+    <tag>BetterRandom-2.0.0-SNAPSHOT</tag>
   </scm>
 
   <distributionManagement>
@@ -58,7 +51,7 @@
     <dependency>
       <groupId>org.slf4j</groupId>
       <artifactId>slf4j-api</artifactId>
-      <version>1.8.0-beta0</version>
+      <version>1.7.25</version>
     </dependency>
     <dependency>
       <groupId>org.apache.logging.log4j</groupId>
@@ -71,6 +64,13 @@
       <groupId>org.apache.maven.plugins</groupId>
       <artifactId>maven-deploy-plugin</artifactId>
       <version>2.8.2</version>
+    </dependency>
+    <dependency>
+      <!-- Overrides transitive dep on 5.2.1 -->
+      <groupId>net.sf.proguard</groupId>
+      <artifactId>proguard-base</artifactId>
+      <version>5.3.3</version>
+      <scope>runtime</scope>
     </dependency>
     <dependency>
       <groupId>com.googlecode.json-simple</groupId>
@@ -152,6 +152,18 @@
                 <head>Implementation Requirements:</head>
               </tag>
               <tag>
+                <name>spec</name>
+                <placement>a</placement>
+
+                <head>Specification:</head>
+              </tag>
+              <tag>
+                <name>revised</name>
+                <placement>a</placement>
+
+                <head>Revised in Version:</head>
+              </tag>
+              <tag>
                 <name>implNote</name>
                 <placement>a</placement>
 
@@ -174,6 +186,12 @@
             <trimStackTrace>false</trimStackTrace>
             <parallel>methods</parallel>
             <forkedProcessTimeoutInSeconds>600</forkedProcessTimeoutInSeconds>
+            <properties>
+              <property>
+                <name>surefire.testng.verbose</name>
+                <value>10</value>
+              </property>
+            </properties>
           </configuration>
         </plugin>
         <plugin>
@@ -310,6 +328,21 @@
           </configuration>
         </plugin>
         <plugin>
+          <groupId>com.github.wvengen</groupId>
+          <artifactId>proguard-maven-plugin</artifactId>
+          <version>2.0.14</version>
+          <configuration>
+            <proguardJar>
+              ${user.home}/.m2/repository/net/sf/proguard/proguard-base/5.3.3/proguard-base-5.3.3.jar
+            </proguardJar>
+            <proguardInclude>${basedir}/proguard.conf</proguardInclude>
+            <libs>
+              <lib>${java.home}/lib/rt.jar</lib>
+              <lib>${java.home}/lib/jce.jar</lib>
+            </libs>
+          </configuration>
+        </plugin>
+        <plugin>
           <!-- Required for com.github.github:site-maven-plugin -->
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-project-info-reports-plugin</artifactId>
@@ -393,11 +426,10 @@
         <artifactId>pitest-maven</artifactId>
         <version>1.2.4</version>
         <configuration>
-          <threads>4</threads>
+          <threads>2</threads>
           <coverageThreshold>80</coverageThreshold>
           <mutationThreshold>60</mutationThreshold>
           <avoidCallsTo>
-            <avoidCallsTo>java.util.logging</avoidCallsTo>
             <avoidCallsTo>org.slf4j</avoidCallsTo>
           </avoidCallsTo>
         </configuration>
@@ -419,6 +451,19 @@
                 </requireMavenVersion>
               </rules>
             </configuration>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <groupId>com.github.wvengen</groupId>
+        <artifactId>proguard-maven-plugin</artifactId>
+        <version>2.0.14</version>
+        <executions>
+          <execution>
+            <phase>package</phase>
+            <goals>
+              <goal>proguard</goal>
+            </goals>
           </execution>
         </executions>
       </plugin>
