@@ -129,11 +129,11 @@ public class CellularAutomatonRandom extends BaseRandom {
 
     // Evolve automaton before returning integers.
     for (int i = 0; i < ((AUTOMATON_LENGTH * AUTOMATON_LENGTH) / 4); i++) {
-      internalNext(32);
+      internalNext();
     }
   }
 
-  private int internalNext(final int bits) {
+  private int internalNext() {
     // Set cell addresses using address of current cell.
     final int cellC = currentCellIndex - 1;
 
@@ -152,17 +152,19 @@ public class CellularAutomatonRandom extends BaseRandom {
       cells[cellA] = RNG_RULE[cells[cellA - 1] + cells[cellA]];
       currentCellIndex -= 4;
     }
-    final int result = convertCellsToInt(cells, cellA);
-    return result >>> (32 - bits);
+    return cellA;
   }
 
   @Override public int next(final int bits) {
     lock.lock();
+    final int result;
     try {
-      return internalNext(bits);
+      final int cellA = internalNext();
+      result = convertCellsToInt(cells, cellA);
     } finally {
       lock.unlock();
     }
+    return result >>> (32 - bits);
   }
 
   @Override public synchronized void setSeed(final long seed) {
