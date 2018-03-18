@@ -35,6 +35,9 @@ public class CellularAutomatonRandom extends BaseRandom {
   private static final long serialVersionUID = 5959251752288589909L;
   private static final int SEED_SIZE_BYTES = 4;
   private static final int AUTOMATON_LENGTH = 2056;
+  public static final int EVOLVE_ITERATIONS_AFTER_SEEDING =
+      (AUTOMATON_LENGTH * AUTOMATON_LENGTH) / 4;
+  public static final int LAST_CELL_INDEX = AUTOMATON_LENGTH - 1;
   private static final int[] RNG_RULE =
       {100, 75, 16, 3, 229, 51, 197, 118, 24, 62, 198, 11, 141, 152, 241, 188, 2, 17, 71, 47, 179,
           177, 126, 231, 202, 243, 59, 25, 77, 196, 30, 134, 199, 163, 34, 216, 21, 84, 37, 182,
@@ -128,7 +131,7 @@ public class CellularAutomatonRandom extends BaseRandom {
     }
 
     // Evolve automaton before returning integers.
-    for (int i = 0; i < ((AUTOMATON_LENGTH * AUTOMATON_LENGTH) / 4); i++) {
+    for (int i = 0; i < EVOLVE_ITERATIONS_AFTER_SEEDING; i++) {
       internalNext();
     }
   }
@@ -147,7 +150,7 @@ public class CellularAutomatonRandom extends BaseRandom {
     // Update the state of cellA and shift current cell to the left by 4 bytes.
     if (cellA == 0) {
       cells[0] = RNG_RULE[cells[0]];
-      currentCellIndex = AUTOMATON_LENGTH - 1;
+      currentCellIndex = LAST_CELL_INDEX;
     } else {
       cells[cellA] = RNG_RULE[cells[cellA - 1] + cells[cellA]];
       currentCellIndex -= 4;
