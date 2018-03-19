@@ -1,3 +1,7 @@
+# 2.3.1
+* Should slightly improve performance of `CellularAutomatonRandom` when seeding and when accessed
+  concurrently.
+
 # 2.3.0
 * `RandomDotOrgSeedGenerator` can now be configured with a proxy.
 * `RandomSeederThread` adds methods for setting thread priority.
