@@ -751,7 +751,7 @@ public abstract class BaseRandomTest {
     parallelOutput.clear();
     pool.execute(new GeneratorForkJoinTask(parallelPrng, parallelOutput, supplier1));
     pool.execute(new GeneratorForkJoinTask(parallelPrng, parallelOutput, supplier2));
-    assertTrue(pool.awaitQuiescence(10, TimeUnit.SECONDS),
+    assertTrue(pool.awaitQuiescence(15, TimeUnit.SECONDS),
         String.format("Timed out waiting for %s and %s to finish", supplier1, supplier2));
   }
 
