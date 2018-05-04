@@ -1,3 +1,8 @@
+# 2.3.2
+* Removes unnecessary `synchronized` modifier from some methods.
+* Tests now include an additional sanity check for `SetSeed`: a seed of all zeroes should give
+  different output than a normal seed.
+
 # 2.3.1
 * Should slightly improve performance of `CellularAutomatonRandom` when seeding and when accessed
   concurrently.

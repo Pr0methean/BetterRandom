@@ -170,7 +170,7 @@ public class CellularAutomatonRandom extends BaseRandom {
     return result >>> (32 - bits);
   }
 
-  @Override public synchronized void setSeed(final long seed) {
+  @Override public void setSeed(final long seed) {
     final byte[] shortenedSeed = convertIntToBytes(((Long) seed).hashCode());
     if (superConstructorFinished) {
       setSeedInternal(shortenedSeed);

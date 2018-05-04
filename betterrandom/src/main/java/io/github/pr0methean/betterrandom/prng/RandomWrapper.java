@@ -178,11 +178,17 @@ public class RandomWrapper extends BaseRandom {
     return super.getSeed();
   }
 
-  @Override public synchronized void setSeed(final long seed) {
-    if (wrapped != null) {
-      wrapped.setSeed(seed);
-      super.setSeedInternal(BinaryUtils.convertLongToBytes(seed));
-      unknownSeed = false;
+  @Override
+  public void setSeed(final long seed) {
+    lock.lock();
+    try {
+      if (wrapped != null) {
+        wrapped.setSeed(seed);
+        super.setSeedInternal(BinaryUtils.convertLongToBytes(seed));
+        unknownSeed = false;
+      }
+    } finally {
+      lock.unlock();
     }
   }
 
