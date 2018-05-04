@@ -88,7 +88,7 @@ public class Cmwc4096Random extends BaseRandom {
    * Reseeds this PRNG using the {@link DefaultSeedGenerator}, since it needs a longer seed.
    * @param seed ignored
    */
-  @Override public synchronized void setSeed(final long seed) {
+  @Override public void setSeed(final long seed) {
     fallbackSetSeedIfInitialized();
   }
 
