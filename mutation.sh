@@ -1,6 +1,9 @@
 #!/bin/sh
 cd betterrandom
 mvn compile test-compile org.pitest:pitest-maven:mutationCoverage
+if [ ! $? ]; then
+  exit $?
+fi
 cd ../docs
 git remote add originauth "https://${GH_TOKEN}@github.com/Pr0methean/pr0methean.github.io.git"
 git pull --rebase originauth master
