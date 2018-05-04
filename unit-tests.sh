@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/usr/bin/env bash
 if [ "$ANDROID" = 1 ]; then
   MAYBE_ANDROID_FLAG="-Pandroid"
 else
@@ -16,10 +16,8 @@ cd betterrandom
 if [ "$JAVA9" = "true" ]; then
   mv pom9.xml pom.xml
 fi
-# Remove git from path (causes conflicts), based on https://stackoverflow.com/a/370192
-NO_GIT_PATH=`echo "${PATH}" | awk -v RS=':' -v ORS=':' '/git/ {next} {print}'`
 # Coverage test
-PATH="${NO_GIT_PATH}" mvn ${MAYBE_ANDROID_FLAG} clean jacoco:prepare-agent test jacoco:report -e
+mvn ${MAYBE_ANDROID_FLAG} clean jacoco:prepare-agent test jacoco:report -e
 STATUS=$?
 if [ "$STATUS" = 0 ]; then
   PUSH_JACOCO="true"
@@ -64,7 +62,7 @@ if [ "$STATUS" = 0 ]; then
     mv *.exec ../../target/
     cd ../..
   fi
-  PATH="${NO_GIT_PATH}" mvn -DskipTests -Dmaven.test.skip=true ${MAYBE_ANDROID_FLAG} jacoco:report-aggregate package && (
+  mvn -DskipTests -Dmaven.test.skip=true ${MAYBE_ANDROID_FLAG} jacoco:report-aggregate package && (
     # Post-Proguard test (verifies Proguard settings)
     mvn ${MAYBE_ANDROID_FLAG} test -e
   )
