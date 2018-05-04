@@ -178,9 +178,13 @@ public class RandomWrapper extends BaseRandom {
     return super.getSeed();
   }
 
-  @Override
-  public void setSeed(final long seed) {
-    lock.lock();
+  @SuppressWarnings("LockAcquiredButNotSafelyReleased")
+  @Override public void setSeed(final long seed) {
+    boolean locked = false;
+    if (lock != null) {
+      lock.lock();
+      locked = true;
+    }
     try {
       if (wrapped != null) {
         wrapped.setSeed(seed);
@@ -188,7 +192,9 @@ public class RandomWrapper extends BaseRandom {
         unknownSeed = false;
       }
     } finally {
-      lock.unlock();
+      if (locked) {
+        lock.unlock();
+      }
     }
   }
 
@@ -197,8 +203,8 @@ public class RandomWrapper extends BaseRandom {
    * SecureRandom#setSeed(byte[])} or {@link Random#setSeed(long)}.
    * @param seed The new seed.
    */
-  @SuppressWarnings("LockAcquiredButNotSafelyReleased") @Override protected void setSeedInternal(
-      final byte[] seed) {
+  @SuppressWarnings("LockAcquiredButNotSafelyReleased")
+  @Override protected void setSeedInternal(final byte[] seed) {
     if (seed == null) {
       throw new IllegalArgumentException("Seed must not be null");
     }

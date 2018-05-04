@@ -13,7 +13,7 @@ if [ "${APPVEYOR}" != "" ]; then
   RANDOM_DOT_ORG_KEY=$(powershell 'Write-Host ($env:random_dot_org_key) -NoNewLine')
   if [ "${OSTYPE}" = "cygwin" ]; then
     # Workaround for a faulty PATH in Appveyor Cygwin (https://github.com/appveyor/ci/issues/1956)
-    NO_GIT_PATH=`echo "${PATH}" | /usr/bin/awk -v RS=':' -v ORS=':' '/git/ {next} {print}'`
+    NO_GIT_PATH=$(echo "${PATH}" | /usr/bin/awk -v RS=':' -v ORS=':' '/git/ {next} {print}')
   fi
 else
   sudo apt-get install tor
