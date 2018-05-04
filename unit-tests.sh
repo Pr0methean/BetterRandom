@@ -60,13 +60,14 @@ if [ "$STATUS" = 0 ]; then
     git pull --rebase  # Merge
     git push
   done
-  /bin/mv *.exec ../../target/
   cd ../..
-  PATH="${NO_GIT_PATH}" mvn -DskipTests -Dmaven.test.skip=true ${MAYBE_ANDROID_FLAG} jacoco:report-aggregate package && (
-    # Post-Proguard test (verifies Proguard settings)
-    PATH="${NO_GIT_PATH}" mvn ${MAYBE_ANDROID_FLAG} test -e
-  )
-  STATUS=$?
+  if [ "$JAVA9" = "true" ]; then
+    PATH="${NO_GIT_PATH}" mvn -DskipTests -Dmaven.test.skip=true ${MAYBE_ANDROID_FLAG} jacoco:report-aggregate package && (
+      # Post-Proguard test (verifies Proguard settings)
+      PATH="${NO_GIT_PATH}" mvn ${MAYBE_ANDROID_FLAG} test -e
+    )
+    STATUS=$?
+  fi
 fi
 cd ..
 exit "$STATUS"
