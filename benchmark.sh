@@ -25,7 +25,7 @@ if [ "$TRAVIS" = "true" ]; then
     java -jar benchmarks.jar -f 1 -t 2 -foe true
 else
     java -jar benchmarks.jar -f 1 -t 1 -foe true -v EXTRA 2>&1 |\
-        tee benchmark_results_one_thread.txt &&\
+        /usr/bin/tee benchmark_results_one_thread.txt &&\
     java -jar benchmarks.jar -f 1 -t 2 -foe true -v EXTRA 2>&1 |\
-        tee benchmark_results_two_threads.txt
+        /usr/bin/tee benchmark_results_two_threads.txt
 fi && cd ../..
