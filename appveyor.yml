@@ -5,15 +5,13 @@ environment:
   JAVA_HOME: C:\Program Files\Java\jdk1.8.0
   matrix:
    - OP: unit-tests
-     RUNNER: MinGW\msys\1.0
+     RUNNER: cygwin64
+   - OP: benchmark
+     RUNNER: cygwin64
    - OP: unit-tests
-     RUNNER: cygwin64
-     ALLOW_FAILURE: true # https://github.com/appveyor/ci/issues/1956
-   - OP: benchmark
      RUNNER: MinGW\msys\1.0
    - OP: benchmark
-     RUNNER: cygwin64
-     ALLOW_FAILURE: true # https://github.com/appveyor/ci/issues/1956
+     RUNNER: MinGW\msys\1.0
   access_token:
     secure: UrMOuu5SzFyDvmnIwDu4EJol6YwyLJJ3yAAvA8URK7x8cmssL4106Wr8MmS01GGL
   random_dot_org_key:
@@ -21,10 +19,6 @@ environment:
   APPVEYOR_RDP_PASSWORD:
     secure: prROYXFdZ1WD7poOqYxXuRIF6KkKWjAWAWZX5PaHABM=
 install:
-  # FIXME: Re-enable once the Appveyor team writes back
-  # HTTP proxy for RandomDotOrgSeedGeneratorTest
-  # - ps: Write-Host (New-Object Net.WebClient).DownloadString('https://www.appveyor.com/tools/my-ip.aspx')
-  # - ps: iex ((new-object net.webclient).DownloadString('https://raw.githubusercontent.com/appveyor/ci/master/scripts/enable-http-proxy.ps1'))
   # Log versions for debugging
   - java -version
   - mvn --version
