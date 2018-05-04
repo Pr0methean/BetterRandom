@@ -246,6 +246,17 @@ public abstract class BaseRandomTest {
         : "Output mismatch after reseeding with same seed";
   }
 
+  @Test(timeOut = 15000) public void testSetSeedZero() throws SeedException {
+    int length = getNewSeedLength(createRng());
+    final byte[] realSeed =
+        DefaultSeedGenerator.DEFAULT_SEED_GENERATOR.generateSeed(length);
+    final byte[] zeroSeed = new byte[length];
+    final BaseRandom rng = createRng(realSeed);
+    final BaseRandom rng2 = createRng(zeroSeed);
+    assert !RandomTestUtils.testEquivalence(rng, rng2, 20)
+        : "Output with real seed matches output with all-zeroes seed";
+  }
+
   @Test(timeOut = 15000) public void testEquals() throws SeedException {
     RandomTestUtils.doEqualsSanityChecks(this::createRng);
   }
