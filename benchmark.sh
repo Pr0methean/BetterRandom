@@ -16,12 +16,6 @@ cd betterrandom
 if [ "$TRAVIS_JDK_VERSION" = "oraclejdk9" ]; then
   mv pom9.xml pom.xml
 fi
-if ([ "${OSTYPE}" = "cygwin" ] && ); then
-  # Workaround for an Appveyor Cygwin path conflict
-  NO_GIT_PATH=`echo "${PATH}" | awk -v RS=':' -v ORS=':' '/git/ {next} {print}'`
-else
-  NO_GIT_PATH="${PATH}"
-fi
 PATH="${NO_GIT_PATH}" mvn -DskipTests -Darguments=-DskipTests -Dmaven.test.skip=true ${MAYBE_ANDROID_FLAG} clean package install &&\
 cd ../benchmark &&\
 PATH="${NO_GIT_PATH}" mvn -DskipTests ${MAYBE_ANDROID_FLAG} package &&\
