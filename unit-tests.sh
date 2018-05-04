@@ -4,20 +4,23 @@ if [ "$ANDROID" = 1 ]; then
 else
   MAYBE_ANDROID_FLAG=""
 fi
-if ([ "$TRAVIS_JDK_VERSION" = "oraclejdk9" ] || [ "$TRAVIS_JDK_VERSION" = "openjdk9" ]); then
+if ([ "{$TRAVIS_JDK_VERSION}" = "oraclejdk9" ] || [ "${TRAVIS_JDK_VERSION}" = "openjdk9" ]); then
   JAVA9="true"
+  mv pom9.xml pom.xml
 fi
-if [ "$APPVEYOR" != "" ]; then
+if [ "${APPVEYOR}" != "" ]; then
   RANDOM_DOT_ORG_KEY=$(powershell 'Write-Host ($env:random_dot_org_key) -NoNewLine')
 else
   sudo apt-get install tor
 fi
 cd betterrandom
-if [ "$JAVA9" = "true" ]; then
-  mv pom9.xml pom.xml
+if [ "${OSTYPE}" = "cygwin" ]; then
+  # Remove git from path (causes conflicts), based on https://stackoverflow.com/a/370192
+  # (causes an awk syntax error on MinGW -- nonstandard version of awk? -- and not needed there)
+  NO_GIT_PATH=`echo "${PATH}" | awk -v RS=':' -v ORS=':' '/git/ {next} {print}'`
+else
+  NO_GIT_PATH="${PATH}"
 fi
-# Remove git from path (causes conflicts), based on https://stackoverflow.com/a/370192
-NO_GIT_PATH=`echo "${PATH}" | awk -v RS=':' -v ORS=':' '/git/ {next} {print}'`
 # Coverage test
 PATH="${NO_GIT_PATH}" mvn ${MAYBE_ANDROID_FLAG} clean jacoco:prepare-agent test jacoco:report -e
 STATUS=$?
