@@ -3,8 +3,9 @@ cd betterrandom
 if ([ "$TRAVIS_JDK_VERSION" = "oraclejdk9" ] || [ "$TRAVIS_JDK_VERSION" = "openjdk9" ]); then
   mv pom9.xml pom.xml
 fi
-if (! [ mvn compile test-compile org.pitest:pitest-maven:mutationCoverage ]); then
-  exit 1
+mvn compile test-compile org.pitest:pitest-maven:mutationCoverage
+if [ ! $? ]; then
+  exit $?
 fi
 cd ../docs
 git remote add originauth "https://${GH_TOKEN}@github.com/Pr0methean/pr0methean.github.io.git"
