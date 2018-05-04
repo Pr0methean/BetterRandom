@@ -8,19 +8,17 @@ if ([ "{$TRAVIS_JDK_VERSION}" = "oraclejdk9" ] || [ "${TRAVIS_JDK_VERSION}" = "o
   JAVA9="true"
   mv pom9.xml pom.xml
 fi
+NO_GIT_PATH="${PATH}"
 if [ "${APPVEYOR}" != "" ]; then
   RANDOM_DOT_ORG_KEY=$(powershell 'Write-Host ($env:random_dot_org_key) -NoNewLine')
+  if [ "${OSTYPE}" = "cygwin" ]; then
+    # Workaround for a faulty PATH in Appveyor Cygwin (https://github.com/appveyor/ci/issues/1956)
+    NO_GIT_PATH=`echo "${PATH}" | "C:\cygwin64\bin\awk" -v RS=':' -v ORS=':' '/git/ {next} {print}'`
+  fi
 else
   sudo apt-get install tor
 fi
 cd betterrandom
-if [ "${OSTYPE}" = "cygwin" ]; then
-  # Remove git from path (causes conflicts), based on https://stackoverflow.com/a/370192
-  # (causes an awk syntax error on MinGW -- nonstandard version of awk? -- and not needed there)
-  NO_GIT_PATH=`echo "${PATH}" | awk -v RS=':' -v ORS=':' '/git/ {next} {print}'`
-else
-  NO_GIT_PATH="${PATH}"
-fi
 # Coverage test
 PATH="${NO_GIT_PATH}" mvn ${MAYBE_ANDROID_FLAG} clean jacoco:prepare-agent test jacoco:report -e
 STATUS=$?
