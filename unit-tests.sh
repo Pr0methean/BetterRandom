@@ -23,7 +23,6 @@ cd betterrandom
 PATH="${NO_GIT_PATH}" mvn ${MAYBE_ANDROID_FLAG} clean jacoco:prepare-agent test jacoco:report -e
 STATUS=$?
 if [ "$STATUS" = 0 ]; then
-  PUSH_JACOCO="true"
   if [ "$TRAVIS" = "true" ]; then
     if [ "$JAVA9" != "true" ]; then
       # Coveralls doesn't seem to work in non-.NET Appveyor yet
@@ -48,26 +47,24 @@ if [ "$STATUS" = 0 ]; then
   else
     PUSH_JACOCO="false"
   fi
-  if [ "$PUSH_JACOCO" = "true" ]; then
-    git clone https://github.com/Pr0methean/betterrandom-coverage.git
-    cd betterrandom-coverage
-    PATH="${NO_GIT_PATH}" mkdir -p "$COMMIT"
-    PATH="${NO_GIT_PATH}" mv ../target/jacoco.exec "$COMMIT/$JOB_ID.exec"
-    cd "$COMMIT"
-    git add .
-    git commit -m "Coverage report from job $JOB_ID"
-    git remote add originauth "https://${GH_TOKEN}@github.com/Pr0methean/betterrandom-coverage.git"
-    git push --set-upstream originauth master
-    while [ ! $? ]; do
-      git pull --rebase  # Merge
-      git push
-    done
-    PATH="${NO_GIT_PATH}" mv *.exec ../../target/
-    PATH="${NO_GIT_PATH}" cd ../..
-  fi
+  git clone https://github.com/Pr0methean/betterrandom-coverage.git
+  cd betterrandom-coverage
+  /bin/mkdir -p "$COMMIT"
+  /bin/mv ../target/jacoco.exec "$COMMIT/$JOB_ID.exec"
+  cd "$COMMIT"
+  git add .
+  git commit -m "Coverage report from job $JOB_ID"
+  git remote add originauth "https://${GH_TOKEN}@github.com/Pr0methean/betterrandom-coverage.git"
+  git push --set-upstream originauth master
+  while [ ! $? ]; do
+    git pull --rebase  # Merge
+    git push
+  done
+  /bin/mv *.exec ../../target/
+  cd ../..
   PATH="${NO_GIT_PATH}" mvn -DskipTests -Dmaven.test.skip=true ${MAYBE_ANDROID_FLAG} jacoco:report-aggregate package && (
     # Post-Proguard test (verifies Proguard settings)
-    mvn ${MAYBE_ANDROID_FLAG} test -e
+    PATH="${NO_GIT_PATH}" mvn ${MAYBE_ANDROID_FLAG} test -e
   )
   STATUS=$?
 fi
