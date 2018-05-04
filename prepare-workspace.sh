@@ -15,7 +15,7 @@ mkdir ~/.m2
 echo -n '<settingsSecurity><master>' >> ~/.m2/settings-security.xml
 echo -n "Maven master password: "
 read -s password
-echo -n `mvn -emp "${password}"` >> ~/.m2/settings-security.xml
+echo -n $(mvn -emp "${password}") >> ~/.m2/settings-security.xml
 echo '</master></settingsSecurity>' >> ~/.m2/settings-security.xml
 echo -n "Sonatype password: "
 read -s password
