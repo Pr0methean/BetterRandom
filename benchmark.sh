@@ -12,7 +12,7 @@ if [ "$TRAVIS_JDK_VERSION" = "oraclejdk9" ]; then
   mv pom9.xml pom.xml
 fi
 # Remove git from path (causes conflicts), based on https://stackoverflow.com/a/370192
-NO_GIT_PATH=`echo ${PATH} | awk -v RS=: -v ORS=: '/git/ {next} {print}'`
+NO_GIT_PATH=`echo "${PATH}" | awk -v RS=: -v ORS=: '/git/ {next} {print}'`
 PATH="${NO_GIT_PATH}" mvn -DskipTests -Darguments=-DskipTests -Dmaven.test.skip=true ${MAYBE_ANDROID_FLAG} clean package install &&\
 cd ../benchmark &&\
 PATH="${NO_GIT_PATH}" mvn -DskipTests ${MAYBE_ANDROID_FLAG} package &&\
