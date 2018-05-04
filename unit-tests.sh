@@ -51,8 +51,8 @@ if [ "$STATUS" = 0 ]; then
   if [ "$PUSH_JACOCO" = "true" ]; then
     git clone https://github.com/Pr0methean/betterrandom-coverage.git
     cd betterrandom-coverage
-    mkdir -p "$COMMIT"
-    mv ../target/jacoco.exec "$COMMIT/$JOB_ID.exec"
+    PATH="${NO_GIT_PATH}" mkdir -p "$COMMIT"
+    PATH="${NO_GIT_PATH}" mv ../target/jacoco.exec "$COMMIT/$JOB_ID.exec"
     cd "$COMMIT"
     git add .
     git commit -m "Coverage report from job $JOB_ID"
@@ -62,8 +62,8 @@ if [ "$STATUS" = 0 ]; then
       git pull --rebase  # Merge
       git push
     done
-    mv *.exec ../../target/
-    cd ../..
+    PATH="${NO_GIT_PATH}" mv *.exec ../../target/
+    PATH="${NO_GIT_PATH}" cd ../..
   fi
   PATH="${NO_GIT_PATH}" mvn -DskipTests -Dmaven.test.skip=true ${MAYBE_ANDROID_FLAG} jacoco:report-aggregate package && (
     # Post-Proguard test (verifies Proguard settings)
