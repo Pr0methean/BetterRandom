@@ -212,30 +212,31 @@ public class RandomWrapper extends BaseRandom {
         this.seed = new byte[seed.length];
       }
       super.setSeedInternal(seed);
-      if (wrapped != null) {
-        @Nullable ByteArrayReseedableRandom asByteArrayReseedable = null;
-        if (wrapped instanceof ByteArrayReseedableRandom) {
-          asByteArrayReseedable = (ByteArrayReseedableRandom) wrapped;
-          if (asByteArrayReseedable.preferSeedWithLong() && (seed.length == Long.BYTES)) {
-            asByteArrayReseedable = null;
-          }
-        } else if (wrapped instanceof SecureRandom) {
-          // Special handling, since SecureRandom isn't ByteArrayReseedableRandom but does have
-          // setSeed(byte[])
-          ((SecureRandom) wrapped).setSeed(seed);
-          unknownSeed = false;
-          return;
-        } else if (seed.length != Long.BYTES) {
-          throw new IllegalArgumentException(
-              "RandomWrapper requires an 8-byte seed when not wrapping a ByteArrayReseedableRandom");
+      if (wrapped == null) {
+        return;
+      }
+      @Nullable ByteArrayReseedableRandom asByteArrayReseedable = null;
+      if (wrapped instanceof ByteArrayReseedableRandom) {
+        asByteArrayReseedable = (ByteArrayReseedableRandom) wrapped;
+        if (asByteArrayReseedable.preferSeedWithLong() && (seed.length == Long.BYTES)) {
+          asByteArrayReseedable = null;
         }
-        if (asByteArrayReseedable != null) {
-          asByteArrayReseedable.setSeed(seed);
-          unknownSeed = false;
-        } else {
-          wrapped.setSeed(BinaryUtils.convertBytesToLong(seed));
-          unknownSeed = false;
-        }
+      } else if (wrapped instanceof SecureRandom) {
+        // Special handling, since SecureRandom isn't ByteArrayReseedableRandom but does have
+        // setSeed(byte[])
+        ((SecureRandom) wrapped).setSeed(seed);
+        unknownSeed = false;
+        return;
+      } else if (seed.length != Long.BYTES) {
+        throw new IllegalArgumentException(
+            "RandomWrapper requires an 8-byte seed when not wrapping a ByteArrayReseedableRandom");
+      }
+      if (asByteArrayReseedable != null) {
+        asByteArrayReseedable.setSeed(seed);
+        unknownSeed = false;
+      } else {
+        wrapped.setSeed(BinaryUtils.convertBytesToLong(seed));
+        unknownSeed = false;
       }
     } finally {
       if (locked) {
