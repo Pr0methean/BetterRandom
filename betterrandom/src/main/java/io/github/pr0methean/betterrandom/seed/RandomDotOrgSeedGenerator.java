@@ -42,6 +42,8 @@ import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * <p>Connects to <a href="https://www.random.org/clients/http/" target="_top">random.org's old
@@ -80,7 +82,7 @@ public enum RandomDotOrgSeedGenerator implements SeedGenerator {
    * DefaultSeedGenerator} uses this version.
    */
   DELAYED_RETRY(true);
-
+  private static final Logger LOG = LoggerFactory.getLogger(RandomDotOrgSeedGenerator.class);
   private static final String JSON_REQUEST_FORMAT = "{\"jsonrpc\":\"2.0\","
       + "\"method\":\"generateBlobs\",\"params\":{\"apiKey\":\"%s\",\"n\":1,\"size\":%d},\"id\":%d}";
 
@@ -175,11 +177,12 @@ public enum RandomDotOrgSeedGenerator implements SeedGenerator {
         cache = new byte[numberOfBytes];
         cacheOffset = numberOfBytes;
       }
+      final HttpsURLConnection connection;
       final UUID currentApiKey = API_KEY.get();
       if (currentApiKey == null) {
         // Use old API.
-        final URL url = new URL(MessageFormat.format(RANDOM_URL, numberOfBytes));
-        final URLConnection connection = url.openConnection();
+        connection = (HttpsURLConnection) new URL(MessageFormat.format(RANDOM_URL, numberOfBytes))
+            .openConnection();
         connection.setRequestProperty("User-Agent", USER_AGENT);
 
         try (BufferedReader reader = new BufferedReader(
@@ -187,6 +190,10 @@ public enum RandomDotOrgSeedGenerator implements SeedGenerator {
           int index = -1;
           for (String line = reader.readLine(); line != null; line = reader.readLine()) {
             ++index;
+            if (index >= numberOfBytes) {
+              LOG.warn("random.org sent more data than requested.");
+              break;
+            }
             cache[index] = (byte) Integer.parseInt(line, 16);
             // Can't use Byte.parseByte, since it expects signed
           }
@@ -196,17 +203,16 @@ public enum RandomDotOrgSeedGenerator implements SeedGenerator {
         }
       } else {
         // Use JSON API.
-        final HttpsURLConnection postRequest =
-            (HttpsURLConnection) JSON_REQUEST_URL.openConnection();
-        postRequest.setDoOutput(true);
-        postRequest.setRequestMethod("POST");
-        postRequest.setRequestProperty("User-Agent", USER_AGENT);
-        try (OutputStream out = postRequest.getOutputStream()) {
+        connection = (HttpsURLConnection) JSON_REQUEST_URL.openConnection();
+        connection.setDoOutput(true);
+        connection.setRequestMethod("POST");
+        connection.setRequestProperty("User-Agent", USER_AGENT);
+        try (OutputStream out = connection.getOutputStream()) {
           out.write(String.format(JSON_REQUEST_FORMAT, currentApiKey, numberOfBytes * Byte.SIZE,
               REQUEST_ID.incrementAndGet()).getBytes(UTF8));
         }
         final JSONObject response;
-        try (InputStream in = postRequest.getInputStream();
+        try (InputStream in = connection.getInputStream();
             InputStreamReader reader = new InputStreamReader(in)) {
           response = (JSONObject) JSON_PARSER.parse(reader);
         } catch (final ParseException e) {
@@ -239,6 +245,7 @@ public enum RandomDotOrgSeedGenerator implements SeedGenerator {
               .plus((advisoryDelay.compareTo(RETRY_DELAY) > 0) ? RETRY_DELAY : advisoryDelay);
         }
       }
+      connection.disconnect();
       cacheOffset = 0;
     } finally {
       cacheLock.unlock();
