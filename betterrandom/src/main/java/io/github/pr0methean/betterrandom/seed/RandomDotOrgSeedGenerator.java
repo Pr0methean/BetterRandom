@@ -117,10 +117,10 @@ public enum RandomDotOrgSeedGenerator implements SeedGenerator {
   private static final Duration RETRY_DELAY = Duration.ofSeconds(10);
   private static final Lock cacheLock = new ReentrantLock();
   private static final Charset UTF8 = Charset.forName("UTF-8");
-  private static Instant EARLIEST_NEXT_ATTEMPT = Instant.MIN;
-  private static byte[] cache = new byte[MAX_CACHE_SIZE];
-  private static int cacheOffset = cache.length;
-  private static int maxRequestSize = GLOBAL_MAX_REQUEST_SIZE;
+  private static volatile Instant EARLIEST_NEXT_ATTEMPT = Instant.MIN;
+  private static volatile byte[] cache = new byte[MAX_CACHE_SIZE];
+  private static volatile int cacheOffset = cache.length;
+  private static volatile int maxRequestSize = GLOBAL_MAX_REQUEST_SIZE;
   /**
    * The proxy to use with random.org, or null to use the JVM default.
    */
@@ -182,7 +182,7 @@ public enum RandomDotOrgSeedGenerator implements SeedGenerator {
       if (currentApiKey == null) {
         // Use old API.
         connection = (HttpsURLConnection) new URL(MessageFormat.format(RANDOM_URL, numberOfBytes))
-            .openConnection();
+            .openConnection(proxy.get());
         connection.setRequestProperty("User-Agent", USER_AGENT);
 
         try (BufferedReader reader = new BufferedReader(
@@ -203,7 +203,7 @@ public enum RandomDotOrgSeedGenerator implements SeedGenerator {
         }
       } else {
         // Use JSON API.
-        connection = (HttpsURLConnection) JSON_REQUEST_URL.openConnection();
+        connection = (HttpsURLConnection) JSON_REQUEST_URL.openConnection(proxy.get());
         connection.setDoOutput(true);
         connection.setRequestMethod("POST");
         connection.setRequestProperty("User-Agent", USER_AGENT);
