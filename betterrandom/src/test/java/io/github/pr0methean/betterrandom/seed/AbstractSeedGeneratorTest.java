@@ -1,9 +1,10 @@
 package io.github.pr0methean.betterrandom.seed;
 
+import org.powermock.modules.testng.PowerMockTestCase;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
-public abstract class AbstractSeedGeneratorTest {
+public abstract class AbstractSeedGeneratorTest extends PowerMockTestCase {
 
   protected final SeedGenerator seedGenerator;
 
