@@ -169,6 +169,7 @@ public enum RandomDotOrgSeedGenerator implements SeedGenerator {
    */
   @SuppressWarnings("NumericCastThatLosesPrecision") private static void refreshCache(
       final int requiredBytes) throws IOException {
+    HttpsURLConnection connection = null;
     cacheLock.lock();
     try {
       int numberOfBytes = Math.max(requiredBytes, cache.length);
@@ -177,7 +178,6 @@ public enum RandomDotOrgSeedGenerator implements SeedGenerator {
         cache = new byte[numberOfBytes];
         cacheOffset = numberOfBytes;
       }
-      final HttpsURLConnection connection;
       final UUID currentApiKey = API_KEY.get();
       if (currentApiKey == null) {
         // Use old API.
@@ -245,10 +245,12 @@ public enum RandomDotOrgSeedGenerator implements SeedGenerator {
               .plus((advisoryDelay.compareTo(RETRY_DELAY) > 0) ? RETRY_DELAY : advisoryDelay);
         }
       }
-      connection.disconnect();
       cacheOffset = 0;
     } finally {
       cacheLock.unlock();
+      if (connection != null) {
+        connection.disconnect();
+      }
     }
   }
 
