@@ -15,8 +15,7 @@
 // ============================================================================
 package io.github.pr0methean.betterrandom.seed;
 
-import static io.github.pr0methean.betterrandom.TestUtils.canRunRandomDotOrgLargeTest;
-import static io.github.pr0methean.betterrandom.TestUtils.isAppveyor;
+import static io.github.pr0methean.betterrandom.seed.RandomDotOrgUtils.canRunRandomDotOrgLargeTest;
 import static io.github.pr0methean.betterrandom.seed.RandomDotOrgSeedGenerator.setProxy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.powermock.api.mockito.PowerMockito.mock;
@@ -24,15 +23,7 @@ import static org.powermock.api.mockito.PowerMockito.when;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertSame;
 
-import java.net.InetSocketAddress;
 import java.net.Proxy;
-import java.net.Proxy.Type;
-import java.net.URL;
-import java.nio.charset.Charset;
-import java.util.UUID;
-import org.powermock.api.mockito.PowerMockito;
-import org.powermock.core.classloader.annotations.PrepareForTest;
-import org.powermock.reflect.Whitebox;
 import org.testng.Assert;
 import org.testng.SkipException;
 import org.testng.annotations.AfterMethod;
@@ -44,9 +35,14 @@ import org.testng.annotations.Test;
  * @author Daniel Dyer
  * @author Chris Hennick
  */
-@PrepareForTest(URL.class)
 @Test(singleThreaded = true)
-public class RandomDotOrgSeedGeneratorLiveTest extends RandomDotOrgSeedGeneratorAbstractTest {
+public class RandomDotOrgSeedGeneratorLiveTest extends AbstractSeedGeneratorTest {
+
+  protected final Proxy proxy = RandomDotOrgUtils.createTorProxy();
+
+  public RandomDotOrgSeedGeneratorLiveTest() {
+    super(RandomDotOrgSeedGenerator.RANDOM_DOT_ORG_SEED_GENERATOR);
+  }
 
   @Test(timeOut = 120000) public void testGeneratorOldApi() throws SeedException {
     if (canRunRandomDotOrgLargeTest()) {
@@ -59,7 +55,7 @@ public class RandomDotOrgSeedGeneratorLiveTest extends RandomDotOrgSeedGenerator
 
   @Test(timeOut = 120000) public void testGeneratorNewApi() throws SeedException {
     if (canRunRandomDotOrgLargeTest()) {
-      setApiKey();
+      RandomDotOrgUtils.setApiKey();
       SeedTestUtils.testGenerator(seedGenerator);
     } else {
       throw new SkipException("Test can't run on this platform");
@@ -72,7 +68,7 @@ public class RandomDotOrgSeedGeneratorLiveTest extends RandomDotOrgSeedGenerator
    */
   @Test(timeOut = 120000) public void testLargeRequest() throws SeedException {
     if (canRunRandomDotOrgLargeTest()) {
-      setApiKey();
+      RandomDotOrgUtils.setApiKey();
       // Request more bytes than are cached internally.
       final int seedLength = 626;
       assertEquals(seedGenerator.generateSeed(seedLength).length, seedLength,
@@ -97,4 +93,15 @@ public class RandomDotOrgSeedGeneratorLiveTest extends RandomDotOrgSeedGenerator
       setProxy(null);
     }
   }
+
+  @BeforeClass
+  public void setUpClass() {
+    RandomDotOrgUtils.maybeSetMaxRequestSize();
+  }
+
+  @AfterMethod
+  public void tearDownMethod() {
+    RandomDotOrgSeedGenerator.setApiKey(null);
+  }
+
 }
