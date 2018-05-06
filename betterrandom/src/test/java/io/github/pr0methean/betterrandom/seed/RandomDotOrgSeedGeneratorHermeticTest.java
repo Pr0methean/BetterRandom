@@ -93,7 +93,7 @@ public class RandomDotOrgSeedGeneratorHermeticTest extends PowerMockTestCase {
       when(mockUrl.openConnection(any(Proxy.class))).thenAnswer(invocationOnMock -> {
         assertSame(proxy, invocationOnMock.getArguments()[0]);
         connection[0] = new FakeHttpsUrlConnection(mockUrl, proxy,
-            RESPONSE_32);
+            usingSmallRequests ? RESPONSE_32 : RESPONSE_625);
         return connection[0];
       });
       when(mockUrl.openConnection()).thenAnswer(invocationOnMock -> {
