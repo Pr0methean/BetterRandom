@@ -23,7 +23,6 @@ import java.io.OutputStream;
 import java.net.MalformedURLException;
 import java.net.Proxy;
 import java.net.URL;
-import java.net.URLConnection;
 import java.nio.charset.Charset;
 import java.text.MessageFormat;
 import java.time.Clock;
@@ -42,7 +41,6 @@ import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
-import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
@@ -82,7 +80,6 @@ public enum RandomDotOrgSeedGenerator implements SeedGenerator {
    * DefaultSeedGenerator} uses this version.
    */
   DELAYED_RETRY(true);
-  private static final Logger LOG = LoggerFactory.getLogger(RandomDotOrgSeedGenerator.class);
   private static final String JSON_REQUEST_FORMAT = "{\"jsonrpc\":\"2.0\","
       + "\"method\":\"generateBlobs\",\"params\":{\"apiKey\":\"%s\",\"n\":1,\"size\":%d},\"id\":%d}";
 
@@ -105,7 +102,6 @@ public enum RandomDotOrgSeedGenerator implements SeedGenerator {
    */
   @SuppressWarnings("HardcodedFileSeparator") private static final String RANDOM_URL =
       BASE_URL + "/integers/?num={0,number,0}&min=0&max=255&col=1&base=16&format=plain&rnd=new";
-  private static final URL JSON_REQUEST_URL;
   /**
    * Used to identify the client to the random.org service.
    */
@@ -121,6 +117,24 @@ public enum RandomDotOrgSeedGenerator implements SeedGenerator {
   private static volatile byte[] cache = new byte[MAX_CACHE_SIZE];
   private static volatile int cacheOffset = cache.length;
   private static volatile int maxRequestSize = GLOBAL_MAX_REQUEST_SIZE;
+
+  /**
+   * Sets the URL used with the JSON API. Intended only for testing.
+   * @param url the new URL
+   */
+  public static void setJsonRequestUrl(final URL url) {
+    jsonRequestUrl = url;
+  }
+
+  /**
+   * Returns the URL currently used with the JSON API. Intended only for testing.
+   * @return
+   */
+  public static URL getJsonRequestUrl() {
+    return jsonRequestUrl;
+  }
+
+  private static volatile URL jsonRequestUrl;
   /**
    * The proxy to use with random.org, or null to use the JVM default.
    */
@@ -128,7 +142,7 @@ public enum RandomDotOrgSeedGenerator implements SeedGenerator {
 
   static {
     try {
-      JSON_REQUEST_URL = new URL("https://api.random.org/json-rpc/1/invoke");
+      jsonRequestUrl = new URL("https://api.random.org/json-rpc/1/invoke");
     } catch (final MalformedURLException e) {
       // Should never happen.
       throw new RuntimeException(e);
@@ -160,6 +174,12 @@ public enum RandomDotOrgSeedGenerator implements SeedGenerator {
     RandomDotOrgSeedGenerator.proxy.set(proxy);
   }
 
+  private static HttpsURLConnection openConnection(final URL url) throws IOException {
+    final Proxy currentProxy = proxy.get();
+    return (HttpsURLConnection)
+        ((currentProxy == null) ? url.openConnection() : url.openConnection(currentProxy));
+  }
+
   /**
    * @param requiredBytes The preferred number of bytes to request from random.org. The
    *     implementation may request more and cache the excess (to avoid making lots of small
@@ -181,17 +201,15 @@ public enum RandomDotOrgSeedGenerator implements SeedGenerator {
       final UUID currentApiKey = API_KEY.get();
       if (currentApiKey == null) {
         // Use old API.
-        connection = (HttpsURLConnection) new URL(MessageFormat.format(RANDOM_URL, numberOfBytes))
-            .openConnection(proxy.get());
+        connection = openConnection(new URL(MessageFormat.format(RANDOM_URL, numberOfBytes)));
         connection.setRequestProperty("User-Agent", USER_AGENT);
-
         try (BufferedReader reader = new BufferedReader(
             new InputStreamReader(connection.getInputStream()))) {
           int index = -1;
           for (String line = reader.readLine(); line != null; line = reader.readLine()) {
             ++index;
             if (index >= numberOfBytes) {
-              LOG.warn("random.org sent more data than requested.");
+              LoggerFactory.getLogger(RandomDotOrgSeedGenerator.class).warn("random.org sent more data than requested.");
               break;
             }
             cache[index] = (byte) Integer.parseInt(line, 16);
@@ -203,7 +221,7 @@ public enum RandomDotOrgSeedGenerator implements SeedGenerator {
         }
       } else {
         // Use JSON API.
-        connection = (HttpsURLConnection) JSON_REQUEST_URL.openConnection(proxy.get());
+        connection = openConnection(jsonRequestUrl);
         connection.setDoOutput(true);
         connection.setRequestMethod("POST");
         connection.setRequestProperty("User-Agent", USER_AGENT);

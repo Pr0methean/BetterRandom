@@ -28,14 +28,15 @@
       <class
         name="io.github.pr0methean.betterrandom.prng.adapter.SingleThreadSplittableRandomAdapterTest"/>
       <class name="io.github.pr0methean.betterrandom.prng.adapter.SplittableRandomAdapterTest"/>
-      <class name="io.github.pr0methean.betterrandom.prng.randomness.RandomFifoFillerTest"/>
-      <class name="io.github.pr0methean.betterrandom.seed.RandomDotOrgSeedGeneratorTest"/>
+      <class name="io.github.pr0methean.betterrandom.seed.RandomDotOrgSeedGeneratorHermeticTest"/>
+      <class name="io.github.pr0methean.betterrandom.seed.RandomDotOrgSeedGeneratorLiveTest"/>
       <class name="io.github.pr0methean.betterrandom.seed.SecureRandomSeedGeneratorTest"/>
       <class name="io.github.pr0methean.betterrandom.seed.DefaultSeedGeneratorTest"/>
       <class name="io.github.pr0methean.betterrandom.seed.DevRandomSeedGeneratorTest"/>
       <class name="io.github.pr0methean.betterrandom.seed.RandomSeederThreadTest"/>
       <class name="io.github.pr0methean.betterrandom.util.BinaryUtilsTest"/>
       <class name="io.github.pr0methean.betterrandom.util.LooperThreadTest"/>
+      <class name="io.github.pr0methean.betterrandom.seed.RandomDotOrgSeedGeneratorHermeticTest"/>
     </classes>
   </test>
 </suite>
