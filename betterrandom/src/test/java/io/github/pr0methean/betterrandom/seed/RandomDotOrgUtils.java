@@ -42,9 +42,11 @@ public enum RandomDotOrgUtils {
     return !TestUtils.isAppveyor() && !("osx".equals(System.getenv("TRAVIS_OS_NAME")));
   }
 
-  static void maybeSetMaxRequestSize() {
+  static boolean maybeSetMaxRequestSize() {
     if (!canRunRandomDotOrgLargeTest()) {
       RandomDotOrgSeedGenerator.setMaxRequestSize(SMALL_REQUEST_SIZE);
+      return true;
     }
+    return false;
   }
 }
