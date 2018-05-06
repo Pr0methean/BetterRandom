@@ -1,3 +1,7 @@
+# 2.3.3
+* Fixes a bug where `RandomDotOrgSeedGenerator` didn't use a proxy when configured with one.
+* `RandomDotOrgSeedGenerator` now closes the connection when done with it.
+
 # 2.3.2
 * Removes unnecessary `synchronized` modifier from some methods.
 * Tests now include an additional sanity check for `SetSeed`: a seed of all zeroes should give

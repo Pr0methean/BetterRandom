@@ -43,6 +43,8 @@ import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * <p>Connects to <a href="https://www.random.org/clients/http/" target="_top">random.org's old
@@ -81,7 +83,7 @@ public enum RandomDotOrgSeedGenerator implements SeedGenerator {
    * DefaultSeedGenerator} uses this version.
    */
   DELAYED_RETRY(true);
-
+  private static final Logger LOG = LoggerFactory.getLogger(RandomDotOrgSeedGenerator.class);
   private static final String JSON_REQUEST_FORMAT = "{\"jsonrpc\":\"2.0\","
       + "\"method\":\"generateBlobs\",\"params\":{\"apiKey\":\"%s\",\"n\":1,\"size\":%d},\"id\":%d}";
 
@@ -108,10 +110,10 @@ public enum RandomDotOrgSeedGenerator implements SeedGenerator {
   private static final Lock cacheLock = new ReentrantLock();
   private static final Charset UTF8 = Charset.forName("UTF-8");
   private static final TimeZone UTC = TimeZone.getTimeZone("UTC");
-  private static Calendar EARLIEST_NEXT_ATTEMPT = Calendar.getInstance(UTC);
-  private static byte[] cache = new byte[MAX_CACHE_SIZE];
-  private static int cacheOffset = cache.length;
-  private static int maxRequestSize = GLOBAL_MAX_REQUEST_SIZE;
+  private static volatile Calendar EARLIEST_NEXT_ATTEMPT = Calendar.getInstance(UTC);
+  private static volatile byte[] cache = new byte[MAX_CACHE_SIZE];
+  private static volatile int cacheOffset = cache.length;
+  private static volatile int maxRequestSize = GLOBAL_MAX_REQUEST_SIZE;
   /**
    * The proxy to use with random.org, or null to use the JVM default.
    */
@@ -164,6 +166,7 @@ public enum RandomDotOrgSeedGenerator implements SeedGenerator {
    */
   @SuppressWarnings("NumericCastThatLosesPrecision") private static void refreshCache(
       final int requiredBytes) throws IOException {
+    HttpsURLConnection connection = null;
     cacheLock.lock();
     try {
       int numberOfBytes = Math.max(requiredBytes, cache.length);
@@ -175,8 +178,8 @@ public enum RandomDotOrgSeedGenerator implements SeedGenerator {
       UUID currentApiKey = API_KEY.get();
       if (currentApiKey == null) {
         // Use old API.
-        final URL url = new URL(MessageFormat.format(RANDOM_URL, numberOfBytes));
-        final URLConnection connection = url.openConnection();
+        connection = (HttpsURLConnection) new URL(MessageFormat.format(RANDOM_URL, numberOfBytes))
+            .openConnection(proxy.get());
         connection.setRequestProperty("User-Agent", USER_AGENT);
 
         try (BufferedReader reader = new BufferedReader(
@@ -184,6 +187,10 @@ public enum RandomDotOrgSeedGenerator implements SeedGenerator {
           int index = -1;
           for (String line = reader.readLine(); line != null; line = reader.readLine()) {
             ++index;
+            if (index >= numberOfBytes) {
+              LOG.warn("random.org sent more data than requested.");
+              break;
+            }
             cache[index] = (byte) Integer.parseInt(line, 16);
             // Can't use Byte.parseByte, since it expects signed
           }
@@ -193,16 +200,16 @@ public enum RandomDotOrgSeedGenerator implements SeedGenerator {
         }
       } else {
         // Use JSON API.
-        HttpsURLConnection postRequest = (HttpsURLConnection) JSON_REQUEST_URL.openConnection();
-        postRequest.setDoOutput(true);
-        postRequest.setRequestMethod("POST");
-        postRequest.setRequestProperty("User-Agent", USER_AGENT);
-        try (OutputStream out = postRequest.getOutputStream()) {
+        connection = (HttpsURLConnection) JSON_REQUEST_URL.openConnection(proxy.get());
+        connection.setDoOutput(true);
+        connection.setRequestMethod("POST");
+        connection.setRequestProperty("User-Agent", USER_AGENT);
+        try (OutputStream out = connection.getOutputStream()) {
           out.write(String.format(JSON_REQUEST_FORMAT, currentApiKey, numberOfBytes * Byte.SIZE,
               REQUEST_ID.incrementAndGet()).getBytes(UTF8));
         }
-        JSONObject response;
-        try (InputStream in = postRequest.getInputStream();
+        final JSONObject response;
+        try (InputStream in = connection.getInputStream();
             InputStreamReader reader = new InputStreamReader(in)) {
           response = (JSONObject) JSON_PARSER.parse(reader);
         } catch (ParseException e) {
@@ -238,6 +245,9 @@ public enum RandomDotOrgSeedGenerator implements SeedGenerator {
       cacheOffset = 0;
     } finally {
       cacheLock.unlock();
+      if (connection != null) {
+        connection.disconnect();
+      }
     }
   }
 
