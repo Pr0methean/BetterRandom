@@ -216,7 +216,8 @@ public enum RandomDotOrgSeedGenerator implements SeedGenerator {
             // Can't use Byte.parseByte, since it expects signed
           }
           if (index < (cache.length - 1)) {
-            throw new IOException("Insufficient data received.");
+            throw new IOException(String.format(
+                "Insufficient data received: expected %d bytes, got %d.", cache.length, index + 1));
           }
         }
       } else {
