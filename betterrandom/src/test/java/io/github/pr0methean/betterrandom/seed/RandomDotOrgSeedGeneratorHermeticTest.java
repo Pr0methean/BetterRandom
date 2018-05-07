@@ -7,28 +7,25 @@ import static io.github.pr0methean.betterrandom.seed.RandomDotOrgUtils.haveApiKe
 import static io.github.pr0methean.betterrandom.seed.RandomDotOrgUtils.maybeSetMaxRequestSize;
 import static io.github.pr0methean.betterrandom.seed.RandomDotOrgUtils.setApiKey;
 import static org.mockito.ArgumentMatchers.any;
-import static org.powermock.api.mockito.PowerMockito.mock;
-import static org.powermock.api.mockito.PowerMockito.when;
-import static org.testng.Assert.assertNull;
-import static org.testng.Assert.assertSame;
+import static org.mockito.Mockito.when;
+import static org.powermock.api.mockito.PowerMockito.mockStatic;
+import static org.testng.Assert.assertTrue;
+import static org.testng.AssertJUnit.assertEquals;
 
 import java.io.IOException;
 import java.net.Proxy;
 import java.net.URL;
-import java.net.URLConnection;
 import java.nio.charset.Charset;
 import javax.annotation.Nullable;
-import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.testng.PowerMockTestCase;
 import org.testng.Assert;
 import org.testng.SkipException;
-import org.testng.annotations.AfterClass;
 import org.testng.annotations.AfterMethod;
-import org.testng.annotations.BeforeClass;
+import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
-@PrepareForTest({URL.class, URLConnection.class, RandomDotOrgSeedGenerator.class})
+@PrepareForTest(RandomDotOrgSeedGenerator.class)
 @Test(singleThreaded = true)
 public class RandomDotOrgSeedGeneratorHermeticTest extends PowerMockTestCase {
 
@@ -91,49 +88,31 @@ public class RandomDotOrgSeedGeneratorHermeticTest extends PowerMockTestCase {
       haveApiKey()
           ? RESPONSE_625_JSON
           : RESPONSE_625_OLD_API;
-  private URL mockUrl;
-  private final URL realUrl = RandomDotOrgSeedGenerator.getJsonRequestUrl();
   @Nullable private String address = null;
   private final Proxy proxy = createTorProxy();
   private boolean usingSmallRequests = false;
 
-  private void enableMockUrlOldApiProxy(final FakeHttpsUrlConnection[] connection)
-      throws IOException {
-    when(mockUrl.openConnection(any(Proxy.class))).thenAnswer(invocationOnMock -> {
-      assertSame(proxy, invocationOnMock.getArguments()[0]);
-      connection[0] = new FakeHttpsUrlConnection(mockUrl, proxy,
-          usingSmallRequests ? RESPONSE_32 : RESPONSE_625);
-      return connection[0];
-    });
-  }
-
-  private void enableMockUrlOldApiNoProxy(final FakeHttpsUrlConnection[] connection)
-      throws IOException {
-    when(mockUrl.openConnection()).thenAnswer(invocationOnMock -> {
-      connection[0] = new FakeHttpsUrlConnection(mockUrl, null,
-          usingSmallRequests ? RESPONSE_32 : RESPONSE_625);
-      return connection[0];
-    });
-  }
-
-  @BeforeClass
-  public void setUpClass() {
+  @BeforeMethod
+  public void setUpMethod() throws IOException {
+    RandomDotOrgSeedGenerator.cacheOffset = RandomDotOrgSeedGenerator.cache.length;
     usingSmallRequests = maybeSetMaxRequestSize();
-    mockUrl = mock(URL.class);
+    mockStatic(RandomDotOrgSeedGenerator.class);
+    when(RandomDotOrgSeedGenerator.openConnection(any(URL.class))).thenAnswer(invocationOnMock -> {
+      final URL url = invocationOnMock.getArgument(0);
+      address = url.toString();
+      return new FakeHttpsUrlConnection(invocationOnMock.getArgument(0), null,
+        usingSmallRequests ? RESPONSE_32 : RESPONSE_625);
+    });
   }
 
   @Test
   public void testSetProxyOldApi() throws Exception {
     setProxy(proxy);
+    RandomDotOrgSeedGenerator.setApiKey(null);
     try {
-      PowerMockito.whenNew(URL.class.getConstructor(String.class)).withArguments(any())
-          .thenAnswer(invocationOnMock -> {
-            address = (String) (invocationOnMock.getArguments()[0]);
-            return mockUrl;
-          });
-      final FakeHttpsUrlConnection[] connection = {null};
-      enableMockUrlOldApiProxy(connection);
       SeedTestUtils.testGenerator(RandomDotOrgSeedGenerator.RANDOM_DOT_ORG_SEED_GENERATOR);
+      assertTrue(address.startsWith("https://www.random.org/integers"));
+      assertEquals(proxy, RandomDotOrgSeedGenerator.proxy.get());
     } finally {
       setProxy(null);
     }
@@ -147,10 +126,9 @@ public class RandomDotOrgSeedGeneratorHermeticTest extends PowerMockTestCase {
     setApiKey();
     setProxy(proxy);
     try {
-      RandomDotOrgSeedGenerator.setJsonRequestUrl(mockUrl);
-      final FakeHttpsUrlConnection[] connection = {null};
-      enableMockUrlOldApiProxy(connection);
       SeedTestUtils.testGenerator(RandomDotOrgSeedGenerator.RANDOM_DOT_ORG_SEED_GENERATOR);
+      assertTrue(address.startsWith("https://api.random.org/json-rpc/1/invoke"));
+      assertEquals(proxy, RandomDotOrgSeedGenerator.proxy.get());
     } finally {
       setProxy(null);
       RandomDotOrgSeedGenerator.setApiKey(null);
@@ -160,14 +138,9 @@ public class RandomDotOrgSeedGeneratorHermeticTest extends PowerMockTestCase {
   @Test
   public void testOverLongResponse() throws IOException {
     RandomDotOrgSeedGenerator.setMaxRequestSize(32);
+    when(RandomDotOrgSeedGenerator.openConnection(any(URL.class))).thenAnswer(invocationOnMock ->
+        new FakeHttpsUrlConnection(invocationOnMock.getArgument(0), null, RESPONSE_625));
     try {
-      final FakeHttpsUrlConnection[] connection = {null};
-      enableMockUrlOldApiNoProxy(connection);
-      when(mockUrl.openConnection()).thenAnswer(invocationOnMock -> {
-        assertNull(proxy);
-        connection[0] = new FakeHttpsUrlConnection(mockUrl, null, RESPONSE_625_OLD_API);
-        return connection[0];
-      });
       SeedTestUtils.testGenerator(RandomDotOrgSeedGenerator.RANDOM_DOT_ORG_SEED_GENERATOR);
     } finally {
       if (!usingSmallRequests) {
@@ -180,19 +153,14 @@ public class RandomDotOrgSeedGeneratorHermeticTest extends PowerMockTestCase {
   @Test
   public void testOverShortResponse() throws IOException {
     RandomDotOrgSeedGenerator.setMaxRequestSize(GLOBAL_MAX_REQUEST_SIZE);
+    when(RandomDotOrgSeedGenerator.openConnection(any(URL.class))).thenAnswer(invocationOnMock ->
+        new FakeHttpsUrlConnection(invocationOnMock.getArgument(0), null, RESPONSE_32));
     try {
-      final FakeHttpsUrlConnection[] connection = {null};
-      enableMockUrlOldApiNoProxy(connection);
-      when(mockUrl.openConnection()).thenAnswer(invocationOnMock -> {
-        assertNull(proxy);
-        connection[0] = new FakeHttpsUrlConnection(mockUrl, null, RESPONSE_32_OLD_API);
-        return connection[0];
-      });
       try {
         SeedTestUtils.testGenerator(RandomDotOrgSeedGenerator.RANDOM_DOT_ORG_SEED_GENERATOR);
         Assert.fail("Should have thrown SeedException");
       } catch (final SeedException expected) {
-        Assert.assertTrue(expected.getCause() instanceof IOException);
+        assertTrue(expected.getCause() instanceof IOException);
       }
     } finally {
       maybeSetMaxRequestSize();
@@ -202,10 +170,5 @@ public class RandomDotOrgSeedGeneratorHermeticTest extends PowerMockTestCase {
   @AfterMethod
   public void tearDownMethod() {
     address = null;
-  }
-
-  @AfterClass
-  public void tearDownClass() throws Exception {
-    RandomDotOrgSeedGenerator.setJsonRequestUrl(realUrl);
   }
 }

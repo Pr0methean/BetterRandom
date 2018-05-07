@@ -115,8 +115,8 @@ public enum RandomDotOrgSeedGenerator implements SeedGenerator {
   private static final Lock cacheLock = new ReentrantLock();
   private static final Charset UTF8 = Charset.forName("UTF-8");
   private static volatile Instant EARLIEST_NEXT_ATTEMPT = Instant.MIN;
-  private static volatile byte[] cache = new byte[MAX_CACHE_SIZE];
-  private static volatile int cacheOffset = cache.length;
+  static volatile byte[] cache = new byte[MAX_CACHE_SIZE];
+  static volatile int cacheOffset = cache.length;
   private static volatile int maxRequestSize = GLOBAL_MAX_REQUEST_SIZE;
 
   /**
@@ -137,9 +137,9 @@ public enum RandomDotOrgSeedGenerator implements SeedGenerator {
 
   private static volatile URL jsonRequestUrl;
   /**
-   * The proxy to use with random.org, or null to use the JVM default.
+   * The proxy to use with random.org, or null to use the JVM default. Package-visible for testing.
    */
-  private static final AtomicReference<Proxy> proxy = new AtomicReference<>(null);
+  static final AtomicReference<Proxy> proxy = new AtomicReference<>(null);
 
   static {
     try {
@@ -175,7 +175,8 @@ public enum RandomDotOrgSeedGenerator implements SeedGenerator {
     RandomDotOrgSeedGenerator.proxy.set(proxy);
   }
 
-  private static HttpsURLConnection openConnection(final URL url) throws IOException {
+  /* Package-visible for testing. */
+  static HttpsURLConnection openConnection(final URL url) throws IOException {
     final Proxy currentProxy = proxy.get();
     return (HttpsURLConnection)
         ((currentProxy == null) ? url.openConnection() : url.openConnection(currentProxy));
