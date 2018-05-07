@@ -107,9 +107,10 @@ public enum RandomDotOrgSeedGenerator implements SeedGenerator {
    */
   private static final String USER_AGENT = RandomDotOrgSeedGenerator.class.getName();
   /**
-   * Random.org does not allow requests for more than 10k integers at once.
+   * Random.org does not allow requests for more than 10k integers at once. This field is
+   * package-visible for testing.
    */
-  private static final int GLOBAL_MAX_REQUEST_SIZE = 10000;
+  static final int GLOBAL_MAX_REQUEST_SIZE = 10000;
   private static final Duration RETRY_DELAY = Duration.ofSeconds(10);
   private static final Lock cacheLock = new ReentrantLock();
   private static final Charset UTF8 = Charset.forName("UTF-8");
