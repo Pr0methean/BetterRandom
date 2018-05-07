@@ -15,6 +15,7 @@ import static org.testng.Assert.assertSame;
 import java.io.IOException;
 import java.net.Proxy;
 import java.net.URL;
+import java.net.URLConnection;
 import java.nio.charset.Charset;
 import javax.annotation.Nullable;
 import org.powermock.api.mockito.PowerMockito;
@@ -27,7 +28,7 @@ import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
-@PrepareForTest({URL.class, RandomDotOrgSeedGenerator.class})
+@PrepareForTest({URL.class, URLConnection.class, RandomDotOrgSeedGenerator.class})
 @Test(singleThreaded = true)
 public class RandomDotOrgSeedGeneratorHermeticTest extends PowerMockTestCase {
 
