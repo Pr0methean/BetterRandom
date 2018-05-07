@@ -11,6 +11,7 @@ import java.security.cert.Certificate;
 import javax.annotation.Nullable;
 import javax.net.ssl.HttpsURLConnection;
 import javax.net.ssl.SSLPeerUnverifiedException;
+import org.slf4j.LoggerFactory;
 
 /**
  * Used for testing {@link RandomDotOrgSeedGenerator}.
@@ -83,5 +84,17 @@ public class FakeHttpsUrlConnection extends HttpsURLConnection {
 
   public boolean isDisconnected() {
     return disconnected;
+  }
+
+  @Override
+  protected void finalize() {
+    try {
+      if (is != null) {
+        is.close();
+      }
+      os.close();
+    } catch (IOException e) {
+      LoggerFactory.getLogger(FakeHttpsUrlConnection.class).error("Failed to close streams", e);
+    }
   }
 }

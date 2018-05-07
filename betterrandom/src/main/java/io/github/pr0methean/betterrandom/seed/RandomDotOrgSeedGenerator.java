@@ -41,6 +41,7 @@ import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
+import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
@@ -112,8 +113,9 @@ public enum RandomDotOrgSeedGenerator implements SeedGenerator {
    */
   static final int GLOBAL_MAX_REQUEST_SIZE = 10000;
   private static final Duration RETRY_DELAY = Duration.ofSeconds(10);
-  private static final Lock cacheLock = new ReentrantLock();
+  static final Lock cacheLock = new ReentrantLock();
   private static final Charset UTF8 = Charset.forName("UTF-8");
+  private static final Logger LOG = LoggerFactory.getLogger(RandomDotOrgSeedGenerator.class);
   private static volatile Instant EARLIEST_NEXT_ATTEMPT = Instant.MIN;
   static volatile byte[] cache = new byte[MAX_CACHE_SIZE];
   static volatile int cacheOffset = cache.length;
@@ -211,7 +213,7 @@ public enum RandomDotOrgSeedGenerator implements SeedGenerator {
           for (String line = reader.readLine(); line != null; line = reader.readLine()) {
             ++index;
             if (index >= numberOfBytes) {
-              LoggerFactory.getLogger(RandomDotOrgSeedGenerator.class).warn("random.org sent more data than requested.");
+              LOG.warn("random.org sent more data than requested.");
               break;
             }
             cache[index] = (byte) Integer.parseInt(line, 16);
@@ -253,8 +255,8 @@ public enum RandomDotOrgSeedGenerator implements SeedGenerator {
               ((data instanceof JSONArray) ? ((JSONArray) data).get(0) : data).toString();
           final byte[] decodedSeed = BASE64.decode(base64seed);
           if (decodedSeed.length < numberOfBytes) {
-            throw new SeedException(
-                "Too few bytes returned: requested " + numberOfBytes + ", got " + base64seed);
+            throw new SeedException(String.format(
+                "Too few bytes returned: expected %d bytes, got '%s'", numberOfBytes, base64seed));
           }
           System.arraycopy(decodedSeed, 0, cache, 0, numberOfBytes);
         }
