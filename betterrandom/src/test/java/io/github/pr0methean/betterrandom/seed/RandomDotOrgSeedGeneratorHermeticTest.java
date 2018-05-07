@@ -10,21 +10,16 @@ import static io.github.pr0methean.betterrandom.seed.RandomDotOrgUtils.haveApiKe
 import static io.github.pr0methean.betterrandom.seed.RandomDotOrgUtils.maybeSetMaxRequestSize;
 import static io.github.pr0methean.betterrandom.seed.RandomDotOrgUtils.setApiKey;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.CALLS_REAL_METHODS;
-import static org.mockito.Mockito.when;
-import static org.powermock.api.mockito.PowerMockito.mockStatic;
 import static org.powermock.api.mockito.PowerMockito.spy;
 import static org.testng.Assert.assertTrue;
 import static org.testng.AssertJUnit.assertEquals;
 
-import io.github.pr0methean.betterrandom.DeadlockWatchdogThread;
 import java.io.IOException;
 import java.net.Proxy;
 import java.net.URL;
 import java.nio.charset.Charset;
 import javax.annotation.Nullable;
 import org.powermock.api.mockito.PowerMockito;
-import org.powermock.core.classloader.annotations.PowerMockIgnore;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.testng.PowerMockTestCase;
 import org.testng.Assert;
@@ -33,7 +28,6 @@ import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
-@PowerMockIgnore("javax.management.*")
 @PrepareForTest(RandomDotOrgSeedGenerator.class)
 public class RandomDotOrgSeedGeneratorHermeticTest extends PowerMockTestCase {
 
@@ -111,7 +105,6 @@ public class RandomDotOrgSeedGeneratorHermeticTest extends PowerMockTestCase {
   @BeforeMethod
   public void setUpMethod() throws IOException {
     spy(RandomDotOrgSeedGenerator.class);
-    DeadlockWatchdogThread.ensureStarted();
     usingSmallRequests = maybeSetMaxRequestSize();
     cacheLock.lock();
     try {
