@@ -120,24 +120,7 @@ public enum RandomDotOrgSeedGenerator implements SeedGenerator {
   static volatile byte[] cache = new byte[MAX_CACHE_SIZE];
   static volatile int cacheOffset = cache.length;
   private static volatile int maxRequestSize = GLOBAL_MAX_REQUEST_SIZE;
-
-  /**
-   * Sets the URL used with the JSON API. Intended only for testing.
-   * @param url the new URL
-   */
-  public static void setJsonRequestUrl(final URL url) {
-    jsonRequestUrl = url;
-  }
-
-  /**
-   * Returns the URL currently used with the JSON API. Intended only for testing.
-   * @return
-   */
-  public static URL getJsonRequestUrl() {
-    return jsonRequestUrl;
-  }
-
-  private static volatile URL jsonRequestUrl;
+  private static final URL JSON_REQUEST_URL;
   /**
    * The proxy to use with random.org, or null to use the JVM default. Package-visible for testing.
    */
@@ -145,7 +128,7 @@ public enum RandomDotOrgSeedGenerator implements SeedGenerator {
 
   static {
     try {
-      jsonRequestUrl = new URL("https://api.random.org/json-rpc/1/invoke");
+      JSON_REQUEST_URL = new URL("https://api.random.org/json-rpc/1/invoke");
     } catch (final MalformedURLException e) {
       // Should never happen.
       throw new RuntimeException(e);
@@ -226,7 +209,7 @@ public enum RandomDotOrgSeedGenerator implements SeedGenerator {
         }
       } else {
         // Use JSON API.
-        connection = openConnection(jsonRequestUrl);
+        connection = openConnection(JSON_REQUEST_URL);
         connection.setDoOutput(true);
         connection.setRequestMethod("POST");
         connection.setRequestProperty("User-Agent", USER_AGENT);
