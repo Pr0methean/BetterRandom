@@ -109,7 +109,6 @@ public class RandomDotOrgSeedGeneratorHermeticTest extends PowerMockTestCase {
   private void enableMockUrlOldApiNoProxy(final FakeHttpsUrlConnection[] connection)
       throws IOException {
     when(mockUrl.openConnection()).thenAnswer(invocationOnMock -> {
-      assertNull(proxy);
       connection[0] = new FakeHttpsUrlConnection(mockUrl, null,
           usingSmallRequests ? RESPONSE_32 : RESPONSE_625);
       return connection[0];
