@@ -1,22 +1,30 @@
 package io.github.pr0methean.betterrandom.seed;
 
 import static io.github.pr0methean.betterrandom.seed.RandomDotOrgSeedGenerator.GLOBAL_MAX_REQUEST_SIZE;
+import static io.github.pr0methean.betterrandom.seed.RandomDotOrgSeedGenerator.cache;
+import static io.github.pr0methean.betterrandom.seed.RandomDotOrgSeedGenerator.cacheLock;
+import static io.github.pr0methean.betterrandom.seed.RandomDotOrgSeedGenerator.cacheOffset;
 import static io.github.pr0methean.betterrandom.seed.RandomDotOrgSeedGenerator.setProxy;
 import static io.github.pr0methean.betterrandom.seed.RandomDotOrgUtils.createTorProxy;
 import static io.github.pr0methean.betterrandom.seed.RandomDotOrgUtils.haveApiKey;
 import static io.github.pr0methean.betterrandom.seed.RandomDotOrgUtils.maybeSetMaxRequestSize;
 import static io.github.pr0methean.betterrandom.seed.RandomDotOrgUtils.setApiKey;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.CALLS_REAL_METHODS;
 import static org.mockito.Mockito.when;
 import static org.powermock.api.mockito.PowerMockito.mockStatic;
+import static org.powermock.api.mockito.PowerMockito.spy;
 import static org.testng.Assert.assertTrue;
 import static org.testng.AssertJUnit.assertEquals;
 
+import io.github.pr0methean.betterrandom.DeadlockWatchdogThread;
 import java.io.IOException;
 import java.net.Proxy;
 import java.net.URL;
 import java.nio.charset.Charset;
 import javax.annotation.Nullable;
+import org.powermock.api.mockito.PowerMockito;
+import org.powermock.core.classloader.annotations.PowerMockIgnore;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.testng.PowerMockTestCase;
 import org.testng.Assert;
@@ -25,8 +33,8 @@ import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
+@PowerMockIgnore("javax.management.*")
 @PrepareForTest(RandomDotOrgSeedGenerator.class)
-@Test(singleThreaded = true)
 public class RandomDotOrgSeedGeneratorHermeticTest extends PowerMockTestCase {
 
   private static final Charset UTF8 = Charset.forName("UTF-8");
@@ -92,22 +100,31 @@ public class RandomDotOrgSeedGeneratorHermeticTest extends PowerMockTestCase {
   private final Proxy proxy = createTorProxy();
   private boolean usingSmallRequests = false;
 
-  @BeforeMethod
-  public void setUpMethod() throws IOException {
-    RandomDotOrgSeedGenerator.cacheOffset = RandomDotOrgSeedGenerator.cache.length;
-    usingSmallRequests = maybeSetMaxRequestSize();
-    mockStatic(RandomDotOrgSeedGenerator.class);
-    when(RandomDotOrgSeedGenerator.openConnection(any(URL.class))).thenAnswer(invocationOnMock -> {
+  private void mockRandomDotOrgResponse(final byte[] response) throws Exception {
+    PowerMockito.doAnswer(invocationOnMock -> {
       final URL url = invocationOnMock.getArgument(0);
       address = url.toString();
-      return new FakeHttpsUrlConnection(invocationOnMock.getArgument(0), null,
-        usingSmallRequests ? RESPONSE_32 : RESPONSE_625);
-    });
+      return new FakeHttpsUrlConnection(invocationOnMock.getArgument(0), null, response);
+    }).when(RandomDotOrgSeedGenerator.class, "openConnection", any(URL.class));
+  }
+
+  @BeforeMethod
+  public void setUpMethod() throws IOException {
+    spy(RandomDotOrgSeedGenerator.class);
+    DeadlockWatchdogThread.ensureStarted();
+    usingSmallRequests = maybeSetMaxRequestSize();
+    cacheLock.lock();
+    try {
+      cacheOffset = cache.length;
+    } finally {
+      cacheLock.unlock();
+    }
   }
 
   @Test
   public void testSetProxyOldApi() throws Exception {
     setProxy(proxy);
+    mockRandomDotOrgResponse(usingSmallRequests ? RESPONSE_32 : RESPONSE_625);
     RandomDotOrgSeedGenerator.setApiKey(null);
     try {
       SeedTestUtils.testGenerator(RandomDotOrgSeedGenerator.RANDOM_DOT_ORG_SEED_GENERATOR);
@@ -125,6 +142,7 @@ public class RandomDotOrgSeedGeneratorHermeticTest extends PowerMockTestCase {
     }
     setApiKey();
     setProxy(proxy);
+    mockRandomDotOrgResponse(usingSmallRequests ? RESPONSE_32 : RESPONSE_625);
     try {
       SeedTestUtils.testGenerator(RandomDotOrgSeedGenerator.RANDOM_DOT_ORG_SEED_GENERATOR);
       assertTrue(address.startsWith("https://api.random.org/json-rpc/1/invoke"));
@@ -136,10 +154,9 @@ public class RandomDotOrgSeedGeneratorHermeticTest extends PowerMockTestCase {
   }
 
   @Test
-  public void testOverLongResponse() throws IOException {
+  public void testOverLongResponse() throws Exception {
     RandomDotOrgSeedGenerator.setMaxRequestSize(32);
-    when(RandomDotOrgSeedGenerator.openConnection(any(URL.class))).thenAnswer(invocationOnMock ->
-        new FakeHttpsUrlConnection(invocationOnMock.getArgument(0), null, RESPONSE_625));
+    mockRandomDotOrgResponse(RESPONSE_625);
     try {
       SeedTestUtils.testGenerator(RandomDotOrgSeedGenerator.RANDOM_DOT_ORG_SEED_GENERATOR);
     } finally {
@@ -151,10 +168,9 @@ public class RandomDotOrgSeedGeneratorHermeticTest extends PowerMockTestCase {
   }
 
   @Test
-  public void testOverShortResponse() throws IOException {
+  public void testOverShortResponse() throws Exception {
     RandomDotOrgSeedGenerator.setMaxRequestSize(GLOBAL_MAX_REQUEST_SIZE);
-    when(RandomDotOrgSeedGenerator.openConnection(any(URL.class))).thenAnswer(invocationOnMock ->
-        new FakeHttpsUrlConnection(invocationOnMock.getArgument(0), null, RESPONSE_32));
+    mockRandomDotOrgResponse(RESPONSE_32);
     try {
       try {
         SeedTestUtils.testGenerator(RandomDotOrgSeedGenerator.RANDOM_DOT_ORG_SEED_GENERATOR);
