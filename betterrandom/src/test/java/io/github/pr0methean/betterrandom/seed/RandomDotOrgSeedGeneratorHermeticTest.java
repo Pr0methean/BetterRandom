@@ -120,7 +120,7 @@ public class RandomDotOrgSeedGeneratorHermeticTest extends PowerMockTestCase {
   @Test
   public void testSetProxyOldApi() throws Exception {
     setProxy(proxy);
-    mockRandomDotOrgResponse(usingSmallRequests ? RESPONSE_32 : RESPONSE_625);
+    mockRandomDotOrgResponse(usingSmallRequests ? RESPONSE_32_OLD_API : RESPONSE_625_OLD_API);
     RandomDotOrgSeedGenerator.setApiKey(null);
     try {
       SeedTestUtils.testGenerator(RandomDotOrgSeedGenerator.RANDOM_DOT_ORG_SEED_GENERATOR);
@@ -138,7 +138,7 @@ public class RandomDotOrgSeedGeneratorHermeticTest extends PowerMockTestCase {
     }
     setApiKey();
     setProxy(proxy);
-    mockRandomDotOrgResponse(usingSmallRequests ? RESPONSE_32 : RESPONSE_625);
+    mockRandomDotOrgResponse(usingSmallRequests ? RESPONSE_32_JSON : RESPONSE_625_JSON);
     try {
       SeedTestUtils.testGenerator(RandomDotOrgSeedGenerator.RANDOM_DOT_ORG_SEED_GENERATOR);
       assertTrue(address.startsWith("https://api.random.org/json-rpc/1/invoke"));
@@ -151,8 +151,9 @@ public class RandomDotOrgSeedGeneratorHermeticTest extends PowerMockTestCase {
 
   @Test
   public void testOverLongResponse() throws Exception {
+    RandomDotOrgSeedGenerator.setApiKey(null);
     RandomDotOrgSeedGenerator.setMaxRequestSize(32);
-    mockRandomDotOrgResponse(RESPONSE_625);
+    mockRandomDotOrgResponse(RESPONSE_625_OLD_API);
     try {
       SeedTestUtils.testGenerator(RandomDotOrgSeedGenerator.RANDOM_DOT_ORG_SEED_GENERATOR);
     } finally {
@@ -160,13 +161,15 @@ public class RandomDotOrgSeedGeneratorHermeticTest extends PowerMockTestCase {
         RandomDotOrgSeedGenerator.setMaxRequestSize(
             GLOBAL_MAX_REQUEST_SIZE);
       }
+      setApiKey();
     }
   }
 
   @Test
   public void testOverShortResponse() throws Exception {
+    RandomDotOrgSeedGenerator.setApiKey(null);
     RandomDotOrgSeedGenerator.setMaxRequestSize(GLOBAL_MAX_REQUEST_SIZE);
-    mockRandomDotOrgResponse(RESPONSE_32);
+    mockRandomDotOrgResponse(RESPONSE_32_OLD_API);
     try {
       try {
         SeedTestUtils.testGenerator(RandomDotOrgSeedGenerator.RANDOM_DOT_ORG_SEED_GENERATOR);
@@ -176,6 +179,7 @@ public class RandomDotOrgSeedGeneratorHermeticTest extends PowerMockTestCase {
       }
     } finally {
       maybeSetMaxRequestSize();
+      setApiKey();
     }
   }
 
