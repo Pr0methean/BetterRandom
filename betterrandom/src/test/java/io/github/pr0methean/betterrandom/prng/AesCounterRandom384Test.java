@@ -3,11 +3,11 @@ package io.github.pr0methean.betterrandom.prng;
 import java.security.NoSuchAlgorithmException;
 import javax.crypto.Cipher;
 import org.testng.SkipException;
-import org.testng.annotations.BeforeClass;
+import org.testng.annotations.BeforeMethod;
 
 public class AesCounterRandom384Test extends AesCounterRandom256Test {
 
-  @BeforeClass
+  @BeforeMethod
   public void checkRunnable() throws NoSuchAlgorithmException {
     if (Cipher.getMaxAllowedKeyLength("AES") < 256) {
       throw new SkipException(
