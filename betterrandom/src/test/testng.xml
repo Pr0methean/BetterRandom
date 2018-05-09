@@ -35,7 +35,6 @@
       <class name="io.github.pr0methean.betterrandom.prng.ReseedingThreadLocalRandomWrapperTest"/>
       <class
         name="io.github.pr0methean.betterrandom.prng.ReseedingThreadLocalRandomWrapperFailingSeedGeneratorTest"/>
-      <class name="io.github.pr0methean.betterrandom.prng.randomness.RandomFifoFillerTest"/>
     </classes>
   </test>
 </suite>
