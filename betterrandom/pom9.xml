@@ -218,9 +218,6 @@
           <artifactId>maven-surefire-plugin</artifactId>
           <version>2.20.1</version>
           <configuration>
-            <trimStackTrace>false</trimStackTrace>
-            <parallel>methods</parallel>
-            <forkedProcessTimeoutInSeconds>600</forkedProcessTimeoutInSeconds>
             <suiteXmlFiles>
               <suiteXmlFile>src/test/testng.xml</suiteXmlFile>
             </suiteXmlFiles>
