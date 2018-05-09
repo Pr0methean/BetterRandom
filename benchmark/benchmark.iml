@@ -40,5 +40,6 @@
     <orderEntry type="library" name="com.google.code.java-allocation-instrumenter:java-allocation-instrumenter:3.0.1" level="project" />
     <orderEntry type="library" name="javax.json:javax.json-api:1.1" level="project" />
     <orderEntry type="library" name="com.googlecode.json-simple:json-simple:1.1.1" level="project" />
+    <orderEntry type="module" module-name="BetterRandom" />
   </component>
 </module>
