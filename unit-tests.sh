@@ -7,7 +7,9 @@ fi
 if ([ "{$TRAVIS_JDK_VERSION}" = "oraclejdk9" ] || [ "${TRAVIS_JDK_VERSION}" = "openjdk9" ]); then
   JAVA9="true"
   mv betterrandom/pom9.xml betterrandom/pom.xml
-  MAVEN_OPTS="${MAVEN_OPTS} --add-exports java.xml/jdk.xml.internal=ALL-UNNAMED"
+
+  # Work around https://github.com/powermock/powermock/issues/864
+  MAVEN_OPTS="${MAVEN_OPTS} --add-opens java.xml/jdk.xml.internal=ALL-UNNAMED"
 fi
 NO_GIT_PATH="${PATH}"
 if [ "${APPVEYOR}" != "" ]; then
