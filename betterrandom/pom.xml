@@ -192,6 +192,9 @@
                 <value>10</value>
               </property>
             </properties>
+            <suiteXmlFiles>
+              <suiteXmlFile>src/test/testng.xml</suiteXmlFile>
+            </suiteXmlFiles>
           </configuration>
         </plugin>
         <plugin>
