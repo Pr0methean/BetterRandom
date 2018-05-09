@@ -215,6 +215,10 @@
             <suiteXmlFiles>
               <suiteXmlFile>src/test/testng.xml</suiteXmlFile>
             </suiteXmlFiles>
+            <argLine>
+              <!-- Work around https://github.com/powermock/powermock/issues/864 -->
+              --add-opens java.xml/jdk.xml.internal=ALL-UNNAMED
+            </argLine>
             <trimStackTrace>false</trimStackTrace>
             <forkedProcessTimeoutInSeconds>600</forkedProcessTimeoutInSeconds>
             <properties>
