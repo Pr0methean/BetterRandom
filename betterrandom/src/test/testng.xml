@@ -1,8 +1,7 @@
 <!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd">
-<suite name="TestNG" object-factory="org.powermock.modules.testng.PowerMockObjectFactory">
+<suite name="TestNG">
   <test name="Seeding">
     <classes>
-      <class name="io.github.pr0methean.betterrandom.seed.RandomDotOrgSeedGeneratorHermeticTest"/>
       <class name="io.github.pr0methean.betterrandom.seed.RandomDotOrgSeedGeneratorLiveTest"/>
       <class name="io.github.pr0methean.betterrandom.seed.SecureRandomSeedGeneratorTest"/>
       <class name="io.github.pr0methean.betterrandom.seed.DefaultSeedGeneratorTest"/>
