@@ -113,29 +113,6 @@ public class CellularAutomatonRandom extends BaseRandom {
     return original.add("cells", Arrays.toString(cells)).add("currentCellIndex", currentCellIndex);
   }
 
-  private void copySeedToCellsAndPreEvolve() {
-    cells = new int[AUTOMATON_LENGTH];
-    // Set initial cell states using seed.
-    cells[AUTOMATON_LENGTH - 1] = seed[0] + 128;
-    cells[AUTOMATON_LENGTH - 2] = seed[1] + 128;
-    cells[AUTOMATON_LENGTH - 3] = seed[2] + 128;
-    cells[AUTOMATON_LENGTH - 4] = seed[3] + 128;
-    currentCellIndex = AUTOMATON_LENGTH - 1;
-
-    int seedAsInt = BinaryUtils.convertBytesToInt(seed, 0);
-    if (seedAsInt != 0xFFFFFFFF) {
-      seedAsInt++;
-    }
-    for (int i = 0; i < (AUTOMATON_LENGTH - 4); i++) {
-      cells[i] = 0x000000FF & (seedAsInt >> (i % 32));
-    }
-
-    // Evolve automaton before returning integers.
-    for (int i = 0; i < EVOLVE_ITERATIONS_AFTER_SEEDING; i++) {
-      internalNext();
-    }
-  }
-
   private int internalNext() {
     // Set cell addresses using address of current cell.
     final int cellC = currentCellIndex - 1;
@@ -183,9 +160,45 @@ public class CellularAutomatonRandom extends BaseRandom {
     if (seed.length != SEED_SIZE_BYTES) {
       throw new IllegalArgumentException("Cellular Automaton RNG requires a 32-bit (4-byte) seed.");
     }
-    super.setSeedInternal(seed);
-    currentCellIndex = AUTOMATON_LENGTH - 1;
-    copySeedToCellsAndPreEvolve();
+    boolean locked = false;
+    if (lock != null) {
+      lock.lock();
+      locked = true;
+    }
+    try {
+      super.setSeedInternal(seed);
+      currentCellIndex = AUTOMATON_LENGTH - 1;
+      if (cells == null) {
+        cells = new int[AUTOMATON_LENGTH];
+      } else {
+        for (int i = 0; i < (AUTOMATON_LENGTH - 4); i++) {
+          cells[i] = 0;
+        }
+      }
+      // Set initial cell states using seed.
+      cells[AUTOMATON_LENGTH - 1] = this.seed[0] + 128;
+      cells[AUTOMATON_LENGTH - 2] = this.seed[1] + 128;
+      cells[AUTOMATON_LENGTH - 3] = this.seed[2] + 128;
+      cells[AUTOMATON_LENGTH - 4] = this.seed[3] + 128;
+      currentCellIndex = AUTOMATON_LENGTH - 1;
+
+      int seedAsInt = BinaryUtils.convertBytesToInt(this.seed, 0);
+      if (seedAsInt != 0xFFFFFFFF) {
+        seedAsInt++;
+      }
+      for (int i = 0; i < (AUTOMATON_LENGTH - 4); i++) {
+        cells[i] = 0x000000FF & (seedAsInt >> (i % 32));
+      }
+
+      // Evolve automaton before returning integers.
+      for (int i = 0; i < EVOLVE_ITERATIONS_AFTER_SEEDING; i++) {
+        internalNext();
+      }
+    } finally {
+      if (locked) {
+        lock.unlock();
+      }
+    }
   }
 
   /** Returns the only supported seed length. */
