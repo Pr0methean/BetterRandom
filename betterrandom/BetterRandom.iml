@@ -11,6 +11,19 @@
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
+    <orderEntry type="library" name="Maven: org.apache.logging.log4j:log4j-core:2.11.0" level="project" />
+    <orderEntry type="library" name="Maven: org.apache.logging.log4j:log4j-api:2.11.0" level="project" />
+    <orderEntry type="library" scope="TEST" name="Maven: org.apache.logging.log4j:log4j-slf4j-impl:2.11.0" level="project" />
+    <orderEntry type="library" scope="TEST" name="Maven: org.mockito:mockito-core:2.18.3" level="project" />
+    <orderEntry type="library" scope="TEST" name="Maven: net.bytebuddy:byte-buddy:1.8.5" level="project" />
+    <orderEntry type="library" scope="TEST" name="Maven: net.bytebuddy:byte-buddy-agent:1.8.5" level="project" />
+    <orderEntry type="library" scope="TEST" name="Maven: org.powermock:powermock-core:2.0.0-beta.5" level="project" />
+    <orderEntry type="library" scope="TEST" name="Maven: org.powermock:powermock-reflect:2.0.0-beta.5" level="project" />
+    <orderEntry type="library" scope="TEST" name="Maven: org.javassist:javassist:3.22.0-CR2" level="project" />
+    <orderEntry type="library" scope="TEST" name="Maven: org.powermock:powermock-module-testng:2.0.0-beta.5" level="project" />
+    <orderEntry type="library" scope="TEST" name="Maven: org.powermock:powermock-module-testng-common:2.0.0-beta.5" level="project" />
+    <orderEntry type="library" scope="TEST" name="Maven: org.powermock:powermock-api-mockito2:2.0.0-beta.5" level="project" />
+    <orderEntry type="library" scope="TEST" name="Maven: org.powermock:powermock-api-support:2.0.0-beta.5" level="project" />
     <orderEntry type="library" name="Maven: org.slf4j:slf4j-api:1.7.25" level="project" />
     <orderEntry type="library" name="Maven: org.apache.logging.log4j:log4j-core:2.11.0" level="project" />
     <orderEntry type="library" name="Maven: org.apache.logging.log4j:log4j-api:2.11.0" level="project" />
