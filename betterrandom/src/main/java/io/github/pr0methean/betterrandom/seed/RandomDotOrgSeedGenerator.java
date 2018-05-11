@@ -115,13 +115,13 @@ public enum RandomDotOrgSeedGenerator implements SeedGenerator {
   private static final Duration RETRY_DELAY = Duration.ofSeconds(10);
   private static final Lock cacheLock = new ReentrantLock();
   private static final Charset UTF8 = Charset.forName("UTF-8");
-  public static final Logger LOG = LoggerFactory.getLogger(RandomDotOrgSeedGenerator.class);
+  private static final Logger LOG = LoggerFactory.getLogger(RandomDotOrgSeedGenerator.class);
   private static volatile Instant EARLIEST_NEXT_ATTEMPT = Instant.MIN;
   private static volatile byte[] cache = new byte[MAX_CACHE_SIZE];
   private static volatile int cacheOffset = cache.length;
   private static volatile int maxRequestSize = GLOBAL_MAX_REQUEST_SIZE;
 
-  private static volatile URL jsonRequestUrl;
+  private static final URL JSON_REQUEST_URL;
   /**
    * The proxy to use with random.org, or null to use the JVM default.
    */
@@ -129,7 +129,7 @@ public enum RandomDotOrgSeedGenerator implements SeedGenerator {
 
   static {
     try {
-      jsonRequestUrl = new URL("https://api.random.org/json-rpc/1/invoke");
+      JSON_REQUEST_URL = new URL("https://api.random.org/json-rpc/1/invoke");
     } catch (final MalformedURLException e) {
       // Should never happen.
       throw new RuntimeException(e);
@@ -209,7 +209,7 @@ public enum RandomDotOrgSeedGenerator implements SeedGenerator {
         }
       } else {
         // Use JSON API.
-        connection = openConnection(jsonRequestUrl);
+        connection = openConnection(JSON_REQUEST_URL);
         connection.setDoOutput(true);
         connection.setRequestMethod("POST");
         connection.setRequestProperty("User-Agent", USER_AGENT);
