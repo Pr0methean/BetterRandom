@@ -30,7 +30,7 @@
     <url>https://github.com/Pr0methean/BetterRandom</url>
     <connection>scm:git:git://github.com/Pr0methean/BetterRandom.git</connection>
     <developerConnection>scm:git:git@github.com:Pr0methean/BetterRandom.git</developerConnection>
-    <tag>BetterRandom-2.0.0-SNAPSHOT</tag>
+    <tag>BetterRandom-2.3.4-SNAPSHOT</tag>
   </scm>
 
   <distributionManagement>
@@ -202,6 +202,9 @@
                 <value>10</value>
               </property>
             </properties>
+            <suiteXmlFiles>
+              <suiteXmlFile>src/test/testng.xml</suiteXmlFile>
+            </suiteXmlFiles>
           </configuration>
         </plugin>
         <plugin>
