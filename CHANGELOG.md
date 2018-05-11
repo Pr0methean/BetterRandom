@@ -1,3 +1,7 @@
+# 2.3.4
+* Should improve performance of `CellularAutomatonRandom` when reseeding frequently, especially
+  under heavy GC load.
+
 # 2.3.3
 * Fixes a bug where `RandomDotOrgSeedGenerator` didn't use a proxy when configured with one.
 * `RandomDotOrgSeedGenerator` now closes the connection when done with it.
