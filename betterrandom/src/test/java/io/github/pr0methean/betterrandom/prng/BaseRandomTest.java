@@ -32,12 +32,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 import java.util.concurrent.ConcurrentSkipListSet;
-<<<<<<< HEAD
+import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ForkJoinPool;
 import java.util.concurrent.ForkJoinTask;
-=======
-import java.util.concurrent.CountDownLatch;
->>>>>>> 29eb411b... Add CountDownLatch to thread-safety test
 import java.util.concurrent.TimeUnit;
 import java.util.function.DoubleConsumer;
 import java.util.function.Function;
