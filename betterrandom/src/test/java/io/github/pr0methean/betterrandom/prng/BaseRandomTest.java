@@ -32,8 +32,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 import java.util.concurrent.ConcurrentSkipListSet;
+<<<<<<< HEAD
 import java.util.concurrent.ForkJoinPool;
 import java.util.concurrent.ForkJoinTask;
+=======
+import java.util.concurrent.CountDownLatch;
+>>>>>>> 29eb411b... Add CountDownLatch to thread-safety test
 import java.util.concurrent.TimeUnit;
 import java.util.function.DoubleConsumer;
 import java.util.function.Function;
@@ -655,7 +659,7 @@ public abstract class BaseRandomTest {
     for (final NamedFunction<Random, Double> supplier1 : pairwiseFunctions) {
       for (final NamedFunction<Random, Double> supplier2 : pairwiseFunctions) {
         if (supplier1 != supplier2) {
-          runParallel(supplier2, supplier1, seed);
+          runParallel(supplier1, supplier2, seed);
         }
       }
     }
@@ -663,10 +667,11 @@ public abstract class BaseRandomTest {
 
   protected void runParallel(final NamedFunction<Random, Double> supplier1,
       final NamedFunction<Random, Double> supplier2, final byte[] seed) {
+    final CountDownLatch latch = new CountDownLatch(2);
     final Random parallelPrng = createRng(seed);
     parallelOutput.clear();
-    pool.execute(new GeneratorForkJoinTask(parallelPrng, parallelOutput, supplier1));
-    pool.execute(new GeneratorForkJoinTask(parallelPrng, parallelOutput, supplier2));
+    pool.execute(new GeneratorForkJoinTask(parallelPrng, parallelOutput, supplier1, latch));
+    pool.execute(new GeneratorForkJoinTask(parallelPrng, parallelOutput, supplier2, latch));
     assertTrue(pool.awaitQuiescence(10, TimeUnit.SECONDS),
         String.format("Timed out waiting for %s and %s to finish", supplier1, supplier2));
   }
@@ -675,8 +680,10 @@ public abstract class BaseRandomTest {
       final NamedFunction<Random, Double> supplier2, final byte[] seed) {
     final Random sequentialPrng = createRng(seed);
     sequentialOutput.clear();
-    new GeneratorForkJoinTask(sequentialPrng, sequentialOutput, supplier1).exec();
-    new GeneratorForkJoinTask(sequentialPrng, sequentialOutput, supplier2).exec();
+    new GeneratorForkJoinTask(sequentialPrng, sequentialOutput, supplier1, new CountDownLatch(1))
+        .exec();
+    new GeneratorForkJoinTask(sequentialPrng, sequentialOutput, supplier2, new CountDownLatch(1))
+        .exec();
   }
 
   @AfterClass public void classTearDown() {
@@ -699,12 +706,14 @@ public abstract class BaseRandomTest {
     private final Random prng;
     private final ConcurrentSkipListSet<T> set;
     private final NamedFunction<Random, T> function;
+    private final CountDownLatch latch;
 
     public GeneratorForkJoinTask(final Random prng, final ConcurrentSkipListSet<T> set,
-        final NamedFunction<Random, T> function) {
+        final NamedFunction<Random, T> function, CountDownLatch latch) {
       this.prng = prng;
       this.set = set;
       this.function = function;
+      this.latch = latch;
     }
 
     @Override public Void getRawResult() {
@@ -716,6 +725,12 @@ public abstract class BaseRandomTest {
     }
 
     @Override protected boolean exec() {
+      latch.countDown();
+      try {
+        latch.await();
+      } catch (InterruptedException e) {
+        throw new AssertionError("Interrupted", e);
+      }
       for (int i = 0; i < 1000; i++) {
         set.add(function.apply(prng));
       }
