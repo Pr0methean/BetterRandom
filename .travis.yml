@@ -10,8 +10,7 @@ git:
 stages:
 - linux unit tests
 - OSX unit tests
-- linux long tests
-- OSX long tests
+- long tests
 jobs:
   include:
   - language: java
@@ -58,82 +57,82 @@ jobs:
     os: linux
     jdk: oraclejdk9
     env: OP=mutation
-    stage: linux long tests
+    stage: long tests
   - language: java
     os: linux
     jdk: oraclejdk9
     env: OP=benchmark
-    stage: linux long tests
+    stage: long tests
   - language: java
     os: linux
     jdk: oraclejdk8
     env: OP=benchmark
-    stage: linux long tests
+    stage: long tests
   - language: java
     os: linux
     jdk: openjdk8
     env: OP=benchmark
-    stage: linux long tests
+    stage: long tests
   - language: android
     os: linux
     jdk: openjdk8
     env: OP=benchmark ANDROID=1
-    stage: linux long tests
+    stage: long tests
   - language: java
     os: osx
     osx_image: xcode9.1
     env: OP=benchmark
-    stage: OSX long tests
+    stage: long tests
   - language: java
     os: osx
     osx_image: xcode9
     env: OP=benchmark
-    stage: OSX long tests
+    stage: long tests
   - language: java
     os: osx
     osx_image: xcode8.3
     env: OP=benchmark
-    stage: OSX long tests
+    stage: long tests
   - language: java
     os: osx
     osx_image: xcode7.3
     env: OP=benchmark
-    stage: OSX long tests
+    stage: long tests
   - language: java
     os: linux
     jdk: oraclejdk9
     env: OP=dieharder CLASS=AesCounterRandom
-    stage: linux long tests
+    stage: long tests
   - language: java
     os: linux
     jdk: oraclejdk9
     env: OP=dieharder CLASS=CellularAutomatonRandom
-    stage: linux long tests
+    stage: long tests
   - language: java
     os: linux
     jdk: oraclejdk9
     env: OP=dieharder CLASS=Cmwc4096Random
-    stage: linux long tests
+    stage: long tests
   - language: java
     os: linux
     jdk: oraclejdk9
     env: OP=dieharder CLASS=MersenneTwisterRandom
-    stage: linux long tests
+    stage: long tests
   - language: java
     os: linux
     jdk: oraclejdk9
     env: OP=dieharder CLASS=Pcg64Random
-    stage: linux long tests
+    stage: long tests
   - language: java
     os: linux
     jdk: oraclejdk9
     env: OP=dieharder CLASS=XorShiftRandom
-    stage: linux long tests
+    stage: long tests
   - language: java
     os: linux
     jdk: oraclejdk9
     env: OP=dieharder CLASS=adapter.SingleThreadSplittableRandomAdapter
-    stage: linux long tests
+    stage: long tests
   allow_failures:
   - language: android
   fast_finish: true
