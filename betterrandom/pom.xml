@@ -30,7 +30,7 @@
     <url>https://github.com/Pr0methean/BetterRandom</url>
     <connection>scm:git:git://github.com/Pr0methean/BetterRandom.git</connection>
     <developerConnection>scm:git:git@github.com:Pr0methean/BetterRandom.git</developerConnection>
-    <tag>BetterRandom-2.3.4-SNAPSHOT</tag>
+    <tag>BetterRandom-2.3.5-SNAPSHOT</tag>
   </scm>
 
   <distributionManagement>
@@ -445,10 +445,12 @@
         <configuration>
           <threads>2</threads>
           <coverageThreshold>80</coverageThreshold>
-          <mutationThreshold>60</mutationThreshold>
+          <mutationThreshold>80</mutationThreshold>
           <avoidCallsTo>
             <avoidCallsTo>org.slf4j</avoidCallsTo>
           </avoidCallsTo>
+          <timeoutFactor>2</timeoutFactor>
+          <timeoutConstant>10000</timeoutConstant>
         </configuration>
       </plugin>
       <plugin>
