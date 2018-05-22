@@ -8,6 +8,7 @@ import static io.github.pr0methean.betterrandom.prng.RandomTestUtils.assertMonte
 import static io.github.pr0methean.betterrandom.prng.RandomTestUtils.checkRangeAndEntropy;
 import static io.github.pr0methean.betterrandom.prng.RandomTestUtils.checkStream;
 import static io.github.pr0methean.betterrandom.seed.DefaultSeedGenerator.DEFAULT_SEED_GENERATOR;
+import static io.github.pr0methean.betterrandom.seed.SecureRandomSeedGenerator.SECURE_RANDOM_SEED_GENERATOR;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertFalse;
 import static org.testng.Assert.assertNotEquals;
@@ -20,6 +21,7 @@ import io.github.pr0methean.betterrandom.TestUtils;
 import io.github.pr0methean.betterrandom.prng.RandomTestUtils.EntropyCheckMode;
 import io.github.pr0methean.betterrandom.seed.DefaultSeedGenerator;
 import io.github.pr0methean.betterrandom.seed.RandomSeederThread;
+import io.github.pr0methean.betterrandom.seed.SecureRandomSeedGenerator;
 import io.github.pr0methean.betterrandom.seed.SeedException;
 import io.github.pr0methean.betterrandom.seed.SeedGenerator;
 import java.io.IOException;
@@ -67,10 +69,11 @@ public abstract class BaseRandomTest {
       new NamedFunction<Random, Double>(random -> {
           if (random instanceof BaseRandom) {
             BaseRandom baseRandom = (BaseRandom) random;
-            baseRandom.setSeed(DEFAULT_SEED_GENERATOR.generateSeed(baseRandom.getNewSeedLength()));
+            baseRandom.setSeed(
+                SECURE_RANDOM_SEED_GENERATOR.generateSeed(baseRandom.getNewSeedLength()));
           } else {
             final ByteBuffer buffer = ByteBuffer.allocate(8);
-            DEFAULT_SEED_GENERATOR.generateSeed(buffer.array());
+            SECURE_RANDOM_SEED_GENERATOR.generateSeed(buffer.array());
             random.setSeed(buffer.getLong(0));
           }
           return 0.0;
