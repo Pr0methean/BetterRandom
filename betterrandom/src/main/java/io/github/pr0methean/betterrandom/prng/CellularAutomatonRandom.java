@@ -150,7 +150,12 @@ public class CellularAutomatonRandom extends BaseRandom {
   @Override public void setSeed(final long seed) {
     final byte[] shortenedSeed = convertIntToBytes(((Long) seed).hashCode());
     if (superConstructorFinished) {
-      setSeedInternal(shortenedSeed);
+      lock.lock();
+      try {
+        setSeedInternal(shortenedSeed);
+      } finally {
+        lock.unlock();
+      }
     } else {
       this.seed = shortenedSeed; // can't do anything else yet
     }
