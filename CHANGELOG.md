@@ -1,3 +1,6 @@
+# 2.3.5
+* Fixes a rare race condition while reseeding `CellularAutomatonRandom`.
+
 # 2.3.4
 * Should improve performance of `CellularAutomatonRandom` when reseeding frequently, especially
   under heavy GC load.
