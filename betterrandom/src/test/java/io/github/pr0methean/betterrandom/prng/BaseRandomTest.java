@@ -19,9 +19,7 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import io.github.pr0methean.betterrandom.TestUtils;
 import io.github.pr0methean.betterrandom.prng.RandomTestUtils.EntropyCheckMode;
-import io.github.pr0methean.betterrandom.seed.DefaultSeedGenerator;
 import io.github.pr0methean.betterrandom.seed.RandomSeederThread;
-import io.github.pr0methean.betterrandom.seed.SecureRandomSeedGenerator;
 import io.github.pr0methean.betterrandom.seed.SeedException;
 import io.github.pr0methean.betterrandom.seed.SeedGenerator;
 import java.io.IOException;
@@ -652,7 +650,7 @@ public abstract class BaseRandomTest {
     final byte[] seed = DEFAULT_SEED_GENERATOR.generateSeed(seedLength);
     for (final NamedFunction<Random, Double> supplier1 : functions) {
       for (final NamedFunction<Random, Double> supplier2 : functions) {
-        runParallel(supplier1, supplier2, seed);
+        runParallel(supplier1, supplier2, seed, 30);
       }
     }
   }
@@ -666,7 +664,7 @@ public abstract class BaseRandomTest {
       for (int i = 0; i < 5; i++) {
         // This loop is necessary to control the false pass rate, especially during mutation testing.
         runSequential(supplier, supplier, seed);
-        runParallel(supplier, supplier, seed);
+        runParallel(supplier, supplier, seed, 10);
         assertEquals(sequentialOutput, parallelOutput,
             "output differs between sequential & parallel calls to " + supplier);
       }
@@ -678,20 +676,20 @@ public abstract class BaseRandomTest {
     for (final NamedFunction<Random, Double> supplier1 : pairwiseFunctions) {
       for (final NamedFunction<Random, Double> supplier2 : pairwiseFunctions) {
         if (supplier1 != supplier2) {
-          runParallel(supplier1, supplier2, seed);
+          runParallel(supplier1, supplier2, seed, 10);
         }
       }
     }
   }
 
   protected void runParallel(final NamedFunction<Random, Double> supplier1,
-      final NamedFunction<Random, Double> supplier2, final byte[] seed) {
+      final NamedFunction<Random, Double> supplier2, final byte[] seed, int timeoutSec) {
     final CountDownLatch latch = new CountDownLatch(2);
     final Random parallelPrng = createRng(seed);
     parallelOutput.clear();
     pool.execute(new GeneratorForkJoinTask(parallelPrng, parallelOutput, supplier1, latch));
     pool.execute(new GeneratorForkJoinTask(parallelPrng, parallelOutput, supplier2, latch));
-    assertTrue(pool.awaitQuiescence(15, TimeUnit.SECONDS),
+    assertTrue(pool.awaitQuiescence(timeoutSec, TimeUnit.SECONDS),
         String.format("Timed out waiting for %s and %s to finish", supplier1, supplier2));
   }
 
