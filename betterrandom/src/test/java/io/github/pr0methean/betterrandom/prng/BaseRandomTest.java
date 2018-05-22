@@ -7,6 +7,7 @@ import static io.github.pr0methean.betterrandom.prng.BaseRandom.ENTROPY_OF_FLOAT
 import static io.github.pr0methean.betterrandom.prng.RandomTestUtils.assertMonteCarloPiEstimateSane;
 import static io.github.pr0methean.betterrandom.prng.RandomTestUtils.checkRangeAndEntropy;
 import static io.github.pr0methean.betterrandom.prng.RandomTestUtils.checkStream;
+import static io.github.pr0methean.betterrandom.seed.DefaultSeedGenerator.DEFAULT_SEED_GENERATOR;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertFalse;
 import static org.testng.Assert.assertNotEquals;
@@ -24,6 +25,7 @@ import io.github.pr0methean.betterrandom.seed.SeedGenerator;
 import java.io.IOException;
 import java.io.Serializable;
 import java.lang.reflect.InvocationTargetException;
+import java.nio.ByteBuffer;
 import java.security.GeneralSecurityException;
 import java.util.Arrays;
 import java.util.Collections;
@@ -61,9 +63,25 @@ public abstract class BaseRandomTest {
       new NamedFunction<>(Random::nextDouble, "Random::nextDouble");
   protected static final NamedFunction<Random, Double> NEXT_GAUSSIAN =
       new NamedFunction<>(Random::nextGaussian, "Random::nextGaussian");
+  private static final NamedFunction<Random,Double> SET_SEED =
+      new NamedFunction<Random, Double>(random -> {
+          if (random instanceof BaseRandom) {
+            BaseRandom baseRandom = (BaseRandom) random;
+            baseRandom.setSeed(DEFAULT_SEED_GENERATOR.generateSeed(baseRandom.getNewSeedLength()));
+          } else {
+            final ByteBuffer buffer = ByteBuffer.allocate(8);
+            DEFAULT_SEED_GENERATOR.generateSeed(buffer.array());
+            random.setSeed(buffer.getLong(0));
+          }
+          return 0.0;
+        }, "BaseRandom::setSeed(byte[])");
+
   @SuppressWarnings("StaticCollection") protected static final List<NamedFunction<Random, Double>>
       FUNCTIONS_FOR_THREAD_SAFETY_TEST =
       ImmutableList.of(NEXT_LONG, NEXT_INT, NEXT_DOUBLE, NEXT_GAUSSIAN);
+  @SuppressWarnings("StaticCollection") protected static final List<NamedFunction<Random, Double>>
+      FUNCTIONS_FOR_THREAD_CRASH_TEST =
+      ImmutableList.of(NEXT_LONG, NEXT_INT, NEXT_DOUBLE, NEXT_GAUSSIAN, SET_SEED);
   private static final int TEST_BYTE_ARRAY_LENGTH = 20;
   private static final String HELLO = "Hello";
   private static final String HOW_ARE_YOU = "How are you?";
@@ -106,8 +124,8 @@ public abstract class BaseRandomTest {
     final HashMap<Class<?>, Object> params = new HashMap<>(4);
     params.put(int.class, seedLength);
     params.put(long.class, TEST_SEED);
-    params.put(byte[].class, DefaultSeedGenerator.DEFAULT_SEED_GENERATOR.generateSeed(seedLength));
-    params.put(SeedGenerator.class, DefaultSeedGenerator.DEFAULT_SEED_GENERATOR);
+    params.put(byte[].class, DEFAULT_SEED_GENERATOR.generateSeed(seedLength));
+    params.put(SeedGenerator.class, DEFAULT_SEED_GENERATOR);
     return params;
   }
 
@@ -131,7 +149,7 @@ public abstract class BaseRandomTest {
 
   @Test(timeOut = 15000, expectedExceptions = IllegalArgumentException.class)
   public void testSeedTooLong() throws GeneralSecurityException, SeedException {
-    createRng(DefaultSeedGenerator.DEFAULT_SEED_GENERATOR
+    createRng(DEFAULT_SEED_GENERATOR
         .generateSeed(getNewSeedLength(createRng()) + 1)); // Should throw an exception.
   }
 
@@ -237,7 +255,7 @@ public abstract class BaseRandomTest {
 
   @Test(timeOut = 15000) public void testSetSeed() throws SeedException {
     final byte[] seed =
-        DefaultSeedGenerator.DEFAULT_SEED_GENERATOR.generateSeed(getNewSeedLength(createRng()));
+        DEFAULT_SEED_GENERATOR.generateSeed(getNewSeedLength(createRng()));
     final BaseRandom rng = createRng();
     final BaseRandom rng2 = createRng();
     rng.nextLong(); // ensure they won't both be in initial state before reseeding
@@ -250,7 +268,7 @@ public abstract class BaseRandomTest {
   @Test(timeOut = 15000) public void testSetSeedZero() throws SeedException {
     int length = getNewSeedLength(createRng());
     final byte[] realSeed =
-        DefaultSeedGenerator.DEFAULT_SEED_GENERATOR.generateSeed(length);
+        DEFAULT_SEED_GENERATOR.generateSeed(length);
     final byte[] zeroSeed = new byte[length];
     final BaseRandom rng = createRng(realSeed);
     final BaseRandom rng2 = createRng(zeroSeed);
@@ -285,7 +303,7 @@ public abstract class BaseRandomTest {
     final byte[] output2 = new byte[20];
     rng2.nextBytes(output2);
     final int seedLength = rng1.getNewSeedLength();
-    rng1.setSeed(DefaultSeedGenerator.DEFAULT_SEED_GENERATOR.generateSeed(seedLength));
+    rng1.setSeed(DEFAULT_SEED_GENERATOR.generateSeed(seedLength));
     assertGreaterOrEqual(rng1.getEntropyBits(), seedLength * 8L);
     rng1.nextBytes(output1);
     rng2.nextBytes(output2);
@@ -299,7 +317,7 @@ public abstract class BaseRandomTest {
     while (rng.getEntropyBits() > Long.SIZE) {
       rng.nextLong();
     }
-    rng.setSeedGenerator(DefaultSeedGenerator.DEFAULT_SEED_GENERATOR);
+    rng.setSeedGenerator(DEFAULT_SEED_GENERATOR);
     try {
       int waits = 0;
       byte[] newSeed;
@@ -622,12 +640,13 @@ public abstract class BaseRandomTest {
 
   @Test public void testThreadSafety() {
     testThreadSafety(FUNCTIONS_FOR_THREAD_SAFETY_TEST, FUNCTIONS_FOR_THREAD_SAFETY_TEST);
+    testThreadSafetyVsCrashesOnly(FUNCTIONS_FOR_THREAD_CRASH_TEST);
   }
 
   protected void testThreadSafetyVsCrashesOnly(
       final List<NamedFunction<Random, Double>> functions) {
     final int seedLength = createRng().getNewSeedLength();
-    final byte[] seed = DefaultSeedGenerator.DEFAULT_SEED_GENERATOR.generateSeed(seedLength);
+    final byte[] seed = DEFAULT_SEED_GENERATOR.generateSeed(seedLength);
     for (final NamedFunction<Random, Double> supplier1 : functions) {
       for (final NamedFunction<Random, Double> supplier2 : functions) {
         runParallel(supplier1, supplier2, seed);
@@ -639,7 +658,7 @@ public abstract class BaseRandomTest {
   protected void testThreadSafety(final List<NamedFunction<Random, Double>> functions,
       final List<NamedFunction<Random, Double>> pairwiseFunctions) {
     final int seedLength = createRng().getNewSeedLength();
-    final byte[] seed = DefaultSeedGenerator.DEFAULT_SEED_GENERATOR.generateSeed(seedLength);
+    final byte[] seed = DEFAULT_SEED_GENERATOR.generateSeed(seedLength);
     for (final NamedFunction<Random, Double> supplier : functions) {
       for (int i = 0; i < 5; i++) {
         // This loop is necessary to control the false pass rate, especially during mutation testing.
