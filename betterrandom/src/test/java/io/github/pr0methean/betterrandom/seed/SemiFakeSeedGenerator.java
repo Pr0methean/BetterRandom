@@ -4,6 +4,7 @@ import java.util.Random;
 
 public class SemiFakeSeedGenerator implements SeedGenerator {
 
+  private static final long serialVersionUID = 3490669976564244209L;
   private final Random random;
 
   public SemiFakeSeedGenerator(Random random) {
