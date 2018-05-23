@@ -5,7 +5,7 @@ if ([ "$TRAVIS_JDK_VERSION" = "oraclejdk9" ] || [ "$TRAVIS_JDK_VERSION" = "openj
 fi
 mvn compile test-compile org.pitest:pitest-maven:mutationCoverage
 if [ ! $? ]; then
-  exit $?
+  exit 1
 fi
 if [ "$TRAVIS_EVENT_TYPE" = "cron" ]; then
   # Do not update reports from cron builds
