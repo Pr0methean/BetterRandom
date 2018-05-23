@@ -1,3 +1,6 @@
+# 2.3.6
+* Coverage and performance improvements to the tests. 
+
 # 2.3.5
 * Fixes a rare race condition while reseeding `CellularAutomatonRandom`.
 

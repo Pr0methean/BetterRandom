@@ -23,6 +23,7 @@ import io.github.pr0methean.betterrandom.seed.RandomSeederThread;
 import io.github.pr0methean.betterrandom.seed.SecureRandomSeedGenerator;
 import io.github.pr0methean.betterrandom.seed.SeedException;
 import io.github.pr0methean.betterrandom.seed.SeedGenerator;
+import io.github.pr0methean.betterrandom.seed.SemiFakeSeedGenerator;
 import java.io.IOException;
 import java.io.Serializable;
 import java.lang.reflect.InvocationTargetException;
@@ -57,6 +58,8 @@ public abstract class BaseRandomTest {
           prng.nextInt();
         }
       };
+  private static final SeedGenerator SEMIFAKE_SEED_GENERATOR
+      = new SemiFakeSeedGenerator(new Random());
   /**
    * The square root of 12, rounded from an extended-precision calculation that was done by Wolfram
    * Alpha (and thus at least as accurate as {@code StrictMath.sqrt(12.0)}).
@@ -94,10 +97,10 @@ public abstract class BaseRandomTest {
           if (random instanceof BaseRandom) {
             BaseRandom baseRandom = (BaseRandom) random;
             baseRandom.setSeed(
-                SECURE_RANDOM_SEED_GENERATOR.generateSeed(baseRandom.getNewSeedLength()));
+                SEMIFAKE_SEED_GENERATOR.generateSeed(baseRandom.getNewSeedLength()));
           } else {
             final ByteBuffer buffer = ByteBuffer.allocate(8);
-            SECURE_RANDOM_SEED_GENERATOR.generateSeed(buffer.array());
+            SEMIFAKE_SEED_GENERATOR.generateSeed(buffer.array());
             random.setSeed(buffer.getLong(0));
           }
           return 0.0;
