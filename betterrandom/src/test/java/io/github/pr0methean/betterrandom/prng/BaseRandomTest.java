@@ -17,6 +17,7 @@ import static org.testng.Assert.fail;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
+import io.github.pr0methean.betterrandom.DeadlockWatchdogThread;
 import io.github.pr0methean.betterrandom.TestUtils;
 import io.github.pr0methean.betterrandom.prng.RandomTestUtils.EntropyCheckMode;
 import io.github.pr0methean.betterrandom.seed.RandomSeederThread;
@@ -639,9 +640,14 @@ public abstract class BaseRandomTest {
         TestEnum.BLUE);
   }
 
-  @Test(timeOut = 90_000) public void testThreadSafety() {
-    testThreadSafety(FUNCTIONS_FOR_THREAD_SAFETY_TEST, FUNCTIONS_FOR_THREAD_SAFETY_TEST);
-    testThreadSafetyVsCrashesOnly(FUNCTIONS_FOR_THREAD_CRASH_TEST);
+  @Test(timeOut = 300_000) public void testThreadSafety() {
+    DeadlockWatchdogThread.ensureStarted();
+    try {
+      testThreadSafety(FUNCTIONS_FOR_THREAD_SAFETY_TEST, FUNCTIONS_FOR_THREAD_SAFETY_TEST);
+      testThreadSafetyVsCrashesOnly(FUNCTIONS_FOR_THREAD_CRASH_TEST);
+    } finally {
+      DeadlockWatchdogThread.stopInstance();
+    }
   }
 
   protected void testThreadSafetyVsCrashesOnly(
