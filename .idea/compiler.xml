@@ -8,6 +8,7 @@
         <outputRelativeToContentRoot value="true" />
         <module name="benchmark" />
         <module name="BetterRandom" />
+        <module name="BetterRandom-Java7" />
         <module name="FifoFiller" />
       </profile>
     </annotationProcessing>
@@ -15,6 +16,7 @@
       <module name="benchmark" target="1.8" />
       <module name="BetterRandom" target="1.7" />
       <module name="BetterRandom (1)" target="1.8" />
+      <module name="BetterRandom-Java7" target="1.7" />
       <module name="FifoFiller" target="1.8" />
       <module name="test" target="1.8" />
     </bytecodeTargetLevel>
