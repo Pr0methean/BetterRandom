@@ -686,6 +686,8 @@ public abstract class BaseRandomTest {
 
   protected void runParallel(final NamedFunction<Random, Double> supplier1,
       final NamedFunction<Random, Double> supplier2, final byte[] seed, int timeoutSec) {
+    // See https://www.yegor256.com/2018/03/27/how-to-test-thread-safety.html for why a
+    // CountDownLatch is used.
     final CountDownLatch latch = new CountDownLatch(2);
     final Random parallelPrng = createRng(seed);
     parallelOutput.clear();
