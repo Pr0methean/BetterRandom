@@ -2,7 +2,7 @@
 cd betterrandom
 mvn compile test-compile org.pitest:pitest-maven:mutationCoverage
 if [ ! $? ]; then
-  exit $?
+  exit 1
 fi
 if [ "$TRAVIS_EVENT_TYPE" = "cron" ]; then
   # Do not update reports from cron builds
