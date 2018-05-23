@@ -1,5 +1,7 @@
 # 2.3.6
-* Coverage and performance improvements to the tests. 
+* Coverage and performance improvements to the tests. The performance improvement is large enough to
+  justify a new release given that Maven Central includes test jars, despite that no main-jar code
+  has changed from 2.3.5.
 
 # 2.3.5
 * Fixes a rare race condition while reseeding `CellularAutomatonRandom`.
