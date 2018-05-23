@@ -427,16 +427,16 @@
       <plugin>
         <groupId>org.pitest</groupId>
         <artifactId>pitest-maven</artifactId>
-        <version>1.2.4</version>
+        <version>1.4.0</version>
         <configuration>
-          <threads>2</threads>
+          <threads>3</threads>
           <coverageThreshold>80</coverageThreshold>
-          <mutationThreshold>80</mutationThreshold>
+          <mutationThreshold>70</mutationThreshold>
           <avoidCallsTo>
             <avoidCallsTo>org.slf4j</avoidCallsTo>
           </avoidCallsTo>
           <timeoutFactor>2</timeoutFactor>
-          <timeoutConstant>10000</timeoutConstant>
+          <timeoutConstant>5000</timeoutConstant>
         </configuration>
       </plugin>
       <plugin>
