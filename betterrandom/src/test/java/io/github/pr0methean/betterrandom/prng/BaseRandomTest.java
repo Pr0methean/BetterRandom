@@ -171,7 +171,7 @@ public abstract class BaseRandomTest {
   /**
    * Test to ensure that two distinct RNGs with the same seed return the same sequence of numbers.
    */
-  @Test(timeOut = 15000) public void testRepeatability() throws SeedException {
+  @Test(timeOut = 15_000) public void testRepeatability() throws SeedException {
     final BaseRandom rng = createRng();
     // Create second RNG using same seed.
     final BaseRandom duplicateRNG = createRng(rng.getSeed());
@@ -180,7 +180,7 @@ public abstract class BaseRandomTest {
             duplicateRNG.dump());
   }
 
-  @Test(timeOut = 15000, expectedExceptions = IllegalArgumentException.class)
+  @Test(timeOut = 15_000, expectedExceptions = IllegalArgumentException.class)
   public void testSeedTooLong() throws GeneralSecurityException, SeedException {
     createRng(DEFAULT_SEED_GENERATOR
         .generateSeed(getNewSeedLength(createRng()) + 1)); // Should throw an exception.
@@ -195,7 +195,7 @@ public abstract class BaseRandomTest {
    * subtle statistical anomalies that would be picked up by Diehard, but it provides a simple check
    * for major problems with the output.
    */
-  @Test(timeOut = 20000, groups = "non-deterministic") public void testDistribution()
+  @Test(timeOut = 20_000, groups = "non-deterministic") public void testDistribution()
       throws SeedException {
     final BaseRandom rng = createRng();
     assertMonteCarloPiEstimateSane(rng);
@@ -214,7 +214,7 @@ public abstract class BaseRandomTest {
     // Expected standard deviation for a uniformly distributed population of values in the range 0..n
     // approaches n/sqrt(12).
     for (final long n : new long[]{100, 1L << 32, Long.MAX_VALUE}) {
-      final int iterations = 10000;
+      final int iterations = 10_000;
       final SynchronizedDescriptiveStatistics stats =
           RandomTestUtils.summaryStats(rng, n, iterations);
       final double observedSD = stats.getStandardDeviation();
@@ -240,7 +240,7 @@ public abstract class BaseRandomTest {
   @Test(timeOut = 20_000, groups = "non-deterministic") public void testNextGaussianStatistically()
       throws SeedException {
     final BaseRandom rng = createRng();
-    final int iterations = 10000;
+    final int iterations = 10_000;
     final SynchronizedDescriptiveStatistics stats = new SynchronizedDescriptiveStatistics();
     rng.gaussians(iterations).spliterator().forEachRemaining(new DoubleConsumer() {
       @Override public void accept(double v) {
@@ -264,7 +264,7 @@ public abstract class BaseRandomTest {
    * Make sure that the RNG does not accept seeds that are too small since this could affect the
    * distribution of the output.
    */
-  @Test(timeOut = 15000, expectedExceptions = IllegalArgumentException.class)
+  @Test(timeOut = 15_000, expectedExceptions = IllegalArgumentException.class)
   public void testSeedTooShort() throws SeedException {
     createRng(new byte[]{1, 2, 3}); // One byte too few, should cause an IllegalArgumentException.
   }
@@ -272,12 +272,12 @@ public abstract class BaseRandomTest {
   /**
    * RNG must not accept a null seed otherwise it will not be properly initialised.
    */
-  @Test(timeOut = 15000, expectedExceptions = IllegalArgumentException.class)
+  @Test(timeOut = 15_000, expectedExceptions = IllegalArgumentException.class)
   public void testNullSeed() throws SeedException {
     createRng(null);
   }
 
-  @Test(timeOut = 15000) public void testSerializable()
+  @Test(timeOut = 15_000) public void testSerializable()
       throws IOException, ClassNotFoundException, SeedException {
     // Serialise an RNG.
     final BaseRandom rng = createRng();
@@ -285,11 +285,11 @@ public abstract class BaseRandomTest {
   }
 
   /** Assertion-free since many implementations have a fallback behavior. */
-  @Test(timeOut = 10000) public void testSetSeedLong() {
+  @Test(timeOut = 10_000) public void testSetSeedLong() {
     createRng().setSeed(0x0123456789ABCDEFL);
   }
 
-  @Test(timeOut = 15000) public void testSetSeed() throws SeedException {
+  @Test(timeOut = 15_000) public void testSetSeed() throws SeedException {
     final byte[] seed =
         DEFAULT_SEED_GENERATOR.generateSeed(getNewSeedLength(createRng()));
     final BaseRandom rng = createRng();
@@ -301,7 +301,7 @@ public abstract class BaseRandomTest {
         : "Output mismatch after reseeding with same seed";
   }
 
-  @Test(timeOut = 15000) public void testSetSeedZero() throws SeedException {
+  @Test(timeOut = 15_000) public void testSetSeedZero() throws SeedException {
     int length = getNewSeedLength(createRng());
     final byte[] realSeed =
         DEFAULT_SEED_GENERATOR.generateSeed(length);
@@ -312,7 +312,7 @@ public abstract class BaseRandomTest {
         : "Output with real seed matches output with all-zeroes seed";
   }
 
-  @Test(timeOut = 15000) public void testEquals() throws SeedException {
+  @Test(timeOut = 15_000) public void testEquals() throws SeedException {
     RandomTestUtils.doEqualsSanityChecks(new Supplier<Random>() {
       @Override public Random get() {
         return BaseRandomTest.this.createRng();
@@ -320,7 +320,7 @@ public abstract class BaseRandomTest {
     });
   }
 
-  @Test(timeOut = 60000) public void testHashCode() throws Exception {
+  @Test(timeOut = 60_000) public void testHashCode() throws Exception {
     assert RandomTestUtils.testHashCodeDistribution(new Supplier<Random>() {
       @Override public Random get() {
         return BaseRandomTest.this.createRng();
@@ -332,7 +332,7 @@ public abstract class BaseRandomTest {
    * dump() doesn't have much of a contract, but we should at least expect it to output enough state
    * for two independently-generated instances to give unequal dumps.
    */
-  @Test(timeOut = 15000) public void testDump() throws SeedException {
+  @Test(timeOut = 15_000) public void testDump() throws SeedException {
     final BaseRandom rng = createRng();
     assertNotEquals(rng.dump(), createRng().dump());
     rng.nextLong(); // Kill a mutant where dump doesn't unlock the lock
@@ -353,7 +353,7 @@ public abstract class BaseRandomTest {
     assertFalse(Arrays.equals(output1, output2));
   }
 
-  @SuppressWarnings("BusyWait") @Test(timeOut = 60000)
+  @SuppressWarnings("BusyWait") @Test(timeOut = 60_000)
   public void testRandomSeederThreadIntegration() throws Exception {
     final BaseRandom rng = createRng();
     final byte[] oldSeed = rng.getSeed();
@@ -749,7 +749,7 @@ public abstract class BaseRandomTest {
     for (final NamedFunction<Random, Double> supplier1 : functions) {
       for (final NamedFunction<Random, Double> supplier2 : functions) {
         if (supplier1 != SET_SEED || supplier2 != SET_SEED) {
-          runParallel(supplier1, supplier2, seed, 15);
+          runParallel(supplier1, supplier2, seed, 30);
         }
       }
     }
