@@ -338,7 +338,7 @@ public abstract class BaseRandomTest {
     }
   }
 
-  @Test(timeOut = 3000) public void testWithProbability() {
+  @Test(timeOut = 10_000) public void testWithProbability() {
     final BaseRandom prng = createRng();
     final long originalEntropy = prng.getEntropyBits();
     assertFalse(prng.withProbability(0.0));
