@@ -748,7 +748,9 @@ public abstract class BaseRandomTest {
     final byte[] seed = DEFAULT_SEED_GENERATOR.generateSeed(seedLength);
     for (final NamedFunction<Random, Double> supplier1 : functions) {
       for (final NamedFunction<Random, Double> supplier2 : functions) {
-        runParallel(supplier1, supplier2, seed, 30);
+        if (supplier1 != SET_SEED || supplier2 != SET_SEED) {
+          runParallel(supplier1, supplier2, seed, 15);
+        }
       }
     }
   }
