@@ -639,7 +639,7 @@ public abstract class BaseRandomTest {
         TestEnum.BLUE);
   }
 
-  @Test public void testThreadSafety() {
+  @Test(timeOut = 90_000) public void testThreadSafety() {
     testThreadSafety(FUNCTIONS_FOR_THREAD_SAFETY_TEST, FUNCTIONS_FOR_THREAD_SAFETY_TEST);
     testThreadSafetyVsCrashesOnly(FUNCTIONS_FOR_THREAD_CRASH_TEST);
   }
@@ -650,9 +650,8 @@ public abstract class BaseRandomTest {
     final byte[] seed = DEFAULT_SEED_GENERATOR.generateSeed(seedLength);
     for (final NamedFunction<Random, Double> supplier1 : functions) {
       for (final NamedFunction<Random, Double> supplier2 : functions) {
-        if (supplier1 != SET_SEED || supplier2 != SET_SEED) {
-          runParallel(supplier1, supplier2, seed, 30);
-        }
+        runParallel(supplier1, supplier2, seed, 30,
+            (supplier1 == SET_SEED && supplier2 == SET_SEED) ? 100 : 1000);
       }
     }
   }
@@ -666,7 +665,7 @@ public abstract class BaseRandomTest {
       for (int i = 0; i < 5; i++) {
         // This loop is necessary to control the false pass rate, especially during mutation testing.
         runSequential(supplier, supplier, seed);
-        runParallel(supplier, supplier, seed, 10);
+        runParallel(supplier, supplier, seed, 10, 1000);
         assertEquals(sequentialOutput, parallelOutput,
             "output differs between sequential & parallel calls to " + supplier);
       }
@@ -678,21 +677,22 @@ public abstract class BaseRandomTest {
     for (final NamedFunction<Random, Double> supplier1 : pairwiseFunctions) {
       for (final NamedFunction<Random, Double> supplier2 : pairwiseFunctions) {
         if (supplier1 != supplier2) {
-          runParallel(supplier1, supplier2, seed, 10);
+          runParallel(supplier1, supplier2, seed, 10, 1000);
         }
       }
     }
   }
 
   protected void runParallel(final NamedFunction<Random, Double> supplier1,
-      final NamedFunction<Random, Double> supplier2, final byte[] seed, int timeoutSec) {
+      final NamedFunction<Random, Double> supplier2, final byte[] seed, int timeoutSec,
+      int iterations) {
     // See https://www.yegor256.com/2018/03/27/how-to-test-thread-safety.html for why a
     // CountDownLatch is used.
     final CountDownLatch latch = new CountDownLatch(2);
     final Random parallelPrng = createRng(seed);
     parallelOutput.clear();
-    pool.execute(new GeneratorForkJoinTask(parallelPrng, parallelOutput, supplier1, latch));
-    pool.execute(new GeneratorForkJoinTask(parallelPrng, parallelOutput, supplier2, latch));
+    pool.execute(new GeneratorForkJoinTask(parallelPrng, parallelOutput, supplier1, latch, iterations));
+    pool.execute(new GeneratorForkJoinTask(parallelPrng, parallelOutput, supplier2, latch, iterations));
     assertTrue(pool.awaitQuiescence(timeoutSec, TimeUnit.SECONDS),
         String.format("Timed out waiting for %s and %s to finish", supplier1, supplier2));
   }
@@ -701,9 +701,11 @@ public abstract class BaseRandomTest {
       final NamedFunction<Random, Double> supplier2, final byte[] seed) {
     final Random sequentialPrng = createRng(seed);
     sequentialOutput.clear();
-    new GeneratorForkJoinTask(sequentialPrng, sequentialOutput, supplier1, new CountDownLatch(1))
+    new GeneratorForkJoinTask(sequentialPrng, sequentialOutput, supplier1, new CountDownLatch(1),
+        1000)
         .exec();
-    new GeneratorForkJoinTask(sequentialPrng, sequentialOutput, supplier2, new CountDownLatch(1))
+    new GeneratorForkJoinTask(sequentialPrng, sequentialOutput, supplier2, new CountDownLatch(1),
+        1000)
         .exec();
   }
 
@@ -728,13 +730,15 @@ public abstract class BaseRandomTest {
     private final ConcurrentSkipListSet<T> set;
     private final NamedFunction<Random, T> function;
     private final CountDownLatch latch;
+    private final int iterations;
 
     public GeneratorForkJoinTask(final Random prng, final ConcurrentSkipListSet<T> set,
-        final NamedFunction<Random, T> function, CountDownLatch latch) {
+        final NamedFunction<Random, T> function, CountDownLatch latch, int iterations) {
       this.prng = prng;
       this.set = set;
       this.function = function;
       this.latch = latch;
+      this.iterations = iterations;
     }
 
     @Override public Void getRawResult() {
@@ -752,7 +756,7 @@ public abstract class BaseRandomTest {
       } catch (InterruptedException e) {
         throw new AssertionError("Interrupted", e);
       }
-      for (int i = 0; i < 1000; i++) {
+      for (int i = 0; i < iterations; i++) {
         set.add(function.apply(prng));
       }
       return true;
