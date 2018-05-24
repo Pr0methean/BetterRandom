@@ -20,7 +20,7 @@
   </properties>
   <groupId>io.github.pr0methean.betterrandom</groupId>
   <artifactId>BetterRandom</artifactId>
-  <version>2.3.4-SNAPSHOT</version>
+  <version>2.3.7-SNAPSHOT</version>
   <name>BetterRandom</name>
   <description>BetterRandom is a library designed to help improve the quality and performance of
     random-number generation on Java.
@@ -227,6 +227,7 @@
                 <value>10</value>
               </property>
             </properties>
+            <suiteXmlFiles>src/test/testng.xml</suiteXmlFiles>
           </configuration>
         </plugin>
         <plugin>
