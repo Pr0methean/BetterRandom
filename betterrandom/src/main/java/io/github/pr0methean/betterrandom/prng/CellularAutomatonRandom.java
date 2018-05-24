@@ -27,6 +27,7 @@ import java.util.Arrays;
 /**
  * Java port of the <a href="http://home.southernct.edu/~pasqualonia1/ca/report.html"
  * target="_top">cellular automaton pseudorandom number generator</a> developed by Tony Pasqualoni.
+ *
  * @author Tony Pasqualoni (original C version)
  * @author Daniel Dyer (Java port)
  */
@@ -72,6 +73,7 @@ public class CellularAutomatonRandom extends BaseRandom {
 
   /**
    * Creates a new RNG and seeds it using the {@link DefaultSeedGenerator}.
+   *
    * @throws SeedException if the {@link DefaultSeedGenerator} fails to generate a seed.
    */
   public CellularAutomatonRandom() throws SeedException {
@@ -80,8 +82,9 @@ public class CellularAutomatonRandom extends BaseRandom {
 
   /**
    * Seed the RNG using the provided seed generation strategy.
+   *
    * @param seedGenerator The seed generation strategy that will provide the seed value for this
-   *     RNG.
+   * RNG.
    * @throws SeedException if there is a problem generating a seed.
    */
   public CellularAutomatonRandom(final SeedGenerator seedGenerator) throws SeedException {
@@ -90,6 +93,7 @@ public class CellularAutomatonRandom extends BaseRandom {
 
   /**
    * Creates an RNG and seeds it with the specified seed data.
+   *
    * @param seed seed used to initialise the RNG.
    */
   public CellularAutomatonRandom(final int seed) {
@@ -98,6 +102,7 @@ public class CellularAutomatonRandom extends BaseRandom {
 
   /**
    * Creates an RNG and seeds it with the specified seed data.
+   *
    * @param seed 4 bytes of seed data used to initialise the RNG.
    */
   public CellularAutomatonRandom(final byte[] seed) {
@@ -109,7 +114,8 @@ public class CellularAutomatonRandom extends BaseRandom {
         << 24);
   }
 
-  @Override protected ToStringHelper addSubclassFields(final ToStringHelper original) {
+  @Override
+  protected ToStringHelper addSubclassFields(final ToStringHelper original) {
     return original.add("cells", Arrays.toString(cells)).add("currentCellIndex", currentCellIndex);
   }
 
@@ -135,7 +141,8 @@ public class CellularAutomatonRandom extends BaseRandom {
     return cellA;
   }
 
-  @Override public int next(final int bits) {
+  @Override
+  public int next(final int bits) {
     lock.lock();
     final int result;
     try {
@@ -147,16 +154,23 @@ public class CellularAutomatonRandom extends BaseRandom {
     return result >>> (32 - bits);
   }
 
-  @Override public void setSeed(final long seed) {
+  @Override
+  public void setSeed(final long seed) {
     final byte[] shortenedSeed = convertIntToBytes(((Long) seed).hashCode());
     if (superConstructorFinished) {
-      setSeedInternal(shortenedSeed);
+      lock.lock();
+      try {
+        setSeedInternal(shortenedSeed);
+      } finally {
+        lock.unlock();
+      }
     } else {
       this.seed = shortenedSeed; // can't do anything else yet
     }
   }
 
-  @Override protected void setSeedInternal(final byte[] seed) {
+  @Override
+  protected void setSeedInternal(final byte[] seed) {
     if (seed.length != SEED_SIZE_BYTES) {
       throw new IllegalArgumentException("Cellular Automaton RNG requires a 32-bit (4-byte) seed.");
     }
@@ -170,10 +184,6 @@ public class CellularAutomatonRandom extends BaseRandom {
       currentCellIndex = AUTOMATON_LENGTH - 1;
       if (cells == null) {
         cells = new int[AUTOMATON_LENGTH];
-      } else {
-        for (int i = 0; i < (AUTOMATON_LENGTH - 4); i++) {
-          cells[i] = 0;
-        }
       }
       // Set initial cell states using seed.
       cells[AUTOMATON_LENGTH - 1] = this.seed[0] + 128;
@@ -201,8 +211,11 @@ public class CellularAutomatonRandom extends BaseRandom {
     }
   }
 
-  /** Returns the only supported seed length. */
-  @Override public int getNewSeedLength() {
+  /**
+   * Returns the only supported seed length.
+   */
+  @Override
+  public int getNewSeedLength() {
     return SEED_SIZE_BYTES;
   }
 }
