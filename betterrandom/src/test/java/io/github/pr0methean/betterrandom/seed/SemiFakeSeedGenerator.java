@@ -15,4 +15,18 @@ public class SemiFakeSeedGenerator implements SeedGenerator {
   public void generateSeed(byte[] output) throws SeedException {
     random.nextBytes(output);
   }
+
+  @Override public byte[] generateSeed(final int length) throws SeedException {
+    if (length <= 0) {
+      return EMPTY_SEED;
+    }
+    final byte[] output = new byte[length];
+    generateSeed(output);
+    return output;
+  }
+
+  @Override
+  public boolean isWorthTrying() {
+    return true;
+  }
 }
