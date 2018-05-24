@@ -474,6 +474,7 @@
           </avoidCallsTo>
           <timeoutFactor>2</timeoutFactor>
           <timeoutConstant>5000</timeoutConstant>
+          <testPlugin>testng</testPlugin>
         </configuration>
       </plugin>
       <plugin>
