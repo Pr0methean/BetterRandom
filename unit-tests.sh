@@ -63,7 +63,7 @@ if [ "$STATUS" = 0 ]; then
   fi
   PATH="${NO_GIT_PATH}" mvn -DskipTests -Dmaven.test.skip=true ${MAYBE_ANDROID_FLAG} jacoco:report-aggregate package && (
     # Post-Proguard test (verifies Proguard settings)
-    mvn ${MAYBE_ANDROID_FLAG} test -e
+    PATH="${NO_GIT_PATH}" mvn ${MAYBE_ANDROID_FLAG} test -e
   )
   STATUS=$?
 fi
