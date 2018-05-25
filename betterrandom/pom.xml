@@ -186,6 +186,7 @@
             <trimStackTrace>false</trimStackTrace>
             <parallel>methods</parallel>
             <forkedProcessTimeoutInSeconds>600</forkedProcessTimeoutInSeconds>
+            <forkedProcessExitTimeoutInSeconds>600</forkedProcessExitTimeoutInSeconds>
             <properties>
               <property>
                 <name>surefire.testng.verbose</name>
@@ -438,6 +439,7 @@
           <timeoutFactor>2</timeoutFactor>
           <timeoutConstant>5000</timeoutConstant>
           <testPlugin>testng</testPlugin>
+          <failWhenNoMutations>true</failWhenNoMutations>
         </configuration>
       </plugin>
       <plugin>
