@@ -13,9 +13,12 @@ git remote add originauth "https://${GH_TOKEN}@github.com/Pr0methean/pr0methean.
 git pull --rebase originauth master
 git checkout originauth/master
 rm -rf betterrandom-java7-pit-reports
-mv ../betterrandom/target/pit-reports betterrandom-java7-pit-reports
+cd ../betterrandom/target/pit-reports
+SUBFOLDER=$(LC_COLLATE=C; /usr/bin/printf '%s\c' */)
+mv ${SUBFOLDER} ../../../docs/betterrandom-java7-pit-reports
+cd ../../../docs
 git add betterrandom-java7-pit-reports
-git commit -m "Update PIT mutation reports (Java 7 branch)"
+git commit -m "Update PIT mutation reports (Java 7)"
 git push originauth HEAD:master
 while [ ! $? ]; do
   git pull --rebase # Merge
