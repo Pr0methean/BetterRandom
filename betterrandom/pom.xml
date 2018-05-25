@@ -429,7 +429,7 @@
         <artifactId>pitest-maven</artifactId>
         <version>1.4.0</version>
         <configuration>
-          <threads>4</threads>
+          <threads>2</threads>
           <coverageThreshold>80</coverageThreshold>
           <mutationThreshold>70</mutationThreshold>
           <avoidCallsTo>
