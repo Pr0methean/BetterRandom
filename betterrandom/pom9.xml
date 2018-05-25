@@ -38,7 +38,7 @@
     <url>https://github.com/Pr0methean/BetterRandom</url>
     <connection>scm:git:git://github.com/Pr0methean/BetterRandom.git</connection>
     <developerConnection>scm:git:git@github.com:Pr0methean/BetterRandom.git</developerConnection>
-    <tag>BetterRandom-2.2.1-SNAPSHOT</tag>
+    <tag>BetterRandom-2.3.6-SNAPSHOT</tag>
   </scm>
 
   <distributionManagement>
@@ -397,7 +397,7 @@
         <artifactId>pitest-maven</artifactId>
         <version>1.4.0</version>
         <configuration>
-          <threads>1</threads>
+          <threads>2</threads>
           <coverageThreshold>80</coverageThreshold>
           <mutationThreshold>70</mutationThreshold>
           <avoidCallsTo>
