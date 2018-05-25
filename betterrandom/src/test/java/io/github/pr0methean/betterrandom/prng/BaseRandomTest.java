@@ -66,7 +66,7 @@ public abstract class BaseRandomTest {
       new NamedFunction<>(Random::nextDouble, "Random::nextDouble");
   protected static final NamedFunction<Random, Double> NEXT_GAUSSIAN =
       new NamedFunction<>(Random::nextGaussian, "Random::nextGaussian");
-  private static final NamedFunction<Random,Double> SET_SEED =
+  protected static final NamedFunction<Random,Double> SET_SEED =
       new NamedFunction<Random, Double>(random -> {
           if (random instanceof BaseRandom) {
             BaseRandom baseRandom = (BaseRandom) random;
@@ -644,6 +644,9 @@ public abstract class BaseRandomTest {
 
   @Test(timeOut = 90_000) public void testThreadSafety() {
     testThreadSafety(FUNCTIONS_FOR_THREAD_SAFETY_TEST, FUNCTIONS_FOR_THREAD_SAFETY_TEST);
+  }
+
+  @Test(timeOut = 90_000) public void testThreadSafetySetSeed() {
     testThreadSafetyVsCrashesOnly(FUNCTIONS_FOR_THREAD_CRASH_TEST);
   }
 
