@@ -1,5 +1,5 @@
 .travis.yml merge=ours
-pom9.xml merge=ours
+betterrandom/pom9.xml merge=ours
 
 # Auto detect text files and perform LF normalization
 * text=auto
