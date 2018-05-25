@@ -8,51 +8,50 @@ serialGroup: edge
 git:
   submodules: true # Travis FIXME: Should be overridable in jobs[x]
 stages:
-- linux unit tests
-- OSX unit tests
+- unit tests
 - long tests
 jobs:
   include:
   - language: java
-    os: linux
-    jdk: oraclejdk9
-    env: OP=unit-tests
-    stage: linux unit tests
-  - language: java
-    os: linux
-    jdk: oraclejdk8
-    env: OP=unit-tests
-    stage: linux unit tests
-  - language: java
-    os: linux
-    jdk: openjdk8
-    env: OP=unit-tests
-    stage: linux unit tests
-  - language: java
     os: osx
     osx_image: xcode9.1
     env: OP=unit-tests
-    stage: OSX unit tests
+    stage: unit tests
   - language: java
     os: osx
     osx_image: xcode9
     env: OP=unit-tests
-    stage: OSX unit tests
+    stage: unit tests
   - language: java
     os: osx
     osx_image: xcode8.3
     env: OP=unit-tests
-    stage: OSX unit tests
+    stage: unit tests
   - language: java
     os: osx
     osx_image: xcode7.3
     env: OP=unit-tests
-    stage: OSX unit tests
+    stage: unit tests
+  - language: java
+    os: linux
+    jdk: oraclejdk9
+    env: OP=unit-tests
+    stage: unit tests
+  - language: java
+    os: linux
+    jdk: oraclejdk8
+    env: OP=unit-tests
+    stage: unit tests
+  - language: java
+    os: linux
+    jdk: openjdk8
+    env: OP=unit-tests
+    stage: unit tests
   - language: android
     os: linux
     jdk: openjdk8
     env: OP=unit-tests ANDROID=1
-    stage: linux unit tests
+    stage: unit tests
   # OSX long tests first, to make the most of the OSX-specific 2-job limit
   - language: java
     os: osx
