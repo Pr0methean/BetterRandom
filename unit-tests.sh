@@ -4,20 +4,19 @@ if [ "$ANDROID" = 1 ]; then
 else
   MAYBE_ANDROID_FLAG=""
 fi
-if ([ "$TRAVIS_JDK_VERSION" = "oraclejdk9" ] || [ "$TRAVIS_JDK_VERSION" = "openjdk9" ]); then
-  JAVA9="true"
-fi
-if [ "$APPVEYOR" != "" ]; then
+cd betterrandom
+NO_GIT_PATH="${PATH}"
+if [ "${APPVEYOR}" != "" ]; then
   RANDOM_DOT_ORG_KEY=$(powershell 'Write-Host ($env:random_dot_org_key) -NoNewLine')
+  if [ "${OSTYPE}" = "cygwin" ]; then
+    # Workaround for a faulty PATH in Appveyor Cygwin (https://github.com/appveyor/ci/issues/1956)
+    NO_GIT_PATH=`echo "${PATH}" | /usr/bin/awk -v RS=':' -v ORS=':' '/git/ {next} {print}'`
+  fi
 else
   sudo apt-get install tor
 fi
-cd betterrandom
-if [ "$JAVA9" = "true" ]; then
-  mv pom9.xml pom.xml
-fi
 # Coverage test
-mvn ${MAYBE_ANDROID_FLAG} clean jacoco:prepare-agent test jacoco:report -e
+PATH="${NO_GIT_PATH}" mvn ${MAYBE_ANDROID_FLAG} clean jacoco:prepare-agent test jacoco:report -e
 STATUS=$?
 if [ "$STATUS" = 0 ]; then
   PUSH_JACOCO="true"
@@ -26,7 +25,7 @@ if [ "$STATUS" = 0 ]; then
       # Coveralls doesn't seem to work in non-.NET Appveyor yet
       # so we have to hope Appveyor pushes its Jacoco reports before Travis does! :(
       mvn coveralls:report
-      
+
       # Send coverage to Codacy
       wget 'https://github.com/codacy/codacy-coverage-reporter/releases/download/2.0.0/codacy-coverage-reporter-2.0.0-assembly.jar'
       java -jar codacy-coverage-reporter-2.0.0-assembly.jar -l Java -r target/site/jacoco/jacoco.xml
@@ -62,7 +61,7 @@ if [ "$STATUS" = 0 ]; then
     mv *.exec ../../target/
     cd ../..
   fi
-  mvn -DskipTests -Dmaven.test.skip=true ${MAYBE_ANDROID_FLAG} jacoco:report-aggregate package && (
+  PATH="${NO_GIT_PATH}" mvn -DskipTests -Dmaven.test.skip=true ${MAYBE_ANDROID_FLAG} jacoco:report-aggregate package && (
     # Post-Proguard test (verifies Proguard settings)
     mvn ${MAYBE_ANDROID_FLAG} test -e
   )
