@@ -657,7 +657,7 @@ public abstract class BaseRandomTest {
     for (final NamedFunction<Random, Double> supplier1 : functions) {
       for (final NamedFunction<Random, Double> supplier2 : functions) {
         runParallel(supplier1, supplier2, seed, 30,
-            (supplier1 == SET_SEED && supplier2 == SET_SEED) ? 100 : 1000);
+            (supplier1 == SET_SEED || supplier2 == SET_SEED) ? 200 : 1000);
       }
     }
   }
