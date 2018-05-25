@@ -90,7 +90,7 @@ public abstract class BaseRandomTest {
           return rng.nextGaussian();
         }
       };
-  private static final NamedFunction<Random,Double> SET_SEED =
+  protected static final NamedFunction<Random,Double> SET_SEED =
       new NamedFunction<Random, Double>("BaseRandom::setSeed(byte[])") {
         @Override
         public Double apply(Random random) {
@@ -742,6 +742,9 @@ public abstract class BaseRandomTest {
 
   @Test(timeOut = 90_000) public void testThreadSafety() {
     testThreadSafety(FUNCTIONS_FOR_THREAD_SAFETY_TEST, FUNCTIONS_FOR_THREAD_SAFETY_TEST);
+  }
+
+  @Test(timeOut = 90_000) public void testThreadSafetySetSeed() {
     testThreadSafetyVsCrashesOnly(FUNCTIONS_FOR_THREAD_CRASH_TEST);
   }
 
