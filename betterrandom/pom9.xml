@@ -394,15 +394,17 @@
       <plugin>
         <groupId>org.pitest</groupId>
         <artifactId>pitest-maven</artifactId>
-        <version>1.2.4</version>
+        <version>1.4.0</version>
         <configuration>
           <threads>4</threads>
           <coverageThreshold>80</coverageThreshold>
-          <mutationThreshold>60</mutationThreshold>
+          <mutationThreshold>70</mutationThreshold>
           <avoidCallsTo>
-            <avoidCallsTo>java.util.logging</avoidCallsTo>
             <avoidCallsTo>org.slf4j</avoidCallsTo>
           </avoidCallsTo>
+          <timeoutFactor>2</timeoutFactor>
+          <timeoutConstant>5000</timeoutConstant>
+          <testPlugin>testng</testPlugin>
         </configuration>
       </plugin>
       <plugin>
