@@ -86,9 +86,9 @@ java -jar "${JAR}" io.github.pr0methean.betterrandom.prng.${CLASS} prng_out &\
     dieharder -d 203 -g 200 -p 25 -n 31
     dieharder -d 203 -g 200 -p 25 -n 32
     dieharder -Y 1 -k 2 -d 204 -g 200
-    dieharder -Y 1 -k 2 -d 205 -g 200
-    dieharder -Y 1 -k 2 -d 206 -g 200
-    dieharder -Y 1 -k 2 -d 207 -g 200
-    dieharder -Y 1 -k 2 -d 208 -g 200
-    dieharder -Y 1 -k 2 -d 209 -g 200
+    dieharder -d 205 -g 200
+    dieharder -d 206 -g 200
+    dieharder -d 207 -g 200
+    dieharder -d 208 -g 200
+    dieharder -d 209 -g 200
 ) < prng_out)
