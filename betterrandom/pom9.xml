@@ -399,7 +399,7 @@
         <configuration>
           <threads>4</threads>
           <coverageThreshold>80</coverageThreshold>
-          <mutationThreshold>70</mutationThreshold>
+          <mutationThreshold>65</mutationThreshold>
           <avoidCallsTo>
             <avoidCallsTo>org.slf4j</avoidCallsTo>
           </avoidCallsTo>
