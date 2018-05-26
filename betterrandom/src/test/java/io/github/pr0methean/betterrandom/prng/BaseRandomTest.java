@@ -744,10 +744,6 @@ public abstract class BaseRandomTest {
     assertTrue(createRng().getNewSeedLength() > 0);
   }
 
-  @Test public void testGetNewSeedLength() {
-    assertTrue(createRng().getNewSeedLength() > 0);
-  }
-
   @Test(timeOut = 90_000) public void testThreadSafety() {
     testThreadSafety(FUNCTIONS_FOR_THREAD_SAFETY_TEST, FUNCTIONS_FOR_THREAD_SAFETY_TEST);
   }
