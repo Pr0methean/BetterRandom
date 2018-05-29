@@ -10,7 +10,7 @@ if ([ "{$TRAVIS_JDK_VERSION}" = "oraclejdk9" ] || [ "${TRAVIS_JDK_VERSION}" = "o
 fi
 NO_GIT_PATH="${PATH}"
 if [ "${APPVEYOR}" != "" ]; then
-  RANDOM_DOT_ORG_KEY=$(powershell 'Write-Host ($env:random_dot_org_key) -NoNewLine')
+  export RANDOM_DOT_ORG_KEY=$(powershell 'Write-Host ($env:random_dot_org_key) -NoNewLine')
   if [ "${OSTYPE}" = "cygwin" ]; then
     # Workaround for a faulty PATH in Appveyor Cygwin (https://github.com/appveyor/ci/issues/1956)
     NO_GIT_PATH=$(echo "${PATH}" | /usr/bin/awk -v RS=':' -v ORS=':' '/git/ {next} {print}')
@@ -44,8 +44,6 @@ if [ "$STATUS" = 0 ]; then
     COMMIT="$APPVEYOR_REPO_COMMIT"
     JOB_ID="appveyor_$APPVEYOR_BUILD_ID"
     git config --global user.email "appveyor@appveyor.com"
-  else
-    PUSH_JACOCO="false"
   fi
   git clone https://github.com/Pr0methean/betterrandom-coverage.git
   cd betterrandom-coverage
