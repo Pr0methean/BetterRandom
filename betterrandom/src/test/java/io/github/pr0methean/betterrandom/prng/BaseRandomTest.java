@@ -8,7 +8,6 @@ import static io.github.pr0methean.betterrandom.prng.RandomTestUtils.assertMonte
 import static io.github.pr0methean.betterrandom.prng.RandomTestUtils.checkRangeAndEntropy;
 import static io.github.pr0methean.betterrandom.prng.RandomTestUtils.checkStream;
 import static io.github.pr0methean.betterrandom.seed.DefaultSeedGenerator.DEFAULT_SEED_GENERATOR;
-import static io.github.pr0methean.betterrandom.seed.SecureRandomSeedGenerator.SECURE_RANDOM_SEED_GENERATOR;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertFalse;
 import static org.testng.Assert.assertNotEquals;
