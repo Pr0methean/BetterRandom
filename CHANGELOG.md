@@ -1,3 +1,6 @@
+# 2.3.7
+* Reduces the performance penalty for calling `BaseRandom.setSeederThread` redundantly.
+
 # 2.3.6
 * Coverage and performance improvements to the tests. The performance improvement is large enough to
   justify a new release given that Maven Central includes test jars, despite that no main-jar code
