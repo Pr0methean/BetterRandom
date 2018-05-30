@@ -16,7 +16,6 @@
 package io.github.pr0methean.betterrandom.seed;
 
 import static io.github.pr0methean.betterrandom.TestUtils.canRunRandomDotOrgLargeTest;
-import static io.github.pr0methean.betterrandom.TestUtils.isAppveyor;
 import static org.testng.Assert.assertEquals;
 
 import java.net.InetSocketAddress;
