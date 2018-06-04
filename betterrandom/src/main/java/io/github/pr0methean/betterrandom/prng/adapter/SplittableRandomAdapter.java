@@ -99,13 +99,11 @@ public class SplittableRandomAdapter extends DirectSplittableRandomAdapter {
     try {
       splittableRandoms = ThreadLocal.withInitial(underlying::split);
       entropyBits = ThreadLocal.withInitial(() -> new AtomicLong(SEED_LENGTH_BITS));
-
       // getSeed() will return the master seed on each thread where setSeed() hasn't yet been called
       seeds = ThreadLocal.withInitial(() -> seed);
     } finally {
       lock.unlock();
     }
-    // WTF Checker Framework? Why is this needed?
   }
 
   @Override protected SplittableRandom getSplittableRandom() {

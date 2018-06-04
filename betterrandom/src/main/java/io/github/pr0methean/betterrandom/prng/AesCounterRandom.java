@@ -269,7 +269,7 @@ public class AesCounterRandom extends BaseRandom implements SeekableRandom {
    * Combines the given seed with the existing seed using SHA-256.
    */
   @Override @SuppressWarnings("contracts.postcondition.not.satisfied")
-  public synchronized void setSeed(final long seed) {
+  public void setSeed(final long seed) {
     if (superConstructorFinished) {
       final byte[] seedBytes = BinaryUtils.convertLongToBytes(seed);
       setSeed(seedBytes);

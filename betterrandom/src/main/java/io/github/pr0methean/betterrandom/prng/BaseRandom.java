@@ -413,31 +413,30 @@ public abstract class BaseRandom extends Random
       final DoubleSupplier nextDouble) {
     // See Knuth, ACP, Section 3.4.1 Algorithm C.
     final double firstTryOut = Double.longBitsToDouble(nextNextGaussian.getAndSet(NAN_LONG_BITS));
-    if (Double.isNaN(firstTryOut)) {
-      lockForNextGaussian();
-      try {
-        // Another output may have become available while we waited for the lock
-        final double secondTryOut =
-            Double.longBitsToDouble(nextNextGaussian.getAndSet(NAN_LONG_BITS));
-        if (!Double.isNaN(secondTryOut)) {
-          return secondTryOut;
-        }
-        double s;
-        double v1;
-        double v2;
-        do {
-          v1 = (2 * nextDouble.getAsDouble()) - 1; // between -1 and 1
-          v2 = (2 * nextDouble.getAsDouble()) - 1; // between -1 and 1
-          s = (v1 * v1) + (v2 * v2);
-        } while ((s >= 1) || (s == 0));
-        final double multiplier = StrictMath.sqrt((-2 * StrictMath.log(s)) / s);
-        nextNextGaussian.set(Double.doubleToRawLongBits(v2 * multiplier));
-        return v1 * multiplier;
-      } finally {
-        unlockForNextGaussian();
-      }
-    } else {
+    if (!Double.isNaN(firstTryOut)) {
       return firstTryOut;
+    }
+    lockForNextGaussian();
+    try {
+      // Another output may have become available while we waited for the lock
+      final double secondTryOut =
+          Double.longBitsToDouble(nextNextGaussian.getAndSet(NAN_LONG_BITS));
+      if (!Double.isNaN(secondTryOut)) {
+        return secondTryOut;
+      }
+      double s;
+      double v1;
+      double v2;
+      do {
+        v1 = (2 * nextDouble.getAsDouble()) - 1; // between -1 and 1
+        v2 = (2 * nextDouble.getAsDouble()) - 1; // between -1 and 1
+        s = (v1 * v1) + (v2 * v2);
+      } while ((s >= 1) || (s == 0));
+      final double multiplier = StrictMath.sqrt((-2 * StrictMath.log(s)) / s);
+      nextNextGaussian.set(Double.doubleToRawLongBits(v2 * multiplier));
+      return v1 * multiplier;
+    } finally {
+      unlockForNextGaussian();
     }
   }
 
@@ -671,9 +670,9 @@ public abstract class BaseRandom extends Random
       if (oldSeedGenerator != null) {
         RandomSeederThread.remove(oldSeedGenerator, this);
       }
-    }
-    if (seedGenerator != null) {
-      RandomSeederThread.add(seedGenerator, this);
+      if (seedGenerator != null) {
+        RandomSeederThread.add(seedGenerator, this);
+      }
     }
   }
 

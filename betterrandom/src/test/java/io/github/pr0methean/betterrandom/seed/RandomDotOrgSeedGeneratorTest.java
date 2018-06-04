@@ -16,11 +16,15 @@
 package io.github.pr0methean.betterrandom.seed;
 
 import static io.github.pr0methean.betterrandom.TestUtils.canRunRandomDotOrgLargeTest;
-import static io.github.pr0methean.betterrandom.TestUtils.isNotAppveyor;
 import static org.testng.Assert.assertEquals;
 
+import java.net.InetSocketAddress;
+import java.net.Proxy;
+import java.net.Proxy.Type;
 import java.util.UUID;
 import org.testng.Assert;
+import org.testng.SkipException;
+import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
@@ -29,9 +33,12 @@ import org.testng.annotations.Test;
  * @author Daniel Dyer
  * @author Chris Hennick
  */
+@Test(singleThreaded = true)
 public class RandomDotOrgSeedGeneratorTest extends AbstractSeedGeneratorTest {
 
-  public static final int SMALL_REQUEST_SIZE = 32;
+  private static final int SMALL_REQUEST_SIZE = 32;
+  private static final int TOR_PORT = 9050;
+  private Proxy proxy;
 
   public RandomDotOrgSeedGeneratorTest() {
     super(RandomDotOrgSeedGenerator.RANDOM_DOT_ORG_SEED_GENERATOR);
@@ -44,22 +51,37 @@ public class RandomDotOrgSeedGeneratorTest extends AbstractSeedGeneratorTest {
   }
 
   @BeforeClass public void setUp() {
+    proxy = /* FIXME once Appveyor adds proxies for all its IPs:
+        isAppveyor()
+        ? new Proxy(Type.HTTP,
+            new InetSocketAddress(System.getenv("APPVEYOR_HTTP_PROXY_IP"),
+            Integer.valueOf(System.getenv("APPVEYOR_HTTP_PROXY_PORT"))))
+        : */ new Proxy(Type.SOCKS, new InetSocketAddress("localhost", TOR_PORT));
     if (!canRunRandomDotOrgLargeTest()) {
       RandomDotOrgSeedGenerator.setMaxRequestSize(SMALL_REQUEST_SIZE);
     }
   }
 
+  @AfterMethod
+  public void tearDown() {
+    RandomDotOrgSeedGenerator.setApiKey(null);
+  }
+
   @Test(timeOut = 120000) public void testGeneratorOldApi() throws SeedException {
-    if (isNotAppveyor()) {
+    if (canRunRandomDotOrgLargeTest()) {
       RandomDotOrgSeedGenerator.setApiKey(null);
       SeedTestUtils.testGenerator(seedGenerator);
+    } else {
+      throw new SkipException("Test can't run on this platform");
     }
   }
 
   @Test(timeOut = 120000) public void testGeneratorNewApi() throws SeedException {
-    if (isNotAppveyor()) {
+    if (canRunRandomDotOrgLargeTest()) {
       setApiKey();
       SeedTestUtils.testGenerator(seedGenerator);
+    } else {
+      throw new SkipException("Test can't run on this platform");
     }
   }
 
@@ -68,7 +90,7 @@ public class RandomDotOrgSeedGeneratorTest extends AbstractSeedGeneratorTest {
    * implementation.
    */
   @Test(timeOut = 120000) public void testLargeRequest() throws SeedException {
-    if (isNotAppveyor()) {
+    if (canRunRandomDotOrgLargeTest()) {
       setApiKey();
       // Request more bytes than are cached internally.
       final int seedLength = 626;
@@ -80,5 +102,18 @@ public class RandomDotOrgSeedGeneratorTest extends AbstractSeedGeneratorTest {
   @Override public void testToString() {
     super.testToString();
     Assert.assertNotNull(RandomDotOrgSeedGenerator.DELAYED_RETRY.toString());
+  }
+
+  @Test
+  public void testSetProxy() throws Exception {
+    if (!canRunRandomDotOrgLargeTest()) {
+      throw new SkipException("Test can't run on this platform");
+    }
+    RandomDotOrgSeedGenerator.setProxy(proxy);
+    try {
+      SeedTestUtils.testGenerator(seedGenerator);
+    } finally {
+      RandomDotOrgSeedGenerator.setProxy(null);
+    }
   }
 }

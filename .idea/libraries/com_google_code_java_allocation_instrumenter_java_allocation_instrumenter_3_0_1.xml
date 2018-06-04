@@ -1,9 +1,25 @@
 <component name="libraryTable">
   <library name="com.google.code.java-allocation-instrumenter:java-allocation-instrumenter:3.0.1" type="repository">
     <properties maven-id="com.google.code.java-allocation-instrumenter:java-allocation-instrumenter:3.0.1" />
-    <CLASSES />
+    <CLASSES>
+      <root url="jar://$MAVEN_REPOSITORY$/com/google/code/java-allocation-instrumenter/java-allocation-instrumenter/3.0.1/java-allocation-instrumenter-3.0.1.jar!/" />
+      <root url="jar://$MAVEN_REPOSITORY$/org/ow2/asm/asm/5.0.3/asm-5.0.3.jar!/" />
+      <root url="jar://$MAVEN_REPOSITORY$/org/ow2/asm/asm-analysis/5.0.3/asm-analysis-5.0.3.jar!/" />
+      <root url="jar://$MAVEN_REPOSITORY$/org/ow2/asm/asm-commons/5.0.3/asm-commons-5.0.3.jar!/" />
+      <root url="jar://$MAVEN_REPOSITORY$/org/ow2/asm/asm-tree/5.0.3/asm-tree-5.0.3.jar!/" />
+      <root url="jar://$MAVEN_REPOSITORY$/org/ow2/asm/asm-util/5.0.3/asm-util-5.0.3.jar!/" />
+      <root url="jar://$MAVEN_REPOSITORY$/org/ow2/asm/asm-xml/5.0.3/asm-xml-5.0.3.jar!/" />
+      <root url="jar://$MAVEN_REPOSITORY$/com/google/guava/guava/18.0/guava-18.0.jar!/" />
+    </CLASSES>
     <JAVADOC>
-      <root url="jar://$PROJECT_DIR$/lib/java-allocation-instrumenter-3.0.1-javadoc.jar!/" />
+      <root url="jar://$MAVEN_REPOSITORY$/com/google/code/java-allocation-instrumenter/java-allocation-instrumenter/3.0.1/java-allocation-instrumenter-3.0.1-javadoc.jar!/" />
+      <root url="jar://$MAVEN_REPOSITORY$/org/ow2/asm/asm/5.0.3/asm-5.0.3-javadoc.jar!/" />
+      <root url="jar://$MAVEN_REPOSITORY$/org/ow2/asm/asm-analysis/5.0.3/asm-analysis-5.0.3-javadoc.jar!/" />
+      <root url="jar://$MAVEN_REPOSITORY$/org/ow2/asm/asm-commons/5.0.3/asm-commons-5.0.3-javadoc.jar!/" />
+      <root url="jar://$MAVEN_REPOSITORY$/org/ow2/asm/asm-tree/5.0.3/asm-tree-5.0.3-javadoc.jar!/" />
+      <root url="jar://$MAVEN_REPOSITORY$/org/ow2/asm/asm-util/5.0.3/asm-util-5.0.3-javadoc.jar!/" />
+      <root url="jar://$MAVEN_REPOSITORY$/org/ow2/asm/asm-xml/5.0.3/asm-xml-5.0.3-javadoc.jar!/" />
+      <root url="jar://$MAVEN_REPOSITORY$/com/google/guava/guava/18.0/guava-18.0-javadoc.jar!/" />
     </JAVADOC>
     <SOURCES />
   </library>

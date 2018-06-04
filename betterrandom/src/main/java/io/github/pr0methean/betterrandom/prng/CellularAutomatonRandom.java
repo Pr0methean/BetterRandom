@@ -35,6 +35,9 @@ public class CellularAutomatonRandom extends BaseRandom {
   private static final long serialVersionUID = 5959251752288589909L;
   private static final int SEED_SIZE_BYTES = 4;
   private static final int AUTOMATON_LENGTH = 2056;
+  public static final int EVOLVE_ITERATIONS_AFTER_SEEDING =
+      (AUTOMATON_LENGTH * AUTOMATON_LENGTH) / 4;
+  public static final int LAST_CELL_INDEX = AUTOMATON_LENGTH - 1;
   private static final int[] RNG_RULE =
       {100, 75, 16, 3, 229, 51, 197, 118, 24, 62, 198, 11, 141, 152, 241, 188, 2, 17, 71, 47, 179,
           177, 126, 231, 202, 243, 59, 25, 77, 196, 30, 134, 199, 163, 34, 216, 21, 84, 37, 182,
@@ -110,30 +113,7 @@ public class CellularAutomatonRandom extends BaseRandom {
     return original.add("cells", Arrays.toString(cells)).add("currentCellIndex", currentCellIndex);
   }
 
-  private void copySeedToCellsAndPreEvolve() {
-    cells = new int[AUTOMATON_LENGTH];
-    // Set initial cell states using seed.
-    cells[AUTOMATON_LENGTH - 1] = seed[0] + 128;
-    cells[AUTOMATON_LENGTH - 2] = seed[1] + 128;
-    cells[AUTOMATON_LENGTH - 3] = seed[2] + 128;
-    cells[AUTOMATON_LENGTH - 4] = seed[3] + 128;
-    currentCellIndex = AUTOMATON_LENGTH - 1;
-
-    int seedAsInt = BinaryUtils.convertBytesToInt(seed, 0);
-    if (seedAsInt != 0xFFFFFFFF) {
-      seedAsInt++;
-    }
-    for (int i = 0; i < (AUTOMATON_LENGTH - 4); i++) {
-      cells[i] = 0x000000FF & (seedAsInt >> (i % 32));
-    }
-
-    // Evolve automaton before returning integers.
-    for (int i = 0; i < ((AUTOMATON_LENGTH * AUTOMATON_LENGTH) / 4); i++) {
-      internalNext(32);
-    }
-  }
-
-  private int internalNext(final int bits) {
+  private int internalNext() {
     // Set cell addresses using address of current cell.
     final int cellC = currentCellIndex - 1;
 
@@ -147,28 +127,35 @@ public class CellularAutomatonRandom extends BaseRandom {
     // Update the state of cellA and shift current cell to the left by 4 bytes.
     if (cellA == 0) {
       cells[0] = RNG_RULE[cells[0]];
-      currentCellIndex = AUTOMATON_LENGTH - 1;
+      currentCellIndex = LAST_CELL_INDEX;
     } else {
       cells[cellA] = RNG_RULE[cells[cellA - 1] + cells[cellA]];
       currentCellIndex -= 4;
     }
-    final int result = convertCellsToInt(cells, cellA);
-    return result >>> (32 - bits);
+    return cellA;
   }
 
   @Override public int next(final int bits) {
     lock.lock();
+    final int result;
     try {
-      return internalNext(bits);
+      final int cellA = internalNext();
+      result = convertCellsToInt(cells, cellA);
     } finally {
       lock.unlock();
     }
+    return result >>> (32 - bits);
   }
 
-  @Override public synchronized void setSeed(final long seed) {
+  @Override public void setSeed(final long seed) {
     final byte[] shortenedSeed = convertIntToBytes(((Long) seed).hashCode());
     if (superConstructorFinished) {
-      setSeedInternal(shortenedSeed);
+      lock.lock();
+      try {
+        setSeedInternal(shortenedSeed);
+      } finally {
+        lock.unlock();
+      }
     } else {
       this.seed = shortenedSeed; // can't do anything else yet
     }
@@ -180,7 +167,28 @@ public class CellularAutomatonRandom extends BaseRandom {
     }
     super.setSeedInternal(seed);
     currentCellIndex = AUTOMATON_LENGTH - 1;
-    copySeedToCellsAndPreEvolve();
+    if (cells == null) {
+      cells = new int[AUTOMATON_LENGTH];
+    }
+    // Set initial cell states using seed.
+    cells[AUTOMATON_LENGTH - 1] = this.seed[0] + 128;
+    cells[AUTOMATON_LENGTH - 2] = this.seed[1] + 128;
+    cells[AUTOMATON_LENGTH - 3] = this.seed[2] + 128;
+    cells[AUTOMATON_LENGTH - 4] = this.seed[3] + 128;
+    currentCellIndex = AUTOMATON_LENGTH - 1;
+
+    int seedAsInt = BinaryUtils.convertBytesToInt(this.seed, 0);
+    if (seedAsInt != 0xFFFFFFFF) {
+      seedAsInt++;
+    }
+    for (int i = 0; i < (AUTOMATON_LENGTH - 4); i++) {
+      cells[i] = 0x000000FF & (seedAsInt >> (i % 32));
+    }
+
+    // Evolve automaton before returning integers.
+    for (int i = 0; i < EVOLVE_ITERATIONS_AFTER_SEEDING; i++) {
+      internalNext();
+    }
   }
 
   /** Returns the only supported seed length. */

@@ -1,4 +1,37 @@
-# 2.2
+# 2.3.7
+* Reduces the performance penalty for calling `BaseRandom.setSeederThread` redundantly.
+
+# 2.3.6
+* Coverage and performance improvements to the tests. The performance improvement is large enough to
+  justify a new release given that Maven Central includes test jars, despite that no main-jar code
+  has changed from 2.3.5.
+
+# 2.3.5
+* Fixes a rare race condition while reseeding `CellularAutomatonRandom`.
+
+# 2.3.4
+* Should improve performance of `CellularAutomatonRandom` when reseeding frequently, especially
+  under heavy GC load.
+
+# 2.3.3
+* Fixes a bug where `RandomDotOrgSeedGenerator` didn't use a proxy when configured with one.
+* `RandomDotOrgSeedGenerator` now closes the connection when done with it.
+* `RandomDotOrgSeedGenerator` will now gracefully handle receiving more bytes than requested.
+
+# 2.3.2
+* Removes unnecessary `synchronized` modifier from some methods.
+* Tests now include an additional sanity check for `SetSeed`: a seed of all zeroes should give
+  different output than a normal seed.
+
+# 2.3.1
+* Should slightly improve performance of `CellularAutomatonRandom` when seeding and when accessed
+  concurrently.
+
+# 2.3.0
+* `RandomDotOrgSeedGenerator` can now be configured with a proxy.
+* `RandomSeederThread` adds methods for setting thread priority.
+
+# 2.2.0
 * Logging is now done through `slf4j`.
 * Removes the class `LooperThread.DummyTarget`, which was only used for deserialization.
 * Performance refactors.
