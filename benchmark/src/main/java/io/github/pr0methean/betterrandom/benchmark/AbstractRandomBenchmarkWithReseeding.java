@@ -36,9 +36,11 @@ import io.github.pr0methean.betterrandom.seed.RandomDotOrgSeedGenerator;
 import io.github.pr0methean.betterrandom.seed.RandomSeederThread;
 import java.util.UUID;
 import org.openjdk.jmh.annotations.Benchmark;
+import org.openjdk.jmh.annotations.Level;
 import org.openjdk.jmh.annotations.Scope;
 import org.openjdk.jmh.annotations.Setup;
 import org.openjdk.jmh.annotations.State;
+import org.openjdk.jmh.annotations.TearDown;
 
 @SuppressWarnings("MethodMayBeStatic")
 @State(Scope.Benchmark)
@@ -50,13 +52,22 @@ public abstract class AbstractRandomBenchmarkWithReseeding extends AbstractRando
         .setApiKey((apiKeyString == null) ? null : UUID.fromString(apiKeyString));
   }
 
-  @Benchmark public byte testBytesSequentialReseeding() {
+  @Override
+  @Setup(Level.Trial)
+  public void setUp() {
+    super.setUp();
     RandomSeederThread.add(DefaultSeedGenerator.DEFAULT_SEED_GENERATOR, prng);
-    final byte b = innerTestBytesSequential();
-    RandomSeederThread.remove(DefaultSeedGenerator.DEFAULT_SEED_GENERATOR, prng);
-    return b;
   }
-  
+
+  @TearDown(Level.Trial)
+  public void tearDown() {
+    RandomSeederThread.remove(DefaultSeedGenerator.DEFAULT_SEED_GENERATOR, prng);
+  }
+
+  @Benchmark public byte testBytesSequentialReseeding() {
+    return innerTestBytesSequential();
+  }
+
   /*
   @Benchmark
   @Group("contended")

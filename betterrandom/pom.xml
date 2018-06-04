@@ -12,7 +12,7 @@
   </properties>
   <groupId>io.github.pr0methean.betterrandom</groupId>
   <artifactId>BetterRandom</artifactId>
-  <version>2.2.1-SNAPSHOT</version>
+  <version>2.3.8-SNAPSHOT</version>
   <name>BetterRandom</name>
   <description>BetterRandom is a library designed to help improve the quality and performance of
     random-number generation on Java.
@@ -31,7 +31,7 @@
     <url>https://github.com/Pr0methean/BetterRandom</url>
     <connection>scm:git:git://github.com/Pr0methean/BetterRandom.git</connection>
     <developerConnection>scm:git:git@github.com:Pr0methean/BetterRandom.git</developerConnection>
-    <tag>BetterRandom-2.0.0-SNAPSHOT</tag>
+    <tag>BetterRandom-2.3.5-SNAPSHOT</tag>
   </scm>
 
   <distributionManagement>
@@ -94,7 +94,7 @@
     <dependency>
       <groupId>com.google.guava</groupId>
       <artifactId>guava</artifactId>
-      <version>23.4-jre</version>
+      <version>25.0-jre</version>
     </dependency>
     <!-- https://mvnrepository.com/artifact/com.google.code.findbugs/jsr305 -->
     <dependency>
@@ -186,12 +186,16 @@
             <trimStackTrace>false</trimStackTrace>
             <parallel>methods</parallel>
             <forkedProcessTimeoutInSeconds>600</forkedProcessTimeoutInSeconds>
+            <forkedProcessExitTimeoutInSeconds>600</forkedProcessExitTimeoutInSeconds>
             <properties>
               <property>
                 <name>surefire.testng.verbose</name>
                 <value>10</value>
               </property>
             </properties>
+            <suiteXmlFiles>
+              <suiteXmlFile>src/test/testng.xml</suiteXmlFile>
+            </suiteXmlFiles>
           </configuration>
         </plugin>
         <plugin>
@@ -424,14 +428,18 @@
       <plugin>
         <groupId>org.pitest</groupId>
         <artifactId>pitest-maven</artifactId>
-        <version>1.2.4</version>
+        <version>1.4.0</version>
         <configuration>
-          <threads>2</threads>
+          <threads>4</threads>
           <coverageThreshold>80</coverageThreshold>
-          <mutationThreshold>60</mutationThreshold>
+          <mutationThreshold>65</mutationThreshold>
           <avoidCallsTo>
             <avoidCallsTo>org.slf4j</avoidCallsTo>
           </avoidCallsTo>
+          <timeoutFactor>2</timeoutFactor>
+          <timeoutConstant>5000</timeoutConstant>
+          <testPlugin>testng</testPlugin>
+          <failWhenNoMutations>true</failWhenNoMutations>
         </configuration>
       </plugin>
       <plugin>

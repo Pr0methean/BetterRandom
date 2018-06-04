@@ -23,7 +23,7 @@ generation on Java. It includes:
 # Get it from MavenCentral
 
 * Get the latest version from
-[Maven Central]([https://search.maven.org/#search%7Cga%7C1%7Ca%3A%22BetterRandom%22]).
+[Maven Central](https://search.maven.org/#search%7Cga%7C1%7Ca%3A%22BetterRandom).
 * Get dependency codes for Maven, Gradle, SBT, Ivy, Grape, Leiningen and Buildr from
   [mvnrepository.com](https://mvnrepository.com/artifact/io.github.pr0methean.betterrandom)
   (more full-featured than Maven Central, but not always up-to-date).
