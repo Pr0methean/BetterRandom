@@ -28,6 +28,42 @@
           <scope>runtime</scope>
         </dependency>
       </dependencies>
+      <build>
+        <pluginManagement>
+          <plugins>
+            <plugin>
+              <groupId>com.github.wvengen</groupId>
+              <artifactId>proguard-maven-plugin</artifactId>
+              <version>2.0.14</version>
+              <configuration>
+                <proguardJar>
+                  ${user.home}/.m2/repository/net/sf/proguard/proguard-base/5.3.3/proguard-base-5.3.3.jar
+                </proguardJar>
+                <proguardInclude>${basedir}/proguard.conf</proguardInclude>
+                <libs>
+                  <lib>${java.home}/lib/rt.jar</lib>
+                  <lib>${java.home}/lib/jce.jar</lib>
+                </libs>
+              </configuration>
+            </plugin>
+          </plugins>
+        </pluginManagement>
+        <plugins>
+          <plugin>
+            <groupId>com.github.wvengen</groupId>
+            <artifactId>proguard-maven-plugin</artifactId>
+            <version>2.0.14</version>
+            <executions>
+              <execution>
+                <phase>package</phase>
+                <goals>
+                  <goal>proguard</goal>
+                </goals>
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
+      </build>
     </profile>
     <profile>
       <id>jdk9</id>
@@ -45,23 +81,6 @@
           <version>1.8.0-beta0</version>
         </dependency>
       </dependencies>
-      <build>
-        <plugins>
-          <plugin>
-            <groupId>com.github.wvengen</groupId>
-            <artifactId>proguard-maven-plugin</artifactId>
-            <version>2.0.14</version>
-            <executions>
-              <execution>
-                <phase>package</phase>
-                <goals>
-                  <goal>proguard</goal>
-                </goals>
-              </execution>
-            </executions>
-          </plugin>
-        </plugins>
-      </build>
     </profile>
     <!-- GPG Signature on release -->
     <profile>
@@ -440,21 +459,6 @@
           <version>4.3.0</version>
           <configuration>
             <failOnServiceError>true</failOnServiceError>
-          </configuration>
-        </plugin>
-        <plugin>
-          <groupId>com.github.wvengen</groupId>
-          <artifactId>proguard-maven-plugin</artifactId>
-          <version>2.0.14</version>
-          <configuration>
-            <proguardJar>
-              ${user.home}/.m2/repository/net/sf/proguard/proguard-base/5.3.3/proguard-base-5.3.3.jar
-            </proguardJar>
-            <proguardInclude>${basedir}/proguard.conf</proguardInclude>
-            <libs>
-              <lib>${java.home}/lib/rt.jar</lib>
-              <lib>${java.home}/lib/jce.jar</lib>
-            </libs>
           </configuration>
         </plugin>
         <plugin>
