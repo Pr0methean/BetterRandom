@@ -1,14 +1,56 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--suppress XmlHighlighting -->
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
+  <profiles>
+    <profile>
+      <id>jdk8</id>
+      <activation>
+        <jdk>1.8</jdk>
+      </activation>
+      <properties>
+        <maven.compiler.source>1.8</maven.compiler.source>
+        <maven.compiler.target>1.8</maven.compiler.target>
+      </properties>
+      <dependencies>
+        <dependency>
+          <groupId>org.slf4j</groupId>
+          <artifactId>slf4j-api</artifactId>
+          <version>1.7.25</version>
+        </dependency>
+        <dependency>
+          <!-- Overrides transitive dep on 5.2.1 -->
+          <groupId>net.sf.proguard</groupId>
+          <artifactId>proguard-base</artifactId>
+          <version>5.3.3</version>
+          <scope>runtime</scope>
+        </dependency>
+      </dependencies>
+    </profile>
+    <profile>
+      <id>jdk9</id>
+      <properties>
+        <maven.compiler.source>1.9</maven.compiler.source>
+        <maven.compiler.target>1.9</maven.compiler.target>
+      </properties>
+      <dependencies>
+        <dependency>
+          <groupId>org.slf4j</groupId>
+          <artifactId>slf4j-api</artifactId>
+          <version>1.8.0-beta0</version>
+        </dependency>
+      </dependencies>
+    </profile>
+  </profiles>
   <packaging>jar</packaging>
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <prefix />
-    <maven.compiler.source>1.8</maven.compiler.source>
-    <maven.compiler.target>1.8</maven.compiler.target>
+    <prefix/>
     <github.global.server>github</github.global.server>
+    <jsr305.version>3.0.2</jsr305.version>
+    <guava.version>25.0</guava.version>
   </properties>
   <groupId>io.github.pr0methean.betterrandom</groupId>
   <artifactId>BetterRandom</artifactId>
@@ -49,11 +91,6 @@
 
   <dependencies>
     <dependency>
-      <groupId>org.slf4j</groupId>
-      <artifactId>slf4j-api</artifactId>
-      <version>1.7.25</version>
-    </dependency>
-    <dependency>
       <groupId>org.apache.logging.log4j</groupId>
       <artifactId>log4j-slf4j-impl</artifactId>
       <version>2.10.0</version>
@@ -64,13 +101,6 @@
       <groupId>org.apache.maven.plugins</groupId>
       <artifactId>maven-deploy-plugin</artifactId>
       <version>2.8.2</version>
-    </dependency>
-    <dependency>
-      <!-- Overrides transitive dep on 5.2.1 -->
-      <groupId>net.sf.proguard</groupId>
-      <artifactId>proguard-base</artifactId>
-      <version>5.3.3</version>
-      <scope>runtime</scope>
     </dependency>
     <dependency>
       <groupId>com.googlecode.json-simple</groupId>
@@ -94,13 +124,13 @@
     <dependency>
       <groupId>com.google.guava</groupId>
       <artifactId>guava</artifactId>
-      <version>25.0-jre</version>
+      <version>${guava.version}-jre</version>
     </dependency>
     <!-- https://mvnrepository.com/artifact/com.google.code.findbugs/jsr305 -->
     <dependency>
       <groupId>com.google.code.findbugs</groupId>
       <artifactId>jsr305</artifactId>
-      <version>3.0.2</version>
+      <version>${jsr305.version}</version>
     </dependency>
     <dependency>
       <groupId>org.apache.maven.plugins</groupId>
@@ -133,10 +163,10 @@
             <subpackages>io.github.pr0methean</subpackages>
             <show>protected</show>
             <links>
-              <link>http://checkstyle-addons.github.io/jsr305-javadoc/3.0.1</link>
+              <link>http://checkstyle-addons.github.io/jsr305-javadoc/${jsr305.version}</link>
               <link>https://checkerframework.org/api</link>
               <link>https://docs.oracle.com/javase/8/docs/api</link>
-              <link>https://google.github.io/guava/releases/23.0/api/docs</link>
+              <link>https://google.github.io/guava/releases/${guava.version}/api/docs</link>
             </links>
             <tags>
               <tag>
@@ -390,7 +420,7 @@
             <dependency>
               <groupId>com.google.code.findbugs</groupId>
               <artifactId>jsr305</artifactId>
-              <version>3.0.2</version>
+              <version>${jsr305.version}</version>
             </dependency>
             <!-- https://stackoverflow.com/questions/15166781/mvn-releaseprepare-not-committing-changes-to-pom-xml -->
             <dependency>

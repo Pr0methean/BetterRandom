@@ -1,8 +1,5 @@
 #!/bin/sh
 cd betterrandom
-if ([ "$TRAVIS_JDK_VERSION" = "oraclejdk9" ] || [ "$TRAVIS_JDK_VERSION" = "openjdk9" ]); then
-  mv pom9.xml pom.xml
-fi
 mvn clean compile test-compile org.pitest:pitest-maven:mutationCoverage
 if [ ! $? ]; then
   exit 1

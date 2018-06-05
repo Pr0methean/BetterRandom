@@ -6,7 +6,6 @@ else
 fi
 if ([ "{$TRAVIS_JDK_VERSION}" = "oraclejdk9" ] || [ "${TRAVIS_JDK_VERSION}" = "openjdk9" ]); then
   JAVA9="true"
-  mv pom9.xml pom.xml
 fi
 NO_GIT_PATH="${PATH}"
 if [ "${APPVEYOR}" != "" ]; then
