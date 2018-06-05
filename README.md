@@ -36,7 +36,7 @@ runtime. Otherwise, choose **BetterRandom-Java7**.
 Javadocs for the latest snapshot, including both public and protected members (to support your
 subclassing), are at [pr0methean.github.io](https://pr0methean.github.io/).
 
-These Javadocs are for the Java 8+ branch; the Java 7 branch differs only in that
+These Javadocs are for the Java 8+ branch; the Java 7 branch differs mainly in that
 `java.util.SplittableRandom`, `java.util.stream.*` and `java.util.function.*` are replaced with
 their backported counterparts (whose full names begin with `java8` instead of `java`) in
 [StreamSupport](https://sourceforge.net/projects/streamsupport/), which is an extra dependency for
@@ -128,8 +128,6 @@ BetterRandom has 2 versions, one for Java 7 -- including Android API levels belo
 Java 8 and newer.
 
 ## Java 8 (master branch)
-
-Compilation with Maven on a Java 9 compiler requires using `pom9.xml` because of a Proguard bug.
 
 Continuous integration takes place in the following environments:
 
