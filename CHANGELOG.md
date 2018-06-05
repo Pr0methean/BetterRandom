@@ -1,3 +1,6 @@
+# 2.3.8
+* Can now build using the same pom.xml on JDK8 and JDK9.
+
 # 2.3.7
 * Reduces the performance penalty for calling `BaseRandom.setSeederThread` redundantly.
 
