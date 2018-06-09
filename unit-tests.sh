@@ -5,6 +5,7 @@ else
   MAYBE_ANDROID_FLAG=""
 fi
 if ([ "${TRAVIS}" = "true" ] \
+    && [ "${TRAVIS_OS_NAME}" = "linux" ] \
     && [ "${TRAVIS_JDK_VERSION}" != "oraclejdk8" ] \
     && [ "${TRAVIS_JDK_VERSION}" != "openjdk8" ]); then
   echo "Using Java 9+ mode."
