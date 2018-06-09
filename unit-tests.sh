@@ -5,8 +5,8 @@ else
   MAYBE_ANDROID_FLAG=""
 fi
 if ([ "${TRAVIS}" = "true" ] \
-    && ([ "{$TRAVIS_JDK_VERSION}" != "oraclejdk8" ] \
-    || [ "${TRAVIS_JDK_VERSION}" != "openjdk8" ])); then
+    && [ "{$TRAVIS_JDK_VERSION}" != "oraclejdk8" ] \
+    && [ "${TRAVIS_JDK_VERSION}" != "openjdk8" ]); then
   JAVA9="true"
   # https://github.com/jacoco/jacoco/issues/663
   NO_JACOCO="true"
