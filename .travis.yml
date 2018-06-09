@@ -46,11 +46,6 @@ jobs:
   # Linux unit tests
   - language: java
     os: linux
-    jdk: oraclejdk11-ea
-    env: OP=unit-tests
-    stage: unit tests
-  - language: java
-    os: linux
     jdk: oraclejdk11
     env: OP=unit-tests
     stage: unit tests
@@ -135,11 +130,6 @@ jobs:
     os: linux
     jdk: oraclejdk10
     env: OP=mutation
-    stage: long tests
-  - language: java
-    os: linux
-    jdk: oraclejdk-ea
-    env: OP=benchmark
     stage: long tests
   - language: java
     os: linux
@@ -230,6 +220,8 @@ jobs:
   - language: android
   fast_finish: true
 script:
+- mvn help:active-profiles
+- java --version
 - ifconfig | grep inet
 - "./remove_unlimited_crypto.sh"
 - travis_wait 49 "./${OP}.sh"
