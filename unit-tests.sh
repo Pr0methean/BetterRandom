@@ -4,7 +4,7 @@ if [ "$ANDROID" = 1 ]; then
 else
   MAYBE_ANDROID_FLAG=""
 fi
-if ([ "{$TRAVIS_JDK_VERSION}" = "oraclejdk9" ] || [ "${TRAVIS_JDK_VERSION}" = "openjdk9" ]); then
+if ([ "{$TRAVIS_JDK_VERSION}" != "oraclejdk8" ] || [ "${TRAVIS_JDK_VERSION}" != "openjdk8" ]); then
   JAVA9="true"
 fi
 NO_GIT_PATH="${PATH}"
