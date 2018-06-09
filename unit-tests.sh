@@ -30,32 +30,29 @@ PATH="${NO_GIT_PATH}" mvn ${MAYBE_ANDROID_FLAG} help:active-profiles clean ${MAY
     test ${MAYBE_JACOCO_REPORT} -e
 STATUS=$?
 if [ "${STATUS}" = 0 ]; then
-  if [ "${TRAVIS}" = "true" ]; then
-    if [ "${JAVA9}" != "true" ]; then
-      # Coveralls doesn't seem to work in non-.NET Appveyor yet
-      # so we have to hope Appveyor pushes its Jacoco reports before Travis does! :(
-      mvn coveralls:report
-
-      # Send coverage to Codacy
-      wget 'https://github.com/codacy/codacy-coverage-reporter/releases/download/2.0.0/codacy-coverage-reporter-2.0.0-assembly.jar'
-      java -jar codacy-coverage-reporter-2.0.0-assembly.jar -l Java -r target/site/jacoco/jacoco.xml
-
-      # Send coverage to Codecov
-      curl -s https://codecov.io/bash | bash
-    fi
-    COMMIT="$TRAVIS_COMMIT"
-    JOB_ID="travis_$TRAVIS_JOB_NUMBER"
-    git config --global user.email "travis@travis-ci.org"
-  elif [ "${APPVEYOR}" != "" ]; then
-    GH_TOKEN=$(powershell 'Write-Host ($env:access_token) -NoNewLine')
-    COMMIT="$APPVEYOR_REPO_COMMIT"
-    JOB_ID="appveyor_$APPVEYOR_BUILD_ID"
-    git config --global user.email "appveyor@appveyor.com"
-  fi
   if [ "${NO_JACOCO}" != "true" ]; then
+    if [ "${TRAVIS}" = "true" ]; then
+      COMMIT="$TRAVIS_COMMIT"
+      JOB_ID="travis_$TRAVIS_JOB_NUMBER"
+    elif [ "${APPVEYOR}" != "" ]; then
+      GH_TOKEN=$(powershell 'Write-Host ($env:access_token) -NoNewLine')
+      COMMIT="$APPVEYOR_REPO_COMMIT"
+      JOB_ID="appveyor_$APPVEYOR_BUILD_ID"
+      git config --global user.email "appveyor@appveyor.com"
+    else
+      COMMIT=$(git rev-parse HEAD)
+      JOB_ID=$(cat /proc/sys/kernel/random/uuid)
+    fi
     git clone https://github.com/Pr0methean/betterrandom-coverage.git
     cd betterrandom-coverage
-    /bin/mkdir -p "$COMMIT"
+    if [ -f "${COMMIT}" ]; then
+      cp "${COMMIT}/*.exec" target
+      mvn jacoco:report-aggregate
+      JACOCO_DIR="jacoco-aggregate"
+    else
+      /bin/mkdir "$COMMIT"
+      JACOCO_DIR="jacoco"
+    fi
     /bin/mv ../target/jacoco.exec "$COMMIT/$JOB_ID.exec"
     cd "$COMMIT"
     git add .
@@ -63,13 +60,25 @@ if [ "${STATUS}" = 0 ]; then
     git remote add originauth "https://${GH_TOKEN}@github.com/Pr0methean/betterrandom-coverage.git"
     git push --set-upstream originauth master
     while [ ! $? ]; do
+      mvn jacoco:report-aggregate
       git pull --rebase  # Merge
       git push
     done
     cd ../..
+    if [ "${TRAVIS}" = "true" ]; then
+      # Coveralls doesn't seem to work in non-.NET Appveyor yet
+      # so we have to hope Appveyor pushes its Jacoco reports before Travis does! :(
+      mvn coveralls:report
+      # Send coverage to Codacy
+      wget 'https://github.com/codacy/codacy-coverage-reporter/releases/download/2.0.0/codacy-coverage-reporter-2.0.0-assembly.jar'
+      java -jar codacy-coverage-reporter-2.0.0-assembly.jar -l Java -r target/site/${JACOCO_DIR}/jacoco.xml
+      # Send coverage to Codecov
+      curl -s https://codecov.io/bash | bash
+      git config --global user.email "travis@travis-ci.org"
+    fi
   fi
-  if [ "$JAVA9" != "true" ]; then
-    PATH="${NO_GIT_PATH}" mvn -DskipTests -Dmaven.test.skip=true ${MAYBE_ANDROID_FLAG} jacoco:report-aggregate package && (
+  if [ "${JAVA9}" != "true" ]; then
+    PATH="${NO_GIT_PATH}" mvn -DskipTests -Dmaven.test.skip=true ${MAYBE_ANDROID_FLAG} package && (
       # Post-Proguard test (verifies Proguard settings)
       PATH="${NO_GIT_PATH}" mvn ${MAYBE_ANDROID_FLAG} test -e
     )
