@@ -42,6 +42,7 @@ if [ "${STATUS}" = 0 ]; then
       JOB_ID="appveyor_$APPVEYOR_BUILD_ID"
       git config --global user.email "appveyor@appveyor.com"
     else
+      # Not in CI
       COMMIT=$(git rev-parse HEAD)
       JOB_ID=$(cat /proc/sys/kernel/random/uuid)
     fi
