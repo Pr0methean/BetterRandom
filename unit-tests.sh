@@ -7,6 +7,7 @@ fi
 if ([ "{$TRAVIS_JDK_VERSION}" != "oraclejdk8" ] || [ "${TRAVIS_JDK_VERSION}" != "openjdk8" ]); then
   JAVA9="true"
   # https://github.com/jacoco/jacoco/issues/663
+  NO_JACOCO="true"
   MAYBE_JACOCO_PREPARE=""
   MAYBE_JACOCO_REPORT=""
 else
@@ -28,9 +29,9 @@ cd betterrandom
 PATH="${NO_GIT_PATH}" mvn ${MAYBE_ANDROID_FLAG} help:active-profiles clean ${MAYBE_JACOCO_PREPARE} \
     test ${MAYBE_JACOCO_REPORT} -e
 STATUS=$?
-if [ "$STATUS" = 0 ]; then
-  if [ "$TRAVIS" = "true" ]; then
-    if [ "$JAVA9" != "true" ]; then
+if [ "${STATUS}" = 0 ]; then
+  if [ "${TRAVIS}" = "true" ]; then
+    if [ "${JAVA9}" != "true" ]; then
       # Coveralls doesn't seem to work in non-.NET Appveyor yet
       # so we have to hope Appveyor pushes its Jacoco reports before Travis does! :(
       mvn coveralls:report
@@ -45,26 +46,28 @@ if [ "$STATUS" = 0 ]; then
     COMMIT="$TRAVIS_COMMIT"
     JOB_ID="travis_$TRAVIS_JOB_NUMBER"
     git config --global user.email "travis@travis-ci.org"
-  elif [ "$APPVEYOR" != "" ]; then
+  elif [ "${APPVEYOR}" != "" ]; then
     GH_TOKEN=$(powershell 'Write-Host ($env:access_token) -NoNewLine')
     COMMIT="$APPVEYOR_REPO_COMMIT"
     JOB_ID="appveyor_$APPVEYOR_BUILD_ID"
     git config --global user.email "appveyor@appveyor.com"
   fi
-  git clone https://github.com/Pr0methean/betterrandom-coverage.git
-  cd betterrandom-coverage
-  /bin/mkdir -p "$COMMIT"
-  /bin/mv ../target/jacoco.exec "$COMMIT/$JOB_ID.exec"
-  cd "$COMMIT"
-  git add .
-  git commit -m "Coverage report from job $JOB_ID"
-  git remote add originauth "https://${GH_TOKEN}@github.com/Pr0methean/betterrandom-coverage.git"
-  git push --set-upstream originauth master
-  while [ ! $? ]; do
-    git pull --rebase  # Merge
-    git push
-  done
-  cd ../..
+  if [ "${NO_JACOCO}" != "true" ]; then
+    git clone https://github.com/Pr0methean/betterrandom-coverage.git
+    cd betterrandom-coverage
+    /bin/mkdir -p "$COMMIT"
+    /bin/mv ../target/jacoco.exec "$COMMIT/$JOB_ID.exec"
+    cd "$COMMIT"
+    git add .
+    git commit -m "Coverage report from job $JOB_ID"
+    git remote add originauth "https://${GH_TOKEN}@github.com/Pr0methean/betterrandom-coverage.git"
+    git push --set-upstream originauth master
+    while [ ! $? ]; do
+      git pull --rebase  # Merge
+      git push
+    done
+    cd ../..
+  fi
   if [ "$JAVA9" != "true" ]; then
     PATH="${NO_GIT_PATH}" mvn -DskipTests -Dmaven.test.skip=true ${MAYBE_ANDROID_FLAG} jacoco:report-aggregate package && (
       # Post-Proguard test (verifies Proguard settings)
