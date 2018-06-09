@@ -7,12 +7,14 @@ fi
 if ([ "${TRAVIS}" = "true" ] \
     && [ "{$TRAVIS_JDK_VERSION}" != "oraclejdk8" ] \
     && [ "${TRAVIS_JDK_VERSION}" != "openjdk8" ]); then
+  echo "Using Java 9+ mode."
   JAVA9="true"
   # https://github.com/jacoco/jacoco/issues/663
   NO_JACOCO="true"
   MAYBE_JACOCO_PREPARE=""
   MAYBE_JACOCO_REPORT=""
 else
+  echo "Using Java 8 mode. JaCoCo will run."
   MAYBE_JACOCO_PREPARE="jacoco:prepare-agent"
   MAYBE_JACOCO_REPORT="jacoco:report"
 fi
@@ -49,10 +51,12 @@ if [ "${STATUS}" = 0 ]; then
     git clone https://github.com/Pr0methean/betterrandom-coverage.git
     cd betterrandom-coverage
     if [ -f "${COMMIT}" ]; then
+      echo "Aggregating with JaCoCo reports from other jobs."
       cp "${COMMIT}/*.exec" target
       mvn jacoco:report-aggregate
       JACOCO_DIR="jacoco-aggregate"
     else
+      echo "This is the first JaCoCo report for this build."
       /bin/mkdir "$COMMIT"
       JACOCO_DIR="jacoco"
     fi
@@ -81,14 +85,18 @@ if [ "${STATUS}" = 0 ]; then
     fi
   fi
   if [ "${JAVA9}" != "true" ]; then
-    # Run Proguard and test again
+    echo "Running Proguard."
     PATH="${NO_GIT_PATH}" mvn -DskipTests -Dmaven.test.skip=true ${MAYBE_ANDROID_FLAG} \
-        package && \
+        package pre-integration-test && \
+        echo "Testing against Proguarded jar." && \
         PATH="${NO_GIT_PATH}" mvn ${MAYBE_ANDROID_FLAG} integration-test -e
     STATUS=$?
   fi
 fi
 if [ "$STATUS" != 0 ]; then
+  echo ""
+  echo "SUREFIRE LOGS"
+  echo "============="
   cat /home/travis/build/Pr0methean/BetterRandom/betterrandom/target/surefire-reports/*
 fi
 cd ..
