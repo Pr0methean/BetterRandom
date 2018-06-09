@@ -46,17 +46,7 @@ jobs:
   # Linux unit tests
   - language: java
     os: linux
-    jdk: oraclejdk11
-    env: OP=unit-tests
-    stage: unit tests
-  - language: java
-    os: linux
-    jdk: oraclejdk10
-    env: OP=unit-tests
-    stage: unit tests
-  - language: java
-    os: linux
-    jdk: oraclejdk9
+    jdk: openjdk8
     env: OP=unit-tests
     stage: unit tests
   - language: java
@@ -66,12 +56,12 @@ jobs:
     stage: unit tests
   - language: java
     os: linux
-    jdk: openjdk-ea
+    jdk: openjdk9
     env: OP=unit-tests
     stage: unit tests
   - language: java
     os: linux
-    jdk: openjdk11
+    jdk: oraclejdk9
     env: OP=unit-tests
     stage: unit tests
   - language: java
@@ -81,12 +71,22 @@ jobs:
     stage: unit tests
   - language: java
     os: linux
-    jdk: openjdk9
+    jdk: oraclejdk10
     env: OP=unit-tests
     stage: unit tests
   - language: java
     os: linux
-    jdk: openjdk8
+    jdk: openjdk11
+    env: OP=unit-tests
+    stage: unit tests
+  - language: java
+    os: linux
+    jdk: oraclejdk11
+    env: OP=unit-tests
+    stage: unit tests
+  - language: java
+    os: linux
+    jdk: openjdk-ea
     env: OP=unit-tests
     stage: unit tests
   - language: android
@@ -133,17 +133,7 @@ jobs:
     stage: long tests
   - language: java
     os: linux
-    jdk: oraclejdk11
-    env: OP=benchmark
-    stage: long tests
-  - language: java
-    os: linux
-    jdk: oraclejdk10
-    env: OP=benchmark
-    stage: long tests
-  - language: java
-    os: linux
-    jdk: oraclejdk9
+    jdk: openjdk8
     env: OP=benchmark
     stage: long tests
   - language: java
@@ -153,12 +143,12 @@ jobs:
     stage: long tests
   - language: java
     os: linux
-    jdk: openjdk-ea
+    jdk: openjdk9
     env: OP=benchmark
     stage: long tests
   - language: java
     os: linux
-    jdk: openjdk11
+    jdk: oraclejdk9
     env: OP=benchmark
     stage: long tests
   - language: java
@@ -168,12 +158,22 @@ jobs:
     stage: long tests
   - language: java
     os: linux
-    jdk: openjdk9
+    jdk: oraclejdk10
     env: OP=benchmark
     stage: long tests
   - language: java
     os: linux
-    jdk: openjdk8
+    jdk: openjdk11
+    env: OP=benchmark
+    stage: long tests
+  - language: java
+    os: linux
+    jdk: oraclejdk11
+    env: OP=benchmark
+    stage: long tests
+  - language: java
+    os: linux
+    jdk: openjdk-ea
     env: OP=benchmark
     stage: long tests
   - language: android
