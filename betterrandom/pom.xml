@@ -55,7 +55,7 @@
             <version>2.0.14</version>
             <executions>
               <execution>
-                <phase>package</phase>
+                <phase>prepare-package</phase>
                 <goals>
                   <goal>proguard</goal>
                 </goals>
