@@ -6,6 +6,12 @@ else
 fi
 if ([ "{$TRAVIS_JDK_VERSION}" != "oraclejdk8" ] || [ "${TRAVIS_JDK_VERSION}" != "openjdk8" ]); then
   JAVA9="true"
+  # https://github.com/jacoco/jacoco/issues/663
+  MAYBE_JACOCO_PREPARE=""
+  MAYBE_JACOCO_REPORT=""
+else
+  MAYBE_JACOCO_PREPARE="jacoco:prepare-agent"
+  MAYBE_JACOCO_REPORT="jacoco:report"
 fi
 NO_GIT_PATH="${PATH}"
 if [ "${APPVEYOR}" != "" ]; then
@@ -19,7 +25,8 @@ else
 fi
 cd betterrandom
 # Coverage test
-PATH="${NO_GIT_PATH}" mvn ${MAYBE_ANDROID_FLAG} help:active-profiles clean jacoco:prepare-agent test jacoco:report -e
+PATH="${NO_GIT_PATH}" mvn ${MAYBE_ANDROID_FLAG} help:active-profiles clean ${MAYBE_JACOCO_PREPARE} \
+    test ${MAYBE_JACOCO_REPORT} -e
 STATUS=$?
 if [ "$STATUS" = 0 ]; then
   if [ "$TRAVIS" = "true" ]; then
