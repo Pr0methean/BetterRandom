@@ -81,10 +81,10 @@ if [ "${STATUS}" = 0 ]; then
     fi
   fi
   if [ "${JAVA9}" != "true" ]; then
-    PATH="${NO_GIT_PATH}" mvn -DskipTests -Dmaven.test.skip=true ${MAYBE_ANDROID_FLAG} package && (
-      # Post-Proguard test (verifies Proguard settings)
-      PATH="${NO_GIT_PATH}" mvn ${MAYBE_ANDROID_FLAG} test -e
-    )
+    # Run Proguard and test again
+    PATH="${NO_GIT_PATH}" mvn -DskipTests -Dmaven.test.skip=true ${MAYBE_ANDROID_FLAG} \
+        package integration-test && \
+        PATH="${NO_GIT_PATH}" mvn ${MAYBE_ANDROID_FLAG} test -e
     STATUS=$?
   fi
 fi
