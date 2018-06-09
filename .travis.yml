@@ -220,8 +220,6 @@ jobs:
   - language: android
   fast_finish: true
 script:
-- mvn help:active-profiles
-- java --version
 - ifconfig | grep inet
 - "./remove_unlimited_crypto.sh"
 - travis_wait 49 "./${OP}.sh"
