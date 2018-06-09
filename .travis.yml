@@ -6,12 +6,23 @@ sudo: required
 dist: trusty
 serialGroup: edge
 git:
-  submodules: true # Travis FIXME: Should be overridable in jobs[x]
+  submodules: true # Travis FIXME: Should be overridable per job
 stages:
 - unit tests
 - long tests
 jobs:
   include:
+  # OSX unit tests
+  - language: java
+    os: osx
+    osx_image: xcode9.3
+    env: OP=unit-tests
+    stage: unit tests
+  - language: java
+    os: osx
+    osx_image: xcode9.2
+    env: OP=unit-tests
+    stage: unit tests
   - language: java
     os: osx
     osx_image: xcode9.1
@@ -32,6 +43,22 @@ jobs:
     osx_image: xcode7.3
     env: OP=unit-tests
     stage: unit tests
+  # Linux unit tests
+  - language: java
+    os: linux
+    jdk: oraclejdk11-ea
+    env: OP=unit-tests
+    stage: unit tests
+  - language: java
+    os: linux
+    jdk: oraclejdk11
+    env: OP=unit-tests
+    stage: unit tests
+  - language: java
+    os: linux
+    jdk: oraclejdk10
+    env: OP=unit-tests
+    stage: unit tests
   - language: java
     os: linux
     jdk: oraclejdk9
@@ -44,6 +71,26 @@ jobs:
     stage: unit tests
   - language: java
     os: linux
+    jdk: openjdk-ea
+    env: OP=unit-tests
+    stage: unit tests
+  - language: java
+    os: linux
+    jdk: openjdk11
+    env: OP=unit-tests
+    stage: unit tests
+  - language: java
+    os: linux
+    jdk: openjdk10
+    env: OP=unit-tests
+    stage: unit tests
+  - language: java
+    os: linux
+    jdk: openjdk9
+    env: OP=unit-tests
+    stage: unit tests
+  - language: java
+    os: linux
     jdk: openjdk8
     env: OP=unit-tests
     stage: unit tests
@@ -52,7 +99,17 @@ jobs:
     jdk: openjdk8
     env: OP=unit-tests ANDROID=1
     stage: unit tests
-  # OSX long tests first, to make the most of the OSX-specific 2-job limit
+  # OSX long tests
+  - language: java
+    os: osx
+    osx_image: xcode9.3
+    env: OP=benchmark
+    stage: long tests
+  - language: java
+    os: osx
+    osx_image: xcode9.2
+    env: OP=benchmark
+    stage: long tests
   - language: java
     os: osx
     osx_image: xcode9.1
@@ -76,8 +133,23 @@ jobs:
   # Linux long tests
   - language: java
     os: linux
-    jdk: oraclejdk9
+    jdk: oraclejdk10
     env: OP=mutation
+    stage: long tests
+  - language: java
+    os: linux
+    jdk: oraclejdk-ea
+    env: OP=benchmark
+    stage: long tests
+  - language: java
+    os: linux
+    jdk: oraclejdk11
+    env: OP=benchmark
+    stage: long tests
+  - language: java
+    os: linux
+    jdk: oraclejdk10
+    env: OP=benchmark
     stage: long tests
   - language: java
     os: linux
@@ -87,6 +159,26 @@ jobs:
   - language: java
     os: linux
     jdk: oraclejdk8
+    env: OP=benchmark
+    stage: long tests
+  - language: java
+    os: linux
+    jdk: openjdk-ea
+    env: OP=benchmark
+    stage: long tests
+  - language: java
+    os: linux
+    jdk: openjdk11
+    env: OP=benchmark
+    stage: long tests
+  - language: java
+    os: linux
+    jdk: openjdk10
+    env: OP=benchmark
+    stage: long tests
+  - language: java
+    os: linux
+    jdk: openjdk9
     env: OP=benchmark
     stage: long tests
   - language: java
@@ -101,37 +193,37 @@ jobs:
     stage: long tests
   - language: java
     os: linux
-    jdk: oraclejdk9
+    jdk: oraclejdk10
     env: OP=dieharder CLASS=AesCounterRandom
     stage: long tests
   - language: java
     os: linux
-    jdk: oraclejdk9
+    jdk: oraclejdk10
     env: OP=dieharder CLASS=CellularAutomatonRandom
     stage: long tests
   - language: java
     os: linux
-    jdk: oraclejdk9
+    jdk: oraclejdk10
     env: OP=dieharder CLASS=Cmwc4096Random
     stage: long tests
   - language: java
     os: linux
-    jdk: oraclejdk9
+    jdk: oraclejdk10
     env: OP=dieharder CLASS=MersenneTwisterRandom
     stage: long tests
   - language: java
     os: linux
-    jdk: oraclejdk9
+    jdk: oraclejdk10
     env: OP=dieharder CLASS=Pcg64Random
     stage: long tests
   - language: java
     os: linux
-    jdk: oraclejdk9
+    jdk: oraclejdk10
     env: OP=dieharder CLASS=XorShiftRandom
     stage: long tests
   - language: java
     os: linux
-    jdk: oraclejdk9
+    jdk: oraclejdk10
     env: OP=dieharder CLASS=adapter.SingleThreadSplittableRandomAdapter
     stage: long tests
   allow_failures:
