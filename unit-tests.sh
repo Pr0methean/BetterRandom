@@ -65,6 +65,8 @@ if [ "$STATUS" = 0 ]; then
     )
     STATUS=$?
   fi
+else
+  cat /home/travis/build/Pr0methean/BetterRandom/betterrandom/target/surefire-reports/*
 fi
 cd ..
 exit "$STATUS"
