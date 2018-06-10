@@ -16,16 +16,23 @@ if [ "${APPVEYOR}" != "" ]; then
     NO_GIT_PATH=$(echo "${PATH}" | /usr/bin/awk -v RS=':' -v ORS=':' '/git/ {next} {print}')
   fi
 fi
-PATH="${NO_GIT_PATH}" mvn -DskipTests -Darguments=-DskipTests -Dmaven.test.skip=true ${MAYBE_ANDROID_FLAG} clean package install &&\
+
+# This is in a variable for git-merge compatibility with the master branch.
+MAYBE_PROGUARD="pre-integration-test"
+
+cd betterrandom
+PATH="${NO_GIT_PATH}" mvn -DskipTests -Darguments=-DskipTests\
+    -Dmaven.test.skip=true ${MAYBE_ANDROID_FLAG}\
+    clean package ${MAYBE_PROGUARD} install &&\
 cd ../benchmark &&\
 PATH="${NO_GIT_PATH}" mvn -DskipTests ${MAYBE_ANDROID_FLAG} package &&\
 cd target &&\
 if [ "$TRAVIS" = "true" ]; then
-    java -jar benchmarks.jar -f 1 -t 1 -foe true &&\
-    java -jar benchmarks.jar -f 1 -t 2 -foe true
+  java -jar benchmarks.jar -f 1 -t 1 -foe true &&\
+  java -jar benchmarks.jar -f 1 -t 2 -foe true
 else
-    java -jar benchmarks.jar -f 1 -t 1 -foe true -v EXTRA 2>&1 |\
-        /usr/bin/tee benchmark_results_one_thread.txt &&\
-    java -jar benchmarks.jar -f 1 -t 2 -foe true -v EXTRA 2>&1 |\
-        /usr/bin/tee benchmark_results_two_threads.txt
+  java -jar benchmarks.jar -f 1 -t 1 -foe true -v EXTRA 2>&1 |\
+      /usr/bin/tee benchmark_results_one_thread.txt &&\
+  java -jar benchmarks.jar -f 1 -t 2 -foe true -v EXTRA 2>&1 |\
+      /usr/bin/tee benchmark_results_two_threads.txt
 fi && cd ../..

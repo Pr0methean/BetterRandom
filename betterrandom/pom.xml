@@ -4,6 +4,93 @@
   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
+  <profiles>
+    <!-- GPG Signature on release -->
+    <profile>
+      <id>release-sign-artifacts</id>
+      <activation>
+        <property>
+          <name>performRelease</name>
+          <value>true</value>
+        </property>
+      </activation>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-gpg-plugin</artifactId>
+            <version>1.6</version>
+            <executions>
+              <execution>
+                <id>sign-artifacts</id>
+                <phase>verify</phase>
+                <goals>
+                  <goal>sign</goal>
+                </goals>
+              </execution>
+            </executions>
+          </plugin>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-surefire-plugin</artifactId>
+          </plugin>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-failsafe-plugin</artifactId>
+            <version>2.17</version>
+            <configuration>
+              <suiteXmlFiles>
+                <suiteXmlFile>src/test/testng.xml</suiteXmlFile>
+              </suiteXmlFiles>
+            </configuration>
+            <executions>
+              <execution>
+                <!-- Check that Proguard isn't breaking anything -->
+                <id>test-after-proguard</id>
+                <phase>integration-test</phase>
+                <goals>
+                  <goal>test</goal>
+                </goals>
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+    <profile>
+      <!-- For testing on an Android emulator. Work in progress. -->
+      <id>android</id>
+      <repositories>
+        <repository>
+          <id>google</id>
+          <name>Google Maven repository</name>
+          <url>https://maven.google.com</url>
+        </repository>
+        <repository>
+          <id>lemonade</id>
+          <name>Lemonade Lab</name>
+          <url>https://dl.bintray.com/lemonade/maven/</url>
+        </repository>
+      </repositories>
+      <properties>
+        <packaging>aar</packaging>
+      </properties>
+      <dependencies>
+        <dependency>
+          <groupId>de.lemona.android</groupId>
+          <artifactId>android-testng</artifactId>
+          <version>1.1.27</version>
+          <type>pom</type>
+        </dependency>
+        <dependency>
+          <groupId>com.google.android.gms</groupId>
+          <artifactId>play-services</artifactId>
+          <version>4.4.52</version>
+          <type>aar</type>
+        </dependency>
+      </dependencies>
+    </profile>
+  </profiles>
   <packaging>jar</packaging>
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -115,6 +202,13 @@
       <version>2.8.2</version>
       <type>maven-plugin</type>
     </dependency>
+    <dependency>
+      <!-- Overrides transitive dep on 5.2.1 -->
+      <groupId>net.sf.proguard</groupId>
+      <artifactId>proguard-base</artifactId>
+      <version>5.3.3</version>
+      <scope>runtime</scope>
+    </dependency>
   </dependencies>
   <build>
     <resources>
@@ -129,6 +223,21 @@
     </resources>
     <pluginManagement>
       <plugins>
+        <plugin>
+          <groupId>com.github.wvengen</groupId>
+          <artifactId>proguard-maven-plugin</artifactId>
+          <version>2.0.14</version>
+          <executions>
+            <execution>
+              <id>proguard</id>
+              <!-- Work around lack of a post-package phase (proguard requires existing jar -->
+              <phase>pre-integration-test</phase>
+              <goals>
+                <goal>proguard</goal>
+              </goals>
+            </execution>
+          </executions>
+        </plugin>
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-javadoc-plugin</artifactId>
@@ -188,7 +297,7 @@
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-surefire-plugin</artifactId>
-          <version>2.20.1</version>
+          <version>2.21.0</version>
           <configuration>
             <trimStackTrace>false</trimStackTrace>
             <parallel>methods</parallel>
@@ -210,8 +319,6 @@
           <artifactId>maven-jar-plugin</artifactId>
           <version>3.0.2</version>
           <configuration>
-            <source>1.7</source>
-            <target>1.7</target>
             <archive>
               <manifest>
                 <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
@@ -294,7 +401,7 @@
         <plugin>
           <groupId>org.jacoco</groupId>
           <artifactId>jacoco-maven-plugin</artifactId>
-          <version>0.7.9</version>
+          <version>0.8.1</version>
           <executions>
             <execution>
               <id>default-prepare-agent</id>
@@ -488,77 +595,6 @@
       </plugin>
     </plugins>
   </build>
-  <profiles>
-
-    <!-- GPG Signature on release -->
-    <profile>
-      <id>release-sign-artifacts</id>
-      <activation>
-        <property>
-          <name>performRelease</name>
-          <value>true</value>
-        </property>
-      </activation>
-      <build>
-        <plugins>
-          <plugin>
-            <groupId>org.apache.maven.plugins</groupId>
-            <artifactId>maven-gpg-plugin</artifactId>
-            <version>1.6</version>
-            <executions>
-              <execution>
-                <id>sign-artifacts</id>
-                <phase>verify</phase>
-                <goals>
-                  <goal>sign</goal>
-                </goals>
-              </execution>
-            </executions>
-          </plugin>
-        </plugins>
-      </build>
-    </profile>
-
-    <profile>
-      <!-- For testing on an Android emulator. Work in progress. -->
-      <id>android</id>
-      <repositories>
-        <repository>
-          <id>google</id>
-          <name>Google Maven repository</name>
-          <url>https://maven.google.com</url>
-        </repository>
-        <repository>
-          <id>lemonade</id>
-          <name>Lemonade Lab</name>
-          <url>https://dl.bintray.com/lemonade/maven/</url>
-        </repository>
-        <repository>
-          <id>jcenter</id>
-          <url>https://dl.bintray.com/cbeust/maven/</url>
-        </repository>
-      </repositories>
-      <properties>
-        <packaging>aar</packaging>
-      </properties>
-      <dependencies>
-        <dependency>
-          <groupId>de.lemona.android</groupId>
-          <artifactId>android-testng</artifactId>
-          <version>1.1.27</version>
-          <type>pom</type>
-        </dependency>
-        <dependency>
-          <groupId>com.google.android.gms</groupId>
-          <artifactId>play-services</artifactId>
-          <version>4.4.52</version>
-          <type>aar</type>
-        </dependency>
-      </dependencies>
-    </profile>
-
-  </profiles>
-
   <!-- Required: developer information: -->
   <developers>
     <developer>
