@@ -3,8 +3,19 @@ if [ "$TRAVIS" = "true" ]; then
   sudo apt-get -qq update
   sudo apt-get install -y dieharder
 fi
+if ([ "${TRAVIS}" = "true" ] \
+    && [ "${TRAVIS_OS_NAME}" = "linux" ] \
+    && [ "${TRAVIS_JDK_VERSION}" != "oraclejdk8" ] \
+    && [ "${TRAVIS_JDK_VERSION}" != "openjdk8" ]); then
+  echo "[dieharder.sh] Using Java 9+ mode."
+  MAYBE_PROGUARD=""
+else
+  echo "[dieharder.sh] Using Java 8 mode. Running Proguard."
+  MAYBE_PROGUARD="pre-integration-test"
+fi
 cd betterrandom
-mvn -DskipTests -Darguments=-DskipTests -Dmaven.test.skip=true clean package install
+mvn -DskipTests -Darguments=-DskipTests -Dmaven.test.skip=true\
+    clean package ${MAYBE_PROGUARD} install
 cd ../FifoFiller
 mvn package
 JAR=$(find target -iname '*-with-dependencies.jar')
