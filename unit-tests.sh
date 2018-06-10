@@ -68,8 +68,9 @@ if [ "${STATUS}" = 0 ]; then
     git remote add originauth "https://${GH_TOKEN}@github.com/Pr0methean/betterrandom-coverage.git"
     git push --set-upstream originauth master
     while [ ! $? ]; do
-      mvn jacoco:report-aggregate
       git pull --rebase  # Merge
+      cp *.exec ../../target/
+      mvn jacoco:report-aggregate
       git push
     done
     cd ../..
