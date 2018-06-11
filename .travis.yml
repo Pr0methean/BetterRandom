@@ -17,11 +17,6 @@ jobs:
     jdk: openjdk7
     env: OP=unit-tests
     stage: unit tests
-  - language: java
-    os: linux
-    jdk: oraclejdk7
-    env: OP=unit-tests
-    stage: unit tests
   - language: android
     os: linux
     jdk: openjdk7
@@ -35,11 +30,6 @@ jobs:
   - language: java
     os: linux
     jdk: openjdk7
-    env: OP=benchmark
-    stage: long tests
-  - language: java
-    os: linux
-    jdk: oraclejdk7
     env: OP=benchmark
     stage: long tests
   - language: android
