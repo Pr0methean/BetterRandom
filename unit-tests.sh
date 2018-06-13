@@ -54,7 +54,9 @@ if [ "${STATUS}" = 0 ]; then
     if [ -f "${COMMIT}" ]; then
       echo "[unit-tests.sh] Aggregating with JaCoCo reports from other jobs."
       cp "${COMMIT}/*.exec" target
+      cp ../pom.xml .
       mvn jacoco:report-aggregate
+      rm pom.xml
       JACOCO_DIR="jacoco-aggregate"
     else
       echo "[unit-tests.sh] This is the first JaCoCo report for this build."

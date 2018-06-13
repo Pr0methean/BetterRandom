@@ -35,7 +35,9 @@ if ( $STATUS ) {
     if ( Test-Path $COMMIT ) {
         echo "[unit-tests.bat] Aggregating with JaCoCo reports from other jobs."
         cp "$COMMIT/*.exec" target
+        cp ../pom.xml .
         mvn "jacoco:report-aggregate"
+        rm pom.xml
         $JACOCO_DIR = "jacoco-aggregate"
     } else {
         echo "[unit-tests.bat] This is the first JaCoCo report for this build."
