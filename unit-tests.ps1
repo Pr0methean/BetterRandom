@@ -13,7 +13,7 @@ cd betterrandom
 mvn "$MAYBE_ANDROID_FLAG" "help:active-profiles" "clean" "$MAYBE_JACOCO_PREPARE" `
     "test" "$MAYBE_JACOCO_REPORT" -e
 $STATUS = $?
-if ( $STATUS -eq 0 ) {
+if ( $STATUS ) {
     if ( $env:TRAVIS ) {
         $COMMIT = "$TRAVIS_COMMIT"
         $JOB_ID = "travis_$TRAVIS_JOB_NUMBER"
@@ -74,12 +74,14 @@ if ( $STATUS -eq 0 ) {
     }
 }
 echo "Result code: $STATUS"
-if ( $STATUS -ne 0 ) {
+if ( ! $STATUS ) {
     echo ""
     echo "[unit-tests.bat] SUREFIRE LOGS"
     echo "[unit-tests.bat] ============="
     foreach ($file in $(Get-ChildItem "target/surefire-reports")) {
-        echo $(Get-Content -Path $file)
+        echo ""
+        echo "File $file contents:"
+        echo $(Get-Content -Path "target/surefire-reports/$file")
     }
 }
 cd ..
