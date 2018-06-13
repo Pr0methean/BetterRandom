@@ -77,6 +77,7 @@ if ( $STATUS ) {
         $STATUS = $?
     }
 }
+echo $STATUS # FIXME: Temporary debug code
 if ( ! $STATUS ) {
     echo ""
     echo "[unit-tests.bat] SUREFIRE LOGS"
