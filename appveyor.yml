@@ -8,6 +8,7 @@ environment:
    - COMMAND: powershell .\unit-tests.ps1
    - COMMAND: c:\MinGW\msys\1.0\bin\sh .\unit-tests.sh
    - COMMAND: c:\cygwin64\bin\sh .\unit-tests.sh
+   - COMMAND: powershell .\benchmark.ps1
    - COMMAND: c:\MinGW\msys\1.0\bin\sh .\benchmark.sh
    - COMMAND: c:\cygwin64\bin\sh .\benchmark.sh
   access_token:
