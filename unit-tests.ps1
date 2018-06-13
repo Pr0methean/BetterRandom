@@ -10,7 +10,8 @@ else
 $MAYBE_JACOCO_PREPARE = "jacoco:prepare-agent"
 $MAYBE_JACOCO_REPORT = "jacoco:report"
 cd betterrandom
-mvn "$MAYBE_ANDROID_FLAG help:active-profiles clean $MAYBE_JACOCO_PREPARE test $MAYBE_JACOCO_REPORT -e"
+mvn "$MAYBE_ANDROID_FLAG" "help:active-profiles" "clean" "$MAYBE_JACOCO_PREPARE" `
+    "test" "$MAYBE_JACOCO_REPORT" -e
 $STATUS = $?
 if ( $STATUS -eq 0 ) {
     if ( $env:TRAVIS ) {
