@@ -56,7 +56,6 @@ if ( $STATUS ) {
         git push
     }
     cd "../.."
-    Get-Location # FIXME: temporary debug code
     if ( $TRAVIS ) {
         # Coveralls doesn't seem to work in non-.NET Appveyor yet
         # so we have to hope Appveyor pushes its Jacoco reports before Travis does! :(
@@ -78,7 +77,6 @@ if ( $STATUS ) {
         $STATUS = $?
     }
 }
-echo "Result code: $STATUS"
 if ( ! $STATUS ) {
     echo ""
     echo "[unit-tests.bat] SUREFIRE LOGS"
@@ -90,4 +88,4 @@ if ( ! $STATUS ) {
     }
 }
 cd ..
-exit "$STATUS"
+exit $STATUS
