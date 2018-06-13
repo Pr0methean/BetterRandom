@@ -1,3 +1,4 @@
+Set-PSDebug -Trace 2
 if ( $env:ANDROID )
 {
     $MAYBE_ANDROID_FLAG = "-Pandroid"
