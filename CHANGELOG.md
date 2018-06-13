@@ -1,8 +1,9 @@
 # 2.3.8
 * Can now build using the same pom.xml on JDK8 and JDK9.
+* Fix a bug that made `ReseedingThreadLocalRandomWrapperTest.testReseeding()` flaky.
 
 # 2.3.7
-* Reduces the performance penalty for calling `BaseRandom.setSeederThread` redundantly.
+* Reduces the performance cost of calling `BaseRandom.setSeederThread` redundantly.
 
 # 2.3.6
 * Coverage and performance improvements to the tests. The performance improvement is large enough to

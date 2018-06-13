@@ -149,10 +149,11 @@ Java 8 and newer.
 
 Continuous integration takes place in the following environments:
 
-* Linux (on Travis): OpenJDK 8, Oracle JDK 8/9
-* OS X (on Travis): JDK 8 (unclear whether Oracle or OpenJDK)
-* Cygwin (on Appveyor): JDK 8 (unclear whether Oracle or OpenJDK)
-* MinGW (on Appveyor): JDK 8 (unclear whether Oracle or OpenJDK)
+* Linux (on Travis): OpenJDK and Oracle JDK 8 and up
+* OS X (on Travis): JDK 8 (unclear whether Oracle or OpenJDK), Xcode 7.3 and up
+* Windows Server 2008 R2 (on Appveyor): OpenJDK? 8
+* Cygwin (on Appveyor): OpenJDK? 8
+* MinGW (on Appveyor): OpenJDK? 8
 
 CI on BSD or Android isn't likely any time soon, since no free providers of BSD CI seem to be
 integrated with GitHub, and there seems to be no actively-maintained Android-app wrapper for TestNG
