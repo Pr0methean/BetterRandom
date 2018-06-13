@@ -73,6 +73,7 @@ if ( $STATUS -eq 0 ) {
         $STATUS = $?
     }
 }
+echo "Result code: $STATUS"
 if ( $STATUS -ne 0 ) {
     echo ""
     echo "[unit-tests.bat] SUREFIRE LOGS"
