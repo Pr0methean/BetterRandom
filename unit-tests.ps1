@@ -23,8 +23,8 @@ if ( $STATUS = 0 ) {
         git config --global user.email "appveyor@appveyor.com"
     } else {
     # Not in CI
-        COMMIT = $(git rev-parse HEAD)
-        JOB_ID = [guid]::NewGuid()
+        $COMMIT = $(git rev-parse HEAD)
+        $JOB_ID = [guid]::NewGuid()
     }
     git clone "https://github.com/Pr0methean/betterrandom-coverage.git"
     cd betterrandom-coverage
