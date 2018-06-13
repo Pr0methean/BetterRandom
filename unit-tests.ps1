@@ -23,7 +23,7 @@ if ( $STATUS ) {
     } elseif ( $env:APPVEYOR ) {
         $GH_TOKEN = "$env:access_token"
         $COMMIT = "$env:APPVEYOR_REPO_COMMIT"
-        $JOB_ID = "appveyor_$env:APPVEYOR_BUILD_ID"
+        $JOB_ID = "appveyor_$env:APPVEYOR_BUILD_NUMBER.$env:APPVEYOR_JOB_NUMBER"
         git config --global user.email "appveyor@appveyor.com"
     } else {
     # Not in CI
