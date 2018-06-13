@@ -72,6 +72,7 @@ if ( $STATUS ) {
         echo "[unit-tests.bat] Running Proguard."
         mvn -DskipTests "-Dmaven.test.skip=true" "$MAYBE_ANDROID_FLAG" package pre-integration-test
         echo "[unit-tests.bat] Testing against Proguarded jar."
+        # FIXME: This runs Proguard again after it finishes.
         mvn "$MAYBE_ANDROID_FLAG" "integration-test" "-e"
         $STATUS = $?
     }
