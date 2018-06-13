@@ -1,17 +1,16 @@
 # http://www.appveyor.com/docs/appveyor-yml
 init:
+  # 32-bit Cygwin causes conflicts
   - rmdir c:\cygwin /s /q
 environment:
   JAVA_HOME: C:\Program Files\Java\jdk1.8.0
   matrix:
-   - OP: unit-tests
-     RUNNER: MinGW\msys\1.0
-   - OP: unit-tests
-     RUNNER: cygwin64
-   - OP: benchmark
-     RUNNER: MinGW\msys\1.0
-   - OP: benchmark
-     RUNNER: cygwin64
+   - COMMAND: powershell .\unit-tests.ps1
+   - COMMAND: c:\MinGW\msys\1.0\bin\sh .\unit-tests.sh
+   - COMMAND: c:\cygwin64\bin\sh .\unit-tests.sh
+   - COMMAND: powershell .\benchmark.ps1
+   - COMMAND: c:\MinGW\msys\1.0\bin\sh .\benchmark.sh
+   - COMMAND: c:\cygwin64\bin\sh .\benchmark.sh
   access_token:
     secure: UrMOuu5SzFyDvmnIwDu4EJol6YwyLJJ3yAAvA8URK7x8cmssL4106Wr8MmS01GGL
   random_dot_org_key:
@@ -28,7 +27,7 @@ build_script:
   # shell scripts both build and test, so all we need to do here is set the character encoding
   - chcp 65001
 test_script:
-  - c:\%RUNNER%\bin\sh ./%OP%.sh
+  - '%COMMAND%'
 cache:
   - C:\maven\
   - C:\Users\appveyor\.m2

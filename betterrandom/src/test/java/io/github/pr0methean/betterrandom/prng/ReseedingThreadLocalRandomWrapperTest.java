@@ -42,8 +42,9 @@ public class ReseedingThreadLocalRandomWrapperTest extends ThreadLocalRandomWrap
         Thread.sleep(10);
         newSeed = rng.getSeed();
       } while (Arrays.equals(newSeed, oldSeed));
-      assertGreaterOrEqual(rng.getEntropyBits(), newSeed.length * 8L - 1);
-    } catch (InterruptedException e) {
+      Thread.sleep(10);
+      assertGreaterOrEqual(rng.getEntropyBits(), (newSeed.length * 8L) - 1);
+    } catch (final InterruptedException e) {
       throw new RuntimeException(e);
     }
   }
