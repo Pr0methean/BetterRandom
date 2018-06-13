@@ -7,7 +7,7 @@ else
 {
     $MAYBE_ANDROID_FLAG = ""
 }
-if ( $APPVEYOR )
+if ( $env:APPVEYOR )
 {
     $RANDOM_DOT_ORG_KEY = $env:random_dot_org_key
 }
