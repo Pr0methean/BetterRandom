@@ -12,7 +12,7 @@ $MAYBE_JACOCO_REPORT = "jacoco:report"
 cd betterrandom
 mvn "$MAYBE_ANDROID_FLAG help:active-profiles clean $MAYBE_JACOCO_PREPARE test $MAYBE_JACOCO_REPORT -e"
 $STATUS = $?
-if ( $STATUS = 0 ) {
+if ( $STATUS -eq 0 ) {
     if ( $env:TRAVIS ) {
         $COMMIT = "$TRAVIS_COMMIT"
         $JOB_ID = "travis_$TRAVIS_JOB_NUMBER"
@@ -64,7 +64,7 @@ if ( $STATUS = 0 ) {
         .\Codecov\codecov.exe # Run codecov.exe with whatever commands you need.
         git config --global user.email "travis@travis-ci.org"
     }
-    if ( ! "$JAVA9" ) {
+    if ( ! $JAVA9 ) {
         echo "[unit-tests.bat] Running Proguard."
         mvn -DskipTests "-Dmaven.test.skip=true" "$MAYBE_ANDROID_FLAG" package pre-integration-test
         echo "[unit-tests.bat] Testing against Proguarded jar."
@@ -72,7 +72,7 @@ if ( $STATUS = 0 ) {
         $STATUS = $?
     }
 }
-if ( $STATUS != 0 ) {
+if ( $STATUS -ne 0 ) {
     echo ""
     echo "[unit-tests.bat] SUREFIRE LOGS"
     echo "[unit-tests.bat] ============="
