@@ -42,7 +42,7 @@ if [ "${STATUS}" = 0 ]; then
     elif [ "${APPVEYOR}" != "" ]; then
       GH_TOKEN=$(powershell 'Write-Host ($env:access_token) -NoNewLine')
       COMMIT="$APPVEYOR_REPO_COMMIT"
-      JOB_ID="appveyor_$APPVEYOR_BUILD_ID"
+      JOB_ID="appveyor_${APPVEYOR_BUILD_NUMBER}.${APPVEYOR_JOB_NUMBER}"
       git config --global user.email "appveyor@appveyor.com"
     else
       # Not in CI
