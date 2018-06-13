@@ -87,6 +87,7 @@ if ( ! $STATUS ) {
         echo "File $file contents:"
         echo $(Get-Content -Path "target/surefire-reports/$file")
     }
+    exit 1
+} else {
+    cd ..
 }
-cd ..
-exit $STATUS
