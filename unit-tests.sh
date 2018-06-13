@@ -85,7 +85,9 @@ if [ "$STATUS" = 0 ]; then
   while [ ! $? ]; do
     git pull --rebase  # Merge
     cp *.exec ../../target/
+    cp ../pom.xml .
     mvn jacoco:report-aggregate
+    rm pom.xml
     git push
   done
   cd ../..
