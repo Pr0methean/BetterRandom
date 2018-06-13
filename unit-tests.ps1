@@ -1,11 +1,15 @@
 Set-PSDebug -Trace 2
-if ($env:ANDROID = 1)
+if ($env:ANDROID)
 {
     $MAYBE_ANDROID_FLAG = "-Pandroid"
 }
 else
 {
     $MAYBE_ANDROID_FLAG = ""
+}
+if ( $APPVEYOR )
+{
+    $RANDOM_DOT_ORG_KEY = $env:random_dot_org_key
 }
 $MAYBE_JACOCO_PREPARE = "jacoco:prepare-agent"
 $MAYBE_JACOCO_REPORT = "jacoco:report"
@@ -52,6 +56,7 @@ if ( $STATUS ) {
         git push
     }
     cd "../.."
+    echo $pwd  # FIXME: temporary debug code
     if ( $TRAVIS ) {
         # Coveralls doesn't seem to work in non-.NET Appveyor yet
         # so we have to hope Appveyor pushes its Jacoco reports before Travis does! :(
