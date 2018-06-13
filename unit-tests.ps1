@@ -77,7 +77,7 @@ if ( $STATUS -ne 0 ) {
     echo ""
     echo "[unit-tests.bat] SUREFIRE LOGS"
     echo "[unit-tests.bat] ============="
-    foreach ($file in $(Get-ChildItem "betterrandom/target/surefire-reports")) {
+    foreach ($file in $(Get-ChildItem "target/surefire-reports")) {
         echo $(Get-Content -Path $file)
     }
 }
