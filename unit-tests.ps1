@@ -56,7 +56,7 @@ if ( $STATUS ) {
         git push
     }
     cd "../.."
-    echo $pwd  # FIXME: temporary debug code
+    pwd  # FIXME: temporary debug code
     if ( $TRAVIS ) {
         # Coveralls doesn't seem to work in non-.NET Appveyor yet
         # so we have to hope Appveyor pushes its Jacoco reports before Travis does! :(
