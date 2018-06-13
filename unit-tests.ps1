@@ -17,7 +17,7 @@ if ( $STATUS = 0 ) {
         $COMMIT = "$TRAVIS_COMMIT"
         $JOB_ID = "travis_$TRAVIS_JOB_NUMBER"
     } elseif ( $env:APPVEYOR ) {
-        $GH_TOKEN = $env: access_token
+        $GH_TOKEN = $env:access_token
         $COMMIT = $APPVEYOR_REPO_COMMIT
         $JOB_ID = "appveyor_$APPVEYOR_BUILD_ID"
         git config --global user.email "appveyor@appveyor.com"
