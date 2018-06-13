@@ -16,6 +16,7 @@
     <orderEntry type="library" name="Maven: io.github.pr0methean.betterrandom:BetterRandom:2.3.0-SNAPSHOT" level="project" />
     <orderEntry type="library" name="Maven: com.google.guava:guava:23.4-jre" level="project" />
     <orderEntry type="library" name="Maven: com.google.errorprone:error_prone_annotations:2.0.18" level="project" />
+    <orderEntry type="library" name="Maven: com.google.guava:guava:25.0-jre" level="project" />
     <orderEntry type="library" scope="TEST" name="Maven: org.testng:testng:6.11" level="project" />
     <orderEntry type="library" scope="TEST" name="Maven: com.beust:jcommander:1.64" level="project" />
     <orderEntry type="library" scope="TEST" name="Maven: org.yaml:snakeyaml:1.17" level="project" />
