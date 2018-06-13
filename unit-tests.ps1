@@ -19,12 +19,12 @@ mvn "$MAYBE_ANDROID_FLAG" "help:active-profiles" "clean" "$MAYBE_JACOCO_PREPARE"
 $STATUS = $?
 if ( $STATUS ) {
     if ( $env:TRAVIS ) {
-        $COMMIT = "$TRAVIS_COMMIT"
-        $JOB_ID = "travis_$TRAVIS_JOB_NUMBER"
+        $COMMIT = "$env:TRAVIS_COMMIT"
+        $JOB_ID = "travis_$env:TRAVIS_JOB_NUMBER"
     } elseif ( $env:APPVEYOR ) {
-        $GH_TOKEN = $env:access_token
-        $COMMIT = $APPVEYOR_REPO_COMMIT
-        $JOB_ID = "appveyor_$APPVEYOR_BUILD_ID"
+        $GH_TOKEN = "$env:access_token"
+        $COMMIT = "$env:APPVEYOR_REPO_COMMIT"
+        $JOB_ID = "appveyor_$env:APPVEYOR_BUILD_ID"
         git config --global user.email "appveyor@appveyor.com"
     } else {
     # Not in CI
