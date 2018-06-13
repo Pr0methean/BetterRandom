@@ -4,7 +4,7 @@ init:
 environment:
   JAVA_HOME: C:\Program Files\Java\jdk1.8.0
   matrix:
-   - COMMAND: .\unit-tests.ps1
+   - COMMAND: powershell .\unit-tests.ps1
    - COMMAND: c:\MinGW\msys\1.0\bin\sh .\unit-tests.sh
    - COMMAND: c:\cygwin64\bin\sh .\unit-tests.sh
    - COMMAND: c:\MinGW\msys\1.0\bin\sh .\benchmark.sh
