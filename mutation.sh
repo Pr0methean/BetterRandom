@@ -1,6 +1,6 @@
 #!/bin/sh
 cd betterrandom
-mvn clean compile test-compile org.pitest:pitest-maven:mutationCoverage
+mvn clean test-compile org.pitest:pitest-maven:mutationCoverage
 if [ ! $? ]; then
   exit 1
 fi
