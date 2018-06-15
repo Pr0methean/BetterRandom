@@ -15,32 +15,22 @@ jobs:
   # OSX unit tests
   - language: java
     os: osx
-    osx_image: xcode9.3
+    osx_image: xcode9.4 # JDK 1.8.0_112-b16, OSX 10.13
     env: OP=unit-tests
     stage: unit tests
   - language: java
     os: osx
-    osx_image: xcode9.2
+    osx_image: xcode8.3 # JDK 1.8.0_112-b16, OSX 10.12
     env: OP=unit-tests
     stage: unit tests
   - language: java
     os: osx
-    osx_image: xcode9.1
+    osx_image: xcode7.3 # JDK 1.8.0_92-b14, OSX 10.11
     env: OP=unit-tests
     stage: unit tests
   - language: java
     os: osx
-    osx_image: xcode9
-    env: OP=unit-tests
-    stage: unit tests
-  - language: java
-    os: osx
-    osx_image: xcode8.3
-    env: OP=unit-tests
-    stage: unit tests
-  - language: java
-    os: osx
-    osx_image: xcode7.3
+    osx_image: xcode6.4 # JDK 1.8.0_45-b14, OSX 10.10
     env: OP=unit-tests
     stage: unit tests
   # Linux unit tests
@@ -97,22 +87,7 @@ jobs:
   # OSX long tests
   - language: java
     os: osx
-    osx_image: xcode9.3
-    env: OP=benchmark
-    stage: long tests
-  - language: java
-    os: osx
-    osx_image: xcode9.2
-    env: OP=benchmark
-    stage: long tests
-  - language: java
-    os: osx
-    osx_image: xcode9.1
-    env: OP=benchmark
-    stage: long tests
-  - language: java
-    os: osx
-    osx_image: xcode9
+    osx_image: xcode9.4
     env: OP=benchmark
     stage: long tests
   - language: java
@@ -123,6 +98,11 @@ jobs:
   - language: java
     os: osx
     osx_image: xcode7.3
+    env: OP=benchmark
+    stage: long tests
+  - language: java
+    os: osx
+    osx_image: xcode6.4
     env: OP=benchmark
     stage: long tests
   # Linux long tests
