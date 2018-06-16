@@ -319,6 +319,7 @@ seederThread.add(myRandom);
   except on Travis.
 * `mutation.sh`: Run mutation tests.
 * `release.sh`: Used to perform new releases.
+* `unrelease.sh`: Used to roll back pom.xml etc. if a release fails.
 * `publish-javadoc.sh`: Used to release updated Javadocs to github.io.
 * `prepare-workspace.sh`: Install necessary packages on a fresh Ubuntu Trusty Tahr workspace, such
   as what c9.io provides.
