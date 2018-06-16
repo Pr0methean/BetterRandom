@@ -2,7 +2,7 @@ if: tag IS blank
 cache:
   directories:
   - $HOME/.m2
-  - $HOME/Library/Developer/Xcode/DerivedData
+  - $HOME/Library/Developer/Xcode
 sudo: required
 dist: trusty
 serialGroup: edge
