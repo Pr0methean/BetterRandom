@@ -4,12 +4,12 @@ OLDVERSION=$(mvn help:evaluate -Dexpression=project.version | sed -n -e '/^\[.*\
 rm -f release.properties &&\
 rm -rf ../../.m2/repository/io/github/pr0methean/betterrandom/ &&\
 (
-  mvn -DskipTests -Darguments=-DskipTests -Dmaven.test.skip=true -Dmaven.main.skip=true pre-integration-test release:prepare release:perform
+  mvn -DskipTests -Darguments=-DskipTests -Dmaven.test.skip=true -Dmaven.main.skip=true package pre-integration-test release:prepare release:perform
   STATUS=$?
   NEWVERSION=$(mvn help:evaluate -Dexpression=project.version | sed -n -e '/^\[.*\]/ !{ /^[0-9]/ { p; q } }' | sed 's/version=//')
   if [ ${STATUS} ]; then
-    sed -i "s/$OLDVERSION/$NEWVERSION/" ../benchmark/pom.xml
-    sed -i "s/$OLDVERSION/$NEWVERSION/" ../FifoFiller/pom.xml
+    sed -i "s/${OLDVERSION}/${NEWVERSION}/" ../benchmark/pom.xml
+    sed -i "s/${OLDVERSION}/${NEWVERSION}/" ../FifoFiller/pom.xml
     git add ../benchmark/pom.xml
     git add ../FifoFiller/pom.xml
     git commit -m "🤖 Update benchmark to use new snapshot version following release"
