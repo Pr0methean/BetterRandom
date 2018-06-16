@@ -17,185 +17,185 @@ jobs:
   - language: java
     os: osx
     osx_image: xcode9.4 # JDK 1.8.0_112-b16, OSX 10.13
-    env: OP=unit-tests JAVA9=true
+    env: OP=unit-tests
     stage: unit tests
   - language: java
     os: osx
     osx_image: xcode8.3 # JDK 1.8.0_112-b16, OSX 10.12
-    env: OP=unit-tests
+    env: OP=unit-tests JAVA8=true
     stage: unit tests
   - language: java
     os: osx
     osx_image: xcode7.3 # JDK 1.8.0_92-b14, OSX 10.11
-    env: OP=unit-tests
+    env: OP=unit-tests JAVA8=true
     stage: unit tests
   - language: java
     os: osx
     osx_image: xcode6.4 # JDK 1.8.0_45-b14, OSX 10.10
-    env: OP=unit-tests
+    env: OP=unit-tests JAVA8=true
     stage: unit tests
   # Linux unit tests
   - language: java
     os: linux
     jdk: openjdk8
-    env: OP=unit-tests
+    env: OP=unit-tests JAVA8=true
     stage: unit tests
   - language: java
     os: linux
     jdk: oraclejdk8
-    env: OP=unit-tests
+    env: OP=unit-tests JAVA8=true
     stage: unit tests
   - language: java
     os: linux
     jdk: openjdk9
-    env: OP=unit-tests JAVA9=true
+    env: OP=unit-tests
     stage: unit tests
   - language: java
     os: linux
     jdk: oraclejdk9
-    env: OP=unit-tests JAVA9=true
+    env: OP=unit-tests
     stage: unit tests
   - language: java
     os: linux
     jdk: openjdk10
-    env: OP=unit-tests JAVA9=true
+    env: OP=unit-tests
     stage: unit tests
   - language: java
     os: linux
     jdk: oraclejdk10
-    env: OP=unit-tests JAVA9=true
+    env: OP=unit-tests
     stage: unit tests
   - language: java
     os: linux
     jdk: openjdk11
-    env: OP=unit-tests JAVA9=true
+    env: OP=unit-tests
     stage: unit tests
   - language: java
     os: linux
     jdk: oraclejdk11
-    env: OP=unit-tests JAVA9=true
+    env: OP=unit-tests
     stage: unit tests
   - language: java
     os: linux
     jdk: openjdk-ea
-    env: OP=unit-tests JAVA9=true
+    env: OP=unit-tests
     stage: unit tests
   - language: android
     os: linux
     jdk: openjdk8
-    env: OP=unit-tests ANDROID=1
+    env: OP=unit-tests ANDROID=1 JAVA8=true
     stage: unit tests
   # OSX long tests
   - language: java
     os: osx
     osx_image: xcode9.4
-    env: OP=benchmark JAVA9=true
+    env: OP=benchmark
     stage: long tests
   - language: java
     os: osx
     osx_image: xcode8.3
-    env: OP=benchmark
+    env: OP=benchmark JAVA8=true
     stage: long tests
   - language: java
     os: osx
     osx_image: xcode7.3
-    env: OP=benchmark
+    env: OP=benchmark JAVA8=true
     stage: long tests
   - language: java
     os: osx
     osx_image: xcode6.4
-    env: OP=benchmark
+    env: OP=benchmark JAVA8=true
     stage: long tests
   # Linux long tests
   - language: java
     os: linux
     jdk: oraclejdk10
-    env: OP=mutation JAVA9=true
+    env: OP=mutation
     stage: long tests
   - language: java
     os: linux
     jdk: openjdk8
-    env: OP=benchmark
+    env: OP=benchmark JAVA8=true
     stage: long tests
   - language: java
     os: linux
     jdk: oraclejdk8
-    env: OP=benchmark
+    env: OP=benchmark JAVA8=true
     stage: long tests
   - language: java
     os: linux
     jdk: openjdk9
-    env: OP=benchmark JAVA9=true
+    env: OP=benchmark
     stage: long tests
   - language: java
     os: linux
     jdk: oraclejdk9
-    env: OP=benchmark JAVA9=true
+    env: OP=benchmark
     stage: long tests
   - language: java
     os: linux
     jdk: openjdk10
-    env: OP=benchmark JAVA9=true
+    env: OP=benchmark
     stage: long tests
   - language: java
     os: linux
     jdk: oraclejdk10
-    env: OP=benchmark JAVA9=true
+    env: OP=benchmark
     stage: long tests
   - language: java
     os: linux
     jdk: openjdk11
-    env: OP=benchmark JAVA9=true
+    env: OP=benchmark
     stage: long tests
   - language: java
     os: linux
     jdk: oraclejdk11
-    env: OP=benchmark JAVA9=true
+    env: OP=benchmark
     stage: long tests
   - language: java
     os: linux
     jdk: openjdk-ea
-    env: OP=benchmark JAVA9=true
+    env: OP=benchmark
     stage: long tests
   - language: android
     os: linux
     jdk: openjdk8
-    env: OP=benchmark ANDROID=1
+    env: OP=benchmark ANDROID=1 JAVA8=true
     stage: long tests
   - language: java
     os: linux
     jdk: oraclejdk10
-    env: OP=dieharder CLASS=AesCounterRandom JAVA9=true
+    env: OP=dieharder CLASS=AesCounterRandom
     stage: long tests
   - language: java
     os: linux
     jdk: oraclejdk10
-    env: OP=dieharder CLASS=CellularAutomatonRandom JAVA9=true
+    env: OP=dieharder CLASS=CellularAutomatonRandom
     stage: long tests
   - language: java
     os: linux
     jdk: oraclejdk10
-    env: OP=dieharder CLASS=Cmwc4096Random JAVA9=true
+    env: OP=dieharder CLASS=Cmwc4096Random
     stage: long tests
   - language: java
     os: linux
     jdk: oraclejdk10
-    env: OP=dieharder CLASS=MersenneTwisterRandom JAVA9=true
+    env: OP=dieharder CLASS=MersenneTwisterRandom
     stage: long tests
   - language: java
     os: linux
     jdk: oraclejdk10
-    env: OP=dieharder CLASS=Pcg64Random JAVA9=true
+    env: OP=dieharder CLASS=Pcg64Random
     stage: long tests
   - language: java
     os: linux
     jdk: oraclejdk10
-    env: OP=dieharder CLASS=XorShiftRandom JAVA9=true
+    env: OP=dieharder CLASS=XorShiftRandom
     stage: long tests
   - language: java
     os: linux
     jdk: oraclejdk10
-    env: OP=dieharder CLASS=adapter.SingleThreadSplittableRandomAdapter JAVA9=true
+    env: OP=dieharder CLASS=adapter.SingleThreadSplittableRandomAdapter 
     stage: long tests
   allow_failures:
   - language: android

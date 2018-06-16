@@ -4,16 +4,16 @@ if [ "$ANDROID" = 1 ]; then
 else
   MAYBE_ANDROID_FLAG=""
 fi
-if [ "${JAVA9}" = "true" ]; then
+if [ "${JAVA8}" = "true" ]; then
+  echo "[unit-tests.sh] Using Java 8 mode. JaCoCo will run."
+  MAYBE_JACOCO_PREPARE="jacoco:prepare-agent"
+  MAYBE_JACOCO_REPORT="jacoco:report"
+else
   echo "[unit-tests.sh] Using Java 9+ mode."
   # https://github.com/jacoco/jacoco/issues/663
   NO_JACOCO="true"
   MAYBE_JACOCO_PREPARE=""
   MAYBE_JACOCO_REPORT=""
-else
-  echo "[unit-tests.sh] Using Java 8 mode. JaCoCo will run."
-  MAYBE_JACOCO_PREPARE="jacoco:prepare-agent"
-  MAYBE_JACOCO_REPORT="jacoco:report"
 fi
 NO_GIT_PATH="${PATH}"
 if [ "${APPVEYOR}" != "" ]; then
@@ -84,7 +84,7 @@ if [ "${STATUS}" = 0 ]; then
       git config --global user.email "travis@travis-ci.org"
     fi
   fi
-  if [ "${JAVA9}" != "true" ]; then
+  if [ "${JAVA8}" = "true" ]; then
     echo "[unit-tests.sh] Running Proguard."
     PATH="${NO_GIT_PATH}" mvn -DskipTests -Dmaven.test.skip=true ${MAYBE_ANDROID_FLAG} \
         clean pre-integration-test && \

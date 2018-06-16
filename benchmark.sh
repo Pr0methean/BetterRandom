@@ -12,12 +12,12 @@ if [ "${APPVEYOR}" != "" ]; then
     NO_GIT_PATH=$(echo "${PATH}" | /usr/bin/awk -v RS=':' -v ORS=':' '/git/ {next} {print}')
   fi
 fi
-if [ "${JAVA9}" = "true" ]; then
-  echo "[benchmark.sh] Using Java 9+ mode."
-  MAYBE_PROGUARD=""
-else
+if [ "${JAVA8}" = "true" ]; then
   echo "[benchmark.sh] Using Java 8 mode. Running Proguard."
   MAYBE_PROGUARD="pre-integration-test"
+else
+  echo "[benchmark.sh] Using Java 9+ mode."
+  MAYBE_PROGUARD=""
 fi
 cd betterrandom
 PATH="${NO_GIT_PATH}" mvn -DskipTests -Darguments=-DskipTests\
