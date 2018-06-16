@@ -3,12 +3,12 @@ if [ "$TRAVIS" = "true" ]; then
   sudo apt-get -qq update
   sudo apt-get install -y dieharder
 fi
-if [ "${JAVA9}" = "true" ]; then
-  echo "[dieharder.sh] Using Java 9+ mode."
-  MAYBE_PROGUARD=""
-else
+if [ "${JAVA8}" = "true" ]; then
   echo "[dieharder.sh] Using Java 8 mode. Running Proguard."
   MAYBE_PROGUARD="pre-integration-test"
+else
+  echo "[dieharder.sh] Using Java 9+ mode."
+  MAYBE_PROGUARD=""
 fi
 cd betterrandom
 mvn -DskipTests -Darguments=-DskipTests -Dmaven.test.skip=true\
