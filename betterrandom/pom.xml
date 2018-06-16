@@ -538,7 +538,7 @@
           </dependencies>
           <configuration>
             <mavenExecutorId>forked-path</mavenExecutorId>
-
+            <preparationGoals>clean pre-integration-test</preparationGoals:>
           </configuration>
         </plugin>
 
