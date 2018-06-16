@@ -13,7 +13,7 @@ if ( $env:APPVEYOR )
 $MAYBE_PROGUARD="pre-integration-test"
 cd betterrandom
 mvn "-DskipTests" "-Darguments=-DskipTests" "-Dmaven.test.skip=true" "$MAYBE_ANDROID_FLAG" `
-    "clean" "package" "$MAYBE_PROGUARD" install
+    "clean" "$MAYBE_PROGUARD" install
 cd ../benchmark
 mvn "-DskipTests" "$MAYBE_ANDROID_FLAG" package
 cd target
