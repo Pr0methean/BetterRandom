@@ -12,10 +12,7 @@ if [ "${APPVEYOR}" != "" ]; then
     NO_GIT_PATH=$(echo "${PATH}" | /usr/bin/awk -v RS=':' -v ORS=':' '/git/ {next} {print}')
   fi
 fi
-if ([ "${TRAVIS}" = "true" ] \
-    && [ "${TRAVIS_OS_NAME}" = "linux" ] \
-    && [ "${TRAVIS_JDK_VERSION}" != "oraclejdk8" ] \
-    && [ "${TRAVIS_JDK_VERSION}" != "openjdk8" ]); then
+if [ "${JAVA9}" = "true" ]; then
   echo "[benchmark.sh] Using Java 9+ mode."
   MAYBE_PROGUARD=""
 else
