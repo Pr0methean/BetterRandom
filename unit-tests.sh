@@ -91,7 +91,7 @@ if [ "${STATUS}" = 0 ]; then
   if [ "${JAVA9}" != "true" ]; then
     echo "[unit-tests.sh] Running Proguard."
     PATH="${NO_GIT_PATH}" mvn -DskipTests -Dmaven.test.skip=true ${MAYBE_ANDROID_FLAG} \
-        package pre-integration-test && \
+        clean pre-integration-test && \
         echo "[unit-tests.sh] Testing against Proguarded jar." && \
         PATH="${NO_GIT_PATH}" mvn ${MAYBE_ANDROID_FLAG} integration-test -e
     STATUS=$?
