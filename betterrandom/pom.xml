@@ -125,7 +125,7 @@
             <executions>
               <execution>
                 <!-- Check that Proguard isn't breaking anything -->
-                <id>test-after-proguard</id>
+                <id>test</id>
                 <phase>integration-test</phase>
                 <goals>
                   <goal>test</goal>
