@@ -4,12 +4,8 @@ if [ "$ANDROID" = 1 ]; then
 else
   MAYBE_ANDROID_FLAG=""
 fi
-if ([ "${TRAVIS}" = "true" ] \
-    && [ "${TRAVIS_OS_NAME}" = "linux" ] \
-    && [ "${TRAVIS_JDK_VERSION}" != "oraclejdk8" ] \
-    && [ "${TRAVIS_JDK_VERSION}" != "openjdk8" ]); then
+if [ "${JAVA9}" = "true" ]; then
   echo "[unit-tests.sh] Using Java 9+ mode."
-  JAVA9="true"
   # https://github.com/jacoco/jacoco/issues/663
   NO_JACOCO="true"
   MAYBE_JACOCO_PREPARE=""

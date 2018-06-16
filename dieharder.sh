@@ -3,10 +3,7 @@ if [ "$TRAVIS" = "true" ]; then
   sudo apt-get -qq update
   sudo apt-get install -y dieharder
 fi
-if ([ "${TRAVIS}" = "true" ] \
-    && [ "${TRAVIS_OS_NAME}" = "linux" ] \
-    && [ "${TRAVIS_JDK_VERSION}" != "oraclejdk8" ] \
-    && [ "${TRAVIS_JDK_VERSION}" != "openjdk8" ]); then
+if [ "${JAVA9}" = "true" ]; then
   echo "[dieharder.sh] Using Java 9+ mode."
   MAYBE_PROGUARD=""
 else
