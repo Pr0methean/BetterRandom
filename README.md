@@ -312,11 +312,11 @@ seederThread.add(myRandom);
 
 # Build scripts
 
-* `benchmark.sh`: Compile and run benchmarks. Output will be in `benchmark/target`. Won't work on
-  JDK 9, except on Travis.
+Many of these scripts require the environment variable `JAVA8=true` when using JDK 8.
+
+* `benchmark.sh`: Compile and run benchmarks. Output will be in `benchmark/target`.
 * `unit-tests.sh`: Compile and run unit tests and generate coverage reports. Upload them to Coveralls
-  if running in Travis-CI. If tests pass, run Proguard and then test again.  Won't work on JDK 9,
-  except on Travis.
+  if running in Travis-CI. If tests pass, run Proguard and then test again.
 * `mutation.sh`: Run mutation tests.
 * `release.sh`: Used to perform new releases.
 * `unrelease.sh`: Used to roll back pom.xml etc. if a release fails.
