@@ -205,11 +205,15 @@ jobs:
   - language: java
     os: linux
     jdk: oraclejdk10
-    env: OP=dieharder CLASS=adapter.SingleThreadSplittableRandomAdapter 
+    env: OP=dieharder CLASS=adapter.SingleThreadSplittableRandomAdapter
     stage: long tests
   allow_failures:
   - language: android
   fast_finish: true
+addons:
+  apt:
+    packages:
+      - tor
 script:
 - ifconfig | grep inet
 - "./remove_unlimited_crypto.sh"
