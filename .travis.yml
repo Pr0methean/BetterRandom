@@ -42,6 +42,10 @@ jobs:
   - language: android
   - jdk: oraclejdk7 # Currently sets ${JAVA_HOME} incorrectly
   fast_finish: true
+addons:
+  apt:
+    packages:
+      - tor
 script:
 - ifconfig | grep inet
 - "./remove_unlimited_crypto.sh"
