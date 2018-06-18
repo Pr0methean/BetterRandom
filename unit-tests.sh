@@ -22,8 +22,6 @@ if [ "${APPVEYOR}" != "" ]; then
     # Workaround for a faulty PATH in Appveyor Cygwin (https://github.com/appveyor/ci/issues/1956)
     NO_GIT_PATH=$(echo "${PATH}" | /usr/bin/awk -v RS=':' -v ORS=':' '/git/ {next} {print}')
   fi
-else
-  sudo apt-get install tor
 fi
 cd betterrandom
 # Coverage test
