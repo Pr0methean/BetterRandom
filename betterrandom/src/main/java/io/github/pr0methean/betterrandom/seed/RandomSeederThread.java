@@ -39,7 +39,7 @@ public final class RandomSeederThread extends LooperThread {
   private final Condition waitWhileEmpty = lock.newCondition();
   private final Condition waitForEntropyDrain = lock.newCondition();
   private final Set<Random> prngs
-      = Collections.synchronizedSet(Collections.newSetFromMap(new WeakHashMap<>(1)));
+      = Collections.synchronizedSet(Collections.newSetFromMap(new WeakHashMap<Random, Boolean>(1)));
   private final byte[] longSeedArray = new byte[8];
   private final ByteBuffer longSeedBuffer = ByteBuffer.wrap(longSeedArray);
   private final Set<Random> prngsThisIteration = new HashSet<>(1);
