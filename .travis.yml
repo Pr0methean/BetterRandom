@@ -211,8 +211,6 @@ jobs:
     jdk: oraclejdk10
     env: OP=dieharder CLASS=adapter.SingleThreadSplittableRandomAdapter
     stage: long tests
-  allow_failures:
-  - language: android
   fast_finish: true
 addons:
   apt:
