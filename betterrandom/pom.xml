@@ -545,12 +545,13 @@
           <threads>4</threads>
           <coverageThreshold>80</coverageThreshold>
           <mutationThreshold>65</mutationThreshold>
+          <avoidCallsTo>
+            <avoidCallsTo>org.slf4j</avoidCallsTo>
+          </avoidCallsTo>
           <timeoutFactor>2</timeoutFactor>
-          <timeoutConstant>3000</timeoutConstant>
+          <timeoutConstant>5000</timeoutConstant>
           <testPlugin>testng</testPlugin>
-          <mutateStaticInitializers>true</mutateStaticInitializers>
           <failWhenNoMutations>true</failWhenNoMutations>
-          <verbose>true</verbose>
         </configuration>
       </plugin>
       <plugin>

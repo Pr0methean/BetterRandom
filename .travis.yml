@@ -40,9 +40,6 @@ jobs:
     jdk: openjdk7
     env: OP=benchmark ANDROID=1
     stage: long tests
-  allow_failures:
-  - language: android
-  - jdk: oraclejdk7 # Currently sets ${JAVA_HOME} incorrectly
   fast_finish: true
 addons:
   apt:
