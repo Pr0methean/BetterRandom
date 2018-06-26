@@ -548,8 +548,8 @@
           <avoidCallsTo>
             <avoidCallsTo>org.slf4j</avoidCallsTo>
           </avoidCallsTo>
-          <timeoutFactor>2</timeoutFactor>
-          <timeoutConstant>5000</timeoutConstant>
+          <timeoutFactor>1.5</timeoutFactor>
+          <timeoutConstant>4000</timeoutConstant>
           <testPlugin>testng</testPlugin>
           <failWhenNoMutations>true</failWhenNoMutations>
         </configuration>
