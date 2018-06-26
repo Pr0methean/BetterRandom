@@ -1,7 +1,12 @@
+# 2.3.9
+* `RandomSeederThread` fields are now all final, and collection fields are cleared on interrupt.
+* `RandomSeederThread`'s error message now indicates which `SeedGenerator` is affected.
+* Minor refactoring.
+
 # 2.3.8
 * Can now build using the same pom.xml on JDK8 and JDK9.
 * Fix a test bug that made `ReseedingThreadLocalRandomWrapperTest.testReseeding()` flaky.
-* Use double-checked locking to slightly improve startup performance of `DevRandomSeedGenerator`.
+* Use double-checked locking to slightly improve performance of `DevRandomSeedGenerator`.
 
 # 2.3.7
 * Reduces the performance cost of calling `BaseRandom.setSeederThread` redundantly.
