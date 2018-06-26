@@ -35,13 +35,15 @@ public final class RandomSeederThread extends LooperThread {
       INSTANCES = Collections.synchronizedMap(new WeakHashMap<>(1));
   private static final long POLL_INTERVAL = 60;
   private final SeedGenerator seedGenerator;
+  private final Condition waitWhileEmpty = lock.newCondition();
+  private final Condition waitForEntropyDrain = lock.newCondition();
+  private final Set<Random> prngs
+      = Collections.synchronizedSet(Collections.newSetFromMap(new WeakHashMap<>(1)));
   private final byte[] longSeedArray = new byte[8];
-  private final Set<Random> prngs;
-  private final ByteBuffer longSeedBuffer;
-  private final Condition waitWhileEmpty;
-  private final Condition waitForEntropyDrain;
-  private final Set<Random> prngsThisIteration;
-  private final WeakHashMap<ByteArrayReseedableRandom, byte[]> seedArrays;
+  private final ByteBuffer longSeedBuffer = ByteBuffer.wrap(longSeedArray);
+  private final Set<Random> prngsThisIteration = new HashSet<>(1);
+  private final WeakHashMap<ByteArrayReseedableRandom, byte[]> seedArrays
+       = new WeakHashMap<>(1);
   private static final AtomicInteger defaultPriority = new AtomicInteger(Thread.NORM_PRIORITY);
 
   /**
@@ -49,12 +51,6 @@ public final class RandomSeederThread extends LooperThread {
    */
   private RandomSeederThread(final SeedGenerator seedGenerator) {
     this.seedGenerator = seedGenerator;
-    prngs = Collections.synchronizedSet(Collections.newSetFromMap(new WeakHashMap<>(1)));
-    longSeedBuffer = ByteBuffer.wrap(longSeedArray);
-    waitWhileEmpty = lock.newCondition();
-    waitForEntropyDrain = lock.newCondition();
-    prngsThisIteration = new HashSet<>(1);
-    seedArrays = new WeakHashMap<>(1);
   }
 
   /**
