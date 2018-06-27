@@ -550,7 +550,6 @@
           <testPlugin>testng</testPlugin>
           <mutateStaticInitializers>true</mutateStaticInitializers>
           <failWhenNoMutations>true</failWhenNoMutations>
-          <verbose>true</verbose>
         </configuration>
       </plugin>
       <plugin>
