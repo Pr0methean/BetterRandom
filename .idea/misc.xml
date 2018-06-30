@@ -21,6 +21,7 @@
       <list>
         <option value="$PROJECT_DIR$/pom.xml" />
         <option value="$PROJECT_DIR$/FifoFiller/pom.xml" />
+        <option value="$PROJECT_DIR$/betterrandom/pom.xml" />
       </list>
     </option>
   </component>
