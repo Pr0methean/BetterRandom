@@ -108,7 +108,7 @@ public enum RandomDotOrgSeedGenerator implements SeedGenerator {
   private static final Lock cacheLock = new ReentrantLock();
   private static final Charset UTF8 = Charset.forName("UTF-8");
   private static final TimeZone UTC = TimeZone.getTimeZone("UTC");
-  private static volatile Calendar EARLIEST_NEXT_ATTEMPT = Calendar.getInstance(UTC);
+  private static volatile Calendar earliestNextAttempt = Calendar.getInstance(UTC);
   private static volatile byte[] cache = new byte[MAX_CACHE_SIZE];
   private static volatile int cacheOffset = cache.length;
   private static final Logger LOG = LoggerFactory.getLogger(RandomDotOrgSeedGenerator.class);
@@ -120,7 +120,7 @@ public enum RandomDotOrgSeedGenerator implements SeedGenerator {
   static final AtomicReference<Proxy> proxy = new AtomicReference<>(null);
 
   static {
-    EARLIEST_NEXT_ATTEMPT.add(YEAR, -1);
+    earliestNextAttempt.add(YEAR, -1);
   }
 
   static {
@@ -243,8 +243,8 @@ public enum RandomDotOrgSeedGenerator implements SeedGenerator {
         Number advisoryDelayMs = (Number) result.get("advisoryDelay");
         if (advisoryDelayMs != null) {
           // Wait RETRY_DELAY or the advisory delay, whichever is shorter
-          EARLIEST_NEXT_ATTEMPT.setTime(new Date());
-          EARLIEST_NEXT_ATTEMPT
+          earliestNextAttempt.setTime(new Date());
+          earliestNextAttempt
               .add(Calendar.MILLISECOND, Math.min(advisoryDelayMs.intValue(), RETRY_DELAY_MS));
         }
       }
@@ -308,8 +308,8 @@ public enum RandomDotOrgSeedGenerator implements SeedGenerator {
         }
       }
     } catch (final IOException ex) {
-      EARLIEST_NEXT_ATTEMPT.setTime(new Date());
-      EARLIEST_NEXT_ATTEMPT.add(Calendar.MILLISECOND, RETRY_DELAY_MS);
+      earliestNextAttempt.setTime(new Date());
+      earliestNextAttempt.add(Calendar.MILLISECOND, RETRY_DELAY_MS);
       throw new SeedException("Failed downloading bytes from " + BASE_URL, ex);
     } catch (final SecurityException ex) {
       // Might be thrown if resource access is restricted (such as in an applet sandbox).
@@ -327,7 +327,7 @@ public enum RandomDotOrgSeedGenerator implements SeedGenerator {
    *     attempting to generate a seed immediately.
    */
   @Override public boolean isWorthTrying() {
-    return !useRetryDelay || !EARLIEST_NEXT_ATTEMPT.after(Calendar.getInstance(UTC));
+    return !useRetryDelay || !earliestNextAttempt.after(Calendar.getInstance(UTC));
   }
 
   /**
