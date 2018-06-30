@@ -116,7 +116,7 @@ public enum RandomDotOrgSeedGenerator implements SeedGenerator {
   static final Lock cacheLock = new ReentrantLock();
   private static final Charset UTF8 = Charset.forName("UTF-8");
   private static final Logger LOG = LoggerFactory.getLogger(RandomDotOrgSeedGenerator.class);
-  private static volatile Instant EARLIEST_NEXT_ATTEMPT = Instant.MIN;
+  private static volatile Instant earliestNextAttempt = Instant.MIN;
   static volatile byte[] cache = new byte[MAX_CACHE_SIZE];
   static volatile int cacheOffset = cache.length;
   private static volatile int maxRequestSize = GLOBAL_MAX_REQUEST_SIZE;
@@ -247,7 +247,7 @@ public enum RandomDotOrgSeedGenerator implements SeedGenerator {
         if (advisoryDelayMs != null) {
           final Duration advisoryDelay = Duration.ofMillis(advisoryDelayMs.longValue());
           // Wait RETRY_DELAY or the advisory delay, whichever is shorter
-          EARLIEST_NEXT_ATTEMPT = CLOCK.instant()
+          earliestNextAttempt = CLOCK.instant()
               .plus((advisoryDelay.compareTo(RETRY_DELAY) > 0) ? RETRY_DELAY : advisoryDelay);
         }
       }
@@ -311,7 +311,7 @@ public enum RandomDotOrgSeedGenerator implements SeedGenerator {
         }
       }
     } catch (final IOException ex) {
-      EARLIEST_NEXT_ATTEMPT = CLOCK.instant().plus(RETRY_DELAY);
+      earliestNextAttempt = CLOCK.instant().plus(RETRY_DELAY);
       throw new SeedException("Failed downloading bytes from " + BASE_URL, ex);
     } catch (final SecurityException ex) {
       // Might be thrown if resource access is restricted (such as in an applet sandbox).
@@ -322,7 +322,7 @@ public enum RandomDotOrgSeedGenerator implements SeedGenerator {
   }
 
   @Override public boolean isWorthTrying() {
-    return !useRetryDelay || !EARLIEST_NEXT_ATTEMPT.isAfter(CLOCK.instant());
+    return !useRetryDelay || !earliestNextAttempt.isAfter(CLOCK.instant());
   }
 
   /**
