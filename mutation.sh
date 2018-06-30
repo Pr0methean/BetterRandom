@@ -1,6 +1,6 @@
 #!/bin/sh
 cd betterrandom
-mvn clean test-compile org.pitest:pitest-maven:mutationCoverage
+mvn clean test-compile org.pitest:pitest-maven:mutationCoverage 2>&1 | tee grep -qv "BUILD FAILURE"
 if [ ! $? ]; then
   exit 1
 fi
