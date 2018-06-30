@@ -105,9 +105,12 @@ public enum RandomDotOrgSeedGenerator implements SeedGenerator {
    */
   static final int GLOBAL_MAX_REQUEST_SIZE = 10000;
   private static final int RETRY_DELAY_MS = 10_000;
+  private static final Lock cacheLock = new ReentrantLock();
   private static final Charset UTF8 = Charset.forName("UTF-8");
   private static final TimeZone UTC = TimeZone.getTimeZone("UTC");
   private static volatile Calendar EARLIEST_NEXT_ATTEMPT = Calendar.getInstance(UTC);
+  private static volatile byte[] cache = new byte[MAX_CACHE_SIZE];
+  private static volatile int cacheOffset = cache.length;
   private static final Logger LOG = LoggerFactory.getLogger(RandomDotOrgSeedGenerator.class);
   private static volatile int maxRequestSize = GLOBAL_MAX_REQUEST_SIZE;
   private static final URL JSON_REQUEST_URL;
