@@ -169,9 +169,20 @@ public class RandomDotOrgSeedGeneratorHermeticTest extends PowerMockTestCase {
     }
   }
 
-  @Test public void testInvalidResponse() throws Exception {
-    mockRandomDotOrgResponse("Not JSON".getBytes(UTF8));
-    assertTrue(expectAndGetException().getCause() instanceof ParseException);
+  @Test public void testInvalidResponseJsonApi() throws Exception {
+    RandomDotOrgSeedGenerator.setApiKey(UUID.randomUUID());
+    try {
+      mockRandomDotOrgResponse("Not JSON".getBytes(UTF8));
+      assertTrue(expectAndGetException().getCause() instanceof ParseException);
+    } finally {
+      RandomDotOrgSeedGenerator.setApiKey(null);
+    }
+  }
+
+  @Test public void testInvalidResponseOldApi() throws Exception {
+    RandomDotOrgSeedGenerator.setApiKey(null);
+    mockRandomDotOrgResponse("Not numbers".getBytes(UTF8));
+    assertTrue(expectAndGetException().getCause() instanceof NumberFormatException);
   }
 
   @Test public void testResponseError() throws Exception {
