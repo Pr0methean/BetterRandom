@@ -199,12 +199,17 @@ public enum RandomDotOrgSeedGenerator implements SeedGenerator {
               LOG.warn("random.org sent more data than requested.");
               break;
             }
-            cache[index] = (byte) Integer.parseInt(line, 16);
-            // Can't use Byte.parseByte, since it expects signed
+            try {
+              cache[index] = (byte) Integer.parseInt(line, 16);
+              // Can't use Byte.parseByte, since it expects signed
+            } catch (NumberFormatException e) {
+              throw new IOException("random.org sent non-numeric data", e);
+            }
           }
           if (index < (cache.length - 1)) {
-            throw new IOException(String.format(
-                "Insufficient data received: expected %d bytes, got %d.", cache.length, index + 1));
+            throw new IOException(String
+                .format("Insufficient data received: expected %d bytes, got %d.", cache.length,
+                    index + 1));
           }
         }
       } else {
