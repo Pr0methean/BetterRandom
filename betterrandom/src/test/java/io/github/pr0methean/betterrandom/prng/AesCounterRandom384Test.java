@@ -2,24 +2,24 @@ package io.github.pr0methean.betterrandom.prng;
 
 import java.security.NoSuchAlgorithmException;
 import javax.crypto.Cipher;
+import org.testng.SkipException;
+import org.testng.annotations.BeforeMethod;
 
 public class AesCounterRandom384Test extends AesCounterRandom256Test {
 
-  private static final boolean UNLIMITED_STRENGTH_CRYPTO;
-
-  static {
-    try {
-      UNLIMITED_STRENGTH_CRYPTO = Cipher.getMaxAllowedKeyLength("AES") >= 256;
-    } catch (final NoSuchAlgorithmException e) {
-      throw new RuntimeException(e);
+  @BeforeMethod
+  public void checkRunnable() throws NoSuchAlgorithmException {
+    if (Cipher.getMaxAllowedKeyLength("AES") < 256) {
+      throw new SkipException(
+          "Test can't run without jurisdiction policy files that allow AES-256");
     }
   }
 
   @Override protected int getNewSeedLength(final BaseRandom basePrng) {
-    return UNLIMITED_STRENGTH_CRYPTO ? 48 : 32;
+    return 48;
   }
 
   @Override public BaseRandom createRng() {
-    return UNLIMITED_STRENGTH_CRYPTO ? new AesCounterRandom(48) : super.createRng();
+    return new AesCounterRandom(48);
   }
 }

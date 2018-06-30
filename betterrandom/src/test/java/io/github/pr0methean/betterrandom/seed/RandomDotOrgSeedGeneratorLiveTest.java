@@ -15,13 +15,16 @@
 // ============================================================================
 package io.github.pr0methean.betterrandom.seed;
 
-import static io.github.pr0methean.betterrandom.TestUtils.canRunRandomDotOrgLargeTest;
+import static io.github.pr0methean.betterrandom.seed.RandomDotOrgSeedGenerator.setProxy;
+import static io.github.pr0methean.betterrandom.seed.RandomDotOrgUtils.canRunRandomDotOrgLargeTest;
+import static io.github.pr0methean.betterrandom.seed.RandomDotOrgUtils.haveApiKey;
+import static org.mockito.ArgumentMatchers.any;
+import static org.powermock.api.mockito.PowerMockito.mock;
+import static org.powermock.api.mockito.PowerMockito.when;
 import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertSame;
 
-import java.net.InetSocketAddress;
 import java.net.Proxy;
-import java.net.Proxy.Type;
-import java.util.UUID;
 import org.testng.Assert;
 import org.testng.SkipException;
 import org.testng.annotations.AfterMethod;
@@ -34,37 +37,12 @@ import org.testng.annotations.Test;
  * @author Chris Hennick
  */
 @Test(singleThreaded = true)
-public class RandomDotOrgSeedGeneratorTest extends AbstractSeedGeneratorTest {
+public class RandomDotOrgSeedGeneratorLiveTest extends AbstractSeedGeneratorTest {
 
-  private static final int SMALL_REQUEST_SIZE = 32;
-  private static final int TOR_PORT = 9050;
-  private Proxy proxy;
+  protected final Proxy proxy = RandomDotOrgUtils.createTorProxy();
 
-  public RandomDotOrgSeedGeneratorTest() {
+  public RandomDotOrgSeedGeneratorLiveTest() {
     super(RandomDotOrgSeedGenerator.RANDOM_DOT_ORG_SEED_GENERATOR);
-  }
-
-  private static void setApiKey() {
-    final String apiKeyString = System.getenv("RANDOM_DOT_ORG_KEY");
-    RandomDotOrgSeedGenerator
-        .setApiKey((apiKeyString == null) ? null : UUID.fromString(apiKeyString));
-  }
-
-  @BeforeClass public void setUp() {
-    proxy = /* FIXME once Appveyor adds proxies for all its IPs:
-        isAppveyor()
-        ? new Proxy(Type.HTTP,
-            new InetSocketAddress(System.getenv("APPVEYOR_HTTP_PROXY_IP"),
-            Integer.valueOf(System.getenv("APPVEYOR_HTTP_PROXY_PORT"))))
-        : */ new Proxy(Type.SOCKS, new InetSocketAddress("localhost", TOR_PORT));
-    if (!canRunRandomDotOrgLargeTest()) {
-      RandomDotOrgSeedGenerator.setMaxRequestSize(SMALL_REQUEST_SIZE);
-    }
-  }
-
-  @AfterMethod
-  public void tearDown() {
-    RandomDotOrgSeedGenerator.setApiKey(null);
   }
 
   @Test(timeOut = 120000) public void testGeneratorOldApi() throws SeedException {
@@ -77,8 +55,8 @@ public class RandomDotOrgSeedGeneratorTest extends AbstractSeedGeneratorTest {
   }
 
   @Test(timeOut = 120000) public void testGeneratorNewApi() throws SeedException {
-    if (canRunRandomDotOrgLargeTest()) {
-      setApiKey();
+    if (canRunRandomDotOrgLargeTest() && haveApiKey()) {
+      RandomDotOrgUtils.setApiKey();
       SeedTestUtils.testGenerator(seedGenerator);
     } else {
       throw new SkipException("Test can't run on this platform");
@@ -91,11 +69,13 @@ public class RandomDotOrgSeedGeneratorTest extends AbstractSeedGeneratorTest {
    */
   @Test(timeOut = 120000) public void testLargeRequest() throws SeedException {
     if (canRunRandomDotOrgLargeTest()) {
-      setApiKey();
+      RandomDotOrgUtils.setApiKey();
       // Request more bytes than are cached internally.
       final int seedLength = 626;
       assertEquals(seedGenerator.generateSeed(seedLength).length, seedLength,
           "Failed to generate seed of length " + seedLength);
+    } else {
+      throw new SkipException("Test can't run on this platform");
     }
   }
 
@@ -105,15 +85,26 @@ public class RandomDotOrgSeedGeneratorTest extends AbstractSeedGeneratorTest {
   }
 
   @Test
-  public void testSetProxy() throws Exception {
+  public void testSetProxyReal() throws Exception {
     if (!canRunRandomDotOrgLargeTest()) {
       throw new SkipException("Test can't run on this platform");
     }
-    RandomDotOrgSeedGenerator.setProxy(proxy);
+    setProxy(proxy);
     try {
       SeedTestUtils.testGenerator(seedGenerator);
     } finally {
-      RandomDotOrgSeedGenerator.setProxy(null);
+      setProxy(null);
     }
   }
+
+  @BeforeClass
+  public void setUpClass() {
+    RandomDotOrgUtils.maybeSetMaxRequestSize();
+  }
+
+  @AfterMethod
+  public void tearDownMethod() {
+    RandomDotOrgSeedGenerator.setApiKey(null);
+  }
+
 }

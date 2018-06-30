@@ -1,0 +1,8 @@
+<!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd">
+<suite name="TestNG Non-JDK9" object-factory="org.powermock.modules.testng.PowerMockObjectFactory">
+  <test name="TestNG Non-JDK9">
+    <classes>
+      <class name="io.github.pr0methean.betterrandom.seed.RandomDotOrgSeedGeneratorHermeticTest"/>
+    </classes>
+  </test>
+</suite>

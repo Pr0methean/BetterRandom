@@ -139,9 +139,6 @@ public abstract class BaseRandomTest {
     return EntropyCheckMode.EXACT;
   }
 
-  @BeforeClass public void setUp() {
-  }
-
   @Test public void testAllPublicConstructors()
       throws SeedException, IllegalAccessException, InstantiationException,
       InvocationTargetException {

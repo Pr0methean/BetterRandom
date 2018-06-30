@@ -105,20 +105,16 @@ public enum RandomDotOrgSeedGenerator implements SeedGenerator {
    */
   static final int GLOBAL_MAX_REQUEST_SIZE = 10000;
   private static final int RETRY_DELAY_MS = 10_000;
-  private static final Lock cacheLock = new ReentrantLock();
   private static final Charset UTF8 = Charset.forName("UTF-8");
   private static final TimeZone UTC = TimeZone.getTimeZone("UTC");
   private static volatile Calendar EARLIEST_NEXT_ATTEMPT = Calendar.getInstance(UTC);
   private static final Logger LOG = LoggerFactory.getLogger(RandomDotOrgSeedGenerator.class);
-  private static volatile byte[] cache = new byte[MAX_CACHE_SIZE];
-  private static volatile int cacheOffset = cache.length;
   private static volatile int maxRequestSize = GLOBAL_MAX_REQUEST_SIZE;
-
   private static final URL JSON_REQUEST_URL;
   /**
-   * The proxy to use with random.org, or null to use the JVM default.
+   * The proxy to use with random.org, or null to use the JVM default. Package-visible for testing.
    */
-  private static final AtomicReference<Proxy> proxy = new AtomicReference<>(null);
+  static final AtomicReference<Proxy> proxy = new AtomicReference<>(null);
 
   static {
     EARLIEST_NEXT_ATTEMPT.add(YEAR, -1);
@@ -158,7 +154,8 @@ public enum RandomDotOrgSeedGenerator implements SeedGenerator {
     RandomDotOrgSeedGenerator.proxy.set(proxy);
   }
 
-  private static HttpsURLConnection openConnection(final URL url) throws IOException {
+  /* Package-visible for testing. */
+  static HttpsURLConnection openConnection(final URL url) throws IOException {
     final Proxy currentProxy = proxy.get();
     return (HttpsURLConnection)
         ((currentProxy == null) ? url.openConnection() : url.openConnection(currentProxy));
@@ -235,8 +232,8 @@ public enum RandomDotOrgSeedGenerator implements SeedGenerator {
               (data instanceof JSONArray ? ((JSONArray) data).get(0) : data).toString();
           byte[] decodedSeed = DatatypeConverter.parseBase64Binary(base64seed);
           if (decodedSeed.length < numberOfBytes) {
-            throw new SeedException(
-                "Too few bytes returned: requested " + numberOfBytes + ", got " + base64seed);
+            throw new SeedException(String.format(
+                "Too few bytes returned: expected %d bytes, got '%s'", numberOfBytes, base64seed));
           }
           System.arraycopy(decodedSeed, 0, cache, 0, numberOfBytes);
         }
