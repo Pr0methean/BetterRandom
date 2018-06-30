@@ -19,7 +19,10 @@ import java.net.URL;
 import java.nio.charset.Charset;
 import java.util.UUID;
 import javax.annotation.Nullable;
+import javax.net.ssl.HttpsURLConnection;
 import org.json.simple.parser.ParseException;
+import org.mockito.invocation.InvocationOnMock;
+import org.mockito.stubbing.Answer;
 import org.powermock.api.mockito.PowerMockito;
 import org.powermock.api.mockito.mockpolicies.Slf4jMockPolicy;
 import org.powermock.core.classloader.annotations.MockPolicy;
@@ -89,10 +92,12 @@ public class RandomDotOrgSeedGeneratorHermeticTest extends PowerMockTestCase {
   private boolean usingSmallRequests = false;
 
   private void mockRandomDotOrgResponse(final byte[] response) throws Exception {
-    PowerMockito.doAnswer(invocationOnMock -> {
-      final URL url = invocationOnMock.getArgument(0);
-      address = url.toString();
-      return new FakeHttpsUrlConnection(invocationOnMock.getArgument(0), null, response);
+    PowerMockito.doAnswer(new Answer<HttpsURLConnection>() {
+      @Override public HttpsURLConnection answer(InvocationOnMock invocation) throws Throwable {
+        final URL url = invocation.getArgument(0);
+        address = url.toString();
+        return new FakeHttpsUrlConnection(url, null, response);
+      }
     }).when(RandomDotOrgSeedGenerator.class, "openConnection", any(URL.class));
   }
 
