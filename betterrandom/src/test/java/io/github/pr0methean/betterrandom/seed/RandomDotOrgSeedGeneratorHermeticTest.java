@@ -92,7 +92,7 @@ public class RandomDotOrgSeedGeneratorHermeticTest extends PowerMockTestCase {
     PowerMockito.doAnswer(invocationOnMock -> {
       final URL url = invocationOnMock.getArgument(0);
       address = url.toString();
-      return new FakeHttpsUrlConnection(invocationOnMock.getArgument(0), null, response);
+      return new FakeHttpsUrlConnection(url, null, response);
     }).when(RandomDotOrgSeedGenerator.class, "openConnection", any(URL.class));
   }
 
