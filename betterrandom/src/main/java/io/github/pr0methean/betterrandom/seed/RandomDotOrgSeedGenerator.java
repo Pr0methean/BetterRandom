@@ -20,6 +20,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
+import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.Proxy;
 import java.net.URL;
@@ -36,7 +37,6 @@ import java.util.concurrent.atomic.AtomicReference;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 import javax.annotation.Nullable;
-import javax.net.ssl.HttpsURLConnection;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
@@ -161,9 +161,9 @@ public enum RandomDotOrgSeedGenerator implements SeedGenerator {
   }
 
   /* Package-visible for testing. */
-  static HttpsURLConnection openConnection(final URL url) throws IOException {
+  static HttpURLConnection openConnection(final URL url) throws IOException {
     final Proxy currentProxy = proxy.get();
-    return (HttpsURLConnection)
+    return (HttpURLConnection)
         ((currentProxy == null) ? url.openConnection() : url.openConnection(currentProxy));
   }
 
@@ -176,7 +176,7 @@ public enum RandomDotOrgSeedGenerator implements SeedGenerator {
    */
   @SuppressWarnings("NumericCastThatLosesPrecision") private static void refreshCache(
       final int requiredBytes) throws IOException {
-    HttpsURLConnection connection = null;
+    HttpURLConnection connection = null;
     cacheLock.lock();
     try {
       int numberOfBytes = Math.max(requiredBytes, cache.length);
