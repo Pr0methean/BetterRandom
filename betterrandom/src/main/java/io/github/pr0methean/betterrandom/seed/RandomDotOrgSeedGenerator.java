@@ -172,7 +172,8 @@ public enum RandomDotOrgSeedGenerator implements SeedGenerator {
    *     implementation may request more and cache the excess (to avoid making lots of small
    *     requests). Alternatively, it may request fewer if the required number is greater than that
    *     permitted by random.org for a single request.
-   * @throws IOException If there is a problem downloading the random bits.
+   * @throws IOException If a connection error occurs.
+   * @throws SeedException If random.org sends a malformed response body.
    */
   @SuppressWarnings("NumericCastThatLosesPrecision") private static void refreshCache(
       final int requiredBytes) throws IOException {
@@ -203,11 +204,11 @@ public enum RandomDotOrgSeedGenerator implements SeedGenerator {
               cache[index] = (byte) Integer.parseInt(line, 16);
               // Can't use Byte.parseByte, since it expects signed
             } catch (NumberFormatException e) {
-              throw new IOException("random.org sent non-numeric data", e);
+              throw new SeedException("random.org sent non-numeric data", e);
             }
           }
           if (index < (cache.length - 1)) {
-            throw new IOException(String
+            throw new SeedException(String
                 .format("Insufficient data received: expected %d bytes, got %d.", cache.length,
                     index + 1));
           }
@@ -229,7 +230,7 @@ public enum RandomDotOrgSeedGenerator implements SeedGenerator {
         } catch (final ParseException e) {
           throw new SeedException("Unparseable JSON response from random.org", e);
         }
-        final JSONObject error = (JSONObject) response.get("error");
+        final Object error = response.get("error");
         if (error != null) {
           throw new SeedException(error.toString());
         }

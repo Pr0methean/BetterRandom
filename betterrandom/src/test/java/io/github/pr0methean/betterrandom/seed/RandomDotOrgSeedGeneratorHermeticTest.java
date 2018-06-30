@@ -158,12 +158,13 @@ public class RandomDotOrgSeedGeneratorHermeticTest extends PowerMockTestCase {
     }
   }
 
-  @Test public void testOverShortResponse() throws Exception {
+  @Test
+  public void testOverShortResponse() throws Exception {
     RandomDotOrgSeedGenerator.setApiKey(null);
     RandomDotOrgSeedGenerator.setMaxRequestSize(GLOBAL_MAX_REQUEST_SIZE);
     mockRandomDotOrgResponse(RESPONSE_32_OLD_API);
     try {
-      assertTrue(expectAndGetException().getCause() instanceof IOException);
+      expectAndGetException();
     } finally {
       maybeSetMaxRequestSize();
     }
@@ -186,13 +187,15 @@ public class RandomDotOrgSeedGeneratorHermeticTest extends PowerMockTestCase {
   }
 
   @Test public void testResponseError() throws Exception {
-    mockRandomDotOrgResponse(
-        ("{\"jsonrpc\":\"2.0\",\"error\":\"Oh noes, an error\",\"result\":{\"random\":{\"data\":"
-            + "[\"gAlhFSSjLy+u5P/Cz92BH4R3NZ0+j8UHNeIR02CChoQ=\"],"
-            + "\"completionTime\":\"2018-05-06 19:54:31Z\"},\"bitsUsed\":256,\"bitsLeft\":996831,"
-            + "\"requestsLeft\":199912,\"advisoryDelay\":290},\"id\":27341}").getBytes(UTF8));
-    assertEquals("Wrong exception message", "Oh noes, an error",
-        expectAndGetException().getMessage());
+    RandomDotOrgSeedGenerator.setApiKey(UUID.randomUUID());
+    try {
+      mockRandomDotOrgResponse(("{\"jsonrpc\":\"2.0\",\"error\":\"Oh noes, an error\",\"result\":{\"random\":{\"data\":"
+          + "[\"gAlhFSSjLy+u5P/Cz92BH4R3NZ0+j8UHNeIR02CChoQ=\"]," + "\"completionTime\":\"2018-05-06 19:54:31Z\"},\"bitsUsed\":256,\"bitsLeft\":996831,"
+          + "\"requestsLeft\":199912,\"advisoryDelay\":290},\"id\":27341}").getBytes(UTF8));
+      assertEquals("Wrong exception message", "Oh noes, an error", expectAndGetException().getMessage());
+    } finally {
+      RandomDotOrgSeedGenerator.setApiKey(null);
+    }
   }
 
   @SuppressWarnings("ThrowableNotThrown") @Test public void testResponseNoResult()
