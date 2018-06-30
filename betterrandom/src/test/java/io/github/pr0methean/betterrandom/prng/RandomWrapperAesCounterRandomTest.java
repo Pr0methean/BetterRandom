@@ -13,10 +13,9 @@ public class RandomWrapperAesCounterRandomTest extends AesCounterRandom128Test {
     return 0.0;
   }, "setWrapped");
 
-  @Override public void testThreadSafety() {
-    super.testThreadSafety();
+  @Override @Test public void testThreadSafetySetSeed() {
     testThreadSafetyVsCrashesOnly(
-        ImmutableList.of(NEXT_LONG, NEXT_INT, NEXT_DOUBLE, NEXT_GAUSSIAN, SET_WRAPPED));
+        ImmutableList.of(NEXT_LONG, NEXT_INT, NEXT_DOUBLE, NEXT_GAUSSIAN, SET_SEED, SET_WRAPPED));
   }
 
   @Override @Test(enabled = false) public void testAdvanceForward() {

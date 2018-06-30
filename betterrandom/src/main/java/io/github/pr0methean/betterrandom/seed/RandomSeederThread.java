@@ -35,13 +35,15 @@ public final class RandomSeederThread extends LooperThread {
       INSTANCES = Collections.synchronizedMap(new WeakHashMap<>(1));
   private static final long POLL_INTERVAL = 60;
   private final SeedGenerator seedGenerator;
+  private final Condition waitWhileEmpty = lock.newCondition();
+  private final Condition waitForEntropyDrain = lock.newCondition();
+  private final Set<Random> prngs
+      = Collections.synchronizedSet(Collections.newSetFromMap(new WeakHashMap<>(1)));
   private final byte[] longSeedArray = new byte[8];
-  private Set<Random> prngs;
-  private ByteBuffer longSeedBuffer;
-  private Condition waitWhileEmpty;
-  private Condition waitForEntropyDrain;
-  private Set<Random> prngsThisIteration;
-  private WeakHashMap<ByteArrayReseedableRandom, byte[]> seedArrays;
+  private final ByteBuffer longSeedBuffer = ByteBuffer.wrap(longSeedArray);
+  private final Set<Random> prngsThisIteration = new HashSet<>(1);
+  private final WeakHashMap<ByteArrayReseedableRandom, byte[]> seedArrays
+       = new WeakHashMap<>(1);
   private static final AtomicInteger defaultPriority = new AtomicInteger(Thread.NORM_PRIORITY);
 
   /**
@@ -49,7 +51,6 @@ public final class RandomSeederThread extends LooperThread {
    */
   private RandomSeederThread(final SeedGenerator seedGenerator) {
     this.seedGenerator = seedGenerator;
-    initTransientFields();
   }
 
   /**
@@ -179,15 +180,6 @@ public final class RandomSeederThread extends LooperThread {
     }
   }
 
-  private void initTransientFields() {
-    prngs = Collections.synchronizedSet(Collections.newSetFromMap(new WeakHashMap<>(1)));
-    longSeedBuffer = ByteBuffer.wrap(longSeedArray);
-    waitWhileEmpty = lock.newCondition();
-    waitForEntropyDrain = lock.newCondition();
-    prngsThisIteration = new HashSet<>(1);
-    seedArrays = new WeakHashMap<>(1);
-  }
-
   /**
    * Asynchronously triggers reseeding of the given {@link EntropyCountingRandom} if it is
    * associated with a live RandomSeederThread.
@@ -256,7 +248,8 @@ public final class RandomSeederThread extends LooperThread {
       } catch (final Throwable t) {
         // Must unlock before interrupt; otherwise we somehow get a deadlock
         lock.unlock();
-        LOG.error("Error during reseeding", t);
+        LOG.error("Error during reseeding; disabling the RandomSeederThread for " + seedGenerator,
+            t);
         interrupt();
         // Must lock again before returning, so we can notify conditions
         lock.lock();
@@ -275,6 +268,14 @@ public final class RandomSeederThread extends LooperThread {
       INSTANCES.remove(seedGenerator, this);
     }
     super.interrupt();
+    lock.lock();
+    try {
+      prngs.clear();
+      prngsThisIteration.clear();
+      seedArrays.clear();
+    } finally {
+      lock.unlock();
+    }
   }
 
   /**
