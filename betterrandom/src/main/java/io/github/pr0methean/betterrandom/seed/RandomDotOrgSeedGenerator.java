@@ -22,6 +22,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
+import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.Proxy;
 import java.net.URL;
@@ -36,7 +37,6 @@ import java.util.concurrent.atomic.AtomicReference;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 import javax.annotation.Nullable;
-import javax.net.ssl.HttpsURLConnection;
 import javax.xml.bind.DatatypeConverter;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
@@ -158,9 +158,9 @@ public enum RandomDotOrgSeedGenerator implements SeedGenerator {
   }
 
   /* Package-visible for testing. */
-  static HttpsURLConnection openConnection(final URL url) throws IOException {
+  static HttpURLConnection openConnection(final URL url) throws IOException {
     final Proxy currentProxy = proxy.get();
-    return (HttpsURLConnection)
+    return (HttpURLConnection)
         ((currentProxy == null) ? url.openConnection() : url.openConnection(currentProxy));
   }
 
@@ -169,11 +169,12 @@ public enum RandomDotOrgSeedGenerator implements SeedGenerator {
    *     implementation may request more and cache the excess (to avoid making lots of small
    *     requests). Alternatively, it may request fewer if the required number is greater than that
    *     permitted by random.org for a single request.
-   * @throws IOException If there is a problem downloading the random bits.
+   * @throws IOException If a connection error occurs.
+   * @throws SeedException If random.org sends a malformed response body.
    */
   @SuppressWarnings("NumericCastThatLosesPrecision") private static void refreshCache(
       final int requiredBytes) throws IOException {
-    HttpsURLConnection connection = null;
+    HttpURLConnection connection = null;
     cacheLock.lock();
     try {
       int numberOfBytes = Math.max(requiredBytes, cache.length);
@@ -196,12 +197,17 @@ public enum RandomDotOrgSeedGenerator implements SeedGenerator {
               LOG.warn("random.org sent more data than requested.");
               break;
             }
-            cache[index] = (byte) Integer.parseInt(line, 16);
-            // Can't use Byte.parseByte, since it expects signed
+            try {
+              cache[index] = (byte) Integer.parseInt(line, 16);
+              // Can't use Byte.parseByte, since it expects signed
+            } catch (NumberFormatException e) {
+              throw new SeedException("random.org sent non-numeric data", e);
+            }
           }
           if (index < (cache.length - 1)) {
-            throw new IOException(String.format(
-                "Insufficient data received: expected %d bytes, got %d.", cache.length, index + 1));
+            throw new SeedException(String
+                .format("Insufficient data received: expected %d bytes, got %d.", cache.length,
+                    index + 1));
           }
         }
       } else {
@@ -221,7 +227,7 @@ public enum RandomDotOrgSeedGenerator implements SeedGenerator {
         } catch (ParseException e) {
           throw new SeedException("Unparseable JSON response from random.org", e);
         }
-        JSONObject error = (JSONObject) response.get("error");
+        final Object error = response.get("error");
         if (error != null) {
           throw new SeedException(error.toString());
         }
