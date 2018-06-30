@@ -24,8 +24,11 @@ import static org.powermock.api.mockito.PowerMockito.when;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertSame;
 
+import java.net.InetAddress;
 import java.net.Proxy;
+import java.net.UnknownHostException;
 import org.testng.Assert;
+import org.testng.Reporter;
 import org.testng.SkipException;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeClass;
@@ -100,6 +103,15 @@ public class RandomDotOrgSeedGeneratorLiveTest extends AbstractSeedGeneratorTest
   @BeforeClass
   public void setUpClass() {
     RandomDotOrgUtils.maybeSetMaxRequestSize();
+    // when using Tor, DNS seems to be unreliable, so it may take several tries to get the address
+    InetAddress address = null;
+    while (address == null) {
+      try {
+        address = InetAddress.getByName("api.random.org");
+      } catch (UnknownHostException e) {
+        Reporter.log("UnknownHostException for api.random.org; trying again");
+      }
+    }
   }
 
   @AfterMethod
