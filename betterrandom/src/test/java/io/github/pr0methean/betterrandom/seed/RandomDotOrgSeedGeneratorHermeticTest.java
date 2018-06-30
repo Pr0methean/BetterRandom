@@ -34,6 +34,7 @@ import org.testng.annotations.Test;
 @PowerMockIgnore("javax.management.*")
 @MockPolicy(Slf4jMockPolicy.class)
 @PrepareForTest(RandomDotOrgSeedGenerator.class)
+@Test(singleThreaded = true)
 public class RandomDotOrgSeedGeneratorHermeticTest extends PowerMockTestCase {
 
   private static final Charset UTF8 = Charset.forName("UTF-8");
