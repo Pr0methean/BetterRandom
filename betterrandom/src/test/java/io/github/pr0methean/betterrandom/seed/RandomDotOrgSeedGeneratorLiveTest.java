@@ -105,12 +105,16 @@ public class RandomDotOrgSeedGeneratorLiveTest extends AbstractSeedGeneratorTest
     RandomDotOrgUtils.maybeSetMaxRequestSize();
     // when using Tor, DNS seems to be unreliable, so it may take several tries to get the address
     InetAddress address = null;
+    long failedLookups = 0;
     while (address == null) {
       try {
         address = InetAddress.getByName("api.random.org");
       } catch (UnknownHostException e) {
-        Reporter.log("UnknownHostException for api.random.org; trying again");
+        failedLookups++;
       }
+    }
+    if (failedLookups > 0) {
+      Reporter.log("Failed to look up api.random.org address on the first " + failedLookups + " attempts");
     }
   }
 
