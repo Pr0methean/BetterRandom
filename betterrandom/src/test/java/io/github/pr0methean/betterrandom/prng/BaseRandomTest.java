@@ -8,7 +8,6 @@ import static io.github.pr0methean.betterrandom.prng.RandomTestUtils.assertMonte
 import static io.github.pr0methean.betterrandom.prng.RandomTestUtils.checkRangeAndEntropy;
 import static io.github.pr0methean.betterrandom.prng.RandomTestUtils.checkStream;
 import static io.github.pr0methean.betterrandom.seed.DefaultSeedGenerator.DEFAULT_SEED_GENERATOR;
-import static io.github.pr0methean.betterrandom.seed.SecureRandomSeedGenerator.SECURE_RANDOM_SEED_GENERATOR;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertFalse;
 import static org.testng.Assert.assertNotEquals;
@@ -66,7 +65,7 @@ public abstract class BaseRandomTest {
       new NamedFunction<>(Random::nextDouble, "Random::nextDouble");
   protected static final NamedFunction<Random, Double> NEXT_GAUSSIAN =
       new NamedFunction<>(Random::nextGaussian, "Random::nextGaussian");
-  private static final NamedFunction<Random,Double> SET_SEED =
+  protected static final NamedFunction<Random,Double> SET_SEED =
       new NamedFunction<Random, Double>(random -> {
           if (random instanceof BaseRandom) {
             BaseRandom baseRandom = (BaseRandom) random;
@@ -639,8 +638,15 @@ public abstract class BaseRandomTest {
         TestEnum.BLUE);
   }
 
+  @Test public void testGetNewSeedLength() {
+    assertTrue(createRng().getNewSeedLength() > 0);
+  }
+
   @Test(timeOut = 90_000) public void testThreadSafety() {
     testThreadSafety(FUNCTIONS_FOR_THREAD_SAFETY_TEST, FUNCTIONS_FOR_THREAD_SAFETY_TEST);
+  }
+
+  @Test(timeOut = 90_000) public void testThreadSafetySetSeed() {
     testThreadSafetyVsCrashesOnly(FUNCTIONS_FOR_THREAD_CRASH_TEST);
   }
 
@@ -651,7 +657,7 @@ public abstract class BaseRandomTest {
     for (final NamedFunction<Random, Double> supplier1 : functions) {
       for (final NamedFunction<Random, Double> supplier2 : functions) {
         runParallel(supplier1, supplier2, seed, 30,
-            (supplier1 == SET_SEED && supplier2 == SET_SEED) ? 100 : 1000);
+            (supplier1 == SET_SEED || supplier2 == SET_SEED) ? 200 : 1000);
       }
     }
   }

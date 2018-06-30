@@ -670,9 +670,9 @@ public abstract class BaseRandom extends Random
       if (oldSeedGenerator != null) {
         RandomSeederThread.remove(oldSeedGenerator, this);
       }
-    }
-    if (seedGenerator != null) {
-      RandomSeederThread.add(seedGenerator, this);
+      if (seedGenerator != null) {
+        RandomSeederThread.add(seedGenerator, this);
+      }
     }
   }
 

@@ -2,146 +2,224 @@ if: tag IS blank
 cache:
   directories:
   - $HOME/.m2
+  - $HOME/Library/Developer/Xcode
 sudo: required
 dist: trusty
 serialGroup: edge
 git:
-  submodules: true # Travis FIXME: Should be overridable in jobs[x]
+  depth: 10
+  quiet: true
+  submodules: true # Travis FIXME: Should be overridable per job
 stages:
-- linux unit tests
-- OSX unit tests
+- unit tests
 - long tests
 jobs:
   include:
+  # OSX unit tests
+  - language: java
+    os: osx
+    osx_image: xcode6.4 # JDK 1.8.0_45-b14, OSX 10.10
+    env: OP=unit-tests JAVA8=true
+    stage: unit tests
+  - language: java
+    os: osx
+    osx_image: xcode7.3 # JDK 1.8.0_92-b14, OSX 10.11
+    env: OP=unit-tests JAVA8=true
+    stage: unit tests
+  - language: java
+    os: osx
+    osx_image: xcode8.3 # JDK 1.8.0_112-b16, OSX 10.12
+    env: OP=unit-tests JAVA8=true
+    stage: unit tests
+  - language: java
+    os: osx
+    osx_image: xcode9.3 # JDK 1.8.0_112-b16, OSX 10.13
+    env: OP=unit-tests JAVA8=true
+    stage: unit tests
+  - language: java
+    os: osx
+    osx_image: xcode9.4 # JDK 10.0.1, OSX 10.13
+    env: OP=unit-tests
+    stage: unit tests
+    # Linux unit tests
   - language: java
     os: linux
-    jdk: oraclejdk9
-    env: OP=unit-tests
-    stage: linux unit tests
+    jdk: openjdk8
+    env: OP=unit-tests JAVA8=true
+    stage: unit tests
   - language: java
     os: linux
     jdk: oraclejdk8
-    env: OP=unit-tests
-    stage: linux unit tests
+    env: OP=unit-tests JAVA8=true
+    stage: unit tests
   - language: java
     os: linux
-    jdk: openjdk8
+    jdk: openjdk9
     env: OP=unit-tests
-    stage: linux unit tests
-  - language: java
-    os: osx
-    osx_image: xcode9.1
-    env: OP=unit-tests
-    stage: OSX unit tests
-  - language: java
-    os: osx
-    osx_image: xcode9
-    env: OP=unit-tests
-    stage: OSX unit tests
-  - language: java
-    os: osx
-    osx_image: xcode8.3
-    env: OP=unit-tests
-    stage: OSX unit tests
-  - language: java
-    os: osx
-    osx_image: xcode7.3
-    env: OP=unit-tests
-    stage: OSX unit tests
-  - language: android
-    os: linux
-    jdk: openjdk8
-    env: OP=unit-tests ANDROID=1
-    stage: linux unit tests
-  # OSX long tests first, to make the most of the OSX-specific 2-job limit
-  - language: java
-    os: osx
-    osx_image: xcode9.1
-    env: OP=benchmark
-    stage: long tests
-  - language: java
-    os: osx
-    osx_image: xcode9
-    env: OP=benchmark
-    stage: long tests
-  - language: java
-    os: osx
-    osx_image: xcode8.3
-    env: OP=benchmark
-    stage: long tests
-  - language: java
-    os: osx
-    osx_image: xcode7.3
-    env: OP=benchmark
-    stage: long tests
-  # Linux long tests
+    stage: unit tests
   - language: java
     os: linux
     jdk: oraclejdk9
+    env: OP=unit-tests
+    stage: unit tests
+  - language: java
+    os: linux
+    jdk: openjdk10
+    env: OP=unit-tests
+    stage: unit tests
+  - language: java
+    os: linux
+    jdk: oraclejdk10
+    env: OP=unit-tests
+    stage: unit tests
+# Uncomment once openjdk11 and openjdk-ea are different versions
+#  - language: java
+#    os: linux
+#    jdk: openjdk11
+#    env: OP=unit-tests
+#    stage: unit tests
+  - language: java
+    os: linux
+    jdk: oraclejdk11
+    env: OP=unit-tests
+    stage: unit tests
+  - language: java
+    os: linux
+    jdk: openjdk-ea
+    env: OP=unit-tests
+    stage: unit tests
+  - language: android
+    os: linux
+    jdk: openjdk8
+    env: OP=unit-tests ANDROID=1 JAVA8=true
+    stage: unit tests
+  # OSX long tests
+  - language: java
+    os: osx
+    osx_image: xcode6.4
+    env: OP=benchmark JAVA8=true
+    stage: long tests
+  - language: java
+    os: osx
+    osx_image: xcode7.3
+    env: OP=benchmark JAVA8=true
+    stage: long tests
+  - language: java
+    os: osx
+    osx_image: xcode8.3
+    env: OP=benchmark JAVA8=true
+    stage: long tests
+  - language: java
+    os: osx
+    osx_image: xcode9.3
+    env: OP=benchmark JAVA8=true
+    stage: long tests
+  - language: java
+    os: osx
+    osx_image: xcode9.4
     env: OP=benchmark
+    stage: long tests
+    # Linux long tests
+  - language: java
+    os: linux
+    jdk: oraclejdk10
+    env: OP=mutation
+    stage: long tests
+  - language: java
+    os: linux
+    jdk: openjdk8
+    env: OP=benchmark JAVA8=true
     stage: long tests
   - language: java
     os: linux
     jdk: oraclejdk8
+    env: OP=benchmark JAVA8=true
+    stage: long tests
+  - language: java
+    os: linux
+    jdk: openjdk9
     env: OP=benchmark
     stage: long tests
   - language: java
     os: linux
-    jdk: openjdk8
+    jdk: oraclejdk9
+    env: OP=benchmark
+    stage: long tests
+  - language: java
+    os: linux
+    jdk: openjdk10
+    env: OP=benchmark
+    stage: long tests
+  - language: java
+    os: linux
+    jdk: oraclejdk10
+    env: OP=benchmark
+    stage: long tests
+# Uncomment once openjdk11 and openjdk-ea are different versions
+#  - language: java
+#    os: linux
+#    jdk: openjdk11
+#    env: OP=benchmark
+#    stage: long tests
+  - language: java
+    os: linux
+    jdk: oraclejdk11
+    env: OP=benchmark
+    stage: long tests
+  - language: java
+    os: linux
+    jdk: openjdk-ea
     env: OP=benchmark
     stage: long tests
   - language: android
     os: linux
     jdk: openjdk8
-    env: OP=benchmark ANDROID=1
+    env: OP=benchmark ANDROID=1 JAVA8=true
     stage: long tests
   - language: java
     os: linux
-    jdk: oraclejdk9
+    jdk: oraclejdk10
     env: OP=dieharder CLASS=AesCounterRandom
     stage: long tests
   - language: java
     os: linux
-    jdk: oraclejdk9
+    jdk: oraclejdk10
     env: OP=dieharder CLASS=CellularAutomatonRandom
     stage: long tests
   - language: java
     os: linux
-    jdk: oraclejdk9
+    jdk: oraclejdk10
     env: OP=dieharder CLASS=Cmwc4096Random
     stage: long tests
   - language: java
     os: linux
-    jdk: oraclejdk9
+    jdk: oraclejdk10
     env: OP=dieharder CLASS=MersenneTwisterRandom
     stage: long tests
   - language: java
     os: linux
-    jdk: oraclejdk9
+    jdk: oraclejdk10
     env: OP=dieharder CLASS=Pcg64Random
     stage: long tests
   - language: java
     os: linux
-    jdk: oraclejdk9
+    jdk: oraclejdk10
     env: OP=dieharder CLASS=XorShiftRandom
     stage: long tests
   - language: java
     os: linux
-    jdk: oraclejdk9
+    jdk: oraclejdk10
     env: OP=dieharder CLASS=adapter.SingleThreadSplittableRandomAdapter
     stage: long tests
-  - language: java
-    os: linux
-    jdk: oraclejdk9
-    env: OP=mutation
-    stage: long tests
-  allow_failures:
-  - language: android
   fast_finish: true
+addons:
+  apt:
+    packages:
+      - tor
 script:
 - ifconfig | grep inet
 - "./remove_unlimited_crypto.sh"
-- travis_wait 48 "./${OP}.sh"
+- travis_wait 49 "./${OP}.sh"
 env:
   global:
   - secure: p6BU8Afyx81w+BwfgkjXgAC/OD6RDWQCEOusw3FSGrt0OSqmMPG3f617ndMWrTPXLekB6y1ZmaLKUSwlbG82oy961wg1rjb7KhfU39OSqzIvzynziRbzFftLX8rMH0dX8nnUc3yrCKxPhrJjnGjU41BlzMOug/i01CVn+PqUBqlSZI8Cqq6YxToGh4CX45TyHJpmx58x6MQ5LRfV3EUWaB83XBSaO2ih/tCRfqO+ryF7eav4daojtJbheONiPQ/ZfZV9TcPHftB6oYbWoGMBJ9YyD1jA4LHWondT+kkSPY2A0gOeTLFd0Ktj9suKS6qXY+QIhuStu8Ew64VOKDdOlLW804w1a438D4qf1Hr64r1lElTRhHoE0efL1vydSVby5gUJLqpru2RsNu29Ky0EovIx6i05d32xtq9kc+BNEl/SYBuUewolB9VbAmsvHGIgQG+3ZchDjcVAz4RAsVyKL1jNdzt2ZqBBlNggqcy2guCfk40IErBhP0fxxuCZy7l0NmjnhYSjaIR8AJ9525uMcbCNLlem1uUOYNpFT6O9I1U27F8Dh7I2qShlPh31UJswV3ASPqlWiGZ9HIsjf7c2OLKOke7RBcyYNn0lQ42nanMmlWhnGoQgzlYtRDY1rzbCcfz6r/xkr63QIEjVVfTjKP1fjnZmbdxsgs779BbCerY=
