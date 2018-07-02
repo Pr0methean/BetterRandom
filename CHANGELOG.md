@@ -1,3 +1,10 @@
+# 2.3.10
+* If random.org ever changes its API output format in a way that breaks us, or sends a corrupted
+  response, then the result will now always be a `SeedException`, and this is now tested.
+* The Java 7 branch is no longer tested on AppVeyor. The versions of Java 7 available as Windows
+  binaries do not support TLS 1.2, which Maven Central began to require in June 2018. (Caching had
+  masked this issue for some time.)
+
 # 2.3.9
 * `RandomSeederThread` fields are now all final, and collection fields are cleared on interrupt.
 * `RandomSeederThread`'s error message now indicates which `SeedGenerator` is affected.

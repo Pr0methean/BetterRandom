@@ -150,10 +150,10 @@ Java 8 and newer.
 Continuous integration takes place in the following environments:
 
 * Linux (on Travis): OpenJDK and Oracle JDK 8 and up
-* OS X (on Travis): JDK 8 (unclear whether Oracle or OpenJDK), Xcode 7.3 and up
-* Windows Server 2008 R2 (on Appveyor): OpenJDK? 8
-* Cygwin (on Appveyor): OpenJDK? 8
-* MinGW (on Appveyor): OpenJDK? 8
+* OS X (on Travis): OpenJDK(?) 8 and up, Xcode 6.4 and up
+* Windows Server 2008 R2 (on Appveyor): Oracle JDK 8
+* Cygwin (on Appveyor): Oracle JDK 8
+* MinGW (on Appveyor): Oracle JDK 8
 
 CI on BSD or Android isn't likely any time soon, since no free providers of BSD CI seem to be
 integrated with GitHub, and there seems to be no actively-maintained Android-app wrapper for TestNG
@@ -168,13 +168,7 @@ devices have API level 24 or newer, as
 18.09 LTS has been released (which will mean Java 7 will be *two* major long-term-support versions
 out of date).
 
-Continuous integration takes place in the following environments:
-
-* Linux (on Travis): OpenJDK 7
-* Cygwin (on Appveyor): JDK 7 (unclear whether Oracle or OpenJDK)
-* MinGW (on Appveyor): JDK 7 (unclear whether Oracle or OpenJDK)
-
-Testing on Oracle JDK 7 is a work in progress.
+Continuous integration takes place in OpenJDK 7 on Linux.
 
 # Alternative random number generators
 
