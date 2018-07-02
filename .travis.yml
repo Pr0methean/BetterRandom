@@ -11,8 +11,7 @@ git:
   quiet: true
   submodules: true # Travis FIXME: Should be overridable per job
 stages:
-# FIXME: Unit tests are disabled for mutation debugging
-# - unit tests
+- unit tests
 - long tests
 jobs:
   include:
@@ -123,7 +122,7 @@ jobs:
     # Linux long tests
   - language: java
     os: linux
-    jdk: oraclejdk9
+    jdk: oraclejdk10
     env: OP=mutation
     stage: long tests
   - language: java
