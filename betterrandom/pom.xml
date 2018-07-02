@@ -598,6 +598,9 @@
         <artifactId>pitest-maven</artifactId>
         <version>1.4.0</version>
         <configuration>
+          <jvmArgs>
+            <jvmArg>--add-opens jdk.xml.internal/jdk.xml.internal=ALL_UNNAMED</jvmArg>
+          </jvmArgs>
           <threads>4</threads>
           <coverageThreshold>80</coverageThreshold>
           <mutationThreshold>65</mutationThreshold>
