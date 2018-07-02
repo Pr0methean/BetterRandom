@@ -608,7 +608,6 @@
           <timeoutConstant>4000</timeoutConstant>
           <testPlugin>testng</testPlugin>
           <failWhenNoMutations>true</failWhenNoMutations>
-          <verbose>true</verbose><!-- FIXME: Delete this line once the clinit bug is fixed -->
         </configuration>
       </plugin>
       <plugin>
