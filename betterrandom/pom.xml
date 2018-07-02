@@ -92,7 +92,7 @@
             <configuration>
               <jvmArgs>
                 <value>--add-opens</value>
-                <value>jdk.xml.internal/jdk.xml.internal=ALL_UNNAMED</value>
+                <value>java.xml/jdk.xml.internal=ALL_UNNAMED</value>
               </jvmArgs>
             </configuration>
           </plugin>
@@ -601,10 +601,6 @@
         <artifactId>pitest-maven</artifactId>
         <version>1.4.0</version>
         <configuration>
-          <jvmArgs>
-            <value>--add-opens</value>
-            <value>java.xml/jdk.xml.internal=ALL_UNNAMED</value>
-          </jvmArgs>
           <threads>4</threads>
           <coverageThreshold>80</coverageThreshold>
           <mutationThreshold>65</mutationThreshold>
