@@ -300,12 +300,24 @@
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-javadoc-plugin</artifactId>
           <version>3.0.0-M1</version>
+          <executions>
+            <execution>
+              <id>attach-javadoc</id>
+              <phase>verify</phase>
+              <goals>
+                <goal>jar</goal>
+              </goals>
+            </execution>
+          </executions>
           <configuration>
-            <sourcepath>${user.home}/j2se-src:${basedir}/src/main/java</sourcepath>
             <javadocVersion>1.8.0</javadocVersion>
             <notimestamp>true</notimestamp>
-            <subpackages>io.github.pr0methean</subpackages>
             <show>protected</show>
+            <bottom>
+              <![CDATA[
+              © {currentYear} Chris Hennick. Free to use under the <a href="https://www.apache.org/licenses/LICENSE-2.0">Apache License 2.0</a>. <a href="/privacy policy.html">Privacy Policy</a>]]></bottom>
+            <sourcepath>${user.home}/j2se-src:${basedir}/src/main/java</sourcepath>
+            <subpackages>io.github.pr0methean</subpackages>
             <links>
               <link>http://checkstyle-addons.github.io/jsr305-javadoc/${jsr305.version}</link>
               <link>https://checkerframework.org/api</link>
@@ -429,30 +441,6 @@
               </goals>
             </execution>
           </executions>
-        </plugin>
-
-        <!-- Required: javadoc JAR -->
-        <plugin>
-          <groupId>org.apache.maven.plugins</groupId>
-          <artifactId>maven-javadoc-plugin</artifactId>
-          <version>3.0.0-M1</version>
-          <executions>
-            <execution>
-              <id>attach-javadoc</id>
-              <phase>verify</phase>
-              <goals>
-                <goal>jar</goal>
-              </goals>
-            </execution>
-          </executions>
-          <configuration>
-            <javadocVersion>1.8.0</javadocVersion>
-            <notimestamp>true</notimestamp>
-            <show>protected</show>
-            <bottom>
-              <![CDATA[
-              © {currentYear} Chris Hennick. Free to use under the <a href="https://www.apache.org/licenses/LICENSE-2.0">Apache License 2.0</a>. <a href="/privacy policy.html">Privacy Policy</a>]]></bottom>
-          </configuration>
         </plugin>
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
