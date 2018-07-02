@@ -219,7 +219,7 @@ addons:
 script:
 - ifconfig | grep inet
 - "./remove_unlimited_crypto.sh"
-- travis_wait 49 "./${OP}.sh"
+- "./${OP}.sh"
 env:
   global:
   - secure: p6BU8Afyx81w+BwfgkjXgAC/OD6RDWQCEOusw3FSGrt0OSqmMPG3f617ndMWrTPXLekB6y1ZmaLKUSwlbG82oy961wg1rjb7KhfU39OSqzIvzynziRbzFftLX8rMH0dX8nnUc3yrCKxPhrJjnGjU41BlzMOug/i01CVn+PqUBqlSZI8Cqq6YxToGh4CX45TyHJpmx58x6MQ5LRfV3EUWaB83XBSaO2ih/tCRfqO+ryF7eav4daojtJbheONiPQ/ZfZV9TcPHftB6oYbWoGMBJ9YyD1jA4LHWondT+kkSPY2A0gOeTLFd0Ktj9suKS6qXY+QIhuStu8Ew64VOKDdOlLW804w1a438D4qf1Hr64r1lElTRhHoE0efL1vydSVby5gUJLqpru2RsNu29Ky0EovIx6i05d32xtq9kc+BNEl/SYBuUewolB9VbAmsvHGIgQG+3ZchDjcVAz4RAsVyKL1jNdzt2ZqBBlNggqcy2guCfk40IErBhP0fxxuCZy7l0NmjnhYSjaIR8AJ9525uMcbCNLlem1uUOYNpFT6O9I1U27F8Dh7I2qShlPh31UJswV3ASPqlWiGZ9HIsjf7c2OLKOke7RBcyYNn0lQ42nanMmlWhnGoQgzlYtRDY1rzbCcfz6r/xkr63QIEjVVfTjKP1fjnZmbdxsgs779BbCerY=
