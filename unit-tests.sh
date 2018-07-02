@@ -18,7 +18,7 @@ if [ "${APPVEYOR}" != "" ]; then
   fi
 fi
 # Coverage test
-PATH="${NO_GIT_PATH}" mvn -Djdk.tls.client.protocols=TLSv1.2 ${MAYBE_ANDROID_FLAG} help:active-profiles clean ${MAYBE_JACOCO_PREPARE} \
+PATH="${NO_GIT_PATH}" mvn ${MAYBE_ANDROID_FLAG} help:active-profiles clean ${MAYBE_JACOCO_PREPARE} \
     test ${MAYBE_JACOCO_REPORT} -e
 STATUS=$?
 if [ "$STATUS" = 0 ]; then
@@ -41,7 +41,7 @@ if [ "$STATUS" = 0 ]; then
   if [ -f "${COMMIT}" ]; then
     echo "[unit-tests.sh] Aggregating with JaCoCo reports from other jobs."
     cp "${COMMIT}/*.exec" target
-    mvn -Djdk.tls.client.protocols=TLSv1.2 jacoco:report-aggregate
+    mvn jacoco:report-aggregate
     JACOCO_DIR="jacoco-aggregate"
   else
     echo "[unit-tests.sh] This is the first JaCoCo report for this build."
@@ -56,14 +56,14 @@ if [ "$STATUS" = 0 ]; then
   git push --set-upstream originauth master
   while [ ! $? ]; do
     git pull --rebase  # Merge
-    mvn -Djdk.tls.client.protocols=TLSv1.2 jacoco:report-aggregate
+    mvn jacoco:report-aggregate
     git push
   done
   cd ../..
   if [ "${TRAVIS}" = "true" ]; then
     # Coveralls doesn't seem to work in non-.NET Appveyor yet
     # so we have to hope Appveyor pushes its Jacoco reports before Travis does! :(
-    mvn -Djdk.tls.client.protocols=TLSv1.2 coveralls:report
+    mvn coveralls:report
     # Send coverage to Codacy
     wget 'https://github.com/codacy/codacy-coverage-reporter/releases/download/2.0.0/codacy-coverage-reporter-2.0.0-assembly.jar'
     java -jar codacy-coverage-reporter-2.0.0-assembly.jar -l Java -r target/site/${JACOCO_DIR}/jacoco.xml
@@ -84,16 +84,16 @@ if [ "$STATUS" = 0 ]; then
     git pull --rebase  # Merge
     cp *.exec ../../target/
     cp ../pom.xml .
-    mvn -Djdk.tls.client.protocols=TLSv1.2 jacoco:report-aggregate
+    mvn jacoco:report-aggregate
     rm pom.xml
     git push
   done
   cd ../..
   echo "[unit-tests.sh] Running Proguard."
-  PATH="${NO_GIT_PATH}" mvn -Djdk.tls.client.protocols=TLSv1.2 -DskipTests -Dmaven.test.skip=true ${MAYBE_ANDROID_FLAG} \
+  PATH="${NO_GIT_PATH}" mvn -DskipTests -Dmaven.test.skip=true ${MAYBE_ANDROID_FLAG} \
       clean pre-integration-test && \
       echo "[unit-tests.sh] Testing against Proguarded jar." && \
-      PATH="${NO_GIT_PATH}" mvn -Djdk.tls.client.protocols=TLSv1.2 ${MAYBE_ANDROID_FLAG} integration-test -e
+      PATH="${NO_GIT_PATH}" mvn ${MAYBE_ANDROID_FLAG} integration-test -e
   STATUS=$?
 fi
 if [ "$STATUS" != 0 ]; then
