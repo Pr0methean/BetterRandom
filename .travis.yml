@@ -122,7 +122,7 @@ jobs:
     # Linux long tests
   - language: java
     os: linux
-    jdk: oraclejdk9 # FIXME: Switch back to oraclejdk10 once https://github.com/hcoles/pitest/issues/484 is fixed
+    jdk: oraclejdk10
     env: OP=mutation
     stage: long tests
   - language: java
