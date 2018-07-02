@@ -122,7 +122,7 @@ jobs:
     # Linux long tests
   - language: java
     os: linux
-    jdk: oraclejdk10
+    jdk: oraclejdk8 # FIXME: Switch back to oraclejdk10 once this job is passing again
     env: OP=mutation
     stage: long tests
   - language: java
