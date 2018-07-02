@@ -92,7 +92,7 @@
             <configuration>
               <jvmArgs>
                 <value>--add-opens</value>
-                <value>java.xml/jdk.xml.internal=ALL_UNNAMED</value>
+                <value>java.xml/jdk.xml.internal=ALL-UNNAMED</value>
               </jvmArgs>
             </configuration>
           </plugin>
