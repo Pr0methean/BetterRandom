@@ -83,6 +83,19 @@
           <version>1.8.0-beta0</version>
         </dependency>
       </dependencies>
+      <plugins>
+        <plugin>
+          <groupId>org.pitest</groupId>
+          <artifactId>pitest-maven</artifactId>
+          <version>1.4.0</version>
+          <configuration>
+            <jvmArgs>
+              <value>--add-opens</value>
+              <value>jdk.xml.internal/jdk.xml.internal=ALL_UNNAMED</value>
+            </jvmArgs>
+          </configuration>
+        </plugin>
+      </plugins>
     </profile>
     <!-- GPG Signature on release -->
     <profile>
@@ -599,7 +612,8 @@
         <version>1.4.0</version>
         <configuration>
           <jvmArgs>
-            <jvmArg>--add-opens jdk.xml.internal/jdk.xml.internal=ALL_UNNAMED</jvmArg>
+            <value>--add-opens</value>
+            <value>jdk.xml.internal/jdk.xml.internal=ALL_UNNAMED</value>
           </jvmArgs>
           <threads>4</threads>
           <coverageThreshold>80</coverageThreshold>
