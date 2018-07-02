@@ -603,7 +603,7 @@
         <configuration>
           <jvmArgs>
             <value>--add-opens</value>
-            <value>jdk.xml/jdk.xml.internal=ALL_UNNAMED</value>
+            <value>java.xml/jdk.xml.internal=ALL_UNNAMED</value>
           </jvmArgs>
           <threads>4</threads>
           <coverageThreshold>80</coverageThreshold>
