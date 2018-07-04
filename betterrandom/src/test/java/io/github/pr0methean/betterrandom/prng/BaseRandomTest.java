@@ -142,7 +142,7 @@ public abstract class BaseRandomTest {
     final BaseRandom rng = createRng();
     // Create second RNG using same seed.
     final BaseRandom duplicateRNG = createRng(rng.getSeed());
-    assert RandomTestUtils.testEquivalence(rng, duplicateRNG, 1000) : String
+    assert RandomTestUtils.testEquivalence(rng, duplicateRNG, 99) : String
         .format("Generated sequences do not match between:%n%s%nand:%n%s", rng.dump(),
             duplicateRNG.dump());
   }
