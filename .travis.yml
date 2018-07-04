@@ -54,6 +54,11 @@ jobs:
     stage: unit tests
   - language: java
     os: linux
+    jdk: oraclejdk8
+    env: OP=unit-tests JAVA8=true LIMITED_CRYPTO=true
+    stage: unit tests
+  - language: java
+    os: linux
     jdk: openjdk9
     env: OP=unit-tests
     stage: unit tests
@@ -218,7 +223,7 @@ addons:
       - tor
 script:
 - ifconfig | grep inet
-# - "./remove_unlimited_crypto.sh"
+- "./remove_unlimited_crypto.sh"
 - "./${OP}.sh"
 env:
   global:
