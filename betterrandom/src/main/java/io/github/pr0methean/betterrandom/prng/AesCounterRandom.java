@@ -73,6 +73,7 @@ public class AesCounterRandom extends BaseRandom implements SeekableRandom {
   private static final int BLOCKS_AT_ONCE = 16;
   private static final String HASH_ALGORITHM = "SHA-256";
   private static final int MAX_TOTAL_SEED_LENGTH_BYTES;
+  private static final byte[] ZEROES = new byte[COUNTER_SIZE_BYTES];
   @SuppressWarnings("CanBeFinal") private static int MAX_KEY_LENGTH_BYTES = 0;
 
   static {
@@ -290,7 +291,7 @@ public class AesCounterRandom extends BaseRandom implements SeekableRandom {
     // rest goes to counter
     int bytesToCopyToCounter = seedLength - keyLength;
     System.arraycopy(seed, keyLength, counter, 0, bytesToCopyToCounter);
-    System.arraycopy(seed, keyLength, counter, bytesToCopyToCounter,
+    System.arraycopy(ZEROES, 0, counter, bytesToCopyToCounter,
         COUNTER_SIZE_BYTES - bytesToCopyToCounter);
     try {
       cipher.init(Cipher.ENCRYPT_MODE, new SecretKeySpec(key, ALGORITHM));
