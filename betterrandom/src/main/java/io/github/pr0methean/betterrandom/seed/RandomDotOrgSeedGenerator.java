@@ -203,7 +203,7 @@ public enum RandomDotOrgSeedGenerator implements SeedGenerator {
             }
             try {
               cache[index] = (byte) Integer.parseInt(line, 16);
-              System.out.println("Read byte %x%n", cache[index]);
+              System.out.format("Read byte %x%n", cache[index]);
               // Can't use Byte.parseByte, since it expects signed
             } catch (NumberFormatException e) {
               throw new SeedException("random.org sent non-numeric data", e);
