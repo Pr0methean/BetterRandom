@@ -368,7 +368,6 @@
           <version>2.21.0</version>
           <configuration>
             <suiteXmlFiles>
-              <suiteXmlFile>src/test/non-jdk9.xml</suiteXmlFile>
               <suiteXmlFile>src/test/testng.xml</suiteXmlFile>
             </suiteXmlFiles>
             <trimStackTrace>false</trimStackTrace>
