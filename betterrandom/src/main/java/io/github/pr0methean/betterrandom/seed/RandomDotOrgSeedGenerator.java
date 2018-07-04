@@ -284,6 +284,7 @@ public enum RandomDotOrgSeedGenerator implements SeedGenerator {
         final int newCacheOffset = cacheOffset + sizeChange;
         System.arraycopy(cache, cacheOffset, newCache, newCacheOffset, cache.length - cacheOffset);
         cache = newCache;
+        cacheOffset = newCacheOffset;
       }
       RandomDotOrgSeedGenerator.maxRequestSize = maxRequestSize;
     } finally {
