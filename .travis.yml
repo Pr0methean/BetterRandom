@@ -47,7 +47,7 @@ addons:
       - tor
 script:
 - ifconfig | grep inet
-- "./remove_unlimited_crypto.sh"
+# - "./remove_unlimited_crypto.sh"
 - "./${OP}.sh"
 env:
   global:
