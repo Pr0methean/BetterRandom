@@ -7,7 +7,7 @@ import java.util.Arrays;
 enum SeedTestUtils {
   ;
 
-  private static final int SEED_SIZE = 16;
+  public static final int SEED_SIZE = 16;
   @SuppressWarnings("MismatchedReadAndWriteOfArray") private static final byte[] ALL_ZEROES =
       new byte[SEED_SIZE];
 
