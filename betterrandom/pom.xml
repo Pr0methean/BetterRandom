@@ -34,7 +34,7 @@
               <artifactId>maven-surefire-plugin</artifactId>
               <version>2.21.0</version>
               <configuration>
-                <argLine>${test.jdk8.argline}</argLine>
+                <argLine>@{argLine} ${test.jdk8.argline}</argLine>
               </configuration>
             </plugin>
             <plugin>
@@ -42,7 +42,7 @@
               <artifactId>maven-failsafe-plugin</artifactId>
               <version>2.17</version>
               <configuration>
-                <argLine>${test.jdk8.argline}</argLine>
+                <argLine>@{argLine} ${test.jdk8.argline}</argLine>
               </configuration>
               <executions>
                 <execution>
@@ -395,7 +395,7 @@
           <artifactId>maven-surefire-plugin</artifactId>
           <version>2.21.0</version>
           <configuration>
-            <argLine>${test.jdk9.argline}</argLine>
+            <argLine>@{argLine} ${test.jdk9.argline}</argLine>
             <suiteXmlFiles>
               <suiteXmlFile>src/test/testng.xml</suiteXmlFile>
             </suiteXmlFiles>
@@ -419,7 +419,7 @@
           <artifactId>maven-failsafe-plugin</artifactId>
           <version>2.17</version>
           <configuration>
-            <argLine>${test.jdk9.argline}</argLine>
+            <argLine>@{argLine} ${test.jdk9.argline}</argLine>
             <suiteXmlFiles>
               <suiteXmlFile>src/test/testng.xml</suiteXmlFile>
             </suiteXmlFiles>
