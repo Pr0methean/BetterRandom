@@ -35,7 +35,7 @@ public enum ReseedingSplittableRandomAdapterDemo {
     final ScheduledThreadPoolExecutor executor = new ScheduledThreadPoolExecutor(4);
     final ReseedingSplittableRandomAdapter random =
         ReseedingSplittableRandomAdapter.getInstance(DEFAULT_SEED_GENERATOR);
-    for (i = 0; i < 200; i++) {
+    for (i = 0; i < 20; i++) {
       executor.submit(new Runnable() {
         @Override public void run() {
           final List<String> deck = deckCopies.get();
