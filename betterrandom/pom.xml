@@ -429,13 +429,16 @@
           <version>0.8.1</version>
           <executions>
             <execution>
-              <id>default-prepare-agent</id>
+              <id>default-instrument</id>
               <goals>
-                <goal>prepare-agent</goal>
+                <goal>instrument</goal>
               </goals>
-              <configuration>
-                <dumpOnExit>true</dumpOnExit>
-              </configuration>
+            </execution>
+            <execution>
+              <id>default-restore-instrumented-classes</id>
+              <goals>
+                <goal>restore-instrumented-classes</goal>
+              </goals>
             </execution>
             <execution>
               <id>default-report</id>
