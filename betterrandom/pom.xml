@@ -97,7 +97,7 @@
     <url>https://github.com/Pr0methean/BetterRandom</url>
     <connection>scm:git:git://github.com/Pr0methean/BetterRandom.git</connection>
     <developerConnection>scm:git:git@github.com:Pr0methean/BetterRandom.git</developerConnection>
-    <tag>BetterRandom-2.3.7-SNAPSHOT</tag>
+    <tag>BetterRandom-2.3.11-SNAPSHOT</tag>
   </scm>
 
   <distributionManagement>
