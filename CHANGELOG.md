@@ -1,6 +1,10 @@
+# 2.3.11
+* `setSeed` now invalidates the result of the next call to `nextGaussian` if it's been pre-computed.
+
 # 2.3.10
 * If random.org ever changes its API output format in a way that breaks us, or sends a corrupted
-  response, then the result will now always be a `SeedException`, and this is now tested.
+  response, then the result will now always be a `SeedException`, and this is now tested through
+  fault injection.
 * The Java 7 branch is no longer tested on AppVeyor. The versions of Java 7 available as Windows
   binaries do not support TLS 1.2, which Maven Central began to require in June 2018. (Caching had
   masked this issue for some time.)
