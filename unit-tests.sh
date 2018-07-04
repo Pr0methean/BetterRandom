@@ -5,7 +5,7 @@ else
   MAYBE_ANDROID_FLAG=""
 fi
 # These are in variables for git-merge compatibility with the master branch.
-MAYBE_JACOCO_PREPARE="jacoco:instrument"
+MAYBE_JACOCO_PREPARE="compile jacoco:instrument"
 MAYBE_JACOCO_REPORT="jacoco:report"
 
 cd betterrandom
