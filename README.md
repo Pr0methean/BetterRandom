@@ -36,7 +36,7 @@ your pseudorandom-number generators (PRNGs) and their seed sources. With it, you
 
 # But java.util.Random is already fast enough for me!
 
-Yeah, but it's not *random* enough for you. Monte Carlo simulations have been known to 
+Yeah, but it's not *random* enough for you. Monte Carlo simulations have been known to
 [give misleading results](http://physics.ucsc.edu/~peter/115/randu.pdf) because of low-quality
 PRNGs, and the implementation in `java.util.Random` is low-quality for two reasons:
 
@@ -96,7 +96,7 @@ public class AesCounterRandomDemo {
 }
 ```
 
-## ReseedingSplittableRandomAdapter for fast, high-quality parallel bridge dealing
+## ReseedingSplittableRandomAdapter for fast, high-quality, parallel duplicate-bridge dealing
 ```
 import static io.github.pr0methean.betterrandom.seed.DefaultSeedGenerator.DEFAULT_SEED_GENERATOR;
 
@@ -142,7 +142,7 @@ public class SplittableRandomAdapterDemo {
 ```
 # Supported environments
 
-BetterRandom has 2 versions, one for Java 7 -- including Android API levels below 24 -- and one for 
+BetterRandom has 2 versions, one for Java 7 -- including Android API levels below 24 -- and one for
 Java 8 and newer.
 
 ## Java 8 (master branch)
@@ -185,7 +185,7 @@ replacements for `java.util.Random`.
   state.
 
 * `setSeed(byte[])`: Reseed even if more than a `long` is needed to do so.
-** Use `getNewSeedLength()` to get the recommended seed size. 
+** Use `getNewSeedLength()` to get the recommended seed size.
 
 * `entropyBits()`: Find out when the PRNG has output more random data than it has been seeded with,
   and thus could benefit from being reseeded. Even when the PRNG is reseeded repeatedly without
