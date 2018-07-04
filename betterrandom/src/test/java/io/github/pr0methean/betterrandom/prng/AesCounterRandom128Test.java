@@ -15,6 +15,8 @@
 // ============================================================================
 package io.github.pr0methean.betterrandom.prng;
 
+import static io.github.pr0methean.betterrandom.seed.DefaultSeedGenerator.DEFAULT_SEED_GENERATOR;
+import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertTrue;
 
 import io.github.pr0methean.betterrandom.seed.SeedException;
@@ -27,8 +29,19 @@ import org.testng.annotations.Test;
  */
 public class AesCounterRandom128Test extends SeekableRandomTest {
 
+  @Override @Test(timeOut = 15_000)
+  public void testRepeatabilityNextGaussian() throws SeedException {
+    final BaseRandom rng = createRng();
+    byte[] seed = rng.getSeed();
+    rng.nextGaussian();
+    rng.setSeed(seed);
+    // Create second RNG using same seed.
+    final BaseRandom duplicateRNG = createRng(seed);
+    assertEquals(rng.nextGaussian(), duplicateRNG.nextGaussian());
+  }
+
   @SuppressWarnings("ObjectAllocationInLoop") @Override @Test(timeOut = 30000)
-  public void testSetSeed() throws SeedException {
+  public void testSetSeedAfterNextLong() throws SeedException {
     // can't use a real SeedGenerator since we need longs, so use a Random
     final Random masterRNG = new Random();
     final long[] seeds =
@@ -50,6 +63,11 @@ public class AesCounterRandom128Test extends SeekableRandomTest {
       }
     }
     assert rngs[0].nextLong() != rngs[1].nextLong() : "RNGs converged after 4 setSeed calls";
+  }
+
+  @Override @Test(enabled = false)
+  public void testSetSeedAfterNextInt() {
+    // No-op.
   }
 
   @Test(timeOut = 15000) public void testMaxSeedLengthOk() {

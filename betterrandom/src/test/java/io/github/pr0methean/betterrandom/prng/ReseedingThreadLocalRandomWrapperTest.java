@@ -55,11 +55,19 @@ public class ReseedingThreadLocalRandomWrapperTest extends ThreadLocalRandomWrap
   }
 
   /** Test for crashes only, since setSeed is a no-op. */
-  @Override @Test public void testSetSeed() throws SeedException {
+  @Override @Test public void testSetSeedAfterNextLong() throws SeedException {
     final BaseRandom prng = createRng();
     prng.nextLong();
     prng.setSeed(DEFAULT_SEED_GENERATOR.generateSeed(16));
     prng.nextLong();
+  }
+
+  /** Test for crashes only, since setSeed is a no-op. */
+  @Override @Test public void testSetSeedAfterNextInt() throws SeedException {
+    final BaseRandom prng = createRng();
+    prng.nextInt();
+    prng.setSeed(DEFAULT_SEED_GENERATOR.generateSeed(16));
+    prng.nextInt();
   }
 
   @Override protected BaseRandom createRng() throws SeedException {
