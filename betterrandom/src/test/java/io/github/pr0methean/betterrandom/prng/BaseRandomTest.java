@@ -178,6 +178,17 @@ public abstract class BaseRandomTest {
         .format("Generated sequences do not match between:%n%s%nand:%n%s", rng.dump(),
             duplicateRNG.dump());
   }
+  
+  /**
+   * Test that nextGaussian never returns a stale cached value.
+   */
+  @Test(timeOut = 15_000) public void testRepeatabilityNextGaussian() throws SeedException {
+    final BaseRandom rng = createRng();
+    rng.nextGaussian();
+    // Create second RNG using same seed.
+    final BaseRandom duplicateRNG = createRng(rng.getSeed());
+    assertEquals(rng.nextGaussian(), duplicateRNG.nextGaussian());
+  }
 
   @Test(timeOut = 15_000, expectedExceptions = IllegalArgumentException.class)
   public void testSeedTooLong() throws GeneralSecurityException, SeedException {

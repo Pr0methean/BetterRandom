@@ -13,31 +13,26 @@ git:
 stages:
 - unit tests
 - long tests
+os: linux
+jdk: openjdk7
 jobs:
   include:
   - language: java
-    os: linux
-    jdk: openjdk7
     env: OP=unit-tests
     stage: unit tests
+  - language: java
+    env: OP=unit-tests LIMITED_CRYPTO=true
+    stage: unit tests
   - language: android
-    os: linux
-    jdk: openjdk7
     env: OP=unit-tests ANDROID=1
     stage: unit tests
   - language: java
-    os: linux
-    jdk: openjdk7
     env: OP=mutation
     stage: long tests
   - language: java
-    os: linux
-    jdk: openjdk7
     env: OP=benchmark
     stage: long tests
   - language: android
-    os: linux
-    jdk: openjdk7
     env: OP=benchmark ANDROID=1
     stage: long tests
   fast_finish: true
