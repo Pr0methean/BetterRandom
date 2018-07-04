@@ -68,12 +68,21 @@ public class ReseedingSplittableRandomAdapterTest extends SingleThreadSplittable
   }
 
   /** Test for crashes only, since setSeed is a no-op. */
-  @Override @Test public void testSetSeed() throws SeedException {
+  @Override @Test public void testSetSeedAfterNextLong() throws SeedException {
     final BaseRandom prng = createRng();
     prng.nextLong();
     prng.setSeed(DEFAULT_SEED_GENERATOR.generateSeed(8));
     prng.setSeed(BinaryUtils.convertBytesToLong(DEFAULT_SEED_GENERATOR.generateSeed(8)));
     prng.nextLong();
+  }
+
+  /** Test for crashes only, since setSeed is a no-op. */
+  @Override @Test public void testSetSeedAfterNextInt() throws SeedException {
+    final BaseRandom prng = createRng();
+    prng.nextInt();
+    prng.setSeed(DEFAULT_SEED_GENERATOR.generateSeed(8));
+    prng.setSeed(BinaryUtils.convertBytesToLong(DEFAULT_SEED_GENERATOR.generateSeed(8)));
+    prng.nextInt();
   }
 
   /** Assertion-free since reseeding may cause divergent output. */

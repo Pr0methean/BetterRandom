@@ -90,10 +90,10 @@ public class AesCounterRandom extends BaseRandom implements SeekableRandom {
   // WARNING: Don't initialize any instance fields at declaration; they may be initialized too late!
   @SuppressWarnings("InstanceVariableMayNotBeInitializedByReadObject") private transient Cipher
       cipher;
-  private byte[] counter;
-  private byte[] counterInput;
-  private boolean seeded;
-  private int index;
+  private volatile byte[] counter;
+  private volatile byte[] counterInput;
+  private volatile boolean seeded;
+  private volatile int index;
 
   /**
    * Creates a new RNG and seeds it using 256 bits from the {@link DefaultSeedGenerator}.
@@ -288,14 +288,18 @@ public class AesCounterRandom extends BaseRandom implements SeekableRandom {
     final int keyLength = getKeyLength(seed);
     final byte[] key = Arrays.copyOfRange(seed, 0, keyLength);
     // rest goes to counter
-    counter = new byte[COUNTER_SIZE_BYTES];
-    System.arraycopy(seed, keyLength, counter, 0, seedLength - keyLength);
+    int bytesToCopyToCounter = seedLength - keyLength;
+    System.arraycopy(seed, keyLength, counter, 0, bytesToCopyToCounter);
+    System.arraycopy(seed, keyLength, counter, bytesToCopyToCounter,
+        COUNTER_SIZE_BYTES - bytesToCopyToCounter);
     try {
       cipher.init(Cipher.ENCRYPT_MODE, new SecretKeySpec(key, ALGORITHM));
     } catch (final InvalidKeyException e) {
       throw new RuntimeException("Invalid key: " + Arrays.toString(key), e);
     }
-    index = currentBlock.length;
+    if (currentBlock != null) {
+      index = currentBlock.length;
+    } // else it'll be initialized in ctor
     seeded = true;
   }
 
