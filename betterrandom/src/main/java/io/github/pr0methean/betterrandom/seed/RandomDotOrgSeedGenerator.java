@@ -203,6 +203,7 @@ public enum RandomDotOrgSeedGenerator implements SeedGenerator {
             }
             try {
               cache[index] = (byte) Integer.parseInt(line, 16);
+              System.out.println("Read byte %x%n", cache[index]);
               // Can't use Byte.parseByte, since it expects signed
             } catch (NumberFormatException e) {
               throw new SeedException("random.org sent non-numeric data", e);
@@ -294,6 +295,7 @@ public enum RandomDotOrgSeedGenerator implements SeedGenerator {
       }
       System.out.format("New max request size is %d, cache size %d%n", maxRequestSize,
           maxNewCacheSize); // FIXME: Debug code
+      Thread.currentThread().printStackTrace();
       RandomDotOrgSeedGenerator.maxRequestSize = maxRequestSize;
     } finally {
       cacheLock.unlock();
