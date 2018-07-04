@@ -295,6 +295,7 @@ public class AesCounterRandom extends BaseRandom implements SeekableRandom {
     } catch (final InvalidKeyException e) {
       throw new RuntimeException("Invalid key: " + Arrays.toString(key), e);
     }
+    index = currentBlock.length;
     seeded = true;
   }
 
