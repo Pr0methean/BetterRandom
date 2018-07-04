@@ -174,19 +174,21 @@ public abstract class BaseRandomTest {
     final BaseRandom rng = createRng();
     // Create second RNG using same seed.
     final BaseRandom duplicateRNG = createRng(rng.getSeed());
-    assert RandomTestUtils.testEquivalence(rng, duplicateRNG, 1000) : String
+    assert RandomTestUtils.testEquivalence(rng, duplicateRNG, 100) : String
         .format("Generated sequences do not match between:%n%s%nand:%n%s", rng.dump(),
             duplicateRNG.dump());
   }
-  
+
   /**
    * Test that nextGaussian never returns a stale cached value.
    */
   @Test(timeOut = 15_000) public void testRepeatabilityNextGaussian() throws SeedException {
     final BaseRandom rng = createRng();
+    byte[] seed = DEFAULT_SEED_GENERATOR.generateSeed(getNewSeedLength(rng));
     rng.nextGaussian();
+    rng.setSeed(seed);
     // Create second RNG using same seed.
-    final BaseRandom duplicateRNG = createRng(rng.getSeed());
+    final BaseRandom duplicateRNG = createRng(seed);
     assertEquals(rng.nextGaussian(), duplicateRNG.nextGaussian());
   }
 
@@ -299,16 +301,34 @@ public abstract class BaseRandomTest {
     createRng().setSeed(0x0123456789ABCDEFL);
   }
 
-  @Test(timeOut = 15_000) public void testSetSeed() throws SeedException {
+  @Test(timeOut = 15_000) public void testSetSeedAfterNextLong() throws SeedException {
     final byte[] seed =
         DEFAULT_SEED_GENERATOR.generateSeed(getNewSeedLength(createRng()));
     final BaseRandom rng = createRng();
     final BaseRandom rng2 = createRng();
-    rng.nextLong(); // ensure they won't both be in initial state before reseeding
+    final BaseRandom rng3 = createRng(seed);
+    rng.nextLong(); // ensure rng & rng2 won't both be in initial state before reseeding
     rng.setSeed(seed);
     rng2.setSeed(seed);
-    assert RandomTestUtils.testEquivalence(rng, rng2, 20)
+    assert RandomTestUtils.testEquivalence(rng, rng2, 64)
         : "Output mismatch after reseeding with same seed";
+    assert RandomTestUtils.testEquivalence(rng, rng3, 64)
+        : "Output mismatch vs a new PRNG with same seed";
+  }
+
+  @Test(timeOut = 15_000) public void testSetSeedAfterNextInt() throws SeedException {
+    final byte[] seed =
+        DEFAULT_SEED_GENERATOR.generateSeed(getNewSeedLength(createRng()));
+    final BaseRandom rng = createRng();
+    final BaseRandom rng2 = createRng();
+    final BaseRandom rng3 = createRng(seed);
+    rng.nextInt(); // ensure rng & rng2 won't both be in initial state before reseeding
+    rng.setSeed(seed);
+    rng2.setSeed(seed);
+    assert RandomTestUtils.testEquivalence(rng, rng2, 64)
+        : "Output mismatch after reseeding with same seed";
+    assert RandomTestUtils.testEquivalence(rng, rng3, 64)
+        : "Output mismatch vs a new PRNG with same seed";
   }
 
   @Test(timeOut = 15_000) public void testSetSeedZero() throws SeedException {

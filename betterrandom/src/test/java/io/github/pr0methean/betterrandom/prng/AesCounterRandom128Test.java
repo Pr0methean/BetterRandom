@@ -27,8 +27,13 @@ import org.testng.annotations.Test;
  */
 public class AesCounterRandom128Test extends SeekableRandomTest {
 
+  @Override @Test(enabled = false)
+  public void testRepeatabilityNextGaussian() throws SeedException {
+    // No-op: can't be tested because setSeed merges with the existing seed
+  }
+
   @SuppressWarnings("ObjectAllocationInLoop") @Override @Test(timeOut = 30000)
-  public void testSetSeed() throws SeedException {
+  public void testSetSeedAfterNextLong() throws SeedException {
     // can't use a real SeedGenerator since we need longs, so use a Random
     final Random masterRNG = new Random();
     final long[] seeds =
@@ -50,6 +55,11 @@ public class AesCounterRandom128Test extends SeekableRandomTest {
       }
     }
     assert rngs[0].nextLong() != rngs[1].nextLong() : "RNGs converged after 4 setSeed calls";
+  }
+
+  @Override @Test(enabled = false)
+  public void testSetSeedAfterNextInt() {
+    // No-op.
   }
 
   @Test(timeOut = 15000) public void testMaxSeedLengthOk() {
