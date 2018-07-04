@@ -182,6 +182,7 @@ public enum RandomDotOrgSeedGenerator implements SeedGenerator {
     try {
       int numberOfBytes = Math.max(requiredBytes, cache.length);
       numberOfBytes = Math.min(numberOfBytes, maxRequestSize);
+      System.out.format("Requested %d bytes, fetching %d%n", requiredBytes, numberOfBytes); // FIXME: Debug code
       if (numberOfBytes != cache.length) {
         cache = new byte[numberOfBytes];
         cacheOffset = numberOfBytes;
@@ -291,6 +292,8 @@ public enum RandomDotOrgSeedGenerator implements SeedGenerator {
         System.arraycopy(cache, cacheOffset, newCache, newCacheOffset, cache.length - cacheOffset);
         cache = newCache;
       }
+      System.out.format("New max request size is %d, cache size %d%n", maxRequestSize,
+          maxNewCacheSize); // FIXME: Debug code
       RandomDotOrgSeedGenerator.maxRequestSize = maxRequestSize;
     } finally {
       cacheLock.unlock();
