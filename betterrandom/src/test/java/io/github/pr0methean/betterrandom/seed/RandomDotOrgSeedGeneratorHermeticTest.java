@@ -100,7 +100,8 @@ public class RandomDotOrgSeedGeneratorHermeticTest extends PowerMockTestCase {
   private static SeedException expectAndGetException() {
     SeedException exception = null;
     try {
-      testGenerator(RandomDotOrgSeedGenerator.RANDOM_DOT_ORG_SEED_GENERATOR);
+      RandomDotOrgSeedGenerator.RANDOM_DOT_ORG_SEED_GENERATOR.generateSeed(
+          SeedTestUtils.SEED_SIZE);
       Assert.fail("Should have thrown SeedException");
     } catch (final SeedException expected) {
       exception = expected;
