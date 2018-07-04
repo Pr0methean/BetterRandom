@@ -294,9 +294,9 @@ public enum RandomDotOrgSeedGenerator implements SeedGenerator {
         cache = newCache;
         cacheOffset = newCacheOffset;
       }
-      System.out.format("New max request size is %d, cache size %d, offset %d%n", maxRequestSize,
-          maxNewCacheSize, cacheOffset); // FIXME: Debug code
-      Thread.dumpStack();
+      System.out.format("New max request size is %d, cache size %d%n", maxRequestSize,
+          maxNewCacheSize); // FIXME: Debug code
+      Thread.currentThread().printStackTrace();
       RandomDotOrgSeedGenerator.maxRequestSize = maxRequestSize;
     } finally {
       cacheLock.unlock();
