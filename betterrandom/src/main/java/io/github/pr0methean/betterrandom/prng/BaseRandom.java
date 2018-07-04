@@ -692,6 +692,7 @@ public abstract class BaseRandom extends Random
     } else {
       System.arraycopy(seed, 0, this.seed, 0, seed.length);
     }
+    nextNextGaussian.set(NAN_LONG_BITS); // Invalidate Gaussian that was generated from old seed
     creditEntropyForNewSeed(seed.length);
   }
 
