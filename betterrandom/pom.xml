@@ -187,6 +187,7 @@
   </profiles>
   <packaging>jar</packaging>
   <properties>
+    <argLine> </argLine>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <prefix />
     <github.global.server>github</github.global.server>

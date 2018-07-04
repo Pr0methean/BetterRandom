@@ -6,7 +6,7 @@ else
 fi
 if [ "${JAVA8}" = "true" ]; then
   echo "[unit-tests.sh] Using Java 8 mode. JaCoCo will run."
-  MAYBE_JACOCO_PREPARE="compile jacoco:instrument"
+  MAYBE_JACOCO_PREPARE="compile jacoco:instrument jacoco:prepare-agent"
   MAYBE_JACOCO_REPORT="jacoco:report"
 else
   echo "[unit-tests.sh] Using Java 9+ mode."
