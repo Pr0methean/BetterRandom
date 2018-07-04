@@ -15,8 +15,6 @@
 // ============================================================================
 package io.github.pr0methean.betterrandom.prng;
 
-import static io.github.pr0methean.betterrandom.seed.DefaultSeedGenerator.DEFAULT_SEED_GENERATOR;
-import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertTrue;
 
 import io.github.pr0methean.betterrandom.seed.SeedException;
@@ -29,15 +27,9 @@ import org.testng.annotations.Test;
  */
 public class AesCounterRandom128Test extends SeekableRandomTest {
 
-  @Override @Test(timeOut = 15_000)
+  @Override @Test(enabled = false)
   public void testRepeatabilityNextGaussian() throws SeedException {
-    final BaseRandom rng = createRng();
-    byte[] seed = rng.getSeed();
-    rng.nextGaussian();
-    rng.setSeed(seed);
-    // Create second RNG using same seed.
-    final BaseRandom duplicateRNG = createRng(seed);
-    assertEquals(rng.nextGaussian(), duplicateRNG.nextGaussian());
+    // No-op: can't be tested because setSeed merges with the existing seed
   }
 
   @SuppressWarnings("ObjectAllocationInLoop") @Override @Test(timeOut = 30000)
