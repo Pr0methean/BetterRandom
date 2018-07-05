@@ -56,7 +56,7 @@ public enum BinaryUtils {
       {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F'};
 
   /**
-   * Converts an array of bytes in to a String of hexadecimal characters (0 - F).
+   * Converts an array of bytes into a String of hexadecimal characters (0 - F).
    * @param data An array of bytes to convert to a String.
    * @return A hexadecimal String representation of the data.
    */
@@ -66,6 +66,25 @@ public enum BinaryUtils {
     }
     final StringBuilder buffer = new StringBuilder(data.length * 2);
     for (final byte b : data) {
+      buffer.append(HEX_CHARS[(b >>> 4) & 0x0F]);
+      buffer.append(HEX_CHARS[b & 0x0F]);
+    }
+    return buffer.toString();
+  }
+  
+  /**
+   * Converts an array of ints into a String of hexadecimal characters (0 - F), taking only the
+   * least significant byte of each int. Prepends a newline, unless returning "null".
+   * @param data An array of ints to convert to a String.
+   * @return A hexadecimal String representation of the data.
+   */
+  public static String convertIntLeastBytesToHexString(@Nullable final int[] data) {
+    if (data == null) {
+      return "null";
+    }
+    final StringBuilder buffer = new StringBuilder(data.length * 2 + 1);
+    buffer.append('\n');
+    for (final int b : data) {
       buffer.append(HEX_CHARS[(b >>> 4) & 0x0F]);
       buffer.append(HEX_CHARS[b & 0x0F]);
     }

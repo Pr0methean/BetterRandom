@@ -6,7 +6,7 @@ else
 fi
 # These are in variables for git-merge compatibility with the master branch.
 MAYBE_JACOCO_PREPARE="compile jacoco:instrument jacoco:prepare-agent"
-MAYBE_JACOCO_REPORT="jacoco:report"
+MAYBE_JACOCO_REPORT="jacoco:restore-instrumented-classes jacoco:report"
 
 cd betterrandom
 NO_GIT_PATH="${PATH}"
