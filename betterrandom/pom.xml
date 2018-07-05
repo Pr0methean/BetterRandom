@@ -193,6 +193,7 @@
     <github.global.server>github</github.global.server>
     <jsr305.version>3.0.2</jsr305.version>
     <guava.version>25.0</guava.version>
+    <jacoco.version>0.8.1</jacoco.version>
     <powermock.version>2.0.0-beta.5</powermock.version>
     <mockito.version>2.19.0</mockito.version>
     <test.jdk8.argline> </test.jdk8.argline>
@@ -202,8 +203,7 @@
   <artifactId>BetterRandom</artifactId>
   <version>2.3.11-SNAPSHOT</version>
   <name>BetterRandom</name>
-  <description>BetterRandom is a library designed to help improve the quality and performance of
-    random-number generation on Java.
+  <description>BetterRandom is a library designed to help improve the quality and performance of random-number generation on Java.
   </description>
   <url>https://github.com/Pr0methean/BetterRandom</url>
 
@@ -497,7 +497,7 @@
         <plugin>
           <groupId>org.jacoco</groupId>
           <artifactId>jacoco-maven-plugin</artifactId>
-          <version>0.8.1</version>
+          <version>${jacoco.version}</version>
           <executions>
             <execution>
               <id>default-instrument</id>
@@ -599,6 +599,14 @@
               <groupId>org.apache.maven.scm</groupId>
               <artifactId>maven-scm-provider-gitexe</artifactId>
               <version>1.9.5</version>
+            </dependency>
+            <dependency>
+              <!-- https://www.eclemma.org/jacoco/trunk/doc/examples/build/pom-offline.xml -->
+              <groupId>org.jacoco</groupId>
+              <artifactId>org.jacoco.agent</artifactId>
+              <classifier>runtime</classifier>
+              <version>${jacoco.version}</version>
+              <scope>test</scope>
             </dependency>
           </dependencies>
           <configuration>
