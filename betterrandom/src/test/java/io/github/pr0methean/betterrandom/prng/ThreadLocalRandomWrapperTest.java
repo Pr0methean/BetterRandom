@@ -17,13 +17,13 @@ import org.testng.annotations.Test;
 public class ThreadLocalRandomWrapperTest extends BaseRandomTest {
 
   @Override public void testSerializable()
-      throws IOException, ClassNotFoundException, SeedException {
+      throws SeedException {
     // May change after serialization, so test only that it still works at all afterward
     CloneViaSerialization.clone(createRng()).nextInt();
   }
 
   @Override @Test(timeOut = 15000, expectedExceptions = IllegalArgumentException.class)
-  public void testSeedTooLong() throws GeneralSecurityException, SeedException {
+  public void testSeedTooLong() throws SeedException {
     createRng().setSeed(DefaultSeedGenerator.DEFAULT_SEED_GENERATOR.generateSeed(17));
   }
 
@@ -51,7 +51,7 @@ public class ThreadLocalRandomWrapperTest extends BaseRandomTest {
 
   /** Seeding of this PRNG is thread-local, so setSeederThread makes no sense. */
   @Override @Test(expectedExceptions = UnsupportedOperationException.class)
-  public void testRandomSeederThreadIntegration() throws Exception {
+  public void testRandomSeederThreadIntegration() {
     createRng().setSeedGenerator(DefaultSeedGenerator.DEFAULT_SEED_GENERATOR);
   }
 
