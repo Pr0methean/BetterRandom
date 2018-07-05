@@ -344,9 +344,11 @@ public class AesCounterRandom extends BaseRandom implements SeekableRandom {
       }
       boolean carry = false;
       for (int i = 0; i < counter.length; i++) {
-        final byte oldCounter = counter[i];
+        final int oldCounterUnsigned = counter[i] < 0 ? counter[i] + 256 : counter[i];
         counter[i] += addendDigits[counter.length - i - 1] + (carry ? 1 : 0);
-        carry = ((counter[i] < oldCounter) || (carry && (counter[i] == oldCounter)));
+        final int newCounterUnsigned = counter[i] < 0 ? counter[i] + 256 : counter[i];
+        carry = (oldCounterUnsigned > newCounterUnsigned)
+            || (carry && (oldCounterUnsigned == newCounterUnsigned));
       }
       nextBlock();
       index = newIndex;
