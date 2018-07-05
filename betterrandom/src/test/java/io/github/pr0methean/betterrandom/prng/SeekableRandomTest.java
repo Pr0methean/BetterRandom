@@ -18,7 +18,7 @@ public abstract class SeekableRandomTest extends BaseRandomTest {
       final SeekableRandom copy1 = (SeekableRandom) copy1AsRandom;
       final Random copy2AsRandom = createRng(copy1.getSeed());
       final SeekableRandom copy2 = (SeekableRandom) copy2AsRandom;
-      for (int j = 0; j < DELTA; i++) {
+      for (int j = 0; j < DELTA; j++) {
         copy1AsRandom.nextInt();
       }
       copy2.advance(DELTA);
@@ -42,7 +42,7 @@ public abstract class SeekableRandomTest extends BaseRandomTest {
       final Random copy1AsRandom = createRng();
       final SeekableRandom copy1 = (SeekableRandom) copy1AsRandom;
       final Random copy2AsRandom = createRng(copy1.getSeed());
-      for (int j = 0; j < DELTA; i++) {
+      for (int j = 0; j < DELTA; j++) {
         copy1AsRandom.nextInt();
       }
       copy1.advance(-DELTA);
