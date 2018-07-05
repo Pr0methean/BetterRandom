@@ -11,7 +11,7 @@ if ( $env:APPVEYOR )
     $RANDOM_DOT_ORG_KEY = $env:random_dot_org_key
 }
 cd betterrandom
-mvn "$MAYBE_ANDROID_FLAG" "help:active-profiles" "clean" "compile" "jacoco:instrument" "jacoco:prepare-agent" \
+mvn "$MAYBE_ANDROID_FLAG" "help:active-profiles" "clean" "compile" "jacoco:instrument" "jacoco:prepare-agent" `
     "test" "jacoco:restore-instrumented-classes" "jacoco:report" -e
 $STATUS = $?
 if ( $STATUS ) {
