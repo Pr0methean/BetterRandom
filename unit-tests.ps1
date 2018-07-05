@@ -10,11 +10,9 @@ if ( $env:APPVEYOR )
 {
     $RANDOM_DOT_ORG_KEY = $env:random_dot_org_key
 }
-$MAYBE_JACOCO_PREPARE = "compile jacoco:instrument jacoco:prepare-agent"
-$MAYBE_JACOCO_REPORT = "jacoco:restore-instrumented-classes jacoco:report"
 cd betterrandom
-mvn "$MAYBE_ANDROID_FLAG" "help:active-profiles" "clean" "$MAYBE_JACOCO_PREPARE" `
-    "test" "$MAYBE_JACOCO_REPORT" -e
+mvn "$MAYBE_ANDROID_FLAG" "help:active-profiles" "clean" "compile" "jacoco:instrument" "jacoco:prepare-agent" `
+    "test" "jacoco:restore-instrumented-classes" "jacoco:report" -e
 $STATUS = $?
 if ( $STATUS ) {
     if ( $env:TRAVIS ) {
