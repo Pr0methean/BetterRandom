@@ -143,7 +143,7 @@ public enum RandomTestUtils {
 
   public static void assertEquivalent(final Random rng1, final Random rng2,
       final int iterations, String message) {
-    String fullMessage = String.format("%s (%s vs. %s)", message, rng1, rng2);
+    String fullMessage = String.format("%s (%s vs. %s)", message, toString(rng1), toString(rng2));
     if (!testEquivalence(rng1, rng2, iterations)) {
       throw new AssertionError(fullMessage);
     }
