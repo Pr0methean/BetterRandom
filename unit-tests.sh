@@ -7,7 +7,7 @@ fi
 if [ "${JAVA8}" = "true" ]; then
   echo "[unit-tests.sh] Using Java 8 mode. JaCoCo will run."
   MAYBE_JACOCO_PREPARE="compile jacoco:instrument jacoco:prepare-agent"
-  MAYBE_JACOCO_REPORT="jacoco:report"
+  MAYBE_JACOCO_REPORT="jacoco:restore-instrumented-classes jacoco:report"
 else
   echo "[unit-tests.sh] Using Java 9+ mode."
   # https://github.com/jacoco/jacoco/issues/663
@@ -85,7 +85,7 @@ if [ "${STATUS}" = 0 ]; then
   if [ "${JAVA8}" = "true" ]; then
     echo "[unit-tests.sh] Running Proguard."
     PATH="${NO_GIT_PATH}" mvn -DskipTests -Dmaven.test.skip=true ${MAYBE_ANDROID_FLAG} \
-        jacoco:restore-instrumented-classes pre-integration-test && \
+        pre-integration-test && \
         echo "[unit-tests.sh] Testing against Proguarded jar." && \
         PATH="${NO_GIT_PATH}" mvn ${MAYBE_ANDROID_FLAG} integration-test -e
     STATUS=$?
