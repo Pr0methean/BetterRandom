@@ -6,6 +6,7 @@ import static org.testng.Assert.assertEquals;
 import io.github.pr0methean.betterrandom.seed.DefaultSeedGenerator;
 import io.github.pr0methean.betterrandom.seed.SeedException;
 import io.github.pr0methean.betterrandom.util.CloneViaSerialization;
+import io.github.pr0methean.betterrandom.util.SerializableSupplier;
 import java.util.Map;
 import java.util.Random;
 import java8.util.function.Function;
