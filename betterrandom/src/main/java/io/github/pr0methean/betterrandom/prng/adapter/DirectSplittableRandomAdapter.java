@@ -70,7 +70,7 @@ public abstract class DirectSplittableRandomAdapter extends BaseSplittableRandom
   @Override public void setSeed(final long seed) {
     if (superConstructorFinished) {
       super.setSeedInternal(BinaryUtils.convertLongToBytes(seed));
-      underlying = new SplittableRandom(seed);
     }
+    underlying = new SplittableRandom(seed);
   }
 }

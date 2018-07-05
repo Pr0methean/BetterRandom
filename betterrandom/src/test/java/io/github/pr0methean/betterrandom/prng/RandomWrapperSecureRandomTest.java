@@ -85,6 +85,11 @@ public class RandomWrapperSecureRandomTest extends BaseRandomTest {
     // No-op.
   }
 
+  @Override @Test(enabled = false) public void testRepeatabilityNextGaussian()
+      throws SeedException {
+    // No-op.
+  }
+
   @Override protected BaseRandom createRng() throws SeedException {
     final RandomWrapper wrapper = createRngInternal();
     wrapper.setSeed(SEED_GEN.nextLong());
