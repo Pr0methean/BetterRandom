@@ -1,13 +1,12 @@
 package io.github.pr0methean.betterrandom.prng;
 
+import static io.github.pr0methean.betterrandom.seed.DefaultSeedGenerator.DEFAULT_SEED_GENERATOR;
 import static org.testng.Assert.assertEquals;
 
 import io.github.pr0methean.betterrandom.seed.DefaultSeedGenerator;
 import io.github.pr0methean.betterrandom.seed.SeedException;
 import io.github.pr0methean.betterrandom.util.CloneViaSerialization;
-import java.io.IOException;
 import java.io.Serializable;
-import java.security.GeneralSecurityException;
 import java.util.Map;
 import java.util.Random;
 import java.util.function.Function;
@@ -54,6 +53,25 @@ public class ThreadLocalRandomWrapperTest extends BaseRandomTest {
   public void testRandomSeederThreadIntegration() {
     createRng().setSeedGenerator(DefaultSeedGenerator.DEFAULT_SEED_GENERATOR);
   }
+
+  /** Assertion-free because ThreadLocalRandomWrapper isn't repeatable. */
+  @Override @Test public void testSetSeedAfterNextLong() throws SeedException {
+    final byte[] seed =
+        DEFAULT_SEED_GENERATOR.generateSeed(getNewSeedLength(createRng()));
+    final BaseRandom rng = createRng();
+    rng.nextLong();
+    rng.setSeed(seed);
+  }
+
+  /** Assertion-free because ThreadLocalRandomWrapper isn't repeatable. */
+  @Override @Test public void testSetSeedAfterNextInt() throws SeedException {
+    final byte[] seed =
+        DEFAULT_SEED_GENERATOR.generateSeed(getNewSeedLength(createRng()));
+    final BaseRandom rng = createRng();
+    rng.nextInt();
+    rng.setSeed(seed);
+  }
+
 
   /** Assertion-free because thread-local. */
   @Override @Test public void testThreadSafety() {
