@@ -275,6 +275,7 @@ public abstract class BaseRandomTest {
     rng2.setSeed(seed);
     RandomTestUtils.assertEquivalent(rng, rng2, 64,
         "Output mismatch after reseeding with same seed");
+    rng.setSeed(seed);
     RandomTestUtils.assertEquivalent(rng, rng3, 64,
         "Output mismatch vs a new PRNG with same seed");
   }
@@ -290,6 +291,7 @@ public abstract class BaseRandomTest {
     rng2.setSeed(seed);
     RandomTestUtils.assertEquivalent(rng, rng2, 64,
         "Output mismatch after reseeding with same seed");
+    rng.setSeed(seed);
     RandomTestUtils.assertEquivalent(rng, rng3, 64,
         "Output mismatch vs a new PRNG with same seed");
   }
