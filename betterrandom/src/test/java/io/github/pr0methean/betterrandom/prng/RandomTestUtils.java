@@ -20,6 +20,7 @@ import static org.testng.Assert.assertNotSame;
 
 import io.github.pr0methean.betterrandom.TestUtils;
 import io.github.pr0methean.betterrandom.util.CloneViaSerialization;
+import io.github.pr0methean.betterrandom.util.Dumpable;
 import java.util.HashSet;
 import java.util.Random;
 import java.util.concurrent.atomic.AtomicLong;
@@ -140,6 +141,18 @@ public enum RandomTestUtils {
     return true;
   }
 
+  public static void assertEquivalent(final Random rng1, final Random rng2,
+      final int iterations, String message) {
+    String fullMessage = String.format("%s (%s vs. %s)", message, rng1, rng2);
+    if (!testEquivalence(rng1, rng2, iterations)) {
+      throw new AssertionError(fullMessage);
+    }
+  }
+
+  public static String toString(Random rng) {
+    return rng instanceof Dumpable ? ((Dumpable) rng).dump() : rng.toString();
+  }
+
   /**
    * This is a rudimentary check to ensure that the output of a given RNG is approximately uniformly
    * distributed.  If the RNG output is not uniformly distributed, this method will return a poor
@@ -208,7 +221,7 @@ public enum RandomTestUtils {
     final T rng2 = CloneViaSerialization.clone(rng);
     assertNotSame(rng, rng2, "Deserialised RNG should be distinct object.");
     // Both RNGs should generate the same sequence.
-    assert testEquivalence(rng, rng2, 20) : "Output mismatch after serialisation.";
+    assertEquivalent(rng, rng2, 20, "Output mismatch after serialisation.");
   }
 
   public static void assertMonteCarloPiEstimateSane(final Random rng) {
