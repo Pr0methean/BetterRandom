@@ -19,9 +19,7 @@ public class SplittableRandomAdapterTest extends SingleThreadSplittableRandomAda
     // Create second RNG using same seed.
     final BaseRandom duplicateRNG = createRng();
     duplicateRNG.setSeed(TEST_SEED);
-    assert RandomTestUtils.testEquivalence(rng, duplicateRNG, 1000) : String
-        .format("Generated sequences do not match between:%n%s%nand:%n%s", rng.dump(),
-            duplicateRNG.dump());
+    RandomTestUtils.assertEquivalent(rng, duplicateRNG, 1000, "Generated sequences do not match");
   }
 
   @Override protected SplittableRandomAdapter createRng() throws SeedException {

@@ -20,7 +20,8 @@ public abstract class SeekableRandomTest extends BaseRandomTest {
       copy1AsRandom.nextInt();
     }
     copy2.advance(ITERATIONS);
-    RandomTestUtils.testEquivalence(copy1AsRandom, copy2AsRandom, ITERATIONS);
+    RandomTestUtils.assertEquivalent(copy1AsRandom, copy2AsRandom, ITERATIONS,
+        "Output mismatch after advancing forward");
   }
 
   @Test public void testAdvanceZero() {
@@ -29,7 +30,8 @@ public abstract class SeekableRandomTest extends BaseRandomTest {
     final Random copy2AsRandom = createRng(copy1.getSeed());
     final SeekableRandom copy2 = (SeekableRandom) copy2AsRandom;
     copy2.advance(0);
-    RandomTestUtils.testEquivalence(copy1AsRandom, copy2AsRandom, ITERATIONS);
+    RandomTestUtils.assertEquivalent(copy1AsRandom, copy2AsRandom, ITERATIONS,
+        "Output mismatch after advancing by zero");
   }
 
   @Test public void testAdvanceBackward() {
@@ -40,6 +42,7 @@ public abstract class SeekableRandomTest extends BaseRandomTest {
       copy1AsRandom.nextInt();
     }
     copy1.advance(-ITERATIONS);
-    RandomTestUtils.testEquivalence(copy1AsRandom, copy2AsRandom, ITERATIONS);
+    RandomTestUtils.assertEquivalent(copy1AsRandom, copy2AsRandom, ITERATIONS,
+        "Output mismatch after advancing backward");
   }
 }
