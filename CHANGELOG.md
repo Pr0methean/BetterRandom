@@ -1,7 +1,7 @@
 # 2.3.11
 * `setSeed` now invalidates the result of the next call to `nextGaussian` if it's been pre-computed.
 * Fixes a bug where `RandomDotOrgSeedGenerator` could reuse seed data or output all-zeroes seeds.
-* Fixes bugs affecting seekability and repeatability in `AesCounterRandom`.
+* Fixes bugs affecting seekability and repeatability in several PRNGs.
 
 # 2.3.10
 * If random.org ever changes its API output format in a way that breaks us, or sends a corrupted
