@@ -174,9 +174,7 @@ public abstract class BaseRandomTest {
     final BaseRandom rng = createRng();
     // Create second RNG using same seed.
     final BaseRandom duplicateRNG = createRng(rng.getSeed());
-    assert RandomTestUtils.testEquivalence(rng, duplicateRNG, 100) : String
-        .format("Generated sequences do not match between:%n%s%nand:%n%s", rng.dump(),
-            duplicateRNG.dump());
+    RandomTestUtils.assertEquivalent(rng, duplicateRNG, 100, "Output mismatch");
   }
 
   /**
@@ -310,10 +308,10 @@ public abstract class BaseRandomTest {
     rng.nextLong(); // ensure rng & rng2 won't both be in initial state before reseeding
     rng.setSeed(seed);
     rng2.setSeed(seed);
-    assert RandomTestUtils.testEquivalence(rng, rng2, 64)
-        : "Output mismatch after reseeding with same seed";
-    assert RandomTestUtils.testEquivalence(rng, rng3, 64)
-        : "Output mismatch vs a new PRNG with same seed";
+    RandomTestUtils.assertEquivalent(rng, rng2, 64,
+        "Output mismatch after reseeding with same seed");
+    RandomTestUtils.assertEquivalent(rng, rng3, 64,
+        "Output mismatch vs a new PRNG with same seed");
   }
 
   @Test(timeOut = 15_000) public void testSetSeedAfterNextInt() throws SeedException {
@@ -325,10 +323,10 @@ public abstract class BaseRandomTest {
     rng.nextInt(); // ensure rng & rng2 won't both be in initial state before reseeding
     rng.setSeed(seed);
     rng2.setSeed(seed);
-    assert RandomTestUtils.testEquivalence(rng, rng2, 64)
-        : "Output mismatch after reseeding with same seed";
-    assert RandomTestUtils.testEquivalence(rng, rng3, 64)
-        : "Output mismatch vs a new PRNG with same seed";
+    RandomTestUtils.assertEquivalent(rng, rng2, 64,
+        "Output mismatch after reseeding with same seed");
+    RandomTestUtils.assertEquivalent(rng, rng3, 64,
+        "Output mismatch vs a new PRNG with same seed");
   }
 
   @Test(timeOut = 15_000) public void testSetSeedZero() throws SeedException {

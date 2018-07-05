@@ -1,6 +1,6 @@
 package io.github.pr0methean.betterrandom.prng.adapter;
 
-import static io.github.pr0methean.betterrandom.prng.RandomTestUtils.testEquivalence;
+import static io.github.pr0methean.betterrandom.prng.RandomTestUtils.assertEquivalent;
 
 import io.github.pr0methean.betterrandom.prng.BaseRandom;
 import io.github.pr0methean.betterrandom.prng.BaseRandomTest;
@@ -43,8 +43,10 @@ public class SingleThreadSplittableRandomAdapterTest extends BaseRandomTest {
     final BaseSplittableRandomAdapter adapter2 = CloneViaSerialization.clone(adapter);
     final BaseSplittableRandomAdapter adapter3 = CloneViaSerialization.clone(adapter);
     final BaseSplittableRandomAdapter adapter4 = CloneViaSerialization.clone(adapter2);
-    testEquivalence(adapter2, adapter3, 20);
-    testEquivalence(adapter2, adapter4, 20);
+    assertEquivalent(adapter2, adapter3, 20,
+        "Deserializing twice doesn't yield same object");
+    assertEquivalent(adapter2, adapter4, 20,
+        "Serialization round-trip is not idempotent");
   }
 
   @Override public void testSetSeedLong() throws SeedException {
@@ -53,7 +55,7 @@ public class SingleThreadSplittableRandomAdapterTest extends BaseRandomTest {
     rng.nextLong(); // ensure they won't both be in initial state before reseeding
     rng.setSeed(0x0123456789ABCDEFL);
     rng2.setSeed(0x0123456789ABCDEFL);
-    assert testEquivalence(rng, rng2, 20) : "Output mismatch after reseeding with same seed";
+    assertEquivalent(rng, rng2, 20, "Output mismatch after reseeding with same seed");
   }
 
   @Override @Test public void testNullSeed() {

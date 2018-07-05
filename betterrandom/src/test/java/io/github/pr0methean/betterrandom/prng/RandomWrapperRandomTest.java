@@ -64,8 +64,8 @@ public class RandomWrapperRandomTest extends BaseRandomTest {
     rng.nextLong(); // ensure they won't both be in initial state before reseeding
     rng.setSeed(0x0123456789ABCDEFL);
     rng2.setSeed(0x0123456789ABCDEFL);
-    assert RandomTestUtils.testEquivalence(rng, rng2, 20)
-        : "Output mismatch after reseeding with same seed";
+    RandomTestUtils.assertEquivalent(rng, rng2, 20,
+        "Output mismatch after reseeding with same seed");
   }
 
   /**
@@ -76,8 +76,8 @@ public class RandomWrapperRandomTest extends BaseRandomTest {
     final RandomWrapper rng = new RandomWrapper();
     // Create second RNG using same seed.
     final RandomWrapper duplicateRNG = new RandomWrapper(rng.getSeed());
-    assert RandomTestUtils.testEquivalence(rng, duplicateRNG, 1000)
-        : "Generated sequences do not match.";
+    RandomTestUtils.assertEquivalent(rng, duplicateRNG, 200,
+        "Generated sequences do not match.");
   }
 
   @Override protected BaseRandom createRng() throws SeedException {
