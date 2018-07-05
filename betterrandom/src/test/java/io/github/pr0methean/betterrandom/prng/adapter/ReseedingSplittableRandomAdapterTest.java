@@ -48,6 +48,10 @@ public class ReseedingSplittableRandomAdapterTest extends SingleThreadSplittable
     // No-op.
   }
 
+  @Override @Test(enabled = false) public void testRepeatabilityNextGaussian() {
+    // No-op.
+  }
+
   @SuppressWarnings("BusyWait") @Override @Test public void testReseeding() {
     final BaseRandom rng = createRng();
     final byte[] oldSeed = rng.getSeed();
