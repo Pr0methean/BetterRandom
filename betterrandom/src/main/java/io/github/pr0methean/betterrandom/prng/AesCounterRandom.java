@@ -320,7 +320,7 @@ public class AesCounterRandom extends BaseRandom implements SeekableRandom {
       return;
     }
     long blocksDelta = delta / INTS_PER_BLOCK;
-    int deltaWithinBlock = (int) (delta % INTS_PER_BLOCK) * Integer.BYTES;
+    int deltaWithinBlock = (int) (delta % INTS_PER_BLOCK) * INT_BYTES;
     lock.lock();
     try {
       int newIndex = index + deltaWithinBlock;
