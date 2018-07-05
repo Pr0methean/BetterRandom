@@ -329,13 +329,6 @@ public class AesCounterRandom extends BaseRandom implements SeekableRandom {
         newIndex += COUNTER_SIZE_BYTES;
         blocksDelta--;
       }
-      System.out.format("Old counter: %s, old index: %d, delta ints: %d, delta blocks: %d, "
-          + "new index: %d%n",
-          BinaryUtils.convertBytesToHexString(counter),
-          index,
-          delta,
-          blocksDelta,
-          newIndex); // FIXME: Debug code
       blocksDelta -= BLOCKS_AT_ONCE; // Compensate for the increment during nextBlock() below
       final byte[] addendDigits = new byte[counter.length];
       System.arraycopy(BinaryUtils.convertLongToBytes(blocksDelta), 0, addendDigits,
@@ -346,17 +339,14 @@ public class AesCounterRandom extends BaseRandom implements SeekableRandom {
           addendDigits[i] = -1;
         }
       }
-      System.out.format("Addend: %s%n", BinaryUtils.convertBytesToHexString(addendDigits)); // FIXME: Debug code
       boolean carry = false;
       for (int i = 0; i < counter.length; i++) {
         final byte oldCounter = counter[i];
         counter[i] += addendDigits[counter.length - i - 1] + (carry ? 1 : 0);
         carry = ((counter[i] < oldCounter) || (carry && (counter[i] == oldCounter)));
       }
-      System.out.format("New counter: %s%n", BinaryUtils.convertBytesToHexString(counter)); // FIXME: Debug code
       nextBlock();
       index = newIndex;
-      System.out.format("New counter: %s%n", BinaryUtils.convertBytesToHexString(counter)); // FIXME: Debug code
     } finally {
       lock.unlock();
     }
