@@ -64,6 +64,7 @@ public class AesCounterRandom extends BaseRandom implements SeekableRandom {
    * should equal the cipher's block size.
    */
   private static final int COUNTER_SIZE_BYTES = 16;
+  private static final int INTS_PER_BLOCK = COUNTER_SIZE_BYTES / Integer.BYTES;
   /**
    * Number of blocks to encrypt at once, to construct/GC fewer arrays. This takes advantage of the
    * fact that in ECB mode, concatenating and then encrypting gives the same output as encrypting
@@ -313,17 +314,27 @@ public class AesCounterRandom extends BaseRandom implements SeekableRandom {
     if (delta == 0) {
       return;
     }
-    final byte[] addendDigits = new byte[counter.length];
-    System.arraycopy(BinaryUtils.convertLongToBytes(delta), 0, addendDigits,
-        counter.length - Long.BYTES, Long.BYTES);
-    if (delta < 0) {
-      // Sign extend
-      for (int i = 0; i < (counter.length - Long.BYTES); i++) {
-        addendDigits[i] = -1;
-      }
-    }
+    long blocksDelta = delta / INTS_PER_BLOCK;
+    int deltaWithinBlock = (int) (delta % INTS_PER_BLOCK);
     lock.lock();
     try {
+      index += deltaWithinBlock;
+      if (index >= COUNTER_SIZE_BYTES) {
+        index -= COUNTER_SIZE_BYTES;
+        blocksDelta++;
+      } else if (index < 0) {
+        index += COUNTER_SIZE_BYTES;
+        blocksDelta--;
+      }
+      final byte[] addendDigits = new byte[counter.length];
+      System.arraycopy(BinaryUtils.convertLongToBytes(blocksDelta), 0, addendDigits,
+          counter.length - Long.BYTES, Long.BYTES);
+      if (blocksDelta < 0) {
+        // Sign extend
+        for (int i = 0; i < (counter.length - Long.BYTES); i++) {
+          addendDigits[i] = -1;
+        }
+      }
       boolean carry = false;
       for (int i = 0; i < counter.length; i++) {
         final byte oldCounter = counter[i];
