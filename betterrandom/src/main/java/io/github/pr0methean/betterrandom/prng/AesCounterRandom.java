@@ -75,6 +75,7 @@ public class AesCounterRandom extends BaseRandom implements SeekableRandom {
    * size is 128 bits at all key lengths.)
    */
   private static final int BLOCKS_AT_ONCE = 16;
+  private static final int BYTES_AT_ONCE = COUNTER_SIZE_BYTES * BLOCKS_AT_ONCE;
   private static final String HASH_ALGORITHM = "SHA-256";
   private static final int MAX_TOTAL_SEED_LENGTH_BYTES;
   private static final byte[] ZEROES = new byte[COUNTER_SIZE_BYTES];
@@ -135,8 +136,8 @@ public class AesCounterRandom extends BaseRandom implements SeekableRandom {
    */
   public AesCounterRandom(final byte[] seed) {
     super(seed);
-    currentBlock = new byte[COUNTER_SIZE_BYTES * BLOCKS_AT_ONCE];
-    index = currentBlock.length; // force generation of first block on demand
+    currentBlock = new byte[BYTES_AT_ONCE];
+    index = BYTES_AT_ONCE; // force generation of first block on demand
   }
 
   /**
@@ -157,7 +158,8 @@ public class AesCounterRandom extends BaseRandom implements SeekableRandom {
 
   @Override public ToStringHelper addSubclassFields(final ToStringHelper original) {
     return original.add("counter", BinaryUtils.convertBytesToHexString(counter))
-        .add("cipher", cipher);
+        .add("cipher", cipher)
+        .add("index", index);
   }
 
   @Override protected void initTransientFields() {
@@ -166,7 +168,7 @@ public class AesCounterRandom extends BaseRandom implements SeekableRandom {
       counter = new byte[COUNTER_SIZE_BYTES];
     }
     if (counterInput == null) {
-      counterInput = new byte[COUNTER_SIZE_BYTES * BLOCKS_AT_ONCE];
+      counterInput = new byte[BYTES_AT_ONCE];
     }
     try {
       cipher = Cipher.getInstance(ALGORITHM_MODE);
@@ -208,7 +210,7 @@ public class AesCounterRandom extends BaseRandom implements SeekableRandom {
     lock.lock();
     int result;
     try {
-      if ((currentBlock.length - index) < 4) {
+      if ((BYTES_AT_ONCE - index) < 4) {
         nextBlock();
         index = 0;
       }
@@ -303,7 +305,7 @@ public class AesCounterRandom extends BaseRandom implements SeekableRandom {
       throw new RuntimeException("Invalid key: " + Arrays.toString(key), e);
     }
     if (currentBlock != null) {
-      index = currentBlock.length;
+      index = BYTES_AT_ONCE;
     } // else it'll be initialized in ctor
     seeded = true;
   }
@@ -318,17 +320,19 @@ public class AesCounterRandom extends BaseRandom implements SeekableRandom {
       return;
     }
     long blocksDelta = delta / INTS_PER_BLOCK;
-    int deltaWithinBlock = (int) (delta % INTS_PER_BLOCK);
+    int deltaWithinBlock = (int) (delta % INTS_PER_BLOCK) * Integer.BYTES;
     lock.lock();
     try {
-      index += deltaWithinBlock;
-      if (index >= COUNTER_SIZE_BYTES) {
-        index -= COUNTER_SIZE_BYTES;
+      int newIndex = index + deltaWithinBlock;
+      while (newIndex >= COUNTER_SIZE_BYTES) {
+        newIndex -= COUNTER_SIZE_BYTES;
         blocksDelta++;
-      } else if (index < 0) {
-        index += COUNTER_SIZE_BYTES;
+      }
+      while (newIndex < 0) {
+        newIndex += COUNTER_SIZE_BYTES;
         blocksDelta--;
       }
+      blocksDelta -= BLOCKS_AT_ONCE; // Compensate for the increment during nextBlock() below
       final byte[] addendDigits = new byte[counter.length];
       System.arraycopy(BinaryUtils.convertLongToBytes(blocksDelta), 0, addendDigits,
           counter.length - LONG_BYTES, LONG_BYTES);
@@ -343,8 +347,9 @@ public class AesCounterRandom extends BaseRandom implements SeekableRandom {
         final byte oldCounter = counter[i];
         counter[i] += addendDigits[counter.length - i - 1] + (carry ? 1 : 0);
         carry = ((counter[i] < oldCounter) || (carry && (counter[i] == oldCounter)));
-        nextBlock();
       }
+      nextBlock();
+      index = newIndex;
     } finally {
       lock.unlock();
     }
