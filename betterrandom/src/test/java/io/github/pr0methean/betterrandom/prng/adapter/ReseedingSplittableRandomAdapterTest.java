@@ -75,8 +75,8 @@ public class ReseedingSplittableRandomAdapterTest extends SingleThreadSplittable
   @Override @Test public void testSetSeedAfterNextLong() throws SeedException {
     final BaseRandom prng = createRng();
     prng.nextLong();
-    prng.setSeed(DEFAULT_SEED_GENERATOR.generateSeed(8));
-    prng.setSeed(BinaryUtils.convertBytesToLong(DEFAULT_SEED_GENERATOR.generateSeed(8)));
+    prng.setSeed(SEMIFAKE_SEED_GENERATOR.generateSeed(8));
+    prng.setSeed(BinaryUtils.convertBytesToLong(SEMIFAKE_SEED_GENERATOR.generateSeed(8)));
     prng.nextLong();
   }
 
@@ -84,8 +84,8 @@ public class ReseedingSplittableRandomAdapterTest extends SingleThreadSplittable
   @Override @Test public void testSetSeedAfterNextInt() throws SeedException {
     final BaseRandom prng = createRng();
     prng.nextInt();
-    prng.setSeed(DEFAULT_SEED_GENERATOR.generateSeed(8));
-    prng.setSeed(BinaryUtils.convertBytesToLong(DEFAULT_SEED_GENERATOR.generateSeed(8)));
+    prng.setSeed(SEMIFAKE_SEED_GENERATOR.generateSeed(8));
+    prng.setSeed(BinaryUtils.convertBytesToLong(SEMIFAKE_SEED_GENERATOR.generateSeed(8)));
     prng.nextInt();
   }
 
@@ -100,7 +100,7 @@ public class ReseedingSplittableRandomAdapterTest extends SingleThreadSplittable
    */
   @Override @Test(expectedExceptions = UnsupportedOperationException.class)
   public void testRandomSeederThreadIntegration() throws Exception {
-    createRng().setSeedGenerator(DEFAULT_SEED_GENERATOR);
+    createRng().setSeedGenerator(SEMIFAKE_SEED_GENERATOR);
   }
 
   @Override @Test(enabled = false) public void testSeedTooShort() {
@@ -113,7 +113,7 @@ public class ReseedingSplittableRandomAdapterTest extends SingleThreadSplittable
 
   @Override @Test public void testDump() throws SeedException {
     assertNotEquals(ReseedingSplittableRandomAdapter.getInstance(DEFAULT_SEED_GENERATOR).dump(),
-        ReseedingSplittableRandomAdapter.getInstance(new FakeSeedGenerator()).dump());
+        ReseedingSplittableRandomAdapter.getInstance(SEMIFAKE_SEED_GENERATOR).dump());
   }
 
   @Test public void testFinalize() throws SeedException {
