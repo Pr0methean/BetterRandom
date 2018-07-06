@@ -32,6 +32,7 @@ public class ReseedingThreadLocalRandomWrapper extends ThreadLocalRandomWrapper 
     super((Serializable & Supplier<? extends BaseRandom>) () -> {
       final BaseRandom out = initializer.get();
       out.setSeedGenerator(seedGenerator);
+      out.debitEntropy(Long.MAX_VALUE); // Force initial seeding
       return out;
     });
   }
