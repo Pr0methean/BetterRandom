@@ -401,7 +401,7 @@
               <suiteXmlFile>src/test/testng.xml</suiteXmlFile>
             </suiteXmlFiles>
             <trimStackTrace>false</trimStackTrace>
-            <parallel>instances</parallel>
+            <parallel>classes</parallel>
             <threadCount>2</threadCount>
             <forkedProcessTimeoutInSeconds>600</forkedProcessTimeoutInSeconds>
             <forkedProcessExitTimeoutInSeconds>600</forkedProcessExitTimeoutInSeconds>
@@ -425,7 +425,7 @@
             <suiteXmlFiles>
               <suiteXmlFile>src/test/testng.xml</suiteXmlFile>
             </suiteXmlFiles>
-            <parallel>instances</parallel>
+            <parallel>classes</parallel>
             <threadCount>2</threadCount>
           </configuration>
           <executions>

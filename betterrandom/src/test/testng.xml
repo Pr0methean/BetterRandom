@@ -1,6 +1,6 @@
 <!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd">
 <suite name="TestNG" parallel="tests">
-  <test name="Seeding">
+  <test name="Seeding" parallel="none">
     <classes>
       <class name="io.github.pr0methean.betterrandom.seed.DefaultSeedGeneratorTest"/>
       <class name="io.github.pr0methean.betterrandom.seed.DevRandomSeedGeneratorTest"/>
@@ -10,7 +10,7 @@
       <class name="io.github.pr0methean.betterrandom.seed.SecureRandomSeedGeneratorTest"/>
     </classes>
   </test>
-  <test name="TestNG Parallel" parallel="instances">
+  <test name="TestNG Parallel" parallel="classes">
     <classes>
       <class name="io.github.pr0methean.betterrandom.prng.AesCounterRandom128Test"/>
       <class name="io.github.pr0methean.betterrandom.prng.AesCounterRandom160Test"/>
