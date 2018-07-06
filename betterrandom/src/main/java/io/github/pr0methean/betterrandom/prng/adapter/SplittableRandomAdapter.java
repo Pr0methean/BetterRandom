@@ -97,7 +97,14 @@ public class SplittableRandomAdapter extends DirectSplittableRandomAdapter {
   private void initSubclassTransientFields() {
     lock.lock();
     try {
-      splittableRandoms = ThreadLocal.withInitial(underlying::split);
+      splittableRandoms = ThreadLocal.withInitial(() -> {
+        /*
+         * Necessary because split() itself is not thread-safe: called on the same instance from 2
+         * different threads, it might return equivalent instances to both.
+         */
+        underlying = underlying.split();
+        return underlying.split();
+      });
       entropyBits = ThreadLocal.withInitial(() -> new AtomicLong(SEED_LENGTH_BITS));
       // getSeed() will return the master seed on each thread where setSeed() hasn't yet been called
       seeds = ThreadLocal.withInitial(() -> seed);
