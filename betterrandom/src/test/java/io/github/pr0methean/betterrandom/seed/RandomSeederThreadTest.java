@@ -6,6 +6,7 @@ import static org.testng.Assert.assertFalse;
 import static org.testng.Assert.assertTrue;
 
 import java.util.Arrays;
+import java.util.Locale;
 import java.util.Random;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.Test;
