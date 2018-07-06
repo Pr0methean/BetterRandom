@@ -15,6 +15,10 @@ public class RandomSeederThreadTest {
   private static final long TEST_SEED = 0x0123456789ABCDEFL;
   private static final int TEST_OUTPUT_SIZE = 20;
 
+  private static final boolean ON_MAC
+      = System.getProperty("os.name", "generic").toLowerCase(Locale.ENGLISH)
+          .contains("mac");
+
   @Test(timeOut = 25_000) public void testAddRemoveAndIsEmpty() throws Exception {
     final Random prng = new Random(TEST_SEED);
     final byte[] bytesWithOldSeed = new byte[TEST_OUTPUT_SIZE];
@@ -25,8 +29,11 @@ public class RandomSeederThreadTest {
       assertTrue(RandomSeederThread.isEmpty(seedGenerator));
       RandomSeederThread.add(seedGenerator, prng);
       assertFalse(RandomSeederThread.isEmpty(seedGenerator));
-      Thread.sleep(250);
-      assertFalse(RandomSeederThread.isEmpty(seedGenerator));
+      if (!ON_MAC) {
+        // FIXME: sleep gets interrupted on Travis-CI OSX
+        Thread.sleep(250);
+        assertFalse(RandomSeederThread.isEmpty(seedGenerator));
+      }
       RandomSeederThread.remove(seedGenerator, prng);
       assertTrue(RandomSeederThread.isEmpty(seedGenerator));
       final byte[] bytesWithNewSeed = new byte[TEST_OUTPUT_SIZE];
