@@ -63,7 +63,7 @@ public class RandomWrapperSecureRandomTest extends BaseRandomTest {
   @Override public void testSetSeedAfterNextLong() throws SeedException {
     final BaseRandom prng = createRng();
     prng.nextLong();
-    prng.setSeed(DefaultSeedGenerator.DEFAULT_SEED_GENERATOR.generateSeed(8));
+    prng.setSeed(SEMIFAKE_SEED_GENERATOR.generateSeed(8));
     prng.nextLong();
   }
 
@@ -74,7 +74,7 @@ public class RandomWrapperSecureRandomTest extends BaseRandomTest {
   @Override public void testSetSeedAfterNextInt() throws SeedException {
     final BaseRandom prng = createRng();
     prng.nextInt();
-    prng.setSeed(DefaultSeedGenerator.DEFAULT_SEED_GENERATOR.generateSeed(8));
+    prng.setSeed(SEMIFAKE_SEED_GENERATOR.generateSeed(8));
     prng.nextInt();
   }
 

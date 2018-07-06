@@ -24,7 +24,7 @@ public class SingleThreadSplittableRandomAdapterTest extends BaseRandomTest {
    * {@inheritDoc} Overridden in subclasses, so that subclassing the test can test the subclasses.
    */
   @Override protected BaseSplittableRandomAdapter createRng() throws SeedException {
-    return new SingleThreadSplittableRandomAdapter(DefaultSeedGenerator.DEFAULT_SEED_GENERATOR);
+    return new SingleThreadSplittableRandomAdapter(SEMIFAKE_SEED_GENERATOR);
   }
 
   @Override protected BaseRandom createRng(final byte[] seed) throws SeedException {
