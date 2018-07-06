@@ -34,6 +34,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 import java.util.SortedSet;
+import java.util.TreeSet;
 import java.util.concurrent.ConcurrentSkipListSet;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ForkJoinPool;
@@ -737,7 +738,7 @@ public abstract class BaseRandomTest {
   protected SortedSet<Double> runSequential(final NamedFunction<Random, Double> supplier1,
       final NamedFunction<Random, Double> supplier2, final byte[] seed) {
     final Random sequentialPrng = createRng(seed);
-    final SortedSet<Double> output = new ConcurrentSkipListSet<>();
+    final SortedSet<Double> output = new TreeSet<>();
     new GeneratorForkJoinTask(sequentialPrng, output, supplier1, new CountDownLatch(1),
         1000)
         .exec();
