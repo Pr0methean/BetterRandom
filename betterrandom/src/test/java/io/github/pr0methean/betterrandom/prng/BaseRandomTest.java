@@ -214,10 +214,10 @@ public abstract class BaseRandomTest {
   /**
    * Test to ensure that the output from nextGaussian is broadly as expected.
    */
-  @Test(timeOut = 20_000, groups = "non-deterministic") public void testNextGaussianStatistically()
+  @Test(timeOut = 40_000, groups = "non-deterministic") public void testNextGaussianStatistically()
       throws SeedException {
     final BaseRandom rng = createRng();
-    final int iterations = 10_000;
+    final int iterations = 20_000;
     final SynchronizedDescriptiveStatistics stats = new SynchronizedDescriptiveStatistics();
     rng.gaussians(iterations).spliterator().forEachRemaining((DoubleConsumer) stats::addValue);
     final double observedSD = stats.getStandardDeviation();
