@@ -186,18 +186,11 @@ public final class RandomSeederThread extends LooperThread {
    * @return Whether or not the reseed was successfully scheduled.
    */
   private boolean asyncReseed(final Random random) {
-    if (!isAlive()) {
+    if (!isAlive() || !prngs.contains(random)) {
       return false;
     }
-    if (!(random instanceof EntropyCountingRandom)) {
+    if (random instanceof EntropyCountingRandom) {
       // Reseed of non-entropy-counting Random happens every iteration anyway
-      return prngs.contains(random);
-    }
-    final boolean eligible;
-    synchronized (prngs) {
-      eligible = prngs.contains(random);
-    }
-    if (eligible) {
       WAKER_UPPER.submit(() -> {
         lock.lock();
         try {
@@ -206,10 +199,8 @@ public final class RandomSeederThread extends LooperThread {
           lock.unlock();
         }
       });
-      return true;
-    } else {
-      return false;
     }
+    return true;
   }
 
   @SuppressWarnings({"InfiniteLoopStatement", "ObjectAllocationInLoop", "AwaitNotInLoop"}) @Override
