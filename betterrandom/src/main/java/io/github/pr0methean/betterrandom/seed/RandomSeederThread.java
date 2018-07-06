@@ -297,11 +297,11 @@ public final class RandomSeederThread extends LooperThread {
    */
   private void add(final Random... randoms) {
     lock.lock();
-    if ((getState() == State.TERMINATED) || isInterrupted()) {
-      throw new IllegalStateException("Already shut down");
-    }
-    Collections.addAll(prngs, randoms);
     try {
+      if ((getState() == State.TERMINATED) || isInterrupted()) {
+        throw new IllegalStateException("Already shut down");
+      }
+      Collections.addAll(prngs, randoms);
       waitForEntropyDrain.signalAll();
       waitWhileEmpty.signalAll();
     } finally {
