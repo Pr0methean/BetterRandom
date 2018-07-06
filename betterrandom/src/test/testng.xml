@@ -38,6 +38,10 @@
       <class
         name="io.github.pr0methean.betterrandom.prng.adapter.SingleThreadSplittableRandomAdapterTest"/>
       <class name="io.github.pr0methean.betterrandom.prng.adapter.SplittableRandomAdapterTest"/>
+      <class
+        name="io.github.pr0methean.betterrandom.prng.ReseedingThreadLocalRandomWrapperMersenneTwisterTest"/>
+      <class
+        name="io.github.pr0methean.betterrandom.prng.ThreadLocalRandomWrapperMersenneTwisterTest"/>
     </classes>
   </test>
   <test name="Util" parallel="methods">
