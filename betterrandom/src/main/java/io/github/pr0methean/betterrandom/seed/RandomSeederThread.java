@@ -116,7 +116,15 @@ public final class RandomSeederThread extends LooperThread {
    * @param randoms One or more {@link Random} instances to be reseeded
    */
   public static void add(final SeedGenerator seedGenerator, final Random... randoms) {
-    getInstance(seedGenerator).add(randoms);
+    boolean notSucceeded = true;
+    do {
+      try {
+        getInstance(seedGenerator).add(randoms);
+        notSucceeded = false;
+      } catch (IllegalStateException ignored) {
+        // Get the new instance and try again.
+      }
+    } while (notSucceeded);
   }
 
   /**
