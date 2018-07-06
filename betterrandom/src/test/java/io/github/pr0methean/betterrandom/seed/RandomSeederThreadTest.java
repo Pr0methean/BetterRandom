@@ -15,7 +15,7 @@ public class RandomSeederThreadTest {
   private static final long TEST_SEED = 0x0123456789ABCDEFL;
   private static final int TEST_OUTPUT_SIZE = 20;
 
-  @Test(timeOut = 15_000) public void testAddRemoveAndIsEmpty() throws Exception {
+  @Test(timeOut = 25_000) public void testAddRemoveAndIsEmpty() throws Exception {
     final Random prng = new Random(TEST_SEED);
     final byte[] bytesWithOldSeed = new byte[TEST_OUTPUT_SIZE];
     prng.nextBytes(bytesWithOldSeed);
@@ -45,7 +45,6 @@ public class RandomSeederThreadTest {
     assertTrue(RandomSeederThread.hasInstance(seedGenerator));
     RandomSeederThread.remove(seedGenerator, prng);
     RandomSeederThread.stopIfEmpty(seedGenerator);
-    Thread.sleep(250);
     assertFalse(RandomSeederThread.hasInstance(seedGenerator));
   }
 
@@ -62,7 +61,6 @@ public class RandomSeederThreadTest {
     assertTrue(RandomSeederThread.hasInstance(addedToAndRemoved));
     assertTrue(RandomSeederThread.hasInstance(addedToAndLeft));
     stopAllEmpty();
-    Thread.sleep(250);
     assertFalse(RandomSeederThread.hasInstance(neverAddedTo));
     assertFalse(RandomSeederThread.hasInstance(addedToAndRemoved));
     assertTrue(RandomSeederThread.hasInstance(addedToAndLeft));
@@ -114,6 +112,7 @@ public class RandomSeederThreadTest {
   }
 
   @AfterMethod public void tearDown() {
+    stopAllEmpty();
     System.gc();
     stopAllEmpty();
   }
