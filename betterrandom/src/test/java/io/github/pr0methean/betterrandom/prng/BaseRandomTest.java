@@ -848,8 +848,7 @@ public abstract class BaseRandomTest {
   }
 
   @AfterClass public void classTearDown() {
-    System.gc();
-    RandomSeederThread.stopAllEmpty();
+    RandomSeederThread.stopIfEmpty(SEMIFAKE_SEED_GENERATOR);
   }
 
   private enum TestEnum {

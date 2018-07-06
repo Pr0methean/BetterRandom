@@ -8,7 +8,9 @@ import static org.testng.Assert.assertNotEquals;
 import io.github.pr0methean.betterrandom.prng.BaseRandom;
 import io.github.pr0methean.betterrandom.prng.RandomTestUtils.EntropyCheckMode;
 import io.github.pr0methean.betterrandom.seed.FakeSeedGenerator;
+import io.github.pr0methean.betterrandom.seed.RandomSeederThread;
 import io.github.pr0methean.betterrandom.seed.SeedException;
+import io.github.pr0methean.betterrandom.seed.SeedGenerator;
 import io.github.pr0methean.betterrandom.util.BinaryUtils;
 import io.github.pr0methean.betterrandom.util.CloneViaSerialization;
 import java.util.Arrays;
@@ -117,8 +119,14 @@ public class ReseedingSplittableRandomAdapterTest extends SingleThreadSplittable
   }
 
   @Test public void testFinalize() throws SeedException {
-    ReseedingSplittableRandomAdapter.getInstance(new FakeSeedGenerator());
-    Runtime.getRuntime().runFinalization();
+    SeedGenerator generator = new FakeSeedGenerator();
+    ReseedingSplittableRandomAdapter.getInstance(generator);
+    try {
+      Runtime.getRuntime().runFinalization();
+    } finally {
+      System.gc();
+      RandomSeederThread.stopIfEmpty(generator);
+    }
   }
 
   /** Assertion-free because thread-local. */
