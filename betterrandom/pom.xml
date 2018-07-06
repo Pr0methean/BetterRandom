@@ -640,8 +640,8 @@
           <notimestamp>true</notimestamp>
           <show>protected</show>
           <links>
-            <link>https://docs.oracle.com/javase/8/docs/api</link>
-            <link>https://google.github.io/guava/releases/19.0/api/docs</link>
+            <link>https://docs.oracle.com/javase/7/docs/api</link>
+            <link>https://google.github.io/guava/releases/${guava.version}/api/docs</link>
           </links>
           <tags>
             <tag>
