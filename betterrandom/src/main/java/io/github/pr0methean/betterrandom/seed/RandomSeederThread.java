@@ -1,5 +1,6 @@
 package io.github.pr0methean.betterrandom.seed;
 
+import com.google.common.cache.CacheBuilder;
 import io.github.pr0methean.betterrandom.ByteArrayReseedableRandom;
 import io.github.pr0methean.betterrandom.EntropyCountingRandom;
 import io.github.pr0methean.betterrandom.util.LooperThread;
@@ -15,6 +16,7 @@ import java.util.Map;
 import java.util.Random;
 import java.util.Set;
 import java.util.WeakHashMap;
+import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
@@ -33,9 +35,13 @@ public final class RandomSeederThread extends LooperThread {
 
   private static final ExecutorService WAKER_UPPER = Executors.newSingleThreadExecutor();
   private static final Logger LOG = LoggerFactory.getLogger(RandomSeederThread.class);
-  @SuppressWarnings("StaticCollection") private static final Map<SeedGenerator, RandomSeederThread>
-      INSTANCES =
-      Collections.synchronizedMap(new WeakHashMap<SeedGenerator, RandomSeederThread>(1));
+  @SuppressWarnings("StaticCollection") private static final ConcurrentMap<SeedGenerator, RandomSeederThread> INSTANCES
+      = CacheBuilder.newBuilder()
+          .weakKeys()
+          .weakValues()
+          .initialCapacity(1)
+          .<SeedGenerator, RandomSeederThread>build()
+          .asMap();
   private static final long POLL_INTERVAL = 60;
   private final SeedGenerator seedGenerator;
   private final Condition waitWhileEmpty = lock.newCondition();
