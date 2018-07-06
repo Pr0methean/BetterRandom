@@ -729,16 +729,7 @@ public abstract class BaseRandom extends Random
    * @param bits The number of bits of entropy spent.
    */
   protected void debitEntropy(final long bits) {
-    if (entropyBits.addAndGet(-bits) <= 0) {
-      asyncReseedIfPossible();
-    }
-  }
-
-  private void asyncReseedIfPossible() {
-    final SeedGenerator currentSeedGenerator = seedGenerator.get();
-    if (currentSeedGenerator != null) {
-      RandomSeederThread.asyncReseed(currentSeedGenerator, this);
-    }
+    entropyBits.addAndGet(-bits);
   }
 
   /**
