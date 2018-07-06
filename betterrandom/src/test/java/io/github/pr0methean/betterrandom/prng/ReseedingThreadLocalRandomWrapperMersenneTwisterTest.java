@@ -68,7 +68,7 @@ public class ReseedingThreadLocalRandomWrapperMersenneTwisterTest
   @Override @Test public void testSetSeedAfterNextLong() throws SeedException {
     final BaseRandom prng = createRng();
     prng.nextLong();
-    prng.setSeed(SEMIFAKE_SEED_GENERATOR.generateSeed(8));
+    prng.setSeed(SEMIFAKE_SEED_GENERATOR.generateSeed(16));
     prng.nextLong();
   }
 
@@ -76,7 +76,7 @@ public class ReseedingThreadLocalRandomWrapperMersenneTwisterTest
   @Override @Test public void testSetSeedAfterNextInt() throws SeedException {
     final BaseRandom prng = createRng();
     prng.nextInt();
-    prng.setSeed(SEMIFAKE_SEED_GENERATOR.generateSeed(8));
+    prng.setSeed(SEMIFAKE_SEED_GENERATOR.generateSeed(16));
     prng.nextInt();
   }
 
