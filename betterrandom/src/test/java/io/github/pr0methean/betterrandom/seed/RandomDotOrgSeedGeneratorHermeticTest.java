@@ -13,7 +13,6 @@ import static org.powermock.api.mockito.PowerMockito.spy;
 import static org.testng.Assert.assertTrue;
 import static org.testng.AssertJUnit.assertEquals;
 
-import java.io.IOException;
 import java.net.Proxy;
 import java.net.URL;
 import java.nio.charset.Charset;

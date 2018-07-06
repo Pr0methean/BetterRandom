@@ -100,6 +100,11 @@ public class SplittableRandomAdapter extends DirectSplittableRandomAdapter {
     try {
       splittableRandoms = new ThreadLocal<SplittableRandom>() {
         @Override public SplittableRandom initialValue() {
+          /*
+           * Necessary because split() itself is not thread-safe: called on the same instance from 2
+           * different threads, it might return equivalent instances to both.
+           */
+          underlying = underlying.split();
           return underlying.split();
         }
       };

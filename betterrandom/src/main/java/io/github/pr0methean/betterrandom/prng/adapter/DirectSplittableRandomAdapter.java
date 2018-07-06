@@ -25,7 +25,7 @@ public abstract class DirectSplittableRandomAdapter extends BaseSplittableRandom
    * {@link SplittableRandomAdapter}) and have the splits delegated to.
    */
   @SuppressWarnings("InstanceVariableMayNotBeInitializedByReadObject")
-  protected transient SplittableRandom underlying; // a SplittableRandom is not Serializable
+  protected transient volatile SplittableRandom underlying; // SplittableRandom isn't Serializable
 
   /**
    * Wraps a {@link SplittableRandom} with the specified seed.

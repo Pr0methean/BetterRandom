@@ -22,7 +22,6 @@ import io.github.pr0methean.betterrandom.seed.DefaultSeedGenerator;
 import io.github.pr0methean.betterrandom.seed.SeedException;
 import io.github.pr0methean.betterrandom.seed.SeedGenerator;
 import io.github.pr0methean.betterrandom.util.BinaryUtils;
-import java.util.Arrays;
 
 /**
  * Java port of the <a href="http://home.southernct.edu/~pasqualonia1/ca/report.html"

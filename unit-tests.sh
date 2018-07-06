@@ -96,11 +96,5 @@ if [ "$STATUS" = 0 ]; then
       PATH="${NO_GIT_PATH}" mvn ${MAYBE_ANDROID_FLAG} integration-test -e
   STATUS=$?
 fi
-if [ "$STATUS" != 0 ]; then
-  echo ""
-  echo "[unit-tests.sh] SUREFIRE LOGS"
-  echo "[unit-tests.sh] ============="
-  cat /home/travis/build/Pr0methean/BetterRandom/betterrandom/target/surefire-reports/*
-fi
 cd ..
 exit "$STATUS"

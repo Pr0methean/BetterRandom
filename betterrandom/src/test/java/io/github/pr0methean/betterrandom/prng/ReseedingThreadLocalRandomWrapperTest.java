@@ -1,7 +1,6 @@
 package io.github.pr0methean.betterrandom.prng;
 
 import static io.github.pr0methean.betterrandom.TestUtils.assertGreaterOrEqual;
-import static io.github.pr0methean.betterrandom.seed.DefaultSeedGenerator.DEFAULT_SEED_GENERATOR;
 
 import io.github.pr0methean.betterrandom.prng.RandomTestUtils.EntropyCheckMode;
 import io.github.pr0methean.betterrandom.seed.SeedException;
@@ -14,7 +13,7 @@ public class ReseedingThreadLocalRandomWrapperTest extends ThreadLocalRandomWrap
 
   @Override public void testWrapLegacy() throws SeedException {
     ReseedingThreadLocalRandomWrapper
-        .wrapLegacy(new RandomColonColonNewForLong(), DEFAULT_SEED_GENERATOR).nextInt();
+        .wrapLegacy(new RandomColonColonNewForLong(), SEMIFAKE_SEED_GENERATOR).nextInt();
   }
 
   @Override protected EntropyCheckMode getEntropyCheckMode() {
@@ -26,7 +25,7 @@ public class ReseedingThreadLocalRandomWrapperTest extends ThreadLocalRandomWrap
   }
 
   @Override @Test public void testReseeding() {
-    final BaseRandom rng = new ReseedingThreadLocalRandomWrapper(DEFAULT_SEED_GENERATOR,
+    final BaseRandom rng = new ReseedingThreadLocalRandomWrapper(SEMIFAKE_SEED_GENERATOR,
         new MersenneTwisterRandomColonColonNew());
     rng.nextLong();
     try {
@@ -58,7 +57,7 @@ public class ReseedingThreadLocalRandomWrapperTest extends ThreadLocalRandomWrap
   @Override @Test public void testSetSeedAfterNextLong() throws SeedException {
     final BaseRandom prng = createRng();
     prng.nextLong();
-    prng.setSeed(DEFAULT_SEED_GENERATOR.generateSeed(16));
+    prng.setSeed(SEMIFAKE_SEED_GENERATOR.generateSeed(16));
     prng.nextLong();
   }
 
@@ -66,12 +65,12 @@ public class ReseedingThreadLocalRandomWrapperTest extends ThreadLocalRandomWrap
   @Override @Test public void testSetSeedAfterNextInt() throws SeedException {
     final BaseRandom prng = createRng();
     prng.nextInt();
-    prng.setSeed(DEFAULT_SEED_GENERATOR.generateSeed(16));
+    prng.setSeed(SEMIFAKE_SEED_GENERATOR.generateSeed(16));
     prng.nextInt();
   }
 
   @Override protected BaseRandom createRng() throws SeedException {
-    return new ReseedingThreadLocalRandomWrapper(DEFAULT_SEED_GENERATOR,
+    return new ReseedingThreadLocalRandomWrapper(SEMIFAKE_SEED_GENERATOR,
         new MersenneTwisterRandomColonColonNew());
   }
 
