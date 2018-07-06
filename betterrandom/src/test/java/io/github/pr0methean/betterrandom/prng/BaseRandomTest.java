@@ -343,12 +343,13 @@ public abstract class BaseRandomTest {
 
   @SuppressWarnings("BusyWait") @Test(timeOut = 60_000)
   public void testRandomSeederThreadIntegration() throws Exception {
+    final SeedGenerator seedGenerator = new SemiFakeSeedGenerator(new Random());
     final BaseRandom rng = createRng();
     final byte[] oldSeed = rng.getSeed();
     while (rng.getEntropyBits() > Long.SIZE) {
       rng.nextLong();
     }
-    rng.setSeedGenerator(DEFAULT_SEED_GENERATOR);
+    rng.setSeedGenerator(seedGenerator);
     try {
       int waits = 0;
       byte[] newSeed;
@@ -365,6 +366,7 @@ public abstract class BaseRandomTest {
       assertGreaterOrEqual(rng.getEntropyBits(), (newSeed.length * 8L) - 1);
     } finally {
       rng.setSeedGenerator(null);
+      RandomSeederThread.stopIfEmpty(seedGenerator);
     }
   }
 
