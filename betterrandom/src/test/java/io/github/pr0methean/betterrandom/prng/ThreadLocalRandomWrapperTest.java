@@ -95,7 +95,7 @@ public class ThreadLocalRandomWrapperTest extends BaseRandomTest {
 
   @Override protected BaseRandom createRng() throws SeedException {
     return new ThreadLocalRandomWrapper(
-        (Serializable & Supplier<BaseRandom>) MersenneTwisterRandom::new);
+        (Serializable & Supplier<BaseRandom>) Pcg64Random::new);
   }
 
   @Override protected BaseRandom createRng(final byte[] seed) throws SeedException {
