@@ -10,7 +10,7 @@
       <class name="io.github.pr0methean.betterrandom.seed.SecureRandomSeedGeneratorTest"/>
     </classes>
   </test>
-  <test name="PRNG" parallel="classes">
+  <test name="PRNG">
     <classes>
       <class name="io.github.pr0methean.betterrandom.prng.AesCounterRandom128Test"/>
       <class name="io.github.pr0methean.betterrandom.prng.AesCounterRandom160Test"/>
