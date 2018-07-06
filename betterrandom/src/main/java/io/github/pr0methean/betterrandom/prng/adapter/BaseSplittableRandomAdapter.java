@@ -58,7 +58,8 @@ public abstract class BaseSplittableRandomAdapter extends BaseRandom {
   @Override protected int next(final int bits) {
     debitEntropy(bits);
     return (bits >= 32) ? getSplittableRandom().nextInt()
-        : getSplittableRandom().nextInt(1 << (bits - 1));
+        : (bits == 31) ? getSplittableRandom().nextInt() >>> 1
+        : getSplittableRandom().nextInt(1 << bits);
   }
 
   /** Delegates to {@link SplittableRandom#nextInt(int) SplittableRandom.nextInt(256)}. */
