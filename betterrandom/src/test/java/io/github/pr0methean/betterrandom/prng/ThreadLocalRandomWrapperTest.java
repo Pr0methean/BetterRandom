@@ -78,9 +78,9 @@ public class ThreadLocalRandomWrapperTest extends BaseRandomTest {
 
   @Override public Map<Class<?>, Object> constructorParams() {
     final Map<Class<?>, Object> params = super.constructorParams();
-    params.put(Supplier.class, (Supplier<MersenneTwisterRandom>) MersenneTwisterRandom::new);
+    params.put(Supplier.class, (Supplier<BaseRandom>) Pcg64Random::new);
     params
-        .put(Function.class, (Function<byte[], MersenneTwisterRandom>) MersenneTwisterRandom::new);
+        .put(Function.class, (Function<byte[], BaseRandom>) Pcg64Random::new);
     return params;
   }
 

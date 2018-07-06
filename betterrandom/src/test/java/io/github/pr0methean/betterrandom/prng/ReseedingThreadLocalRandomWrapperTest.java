@@ -26,7 +26,7 @@ public class ReseedingThreadLocalRandomWrapperTest extends ThreadLocalRandomWrap
 
   @SuppressWarnings("BusyWait") @Override @Test public void testReseeding() {
     final BaseRandom rng = new ReseedingThreadLocalRandomWrapper(SEMIFAKE_SEED_GENERATOR,
-        (Serializable & Supplier<BaseRandom>) MersenneTwisterRandom::new);
+        (Serializable & Supplier<BaseRandom>) Pcg64Random::new);
     rng.nextLong();
     try {
       Thread.sleep(1000);
@@ -57,7 +57,7 @@ public class ReseedingThreadLocalRandomWrapperTest extends ThreadLocalRandomWrap
   @Override @Test public void testSetSeedAfterNextLong() throws SeedException {
     final BaseRandom prng = createRng();
     prng.nextLong();
-    prng.setSeed(SEMIFAKE_SEED_GENERATOR.generateSeed(16));
+    prng.setSeed(SEMIFAKE_SEED_GENERATOR.generateSeed(8));
     prng.nextLong();
   }
 
@@ -65,12 +65,12 @@ public class ReseedingThreadLocalRandomWrapperTest extends ThreadLocalRandomWrap
   @Override @Test public void testSetSeedAfterNextInt() throws SeedException {
     final BaseRandom prng = createRng();
     prng.nextInt();
-    prng.setSeed(SEMIFAKE_SEED_GENERATOR.generateSeed(16));
+    prng.setSeed(SEMIFAKE_SEED_GENERATOR.generateSeed(8));
     prng.nextInt();
   }
 
   @Override protected BaseRandom createRng() throws SeedException {
     return new ReseedingThreadLocalRandomWrapper(SEMIFAKE_SEED_GENERATOR,
-        (Serializable & Supplier<BaseRandom>) MersenneTwisterRandom::new);
+        (Serializable & Supplier<BaseRandom>) Pcg64Random::new);
   }
 }
