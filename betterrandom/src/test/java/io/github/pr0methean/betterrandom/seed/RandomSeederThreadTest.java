@@ -6,6 +6,7 @@ import static org.testng.Assert.assertFalse;
 import static org.testng.Assert.assertTrue;
 
 import java.util.Arrays;
+import java.util.Locale;
 import java.util.Random;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.Test;
@@ -15,22 +16,36 @@ public class RandomSeederThreadTest {
   private static final long TEST_SEED = 0x0123456789ABCDEFL;
   private static final int TEST_OUTPUT_SIZE = 20;
 
-  @Test public void testAddRemoveAndIsEmpty() throws Exception {
+  private static final boolean ON_MAC
+      = System.getProperty("os.name", "generic").toLowerCase(Locale.ENGLISH)
+          .contains("mac");
+
+  @Test(timeOut = 25_000) public void testAddRemoveAndIsEmpty() throws Exception {
     final Random prng = new Random(TEST_SEED);
     final byte[] bytesWithOldSeed = new byte[TEST_OUTPUT_SIZE];
     prng.nextBytes(bytesWithOldSeed);
     prng.setSeed(TEST_SEED); // Rewind
     final SeedGenerator seedGenerator = new FakeSeedGenerator();
-    assertTrue(RandomSeederThread.isEmpty(seedGenerator));
-    RandomSeederThread.add(seedGenerator, prng);
-    assertFalse(RandomSeederThread.isEmpty(seedGenerator));
-    Thread.sleep(1000);
-    assertFalse(RandomSeederThread.isEmpty(seedGenerator));
-    RandomSeederThread.remove(seedGenerator, prng);
-    assertTrue(RandomSeederThread.isEmpty(seedGenerator));
-    final byte[] bytesWithNewSeed = new byte[TEST_OUTPUT_SIZE];
-    prng.nextBytes(bytesWithNewSeed);
-    assertFalse(Arrays.equals(bytesWithOldSeed, bytesWithNewSeed));
+    try {
+      assertTrue(RandomSeederThread.isEmpty(seedGenerator));
+      RandomSeederThread.add(seedGenerator, prng);
+      assertFalse(RandomSeederThread.isEmpty(seedGenerator));
+      if (!ON_MAC) {
+        // FIXME: sleep gets interrupted on Travis-CI OSX
+        Thread.sleep(250);
+        assertFalse(RandomSeederThread.isEmpty(seedGenerator));
+      }
+      RandomSeederThread.remove(seedGenerator, prng);
+      assertTrue(RandomSeederThread.isEmpty(seedGenerator));
+      final byte[] bytesWithNewSeed = new byte[TEST_OUTPUT_SIZE];
+      prng.nextBytes(bytesWithNewSeed);
+      if (!ON_MAC) {
+        // FIXME: Fails without the Thread.sleep call
+        assertFalse(Arrays.equals(bytesWithOldSeed, bytesWithNewSeed));
+      }
+    } finally {
+      RandomSeederThread.stopIfEmpty(seedGenerator);
+    }
   }
 
   @Test public void testStopIfEmpty() throws Exception {
@@ -41,7 +56,6 @@ public class RandomSeederThreadTest {
     assertTrue(RandomSeederThread.hasInstance(seedGenerator));
     RandomSeederThread.remove(seedGenerator, prng);
     RandomSeederThread.stopIfEmpty(seedGenerator);
-    Thread.sleep(1000);
     assertFalse(RandomSeederThread.hasInstance(seedGenerator));
   }
 
@@ -58,7 +72,6 @@ public class RandomSeederThreadTest {
     assertTrue(RandomSeederThread.hasInstance(addedToAndRemoved));
     assertTrue(RandomSeederThread.hasInstance(addedToAndLeft));
     stopAllEmpty();
-    Thread.sleep(500);
     assertFalse(RandomSeederThread.hasInstance(neverAddedTo));
     assertFalse(RandomSeederThread.hasInstance(addedToAndRemoved));
     assertTrue(RandomSeederThread.hasInstance(addedToAndLeft));
@@ -110,6 +123,7 @@ public class RandomSeederThreadTest {
   }
 
   @AfterMethod public void tearDown() {
+    stopAllEmpty();
     System.gc();
     stopAllEmpty();
   }

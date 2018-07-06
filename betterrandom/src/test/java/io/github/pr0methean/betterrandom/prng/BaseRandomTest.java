@@ -34,6 +34,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
+import java.util.SortedSet;
+import java.util.TreeSet;
 import java.util.concurrent.ConcurrentSkipListSet;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
@@ -123,8 +125,6 @@ public abstract class BaseRandomTest {
   private static final double UPPER_BOUND_FOR_ROUNDING_TEST =
       Double.longBitsToDouble(Double.doubleToLongBits(1.0) + 3);
   protected final ForkJoinPool pool = new ForkJoinPool(2);
-  protected final ConcurrentSkipListSet<Double> sequentialOutput = new ConcurrentSkipListSet<>();
-  protected final ConcurrentSkipListSet<Double> parallelOutput = new ConcurrentSkipListSet<>();
 
   @SafeVarargs
   private static <E> void testGeneratesAll(final Supplier<E> generator, final E... expected) {
@@ -385,12 +385,13 @@ public abstract class BaseRandomTest {
 
   @SuppressWarnings("BusyWait") @Test(timeOut = 60_000)
   public void testRandomSeederThreadIntegration() throws Exception {
+    final SeedGenerator seedGenerator = new SemiFakeSeedGenerator(new Random());
     final BaseRandom rng = createRng();
     final byte[] oldSeed = rng.getSeed();
     while (rng.getEntropyBits() > Long.SIZE) {
       rng.nextLong();
     }
-    rng.setSeedGenerator(DEFAULT_SEED_GENERATOR);
+    rng.setSeedGenerator(seedGenerator);
     try {
       int waits = 0;
       byte[] newSeed;
@@ -407,6 +408,7 @@ public abstract class BaseRandomTest {
       assertGreaterOrEqual(rng.getEntropyBits(), (newSeed.length * 8L) - 1);
     } finally {
       rng.setSeedGenerator(null);
+      RandomSeederThread.stopIfEmpty(seedGenerator);
     }
   }
 
@@ -799,8 +801,8 @@ public abstract class BaseRandomTest {
     for (final NamedFunction<Random, Double> supplier : functions) {
       for (int i = 0; i < 5; i++) {
         // This loop is necessary to control the false pass rate, especially during mutation testing.
-        runSequential(supplier, supplier, seed);
-        runParallel(supplier, supplier, seed, 10, 1000);
+        SortedSet<Double> sequentialOutput = runSequential(supplier, supplier, seed);
+        SortedSet<Double> parallelOutput = runParallel(supplier, supplier, seed, 10, 1000);
         assertEquals(sequentialOutput, parallelOutput,
             "output differs between sequential & parallel calls to " + supplier);
       }
@@ -818,30 +820,32 @@ public abstract class BaseRandomTest {
     }
   }
 
-  protected void runParallel(final NamedFunction<Random, Double> supplier1,
+  protected SortedSet<Double> runParallel(final NamedFunction<Random, Double> supplier1,
       final NamedFunction<Random, Double> supplier2, final byte[] seed, int timeoutSec,
       int iterations) {
     // See https://www.yegor256.com/2018/03/27/how-to-test-thread-safety.html for why a
     // CountDownLatch is used.
     final CountDownLatch latch = new CountDownLatch(2);
     final Random parallelPrng = createRng(seed);
-    parallelOutput.clear();
-    pool.execute(new GeneratorForkJoinTask(parallelPrng, parallelOutput, supplier1, latch, iterations));
-    pool.execute(new GeneratorForkJoinTask(parallelPrng, parallelOutput, supplier2, latch, iterations));
+    final SortedSet<Double> output = new ConcurrentSkipListSet<>();
+    pool.execute(new GeneratorForkJoinTask(parallelPrng, output, supplier1, latch, iterations));
+    pool.execute(new GeneratorForkJoinTask(parallelPrng, output, supplier2, latch, iterations));
     assertTrue(pool.awaitQuiescence(timeoutSec, TimeUnit.SECONDS),
         String.format("Timed out waiting for %s and %s to finish", supplier1, supplier2));
+    return output;
   }
 
-  protected void runSequential(final NamedFunction<Random, Double> supplier1,
+  protected SortedSet<Double> runSequential(final NamedFunction<Random, Double> supplier1,
       final NamedFunction<Random, Double> supplier2, final byte[] seed) {
     final Random sequentialPrng = createRng(seed);
-    sequentialOutput.clear();
-    new GeneratorForkJoinTask(sequentialPrng, sequentialOutput, supplier1, new CountDownLatch(1),
+    final SortedSet<Double> output = new TreeSet<>();
+    new GeneratorForkJoinTask(sequentialPrng, output, supplier1, new CountDownLatch(1),
         1000)
         .exec();
-    new GeneratorForkJoinTask(sequentialPrng, sequentialOutput, supplier2, new CountDownLatch(1),
+    new GeneratorForkJoinTask(sequentialPrng, output, supplier2, new CountDownLatch(1),
         1000)
         .exec();
+    return output;
   }
 
   @AfterClass public void classTearDown() {
@@ -862,12 +866,12 @@ public abstract class BaseRandomTest {
 
     private static final long serialVersionUID = 9155874155769888368L;
     private final Random prng;
-    private final ConcurrentSkipListSet<T> set;
+    private final SortedSet<T> set;
     private final NamedFunction<Random, T> function;
     private final CountDownLatch latch;
     private final int iterations;
 
-    public GeneratorForkJoinTask(final Random prng, final ConcurrentSkipListSet<T> set,
+    public GeneratorForkJoinTask(final Random prng, final SortedSet<T> set,
         final NamedFunction<Random, T> function, CountDownLatch latch, int iterations) {
       this.prng = prng;
       this.set = set;

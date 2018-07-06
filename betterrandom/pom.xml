@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--suppress XmlHighlighting -->
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <profiles>
     <!-- GPG Signature on release -->
@@ -82,7 +84,8 @@
   <artifactId>BetterRandom-Java7</artifactId>
   <version>2.3.12-SNAPSHOT</version>
   <name>BetterRandom</name>
-  <description>BetterRandom is a library designed to help improve the quality and performance of random-number generation on Java.
+  <description>BetterRandom is a library designed to help improve the quality and performance of
+    random-number generation on Java.
   </description>
   <url>https://github.com/Pr0methean/BetterRandom</url>
 
@@ -337,9 +340,10 @@
               <suiteXmlFile>src/test/testng.xml</suiteXmlFile>
             </suiteXmlFiles>
             <trimStackTrace>false</trimStackTrace>
-            <parallel>methods</parallel>
             <forkedProcessTimeoutInSeconds>600</forkedProcessTimeoutInSeconds>
             <forkedProcessExitTimeoutInSeconds>600</forkedProcessExitTimeoutInSeconds>
+            <parallel>tests</parallel>
+            <perCoreThreadCount>1</perCoreThreadCount>
             <properties>
               <property>
                 <name>surefire.testng.verbose</name>
@@ -359,6 +363,8 @@
             <suiteXmlFiles>
               <suiteXmlFile>src/test/testng.xml</suiteXmlFile>
             </suiteXmlFiles>
+            <parallel>tests</parallel>
+            <perCoreThreadCount>1</perCoreThreadCount>
           </configuration>
           <executions>
             <execution>
