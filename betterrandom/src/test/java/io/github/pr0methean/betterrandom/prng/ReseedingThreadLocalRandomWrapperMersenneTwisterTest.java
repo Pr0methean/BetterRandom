@@ -6,10 +6,20 @@ import io.github.pr0methean.betterrandom.prng.RandomTestUtils.EntropyCheckMode;
 import io.github.pr0methean.betterrandom.seed.RandomSeederThread;
 import io.github.pr0methean.betterrandom.seed.SeedException;
 import java.util.Arrays;
+import java.util.Random;
+import java8.util.function.LongFunction;
 import org.testng.annotations.Test;
 
 public class ReseedingThreadLocalRandomWrapperMersenneTwisterTest
     extends ThreadLocalRandomWrapperMersenneTwisterTest {
+
+  @Override public void testWrapLegacy() throws SeedException {
+    ReseedingThreadLocalRandomWrapper.wrapLegacy(new LongFunction<Random>() {
+      @Override public Random apply(long seed) {
+        return new Random(seed);
+      }
+    }, SEMIFAKE_SEED_GENERATOR).nextInt();
+  }
 
   @Override protected EntropyCheckMode getEntropyCheckMode() {
     return EntropyCheckMode.LOWER_BOUND;
@@ -55,7 +65,7 @@ public class ReseedingThreadLocalRandomWrapperMersenneTwisterTest
   @Override @Test public void testSetSeedAfterNextLong() throws SeedException {
     final BaseRandom prng = createRng();
     prng.nextLong();
-    prng.setSeed(SEMIFAKE_SEED_GENERATOR.generateSeed(8));
+    prng.setSeed(SEMIFAKE_SEED_GENERATOR.generateSeed(16));
     prng.nextLong();
   }
 
@@ -63,7 +73,7 @@ public class ReseedingThreadLocalRandomWrapperMersenneTwisterTest
   @Override @Test public void testSetSeedAfterNextInt() throws SeedException {
     final BaseRandom prng = createRng();
     prng.nextInt();
-    prng.setSeed(SEMIFAKE_SEED_GENERATOR.generateSeed(8));
+    prng.setSeed(SEMIFAKE_SEED_GENERATOR.generateSeed(16));
     prng.nextInt();
   }
 
