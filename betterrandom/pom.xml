@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--suppress XmlHighlighting -->
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <profiles>
     <profile>
@@ -184,26 +186,57 @@
         </dependency>
       </dependencies>
     </profile>
+    <profile>
+      <id>osx</id>
+      <activation>
+        <os>
+          <family>mac</family>
+        </os>
+      </activation>
+      <build>
+        <pluginManagement>
+          <plugins>
+            <plugin>
+              <groupId>org.apache.maven.plugins</groupId>
+              <artifactId>maven-surefire-plugin</artifactId>
+              <version>2.21.0</version>
+              <configuration>
+                <parallel>none</parallel>
+              </configuration>
+            </plugin>
+            <plugin>
+              <groupId>org.apache.maven.plugins</groupId>
+              <artifactId>maven-failsafe-plugin</artifactId>
+              <version>2.17</version>
+              <configuration>
+                <parallel>none</parallel>
+              </configuration>
+            </plugin>
+          </plugins>
+        </pluginManagement>
+      </build>
+    </profile>
   </profiles>
   <packaging>jar</packaging>
   <properties>
-    <argLine> </argLine>
+    <argLine></argLine>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <prefix />
+    <prefix/>
     <github.global.server>github</github.global.server>
     <jsr305.version>3.0.2</jsr305.version>
     <guava.version>25.0</guava.version>
     <jacoco.version>0.8.1</jacoco.version>
     <powermock.version>2.0.0-beta.5</powermock.version>
     <mockito.version>2.19.0</mockito.version>
-    <test.jdk8.argline> </test.jdk8.argline>
+    <test.jdk8.argline></test.jdk8.argline>
     <test.jdk9.argline>--add-opens java.xml/jdk.xml.internal=ALL-UNNAMED</test.jdk9.argline>
   </properties>
   <groupId>io.github.pr0methean.betterrandom</groupId>
   <artifactId>BetterRandom</artifactId>
   <version>2.3.12-SNAPSHOT</version>
   <name>BetterRandom</name>
-  <description>BetterRandom is a library designed to help improve the quality and performance of random-number generation on Java.
+  <description>BetterRandom is a library designed to help improve the quality and performance of
+    random-number generation on Java.
   </description>
   <url>https://github.com/Pr0methean/BetterRandom</url>
 
