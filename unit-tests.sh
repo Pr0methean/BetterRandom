@@ -91,11 +91,5 @@ if [ "${STATUS}" = 0 ]; then
     STATUS=$?
   fi
 fi
-if [ "$STATUS" != 0 ]; then
-  echo ""
-  echo "[unit-tests.sh] SUREFIRE LOGS"
-  echo "[unit-tests.sh] ============="
-  cat /home/travis/build/Pr0methean/BetterRandom/betterrandom/target/surefire-reports/*
-fi
 cd ..
 exit "$STATUS"
