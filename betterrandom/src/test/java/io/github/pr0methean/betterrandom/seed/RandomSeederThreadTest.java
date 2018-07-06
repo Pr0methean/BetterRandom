@@ -15,22 +15,26 @@ public class RandomSeederThreadTest {
   private static final long TEST_SEED = 0x0123456789ABCDEFL;
   private static final int TEST_OUTPUT_SIZE = 20;
 
-  @Test public void testAddRemoveAndIsEmpty() throws Exception {
+  @Test(timeOut = 15_000) public void testAddRemoveAndIsEmpty() throws Exception {
     final Random prng = new Random(TEST_SEED);
     final byte[] bytesWithOldSeed = new byte[TEST_OUTPUT_SIZE];
     prng.nextBytes(bytesWithOldSeed);
     prng.setSeed(TEST_SEED); // Rewind
     final SeedGenerator seedGenerator = new FakeSeedGenerator();
-    assertTrue(RandomSeederThread.isEmpty(seedGenerator));
-    RandomSeederThread.add(seedGenerator, prng);
-    assertFalse(RandomSeederThread.isEmpty(seedGenerator));
-    Thread.sleep(1000);
-    assertFalse(RandomSeederThread.isEmpty(seedGenerator));
-    RandomSeederThread.remove(seedGenerator, prng);
-    assertTrue(RandomSeederThread.isEmpty(seedGenerator));
-    final byte[] bytesWithNewSeed = new byte[TEST_OUTPUT_SIZE];
-    prng.nextBytes(bytesWithNewSeed);
-    assertFalse(Arrays.equals(bytesWithOldSeed, bytesWithNewSeed));
+    try {
+      assertTrue(RandomSeederThread.isEmpty(seedGenerator));
+      RandomSeederThread.add(seedGenerator, prng);
+      assertFalse(RandomSeederThread.isEmpty(seedGenerator));
+      Thread.sleep(1000);
+      assertFalse(RandomSeederThread.isEmpty(seedGenerator));
+      RandomSeederThread.remove(seedGenerator, prng);
+      assertTrue(RandomSeederThread.isEmpty(seedGenerator));
+      final byte[] bytesWithNewSeed = new byte[TEST_OUTPUT_SIZE];
+      prng.nextBytes(bytesWithNewSeed);
+      assertFalse(Arrays.equals(bytesWithOldSeed, bytesWithNewSeed));
+    } finally {
+      RandomSeederThread.stopIfEmpty(seedGenerator);
+    }
   }
 
   @Test public void testStopIfEmpty() throws Exception {
