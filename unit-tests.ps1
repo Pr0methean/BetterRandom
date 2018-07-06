@@ -77,16 +77,7 @@ if ( $STATUS ) {
         $STATUS = $?
     }
 }
+cd ..
 if ( ! $STATUS ) {
-    echo ""
-    echo "[unit-tests.bat] SUREFIRE LOGS"
-    echo "[unit-tests.bat] ============="
-    foreach ($file in $(Get-ChildItem "target/surefire-reports")) {
-        echo ""
-        echo "File $file contents:"
-        echo $(Get-Content -Path "target/surefire-reports/$file")
-    }
     exit 1
-} else {
-    cd ..
 }
