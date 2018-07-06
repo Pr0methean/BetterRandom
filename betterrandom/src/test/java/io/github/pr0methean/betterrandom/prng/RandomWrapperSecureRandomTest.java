@@ -1,7 +1,6 @@
 package io.github.pr0methean.betterrandom.prng;
 
 import com.google.common.collect.ImmutableList;
-import io.github.pr0methean.betterrandom.seed.DefaultSeedGenerator;
 import io.github.pr0methean.betterrandom.seed.SeedException;
 import java.security.GeneralSecurityException;
 import java.security.NoSuchAlgorithmException;

@@ -15,11 +15,9 @@
 // ============================================================================
 package io.github.pr0methean.betterrandom.seed;
 
-import static org.testng.Assert.assertFalse;
 import static org.testng.Assert.assertTrue;
 
 import java.io.File;
-import org.testng.Reporter;
 import org.testng.SkipException;
 import org.testng.annotations.Test;
 
