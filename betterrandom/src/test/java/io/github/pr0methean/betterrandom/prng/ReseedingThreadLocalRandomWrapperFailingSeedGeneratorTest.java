@@ -18,6 +18,6 @@ public class ReseedingThreadLocalRandomWrapperFailingSeedGeneratorTest
 
   @Override protected BaseRandom createRng() throws SeedException {
     return new ReseedingThreadLocalRandomWrapper(FailingSeedGenerator.FAILING_SEED_GENERATOR,
-        new MersenneTwisterRandomColonColonNew());
+        new Pcg64RandomColonColonNew());
   }
 }

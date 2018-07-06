@@ -9,6 +9,8 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 import java.util.Random;
 import java.util.Set;
@@ -63,17 +65,17 @@ public final class RandomSeederThread extends LooperThread {
    */
   private static RandomSeederThread getInstance(final SeedGenerator seedGenerator) {
     RandomSeederThread instance;
-    synchronized (INSTANCES) {
-      instance = INSTANCES.get(seedGenerator);
-      if (instance == null) {
-        LOG.info("Creating a RandomSeederThread for {}", seedGenerator);
-        instance = new RandomSeederThread(seedGenerator);
-        instance.setName("RandomSeederThread for " + seedGenerator);
-        instance.setDaemon(true);
-        instance.setPriority(defaultPriority.get());
-        instance.start();
-      }
-      INSTANCES.put(seedGenerator, instance);
+    instance = INSTANCES.get(seedGenerator);
+    if (instance == null) {
+      LOG.info("Creating a RandomSeederThread for {}", seedGenerator);
+      instance = new RandomSeederThread(seedGenerator);
+      instance.setName("RandomSeederThread for " + seedGenerator);
+      instance.setDaemon(true);
+      instance.setPriority(defaultPriority.get());
+      instance.start();
+    }
+    if (!INSTANCES.replace(seedGenerator, null, instance)) {
+      instance.interrupt();
     }
     return instance;
   }
@@ -85,31 +87,17 @@ public final class RandomSeederThread extends LooperThread {
    *     otherwise.
    */
   public static boolean hasInstance(final SeedGenerator seedGenerator) {
-    synchronized (INSTANCES) {
-      return INSTANCES.containsKey(seedGenerator);
-    }
+    return INSTANCES.containsKey(seedGenerator);
   }
 
   /**
    * Shut down all instances with which no {@link Random} instances are registered.
    */
   public static void stopAllEmpty() {
-    final ArrayList<RandomSeederThread> toStop = new ArrayList<>();
-    do {
-      toStop.clear();
-      synchronized (INSTANCES) {
-        // This method is complicated because stopIfEmpty can't be called from inside this loop due
-        // to SynchronizedMap limitations.
-        for (final RandomSeederThread instance : INSTANCES.values()) {
-          if (instance.isEmpty()) {
-            toStop.add(instance);
-          }
-        }
-      }
-      for (final RandomSeederThread instance : toStop) {
-        instance.stopIfEmpty();
-      }
-    } while (!toStop.isEmpty());
+    final List<RandomSeederThread> toStop = new LinkedList<>(INSTANCES.values());
+    for (final RandomSeederThread instance : toStop) {
+      instance.stopIfEmpty();
+    }
   }
 
   /**
@@ -120,15 +108,12 @@ public final class RandomSeederThread extends LooperThread {
    * @return Whether or not the reseed was successfully scheduled.
    */
   public static boolean asyncReseed(final SeedGenerator seedGenerator, final Random random) {
-    synchronized (INSTANCES) {
-      return getInstance(seedGenerator).asyncReseed(random);
-    }
+    RandomSeederThread thread = getInstance(seedGenerator);
+    return thread != null && thread.asyncReseed(random);
   }
 
   public static boolean isEmpty(final SeedGenerator seedGenerator) {
-    synchronized (INSTANCES) {
-      return (!hasInstance(seedGenerator)) || getInstance(seedGenerator).isEmpty();
-    }
+    return (!hasInstance(seedGenerator)) || getInstance(seedGenerator).isEmpty();
   }
 
   /**
@@ -137,9 +122,15 @@ public final class RandomSeederThread extends LooperThread {
    * @param randoms One or more {@link Random} instances to be reseeded
    */
   public static void add(final SeedGenerator seedGenerator, final Random... randoms) {
-    synchronized (INSTANCES) {
-      getInstance(seedGenerator).add(randoms);
-    }
+    boolean notSucceeded = true;
+    do {
+      try {
+        getInstance(seedGenerator).add(randoms);
+        notSucceeded = false;
+      } catch (IllegalStateException ignored) {
+        // Get the new instance and try again.
+      }
+    } while (notSucceeded);
   }
 
   /**
@@ -149,11 +140,9 @@ public final class RandomSeederThread extends LooperThread {
    * @param randoms One or more {@link Random} instances to be reseeded
    */
   public static void remove(final SeedGenerator seedGenerator, final Random... randoms) {
-    synchronized (INSTANCES) {
-      final RandomSeederThread thread = INSTANCES.get(seedGenerator);
-      if (thread != null) {
-        thread.remove(randoms);
-      }
+    final RandomSeederThread thread = INSTANCES.get(seedGenerator);
+    if (thread != null) {
+      thread.remove(randoms);
     }
   }
 
@@ -177,10 +166,9 @@ public final class RandomSeederThread extends LooperThread {
   }
 
   public static void stopIfEmpty(final SeedGenerator seedGenerator) {
-    synchronized (INSTANCES) {
-      if (hasInstance(seedGenerator)) {
-        getInstance(seedGenerator).stopIfEmpty();
-      }
+    final RandomSeederThread thread = INSTANCES.get(seedGenerator);
+    if (thread != null) {
+      thread.stopIfEmpty();
     }
   }
 
@@ -191,15 +179,11 @@ public final class RandomSeederThread extends LooperThread {
    * @return Whether or not the reseed was successfully scheduled.
    */
   private boolean asyncReseed(final Random random) {
-    if (!(random instanceof EntropyCountingRandom)) {
+    if (!isAlive() || !prngs.contains(random)) {
+      return false;
+    }
+    if (random instanceof EntropyCountingRandom) {
       // Reseed of non-entropy-counting Random happens every iteration anyway
-      return prngs.contains(random);
-    }
-    final boolean eligible;
-    synchronized (prngs) {
-      eligible = prngs.contains(random);
-    }
-    if (eligible) {
       WAKER_UPPER.submit(new Runnable() {
         @Override public void run() {
           lock.lock();
@@ -210,10 +194,8 @@ public final class RandomSeederThread extends LooperThread {
           }
         }
       });
-      return true;
-    } else {
-      return false;
     }
+    return true;
   }
 
   @SuppressWarnings({"InfiniteLoopStatement", "ObjectAllocationInLoop", "AwaitNotInLoop"}) @Override
@@ -272,12 +254,8 @@ public final class RandomSeederThread extends LooperThread {
   }
 
   @Override public void interrupt() {
-    synchronized (INSTANCES) {
-      // Ensure dying instance is unregistered
-      if (INSTANCES.get(seedGenerator) == this) {
-        INSTANCES.remove(seedGenerator);
-      }
-    }
+    // Ensure dying instance is unregistered
+    INSTANCES.remove(seedGenerator, this);
     super.interrupt();
     lock.lock();
     try {
@@ -308,11 +286,11 @@ public final class RandomSeederThread extends LooperThread {
    */
   private void add(final Random... randoms) {
     lock.lock();
-    if ((getState() == State.TERMINATED) || isInterrupted()) {
-      throw new IllegalStateException("Already shut down");
-    }
-    Collections.addAll(prngs, randoms);
     try {
+      if ((getState() == State.TERMINATED) || isInterrupted()) {
+        throw new IllegalStateException("Already shut down");
+      }
+      Collections.addAll(prngs, randoms);
       waitForEntropyDrain.signalAll();
       waitWhileEmpty.signalAll();
     } finally {

@@ -78,9 +78,9 @@ public class ThreadLocalRandomWrapperTest extends BaseRandomTest {
   }
 
   @Override public Map<Class<?>, Object> constructorParams() {
-    Map<Class<?>, Object> params = super.constructorParams();
-    params.put(Supplier.class, new MersenneTwisterRandomColonColonNew());
-    params.put(Function.class, new ByteArrayRandomConstructor());
+    final Map<Class<?>, Object> params = super.constructorParams();
+    params.put(Supplier.class, new Pcg64RandomColonColonNew());
+    params.put(Function.class, new Pcg64RandomColonColonNew());
     return params;
   }
 
@@ -102,25 +102,22 @@ public class ThreadLocalRandomWrapperTest extends BaseRandomTest {
   }
 
   @Override protected BaseRandom createRng() throws SeedException {
-    return new ThreadLocalRandomWrapper(new MersenneTwisterRandomColonColonNew());
+    return new ThreadLocalRandomWrapper(new Pcg64RandomColonColonNew());
   }
 
   @Override protected BaseRandom createRng(final byte[] seed) throws SeedException {
     return createRng();
   }
 
-  protected static class MersenneTwisterRandomColonColonNew
-      implements SerializableSupplier<MersenneTwisterRandom> {
+  protected static class Pcg64RandomColonColonNew
+      implements SerializableSupplier<BaseRandom>, Function<byte[], BaseRandom> {
 
-    @Override public MersenneTwisterRandom get() {
-      return new MersenneTwisterRandom();
+    @Override public BaseRandom get() {
+      return new Pcg64Random();
     }
-  }
-
-  private static class ByteArrayRandomConstructor implements Function<byte[], BaseRandom> {
 
     @Override public BaseRandom apply(byte[] seed) {
-      return new MersenneTwisterRandom(seed);
+      return new Pcg64Random(seed);
     }
   }
 }

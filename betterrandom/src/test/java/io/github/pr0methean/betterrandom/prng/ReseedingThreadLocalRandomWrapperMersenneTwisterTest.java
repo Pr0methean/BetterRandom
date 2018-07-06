@@ -2,19 +2,26 @@ package io.github.pr0methean.betterrandom.prng;
 
 import static io.github.pr0methean.betterrandom.TestUtils.assertGreaterOrEqual;
 
+import io.github.pr0methean.betterrandom.DeadlockWatchdogThread;
 import io.github.pr0methean.betterrandom.prng.RandomTestUtils.EntropyCheckMode;
 import io.github.pr0methean.betterrandom.seed.RandomSeederThread;
 import io.github.pr0methean.betterrandom.seed.SeedException;
+import java.io.Serializable;
 import java.util.Arrays;
 import java.util.Random;
-import java8.util.function.LongFunction;
+import java.util.function.Supplier;
+import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
-public class ReseedingThreadLocalRandomWrapperTest extends ThreadLocalRandomWrapperTest {
+public class ReseedingThreadLocalRandomWrapperMersenneTwisterTest
+    extends ThreadLocalRandomWrapperMersenneTwisterTest {
+
+  @BeforeClass public void setUp() {
+    DeadlockWatchdogThread.ensureStarted(); // FIXME: Remove once bug is fixed
+  }
 
   @Override public void testWrapLegacy() throws SeedException {
-    ReseedingThreadLocalRandomWrapper
-        .wrapLegacy(new RandomColonColonNewForLong(), SEMIFAKE_SEED_GENERATOR).nextInt();
+    ReseedingThreadLocalRandomWrapper.wrapLegacy(Random::new, SEMIFAKE_SEED_GENERATOR).nextInt();
   }
 
   @Override protected EntropyCheckMode getEntropyCheckMode() {
@@ -25,13 +32,13 @@ public class ReseedingThreadLocalRandomWrapperTest extends ThreadLocalRandomWrap
     return ReseedingThreadLocalRandomWrapper.class;
   }
 
-  @Override @Test public void testReseeding() {
+  @SuppressWarnings("BusyWait") @Override @Test public void testReseeding() {
     final BaseRandom rng = new ReseedingThreadLocalRandomWrapper(SEMIFAKE_SEED_GENERATOR,
-        new Pcg64RandomColonColonNew());
+        (Serializable & Supplier<BaseRandom>) MersenneTwisterRandom::new);
     rng.nextLong();
     try {
       Thread.sleep(1000);
-    } catch (InterruptedException e) {
+    } catch (final InterruptedException e) {
       throw new RuntimeException(e);
     }
     final byte[] oldSeed = rng.getSeed();
@@ -43,7 +50,7 @@ public class ReseedingThreadLocalRandomWrapperTest extends ThreadLocalRandomWrap
         Thread.sleep(10);
         newSeed = rng.getSeed();
       } while (Arrays.equals(newSeed, oldSeed));
-      Thread.sleep(10);
+      Thread.sleep(100);
       assertGreaterOrEqual(rng.getEntropyBits(), (newSeed.length * 8L) - 1);
     } catch (final InterruptedException e) {
       throw new RuntimeException(e);
@@ -53,7 +60,7 @@ public class ReseedingThreadLocalRandomWrapperTest extends ThreadLocalRandomWrap
   }
 
   /** Assertion-free since reseeding may cause divergent output. */
-  @Test(timeOut = 10000) public void testSetSeedLong() {
+  @Override @Test(timeOut = 10000) public void testSetSeedLong() {
     createRng().setSeed(0x0123456789ABCDEFL);
   }
 
@@ -75,13 +82,6 @@ public class ReseedingThreadLocalRandomWrapperTest extends ThreadLocalRandomWrap
 
   @Override protected BaseRandom createRng() throws SeedException {
     return new ReseedingThreadLocalRandomWrapper(SEMIFAKE_SEED_GENERATOR,
-        new Pcg64RandomColonColonNew());
-  }
-
-  private static class RandomColonColonNewForLong implements LongFunction<Random> {
-
-    @Override public Random apply(long seed) {
-      return new Random(seed);
-    }
+        (Serializable & Supplier<BaseRandom>) MersenneTwisterRandom::new);
   }
 }

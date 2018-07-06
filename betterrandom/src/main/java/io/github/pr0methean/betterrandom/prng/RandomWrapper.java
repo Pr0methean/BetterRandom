@@ -127,7 +127,9 @@ public class RandomWrapper extends BaseRandom {
   }
 
   @Override protected int next(final int bits) {
-    return (bits >= 32) ? getWrapped().nextInt() : getWrapped().nextInt(1 << bits);
+    return (bits >= 32) ? getWrapped().nextInt()
+        : (bits == 31) ? getWrapped().nextInt() >>> 1
+            : getWrapped().nextInt(1 << bits);
   }
 
   /**
