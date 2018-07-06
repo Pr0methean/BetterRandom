@@ -1,9 +1,7 @@
 package io.github.pr0methean.betterrandom.prng;
 
-import static io.github.pr0methean.betterrandom.seed.DefaultSeedGenerator.DEFAULT_SEED_GENERATOR;
 import static org.testng.Assert.assertEquals;
 
-import io.github.pr0methean.betterrandom.seed.DefaultSeedGenerator;
 import io.github.pr0methean.betterrandom.seed.SeedException;
 import io.github.pr0methean.betterrandom.util.CloneViaSerialization;
 import java.io.Serializable;
