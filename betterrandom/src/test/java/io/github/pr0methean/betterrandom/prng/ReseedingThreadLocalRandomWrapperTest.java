@@ -4,6 +4,7 @@ import static io.github.pr0methean.betterrandom.TestUtils.assertGreaterOrEqual;
 
 import io.github.pr0methean.betterrandom.DeadlockWatchdogThread;
 import io.github.pr0methean.betterrandom.prng.RandomTestUtils.EntropyCheckMode;
+import io.github.pr0methean.betterrandom.seed.RandomSeederThread;
 import io.github.pr0methean.betterrandom.seed.SeedException;
 import java.io.Serializable;
 import java.util.Arrays;
@@ -40,8 +41,9 @@ public class ReseedingThreadLocalRandomWrapperTest extends ThreadLocalRandomWrap
       throw new RuntimeException(e);
     }
     final byte[] oldSeed = rng.getSeed();
+    byte[] newSeed;
+    RandomSeederThread.setPriority(SEMIFAKE_SEED_GENERATOR, Thread.MAX_PRIORITY);
     try {
-      byte[] newSeed;
       do {
         rng.nextLong();
         Thread.sleep(10);
@@ -51,6 +53,8 @@ public class ReseedingThreadLocalRandomWrapperTest extends ThreadLocalRandomWrap
       assertGreaterOrEqual(rng.getEntropyBits(), (newSeed.length * 8L) - 1);
     } catch (final InterruptedException e) {
       throw new RuntimeException(e);
+    } finally {
+      RandomSeederThread.setPriority(SEMIFAKE_SEED_GENERATOR, Thread.NORM_PRIORITY);
     }
   }
 
