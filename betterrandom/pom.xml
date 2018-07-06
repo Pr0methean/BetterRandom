@@ -205,8 +205,7 @@
   <artifactId>BetterRandom</artifactId>
   <version>2.3.12-SNAPSHOT</version>
   <name>BetterRandom</name>
-  <description>BetterRandom is a library designed to help improve the quality and performance of
-    random-number generation on Java.
+  <description>Better, faster random-number generation in Java.
   </description>
   <url>https://github.com/Pr0methean/BetterRandom</url>
 
