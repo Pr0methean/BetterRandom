@@ -2,27 +2,14 @@ package io.github.pr0methean.betterrandom.prng;
 
 import static io.github.pr0methean.betterrandom.TestUtils.assertGreaterOrEqual;
 
-import io.github.pr0methean.betterrandom.DeadlockWatchdogThread;
 import io.github.pr0methean.betterrandom.prng.RandomTestUtils.EntropyCheckMode;
 import io.github.pr0methean.betterrandom.seed.RandomSeederThread;
 import io.github.pr0methean.betterrandom.seed.SeedException;
-import java.io.Serializable;
 import java.util.Arrays;
-import java.util.Random;
-import java.util.function.Supplier;
-import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
 public class ReseedingThreadLocalRandomWrapperMersenneTwisterTest
     extends ThreadLocalRandomWrapperMersenneTwisterTest {
-
-  @BeforeClass public void setUp() {
-    DeadlockWatchdogThread.ensureStarted(); // FIXME: Remove once bug is fixed
-  }
-
-  @Override public void testWrapLegacy() throws SeedException {
-    ReseedingThreadLocalRandomWrapper.wrapLegacy(Random::new, SEMIFAKE_SEED_GENERATOR).nextInt();
-  }
 
   @Override protected EntropyCheckMode getEntropyCheckMode() {
     return EntropyCheckMode.LOWER_BOUND;
@@ -34,7 +21,7 @@ public class ReseedingThreadLocalRandomWrapperMersenneTwisterTest
 
   @SuppressWarnings("BusyWait") @Override @Test public void testReseeding() {
     final BaseRandom rng = new ReseedingThreadLocalRandomWrapper(SEMIFAKE_SEED_GENERATOR,
-        (Serializable & Supplier<BaseRandom>) MersenneTwisterRandom::new);
+        new MersenneTwisterRandomColonColonNew());
     rng.nextLong();
     try {
       Thread.sleep(1000);
@@ -82,6 +69,6 @@ public class ReseedingThreadLocalRandomWrapperMersenneTwisterTest
 
   @Override protected BaseRandom createRng() throws SeedException {
     return new ReseedingThreadLocalRandomWrapper(SEMIFAKE_SEED_GENERATOR,
-        (Serializable & Supplier<BaseRandom>) MersenneTwisterRandom::new);
+        new MersenneTwisterRandomColonColonNew());
   }
 }
