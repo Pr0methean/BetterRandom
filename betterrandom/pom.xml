@@ -187,10 +187,10 @@
       </dependencies>
     </profile>
     <profile>
-      <id>osx</id>
+      <id>parallel-tests</id>
       <activation>
         <os>
-          <family>mac</family>
+          <family>!mac</family>
         </os>
       </activation>
       <build>
@@ -201,7 +201,8 @@
               <artifactId>maven-surefire-plugin</artifactId>
               <version>2.21.0</version>
               <configuration>
-                <parallel>none</parallel>
+                <parallel>tests</parallel>
+                <perCoreThreadCount>1</perCoreThreadCount>
               </configuration>
             </plugin>
             <plugin>
@@ -209,7 +210,8 @@
               <artifactId>maven-failsafe-plugin</artifactId>
               <version>2.17</version>
               <configuration>
-                <parallel>none</parallel>
+                <parallel>tests</parallel>
+                <perCoreThreadCount>1</perCoreThreadCount>
               </configuration>
             </plugin>
           </plugins>
@@ -434,8 +436,6 @@
               <suiteXmlFile>src/test/testng.xml</suiteXmlFile>
             </suiteXmlFiles>
             <trimStackTrace>false</trimStackTrace>
-            <parallel>tests</parallel>
-            <threadCount>2</threadCount>
             <forkedProcessTimeoutInSeconds>600</forkedProcessTimeoutInSeconds>
             <forkedProcessExitTimeoutInSeconds>600</forkedProcessExitTimeoutInSeconds>
             <properties>
@@ -458,8 +458,6 @@
             <suiteXmlFiles>
               <suiteXmlFile>src/test/testng.xml</suiteXmlFile>
             </suiteXmlFiles>
-            <parallel>tests</parallel>
-            <threadCount>2</threadCount>
           </configuration>
           <executions>
             <execution>
