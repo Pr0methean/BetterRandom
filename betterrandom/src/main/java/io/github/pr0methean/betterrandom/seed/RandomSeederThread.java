@@ -116,9 +116,8 @@ public final class RandomSeederThread extends LooperThread {
    * @return Whether or not the reseed was successfully scheduled.
    */
   public static boolean asyncReseed(final SeedGenerator seedGenerator, final Random random) {
-    synchronized (INSTANCES) {
-      return getInstance(seedGenerator).asyncReseed(random);
-    }
+    RandomSeederThread thread = getInstance(seedGenerator);
+    return thread != null && thread.asyncReseed(random);
   }
 
   public static boolean isEmpty(final SeedGenerator seedGenerator) {
@@ -187,6 +186,9 @@ public final class RandomSeederThread extends LooperThread {
    * @return Whether or not the reseed was successfully scheduled.
    */
   private boolean asyncReseed(final Random random) {
+    if (!isAlive()) {
+      return false;
+    }
     if (!(random instanceof EntropyCountingRandom)) {
       // Reseed of non-entropy-counting Random happens every iteration anyway
       return prngs.contains(random);
