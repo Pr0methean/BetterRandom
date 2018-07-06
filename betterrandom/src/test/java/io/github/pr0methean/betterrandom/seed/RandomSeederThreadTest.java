@@ -25,7 +25,7 @@ public class RandomSeederThreadTest {
       assertTrue(RandomSeederThread.isEmpty(seedGenerator));
       RandomSeederThread.add(seedGenerator, prng);
       assertFalse(RandomSeederThread.isEmpty(seedGenerator));
-      Thread.sleep(1000);
+      Thread.sleep(250);
       assertFalse(RandomSeederThread.isEmpty(seedGenerator));
       RandomSeederThread.remove(seedGenerator, prng);
       assertTrue(RandomSeederThread.isEmpty(seedGenerator));
@@ -45,7 +45,7 @@ public class RandomSeederThreadTest {
     assertTrue(RandomSeederThread.hasInstance(seedGenerator));
     RandomSeederThread.remove(seedGenerator, prng);
     RandomSeederThread.stopIfEmpty(seedGenerator);
-    Thread.sleep(1000);
+    Thread.sleep(250);
     assertFalse(RandomSeederThread.hasInstance(seedGenerator));
   }
 
@@ -62,7 +62,7 @@ public class RandomSeederThreadTest {
     assertTrue(RandomSeederThread.hasInstance(addedToAndRemoved));
     assertTrue(RandomSeederThread.hasInstance(addedToAndLeft));
     stopAllEmpty();
-    Thread.sleep(500);
+    Thread.sleep(250);
     assertFalse(RandomSeederThread.hasInstance(neverAddedTo));
     assertFalse(RandomSeederThread.hasInstance(addedToAndRemoved));
     assertTrue(RandomSeederThread.hasInstance(addedToAndLeft));
