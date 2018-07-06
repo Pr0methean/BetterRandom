@@ -67,8 +67,8 @@ public abstract class BaseSplittableRandomAdapter extends BaseRandom {
     final SplittableRandom local = getSplittableRandom();
     for (int i = 0; i < bytes.length; i++) {
       bytes[i] = (byte) (local.nextInt(256));
+      debitEntropy(Byte.SIZE);
     }
-    debitEntropy(bytes.length * (long) (Byte.SIZE));
   }
 
   /** Delegates to {@link SplittableRandom#nextInt()}. */
