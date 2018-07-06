@@ -229,8 +229,8 @@ public abstract class BaseRandomTest {
       final double observedSD = stats.getStandardDeviation();
       final double expectedSD = n / SQRT_12;
       Reporter.log("Expected SD: " + expectedSD + ", observed SD: " + observedSD);
-      assertGreaterOrEqual(observedSD, 0.98 * expectedSD);
-      assertLessOrEqual(observedSD, 1.02 * expectedSD);
+      assertGreaterOrEqual(observedSD, 0.975 * expectedSD);
+      assertLessOrEqual(observedSD, 1.025 * expectedSD);
       assertGreaterOrEqual(stats.getMax(), 0.9 * n);
       assertLessOrEqual(stats.getMax(), n - 1);
       assertGreaterOrEqual(stats.getMin(), 0);
