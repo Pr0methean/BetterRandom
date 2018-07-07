@@ -78,13 +78,15 @@ public final class RandomSeederThread extends LooperThread {
     if (instance == null) {
       LOG.info("Creating a RandomSeederThread for {}", seedGenerator);
       instance = new RandomSeederThread(seedGenerator);
-      instance.setName("RandomSeederThread for " + seedGenerator);
-      instance.setDaemon(true);
-      instance.setPriority(defaultPriority.get());
-      instance.start();
-    }
-    if (!INSTANCES.replace(seedGenerator, null, instance)) {
-      instance.interrupt();
+      RandomSeederThread oldInstance = INSTANCES.putIfAbsent(seedGenerator, instance);
+      if (oldInstance == null) {
+        instance.setName("RandomSeederThread for " + seedGenerator);
+        instance.setDaemon(true);
+        instance.setPriority(defaultPriority.get());
+        instance.start();
+      } else {
+        instance = oldInstance;
+      }
     }
     return instance;
   }
@@ -196,7 +198,7 @@ public final class RandomSeederThread extends LooperThread {
    * @return Whether or not the reseed was successfully scheduled.
    */
   private boolean asyncReseed(final Random random) {
-    if (!isAlive() || !prngs.contains(random)) {
+    if (getState() == Thread.State.TERMINATED || !prngs.contains(random)) {
       return false;
     }
     if (random instanceof EntropyCountingRandom) {
