@@ -42,6 +42,7 @@ public final class RandomSeederThread extends LooperThread {
   @SuppressWarnings("StaticCollection") private static final ConcurrentMap<SeedGenerator, RandomSeederThread> INSTANCES
       = CacheBuilder.newBuilder()
           .weakKeys()
+          .weakValues()
           .initialCapacity(1)
           .<SeedGenerator, RandomSeederThread>build()
           .asMap();
