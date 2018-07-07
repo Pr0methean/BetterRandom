@@ -25,6 +25,7 @@ import io.github.pr0methean.betterrandom.seed.DefaultSeedGenerator;
 import io.github.pr0methean.betterrandom.seed.SeedException;
 import io.github.pr0methean.betterrandom.seed.SeedGenerator;
 import io.github.pr0methean.betterrandom.util.BinaryUtils;
+import io.github.pr0methean.betterrandom.util.Dumpable;
 import io.github.pr0methean.betterrandom.util.EntryPoint;
 import io.github.pr0methean.betterrandom.util.Java8Constants;
 import java.security.SecureRandom;
@@ -170,7 +171,8 @@ public class RandomWrapper extends BaseRandom {
   }
 
   @Override protected ToStringHelper addSubclassFields(final ToStringHelper original) {
-    return original.add("wrapped", wrapped);
+    return original.add("wrapped",
+        wrapped instanceof Dumpable ? ((Dumpable) wrapped).dump() : wrapped);
   }
 
   /**

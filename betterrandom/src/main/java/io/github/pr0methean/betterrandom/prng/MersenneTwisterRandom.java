@@ -93,7 +93,7 @@ public class MersenneTwisterRandom extends BaseRandom {
   }
 
   @Override protected ToStringHelper addSubclassFields(final ToStringHelper original) {
-    return original.add("mt", Arrays.toString(mt)).add("mtIndex", mtIndex);
+    return original.add("mt hash", Arrays.hashCode(mt)).add("mtIndex", mtIndex);
   }
 
   /**
