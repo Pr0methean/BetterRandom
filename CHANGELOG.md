@@ -1,6 +1,7 @@
 # 2.3.12
 * Fixes a bug that could cause `*SplittableRandomAdapter` to give correlated results on multiple
   threads.
+* Fixes a bug with entropy counting in `ThreadLocalRandomWrapper`.
 * Unit tests are now split into groups that run in parallel.
 
 # 2.3.11
