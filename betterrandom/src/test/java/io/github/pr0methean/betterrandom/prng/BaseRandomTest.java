@@ -351,6 +351,7 @@ public abstract class BaseRandomTest {
     while (rng.getEntropyBits() > Long.SIZE) {
       rng.nextLong();
     }
+    RandomSeederThread.setPriority(seedGenerator, Thread.MAX_PRIORITY);
     rng.setSeedGenerator(seedGenerator);
     try {
       int waits = 0;
