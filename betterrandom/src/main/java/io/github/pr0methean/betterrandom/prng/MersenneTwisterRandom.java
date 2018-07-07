@@ -126,6 +126,7 @@ public class MersenneTwisterRandom extends BaseRandom {
       mt[mtIndex] = ((BOOTSTRAP_FACTOR * (mt[mtIndex - 1] ^ (mt[mtIndex - 1] >>> 30))) + mtIndex);
     }
 
+    mtIndex = 0;
     // This section is translated from the init_by_array code in the C version.
     int i = 1;
     int j = 0;
@@ -153,8 +154,8 @@ public class MersenneTwisterRandom extends BaseRandom {
   }
 
   @Override protected final int next(final int bits) {
-    lock.lock();
     int y;
+    lock.lock();
     try {
       if (mtIndex >= N) // Generate N ints at a time.
       {
