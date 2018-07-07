@@ -73,20 +73,15 @@ public final class RandomSeederThread extends LooperThread {
    * @return a RandomSeederThread that is running and is backed by {@code seedGenerator}.
    */
   private static RandomSeederThread getInstance(final SeedGenerator seedGenerator) {
-    RandomSeederThread instance;
-    instance = INSTANCES.get(seedGenerator);
-    if (instance == null) {
-      LOG.info("Creating a RandomSeederThread for {}", seedGenerator);
-      instance = new RandomSeederThread(seedGenerator);
-      RandomSeederThread oldInstance = INSTANCES.putIfAbsent(seedGenerator, instance);
-      if (oldInstance == null) {
-        instance.setName("RandomSeederThread for " + seedGenerator);
-        instance.setDaemon(true);
-        instance.setPriority(defaultPriority.get());
-        instance.start();
-      } else {
-        instance = oldInstance;
-      }
+    RandomSeederThread instance = new RandomSeederThread(seedGenerator);
+    RandomSeederThread oldInstance = INSTANCES.putIfAbsent(seedGenerator, instance);
+    if (oldInstance == null) {
+      instance.setName("RandomSeederThread for " + seedGenerator);
+      instance.setDaemon(true);
+      instance.setPriority(defaultPriority.get());
+      instance.start();
+    } else {
+      instance = oldInstance;
     }
     return instance;
   }
