@@ -1,6 +1,7 @@
 package io.github.pr0methean.betterrandom.prng;
 
 import static io.github.pr0methean.betterrandom.TestUtils.assertGreaterOrEqual;
+import static io.github.pr0methean.betterrandom.TestUtils.isAppveyor;
 
 import io.github.pr0methean.betterrandom.prng.RandomTestUtils.EntropyCheckMode;
 import io.github.pr0methean.betterrandom.seed.RandomSeederThread;
@@ -43,7 +44,7 @@ public class ReseedingThreadLocalRandomWrapperTest extends ThreadLocalRandomWrap
         Thread.sleep(10);
         newSeed = rng.getSeed();
       } while (Arrays.equals(newSeed, oldSeed));
-      Thread.sleep(10);
+      Thread.sleep(isAppveyor() ? 1000 : 10);
       assertGreaterOrEqual(rng.getEntropyBits(), (newSeed.length * 8L) - 1);
     } catch (final InterruptedException e) {
       throw new RuntimeException(e);
