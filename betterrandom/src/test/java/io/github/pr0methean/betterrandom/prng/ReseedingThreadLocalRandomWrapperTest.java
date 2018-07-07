@@ -14,7 +14,7 @@ public class ReseedingThreadLocalRandomWrapperTest extends ThreadLocalRandomWrap
 
   @Override public void testWrapLegacy() throws SeedException {
     ReseedingThreadLocalRandomWrapper
-        .wrapLegacy(new RandomColonColonNewForLong(), SEMIFAKE_SEED_GENERATOR).nextInt();
+        .wrapLegacy(new RandomColonColonNewForLong(), getTestSeedGenerator()).nextInt();
   }
 
   @Override protected EntropyCheckMode getEntropyCheckMode() {
@@ -26,7 +26,7 @@ public class ReseedingThreadLocalRandomWrapperTest extends ThreadLocalRandomWrap
   }
 
   @Override @Test public void testReseeding() {
-    final BaseRandom rng = new ReseedingThreadLocalRandomWrapper(SEMIFAKE_SEED_GENERATOR,
+    final BaseRandom rng = new ReseedingThreadLocalRandomWrapper(getTestSeedGenerator(),
         new Pcg64RandomColonColonNew());
     rng.nextLong();
     try {
@@ -36,7 +36,7 @@ public class ReseedingThreadLocalRandomWrapperTest extends ThreadLocalRandomWrap
     }
     final byte[] oldSeed = rng.getSeed();
     byte[] newSeed;
-    RandomSeederThread.setPriority(SEMIFAKE_SEED_GENERATOR, Thread.MAX_PRIORITY);
+    RandomSeederThread.setPriority(getTestSeedGenerator(), Thread.MAX_PRIORITY);
     try {
       do {
         rng.nextLong();
@@ -48,7 +48,7 @@ public class ReseedingThreadLocalRandomWrapperTest extends ThreadLocalRandomWrap
     } catch (final InterruptedException e) {
       throw new RuntimeException(e);
     } finally {
-      RandomSeederThread.setPriority(SEMIFAKE_SEED_GENERATOR, Thread.NORM_PRIORITY);
+      RandomSeederThread.setPriority(getTestSeedGenerator(), Thread.NORM_PRIORITY);
     }
   }
 
@@ -61,7 +61,7 @@ public class ReseedingThreadLocalRandomWrapperTest extends ThreadLocalRandomWrap
   @Override @Test public void testSetSeedAfterNextLong() throws SeedException {
     final BaseRandom prng = createRng();
     prng.nextLong();
-    prng.setSeed(SEMIFAKE_SEED_GENERATOR.generateSeed(8));
+    prng.setSeed(getTestSeedGenerator().generateSeed(8));
     prng.nextLong();
   }
 
@@ -69,12 +69,12 @@ public class ReseedingThreadLocalRandomWrapperTest extends ThreadLocalRandomWrap
   @Override @Test public void testSetSeedAfterNextInt() throws SeedException {
     final BaseRandom prng = createRng();
     prng.nextInt();
-    prng.setSeed(SEMIFAKE_SEED_GENERATOR.generateSeed(8));
+    prng.setSeed(getTestSeedGenerator().generateSeed(8));
     prng.nextInt();
   }
 
   @Override protected BaseRandom createRng() throws SeedException {
-    return new ReseedingThreadLocalRandomWrapper(SEMIFAKE_SEED_GENERATOR,
+    return new ReseedingThreadLocalRandomWrapper(getTestSeedGenerator(),
         new Pcg64RandomColonColonNew());
   }
 
