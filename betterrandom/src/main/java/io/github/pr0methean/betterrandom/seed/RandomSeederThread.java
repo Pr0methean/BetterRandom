@@ -114,12 +114,13 @@ public final class RandomSeederThread extends LooperThread {
    * @return Whether or not the reseed was successfully scheduled.
    */
   public static boolean asyncReseed(final SeedGenerator seedGenerator, final Random random) {
-    RandomSeederThread thread = getInstance(seedGenerator);
+    final RandomSeederThread thread = getInstance(seedGenerator);
     return thread != null && thread.asyncReseed(random);
   }
 
   public static boolean isEmpty(final SeedGenerator seedGenerator) {
-    return (!hasInstance(seedGenerator)) || getInstance(seedGenerator).isEmpty();
+    final RandomSeederThread thread = getInstance(seedGenerator);
+    return thread == null || thread.isEmpty();
   }
 
   /**
