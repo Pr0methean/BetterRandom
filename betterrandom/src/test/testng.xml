@@ -2,14 +2,17 @@
 <suite name="TestNG" parallel="tests">
   <test name="Seeding" parallel="none">
     <classes>
+      <!--
       <class name="io.github.pr0methean.betterrandom.seed.DefaultSeedGeneratorTest"/>
       <class name="io.github.pr0methean.betterrandom.seed.DevRandomSeedGeneratorTest"/>
       <class name="io.github.pr0methean.betterrandom.seed.RandomDotOrgSeedGeneratorHermeticTest"/>
       <class name="io.github.pr0methean.betterrandom.seed.RandomDotOrgSeedGeneratorLiveTest"/>
+    -->
       <class name="io.github.pr0methean.betterrandom.seed.RandomSeederThreadTest"/>
-      <class name="io.github.pr0methean.betterrandom.seed.SecureRandomSeedGeneratorTest"/>
+      <!-- <class name="io.github.pr0methean.betterrandom.seed.SecureRandomSeedGeneratorTest"/> -->
     </classes>
   </test>
+  <!--
   <test name="PRNG">
     <classes>
       <class name="io.github.pr0methean.betterrandom.prng.AesCounterRandom128Test"/>
@@ -50,4 +53,5 @@
       <class name="io.github.pr0methean.betterrandom.util.LooperThreadTest"/>
     </classes>
   </test>
+-->
 </suite>
