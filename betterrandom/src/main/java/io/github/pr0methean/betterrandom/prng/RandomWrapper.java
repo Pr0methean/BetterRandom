@@ -191,14 +191,19 @@ public class RandomWrapper extends BaseRandom {
   @SuppressWarnings("LockAcquiredButNotSafelyReleased")
   @Override public void setSeed(final long seed) {
     boolean locked = false;
+    System.out.println("setSeed called");
     if (lock != null) {
       lock.lock();
+      System.out.println("Locked");
       locked = true;
     }
     try {
       if (wrapped != null) {
+        System.out.println("Calling wrapped.setSeed");
         wrapped.setSeed(seed);
+        System.out.println("wrapped.setSeed returned; calling super.setSeedInternal");
         super.setSeedInternal(BinaryUtils.convertLongToBytes(seed));
+        System.out.println("super.setSeedInternal returned");
         unknownSeed = false;
       }
     } finally {
@@ -215,19 +220,23 @@ public class RandomWrapper extends BaseRandom {
    */
   @SuppressWarnings("LockAcquiredButNotSafelyReleased")
   @Override protected void setSeedInternal(final byte[] seed) {
+    System.out.println("setSeedInternal called");
     if (seed == null) {
       throw new IllegalArgumentException("Seed must not be null");
     }
     boolean locked = false;
     if (lock != null) {
       lock.lock();
+      System.out.println("Locked");
       locked = true;
     }
     try {
       if ((this.seed == null) || (this.seed.length != seed.length)) {
         this.seed = new byte[seed.length];
       }
+      System.out.println("Calling super.setSeedInternal");
       super.setSeedInternal(seed);
+      System.out.println("super.setSeedInternal returned");
       if (wrapped == null) {
         return;
       }
@@ -248,10 +257,14 @@ public class RandomWrapper extends BaseRandom {
             "RandomWrapper requires an 8-byte seed when not wrapping a ByteArrayReseedableRandom");
       }
       if (asByteArrayReseedable != null) {
+        System.out.println("Calling asByteArrayReseedable.setSeed");
         asByteArrayReseedable.setSeed(seed);
+        System.out.println("asByteArrayReseedable.setSeed returned");
         unknownSeed = false;
       } else {
+        System.out.println("Calling wrapped.setSeed");
         wrapped.setSeed(BinaryUtils.convertBytesToLong(seed));
+        System.out.println("wrapped.setSeed returned");
         unknownSeed = false;
       }
     } finally {
