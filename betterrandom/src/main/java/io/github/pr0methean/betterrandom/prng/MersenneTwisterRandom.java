@@ -149,6 +149,7 @@ public class MersenneTwisterRandom extends BaseRandom {
         i = 1;
       }
     }
+    mtIndex = 0;
     mt[0] = UPPER_MASK; // Most significant bit is 1 - guarantees non-zero initial array.
   }
 
