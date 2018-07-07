@@ -50,7 +50,7 @@ import org.testng.annotations.Test;
 
 public abstract class BaseRandomTest {
 
-  protected static final SeedGenerator SEMIFAKE_SEED_GENERATOR
+  private static final SeedGenerator SEMIFAKE_SEED_GENERATOR
       = new SemiFakeSeedGenerator(new SplittableRandomAdapter());
   /**
    * The square root of 12, rounded from an extended-precision calculation that was done by Wolfram
@@ -107,6 +107,10 @@ public abstract class BaseRandomTest {
     assertTrue(Arrays.asList(selected).containsAll(Arrays.asList(expected)));
   }
 
+  protected SeedGenerator getTestSeedGenerator() {
+    return SEMIFAKE_SEED_GENERATOR;
+  }
+
   protected EntropyCheckMode getEntropyCheckMode() {
     return EntropyCheckMode.EXACT;
   }
@@ -123,8 +127,8 @@ public abstract class BaseRandomTest {
     final HashMap<Class<?>, Object> params = new HashMap<>(4);
     params.put(int.class, seedLength);
     params.put(long.class, TEST_SEED);
-    params.put(byte[].class, SEMIFAKE_SEED_GENERATOR.generateSeed(seedLength));
-    params.put(SeedGenerator.class, SEMIFAKE_SEED_GENERATOR);
+    params.put(byte[].class, getTestSeedGenerator().generateSeed(seedLength));
+    params.put(SeedGenerator.class, getTestSeedGenerator());
     return params;
   }
 
@@ -149,7 +153,7 @@ public abstract class BaseRandomTest {
    */
   @Test(timeOut = 15_000) public void testRepeatabilityNextGaussian() throws SeedException {
     final BaseRandom rng = createRng();
-    byte[] seed = SEMIFAKE_SEED_GENERATOR.generateSeed(getNewSeedLength(rng));
+    byte[] seed = getTestSeedGenerator().generateSeed(getNewSeedLength(rng));
     rng.nextGaussian();
     rng.setSeed(seed);
     // Create second RNG using same seed.
@@ -159,7 +163,7 @@ public abstract class BaseRandomTest {
 
   @Test(timeOut = 15_000, expectedExceptions = IllegalArgumentException.class)
   public void testSeedTooLong() throws GeneralSecurityException, SeedException {
-    createRng(SEMIFAKE_SEED_GENERATOR
+    createRng(getTestSeedGenerator()
         .generateSeed(getNewSeedLength(createRng()) + 1)); // Should throw an exception.
   }
 
@@ -264,7 +268,7 @@ public abstract class BaseRandomTest {
 
   @Test(timeOut = 15_000) public void testSetSeedAfterNextLong() throws SeedException {
     final byte[] seed =
-        SEMIFAKE_SEED_GENERATOR.generateSeed(getNewSeedLength(createRng()));
+        getTestSeedGenerator().generateSeed(getNewSeedLength(createRng()));
     final BaseRandom rng = createRng();
     final BaseRandom rng2 = createRng();
     final BaseRandom rng3 = createRng(seed);
@@ -280,7 +284,7 @@ public abstract class BaseRandomTest {
 
   @Test(timeOut = 15_000) public void testSetSeedAfterNextInt() throws SeedException {
     final byte[] seed =
-        SEMIFAKE_SEED_GENERATOR.generateSeed(getNewSeedLength(createRng()));
+        getTestSeedGenerator().generateSeed(getNewSeedLength(createRng()));
     final BaseRandom rng = createRng();
     final BaseRandom rng2 = createRng();
     final BaseRandom rng3 = createRng(seed);
@@ -297,7 +301,7 @@ public abstract class BaseRandomTest {
   @Test(timeOut = 15_000) public void testSetSeedZero() throws SeedException {
     int length = getNewSeedLength(createRng());
     final byte[] realSeed =
-        SEMIFAKE_SEED_GENERATOR.generateSeed(length);
+        getTestSeedGenerator().generateSeed(length);
     final byte[] zeroSeed = new byte[length];
     final BaseRandom rng = createRng(realSeed);
     final BaseRandom rng2 = createRng(zeroSeed);
@@ -332,7 +336,7 @@ public abstract class BaseRandomTest {
     final byte[] output2 = new byte[20];
     rng2.nextBytes(output2);
     final int seedLength = rng1.getNewSeedLength();
-    rng1.setSeed(SEMIFAKE_SEED_GENERATOR.generateSeed(seedLength));
+    rng1.setSeed(getTestSeedGenerator().generateSeed(seedLength));
     assertGreaterOrEqual(rng1.getEntropyBits(), seedLength * 8L);
     rng1.nextBytes(output1);
     rng2.nextBytes(output2);
@@ -684,7 +688,7 @@ public abstract class BaseRandomTest {
   protected void testThreadSafetyVsCrashesOnly(
       final List<NamedFunction<Random, Double>> functions) {
     final int seedLength = createRng().getNewSeedLength();
-    final byte[] seed = SEMIFAKE_SEED_GENERATOR.generateSeed(seedLength);
+    final byte[] seed = getTestSeedGenerator().generateSeed(seedLength);
     for (final NamedFunction<Random, Double> supplier1 : functions) {
       for (final NamedFunction<Random, Double> supplier2 : functions) {
         runParallel(supplier1, supplier2, seed, 30,
@@ -697,7 +701,7 @@ public abstract class BaseRandomTest {
   protected void testThreadSafety(final List<NamedFunction<Random, Double>> functions,
       final List<NamedFunction<Random, Double>> pairwiseFunctions) {
     final int seedLength = createRng().getNewSeedLength();
-    final byte[] seed = SEMIFAKE_SEED_GENERATOR.generateSeed(seedLength);
+    final byte[] seed = getTestSeedGenerator().generateSeed(seedLength);
     for (final NamedFunction<Random, Double> supplier : functions) {
       for (int i = 0; i < 5; i++) {
         // This loop is necessary to control the false pass rate, especially during mutation testing.
@@ -749,7 +753,7 @@ public abstract class BaseRandomTest {
   }
 
   @AfterClass public void classTearDown() {
-    RandomSeederThread.stopIfEmpty(SEMIFAKE_SEED_GENERATOR);
+    RandomSeederThread.stopIfEmpty(getTestSeedGenerator());
   }
 
   private enum TestEnum {
