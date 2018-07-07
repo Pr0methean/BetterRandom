@@ -21,7 +21,7 @@ public class ThreadLocalRandomWrapperTest extends BaseRandomTest {
 
   @Override @Test(timeOut = 15000, expectedExceptions = IllegalArgumentException.class)
   public void testSeedTooLong() throws SeedException {
-    createRng().setSeed(SEMIFAKE_SEED_GENERATOR.generateSeed(17));
+    createRng().setSeed(getTestSeedGenerator().generateSeed(17));
   }
 
   @Override @Test(timeOut = 15000, expectedExceptions = IllegalArgumentException.class)
@@ -49,13 +49,13 @@ public class ThreadLocalRandomWrapperTest extends BaseRandomTest {
   /** Seeding of this PRNG is thread-local, so setSeederThread makes no sense. */
   @Override @Test(expectedExceptions = UnsupportedOperationException.class)
   public void testRandomSeederThreadIntegration() {
-    createRng().setSeedGenerator(SEMIFAKE_SEED_GENERATOR);
+    createRng().setSeedGenerator(getTestSeedGenerator());
   }
 
   /** Assertion-free because ThreadLocalRandomWrapper isn't repeatable. */
   @Override @Test public void testSetSeedAfterNextLong() throws SeedException {
     final byte[] seed =
-        SEMIFAKE_SEED_GENERATOR.generateSeed(getNewSeedLength(createRng()));
+        getTestSeedGenerator().generateSeed(getNewSeedLength(createRng()));
     final BaseRandom rng = createRng();
     rng.nextLong();
     rng.setSeed(seed);
@@ -64,7 +64,7 @@ public class ThreadLocalRandomWrapperTest extends BaseRandomTest {
   /** Assertion-free because ThreadLocalRandomWrapper isn't repeatable. */
   @Override @Test public void testSetSeedAfterNextInt() throws SeedException {
     final byte[] seed =
-        SEMIFAKE_SEED_GENERATOR.generateSeed(getNewSeedLength(createRng()));
+        getTestSeedGenerator().generateSeed(getNewSeedLength(createRng()));
     final BaseRandom rng = createRng();
     rng.nextInt();
     rng.setSeed(seed);
@@ -85,12 +85,12 @@ public class ThreadLocalRandomWrapperTest extends BaseRandomTest {
   }
 
   @Test public void testExplicitSeedSize() throws SeedException {
-    assertEquals(new ThreadLocalRandomWrapper(200, SEMIFAKE_SEED_GENERATOR,
+    assertEquals(new ThreadLocalRandomWrapper(200, getTestSeedGenerator(),
         AesCounterRandom::new).getNewSeedLength(), 200);
   }
 
   @Test public void testWrapLegacy() throws SeedException {
-    ThreadLocalRandomWrapper.wrapLegacy(Random::new, SEMIFAKE_SEED_GENERATOR).nextInt();
+    ThreadLocalRandomWrapper.wrapLegacy(Random::new, getTestSeedGenerator()).nextInt();
   }
 
   @Override protected BaseRandom createRng() throws SeedException {

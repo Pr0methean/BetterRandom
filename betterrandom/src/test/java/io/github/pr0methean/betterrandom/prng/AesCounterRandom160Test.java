@@ -12,7 +12,7 @@ public class AesCounterRandom160Test extends AesCounterRandom128Test {
   @Override @Test(timeOut = 15000, expectedExceptions = IllegalArgumentException.class)
   public void testSeedTooLong() throws SeedException {
     createRng(
-        SEMIFAKE_SEED_GENERATOR.generateSeed(49)); // Should throw an exception.
+        getTestSeedGenerator().generateSeed(49)); // Should throw an exception.
   }
 
   @Override public BaseRandom createRng() {
