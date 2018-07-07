@@ -64,7 +64,7 @@ public class MersenneTwisterRandom extends BaseRandom {
   private static final int GENERATE_MASK2 = 0xefc60000;
 
   private int[] mt; // State vector.
-  private volatile int mtIndex = 0; // Index into state vector.
+  private volatile int mtIndex = N; // Index into state vector.
 
   /**
    * Creates a new RNG and seeds it using the default seeding strategy.
