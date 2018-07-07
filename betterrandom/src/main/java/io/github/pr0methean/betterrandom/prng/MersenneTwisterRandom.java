@@ -153,8 +153,8 @@ public class MersenneTwisterRandom extends BaseRandom {
   }
 
   @Override protected final int next(final int bits) {
-    lock.lock();
     int y;
+    lock.lock();
     try {
       if (mtIndex >= N) // Generate N ints at a time.
       {
