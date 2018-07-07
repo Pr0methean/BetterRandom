@@ -194,9 +194,7 @@ public final class RandomSeederThread extends LooperThread {
   @SuppressWarnings({"InfiniteLoopStatement", "ObjectAllocationInLoop", "AwaitNotInLoop"}) @Override
   protected boolean iterate() throws InterruptedException {
     while (true) {
-      synchronized (prngs) {
-        prngsThisIteration.addAll(prngs);
-      }
+      prngsThisIteration.addAll(prngs);
       if (prngsThisIteration.isEmpty()) {
         waitWhileEmpty.await();
       } else {
@@ -262,8 +260,11 @@ public final class RandomSeederThread extends LooperThread {
    * @return true if no {@link Random} instances are registered with this RandomSeederThread.
    */
   private boolean isEmpty() {
-    synchronized (prngs) {
+    lock.lock();
+    try {
       return prngs.isEmpty();
+    } finally {
+      lock.unlock();
     }
   }
 
