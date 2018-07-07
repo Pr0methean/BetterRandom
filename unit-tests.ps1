@@ -31,14 +31,14 @@ if ( $STATUS ) {
     git clone "https://github.com/Pr0methean/betterrandom-coverage.git"
     cd betterrandom-coverage
     if ( Test-Path $COMMIT ) {
-        echo "[unit-tests.bat] Aggregating with JaCoCo reports from other jobs."
+        echo "[unit-tests.ps1] Aggregating with JaCoCo reports from other jobs."
         cp "$COMMIT/*.exec" target
         cp ../pom.xml .
         mvn "jacoco:report-aggregate"
         rm pom.xml
         $JACOCO_DIR = "jacoco-aggregate"
     } else {
-        echo "[unit-tests.bat] This is the first JaCoCo report for this build."
+        echo "[unit-tests.ps1] This is the first JaCoCo report for this build."
         mkdir "$COMMIT"
         $JACOCO_DIR = "jacoco"
     }
@@ -69,9 +69,9 @@ if ( $STATUS ) {
         git config --global user.email "travis@travis-ci.org"
     }
     if ( ! $JAVA9 ) {
-        echo "[unit-tests.bat] Running Proguard."
+        echo "[unit-tests.ps1] Running Proguard."
         mvn -DskipTests "-Dmaven.test.skip=true" "$MAYBE_ANDROID_FLAG" package pre-integration-test
-        echo "[unit-tests.bat] Testing against Proguarded jar."
+        echo "[unit-tests.ps1] Testing against Proguarded jar."
         # FIXME: This runs Proguard again after it finishes.
         mvn "$MAYBE_ANDROID_FLAG" "integration-test" "-e"
         $STATUS = $?
