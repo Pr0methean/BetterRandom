@@ -182,7 +182,7 @@ public class ThreadLocalRandomWrapper extends RandomWrapper {
     if (threadLocal != null) {
       final BaseRandom wrapped = getWrapped();
       wrapped.setSeed(seed);
-      wrapped.creditEntropyForNewSeed(Long.BYTES);
+      wrapped.creditEntropyForNewSeed(LONG_BYTES);
     }
   }
 
