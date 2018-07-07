@@ -33,6 +33,10 @@ import org.slf4j.LoggerFactory;
 @SuppressWarnings("ClassExplicitlyExtendsThread")
 public final class RandomSeederThread extends LooperThread {
 
+  @Override public String toString() {
+    return String.format("%s @ %8x", super.toString(), System.identityHashCode(this));
+  }
+
   private static final ExecutorService WAKER_UPPER = Executors.newSingleThreadExecutor();
   private static final Logger LOG = LoggerFactory.getLogger(RandomSeederThread.class);
   @SuppressWarnings("StaticCollection") private static final ConcurrentMap<SeedGenerator, RandomSeederThread> INSTANCES
@@ -100,9 +104,12 @@ public final class RandomSeederThread extends LooperThread {
    * Shut down all instances with which no {@link Random} instances are registered.
    */
   public static void stopAllEmpty() {
+    System.out.println("[RST debug] stopAllEmpty called");
     for (final RandomSeederThread instance : INSTANCES.values()) {
+      System.out.println("[RST debug] Calling stopIfEmpty on " + instance);
       instance.stopIfEmpty();
     }
+    System.out.println("[RST debug] stopAllEmpty returning");
   }
 
   /**
@@ -114,11 +121,13 @@ public final class RandomSeederThread extends LooperThread {
    */
   public static boolean asyncReseed(final SeedGenerator seedGenerator, final Random random) {
     final RandomSeederThread thread = getInstance(seedGenerator);
+    System.out.println("[RST debug] asyncReseed applying to " + thread);
     return thread != null && thread.asyncReseed(random);
   }
 
   public static boolean isEmpty(final SeedGenerator seedGenerator) {
     final RandomSeederThread thread = getInstance(seedGenerator);
+    System.out.println("[RST debug] isEmpty applying to " + thread);
     return thread == null || thread.isEmpty();
   }
 
@@ -134,6 +143,7 @@ public final class RandomSeederThread extends LooperThread {
         getInstance(seedGenerator).add(randoms);
         notSucceeded = false;
       } catch (IllegalStateException ignored) {
+        System.out.println("[RST debug] add failed, retrying");
         // Get the new instance and try again.
       }
     } while (notSucceeded);
@@ -147,6 +157,7 @@ public final class RandomSeederThread extends LooperThread {
    */
   public static void remove(final SeedGenerator seedGenerator, final Random... randoms) {
     final RandomSeederThread thread = INSTANCES.get(seedGenerator);
+    System.out.println("[RST debug] remove applying to " + thread);
     if (thread != null) {
       thread.remove(randoms);
     }
@@ -173,6 +184,7 @@ public final class RandomSeederThread extends LooperThread {
 
   public static void stopIfEmpty(final SeedGenerator seedGenerator) {
     final RandomSeederThread thread = INSTANCES.get(seedGenerator);
+    System.out.println("[RST debug] stopIfEmpty applying to " + thread);
     if (thread != null) {
       thread.stopIfEmpty();
     }
@@ -226,6 +238,7 @@ public final class RandomSeederThread extends LooperThread {
         entropyConsumed = true;
       }
       try {
+        System.out.println("[RST debug] starting to reseed " + random);
         if ((random instanceof ByteArrayReseedableRandom) && !((ByteArrayReseedableRandom) random)
             .preferSeedWithLong()) {
           final ByteArrayReseedableRandom reseedable = (ByteArrayReseedableRandom) random;
@@ -240,6 +253,7 @@ public final class RandomSeederThread extends LooperThread {
           seedGenerator.generateSeed(longSeedArray);
           random.setSeed(longSeedBuffer.getLong(0));
         }
+        System.out.println("[RST debug] done reseeding " + random);
       } catch (final Throwable t) {
         // Must unlock before interrupt; otherwise we somehow get a deadlock
         lock.unlock();
@@ -259,6 +273,7 @@ public final class RandomSeederThread extends LooperThread {
 
   @Override public void interrupt() {
     // Ensure dying instance is unregistered
+    System.out.println("[RST debug] interrupt() called on " + this);
     INSTANCES.remove(seedGenerator, this);
     super.interrupt();
     lock.lock();
@@ -269,6 +284,7 @@ public final class RandomSeederThread extends LooperThread {
     } finally {
       lock.unlock();
     }
+    System.out.println("[RST debug] interrupt() returning on " + this);
   }
 
   /**
