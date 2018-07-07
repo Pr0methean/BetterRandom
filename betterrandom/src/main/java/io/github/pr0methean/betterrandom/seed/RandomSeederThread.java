@@ -100,8 +100,7 @@ public final class RandomSeederThread extends LooperThread {
    * Shut down all instances with which no {@link Random} instances are registered.
    */
   public static void stopAllEmpty() {
-    final List<RandomSeederThread> toStop = new LinkedList<>(INSTANCES.values());
-    for (final RandomSeederThread instance : toStop) {
+    for (final RandomSeederThread instance : INSTANCES.values()) {
       instance.stopIfEmpty();
     }
   }
