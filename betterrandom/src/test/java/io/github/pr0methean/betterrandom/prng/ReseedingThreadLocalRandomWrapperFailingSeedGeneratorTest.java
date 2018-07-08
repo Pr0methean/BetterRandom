@@ -18,7 +18,7 @@ public class ReseedingThreadLocalRandomWrapperFailingSeedGeneratorTest
     // No-op.
   }
 
-  @Override @Test(enabled = false) public void setSeedZero() {
+  @Override @Test(enabled = false) public void testSetSeedZero() {
     // No-op.
   }
 
