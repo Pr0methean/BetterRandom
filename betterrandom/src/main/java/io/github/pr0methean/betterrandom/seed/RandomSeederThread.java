@@ -1,5 +1,6 @@
 package io.github.pr0methean.betterrandom.seed;
 
+import com.google.common.cache.CacheBuilder;
 import io.github.pr0methean.betterrandom.ByteArrayReseedableRandom;
 import io.github.pr0methean.betterrandom.EntropyCountingRandom;
 import io.github.pr0methean.betterrandom.util.LooperThread;
@@ -41,7 +42,11 @@ public final class RandomSeederThread extends LooperThread {
   private final Condition waitWhileEmpty = lock.newCondition();
   private final Condition waitForEntropyDrain = lock.newCondition();
   private final Set<Random> prngs
-      = Collections.synchronizedSet(Collections.newSetFromMap(new WeakHashMap<>(1)));
+      = Collections.newSetFromMap(CacheBuilder.newBuilder()
+          .weakKeys()
+          .initialCapacity(1)
+          .<Random, Boolean>build()
+          .asMap());
   private final byte[] longSeedArray = new byte[8];
   private final ByteBuffer longSeedBuffer = ByteBuffer.wrap(longSeedArray);
   private final Set<Random> prngsThisIteration = new HashSet<>(1);
