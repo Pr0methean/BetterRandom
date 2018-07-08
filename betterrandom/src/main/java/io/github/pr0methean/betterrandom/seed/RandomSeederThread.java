@@ -36,7 +36,7 @@ public final class RandomSeederThread extends LooperThread {
 
   private static final ExecutorService WAKER_UPPER = Executors.newSingleThreadExecutor();
   private static final Logger LOG = LoggerFactory.getLogger(RandomSeederThread.class);
-  @SuppressWarnings("StaticCollection") private static final Map<SeedGenerator, RandomSeederThread>
+  @SuppressWarnings("StaticCollection") private static final ConcurrentMap<SeedGenerator, RandomSeederThread>
       INSTANCES = new ConcurrentHashMap<>(1);
   private static final long POLL_INTERVAL = 60;
   private final SeedGenerator seedGenerator;
