@@ -1,8 +1,13 @@
+# 2.3.13
+* `RandomSeederThread` no longer uselessly uses weak references to its instances. This decreases
+  the memory footprint slightly.
+
 # 2.3.12
 * Fixes a bug that could cause `*SplittableRandomAdapter` to give correlated results on multiple
   threads.
 * Fixes a bug with entropy counting in `ThreadLocalRandomWrapper`.
-* Unit tests are now split into groups that run in parallel.
+* Unit tests are now split into 3 groups that run in parallel. One group also has within-group
+  parallelism.
 
 # 2.3.11
 * `setSeed` now invalidates the result of the next call to `nextGaussian` if it's been pre-computed.
