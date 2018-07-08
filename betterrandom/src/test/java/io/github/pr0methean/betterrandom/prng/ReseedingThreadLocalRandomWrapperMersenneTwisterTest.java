@@ -13,7 +13,6 @@ import java.io.Serializable;
 import java.util.Arrays;
 import java.util.Random;
 import java.util.function.Supplier;
-import org.testng.SkipException;
 import org.testng.annotations.Test;
 
 public class ReseedingThreadLocalRandomWrapperMersenneTwisterTest
@@ -38,9 +37,6 @@ public class ReseedingThreadLocalRandomWrapperMersenneTwisterTest
   }
 
   @SuppressWarnings("BusyWait") @Override @Test public void testReseeding() {
-    if (isAppveyor()) {
-      throw new SkipException("This test often fails spuriously on AppVeyor"); // FIXME
-    }
     final BaseRandom rng = new ReseedingThreadLocalRandomWrapper(getTestSeedGenerator(),
         (Serializable & Supplier<BaseRandom>) MersenneTwisterRandom::new);
     rng.nextLong();
