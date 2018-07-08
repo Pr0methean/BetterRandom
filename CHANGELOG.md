@@ -1,4 +1,4 @@
-# 2.3.13
+# 2.3.14
 * `RandomSeederThread` no longer uselessly uses weak references to its instances. This decreases
   the memory footprint slightly.
 
