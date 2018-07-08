@@ -16,6 +16,7 @@ import java.util.Map;
 import java.util.Random;
 import java.util.Set;
 import java.util.WeakHashMap;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -35,19 +36,18 @@ public final class RandomSeederThread extends LooperThread {
 
   private static final ExecutorService WAKER_UPPER = Executors.newSingleThreadExecutor();
   private static final Logger LOG = LoggerFactory.getLogger(RandomSeederThread.class);
-  @SuppressWarnings("StaticCollection") private static final ConcurrentMap<SeedGenerator, RandomSeederThread> INSTANCES
-      = CacheBuilder.newBuilder()
-          .weakKeys()
-          .weakValues()
-          .initialCapacity(1)
-          .<SeedGenerator, RandomSeederThread>build()
-          .asMap();
+  @SuppressWarnings("StaticCollection") private static final Map<SeedGenerator, RandomSeederThread>
+      INSTANCES = new ConcurrentHashMap<>(1);
   private static final long POLL_INTERVAL = 60;
   private final SeedGenerator seedGenerator;
   private final Condition waitWhileEmpty = lock.newCondition();
   private final Condition waitForEntropyDrain = lock.newCondition();
   private final Set<Random> prngs
-      = Collections.synchronizedSet(Collections.newSetFromMap(new WeakHashMap<Random, Boolean>(1)));
+      = Collections.newSetFromMap(CacheBuilder.newBuilder()
+          .weakKeys()
+          .initialCapacity(1)
+          .<Random, Boolean>build()
+          .asMap());
   private final byte[] longSeedArray = new byte[8];
   private final ByteBuffer longSeedBuffer = ByteBuffer.wrap(longSeedArray);
   private final Set<Random> prngsThisIteration = new HashSet<>(1);
