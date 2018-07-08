@@ -3,126 +3,6 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <profiles>
-    <profile>
-      <id>jdk8</id>
-      <activation>
-        <jdk>(,1.8]</jdk>
-      </activation>
-      <properties>
-        <maven.compiler.source>1.8</maven.compiler.source>
-        <maven.compiler.target>1.8</maven.compiler.target>
-      </properties>
-      <dependencies>
-        <dependency>
-          <groupId>org.slf4j</groupId>
-          <artifactId>slf4j-api</artifactId>
-          <version>1.7.25</version>
-        </dependency>
-        <dependency>
-          <!-- Overrides transitive dep on 5.2.1 -->
-          <groupId>net.sf.proguard</groupId>
-          <artifactId>proguard-base</artifactId>
-          <version>5.3.3</version>
-          <scope>runtime</scope>
-        </dependency>
-      </dependencies>
-      <build>
-        <pluginManagement>
-          <plugins>
-            <plugin>
-              <groupId>org.apache.maven.plugins</groupId>
-              <artifactId>maven-surefire-plugin</artifactId>
-              <version>2.21.0</version>
-              <configuration>
-                <argLine>@{argLine} ${test.jdk8.argline}</argLine>
-              </configuration>
-            </plugin>
-            <plugin>
-              <groupId>org.apache.maven.plugins</groupId>
-              <artifactId>maven-failsafe-plugin</artifactId>
-              <version>2.17</version>
-              <configuration>
-                <argLine>@{argLine} ${test.jdk8.argline}</argLine>
-              </configuration>
-              <executions>
-                <execution>
-                  <!-- Check that Proguard isn't breaking anything -->
-                  <id>test</id>
-                  <phase>integration-test</phase>
-                  <goals>
-                    <goal>integration-test</goal>
-                  </goals>
-                </execution>
-              </executions>
-            </plugin>
-            <plugin>
-              <groupId>com.github.wvengen</groupId>
-              <artifactId>proguard-maven-plugin</artifactId>
-              <version>2.0.14</version>
-              <configuration>
-                <proguardJar>
-                  ${user.home}/.m2/repository/net/sf/proguard/proguard-base/5.3.3/proguard-base-5.3.3.jar
-                </proguardJar>
-                <proguardInclude>${basedir}/proguard.conf</proguardInclude>
-                <libs>
-                  <lib>${java.home}/lib/rt.jar</lib>
-                  <lib>${java.home}/lib/jce.jar</lib>
-                </libs>
-              </configuration>
-            </plugin>
-          </plugins>
-        </pluginManagement>
-        <plugins>
-          <plugin>
-            <groupId>com.github.wvengen</groupId>
-            <artifactId>proguard-maven-plugin</artifactId>
-            <version>2.0.14</version>
-            <executions>
-              <execution>
-                <id>proguard</id>
-                <!-- Work around lack of a post-package phase (proguard requires existing jar -->
-                <phase>pre-integration-test</phase>
-                <goals>
-                  <goal>proguard</goal>
-                </goals>
-              </execution>
-            </executions>
-          </plugin>
-        </plugins>
-      </build>
-    </profile>
-    <profile>
-      <id>jdk9</id>
-      <activation>
-        <jdk>[9.0,)</jdk>
-      </activation>
-      <properties>
-        <maven.compiler.source>1.9</maven.compiler.source>
-        <maven.compiler.target>1.9</maven.compiler.target>
-      </properties>
-      <dependencies>
-        <dependency>
-          <groupId>org.slf4j</groupId>
-          <artifactId>slf4j-api</artifactId>
-          <version>1.8.0-beta0</version>
-        </dependency>
-      </dependencies>
-      <build>
-        <plugins>
-          <plugin>
-            <groupId>org.pitest</groupId>
-            <artifactId>pitest-maven</artifactId>
-            <version>1.4.0</version>
-            <configuration>
-              <jvmArgs>
-                <value>--add-opens</value>
-                <value>java.xml/jdk.xml.internal=ALL-UNNAMED</value>
-              </jvmArgs>
-            </configuration>
-          </plugin>
-        </plugins>
-      </build>
-    </profile>
     <!-- GPG Signature on release -->
     <profile>
       <id>release-sign-artifacts</id>
@@ -187,20 +67,19 @@
   </profiles>
   <packaging>jar</packaging>
   <properties>
-    <argLine />
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <prefix />
+    <maven.compiler.source>1.7</maven.compiler.source>
+    <maven.compiler.target>1.7</maven.compiler.target>
     <github.global.server>github</github.global.server>
+    <jacoco.version>0.8.1</jacoco.version>
     <jsr305.version>3.0.2</jsr305.version>
     <guava.version>25.0</guava.version>
-    <jacoco.version>0.8.1</jacoco.version>
     <powermock.version>2.0.0-beta.5</powermock.version>
     <mockito.version>2.19.0</mockito.version>
-    <test.jdk8.argline />
-    <test.jdk9.argline>--add-opens java.xml/jdk.xml.internal=ALL-UNNAMED</test.jdk9.argline>
   </properties>
   <groupId>io.github.pr0methean.betterrandom</groupId>
-  <artifactId>BetterRandom</artifactId>
+  <artifactId>BetterRandom-Java7</artifactId>
   <version>2.3.14-SNAPSHOT</version>
   <name>BetterRandom</name>
   <description>Better, faster random-number generation in Java.
@@ -219,7 +98,7 @@
     <url>https://github.com/Pr0methean/BetterRandom</url>
     <connection>scm:git:git://github.com/Pr0methean/BetterRandom.git</connection>
     <developerConnection>scm:git:git@github.com:Pr0methean/BetterRandom.git</developerConnection>
-    <tag>BetterRandom-2.3.12-SNAPSHOT</tag>
+    <tag>BetterRandom-2.3.14-SNAPSHOT</tag>
   </scm>
 
   <distributionManagement>
@@ -236,6 +115,22 @@
   </distributionManagement>
 
   <dependencies>
+    <dependency>
+      <groupId>net.sourceforge.streamsupport</groupId>
+      <artifactId>streamsupport</artifactId>
+      <version>1.6.1</version>
+    </dependency>
+    <dependency>
+      <!-- Works around an issue in newer versions of JCommander otherwise used by TestNG -->
+      <groupId>com.beust</groupId>
+      <artifactId>jcommander</artifactId>
+      <version>1.48</version>
+    </dependency>
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-api</artifactId>
+      <version>1.7.25</version>
+    </dependency>
     <dependency>
       <groupId>org.apache.logging.log4j</groupId>
       <artifactId>log4j-slf4j-impl</artifactId>
@@ -294,7 +189,7 @@
     <dependency>
       <groupId>com.google.guava</groupId>
       <artifactId>guava</artifactId>
-      <version>${guava.version}-jre</version>
+      <version>${guava.version}-android</version>
     </dependency>
     <!-- https://mvnrepository.com/artifact/com.google.code.findbugs/jsr305 -->
     <dependency>
@@ -307,6 +202,21 @@
       <artifactId>maven-deploy-plugin</artifactId>
       <version>2.8.2</version>
       <type>maven-plugin</type>
+    </dependency>
+    <dependency>
+      <!-- Overrides transitive dep on 5.2.1 -->
+      <groupId>net.sf.proguard</groupId>
+      <artifactId>proguard-base</artifactId>
+      <version>5.3.3</version>
+      <scope>runtime</scope>
+    </dependency>
+    <dependency>
+      <!-- https://www.eclemma.org/jacoco/trunk/doc/examples/build/pom-offline.xml -->
+      <groupId>org.jacoco</groupId>
+      <artifactId>org.jacoco.agent</artifactId>
+      <classifier>runtime</classifier>
+      <version>${jacoco.version}</version>
+      <scope>test</scope>
     </dependency>
   </dependencies>
   <build>
@@ -322,7 +232,31 @@
     </resources>
     <pluginManagement>
       <plugins>
-
+        <plugin>
+          <groupId>com.github.wvengen</groupId>
+          <artifactId>proguard-maven-plugin</artifactId>
+          <version>2.0.14</version>
+          <executions>
+            <execution>
+              <id>proguard</id>
+              <!-- Work around lack of a post-package phase (proguard requires existing jar -->
+              <phase>pre-integration-test</phase>
+              <goals>
+                <goal>proguard</goal>
+              </goals>
+            </execution>
+          </executions>
+          <configuration>
+            <proguardJar>
+              ${user.home}/.m2/repository/net/sf/proguard/proguard-base/5.3.3/proguard-base-5.3.3.jar
+            </proguardJar>
+            <proguardInclude>${basedir}/proguard.conf</proguardInclude>
+            <libs>
+              <lib>${java.home}/lib/rt.jar</lib>
+              <lib>${java.home}/lib/jce.jar</lib>
+            </libs>
+          </configuration>
+        </plugin>
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-javadoc-plugin</artifactId>
@@ -344,7 +278,10 @@
               <![CDATA[
               © {currentYear} Chris Hennick. Free to use under the <a href="https://www.apache.org/licenses/LICENSE-2.0">Apache License 2.0</a>. <a href="/privacy policy.html">Privacy Policy</a>]]></bottom>
             <sourcepath>${user.home}/j2se-src:${basedir}/src/main/java</sourcepath>
+            <javadocVersion>1.8.0</javadocVersion>
+            <notimestamp>true</notimestamp>
             <subpackages>io.github.pr0methean</subpackages>
+            <show>protected</show>
             <links>
               <link>http://checkstyle-addons.github.io/jsr305-javadoc/${jsr305.version}</link>
               <link>https://checkerframework.org/api</link>
@@ -396,7 +333,6 @@
           <artifactId>maven-surefire-plugin</artifactId>
           <version>2.21.0</version>
           <configuration>
-            <argLine>@{argLine} ${test.jdk9.argline}</argLine>
             <suiteXmlFiles>
               <suiteXmlFile>src/test/testng.xml</suiteXmlFile>
             </suiteXmlFiles>
@@ -421,7 +357,6 @@
           <artifactId>maven-failsafe-plugin</artifactId>
           <version>2.17</version>
           <configuration>
-            <argLine>@{argLine} ${test.jdk9.argline}</argLine>
             <suiteXmlFiles>
               <suiteXmlFile>src/test/testng.xml</suiteXmlFile>
             </suiteXmlFiles>
@@ -489,6 +424,8 @@
           <artifactId>maven-compiler-plugin</artifactId>
           <version>3.7.0</version>
           <configuration>
+            <source>1.7</source>
+            <target>1.7</target>
             <staleMillis>3600000</staleMillis>
             <fork>true</fork>
             <compilerArguments>
@@ -603,14 +540,6 @@
               <artifactId>maven-scm-provider-gitexe</artifactId>
               <version>1.9.5</version>
             </dependency>
-            <dependency>
-              <!-- https://www.eclemma.org/jacoco/trunk/doc/examples/build/pom-offline.xml -->
-              <groupId>org.jacoco</groupId>
-              <artifactId>org.jacoco.agent</artifactId>
-              <classifier>runtime</classifier>
-              <version>${jacoco.version}</version>
-              <scope>test</scope>
-            </dependency>
           </dependencies>
           <configuration>
             <mavenExecutorId>forked-path</mavenExecutorId>
@@ -641,17 +570,15 @@
       <plugin>
         <groupId>org.pitest</groupId>
         <artifactId>pitest-maven</artifactId>
-        <version>1.4.0</version>
+        <version>1.2.4</version>
         <configuration>
           <threads>4</threads>
           <coverageThreshold>80</coverageThreshold>
           <mutationThreshold>65</mutationThreshold>
-          <avoidCallsTo>
-            <avoidCallsTo>org.slf4j</avoidCallsTo>
-          </avoidCallsTo>
           <timeoutFactor>1.5</timeoutFactor>
           <timeoutConstant>4000</timeoutConstant>
           <testPlugin>testng</testPlugin>
+          <mutateStaticInitializers>true</mutateStaticInitializers>
           <failWhenNoMutations>true</failWhenNoMutations>
         </configuration>
       </plugin>
@@ -672,6 +599,19 @@
                 </requireMavenVersion>
               </rules>
             </configuration>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <groupId>com.github.wvengen</groupId>
+        <artifactId>proguard-maven-plugin</artifactId>
+        <version>2.0.14</version>
+        <executions>
+          <execution>
+            <phase>package</phase>
+            <goals>
+              <goal>proguard</goal>
+            </goals>
           </execution>
         </executions>
       </plugin>
@@ -698,8 +638,8 @@
           <notimestamp>true</notimestamp>
           <show>protected</show>
           <links>
-            <link>https://docs.oracle.com/javase/8/docs/api</link>
-            <link>https://google.github.io/guava/releases/19.0/api/docs</link>
+            <link>https://docs.oracle.com/javase/7/docs/api</link>
+            <link>https://google.github.io/guava/releases/${guava.version}/api/docs</link>
           </links>
           <tags>
             <tag>
