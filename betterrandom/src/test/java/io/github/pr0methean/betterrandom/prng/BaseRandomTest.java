@@ -614,7 +614,7 @@ public abstract class BaseRandomTest {
     checkStream(prng, 42, prng.longs(20, 1L << 40, 1L << 42).boxed(), 20, 1L << 40, 1L << 42, true);
   }
 
-  @Test(timeOut = 1000) public void testLongs3SmallRange() throws Exception {
+  @Test(timeOut = 10_000) public void testLongs3SmallRange() throws Exception {
     final long bound = (1L << 40) + 2;
     final BaseRandom prng = createRng();
     checkStream(prng, 31, prng.longs(20, 1L << 40, bound).boxed(), 20, 1L << 40, bound, true);
