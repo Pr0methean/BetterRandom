@@ -21,8 +21,13 @@ fi
 PATH="${NO_GIT_PATH}" mvn ${MAYBE_ANDROID_FLAG} help:active-profiles clean ${MAYBE_JACOCO_PREPARE} \
     test ${MAYBE_JACOCO_REPORT} -e
 STATUS=$?
-if [ "$STATUS" = 0 ]; then
+if [ "${STATUS}" = 0 ]; then
   PUSH_JACOCO="true"
+else
+  cd ..
+  exit "${STATUS}"
+fi
+if [ "${NO_JACOCO}" != "true" ]; then
   if [ "${TRAVIS}" = "true" ]; then
     COMMIT="$TRAVIS_COMMIT"
     JOB_ID="travis_$TRAVIS_JOB_NUMBER"
@@ -41,7 +46,9 @@ if [ "$STATUS" = 0 ]; then
   if [ -f "${COMMIT}" ]; then
     echo "[unit-tests.sh] Aggregating with JaCoCo reports from other jobs."
     cp "${COMMIT}/*.exec" target
-    mvn jacoco:report-aggregate
+    cp ../pom.xml .
+    mvn "jacoco:report-aggregate"
+    rm pom.xml
     JACOCO_DIR="jacoco-aggregate"
   else
     echo "[unit-tests.sh] This is the first JaCoCo report for this build."
@@ -49,7 +56,6 @@ if [ "$STATUS" = 0 ]; then
     JACOCO_DIR="jacoco"
   fi
   /bin/mv ../target/jacoco.exec "$COMMIT/$JOB_ID.exec"
-  cd "$COMMIT"
   git add .
   git commit -m "Coverage report from job $JOB_ID"
   git remote add originauth "https://${GH_TOKEN}@github.com/Pr0methean/betterrandom-coverage.git"
@@ -57,7 +63,7 @@ if [ "$STATUS" = 0 ]; then
   while [ ! $? ]; do
     git pull --rebase  # Merge
     cp "*.exec" "../../target/"
-    cp ../../pom.xml .
+    cp ../pom.xml .
     mvn "jacoco:report-aggregate"
     rm pom.xml
     git push
@@ -99,5 +105,13 @@ if [ "$STATUS" = 0 ]; then
       PATH="${NO_GIT_PATH}" mvn ${MAYBE_ANDROID_FLAG} integration-test -e
   STATUS=$?
 fi
+if [ "${JAVA8}" = "true" ]; then
+  echo "[unit-tests.sh] Running Proguard."
+  PATH="${NO_GIT_PATH}" mvn -DskipTests -Dmaven.test.skip=true ${MAYBE_ANDROID_FLAG} \
+      pre-integration-test && \
+      echo "[unit-tests.sh] Testing against Proguarded jar." && \
+      PATH="${NO_GIT_PATH}" mvn ${MAYBE_ANDROID_FLAG} integration-test -e
+  STATUS=$?
+fi
 cd ..
-exit "$STATUS"
+exit "${STATUS}"
