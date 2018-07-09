@@ -4,26 +4,31 @@ if [ "$ANDROID" = 1 ]; then
 else
   MAYBE_ANDROID_FLAG=""
 fi
-# These are in variables for git-merge compatibility with the master branch.
-MAYBE_JACOCO_PREPARE="compile jacoco:instrument jacoco:prepare-agent"
-MAYBE_JACOCO_REPORT="jacoco:restore-instrumented-classes jacoco:report"
-
-cd betterrandom
+if [ "${JAVA8}" = "true" ]; then
+  echo "[unit-tests.sh] Using Java 8 mode. JaCoCo will run."
+  MAYBE_JACOCO_PREPARE="compile jacoco:instrument jacoco:prepare-agent"
+  MAYBE_JACOCO_REPORT="jacoco:restore-instrumented-classes jacoco:report"
+else
+  echo "[unit-tests.sh] Using Java 9+ mode."
+  # https://github.com/jacoco/jacoco/issues/663
+  NO_JACOCO="true"
+  MAYBE_JACOCO_PREPARE=""
+  MAYBE_JACOCO_REPORT=""
+fi
 NO_GIT_PATH="${PATH}"
 if [ "${APPVEYOR}" != "" ]; then
   export RANDOM_DOT_ORG_KEY=$(powershell 'Write-Host ($env:random_dot_org_key) -NoNewLine')
   if [ "${OSTYPE}" = "cygwin" ]; then
     # Workaround for a faulty PATH in Appveyor Cygwin (https://github.com/appveyor/ci/issues/1956)
-    NO_GIT_PATH=`echo "${PATH}" | /usr/bin/awk -v RS=':' -v ORS=':' '/git/ {next} {print}'`
+    NO_GIT_PATH=$(echo "${PATH}" | /usr/bin/awk -v RS=':' -v ORS=':' '/git/ {next} {print}')
   fi
 fi
+cd betterrandom
 # Coverage test
 PATH="${NO_GIT_PATH}" mvn ${MAYBE_ANDROID_FLAG} help:active-profiles clean ${MAYBE_JACOCO_PREPARE} \
     test ${MAYBE_JACOCO_REPORT} -e
 STATUS=$?
-if [ "${STATUS}" = 0 ]; then
-  PUSH_JACOCO="true"
-else
+if [ "${STATUS}" != 0 ]; then
   cd ..
   exit "${STATUS}"
 fi
@@ -81,30 +86,6 @@ if [ "${NO_JACOCO}" != "true" ]; then
     curl -s https://codecov.io/bash | bash
     git config --global user.email "travis@travis-ci.org"
   fi
-  git clone https://github.com/Pr0methean/betterrandom-coverage.git
-  cd betterrandom-coverage
-  mkdir -p "$COMMIT"
-  mv ../target/jacoco.exec "$COMMIT/$JOB_ID.exec"
-  cd "$COMMIT"
-  git add .
-  git commit -m "Coverage report from job $JOB_ID"
-  git remote add originauth "https://${GH_TOKEN}@github.com/Pr0methean/betterrandom-coverage.git"
-  git push --set-upstream originauth master
-  while [ ! $? ]; do
-    git pull --rebase  # Merge
-    cp *.exec ../../target/
-    cp ../pom.xml .
-    mvn jacoco:report-aggregate
-    rm pom.xml
-    git push
-  done
-  cd ../..
-  echo "[unit-tests.sh] Running Proguard."
-  PATH="${NO_GIT_PATH}" mvn -DskipTests -Dmaven.test.skip=true ${MAYBE_ANDROID_FLAG} \
-      clean pre-integration-test && \
-      echo "[unit-tests.sh] Testing against Proguarded jar." && \
-      PATH="${NO_GIT_PATH}" mvn ${MAYBE_ANDROID_FLAG} integration-test -e
-  STATUS=$?
 fi
 if [ "${JAVA8}" = "true" ]; then
   echo "[unit-tests.sh] Running Proguard."
