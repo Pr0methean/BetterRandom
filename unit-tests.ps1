@@ -16,7 +16,7 @@ mvn "$MAYBE_ANDROID_FLAG" "help:active-profiles" "clean" "compile" "jacoco:instr
 $STATUS = $?
 if ( ! $STATUS ) {
     exit 1
-}
+fi
 if ( $env:TRAVIS ) {
     $COMMIT = "$env:TRAVIS_COMMIT"
     $JOB_ID = "travis_$env:TRAVIS_JOB_NUMBER"
