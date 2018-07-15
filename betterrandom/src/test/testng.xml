@@ -1,5 +1,5 @@
 <!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd">
-<suite name="TestNG" parallel="tests">
+<suite name="BetterRandom" parallel="tests">
   <test name="Seeding" parallel="none">
     <classes>
       <class name="io.github.pr0methean.betterrandom.seed.DefaultSeedGeneratorTest"/>
