@@ -652,7 +652,7 @@
         <artifactId>pitest-maven</artifactId>
         <version>1.4.0</version>
         <configuration>
-          <threads>4</threads>
+          <threads>${testng.perCoreThreadCount}C</threads>
           <coverageThreshold>80</coverageThreshold>
           <mutationThreshold>65</mutationThreshold>
           <avoidCallsTo>
