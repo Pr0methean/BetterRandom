@@ -28,7 +28,7 @@ cd betterrandom
 PATH="${NO_GIT_PATH}" mvn ${MAYBE_ANDROID_FLAG} help:active-profiles clean ${MAYBE_JACOCO_PREPARE} \
     test ${MAYBE_JACOCO_REPORT} -e
 STATUS=$?
-if [ "${STATUS}" == 0 ] && [ "${NO_JACOCO}" != "true" ] ; then
+if [ "${STATUS}" == 0 ] && [ "${NO_JACOCO}" != "true" ]; then
   if [ "${TRAVIS}" == "true" ]; then
     COMMIT="$TRAVIS_COMMIT"
     JOB_ID="travis_$TRAVIS_JOB_NUMBER"
