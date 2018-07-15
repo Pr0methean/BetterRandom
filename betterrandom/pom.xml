@@ -407,7 +407,8 @@
             <forkedProcessTimeoutInSeconds>600</forkedProcessTimeoutInSeconds>
             <forkedProcessExitTimeoutInSeconds>600</forkedProcessExitTimeoutInSeconds>
             <parallel>${testng.parallel}</parallel>
-            <perCoreThreadCount>${testng.perCoreThreadCount}</perCoreThreadCount>
+            <threadCount>${testng.perCoreThreadCount}</threadCount>
+            <perCoreThreadCount>true</perCoreThreadCount>
             <properties>
               <property>
                 <name>surefire.testng.verbose</name>
@@ -429,7 +430,8 @@
               <suiteXmlFile>src/test/testng.xml</suiteXmlFile>
             </suiteXmlFiles>
             <parallel>${testng.parallel}</parallel>
-            <perCoreThreadCount>${testng.perCoreThreadCount}</perCoreThreadCount>
+            <threadCount>${testng.perCoreThreadCount}</threadCount>
+            <perCoreThreadCount>true</perCoreThreadCount>
             <properties>
               <property>
                 <name>surefire.testng.verbose</name>
