@@ -653,8 +653,8 @@
         <version>1.4.0</version>
         <configuration>
           <threads>${testng.perCoreThreadCount}C</threads>
-          <coverageThreshold>80</coverageThreshold>
-          <mutationThreshold>65</mutationThreshold>
+          <coverageThreshold>90</coverageThreshold>
+          <mutationThreshold>80</mutationThreshold>
           <avoidCallsTo>
             <avoidCallsTo>org.slf4j</avoidCallsTo>
           </avoidCallsTo>
