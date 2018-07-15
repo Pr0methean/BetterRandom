@@ -408,7 +408,7 @@
             <properties>
               <property>
                 <name>surefire.testng.verbose</name>
-                <value>5</value>
+                <value>3</value>
               </property>
             </properties>
             <suiteXmlFiles>
