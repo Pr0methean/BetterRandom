@@ -1,10 +1,10 @@
 #!/bin/sh
-if [ "$ANDROID" == 1 ]; then
+if [ "${ANDROID}" = 1 ]; then
   MAYBE_ANDROID_FLAG="-Pandroid"
 else
   MAYBE_ANDROID_FLAG=""
 fi
-if [ "${JAVA8}" == "true" ]; then
+if [ "${JAVA8}" = "true" ]; then
   echo "[unit-tests.sh] Using Java 8 mode. JaCoCo will run."
   MAYBE_JACOCO_PREPARE="compile jacoco:instrument jacoco:prepare-agent"
   MAYBE_JACOCO_REPORT="jacoco:restore-instrumented-classes jacoco:report"
@@ -28,8 +28,8 @@ cd betterrandom
 PATH="${NO_GIT_PATH}" mvn ${MAYBE_ANDROID_FLAG} help:active-profiles clean ${MAYBE_JACOCO_PREPARE} \
     test ${MAYBE_JACOCO_REPORT} -e
 STATUS=$?
-if [ "${STATUS}" == 0 ] && [ "${NO_JACOCO}" != "true" ]; then
-  if [ "${TRAVIS}" == "true" ]; then
+if [ "${STATUS}" = 0 ] && [ "${NO_JACOCO}" != "true" ]; then
+  if [ "${TRAVIS}" = "true" ]; then
     COMMIT="$TRAVIS_COMMIT"
     JOB_ID="travis_$TRAVIS_JOB_NUMBER"
   elif [ "${APPVEYOR}" != "" ]; then
@@ -71,7 +71,7 @@ if [ "${STATUS}" == 0 ] && [ "${NO_JACOCO}" != "true" ]; then
     git push
   done
   cd ../..
-  if [ "${TRAVIS}" == "true" ]; then
+  if [ "${TRAVIS}" = "true" ]; then
     # Coveralls doesn't seem to work in non-.NET Appveyor yet
     # so we have to hope Appveyor pushes its Jacoco reports before Travis does! :(
     mvn coveralls:report
@@ -83,7 +83,7 @@ if [ "${STATUS}" == 0 ] && [ "${NO_JACOCO}" != "true" ]; then
     git config --global user.email "travis@travis-ci.org"
   fi
 fi
-if [ "${JAVA8}" == "true" ]; then
+if [ "${JAVA8}" = "true" ]; then
   echo "[unit-tests.sh] Running Proguard."
   PATH="${NO_GIT_PATH}" mvn -DskipTests -Dmaven.test.skip=true ${MAYBE_ANDROID_FLAG} \
       pre-integration-test && \
