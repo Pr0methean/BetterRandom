@@ -1,5 +1,5 @@
 <!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd">
-<suite name="TestNG" parallel="tests">
+<suite name="BetterRandom" parallel="tests">
   <test name="Seeding" parallel="none">
     <classes>
       <class name="io.github.pr0methean.betterrandom.seed.DefaultSeedGeneratorTest"/>
@@ -17,7 +17,6 @@
       <class name="io.github.pr0methean.betterrandom.prng.AesCounterRandom256Test"/>
       <class name="io.github.pr0methean.betterrandom.prng.AesCounterRandom384Test"/>
       <class name="io.github.pr0methean.betterrandom.prng.AesCounterRandomDemoTest"/>
-      <class name="io.github.pr0methean.betterrandom.prng.BaseRandomStaticTest"/>
       <class name="io.github.pr0methean.betterrandom.prng.CellularAutomatonRandomTest"/>
       <class name="io.github.pr0methean.betterrandom.prng.Cmwc4096RandomTest"/>
       <class name="io.github.pr0methean.betterrandom.prng.MersenneTwisterRandomTest"/>
@@ -44,8 +43,9 @@
       <class name="io.github.pr0methean.betterrandom.prng.adapter.SplittableRandomAdapterTest"/>
     </classes>
   </test>
-  <test name="Util" parallel="methods">
+  <test name="Misc" parallel="methods">
     <classes>
+      <class name="io.github.pr0methean.betterrandom.prng.BaseRandomStaticTest"/>
       <class name="io.github.pr0methean.betterrandom.util.BinaryUtilsTest"/>
       <class name="io.github.pr0methean.betterrandom.util.LooperThreadTest"/>
     </classes>
