@@ -43,20 +43,20 @@ if [ "${STATUS}" = 0 ] && [ "${NO_JACOCO}" != "true" ]; then
     JOB_ID=$(cat /proc/sys/kernel/random/uuid)
   fi
   git clone https://github.com/Pr0methean/betterrandom-coverage.git
-  cd betterrandom-coverage
-  if [ -d "${COMMIT}" ]; then
+  if [ -d "betterrandom-coverage/${COMMIT}" ]; then
     echo "[unit-tests.sh] Aggregating with JaCoCo reports from other jobs."
-    cp "${COMMIT}/*.exec" target
+    cp "betterrandom-coverage/${COMMIT}/*.exec" target
     cp ../pom.xml .
     mvn "jacoco:report-aggregate"
     rm pom.xml
     JACOCO_DIR="jacoco-aggregate"
   else
     echo "[unit-tests.sh] This is the first JaCoCo report for this build."
-    /bin/mkdir "$COMMIT"
+    /bin/mkdir "betterrandom-coverage/$COMMIT"
     JACOCO_DIR="jacoco"
   fi
-  /bin/mv ../target/jacoco.exec "$COMMIT/$JOB_ID.exec"
+  /bin/mv target/jacoco.exec "betterrandom-coverage/${COMMIT}/${JOB_ID}.exec"
+  cd betterrandom-coverage
   git add .
   git commit -m "Coverage report from job $JOB_ID"
   git remote add originauth "https://${GH_TOKEN}@github.com/Pr0methean/betterrandom-coverage.git"
