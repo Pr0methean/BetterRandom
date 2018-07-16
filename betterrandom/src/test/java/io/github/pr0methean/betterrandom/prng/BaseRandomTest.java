@@ -336,13 +336,15 @@ public abstract class BaseRandomTest {
 
   @Test(timeOut = 15_000) public void testSetSeedZero() throws SeedException {
     int length = getNewSeedLength(createRng());
-    final byte[] realSeed =
-        getTestSeedGenerator().generateSeed(length);
     final byte[] zeroSeed = new byte[length];
+    final byte[] realSeed = new byte[length];
+    do {
+      getTestSeedGenerator().generateSeed(realSeed);
+    } while (Arrays.equals(realSeed, zeroSeed));
     final BaseRandom rng = createRng(realSeed);
     final BaseRandom rng2 = createRng(zeroSeed);
-    assert !RandomTestUtils.testEquivalence(rng, rng2, 20)
-        : "Output with real seed matches output with all-zeroes seed";
+    RandomTestUtils.assertDistinct(rng, rng2, 20,
+        "Output with real seed matches output with all-zeroes seed");
   }
 
   @Test(timeOut = 15_000) public void testEquals() throws SeedException {

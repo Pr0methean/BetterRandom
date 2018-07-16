@@ -145,13 +145,23 @@ public enum RandomTestUtils {
     return true;
   }
 
-  public static void assertEquivalent(final Random rng1, final Random rng2,
-      final int iterations, String message) {
-    String fullMessage
+  private static void assertEquivalentOrDistinct(final Random rng1, final Random rng2,
+      final int iterations, final String message, final boolean shouldBeEquivalent) {
+    final String fullMessage
         = String.format("%s:%n%s%nvs.%n%s%n", message, toString(rng1), toString(rng2));
-    if (!testEquivalence(rng1, rng2, iterations)) {
+    if (testEquivalence(rng1, rng2, iterations) != shouldBeEquivalent) {
       throw new AssertionError(fullMessage);
     }
+  }
+
+  public static void assertEquivalent(final Random rng1, final Random rng2,
+      final int iterations, String message) {
+    assertEquivalentOrDistinct(rng1, rng2, iterations, message, true);
+  }
+
+  public static void assertDistinct(final Random rng1, final Random rng2,
+      final int iterations, String message) {
+    assertEquivalentOrDistinct(rng1, rng2, iterations, message, false);
   }
 
   public static String toString(Random rng) {
