@@ -29,33 +29,32 @@ if ( $STATUS ) {
         $JOB_ID = [guid]::NewGuid()
     }
     git clone "https://github.com/Pr0methean/betterrandom-coverage.git"
-    cd betterrandom-coverage
-    if ( Test-Path $COMMIT ) {
+    if ( Test-Path "betterrandom-coverage/${COMMIT}" ) {
         echo "[unit-tests.ps1] Aggregating with JaCoCo reports from other jobs."
-        cp "$COMMIT/*.exec" target
-        cp ../pom.xml .
+        cp "betterrandom-coverage/${COMMIT}/*.exec" target
         mvn "jacoco:report-aggregate"
-        rm pom.xml
         $JACOCO_DIR = "jacoco-aggregate"
     } else {
         echo "[unit-tests.ps1] This is the first JaCoCo report for this build."
-        mkdir "$COMMIT"
+        mkdir "betterrandom-coverage/${COMMIT}"
         $JACOCO_DIR = "jacoco"
     }
-    mv "../target/jacoco.exec" "$COMMIT/$JOB_ID.exec"
+    mv target/jacoco.exec "betterrandom-coverage/${COMMIT}/${JOB_ID}.exec"
+    cd betterrandom-coverage
     git add .
     git commit -m "Coverage report from job $JOB_ID"
-    git remote add originauth "https://$GH_TOKEN@github.com/Pr0methean/betterrandom-coverage.git"
+    git remote add originauth "https://${GH_TOKEN}@github.com/Pr0methean/betterrandom-coverage.git"
     git push --set-upstream originauth master
     while (! $?) {
-        git pull --rebase  # Merge
-        cp "$COMMIT/*.exec" target
-        cp ../pom.xml .
-        mvn "jacoco:report-aggregate"
-        rm pom.xml
-        git add .
-        git commit --amend --no-edit
-        git push
+      cd ..
+      git pull --rebase  # Merge
+      cp "betterrandom-coverage/${COMMIT}/*.exec" target
+      mvn "jacoco:report-aggregate"
+      /bin/mv target/jacoco.exec "betterrandom-coverage/${COMMIT}/${JOB_ID}.exec"
+      cd betterrandom-coverage
+      git add .
+      git commit --amend --no-edit
+      git push
     }
     cd ..
     if ( $TRAVIS ) {
