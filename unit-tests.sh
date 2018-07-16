@@ -67,6 +67,8 @@ if [ "${STATUS}" = 0 ] && [ "${NO_JACOCO}" != "true" ]; then
     cp ../pom.xml .
     mvn "jacoco:report-aggregate"
     rm pom.xml
+    git add .
+    git commit --amend --no-edit
     git push
   done
   cd ..
