@@ -61,14 +61,14 @@ if [ "${STATUS}" = 0 ] && [ "${NO_JACOCO}" != "true" ]; then
   git push --set-upstream originauth master
   while [ ! $? ]; do
     cd ..
-    git pull --rebase  # Merge
+    git pull --rebase originauth # Merge
     cp betterrandom-coverage/${COMMIT}/*.exec target
     mvn "jacoco:report-aggregate"
     /bin/mv target/jacoco.exec "betterrandom-coverage/${COMMIT}/${JOB_ID}.exec"
     cd betterrandom-coverage
     git add .
     git commit --amend --no-edit
-    git push
+    git push --set-upstream originauth master
   done
   cd ..
   if [ "${TRAVIS}" = "true" ]; then
