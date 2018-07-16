@@ -37,7 +37,7 @@ if [ "${STATUS}" = 0 ] && [ "${NO_JACOCO}" != "true" ]; then
   fi
   git clone https://github.com/Pr0methean/betterrandom-coverage.git
   cd betterrandom-coverage
-  if [ -f "${COMMIT}" ]; then
+  if [ -d "${COMMIT}" ]; then
     echo "[unit-tests.sh] Aggregating with JaCoCo reports from other jobs."
     cp "${COMMIT}/*.exec" target
     cp ../pom.xml .
