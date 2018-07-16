@@ -1,3 +1,7 @@
+# 2.3.15
+* Slightly improves unit-test parallelization.
+* Fixes a rare flake in `testSetSeedZero`.
+
 # 2.3.14
 * `RandomSeederThread` no longer uselessly uses weak references to its instances. This decreases
   the memory footprint slightly.
