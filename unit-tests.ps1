@@ -53,6 +53,8 @@ if ( $STATUS ) {
         cp ../pom.xml .
         mvn "jacoco:report-aggregate"
         rm pom.xml
+        git add .
+        git commit --amend --no-edit
         git push
     }
     cd ..
