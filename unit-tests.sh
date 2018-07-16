@@ -48,7 +48,7 @@ if [ "${STATUS}" = 0 ] && [ "${NO_JACOCO}" != "true" ]; then
     echo "[unit-tests.sh] Aggregating with JaCoCo reports from other jobs."
     cp "${COMMIT}/*.exec" target
     cp ../pom.xml .
-    mvn jacoco:report-aggregate
+    mvn "jacoco:report-aggregate"
     rm pom.xml
     JACOCO_DIR="jacoco-aggregate"
   else
@@ -57,20 +57,19 @@ if [ "${STATUS}" = 0 ] && [ "${NO_JACOCO}" != "true" ]; then
     JACOCO_DIR="jacoco"
   fi
   /bin/mv ../target/jacoco.exec "$COMMIT/$JOB_ID.exec"
-  cd "$COMMIT"
   git add .
   git commit -m "Coverage report from job $JOB_ID"
   git remote add originauth "https://${GH_TOKEN}@github.com/Pr0methean/betterrandom-coverage.git"
   git push --set-upstream originauth master
   while [ ! $? ]; do
     git pull --rebase  # Merge
-    cp "*.exec" "../../target/"
-    cp ../../pom.xml .
+    cp "${COMMIT}/*.exec" target
+    cp ../pom.xml .
     mvn "jacoco:report-aggregate"
     rm pom.xml
     git push
   done
-  cd ../..
+  cd ..
   if [ "${TRAVIS}" = "true" ]; then
     # Coveralls doesn't seem to work in non-.NET Appveyor yet
     # so we have to hope Appveyor pushes its Jacoco reports before Travis does! :(
