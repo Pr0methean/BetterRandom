@@ -76,23 +76,34 @@ if [ "${STATUS}" = 0 ] && [ "${NO_JACOCO}" != "true" ]; then
     git config --global user.email "travis@travis-ci.org"
   fi
   git clone https://github.com/Pr0methean/betterrandom-coverage.git
+  if [ -d "betterrandom-coverage/${COMMIT}" ]; then
+    echo "[unit-tests.sh] Aggregating with JaCoCo reports from other jobs."
+    cp betterrandom-coverage/${COMMIT}/*.exec target
+    mvn "jacoco:report-aggregate"
+    JACOCO_DIR="jacoco-aggregate"
+  else
+    echo "[unit-tests.sh] This is the first JaCoCo report for this build."
+    /bin/mkdir "betterrandom-coverage/$COMMIT"
+    JACOCO_DIR="jacoco"
+  fi
+  /bin/mv target/jacoco.exec "betterrandom-coverage/${COMMIT}/${JOB_ID}.exec"
   cd betterrandom-coverage
-  mkdir -p "$COMMIT"
-  mv ../target/jacoco.exec "$COMMIT/$JOB_ID.exec"
-  cd "$COMMIT"
   git add .
   git commit -m "Coverage report from job $JOB_ID"
   git remote add originauth "https://${GH_TOKEN}@github.com/Pr0methean/betterrandom-coverage.git"
   git push --set-upstream originauth master
   while [ ! $? ]; do
-    git pull --rebase  # Merge
-    cp *.exec ../../target/
-    cp ../pom.xml .
-    mvn jacoco:report-aggregate
-    rm pom.xml
-    git push
+    git pull --rebase originauth # Merge
+    cd ..
+    cp betterrandom-coverage/${COMMIT}/*.exec target
+    mvn "jacoco:report-aggregate"
+    /bin/mv target/jacoco.exec "betterrandom-coverage/${COMMIT}/${JOB_ID}.exec"
+    cd betterrandom-coverage
+    git add .
+    git commit --amend --no-edit
+    git push --set-upstream originauth master
   done
-  cd ../..
+  cd ..
   echo "[unit-tests.sh] Running Proguard."
   PATH="${NO_GIT_PATH}" mvn -DskipTests -Dmaven.test.skip=true ${MAYBE_ANDROID_FLAG} \
       clean pre-integration-test && \
