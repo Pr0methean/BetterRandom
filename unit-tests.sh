@@ -46,9 +46,7 @@ if [ "${STATUS}" = 0 ] && [ "${NO_JACOCO}" != "true" ]; then
   if [ -d "betterrandom-coverage/${COMMIT}" ]; then
     echo "[unit-tests.sh] Aggregating with JaCoCo reports from other jobs."
     cp "betterrandom-coverage/${COMMIT}/*.exec" target
-    cp ../pom.xml .
     mvn "jacoco:report-aggregate"
-    rm pom.xml
     JACOCO_DIR="jacoco-aggregate"
   else
     echo "[unit-tests.sh] This is the first JaCoCo report for this build."
@@ -63,10 +61,10 @@ if [ "${STATUS}" = 0 ] && [ "${NO_JACOCO}" != "true" ]; then
   git push --set-upstream originauth master
   while [ ! $? ]; do
     git pull --rebase  # Merge
-    cp "${COMMIT}/*.exec" target
-    cp ../pom.xml .
+    cp "betterrandom-coverage/${COMMIT}/*.exec" target
     mvn "jacoco:report-aggregate"
-    rm pom.xml
+    /bin/mv target/jacoco.exec "betterrandom-coverage/${COMMIT}/${JOB_ID}.exec"
+    cd betterrandom-coverage
     git add .
     git commit --amend --no-edit
     git push
