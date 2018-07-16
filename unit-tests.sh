@@ -53,8 +53,8 @@ if [ "${STATUS}" = 0 ] && [ "${NO_JACOCO}" != "true" ]; then
   git remote add originauth "https://${GH_TOKEN}@github.com/Pr0methean/betterrandom-coverage.git"
   git push --set-upstream originauth master
   while [ ! $? ]; do
-    cd ..
     git pull --rebase originauth # Merge
+    cd ..
     cp betterrandom-coverage/${COMMIT}/*.exec target
     mvn "jacoco:report-aggregate"
     /bin/mv target/jacoco.exec "betterrandom-coverage/${COMMIT}/${JOB_ID}.exec"
