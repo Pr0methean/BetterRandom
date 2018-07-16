@@ -38,7 +38,7 @@ if [ "${STATUS}" = 0 ] && [ "${NO_JACOCO}" != "true" ]; then
   git clone https://github.com/Pr0methean/betterrandom-coverage.git
   if [ -d "betterrandom-coverage/${COMMIT}" ]; then
     echo "[unit-tests.sh] Aggregating with JaCoCo reports from other jobs."
-    cp "betterrandom-coverage/${COMMIT}/*.exec" target
+    cp betterrandom-coverage/${COMMIT}/*.exec target
     mvn "jacoco:report-aggregate"
     JACOCO_DIR="jacoco-aggregate"
   else
@@ -55,7 +55,7 @@ if [ "${STATUS}" = 0 ] && [ "${NO_JACOCO}" != "true" ]; then
   while [ ! $? ]; do
     cd ..
     git pull --rebase  # Merge
-    cp "betterrandom-coverage/${COMMIT}/*.exec" target
+    cp betterrandom-coverage/${COMMIT}/*.exec target
     mvn "jacoco:report-aggregate"
     /bin/mv target/jacoco.exec "betterrandom-coverage/${COMMIT}/${JOB_ID}.exec"
     cd betterrandom-coverage
