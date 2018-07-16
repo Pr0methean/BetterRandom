@@ -43,15 +43,14 @@ if ( $STATUS ) {
         $JACOCO_DIR = "jacoco"
     }
     mv "../target/jacoco.exec" "$COMMIT/$JOB_ID.exec"
-    cd "$COMMIT"
     git add .
     git commit -m "Coverage report from job $JOB_ID"
     git remote add originauth "https://$GH_TOKEN@github.com/Pr0methean/betterrandom-coverage.git"
     git push --set-upstream originauth master
     while (! $?) {
         git pull --rebase  # Merge
-        cp "*.exec" "../../target/"
-        cp ../../pom.xml .
+        cp "$COMMIT/*.exec" target
+        cp ../pom.xml .
         mvn "jacoco:report-aggregate"
         rm pom.xml
         git push
