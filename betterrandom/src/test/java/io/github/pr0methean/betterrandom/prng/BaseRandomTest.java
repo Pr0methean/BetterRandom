@@ -258,6 +258,7 @@ public abstract class BaseRandomTest {
       throws IOException, ClassNotFoundException, SeedException {
     // Serialise an RNG.
     final BaseRandom rng = createRng();
+    rng.setSeedGenerator(getTestSeedGenerator());
     RandomTestUtils.assertEquivalentWhenSerializedAndDeserialized(rng);
   }
 
