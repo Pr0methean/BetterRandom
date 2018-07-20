@@ -728,7 +728,7 @@ public abstract class BaseRandom extends Random
     setSeedInternal(seed);
     SeedGenerator currentSeedGenerator = getSeedGenerator();
     if (currentSeedGenerator != null) {
-      currentSeedGenerator.add(this);
+      RandomSeederThread.add(currentSeedGenerator, this);
     }
   }
 
