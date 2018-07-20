@@ -241,6 +241,11 @@ public enum RandomTestUtils {
     assertNotSame(rng, rng2, "Deserialised RNG should be distinct object.");
     // Both RNGs should generate the same sequence.
     assertEquivalent(rng, rng2, 20, "Output mismatch after serialisation.");
+    assertEquals(rng.getClass(), rng2.getClass());
+    if (rng instanceof BaseRandom) {
+      assertEquals(((BaseRandom) rng).getSeedGenerator(),
+          ((BaseRandom) rng2).getSeedGenerator());
+    }
   }
 
   public static void assertMonteCarloPiEstimateSane(final Random rng) {

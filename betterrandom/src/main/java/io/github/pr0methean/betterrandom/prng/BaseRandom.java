@@ -742,6 +742,14 @@ public abstract class BaseRandom extends Random
     }
   }
 
+  /**
+   * Returns the current seed generator for this PRNG.
+   * @return the current seed generator, or null if there is none
+   */
+  public SeedGenerator getSeedGenerator() {
+    return seedGenerator.get();
+  }
+
   @Override public boolean preferSeedWithLong() {
     return getNewSeedLength() <= Java8Constants.LONG_BYTES;
   }
@@ -786,6 +794,10 @@ public abstract class BaseRandom extends Random
     in.defaultReadObject();
     initTransientFields();
     setSeedInternal(seed);
+    SeedGenerator currentSeedGenerator = seedGenerator.get();
+    if (currentSeedGenerator != null) {
+      currentSeedGenerator.add(this);
+    }
   }
 
   @Override public long getEntropyBits() {

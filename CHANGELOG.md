@@ -1,4 +1,5 @@
 # 2.3.15
+* Fixes a bug where a PRNG would lose its SeedGenerator upon deserialization.
 * Slightly improves unit-test parallelization.
 * Fixes a rare flake in `testSetSeedZero`.
 
