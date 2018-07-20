@@ -25,7 +25,7 @@ public class FakeSeedGenerator implements SeedGenerator {
   public String toString() {
     return name;
   }
-  
+
   /**
    * Generates and returns a seed value for a random number generator as a new array.
    * @param length The length of the seed to generate (in bytes).
@@ -50,5 +50,17 @@ public class FakeSeedGenerator implements SeedGenerator {
    */
   @Override public boolean isWorthTrying() {
     return true;
+  }
+
+  @Override
+  public boolean equals(Object o) {
+    return this == o
+        || (o instanceof FakeSeedGenerator
+            && name.equals(o.name));
+  }
+
+  @Override
+  public int hashCode() {
+    return name.hashCode();
   }
 }
