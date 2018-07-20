@@ -727,11 +727,10 @@ public abstract class BaseRandom extends Random
    * SeedGenerator}, to schedule reseeding when we run out of entropy. Unregisters this PRNG with
    * the previous {@link RandomSeederThread} if it had a different one.
    * @param seedGenerator a {@link SeedGenerator} whose {@link RandomSeederThread} will be used
-   *     to
-   *     reseed this PRNG.
+   *     to reseed this PRNG, or null to stop using one.
    */
   @SuppressWarnings({"EqualityOperatorComparesObjects", "ObjectEquality"})
-  public void setSeedGenerator(final SeedGenerator seedGenerator) {
+  public void setSeedGenerator(@Nullable final SeedGenerator seedGenerator) {
     final SeedGenerator oldSeedGenerator = this.seedGenerator.getAndSet(seedGenerator);
     if (seedGenerator != oldSeedGenerator) {
       if (oldSeedGenerator != null) {

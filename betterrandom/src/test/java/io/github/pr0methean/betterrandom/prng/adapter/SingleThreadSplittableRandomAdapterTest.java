@@ -2,11 +2,11 @@ package io.github.pr0methean.betterrandom.prng.adapter;
 
 import static io.github.pr0methean.betterrandom.prng.RandomTestUtils.assertEquivalent;
 
+import io.github.pr0methean.betterrandom.CloneViaSerialization;
 import io.github.pr0methean.betterrandom.TestingDeficiency;
 import io.github.pr0methean.betterrandom.prng.BaseRandom;
 import io.github.pr0methean.betterrandom.prng.BaseRandomTest;
 import io.github.pr0methean.betterrandom.seed.SeedException;
-import io.github.pr0methean.betterrandom.util.CloneViaSerialization;
 import org.testng.annotations.Test;
 
 public class SingleThreadSplittableRandomAdapterTest extends BaseRandomTest {

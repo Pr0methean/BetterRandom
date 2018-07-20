@@ -18,8 +18,8 @@ package io.github.pr0methean.betterrandom.prng;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotSame;
 
+import io.github.pr0methean.betterrandom.CloneViaSerialization;
 import io.github.pr0methean.betterrandom.TestUtils;
-import io.github.pr0methean.betterrandom.util.CloneViaSerialization;
 import io.github.pr0methean.betterrandom.util.Dumpable;
 import java.util.HashSet;
 import java.util.Random;
@@ -242,10 +242,6 @@ public enum RandomTestUtils {
     // Both RNGs should generate the same sequence.
     assertEquivalent(rng, rng2, 20, "Output mismatch after serialisation.");
     assertEquals(rng.getClass(), rng2.getClass());
-    if (rng instanceof BaseRandom) {
-      assertEquals(((BaseRandom) rng).getSeedGenerator(),
-          ((BaseRandom) rng2).getSeedGenerator());
-    }
   }
 
   public static void assertMonteCarloPiEstimateSane(final Random rng) {
