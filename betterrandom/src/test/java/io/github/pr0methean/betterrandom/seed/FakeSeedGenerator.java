@@ -25,4 +25,16 @@ public class FakeSeedGenerator implements SeedGenerator {
   public String toString() {
     return name;
   }
+
+  @Override
+  public boolean equals(Object o) {
+    return this == o
+        || (o instanceof FakeSeedGenerator
+            && name.equals(o.name));
+  }
+
+  @Override
+  public int hashCode() {
+    return name.hashCode();
+  }
 }
