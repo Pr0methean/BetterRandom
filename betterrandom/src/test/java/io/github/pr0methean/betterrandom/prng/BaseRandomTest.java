@@ -15,6 +15,7 @@ import static org.testng.Assert.fail;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
+import io.github.pr0methean.betterrandom.CloneViaSerialization;
 import io.github.pr0methean.betterrandom.TestUtils;
 import io.github.pr0methean.betterrandom.prng.RandomTestUtils.EntropyCheckMode;
 import io.github.pr0methean.betterrandom.prng.adapter.SplittableRandomAdapter;
@@ -258,8 +259,17 @@ public abstract class BaseRandomTest {
       throws IOException, ClassNotFoundException, SeedException {
     // Serialise an RNG.
     final BaseRandom rng = createRng();
-    rng.setSeedGenerator(getTestSeedGenerator());
     RandomTestUtils.assertEquivalentWhenSerializedAndDeserialized(rng);
+    final SeedGenerator seedGenerator = getTestSeedGenerator();
+    try {
+      rng.setSeedGenerator(seedGenerator);
+      BaseRandom rng2 = CloneViaSerialization.clone(rng);
+      assertEquals(seedGenerator, rng2.getSeedGenerator());
+    } finally {
+      rng.setSeedGenerator(null);
+      rng2.setSeedGenerator(null);
+      RandomSeederThread.stopIfEmpty(seedGenerator);
+    }
   }
 
   /** Assertion-free since many implementations have a fallback behavior. */

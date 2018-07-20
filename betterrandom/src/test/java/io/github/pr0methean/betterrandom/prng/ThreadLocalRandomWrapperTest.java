@@ -2,8 +2,8 @@ package io.github.pr0methean.betterrandom.prng;
 
 import static org.testng.Assert.assertEquals;
 
+import io.github.pr0methean.betterrandom.CloneViaSerialization;
 import io.github.pr0methean.betterrandom.seed.SeedException;
-import io.github.pr0methean.betterrandom.util.CloneViaSerialization;
 import java.io.Serializable;
 import java.util.Map;
 import java.util.Random;

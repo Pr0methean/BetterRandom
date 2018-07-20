@@ -1,4 +1,5 @@
-# 2.3.15
+# 2.4.0
+* Removes `CloneViaSerialization` to the test jar, since it's not used anywhere else.
 * Adds `BaseRandom.getSeedGenerator()`.
 * Fixes a bug where a PRNG would lose its SeedGenerator upon deserialization.
 * Slightly improves unit-test parallelization.
