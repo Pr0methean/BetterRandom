@@ -1,4 +1,4 @@
-package io.github.pr0methean.betterrandom.util;
+package io.github.pr0methean.betterrandom;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
