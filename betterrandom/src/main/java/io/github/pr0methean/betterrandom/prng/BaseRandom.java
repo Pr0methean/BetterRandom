@@ -34,6 +34,7 @@ import java8.util.stream.IntStream;
 import java8.util.stream.IntStreams;
 import java8.util.stream.LongStream;
 import java8.util.stream.LongStreams;
+import javax.annotation.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -746,7 +747,7 @@ public abstract class BaseRandom extends Random
    * Returns the current seed generator for this PRNG.
    * @return the current seed generator, or null if there is none
    */
-  public SeedGenerator getSeedGenerator() {
+  @Nullable public SeedGenerator getSeedGenerator() {
     return seedGenerator.get();
   }
 
@@ -794,9 +795,9 @@ public abstract class BaseRandom extends Random
     in.defaultReadObject();
     initTransientFields();
     setSeedInternal(seed);
-    SeedGenerator currentSeedGenerator = seedGenerator.get();
+    SeedGenerator currentSeedGenerator = getSeedGenerator();
     if (currentSeedGenerator != null) {
-      currentSeedGenerator.add(this);
+      RandomSeederThread.add(currentSeedGenerator, this);
     }
   }
 
@@ -816,7 +817,7 @@ public abstract class BaseRandom extends Random
   }
 
   private void asyncReseedIfPossible() {
-    final SeedGenerator currentSeedGenerator = seedGenerator.get();
+    final SeedGenerator currentSeedGenerator = getSeedGenerator();
     if (currentSeedGenerator != null) {
       RandomSeederThread.asyncReseed(currentSeedGenerator, this);
     }
