@@ -261,13 +261,16 @@ public abstract class BaseRandomTest {
     final BaseRandom rng = createRng();
     RandomTestUtils.assertEquivalentWhenSerializedAndDeserialized(rng);
     final SeedGenerator seedGenerator = getTestSeedGenerator();
+    rng.setSeedGenerator(seedGenerator);
     try {
-      rng.setSeedGenerator(seedGenerator);
-      BaseRandom rng2 = CloneViaSerialization.clone(rng);
-      assertEquals(seedGenerator, rng2.getSeedGenerator());
+      final BaseRandom rng2 = CloneViaSerialization.clone(rng);
+      try {
+        assertEquals(seedGenerator, rng2.getSeedGenerator());
+      } finally {
+        rng2.setSeedGenerator(null);
+      }
     } finally {
       rng.setSeedGenerator(null);
-      rng2.setSeedGenerator(null);
       RandomSeederThread.stopIfEmpty(seedGenerator);
     }
   }
