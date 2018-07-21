@@ -24,7 +24,7 @@ public class RandomSeederThreadTest {
     final byte[] bytesWithOldSeed = new byte[TEST_OUTPUT_SIZE];
     prng.nextBytes(bytesWithOldSeed);
     prng.setSeed(TEST_SEED); // Rewind
-    final SeedGenerator seedGenerator = new FakeSeedGenerator();
+    final SeedGenerator seedGenerator = new FakeSeedGenerator("testAddRemoveAndIsEmpty");
     try {
       assertTrue(RandomSeederThread.isEmpty(seedGenerator));
       RandomSeederThread.add(seedGenerator, prng);
@@ -49,7 +49,7 @@ public class RandomSeederThreadTest {
   }
 
   @Test public void testStopIfEmpty() throws Exception {
-    final SeedGenerator seedGenerator = new FakeSeedGenerator();
+    final SeedGenerator seedGenerator = new FakeSeedGenerator("testStopIfEmpty");
     final Random prng = new Random();
     RandomSeederThread.add(seedGenerator, prng);
     RandomSeederThread.stopIfEmpty(seedGenerator);
@@ -60,9 +60,9 @@ public class RandomSeederThreadTest {
   }
 
   @Test public void testStopAllEmpty() throws Exception {
-    final SeedGenerator neverAddedTo = new FakeSeedGenerator();
-    final SeedGenerator addedToAndRemoved = new FakeSeedGenerator();
-    final SeedGenerator addedToAndLeft = new FakeSeedGenerator();
+    final SeedGenerator neverAddedTo = new FakeSeedGenerator("neverAddedTo");
+    final SeedGenerator addedToAndRemoved = new FakeSeedGenerator("addedToAndRemoved");
+    final SeedGenerator addedToAndLeft = new FakeSeedGenerator("addedToAndLeft");
     final Random addedAndRemoved = new Random();
     final Random addedAndLeft = new Random();
     RandomSeederThread.add(addedToAndRemoved, addedAndRemoved);
