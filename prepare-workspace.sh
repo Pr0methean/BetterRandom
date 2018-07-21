@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 sudo apt-get -y remove maven2
 sudo apt-add-repository ppa:webupd8team/java
 sudo apt-get -y update
