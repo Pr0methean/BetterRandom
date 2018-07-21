@@ -10,8 +10,8 @@ public class Pcg64RandomTest extends SeekableRandomTest {
     rng.nextLong(); // ensure they won't both be in initial state before reseeding
     rng.setSeed(0x0123456789ABCDEFL);
     rng2.setSeed(0x0123456789ABCDEFL);
-    assert RandomTestUtils.testEquivalence(rng, rng2, 20)
-        : "Output mismatch after reseeding with same seed";
+    RandomTestUtils.assertEquivalent(rng, rng2, 20,
+        "Output mismatch after reseeding with same seed");
   }
 
   @Override protected Class<? extends BaseRandom> getClassUnderTest() {

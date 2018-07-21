@@ -64,7 +64,7 @@ public class MersenneTwisterRandom extends BaseRandom {
   private static final int GENERATE_MASK2 = 0xefc60000;
 
   private int[] mt; // State vector.
-  private int mtIndex = 0; // Index into state vector.
+  private volatile int mtIndex = N; // Index into state vector.
 
   /**
    * Creates a new RNG and seeds it using the default seeding strategy.
@@ -93,14 +93,14 @@ public class MersenneTwisterRandom extends BaseRandom {
   }
 
   @Override protected ToStringHelper addSubclassFields(final ToStringHelper original) {
-    return original.add("mt", Arrays.toString(mt)).add("mtIndex", mtIndex);
+    return original.add("mt hash", Arrays.hashCode(mt)).add("mtIndex", mtIndex);
   }
 
   /**
    * Reseeds this PRNG using the {@link DefaultSeedGenerator}, since it needs a longer seed.
    * @param seed ignored
    */
-  @Override public synchronized void setSeed(final long seed) {
+  @Override public void setSeed(final long seed) {
     fallbackSetSeedIfInitialized();
   }
 
@@ -153,8 +153,8 @@ public class MersenneTwisterRandom extends BaseRandom {
   }
 
   @Override protected final int next(final int bits) {
-    lock.lock();
     int y;
+    lock.lock();
     try {
       if (mtIndex >= N) // Generate N ints at a time.
       {

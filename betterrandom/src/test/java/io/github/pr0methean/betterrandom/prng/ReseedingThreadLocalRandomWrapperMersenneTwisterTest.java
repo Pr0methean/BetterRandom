@@ -3,9 +3,12 @@ package io.github.pr0methean.betterrandom.prng;
 import static io.github.pr0methean.betterrandom.TestUtils.assertGreaterOrEqual;
 import static io.github.pr0methean.betterrandom.TestUtils.isAppveyor;
 
+import io.github.pr0methean.betterrandom.TestingDeficiency;
 import io.github.pr0methean.betterrandom.prng.RandomTestUtils.EntropyCheckMode;
+import io.github.pr0methean.betterrandom.seed.DefaultSeedGenerator;
 import io.github.pr0methean.betterrandom.seed.RandomSeederThread;
 import io.github.pr0methean.betterrandom.seed.SeedException;
+import io.github.pr0methean.betterrandom.seed.SeedGenerator;
 import java.io.Serializable;
 import java.util.Arrays;
 import java.util.Random;
@@ -13,7 +16,14 @@ import java.util.function.Supplier;
 import org.testng.SkipException;
 import org.testng.annotations.Test;
 
-public class ReseedingThreadLocalRandomWrapperTest extends ThreadLocalRandomWrapperTest {
+public class ReseedingThreadLocalRandomWrapperMersenneTwisterTest
+    extends ThreadLocalRandomWrapperMersenneTwisterTest {
+
+  @TestingDeficiency
+  @Override protected SeedGenerator getTestSeedGenerator() {
+    // FIXME: Statistical tests often fail when using SEMIFAKE_SEED_GENERATOR
+    return DefaultSeedGenerator.DEFAULT_SEED_GENERATOR;
+  }
 
   @Override public void testWrapLegacy() throws SeedException {
     ReseedingThreadLocalRandomWrapper.wrapLegacy(Random::new, getTestSeedGenerator()).nextInt();
@@ -32,7 +42,7 @@ public class ReseedingThreadLocalRandomWrapperTest extends ThreadLocalRandomWrap
       throw new SkipException("This test often fails spuriously on AppVeyor"); // FIXME
     }
     final BaseRandom rng = new ReseedingThreadLocalRandomWrapper(getTestSeedGenerator(),
-        (Serializable & Supplier<BaseRandom>) Pcg64Random::new);
+        (Serializable & Supplier<BaseRandom>) MersenneTwisterRandom::new);
     rng.nextLong();
     try {
       Thread.sleep(1000);
@@ -48,7 +58,7 @@ public class ReseedingThreadLocalRandomWrapperTest extends ThreadLocalRandomWrap
         Thread.sleep(10);
         newSeed = rng.getSeed();
       } while (Arrays.equals(newSeed, oldSeed));
-      Thread.sleep(100);
+      Thread.sleep(isAppveyor() ? 1000 : 100);
       assertGreaterOrEqual(rng.getEntropyBits(), (newSeed.length * 8L) - 1);
     } catch (final InterruptedException e) {
       throw new RuntimeException(e);
@@ -66,7 +76,7 @@ public class ReseedingThreadLocalRandomWrapperTest extends ThreadLocalRandomWrap
   @Override @Test public void testSetSeedAfterNextLong() throws SeedException {
     final BaseRandom prng = createRng();
     prng.nextLong();
-    prng.setSeed(getTestSeedGenerator().generateSeed(8));
+    prng.setSeed(getTestSeedGenerator().generateSeed(16));
     prng.nextLong();
   }
 
@@ -74,12 +84,12 @@ public class ReseedingThreadLocalRandomWrapperTest extends ThreadLocalRandomWrap
   @Override @Test public void testSetSeedAfterNextInt() throws SeedException {
     final BaseRandom prng = createRng();
     prng.nextInt();
-    prng.setSeed(getTestSeedGenerator().generateSeed(8));
+    prng.setSeed(getTestSeedGenerator().generateSeed(16));
     prng.nextInt();
   }
 
   @Override protected BaseRandom createRng() throws SeedException {
     return new ReseedingThreadLocalRandomWrapper(getTestSeedGenerator(),
-        (Serializable & Supplier<BaseRandom>) Pcg64Random::new);
+        (Serializable & Supplier<BaseRandom>) MersenneTwisterRandom::new);
   }
 }

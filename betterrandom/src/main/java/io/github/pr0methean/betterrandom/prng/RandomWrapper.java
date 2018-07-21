@@ -23,6 +23,7 @@ import io.github.pr0methean.betterrandom.seed.DefaultSeedGenerator;
 import io.github.pr0methean.betterrandom.seed.SeedException;
 import io.github.pr0methean.betterrandom.seed.SeedGenerator;
 import io.github.pr0methean.betterrandom.util.BinaryUtils;
+import io.github.pr0methean.betterrandom.util.Dumpable;
 import io.github.pr0methean.betterrandom.util.EntryPoint;
 import java.security.SecureRandom;
 import java.util.Random;
@@ -119,7 +120,9 @@ public class RandomWrapper extends BaseRandom {
   }
 
   @Override protected int next(final int bits) {
-    return (bits >= 32) ? getWrapped().nextInt() : getWrapped().nextInt(1 << bits);
+    return (bits >= 32) ? getWrapped().nextInt()
+        : (bits == 31) ? getWrapped().nextInt() >>> 1
+            : getWrapped().nextInt(1 << bits);
   }
 
   /**
@@ -160,7 +163,8 @@ public class RandomWrapper extends BaseRandom {
   }
 
   @Override protected ToStringHelper addSubclassFields(final ToStringHelper original) {
-    return original.add("wrapped", wrapped);
+    return original.add("wrapped",
+        wrapped instanceof Dumpable ? ((Dumpable) wrapped).dump() : wrapped);
   }
 
   /**
@@ -178,11 +182,23 @@ public class RandomWrapper extends BaseRandom {
     return super.getSeed();
   }
 
-  @Override public synchronized void setSeed(final long seed) {
-    if (wrapped != null) {
-      wrapped.setSeed(seed);
-      super.setSeedInternal(BinaryUtils.convertLongToBytes(seed));
-      unknownSeed = false;
+  @SuppressWarnings("LockAcquiredButNotSafelyReleased")
+  @Override public void setSeed(final long seed) {
+    boolean locked = false;
+    if (lock != null) {
+      lock.lock();
+      locked = true;
+    }
+    try {
+      if (wrapped != null) {
+        wrapped.setSeed(seed);
+        super.setSeedInternal(BinaryUtils.convertLongToBytes(seed));
+        unknownSeed = false;
+      }
+    } finally {
+      if (locked) {
+        lock.unlock();
+      }
     }
   }
 
@@ -191,8 +207,8 @@ public class RandomWrapper extends BaseRandom {
    * SecureRandom#setSeed(byte[])} or {@link Random#setSeed(long)}.
    * @param seed The new seed.
    */
-  @SuppressWarnings("LockAcquiredButNotSafelyReleased") @Override protected void setSeedInternal(
-      final byte[] seed) {
+  @SuppressWarnings("LockAcquiredButNotSafelyReleased")
+  @Override protected void setSeedInternal(final byte[] seed) {
     if (seed == null) {
       throw new IllegalArgumentException("Seed must not be null");
     }
@@ -206,30 +222,31 @@ public class RandomWrapper extends BaseRandom {
         this.seed = new byte[seed.length];
       }
       super.setSeedInternal(seed);
-      if (wrapped != null) {
-        @Nullable ByteArrayReseedableRandom asByteArrayReseedable = null;
-        if (wrapped instanceof ByteArrayReseedableRandom) {
-          asByteArrayReseedable = (ByteArrayReseedableRandom) wrapped;
-          if (asByteArrayReseedable.preferSeedWithLong() && (seed.length == Long.BYTES)) {
-            asByteArrayReseedable = null;
-          }
-        } else if (wrapped instanceof SecureRandom) {
-          // Special handling, since SecureRandom isn't ByteArrayReseedableRandom but does have
-          // setSeed(byte[])
-          ((SecureRandom) wrapped).setSeed(seed);
-          unknownSeed = false;
-          return;
-        } else if (seed.length != Long.BYTES) {
-          throw new IllegalArgumentException(
-              "RandomWrapper requires an 8-byte seed when not wrapping a ByteArrayReseedableRandom");
+      if (wrapped == null) {
+        return;
+      }
+      @Nullable ByteArrayReseedableRandom asByteArrayReseedable = null;
+      if (wrapped instanceof ByteArrayReseedableRandom) {
+        asByteArrayReseedable = (ByteArrayReseedableRandom) wrapped;
+        if (asByteArrayReseedable.preferSeedWithLong() && (seed.length == Long.BYTES)) {
+          asByteArrayReseedable = null;
         }
-        if (asByteArrayReseedable != null) {
-          asByteArrayReseedable.setSeed(seed);
-          unknownSeed = false;
-        } else {
-          wrapped.setSeed(BinaryUtils.convertBytesToLong(seed));
-          unknownSeed = false;
-        }
+      } else if (wrapped instanceof SecureRandom) {
+        // Special handling, since SecureRandom isn't ByteArrayReseedableRandom but does have
+        // setSeed(byte[])
+        ((SecureRandom) wrapped).setSeed(seed);
+        unknownSeed = false;
+        return;
+      } else if (seed.length != Long.BYTES) {
+        throw new IllegalArgumentException(
+            "RandomWrapper requires an 8-byte seed when not wrapping a ByteArrayReseedableRandom");
+      }
+      if (asByteArrayReseedable != null) {
+        asByteArrayReseedable.setSeed(seed);
+        unknownSeed = false;
+      } else {
+        wrapped.setSeed(BinaryUtils.convertBytesToLong(seed));
+        unknownSeed = false;
       }
     } finally {
       if (locked) {

@@ -58,7 +58,8 @@ public abstract class BaseSplittableRandomAdapter extends BaseRandom {
   @Override protected int next(final int bits) {
     debitEntropy(bits);
     return (bits >= 32) ? getSplittableRandom().nextInt()
-        : getSplittableRandom().nextInt(1 << (bits - 1));
+        : (bits == 31) ? getSplittableRandom().nextInt() >>> 1
+        : getSplittableRandom().nextInt(1 << bits);
   }
 
   /** Delegates to {@link SplittableRandom#nextInt(int) SplittableRandom.nextInt(256)}. */
@@ -67,8 +68,8 @@ public abstract class BaseSplittableRandomAdapter extends BaseRandom {
     final SplittableRandom local = getSplittableRandom();
     for (int i = 0; i < bytes.length; i++) {
       bytes[i] = (byte) (local.nextInt(256));
+      debitEntropy(Byte.SIZE);
     }
-    debitEntropy(bytes.length * (long) (Byte.SIZE));
   }
 
   /** Delegates to {@link SplittableRandom#nextInt()}. */

@@ -61,10 +61,11 @@ public class AesCounterRandom extends BaseRandom implements SeekableRandom {
   @SuppressWarnings("HardcodedFileSeparator") private static final String ALGORITHM_MODE =
       ALGORITHM + "/ECB/NoPadding";
   /**
-   * 128-bit counter. Note to forkers: when running a cipher in ECB mode, this counter's length
-   * should equal the cipher's block size.
+   * 128-bit counter. Package-visible for testing. Note to forkers: when running a cipher in ECB
+   * mode, this counter's length should equal the cipher's block size.
    */
-  private static final int COUNTER_SIZE_BYTES = 16;
+  static final int COUNTER_SIZE_BYTES = 16;
+  private static final int INTS_PER_BLOCK = COUNTER_SIZE_BYTES / Integer.BYTES;
   /**
    * Number of blocks to encrypt at once, to construct/GC fewer arrays. This takes advantage of the
    * fact that in ECB mode, concatenating and then encrypting gives the same output as encrypting
@@ -72,8 +73,10 @@ public class AesCounterRandom extends BaseRandom implements SeekableRandom {
    * size is 128 bits at all key lengths.)
    */
   private static final int BLOCKS_AT_ONCE = 16;
+  private static final int BYTES_AT_ONCE = COUNTER_SIZE_BYTES * BLOCKS_AT_ONCE;
   private static final String HASH_ALGORITHM = "SHA-256";
   private static final int MAX_TOTAL_SEED_LENGTH_BYTES;
+  private static final byte[] ZEROES = new byte[COUNTER_SIZE_BYTES];
   @SuppressWarnings("CanBeFinal") private static int MAX_KEY_LENGTH_BYTES = 0;
 
   static {
@@ -91,10 +94,10 @@ public class AesCounterRandom extends BaseRandom implements SeekableRandom {
   // WARNING: Don't initialize any instance fields at declaration; they may be initialized too late!
   @SuppressWarnings("InstanceVariableMayNotBeInitializedByReadObject") private transient Cipher
       cipher;
-  private byte[] counter;
-  private byte[] counterInput;
-  private boolean seeded;
-  private int index;
+  private volatile byte[] counter;
+  private volatile byte[] counterInput;
+  private volatile boolean seeded;
+  private volatile int index;
 
   /**
    * Creates a new RNG and seeds it using 256 bits from the {@link DefaultSeedGenerator}.
@@ -131,8 +134,8 @@ public class AesCounterRandom extends BaseRandom implements SeekableRandom {
    */
   public AesCounterRandom(final byte[] seed) {
     super(seed);
-    currentBlock = new byte[COUNTER_SIZE_BYTES * BLOCKS_AT_ONCE];
-    index = currentBlock.length; // force generation of first block on demand
+    currentBlock = new byte[BYTES_AT_ONCE];
+    index = BYTES_AT_ONCE; // force generation of first block on demand
   }
 
   /**
@@ -153,7 +156,8 @@ public class AesCounterRandom extends BaseRandom implements SeekableRandom {
 
   @Override public ToStringHelper addSubclassFields(final ToStringHelper original) {
     return original.add("counter", BinaryUtils.convertBytesToHexString(counter))
-        .add("cipher", cipher);
+        .add("cipher", cipher)
+        .add("index", index);
   }
 
   @Override protected void initTransientFields() {
@@ -162,7 +166,7 @@ public class AesCounterRandom extends BaseRandom implements SeekableRandom {
       counter = new byte[COUNTER_SIZE_BYTES];
     }
     if (counterInput == null) {
-      counterInput = new byte[COUNTER_SIZE_BYTES * BLOCKS_AT_ONCE];
+      counterInput = new byte[BYTES_AT_ONCE];
     }
     try {
       cipher = Cipher.getInstance(ALGORITHM_MODE);
@@ -194,7 +198,7 @@ public class AesCounterRandom extends BaseRandom implements SeekableRandom {
     lock.lock();
     int result;
     try {
-      if ((currentBlock.length - index) < 4) {
+      if ((BYTES_AT_ONCE - index) < 4) {
         nextBlock();
         index = 0;
       }
@@ -259,7 +263,7 @@ public class AesCounterRandom extends BaseRandom implements SeekableRandom {
   /**
    * Combines the given seed with the existing seed using SHA-256.
    */
-  @Override public synchronized void setSeed(final long seed) {
+  public void setSeed(final long seed) {
     if (superConstructorFinished) {
       final byte[] seedBytes = BinaryUtils.convertLongToBytes(seed);
       setSeed(seedBytes);
@@ -278,13 +282,18 @@ public class AesCounterRandom extends BaseRandom implements SeekableRandom {
     final int keyLength = getKeyLength(seed);
     final byte[] key = Arrays.copyOfRange(seed, 0, keyLength);
     // rest goes to counter
-    counter = new byte[COUNTER_SIZE_BYTES];
-    System.arraycopy(seed, keyLength, counter, 0, seedLength - keyLength);
+    int bytesToCopyToCounter = seedLength - keyLength;
+    System.arraycopy(seed, keyLength, counter, 0, bytesToCopyToCounter);
+    System.arraycopy(ZEROES, 0, counter, bytesToCopyToCounter,
+        COUNTER_SIZE_BYTES - bytesToCopyToCounter);
     try {
       cipher.init(Cipher.ENCRYPT_MODE, new SecretKeySpec(key, ALGORITHM));
     } catch (final InvalidKeyException e) {
       throw new RuntimeException("Invalid key: " + Arrays.toString(key), e);
     }
+    if (currentBlock != null) {
+      index = BYTES_AT_ONCE;
+    } // else it'll be initialized in ctor
     seeded = true;
   }
 
@@ -297,9 +306,32 @@ public class AesCounterRandom extends BaseRandom implements SeekableRandom {
     if (delta == 0) {
       return;
     }
+    long blocksDelta = delta / INTS_PER_BLOCK;
+    int deltaWithinBlock = (int) (delta % INTS_PER_BLOCK) * Integer.BYTES;
     lock.lock();
     try {
-      Byte16ArrayArithmetic.addInto(counter, delta);
+      int newIndex = index + deltaWithinBlock;
+      while (newIndex >= COUNTER_SIZE_BYTES) {
+        newIndex -= COUNTER_SIZE_BYTES;
+        blocksDelta++;
+      }
+      while (newIndex < 0) {
+        newIndex += COUNTER_SIZE_BYTES;
+        blocksDelta--;
+      }
+      blocksDelta -= BLOCKS_AT_ONCE; // Compensate for the increment during nextBlock() below
+      final byte[] addendDigits = new byte[counter.length];
+      System.arraycopy(BinaryUtils.convertLongToBytes(blocksDelta), 0, addendDigits,
+          counter.length - Long.BYTES, Long.BYTES);
+      if (blocksDelta < 0) {
+        // Sign extend
+        for (int i = 0; i < (counter.length - Long.BYTES); i++) {
+          addendDigits[i] = -1;
+        }
+      }
+      Byte16ArrayArithmetic.addInto(counter, blocksDelta * INTS_PER_BLOCK);
+      nextBlock();
+      index = newIndex;
     } finally {
       lock.unlock();
     }

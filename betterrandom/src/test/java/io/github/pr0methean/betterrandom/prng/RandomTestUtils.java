@@ -18,8 +18,9 @@ package io.github.pr0methean.betterrandom.prng;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotSame;
 
+import io.github.pr0methean.betterrandom.CloneViaSerialization;
 import io.github.pr0methean.betterrandom.TestUtils;
-import io.github.pr0methean.betterrandom.util.CloneViaSerialization;
+import io.github.pr0methean.betterrandom.util.Dumpable;
 import java.util.HashSet;
 import java.util.Random;
 import java.util.concurrent.atomic.AtomicLong;
@@ -140,6 +141,29 @@ public enum RandomTestUtils {
     return true;
   }
 
+  private static void assertEquivalentOrDistinct(final Random rng1, final Random rng2,
+      final int iterations, final String message, final boolean shouldBeEquivalent) {
+    final String fullMessage
+        = String.format("%s:%n%s%nvs.%n%s%n", message, toString(rng1), toString(rng2));
+    if (testEquivalence(rng1, rng2, iterations) != shouldBeEquivalent) {
+      throw new AssertionError(fullMessage);
+    }
+  }
+
+  public static void assertEquivalent(final Random rng1, final Random rng2,
+      final int iterations, String message) {
+    assertEquivalentOrDistinct(rng1, rng2, iterations, message, true);
+  }
+
+  public static void assertDistinct(final Random rng1, final Random rng2,
+      final int iterations, String message) {
+    assertEquivalentOrDistinct(rng1, rng2, iterations, message, false);
+  }
+
+  public static String toString(Random rng) {
+    return rng instanceof Dumpable ? ((Dumpable) rng).dump() : rng.toString();
+  }
+
   /**
    * This is a rudimentary check to ensure that the output of a given RNG is approximately uniformly
    * distributed.  If the RNG output is not uniformly distributed, this method will return a poor
@@ -208,7 +232,8 @@ public enum RandomTestUtils {
     final T rng2 = CloneViaSerialization.clone(rng);
     assertNotSame(rng, rng2, "Deserialised RNG should be distinct object.");
     // Both RNGs should generate the same sequence.
-    assert testEquivalence(rng, rng2, 20) : "Output mismatch after serialisation.";
+    assertEquivalent(rng, rng2, 20, "Output mismatch after serialisation.");
+    assertEquals(rng.getClass(), rng2.getClass());
   }
 
   public static void assertMonteCarloPiEstimateSane(final Random rng) {

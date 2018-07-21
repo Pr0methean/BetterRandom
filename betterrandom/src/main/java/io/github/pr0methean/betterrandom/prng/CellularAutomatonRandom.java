@@ -22,11 +22,11 @@ import io.github.pr0methean.betterrandom.seed.DefaultSeedGenerator;
 import io.github.pr0methean.betterrandom.seed.SeedException;
 import io.github.pr0methean.betterrandom.seed.SeedGenerator;
 import io.github.pr0methean.betterrandom.util.BinaryUtils;
-import java.util.Arrays;
 
 /**
  * Java port of the <a href="http://home.southernct.edu/~pasqualonia1/ca/report.html"
  * target="_top">cellular automaton pseudorandom number generator</a> developed by Tony Pasqualoni.
+ *
  * @author Tony Pasqualoni (original C version)
  * @author Daniel Dyer (Java port)
  */
@@ -35,6 +35,9 @@ public class CellularAutomatonRandom extends BaseRandom {
   private static final long serialVersionUID = 5959251752288589909L;
   private static final int SEED_SIZE_BYTES = 4;
   private static final int AUTOMATON_LENGTH = 2056;
+  public static final int EVOLVE_ITERATIONS_AFTER_SEEDING =
+      (AUTOMATON_LENGTH * AUTOMATON_LENGTH) / 4;
+  public static final int LAST_CELL_INDEX = AUTOMATON_LENGTH - 1;
   private static final int[] RNG_RULE =
       {100, 75, 16, 3, 229, 51, 197, 118, 24, 62, 198, 11, 141, 152, 241, 188, 2, 17, 71, 47, 179,
           177, 126, 231, 202, 243, 59, 25, 77, 196, 30, 134, 199, 163, 34, 216, 21, 84, 37, 182,
@@ -69,6 +72,7 @@ public class CellularAutomatonRandom extends BaseRandom {
 
   /**
    * Creates a new RNG and seeds it using the {@link DefaultSeedGenerator}.
+   *
    * @throws SeedException if the {@link DefaultSeedGenerator} fails to generate a seed.
    */
   public CellularAutomatonRandom() throws SeedException {
@@ -77,8 +81,9 @@ public class CellularAutomatonRandom extends BaseRandom {
 
   /**
    * Seed the RNG using the provided seed generation strategy.
+   *
    * @param seedGenerator The seed generation strategy that will provide the seed value for this
-   *     RNG.
+   * RNG.
    * @throws SeedException if there is a problem generating a seed.
    */
   public CellularAutomatonRandom(final SeedGenerator seedGenerator) throws SeedException {
@@ -87,6 +92,7 @@ public class CellularAutomatonRandom extends BaseRandom {
 
   /**
    * Creates an RNG and seeds it with the specified seed data.
+   *
    * @param seed seed used to initialise the RNG.
    */
   public CellularAutomatonRandom(final int seed) {
@@ -95,6 +101,7 @@ public class CellularAutomatonRandom extends BaseRandom {
 
   /**
    * Creates an RNG and seeds it with the specified seed data.
+   *
    * @param seed 4 bytes of seed data used to initialise the RNG.
    */
   public CellularAutomatonRandom(final byte[] seed) {
@@ -106,34 +113,13 @@ public class CellularAutomatonRandom extends BaseRandom {
         << 24);
   }
 
-  @Override protected ToStringHelper addSubclassFields(final ToStringHelper original) {
-    return original.add("cells", Arrays.toString(cells)).add("currentCellIndex", currentCellIndex);
+  @Override
+  protected ToStringHelper addSubclassFields(final ToStringHelper original) {
+    return original.add("currentCellIndex", currentCellIndex).add("cells", 
+        BinaryUtils.convertIntLeastBytesToHexString(cells));
   }
 
-  private void copySeedToCellsAndPreEvolve() {
-    cells = new int[AUTOMATON_LENGTH];
-    // Set initial cell states using seed.
-    cells[AUTOMATON_LENGTH - 1] = seed[0] + 128;
-    cells[AUTOMATON_LENGTH - 2] = seed[1] + 128;
-    cells[AUTOMATON_LENGTH - 3] = seed[2] + 128;
-    cells[AUTOMATON_LENGTH - 4] = seed[3] + 128;
-    currentCellIndex = AUTOMATON_LENGTH - 1;
-
-    int seedAsInt = BinaryUtils.convertBytesToInt(seed, 0);
-    if (seedAsInt != 0xFFFFFFFF) {
-      seedAsInt++;
-    }
-    for (int i = 0; i < (AUTOMATON_LENGTH - 4); i++) {
-      cells[i] = 0x000000FF & (seedAsInt >> (i % 32));
-    }
-
-    // Evolve automaton before returning integers.
-    for (int i = 0; i < ((AUTOMATON_LENGTH * AUTOMATON_LENGTH) / 4); i++) {
-      internalNext(32);
-    }
-  }
-
-  private int internalNext(final int bits) {
+  private int internalNext() {
     // Set cell addresses using address of current cell.
     final int cellC = currentCellIndex - 1;
 
@@ -147,44 +133,88 @@ public class CellularAutomatonRandom extends BaseRandom {
     // Update the state of cellA and shift current cell to the left by 4 bytes.
     if (cellA == 0) {
       cells[0] = RNG_RULE[cells[0]];
-      currentCellIndex = AUTOMATON_LENGTH - 1;
+      currentCellIndex = LAST_CELL_INDEX;
     } else {
       cells[cellA] = RNG_RULE[cells[cellA - 1] + cells[cellA]];
       currentCellIndex -= 4;
     }
-    final int result = convertCellsToInt(cells, cellA);
-    return result >>> (32 - bits);
+    return cellA;
   }
 
-  @Override public int next(final int bits) {
+  @Override
+  public int next(final int bits) {
     lock.lock();
+    final int result;
     try {
-      return internalNext(bits);
+      final int cellA = internalNext();
+      result = convertCellsToInt(cells, cellA);
     } finally {
       lock.unlock();
     }
+    return result >>> (32 - bits);
   }
 
-  @Override public synchronized void setSeed(final long seed) {
+  @Override
+  public void setSeed(final long seed) {
     final byte[] shortenedSeed = convertIntToBytes(((Long) seed).hashCode());
     if (superConstructorFinished) {
-      setSeedInternal(shortenedSeed);
+      lock.lock();
+      try {
+        setSeedInternal(shortenedSeed);
+      } finally {
+        lock.unlock();
+      }
     } else {
       this.seed = shortenedSeed; // can't do anything else yet
     }
   }
 
-  @Override protected void setSeedInternal(final byte[] seed) {
+  @Override
+  protected void setSeedInternal(final byte[] seed) {
     if (seed.length != SEED_SIZE_BYTES) {
       throw new IllegalArgumentException("Cellular Automaton RNG requires a 32-bit (4-byte) seed.");
     }
-    super.setSeedInternal(seed);
-    currentCellIndex = AUTOMATON_LENGTH - 1;
-    copySeedToCellsAndPreEvolve();
+    boolean locked = false;
+    if (lock != null) {
+      lock.lock();
+      locked = true;
+    }
+    try {
+      super.setSeedInternal(seed);
+      currentCellIndex = AUTOMATON_LENGTH - 1;
+      if (cells == null) {
+        cells = new int[AUTOMATON_LENGTH];
+      }
+      // Set initial cell states using seed.
+      cells[AUTOMATON_LENGTH - 1] = seed[0] + 128;
+      cells[AUTOMATON_LENGTH - 2] = seed[1] + 128;
+      cells[AUTOMATON_LENGTH - 3] = seed[2] + 128;
+      cells[AUTOMATON_LENGTH - 4] = seed[3] + 128;
+      currentCellIndex = LAST_CELL_INDEX;
+
+      int seedAsInt = BinaryUtils.convertBytesToInt(seed, 0);
+      if (seedAsInt != 0xFFFFFFFF) {
+        seedAsInt++;
+      }
+      for (int i = 0; i < (AUTOMATON_LENGTH - 4); i++) {
+        cells[i] = 0x000000FF & (seedAsInt >> (i % 32));
+      }
+      // Evolve automaton before returning integers.
+      for (int i = 0; i < EVOLVE_ITERATIONS_AFTER_SEEDING; i++) {
+        internalNext();
+      }
+    } finally {
+      if (locked) {
+        lock.unlock();
+      }
+    }
   }
 
-  /** Returns the only supported seed length. */
-  @Override public int getNewSeedLength() {
+  /**
+   * Returns the only supported seed length.
+   */
+  @Override
+  public int getNewSeedLength() {
     return SEED_SIZE_BYTES;
   }
 }

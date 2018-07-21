@@ -15,12 +15,18 @@
 // ============================================================================
 package io.github.pr0methean.betterrandom.seed;
 
-import static io.github.pr0methean.betterrandom.TestUtils.canRunRandomDotOrgLargeTest;
-import static io.github.pr0methean.betterrandom.TestUtils.isNotAppveyor;
+import static io.github.pr0methean.betterrandom.seed.RandomDotOrgSeedGenerator.setProxy;
+import static io.github.pr0methean.betterrandom.seed.RandomDotOrgUtils.canRunRandomDotOrgLargeTest;
+import static io.github.pr0methean.betterrandom.seed.RandomDotOrgUtils.haveApiKey;
 import static org.testng.Assert.assertEquals;
 
-import java.util.UUID;
+import java.net.InetAddress;
+import java.net.Proxy;
+import java.net.UnknownHostException;
 import org.testng.Assert;
+import org.testng.Reporter;
+import org.testng.SkipException;
+import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
@@ -29,37 +35,30 @@ import org.testng.annotations.Test;
  * @author Daniel Dyer
  * @author Chris Hennick
  */
-public class RandomDotOrgSeedGeneratorTest extends AbstractSeedGeneratorTest {
+@Test(singleThreaded = true)
+public class RandomDotOrgSeedGeneratorLiveTest extends AbstractSeedGeneratorTest {
 
-  public static final int SMALL_REQUEST_SIZE = 32;
+  protected final Proxy proxy = RandomDotOrgUtils.createTorProxy();
 
-  public RandomDotOrgSeedGeneratorTest() {
+  public RandomDotOrgSeedGeneratorLiveTest() {
     super(RandomDotOrgSeedGenerator.RANDOM_DOT_ORG_SEED_GENERATOR);
   }
 
-  private static void setApiKey() {
-    final String apiKeyString = System.getenv("RANDOM_DOT_ORG_KEY");
-    RandomDotOrgSeedGenerator
-        .setApiKey((apiKeyString == null) ? null : UUID.fromString(apiKeyString));
-  }
-
-  @BeforeClass public void setUp() {
-    if (!canRunRandomDotOrgLargeTest()) {
-      RandomDotOrgSeedGenerator.setMaxRequestSize(SMALL_REQUEST_SIZE);
-    }
-  }
-
   @Test(timeOut = 120000) public void testGeneratorOldApi() throws SeedException {
-    if (isNotAppveyor()) {
+    if (canRunRandomDotOrgLargeTest()) {
       RandomDotOrgSeedGenerator.setApiKey(null);
       SeedTestUtils.testGenerator(seedGenerator);
+    } else {
+      throw new SkipException("Test can't run on this platform");
     }
   }
 
   @Test(timeOut = 120000) public void testGeneratorNewApi() throws SeedException {
-    if (isNotAppveyor()) {
-      setApiKey();
+    if (canRunRandomDotOrgLargeTest() && haveApiKey()) {
+      RandomDotOrgUtils.setApiKey();
       SeedTestUtils.testGenerator(seedGenerator);
+    } else {
+      throw new SkipException("Test can't run on this platform");
     }
   }
 
@@ -68,12 +67,14 @@ public class RandomDotOrgSeedGeneratorTest extends AbstractSeedGeneratorTest {
    * implementation.
    */
   @Test(timeOut = 120000) public void testLargeRequest() throws SeedException {
-    if (isNotAppveyor()) {
-      setApiKey();
+    if (canRunRandomDotOrgLargeTest()) {
+      RandomDotOrgUtils.setApiKey();
       // Request more bytes than are cached internally.
       final int seedLength = 626;
       assertEquals(seedGenerator.generateSeed(seedLength).length, seedLength,
           "Failed to generate seed of length " + seedLength);
+    } else {
+      throw new SkipException("Test can't run on this platform");
     }
   }
 
@@ -81,4 +82,41 @@ public class RandomDotOrgSeedGeneratorTest extends AbstractSeedGeneratorTest {
     super.testToString();
     Assert.assertNotNull(RandomDotOrgSeedGenerator.DELAYED_RETRY.toString());
   }
+
+  @Test
+  public void testSetProxyReal() throws Exception {
+    if (!canRunRandomDotOrgLargeTest()) {
+      throw new SkipException("Test can't run on this platform");
+    }
+    setProxy(proxy);
+    try {
+      SeedTestUtils.testGenerator(seedGenerator);
+    } finally {
+      setProxy(null);
+    }
+  }
+
+  @BeforeClass
+  public void setUpClass() {
+    RandomDotOrgUtils.maybeSetMaxRequestSize();
+    // when using Tor, DNS seems to be unreliable, so it may take several tries to get the address
+    InetAddress address = null;
+    long failedLookups = 0;
+    while (address == null) {
+      try {
+        address = InetAddress.getByName("api.random.org");
+      } catch (UnknownHostException e) {
+        failedLookups++;
+      }
+    }
+    if (failedLookups > 0) {
+      Reporter.log("Failed to look up api.random.org address on the first " + failedLookups + " attempts");
+    }
+  }
+
+  @AfterMethod
+  public void tearDownMethod() {
+    RandomDotOrgSeedGenerator.setApiKey(null);
+  }
+
 }

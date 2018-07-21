@@ -2,12 +2,9 @@ package io.github.pr0methean.betterrandom.prng;
 
 import static org.testng.Assert.assertEquals;
 
-import io.github.pr0methean.betterrandom.seed.DefaultSeedGenerator;
+import io.github.pr0methean.betterrandom.CloneViaSerialization;
 import io.github.pr0methean.betterrandom.seed.SeedException;
-import io.github.pr0methean.betterrandom.util.CloneViaSerialization;
-import java.io.IOException;
 import java.io.Serializable;
-import java.security.GeneralSecurityException;
 import java.util.Map;
 import java.util.Random;
 import java.util.function.Function;
@@ -17,14 +14,14 @@ import org.testng.annotations.Test;
 public class ThreadLocalRandomWrapperTest extends BaseRandomTest {
 
   @Override public void testSerializable()
-      throws IOException, ClassNotFoundException, SeedException {
+      throws SeedException {
     // May change after serialization, so test only that it still works at all afterward
     CloneViaSerialization.clone(createRng()).nextInt();
   }
 
   @Override @Test(timeOut = 15000, expectedExceptions = IllegalArgumentException.class)
-  public void testSeedTooLong() throws GeneralSecurityException, SeedException {
-    createRng().setSeed(DefaultSeedGenerator.DEFAULT_SEED_GENERATOR.generateSeed(17));
+  public void testSeedTooLong() throws SeedException {
+    createRng().setSeed(getTestSeedGenerator().generateSeed(17));
   }
 
   @Override @Test(timeOut = 15000, expectedExceptions = IllegalArgumentException.class)
@@ -45,11 +42,34 @@ public class ThreadLocalRandomWrapperTest extends BaseRandomTest {
     // No-op: ThreadLocalRandomWrapper isn't repeatable.
   }
 
+  @Override @Test(enabled = false) public void testRepeatabilityNextGaussian() {
+    // No-op: ThreadLocalRandomWrapper isn't repeatable.
+  }
+
   /** Seeding of this PRNG is thread-local, so setSeederThread makes no sense. */
   @Override @Test(expectedExceptions = UnsupportedOperationException.class)
-  public void testRandomSeederThreadIntegration() throws Exception {
-    createRng().setSeedGenerator(DefaultSeedGenerator.DEFAULT_SEED_GENERATOR);
+  public void testRandomSeederThreadIntegration() {
+    createRng().setSeedGenerator(getTestSeedGenerator());
   }
+
+  /** Assertion-free because ThreadLocalRandomWrapper isn't repeatable. */
+  @Override @Test public void testSetSeedAfterNextLong() throws SeedException {
+    final byte[] seed =
+        getTestSeedGenerator().generateSeed(getNewSeedLength(createRng()));
+    final BaseRandom rng = createRng();
+    rng.nextLong();
+    rng.setSeed(seed);
+  }
+
+  /** Assertion-free because ThreadLocalRandomWrapper isn't repeatable. */
+  @Override @Test public void testSetSeedAfterNextInt() throws SeedException {
+    final byte[] seed =
+        getTestSeedGenerator().generateSeed(getNewSeedLength(createRng()));
+    final BaseRandom rng = createRng();
+    rng.nextInt();
+    rng.setSeed(seed);
+  }
+
 
   /** Assertion-free because thread-local. */
   @Override @Test public void testThreadSafety() {
@@ -58,28 +78,29 @@ public class ThreadLocalRandomWrapperTest extends BaseRandomTest {
 
   @Override public Map<Class<?>, Object> constructorParams() {
     final Map<Class<?>, Object> params = super.constructorParams();
-    params.put(Supplier.class, (Supplier<MersenneTwisterRandom>) MersenneTwisterRandom::new);
+    params.put(Supplier.class, (Supplier<BaseRandom>) Pcg64Random::new);
     params
-        .put(Function.class, (Function<byte[], MersenneTwisterRandom>) MersenneTwisterRandom::new);
+        .put(Function.class, (Function<byte[], BaseRandom>) Pcg64Random::new);
     return params;
   }
 
   @Test public void testExplicitSeedSize() throws SeedException {
-    assertEquals(new ThreadLocalRandomWrapper(200, DefaultSeedGenerator.DEFAULT_SEED_GENERATOR,
+    assertEquals(new ThreadLocalRandomWrapper(200, getTestSeedGenerator(),
         AesCounterRandom::new).getNewSeedLength(), 200);
   }
 
   @Test public void testWrapLegacy() throws SeedException {
-    ThreadLocalRandomWrapper.wrapLegacy(Random::new, DefaultSeedGenerator.DEFAULT_SEED_GENERATOR)
-        .nextInt();
+    ThreadLocalRandomWrapper.wrapLegacy(Random::new, getTestSeedGenerator()).nextInt();
   }
 
   @Override protected BaseRandom createRng() throws SeedException {
     return new ThreadLocalRandomWrapper(
-        (Serializable & Supplier<BaseRandom>) MersenneTwisterRandom::new);
+        (Serializable & Supplier<BaseRandom>) Pcg64Random::new);
   }
 
   @Override protected BaseRandom createRng(final byte[] seed) throws SeedException {
-    return createRng();
+    BaseRandom rng = createRng();
+    rng.setSeed(seed);
+    return rng;
   }
 }

@@ -1,4 +1,78 @@
-# 2.2
+# 2.4.0
+* Removes `CloneViaSerialization` to the test jar, since it's not used anywhere else.
+* Adds `BaseRandom.getSeedGenerator()`.
+* Fixes a bug where a PRNG would lose its SeedGenerator upon deserialization.
+* Slightly improves unit-test parallelization.
+* Fixes a rare flake in `testSetSeedZero`.
+
+# 2.3.14
+* `RandomSeederThread` no longer uselessly uses weak references to its instances. This decreases
+  the memory footprint slightly.
+
+# 2.3.12
+* Fixes a bug that could cause `*SplittableRandomAdapter` to give correlated results on multiple
+  threads.
+* Fixes a bug with entropy counting in `ThreadLocalRandomWrapper`.
+* Unit tests are now split into 3 groups that run in parallel. One group also has within-group
+  parallelism.
+
+# 2.3.11
+* `setSeed` now invalidates the result of the next call to `nextGaussian` if it's been pre-computed.
+* Fixes a bug where `RandomDotOrgSeedGenerator` could reuse seed data or output all-zeroes seeds.
+* Fixes bugs affecting seekability and repeatability in several PRNGs.
+
+# 2.3.10
+* If random.org ever changes its API output format in a way that breaks us, or sends a corrupted
+  response, then the result will now always be a `SeedException`, and this is now tested through
+  fault injection.
+* The Java 7 branch is no longer tested on AppVeyor. The versions of Java 7 available as Windows
+  binaries do not support TLS 1.2, which Maven Central began to require in June 2018. (Caching had
+  masked this issue for some time.)
+
+# 2.3.9
+* `RandomSeederThread` fields are now all final, and collection fields are cleared on interrupt.
+* `RandomSeederThread`'s error message now indicates which `SeedGenerator` is affected.
+* Minor refactoring.
+
+# 2.3.8
+* Can now build using the same pom.xml on JDK8 and JDK9.
+* Fix a test bug that made `ReseedingThreadLocalRandomWrapperTest.testReseeding()` flaky.
+* Use double-checked locking to slightly improve performance of `DevRandomSeedGenerator`.
+
+# 2.3.7
+* Reduces the performance cost of calling `BaseRandom.setSeederThread` redundantly.
+
+# 2.3.6
+* Coverage and performance improvements to the tests. The performance improvement is large enough to
+  justify a new release given that Maven Central includes test jars, despite that no main-jar code
+  has changed from 2.3.5.
+
+# 2.3.5
+* Fixes a rare race condition while reseeding `CellularAutomatonRandom`.
+
+# 2.3.4
+* Should improve performance of `CellularAutomatonRandom` when reseeding frequently, especially
+  under heavy GC load.
+
+# 2.3.3
+* Fixes a bug where `RandomDotOrgSeedGenerator` didn't use a proxy when configured with one.
+* `RandomDotOrgSeedGenerator` now closes the connection when done with it.
+* `RandomDotOrgSeedGenerator` will now gracefully handle receiving more bytes than requested.
+
+# 2.3.2
+* Removes unnecessary `synchronized` modifier from some methods.
+* Tests now include an additional sanity check for `SetSeed`: a seed of all zeroes should give
+  different output than a normal seed.
+
+# 2.3.1
+* Should slightly improve performance of `CellularAutomatonRandom` when seeding and when accessed
+  concurrently.
+
+# 2.3.0
+* `RandomDotOrgSeedGenerator` can now be configured with a proxy.
+* `RandomSeederThread` adds methods for setting thread priority.
+
+# 2.2.0
 * Logging is now done through `slf4j`.
 * Removes the class `LooperThread.DummyTarget`, which was only used for deserialization.
 * Performance refactors.
