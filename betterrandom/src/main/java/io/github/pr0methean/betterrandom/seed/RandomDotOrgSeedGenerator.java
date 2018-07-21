@@ -20,9 +20,10 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
+import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
+import java.net.Proxy;
 import java.net.URL;
-import java.net.URLConnection;
 import java.nio.charset.Charset;
 import java.text.MessageFormat;
 import java.time.Clock;
@@ -36,11 +37,12 @@ import java.util.concurrent.atomic.AtomicReference;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 import javax.annotation.Nullable;
-import javax.net.ssl.HttpsURLConnection;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * <p>Connects to <a href="https://www.random.org/clients/http/" target="_top">random.org's old
@@ -79,7 +81,6 @@ public enum RandomDotOrgSeedGenerator implements SeedGenerator {
    * DefaultSeedGenerator} uses this version.
    */
   DELAYED_RETRY(true);
-
   private static final String JSON_REQUEST_FORMAT = "{\"jsonrpc\":\"2.0\","
       + "\"method\":\"generateBlobs\",\"params\":{\"apiKey\":\"%s\",\"n\":1,\"size\":%d},\"id\":%d}";
 
@@ -98,26 +99,32 @@ public enum RandomDotOrgSeedGenerator implements SeedGenerator {
   private static final int MAX_CACHE_SIZE = 625; // 5000 bits = 1/50 daily limit per API key
   private static final String BASE_URL = "https://www.random.org";
   /**
-   * The URL from which the random bytes are retrieved.
+   * The URL from which the random bytes are retrieved (old API).
    */
   @SuppressWarnings("HardcodedFileSeparator") private static final String RANDOM_URL =
       BASE_URL + "/integers/?num={0,number,0}&min=0&max=255&col=1&base=16&format=plain&rnd=new";
-  private static final URL JSON_REQUEST_URL;
   /**
    * Used to identify the client to the random.org service.
    */
   private static final String USER_AGENT = RandomDotOrgSeedGenerator.class.getName();
   /**
-   * Random.org does not allow requests for more than 10k integers at once.
+   * Random.org does not allow requests for more than 10k integers at once. This field is
+   * package-visible for testing.
    */
-  private static final int GLOBAL_MAX_REQUEST_SIZE = 10000;
+  static final int GLOBAL_MAX_REQUEST_SIZE = 10000;
   private static final Duration RETRY_DELAY = Duration.ofSeconds(10);
-  private static final Lock cacheLock = new ReentrantLock();
+  static final Lock cacheLock = new ReentrantLock();
   private static final Charset UTF8 = Charset.forName("UTF-8");
-  private static Instant EARLIEST_NEXT_ATTEMPT = Instant.MIN;
-  private static byte[] cache = new byte[MAX_CACHE_SIZE];
-  private static int cacheOffset = cache.length;
-  private static int maxRequestSize = GLOBAL_MAX_REQUEST_SIZE;
+  private static final Logger LOG = LoggerFactory.getLogger(RandomDotOrgSeedGenerator.class);
+  private static volatile Instant earliestNextAttempt = Instant.MIN;
+  static volatile byte[] cache = new byte[MAX_CACHE_SIZE];
+  static volatile int cacheOffset = cache.length;
+  private static volatile int maxRequestSize = GLOBAL_MAX_REQUEST_SIZE;
+  private static final URL JSON_REQUEST_URL;
+  /**
+   * The proxy to use with random.org, or null to use the JVM default. Package-visible for testing.
+   */
+  static final AtomicReference<Proxy> proxy = new AtomicReference<>(null);
 
   static {
     try {
@@ -146,14 +153,31 @@ public enum RandomDotOrgSeedGenerator implements SeedGenerator {
   }
 
   /**
+   * Sets the proxy to use to connect to random.org. If null, the JVM default is used.
+   * @param proxy a proxy, or null for the JVM default
+   */
+  public static void setProxy(@Nullable final Proxy proxy) {
+    RandomDotOrgSeedGenerator.proxy.set(proxy);
+  }
+
+  /* Package-visible for testing. */
+  static HttpURLConnection openConnection(final URL url) throws IOException {
+    final Proxy currentProxy = proxy.get();
+    return (HttpURLConnection)
+        ((currentProxy == null) ? url.openConnection() : url.openConnection(currentProxy));
+  }
+
+  /**
    * @param requiredBytes The preferred number of bytes to request from random.org. The
    *     implementation may request more and cache the excess (to avoid making lots of small
    *     requests). Alternatively, it may request fewer if the required number is greater than that
    *     permitted by random.org for a single request.
-   * @throws IOException If there is a problem downloading the random bits.
+   * @throws IOException If a connection error occurs.
+   * @throws SeedException If random.org sends a malformed response body.
    */
   @SuppressWarnings("NumericCastThatLosesPrecision") private static void refreshCache(
       final int requiredBytes) throws IOException {
+    HttpURLConnection connection = null;
     cacheLock.lock();
     try {
       int numberOfBytes = Math.max(requiredBytes, cache.length);
@@ -165,41 +189,48 @@ public enum RandomDotOrgSeedGenerator implements SeedGenerator {
       final UUID currentApiKey = API_KEY.get();
       if (currentApiKey == null) {
         // Use old API.
-        final URL url = new URL(MessageFormat.format(RANDOM_URL, numberOfBytes));
-        final URLConnection connection = url.openConnection();
+        connection = openConnection(new URL(MessageFormat.format(RANDOM_URL, numberOfBytes)));
         connection.setRequestProperty("User-Agent", USER_AGENT);
-
         try (BufferedReader reader = new BufferedReader(
             new InputStreamReader(connection.getInputStream()))) {
           int index = -1;
           for (String line = reader.readLine(); line != null; line = reader.readLine()) {
             ++index;
-            cache[index] = (byte) Integer.parseInt(line, 16);
-            // Can't use Byte.parseByte, since it expects signed
+            if (index >= numberOfBytes) {
+              LOG.warn("random.org sent more data than requested.");
+              break;
+            }
+            try {
+              cache[index] = (byte) Integer.parseInt(line, 16);
+              // Can't use Byte.parseByte, since it expects signed
+            } catch (NumberFormatException e) {
+              throw new SeedException("random.org sent non-numeric data", e);
+            }
           }
           if (index < (cache.length - 1)) {
-            throw new IOException("Insufficient data received.");
+            throw new SeedException(String
+                .format("Insufficient data received: expected %d bytes, got %d.", cache.length,
+                    index + 1));
           }
         }
       } else {
         // Use JSON API.
-        final HttpsURLConnection postRequest =
-            (HttpsURLConnection) JSON_REQUEST_URL.openConnection();
-        postRequest.setDoOutput(true);
-        postRequest.setRequestMethod("POST");
-        postRequest.setRequestProperty("User-Agent", USER_AGENT);
-        try (OutputStream out = postRequest.getOutputStream()) {
+        connection = openConnection(JSON_REQUEST_URL);
+        connection.setDoOutput(true);
+        connection.setRequestMethod("POST");
+        connection.setRequestProperty("User-Agent", USER_AGENT);
+        try (OutputStream out = connection.getOutputStream()) {
           out.write(String.format(JSON_REQUEST_FORMAT, currentApiKey, numberOfBytes * Byte.SIZE,
               REQUEST_ID.incrementAndGet()).getBytes(UTF8));
         }
         final JSONObject response;
-        try (InputStream in = postRequest.getInputStream();
+        try (InputStream in = connection.getInputStream();
             InputStreamReader reader = new InputStreamReader(in)) {
           response = (JSONObject) JSON_PARSER.parse(reader);
         } catch (final ParseException e) {
           throw new SeedException("Unparseable JSON response from random.org", e);
         }
-        final JSONObject error = (JSONObject) response.get("error");
+        final Object error = response.get("error");
         if (error != null) {
           throw new SeedException(error.toString());
         }
@@ -213,8 +244,8 @@ public enum RandomDotOrgSeedGenerator implements SeedGenerator {
               ((data instanceof JSONArray) ? ((JSONArray) data).get(0) : data).toString();
           final byte[] decodedSeed = BASE64.decode(base64seed);
           if (decodedSeed.length < numberOfBytes) {
-            throw new SeedException(
-                "Too few bytes returned: requested " + numberOfBytes + ", got " + base64seed);
+            throw new SeedException(String.format(
+                "Too few bytes returned: expected %d bytes, got '%s'", numberOfBytes, base64seed));
           }
           System.arraycopy(decodedSeed, 0, cache, 0, numberOfBytes);
         }
@@ -222,13 +253,16 @@ public enum RandomDotOrgSeedGenerator implements SeedGenerator {
         if (advisoryDelayMs != null) {
           final Duration advisoryDelay = Duration.ofMillis(advisoryDelayMs.longValue());
           // Wait RETRY_DELAY or the advisory delay, whichever is shorter
-          EARLIEST_NEXT_ATTEMPT = CLOCK.instant()
+          earliestNextAttempt = CLOCK.instant()
               .plus((advisoryDelay.compareTo(RETRY_DELAY) > 0) ? RETRY_DELAY : advisoryDelay);
         }
       }
       cacheOffset = 0;
     } finally {
       cacheLock.unlock();
+      if (connection != null) {
+        connection.disconnect();
+      }
     }
   }
 
@@ -256,6 +290,7 @@ public enum RandomDotOrgSeedGenerator implements SeedGenerator {
         final int newCacheOffset = cacheOffset + sizeChange;
         System.arraycopy(cache, cacheOffset, newCache, newCacheOffset, cache.length - cacheOffset);
         cache = newCache;
+        cacheOffset = newCacheOffset;
       }
       RandomDotOrgSeedGenerator.maxRequestSize = maxRequestSize;
     } finally {
@@ -283,7 +318,7 @@ public enum RandomDotOrgSeedGenerator implements SeedGenerator {
         }
       }
     } catch (final IOException ex) {
-      EARLIEST_NEXT_ATTEMPT = CLOCK.instant().plus(RETRY_DELAY);
+      earliestNextAttempt = CLOCK.instant().plus(RETRY_DELAY);
       throw new SeedException("Failed downloading bytes from " + BASE_URL, ex);
     } catch (final SecurityException ex) {
       // Might be thrown if resource access is restricted (such as in an applet sandbox).
@@ -294,7 +329,7 @@ public enum RandomDotOrgSeedGenerator implements SeedGenerator {
   }
 
   @Override public boolean isWorthTrying() {
-    return !useRetryDelay || !EARLIEST_NEXT_ATTEMPT.isAfter(CLOCK.instant());
+    return !useRetryDelay || !earliestNextAttempt.isAfter(CLOCK.instant());
   }
 
   /**

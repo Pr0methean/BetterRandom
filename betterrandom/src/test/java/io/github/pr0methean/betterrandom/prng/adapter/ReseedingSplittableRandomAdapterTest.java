@@ -5,12 +5,14 @@ import static io.github.pr0methean.betterrandom.seed.DefaultSeedGenerator.DEFAUL
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotEquals;
 
+import io.github.pr0methean.betterrandom.CloneViaSerialization;
 import io.github.pr0methean.betterrandom.prng.BaseRandom;
 import io.github.pr0methean.betterrandom.prng.RandomTestUtils.EntropyCheckMode;
 import io.github.pr0methean.betterrandom.seed.FakeSeedGenerator;
+import io.github.pr0methean.betterrandom.seed.RandomSeederThread;
 import io.github.pr0methean.betterrandom.seed.SeedException;
+import io.github.pr0methean.betterrandom.seed.SeedGenerator;
 import io.github.pr0methean.betterrandom.util.BinaryUtils;
-import io.github.pr0methean.betterrandom.util.CloneViaSerialization;
 import java.util.Arrays;
 import org.testng.annotations.Test;
 
@@ -48,6 +50,10 @@ public class ReseedingSplittableRandomAdapterTest extends SingleThreadSplittable
     // No-op.
   }
 
+  @Override @Test(enabled = false) public void testRepeatabilityNextGaussian() {
+    // No-op.
+  }
+
   @SuppressWarnings("BusyWait") @Override @Test public void testReseeding() {
     final BaseRandom rng = createRng();
     final byte[] oldSeed = rng.getSeed();
@@ -68,12 +74,21 @@ public class ReseedingSplittableRandomAdapterTest extends SingleThreadSplittable
   }
 
   /** Test for crashes only, since setSeed is a no-op. */
-  @Override @Test public void testSetSeed() throws SeedException {
+  @Override @Test public void testSetSeedAfterNextLong() throws SeedException {
     final BaseRandom prng = createRng();
     prng.nextLong();
-    prng.setSeed(DEFAULT_SEED_GENERATOR.generateSeed(8));
-    prng.setSeed(BinaryUtils.convertBytesToLong(DEFAULT_SEED_GENERATOR.generateSeed(8)));
+    prng.setSeed(getTestSeedGenerator().generateSeed(8));
+    prng.setSeed(BinaryUtils.convertBytesToLong(getTestSeedGenerator().generateSeed(8)));
     prng.nextLong();
+  }
+
+  /** Test for crashes only, since setSeed is a no-op. */
+  @Override @Test public void testSetSeedAfterNextInt() throws SeedException {
+    final BaseRandom prng = createRng();
+    prng.nextInt();
+    prng.setSeed(getTestSeedGenerator().generateSeed(8));
+    prng.setSeed(BinaryUtils.convertBytesToLong(getTestSeedGenerator().generateSeed(8)));
+    prng.nextInt();
   }
 
   /** Assertion-free since reseeding may cause divergent output. */
@@ -87,7 +102,7 @@ public class ReseedingSplittableRandomAdapterTest extends SingleThreadSplittable
    */
   @Override @Test(expectedExceptions = UnsupportedOperationException.class)
   public void testRandomSeederThreadIntegration() throws Exception {
-    createRng().setSeedGenerator(DEFAULT_SEED_GENERATOR);
+    createRng().setSeedGenerator(getTestSeedGenerator());
   }
 
   @Override @Test(enabled = false) public void testSeedTooShort() {
@@ -100,12 +115,18 @@ public class ReseedingSplittableRandomAdapterTest extends SingleThreadSplittable
 
   @Override @Test public void testDump() throws SeedException {
     assertNotEquals(ReseedingSplittableRandomAdapter.getInstance(DEFAULT_SEED_GENERATOR).dump(),
-        ReseedingSplittableRandomAdapter.getInstance(new FakeSeedGenerator()).dump());
+        ReseedingSplittableRandomAdapter.getInstance(getTestSeedGenerator()).dump());
   }
 
   @Test public void testFinalize() throws SeedException {
-    ReseedingSplittableRandomAdapter.getInstance(new FakeSeedGenerator());
-    Runtime.getRuntime().runFinalization();
+    SeedGenerator generator = new FakeSeedGenerator();
+    ReseedingSplittableRandomAdapter.getInstance(generator);
+    try {
+      Runtime.getRuntime().runFinalization();
+    } finally {
+      System.gc();
+      RandomSeederThread.stopIfEmpty(generator);
+    }
   }
 
   /** Assertion-free because thread-local. */

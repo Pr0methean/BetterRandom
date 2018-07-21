@@ -1,6 +1,5 @@
 package io.github.pr0methean.betterrandom.prng.adapter;
 
-import com.google.common.base.MoreObjects.ToStringHelper;
 import io.github.pr0methean.betterrandom.seed.DefaultSeedGenerator;
 import io.github.pr0methean.betterrandom.seed.SeedException;
 import io.github.pr0methean.betterrandom.seed.SeedGenerator;
@@ -16,7 +15,6 @@ import java.util.SplittableRandom;
 public class SingleThreadSplittableRandomAdapter extends DirectSplittableRandomAdapter {
 
   private static final long serialVersionUID = -1125374167384636394L;
-  private boolean deserializedAndNotUsedSince = false;
 
   /**
    * Use the provided seed generation strategy to create the seed for the underlying {@link
@@ -63,26 +61,16 @@ public class SingleThreadSplittableRandomAdapter extends DirectSplittableRandomA
     super.debitEntropy(bits);
   }
 
-  @Override protected ToStringHelper addSubclassFields(final ToStringHelper original) {
-    return super.addSubclassFields(original)
-        .add("deserializedAndNotUsedSince", deserializedAndNotUsedSince);
-  }
-
   /**
    * Returns this SingleThreadSplittableRandomAdapter's only {@link SplittableRandom}.
    * @return {@link #underlying}
    */
   @Override protected SplittableRandom getSplittableRandom() {
-    deserializedAndNotUsedSince = false;
     return underlying;
   }
 
   private void readObject(final ObjectInputStream in) throws IOException, ClassNotFoundException {
     in.defaultReadObject();
     setSeed(seed);
-    if (!deserializedAndNotUsedSince) {
-      underlying = underlying.split(); // Ensures we aren't rewinding
-      deserializedAndNotUsedSince = true; // Ensures serializing and deserializing is idempotent
-    }
   }
 }

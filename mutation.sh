@@ -1,15 +1,19 @@
-#!/bin/sh
+#!/bin/bash
 cd betterrandom
-if ([ "$TRAVIS_JDK_VERSION" = "oraclejdk9" ] || [ "$TRAVIS_JDK_VERSION" = "openjdk9" ]); then
-  mv pom9.xml pom.xml
+set -eo pipefail # TODO: Find a pipefail method that's not Bash-specific
+mvn clean test-compile org.pitest:pitest-maven:mutationCoverage 2>&1 | tee >(grep -qv "BUILD FAILURE")
+if [ ! $? ]; then
+  exit 1
 fi
-mvn compile test-compile org.pitest:pitest-maven:mutationCoverage
 cd ../docs
 git remote add originauth "https://${GH_TOKEN}@github.com/Pr0methean/pr0methean.github.io.git"
 git pull --rebase originauth master
 git checkout originauth/master
 rm -rf betterrandom-pit-reports
-mv ../betterrandom/target/pit-reports betterrandom-pit-reports
+cd ../betterrandom/target/pit-reports
+SUBFOLDER=$(LC_COLLATE=C; /usr/bin/printf '%s\c' */)
+mv ${SUBFOLDER} ../../../docs/betterrandom-pit-reports
+cd ../../../docs
 git add betterrandom-pit-reports
 git commit -m "Update PIT mutation reports"
 git push originauth HEAD:master

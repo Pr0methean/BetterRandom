@@ -1,18 +1,6 @@
-BetterRandom is a library designed to help improve the quality and performance of random-number
-generation on Java. It includes:
+# More randomness. Less time. Still an instance of java.util.Random.
 
-* Improved versions of the PRNGs from [Uncommons Maths](https://github.com/dwdyer/uncommons-maths/)
-  that support seeding with byte arrays, seed dumping, serialization, and entropy counting.
-* The SeedGenerator interface and its implementations from Uncommons Math, with the implementations
-  now singletons.
-* A RandomSeederThread class that reseeds registered Random instances as frequently as its
-  SeedGenerator will allow, but also taking into account the entropy count where available.
-* Single-thread and multithread adapter classes that wrap a SplittableRandom as a Random, so that it
-  can be used in legacy methods such as
-  [Collections.shuffle(List<>,Random)](https://docs.oracle.com/javase/8/docs/api/java/util/Collections.html#shuffle-java.util.List-java.util.Random-)
-  that don't have overloads to use with a SplittableRandom. They can be reseeded (this is
-  implemented by replacing the SplittableRandom).
-
+[![Maven Central](https://maven-badges.herokuapp.com/maven-central/io.github.pr0methean.betterrandom/BetterRandom/badge.svg)](https://maven-badges.herokuapp.com/maven-central/io.github.pr0methean.betterrandom/BetterRandom/badge.svg)
 [![Build Status (Travis - Linux & OS X)](https://travis-ci.org/Pr0methean/BetterRandom.svg?branch=master)](https://travis-ci.org/Pr0methean/BetterRandom)
 [![Build status (Appveyor - Windows)](https://ci.appveyor.com/api/projects/status/fg6siyo4ft98gfff?svg=true)](https://ci.appveyor.com/project/Pr0methean/betterrandom)
 [![Coverage Status](https://coveralls.io/repos/github/Pr0methean/BetterRandom/badge.svg?branch=master)](https://coveralls.io/github/Pr0methean/BetterRandom?branch=master)
@@ -20,40 +8,71 @@ generation on Java. It includes:
 [![codebeat badge](https://codebeat.co/badges/4339b354-590c-4871-b441-d694dc5a33ea)](https://codebeat.co/projects/github-com-pr0methean-betterrandom-master)
 [![BCH compliance](https://bettercodehub.com/edge/badge/Pr0methean/BetterRandom?branch=master)](https://bettercodehub.com/)
 
-# Get it from MavenCentral
+BetterRandom is a library that helps you get the best performance and the best pseudorandomness from
+your pseudorandom-number generators (PRNGs) and their seed sources. With it, you can:
 
-* Get the latest version from
-[Maven Central]([https://search.maven.org/#search%7Cga%7C1%7Ca%3A%22BetterRandom%22]).
-* Get dependency codes for Maven, Gradle, SBT, Ivy, Grape, Leiningen and Buildr from
-  [mvnrepository.com](https://mvnrepository.com/artifact/io.github.pr0methean.betterrandom)
-  (more full-featured than Maven Central, but not always up-to-date).
+* Wrap a `SplittableRandom`, with its improved speed and randomness-test performance, as a
+  `java.util.Random` so that methods like
+  [Collections.shuffle(List<>,Random)](https://docs.oracle.com/javase/8/docs/api/java/util/Collections.html#shuffle-java.util.List-java.util.Random-)
+  can use it.
+  * Have it automatically split when accessed from a new thread, so that it's even faster than a
+    `ThreadLocalRandom` but still safe to pass between threads.
+* Wrap any `Supplier<Random>` to create a `Random` that's thread-local, but can be accessed just
+  like any other `Random`.
+* Use `AesCounterRandom`, a PRNG that's as secure as AES but much faster than `SecureRandom`.
+* Use any of 5 other great PRNG algorithms.
+* Use the above PRNGs anywhere you can use `java.util.Random`, because they're *subclasses* of
+  `java.util.Random`.
+* Be confident that your PRNGs will serialize and deserialize correctly.
+* Make the most of a custom PRNG algorithm by extending the abstract class `BaseRandom`.
+* Keep track of how much entropy your PRNG has left (bits of output versus bits of seed).
+* Automatically reseed your PRNGs whenever it's possible and beneficial, without blocking the
+  threads that use them while a seed is generated. The `RandomSeederThread` class does this and can
+  use any of the following seed sources:
+  * `/dev/random`
+  * [random.org](https://random.org)
+  * A `SecureRandom`
+  * Automatically choose the best of the above three with `DefaultSeedGenerator`.
+  * Or roll your own by implementing just one method from the `SeedGenerator` interface.
 
-At both links, choose **BetterRandom** if using Java 8+ and Android API 24+ at both compile-time and
-runtime. Otherwise, choose **BetterRandom-Java7**.
+# But java.util.Random is already fast enough for me!
 
-# Full javadocs
+Yeah, but it's not *random* enough for you. Monte Carlo simulations have been known to
+[give misleading results](http://physics.ucsc.edu/~peter/115/randu.pdf) because of low-quality
+PRNGs, and the implementation in `java.util.Random` is low-quality for two reasons:
 
-Javadocs for the latest snapshot, including both public and protected members (to support your
-subclassing), are at [pr0methean.github.io](https://pr0methean.github.io/).
-
-These Javadocs are for the Java 8+ branch; the Java 7 branch differs only in that
-`java.util.SplittableRandom`, `java.util.stream.*` and `java.util.function.*` are replaced with
-their backported counterparts (whose full names begin with `java8` instead of `java`) in
-[StreamSupport](https://sourceforge.net/projects/streamsupport/), which is an extra dependency for
-the Java 7 branch.
-
-# Design philosophy: don't take chances on randomness
+* It's a linear congruential generator, a notoriously bad algorithm.
+* It only has 48 bits of internal state, so some `long` and `double` values are impossible to
+  generate. This means "uniform distributions" aren't uniform.
 
 Many standard tests of randomness amount to Monte Carlo simulations. And since widespread
 pseudorandom number generators (PRNGs) pass most but not all such tests in standard suites such as
 BigCrush and Dieharder, this suggests that *any* Monte Carlo simulation may turn out to be a test of
 randomness, and to give misleading or untrustworthy results because of an unfortunate choice of
-PRNG. ([It's happened to scientists before.](http://physics.ucsc.edu/~peter/115/randu.pdf)) There
-are two ways to minimize this risk, both of which BetterRandom can help with:
+PRNG. There are two ways to minimize this risk, both of which BetterRandom can help with:
 
-* Have several different PRNG algorithms available, all with the same interfaces.
+* Have several different PRNG algorithms available, all with the same interfaces, so that you can
+  swap one out and compare results.
 * Reseed PRNGs as often as possible, ideally with a seed source that continues to receive entropy
   in parallel with your simulation.
+
+Don't take chances on randomness -- get it right with BetterRandom.
+
+# Get it from MavenCentral
+
+* Get the latest version from
+[Maven Central](https://search.maven.org/#search%7Cga%7C1%7Ca%3A%22BetterRandom).
+* Get dependency codes for Maven, Gradle, SBT, Ivy, Grape, Leiningen and Buildr from
+  [mvnrepository.com](https://mvnrepository.com/artifact/io.github.pr0methean.betterrandom)
+  (more full-featured than Maven Central, but not always up-to-date).
+
+At both links, choose **BetterRandom** if using JDK 8+ and/or Android API 24+ at both compile-time
+and runtime. Otherwise, choose **BetterRandom-Java7**.
+
+# Full javadocs
+
+Javadocs for the latest snapshot, including both public and protected members (to support your
+subclassing), are at [pr0methean.github.io](https://pr0methean.github.io/).
 
 # Usage examples
 
@@ -78,7 +97,7 @@ public class AesCounterRandomDemo {
 }
 ```
 
-## ReseedingSplittableRandomAdapter for fast, high-quality parallel bridge dealing
+## ReseedingSplittableRandomAdapter for fast, high-quality, parallel duplicate-bridge dealing
 ```
 import static io.github.pr0methean.betterrandom.seed.DefaultSeedGenerator.DEFAULT_SEED_GENERATOR;
 
@@ -124,19 +143,18 @@ public class SplittableRandomAdapterDemo {
 ```
 # Supported environments
 
-BetterRandom has 2 versions, one for Java 7 -- including Android API levels below 24 -- and one for 
+BetterRandom has 2 versions, one for Java 7 -- including Android API levels below 24 -- and one for
 Java 8 and newer.
 
 ## Java 8 (master branch)
 
-Compilation with Maven on a Java 9 compiler requires using `pom9.xml` because of a Proguard bug.
-
 Continuous integration takes place in the following environments:
 
-* Linux (on Travis): OpenJDK 8, Oracle JDK 8/9
-* OS X (on Travis): JDK 8 (unclear whether Oracle or OpenJDK)
-* Cygwin (on Appveyor): JDK 8 (unclear whether Oracle or OpenJDK)
-* MinGW (on Appveyor): JDK 8 (unclear whether Oracle or OpenJDK)
+* Linux (on Travis): OpenJDK and Oracle JDK 8 and up
+* OS X (on Travis): OpenJDK(?) 8 and up, Xcode 6.4 and up
+* Windows Server 2008 R2 (on Appveyor): Oracle JDK 8
+* Cygwin (on Appveyor): Oracle JDK 8
+* MinGW (on Appveyor): Oracle JDK 8
 
 CI on BSD or Android isn't likely any time soon, since no free providers of BSD CI seem to be
 integrated with GitHub, and there seems to be no actively-maintained Android-app wrapper for TestNG
@@ -151,13 +169,7 @@ devices have API level 24 or newer, as
 18.09 LTS has been released (which will mean Java 7 will be *two* major long-term-support versions
 out of date).
 
-Continuous integration takes place in the following environments:
-
-* Linux (on Travis): OpenJDK 7
-* Cygwin (on Appveyor): JDK 7 (unclear whether Oracle or OpenJDK)
-* MinGW (on Appveyor): JDK 7 (unclear whether Oracle or OpenJDK)
-
-Testing on Oracle JDK 7 is a work in progress.
+Continuous integration takes place in OpenJDK 7 on Linux.
 
 # Alternative random number generators
 
@@ -174,7 +186,7 @@ replacements for `java.util.Random`.
   state.
 
 * `setSeed(byte[])`: Reseed even if more than a `long` is needed to do so.
-** Use `getNewSeedLength()` to get the recommended seed size. 
+** Use `getNewSeedLength()` to get the recommended seed size.
 
 * `entropyBits()`: Find out when the PRNG has output more random data than it has been seeded with,
   and thus could benefit from being reseeded. Even when the PRNG is reseeded repeatedly without
@@ -295,13 +307,14 @@ seederThread.add(myRandom);
 
 # Build scripts
 
-* `benchmark.sh`: Compile and run benchmarks. Output will be in `benchmark/target`. Won't work on
-  JDK 9, except on Travis.
+Many of these scripts require the environment variable `JAVA8=true` when using JDK 8.
+
+* `benchmark.sh`: Compile and run benchmarks. Output will be in `benchmark/target`.
 * `unit-tests.sh`: Compile and run unit tests and generate coverage reports. Upload them to Coveralls
-  if running in Travis-CI. If tests pass, run Proguard and then test again.  Won't work on JDK 9,
-  except on Travis.
+  if running in Travis-CI. If tests pass, run Proguard and then test again.
 * `mutation.sh`: Run mutation tests.
 * `release.sh`: Used to perform new releases.
+* `unrelease.sh`: Used to roll back pom.xml etc. if a release fails.
 * `publish-javadoc.sh`: Used to release updated Javadocs to github.io.
 * `prepare-workspace.sh`: Install necessary packages on a fresh Ubuntu Trusty Tahr workspace, such
   as what c9.io provides.

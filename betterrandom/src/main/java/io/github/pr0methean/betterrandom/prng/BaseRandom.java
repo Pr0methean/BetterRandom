@@ -25,6 +25,7 @@ import java.util.stream.BaseStream;
 import java.util.stream.DoubleStream;
 import java.util.stream.IntStream;
 import java.util.stream.LongStream;
+import javax.annotation.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -413,31 +414,30 @@ public abstract class BaseRandom extends Random
       final DoubleSupplier nextDouble) {
     // See Knuth, ACP, Section 3.4.1 Algorithm C.
     final double firstTryOut = Double.longBitsToDouble(nextNextGaussian.getAndSet(NAN_LONG_BITS));
-    if (Double.isNaN(firstTryOut)) {
-      lockForNextGaussian();
-      try {
-        // Another output may have become available while we waited for the lock
-        final double secondTryOut =
-            Double.longBitsToDouble(nextNextGaussian.getAndSet(NAN_LONG_BITS));
-        if (!Double.isNaN(secondTryOut)) {
-          return secondTryOut;
-        }
-        double s;
-        double v1;
-        double v2;
-        do {
-          v1 = (2 * nextDouble.getAsDouble()) - 1; // between -1 and 1
-          v2 = (2 * nextDouble.getAsDouble()) - 1; // between -1 and 1
-          s = (v1 * v1) + (v2 * v2);
-        } while ((s >= 1) || (s == 0));
-        final double multiplier = StrictMath.sqrt((-2 * StrictMath.log(s)) / s);
-        nextNextGaussian.set(Double.doubleToRawLongBits(v2 * multiplier));
-        return v1 * multiplier;
-      } finally {
-        unlockForNextGaussian();
-      }
-    } else {
+    if (!Double.isNaN(firstTryOut)) {
       return firstTryOut;
+    }
+    lockForNextGaussian();
+    try {
+      // Another output may have become available while we waited for the lock
+      final double secondTryOut =
+          Double.longBitsToDouble(nextNextGaussian.getAndSet(NAN_LONG_BITS));
+      if (!Double.isNaN(secondTryOut)) {
+        return secondTryOut;
+      }
+      double s;
+      double v1;
+      double v2;
+      do {
+        v1 = (2 * nextDouble.getAsDouble()) - 1; // between -1 and 1
+        v2 = (2 * nextDouble.getAsDouble()) - 1; // between -1 and 1
+        s = (v1 * v1) + (v2 * v2);
+      } while ((s >= 1) || (s == 0));
+      final double multiplier = StrictMath.sqrt((-2 * StrictMath.log(s)) / s);
+      nextNextGaussian.set(Double.doubleToRawLongBits(v2 * multiplier));
+      return v1 * multiplier;
+    } finally {
+      unlockForNextGaussian();
     }
   }
 
@@ -625,7 +625,8 @@ public abstract class BaseRandom extends Random
    * {@link Random#setSeed(long)} does; otherwise, it shall either be a no-op, or shall combine the
    * input with the existing seed as {@link java.security.SecureRandom#setSeed(long)} does.
    */
-  @Override public synchronized void setSeed(final long seed) {
+  @SuppressWarnings("NonSynchronizedMethodOverridesSynchronizedMethod")
+  @Override public void setSeed(final long seed) {
     final byte[] seedBytes = BinaryUtils.convertLongToBytes(seed);
     if (superConstructorFinished) {
       setSeed(seedBytes);
@@ -660,20 +661,27 @@ public abstract class BaseRandom extends Random
    * SeedGenerator}, to schedule reseeding when we run out of entropy. Unregisters this PRNG with
    * the previous {@link RandomSeederThread} if it had a different one.
    * @param seedGenerator a {@link SeedGenerator} whose {@link RandomSeederThread} will be used
-   *     to
-   *     reseed this PRNG.
+   *     to reseed this PRNG, or null to stop using one.
    */
   @SuppressWarnings({"EqualityOperatorComparesObjects", "ObjectEquality"})
-  public void setSeedGenerator(final SeedGenerator seedGenerator) {
+  public void setSeedGenerator(@Nullable final SeedGenerator seedGenerator) {
     final SeedGenerator oldSeedGenerator = this.seedGenerator.getAndSet(seedGenerator);
     if (seedGenerator != oldSeedGenerator) {
       if (oldSeedGenerator != null) {
         RandomSeederThread.remove(oldSeedGenerator, this);
       }
+      if (seedGenerator != null) {
+        RandomSeederThread.add(seedGenerator, this);
+      }
     }
-    if (seedGenerator != null) {
-      RandomSeederThread.add(seedGenerator, this);
-    }
+  }
+
+  /**
+   * Returns the current seed generator for this PRNG.
+   * @return the current seed generator, or null if there is none
+   */
+  @Nullable public SeedGenerator getSeedGenerator() {
+    return seedGenerator.get();
   }
 
   @Override public boolean preferSeedWithLong() {
@@ -692,6 +700,7 @@ public abstract class BaseRandom extends Random
     } else {
       System.arraycopy(seed, 0, this.seed, 0, seed.length);
     }
+    nextNextGaussian.set(NAN_LONG_BITS); // Invalidate Gaussian that was generated from old seed
     creditEntropyForNewSeed(seed.length);
   }
 
@@ -716,6 +725,10 @@ public abstract class BaseRandom extends Random
     in.defaultReadObject();
     initTransientFields();
     setSeedInternal(seed);
+    SeedGenerator currentSeedGenerator = getSeedGenerator();
+    if (currentSeedGenerator != null) {
+      RandomSeederThread.add(currentSeedGenerator, this);
+    }
   }
 
   @Override public long getEntropyBits() {
@@ -734,7 +747,7 @@ public abstract class BaseRandom extends Random
   }
 
   private void asyncReseedIfPossible() {
-    final SeedGenerator currentSeedGenerator = seedGenerator.get();
+    final SeedGenerator currentSeedGenerator = getSeedGenerator();
     if (currentSeedGenerator != null) {
       RandomSeederThread.asyncReseed(currentSeedGenerator, this);
     }

@@ -1,24 +1,23 @@
 #!/bin/sh
 cd betterrandom
-OLDVERSION=`mvn help:evaluate -Dexpression=project.version | sed -n -e '/^\[.*\]/ !{ /^[0-9]/ { p; q } }' | sed 's/version=//'` &&\
+OLDVERSION=$(mvn help:evaluate -Dexpression=project.version | sed -n -e '/^\[.*\]/ !{ /^[0-9]/ { p; q } }' | sed 's/version=//') &&\
 rm -f release.properties &&\
 rm -rf ../../.m2/repository/io/github/pr0methean/betterrandom/ &&\
 (
-  mvn -DskipTests -Darguments=-DskipTests -Dmaven.test.skip=true -Dmaven.main.skip=true release:prepare release:perform
+  mvn -DskipTests -Darguments=-DskipTests -Dmaven.test.skip=true -Dmaven.main.skip=true clean release:prepare pre-integration-test release:perform
   STATUS=$?
-  NEWVERSION=`mvn help:evaluate -Dexpression=project.version | sed -n -e '/^\[.*\]/ !{ /^[0-9]/ { p; q } }' | sed 's/version=//'`
+  NEWVERSION=$(mvn help:evaluate -Dexpression=project.version | sed -n -e '/^\[.*\]/ !{ /^[0-9]/ { p; q } }' | sed 's/version=//')
   if [ ${STATUS} ]; then
-    sed -i "s/$OLDVERSION/$NEWVERSION/g" pom9.xml
-    sed -i "s/$OLDVERSION/$NEWVERSION/" ../benchmark/pom.xml
-    sed -i "s/$OLDVERSION/$NEWVERSION/" ../FifoFiller/pom.xml
-    git add pom9.xml
+    sed -i "s/${OLDVERSION}/${NEWVERSION}/" ../benchmark/pom.xml
+    sed -i "s/${OLDVERSION}/${NEWVERSION}/" ../FifoFiller/pom.xml
     git add ../benchmark/pom.xml
-    git commit -m "🤖 Update benchmark and pom9 to use new snapshot version following release"
+    git add ../FifoFiller/pom.xml
+    git commit -m "🤖 Update benchmark to use new snapshot version following release"
     git push
   else
     if [ "$NEWVERSION" != "$OLDVERSION" ]; then
       git tag -d "BetterRandom-$NEWVERSION"
-      git push origin ":refs/tags/BetterRandom-$NEWVERSION"
+      git push --delete origin "BetterRandom-$NEWVERSION"
       mvn versions:set "-DoldVersion=$NEWVERSION" "-DnewVersion=$OLDVERSION"
       rm -f release.properties pom.xml.versionsBackup pom.xml.releaseBackup
       git add pom.xml

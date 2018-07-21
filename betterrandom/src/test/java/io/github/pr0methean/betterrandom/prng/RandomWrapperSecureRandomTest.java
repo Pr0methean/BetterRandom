@@ -1,7 +1,6 @@
 package io.github.pr0methean.betterrandom.prng;
 
 import com.google.common.collect.ImmutableList;
-import io.github.pr0methean.betterrandom.seed.DefaultSeedGenerator;
 import io.github.pr0methean.betterrandom.seed.SeedException;
 import java.security.GeneralSecurityException;
 import java.security.NoSuchAlgorithmException;
@@ -60,14 +59,30 @@ public class RandomWrapperSecureRandomTest extends BaseRandomTest {
    * Only test for crashes, since {@link SecureRandom#setSeed(long)} doesn't completely replace the
    * existing seed.
    */
-  @Override public void testSetSeed() throws SeedException {
+  @Override public void testSetSeedAfterNextLong() throws SeedException {
     final BaseRandom prng = createRng();
     prng.nextLong();
-    prng.setSeed(DefaultSeedGenerator.DEFAULT_SEED_GENERATOR.generateSeed(8));
+    prng.setSeed(getTestSeedGenerator().generateSeed(8));
     prng.nextLong();
   }
 
+  /**
+   * Only test for crashes, since {@link SecureRandom#setSeed(long)} doesn't completely replace the
+   * existing seed.
+   */
+  @Override public void testSetSeedAfterNextInt() throws SeedException {
+    final BaseRandom prng = createRng();
+    prng.nextInt();
+    prng.setSeed(getTestSeedGenerator().generateSeed(8));
+    prng.nextInt();
+  }
+
   @Override @Test(enabled = false) public void testRepeatability() throws SeedException {
+    // No-op.
+  }
+
+  @Override @Test(enabled = false) public void testRepeatabilityNextGaussian()
+      throws SeedException {
     // No-op.
   }
 

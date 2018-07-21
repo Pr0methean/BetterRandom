@@ -18,8 +18,12 @@ public class ReseedingThreadLocalRandomWrapperFailingSeedGeneratorTest
     // No-op.
   }
 
+  @Override @Test(enabled = false) public void testSetSeedZero() {
+    // No-op.
+  }
+
   @Override protected BaseRandom createRng() throws SeedException {
     return new ReseedingThreadLocalRandomWrapper(FailingSeedGenerator.FAILING_SEED_GENERATOR,
-        (Serializable & Supplier<BaseRandom>) MersenneTwisterRandom::new);
+        (Serializable & Supplier<BaseRandom>) Pcg64Random::new);
   }
 }
