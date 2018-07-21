@@ -27,7 +27,3 @@ echo $(mvn -ep "${pgp_pass}") >> ~/.m2/settings.xml
 cat settings.xml.part3 >> ~/.m2/settings.xml
 unset password
 unset pgp_pass
-
-# Enable JAVA8 mode for scripts
-echo "export JAVA8=true" >> ~/.bashrc
-export JAVA8=true
