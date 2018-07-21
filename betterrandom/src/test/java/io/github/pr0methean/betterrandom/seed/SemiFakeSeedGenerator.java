@@ -1,6 +1,5 @@
 package io.github.pr0methean.betterrandom.seed;
 
-import java.util.Objects;
 import java.util.Random;
 
 public class SemiFakeSeedGenerator implements SeedGenerator {
@@ -21,7 +20,7 @@ public class SemiFakeSeedGenerator implements SeedGenerator {
   public boolean equals(Object o) {
     return this == o
         || (o instanceof SemiFakeSeedGenerator
-            && random.equals(o.random));
+            && random.equals(((SemiFakeSeedGenerator) o).random));
   }
 
   @Override
