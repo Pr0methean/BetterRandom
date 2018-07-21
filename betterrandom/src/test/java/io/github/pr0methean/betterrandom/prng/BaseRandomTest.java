@@ -10,6 +10,8 @@ import static io.github.pr0methean.betterrandom.prng.RandomTestUtils.checkStream
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertFalse;
 import static org.testng.Assert.assertNotEquals;
+import static org.testng.Assert.assertNull;
+import static org.testng.Assert.assertSame;
 import static org.testng.Assert.assertTrue;
 import static org.testng.Assert.fail;
 
@@ -405,6 +407,12 @@ public abstract class BaseRandomTest {
     assertFalse(Arrays.equals(output1, output2));
   }
 
+  /**
+   * This also tests {@link BaseRandom#getSeedGenerator()} and
+   * {@link BaseRandom#setSeedGenerator(SeedGenerator)}.
+   *
+   * @throws Exception
+   */
   @SuppressWarnings("BusyWait") @Test(timeOut = 60_000)
   public void testRandomSeederThreadIntegration() throws Exception {
     final SeedGenerator seedGenerator = new SemiFakeSeedGenerator(new Random());
@@ -419,6 +427,7 @@ public abstract class BaseRandomTest {
       int waits = 0;
       byte[] newSeed;
       do {
+        assertSame(rng.getSeedGenerator(), seedGenerator);
         rng.nextBoolean();
         Thread.sleep(10);
         waits++;
@@ -433,6 +442,7 @@ public abstract class BaseRandomTest {
       rng.setSeedGenerator(null);
       RandomSeederThread.stopIfEmpty(seedGenerator);
     }
+    assertNull(rng.getSeedGenerator());
   }
 
   @Test(timeOut = 10_000) public void testWithProbability() {
