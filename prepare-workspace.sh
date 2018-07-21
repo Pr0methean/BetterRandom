@@ -20,10 +20,12 @@ read -s -p "Sonatype password: " password
 echo ""
 read -s -p "Sonatype PGP password: " pgp_pass
 echo ""
-cat settings.xml.part1 > ~/.m2/settings.xml
-echo $(mvn -ep "${password}") >> ~/.m2/settings.xml
-cat settings.xml.part2 >> ~/.m2/settings.xml
-echo $(mvn -ep "${pgp_pass}") >> ~/.m2/settings.xml
-cat settings.xml.part3 >> ~/.m2/settings.xml
+rm ~/.m2/settings.xml
+cat settings.xml.part1 > ~/.m2/settings_temp.xml
+echo -n $(mvn -ep "${password}") >> ~/.m2/settings_temp.xml
+cat settings.xml.part2 >> ~/.m2/settings_temp.xml
+echo -n $(mvn -ep "${pgp_pass}") >> ~/.m2/settings_temp.xml
+cat settings.xml.part3 >> ~/.m2/settings_temp.xml
+mv ~/.m2/settings_temp.xml ~/.m2/settings.xml
 unset password
 unset pgp_pass
