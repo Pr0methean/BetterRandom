@@ -30,7 +30,7 @@ public class FakeSeedGenerator implements SeedGenerator {
   public boolean equals(Object o) {
     return this == o
         || (o instanceof FakeSeedGenerator
-            && name.equals(o.name));
+            && name.equals(((FakeSeedGenerator) o).name));
   }
 
   @Override
