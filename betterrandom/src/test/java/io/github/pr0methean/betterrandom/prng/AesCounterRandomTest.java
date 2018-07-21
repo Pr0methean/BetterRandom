@@ -86,7 +86,7 @@ public class AesCounterRandomTest extends SeekableRandomTest {
     for (int i = 0; i < 2; i++) {
       for (final long seed : seeds) {
         final byte[] originalSeed = rngs[i].getSeed();
-        assertTrue(originalSeed.length >= 16);
+        assertTrue(originalSeed.length >= 16, "getSeed() returned seed that was too short");
         final AesCounterRandom rngReseeded = new AesCounterRandom(originalSeed);
         final AesCounterRandom rngReseededOther = new AesCounterRandom(originalSeed);
         rngReseeded.setSeed(seed);
