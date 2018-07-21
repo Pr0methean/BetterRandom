@@ -12,9 +12,7 @@
   </test>
   <test name="PRNG">
     <classes>
-      <class name="io.github.pr0methean.betterrandom.prng.AesCounterRandom128Test"/>
-      <class name="io.github.pr0methean.betterrandom.prng.AesCounterRandom160Test"/>
-      <class name="io.github.pr0methean.betterrandom.prng.AesCounterRandom256Test"/>
+      <class name="io.github.pr0methean.betterrandom.prng.AesCounterRandomTest"/>
       <class name="io.github.pr0methean.betterrandom.prng.AesCounterRandom384Test"/>
       <class name="io.github.pr0methean.betterrandom.prng.AesCounterRandomDemoTest"/>
       <class name="io.github.pr0methean.betterrandom.prng.CellularAutomatonRandomTest"/>

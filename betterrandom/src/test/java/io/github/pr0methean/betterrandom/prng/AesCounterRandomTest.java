@@ -19,13 +19,42 @@ import static org.testng.Assert.assertTrue;
 
 import io.github.pr0methean.betterrandom.seed.SeedException;
 import java.util.Random;
+import org.testng.SkipException;
+import org.testng.annotations.Factory;
 import org.testng.annotations.Test;
 
 /**
  * Unit test for the AES RNG.
  * @author Daniel Dyer
  */
-public class AesCounterRandom128Test extends SeekableRandomTest {
+public class AesCounterRandomTest extends SeekableRandomTest {
+
+  private final int seedSizeBytes;
+
+  private AesCounterRandomTest(int seedSizeBytes) {
+    this.seedSizeBytes = seedSizeBytes;
+  }
+
+  @Factory public static AesCounterRandomTest[] getInstances() {
+    return new AesCounterRandomTest[]{
+        new AesCounterRandomTest(16),
+        new AesCounterRandomTest(17),
+        new AesCounterRandomTest(32)
+    };
+  }
+
+  @Override protected int getNewSeedLength(BaseRandom basePrng) {
+    return seedSizeBytes;
+  }
+
+  @Override @Test(timeOut = 15000, expectedExceptions = IllegalArgumentException.class)
+  public void testSeedTooLong() throws SeedException {
+    if (seedSizeBytes > 16) {
+      throw new SkipException("Skipping a redundant test");
+    }
+    createRng(
+        getTestSeedGenerator().generateSeed(49)); // Should throw an exception.
+  }
 
   @Override @Test(enabled = false)
   public void testRepeatabilityNextGaussian() throws SeedException {
@@ -63,6 +92,9 @@ public class AesCounterRandom128Test extends SeekableRandomTest {
   }
 
   @Test(timeOut = 15000) public void testMaxSeedLengthOk() {
+    if (seedSizeBytes > 16) {
+      throw new SkipException("Skipping a redundant test");
+    }
     assert AesCounterRandom.getMaxKeyLengthBytes() >= 16 : "Should allow a 16-byte key";
     assert AesCounterRandom.getMaxKeyLengthBytes() <= 32
         : "Shouldn't allow a key longer than 32 bytes";
@@ -73,7 +105,7 @@ public class AesCounterRandom128Test extends SeekableRandomTest {
   }
 
   @Override protected BaseRandom createRng() throws SeedException {
-    return new AesCounterRandom(16);
+    return new AesCounterRandom(seedSizeBytes);
   }
 
   @Override protected BaseRandom createRng(final byte[] seed) throws SeedException {
