@@ -19,6 +19,7 @@ import io.github.pr0methean.betterrandom.CloneViaSerialization;
 import io.github.pr0methean.betterrandom.TestUtils;
 import io.github.pr0methean.betterrandom.prng.RandomTestUtils.EntropyCheckMode;
 import io.github.pr0methean.betterrandom.prng.adapter.SplittableRandomAdapter;
+import io.github.pr0methean.betterrandom.seed.FakeSeedGenerator;
 import io.github.pr0methean.betterrandom.seed.RandomSeederThread;
 import io.github.pr0methean.betterrandom.seed.SecureRandomSeedGenerator;
 import io.github.pr0methean.betterrandom.seed.SeedException;
@@ -296,7 +297,9 @@ public abstract class BaseRandomTest {
     // Serialise an RNG.
     final BaseRandom rng = createRng();
     RandomTestUtils.assertEquivalentWhenSerializedAndDeserialized(rng);
-    final SeedGenerator seedGenerator = getTestSeedGenerator();
+    // Can't use a SemiFakeSeedGenerator, because Random.equals() breaks equality check
+    final SeedGenerator seedGenerator = new FakeSeedGenerator(
+        getClass().getSimpleName() + "::testSerializable");
     rng.setSeedGenerator(seedGenerator);
     try {
       final BaseRandom rng2 = CloneViaSerialization.clone(rng);
