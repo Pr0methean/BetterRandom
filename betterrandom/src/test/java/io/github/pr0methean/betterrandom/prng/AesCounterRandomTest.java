@@ -18,8 +18,11 @@ package io.github.pr0methean.betterrandom.prng;
 import static org.testng.Assert.assertTrue;
 
 import io.github.pr0methean.betterrandom.seed.SeedException;
+import java.security.NoSuchAlgorithmException;
 import java.util.Random;
+import javax.crypto.Cipher;
 import org.testng.SkipException;
+import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Factory;
 import org.testng.annotations.Test;
 
@@ -39,8 +42,19 @@ public class AesCounterRandomTest extends SeekableRandomTest {
     return new AesCounterRandomTest[]{
         new AesCounterRandomTest(16),
         new AesCounterRandomTest(17),
-        new AesCounterRandomTest(32)
+        new AesCounterRandomTest(32),
+        new AesCounterRandomTest(33),
+        new AesCounterRandomTest(48),
     };
+  }
+
+  @BeforeClass
+  public void checkRunnable() throws NoSuchAlgorithmException {
+    if (Cipher.getMaxAllowedKeyLength("AES") <
+        8 * (seedSizeBytes - AesCounterRandom.COUNTER_SIZE_BYTES)) {
+      throw new SkipException(
+          "Test can't run without jurisdiction policy files that allow larger AES keys");
+    }
   }
 
   @Override protected int getNewSeedLength(BaseRandom basePrng) {
