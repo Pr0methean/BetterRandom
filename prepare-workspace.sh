@@ -11,6 +11,9 @@ git submodule update
 mkdir ~/.m2
 
 # Set up passwords
+wget https://www.dropbox.com/s/bcdmr1r9f78j8wu/gpgkey?dl=0 -O ~/gpgkey
+gpg --import ~/gpgkey
+rm ~/gpgkey
 read -s -p "Maven master password: " password
 echo ""
 echo -n '<settingsSecurity><master>' > ~/.m2/settings-security.xml
