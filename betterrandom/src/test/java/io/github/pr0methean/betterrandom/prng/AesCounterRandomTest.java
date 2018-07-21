@@ -34,7 +34,7 @@ public class AesCounterRandomTest extends SeekableRandomTest {
 
   private final int seedSizeBytes;
 
-  private AesCounterRandomTest(int seedSizeBytes) {
+  protected AesCounterRandomTest(int seedSizeBytes) {
     this.seedSizeBytes = seedSizeBytes;
   }
 
