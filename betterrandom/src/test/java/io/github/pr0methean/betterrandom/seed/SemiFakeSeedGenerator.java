@@ -35,7 +35,7 @@ public class SemiFakeSeedGenerator implements SeedGenerator {
   public boolean equals(Object o) {
     return this == o
         || (o instanceof SemiFakeSeedGenerator
-            && random.equals(o.random));
+            && random.equals(((SemiFakeSeedGenerator) o).random));
   }
 
   @Override
