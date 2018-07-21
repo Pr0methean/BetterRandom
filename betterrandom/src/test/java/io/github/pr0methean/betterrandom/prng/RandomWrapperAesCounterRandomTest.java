@@ -6,7 +6,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.Random;
 import org.testng.annotations.Test;
 
-public class RandomWrapperAesCounterRandomTest extends AesCounterRandom128Test {
+public class RandomWrapperAesCounterRandomTest extends AesCounterRandomTest {
 
   private static final NamedFunction<Random, Double> SET_WRAPPED =
       new NamedFunction<Random, Double>("setWrapped") {
@@ -15,6 +15,10 @@ public class RandomWrapperAesCounterRandomTest extends AesCounterRandom128Test {
           return 0.0;
         }
       };
+
+  public RandomWrapperAesCounterRandomTest() {
+    super(16);
+  }
 
   @Override @Test public void testThreadSafetySetSeed() {
     testThreadSafetyVsCrashesOnly(

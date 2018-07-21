@@ -63,10 +63,10 @@ public class AesCounterRandom extends BaseRandom implements SeekableRandom {
   @SuppressWarnings("HardcodedFileSeparator") private static final String ALGORITHM_MODE =
       ALGORITHM + "/ECB/NoPadding";
   /**
-   * 128-bit counter. Note to forkers: when running a cipher in ECB mode, this counter's length
-   * should equal the cipher's block size.
+   * 128-bit counter. Package-visible for testing. Note to forkers: when running a cipher in ECB
+   * mode, this counter's length should equal the cipher's block size.
    */
-  private static final int COUNTER_SIZE_BYTES = 16;
+  static final int COUNTER_SIZE_BYTES = 16;
   private static final int INTS_PER_BLOCK = COUNTER_SIZE_BYTES / INT_BYTES;
   /**
    * Number of blocks to encrypt at once, to construct/GC fewer arrays. This takes advantage of the
