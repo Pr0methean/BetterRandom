@@ -38,8 +38,8 @@ public class AesCounterRandomTest extends SeekableRandomTest {
     this.seedSizeBytes = seedSizeBytes;
   }
 
-  @Factory public static AesCounterRandomTest[] getInstances() {
-    return new AesCounterRandomTest[]{
+  @Factory public static Object[] getInstances() {
+    return new Object[]{
         new AesCounterRandomTest(16),
         new AesCounterRandomTest(17),
         new AesCounterRandomTest(32),
