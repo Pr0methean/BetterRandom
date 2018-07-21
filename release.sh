@@ -17,7 +17,7 @@ rm -rf ../../.m2/repository/io/github/pr0methean/betterrandom/ &&\
   else
     if [ "$NEWVERSION" != "$OLDVERSION" ]; then
       git tag -d "BetterRandom-Java7-$NEWVERSION"
-      git push origin ":refs/tags/BetterRandom-Java7-$NEWVERSION"
+      git push --delete origin "BetterRandom-Java7-$NEWVERSION"
       mvn versions:set "-DoldVersion=$NEWVERSION" "-DnewVersion=$OLDVERSION"
       rm -f release.properties pom.xml.versionsBackup pom.xml.releaseBackup
       git add pom.xml
