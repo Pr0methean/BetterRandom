@@ -42,11 +42,11 @@ public enum Byte16ArrayArithmetic {
   public static void addInto(ByteBuffer counter, ByteBuffer delta) {
     long most = delta.getLong(0);
     long least = delta.getLong(1);
-    if (most >= 0 && least < 0) {
+    /* if (most >= 0 && least < 0) {
       most--;
     } else if (most < 0 && least >= 0) {
       most++;
-    }
+    } */
     addInto(counter, least);
     counter.putLong(0, counter.getLong(0) + most);
   }
