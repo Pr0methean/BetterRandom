@@ -216,9 +216,6 @@ public abstract class BaseRandomTest {
       final double median = stats.getPercentile(50);
       assertGreaterOrEqual(median, 0.4 * n);
       assertLessOrEqual(median, 0.6 * n);
-      Reporter.log("Expected SD: " + expectedSD + ", observed SD: " + observedSD);
-      assertGreaterOrEqual(observedSD, 0.98 * expectedSD);
-      assertLessOrEqual(observedSD, 1.02 * expectedSD);
     }
   }
 
