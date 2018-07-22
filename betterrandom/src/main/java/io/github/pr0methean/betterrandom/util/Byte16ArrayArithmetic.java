@@ -27,9 +27,10 @@ public enum Byte16ArrayArithmetic {
     final long oldLeast = counter.getLong(1);
     long newLeast = oldLeast + delta;
     counter.putLong(1, newLeast);
-    if (newLeast <= oldLeast && delta > 0) {
+    int compare = Long.compareUnsigned(newLeast, oldLeast);
+    if (compare < 0 && delta > 0) {
       counter.putLong(0, counter.getLong(0) + 1);
-    } else if (newLeast >= oldLeast && delta < 0) {
+    } else if (compare > 0 && delta < 0) {
       counter.putLong(0, counter.getLong(0) - 1);
     }
   }
