@@ -1,3 +1,6 @@
+# 2.4.1
+* Adds `Pcg128Random`, a variant of `Pcg64Random` that uses a 128-bit seed and state.
+
 # 2.4.0
 * Removes `CloneViaSerialization` to the test jar, since it's not used anywhere else.
 * Adds `BaseRandom.getSeedGenerator()`.
