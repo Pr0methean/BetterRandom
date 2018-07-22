@@ -38,24 +38,6 @@
               </configuration>
             </plugin>
             <plugin>
-              <groupId>org.apache.maven.plugins</groupId>
-              <artifactId>maven-failsafe-plugin</artifactId>
-              <version>2.17</version>
-              <configuration>
-                <argLine>@{argLine} ${test.jdk8.argline}</argLine>
-              </configuration>
-              <executions>
-                <execution>
-                  <!-- Check that Proguard isn't breaking anything -->
-                  <id>test</id>
-                  <phase>integration-test</phase>
-                  <goals>
-                    <goal>integration-test</goal>
-                  </goals>
-                </execution>
-              </executions>
-            </plugin>
-            <plugin>
               <groupId>com.github.wvengen</groupId>
               <artifactId>proguard-maven-plugin</artifactId>
               <version>2.0.14</version>
@@ -69,6 +51,16 @@
                   <lib>${java.home}/lib/jce.jar</lib>
                 </libs>
               </configuration>
+              <executions>
+                <execution>
+                  <!-- Check that Proguard isn't breaking anything -->
+                  <id>integration-test</id>
+                  <phase>integration-test</phase>
+                  <goals>
+                    <goal>integration-test</goal>
+                  </goals>
+                </execution>
+              </executions>
             </plugin>
           </plugins>
         </pluginManagement>
@@ -399,6 +391,7 @@
           <artifactId>maven-surefire-plugin</artifactId>
           <version>2.21.0</version>
           <configuration>
+            <skipTests>${skip.surefire.tests}<!-- https://stackoverflow.com/questions/6612344/prevent-unit-tests-in-maven-but-allow-integration-tests --></skipTests>
             <argLine>@{argLine} ${test.jdk9.argline}</argLine>
             <suiteXmlFiles>
               <suiteXmlFile>src/test/testng.xml</suiteXmlFile>
@@ -419,36 +412,6 @@
               <suiteXmlFile>src/test/testng.xml</suiteXmlFile>
             </suiteXmlFiles>
           </configuration>
-        </plugin>
-        <plugin>
-          <groupId>org.apache.maven.plugins</groupId>
-          <artifactId>maven-failsafe-plugin</artifactId>
-          <version>2.17</version>
-          <configuration>
-            <argLine>@{argLine} ${test.jdk9.argline}</argLine>
-            <suiteXmlFiles>
-              <suiteXmlFile>src/test/testng.xml</suiteXmlFile>
-            </suiteXmlFiles>
-            <parallel>${testng.parallel}</parallel>
-            <threadCount>${testng.perCoreThreadCount}</threadCount>
-            <perCoreThreadCount>true</perCoreThreadCount>
-            <properties>
-              <property>
-                <name>surefire.testng.verbose</name>
-                <value>${testng.verbose}</value>
-              </property>
-            </properties>
-          </configuration>
-          <executions>
-            <execution>
-              <!-- Check that Proguard isn't breaking anything -->
-              <id>test</id>
-              <phase>integration-test</phase>
-              <goals>
-                <goal>integration-test</goal>
-              </goals>
-            </execution>
-          </executions>
         </plugin>
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
@@ -683,6 +646,24 @@
                 </requireMavenVersion>
               </rules>
             </configuration>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-failsafe-plugin</artifactId>
+        <version>2.17</version>
+        <configuration>
+          <argLine>@{argLine} ${test.jdk8.argline}</argLine>
+        </configuration>
+        <executions>
+          <execution>
+            <!-- Check that Proguard isn't breaking anything -->
+            <id>integration-test</id>
+            <phase>integration-test</phase>
+            <goals>
+              <goal>integration-test</goal>
+            </goals>
           </execution>
         </executions>
       </plugin>
