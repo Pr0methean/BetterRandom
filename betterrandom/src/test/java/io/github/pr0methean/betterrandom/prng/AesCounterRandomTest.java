@@ -17,6 +17,7 @@ package io.github.pr0methean.betterrandom.prng;
 
 import static org.testng.Assert.assertTrue;
 
+import io.github.pr0methean.betterrandom.DeadlockWatchdogThread;
 import io.github.pr0methean.betterrandom.seed.SeedException;
 import java.security.NoSuchAlgorithmException;
 import java.util.Random;
@@ -50,6 +51,7 @@ public class AesCounterRandomTest extends SeekableRandomTest {
 
   @BeforeClass
   public void checkRunnable() throws NoSuchAlgorithmException {
+    DeadlockWatchdogThread.ensureStarted();
     if (Cipher.getMaxAllowedKeyLength("AES") <
         8 * (seedSizeBytes - AesCounterRandom.COUNTER_SIZE_BYTES)) {
       throw new SkipException(
