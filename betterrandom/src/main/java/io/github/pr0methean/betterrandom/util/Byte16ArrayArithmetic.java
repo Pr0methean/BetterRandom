@@ -19,8 +19,9 @@ public enum Byte16ArrayArithmetic {
    * {@code counter += delta}
    * @param counter the variable-sized input and the result
    * @param delta the long-sized input
+   * @param signed if true, treat {@code delta} as signed
    */
-  public static void addInto(ByteBuffer counter, long delta) {
+  public static void addInto(ByteBuffer counter, long delta, boolean signed) {
     if (delta == 0) {
       return;
     }
@@ -28,9 +29,9 @@ public enum Byte16ArrayArithmetic {
     long newLeast = oldLeast + delta;
     counter.putLong(1, newLeast);
     int compare = Long.compareUnsigned(newLeast, oldLeast);
-    if (compare < 0 && delta > 0) {
+    if (compare < 0 && (delta > 0 || !signed)) {
       counter.putLong(0, counter.getLong(0) + 1);
-    } else if (compare > 0 && delta < 0) {
+    } else if (compare > 0 && delta < 0 && signed) {
       counter.putLong(0, counter.getLong(0) - 1);
     }
   }
@@ -47,8 +48,8 @@ public enum Byte16ArrayArithmetic {
     } else if (most < 0 && least >= 0) {
       most++;
     } */
-    addInto(counter, least);
-    counter.putLong(0, counter.getLong(0) + (least < 0 ? 1 : 0) + delta.getLong(0));
+    addInto(counter, least, false);
+    counter.putLong(0, counter.getLong(0) + delta.getLong(0));
   }
 
   /**

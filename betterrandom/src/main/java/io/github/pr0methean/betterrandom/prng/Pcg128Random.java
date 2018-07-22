@@ -109,7 +109,7 @@ public class Pcg128Random extends BaseRandom implements SeekableRandom {
         addInto(accPlus, curPlus);
       }
       ByteBuffer adjMult = copyInto(ADJ_MULT, curMult.array());
-      addInto(adjMult, 1);
+      addInto(adjMult, 1, true);
       multiplyInto(curPlus, adjMult);
       multiplyInto(curMult, curMult);
       delta >>>= 1;
