@@ -37,14 +37,10 @@ public enum Byte16ArrayArithmetic {
    * @param delta the second input
    */
   public static void addInto(byte[] counter, byte[] delta) {
-    addInto(counter, delta, 0);
-  }
-
-  private static void addInto(byte[] counter, byte[] delta, int offset) {
     boolean carry = false;
-    for (int i = counter.length - offset - 1; i >= 0; i--) {
+    for (int i = counter.length - 1; i >= 0; i--) {
       final byte oldCounter = counter[i];
-      counter[i] += delta[i + offset] + (carry ? 1 : 0);
+      counter[i] += delta[i] + (carry ? 1 : 0);
       carry = ((counter[i] & 0xFF) < (oldCounter & 0xFF)) || (carry && (counter[i] == oldCounter));
     }
   }
@@ -83,46 +79,46 @@ public enum Byte16ArrayArithmetic {
    * @author Patrick Favre-Bulle
    */
   public static void unsignedShiftRight(byte[] shifted, int bits) {
-    if (bits == 0) {
-      return;
-    } else if (bits > 0) {
-      final int shiftMod = bits % 8;
-      final byte carryMask = (byte) (0xFF << (8 - shiftMod));
-      final int offsetBytes = (bits / 8);
-  
-      int sourceIndex;
-      for (int i = shifted.length - 1; i >= 0; i--) {
-        sourceIndex = i - offsetBytes;
-        if (sourceIndex < 0 || sourceIndex >= shifted.length) {
-          shifted[i] = 0;
-        } else {
-          byte src = shifted[sourceIndex];
-          byte dst = (byte) ((0xff & src) >>> shiftMod);
-          if (sourceIndex - 1 >= 0) {
-            dst |= shifted[sourceIndex - 1] << (8 - shiftMod) & carryMask;
-          }
-          shifted[i] = dst;
-        }
-      }
-    } else {
-      bits = -bits;
-      final int shiftMod = bits % 8;
-      final byte carryMask = (byte) ((1 << shiftMod) - 1);
-      final int offsetBytes = (bits / 8);
+    if (bits != 0) {
+      if (bits > 0) {
+        final int shiftMod = bits % 8;
+        final byte carryMask = (byte) (0xFF << (8 - shiftMod));
+        final int offsetBytes = (bits / 8);
 
-      int sourceIndex;
-      for (int i = 0; i < shifted.length; i++) {
-          sourceIndex = i + offsetBytes;
-          if (sourceIndex >= shifted.length) {
-              shifted[i] = 0;
+        int sourceIndex;
+        for (int i = shifted.length - 1; i >= 0; i--) {
+          sourceIndex = i - offsetBytes;
+          if (sourceIndex < 0 || sourceIndex >= shifted.length) {
+            shifted[i] = 0;
           } else {
-              byte src = shifted[sourceIndex];
-              byte dst = (byte) (src << shiftMod);
-              if (sourceIndex + 1 < shifted.length) {
-                  dst |= shifted[sourceIndex + 1] >>> (8 - shiftMod) & carryMask;
-              }
-              shifted[i] = dst;
+            byte src = shifted[sourceIndex];
+            byte dst = (byte) ((0xff & src) >>> shiftMod);
+            if (sourceIndex - 1 >= 0) {
+              dst |= shifted[sourceIndex - 1] << (8 - shiftMod) & carryMask;
+            }
+            shifted[i] = dst;
           }
+        }
+      } else {
+        bits = -bits;
+        final int shiftMod = bits % 8;
+        final byte carryMask = (byte) ((1 << shiftMod) - 1);
+        final int offsetBytes = (bits / 8);
+
+        int sourceIndex;
+        for (int i = 0; i < shifted.length; i++) {
+            sourceIndex = i + offsetBytes;
+            if (sourceIndex >= shifted.length) {
+                shifted[i] = 0;
+            } else {
+                byte src = shifted[sourceIndex];
+                byte dst = (byte) (src << shiftMod);
+                if (sourceIndex + 1 < shifted.length) {
+                    dst |= shifted[sourceIndex + 1] >>> (8 - shiftMod) & carryMask;
+                }
+                shifted[i] = dst;
+            }
+        }
       }
     }
   }
