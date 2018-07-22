@@ -30,7 +30,7 @@ public class Byte16ArrayArithmeticTest {
 
   private static void assertByteBufferEqualsLongs(
       ByteBuffer actual, long expectedMost, long expectedLeast) {
-    String message = String.format("Expected %16x%16x, got %s",
+    String message = String.format("Expected %016X%016X, got %s",
         expectedMost, expectedLeast, BinaryUtils.convertBytesToHexString(actual.array()));
     assertEquals(actual.getLong(0), expectedMost, message);
     assertEquals(actual.getLong(1), expectedLeast, message);
