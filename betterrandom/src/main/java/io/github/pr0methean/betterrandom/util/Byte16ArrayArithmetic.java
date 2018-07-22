@@ -3,8 +3,8 @@ package io.github.pr0methean.betterrandom.util;
 import java.nio.ByteBuffer;
 
 /**
- * Collection of arithmetic methods that treat byte arrays as large fixed-precision integers. Each
- * byte is treated as unsigned, and the array is in {@link java.nio.ByteOrder#BIG_ENDIAN}.
+ * Collection of arithmetic methods that treat {@link ByteBuffer} instances wrapping a
+ * {@code byte[16]} array as 128-bit unsigned integers.
  */
 @SuppressWarnings("AccessStaticViaInstance")
 public enum Byte16ArrayArithmetic {
@@ -48,7 +48,7 @@ public enum Byte16ArrayArithmetic {
       most++;
     } */
     addInto(counter, least);
-    counter.putLong(0, counter.getLong(0) + delta.getLong(0));
+    counter.putLong(0, counter.getLong(0) + (least < 0 ? 1 : 0) + delta.getLong(0));
   }
 
   /**
