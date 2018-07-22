@@ -85,7 +85,7 @@ if [ "${STATUS}" = 0 ] && [ "${NO_JACOCO}" != "true" ]; then
 fi
 if [ "${JAVA8}" = "true" ]; then
   echo "[unit-tests.sh] Running Proguard and testing against Proguarded jar."
-  PATH="${NO_GIT_PATH}" mvn ${MAYBE_ANDROID_FLAG} integration-test
+  PATH="${NO_GIT_PATH}" mvn ${MAYBE_ANDROID_FLAG} pre-integration-test integration-test -e
   STATUS=$?
 fi
 cd ..
