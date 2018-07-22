@@ -36,16 +36,27 @@ public class Byte16ArrayArithmeticTest {
     assertEquals(actual.getLong(1), expectedLeast, message);
   }
 
-  @Test public void testAddInto() {
+  @Test public void testAddIntoBb() {
     ByteBuffer result = cloneByteBuffer(OPERAND1);
     Byte16ArrayArithmetic.addInto(result, OPERAND2);
     assertByteBufferEqualsLongs(result, 0x3C57_B490_19EC_B5E5L, 0x9C18_C970_032C_8DD6L);
   }
 
-  @Test public void testAddInto1() {
+  @Test public void testAddIntoLongSigned() {
     ByteBuffer result = cloneByteBuffer(OPERAND1);
-    Byte16ArrayArithmetic.addInto(result, 0x631bc1882d24d6e9L);
+    Byte16ArrayArithmetic.addInto(result, 0x631bc1882d24d6e9L, true);
     assertByteBufferEqualsLongs(result, 0x79EC_964A_738B_2EBAL, 0x9C18_C970_032C_8DD6L);
+    Byte16ArrayArithmetic.addInto(result, -0x631bc1882d24d6e9L, true);
+    assertByteBufferEqualsLongs(result, 0x79EC_964A_738B_2EBAL, 0x38FD_07E7_D607_B6EDL);
+  }
+
+  @Test public void testAddIntoLongUnsigned() {
+    ByteBuffer result = cloneByteBuffer(OPERAND1);
+    Byte16ArrayArithmetic.addInto(result, 0x631bc1882d24d6e9L, false);
+    assertByteBufferEqualsLongs(result, 0x79EC_964A_738B_2EBAL, 0x9C18_C970_032C_8DD6L);
+    Byte16ArrayArithmetic.addInto(result, -0x631bc1882d24d6e9L, false);
+    assertByteBufferEqualsLongs(result, 0x79EC_964A_738B_2EBBL, 0x38FD_07E7_D607_B6EDL);
+
   }
 
   @Test public void testMultiplyInto() {
