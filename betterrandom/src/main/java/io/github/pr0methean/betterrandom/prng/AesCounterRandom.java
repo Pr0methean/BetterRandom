@@ -322,12 +322,12 @@ public class AesCounterRandom extends BaseRandom implements SeekableRandom {
         blocksDelta--;
       }
       blocksDelta -= BLOCKS_AT_ONCE; // Compensate for the increment during nextBlock() below
-      final byte[] addendDigits = new byte[counter.limit()];
+      final byte[] addendDigits = new byte[COUNTER_SIZE_BYTES];
       System.arraycopy(BinaryUtils.convertLongToBytes(blocksDelta), 0, addendDigits,
-          counter.limit() - Long.BYTES, Long.BYTES);
+          COUNTER_SIZE_BYTES - Long.BYTES, Long.BYTES);
       if (blocksDelta < 0) {
         // Sign extend
-        for (int i = 0; i < (counter.limit() - Long.BYTES); i++) {
+        for (int i = 0; i < (COUNTER_SIZE_BYTES - Long.BYTES); i++) {
           addendDigits[i] = -1;
         }
       }

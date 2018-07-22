@@ -53,32 +53,28 @@ public enum Byte16ArrayArithmetic {
 
   /**
    * {@code counter *= multiplier}
-   * @param counterB the first input and the result
-   * @param multiplierB the second input
+   * @param counter the first input and the result
+   * @param multiplier the second input
    */
   @SuppressWarnings("NumericCastThatLosesPrecision") public static void multiplyInto(
-      ByteBuffer counterB, ByteBuffer multiplierB) {
-    byte[] counter = counterB.array();
-    byte[] multiplier = multiplierB.array();
+      ByteBuffer counter, ByteBuffer multiplier) {
     ByteBuffer multiplicationAccumulator =
         copyInto(Byte16ArrayArithmetic.multiplicationAccumulator, ZERO);
-    final ByteBuffer multiplicationStepB = copyInto(Byte16ArrayArithmetic.multiplicationStep, ZERO);
-    byte[] multiplicationStep = multiplicationStepB.array();
-    for (int multiplierDigit = 0; multiplierDigit < multiplier.length; multiplierDigit++) {
-      for (int counterDigit = counter.length - multiplierDigit - 1; counterDigit < counter.length; counterDigit++) {
-        int destDigit = multiplierDigit + counterDigit - counter.length + 1;
-        System.arraycopy(ZERO, 0, multiplicationStep, 0, multiplicationStep.length);
-        // Signed multiplication gives same result as unsigned, in the last 2 bytes
-        int stepValue = (multiplier[multiplierDigit] & 0xFF) * (counter[counterDigit] & 0xFF);
-        multiplicationStep[destDigit] = (byte) stepValue; // lower 8 bits
-        if (destDigit > 0) {
-          multiplicationStep[destDigit - 1] = (byte) (stepValue >> 8); // upper 8 bits
+    final ByteBuffer multiplicationStepB = Byte16ArrayArithmetic.multiplicationStep.get();
+    for (int multiplierLimb = 0; multiplierLimb < 4; multiplierLimb++) {
+      for (int counterLimb = 3 - multiplierLimb; counterLimb < 4; counterLimb++) {
+        int destLimb = multiplierLimb + counterLimb - 3;
+        long stepValue = ((long) multiplier.getInt(multiplierLimb))
+            * counter.getInt(counterLimb);
+        multiplicationStepB.putInt(destLimb, (int) stepValue);
+        if (destLimb > 0) {
+          multiplicationStepB.putInt(destLimb - 1, (int) (stepValue >> Integer.SIZE));
         }
         addInto(multiplicationAccumulator, multiplicationStepB);
       }
     }
-    System.arraycopy(multiplicationAccumulator.array(), 0, counter, 0,
-        multiplicationAccumulator.array().length);
+    counter.putLong(0, multiplicationAccumulator.getLong(0));
+    counter.putLong(1, multiplicationAccumulator.getLong(1));
   }
 
   /**
@@ -89,49 +85,13 @@ public enum Byte16ArrayArithmetic {
    * @author Patrick Favre-Bulle
    */
   public static void unsignedShiftRight(ByteBuffer shiftedB, int bits) {
-    byte[] shifted = shiftedB.array();
-    if (bits != 0) {
-      if (bits > 0) {
-        final int shiftMod = bits % 8;
-        final byte carryMask = (byte) (0xFF << (8 - shiftMod));
-        final int offsetBytes = (bits / 8);
-
-        int sourceIndex;
-        for (int i = shifted.length - 1; i >= 0; i--) {
-          sourceIndex = i - offsetBytes;
-          if (sourceIndex < 0 || sourceIndex >= shifted.length) {
-            shifted[i] = 0;
-          } else {
-            byte src = shifted[sourceIndex];
-            byte dst = (byte) ((0xff & src) >>> shiftMod);
-            if (sourceIndex - 1 >= 0) {
-              dst |= shifted[sourceIndex - 1] << (8 - shiftMod) & carryMask;
-            }
-            shifted[i] = dst;
-          }
-        }
-      } else {
-        bits = -bits;
-        final int shiftMod = bits % 8;
-        final byte carryMask = (byte) ((1 << shiftMod) - 1);
-        final int offsetBytes = (bits / 8);
-
-        int sourceIndex;
-        for (int i = 0; i < shifted.length; i++) {
-            sourceIndex = i + offsetBytes;
-            if (sourceIndex >= shifted.length) {
-                shifted[i] = 0;
-            } else {
-                byte src = shifted[sourceIndex];
-                byte dst = (byte) (src << shiftMod);
-                if (sourceIndex + 1 < shifted.length) {
-                    dst |= shifted[sourceIndex + 1] >>> (8 - shiftMod) & carryMask;
-                }
-                shifted[i] = dst;
-            }
-        }
-      }
+    if (bits == 0) {
+      return;
     }
+    long oldMost = shiftedB.getLong(0);
+    long oldLeast = shiftedB.getLong(1);
+    shiftedB.putLong(0, (oldMost >>> bits) | (oldLeast >>> (bits + 64)));
+    shiftedB.putLong(1, (oldLeast >>> bits) | (oldMost >>> (bits - 64)));
   }
 
   /**
