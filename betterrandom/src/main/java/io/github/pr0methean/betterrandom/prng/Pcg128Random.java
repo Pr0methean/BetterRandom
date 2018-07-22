@@ -77,7 +77,7 @@ public class Pcg128Random extends BaseRandom implements SeekableRandom {
   @EntryPoint public Pcg128Random(byte[] seed) {
     super(seed);
     if (seed.length != SEED_SIZE_BYTES) {
-      throw new IllegalArgumentException("Pcg64Random requires a 16-byte seed");
+      throw new IllegalArgumentException("Pcg128Random requires a 16-byte seed");
     }
   }
 
