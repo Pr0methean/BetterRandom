@@ -155,7 +155,7 @@ public enum Byte16ArrayArithmetic {
   }
 
   public static ThreadLocal<byte[]> makeByteArrayThreadLocal() {
-    return ThreadLocal.withInitial(() -> ZERO.clone());
+    return ThreadLocal.withInitial(ZERO::clone);
   }
 
   public static byte[] copyInto(ThreadLocal<byte[]> dest, byte[] src) {
