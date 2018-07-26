@@ -20,6 +20,7 @@ import static org.testng.Assert.assertTrue;
 
 import io.github.pr0methean.betterrandom.DeadlockWatchdogThread;
 import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.List;
@@ -51,7 +52,9 @@ public class AesCounterRandomTest extends AbstractAesCounterRandomTest {
   }
 
   @Factory public Object[] getInstances()
-      throws NoSuchAlgorithmException, NoSuchMethodException {
+      throws NoSuchAlgorithmException, NoSuchMethodException, IllegalAccessException,
+      InvocationTargetException, InstantiationException {
+    Constructor<?> powerMockModifiedCtor = getClass().getConstructor(int.class);
     System.out.println("Creating factory");
     int[] desiredSeedSizes = {16, 17, 32, 33, 48};
     int maxSize = Cipher.getMaxAllowedKeyLength("AES") / 8
@@ -62,7 +65,7 @@ public class AesCounterRandomTest extends AbstractAesCounterRandomTest {
         break;
       } else {
         System.out.println("Creating instance for size " + size);
-        instances.add(new AesCounterRandomTest(size));
+        instances.add(powerMockModifiedCtor.newInstance(size));
       }
     }
     assertFalse(instances.isEmpty());
