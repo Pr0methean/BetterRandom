@@ -25,7 +25,9 @@ import org.testng.annotations.Test;
 /**
  * Unit test for the JDK RNG.
  * @author Daniel Dyer
+ * @author Chris Hennick
  */
+@Test(testName = "RandomWrapper")
 public class RandomWrapperRandomTest extends BaseRandomTest {
 
   private static final NamedFunction<Random, Double> SET_WRAPPED = new NamedFunction<>(random -> {

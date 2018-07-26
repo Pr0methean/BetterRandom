@@ -1,7 +1,9 @@
 package io.github.pr0methean.betterrandom.prng;
 
 import io.github.pr0methean.betterrandom.seed.SeedException;
+import org.testng.annotations.Test;
 
+@Test(testName = "Pcg64Random")
 public class Pcg64RandomTest extends SeekableRandomTest {
 
   @Override public void testSetSeedLong() throws SeedException {

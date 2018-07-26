@@ -7,6 +7,7 @@ import java.io.Serializable;
 import java.util.function.Supplier;
 import org.testng.annotations.Test;
 
+@Test(testName = "ReseedingThreadLocalRandomWrapper:FailingSeedGenerator")
 public class ReseedingThreadLocalRandomWrapperFailingSeedGeneratorTest
     extends ReseedingThreadLocalRandomWrapperTest {
 

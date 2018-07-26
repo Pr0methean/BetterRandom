@@ -12,6 +12,7 @@ import java.util.function.Function;
 import java.util.function.Supplier;
 import org.testng.annotations.Test;
 
+@Test(testName = "ThreadLocalRandomWrapper")
 public class ThreadLocalRandomWrapperTest extends BaseRandomTest {
 
   private final Supplier<BaseRandom> pcgSupplier;
