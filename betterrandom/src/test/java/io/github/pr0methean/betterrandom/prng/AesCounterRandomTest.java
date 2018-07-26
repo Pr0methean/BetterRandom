@@ -42,21 +42,6 @@ public class AesCounterRandomTest extends SeekableRandomTest {
     this.seedSizeBytes = seedSizeBytes;
   }
 
-  @Factory public static Object[] getInstances() throws NoSuchAlgorithmException {
-    int[] desiredSeedSizes = {16, 17, 32, 33, 48};
-    int maxSize = Cipher.getMaxAllowedKeyLength("AES") / 8
-        + AesCounterRandom.COUNTER_SIZE_BYTES;
-    List<AesCounterRandomTest> instances = new ArrayList<>(5);
-    for (int size : desiredSeedSizes) {
-      if (size > maxSize) {
-        break;
-      } else {
-        instances.add(new AesCounterRandomTest(size));
-      }
-    }
-    return instances.toArray();
-  }
-
   @Override protected int getNewSeedLength(BaseRandom basePrng) {
     return seedSizeBytes;
   }
