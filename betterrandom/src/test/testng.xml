@@ -22,8 +22,6 @@
       <class name="io.github.pr0methean.betterrandom.prng.ThreadLocalRandomWrapperTest"/>
       <class name="io.github.pr0methean.betterrandom.prng.XorShiftRandomTest"/>
       <class
-        name="io.github.pr0methean.betterrandom.prng.adapter.ReseedingSplittableRandomAdapterDemoTest"/>
-      <class
         name="io.github.pr0methean.betterrandom.prng.adapter.ReseedingSplittableRandomAdapterTest"/>
       <class
         name="io.github.pr0methean.betterrandom.prng.adapter.SingleThreadSplittableRandomAdapterTest"/>
@@ -76,6 +74,8 @@
       <class name="io.github.pr0methean.betterrandom.prng.BaseRandomStaticTest"/>
       <class name="io.github.pr0methean.betterrandom.util.BinaryUtilsTest"/>
       <class name="io.github.pr0methean.betterrandom.util.LooperThreadTest"/>
+      <class
+        name="io.github.pr0methean.betterrandom.prng.adapter.ReseedingSplittableRandomAdapterDemoTest"/>
     </classes>
   </test>
 </suite>
