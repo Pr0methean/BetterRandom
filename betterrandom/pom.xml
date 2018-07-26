@@ -200,7 +200,7 @@
     <test.jdk9.argline>--add-opens java.xml/jdk.xml.internal=ALL-UNNAMED</test.jdk9.argline>
     <testng.parallel>tests</testng.parallel>
     <testng.perCoreThreadCount>1</testng.perCoreThreadCount>
-    <testng.verbose>3</testng.verbose>
+    <testng.verbose>10</testng.verbose>
   </properties>
   <groupId>io.github.pr0methean.betterrandom</groupId>
   <artifactId>BetterRandom</artifactId>
