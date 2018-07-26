@@ -16,6 +16,7 @@
 package io.github.pr0methean.betterrandom.prng;
 
 import static org.testng.Assert.assertFalse;
+import static org.testng.Assert.assertTrue;
 
 import io.github.pr0methean.betterrandom.DeadlockWatchdogThread;
 import java.lang.reflect.Constructor;
@@ -25,6 +26,7 @@ import java.util.List;
 import javax.crypto.Cipher;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.testng.PowerMockObjectFactory;
+import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Factory;
 import org.testng.annotations.Test;
 
@@ -37,11 +39,19 @@ import org.testng.annotations.Test;
 @PrepareForTest(AesCounterRandomTest.class)
 public class AesCounterRandomTest extends AbstractAesCounterRandomTest {
 
+  public AesCounterRandomTest() {
+    this(0);
+  }
+
   public AesCounterRandomTest(int seedSizeBytes) {
     super(seedSizeBytes);
   }
 
-  @Factory public static Object[] getInstances()
+  @BeforeMethod public void assertNotBootstrapInstance() {
+    assertTrue(seedSizeBytes > 0);
+  }
+
+  @Factory public Object[] getInstances()
       throws NoSuchAlgorithmException, NoSuchMethodException {
     DeadlockWatchdogThread.ensureStarted();
     Constructor constructor = AesCounterRandomTest.class.getConstructor(int.class);
