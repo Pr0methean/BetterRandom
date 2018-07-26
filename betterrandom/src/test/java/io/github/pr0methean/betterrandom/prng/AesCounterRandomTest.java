@@ -119,7 +119,7 @@ public class AesCounterRandomTest extends SeekableRandomTest {
   }
 
   @Override protected BaseRandom createRng() throws SeedException {
-    return new AesCounterRandom(seedSizeBytes);
+    return new AesCounterRandom(getTestSeedGenerator().generateSeed(seedSizeBytes));
   }
 
   @Override protected BaseRandom createRng(final byte[] seed) throws SeedException {
