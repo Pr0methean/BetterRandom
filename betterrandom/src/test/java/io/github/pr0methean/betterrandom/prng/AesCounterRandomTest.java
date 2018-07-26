@@ -49,11 +49,19 @@ public class AesCounterRandomTest extends SeekableRandomTest {
     }
   }
 
+  /**
+   * It'd be more elegant to use a {@code @Factory} static method to set the seed size (which could
+   * then be a final field), but that doesn't seem to be compatible with PowerMock; see
+   * https://github.com/powermock/powermock/issues/925
+   *
+   * @param seedSize XML parameter
+   */
   @Parameters("seedSize")
   @BeforeClass
   public void setSeedSize(final int seedSize) {
     if (seedSize > MAX_SIZE) {
       assertFalse(seedSize <= 32, "Can't handle a 32-byte seed");
+      throw new SkipException("Jurisdiction policy files don't allow this crypto strength");
     }
     seedSizeBytes = seedSize;
   }
