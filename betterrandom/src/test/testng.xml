@@ -11,11 +11,10 @@
     </classes>
   </test>
   <test name="PRNG">
+    <parameter name="seedSize" value="16"/>
     <classes>
       <class name="io.github.pr0methean.betterrandom.prng.AesCounterRandomDemoTest"/>
-      <class name="io.github.pr0methean.betterrandom.prng.AesCounterRandomTest">
-        <parameter name="seedSize" value="16"/>
-      </class>
+      <class name="io.github.pr0methean.betterrandom.prng.AesCounterRandomTest"/>
       <class name="io.github.pr0methean.betterrandom.prng.AesCounterRandomTest">
         <parameter name="seedSize" value="17"/>
       </class>
