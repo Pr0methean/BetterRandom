@@ -66,7 +66,7 @@ import org.testng.annotations.Test;
 
 @MockPolicy(Slf4jMockPolicy.class)
 @PrepareForTest(DefaultSeedGenerator.class)
-@PowerMockIgnore({"javax.crypto.*" })
+@PowerMockIgnore({"javax.crypto.*", "javax.management.*"})
 public abstract class BaseRandomTest extends PowerMockTestCase {
 
   private static final SeedGenerator SEMIFAKE_SEED_GENERATOR

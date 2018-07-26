@@ -91,11 +91,13 @@ public class RandomDotOrgSeedGeneratorHermeticTest extends PowerMockTestCase {
   private boolean usingSmallRequests = false;
 
   private void mockRandomDotOrgResponse(final byte[] response) throws Exception {
+    spy(RandomDotOrgSeedGenerator.class);
     PowerMockito.doAnswer(invocationOnMock -> {
       final URL url = invocationOnMock.getArgument(0);
       address = url.toString();
       return new FakeHttpsUrlConnection(url, null, response);
-    }).when(RandomDotOrgSeedGenerator.class, "openConnection", any(URL.class));
+    }).when(RandomDotOrgSeedGenerator.class);
+    RandomDotOrgSeedGenerator.openConnection(any(URL.class));
   }
 
   private static SeedException expectAndGetException() {
@@ -111,7 +113,6 @@ public class RandomDotOrgSeedGeneratorHermeticTest extends PowerMockTestCase {
   }
 
   @BeforeMethod public void setUpMethod() {
-    spy(RandomDotOrgSeedGenerator.class);
     usingSmallRequests = maybeSetMaxRequestSize();
     assertTrue(cacheLock.tryLock()); // If this blocks, then our tests risk interfering
     try {
