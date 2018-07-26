@@ -28,7 +28,7 @@ public class MersenneTwisterRandomTest extends BaseRandomTest {
   }
 
   @Override protected BaseRandom createRng() throws SeedException {
-    return new MersenneTwisterRandom();
+    return new MersenneTwisterRandom(getTestSeedGenerator());
   }
 
   @Override protected BaseRandom createRng(final byte[] seed) throws SeedException {

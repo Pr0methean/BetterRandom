@@ -28,7 +28,7 @@ public class Cmwc4096RandomTest extends BaseRandomTest {
   }
 
   @Override protected BaseRandom createRng() throws SeedException {
-    return new Cmwc4096Random();
+    return new Cmwc4096Random(getTestSeedGenerator());
   }
 
   @Override protected BaseRandom createRng(final byte[] seed) throws SeedException {

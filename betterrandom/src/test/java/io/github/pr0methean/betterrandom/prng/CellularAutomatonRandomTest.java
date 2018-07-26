@@ -38,7 +38,7 @@ public class CellularAutomatonRandomTest extends BaseRandomTest {
   }
 
   @Override protected BaseRandom createRng() throws SeedException {
-    return new CellularAutomatonRandom();
+    return new CellularAutomatonRandom(getTestSeedGenerator());
   }
 
   @Override protected BaseRandom createRng(final byte[] seed) throws SeedException {

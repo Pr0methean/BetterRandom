@@ -13,6 +13,9 @@ import org.testng.annotations.Test;
 
 public class ThreadLocalRandomWrapperTest extends BaseRandomTest {
 
+  private final Supplier<BaseRandom> pcgSupplier = (Supplier<BaseRandom> & Serializable)
+      (() -> new Pcg64Random(getTestSeedGenerator()));
+
   @Override public void testSerializable()
       throws SeedException {
     // May change after serialization, so test only that it still works at all afterward
@@ -78,7 +81,7 @@ public class ThreadLocalRandomWrapperTest extends BaseRandomTest {
 
   @Override public Map<Class<?>, Object> constructorParams() {
     final Map<Class<?>, Object> params = super.constructorParams();
-    params.put(Supplier.class, (Supplier<BaseRandom>) Pcg64Random::new);
+    params.put(Supplier.class, pcgSupplier);
     params
         .put(Function.class, (Function<byte[], BaseRandom>) Pcg64Random::new);
     return params;
@@ -94,8 +97,7 @@ public class ThreadLocalRandomWrapperTest extends BaseRandomTest {
   }
 
   @Override protected BaseRandom createRng() throws SeedException {
-    return new ThreadLocalRandomWrapper(
-        (Serializable & Supplier<BaseRandom>) Pcg64Random::new);
+    return new ThreadLocalRandomWrapper(pcgSupplier);
   }
 
   @Override protected BaseRandom createRng(final byte[] seed) throws SeedException {

@@ -38,14 +38,12 @@ public class RandomWrapperAesCounterRandomTest extends AesCounterRandomTest {
     return RandomWrapper.class;
   }
 
-  @Override @Test(enabled = false) public void testAllPublicConstructors()
-      throws SeedException, IllegalAccessException, InstantiationException,
-      InvocationTargetException {
+  @Override @Test(enabled = false) public void testAllPublicConstructors() {
     // No-op: redundant to super insofar as it works.
   }
 
   @Override protected RandomWrapper createRng() throws SeedException {
-    return new RandomWrapper(new AesCounterRandom());
+    return new RandomWrapper(new AesCounterRandom(getTestSeedGenerator()));
   }
 
   @Override protected RandomWrapper createRng(final byte[] seed) throws SeedException {
