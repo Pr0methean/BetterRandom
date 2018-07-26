@@ -10,7 +10,7 @@
       <class name="io.github.pr0methean.betterrandom.seed.SecureRandomSeedGeneratorTest"/>
     </classes>
   </test>
-  <test name="PRNG">
+  <test name="PRNG" object-factory="org.powermock.modules.testng.PowerMockObjectFactory">
     <classes>
       <class name="io.github.pr0methean.betterrandom.prng.AesCounterRandomTest"/>
       <class name="io.github.pr0methean.betterrandom.prng.AesCounterRandomDemoTest"/>
