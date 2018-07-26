@@ -26,10 +26,8 @@ import java.util.List;
 import javax.crypto.Cipher;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.testng.PowerMockObjectFactory;
-import org.testng.IObjectFactory;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Factory;
-import org.testng.annotations.ObjectFactory;
 import org.testng.annotations.Test;
 
 /**
@@ -50,11 +48,6 @@ public class AesCounterRandomTest extends AbstractAesCounterRandomTest {
 
   @BeforeMethod public void assertNotBootstrapInstance() {
     assertTrue(seedSizeBytes > 0);
-  }
-
-  @ObjectFactory
-  public IObjectFactory getObjectFactory() {
-    return new PowerMockObjectFactory();
   }
 
   @Factory public Object[] getInstances()
