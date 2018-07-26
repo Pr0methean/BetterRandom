@@ -40,7 +40,7 @@
       <class name="io.github.pr0methean.betterrandom.prng.AesCounterRandomTest"/>
     </classes>
   </test>
-  <test name="PRNGs" parallel="classes">
+  <test name="PRNGs">
     <parameter name="seedSize" value="16"/>
     <classes>
       <class name="io.github.pr0methean.betterrandom.prng.AesCounterRandomTest"/>
