@@ -3,10 +3,15 @@ package io.github.pr0methean.betterrandom.prng;
 import com.google.common.collect.ImmutableList;
 import io.github.pr0methean.betterrandom.seed.SeedException;
 import java.util.Random;
+import org.testng.annotations.Factory;
 import org.testng.annotations.Test;
 
 @Test(testName = "RandomWrapper:AesCounterRandom")
 public class RandomWrapperAesCounterRandomTest extends AesCounterRandomTest {
+
+  @Factory public static Object[] getInstances() {
+    return new Object[]{new RandomWrapperAesCounterRandomTest()};
+  }
 
   private static final NamedFunction<Random, Double> SET_WRAPPED = new NamedFunction<>(random -> {
     ((RandomWrapper) random).setWrapped(new AesCounterRandom());
