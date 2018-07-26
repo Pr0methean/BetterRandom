@@ -2,6 +2,7 @@ package io.github.pr0methean.betterrandom.prng;
 
 import com.google.common.collect.ImmutableList;
 import io.github.pr0methean.betterrandom.seed.SeedException;
+import io.github.pr0methean.betterrandom.seed.SeedGenerator;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Random;
 import org.testng.annotations.Test;
@@ -9,15 +10,20 @@ import org.testng.annotations.Test;
 @Test(testName = "RandomWrapper:MersenneTwisterRandom")
 public class RandomWrapperMersenneTwisterRandomTest extends MersenneTwisterRandomTest {
 
-  private static final NamedFunction<Random, Double> SET_WRAPPED = new NamedFunction<>(random -> {
-    ((RandomWrapper) random).setWrapped(new MersenneTwisterRandom());
-    return 0.0;
-  }, "setWrapped");
+  private final NamedFunction<Random, Double> setWrapped;
+
+  public RandomWrapperMersenneTwisterRandomTest() {
+    SeedGenerator seedGenerator = getTestSeedGenerator();
+    setWrapped = new NamedFunction<>(random -> {
+      ((RandomWrapper) random).setWrapped(new MersenneTwisterRandom(seedGenerator));
+      return 0.0;
+    }, "setWrapped");
+  }
 
   @Override public void testThreadSafety() {
     super.testThreadSafety();
-    testThreadSafetyVsCrashesOnly(
-        ImmutableList.of(NEXT_LONG, NEXT_INT, NEXT_DOUBLE, NEXT_GAUSSIAN, SET_WRAPPED));
+    testThreadSafetyVsCrashesOnly(30,
+        ImmutableList.of(NEXT_LONG, NEXT_INT, NEXT_DOUBLE, NEXT_GAUSSIAN, setWrapped));
   }
 
   @Override protected Class<? extends BaseRandom> getClassUnderTest() {

@@ -131,6 +131,6 @@ public class ReseedingSplittableRandomAdapterTest extends SingleThreadSplittable
 
   /** Assertion-free because thread-local. */
   @Override @Test public void testThreadSafety() {
-    testThreadSafetyVsCrashesOnly(FUNCTIONS_FOR_THREAD_SAFETY_TEST);
+    testThreadSafetyVsCrashesOnly(30, FUNCTIONS_FOR_THREAD_SAFETY_TEST);
   }
 }
