@@ -1,5 +1,5 @@
 <!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd">
-<suite name="BetterRandom" parallel="tests">
+<suite name="BetterRandom" parallel="tests" object-factory="org.powermock.modules.testng.PowerMockObjectFactory">
   <test name="Seeding" parallel="none">
     <classes>
       <class name="io.github.pr0methean.betterrandom.seed.DefaultSeedGeneratorTest"/>
@@ -10,7 +10,7 @@
       <class name="io.github.pr0methean.betterrandom.seed.SecureRandomSeedGeneratorTest"/>
     </classes>
   </test>
-  <test name="PRNG" object-factory="org.powermock.modules.testng.PowerMockObjectFactory">
+  <test name="PRNG">
     <classes>
       <class name="io.github.pr0methean.betterrandom.prng.AesCounterRandomTest"/>
       <class name="io.github.pr0methean.betterrandom.prng.AesCounterRandomDemoTest"/>
