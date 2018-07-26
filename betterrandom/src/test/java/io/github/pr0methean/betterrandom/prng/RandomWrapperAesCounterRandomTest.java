@@ -9,10 +9,6 @@ import org.testng.annotations.Test;
 @Test(testName = "RandomWrapper:AesCounterRandom")
 public class RandomWrapperAesCounterRandomTest extends AesCounterRandomTest {
 
-  @Factory public static Object[] getInstances() {
-    return new Object[]{new RandomWrapperAesCounterRandomTest()};
-  }
-
   private static final NamedFunction<Random, Double> SET_WRAPPED = new NamedFunction<>(random -> {
     ((RandomWrapper) random).setWrapped(new AesCounterRandom());
     return 0.0;
