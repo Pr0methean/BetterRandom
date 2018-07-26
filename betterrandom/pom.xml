@@ -286,7 +286,7 @@
     <dependency>
       <groupId>org.powermock</groupId>
       <artifactId>powermock-module-testng-agent</artifactId>
-      <version>1.7.1</version>
+      <version>${powermock.version}</version>
       <scope>test</scope>
     </dependency>
     <dependency>
