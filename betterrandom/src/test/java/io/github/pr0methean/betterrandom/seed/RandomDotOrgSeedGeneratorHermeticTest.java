@@ -149,9 +149,6 @@ public class RandomDotOrgSeedGeneratorHermeticTest extends PowerMockTestCase {
   }
 
   @Test public void testOverLongResponse() throws Exception {
-    if (TestUtils.isAppveyor()) {
-      throw new SkipException("This test's Log4j logging crashes on Appveyor");
-    }
     RandomDotOrgSeedGenerator.setApiKey(null);
     RandomDotOrgSeedGenerator.setMaxRequestSize(32);
     mockRandomDotOrgResponse(RESPONSE_625_OLD_API);
