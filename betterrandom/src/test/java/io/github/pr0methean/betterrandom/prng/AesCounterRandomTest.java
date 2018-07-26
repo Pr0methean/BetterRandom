@@ -40,6 +40,8 @@ import org.testng.annotations.Test;
 @Test(testName = "AesCounterRandom")
 public class AesCounterRandomTest extends AbstractAesCounterRandomTest {
 
+  private final PowerMockObjectFactory factory = new PowerMockObjectFactory();
+
   public AesCounterRandomTest() {
     this(0);
   }
@@ -54,12 +56,13 @@ public class AesCounterRandomTest extends AbstractAesCounterRandomTest {
 
   @ObjectFactory
   public IObjectFactory getObjectFactory() {
-    return new PowerMockObjectFactory();
+    return factory;
   }
 
   @Factory public Object[] getInstances()
       throws NoSuchAlgorithmException, NoSuchMethodException {
-    System.out.println("Creating factory");
+    DeadlockWatchdogThread.ensureStarted();
+    Constructor constructor = AesCounterRandomTest.class.getConstructor(int.class);
     int[] desiredSeedSizes = {16, 17, 32, 33, 48};
     int maxSize = Cipher.getMaxAllowedKeyLength("AES") / 8
         + AesCounterRandom.COUNTER_SIZE_BYTES;
@@ -69,7 +72,7 @@ public class AesCounterRandomTest extends AbstractAesCounterRandomTest {
         break;
       } else {
         System.out.println("Creating instance for size " + size);
-        instances.add(new AesCounterRandomTest(size));
+        instances.add(factory.newInstance(constructor, size));
       }
     }
     assertFalse(instances.isEmpty());
