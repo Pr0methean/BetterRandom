@@ -13,13 +13,14 @@ import static org.powermock.api.mockito.PowerMockito.spy;
 import static org.testng.Assert.assertTrue;
 import static org.testng.AssertJUnit.assertEquals;
 
-import io.github.pr0methean.betterrandom.TestUtils;
+import java.io.IOException;
 import java.net.Proxy;
 import java.net.URL;
 import java.nio.charset.Charset;
 import java.util.UUID;
 import javax.annotation.Nullable;
 import org.json.simple.parser.ParseException;
+import org.mockito.Mockito;
 import org.powermock.api.mockito.PowerMockito;
 import org.powermock.api.mockito.mockpolicies.Slf4jMockPolicy;
 import org.powermock.core.classloader.annotations.MockPolicy;
@@ -27,12 +28,13 @@ import org.powermock.core.classloader.annotations.PowerMockIgnore;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.testng.PowerMockTestCase;
 import org.testng.Assert;
-import org.testng.SkipException;
+import org.testng.annotations.AfterClass;
 import org.testng.annotations.AfterMethod;
+import org.testng.annotations.BeforeClass;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
-@PowerMockIgnore("javax.management.*", "javax.script.*", "jdk.nashorn.*")
+@PowerMockIgnore({"javax.management.*", "javax.script.*", "jdk.nashorn.*"})
 @MockPolicy(Slf4jMockPolicy.class)
 @PrepareForTest(RandomDotOrgSeedGenerator.class)
 @Test(singleThreaded = true)
@@ -90,8 +92,12 @@ public class RandomDotOrgSeedGeneratorHermeticTest extends PowerMockTestCase {
   private final Proxy proxy = createTorProxy();
   private boolean usingSmallRequests = false;
 
-  private void mockRandomDotOrgResponse(final byte[] response) throws Exception {
+  @BeforeClass
+  public void setUpClass() {
     spy(RandomDotOrgSeedGenerator.class);
+  }
+
+  private void mockRandomDotOrgResponse(final byte[] response) throws Exception {
     PowerMockito.doAnswer(invocationOnMock -> {
       final URL url = invocationOnMock.getArgument(0);
       address = url.toString();
@@ -218,5 +224,10 @@ public class RandomDotOrgSeedGeneratorHermeticTest extends PowerMockTestCase {
 
   @AfterMethod public void tearDownMethod() {
     address = null;
+  }
+
+  @AfterClass public void tearDownClass() throws IOException {
+    PowerMockito.doCallRealMethod().when(RandomDotOrgSeedGenerator.class);
+    RandomDotOrgSeedGenerator.openConnection(any(URL.class));
   }
 }

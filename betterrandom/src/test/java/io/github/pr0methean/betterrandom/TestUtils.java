@@ -29,7 +29,6 @@ public enum TestUtils {
     for (final Constructor<?> constructor : clazz.getDeclaredConstructors()) {
       final int modifiers = constructor.getModifiers();
       if (Modifier.isPublic(modifiers) || (includeProtected && Modifier.isProtected(modifiers))) {
-        System.out.println("Testing " + constructor);
         constructor.setAccessible(true);
         final int nParams = constructor.getParameterCount();
         final Class<?>[] parameterTypes = constructor.getParameterTypes();
