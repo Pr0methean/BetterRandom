@@ -117,7 +117,7 @@ public abstract class BaseRandomTest {
     return EntropyCheckMode.EXACT;
   }
 
-  @Test public void testAllPublicConstructors()
+  @Test(timeOut = 60_000) public void testAllPublicConstructors()
       throws SeedException, IllegalAccessException, InstantiationException,
       InvocationTargetException {
     TestUtils.testConstructors(getClassUnderTest(), false, ImmutableMap.copyOf(constructorParams()),
@@ -129,8 +129,8 @@ public abstract class BaseRandomTest {
     final HashMap<Class<?>, Object> params = new HashMap<>(4);
     params.put(int.class, seedLength);
     params.put(long.class, TEST_SEED);
-    params.put(byte[].class, getTestSeedGenerator().generateSeed(seedLength));
-    params.put(SeedGenerator.class, getTestSeedGenerator());
+    params.put(byte[].class, new byte[seedLength]);
+    params.put(SeedGenerator.class, SEMIFAKE_SEED_GENERATOR);
     return params;
   }
 
