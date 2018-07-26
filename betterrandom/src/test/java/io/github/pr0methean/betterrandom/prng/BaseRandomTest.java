@@ -135,8 +135,13 @@ public abstract class BaseRandomTest extends PowerMockTestCase {
   @Test(timeOut = 120_000) public void testAllPublicConstructors()
       throws SeedException, IllegalAccessException, InstantiationException,
       InvocationTargetException {
-    TestUtils.testConstructors(getClassUnderTest(), false, ImmutableMap.copyOf(constructorParams()),
-        BaseRandom::nextInt);
+    mockDefaultSeedGenerator();
+    try {
+      TestUtils.testConstructors(getClassUnderTest(), false, ImmutableMap.copyOf(constructorParams()),
+          BaseRandom::nextInt);
+    } finally {
+      unmockDefaultSeedGenerator();
+    }
   }
 
   protected Map<Class<?>, Object> constructorParams() {
@@ -149,8 +154,7 @@ public abstract class BaseRandomTest extends PowerMockTestCase {
     return params;
   }
 
-  @BeforeMethod
-  public void setUpMethod() {
+  protected void mockDefaultSeedGenerator() {
     oldDefaultSeedGenerator = DefaultSeedGenerator.DEFAULT_SEED_GENERATOR;
     DefaultSeedGenerator mockDefaultSeedGenerator = PowerMockito.mock(DefaultSeedGenerator.class);
     when(mockDefaultSeedGenerator.generateSeed(anyInt())).thenAnswer(invocation ->
@@ -163,8 +167,7 @@ public abstract class BaseRandomTest extends PowerMockTestCase {
         mockDefaultSeedGenerator);
   }
 
-  @AfterMethod
-  public void tearDownMethod() {
+  protected void unmockDefaultSeedGenerator() {
     Whitebox.setInternalState(DefaultSeedGenerator.class, "DEFAULT_SEED_GENERATOR",
         oldDefaultSeedGenerator);
   }
@@ -316,7 +319,12 @@ public abstract class BaseRandomTest extends PowerMockTestCase {
   /** Assertion-free since many implementations have a fallback behavior. */
   @Test(timeOut = 60_000) public void testSetSeedLong() {
     System.out.format("Running %s.testSetSeedLong()%n", getClass().getSimpleName());
-    createRng().setSeed(0x0123456789ABCDEFL);
+    mockDefaultSeedGenerator();
+    try {
+      createRng().setSeed(0x0123456789ABCDEFL);
+    } finally {
+      unmockDefaultSeedGenerator();
+    }
   }
 
   @Test(timeOut = 15_000) public void testSetSeedAfterNextLong() throws SeedException {
