@@ -6,6 +6,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.Random;
 import org.testng.annotations.Test;
 
+@Test(testName = "RandomWrapper:MersenneTwisterRandom")
 public class RandomWrapperMersenneTwisterRandomTest extends MersenneTwisterRandomTest {
 
   private static final NamedFunction<Random, Double> SET_WRAPPED =
@@ -33,7 +34,7 @@ public class RandomWrapperMersenneTwisterRandomTest extends MersenneTwisterRando
   }
 
   @Override protected RandomWrapper createRng() throws SeedException {
-    return new RandomWrapper(new MersenneTwisterRandom());
+    return new RandomWrapper(new MersenneTwisterRandom(getTestSeedGenerator()));
   }
 
   @Override protected RandomWrapper createRng(final byte[] seed) throws SeedException {

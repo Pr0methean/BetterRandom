@@ -16,11 +16,14 @@
 package io.github.pr0methean.betterrandom.prng;
 
 import io.github.pr0methean.betterrandom.seed.SeedException;
+import org.testng.annotations.Test;
 
 /**
  * Unit test for the cellular automaton RNG.
  * @author Daniel Dyer
+ * @author Chris Hennick
  */
+@Test(testName = "MersenneTwisterRandom")
 public class MersenneTwisterRandomTest extends BaseRandomTest {
 
   @Override protected Class<? extends BaseRandom> getClassUnderTest() {
@@ -28,7 +31,7 @@ public class MersenneTwisterRandomTest extends BaseRandomTest {
   }
 
   @Override protected BaseRandom createRng() throws SeedException {
-    return new MersenneTwisterRandom();
+    return new MersenneTwisterRandom(getTestSeedGenerator());
   }
 
   @Override protected BaseRandom createRng(final byte[] seed) throws SeedException {

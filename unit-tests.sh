@@ -18,7 +18,7 @@ if [ "${APPVEYOR}" != "" ]; then
   fi
 fi
 # Coverage test
-PATH="${NO_GIT_PATH}" mvn ${MAYBE_ANDROID_FLAG} help:active-profiles clean ${MAYBE_JACOCO_PREPARE} \
+PATH="${NO_GIT_PATH}" mvn ${MAYBE_ANDROID_FLAG} clean ${MAYBE_JACOCO_PREPARE} \
     test ${MAYBE_JACOCO_REPORT} -e
 STATUS=$?
 if [ "${STATUS}" = 0 ] && [ "${NO_JACOCO}" != "true" ]; then

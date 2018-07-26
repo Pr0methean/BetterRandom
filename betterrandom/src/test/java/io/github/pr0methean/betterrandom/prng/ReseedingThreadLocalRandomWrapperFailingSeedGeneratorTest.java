@@ -5,6 +5,7 @@ import io.github.pr0methean.betterrandom.seed.FailingSeedGenerator;
 import io.github.pr0methean.betterrandom.seed.SeedException;
 import org.testng.annotations.Test;
 
+@Test(testName = "ReseedingThreadLocalRandomWrapper:FailingSeedGenerator")
 public class ReseedingThreadLocalRandomWrapperFailingSeedGeneratorTest
     extends ReseedingThreadLocalRandomWrapperTest {
 
@@ -22,6 +23,6 @@ public class ReseedingThreadLocalRandomWrapperFailingSeedGeneratorTest
 
   @Override protected BaseRandom createRng() throws SeedException {
     return new ReseedingThreadLocalRandomWrapper(FailingSeedGenerator.FAILING_SEED_GENERATOR,
-        new Pcg64RandomColonColonNew());
+        pcgSupplier);
   }
 }

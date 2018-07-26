@@ -6,13 +6,25 @@ import static io.github.pr0methean.betterrandom.TestUtils.isAppveyor;
 import io.github.pr0methean.betterrandom.prng.RandomTestUtils.EntropyCheckMode;
 import io.github.pr0methean.betterrandom.seed.RandomSeederThread;
 import io.github.pr0methean.betterrandom.seed.SeedException;
+import io.github.pr0methean.betterrandom.seed.SeedGenerator;
+import java.io.Serializable;
 import java.util.Arrays;
 import java.util.Random;
 import java8.util.function.LongFunction;
 import org.testng.SkipException;
 import org.testng.annotations.Test;
 
+@Test(testName = "ReseedingThreadLocalRandomWrapper")
 public class ReseedingThreadLocalRandomWrapperTest extends ThreadLocalRandomWrapperTest {
+
+  protected Supplier<? extends BaseRandom> pcgSupplier;
+
+  public ReseedingThreadLocalRandomWrapperTest() {
+    // Must be done first, or else lambda won't be serializable.
+    SeedGenerator seedGenerator = getTestSeedGenerator();
+
+    pcgSupplier = (Serializable & Supplier<BaseRandom>) () -> new Pcg64Random(seedGenerator);
+  }
 
   @Override public void testWrapLegacy() throws SeedException {
     ReseedingThreadLocalRandomWrapper
@@ -31,8 +43,9 @@ public class ReseedingThreadLocalRandomWrapperTest extends ThreadLocalRandomWrap
     if (isAppveyor()) {
       throw new SkipException("This test often fails spuriously on AppVeyor"); // FIXME
     }
+
     final BaseRandom rng = new ReseedingThreadLocalRandomWrapper(getTestSeedGenerator(),
-        new Pcg64RandomColonColonNew());
+        pcgSupplier);
     rng.nextLong();
     try {
       Thread.sleep(1000);
@@ -80,7 +93,7 @@ public class ReseedingThreadLocalRandomWrapperTest extends ThreadLocalRandomWrap
 
   @Override protected BaseRandom createRng() throws SeedException {
     return new ReseedingThreadLocalRandomWrapper(getTestSeedGenerator(),
-        new Pcg64RandomColonColonNew());
+        pcgSupplier);
   }
 
   private static class RandomColonColonNewForLong implements LongFunction<Random> {

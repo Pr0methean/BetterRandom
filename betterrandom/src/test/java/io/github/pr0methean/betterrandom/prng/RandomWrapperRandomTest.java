@@ -25,7 +25,9 @@ import org.testng.annotations.Test;
 /**
  * Unit test for the JDK RNG.
  * @author Daniel Dyer
+ * @author Chris Hennick
  */
+@Test(testName = "RandomWrapper")
 public class RandomWrapperRandomTest extends BaseRandomTest {
 
   private static final NamedFunction<Random, Double> SET_WRAPPED =
@@ -81,7 +83,7 @@ public class RandomWrapperRandomTest extends BaseRandomTest {
   }
 
   @Override protected BaseRandom createRng() throws SeedException {
-    return new RandomWrapper();
+    return new RandomWrapper(getTestSeedGenerator());
   }
 
   @Override protected BaseRandom createRng(final byte[] seed) throws SeedException {

@@ -18,6 +18,7 @@ import org.testng.annotations.Test;
 /**
  * Tests for {@link BaseRandom} that are not heritable by tests of subclasses.
  */
+@Test(testName = "BaseRandom statics")
 public class BaseRandomStaticTest {
 
   @TestingDeficiency // FIXME: The switcheroo isn't happening!

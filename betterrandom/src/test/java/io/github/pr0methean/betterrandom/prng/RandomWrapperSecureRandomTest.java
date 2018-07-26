@@ -9,6 +9,7 @@ import java.util.Map;
 import java.util.Random;
 import org.testng.annotations.Test;
 
+@Test(testName = "RandomWrapper:SecureRandom")
 public class RandomWrapperSecureRandomTest extends BaseRandomTest {
 
   private static final SecureRandom SEED_GEN = new SecureRandom();
