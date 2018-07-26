@@ -24,6 +24,6 @@ public class ReseedingThreadLocalRandomWrapperFailingSeedGeneratorTest
 
   @Override protected BaseRandom createRng() throws SeedException {
     return new ReseedingThreadLocalRandomWrapper(FailingSeedGenerator.FAILING_SEED_GENERATOR,
-        (Serializable & Supplier<BaseRandom>) Pcg64Random::new);
+        pcgSupplier);
   }
 }

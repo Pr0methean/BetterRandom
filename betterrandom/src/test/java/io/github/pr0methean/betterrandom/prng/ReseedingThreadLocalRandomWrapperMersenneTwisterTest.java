@@ -20,6 +20,16 @@ import org.testng.annotations.Test;
 public class ReseedingThreadLocalRandomWrapperMersenneTwisterTest
     extends ThreadLocalRandomWrapperMersenneTwisterTest {
 
+  private Supplier<? extends BaseRandom> mtSupplier;
+
+  public ReseedingThreadLocalRandomWrapperMersenneTwisterTest() {
+    // Must be done first, or else lambda won't be serializable.
+    SeedGenerator seedGenerator = getTestSeedGenerator();
+
+    mtSupplier = (Serializable & Supplier<BaseRandom>)
+        () -> new MersenneTwisterRandom(seedGenerator);
+  }
+
   @TestingDeficiency
   @Override protected SeedGenerator getTestSeedGenerator() {
     // FIXME: Statistical tests often fail when using SEMIFAKE_SEED_GENERATOR
@@ -42,8 +52,7 @@ public class ReseedingThreadLocalRandomWrapperMersenneTwisterTest
     if (isAppveyor()) {
       throw new SkipException("This test often fails spuriously on AppVeyor"); // FIXME
     }
-    final BaseRandom rng = new ReseedingThreadLocalRandomWrapper(getTestSeedGenerator(),
-        (Serializable & Supplier<BaseRandom>) MersenneTwisterRandom::new);
+    final BaseRandom rng = new ReseedingThreadLocalRandomWrapper(getTestSeedGenerator(), mtSupplier);
     rng.nextLong();
     try {
       Thread.sleep(1000);
