@@ -40,10 +40,9 @@
       <class name="io.github.pr0methean.betterrandom.prng.AesCounterRandomTest"/>
     </classes>
   </test>
-  <test name="PRNG">
+  <test name="PRNGs" parallel="classes">
     <parameter name="seedSize" value="16"/>
     <classes>
-      <class name="io.github.pr0methean.betterrandom.prng.AesCounterRandomDemoTest"/>
       <class name="io.github.pr0methean.betterrandom.prng.AesCounterRandomTest"/>
       <class name="io.github.pr0methean.betterrandom.prng.CellularAutomatonRandomTest"/>
       <class name="io.github.pr0methean.betterrandom.prng.Cmwc4096RandomTest"/>
@@ -73,6 +72,7 @@
   </test>
   <test name="Misc" parallel="methods">
     <classes>
+      <class name="io.github.pr0methean.betterrandom.prng.AesCounterRandomDemoTest"/>
       <class name="io.github.pr0methean.betterrandom.prng.BaseRandomStaticTest"/>
       <class name="io.github.pr0methean.betterrandom.util.BinaryUtilsTest"/>
       <class name="io.github.pr0methean.betterrandom.util.LooperThreadTest"/>
