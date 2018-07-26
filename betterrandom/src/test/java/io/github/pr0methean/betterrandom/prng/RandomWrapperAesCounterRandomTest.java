@@ -6,6 +6,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.Random;
 import org.testng.annotations.Test;
 
+@Test(testName = "RandomWrapper:AesCounterRandom")
 public class RandomWrapperAesCounterRandomTest extends AesCounterRandomTest {
 
   private static final NamedFunction<Random, Double> SET_WRAPPED = new NamedFunction<>(random -> {

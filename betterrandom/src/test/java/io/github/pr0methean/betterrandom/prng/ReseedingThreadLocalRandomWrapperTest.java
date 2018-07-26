@@ -14,6 +14,7 @@ import java.util.function.Supplier;
 import org.testng.SkipException;
 import org.testng.annotations.Test;
 
+@Test(testName = "ReseedingThreadLocalRandomWrapper")
 public class ReseedingThreadLocalRandomWrapperTest extends ThreadLocalRandomWrapperTest {
 
   protected Supplier<? extends BaseRandom> pcgSupplier;

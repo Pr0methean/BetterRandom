@@ -4,6 +4,7 @@ import io.github.pr0methean.betterrandom.seed.RandomDotOrgUtils;
 import io.github.pr0methean.betterrandom.seed.SeedException;
 import org.testng.annotations.Test;
 
+@Test(testName = "AesCounterRandomDemo")
 public class AesCounterRandomDemoTest {
 
   private static final String[] NO_ARGS = {};
