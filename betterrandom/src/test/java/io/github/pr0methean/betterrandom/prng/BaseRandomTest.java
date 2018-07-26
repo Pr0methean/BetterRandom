@@ -280,6 +280,7 @@ public abstract class BaseRandomTest {
 
   /** Assertion-free since many implementations have a fallback behavior. */
   @Test(timeOut = 10_000) public void testSetSeedLong() {
+    System.out.format("Running %s.testSetSeedLong()%n", getClass().getSimpleName());
     createRng().setSeed(0x0123456789ABCDEFL);
   }
 
@@ -710,16 +711,16 @@ public abstract class BaseRandomTest {
   }
 
   @Test(timeOut = 90_000) public void testThreadSafetySetSeed() {
-    testThreadSafetyVsCrashesOnly(FUNCTIONS_FOR_THREAD_CRASH_TEST);
+    testThreadSafetyVsCrashesOnly(30, FUNCTIONS_FOR_THREAD_CRASH_TEST);
   }
 
-  protected void testThreadSafetyVsCrashesOnly(
+  protected void testThreadSafetyVsCrashesOnly(final int timeoutSec,
       final List<NamedFunction<Random, Double>> functions) {
     final int seedLength = createRng().getNewSeedLength();
     final byte[] seed = getTestSeedGenerator().generateSeed(seedLength);
     for (final NamedFunction<Random, Double> supplier1 : functions) {
       for (final NamedFunction<Random, Double> supplier2 : functions) {
-        runParallel(supplier1, supplier2, seed, 30,
+        runParallel(supplier1, supplier2, seed, timeoutSec,
             (supplier1 == SET_SEED || supplier2 == SET_SEED) ? 200 : 1000);
       }
     }

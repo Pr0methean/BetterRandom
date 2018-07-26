@@ -75,7 +75,7 @@ public class AesCounterRandomTest extends SeekableRandomTest {
     // No-op: can't be tested because setSeed merges with the existing seed
   }
 
-  @SuppressWarnings("ObjectAllocationInLoop") @Override @Test(timeOut = 30000)
+  @SuppressWarnings("ObjectAllocationInLoop") @Override @Test(timeOut = 40_000)
   public void testSetSeedAfterNextLong() throws SeedException {
     // can't use a real SeedGenerator since we need longs, so use a Random
     final Random masterRNG = new Random();
