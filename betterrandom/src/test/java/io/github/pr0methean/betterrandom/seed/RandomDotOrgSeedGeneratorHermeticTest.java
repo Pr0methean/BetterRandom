@@ -90,7 +90,7 @@ public class RandomDotOrgSeedGeneratorHermeticTest extends PowerMockTestCase {
 
   private void mockRandomDotOrgResponse(final byte[] response) throws Exception {
     PowerMockito.mockStatic(RandomDotOrgSeedGenerator.class, Answers.CALLS_REAL_METHODS);
-    PowerMockito.when(RandomDotOrgSeedGenerator.openConnection(any(URL.class)))
+    PowerMockito.when(RandomDotOrgSeedGenerator.class, "openConnection", any(URL.class))
         .thenAnswer(invocationOnMock -> {
       final URL url = invocationOnMock.getArgument(0);
       address = url.toString();
