@@ -7,6 +7,10 @@ import static io.github.pr0methean.betterrandom.prng.BaseRandom.ENTROPY_OF_FLOAT
 import static io.github.pr0methean.betterrandom.prng.RandomTestUtils.assertMonteCarloPiEstimateSane;
 import static io.github.pr0methean.betterrandom.prng.RandomTestUtils.checkRangeAndEntropy;
 import static io.github.pr0methean.betterrandom.prng.RandomTestUtils.checkStream;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyInt;
+import static org.powermock.api.mockito.PowerMockito.doAnswer;
+import static org.powermock.api.mockito.PowerMockito.when;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertFalse;
 import static org.testng.Assert.assertNotEquals;
@@ -21,6 +25,7 @@ import io.github.pr0methean.betterrandom.CloneViaSerialization;
 import io.github.pr0methean.betterrandom.TestUtils;
 import io.github.pr0methean.betterrandom.prng.RandomTestUtils.EntropyCheckMode;
 import io.github.pr0methean.betterrandom.prng.adapter.SplittableRandomAdapter;
+import io.github.pr0methean.betterrandom.seed.DefaultSeedGenerator;
 import io.github.pr0methean.betterrandom.seed.FakeSeedGenerator;
 import io.github.pr0methean.betterrandom.seed.RandomSeederThread;
 import io.github.pr0methean.betterrandom.seed.SeedException;
@@ -48,14 +53,24 @@ import java.util.function.DoubleConsumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
 import org.apache.commons.math3.stat.descriptive.SynchronizedDescriptiveStatistics;
+import org.mockito.Mockito;
+import org.powermock.api.mockito.PowerMockito;
+import org.powermock.core.classloader.annotations.PrepareForTest;
+import org.powermock.modules.testng.PowerMockTestCase;
+import org.powermock.reflect.Whitebox;
 import org.testng.Reporter;
 import org.testng.annotations.AfterClass;
+import org.testng.annotations.AfterMethod;
+import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
-public abstract class BaseRandomTest {
+@PrepareForTest(DefaultSeedGenerator.class)
+public abstract class BaseRandomTest extends PowerMockTestCase {
 
   private static final SeedGenerator SEMIFAKE_SEED_GENERATOR
       = new SemiFakeSeedGenerator(new SplittableRandomAdapter());
+  private DefaultSeedGenerator oldDefaultSeedGenerator;
+
   /**
    * The square root of 12, rounded from an extended-precision calculation that was done by Wolfram
    * Alpha (and thus at least as accurate as {@code StrictMath.sqrt(12.0)}).
@@ -132,6 +147,26 @@ public abstract class BaseRandomTest {
     params.put(byte[].class, new byte[seedLength]);
     params.put(SeedGenerator.class, SEMIFAKE_SEED_GENERATOR);
     return params;
+  }
+
+  @BeforeMethod
+  public void setUpMethod() {
+    oldDefaultSeedGenerator = DefaultSeedGenerator.DEFAULT_SEED_GENERATOR;
+    DefaultSeedGenerator mockDefaultSeedGenerator = PowerMockito.mock(DefaultSeedGenerator.class);
+    when(mockDefaultSeedGenerator.generateSeed(anyInt())).thenAnswer(invocation ->
+        SEMIFAKE_SEED_GENERATOR.generateSeed((Integer) (invocation.getArgument(0))));
+    doAnswer(invocation -> {
+      SEMIFAKE_SEED_GENERATOR.generateSeed((byte[]) invocation.getArgument(0));
+      return null;
+    }).when(mockDefaultSeedGenerator).generateSeed(any(byte[].class));
+    Whitebox.setInternalState(DefaultSeedGenerator.class, "DEFAULT_SEED_GENERATOR",
+        mockDefaultSeedGenerator);
+  }
+
+  @AfterMethod
+  public void tearDownMethod() {
+    Whitebox.setInternalState(DefaultSeedGenerator.class, "DEFAULT_SEED_GENERATOR",
+        oldDefaultSeedGenerator);
   }
 
   protected int getNewSeedLength(final BaseRandom basePrng) {
@@ -279,7 +314,7 @@ public abstract class BaseRandomTest {
   }
 
   /** Assertion-free since many implementations have a fallback behavior. */
-  @Test(timeOut = 30_000) public void testSetSeedLong() {
+  @Test(timeOut = 60_000) public void testSetSeedLong() {
     System.out.format("Running %s.testSetSeedLong()%n", getClass().getSimpleName());
     createRng().setSeed(0x0123456789ABCDEFL);
   }
