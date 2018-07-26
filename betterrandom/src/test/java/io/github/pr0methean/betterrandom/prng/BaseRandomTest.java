@@ -55,6 +55,8 @@ import java.util.function.Supplier;
 import org.apache.commons.math3.stat.descriptive.SynchronizedDescriptiveStatistics;
 import org.mockito.Mockito;
 import org.powermock.api.mockito.PowerMockito;
+import org.powermock.api.mockito.mockpolicies.Slf4jMockPolicy;
+import org.powermock.core.classloader.annotations.MockPolicy;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.testng.PowerMockTestCase;
 import org.powermock.reflect.Whitebox;
@@ -65,6 +67,7 @@ import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 @PrepareForTest(DefaultSeedGenerator.class)
+@MockPolicy(Slf4jMockPolicy.class)
 public abstract class BaseRandomTest extends PowerMockTestCase {
 
   private static final SeedGenerator SEMIFAKE_SEED_GENERATOR
