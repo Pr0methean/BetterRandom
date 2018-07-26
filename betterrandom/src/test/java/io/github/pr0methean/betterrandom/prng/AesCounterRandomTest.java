@@ -15,16 +15,12 @@
 // ============================================================================
 package io.github.pr0methean.betterrandom.prng;
 
-import static org.testng.Assert.assertTrue;
-
-import io.github.pr0methean.betterrandom.seed.SeedException;
+import java.lang.reflect.Constructor;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
 import javax.crypto.Cipher;
-import org.testng.SkipException;
-import org.testng.annotations.BeforeClass;
+import org.powermock.modules.testng.PowerMockObjectFactory;
 import org.testng.annotations.Factory;
 import org.testng.annotations.Test;
 
@@ -36,20 +32,23 @@ import org.testng.annotations.Test;
 @Test(testName = "AesCounterRandom")
 public class AesCounterRandomTest extends AbstractAesCounterRandomTest {
 
-  protected AesCounterRandomTest(int seedSizeBytes) {
+  public AesCounterRandomTest(int seedSizeBytes) {
     super(seedSizeBytes);
   }
 
-  @Factory public static Object[] getInstances() throws NoSuchAlgorithmException {
+  @Factory public static Object[] getInstances()
+      throws NoSuchAlgorithmException, NoSuchMethodException {
+    Constructor constructor = AesCounterRandomTest.class.getConstructor(int.class);
+    PowerMockObjectFactory factory = new PowerMockObjectFactory();
     int[] desiredSeedSizes = {16, 17, 32, 33, 48};
     int maxSize = Cipher.getMaxAllowedKeyLength("AES") / 8
         + AesCounterRandom.COUNTER_SIZE_BYTES;
-    List<AesCounterRandomTest> instances = new ArrayList<>(5);
+    List<Object> instances = new ArrayList<>(5);
     for (int size : desiredSeedSizes) {
       if (size > maxSize) {
         break;
       } else {
-        instances.add(new AesCounterRandomTest(size));
+        instances.add(factory.newInstance(constructor, size));
       }
     }
     return instances.toArray();
