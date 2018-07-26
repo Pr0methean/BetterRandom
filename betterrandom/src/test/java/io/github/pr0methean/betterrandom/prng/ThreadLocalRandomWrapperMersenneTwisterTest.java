@@ -4,6 +4,7 @@ import static org.testng.Assert.assertEquals;
 
 import io.github.pr0methean.betterrandom.CloneViaSerialization;
 import io.github.pr0methean.betterrandom.seed.SeedException;
+import io.github.pr0methean.betterrandom.seed.SeedGenerator;
 import java.io.Serializable;
 import java.util.Map;
 import java.util.Random;
@@ -13,8 +14,15 @@ import org.testng.annotations.Test;
 
 public class ThreadLocalRandomWrapperMersenneTwisterTest extends ThreadLocalRandomWrapperTest {
 
-  private final Supplier<BaseRandom> mtSupplier = (Serializable & Supplier<BaseRandom>)
-      (() -> new MersenneTwisterRandom(getTestSeedGenerator()));
+  private Supplier<? extends BaseRandom> mtSupplier;
+
+  public ThreadLocalRandomWrapperMersenneTwisterTest() {
+    // Must be done first, or else lambda won't be serializable.
+    SeedGenerator seedGenerator = getTestSeedGenerator();
+
+    mtSupplier = (Serializable & Supplier<BaseRandom>)
+        () -> new MersenneTwisterRandom(seedGenerator);
+  }
 
   @Override public Map<Class<?>, Object> constructorParams() {
     final Map<Class<?>, Object> params = super.constructorParams();

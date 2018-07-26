@@ -4,6 +4,7 @@ import static org.testng.Assert.assertEquals;
 
 import io.github.pr0methean.betterrandom.CloneViaSerialization;
 import io.github.pr0methean.betterrandom.seed.SeedException;
+import io.github.pr0methean.betterrandom.seed.SeedGenerator;
 import java.io.Serializable;
 import java.util.Map;
 import java.util.Random;
@@ -13,8 +14,15 @@ import org.testng.annotations.Test;
 
 public class ThreadLocalRandomWrapperTest extends BaseRandomTest {
 
-  private final Supplier<BaseRandom> pcgSupplier = (Supplier<BaseRandom> & Serializable)
-      (() -> new Pcg64Random(getTestSeedGenerator()));
+  private final Supplier<BaseRandom> pcgSupplier;
+
+  public ThreadLocalRandomWrapperTest() {
+    // Must be done first, or else lambda won't be serializable.
+    final SeedGenerator seedGenerator = getTestSeedGenerator();
+
+    pcgSupplier = (Supplier<BaseRandom> & Serializable)
+        (() -> new Pcg64Random(seedGenerator));
+  }
 
   @Override public void testSerializable()
       throws SeedException {
