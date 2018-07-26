@@ -23,6 +23,7 @@ import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.List;
 import javax.crypto.Cipher;
+import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.testng.PowerMockObjectFactory;
 import org.testng.annotations.Factory;
 import org.testng.annotations.Test;
@@ -33,6 +34,7 @@ import org.testng.annotations.Test;
  * @author Chris Hennick
  */
 @Test(testName = "AesCounterRandom")
+@PrepareForTest(AesCounterRandomTest.class)
 public class AesCounterRandomTest extends AbstractAesCounterRandomTest {
 
   public AesCounterRandomTest(int seedSizeBytes) {
