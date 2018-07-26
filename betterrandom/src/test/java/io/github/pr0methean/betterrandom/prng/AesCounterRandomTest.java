@@ -24,11 +24,8 @@ import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.List;
 import javax.crypto.Cipher;
-import org.powermock.core.PowerMockUtils;
-import org.powermock.core.classloader.PowerMockModified;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.testng.PowerMockObjectFactory;
-import org.powermock.modules.testng.internal.PowerMockClassloaderObjectFactory;
 import org.testng.IObjectFactory;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Factory;
@@ -65,7 +62,7 @@ public class AesCounterRandomTest extends AbstractAesCounterRandomTest {
   @Factory public Object[] getInstances()
       throws NoSuchAlgorithmException, NoSuchMethodException {
     DeadlockWatchdogThread.ensureStarted();
-    Constructor constructor = getClass().getConstructor(int.class);
+    Constructor constructor = AesCounterRandomTest.class.getConstructor(int.class);
     int[] desiredSeedSizes = {16, 17, 32, 33, 48};
     int maxSize = Cipher.getMaxAllowedKeyLength("AES") / 8
         + AesCounterRandom.COUNTER_SIZE_BYTES;
