@@ -19,6 +19,8 @@ import static org.testng.Assert.assertTrue;
 
 import io.github.pr0methean.betterrandom.seed.SeedException;
 import java.security.NoSuchAlgorithmException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 import javax.crypto.Cipher;
 import org.testng.SkipException;
@@ -40,23 +42,19 @@ public class AesCounterRandomTest extends SeekableRandomTest {
     this.seedSizeBytes = seedSizeBytes;
   }
 
-  @Factory public static Object[] getInstances() {
-    return new Object[]{
-        new AesCounterRandomTest(16),
-        new AesCounterRandomTest(17),
-        new AesCounterRandomTest(32),
-        new AesCounterRandomTest(33),
-        new AesCounterRandomTest(48),
-    };
-  }
-
-  @BeforeClass
-  public void checkRunnable() throws NoSuchAlgorithmException {
-    if (Cipher.getMaxAllowedKeyLength("AES") <
-        8 * (seedSizeBytes - AesCounterRandom.COUNTER_SIZE_BYTES)) {
-      throw new SkipException(
-          "Test can't run without jurisdiction policy files that allow larger AES keys");
+  @Factory public static Object[] getInstances() throws NoSuchAlgorithmException {
+    int[] desiredSeedSizes = {16, 17, 32, 33, 48};
+    int maxSize = Cipher.getMaxAllowedKeyLength("AES") / 8
+        + AesCounterRandom.COUNTER_SIZE_BYTES;
+    List<AesCounterRandomTest> instances = new ArrayList<>(5);
+    for (int size : desiredSeedSizes) {
+      if (size > maxSize) {
+        break;
+      } else {
+        instances.add(new AesCounterRandomTest(size));
+      }
     }
+    return instances.toArray();
   }
 
   @Override protected int getNewSeedLength(BaseRandom basePrng) {
