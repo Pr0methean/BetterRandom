@@ -9,7 +9,7 @@ import org.testng.annotations.Test;
 
 public abstract class AbstractAesCounterRandomTest extends SeekableRandomTest {
 
-  protected int seedSizeBytes;
+  protected final int seedSizeBytes;
 
   public AbstractAesCounterRandomTest(int seedSizeBytes) {
     this.seedSizeBytes = seedSizeBytes;
