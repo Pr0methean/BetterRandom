@@ -34,7 +34,8 @@
               <artifactId>maven-surefire-plugin</artifactId>
               <version>2.21.0</version>
               <configuration>
-                <argLine>@{argLine} ${test.jdk8.argline}</argLine>
+                <useSystemClassLoader>true</useSystemClassLoader>
+                <argLine>@{argLine} ${test.argline.jdk8}</argLine>
               </configuration>
             </plugin>
             <plugin>
@@ -42,7 +43,8 @@
               <artifactId>maven-failsafe-plugin</artifactId>
               <version>2.17</version>
               <configuration>
-                <argLine>@{argLine} ${test.jdk8.argline}</argLine>
+                <useSystemClassLoader>true</useSystemClassLoader>
+                <argLine>@{argLine} ${test.argline.jdk8}</argLine>
               </configuration>
               <executions>
                 <execution>
@@ -196,8 +198,9 @@
     <jacoco.version>0.8.1</jacoco.version>
     <powermock.version>2.0.0-beta.5</powermock.version>
     <mockito.version>2.19.0</mockito.version>
-    <test.jdk8.argline />
-    <test.jdk9.argline>--add-opens java.xml/jdk.xml.internal=ALL-UNNAMED</test.jdk9.argline>
+    <test.argline.common>-javaagent:${settings.localRepository}/org/powermock/powermock-module-javaagent/1.7.1/powermock-module-javaagent-1.7.1.jar</test.argline.common>
+    <test.argline.jdk8>${test.argline.common}</test.argline.jdk8>
+    <test.argline.jdk9>${test.argline.common} --add-opens java.xml/jdk.xml.internal=ALL-UNNAMED</test.argline.jdk9>
     <testng.parallel>tests</testng.parallel>
     <testng.perCoreThreadCount>1</testng.perCoreThreadCount>
     <testng.verbose>10</testng.verbose>
@@ -399,7 +402,7 @@
           <artifactId>maven-surefire-plugin</artifactId>
           <version>2.21.0</version>
           <configuration>
-            <argLine>@{argLine} ${test.jdk9.argline}</argLine>
+            <argLine>@{argLine} ${test.argline.jdk9}</argLine>
             <suiteXmlFiles>
               <suiteXmlFile>src/test/testng.xml</suiteXmlFile>
             </suiteXmlFiles>
@@ -425,7 +428,7 @@
           <artifactId>maven-failsafe-plugin</artifactId>
           <version>2.17</version>
           <configuration>
-            <argLine>@{argLine} ${test.jdk9.argline}</argLine>
+            <argLine>@{argLine} ${test.argline.jdk9}</argLine>
             <suiteXmlFiles>
               <suiteXmlFile>src/test/testng.xml</suiteXmlFile>
             </suiteXmlFiles>
