@@ -117,7 +117,7 @@ public abstract class BaseRandomTest {
     return EntropyCheckMode.EXACT;
   }
 
-  @Test(timeOut = 60_000) public void testAllPublicConstructors()
+  @Test(timeOut = 120_000) public void testAllPublicConstructors()
       throws SeedException, IllegalAccessException, InstantiationException,
       InvocationTargetException {
     TestUtils.testConstructors(getClassUnderTest(), false, ImmutableMap.copyOf(constructorParams()),
@@ -279,7 +279,7 @@ public abstract class BaseRandomTest {
   }
 
   /** Assertion-free since many implementations have a fallback behavior. */
-  @Test(timeOut = 10_000) public void testSetSeedLong() {
+  @Test(timeOut = 30_000) public void testSetSeedLong() {
     System.out.format("Running %s.testSetSeedLong()%n", getClass().getSimpleName());
     createRng().setSeed(0x0123456789ABCDEFL);
   }
