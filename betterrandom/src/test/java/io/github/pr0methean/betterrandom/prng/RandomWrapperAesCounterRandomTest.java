@@ -15,7 +15,7 @@ public class RandomWrapperAesCounterRandomTest extends AesCounterRandomTest {
   }, "setWrapped");
 
   public RandomWrapperAesCounterRandomTest() {
-    super(16);
+    seedSizeBytes = 16;
   }
 
   @Override @Test public void testThreadSafetySetSeed() {
