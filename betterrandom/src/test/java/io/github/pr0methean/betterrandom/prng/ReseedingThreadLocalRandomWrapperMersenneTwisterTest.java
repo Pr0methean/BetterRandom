@@ -7,6 +7,7 @@ import io.github.pr0methean.betterrandom.TestingDeficiency;
 import io.github.pr0methean.betterrandom.prng.RandomTestUtils.EntropyCheckMode;
 import io.github.pr0methean.betterrandom.seed.DefaultSeedGenerator;
 import io.github.pr0methean.betterrandom.seed.RandomSeederThread;
+import io.github.pr0methean.betterrandom.seed.SecureRandomSeedGenerator;
 import io.github.pr0methean.betterrandom.seed.SeedException;
 import io.github.pr0methean.betterrandom.seed.SeedGenerator;
 import java.io.Serializable;
@@ -22,7 +23,7 @@ public class ReseedingThreadLocalRandomWrapperMersenneTwisterTest
   @TestingDeficiency
   @Override protected SeedGenerator getTestSeedGenerator() {
     // FIXME: Statistical tests often fail when using SEMIFAKE_SEED_GENERATOR
-    return DefaultSeedGenerator.DEFAULT_SEED_GENERATOR;
+    return SecureRandomSeedGenerator.SECURE_RANDOM_SEED_GENERATOR;
   }
 
   @Override public void testWrapLegacy() throws SeedException {
