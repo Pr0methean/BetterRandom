@@ -320,7 +320,6 @@ public abstract class BaseRandomTest extends PowerMockTestCase {
 
   /** Assertion-free since many implementations have a fallback behavior. */
   @Test(timeOut = 60_000) public void testSetSeedLong() {
-    System.out.format("Running %s.testSetSeedLong()%n", getClass().getSimpleName());
     mockDefaultSeedGenerator();
     try {
       createRng().setSeed(0x0123456789ABCDEFL);
