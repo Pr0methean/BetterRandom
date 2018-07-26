@@ -38,7 +38,7 @@ import org.testng.annotations.Test;
  */
 @PrepareForTest(AesCounterRandomTest.class)
 @Test(testName = "AesCounterRandom")
-public class AesCounterRandomTest extends AbstractAesCounterRandomTest {
+public class AesCounterRandomTest extends AbstractAesCounterRandomTest implements Cloneable {
 
   public AesCounterRandomTest() {
     this(0);
@@ -53,9 +53,7 @@ public class AesCounterRandomTest extends AbstractAesCounterRandomTest {
   }
 
   @Factory public Object[] getInstances()
-      throws NoSuchAlgorithmException, NoSuchMethodException, IllegalAccessException,
-      InvocationTargetException, InstantiationException {
-    Constructor<?> powerMockModifiedCtor = getClass().getConstructor(int.class);
+      throws NoSuchAlgorithmException, CloneNotSupportedException {
     System.out.println("Creating factory");
     int[] desiredSeedSizes = {16, 17, 32, 33, 48};
     int maxSize = Cipher.getMaxAllowedKeyLength("AES") / 8
@@ -66,7 +64,9 @@ public class AesCounterRandomTest extends AbstractAesCounterRandomTest {
         break;
       } else {
         System.out.println("Creating instance for size " + size);
-        instances.add(powerMockModifiedCtor.newInstance(size));
+        AesCounterRandomTest newInstance = (AesCounterRandomTest) clone();
+        newInstance.seedSizeBytes = size;
+        instances.add(newInstance);
       }
     }
     assertFalse(instances.isEmpty());
