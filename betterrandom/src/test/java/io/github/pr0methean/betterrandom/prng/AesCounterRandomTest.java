@@ -36,7 +36,6 @@ import org.testng.annotations.Test;
  * @author Daniel Dyer
  * @author Chris Hennick
  */
-@PrepareForTest(AesCounterRandomTest.class)
 @Test(testName = "AesCounterRandom")
 public class AesCounterRandomTest extends AbstractAesCounterRandomTest implements Cloneable {
 
