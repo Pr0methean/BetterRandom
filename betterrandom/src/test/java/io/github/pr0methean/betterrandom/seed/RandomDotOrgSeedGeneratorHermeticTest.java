@@ -98,12 +98,12 @@ public class RandomDotOrgSeedGeneratorHermeticTest extends PowerMockTestCase {
   }
 
   private void mockRandomDotOrgResponse(final byte[] response) throws Exception {
-    PowerMockito.doAnswer(invocationOnMock -> {
+    PowerMockito.when(RandomDotOrgSeedGenerator.openConnection(any(URL.class)))
+        .thenAnswer(invocationOnMock -> {
       final URL url = invocationOnMock.getArgument(0);
       address = url.toString();
       return new FakeHttpsUrlConnection(url, null, response);
-    }).when(RandomDotOrgSeedGenerator.class);
-    RandomDotOrgSeedGenerator.openConnection(any(URL.class));
+    });
   }
 
   private static SeedException expectAndGetException() {
@@ -227,7 +227,7 @@ public class RandomDotOrgSeedGeneratorHermeticTest extends PowerMockTestCase {
   }
 
   @AfterClass public void tearDownClass() throws IOException {
-    PowerMockito.doCallRealMethod().when(RandomDotOrgSeedGenerator.class);
-    RandomDotOrgSeedGenerator.openConnection(any(URL.class));
+    PowerMockito.when(RandomDotOrgSeedGenerator.openConnection(any(URL.class)))
+        .thenCallRealMethod();
   }
 }
