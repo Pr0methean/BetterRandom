@@ -10,10 +10,9 @@
       <class name="io.github.pr0methean.betterrandom.seed.SecureRandomSeedGeneratorTest"/>
     </classes>
   </test>
-  <test name="PRNG">
+  <test name="PRNG" parallel="classes">
     <classes>
       <class name="io.github.pr0methean.betterrandom.prng.AesCounterRandomTest"/>
-      <class name="io.github.pr0methean.betterrandom.prng.AesCounterRandomDemoTest"/>
       <class name="io.github.pr0methean.betterrandom.prng.CellularAutomatonRandomTest"/>
       <class name="io.github.pr0methean.betterrandom.prng.Cmwc4096RandomTest"/>
       <class name="io.github.pr0methean.betterrandom.prng.MersenneTwisterRandomTest"/>
@@ -42,6 +41,7 @@
   </test>
   <test name="Misc" parallel="methods">
     <classes>
+      <class name="io.github.pr0methean.betterrandom.prng.AesCounterRandomDemoTest"/>
       <class name="io.github.pr0methean.betterrandom.prng.BaseRandomStaticTest"/>
       <class name="io.github.pr0methean.betterrandom.util.BinaryUtilsTest"/>
       <class name="io.github.pr0methean.betterrandom.util.LooperThreadTest"/>
