@@ -5,7 +5,6 @@ import static io.github.pr0methean.betterrandom.TestUtils.isAppveyor;
 
 import io.github.pr0methean.betterrandom.TestingDeficiency;
 import io.github.pr0methean.betterrandom.prng.RandomTestUtils.EntropyCheckMode;
-import io.github.pr0methean.betterrandom.seed.DefaultSeedGenerator;
 import io.github.pr0methean.betterrandom.seed.RandomSeederThread;
 import io.github.pr0methean.betterrandom.seed.SecureRandomSeedGenerator;
 import io.github.pr0methean.betterrandom.seed.SeedException;
@@ -21,15 +20,8 @@ import org.testng.annotations.Test;
 public class ReseedingThreadLocalRandomWrapperMersenneTwisterTest
     extends ThreadLocalRandomWrapperMersenneTwisterTest {
 
-  private Supplier<? extends BaseRandom> mtSupplier;
-
-  public ReseedingThreadLocalRandomWrapperMersenneTwisterTest() {
-    // Must be done first, or else lambda won't be serializable.
-    SeedGenerator seedGenerator = getTestSeedGenerator();
-
-    mtSupplier = (Serializable & Supplier<BaseRandom>)
-        () -> new MersenneTwisterRandom(seedGenerator);
-  }
+  private MersenneTwisterRandomColonColonNew mtSupplier
+      = new MersenneTwisterRandomColonColonNew(getTestSeedGenerator());
 
   @TestingDeficiency
   @Override protected SeedGenerator getTestSeedGenerator() {
@@ -104,7 +96,6 @@ public class ReseedingThreadLocalRandomWrapperMersenneTwisterTest
   }
 
   @Override protected BaseRandom createRng() throws SeedException {
-    return new ReseedingThreadLocalRandomWrapper(getTestSeedGenerator(),
-        new MersenneTwisterRandomColonColonNew());
+    return new ReseedingThreadLocalRandomWrapper(getTestSeedGenerator(), mtSupplier);
   }
 }

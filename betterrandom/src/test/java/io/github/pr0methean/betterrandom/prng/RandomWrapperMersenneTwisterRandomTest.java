@@ -28,8 +28,7 @@ public class RandomWrapperMersenneTwisterRandomTest extends MersenneTwisterRando
   }
 
   @Override @Test(enabled = false) public void testAllPublicConstructors()
-      throws SeedException, IllegalAccessException, InstantiationException,
-      InvocationTargetException {
+      throws SeedException {
     // No-op: redundant to super insofar as it works.
   }
 

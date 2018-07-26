@@ -11,15 +11,8 @@ import org.testng.annotations.Test;
 @Test(testName = "ThreadLocalRandomWrapper:MersenneTwisterRandom")
 public class ThreadLocalRandomWrapperMersenneTwisterTest extends ThreadLocalRandomWrapperTest {
 
-  private Supplier<? extends BaseRandom> mtSupplier;
-
-  public ThreadLocalRandomWrapperMersenneTwisterTest() {
-    // Must be done first, or else lambda won't be serializable.
-    SeedGenerator seedGenerator = getTestSeedGenerator();
-
-    mtSupplier = (Serializable & Supplier<BaseRandom>)
-        () -> new MersenneTwisterRandom(seedGenerator);
-  }
+  private MersenneTwisterRandomColonColonNew mtSupplier
+      = new MersenneTwisterRandomColonColonNew(getTestSeedGenerator());
 
   @Override public Map<Class<?>, Object> constructorParams() {
     final Map<Class<?>, Object> params = super.constructorParams();
@@ -35,8 +28,14 @@ public class ThreadLocalRandomWrapperMersenneTwisterTest extends ThreadLocalRand
   protected static class MersenneTwisterRandomColonColonNew
       implements SerializableSupplier<MersenneTwisterRandom>, Function<byte[], BaseRandom> {
 
+    private final SeedGenerator seedGenerator;
+
+    public MersenneTwisterRandomColonColonNew(SeedGenerator seedGenerator) {
+      this.seedGenerator = seedGenerator;
+    }
+
     @Override public MersenneTwisterRandom get() {
-      return new MersenneTwisterRandom();
+      return new MersenneTwisterRandom(seedGenerator);
     }
 
     @Override public BaseRandom apply(byte[] seed) {

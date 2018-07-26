@@ -17,15 +17,8 @@ import org.testng.annotations.Test;
 @Test(testName = "ThreadLocalRandomWrapper")
 public class ThreadLocalRandomWrapperTest extends BaseRandomTest {
 
-  private final Supplier<BaseRandom> pcgSupplier;
-
-  public ThreadLocalRandomWrapperTest() {
-    // Must be done first, or else lambda won't be serializable.
-    final SeedGenerator seedGenerator = getTestSeedGenerator();
-
-    pcgSupplier = (Supplier<BaseRandom> & Serializable)
-        (() -> new Pcg64Random(seedGenerator));
-  }
+  protected final Supplier<BaseRandom> pcgSupplier
+      = new Pcg64RandomColonColonNew(getTestSeedGenerator());
 
   @Override public void testSerializable()
       throws SeedException {
@@ -127,8 +120,14 @@ public class ThreadLocalRandomWrapperTest extends BaseRandomTest {
   protected static class Pcg64RandomColonColonNew
       implements SerializableSupplier<BaseRandom>, Function<byte[], BaseRandom> {
 
+    private SeedGenerator seedGenerator;
+
+    public Pcg64RandomColonColonNew(SeedGenerator seedGenerator) {
+      this.seedGenerator = seedGenerator;
+    }
+
     @Override public BaseRandom get() {
-      return new Pcg64Random();
+      return new Pcg64Random(seedGenerator);
     }
 
     @Override public BaseRandom apply(byte[] seed) {

@@ -17,15 +17,6 @@ import org.testng.annotations.Test;
 @Test(testName = "ReseedingThreadLocalRandomWrapper")
 public class ReseedingThreadLocalRandomWrapperTest extends ThreadLocalRandomWrapperTest {
 
-  protected Supplier<? extends BaseRandom> pcgSupplier;
-
-  public ReseedingThreadLocalRandomWrapperTest() {
-    // Must be done first, or else lambda won't be serializable.
-    SeedGenerator seedGenerator = getTestSeedGenerator();
-
-    pcgSupplier = (Serializable & Supplier<BaseRandom>) () -> new Pcg64Random(seedGenerator);
-  }
-
   @Override public void testWrapLegacy() throws SeedException {
     ReseedingThreadLocalRandomWrapper
         .wrapLegacy(new RandomColonColonNewForLong(), getTestSeedGenerator()).nextInt();
