@@ -198,7 +198,7 @@
     <jacoco.version>0.8.1</jacoco.version>
     <powermock.version>2.0.0-beta.5</powermock.version>
     <mockito.version>2.19.0</mockito.version>
-    <test.argline.common>-javaagent:${settings.localRepository}/org/powermock/powermock-module-javaagent/1.7.1/powermock-module-javaagent-1.7.1.jar</test.argline.common>
+    <test.argline.common>-javaagent:${settings.localRepository}/org/powermock/powermock-module-javaagent/${powermock.version}/powermock-module-javaagent-${powermock.version}.jar</test.argline.common>
     <test.argline.jdk8>${test.argline.common}</test.argline.jdk8>
     <test.argline.jdk9>${test.argline.common} --add-opens java.xml/jdk.xml.internal=ALL-UNNAMED</test.argline.jdk9>
     <testng.parallel>tests</testng.parallel>
