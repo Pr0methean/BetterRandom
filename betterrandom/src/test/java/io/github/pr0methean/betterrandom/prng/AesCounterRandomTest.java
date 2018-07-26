@@ -15,11 +15,17 @@
 // ============================================================================
 package io.github.pr0methean.betterrandom.prng;
 
+import static org.testng.Assert.assertFalse;
 import static org.testng.Assert.assertTrue;
 
 import io.github.pr0methean.betterrandom.seed.SeedException;
+import java.security.NoSuchAlgorithmException;
 import java.util.Random;
+import javax.crypto.Cipher;
 import org.testng.SkipException;
+import org.testng.annotations.BeforeClass;
+import org.testng.annotations.DataProvider;
+import org.testng.annotations.Parameters;
 import org.testng.annotations.Test;
 
 /**
@@ -30,10 +36,26 @@ import org.testng.annotations.Test;
 @Test(testName = "AesCounterRandom")
 public class AesCounterRandomTest extends SeekableRandomTest {
 
-  private final int seedSizeBytes;
+  protected int seedSizeBytes;
 
-  protected AesCounterRandomTest(int seedSizeBytes) {
-    this.seedSizeBytes = seedSizeBytes;
+  private static final int MAX_SIZE;
+
+  static {
+    try {
+      MAX_SIZE = Cipher.getMaxAllowedKeyLength("AES") / 8
+            + AesCounterRandom.COUNTER_SIZE_BYTES;
+    } catch (NoSuchAlgorithmException e) {
+      throw new AssertionError(e);
+    }
+  }
+
+  @Parameters("seedSize")
+  @BeforeClass
+  public void setSeedSize(final int seedSize) {
+    if (seedSize > MAX_SIZE) {
+      assertFalse(seedSize <= 32, "Can't handle a 32-byte seed");
+    }
+    seedSizeBytes = seedSize;
   }
 
   @Override protected int getNewSeedLength(BaseRandom basePrng) {
