@@ -19,7 +19,7 @@ public class Pcg64RandomTest extends SeekableRandomTest {
   }
 
   @Override protected Pcg64Random createRng() {
-    return new Pcg64Random();
+    return new Pcg64Random(getTestSeedGenerator());
   }
 
   @Override protected Pcg64Random createRng(final byte[] seed) {

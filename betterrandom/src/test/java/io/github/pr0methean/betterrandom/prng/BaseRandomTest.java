@@ -70,19 +70,17 @@ public abstract class BaseRandomTest {
       new NamedFunction<>(Random::nextDouble, "Random::nextDouble");
   protected static final NamedFunction<Random, Double> NEXT_GAUSSIAN =
       new NamedFunction<>(Random::nextGaussian, "Random::nextGaussian");
-  protected static final NamedFunction<Random,Double> SET_SEED =
-      new NamedFunction<Random, Double>(random -> {
-          if (random instanceof BaseRandom) {
-            BaseRandom baseRandom = (BaseRandom) random;
-            baseRandom.setSeed(
-                SEMIFAKE_SEED_GENERATOR.generateSeed(baseRandom.getNewSeedLength()));
-          } else {
-            final ByteBuffer buffer = ByteBuffer.allocate(8);
-            SEMIFAKE_SEED_GENERATOR.generateSeed(buffer.array());
-            random.setSeed(buffer.getLong(0));
-          }
-          return 0.0;
-        }, "BaseRandom::setSeed(byte[])");
+  protected static final NamedFunction<Random,Double> SET_SEED = new NamedFunction<>(random -> {
+    if (random instanceof BaseRandom) {
+      BaseRandom baseRandom = (BaseRandom) random;
+      baseRandom.setSeed(SEMIFAKE_SEED_GENERATOR.generateSeed(baseRandom.getNewSeedLength()));
+    } else {
+      final ByteBuffer buffer = ByteBuffer.allocate(8);
+      SEMIFAKE_SEED_GENERATOR.generateSeed(buffer.array());
+      random.setSeed(buffer.getLong(0));
+    }
+    return 0.0;
+  }, "BaseRandom::setSeed(byte[])");
 
   @SuppressWarnings("StaticCollection") protected static final List<NamedFunction<Random, Double>>
       FUNCTIONS_FOR_THREAD_SAFETY_TEST =

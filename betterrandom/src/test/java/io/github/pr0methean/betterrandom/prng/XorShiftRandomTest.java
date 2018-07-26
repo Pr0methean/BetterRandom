@@ -28,7 +28,7 @@ public class XorShiftRandomTest extends BaseRandomTest {
   }
 
   @Override protected BaseRandom createRng() throws SeedException {
-    return new XorShiftRandom();
+    return new XorShiftRandom(getTestSeedGenerator());
   }
 
   @Override protected BaseRandom createRng(final byte[] seed) throws SeedException {
