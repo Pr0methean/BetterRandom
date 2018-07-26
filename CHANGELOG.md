@@ -1,3 +1,7 @@
+# 2.4.1
+* `RandomDotOrgSeedGenerator` now only calls `LoggerFactory` in the unlikely event that it needs to
+  log something, rather than on startup.
+
 # 2.4.0
 * Removes `CloneViaSerialization` to the test jar, since it's not used anywhere else.
 * Adds `BaseRandom.getSeedGenerator()`.

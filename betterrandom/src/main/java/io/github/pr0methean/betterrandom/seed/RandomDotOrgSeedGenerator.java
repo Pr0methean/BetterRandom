@@ -111,7 +111,6 @@ public enum RandomDotOrgSeedGenerator implements SeedGenerator {
   private static volatile Calendar earliestNextAttempt = Calendar.getInstance(UTC);
   static volatile byte[] cache = new byte[MAX_CACHE_SIZE];
   static volatile int cacheOffset = cache.length;
-  private static final Logger LOG = LoggerFactory.getLogger(RandomDotOrgSeedGenerator.class);
   private static volatile int maxRequestSize = GLOBAL_MAX_REQUEST_SIZE;
   private static final URL JSON_REQUEST_URL;
   /**
@@ -191,7 +190,8 @@ public enum RandomDotOrgSeedGenerator implements SeedGenerator {
           for (String line = reader.readLine(); line != null; line = reader.readLine()) {
             ++index;
             if (index >= numberOfBytes) {
-              LOG.warn("random.org sent more data than requested.");
+              LoggerFactory.getLogger(RandomDotOrgSeedGenerator.class)
+                  .warn("random.org sent more data than requested.");
               break;
             }
             try {
