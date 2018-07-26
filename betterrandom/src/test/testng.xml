@@ -13,7 +13,21 @@
   <test name="PRNG">
     <classes>
       <class name="io.github.pr0methean.betterrandom.prng.AesCounterRandomDemoTest"/>
-      <class name="io.github.pr0methean.betterrandom.prng.AesCounterRandomTestFactory"/>
+      <class name="io.github.pr0methean.betterrandom.prng.AesCounterRandomTest">
+        <parameter name="seedSize" value="16"/>
+      </class>
+      <class name="io.github.pr0methean.betterrandom.prng.AesCounterRandomTest">
+        <parameter name="seedSize" value="17"/>
+      </class>
+      <class name="io.github.pr0methean.betterrandom.prng.AesCounterRandomTest">
+        <parameter name="seedSize" value="32"/>
+      </class>
+      <class name="io.github.pr0methean.betterrandom.prng.AesCounterRandomTest">
+        <parameter name="seedSize" value="33"/>
+      </class>
+      <class name="io.github.pr0methean.betterrandom.prng.AesCounterRandomTest">
+        <parameter name="seedSize" value="48"/>
+      </class>
       <class name="io.github.pr0methean.betterrandom.prng.CellularAutomatonRandomTest"/>
       <class name="io.github.pr0methean.betterrandom.prng.Cmwc4096RandomTest"/>
       <class name="io.github.pr0methean.betterrandom.prng.MersenneTwisterRandomTest"/>
