@@ -10,23 +10,41 @@
       <class name="io.github.pr0methean.betterrandom.seed.SecureRandomSeedGeneratorTest"/>
     </classes>
   </test>
+  <test name="AES128+8">
+    <parameter name="seedSize" value="17"/>
+    <classes>
+      <class name="io.github.pr0methean.betterrandom.prng.AesCounterRandomTest"/>
+    </classes>
+  </test>
+  <test name="AES192">
+    <parameter name="seedSize" value="24"/>
+    <classes>
+      <class name="io.github.pr0methean.betterrandom.prng.AesCounterRandomTest"/>
+    </classes>
+  </test>
+  <test name="AES256">
+    <parameter name="seedSize" value="32"/>
+    <classes>
+      <class name="io.github.pr0methean.betterrandom.prng.AesCounterRandomTest"/>
+    </classes>
+  </test>
+  <test name="AES256+8">
+    <parameter name="seedSize" value="33"/>
+    <classes>
+      <class name="io.github.pr0methean.betterrandom.prng.AesCounterRandomTest"/>
+    </classes>
+  </test>
+  <test name="AES256+128">
+    <parameter name="seedSize" value="48"/>
+    <classes>
+      <class name="io.github.pr0methean.betterrandom.prng.AesCounterRandomTest"/>
+    </classes>
+  </test>
   <test name="PRNG">
     <parameter name="seedSize" value="16"/>
     <classes>
       <class name="io.github.pr0methean.betterrandom.prng.AesCounterRandomDemoTest"/>
       <class name="io.github.pr0methean.betterrandom.prng.AesCounterRandomTest"/>
-      <class name="io.github.pr0methean.betterrandom.prng.AesCounterRandomTest">
-        <parameter name="seedSize" value="17"/>
-      </class>
-      <class name="io.github.pr0methean.betterrandom.prng.AesCounterRandomTest">
-        <parameter name="seedSize" value="32"/>
-      </class>
-      <class name="io.github.pr0methean.betterrandom.prng.AesCounterRandomTest">
-        <parameter name="seedSize" value="33"/>
-      </class>
-      <class name="io.github.pr0methean.betterrandom.prng.AesCounterRandomTest">
-        <parameter name="seedSize" value="48"/>
-      </class>
       <class name="io.github.pr0methean.betterrandom.prng.CellularAutomatonRandomTest"/>
       <class name="io.github.pr0methean.betterrandom.prng.Cmwc4096RandomTest"/>
       <class name="io.github.pr0methean.betterrandom.prng.MersenneTwisterRandomTest"/>
