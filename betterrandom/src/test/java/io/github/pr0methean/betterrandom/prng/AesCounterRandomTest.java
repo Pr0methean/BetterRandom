@@ -15,19 +15,16 @@
 // ============================================================================
 package io.github.pr0methean.betterrandom.prng;
 
-import static org.testng.Assert.assertFalse;
 import static org.testng.Assert.assertTrue;
 
-import io.github.pr0methean.betterrandom.DeadlockWatchdogThread;
-import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
+import io.github.pr0methean.betterrandom.seed.SeedException;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 import javax.crypto.Cipher;
-import org.powermock.core.classloader.annotations.PrepareForTest;
-import org.powermock.modules.testng.PowerMockObjectFactory;
-import org.testng.annotations.BeforeMethod;
+import org.testng.SkipException;
+import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Factory;
 import org.testng.annotations.Test;
 
@@ -37,40 +34,24 @@ import org.testng.annotations.Test;
  * @author Chris Hennick
  */
 @Test(testName = "AesCounterRandom")
-public class AesCounterRandomTest extends AbstractAesCounterRandomTest implements Cloneable {
+public class AesCounterRandomTest extends AbstractAesCounterRandomTest {
 
-  public AesCounterRandomTest() {
-    this(0);
-  }
-
-  public AesCounterRandomTest(int seedSizeBytes) {
+  protected AesCounterRandomTest(int seedSizeBytes) {
     super(seedSizeBytes);
   }
 
-  @BeforeMethod public void assertNotBootstrapInstance() {
-    assertTrue(seedSizeBytes > 0);
-  }
-
-  @Factory public Object[] getInstances()
-      throws NoSuchAlgorithmException, CloneNotSupportedException {
-    System.out.println("Creating factory");
+  @Factory public static Object[] getInstances() throws NoSuchAlgorithmException {
     int[] desiredSeedSizes = {16, 17, 32, 33, 48};
     int maxSize = Cipher.getMaxAllowedKeyLength("AES") / 8
         + AesCounterRandom.COUNTER_SIZE_BYTES;
-    List<Object> instances = new ArrayList<>(5);
+    List<AesCounterRandomTest> instances = new ArrayList<>(5);
     for (int size : desiredSeedSizes) {
       if (size > maxSize) {
         break;
       } else {
-        System.out.println("Creating instance for size " + size);
-        AesCounterRandomTest newInstance = (AesCounterRandomTest) clone();
-        newInstance.seedSizeBytes = size;
-        instances.add(newInstance);
+        instances.add(new AesCounterRandomTest(size));
       }
     }
-    assertFalse(instances.isEmpty());
-    DeadlockWatchdogThread.stopInstance();
-    System.out.println("Returning");
     return instances.toArray();
   }
 }
