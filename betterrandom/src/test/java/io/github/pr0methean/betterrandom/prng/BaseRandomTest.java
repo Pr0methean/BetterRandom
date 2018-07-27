@@ -65,9 +65,8 @@ import org.testng.annotations.AfterClass;
 import org.testng.annotations.Test;
 
 @MockPolicy(Slf4jMockPolicy.class)
-@PrepareForTest(DefaultSeedGenerator.class)
 @PowerMockIgnore({"javax.crypto.*", "javax.management.*", "javax.script.*", "jdk.nashorn.*"})
-public abstract class BaseRandomTest extends PowerMockTestCase {
+public abstract class BaseRandomTest {
 
   private static final SeedGenerator SEMIFAKE_SEED_GENERATOR
       = new SemiFakeSeedGenerator(new SplittableRandomAdapter());
@@ -134,6 +133,7 @@ public abstract class BaseRandomTest extends PowerMockTestCase {
     return EntropyCheckMode.EXACT;
   }
 
+  @PrepareForTest(DefaultSeedGenerator.class)
   @Test(timeOut = 120_000) public void testAllPublicConstructors()
       throws SeedException, IllegalAccessException, InstantiationException,
       InvocationTargetException {
@@ -319,6 +319,7 @@ public abstract class BaseRandomTest extends PowerMockTestCase {
   }
 
   /** Assertion-free since many implementations have a fallback behavior. */
+  @PrepareForTest(DefaultSeedGenerator.class)
   @Test(timeOut = 60_000) public void testSetSeedLong() {
     mockDefaultSeedGenerator();
     try {
