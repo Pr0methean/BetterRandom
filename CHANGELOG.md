@@ -1,6 +1,9 @@
 # 2.4.1
-* `RandomDotOrgSeedGenerator` now only calls `LoggerFactory` in the unlikely event that it needs to
-  log something, rather than on startup.
+* `RandomDotOrgSeedGenerator` and `AesCounterRandom` no longer create `Logger` instances eagerly or
+  keep references to them after use, since they very rarely log.
+* `Cmwc4096RandomTest` now uses a mock `DefaultSeedGenerator`, improving performance on systems
+  where the real one is slow.
+* Other PRNG tests make less use of `DefaultSeedGenerator`.
 
 # 2.4.0
 * Removes `CloneViaSerialization` to the test jar, since it's not used anywhere else.
