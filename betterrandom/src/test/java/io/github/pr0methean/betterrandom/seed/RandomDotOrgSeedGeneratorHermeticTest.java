@@ -13,7 +13,6 @@ import static org.powermock.api.mockito.PowerMockito.spy;
 import static org.testng.Assert.assertTrue;
 import static org.testng.AssertJUnit.assertEquals;
 
-import io.github.pr0methean.betterrandom.TestUtils;
 import java.net.Proxy;
 import java.net.URL;
 import java.nio.charset.Charset;
@@ -30,12 +29,11 @@ import org.powermock.core.classloader.annotations.PowerMockIgnore;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.testng.PowerMockTestCase;
 import org.testng.Assert;
-import org.testng.SkipException;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
-@PowerMockIgnore("javax.management.*")
+@PowerMockIgnore({"javax.management.*", "javax.script.*", "jdk.nashorn.*"})
 @MockPolicy(Slf4jMockPolicy.class)
 @PrepareForTest(RandomDotOrgSeedGenerator.class)
 @Test(singleThreaded = true)
@@ -154,9 +152,6 @@ public class RandomDotOrgSeedGeneratorHermeticTest extends PowerMockTestCase {
   }
 
   @Test public void testOverLongResponse() throws Exception {
-    if (TestUtils.isAppveyor()) {
-      throw new SkipException("This test's Log4j logging crashes on Appveyor");
-    }
     RandomDotOrgSeedGenerator.setApiKey(null);
     RandomDotOrgSeedGenerator.setMaxRequestSize(32);
     mockRandomDotOrgResponse(RESPONSE_625_OLD_API);

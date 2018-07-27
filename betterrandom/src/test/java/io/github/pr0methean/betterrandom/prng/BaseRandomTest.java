@@ -7,6 +7,10 @@ import static io.github.pr0methean.betterrandom.prng.BaseRandom.ENTROPY_OF_FLOAT
 import static io.github.pr0methean.betterrandom.prng.RandomTestUtils.assertMonteCarloPiEstimateSane;
 import static io.github.pr0methean.betterrandom.prng.RandomTestUtils.checkRangeAndEntropy;
 import static io.github.pr0methean.betterrandom.prng.RandomTestUtils.checkStream;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyInt;
+import static org.powermock.api.mockito.PowerMockito.doAnswer;
+import static org.powermock.api.mockito.PowerMockito.when;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertFalse;
 import static org.testng.Assert.assertNotEquals;
@@ -21,6 +25,7 @@ import io.github.pr0methean.betterrandom.CloneViaSerialization;
 import io.github.pr0methean.betterrandom.TestUtils;
 import io.github.pr0methean.betterrandom.prng.RandomTestUtils.EntropyCheckMode;
 import io.github.pr0methean.betterrandom.prng.adapter.SplittableRandomAdapter;
+import io.github.pr0methean.betterrandom.seed.DefaultSeedGenerator;
 import io.github.pr0methean.betterrandom.seed.FakeSeedGenerator;
 import io.github.pr0methean.betterrandom.seed.RandomSeederThread;
 import io.github.pr0methean.betterrandom.seed.SecureRandomSeedGenerator;
@@ -50,11 +55,21 @@ import java8.util.function.DoubleConsumer;
 import java8.util.function.Function;
 import java8.util.function.Supplier;
 import org.apache.commons.math3.stat.descriptive.SynchronizedDescriptiveStatistics;
+import org.powermock.api.mockito.PowerMockito;
+import org.powermock.api.mockito.mockpolicies.Slf4jMockPolicy;
+import org.powermock.core.classloader.annotations.MockPolicy;
+import org.powermock.core.classloader.annotations.PowerMockIgnore;
+import org.powermock.core.classloader.annotations.PrepareForTest;
+import org.powermock.modules.testng.PowerMockTestCase;
+import org.powermock.reflect.Whitebox;
 import org.testng.Reporter;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.Test;
 
-public abstract class BaseRandomTest {
+@MockPolicy(Slf4jMockPolicy.class)
+@PrepareForTest(DefaultSeedGenerator.class)
+@PowerMockIgnore({"javax.crypto.*", "javax.management.*", "javax.script.*", "jdk.nashorn.*"})
+public abstract class BaseRandomTest extends PowerMockTestCase {
 
   protected static final Consumer<BaseRandom> VERIFY_NEXT_INT_NO_CRASH =
       new Consumer<BaseRandom>() {
@@ -64,6 +79,8 @@ public abstract class BaseRandomTest {
       };
   private static final SeedGenerator SEMIFAKE_SEED_GENERATOR
       = new SemiFakeSeedGenerator(new SplittableRandomAdapter());
+  private DefaultSeedGenerator oldDefaultSeedGenerator;
+
   /**
    * The square root of 12, rounded from an extended-precision calculation that was done by Wolfram
    * Alpha (and thus at least as accurate as {@code StrictMath.sqrt(12.0)}).
@@ -146,9 +163,10 @@ public abstract class BaseRandomTest {
     return EntropyCheckMode.EXACT;
   }
 
-  @Test public void testAllPublicConstructors()
+  @Test(timeOut = 120_000) public void testAllPublicConstructors()
       throws SeedException, IllegalAccessException, InstantiationException,
       InvocationTargetException {
+    mockDefaultSeedGenerator();
     TestUtils
         .testConstructors(getClassUnderTest(), false, ImmutableMap.copyOf(constructorParams()),
             new Consumer<BaseRandom>() {
@@ -163,9 +181,27 @@ public abstract class BaseRandomTest {
     final HashMap<Class<?>, Object> params = new HashMap<>(4);
     params.put(int.class, seedLength);
     params.put(long.class, TEST_SEED);
-    params.put(byte[].class, getTestSeedGenerator().generateSeed(seedLength));
-    params.put(SeedGenerator.class, getTestSeedGenerator());
+    params.put(byte[].class, new byte[seedLength]);
+    params.put(SeedGenerator.class, SEMIFAKE_SEED_GENERATOR);
     return params;
+  }
+
+  protected void mockDefaultSeedGenerator() {
+    oldDefaultSeedGenerator = DefaultSeedGenerator.DEFAULT_SEED_GENERATOR;
+    DefaultSeedGenerator mockDefaultSeedGenerator = PowerMockito.mock(DefaultSeedGenerator.class);
+    when(mockDefaultSeedGenerator.generateSeed(anyInt())).thenAnswer(invocation ->
+        SEMIFAKE_SEED_GENERATOR.generateSeed((Integer) (invocation.getArgument(0))));
+    doAnswer(invocation -> {
+      SEMIFAKE_SEED_GENERATOR.generateSeed((byte[]) invocation.getArgument(0));
+      return null;
+    }).when(mockDefaultSeedGenerator).generateSeed(any(byte[].class));
+    Whitebox.setInternalState(DefaultSeedGenerator.class, "DEFAULT_SEED_GENERATOR",
+        mockDefaultSeedGenerator);
+  }
+
+  protected void unmockDefaultSeedGenerator() {
+    Whitebox.setInternalState(DefaultSeedGenerator.class, "DEFAULT_SEED_GENERATOR",
+        oldDefaultSeedGenerator);
   }
 
   protected int getNewSeedLength(final BaseRandom basePrng) {
@@ -317,8 +353,13 @@ public abstract class BaseRandomTest {
   }
 
   /** Assertion-free since many implementations have a fallback behavior. */
-  @Test(timeOut = 10_000) public void testSetSeedLong() {
-    createRng().setSeed(0x0123456789ABCDEFL);
+  @Test(timeOut = 60_000) public void testSetSeedLong() {
+    mockDefaultSeedGenerator();
+    try {
+      createRng().setSeed(0x0123456789ABCDEFL);
+    } finally {
+      unmockDefaultSeedGenerator();
+    }
   }
 
   @Test(timeOut = 15_000) public void testSetSeedAfterNextLong() throws SeedException {
@@ -811,16 +852,16 @@ public abstract class BaseRandomTest {
   }
 
   @Test(timeOut = 90_000) public void testThreadSafetySetSeed() {
-    testThreadSafetyVsCrashesOnly(FUNCTIONS_FOR_THREAD_CRASH_TEST);
+    testThreadSafetyVsCrashesOnly(30, FUNCTIONS_FOR_THREAD_CRASH_TEST);
   }
 
-  protected void testThreadSafetyVsCrashesOnly(
+  protected void testThreadSafetyVsCrashesOnly(final int timeoutSec,
       final List<NamedFunction<Random, Double>> functions) {
     final int seedLength = createRng().getNewSeedLength();
     final byte[] seed = getTestSeedGenerator().generateSeed(seedLength);
     for (final NamedFunction<Random, Double> supplier1 : functions) {
       for (final NamedFunction<Random, Double> supplier2 : functions) {
-        runParallel(supplier1, supplier2, seed, 30,
+        runParallel(supplier1, supplier2, seed, timeoutSec,
             (supplier1 == SET_SEED || supplier2 == SET_SEED) ? 200 : 1000);
       }
     }

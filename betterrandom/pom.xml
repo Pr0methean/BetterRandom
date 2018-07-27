@@ -338,6 +338,7 @@
           <configuration>
             <suiteXmlFiles>
               <suiteXmlFile>src/test/testng.xml</suiteXmlFile>
+              <suiteXmlFile>src/test/testng-no-powermockobjectfactory.xml</suiteXmlFile>
             </suiteXmlFiles>
             <trimStackTrace>false</trimStackTrace>
             <forkedProcessTimeoutInSeconds>600</forkedProcessTimeoutInSeconds>
@@ -351,9 +352,6 @@
                 <value>${testng.verbose}</value>
               </property>
             </properties>
-            <suiteXmlFiles>
-              <suiteXmlFile>src/test/testng.xml</suiteXmlFile>
-            </suiteXmlFiles>
           </configuration>
         </plugin>
         <plugin>
@@ -363,6 +361,7 @@
           <configuration>
             <suiteXmlFiles>
               <suiteXmlFile>src/test/testng.xml</suiteXmlFile>
+              <suiteXmlFile>src/test/testng-no-powermockobjectfactory.xml</suiteXmlFile>
             </suiteXmlFiles>
             <parallel>${testng.parallel}</parallel>
             <threadCount>${testng.perCoreThreadCount}</threadCount>

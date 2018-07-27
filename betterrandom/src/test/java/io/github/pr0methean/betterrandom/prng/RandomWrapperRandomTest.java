@@ -56,7 +56,7 @@ public class RandomWrapperRandomTest extends BaseRandomTest {
   @Override public void testThreadSafety() {
     testThreadSafety(ImmutableList.of(NEXT_INT),
         Collections.<NamedFunction<Random, Double>>emptyList());
-    testThreadSafetyVsCrashesOnly(
+    testThreadSafetyVsCrashesOnly(30,
         ImmutableList.of(NEXT_LONG, NEXT_INT, NEXT_DOUBLE, NEXT_GAUSSIAN, SET_WRAPPED));
   }
 
@@ -73,9 +73,9 @@ public class RandomWrapperRandomTest extends BaseRandomTest {
   /**
    * Test to ensure that two distinct RNGs with the same seed return the same sequence of numbers.
    */
-  @Override @Test(timeOut = 15000) public void testRepeatability() throws SeedException {
+  @Override @Test(timeOut = 30_000) public void testRepeatability() throws SeedException {
     // Create an RNG using the default seeding strategy.
-    final RandomWrapper rng = new RandomWrapper();
+    final RandomWrapper rng = new RandomWrapper(getTestSeedGenerator());
     // Create second RNG using same seed.
     final RandomWrapper duplicateRNG = new RandomWrapper(rng.getSeed());
     RandomTestUtils.assertEquivalent(rng, duplicateRNG, 200,
