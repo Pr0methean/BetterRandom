@@ -58,4 +58,14 @@
       <class name="io.github.pr0methean.betterrandom.prng.AesCounterRandomTest"/>
     </classes>
   </test>
+  <test name="Misc" parallel="methods">
+    <classes>
+      <class name="io.github.pr0methean.betterrandom.prng.AesCounterRandomDemoTest"/>
+      <class name="io.github.pr0methean.betterrandom.prng.BaseRandomStaticTest"/>
+      <class name="io.github.pr0methean.betterrandom.util.BinaryUtilsTest"/>
+      <class name="io.github.pr0methean.betterrandom.util.LooperThreadTest"/>
+      <class
+        name="io.github.pr0methean.betterrandom.prng.adapter.ReseedingSplittableRandomAdapterDemoTest"/>
+    </classes>
+  </test>
 </suite>
