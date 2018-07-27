@@ -338,6 +338,7 @@
           <configuration>
             <suiteXmlFiles>
               <suiteXmlFile>src/test/testng.xml</suiteXmlFile>
+              <suiteXmlFile>src/test/testng-seed.xml</suiteXmlFile>
             </suiteXmlFiles>
             <trimStackTrace>false</trimStackTrace>
             <forkedProcessTimeoutInSeconds>600</forkedProcessTimeoutInSeconds>
@@ -360,6 +361,7 @@
           <configuration>
             <suiteXmlFiles>
               <suiteXmlFile>src/test/testng.xml</suiteXmlFile>
+              <suiteXmlFile>src/test/testng-seed.xml</suiteXmlFile>
             </suiteXmlFiles>
             <parallel>${testng.parallel}</parallel>
             <threadCount>${testng.perCoreThreadCount}</threadCount>
