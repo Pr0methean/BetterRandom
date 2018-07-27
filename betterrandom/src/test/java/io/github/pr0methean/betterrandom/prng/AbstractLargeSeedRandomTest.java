@@ -1,0 +1,66 @@
+package io.github.pr0methean.betterrandom.prng;
+
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyInt;
+import static org.powermock.api.mockito.PowerMockito.doAnswer;
+import static org.powermock.api.mockito.PowerMockito.when;
+
+import io.github.pr0methean.betterrandom.seed.DefaultSeedGenerator;
+import io.github.pr0methean.betterrandom.seed.SeedException;
+import java.lang.reflect.InvocationTargetException;
+import org.powermock.api.mockito.PowerMockito;
+import org.powermock.api.mockito.mockpolicies.Slf4jMockPolicy;
+import org.powermock.core.classloader.annotations.MockPolicy;
+import org.powermock.core.classloader.annotations.PowerMockIgnore;
+import org.powermock.core.classloader.annotations.PrepareForTest;
+import org.powermock.reflect.Whitebox;
+
+/**
+ * A subclass of {@link BaseRandomTest} for when avoiding {@link io.github.pr0methean.betterrandom.seed.DefaultSeedGenerator}
+ * calls is worth the overhead of using PowerMock.
+ */
+@MockPolicy(Slf4jMockPolicy.class)
+@PrepareForTest(DefaultSeedGenerator.class)
+@PowerMockIgnore({"javax.crypto.*", "javax.management.*", "javax.script.*", "jdk.nashorn.*"})
+public abstract class AbstractLargeSeedRandomTest extends BaseRandomTest {
+
+  private DefaultSeedGenerator oldDefaultSeedGenerator;
+
+  protected void mockDefaultSeedGenerator() {
+    oldDefaultSeedGenerator = DefaultSeedGenerator.DEFAULT_SEED_GENERATOR;
+    DefaultSeedGenerator mockDefaultSeedGenerator = PowerMockito.mock(DefaultSeedGenerator.class);
+    when(mockDefaultSeedGenerator.generateSeed(anyInt())).thenAnswer(invocation ->
+        SEMIFAKE_SEED_GENERATOR.generateSeed((Integer) (invocation.getArgument(0))));
+    doAnswer(invocation -> {
+      SEMIFAKE_SEED_GENERATOR.generateSeed((byte[]) invocation.getArgument(0));
+      return null;
+    }).when(mockDefaultSeedGenerator).generateSeed(any(byte[].class));
+    Whitebox.setInternalState(DefaultSeedGenerator.class, "DEFAULT_SEED_GENERATOR",
+        mockDefaultSeedGenerator);
+  }
+
+  protected void unmockDefaultSeedGenerator() {
+    Whitebox.setInternalState(DefaultSeedGenerator.class, "DEFAULT_SEED_GENERATOR",
+        oldDefaultSeedGenerator);
+  }
+
+  @Override public void testAllPublicConstructors()
+      throws SeedException, IllegalAccessException, InstantiationException,
+      InvocationTargetException {
+    mockDefaultSeedGenerator();
+    try {
+      super.testAllPublicConstructors();
+    } finally {
+      unmockDefaultSeedGenerator();
+    }
+  }
+
+  @Override public void testSetSeedLong() {
+    mockDefaultSeedGenerator();
+    try {
+      super.testSetSeedLong();
+    } finally {
+      unmockDefaultSeedGenerator();
+    }
+  }
+}
