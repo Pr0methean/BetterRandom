@@ -9,6 +9,7 @@ import static io.github.pr0methean.betterrandom.seed.RandomDotOrgUtils.createTor
 import static io.github.pr0methean.betterrandom.seed.RandomDotOrgUtils.maybeSetMaxRequestSize;
 import static io.github.pr0methean.betterrandom.seed.SeedTestUtils.testGenerator;
 import static org.mockito.ArgumentMatchers.any;
+import static org.powermock.api.mockito.PowerMockito.spy;
 import static org.testng.Assert.assertTrue;
 import static org.testng.AssertJUnit.assertEquals;
 
@@ -18,7 +19,6 @@ import java.nio.charset.Charset;
 import java.util.UUID;
 import javax.annotation.Nullable;
 import org.json.simple.parser.ParseException;
-import org.mockito.Answers;
 import org.powermock.api.mockito.PowerMockito;
 import org.powermock.api.mockito.mockpolicies.Slf4jMockPolicy;
 import org.powermock.core.classloader.annotations.MockPolicy;
@@ -30,7 +30,7 @@ import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
-@PowerMockIgnore({"javax.management.*", "javax.script.*", "jdk.nashorn.*"})
+@PowerMockIgnore("javax.management.*")
 @MockPolicy(Slf4jMockPolicy.class)
 @PrepareForTest(RandomDotOrgSeedGenerator.class)
 @Test(singleThreaded = true)
@@ -89,13 +89,11 @@ public class RandomDotOrgSeedGeneratorHermeticTest extends PowerMockTestCase {
   private boolean usingSmallRequests = false;
 
   private void mockRandomDotOrgResponse(final byte[] response) throws Exception {
-    PowerMockito.mockStatic(RandomDotOrgSeedGenerator.class, Answers.CALLS_REAL_METHODS);
-    PowerMockito.when(RandomDotOrgSeedGenerator.class, "openConnection", any(URL.class))
-        .thenAnswer(invocationOnMock -> {
+    PowerMockito.doAnswer(invocationOnMock -> {
       final URL url = invocationOnMock.getArgument(0);
       address = url.toString();
       return new FakeHttpsUrlConnection(url, null, response);
-    });
+    }).when(RandomDotOrgSeedGenerator.class, "openConnection", any(URL.class));
   }
 
   private static SeedException expectAndGetException() {
@@ -111,6 +109,7 @@ public class RandomDotOrgSeedGeneratorHermeticTest extends PowerMockTestCase {
   }
 
   @BeforeMethod public void setUpMethod() {
+    spy(RandomDotOrgSeedGenerator.class);
     usingSmallRequests = maybeSetMaxRequestSize();
     assertTrue(cacheLock.tryLock()); // If this blocks, then our tests risk interfering
     try {
