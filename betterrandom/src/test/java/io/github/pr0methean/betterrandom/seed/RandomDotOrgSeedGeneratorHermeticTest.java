@@ -30,7 +30,7 @@ import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
-@PowerMockIgnore({"javax.management.*", "javax.script.*", "jdk.nashorn.*", "org.apache.logging.*"})
+@PowerMockIgnore({"javax.management.*", "javax.script.*", "jdk.nashorn.*"})
 @MockPolicy(Slf4jMockPolicy.class)
 @PrepareForTest(RandomDotOrgSeedGenerator.class)
 @Test(singleThreaded = true)
