@@ -55,6 +55,8 @@ import java8.util.function.DoubleConsumer;
 import java8.util.function.Function;
 import java8.util.function.Supplier;
 import org.apache.commons.math3.stat.descriptive.SynchronizedDescriptiveStatistics;
+import org.mockito.invocation.InvocationOnMock;
+import org.mockito.stubbing.Answer;
 import org.powermock.api.mockito.PowerMockito;
 import org.powermock.api.mockito.mockpolicies.Slf4jMockPolicy;
 import org.powermock.core.classloader.annotations.MockPolicy;
@@ -189,11 +191,16 @@ public abstract class BaseRandomTest extends PowerMockTestCase {
   protected void mockDefaultSeedGenerator() {
     oldDefaultSeedGenerator = DefaultSeedGenerator.DEFAULT_SEED_GENERATOR;
     DefaultSeedGenerator mockDefaultSeedGenerator = PowerMockito.mock(DefaultSeedGenerator.class);
-    when(mockDefaultSeedGenerator.generateSeed(anyInt())).thenAnswer(invocation ->
-        SEMIFAKE_SEED_GENERATOR.generateSeed((Integer) (invocation.getArgument(0))));
-    doAnswer(invocation -> {
-      SEMIFAKE_SEED_GENERATOR.generateSeed((byte[]) invocation.getArgument(0));
-      return null;
+    when(mockDefaultSeedGenerator.generateSeed(anyInt())).thenAnswer(new Answer<byte[]>() {
+      @Override public byte[] answer(InvocationOnMock invocation) throws Throwable {
+        return SEMIFAKE_SEED_GENERATOR.generateSeed((Integer) (invocation.getArgument(0)));
+      }
+    });
+    doAnswer(new Answer<Void>() {
+      @Override public Void answer(InvocationOnMock invocation) throws Throwable {
+        SEMIFAKE_SEED_GENERATOR.generateSeed((byte[]) invocation.getArgument(0));
+        return null;
+      }
     }).when(mockDefaultSeedGenerator).generateSeed(any(byte[].class));
     Whitebox.setInternalState(DefaultSeedGenerator.class, "DEFAULT_SEED_GENERATOR",
         mockDefaultSeedGenerator);

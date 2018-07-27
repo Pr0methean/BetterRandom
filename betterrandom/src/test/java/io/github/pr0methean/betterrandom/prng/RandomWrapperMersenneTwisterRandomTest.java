@@ -13,12 +13,13 @@ public class RandomWrapperMersenneTwisterRandomTest extends MersenneTwisterRando
   private final NamedFunction<Random, Double> setWrapped;
 
   public RandomWrapperMersenneTwisterRandomTest() {
-    SeedGenerator seedGenerator = getTestSeedGenerator();
+    final SeedGenerator seedGenerator = getTestSeedGenerator();
     setWrapped = new NamedFunction<Random, Double>("setWrapped") {
       @Override public Double apply(Random random) {
         ((RandomWrapper) random).setWrapped(new MersenneTwisterRandom(seedGenerator));
         return 0.0;
-      };
+      }
+    };
   }
 
   @Override public void testThreadSafety() {
