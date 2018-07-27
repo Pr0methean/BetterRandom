@@ -75,7 +75,7 @@ if ( $STATUS ) {
         mvn -DskipTests "-Dmaven.test.skip=true" "$MAYBE_ANDROID_FLAG" package pre-integration-test
         echo "[unit-tests.ps1] Testing against Proguarded jar."
         # FIXME: This runs Proguard again after it finishes.
-        mvn -Dmaven.main.skip=true "$MAYBE_ANDROID_FLAG" "integration-test" "-e"
+        mvn '-Dmaven.main.skip=true' "$MAYBE_ANDROID_FLAG" "integration-test" "-e"
         $STATUS = $?
     }
 }
