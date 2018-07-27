@@ -20,15 +20,20 @@
         name="io.github.pr0methean.betterrandom.prng.adapter.ReseedingSplittableRandomAdapterDemoTest"/>
     </classes>
   </test>
-  <test name="PRNGs">
+  <test name="Large Seed PRNGs" parallel="classes">
+    <!-- Descendants of AbstractLargeSeedRandomTest. -->
     <parameter name="seedSize" value="16"/>
     <classes>
       <class name="io.github.pr0methean.betterrandom.prng.AesCounterRandomTest"/>
-      <class name="io.github.pr0methean.betterrandom.prng.CellularAutomatonRandomTest"/>
       <class name="io.github.pr0methean.betterrandom.prng.Cmwc4096RandomTest"/>
-      <class name="io.github.pr0methean.betterrandom.prng.MersenneTwisterRandomTest"/>
-      <class name="io.github.pr0methean.betterrandom.prng.Pcg64RandomTest"/>
       <class name="io.github.pr0methean.betterrandom.prng.RandomWrapperAesCounterRandomTest"/>
+      <class name="io.github.pr0methean.betterrandom.prng.Pcg64RandomTest"/>
+    </classes>
+  </test>
+  <test name="Small Seed PRNGs">
+    <classes>
+      <class name="io.github.pr0methean.betterrandom.prng.CellularAutomatonRandomTest"/>
+      <class name="io.github.pr0methean.betterrandom.prng.MersenneTwisterRandomTest"/>
       <class name="io.github.pr0methean.betterrandom.prng.RandomWrapperMersenneTwisterRandomTest"/>
       <class name="io.github.pr0methean.betterrandom.prng.RandomWrapperRandomTest"/>
       <class name="io.github.pr0methean.betterrandom.prng.RandomWrapperSecureRandomTest"/>
