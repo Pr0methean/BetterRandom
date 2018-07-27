@@ -68,9 +68,6 @@ import org.testng.Reporter;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.Test;
 
-@MockPolicy(Slf4jMockPolicy.class)
-@PrepareForTest(DefaultSeedGenerator.class)
-@PowerMockIgnore({"javax.crypto.*", "javax.management.*", "javax.script.*", "jdk.nashorn.*"})
 public abstract class BaseRandomTest extends PowerMockTestCase {
 
   protected static final Consumer<BaseRandom> VERIFY_NEXT_INT_NO_CRASH =
@@ -79,9 +76,8 @@ public abstract class BaseRandomTest extends PowerMockTestCase {
           prng.nextInt();
         }
       };
-  private static final SeedGenerator SEMIFAKE_SEED_GENERATOR
+  protected static final SeedGenerator SEMIFAKE_SEED_GENERATOR
       = new SemiFakeSeedGenerator(new SplittableRandomAdapter());
-  private DefaultSeedGenerator oldDefaultSeedGenerator;
 
   /**
    * The square root of 12, rounded from an extended-precision calculation that was done by Wolfram
@@ -168,7 +164,6 @@ public abstract class BaseRandomTest extends PowerMockTestCase {
   @Test(timeOut = 120_000) public void testAllPublicConstructors()
       throws SeedException, IllegalAccessException, InstantiationException,
       InvocationTargetException {
-    mockDefaultSeedGenerator();
     TestUtils
         .testConstructors(getClassUnderTest(), false, ImmutableMap.copyOf(constructorParams()),
             new Consumer<BaseRandom>() {
@@ -186,29 +181,6 @@ public abstract class BaseRandomTest extends PowerMockTestCase {
     params.put(byte[].class, new byte[seedLength]);
     params.put(SeedGenerator.class, SEMIFAKE_SEED_GENERATOR);
     return params;
-  }
-
-  protected void mockDefaultSeedGenerator() {
-    oldDefaultSeedGenerator = DefaultSeedGenerator.DEFAULT_SEED_GENERATOR;
-    DefaultSeedGenerator mockDefaultSeedGenerator = PowerMockito.mock(DefaultSeedGenerator.class);
-    when(mockDefaultSeedGenerator.generateSeed(anyInt())).thenAnswer(new Answer<byte[]>() {
-      @Override public byte[] answer(InvocationOnMock invocation) throws Throwable {
-        return SEMIFAKE_SEED_GENERATOR.generateSeed((Integer) (invocation.getArgument(0)));
-      }
-    });
-    doAnswer(new Answer<Void>() {
-      @Override public Void answer(InvocationOnMock invocation) throws Throwable {
-        SEMIFAKE_SEED_GENERATOR.generateSeed((byte[]) invocation.getArgument(0));
-        return null;
-      }
-    }).when(mockDefaultSeedGenerator).generateSeed(any(byte[].class));
-    Whitebox.setInternalState(DefaultSeedGenerator.class, "DEFAULT_SEED_GENERATOR",
-        mockDefaultSeedGenerator);
-  }
-
-  protected void unmockDefaultSeedGenerator() {
-    Whitebox.setInternalState(DefaultSeedGenerator.class, "DEFAULT_SEED_GENERATOR",
-        oldDefaultSeedGenerator);
   }
 
   protected int getNewSeedLength(final BaseRandom basePrng) {
@@ -361,12 +333,7 @@ public abstract class BaseRandomTest extends PowerMockTestCase {
 
   /** Assertion-free since many implementations have a fallback behavior. */
   @Test(timeOut = 60_000) public void testSetSeedLong() {
-    mockDefaultSeedGenerator();
-    try {
-      createRng().setSeed(0x0123456789ABCDEFL);
-    } finally {
-      unmockDefaultSeedGenerator();
-    }
+    createRng().setSeed(0x0123456789ABCDEFL);
   }
 
   @Test(timeOut = 15_000) public void testSetSeedAfterNextLong() throws SeedException {
