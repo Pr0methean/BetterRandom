@@ -24,7 +24,6 @@ import java.util.stream.BaseStream
 import java.util.stream.DoubleStream
 import java.util.stream.IntStream
 import java.util.stream.LongStream
-import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 
 /**
@@ -303,7 +302,7 @@ protected constructor(seed: ByteArray?) : Random(), ByteArrayReseedableRandom, R
     }
 
     override fun doubles(streamSize: Long): DoubleStream {
-        return streamOfSize(streamSize).mapToDouble { ignored -> nextDouble() }
+        return streamOfSize(streamSize).mapToDouble { nextDouble() }
     }
 
     private fun streamOfSize(streamSize: Long): LongStream {
@@ -317,7 +316,7 @@ protected constructor(seed: ByteArray?) : Random(), ByteArrayReseedableRandom, R
     override fun doubles(streamSize: Long, randomNumberOrigin: Double,
                          randomNumberBound: Double): DoubleStream {
         return streamOfSize(streamSize)
-                .mapToDouble { ignored -> nextDouble(randomNumberOrigin, randomNumberBound) }
+                .mapToDouble { nextDouble(randomNumberOrigin, randomNumberBound) }
     }
 
     /**
@@ -337,7 +336,7 @@ protected constructor(seed: ByteArray?) : Random(), ByteArrayReseedableRandom, R
      * @return a stream of `streamSize` normally-distributed random doubles.
      */
     fun gaussians(streamSize: Long): DoubleStream {
-        return streamOfSize(streamSize).mapToDouble { ignored -> nextGaussian() }
+        return streamOfSize(streamSize).mapToDouble { nextGaussian() }
     }
 
     override fun nextBoolean(): Boolean {
@@ -428,11 +427,11 @@ protected constructor(seed: ByteArray?) : Random(), ByteArrayReseedableRandom, R
     }
 
     override fun ints(streamSize: Long): IntStream {
-        return streamOfSize(streamSize).mapToInt { ignored -> nextInt() }
+        return streamOfSize(streamSize).mapToInt { nextInt() }
     }
 
     override fun ints(): IntStream {
-        return maybeParallel(IntStream.generate(IntSupplier { this.nextInt() }))
+        return maybeParallel(IntStream.generate { this.nextInt() })
     }
 
     /**
@@ -443,7 +442,7 @@ protected constructor(seed: ByteArray?) : Random(), ByteArrayReseedableRandom, R
     override fun ints(streamSize: Long, randomNumberOrigin: Int,
                       randomNumberBound: Int): IntStream {
         return streamOfSize(streamSize)
-                .mapToInt { ignored -> nextInt(randomNumberOrigin, randomNumberBound) }
+                .mapToInt { nextInt(randomNumberOrigin, randomNumberBound) }
     }
 
     /**
@@ -485,7 +484,7 @@ protected constructor(seed: ByteArray?) : Random(), ByteArrayReseedableRandom, R
     }
 
     override fun longs(streamSize: Long): LongStream {
-        return streamOfSize(streamSize).map { ignored -> nextLong() }
+        return streamOfSize(streamSize).map { nextLong() }
     }
 
     /**
@@ -497,7 +496,7 @@ protected constructor(seed: ByteArray?) : Random(), ByteArrayReseedableRandom, R
      * consumed.
      */
     override fun longs(): LongStream {
-        return maybeParallel(LongStream.generate(LongSupplier { this.nextLong() }))
+        return maybeParallel(LongStream.generate { this.nextLong() })
     }
 
     /**
@@ -508,7 +507,7 @@ protected constructor(seed: ByteArray?) : Random(), ByteArrayReseedableRandom, R
      */
     override fun longs(streamSize: Long, randomNumberOrigin: Long,
                        randomNumberBound: Long): LongStream {
-        return streamOfSize(streamSize).map { ignored -> nextLong(randomNumberOrigin, randomNumberBound) }
+        return streamOfSize(streamSize).map { nextLong(randomNumberOrigin, randomNumberBound) }
     }
 
     /**
@@ -538,7 +537,7 @@ protected constructor(seed: ByteArray?) : Random(), ByteArrayReseedableRandom, R
                 return (r and m) + origin
             } else if (n > 0L) {  // reject over-represented candidates
                 var u = r.ushr(1)            // ensure nonnegative
-                while (u + m - (r = u % n) < 0L) {
+                while (u + m - let { r = u % n; r } < 0L) {
                     // rejection check
                     u = nextLongNoEntropyDebit().ushr(1)
                 } // retry
@@ -694,8 +693,8 @@ protected constructor(seed: ByteArray?) : Random(), ByteArrayReseedableRandom, R
     }
 
     @Throws(IOException::class, ClassNotFoundException::class)
-    private fun readObject(`in`: ObjectInputStream) {
-        `in`.defaultReadObject()
+    private fun readObject(inStream: ObjectInputStream) {
+        inStream.defaultReadObject()
         initTransientFields()
         setSeedInternal(seed_)
         val currentSeedGenerator = getSeedGenerator()

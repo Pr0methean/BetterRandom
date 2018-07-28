@@ -68,8 +68,7 @@ class Cmwc4096Random
      * @throws SeedException If there is a problem generating a seed.
      */
     @EntryPoint @Throws(SeedException::class)
-    constructor(seedGenerator: SeedGenerator) : this(seedGenerator.generateSeed(SEED_SIZE_BYTES)) {
-    }
+    constructor(seedGenerator: SeedGenerator) : this(seedGenerator.generateSeed(SEED_SIZE_BYTES))
 
     override fun addSubclassFields(original: ToStringHelper): ToStringHelper {
         return original.add("state", Arrays.toString(state))
@@ -97,14 +96,14 @@ class Cmwc4096Random
         lock.lock()
         try {
             index = index + 1 and 4095
-            val t = A * (state!![index] and 0xFFFFFFFFL) + carry
+            val t = A * (state!![index].toLong() and 0xFFFFFFFFL) + carry
             carry = (t shr 32).toInt()
             var x = t.toInt() + carry
             if (x < carry) {
                 x++
                 carry++
             }
-            state[index] = -0x2 - x
+            state!![index] = -0x2 - x
             return state!![index].ushr(32 - bits)
         } finally {
             lock.unlock()
@@ -113,10 +112,10 @@ class Cmwc4096Random
 
     companion object {
 
-        private val SEED_SIZE_BYTES = 16384 // Needs 4,096 32-bit integers.
+        private const val SEED_SIZE_BYTES = 16384 // Needs 4,096 32-bit integers.
 
-        private val A = 18782L
-        private val serialVersionUID = 1731465909906078875L
+        private const val A = 18782L
+        private const val serialVersionUID = 1731465909906078875L
     }
 }
 /**

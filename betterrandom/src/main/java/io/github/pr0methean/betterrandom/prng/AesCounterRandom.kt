@@ -80,8 +80,7 @@ class AesCounterRandom
      * @throws SeedException if there is a problem generating a seed.
      */
     @Throws(SeedException::class)
-    constructor(seedGenerator: SeedGenerator) : this(seedGenerator.generateSeed(DEFAULT_SEED_SIZE_BYTES)) {
-    }
+    constructor(seedGenerator: SeedGenerator) : this(seedGenerator.generateSeed(DEFAULT_SEED_SIZE_BYTES))
 
     /**
      * Seed the RNG using the [DefaultSeedGenerator] to create a seed of the specified size.
@@ -90,8 +89,7 @@ class AesCounterRandom
      * @throws SeedException if the [DefaultSeedGenerator] fails to generate a seed.
      */
     @Throws(SeedException::class)
-    @JvmOverloads constructor(seedSizeBytes: Int = DEFAULT_SEED_SIZE_BYTES) : this(DefaultSeedGenerator.DEFAULT_SEED_GENERATOR.generateSeed(seedSizeBytes)) {
-    }
+    @JvmOverloads constructor(seedSizeBytes: Int = DEFAULT_SEED_SIZE_BYTES) : this(DefaultSeedGenerator.DEFAULT_SEED_GENERATOR.generateSeed(seedSizeBytes))
 
     init {
         currentBlock = ByteArray(BYTES_AT_ONCE)
@@ -196,12 +194,12 @@ class AesCounterRandom
                     System.arraycopy(this.seed_!!, 0, newSeed, 0, this.seed_!!.size)
                     System.arraycopy(seed, 0, newSeed, this.seed_!!.size, seed.size)
                     val keyLength = getKeyLength(newSeed)
-                    if (newSeed.size > keyLength) {
+                    key = if (newSeed.size > keyLength) {
                         val md = MessageDigest.getInstance(HASH_ALGORITHM)
                         md.update(newSeed)
-                        key = Arrays.copyOf(md.digest(), keyLength)
+                        Arrays.copyOf(md.digest(), keyLength)
                     } else {
-                        key = newSeed
+                        newSeed
                     }
                 } else {
                     key = seed.clone()
@@ -287,9 +285,10 @@ class AesCounterRandom
             }
             var carry = false
             for (i in counter!!.indices) {
-                val oldCounterUnsigned = if (counter!![i] < 0) counter!![i] + 256 else counter!![i]
-                counter[i] += (addendDigits[counter!!.size - i - 1] + if (carry) 1 else 0).toByte()
-                val newCounterUnsigned = if (counter!![i] < 0) counter!![i] + 256 else counter!![i]
+                val oldCounterUnsigned = if (counter!![i] < 0) counter!![i] + 256 else counter!![i].toInt()
+                val newCounterValue = (counter!![i] + addendDigits[counter!!.size - i - 1] + if (carry) 1 else 0).toByte()
+                counter!![i] = newCounterValue
+                val newCounterUnsigned = if (counter!![i] < 0) counter!![i] + 256 else counter!![i].toInt()
                 carry = oldCounterUnsigned > newCounterUnsigned || carry && oldCounterUnsigned == newCounterUnsigned
             }
             nextBlock()
@@ -301,31 +300,31 @@ class AesCounterRandom
 
     companion object {
 
-        private val serialVersionUID = 5949778642428995210L
-        private val DEFAULT_SEED_SIZE_BYTES = 32
+        private const val serialVersionUID = 5949778642428995210L
+        private const val DEFAULT_SEED_SIZE_BYTES = 32
         /**
          * Theoretically, the Rijndael algorithm supports key sizes and block sizes of 16, 20, 24, 28 & 32
          * bytes. Thus, if Java contained a full implementation of Rijndael, specifying it would let us
          * support seeds of 16 to 32 and 36, 40, 44, 48, 52, 56, 60 & 64 bytes. However, neither Oracle
          * Java nor OpenJDK provides any implementation of the part of Rijndael that isn't AES.
          */
-        private val ALGORITHM = "AES"
-        private val ALGORITHM_MODE = "$ALGORITHM/ECB/NoPadding"
+        private const val ALGORITHM = "AES"
+        private const val ALGORITHM_MODE = "$ALGORITHM/ECB/NoPadding"
         /**
          * 128-bit counter. Package-visible for testing. Note to forkers: when running a cipher in ECB
          * mode, this counter's length should equal the cipher's block size.
          */
-        internal val COUNTER_SIZE_BYTES = 16
-        private val INTS_PER_BLOCK = COUNTER_SIZE_BYTES / Integer.BYTES
+        internal const val COUNTER_SIZE_BYTES = 16
+        private const val INTS_PER_BLOCK = COUNTER_SIZE_BYTES / Integer.BYTES
         /**
          * Number of blocks to encrypt at once, to construct/GC fewer arrays. This takes advantage of the
          * fact that in ECB mode, concatenating and then encrypting gives the same output as encrypting
          * and then concatenating, as long as both plaintexts are a whole number of blocks. (The AES block
          * size is 128 bits at all key lengths.)
          */
-        private val BLOCKS_AT_ONCE = 16
-        private val BYTES_AT_ONCE = COUNTER_SIZE_BYTES * BLOCKS_AT_ONCE
-        private val HASH_ALGORITHM = "SHA-256"
+        private const val BLOCKS_AT_ONCE = 16
+        private const val BYTES_AT_ONCE = COUNTER_SIZE_BYTES * BLOCKS_AT_ONCE
+        private const val HASH_ALGORITHM = "SHA-256"
         private val MAX_TOTAL_SEED_LENGTH_BYTES: Int
         private val ZEROES = ByteArray(COUNTER_SIZE_BYTES)
         /**
@@ -351,10 +350,11 @@ class AesCounterRandom
         }
 
         private fun getKeyLength(input: ByteArray): Int {
-            return if (input.size > maxKeyLengthBytes)
-                maxKeyLengthBytes
-            else
-                if (input.size >= 24) 24 else 16
+            return when {
+                input.size > maxKeyLengthBytes -> maxKeyLengthBytes
+                input.size >= 24 -> 24
+                else -> 16
+            }
         }
     }
 }
