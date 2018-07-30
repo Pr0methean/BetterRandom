@@ -1,5 +1,5 @@
 <!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd">
-<suite name="PowerMockObjectFactory" parallel="tests">
+<suite name="Main" parallel="tests">
   <test name="PRNGs">
     <parameter name="seedSize" value="16"/>
     <classes>
