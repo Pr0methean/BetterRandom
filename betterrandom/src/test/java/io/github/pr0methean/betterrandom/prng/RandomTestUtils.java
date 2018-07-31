@@ -273,8 +273,14 @@ public enum RandomTestUtils {
     }
   }
 
-  public static void removeAndAssertEmpty(SeedGenerator seedGenerator, Random... prngs) {
-    RandomSeederThread.remove(seedGenerator, prngs);
+  public static void removeAndAssertEmpty(SeedGenerator seedGenerator, BaseRandom prng) {
+    prng.setSeedGenerator(null);
+    RandomSeederThread.stopIfEmpty(seedGenerator);
+    assertFalse(RandomSeederThread.hasInstance(seedGenerator));
+  }
+
+  public static void removeAndAssertEmpty(SeedGenerator seedGenerator, Random prng) {
+    RandomSeederThread.remove(seedGenerator, prng);
     RandomSeederThread.stopIfEmpty(seedGenerator);
     assertFalse(RandomSeederThread.hasInstance(seedGenerator));
   }
