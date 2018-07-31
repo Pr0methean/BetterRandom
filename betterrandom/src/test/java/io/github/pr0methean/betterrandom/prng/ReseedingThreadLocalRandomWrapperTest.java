@@ -39,10 +39,6 @@ public class ReseedingThreadLocalRandomWrapperTest extends ThreadLocalRandomWrap
   }
 
   @SuppressWarnings("BusyWait") @Override @Test public void testReseeding() {
-    if (isAppveyor()) {
-      throw new SkipException("This test often fails spuriously on AppVeyor"); // FIXME
-    }
-
     final BaseRandom rng = new ReseedingThreadLocalRandomWrapper(getTestSeedGenerator(),
         pcgSupplier);
     rng.nextLong();
@@ -57,10 +53,10 @@ public class ReseedingThreadLocalRandomWrapperTest extends ThreadLocalRandomWrap
     try {
       do {
         rng.nextLong();
-        Thread.sleep(10);
+        Thread.sleep(50);
         newSeed = rng.getSeed();
       } while (Arrays.equals(newSeed, oldSeed));
-      Thread.sleep(100);
+      Thread.sleep(200);
       assertGreaterOrEqual(rng.getEntropyBits(), (newSeed.length * 8L) - 1);
     } catch (final InterruptedException e) {
       throw new RuntimeException(e);
