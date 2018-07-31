@@ -1,3 +1,10 @@
+# 2.4.2
+* `BaseRandom#getSeedGenerator` and `BaseRandom#setSeedGenerator(SeedGenerator)` no longer give
+  misleading results after the `RandomSeederThread` has crashed.
+* PRNGs associated with a running `RandomSeederThread` can now be garbage-collected slightly sooner.
+* May improve `RandomSeederThread` performance.
+* Reduces unit-test flakiness and shortens `RandomSeederThread` lifespan during tests.
+
 # 2.4.1
 * `RandomDotOrgSeedGenerator` and `AesCounterRandom` no longer create `Logger` instances eagerly or
   keep references to them after use, since they very rarely log.
