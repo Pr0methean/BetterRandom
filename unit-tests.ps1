@@ -12,7 +12,7 @@ if ( $env:APPVEYOR )
 }
 cd betterrandom
 mvn "$MAYBE_ANDROID_FLAG" "clean" "compile" "jacoco:instrument" "jacoco:prepare-agent" `
-    "test" "-Dtest=io.github.pr0methean.betterrandom.prng.ReseedingThreadLocalRandomWrapperTest#testReseeding " "jacoco:restore-instrumented-classes" "jacoco:report" -e
+    "test" "jacoco:restore-instrumented-classes" "jacoco:report" -e
 $STATUS = $?
 if ( $STATUS ) {
     if ( $env:TRAVIS ) {

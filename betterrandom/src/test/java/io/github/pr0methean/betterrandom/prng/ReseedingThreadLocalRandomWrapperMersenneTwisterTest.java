@@ -23,7 +23,11 @@ public class ReseedingThreadLocalRandomWrapperMersenneTwisterTest
     SeedGenerator seedGenerator = getTestSeedGenerator();
 
     mtSupplier = (Serializable & Supplier<BaseRandom>)
-        () -> new MersenneTwisterRandom(seedGenerator);
+        () -> {
+          BaseRandom out = new MersenneTwisterRandom(seedGenerator);
+          out.debugEntropy = true;
+          return out;
+        };
   }
 
   @TestingDeficiency

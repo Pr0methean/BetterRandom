@@ -19,7 +19,11 @@ public class ReseedingThreadLocalRandomWrapperTest extends ThreadLocalRandomWrap
     // Must be done first, or else lambda won't be serializable.
     SeedGenerator seedGenerator = getTestSeedGenerator();
 
-    pcgSupplier = (Serializable & Supplier<BaseRandom>) () -> new Pcg64Random(seedGenerator);
+    pcgSupplier = (Serializable & Supplier<BaseRandom>) () -> {
+      BaseRandom out = new Pcg64Random(seedGenerator);
+      out.debugEntropy = true;
+      return out;
+    };
   }
 
   @Override public void testWrapLegacy() throws SeedException {
