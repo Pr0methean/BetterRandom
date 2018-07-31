@@ -226,17 +226,17 @@ public final class RandomSeederThread extends LooperThread {
           boolean debug =
               (reseedable instanceof BaseRandom && ((BaseRandom) reseedable).debugEntropy);
           if (debug) {
-            System.out.format("At %d: Generating a new seed for %s%n", System.nanoTime(), reseedable);
+            System.out.format("At %d for %s: Generating a new seed for %s%n", System.nanoTime(), seedGenerator, reseedable);
           }
           final byte[] seedArray = seedArrays
               .computeIfAbsent(reseedable, random_ -> new byte[random_.getNewSeedLength()]);
           seedGenerator.generateSeed(seedArray);
           if (debug) {
-            System.out.format("At %d: Applying the new seed to %s%n", System.nanoTime(), reseedable);
+            System.out.format("At %d for %s: Applying the new seed to %s%n", System.nanoTime(), seedGenerator, reseedable);
           }
           reseedable.setSeed(seedArray);
           if (debug) {
-            System.out.format("At %d: Done reseeding %s%n", System.nanoTime(), reseedable);
+            System.out.format("At %d for %s: Done reseeding %s%n", System.nanoTime(), seedGenerator, reseedable);
           }
         } else {
           boolean debug =
@@ -265,6 +265,8 @@ public final class RandomSeederThread extends LooperThread {
       }
     }
     if (!entropyConsumed) {
+      LOG.info("At %d for %s: No entropy consumed; starting timed wait",
+          System.nanoTime(), seedGenerator);
       waitForEntropyDrain.await(POLL_INTERVAL, TimeUnit.SECONDS);
     }
     return true;
