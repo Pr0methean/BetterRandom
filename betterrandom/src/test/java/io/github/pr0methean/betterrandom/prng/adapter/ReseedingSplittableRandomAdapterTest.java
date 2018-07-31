@@ -7,6 +7,7 @@ import static org.testng.Assert.assertNotEquals;
 
 import io.github.pr0methean.betterrandom.CloneViaSerialization;
 import io.github.pr0methean.betterrandom.prng.BaseRandom;
+import io.github.pr0methean.betterrandom.prng.RandomTestUtils;
 import io.github.pr0methean.betterrandom.prng.RandomTestUtils.EntropyCheckMode;
 import io.github.pr0methean.betterrandom.seed.FakeSeedGenerator;
 import io.github.pr0methean.betterrandom.seed.RandomSeederThread;
@@ -55,22 +56,7 @@ public class ReseedingSplittableRandomAdapterTest extends SingleThreadSplittable
   }
 
   @SuppressWarnings("BusyWait") @Override @Test public void testReseeding() {
-    final BaseRandom rng = createRng();
-    final byte[] oldSeed = rng.getSeed();
-    while (rng.getEntropyBits() > Long.SIZE) {
-      rng.nextLong();
-    }
-    try {
-      byte[] newSeed;
-      do {
-        rng.nextBoolean();
-        Thread.sleep(10);
-        newSeed = rng.getSeed();
-      } while (Arrays.equals(newSeed, oldSeed));
-      assertGreaterOrEqual(rng.getEntropyBits(), (newSeed.length * 8L) - 1);
-    } catch (final InterruptedException e) {
-      throw new RuntimeException(e);
-    }
+    RandomTestUtils.testThreadLocalReseeding(getTestSeedGenerator(), createRng());
   }
 
   /** Test for crashes only, since setSeed is a no-op. */
