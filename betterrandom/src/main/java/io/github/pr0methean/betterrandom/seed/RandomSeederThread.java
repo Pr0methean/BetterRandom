@@ -226,13 +226,10 @@ public final class RandomSeederThread extends LooperThread {
         if (random.preferSeedWithLong()) {
           reseedWithLong((Random) random);
         } else {
-          System.out.format("Thread for %s: generating byte[] seed for %s%n", seedGenerator, random);
           final byte[] seedArray =
               seedArrays.computeIfAbsent(random, random_ -> new byte[random_.getNewSeedLength()]);
           seedGenerator.generateSeed(seedArray);
-          System.out.format("Thread for %s: reseeding %s%n", seedGenerator, random);
           random.setSeed(seedArray);
-          System.out.format("Thread for %s: done reseeding %s%n", seedGenerator, random);
         }
       }
       final Iterator<Random> otherPrngsIterator = otherPrngsThisIteration.iterator();
@@ -240,7 +237,6 @@ public final class RandomSeederThread extends LooperThread {
         final Random random = otherPrngsIterator.next();
         otherPrngsIterator.remove();
         if (stillDefinitelyHasEntropy(random)) {
-          System.out.format("Thread for %s: skipping %s (still has entropy)%n", seedGenerator, random);
           continue;
         }
         entropyConsumed = true;
