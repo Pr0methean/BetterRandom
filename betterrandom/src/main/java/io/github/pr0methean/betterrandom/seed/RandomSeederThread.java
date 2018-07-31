@@ -198,6 +198,7 @@ public final class RandomSeederThread extends LooperThread {
 
   @SuppressWarnings({"InfiniteLoopStatement", "ObjectAllocationInLoop", "AwaitNotInLoop"}) @Override
   protected boolean iterate() throws InterruptedException {
+    LOG.info("Thread for %s: iterate() called", seedGenerator);
     while (true) {
       otherPrngsThisIteration.addAll(otherPrngs);
       byteArrayPrngsThisIteration.addAll(byteArrayPrngs);
@@ -256,6 +257,7 @@ public final class RandomSeederThread extends LooperThread {
       LOG.info("Thread for %s: sleeping because no entropy was consumed", seedGenerator);
       waitForEntropyDrain.await(POLL_INTERVAL, TimeUnit.SECONDS);
     }
+    LOG.info("Thread for %s: iterate() returning", seedGenerator);
     return true;
   }
 
@@ -309,8 +311,10 @@ public final class RandomSeederThread extends LooperThread {
    * @param randoms One or more {@link Random} instances to be reseeded.
    */
   private void add(final Random... randoms) {
+    LOG.info("Thread for %s: add() called", seedGenerator);
     lock.lock();
     try {
+      LOG.info("Thread for %s: lock obtained for add()", seedGenerator);
       if ((getState() == State.TERMINATED) || isInterrupted()) {
         throw new IllegalStateException("Already shut down");
       }
@@ -320,6 +324,7 @@ public final class RandomSeederThread extends LooperThread {
         } else {
           otherPrngs.add(random);
         }
+        LOG.info("Thread for %s: added %s", seedGenerator, random);
       }
       waitForEntropyDrain.signalAll();
       waitWhileEmpty.signalAll();
