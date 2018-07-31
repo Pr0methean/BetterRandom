@@ -216,9 +216,8 @@ public final class RandomSeederThread extends LooperThread {
         byteArrayPrngsIterator.remove();
         if (stillDefinitelyHasEntropy(random)) {
           continue;
-        } else {
-          entropyConsumed = true;
         }
+        entropyConsumed = true;
         if (random.preferSeedWithLong()) {
           reseedWithLong((Random) random);
         } else {
@@ -234,9 +233,8 @@ public final class RandomSeederThread extends LooperThread {
         otherPrngsIterator.remove();
         if (stillDefinitelyHasEntropy(random)) {
           continue;
-        } else {
-          entropyConsumed = true;
         }
+        entropyConsumed = true;
         reseedWithLong(random);
       }
     } catch (final Throwable t) {
