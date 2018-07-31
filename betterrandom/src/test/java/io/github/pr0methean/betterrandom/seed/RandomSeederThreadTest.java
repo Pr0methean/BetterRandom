@@ -35,29 +35,27 @@ public class RandomSeederThreadTest {
         Thread.sleep(250);
         assertFalse(RandomSeederThread.isEmpty(seedGenerator));
       }
-      RandomSeederThread.remove(seedGenerator, prng);
-      assertTrue(RandomSeederThread.isEmpty(seedGenerator));
-      final byte[] bytesWithNewSeed = new byte[TEST_OUTPUT_SIZE];
-      prng.nextBytes(bytesWithNewSeed);
-      if (ON_LINUX) {
-        // FIXME: Fails without the Thread.sleep call
-        assertFalse(Arrays.equals(bytesWithOldSeed, bytesWithNewSeed));
-      }
     } finally {
-      RandomTestUtils.removeAndAssertEmpty(seedGenerator);
+      RandomTestUtils.removeAndAssertEmpty(seedGenerator, prng);
+    }
+    final byte[] bytesWithNewSeed = new byte[TEST_OUTPUT_SIZE];
+    prng.nextBytes(bytesWithNewSeed);
+    if (ON_LINUX) {
+      // FIXME: Fails without the Thread.sleep call
+      assertFalse(Arrays.equals(bytesWithOldSeed, bytesWithNewSeed));
     }
   }
 
-  @Test public void testStopIfEmpty() throws Exception {
+  @Test public void testStopIfEmpty() {
     final SeedGenerator seedGenerator = new FakeSeedGenerator("testStopIfEmpty");
     final Random prng = new Random();
     RandomSeederThread.add(seedGenerator, prng);
     RandomSeederThread.stopIfEmpty(seedGenerator);
     assertTrue(RandomSeederThread.hasInstance(seedGenerator));
-    RandomTestUtils.removeAndAssertEmpty(seedGenerator);
+    RandomTestUtils.removeAndAssertEmpty(seedGenerator, prng);
   }
 
-  @Test public void testStopAllEmpty() throws Exception {
+  @Test public void testStopAllEmpty() {
     final SeedGenerator neverAddedTo = new FakeSeedGenerator("neverAddedTo");
     final SeedGenerator addedToAndRemoved = new FakeSeedGenerator("addedToAndRemoved");
     final SeedGenerator addedToAndLeft = new FakeSeedGenerator("addedToAndLeft");
