@@ -795,7 +795,8 @@ public abstract class BaseRandomTest extends PowerMockTestCase {
   }
 
   @AfterClass public void classTearDown() {
-    RandomSeederThread.stopIfEmpty(getTestSeedGenerator());
+    System.gc();
+    RandomSeederThread.stopAllEmpty();
   }
 
   private enum TestEnum {
