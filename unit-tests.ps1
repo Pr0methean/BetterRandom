@@ -50,7 +50,7 @@ if ( $STATUS ) {
       git pull --rebase originauth # Merge
       cp betterrandom-coverage/${COMMIT}/*.exec target
       mvn "jacoco:report-aggregate"
-      /bin/mv target/jacoco.exec "betterrandom-coverage/${COMMIT}/${JOB_ID}.exec"
+      mv target/jacoco.exec "betterrandom-coverage/${COMMIT}/${JOB_ID}.exec"
       cd betterrandom-coverage
       git add .
       git commit --amend --no-edit
