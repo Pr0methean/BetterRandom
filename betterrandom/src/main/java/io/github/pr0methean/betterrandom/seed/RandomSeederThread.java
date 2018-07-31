@@ -242,15 +242,15 @@ public final class RandomSeederThread extends LooperThread {
           boolean debug =
               (random instanceof BaseRandom && ((BaseRandom) random).debugEntropy);
           if (debug) {
-            System.out.format("At %d: Generating a new seed for %s%n", System.nanoTime(), reseedable);
+            System.out.format("At %d: Generating a new seed for %s%n", System.nanoTime(), random);
           }
           seedGenerator.generateSeed(longSeedArray);
           if (debug) {
-            System.out.format("At %d: Applying the new seed to %s%n", System.nanoTime(), reseedable);
+            System.out.format("At %d: Applying the new seed to %s%n", System.nanoTime(), random);
           }
           random.setSeed(longSeedBuffer.getLong(0));
           if (debug) {
-            System.out.format("At %d: Done reseeding %s%n", System.nanoTime(), reseedable);
+            System.out.format("At %d: Done reseeding %s%n", System.nanoTime(), random);
           }
         }
       } catch (final Throwable t) {
