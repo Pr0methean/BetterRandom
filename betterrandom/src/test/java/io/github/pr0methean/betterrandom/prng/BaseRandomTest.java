@@ -411,6 +411,7 @@ public abstract class BaseRandomTest extends PowerMockTestCase {
       RandomSeederThread.stopIfEmpty(seedGenerator);
     }
     assertNull(rng.getSeedGenerator());
+    assertFalse(RandomSeederThread.hasInstance(seedGenerator));
   }
 
   @Test(timeOut = 10_000) public void testWithProbability() {
