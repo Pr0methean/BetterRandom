@@ -7,10 +7,6 @@ import static io.github.pr0methean.betterrandom.prng.BaseRandom.ENTROPY_OF_FLOAT
 import static io.github.pr0methean.betterrandom.prng.RandomTestUtils.assertMonteCarloPiEstimateSane;
 import static io.github.pr0methean.betterrandom.prng.RandomTestUtils.checkRangeAndEntropy;
 import static io.github.pr0methean.betterrandom.prng.RandomTestUtils.checkStream;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyInt;
-import static org.powermock.api.mockito.PowerMockito.doAnswer;
-import static org.powermock.api.mockito.PowerMockito.when;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertFalse;
 import static org.testng.Assert.assertNotEquals;
@@ -25,14 +21,11 @@ import io.github.pr0methean.betterrandom.CloneViaSerialization;
 import io.github.pr0methean.betterrandom.TestUtils;
 import io.github.pr0methean.betterrandom.prng.RandomTestUtils.EntropyCheckMode;
 import io.github.pr0methean.betterrandom.prng.adapter.SplittableRandomAdapter;
-import io.github.pr0methean.betterrandom.seed.DefaultSeedGenerator;
 import io.github.pr0methean.betterrandom.seed.FakeSeedGenerator;
 import io.github.pr0methean.betterrandom.seed.RandomSeederThread;
-import io.github.pr0methean.betterrandom.seed.SecureRandomSeedGenerator;
 import io.github.pr0methean.betterrandom.seed.SeedException;
 import io.github.pr0methean.betterrandom.seed.SeedGenerator;
 import io.github.pr0methean.betterrandom.seed.SemiFakeSeedGenerator;
-import java.io.IOException;
 import java.io.Serializable;
 import java.lang.reflect.InvocationTargetException;
 import java.nio.ByteBuffer;
@@ -55,15 +48,7 @@ import java8.util.function.DoubleConsumer;
 import java8.util.function.Function;
 import java8.util.function.Supplier;
 import org.apache.commons.math3.stat.descriptive.SynchronizedDescriptiveStatistics;
-import org.mockito.invocation.InvocationOnMock;
-import org.mockito.stubbing.Answer;
-import org.powermock.api.mockito.PowerMockito;
-import org.powermock.api.mockito.mockpolicies.Slf4jMockPolicy;
-import org.powermock.core.classloader.annotations.MockPolicy;
-import org.powermock.core.classloader.annotations.PowerMockIgnore;
-import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.testng.PowerMockTestCase;
-import org.powermock.reflect.Whitebox;
 import org.testng.Reporter;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.Test;
@@ -76,7 +61,7 @@ public abstract class BaseRandomTest extends PowerMockTestCase {
           prng.nextInt();
         }
       };
-  protected static final SeedGenerator SEMIFAKE_SEED_GENERATOR
+  protected final SeedGenerator semiFakeSeedGenerator
       = new SemiFakeSeedGenerator(new SplittableRandomAdapter());
 
   /**
@@ -109,29 +94,29 @@ public abstract class BaseRandomTest extends PowerMockTestCase {
           return rng.nextGaussian();
         }
       };
-  protected static final NamedFunction<Random,Double> SET_SEED =
+  protected final NamedFunction<Random,Double> setSeed =
       new NamedFunction<Random, Double>("BaseRandom::setSeed(byte[])") {
         @Override
         public Double apply(Random random) {
           if (random instanceof BaseRandom) {
             BaseRandom baseRandom = (BaseRandom) random;
             baseRandom.setSeed(
-                SEMIFAKE_SEED_GENERATOR.generateSeed(baseRandom.getNewSeedLength()));
+                semiFakeSeedGenerator.generateSeed(baseRandom.getNewSeedLength()));
           } else {
             final ByteBuffer buffer = ByteBuffer.allocate(8);
-            SEMIFAKE_SEED_GENERATOR.generateSeed(buffer.array());
+            semiFakeSeedGenerator.generateSeed(buffer.array());
             random.setSeed(buffer.getLong(0));
           }
           return 0.0;
         }
       };
 
-  @SuppressWarnings("StaticCollection") protected static final List<NamedFunction<Random, Double>>
-      FUNCTIONS_FOR_THREAD_SAFETY_TEST =
+  @SuppressWarnings("StaticCollection") protected final List<NamedFunction<Random, Double>>
+      functionsForThreadSafetyTest =
       ImmutableList.of(NEXT_LONG, NEXT_INT, NEXT_DOUBLE, NEXT_GAUSSIAN);
-  @SuppressWarnings("StaticCollection") protected static final List<NamedFunction<Random, Double>>
-      FUNCTIONS_FOR_THREAD_CRASH_TEST =
-      ImmutableList.of(NEXT_LONG, NEXT_INT, NEXT_DOUBLE, NEXT_GAUSSIAN, SET_SEED);
+  @SuppressWarnings("StaticCollection") protected final List<NamedFunction<Random, Double>>
+      functionsForThreadCrashTest =
+      ImmutableList.of(NEXT_LONG, NEXT_INT, NEXT_DOUBLE, NEXT_GAUSSIAN, setSeed);
   private static final int TEST_BYTE_ARRAY_LENGTH = 20;
   private static final String HELLO = "Hello";
   private static final String HOW_ARE_YOU = "How are you?";
@@ -154,7 +139,7 @@ public abstract class BaseRandomTest extends PowerMockTestCase {
   }
 
   protected SeedGenerator getTestSeedGenerator() {
-    return SEMIFAKE_SEED_GENERATOR;
+    return semiFakeSeedGenerator;
   }
 
   protected EntropyCheckMode getEntropyCheckMode() {
@@ -179,7 +164,7 @@ public abstract class BaseRandomTest extends PowerMockTestCase {
     params.put(int.class, seedLength);
     params.put(long.class, TEST_SEED);
     params.put(byte[].class, new byte[seedLength]);
-    params.put(SeedGenerator.class, SEMIFAKE_SEED_GENERATOR);
+    params.put(SeedGenerator.class, semiFakeSeedGenerator);
     return params;
   }
 
@@ -310,7 +295,7 @@ public abstract class BaseRandomTest extends PowerMockTestCase {
   }
 
   @Test(timeOut = 15_000) public void testSerializable()
-      throws IOException, ClassNotFoundException, SeedException {
+      throws SeedException {
     // Serialise an RNG.
     final BaseRandom rng = createRng();
     RandomTestUtils.assertEquivalentWhenSerializedAndDeserialized(rng);
@@ -320,14 +305,10 @@ public abstract class BaseRandomTest extends PowerMockTestCase {
     rng.setSeedGenerator(seedGenerator);
     try {
       final BaseRandom rng2 = CloneViaSerialization.clone(rng);
-      try {
-        assertEquals(seedGenerator, rng2.getSeedGenerator());
-      } finally {
-        rng2.setSeedGenerator(null);
-      }
+      assertEquals(seedGenerator, rng2.getSeedGenerator());
+      rng2.setSeedGenerator(null);
     } finally {
-      rng.setSeedGenerator(null);
-      RandomSeederThread.stopIfEmpty(seedGenerator);
+      RandomTestUtils.removeAndAssertEmpty(seedGenerator, rng);
     }
   }
 
@@ -454,8 +435,7 @@ public abstract class BaseRandomTest extends PowerMockTestCase {
       Thread.sleep(100); // entropy update may not be co-atomic with seed update
       assertGreaterOrEqual(rng.getEntropyBits(), (newSeed.length * 8L) - 1);
     } finally {
-      rng.setSeedGenerator(null);
-      RandomSeederThread.stopIfEmpty(seedGenerator);
+      RandomTestUtils.removeAndAssertEmpty(seedGenerator, rng);
     }
     assertNull(rng.getSeedGenerator());
   }
@@ -509,7 +489,7 @@ public abstract class BaseRandomTest extends PowerMockTestCase {
     assertLessOrEqual(trues, 1625);
   }
 
-  @Test public void testNextBytes() throws Exception {
+  @Test public void testNextBytes() {
     final byte[] testBytes = new byte[TEST_BYTE_ARRAY_LENGTH];
     final BaseRandom prng = createRng();
     final long oldEntropy = prng.getEntropyBits();
@@ -529,7 +509,7 @@ public abstract class BaseRandomTest extends PowerMockTestCase {
     }
   }
 
-  @Test public void testNextInt1() throws Exception {
+  @Test public void testNextInt1() {
     final BaseRandom prng = createRng();
     checkRangeAndEntropy(prng, 31, new Supplier<Number>() {
       @Override public Number get() {
@@ -543,7 +523,7 @@ public abstract class BaseRandomTest extends PowerMockTestCase {
     createRng().nextInt(0);
   }
 
-  @Test public void testNextInt() throws Exception {
+  @Test public void testNextInt() {
     final BaseRandom prng = createRng();
     checkRangeAndEntropy(prng, 32, new Supplier<Number>() {
       @Override public Number get() {
@@ -552,7 +532,7 @@ public abstract class BaseRandomTest extends PowerMockTestCase {
     }, Integer.MIN_VALUE, Integer.MAX_VALUE + 1L, getEntropyCheckMode());
   }
 
-  @Test public void testNextInt2() throws Exception {
+  @Test public void testNextInt2() {
     final BaseRandom prng = createRng();
     checkRangeAndEntropy(prng, 29, new Supplier<Number>() {
       @Override public Number get() {
@@ -566,7 +546,7 @@ public abstract class BaseRandomTest extends PowerMockTestCase {
     createRng().nextInt(1, 1);
   }
 
-  @Test public void testNextInt2HugeRange() throws Exception {
+  @Test public void testNextInt2HugeRange() {
     final BaseRandom prng = createRng();
     checkRangeAndEntropy(prng, 32, new Supplier<Number>() {
       @Override public Number get() {
@@ -575,7 +555,7 @@ public abstract class BaseRandomTest extends PowerMockTestCase {
     }, Integer.MIN_VALUE, 1 << 29, getEntropyCheckMode());
   }
 
-  @Test public void testNextLong() throws Exception {
+  @Test public void testNextLong() {
     final BaseRandom prng = createRng();
     checkRangeAndEntropy(prng, 64, new Supplier<Number>() {
       @Override public Number get() {
@@ -584,7 +564,7 @@ public abstract class BaseRandomTest extends PowerMockTestCase {
     }, Long.MIN_VALUE, Long.MAX_VALUE + 1.0, getEntropyCheckMode());
   }
 
-  @Test public void testNextLong1() throws Exception {
+  @Test public void testNextLong1() {
     final BaseRandom prng = createRng();
     for (int i = 0; i < 20; i++) {
       // check that the bound is exclusive, to kill an off-by-one mutant
@@ -606,7 +586,7 @@ public abstract class BaseRandomTest extends PowerMockTestCase {
     createRng().nextLong(-1);
   }
 
-  @Test public void testNextLong2() throws Exception {
+  @Test public void testNextLong2() {
     final BaseRandom prng = createRng();
     checkRangeAndEntropy(prng, 42, new Supplier<Number>() {
       @Override public Number get() {
@@ -620,7 +600,7 @@ public abstract class BaseRandomTest extends PowerMockTestCase {
     createRng().nextLong(10, 9);
   }
 
-  @Test public void testNextLong2HugeRange() throws Exception {
+  @Test public void testNextLong2HugeRange() {
     final BaseRandom prng = createRng();
     checkRangeAndEntropy(prng, 64, new Supplier<Number>() {
       @Override public Number get() {
@@ -629,7 +609,7 @@ public abstract class BaseRandomTest extends PowerMockTestCase {
     }, Long.MIN_VALUE, 1 << 62, getEntropyCheckMode());
   }
 
-  @Test public void testNextDouble() throws Exception {
+  @Test public void testNextDouble() {
     final BaseRandom prng = createRng();
     checkRangeAndEntropy(prng, ENTROPY_OF_DOUBLE, new Supplier<Number>() {
       @Override public Number get() {
@@ -638,7 +618,7 @@ public abstract class BaseRandomTest extends PowerMockTestCase {
     }, 0.0, 1.0, getEntropyCheckMode());
   }
 
-  @Test public void testNextFloat() throws Exception {
+  @Test public void testNextFloat() {
     final BaseRandom prng = createRng();
     checkRangeAndEntropy(prng, ENTROPY_OF_FLOAT, new Supplier<Number>() {
       @Override public Number get() {
@@ -647,7 +627,7 @@ public abstract class BaseRandomTest extends PowerMockTestCase {
     }, 0.0, 1.0, getEntropyCheckMode());
   }
 
-  @Test public void testNextDouble1() throws Exception {
+  @Test public void testNextDouble1() {
     final BaseRandom prng = createRng();
     checkRangeAndEntropy(prng, ENTROPY_OF_DOUBLE, new Supplier<Number>() {
       @Override public Number get() {
@@ -661,7 +641,7 @@ public abstract class BaseRandomTest extends PowerMockTestCase {
     createRng().nextDouble(-1.0);
   }
 
-  @Test public void testNextDouble2() throws Exception {
+  @Test public void testNextDouble2() {
     final BaseRandom prng = createRng();
     checkRangeAndEntropy(prng, ENTROPY_OF_DOUBLE, new Supplier<Number>() {
       @Override public Number get() {
@@ -685,7 +665,7 @@ public abstract class BaseRandomTest extends PowerMockTestCase {
     createRng().nextDouble(3.5, 3.5);
   }
 
-  @Test public void testNextGaussian() throws Exception {
+  @Test public void testNextGaussian() {
     final BaseRandom prng = createRng();
     // TODO: Find out the actual Shannon entropy of nextGaussian() and adjust the entropy count to
     // it in a wrapper function.
@@ -696,7 +676,7 @@ public abstract class BaseRandomTest extends PowerMockTestCase {
     }, -Double.MAX_VALUE, Double.MAX_VALUE, getEntropyCheckMode());
   }
 
-  @Test public void testNextBoolean() throws Exception {
+  @Test public void testNextBoolean() {
     final BaseRandom prng = createRng();
     checkRangeAndEntropy(prng, 1, new Supplier<Number>() {
       @Override public Number get() {
@@ -705,86 +685,86 @@ public abstract class BaseRandomTest extends PowerMockTestCase {
     }, 0, 2, getEntropyCheckMode());
   }
 
-  @Test public void testInts() throws Exception {
+  @Test public void testInts() {
     final BaseRandom prng = createRng();
     checkStream(prng, 32, prng.ints().boxed(), -1, Integer.MIN_VALUE, Integer.MAX_VALUE + 1L, true);
   }
 
-  @Test public void testInts1() throws Exception {
+  @Test public void testInts1() {
     final BaseRandom prng = createRng();
     checkStream(prng, 32, prng.ints(20).boxed(), 20, Integer.MIN_VALUE, Integer.MAX_VALUE + 1L,
         true);
   }
 
-  @Test public void testInts2() throws Exception {
+  @Test public void testInts2() {
     final BaseRandom prng = createRng();
     checkStream(prng, 29, prng.ints(1 << 27, 1 << 29).boxed(), -1, 1 << 27, 1 << 29, true);
   }
 
-  @Test public void testInts3() throws Exception {
+  @Test public void testInts3() {
     final BaseRandom prng = createRng();
     checkStream(prng, 29, prng.ints(3, 1 << 27, 1 << 29).boxed(), 3, 1 << 27, 1 << 29, true);
   }
 
-  @Test public void testLongs() throws Exception {
+  @Test public void testLongs() {
     final BaseRandom prng = createRng();
     checkStream(prng, 64, prng.longs().boxed(), -1, Long.MIN_VALUE, Long.MAX_VALUE + 1.0, true);
   }
 
-  @Test public void testLongs1() throws Exception {
+  @Test public void testLongs1() {
     final BaseRandom prng = createRng();
     checkStream(prng, 64, prng.longs(20).boxed(), 20, Long.MIN_VALUE, Long.MAX_VALUE + 1.0, true);
   }
 
-  @Test public void testLongs2() throws Exception {
+  @Test public void testLongs2() {
     final BaseRandom prng = createRng();
     checkStream(prng, 42, prng.longs(1L << 40, 1L << 42).boxed(), -1, 1L << 40, 1L << 42, true);
   }
 
-  @Test public void testLongs3() throws Exception {
+  @Test public void testLongs3() {
     final BaseRandom prng = createRng();
     checkStream(prng, 42, prng.longs(20, 1L << 40, 1L << 42).boxed(), 20, 1L << 40, 1L << 42, true);
   }
 
-  @Test(timeOut = 10_000) public void testLongs3SmallRange() throws Exception {
+  @Test(timeOut = 10_000) public void testLongs3SmallRange() {
     final long bound = (1L << 40) + 2;
     final BaseRandom prng = createRng();
     checkStream(prng, 31, prng.longs(20, 1L << 40, bound).boxed(), 20, 1L << 40, bound, true);
   }
 
-  @Test public void testDoubles() throws Exception {
+  @Test public void testDoubles() {
     final BaseRandom prng = createRng();
     checkStream(prng, ENTROPY_OF_DOUBLE, prng.doubles().boxed(), -1, 0.0, 1.0, true);
   }
 
-  @Test public void testDoubles1() throws Exception {
+  @Test public void testDoubles1() {
     final BaseRandom prng = createRng();
     checkStream(prng, ENTROPY_OF_DOUBLE, prng.doubles(20).boxed(), 20, 0.0, 1.0, true);
   }
 
-  @Test public void testDoubles2() throws Exception {
+  @Test public void testDoubles2() {
     final BaseRandom prng = createRng();
     checkStream(prng, ENTROPY_OF_DOUBLE, prng.doubles(-5.0, 8.0).boxed(), -1, -5.0, 8.0, true);
   }
 
-  @Test public void testDoubles3() throws Exception {
+  @Test public void testDoubles3() {
     final BaseRandom prng = createRng();
     checkStream(prng, ENTROPY_OF_DOUBLE, prng.doubles(20, -5.0, 8.0).boxed(), 20, -5.0, 8.0, true);
   }
 
-  @Test public void testDoubles3RoundingCorrection() throws Exception {
+  @Test public void testDoubles3RoundingCorrection() {
     final BaseRandom prng = createRng();
     checkStream(prng, ENTROPY_OF_DOUBLE,
         prng.doubles(20, 1.0, UPPER_BOUND_FOR_ROUNDING_TEST).boxed(), 20, -5.0, 8.0, true);
   }
 
-  @Test public void testGaussians() throws Exception {
+  @Test public void testGaussians() {
     final BaseRandom prng = createRng();
     checkStream(prng, ENTROPY_OF_DOUBLE, prng.gaussians().boxed(), -1, -Double.MAX_VALUE,
         Double.MAX_VALUE, true);
   }
 
-  @Test public void testGaussians1() throws Exception {
+  @Test public void testGaussians1() {
     final BaseRandom prng = createRng();
     checkStream(prng, ENTROPY_OF_DOUBLE, prng.gaussians(100).boxed(), 100, -Double.MAX_VALUE,
         Double.MAX_VALUE, true);
@@ -822,11 +802,11 @@ public abstract class BaseRandomTest extends PowerMockTestCase {
   }
 
   @Test(timeOut = 90_000) public void testThreadSafety() {
-    testThreadSafety(FUNCTIONS_FOR_THREAD_SAFETY_TEST, FUNCTIONS_FOR_THREAD_SAFETY_TEST);
+    testThreadSafety(functionsForThreadSafetyTest, functionsForThreadSafetyTest);
   }
 
   @Test(timeOut = 90_000) public void testThreadSafetySetSeed() {
-    testThreadSafetyVsCrashesOnly(30, FUNCTIONS_FOR_THREAD_CRASH_TEST);
+    testThreadSafetyVsCrashesOnly(30, functionsForThreadCrashTest);
   }
 
   protected void testThreadSafetyVsCrashesOnly(final int timeoutSec,
@@ -836,7 +816,7 @@ public abstract class BaseRandomTest extends PowerMockTestCase {
     for (final NamedFunction<Random, Double> supplier1 : functions) {
       for (final NamedFunction<Random, Double> supplier2 : functions) {
         runParallel(supplier1, supplier2, seed, timeoutSec,
-            (supplier1 == SET_SEED || supplier2 == SET_SEED) ? 200 : 1000);
+            (supplier1 == setSeed || supplier2 == setSeed) ? 200 : 1000);
       }
     }
   }
@@ -897,7 +877,9 @@ public abstract class BaseRandomTest extends PowerMockTestCase {
   }
 
   @AfterClass public void classTearDown() {
-    RandomSeederThread.stopIfEmpty(getTestSeedGenerator());
+    RandomSeederThread.clear(getTestSeedGenerator());
+    System.gc();
+    RandomSeederThread.stopAllEmpty();
   }
 
   private enum TestEnum {

@@ -1,19 +1,19 @@
 package io.github.pr0methean.betterrandom.prng.adapter;
 
 import static io.github.pr0methean.betterrandom.TestUtils.assertGreaterOrEqual;
-import static io.github.pr0methean.betterrandom.seed.DefaultSeedGenerator.DEFAULT_SEED_GENERATOR;
 import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertFalse;
 import static org.testng.Assert.assertNotEquals;
 
 import io.github.pr0methean.betterrandom.CloneViaSerialization;
 import io.github.pr0methean.betterrandom.prng.BaseRandom;
+import io.github.pr0methean.betterrandom.prng.RandomTestUtils;
 import io.github.pr0methean.betterrandom.prng.RandomTestUtils.EntropyCheckMode;
 import io.github.pr0methean.betterrandom.seed.FakeSeedGenerator;
 import io.github.pr0methean.betterrandom.seed.RandomSeederThread;
 import io.github.pr0methean.betterrandom.seed.SeedException;
 import io.github.pr0methean.betterrandom.seed.SeedGenerator;
 import io.github.pr0methean.betterrandom.util.BinaryUtils;
-import java.util.Arrays;
 import org.testng.annotations.Test;
 
 @SuppressWarnings("BusyWait")
@@ -55,22 +55,7 @@ public class ReseedingSplittableRandomAdapterTest extends SingleThreadSplittable
   }
 
   @SuppressWarnings("BusyWait") @Override @Test public void testReseeding() {
-    final BaseRandom rng = createRng();
-    final byte[] oldSeed = rng.getSeed();
-    while (rng.getEntropyBits() > Long.SIZE) {
-      rng.nextLong();
-    }
-    try {
-      byte[] newSeed;
-      do {
-        rng.nextBoolean();
-        Thread.sleep(10);
-        newSeed = rng.getSeed();
-      } while (Arrays.equals(newSeed, oldSeed));
-      assertGreaterOrEqual(rng.getEntropyBits(), (newSeed.length * 8L) - 1);
-    } catch (final InterruptedException e) {
-      throw new RuntimeException(e);
-    }
+    RandomTestUtils.testThreadLocalReseeding(getTestSeedGenerator(), createRng());
   }
 
   /** Test for crashes only, since setSeed is a no-op. */
@@ -114,7 +99,7 @@ public class ReseedingSplittableRandomAdapterTest extends SingleThreadSplittable
   }
 
   @Override @Test public void testDump() throws SeedException {
-    assertNotEquals(ReseedingSplittableRandomAdapter.getInstance(DEFAULT_SEED_GENERATOR).dump(),
+    assertNotEquals(ReseedingSplittableRandomAdapter.getInstance(new FakeSeedGenerator()).dump(),
         ReseedingSplittableRandomAdapter.getInstance(getTestSeedGenerator()).dump());
   }
 
@@ -126,11 +111,12 @@ public class ReseedingSplittableRandomAdapterTest extends SingleThreadSplittable
     } finally {
       System.gc();
       RandomSeederThread.stopIfEmpty(generator);
+      assertFalse(RandomSeederThread.hasInstance(generator));
     }
   }
 
   /** Assertion-free because thread-local. */
   @Override @Test public void testThreadSafety() {
-    testThreadSafetyVsCrashesOnly(30, FUNCTIONS_FOR_THREAD_SAFETY_TEST);
+    testThreadSafetyVsCrashesOnly(30, functionsForThreadSafetyTest);
   }
 }
