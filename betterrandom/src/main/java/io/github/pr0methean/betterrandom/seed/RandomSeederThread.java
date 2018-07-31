@@ -48,8 +48,10 @@ public final class RandomSeederThread extends LooperThread {
           .<Random, Boolean>build().asMap());
   private final byte[] longSeedArray = new byte[8];
   private final ByteBuffer longSeedBuffer = ByteBuffer.wrap(longSeedArray);
-  private final Set<ByteArrayReseedableRandom> byteArrayPrngsThisIteration = new HashSet<>(1);
-  private final Set<Random> otherPrngsThisIteration = new HashSet<>(1);
+  private final Set<ByteArrayReseedableRandom> byteArrayPrngsThisIteration
+      = Collections.newSetFromMap(new WeakHashMap<>());
+  private final Set<Random> otherPrngsThisIteration
+      = Collections.newSetFromMap(new WeakHashMap<>());
   private final WeakHashMap<ByteArrayReseedableRandom, byte[]> seedArrays = new WeakHashMap<>(1);
   private static final AtomicInteger defaultPriority = new AtomicInteger(Thread.NORM_PRIORITY);
 
