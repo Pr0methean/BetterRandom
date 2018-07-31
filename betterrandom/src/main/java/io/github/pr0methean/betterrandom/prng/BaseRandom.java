@@ -714,8 +714,10 @@ public abstract class BaseRandom extends Random
    * @param seedLength the length of the new seed in bytes
    */
   protected void creditEntropyForNewSeed(final int seedLength) {
+    System.out.format("creditEntropyForNewSeed called on %s%n", this);
     entropyBits.updateAndGet(
         oldCount -> Math.max(oldCount, Math.min(seedLength, getNewSeedLength()) * 8L));
+    System.out.format("creditEntropyForNewSeed returning on %s%n", this);
   }
 
   /**
@@ -745,6 +747,7 @@ public abstract class BaseRandom extends Random
    * @param bits The number of bits of entropy spent.
    */
   protected void debitEntropy(final long bits) {
+    System.out.format("Debiting %d bits for %s%n", bits, this);
     if (entropyBits.addAndGet(-bits) <= 0) {
       asyncReseedIfPossible();
     }

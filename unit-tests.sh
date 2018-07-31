@@ -26,7 +26,7 @@ fi
 cd betterrandom
 # Coverage test
 PATH="${NO_GIT_PATH}" mvn ${MAYBE_ANDROID_FLAG} clean ${MAYBE_JACOCO_PREPARE} \
-    test ${MAYBE_JACOCO_REPORT} -e
+    test -Dtest=io.github.pr0methean.betterrandom.prng.ReseedingThreadLocalRandomWrapperTest#testReseeding ${MAYBE_JACOCO_REPORT} -e
 STATUS=$?
 if [ "${STATUS}" = 0 ] && [ "${NO_JACOCO}" != "true" ]; then
   if [ "${TRAVIS}" = "true" ]; then

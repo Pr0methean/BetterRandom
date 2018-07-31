@@ -63,7 +63,6 @@ public class ReseedingThreadLocalRandomWrapperTest extends ThreadLocalRandomWrap
   }
 
   @Override protected BaseRandom createRng() throws SeedException {
-    return new ReseedingThreadLocalRandomWrapper(getTestSeedGenerator(),
-        (Serializable & Supplier<BaseRandom>) pcgSupplier);
+    return new ReseedingThreadLocalRandomWrapper(getTestSeedGenerator(), pcgSupplier);
   }
 }
