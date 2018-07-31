@@ -214,15 +214,13 @@ public final class RandomSeederThread extends LooperThread {
       while (byteArrayPrngsIterator.hasNext()) {
         final ByteArrayReseedableRandom random = byteArrayPrngsIterator.next();
         byteArrayPrngsIterator.remove();
-        if ((random instanceof EntropyCountingRandom) && (
-            ((EntropyCountingRandom) random).getEntropyBits() > 0)) {
+        if (stillDefinitelyHasEntropy(random)) {
           continue;
         } else {
           entropyConsumed = true;
         }
         if (random.preferSeedWithLong()) {
-          seedGenerator.generateSeed(longSeedArray);
-          ((Random) random).setSeed(longSeedBuffer.getLong(0));
+          reseedWithLong((Random) random);
         } else {
           final byte[] seedArray =
               seedArrays.computeIfAbsent(random, random_ -> new byte[random_.getNewSeedLength()]);
@@ -234,14 +232,12 @@ public final class RandomSeederThread extends LooperThread {
       while (otherPrngsIterator.hasNext()) {
         final Random random = otherPrngsIterator.next();
         otherPrngsIterator.remove();
-        if ((random instanceof EntropyCountingRandom) && (
-            ((EntropyCountingRandom) random).getEntropyBits() > 0)) {
+        if (stillDefinitelyHasEntropy(random)) {
           continue;
         } else {
           entropyConsumed = true;
         }
-        seedGenerator.generateSeed(longSeedArray);
-        random.setSeed(longSeedBuffer.getLong(0));
+        reseedWithLong(random);
       }
     } catch (final Throwable t) {
       // Must unlock before interrupt; otherwise we somehow get a deadlock
@@ -256,6 +252,16 @@ public final class RandomSeederThread extends LooperThread {
       waitForEntropyDrain.await(POLL_INTERVAL, TimeUnit.SECONDS);
     }
     return true;
+  }
+
+  private void reseedWithLong(Random random) {
+    seedGenerator.generateSeed(longSeedArray);
+    random.setSeed(longSeedBuffer.getLong(0));
+  }
+
+  private static boolean stillDefinitelyHasEntropy(Object random) {
+    return (random instanceof EntropyCountingRandom) && (
+        ((EntropyCountingRandom) random).getEntropyBits() > 0);
   }
 
   @Override public void interrupt() {
