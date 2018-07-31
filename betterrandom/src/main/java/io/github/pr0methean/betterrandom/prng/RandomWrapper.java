@@ -167,32 +167,6 @@ public class RandomWrapper extends BaseRandom {
         wrapped instanceof Dumpable ? ((Dumpable) wrapped).dump() : wrapped);
   }
 
-  @Override public void setSeedGenerator(@Nullable SeedGenerator seedGenerator) {
-    lock.lock();
-    try {
-      if (wrapped instanceof BaseRandom) {
-        ((BaseRandom) wrapped).setSeedGenerator(seedGenerator);
-      } else {
-        super.setSeedGenerator(seedGenerator);
-      }
-    } finally {
-      lock.unlock();
-    }
-  }
-
-  @Nullable @Override public SeedGenerator getSeedGenerator() {
-    lock.lock();
-    try {
-      if (wrapped instanceof BaseRandom) {
-        return ((BaseRandom) wrapped).getSeedGenerator();
-      } else {
-        return super.getSeedGenerator();
-      }
-    } finally {
-      lock.unlock();
-    }
-  }
-
   /**
    * Returns the wrapped PRNG's seed, if we know it. When this RandomWrapper is wrapping a passed-in
    * {@link Random} that's not a {@link RepeatableRandom}, we won't know the seed until the next
