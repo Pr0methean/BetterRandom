@@ -717,12 +717,12 @@ public abstract class BaseRandom extends Random
    */
   protected void creditEntropyForNewSeed(final int seedLength) {
     if (debugEntropy) {
-      System.out.format("creditEntropyForNewSeed called on %s%n", this);
+      System.out.format("At %d: creditEntropyForNewSeed called on %s%n", System.nanoTime(), this);
     }
     entropyBits.updateAndGet(
         oldCount -> Math.max(oldCount, Math.min(seedLength, getNewSeedLength()) * 8L));
     if (debugEntropy) {
-      System.out.format("creditEntropyForNewSeed returning on %s%n", this);
+      System.out.format("At %d: creditEntropyForNewSeed returning on %s%n", System.nanoTime(), this);
     }
   }
 
@@ -754,10 +754,13 @@ public abstract class BaseRandom extends Random
    */
   protected void debitEntropy(final long bits) {
     if (debugEntropy) {
-      System.out.format("Debiting %d bits for %s%n", bits, this);
+      System.out.format("At %d: Debiting %d bits for %s%n", System.nanoTime(), bits, this);
     }
     if (entropyBits.addAndGet(-bits) <= 0) {
       asyncReseedIfPossible();
+    }
+    if (debugEntropy) {
+      System.out.format("At %d: Returning from debitEntropy in %s%n", System.nanoTime(), bits, this);
     }
   }
 

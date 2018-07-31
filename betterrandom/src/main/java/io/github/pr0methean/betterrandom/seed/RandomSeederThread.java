@@ -3,6 +3,7 @@ package io.github.pr0methean.betterrandom.seed;
 import com.google.common.cache.CacheBuilder;
 import io.github.pr0methean.betterrandom.ByteArrayReseedableRandom;
 import io.github.pr0methean.betterrandom.EntropyCountingRandom;
+import io.github.pr0methean.betterrandom.prng.BaseRandom;
 import io.github.pr0methean.betterrandom.util.LooperThread;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
@@ -222,10 +223,21 @@ public final class RandomSeederThread extends LooperThread {
         if ((random instanceof ByteArrayReseedableRandom) && !((ByteArrayReseedableRandom) random)
             .preferSeedWithLong()) {
           final ByteArrayReseedableRandom reseedable = (ByteArrayReseedableRandom) random;
+          boolean debug =
+              (reseedable instanceof BaseRandom && ((BaseRandom) reseedable).debugEntropy);
+          if (debug) {
+            System.out.format("At %d: Generating a new seed for %s%n", System.nanoTime(), reseedable);
+          }
           final byte[] seedArray = seedArrays
               .computeIfAbsent(reseedable, random_ -> new byte[random_.getNewSeedLength()]);
           seedGenerator.generateSeed(seedArray);
+          if (debug) {
+            System.out.format("At %d: Applying the new seed to %s%n", System.nanoTime(), reseedable);
+          }
           reseedable.setSeed(seedArray);
+          if (debug) {
+            System.out.format("At %d: Done reseeding %s%n", System.nanoTime(), reseedable);
+          }
         } else {
           seedGenerator.generateSeed(longSeedArray);
           random.setSeed(longSeedBuffer.getLong(0));

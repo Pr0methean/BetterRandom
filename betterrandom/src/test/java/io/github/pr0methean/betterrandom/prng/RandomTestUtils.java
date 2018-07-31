@@ -263,9 +263,9 @@ public enum RandomTestUtils {
         Thread.sleep(10);
         newSeed = rng.getSeed();
       } while (Arrays.equals(newSeed, oldSeed));
-      System.out.println("Seed change detected");
+      System.out.format("At %d: Seed change detected%n", System.nanoTime());
       Thread.sleep(100);
-      System.out.println("Checking new entropy total");
+      System.out.format("At %d: Checking new entropy total%n", System.nanoTime());
       assertGreaterOrEqual(rng.getEntropyBits(), (newSeed.length * 8L) - 1);
     } catch (final InterruptedException e) {
       throw new RuntimeException(e);
