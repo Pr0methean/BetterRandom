@@ -72,7 +72,6 @@ public class ReseedingThreadLocalRandomWrapperMersenneTwisterTest
   }
 
   @Override protected BaseRandom createRng() throws SeedException {
-    return new ReseedingThreadLocalRandomWrapper(getTestSeedGenerator(),
-        (Serializable & Supplier<BaseRandom>) MersenneTwisterRandom::new);
+    return new ReseedingThreadLocalRandomWrapper(getTestSeedGenerator(), mtSupplier);
   }
 }
