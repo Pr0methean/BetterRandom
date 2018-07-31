@@ -183,7 +183,7 @@ public final class RandomSeederThread extends LooperThread {
    * @return Whether or not the reseed was successfully scheduled.
    */
   private boolean asyncReseed(final Random random) {
-    if (!isAlive() ||
+    if (getState() == State.TERMINATED ||
         (!byteArrayPrngs.contains(random) && !otherPrngs.contains(random))) {
       return false;
     }
