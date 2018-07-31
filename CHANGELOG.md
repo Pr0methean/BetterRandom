@@ -1,3 +1,6 @@
+# 2.4.2
+* Refactors `RandomSeederThread` to make fewer `instanceof` checks on each PRNG.
+
 # 2.4.1
 * `RandomDotOrgSeedGenerator` and `AesCounterRandom` no longer create `Logger` instances eagerly or
   keep references to them after use, since they very rarely log.

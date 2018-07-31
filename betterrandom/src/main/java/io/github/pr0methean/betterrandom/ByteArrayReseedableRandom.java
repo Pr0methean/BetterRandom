@@ -23,7 +23,8 @@ public interface ByteArrayReseedableRandom /* extends BaseRandom */ {
 
   /**
    * Indicates whether {@link java.util.Random#setSeed(long)} is recommended over {@link
-   * #setSeed(byte[])} when the seed is already in the form of a {@code long}.
+   * #setSeed(byte[])} when the seed is already in the form of a {@code long}. Must return false if
+   * this isn't an instance of {@link java.util.Random}.
    * @return true if {@link java.util.Random#setSeed(long)} will tend to perform better than {@link
    *     #setSeed(byte[])}.
    */
