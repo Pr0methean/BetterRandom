@@ -13,6 +13,7 @@ public class ReseedingSplittableRandomAdapterDemoTest {
     try {
       ReseedingSplittableRandomAdapterDemo.main(NO_ARGS);
     } finally {
+      System.gc();
       RandomSeederThread.stopAllEmpty();
     }
   }
