@@ -3,6 +3,7 @@ package io.github.pr0methean.betterrandom.seed;
 import com.google.common.cache.CacheBuilder;
 import io.github.pr0methean.betterrandom.ByteArrayReseedableRandom;
 import io.github.pr0methean.betterrandom.EntropyCountingRandom;
+import io.github.pr0methean.betterrandom.prng.BaseRandom;
 import io.github.pr0methean.betterrandom.util.LooperThread;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
@@ -253,13 +254,37 @@ public final class RandomSeederThread extends LooperThread {
     // Ensure dying instance is unregistered
     INSTANCES.remove(seedGenerator, this);
     super.interrupt();
+    clear();
+  }
+
+  private void clear() {
     lock.lock();
     try {
       prngs.clear();
       prngsThisIteration.clear();
+      for (ByteArrayReseedableRandom random : byteArrayPrngs) {
+        if (random instanceof BaseRandom) {
+          ((BaseRandom) random).setSeedGenerator(null);
+        }
+      }
+      byteArrayPrngs.clear();
+      byteArrayPrngsThisIteration.clear();
+      otherPrngs.clear();
+      otherPrngsThisIteration.clear();
       seedArrays.clear();
     } finally {
       lock.unlock();
+    }
+  }
+
+  /**
+   * Removes all PRNGs from a given seed generator's thread.
+   * @param seedGenerator the {@link SeedGenerator} of the thread to clear
+   */
+  public static void clear(SeedGenerator seedGenerator) {
+    final RandomSeederThread thread = INSTANCES.get(seedGenerator);
+    if (thread != null) {
+      thread.clear();
     }
   }
 

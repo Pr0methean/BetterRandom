@@ -5,6 +5,7 @@ import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertFalse;
 import static org.testng.Assert.assertTrue;
 
+import io.github.pr0methean.betterrandom.prng.RandomTestUtils;
 import java.util.Arrays;
 import java.util.Locale;
 import java.util.Random;
@@ -43,8 +44,7 @@ public class RandomSeederThreadTest {
         assertFalse(Arrays.equals(bytesWithOldSeed, bytesWithNewSeed));
       }
     } finally {
-      RandomSeederThread.remove(seedGenerator, prng);
-      RandomSeederThread.stopIfEmpty(seedGenerator);
+      RandomTestUtils.removeAndAssertEmpty(seedGenerator);
     }
   }
 
@@ -54,9 +54,7 @@ public class RandomSeederThreadTest {
     RandomSeederThread.add(seedGenerator, prng);
     RandomSeederThread.stopIfEmpty(seedGenerator);
     assertTrue(RandomSeederThread.hasInstance(seedGenerator));
-    RandomSeederThread.remove(seedGenerator, prng);
-    RandomSeederThread.stopIfEmpty(seedGenerator);
-    assertFalse(RandomSeederThread.hasInstance(seedGenerator));
+    RandomTestUtils.removeAndAssertEmpty(seedGenerator);
   }
 
   @Test public void testStopAllEmpty() throws Exception {
@@ -99,8 +97,7 @@ public class RandomSeederThreadTest {
         assertTrue(threadFound, "Couldn't find the seeder thread!");
         prng.nextInt(); // prevent GC before this point
       } finally {
-        RandomSeederThread.remove(generator, prng);
-        RandomSeederThread.stopIfEmpty(generator);
+        RandomTestUtils.removeAndAssertEmpty(generator, prng);
       }
     } finally {
       RandomSeederThread.setDefaultPriority(Thread.NORM_PRIORITY);
@@ -126,8 +123,7 @@ public class RandomSeederThreadTest {
       }
       assertTrue(threadFound, "Couldn't find the seeder thread!");
     } finally {
-      RandomSeederThread.remove(generator, prng);
-      RandomSeederThread.stopIfEmpty(generator);
+      RandomTestUtils.removeAndAssertEmpty(generator, prng);
     }
   }
 }
