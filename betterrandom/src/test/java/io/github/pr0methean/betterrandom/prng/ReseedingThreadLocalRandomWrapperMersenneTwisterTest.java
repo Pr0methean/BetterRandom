@@ -23,11 +23,7 @@ public class ReseedingThreadLocalRandomWrapperMersenneTwisterTest
     SeedGenerator seedGenerator = getTestSeedGenerator();
 
     mtSupplier = (Serializable & Supplier<BaseRandom>)
-        () -> {
-          BaseRandom out = new MersenneTwisterRandom(seedGenerator);
-          out.debugEntropy = true;
-          return out;
-        };
+        () -> new MersenneTwisterRandom(seedGenerator);
   }
 
   @TestingDeficiency
@@ -50,7 +46,11 @@ public class ReseedingThreadLocalRandomWrapperMersenneTwisterTest
 
   @SuppressWarnings("BusyWait") @Override @Test public void testReseeding() {
     final SeedGenerator testSeedGenerator = getTestSeedGenerator();
-    final BaseRandom rng = new ReseedingThreadLocalRandomWrapper(testSeedGenerator, mtSupplier);
+    final BaseRandom rng = new ReseedingThreadLocalRandomWrapper(testSeedGenerator, () -> {
+      BaseRandom out = new MersenneTwisterRandom(seedGenerator);
+      out.debugEntropy = true;
+      return out;
+    });
     RandomTestUtils.testThreadLocalReseeding(testSeedGenerator, rng);
   }
 
