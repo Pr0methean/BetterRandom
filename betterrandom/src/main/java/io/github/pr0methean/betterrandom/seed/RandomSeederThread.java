@@ -202,6 +202,7 @@ public final class RandomSeederThread extends LooperThread {
       otherPrngsThisIteration.addAll(otherPrngs);
       byteArrayPrngsThisIteration.addAll(byteArrayPrngs);
       if (otherPrngsThisIteration.isEmpty() && byteArrayPrngsThisIteration.isEmpty()) {
+        LOG.info("Thread for %s is empty", seedGenerator);
         waitWhileEmpty.await();
       } else {
         break;
@@ -215,16 +216,20 @@ public final class RandomSeederThread extends LooperThread {
         final ByteArrayReseedableRandom random = byteArrayPrngsIterator.next();
         byteArrayPrngsIterator.remove();
         if (stillDefinitelyHasEntropy(random)) {
+          LOG.info("Thread for %s: skipping %s (still has entropy)", seedGenerator, random);
           continue;
         }
         entropyConsumed = true;
         if (random.preferSeedWithLong()) {
           reseedWithLong((Random) random);
         } else {
+          LOG.info("Thread for %s: generating byte[] seed for %s", seedGenerator, random);
           final byte[] seedArray =
               seedArrays.computeIfAbsent(random, random_ -> new byte[random_.getNewSeedLength()]);
           seedGenerator.generateSeed(seedArray);
+          LOG.info("Thread for %s: reseeding %s", seedGenerator, random);
           random.setSeed(seedArray);
+          LOG.info("Thread for %s: done reseeding %s", seedGenerator, random);
         }
       }
       final Iterator<Random> otherPrngsIterator = otherPrngsThisIteration.iterator();
@@ -232,6 +237,7 @@ public final class RandomSeederThread extends LooperThread {
         final Random random = otherPrngsIterator.next();
         otherPrngsIterator.remove();
         if (stillDefinitelyHasEntropy(random)) {
+          LOG.info("Thread for %s: skipping %s (still has entropy)", seedGenerator, random);
           continue;
         }
         entropyConsumed = true;
@@ -247,19 +253,23 @@ public final class RandomSeederThread extends LooperThread {
       return false;
     }
     if (!entropyConsumed) {
+      LOG.info("Thread for %s: sleeping because no entropy was consumed", seedGenerator);
       waitForEntropyDrain.await(POLL_INTERVAL, TimeUnit.SECONDS);
     }
     return true;
   }
 
   private void reseedWithLong(Random random) {
+    LOG.info("Thread for %s: generating long seed for %s", seedGenerator, random);
     seedGenerator.generateSeed(longSeedArray);
+    LOG.info("Thread for %s: reseeding %s", seedGenerator, random);
     random.setSeed(longSeedBuffer.getLong(0));
+    LOG.info("Thread for %s: done reseeding %s", seedGenerator, random);
   }
 
   private static boolean stillDefinitelyHasEntropy(Object random) {
-    return (random instanceof EntropyCountingRandom) && (
-        ((EntropyCountingRandom) random).getEntropyBits() > 0);
+    return (random instanceof EntropyCountingRandom) &&
+        (((EntropyCountingRandom) random).getEntropyBits() > 0);
   }
 
   @Override public void interrupt() {
