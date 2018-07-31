@@ -3,7 +3,6 @@ package io.github.pr0methean.betterrandom.prng;
 import com.google.common.collect.ImmutableList;
 import io.github.pr0methean.betterrandom.seed.SeedException;
 import java.util.Random;
-import org.testng.annotations.Factory;
 import org.testng.annotations.Test;
 
 @Test(testName = "RandomWrapper:AesCounterRandom")
@@ -20,7 +19,7 @@ public class RandomWrapperAesCounterRandomTest extends AesCounterRandomTest {
 
   @Override @Test public void testThreadSafetySetSeed() {
     testThreadSafetyVsCrashesOnly(30,
-        ImmutableList.of(NEXT_LONG, NEXT_INT, NEXT_DOUBLE, NEXT_GAUSSIAN, SET_SEED, SET_WRAPPED));
+        ImmutableList.of(NEXT_LONG, NEXT_INT, NEXT_DOUBLE, NEXT_GAUSSIAN, setSeed, SET_WRAPPED));
   }
 
   @Override @Test(enabled = false) public void testAdvanceForward() {

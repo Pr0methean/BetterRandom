@@ -1,7 +1,6 @@
 package io.github.pr0methean.betterrandom.prng.adapter;
 
 import static io.github.pr0methean.betterrandom.TestUtils.assertGreaterOrEqual;
-import static io.github.pr0methean.betterrandom.seed.DefaultSeedGenerator.DEFAULT_SEED_GENERATOR;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertFalse;
 import static org.testng.Assert.assertNotEquals;
@@ -15,8 +14,6 @@ import io.github.pr0methean.betterrandom.seed.RandomSeederThread;
 import io.github.pr0methean.betterrandom.seed.SeedException;
 import io.github.pr0methean.betterrandom.seed.SeedGenerator;
 import io.github.pr0methean.betterrandom.util.BinaryUtils;
-import java.util.Arrays;
-import org.testng.annotations.AfterClass;
 import org.testng.annotations.Test;
 
 @SuppressWarnings("BusyWait")
@@ -120,6 +117,6 @@ public class ReseedingSplittableRandomAdapterTest extends SingleThreadSplittable
 
   /** Assertion-free because thread-local. */
   @Override @Test public void testThreadSafety() {
-    testThreadSafetyVsCrashesOnly(30, FUNCTIONS_FOR_THREAD_SAFETY_TEST);
+    testThreadSafetyVsCrashesOnly(30, functionsForThreadSafetyTest);
   }
 }
