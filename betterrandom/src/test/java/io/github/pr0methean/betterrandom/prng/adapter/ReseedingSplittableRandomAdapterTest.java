@@ -3,6 +3,7 @@ package io.github.pr0methean.betterrandom.prng.adapter;
 import static io.github.pr0methean.betterrandom.TestUtils.assertGreaterOrEqual;
 import static io.github.pr0methean.betterrandom.seed.DefaultSeedGenerator.DEFAULT_SEED_GENERATOR;
 import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertFalse;
 import static org.testng.Assert.assertNotEquals;
 
 import io.github.pr0methean.betterrandom.CloneViaSerialization;
@@ -113,15 +114,12 @@ public class ReseedingSplittableRandomAdapterTest extends SingleThreadSplittable
     } finally {
       System.gc();
       RandomSeederThread.stopIfEmpty(generator);
+      assertFalse(RandomSeederThread.hasInstance(generator));
     }
   }
 
   /** Assertion-free because thread-local. */
   @Override @Test public void testThreadSafety() {
     testThreadSafetyVsCrashesOnly(30, FUNCTIONS_FOR_THREAD_SAFETY_TEST);
-  }
-
-  @AfterClass public void tearDownClass() {
-    RandomSeederThread.stopAllEmpty();
   }
 }

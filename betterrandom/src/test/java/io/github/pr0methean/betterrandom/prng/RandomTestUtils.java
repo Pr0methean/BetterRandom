@@ -17,6 +17,7 @@ package io.github.pr0methean.betterrandom.prng;
 
 import static io.github.pr0methean.betterrandom.TestUtils.assertGreaterOrEqual;
 import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertFalse;
 import static org.testng.Assert.assertNotSame;
 
 import io.github.pr0methean.betterrandom.CloneViaSerialization;
@@ -270,6 +271,12 @@ public enum RandomTestUtils {
     } finally {
       RandomSeederThread.setPriority(testSeedGenerator, Thread.NORM_PRIORITY);
     }
+  }
+
+  public static void removeAndAssertEmpty(SeedGenerator seedGenerator, Random... prngs) {
+    RandomSeederThread.remove(seedGenerator, prngs);
+    RandomSeederThread.stopIfEmpty(seedGenerator);
+    assertFalse(RandomSeederThread.hasInstance(seedGenerator));
   }
 
   public enum EntropyCheckMode {

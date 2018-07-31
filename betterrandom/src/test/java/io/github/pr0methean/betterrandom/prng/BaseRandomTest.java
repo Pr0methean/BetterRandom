@@ -8,8 +8,6 @@ import static io.github.pr0methean.betterrandom.prng.RandomTestUtils.assertMonte
 import static io.github.pr0methean.betterrandom.prng.RandomTestUtils.checkRangeAndEntropy;
 import static io.github.pr0methean.betterrandom.prng.RandomTestUtils.checkStream;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyInt;
-import static org.powermock.api.mockito.PowerMockito.doAnswer;
 import static org.powermock.api.mockito.PowerMockito.when;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertFalse;
@@ -25,7 +23,6 @@ import io.github.pr0methean.betterrandom.CloneViaSerialization;
 import io.github.pr0methean.betterrandom.TestUtils;
 import io.github.pr0methean.betterrandom.prng.RandomTestUtils.EntropyCheckMode;
 import io.github.pr0methean.betterrandom.prng.adapter.SplittableRandomAdapter;
-import io.github.pr0methean.betterrandom.seed.DefaultSeedGenerator;
 import io.github.pr0methean.betterrandom.seed.FakeSeedGenerator;
 import io.github.pr0methean.betterrandom.seed.RandomSeederThread;
 import io.github.pr0methean.betterrandom.seed.SeedException;
@@ -53,13 +50,7 @@ import java.util.function.DoubleConsumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
 import org.apache.commons.math3.stat.descriptive.SynchronizedDescriptiveStatistics;
-import org.powermock.api.mockito.PowerMockito;
-import org.powermock.api.mockito.mockpolicies.Slf4jMockPolicy;
-import org.powermock.core.classloader.annotations.MockPolicy;
-import org.powermock.core.classloader.annotations.PowerMockIgnore;
-import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.testng.PowerMockTestCase;
-import org.powermock.reflect.Whitebox;
 import org.testng.Reporter;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.Test;
@@ -280,14 +271,10 @@ public abstract class BaseRandomTest extends PowerMockTestCase {
     rng.setSeedGenerator(seedGenerator);
     try {
       final BaseRandom rng2 = CloneViaSerialization.clone(rng);
-      try {
-        assertEquals(seedGenerator, rng2.getSeedGenerator());
-      } finally {
-        rng2.setSeedGenerator(null);
-      }
+      assertEquals(seedGenerator, rng2.getSeedGenerator());
+      rng2.setSeedGenerator(null);
     } finally {
-      rng.setSeedGenerator(null);
-      RandomSeederThread.stopIfEmpty(seedGenerator);
+      RandomTestUtils.removeAndAssertEmpty(seedGenerator, rng);
     }
   }
 
@@ -407,11 +394,9 @@ public abstract class BaseRandomTest extends PowerMockTestCase {
       Thread.sleep(100); // entropy update may not be co-atomic with seed update
       assertGreaterOrEqual(rng.getEntropyBits(), (newSeed.length * 8L) - 1);
     } finally {
-      rng.setSeedGenerator(null);
-      RandomSeederThread.stopIfEmpty(seedGenerator);
+      RandomTestUtils.removeAndAssertEmpty(seedGenerator, rng);
     }
     assertNull(rng.getSeedGenerator());
-    assertFalse(RandomSeederThread.hasInstance(seedGenerator));
   }
 
   @Test(timeOut = 10_000) public void testWithProbability() {
@@ -795,6 +780,7 @@ public abstract class BaseRandomTest extends PowerMockTestCase {
   }
 
   @AfterClass public void classTearDown() {
+    RandomSeederThread.clear(getTestSeedGenerator());
     System.gc();
     RandomSeederThread.stopAllEmpty();
   }

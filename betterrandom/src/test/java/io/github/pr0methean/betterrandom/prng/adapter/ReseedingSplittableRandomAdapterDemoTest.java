@@ -1,5 +1,6 @@
 package io.github.pr0methean.betterrandom.prng.adapter;
 
+import io.github.pr0methean.betterrandom.seed.DefaultSeedGenerator;
 import io.github.pr0methean.betterrandom.seed.RandomSeederThread;
 import io.github.pr0methean.betterrandom.seed.SeedException;
 import org.testng.annotations.Test;
@@ -13,7 +14,7 @@ public class ReseedingSplittableRandomAdapterDemoTest {
     try {
       ReseedingSplittableRandomAdapterDemo.main(NO_ARGS);
     } finally {
-      System.gc();
+      RandomSeederThread.clear(DefaultSeedGenerator.DEFAULT_SEED_GENERATOR);
       RandomSeederThread.stopAllEmpty();
     }
   }
