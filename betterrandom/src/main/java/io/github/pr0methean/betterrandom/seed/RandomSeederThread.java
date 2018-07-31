@@ -239,8 +239,19 @@ public final class RandomSeederThread extends LooperThread {
             System.out.format("At %d: Done reseeding %s%n", System.nanoTime(), reseedable);
           }
         } else {
+          boolean debug =
+              (random instanceof BaseRandom && ((BaseRandom) random).debugEntropy);
+          if (debug) {
+            System.out.format("At %d: Generating a new seed for %s%n", System.nanoTime(), reseedable);
+          }
           seedGenerator.generateSeed(longSeedArray);
+          if (debug) {
+            System.out.format("At %d: Applying the new seed to %s%n", System.nanoTime(), reseedable);
+          }
           random.setSeed(longSeedBuffer.getLong(0));
+          if (debug) {
+            System.out.format("At %d: Done reseeding %s%n", System.nanoTime(), reseedable);
+          }
         }
       } catch (final Throwable t) {
         // Must unlock before interrupt; otherwise we somehow get a deadlock
