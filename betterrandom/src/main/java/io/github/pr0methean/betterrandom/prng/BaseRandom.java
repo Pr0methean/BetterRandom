@@ -745,6 +745,7 @@ public abstract class BaseRandom extends Random
 
   @Override public long getEntropyBits() {
     if (debugEntropy) {
+      Thread.dumpStack();
       System.out.format("At %d: Reading the entropy of %s%n", System.nanoTime(), this);
     }
     return entropyBits.get();
