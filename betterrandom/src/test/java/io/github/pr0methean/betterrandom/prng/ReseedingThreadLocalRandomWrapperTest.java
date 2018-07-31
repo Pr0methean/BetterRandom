@@ -38,7 +38,7 @@ public class ReseedingThreadLocalRandomWrapperTest extends ThreadLocalRandomWrap
     final SeedGenerator testSeedGenerator = getTestSeedGenerator();
     final BaseRandom rng = new ReseedingThreadLocalRandomWrapper(testSeedGenerator,
         () -> {
-          BaseRandom out = new Pcg64Random(seedGenerator);
+          BaseRandom out = new Pcg64Random(testSeedGenerator);
           out.debugEntropy = true;
           return out;
         });
