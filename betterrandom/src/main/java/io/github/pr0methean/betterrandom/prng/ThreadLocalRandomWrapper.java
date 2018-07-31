@@ -160,7 +160,6 @@ public class ThreadLocalRandomWrapper extends RandomWrapper {
     if (threadLocal != null) {
       final BaseRandom wrapped = getWrapped();
       wrapped.setSeed(seed);
-      wrapped.creditEntropyForNewSeed(Long.BYTES);
     }
   }
 
@@ -172,11 +171,14 @@ public class ThreadLocalRandomWrapper extends RandomWrapper {
     if (threadLocal != null) {
       final BaseRandom wrapped = getWrapped();
       wrapped.setSeed(seed);
-      wrapped.creditEntropyForNewSeed(seed.length);
     }
     if (this.seed == null) {
       this.seed = seed.clone(); // Needed for serialization
     }
+  }
+
+  @Override protected void creditEntropyForNewSeed(int seedLength) {
+    throw new AssertionError("Caller should have been overridden");
   }
 
   @Override protected void debitEntropy(final long bits) {
