@@ -30,9 +30,9 @@ public abstract class AbstractLargeSeedRandomTest extends BaseRandomTest {
     oldDefaultSeedGenerator = DefaultSeedGenerator.DEFAULT_SEED_GENERATOR;
     DefaultSeedGenerator mockDefaultSeedGenerator = PowerMockito.mock(DefaultSeedGenerator.class);
     when(mockDefaultSeedGenerator.generateSeed(anyInt())).thenAnswer(invocation ->
-        SEMIFAKE_SEED_GENERATOR.generateSeed((Integer) (invocation.getArgument(0))));
+        semiFakeSeedGenerator.generateSeed((Integer) (invocation.getArgument(0))));
     doAnswer(invocation -> {
-      SEMIFAKE_SEED_GENERATOR.generateSeed((byte[]) invocation.getArgument(0));
+      semiFakeSeedGenerator.generateSeed((byte[]) invocation.getArgument(0));
       return null;
     }).when(mockDefaultSeedGenerator).generateSeed(any(byte[].class));
     Whitebox.setInternalState(DefaultSeedGenerator.class, "DEFAULT_SEED_GENERATOR",
