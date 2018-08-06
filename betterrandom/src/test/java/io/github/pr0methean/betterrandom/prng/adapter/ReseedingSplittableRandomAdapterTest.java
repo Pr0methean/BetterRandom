@@ -11,6 +11,7 @@ import io.github.pr0methean.betterrandom.prng.RandomTestUtils;
 import io.github.pr0methean.betterrandom.prng.RandomTestUtils.EntropyCheckMode;
 import io.github.pr0methean.betterrandom.seed.FakeSeedGenerator;
 import io.github.pr0methean.betterrandom.seed.RandomSeederThread;
+import io.github.pr0methean.betterrandom.seed.SecureRandomSeedGenerator;
 import io.github.pr0methean.betterrandom.seed.SeedException;
 import io.github.pr0methean.betterrandom.seed.SeedGenerator;
 import io.github.pr0methean.betterrandom.util.BinaryUtils;
@@ -42,7 +43,9 @@ public class ReseedingSplittableRandomAdapterTest extends SingleThreadSplittable
   }
 
   @Override @Test public void testSerializable() throws SeedException {
-    final BaseSplittableRandomAdapter adapter = createRng();
+    final BaseSplittableRandomAdapter adapter =
+        ReseedingSplittableRandomAdapter.getInstance(
+            SecureRandomSeedGenerator.SECURE_RANDOM_SEED_GENERATOR);
     assertEquals(adapter, CloneViaSerialization.clone(adapter));
   }
 
