@@ -623,6 +623,7 @@
             </dependency>
           </dependencies>
           <configuration>
+            <stagingRepositoryId>sonatype-nexus-staging</stagingRepositoryId>
             <autoVersionSubmodules>true</autoVersionSubmodules>
             <useReleaseProfile>false</useReleaseProfile>
             <releaseProfiles>release-sign-artifacts</releaseProfiles>
