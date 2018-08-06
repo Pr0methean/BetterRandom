@@ -625,6 +625,7 @@
           <configuration>
             <mavenExecutorId>forked-path</mavenExecutorId>
             <preparationGoals>clean pre-integration-test</preparationGoals>
+            <goals>deploy nexus-staging:close nexus-staging:release</goals>
           </configuration>
         </plugin>
 
