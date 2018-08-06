@@ -552,8 +552,11 @@
             </dependency>
           </dependencies>
           <configuration>
-            <mavenExecutorId>forked-path</mavenExecutorId>
+            <autoVersionSubmodules>true</autoVersionSubmodules>
+            <useReleaseProfile>false</useReleaseProfile>
+            <releaseProfiles>release-sign-artifacts</releaseProfiles>
             <preparationGoals>clean pre-integration-test</preparationGoals>
+            <goals>deploy nexus-staging:release</goals>
           </configuration>
         </plugin>
 
