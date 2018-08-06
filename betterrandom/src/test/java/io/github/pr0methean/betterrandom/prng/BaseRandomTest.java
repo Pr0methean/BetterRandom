@@ -25,6 +25,7 @@ import io.github.pr0methean.betterrandom.prng.RandomTestUtils.EntropyCheckMode;
 import io.github.pr0methean.betterrandom.prng.adapter.SplittableRandomAdapter;
 import io.github.pr0methean.betterrandom.seed.FakeSeedGenerator;
 import io.github.pr0methean.betterrandom.seed.RandomSeederThread;
+import io.github.pr0methean.betterrandom.seed.SecureRandomSeedGenerator;
 import io.github.pr0methean.betterrandom.seed.SeedException;
 import io.github.pr0methean.betterrandom.seed.SeedGenerator;
 import io.github.pr0methean.betterrandom.seed.SemiFakeSeedGenerator;
@@ -58,7 +59,7 @@ import org.testng.annotations.Test;
 public abstract class BaseRandomTest extends PowerMockTestCase {
 
   protected final SeedGenerator semiFakeSeedGenerator
-      = new SemiFakeSeedGenerator(new SplittableRandomAdapter());
+      = new SemiFakeSeedGenerator(new SplittableRandomAdapter(SecureRandomSeedGenerator.SECURE_RANDOM_SEED_GENERATOR));
 
   /**
    * The square root of 12, rounded from an extended-precision calculation that was done by Wolfram
