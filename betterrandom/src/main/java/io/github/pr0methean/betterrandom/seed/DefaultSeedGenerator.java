@@ -45,18 +45,5 @@ public enum DefaultSeedGenerator implements SeedGenerator {
    */
   @Override public void generateSeed(final byte[] output) throws SeedException {
     throw new AssertionError("DefaultSeedGenerator called");
-    for (final SeedGenerator generator : GENERATORS) {
-      if (generator.isWorthTrying()) {
-        try {
-          generator.generateSeed(output);
-          return;
-        } catch (final SeedException ignored) {
-          // Try the next one
-        }
-      }
-    }
-    // This shouldn't happen as at least one the generators should be
-    // able to generate a seed.
-    throw new SeedException("All available seed generation strategies failed.");
   }
 }
