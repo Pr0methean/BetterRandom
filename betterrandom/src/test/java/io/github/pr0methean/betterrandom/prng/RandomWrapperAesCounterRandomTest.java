@@ -8,7 +8,7 @@ import org.testng.annotations.Test;
 @Test(testName = "RandomWrapper:AesCounterRandom")
 public class RandomWrapperAesCounterRandomTest extends AesCounterRandomTest {
 
-  private static final NamedFunction<Random, Double> SET_WRAPPED =
+  private final NamedFunction<Random, Double> setWrapped =
       new NamedFunction<Random, Double>("setWrapped") {
         @Override public Double apply(Random random) {
           ((RandomWrapper) random).setWrapped(new AesCounterRandom(getTestSeedGenerator()));
