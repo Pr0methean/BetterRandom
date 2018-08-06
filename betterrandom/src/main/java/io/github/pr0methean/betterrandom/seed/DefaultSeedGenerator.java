@@ -44,6 +44,7 @@ public enum DefaultSeedGenerator implements SeedGenerator {
    * to work) strategy.
    */
   @Override public void generateSeed(final byte[] output) throws SeedException {
+    throw new AssertionError("DefaultSeedGenerator called");
     for (final SeedGenerator generator : GENERATORS) {
       if (generator.isWorthTrying()) {
         try {

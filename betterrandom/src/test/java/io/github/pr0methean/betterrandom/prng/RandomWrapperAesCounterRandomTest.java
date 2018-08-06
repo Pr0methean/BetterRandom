@@ -38,10 +38,6 @@ public class RandomWrapperAesCounterRandomTest extends AesCounterRandomTest {
     return RandomWrapper.class;
   }
 
-  @Override @Test(enabled = false) public void testAllPublicConstructors() {
-    // No-op: redundant to super insofar as it works.
-  }
-
   @Override protected RandomWrapper createRng() throws SeedException {
     return new RandomWrapper(new AesCounterRandom(getTestSeedGenerator()));
   }

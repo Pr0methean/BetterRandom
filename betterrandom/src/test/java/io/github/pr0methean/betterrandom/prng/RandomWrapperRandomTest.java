@@ -56,16 +56,6 @@ public class RandomWrapperRandomTest extends BaseRandomTest {
         ImmutableList.of(NEXT_LONG, NEXT_INT, NEXT_DOUBLE, NEXT_GAUSSIAN, SET_WRAPPED));
   }
 
-  @Override public void testSetSeedLong() throws SeedException {
-    final BaseRandom rng = createRng();
-    final BaseRandom rng2 = createRng();
-    rng.nextLong(); // ensure they won't both be in initial state before reseeding
-    rng.setSeed(0x0123456789ABCDEFL);
-    rng2.setSeed(0x0123456789ABCDEFL);
-    RandomTestUtils.assertEquivalent(rng, rng2, 20,
-        "Output mismatch after reseeding with same seed");
-  }
-
   /**
    * Test to ensure that two distinct RNGs with the same seed return the same sequence of numbers.
    */

@@ -121,13 +121,6 @@ public abstract class BaseRandomTest extends PowerMockTestCase {
     return EntropyCheckMode.EXACT;
   }
 
-  @Test(timeOut = 120_000) public void testAllPublicConstructors()
-      throws SeedException, IllegalAccessException, InstantiationException,
-      InvocationTargetException {
-    TestUtils.testConstructors(getClassUnderTest(), false, ImmutableMap.copyOf(constructorParams()),
-        BaseRandom::nextInt);
-  }
-
   protected Map<Class<?>, Object> constructorParams() {
     final int seedLength = getNewSeedLength(createRng());
     final HashMap<Class<?>, Object> params = new HashMap<>(4);
@@ -276,11 +269,6 @@ public abstract class BaseRandomTest extends PowerMockTestCase {
     } finally {
       RandomTestUtils.removeAndAssertEmpty(seedGenerator, rng);
     }
-  }
-
-  /** Assertion-free since many implementations have a fallback behavior. */
-  @Test(timeOut = 60_000) public void testSetSeedLong() {
-    createRng().setSeed(0x0123456789ABCDEFL);
   }
 
   @Test(timeOut = 15_000) public void testSetSeedAfterNextLong() throws SeedException {

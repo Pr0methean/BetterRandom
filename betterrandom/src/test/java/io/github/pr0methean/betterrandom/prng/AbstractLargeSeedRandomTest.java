@@ -6,8 +6,6 @@ import static org.powermock.api.mockito.PowerMockito.doAnswer;
 import static org.powermock.api.mockito.PowerMockito.when;
 
 import io.github.pr0methean.betterrandom.seed.DefaultSeedGenerator;
-import io.github.pr0methean.betterrandom.seed.SeedException;
-import java.lang.reflect.InvocationTargetException;
 import org.powermock.api.mockito.PowerMockito;
 import org.powermock.api.mockito.mockpolicies.Slf4jMockPolicy;
 import org.powermock.core.classloader.annotations.MockPolicy;
@@ -42,25 +40,5 @@ public abstract class AbstractLargeSeedRandomTest extends BaseRandomTest {
   protected void unmockDefaultSeedGenerator() {
     Whitebox.setInternalState(DefaultSeedGenerator.class, "DEFAULT_SEED_GENERATOR",
         oldDefaultSeedGenerator);
-  }
-
-  @Override public void testAllPublicConstructors()
-      throws SeedException, IllegalAccessException, InstantiationException,
-      InvocationTargetException {
-    mockDefaultSeedGenerator();
-    try {
-      super.testAllPublicConstructors();
-    } finally {
-      unmockDefaultSeedGenerator();
-    }
-  }
-
-  @Override public void testSetSeedLong() {
-    mockDefaultSeedGenerator();
-    try {
-      super.testSetSeedLong();
-    } finally {
-      unmockDefaultSeedGenerator();
-    }
   }
 }

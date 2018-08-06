@@ -76,11 +76,6 @@ public class ReseedingSplittableRandomAdapterTest extends SingleThreadSplittable
     prng.nextInt();
   }
 
-  /** Assertion-free since reseeding may cause divergent output. */
-  @Override @Test(timeOut = 10000) public void testSetSeedLong() {
-    createRng().setSeed(0x0123456789ABCDEFL);
-  }
-
   /**
    * This class manages its own interaction with a RandomSeederThread, so setSeederThread makes no
    * sense.
