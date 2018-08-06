@@ -628,7 +628,7 @@
             </dependency>
           </dependencies>
           <configuration>
-            <stagingRepositoryId />
+            <stagingRepositoryId></stagingRepositoryId>
             <autoVersionSubmodules>true</autoVersionSubmodules>
             <useReleaseProfile>false</useReleaseProfile>
             <releaseProfiles>release-sign-artifacts</releaseProfiles>
