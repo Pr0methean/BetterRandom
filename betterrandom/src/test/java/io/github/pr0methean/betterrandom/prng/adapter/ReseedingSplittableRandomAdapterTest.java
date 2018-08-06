@@ -24,7 +24,7 @@ public class ReseedingSplittableRandomAdapterTest extends SingleThreadSplittable
   }
 
   @Override protected ReseedingSplittableRandomAdapter createRng() throws SeedException {
-    return ReseedingSplittableRandomAdapter.getDefaultInstance();
+    return ReseedingSplittableRandomAdapter.getInstance(getTestSeedGenerator());
   }
 
   // FIXME: Why does this need more time than other PRNGs?!
