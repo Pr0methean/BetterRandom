@@ -64,8 +64,6 @@
       <class name="io.github.pr0methean.betterrandom.prng.BaseRandomStaticTest"/>
       <class name="io.github.pr0methean.betterrandom.util.BinaryUtilsTest"/>
       <class name="io.github.pr0methean.betterrandom.util.LooperThreadTest"/>
-      <class
-        name="io.github.pr0methean.betterrandom.prng.adapter.ReseedingSplittableRandomAdapterDemoTest"/>
     </classes>
   </test>
 </suite>
