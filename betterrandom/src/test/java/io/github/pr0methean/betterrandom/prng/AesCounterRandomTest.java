@@ -91,7 +91,9 @@ public class AesCounterRandomTest extends SeekableRandomTest {
     final long[] seeds =
         {masterRNG.nextLong(), masterRNG.nextLong(), masterRNG.nextLong(), masterRNG.nextLong()};
     final long otherSeed = masterRNG.nextLong();
-    final AesCounterRandom[] rngs = {new AesCounterRandom(16), new AesCounterRandom(16)};
+    final AesCounterRandom[] rngs = {
+        new AesCounterRandom(getTestSeedGenerator().generateSeed(16)),
+        new AesCounterRandom(getTestSeedGenerator().generateSeed(16))};
     for (int i = 0; i < 2; i++) {
       for (final long seed : seeds) {
         final byte[] originalSeed = rngs[i].getSeed();
