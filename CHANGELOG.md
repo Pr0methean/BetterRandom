@@ -1,3 +1,6 @@
+# 2.4.3
+* Reduces unit-test flakiness further on systems where `DefaultSeedGenerator` is slow.
+
 # 2.4.2
 * `BaseRandom#getSeedGenerator` and `BaseRandom#setSeedGenerator(SeedGenerator)` no longer give
   misleading results after the `RandomSeederThread` has crashed.
