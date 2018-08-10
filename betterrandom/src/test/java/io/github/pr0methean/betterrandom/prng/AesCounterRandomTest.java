@@ -59,10 +59,9 @@ public class AesCounterRandomTest extends SeekableRandomTest {
    */
   @Parameters("seedSize")
   @BeforeClass
-  public void checkRunnable() throws NoSuchAlgorithmException {
+  public void setSeedSize(final int seedSize) {
     DeadlockWatchdogThread.ensureStarted();
-    if (Cipher.getMaxAllowedKeyLength("AES") <
-        8 * (seedSize - AesCounterRandom.COUNTER_SIZE_BYTES)) {
+    if (seedSize > MAX_SIZE) {
       assertFalse(seedSize <= 32, "Can't handle a 32-byte seed");
       throw new SkipException(
           "Test can't run without jurisdiction policy files that allow larger AES keys");
@@ -90,6 +89,9 @@ public class AesCounterRandomTest extends SeekableRandomTest {
 
   @SuppressWarnings("ObjectAllocationInLoop") @Override @Test(timeOut = 40_000)
   public void testSetSeedAfterNextLong() throws SeedException {
+    if (seedSizeBytes > 16) {
+      throw new SkipException("Skipping a redundant test");
+    }
     // can't use a real SeedGenerator since we need longs, so use a Random
     final Random masterRNG = new Random();
     final long[] seeds =
