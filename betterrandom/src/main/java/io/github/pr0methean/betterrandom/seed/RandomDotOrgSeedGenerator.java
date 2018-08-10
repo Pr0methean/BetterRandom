@@ -41,7 +41,6 @@ import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
-import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
@@ -115,7 +114,6 @@ public enum RandomDotOrgSeedGenerator implements SeedGenerator {
   private static final Duration RETRY_DELAY = Duration.ofSeconds(10);
   static final Lock cacheLock = new ReentrantLock();
   private static final Charset UTF8 = Charset.forName("UTF-8");
-  private static final Logger LOG = LoggerFactory.getLogger(RandomDotOrgSeedGenerator.class);
   private static volatile Instant earliestNextAttempt = Instant.MIN;
   static volatile byte[] cache = new byte[MAX_CACHE_SIZE];
   static volatile int cacheOffset = cache.length;
@@ -197,7 +195,8 @@ public enum RandomDotOrgSeedGenerator implements SeedGenerator {
           for (String line = reader.readLine(); line != null; line = reader.readLine()) {
             ++index;
             if (index >= numberOfBytes) {
-              LOG.warn("random.org sent more data than requested.");
+              LoggerFactory.getLogger(RandomDotOrgSeedGenerator.class)
+                  .warn("random.org sent more data than requested.");
               break;
             }
             try {

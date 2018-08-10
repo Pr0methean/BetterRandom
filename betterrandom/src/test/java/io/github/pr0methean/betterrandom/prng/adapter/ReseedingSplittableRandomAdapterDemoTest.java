@@ -1,5 +1,7 @@
 package io.github.pr0methean.betterrandom.prng.adapter;
 
+import io.github.pr0methean.betterrandom.seed.DefaultSeedGenerator;
+import io.github.pr0methean.betterrandom.seed.RandomSeederThread;
 import io.github.pr0methean.betterrandom.seed.SeedException;
 import org.testng.annotations.Test;
 
@@ -9,6 +11,11 @@ public class ReseedingSplittableRandomAdapterDemoTest {
 
   @Test(timeOut = 120_000) public void ensureNoDemoCrash()
       throws SeedException, InterruptedException {
-    ReseedingSplittableRandomAdapterDemo.main(NO_ARGS);
+    try {
+      ReseedingSplittableRandomAdapterDemo.main(NO_ARGS);
+    } finally {
+      RandomSeederThread.clear(DefaultSeedGenerator.DEFAULT_SEED_GENERATOR);
+      RandomSeederThread.stopAllEmpty();
+    }
   }
 }

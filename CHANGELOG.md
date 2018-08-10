@@ -1,5 +1,22 @@
-# 2.4.1
+# 2.5.0
 * Adds `Pcg128Random`, a variant of `Pcg64Random` that uses a 128-bit seed and state.
+
+# 2.4.3
+* Reduces unit-test flakiness further on systems where `DefaultSeedGenerator` is slow.
+
+# 2.4.2
+* `BaseRandom#getSeedGenerator` and `BaseRandom#setSeedGenerator(SeedGenerator)` no longer give
+  misleading results after the `RandomSeederThread` has crashed.
+* PRNGs associated with a running `RandomSeederThread` can now be garbage-collected slightly sooner.
+* May improve `RandomSeederThread` performance.
+* Reduces unit-test flakiness and shortens `RandomSeederThread` lifespan during tests.
+
+# 2.4.1
+* `RandomDotOrgSeedGenerator` and `AesCounterRandom` no longer create `Logger` instances eagerly or
+  keep references to them after use, since they very rarely log.
+* `Cmwc4096RandomTest` now uses a mock `DefaultSeedGenerator`, improving performance on systems
+  where the real one is slow.
+* Other PRNG tests make less use of `DefaultSeedGenerator`.
 
 # 2.4.0
 * Removes `CloneViaSerialization` to the test jar, since it's not used anywhere else.

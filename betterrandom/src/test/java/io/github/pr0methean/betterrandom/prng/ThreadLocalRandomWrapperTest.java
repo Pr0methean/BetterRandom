@@ -4,6 +4,7 @@ import static org.testng.Assert.assertEquals;
 
 import io.github.pr0methean.betterrandom.CloneViaSerialization;
 import io.github.pr0methean.betterrandom.seed.SeedException;
+import io.github.pr0methean.betterrandom.seed.SeedGenerator;
 import java.io.Serializable;
 import java.util.Map;
 import java.util.Random;
@@ -11,7 +12,18 @@ import java.util.function.Function;
 import java.util.function.Supplier;
 import org.testng.annotations.Test;
 
+@Test(testName = "ThreadLocalRandomWrapper")
 public class ThreadLocalRandomWrapperTest extends BaseRandomTest {
+
+  private final Supplier<BaseRandom> pcgSupplier;
+
+  public ThreadLocalRandomWrapperTest() {
+    // Must be done first, or else lambda won't be serializable.
+    final SeedGenerator seedGenerator = getTestSeedGenerator();
+
+    pcgSupplier = (Supplier<BaseRandom> & Serializable)
+        (() -> new Pcg64Random(seedGenerator));
+  }
 
   @Override public void testSerializable()
       throws SeedException {
@@ -73,12 +85,12 @@ public class ThreadLocalRandomWrapperTest extends BaseRandomTest {
 
   /** Assertion-free because thread-local. */
   @Override @Test public void testThreadSafety() {
-    testThreadSafetyVsCrashesOnly(FUNCTIONS_FOR_THREAD_SAFETY_TEST);
+    testThreadSafetyVsCrashesOnly(30, functionsForThreadSafetyTest);
   }
 
   @Override public Map<Class<?>, Object> constructorParams() {
     final Map<Class<?>, Object> params = super.constructorParams();
-    params.put(Supplier.class, (Supplier<BaseRandom>) Pcg64Random::new);
+    params.put(Supplier.class, pcgSupplier);
     params
         .put(Function.class, (Function<byte[], BaseRandom>) Pcg64Random::new);
     return params;
@@ -94,8 +106,7 @@ public class ThreadLocalRandomWrapperTest extends BaseRandomTest {
   }
 
   @Override protected BaseRandom createRng() throws SeedException {
-    return new ThreadLocalRandomWrapper(
-        (Serializable & Supplier<BaseRandom>) Pcg64Random::new);
+    return new ThreadLocalRandomWrapper(pcgSupplier);
   }
 
   @Override protected BaseRandom createRng(final byte[] seed) throws SeedException {

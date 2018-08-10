@@ -15,6 +15,7 @@
 // ============================================================================
 package io.github.pr0methean.betterrandom.prng;
 
+import static org.testng.Assert.assertFalse;
 import static org.testng.Assert.assertTrue;
 
 import io.github.pr0methean.betterrandom.DeadlockWatchdogThread;
@@ -24,39 +25,49 @@ import java.util.Random;
 import javax.crypto.Cipher;
 import org.testng.SkipException;
 import org.testng.annotations.BeforeClass;
-import org.testng.annotations.Factory;
+import org.testng.annotations.DataProvider;
+import org.testng.annotations.Parameters;
 import org.testng.annotations.Test;
 
 /**
  * Unit test for the AES RNG.
  * @author Daniel Dyer
+ * @author Chris Hennick
  */
+@Test(testName = "AesCounterRandom")
 public class AesCounterRandomTest extends SeekableRandomTest {
 
-  private final int seedSizeBytes;
+  protected int seedSizeBytes;
 
-  protected AesCounterRandomTest(int seedSizeBytes) {
-    this.seedSizeBytes = seedSizeBytes;
+  private static final int MAX_SIZE;
+
+  static {
+    try {
+      MAX_SIZE = Cipher.getMaxAllowedKeyLength("AES") / 8
+            + AesCounterRandom.COUNTER_SIZE_BYTES;
+    } catch (NoSuchAlgorithmException e) {
+      throw new AssertionError(e);
+    }
   }
 
-  @Factory public static Object[] getInstances() {
-    return new Object[]{
-        new AesCounterRandomTest(16),
-        new AesCounterRandomTest(17),
-        new AesCounterRandomTest(32),
-        new AesCounterRandomTest(33),
-        new AesCounterRandomTest(48),
-    };
-  }
-
+  /**
+   * It'd be more elegant to use a {@code @Factory} static method to set the seed size (which could
+   * then be a final field), but that doesn't seem to be compatible with PowerMock; see
+   * https://github.com/powermock/powermock/issues/925
+   *
+   * @param seedSize XML parameter
+   */
+  @Parameters("seedSize")
   @BeforeClass
   public void checkRunnable() throws NoSuchAlgorithmException {
     DeadlockWatchdogThread.ensureStarted();
     if (Cipher.getMaxAllowedKeyLength("AES") <
-        8 * (seedSizeBytes - AesCounterRandom.COUNTER_SIZE_BYTES)) {
+        8 * (seedSize - AesCounterRandom.COUNTER_SIZE_BYTES)) {
+      assertFalse(seedSize <= 32, "Can't handle a 32-byte seed");
       throw new SkipException(
           "Test can't run without jurisdiction policy files that allow larger AES keys");
     }
+    seedSizeBytes = seedSize;
   }
 
   @Override protected int getNewSeedLength(BaseRandom basePrng) {
@@ -77,14 +88,16 @@ public class AesCounterRandomTest extends SeekableRandomTest {
     // No-op: can't be tested because setSeed merges with the existing seed
   }
 
-  @SuppressWarnings("ObjectAllocationInLoop") @Override @Test(timeOut = 30000)
+  @SuppressWarnings("ObjectAllocationInLoop") @Override @Test(timeOut = 40_000)
   public void testSetSeedAfterNextLong() throws SeedException {
     // can't use a real SeedGenerator since we need longs, so use a Random
     final Random masterRNG = new Random();
     final long[] seeds =
         {masterRNG.nextLong(), masterRNG.nextLong(), masterRNG.nextLong(), masterRNG.nextLong()};
     final long otherSeed = masterRNG.nextLong();
-    final AesCounterRandom[] rngs = {new AesCounterRandom(16), new AesCounterRandom(16)};
+    final AesCounterRandom[] rngs = {
+        new AesCounterRandom(getTestSeedGenerator().generateSeed(16)),
+        new AesCounterRandom(getTestSeedGenerator().generateSeed(16))};
     for (int i = 0; i < 2; i++) {
       for (final long seed : seeds) {
         final byte[] originalSeed = rngs[i].getSeed();
@@ -121,7 +134,7 @@ public class AesCounterRandomTest extends SeekableRandomTest {
   }
 
   @Override protected BaseRandom createRng() throws SeedException {
-    return new AesCounterRandom(seedSizeBytes);
+    return new AesCounterRandom(getTestSeedGenerator().generateSeed(seedSizeBytes));
   }
 
   @Override protected BaseRandom createRng(final byte[] seed) throws SeedException {

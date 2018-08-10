@@ -16,19 +16,22 @@
 package io.github.pr0methean.betterrandom.prng;
 
 import io.github.pr0methean.betterrandom.seed.SeedException;
+import org.testng.annotations.Test;
 
 /**
  * Unit test for the Complementary Multiply With Carry (CMWC) RNG.
  * @author Daniel Dyer
+ * @author Chris Hennick
  */
-public class Cmwc4096RandomTest extends BaseRandomTest {
+@Test(testName = "Cmwc4096Random")
+public class Cmwc4096RandomTest extends AbstractLargeSeedRandomTest {
 
   @Override protected Class<? extends BaseRandom> getClassUnderTest() {
     return Cmwc4096Random.class;
   }
 
   @Override protected BaseRandom createRng() throws SeedException {
-    return new Cmwc4096Random();
+    return new Cmwc4096Random(getTestSeedGenerator());
   }
 
   @Override protected BaseRandom createRng(final byte[] seed) throws SeedException {

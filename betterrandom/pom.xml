@@ -135,6 +135,11 @@
       <build>
         <plugins>
           <plugin>
+            <groupId>org.sonatype.plugins</groupId>
+            <artifactId>nexus-staging-maven-plugin</artifactId>
+            <version>1.6.8</version>
+          </plugin>
+          <plugin>
             <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-gpg-plugin</artifactId>
             <version>1.6</version>
@@ -200,11 +205,11 @@
     <test.jdk9.argline>--add-opens java.xml/jdk.xml.internal=ALL-UNNAMED</test.jdk9.argline>
     <testng.parallel>tests</testng.parallel>
     <testng.perCoreThreadCount>1</testng.perCoreThreadCount>
-    <testng.verbose>3</testng.verbose>
+    <testng.verbose>2</testng.verbose>
   </properties>
   <groupId>io.github.pr0methean.betterrandom</groupId>
   <artifactId>BetterRandom</artifactId>
-  <version>2.4.1-SNAPSHOT</version>
+  <version>2.4.4-SNAPSHOT</version>
   <name>BetterRandom</name>
   <description>Better, faster random-number generation in Java.
   </description>
@@ -402,6 +407,7 @@
             <argLine>@{argLine} ${test.jdk9.argline}</argLine>
             <suiteXmlFiles>
               <suiteXmlFile>src/test/testng.xml</suiteXmlFile>
+              <suiteXmlFile>src/test/testng-seed.xml</suiteXmlFile>
             </suiteXmlFiles>
             <trimStackTrace>false</trimStackTrace>
             <forkedProcessTimeoutInSeconds>600</forkedProcessTimeoutInSeconds>
@@ -415,9 +421,6 @@
                 <value>${testng.verbose}</value>
               </property>
             </properties>
-            <suiteXmlFiles>
-              <suiteXmlFile>src/test/testng.xml</suiteXmlFile>
-            </suiteXmlFiles>
           </configuration>
         </plugin>
         <plugin>
@@ -428,6 +431,7 @@
             <argLine>@{argLine} ${test.jdk9.argline}</argLine>
             <suiteXmlFiles>
               <suiteXmlFile>src/test/testng.xml</suiteXmlFile>
+              <suiteXmlFile>src/test/testng-seed.xml</suiteXmlFile>
             </suiteXmlFiles>
             <parallel>${testng.parallel}</parallel>
             <threadCount>${testng.perCoreThreadCount}</threadCount>
@@ -624,8 +628,12 @@
             </dependency>
           </dependencies>
           <configuration>
-            <mavenExecutorId>forked-path</mavenExecutorId>
+            <stagingRepositoryId></stagingRepositoryId>
+            <autoVersionSubmodules>true</autoVersionSubmodules>
+            <useReleaseProfile>false</useReleaseProfile>
+            <releaseProfiles>release-sign-artifacts</releaseProfiles>
             <preparationGoals>clean pre-integration-test</preparationGoals>
+            <goals>deploy nexus-staging:release</goals>
           </configuration>
         </plugin>
 

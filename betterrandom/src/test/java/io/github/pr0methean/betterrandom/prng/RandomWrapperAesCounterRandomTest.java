@@ -2,24 +2,24 @@ package io.github.pr0methean.betterrandom.prng;
 
 import com.google.common.collect.ImmutableList;
 import io.github.pr0methean.betterrandom.seed.SeedException;
-import java.lang.reflect.InvocationTargetException;
 import java.util.Random;
 import org.testng.annotations.Test;
 
+@Test(testName = "RandomWrapper:AesCounterRandom")
 public class RandomWrapperAesCounterRandomTest extends AesCounterRandomTest {
 
-  private static final NamedFunction<Random, Double> SET_WRAPPED = new NamedFunction<>(random -> {
-    ((RandomWrapper) random).setWrapped(new AesCounterRandom());
+  private final NamedFunction<Random, Double> setWrapped = new NamedFunction<>(random -> {
+    ((RandomWrapper) random).setWrapped(new AesCounterRandom(getTestSeedGenerator()));
     return 0.0;
   }, "setWrapped");
 
   public RandomWrapperAesCounterRandomTest() {
-    super(16);
+    seedSizeBytes = 16;
   }
 
   @Override @Test public void testThreadSafetySetSeed() {
-    testThreadSafetyVsCrashesOnly(
-        ImmutableList.of(NEXT_LONG, NEXT_INT, NEXT_DOUBLE, NEXT_GAUSSIAN, SET_SEED, SET_WRAPPED));
+    testThreadSafetyVsCrashesOnly(30,
+        ImmutableList.of(NEXT_LONG, NEXT_INT, NEXT_DOUBLE, NEXT_GAUSSIAN, setSeed, setWrapped));
   }
 
   @Override @Test(enabled = false) public void testAdvanceForward() {
@@ -38,14 +38,12 @@ public class RandomWrapperAesCounterRandomTest extends AesCounterRandomTest {
     return RandomWrapper.class;
   }
 
-  @Override @Test(enabled = false) public void testAllPublicConstructors()
-      throws SeedException, IllegalAccessException, InstantiationException,
-      InvocationTargetException {
+  @Override @Test(enabled = false) public void testAllPublicConstructors() {
     // No-op: redundant to super insofar as it works.
   }
 
   @Override protected RandomWrapper createRng() throws SeedException {
-    return new RandomWrapper(new AesCounterRandom());
+    return new RandomWrapper(new AesCounterRandom(getTestSeedGenerator()));
   }
 
   @Override protected RandomWrapper createRng(final byte[] seed) throws SeedException {
