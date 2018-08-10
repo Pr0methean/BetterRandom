@@ -3,6 +3,7 @@ package io.github.pr0methean.betterrandom.seed;
 import com.google.common.cache.CacheBuilder;
 import io.github.pr0methean.betterrandom.ByteArrayReseedableRandom;
 import io.github.pr0methean.betterrandom.EntropyCountingRandom;
+import io.github.pr0methean.betterrandom.prng.BaseRandom;
 import io.github.pr0methean.betterrandom.util.LooperThread;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
@@ -41,17 +42,19 @@ public final class RandomSeederThread extends LooperThread {
   private final SeedGenerator seedGenerator;
   private final Condition waitWhileEmpty = lock.newCondition();
   private final Condition waitForEntropyDrain = lock.newCondition();
-  private final Set<Random> prngs
-      = Collections.newSetFromMap(CacheBuilder.newBuilder()
-          .weakKeys()
-          .initialCapacity(1)
-          .<Random, Boolean>build()
-          .asMap());
+  private final Set<ByteArrayReseedableRandom> byteArrayPrngs = Collections.newSetFromMap(
+      CacheBuilder.newBuilder().weakKeys().initialCapacity(1)
+          .<ByteArrayReseedableRandom, Boolean>build().asMap());
+  private final Set<Random> otherPrngs = Collections.newSetFromMap(
+      CacheBuilder.newBuilder().weakKeys().initialCapacity(1)
+          .<Random, Boolean>build().asMap());
   private final byte[] longSeedArray = new byte[8];
   private final ByteBuffer longSeedBuffer = ByteBuffer.wrap(longSeedArray);
-  private final Set<Random> prngsThisIteration = new HashSet<>(1);
-  private final WeakHashMap<ByteArrayReseedableRandom, byte[]> seedArrays
-       = new WeakHashMap<>(1);
+  private final Set<ByteArrayReseedableRandom> byteArrayPrngsThisIteration
+      = Collections.newSetFromMap(new WeakHashMap<>());
+  private final Set<Random> otherPrngsThisIteration
+      = Collections.newSetFromMap(new WeakHashMap<>());
+  private final WeakHashMap<ByteArrayReseedableRandom, byte[]> seedArrays = new WeakHashMap<>(1);
   private static final AtomicInteger defaultPriority = new AtomicInteger(Thread.NORM_PRIORITY);
 
   /**
@@ -180,7 +183,8 @@ public final class RandomSeederThread extends LooperThread {
    * @return Whether or not the reseed was successfully scheduled.
    */
   private boolean asyncReseed(final Random random) {
-    if (!isAlive() || !prngs.contains(random)) {
+    if (getState() == State.TERMINATED ||
+        (!byteArrayPrngs.contains(random) && !otherPrngs.contains(random))) {
       return false;
     }
     if (random instanceof EntropyCountingRandom) {
@@ -200,46 +204,52 @@ public final class RandomSeederThread extends LooperThread {
   @SuppressWarnings({"InfiniteLoopStatement", "ObjectAllocationInLoop", "AwaitNotInLoop"}) @Override
   protected boolean iterate() throws InterruptedException {
     while (true) {
-      prngsThisIteration.addAll(prngs);
-      if (prngsThisIteration.isEmpty()) {
+      otherPrngsThisIteration.addAll(otherPrngs);
+      byteArrayPrngsThisIteration.addAll(byteArrayPrngs);
+      if (otherPrngsThisIteration.isEmpty() && byteArrayPrngsThisIteration.isEmpty()) {
         waitWhileEmpty.await();
       } else {
         break;
       }
     }
-    final Iterator<Random> iterator = prngsThisIteration.iterator();
     boolean entropyConsumed = false;
-    while (iterator.hasNext()) {
-      final Random random = iterator.next();
-      iterator.remove();
-      if ((random instanceof EntropyCountingRandom) && (
-          ((EntropyCountingRandom) random).getEntropyBits() > 0)) {
-        continue;
-      } else {
-        entropyConsumed = true;
-      }
-      try {
-        if ((random instanceof ByteArrayReseedableRandom) && !((ByteArrayReseedableRandom) random)
-            .preferSeedWithLong()) {
-          final ByteArrayReseedableRandom reseedable = (ByteArrayReseedableRandom) random;
-          final byte[] seedArray = seedArrays
-              .computeIfAbsent(reseedable, random_ -> new byte[random_.getNewSeedLength()]);
-          seedGenerator.generateSeed(seedArray);
-          reseedable.setSeed(seedArray);
-        } else {
-          seedGenerator.generateSeed(longSeedArray);
-          random.setSeed(longSeedBuffer.getLong(0));
+    try {
+      final Iterator<ByteArrayReseedableRandom> byteArrayPrngsIterator =
+          byteArrayPrngsThisIteration.iterator();
+      while (byteArrayPrngsIterator.hasNext()) {
+        final ByteArrayReseedableRandom random = byteArrayPrngsIterator.next();
+        byteArrayPrngsIterator.remove();
+        if (stillDefinitelyHasEntropy(random)) {
+          continue;
         }
-      } catch (final Throwable t) {
-        // Must unlock before interrupt; otherwise we somehow get a deadlock
-        lock.unlock();
-        LOG.error("Error during reseeding; disabling the RandomSeederThread for " + seedGenerator,
-            t);
-        interrupt();
-        // Must lock again before returning, so we can notify conditions
-        lock.lock();
-        return false;
+        entropyConsumed = true;
+        if (random.preferSeedWithLong()) {
+          reseedWithLong((Random) random);
+        } else {
+          final byte[] seedArray =
+              seedArrays.computeIfAbsent(random, random_ -> new byte[random_.getNewSeedLength()]);
+          seedGenerator.generateSeed(seedArray);
+          random.setSeed(seedArray);
+        }
       }
+      final Iterator<Random> otherPrngsIterator = otherPrngsThisIteration.iterator();
+      while (otherPrngsIterator.hasNext()) {
+        final Random random = otherPrngsIterator.next();
+        otherPrngsIterator.remove();
+        if (stillDefinitelyHasEntropy(random)) {
+          continue;
+        }
+        entropyConsumed = true;
+        reseedWithLong(random);
+      }
+    } catch (final Throwable t) {
+      // Must unlock before interrupt; otherwise we somehow get a deadlock
+      lock.unlock();
+      LOG.error("Error during reseeding; disabling the RandomSeederThread for " + seedGenerator, t);
+      interrupt();
+      // Must lock again before returning, so we can notify conditions
+      lock.lock();
+      return false;
     }
     if (!entropyConsumed) {
       waitForEntropyDrain.await(POLL_INTERVAL, TimeUnit.SECONDS);
@@ -247,17 +257,49 @@ public final class RandomSeederThread extends LooperThread {
     return true;
   }
 
+  private void reseedWithLong(Random random) {
+    seedGenerator.generateSeed(longSeedArray);
+    random.setSeed(longSeedBuffer.getLong(0));
+  }
+
+  private static boolean stillDefinitelyHasEntropy(Object random) {
+    return (random instanceof EntropyCountingRandom) &&
+        (((EntropyCountingRandom) random).getEntropyBits() > 0);
+  }
+
   @Override public void interrupt() {
     // Ensure dying instance is unregistered
     INSTANCES.remove(seedGenerator, this);
     super.interrupt();
+    clear();
+  }
+
+  private void clear() {
     lock.lock();
     try {
-      prngs.clear();
-      prngsThisIteration.clear();
+      for (ByteArrayReseedableRandom random : byteArrayPrngs) {
+        if (random instanceof BaseRandom) {
+          ((BaseRandom) random).setSeedGenerator(null);
+        }
+      }
+      byteArrayPrngs.clear();
+      byteArrayPrngsThisIteration.clear();
+      otherPrngs.clear();
+      otherPrngsThisIteration.clear();
       seedArrays.clear();
     } finally {
       lock.unlock();
+    }
+  }
+
+  /**
+   * Removes all PRNGs from a given seed generator's thread.
+   * @param seedGenerator the {@link SeedGenerator} of the thread to clear
+   */
+  public static void clear(SeedGenerator seedGenerator) {
+    final RandomSeederThread thread = INSTANCES.get(seedGenerator);
+    if (thread != null) {
+      thread.clear();
     }
   }
 
@@ -268,7 +310,7 @@ public final class RandomSeederThread extends LooperThread {
   private boolean isEmpty() {
     lock.lock();
     try {
-      return prngs.isEmpty();
+      return byteArrayPrngs.isEmpty() && otherPrngs.isEmpty();
     } finally {
       lock.unlock();
     }
@@ -287,7 +329,13 @@ public final class RandomSeederThread extends LooperThread {
       if ((getState() == State.TERMINATED) || isInterrupted()) {
         throw new IllegalStateException("Already shut down");
       }
-      Collections.addAll(prngs, randoms);
+      for (Random random : randoms) {
+        if (random instanceof ByteArrayReseedableRandom) {
+          byteArrayPrngs.add((ByteArrayReseedableRandom) random);
+        } else {
+          otherPrngs.add(random);
+        }
+      }
       waitForEntropyDrain.signalAll();
       waitWhileEmpty.signalAll();
     } finally {
@@ -301,7 +349,9 @@ public final class RandomSeederThread extends LooperThread {
    * @param randoms the {@link Random} instances to remove.
    */
   private void remove(final Random... randoms) {
-    prngs.removeAll(Arrays.asList(randoms));
+    final List<Random> randomsList = Arrays.asList(randoms);
+    byteArrayPrngs.removeAll(randomsList);
+    otherPrngs.removeAll(randomsList);
   }
 
   /**

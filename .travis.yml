@@ -98,7 +98,13 @@ jobs:
     jdk: openjdk8
     env: OP=unit-tests ANDROID=1 JAVA8=true
     stage: unit tests
-  # OSX long tests
+  # Mutation test
+  - language: java
+    os: linux
+    jdk: oraclejdk10
+    env: OP=mutation
+    stage: long tests
+  # OSX benchmarks
   - language: java
     os: osx
     osx_image: xcode6.4
@@ -124,12 +130,7 @@ jobs:
     osx_image: xcode9.4
     env: OP=benchmark
     stage: long tests
-    # Linux long tests
-  - language: java
-    os: linux
-    jdk: oraclejdk10
-    env: OP=mutation
-    stage: long tests
+  # Linux benchmarks
   - language: java
     os: linux
     jdk: openjdk8
@@ -181,6 +182,7 @@ jobs:
     jdk: openjdk8
     env: OP=benchmark ANDROID=1 JAVA8=true
     stage: long tests
+  # Dieharder
   - language: java
     os: linux
     jdk: oraclejdk10

@@ -7,6 +7,7 @@ import java.io.Serializable;
 import java.util.function.Supplier;
 import org.testng.annotations.Test;
 
+@Test(testName = "ReseedingThreadLocalRandomWrapper:FailingSeedGenerator")
 public class ReseedingThreadLocalRandomWrapperFailingSeedGeneratorTest
     extends ReseedingThreadLocalRandomWrapperTest {
 
@@ -24,6 +25,6 @@ public class ReseedingThreadLocalRandomWrapperFailingSeedGeneratorTest
 
   @Override protected BaseRandom createRng() throws SeedException {
     return new ReseedingThreadLocalRandomWrapper(FailingSeedGenerator.FAILING_SEED_GENERATOR,
-        (Serializable & Supplier<BaseRandom>) Pcg64Random::new);
+        pcgSupplier);
   }
 }

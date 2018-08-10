@@ -622,9 +622,13 @@ public abstract class BaseRandom extends Random
    * Sets the seed of this random number generator using a single long seed, if this implementation
    * supports that. If it is capable of using 64 bits or less of seed data (i.e. if {@code {@link
    * #getNewSeedLength()} <= {@link Long#BYTES}}), then this method shall replace the entire seed as
-   * {@link Random#setSeed(long)} does; otherwise, it shall either be a no-op, or shall combine the
-   * input with the existing seed as {@link java.security.SecureRandom#setSeed(long)} does.
+   * {@link Random#setSeed(long)} does; otherwise, it shall either combine the input with the
+   * existing seed as {@link java.security.SecureRandom#setSeed(long)} does, or it shall generate a
+   * new seed using the {@link DefaultSeedGenerator}.
+   *
+   * @deprecated Some implementations are very slow.
    */
+  @Deprecated
   @SuppressWarnings("NonSynchronizedMethodOverridesSynchronizedMethod")
   @Override public void setSeed(final long seed) {
     final byte[] seedBytes = BinaryUtils.convertLongToBytes(seed);

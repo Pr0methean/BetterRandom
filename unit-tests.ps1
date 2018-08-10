@@ -11,7 +11,7 @@ if ( $env:APPVEYOR )
     $RANDOM_DOT_ORG_KEY = $env:random_dot_org_key
 }
 cd betterrandom
-mvn "$MAYBE_ANDROID_FLAG" "help:active-profiles" "clean" "compile" "jacoco:instrument" "jacoco:prepare-agent" `
+mvn "$MAYBE_ANDROID_FLAG" "clean" "compile" "jacoco:instrument" "jacoco:prepare-agent" `
     "test" "jacoco:restore-instrumented-classes" "jacoco:report" -e
 $STATUS = $?
 if ( $STATUS ) {
@@ -50,7 +50,7 @@ if ( $STATUS ) {
       git pull --rebase originauth # Merge
       cp betterrandom-coverage/${COMMIT}/*.exec target
       mvn "jacoco:report-aggregate"
-      /bin/mv target/jacoco.exec "betterrandom-coverage/${COMMIT}/${JOB_ID}.exec"
+      mv target/jacoco.exec "betterrandom-coverage/${COMMIT}/${JOB_ID}.exec"
       cd betterrandom-coverage
       git add .
       git commit --amend --no-edit
@@ -75,7 +75,7 @@ if ( $STATUS ) {
         mvn -DskipTests "-Dmaven.test.skip=true" "$MAYBE_ANDROID_FLAG" package pre-integration-test
         echo "[unit-tests.ps1] Testing against Proguarded jar."
         # FIXME: This runs Proguard again after it finishes.
-        mvn "$MAYBE_ANDROID_FLAG" "integration-test" "-e"
+        mvn '-Dmaven.main.skip=true' "$MAYBE_ANDROID_FLAG" "integration-test" "-e"
         $STATUS = $?
     }
 }

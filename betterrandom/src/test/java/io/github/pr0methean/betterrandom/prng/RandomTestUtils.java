@@ -15,12 +15,17 @@
 // ============================================================================
 package io.github.pr0methean.betterrandom.prng;
 
+import static io.github.pr0methean.betterrandom.TestUtils.assertGreaterOrEqual;
 import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertFalse;
 import static org.testng.Assert.assertNotSame;
 
 import io.github.pr0methean.betterrandom.CloneViaSerialization;
 import io.github.pr0methean.betterrandom.TestUtils;
+import io.github.pr0methean.betterrandom.seed.RandomSeederThread;
+import io.github.pr0methean.betterrandom.seed.SeedGenerator;
 import io.github.pr0methean.betterrandom.util.Dumpable;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Random;
 import java.util.concurrent.atomic.AtomicLong;
@@ -241,6 +246,43 @@ public enum RandomTestUtils {
     Reporter.log("Monte Carlo value for Pi: " + pi);
     assertEquals(pi, Math.PI, 0.01 * Math.PI,
         "Monte Carlo value for Pi is outside acceptable range:" + pi);
+  }
+
+  public static void testThreadLocalReseeding(SeedGenerator testSeedGenerator, BaseRandom rng) {
+    rng.nextLong();
+    try {
+      Thread.sleep(100);
+    } catch (final InterruptedException e) {
+      throw new RuntimeException(e);
+    }
+    final byte[] oldSeed = rng.getSeed();
+    byte[] newSeed;
+    RandomSeederThread.setPriority(testSeedGenerator, Thread.MAX_PRIORITY);
+    try {
+      do {
+        rng.nextLong();
+        Thread.sleep(10);
+        newSeed = rng.getSeed();
+      } while (Arrays.equals(newSeed, oldSeed));
+      Thread.sleep(200);
+      assertGreaterOrEqual(rng.getEntropyBits(), (newSeed.length * 8L) - 1);
+    } catch (final InterruptedException e) {
+      throw new RuntimeException(e);
+    } finally {
+      RandomSeederThread.setPriority(testSeedGenerator, Thread.NORM_PRIORITY);
+    }
+  }
+
+  public static void removeAndAssertEmpty(SeedGenerator seedGenerator, BaseRandom prng) {
+    prng.setSeedGenerator(null);
+    RandomSeederThread.stopIfEmpty(seedGenerator);
+    assertFalse(RandomSeederThread.hasInstance(seedGenerator));
+  }
+
+  public static void removeAndAssertEmpty(SeedGenerator seedGenerator, Random prng) {
+    RandomSeederThread.remove(seedGenerator, prng);
+    RandomSeederThread.stopIfEmpty(seedGenerator);
+    assertFalse(RandomSeederThread.hasInstance(seedGenerator));
   }
 
   public enum EntropyCheckMode {
