@@ -27,7 +27,7 @@ public enum Byte16ArrayArithmetic {
     }
     final long oldLeast = counter.getLong(1);
     long newLeast = oldLeast + delta;
-    counter.putLong(1, newLeast);
+    counter.putLong(Long.BYTES, newLeast);
     int compare = Long.compareUnsigned(newLeast, oldLeast);
     if (compare < 0 && (delta > 0 || !signed)) {
       counter.putLong(0, counter.getLong(0) + 1);
@@ -42,7 +42,7 @@ public enum Byte16ArrayArithmetic {
    * @param delta the second input
    */
   public static void addInto(ByteBuffer counter, ByteBuffer delta) {
-    long least = delta.getLong(1);
+    long least = delta.getLong(Long.BYTES);
     /* if (most >= 0 && least < 0) {
       most--;
     } else if (most < 0 && least >= 0) {
@@ -65,17 +65,17 @@ public enum Byte16ArrayArithmetic {
     for (int multiplierLimb = 0; multiplierLimb < 4; multiplierLimb++) {
       for (int counterLimb = 3 - multiplierLimb; counterLimb < 4; counterLimb++) {
         int destLimb = multiplierLimb + counterLimb - 3;
-        long stepValue = ((long) multiplier.getInt(multiplierLimb))
-            * counter.getInt(counterLimb);
-        multiplicationStepB.putInt(destLimb, (int) stepValue);
+        long stepValue = ((long) multiplier.getInt(Integer.BYTES * multiplierLimb))
+            * counter.getInt(Integer.BYTES * counterLimb);
+        multiplicationStepB.putInt(Integer.BYTES * destLimb, (int) stepValue);
         if (destLimb > 0) {
-          multiplicationStepB.putInt(destLimb - 1, (int) (stepValue >> Integer.SIZE));
+          multiplicationStepB.putInt(Integer.BYTES * (destLimb - 1), (int) (stepValue >> Integer.SIZE));
         }
         addInto(multiplicationAccumulator, multiplicationStepB);
       }
     }
     counter.putLong(0, multiplicationAccumulator.getLong(0));
-    counter.putLong(1, multiplicationAccumulator.getLong(1));
+    counter.putLong(Long.BYTES, multiplicationAccumulator.getLong(Long.BYTES));
   }
 
   /**
@@ -90,9 +90,9 @@ public enum Byte16ArrayArithmetic {
       return;
     }
     long oldMost = shiftedB.getLong(0);
-    long oldLeast = shiftedB.getLong(1);
+    long oldLeast = shiftedB.getLong(Long.BYTES);
     shiftedB.putLong(0, (oldMost >>> bits) | (oldLeast >>> (bits + 64)));
-    shiftedB.putLong(1, (oldLeast >>> bits) | (oldMost >>> (bits - 64)));
+    shiftedB.putLong(Long.BYTES, (oldLeast >>> bits) | (oldMost >>> (bits - 64)));
   }
 
   /**
