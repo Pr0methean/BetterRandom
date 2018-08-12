@@ -202,18 +202,18 @@ public final class RandomSeederThread extends LooperThread {
   }
 
   @SuppressWarnings({"InfiniteLoopStatement", "ObjectAllocationInLoop", "AwaitNotInLoop"}) @Override
-  protected boolean iterate() throws InterruptedException {
-    while (true) {
-      otherPrngsThisIteration.addAll(otherPrngs);
-      byteArrayPrngsThisIteration.addAll(byteArrayPrngs);
-      if (otherPrngsThisIteration.isEmpty() && byteArrayPrngsThisIteration.isEmpty()) {
-        waitWhileEmpty.await();
-      } else {
-        break;
-      }
-    }
-    boolean entropyConsumed = false;
+  protected boolean iterate() {
     try {
+      while (true) {
+        otherPrngsThisIteration.addAll(otherPrngs);
+        byteArrayPrngsThisIteration.addAll(byteArrayPrngs);
+        if (otherPrngsThisIteration.isEmpty() && byteArrayPrngsThisIteration.isEmpty()) {
+          waitWhileEmpty.await();
+        } else {
+          break;
+        }
+      }
+      boolean entropyConsumed = false;
       final Iterator<ByteArrayReseedableRandom> byteArrayPrngsIterator =
           byteArrayPrngsThisIteration.iterator();
       while (byteArrayPrngsIterator.hasNext()) {
@@ -242,19 +242,17 @@ public final class RandomSeederThread extends LooperThread {
         entropyConsumed = true;
         reseedWithLong(random);
       }
+      if (!entropyConsumed) {
+        waitForEntropyDrain.await(POLL_INTERVAL, TimeUnit.SECONDS);
+      }
+      return true;
     } catch (final Throwable t) {
-      // Must unlock before interrupt; otherwise we somehow get a deadlock
-      lock.unlock();
-      LOG.error("Error during reseeding; disabling the RandomSeederThread for " + seedGenerator, t);
+      LOG.error("Disabling the RandomSeederThread for " + seedGenerator, t);
+      INSTANCES.remove(seedGenerator, this);
       interrupt();
-      // Must lock again before returning, so we can notify conditions
-      lock.lock();
+      clear();
       return false;
     }
-    if (!entropyConsumed) {
-      waitForEntropyDrain.await(POLL_INTERVAL, TimeUnit.SECONDS);
-    }
-    return true;
   }
 
   private void reseedWithLong(Random random) {
@@ -265,13 +263,6 @@ public final class RandomSeederThread extends LooperThread {
   private static boolean stillDefinitelyHasEntropy(Object random) {
     return (random instanceof EntropyCountingRandom) &&
         (((EntropyCountingRandom) random).getEntropyBits() > 0);
-  }
-
-  @Override public void interrupt() {
-    // Ensure dying instance is unregistered
-    INSTANCES.remove(seedGenerator, this);
-    super.interrupt();
-    clear();
   }
 
   private void clear() {
