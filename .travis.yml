@@ -131,6 +131,11 @@ jobs:
     env: OP=benchmark
     stage: long tests
   # Linux benchmarks
+  - language: android
+    os: linux
+    jdk: openjdk8
+    env: OP=benchmark ANDROID=1 JAVA8=true
+    stage: long tests
   - language: java
     os: linux
     jdk: openjdk8
@@ -176,11 +181,6 @@ jobs:
     os: linux
     jdk: openjdk11
     env: OP=benchmark
-    stage: long tests
-  - language: android
-    os: linux
-    jdk: openjdk8
-    env: OP=benchmark ANDROID=1 JAVA8=true
     stage: long tests
   # Dieharder
   - language: java
