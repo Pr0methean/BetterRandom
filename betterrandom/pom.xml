@@ -115,6 +115,7 @@
             <version>1.4.0</version>
             <configuration>
               <jvmArgs>
+                <value>-Djava.security.egd=file:/dev/./urandom</value>
                 <value>--add-opens</value>
                 <value>java.xml/jdk.xml.internal=ALL-UNNAMED</value>
               </jvmArgs>
@@ -192,7 +193,7 @@
   </profiles>
   <packaging>jar</packaging>
   <properties>
-    <argLine />
+    <argLine>@{argLine} -Djava.security.egd=file:/dev/./urandom</argLine>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <prefix />
     <github.global.server>github</github.global.server>
