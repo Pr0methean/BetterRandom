@@ -248,11 +248,15 @@ public final class RandomSeederThread extends LooperThread {
       return true;
     } catch (final Throwable t) {
       LOG.error("Disabling the RandomSeederThread for " + seedGenerator, t);
-      INSTANCES.remove(seedGenerator, this);
-      interrupt();
-      clear();
+      shutDown();
       return false;
     }
+  }
+
+  private void shutDown() {
+    INSTANCES.remove(seedGenerator, this);
+    interrupt();
+    clear();
   }
 
   private void reseedWithLong(Random random) {
@@ -353,7 +357,7 @@ public final class RandomSeederThread extends LooperThread {
     try {
       if (isEmpty()) {
         LOG.info("Stopping empty RandomSeederThread for {}", seedGenerator);
-        interrupt();
+        shutDown();
       }
     } finally {
       lock.unlock();
