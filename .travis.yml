@@ -223,6 +223,7 @@ addons:
   apt:
     packages:
       - tor
+      - dieharder
 script:
 - ifconfig | grep inet
 - "./remove_unlimited_crypto.sh"

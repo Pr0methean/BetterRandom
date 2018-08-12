@@ -1,8 +1,4 @@
 #!/bin/sh
-if [ "$TRAVIS" = "true" ]; then
-  sudo apt-get -qq update
-  sudo apt-get install -y dieharder
-fi
 if [ "${JAVA8}" = "true" ]; then
   echo "[dieharder.sh] Using Java 8 mode. Running Proguard."
   MAYBE_PROGUARD="pre-integration-test"
