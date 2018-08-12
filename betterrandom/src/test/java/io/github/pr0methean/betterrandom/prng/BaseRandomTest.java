@@ -710,15 +710,23 @@ public abstract class BaseRandomTest extends PowerMockTestCase {
   }
 
   @Test(timeOut = 90_000) public void testThreadSafetySetSeed() {
-    testThreadSafetyVsCrashesOnly(30, functionsForThreadCrashTest);
+    testThreadSafetyVsCrashesOnly(30,
+        Collections.singletonList(setSeed),
+        functionsForThreadCrashTest);
   }
 
   protected void testThreadSafetyVsCrashesOnly(final int timeoutSec,
       final List<NamedFunction<Random, Double>> functions) {
+    testThreadSafetyVsCrashesOnly(timeoutSec, functions, functions);
+  }
+
+  protected void testThreadSafetyVsCrashesOnly(final int timeoutSec,
+      final List<NamedFunction<Random, Double>> functionsThread1,
+      final List<NamedFunction<Random, Double>> functionsThread2) {
     final int seedLength = createRng().getNewSeedLength();
     final byte[] seed = getTestSeedGenerator().generateSeed(seedLength);
-    for (final NamedFunction<Random, Double> supplier1 : functions) {
-      for (final NamedFunction<Random, Double> supplier2 : functions) {
+    for (final NamedFunction<Random, Double> supplier1 : functionsThread1) {
+      for (final NamedFunction<Random, Double> supplier2 : functionsThread2) {
         runParallel(supplier1, supplier2, seed, timeoutSec,
             (supplier1 == setSeed || supplier2 == setSeed) ? 200 : 1000);
       }
