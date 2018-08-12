@@ -4,6 +4,15 @@
   <modelVersion>4.0.0</modelVersion>
   <profiles>
     <profile>
+      <id>windows</id>
+      <activation>
+        <os><family>windows</family></os>
+      </activation>
+      <properties>
+        <test.argline />
+      </properties>
+    </profile>
+    <profile>
       <id>jdk8</id>
       <activation>
         <jdk>(,1.8]</jdk>
