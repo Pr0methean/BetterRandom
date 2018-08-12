@@ -41,6 +41,11 @@ jobs:
     env: OP=unit-tests
     stage: unit tests
     # Linux unit tests
+  - language: android
+    os: linux
+    jdk: openjdk8
+    env: OP=unit-tests ANDROID=1 JAVA8=true
+    stage: unit tests
   - language: java
     os: linux
     jdk: openjdk8
@@ -93,11 +98,6 @@ jobs:
 #    jdk: openjdk-ea
 #    env: OP=unit-tests
 #    stage: unit tests
-  - language: android
-    os: linux
-    jdk: openjdk8
-    env: OP=unit-tests ANDROID=1 JAVA8=true
-    stage: unit tests
   # Mutation test
   - language: java
     os: linux
