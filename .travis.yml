@@ -14,6 +14,12 @@ stages:
 - long tests
 jobs:
   include:
+  # Android-SDK unit test
+  - language: android
+    os: linux
+    jdk: openjdk8
+    env: OP=unit-tests ANDROID=1 JAVA8=true
+    stage: unit tests
   # OSX unit tests
   - language: java
     os: osx
@@ -40,12 +46,7 @@ jobs:
     osx_image: xcode9.4 # JDK 10.0.1, OSX 10.13
     env: OP=unit-tests
     stage: unit tests
-    # Linux unit tests
-  - language: android
-    os: linux
-    jdk: openjdk8
-    env: OP=unit-tests ANDROID=1 JAVA8=true
-    stage: unit tests
+  # Linux unit tests
   - language: java
     os: linux
     jdk: openjdk8
@@ -104,6 +105,12 @@ jobs:
     jdk: oraclejdk10
     env: OP=mutation
     stage: long tests
+  # Android-SDK benchmark
+  - language: android
+    os: linux
+    jdk: openjdk8
+    env: OP=benchmark ANDROID=1 JAVA8=true
+    stage: long tests
   # OSX benchmarks
   - language: java
     os: osx
@@ -131,11 +138,6 @@ jobs:
     env: OP=benchmark
     stage: long tests
   # Linux benchmarks
-  - language: android
-    os: linux
-    jdk: openjdk8
-    env: OP=benchmark ANDROID=1 JAVA8=true
-    stage: long tests
   - language: java
     os: linux
     jdk: openjdk8
