@@ -1,4 +1,5 @@
 #!/bin/sh
+JAVA_OPTS="-Djava.security.egd=file:/dev/./urandom"
 if [ "${JAVA8}" = "true" ]; then
   echo "[dieharder.sh] Using Java 8 mode. Running Proguard."
   MAYBE_PROGUARD="pre-integration-test"
@@ -13,7 +14,7 @@ cd ../FifoFiller
 mvn package
 JAR=$(find target -iname '*-with-dependencies.jar')
 mkfifo prng_out
-java -jar "${JAR}" io.github.pr0methean.betterrandom.prng.${CLASS} prng_out &\
+java ${JAVA_OPTS} -jar "${JAR}" io.github.pr0methean.betterrandom.prng.${CLASS} prng_out &\
 ((
     dieharder -S 1 -Y 1 -k 2 -d 0 -g 200
     dieharder -S 1 -Y 1 -k 2 -d 1 -g 200
