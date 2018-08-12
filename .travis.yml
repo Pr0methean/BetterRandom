@@ -77,12 +77,11 @@ jobs:
     jdk: oraclejdk10
     env: OP=unit-tests
     stage: unit tests
-# FIXME: Uncomment once https://github.com/travis-ci/travis-ci/issues/9987 is fixed
-#  - language: java
-#    os: linux
-#    jdk: openjdk11
-#    env: OP=unit-tests
-#    stage: unit tests
+  - language: java
+    os: linux
+    jdk: openjdk11
+    env: OP=unit-tests
+    stage: unit tests
   - language: java
     os: linux
     jdk: oraclejdk-ea
@@ -173,12 +172,11 @@ jobs:
     jdk: oraclejdk11
     env: OP=benchmark
     stage: long tests
-# FIXME: Uncomment once https://github.com/travis-ci/travis-ci/issues/9987 is fixed
-#  - language: java
-#    os: linux
-#    jdk: openjdk11
-#    env: OP=benchmark
-#    stage: long tests
+  - language: java
+    os: linux
+    jdk: openjdk11
+    env: OP=benchmark
+    stage: long tests
   - language: android
     os: linux
     jdk: openjdk8
