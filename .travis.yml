@@ -77,22 +77,22 @@ jobs:
     jdk: oraclejdk10
     env: OP=unit-tests
     stage: unit tests
-# Uncomment once openjdk11 and openjdk-ea are different versions
+  - language: java
+    os: linux
+    jdk: openjdk11
+    env: OP=unit-tests
+    stage: unit tests
+  - language: java
+    os: linux
+    jdk: oraclejdk-ea
+    env: OP=unit-tests
+    stage: unit tests
+# Uncomment once OpenJDK 12 enters EA
 #  - language: java
 #    os: linux
-#    jdk: openjdk11
+#    jdk: openjdk-ea
 #    env: OP=unit-tests
 #    stage: unit tests
-  - language: java
-    os: linux
-    jdk: oraclejdk11
-    env: OP=unit-tests
-    stage: unit tests
-  - language: java
-    os: linux
-    jdk: openjdk-ea
-    env: OP=unit-tests
-    stage: unit tests
   - language: android
     os: linux
     jdk: openjdk8
