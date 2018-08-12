@@ -84,7 +84,7 @@ jobs:
     stage: unit tests
   - language: java
     os: linux
-    jdk: oraclejdk-ea
+    jdk: oraclejdk11
     env: OP=unit-tests
     stage: unit tests
 # Uncomment once OpenJDK 12 enters EA
