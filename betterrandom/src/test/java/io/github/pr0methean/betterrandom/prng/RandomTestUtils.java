@@ -19,6 +19,7 @@ import static io.github.pr0methean.betterrandom.TestUtils.assertGreaterOrEqual;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertFalse;
 import static org.testng.Assert.assertNotSame;
+import static org.testng.Assert.fail;
 
 import io.github.pr0methean.betterrandom.CloneViaSerialization;
 import io.github.pr0methean.betterrandom.TestUtils;
@@ -264,6 +265,7 @@ public enum RandomTestUtils {
         Thread.sleep(10);
         newSeed = rng.getSeed();
       } while (Arrays.equals(newSeed, oldSeed));
+      int waits = 0;
       while (rng.getEntropyBits() < (newSeed.length * 8L) - 1) {
         waits++;
         if (waits > 10) {
