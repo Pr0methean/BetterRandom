@@ -1,3 +1,6 @@
+# 2.4.4
+* `RandomSeederThread` no longer overrides `Thread.interrupt()`.
+
 # 2.4.3
 * Reduces unit-test flakiness further on systems where `DefaultSeedGenerator` is slow.
 
