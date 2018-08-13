@@ -19,6 +19,7 @@ import static io.github.pr0methean.betterrandom.TestUtils.assertGreaterOrEqual;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertFalse;
 import static org.testng.Assert.assertNotSame;
+import static org.testng.Assert.assertSame;
 import static org.testng.Assert.fail;
 
 import io.github.pr0methean.betterrandom.CloneViaSerialization;
@@ -250,25 +251,27 @@ public enum RandomTestUtils {
   }
 
   public static void testThreadLocalReseeding(SeedGenerator testSeedGenerator, BaseRandom rng) {
-    rng.nextLong();
-    try {
-      Thread.sleep(100);
-    } catch (final InterruptedException e) {
-      throw new RuntimeException(e);
-    }
     final byte[] oldSeed = rng.getSeed();
-    byte[] newSeed;
+    while (rng.getEntropyBits() > Long.SIZE) {
+      rng.nextLong();
+    }
     RandomSeederThread.setPriority(testSeedGenerator, Thread.MAX_PRIORITY);
     try {
-      do {
-        rng.nextLong();
-        Thread.sleep(10);
-        newSeed = rng.getSeed();
-      } while (Arrays.equals(newSeed, oldSeed));
       int waits = 0;
+      byte[] newSeed;
+      do {
+        assertSame(rng.getSeedGenerator(), testSeedGenerator);
+        rng.nextBoolean();
+        Thread.sleep(10);
+        waits++;
+        newSeed = rng.getSeed();
+      } while (Arrays.equals(newSeed, oldSeed) && (waits < 1000));
+      if (waits >= 1000) {
+        fail(String.format("Timed out waiting for %s to be reseeded!", rng));
+      }
       while (rng.getEntropyBits() < (newSeed.length * 8L) - 1) {
         waits++;
-        if (waits > 10) {
+        if (waits > 20) {
           fail(String.format("Timed out waiting for entropy count of %s to increase", rng));
         }
         Thread.sleep(50); // entropy update may not be co-atomic with seed update

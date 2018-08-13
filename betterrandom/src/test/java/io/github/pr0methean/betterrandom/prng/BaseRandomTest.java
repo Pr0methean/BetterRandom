@@ -373,33 +373,8 @@ public abstract class BaseRandomTest extends PowerMockTestCase {
   public void testRandomSeederThreadIntegration() throws Exception {
     final SeedGenerator seedGenerator = new SemiFakeSeedGenerator(new Random());
     final BaseRandom rng = createRng();
-    final byte[] oldSeed = rng.getSeed();
-    while (rng.getEntropyBits() > Long.SIZE) {
-      rng.nextLong();
-    }
-    RandomSeederThread.setPriority(seedGenerator, Thread.MAX_PRIORITY);
-    rng.setSeedGenerator(seedGenerator);
     try {
-      int waits = 0;
-      byte[] newSeed;
-      do {
-        assertSame(rng.getSeedGenerator(), seedGenerator);
-        rng.nextBoolean();
-        Thread.sleep(10);
-        waits++;
-        newSeed = rng.getSeed();
-      } while (Arrays.equals(newSeed, oldSeed) && (waits < 1000));
-      if (waits >= 1000) {
-        fail(String.format("Timed out waiting for %s to be reseeded!", rng));
-      }
-      waits = 0;
-      while (rng.getEntropyBits() < (newSeed.length * 8L) - 1) {
-        waits++;
-        if (waits > 10) {
-          fail(String.format("Timed out waiting for entropy count of %s to increase", rng));
-        }
-        Thread.sleep(50); // entropy update may not be co-atomic with seed update
-      }
+      RandomTestUtils.testThreadLocalReseeding(seedGenerator, rng);
     } finally {
       RandomTestUtils.removeAndAssertEmpty(seedGenerator, rng);
     }
