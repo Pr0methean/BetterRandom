@@ -1,4 +1,5 @@
-</passphrase>
+</password>
     </server>
-  </servers>
-</settings>
+    <server>
+      <id>gpg.passphrase</id>
+      <passphrase>
