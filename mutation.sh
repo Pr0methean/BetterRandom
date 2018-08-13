@@ -8,7 +8,11 @@ fi
 cd ../docs
 git checkout master
 git pull --commit
+<<<<<<< HEAD
 rm -rf betterrandom-java7-pit-reports
+=======
+rm -rf betterrandom-pit-reports
+>>>>>>> 2155155e... Bug fix
 cd ../betterrandom/target/pit-reports
 SUBFOLDER=$(LC_COLLATE=C; /usr/bin/printf '%s\c' */)
 mv ${SUBFOLDER} ../../../docs/betterrandom-java7-pit-reports
