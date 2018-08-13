@@ -7,7 +7,7 @@ if [ ! $? ]; then
 fi
 cd ../docs
 git checkout master
-git pull --rebase
+git pull --commit
 rm -rf betterrandom-pit-reports
 cd ../betterrandom/target/pit-reports
 SUBFOLDER=$(LC_COLLATE=C; /usr/bin/printf '%s\c' */)
@@ -18,6 +18,6 @@ git commit -m "Update PIT mutation reports"
 git remote set-url origin "https://Pr0methean:${GH_TOKEN}@github.com/Pr0methean/pr0methean.github.io.git"
 git push
 while [ ! $? ]; do
-  git pull --rebase # Merge
+  git pull --commit # Merge
   git push
 done
