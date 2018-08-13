@@ -4,6 +4,7 @@ sudo apt-add-repository ppa:webupd8team/java
 sudo apt-get -y update
 sudo apt-get -y install maven markdown oracle-java8-installer dieharder
 sudo apt-get -y autoremove
+gem install travis -v 1.8.8 --no-rdoc --no-ri
 gem install github-markup
 gem install commonmarker
 git config --global user.email "4961925+Pr0methean@users.noreply.github.com"
