@@ -57,10 +57,10 @@ if [ "${STATUS}" = 0 ] && [ "${NO_JACOCO}" != "true" ]; then
   cd betterrandom-coverage
   git add .
   git commit -m "Coverage report from job $JOB_ID"
-  git remote add originauth "https://${GH_TOKEN}@github.com/Pr0methean/betterrandom-coverage.git"
-  git push --set-upstream originauth master
+  git remote set-url origin "https://Pr0methean:${GH_TOKEN}@github.com/Pr0methean/betterrandom-coverage.git"
+  git push
   while [ ! $? ]; do
-    git pull --rebase originauth # Merge
+    git pull --rebase # Merge
     cd ..
     cp betterrandom-coverage/${COMMIT}/*.exec target
     mvn "jacoco:report-aggregate"
@@ -68,7 +68,7 @@ if [ "${STATUS}" = 0 ] && [ "${NO_JACOCO}" != "true" ]; then
     cd betterrandom-coverage
     git add .
     git commit --amend --no-edit
-    git push --set-upstream originauth master
+    git push
   done
   cd ..
   if [ "${TRAVIS}" = "true" ]; then
