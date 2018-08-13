@@ -22,16 +22,19 @@ echo -n $(mvn -emp "${password}") >> ~/.m2/settings-security.xml
 echo '</master></settingsSecurity>' >> ~/.m2/settings-security.xml
 read -s -p "Sonatype password: " password
 echo ""
+password_crypt=$(mvn -ep "${password}")
+unset password
 read -s -p "Sonatype PGP password: " pgp_pass
 echo ""
 rm ~/.m2/settings.xml
 cat settings.xml.part1 > ~/.m2/settings_temp.xml
-echo -n $(mvn -ep "${password}") >> ~/.m2/settings_temp.xml
+echo -n "${password_crypt}" >> ~/.m2/settings_temp.xml
 cat settings.xml.part2 >> ~/.m2/settings_temp.xml
-echo -n $(mvn -ep "${pgp_pass}") >> ~/.m2/settings_temp.xml
+echo -n "${password_crypt}" >> ~/.m2/settings_temp.xml
 cat settings.xml.part3 >> ~/.m2/settings_temp.xml
+echo -n $(mvn -ep "${pgp_pass}") >> ~/.m2/settings_temp.xml
+cat settings.xml.part4 >> ~/.m2/settings_temp.xml
 mv ~/.m2/settings_temp.xml ~/.m2/settings.xml
-unset password
 unset pgp_pass
 
 # Enable JAVA8 mode for scripts
