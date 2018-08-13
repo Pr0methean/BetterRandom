@@ -1,5 +1,4 @@
 #!/bin/sh
-JAVA_OPTS="-Djava.security.egd=file:/dev/./urandom"
 if [ "$ANDROID" = 1 ]; then
   MAYBE_ANDROID_FLAG="-Pandroid"
 else
@@ -7,11 +6,14 @@ else
 fi
 NO_GIT_PATH="${PATH}"
 if [ "${APPVEYOR}" != "" ]; then
+  JAVA_OPTS=""
   export RANDOM_DOT_ORG_KEY=$(powershell 'Write-Host ($env:random_dot_org_key) -NoNewLine')
   if [ "${OSTYPE}" = "cygwin" ]; then
     # Workaround for a faulty PATH in Appveyor Cygwin (https://github.com/appveyor/ci/issues/1956)
     NO_GIT_PATH=$(echo "${PATH}" | /usr/bin/awk -v RS=':' -v ORS=':' '/git/ {next} {print}')
   fi
+else
+  JAVA_OPTS="-Djava.security.egd=file:/dev/./urandom"
 fi
 if [ "${JAVA8}" = "true" ]; then
   echo "[benchmark.sh] Using Java 8 mode. Running Proguard."
