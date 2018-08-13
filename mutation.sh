@@ -8,7 +8,6 @@ fi
 cd ../docs
 git checkout master
 git pull --rebase
-git remote set-url origin "https://${GH_TOKEN}@github.com/Pr0methean/pr0methean.github.io.git"
 rm -rf betterrandom-pit-reports
 cd ../betterrandom/target/pit-reports
 SUBFOLDER=$(LC_COLLATE=C; /usr/bin/printf '%s\c' */)
@@ -16,6 +15,7 @@ mv ${SUBFOLDER} ../../../docs/betterrandom-pit-reports
 cd ../../../docs
 git add betterrandom-pit-reports
 git commit -m "Update PIT mutation reports"
+git remote set-url origin "https://${GH_TOKEN}@github.com/Pr0methean/pr0methean.github.io.git"
 git push
 while [ ! $? ]; do
   git pull --rebase # Merge
