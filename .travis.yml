@@ -1,52 +1,49 @@
 if: tag IS blank
 cache:
   directories:
-  - $HOME/.m2
-  - $HOME/Library/Developer/Xcode
+  - "$HOME/.m2"
+  - "$HOME/Library/Developer/Xcode"
 dist: trusty
 serialGroup: edge
 git:
   depth: 10
   quiet: true
-  submodules: true # Travis FIXME: Should be overridable per job
+  submodules: true
 stages:
 - unit tests
 - long tests
 jobs:
   include:
-  # Android-SDK unit test
   - language: android
     os: linux
     jdk: openjdk8
     env: OP=unit-tests ANDROID=1 JAVA8=true
     stage: unit tests
-  # OSX unit tests
   - language: java
     os: osx
-    osx_image: xcode6.4 # JDK 1.8.0_45-b14, OSX 10.10
+    osx_image: xcode6.4
     env: OP=unit-tests JAVA8=true
     stage: unit tests
   - language: java
     os: osx
-    osx_image: xcode7.3 # JDK 1.8.0_92-b14, OSX 10.11
+    osx_image: xcode7.3
     env: OP=unit-tests JAVA8=true
     stage: unit tests
   - language: java
     os: osx
-    osx_image: xcode8.3 # JDK 1.8.0_112-b16, OSX 10.12
+    osx_image: xcode8.3
     env: OP=unit-tests JAVA8=true
     stage: unit tests
   - language: java
     os: osx
-    osx_image: xcode9.3 # JDK 1.8.0_112-b16, OSX 10.13
+    osx_image: xcode9.3
     env: OP=unit-tests JAVA8=true
     stage: unit tests
   - language: java
     os: osx
-    osx_image: xcode9.4 # JDK 10.0.1, OSX 10.13
+    osx_image: xcode9.4
     env: OP=unit-tests
     stage: unit tests
-  # Linux unit tests
   - language: java
     os: linux
     jdk: openjdk8
@@ -93,25 +90,16 @@ jobs:
     jdk: oraclejdk11
     env: OP=unit-tests
     stage: unit tests
-# Uncomment once OpenJDK 12 enters EA
-#  - language: java
-#    os: linux
-#    jdk: openjdk-ea
-#    env: OP=unit-tests
-#    stage: unit tests
-  # Mutation test
   - language: java
     os: linux
     jdk: oraclejdk10
     env: OP=mutation
     stage: long tests
-  # Android-SDK benchmark
   - language: android
     os: linux
     jdk: openjdk8
     env: OP=benchmark ANDROID=1 JAVA8=true
     stage: long tests
-  # OSX benchmarks
   - language: java
     os: osx
     osx_image: xcode6.4
@@ -137,7 +125,6 @@ jobs:
     osx_image: xcode9.4
     env: OP=benchmark
     stage: long tests
-  # Linux benchmarks
   - language: java
     os: linux
     jdk: openjdk8
@@ -168,12 +155,6 @@ jobs:
     jdk: oraclejdk10
     env: OP=benchmark
     stage: long tests
-# Uncomment once OpenJDK 12 enters EA
-#  - language: java
-#    os: linux
-#    jdk: openjdk-ea
-#    env: OP=benchmark
-#    stage: long tests
   - language: java
     os: linux
     jdk: oraclejdk11
@@ -184,7 +165,6 @@ jobs:
     jdk: openjdk11
     env: OP=benchmark
     stage: long tests
-  # Dieharder
   - language: java
     os: linux
     jdk: oraclejdk10
@@ -224,14 +204,14 @@ jobs:
 addons:
   apt:
     packages:
-      - tor
-      - dieharder
+    - tor
+    - dieharder
 script:
 - ifconfig | grep inet
 - "./remove_unlimited_crypto.sh"
 - "./${OP}.sh"
 env:
   global:
-  - secure: "q7fcoiQBIB+6LqQuP7l41aZOk+j9VpW4dBUER+ALHXc9p9ZPIri5tj7jZDlh993zXdlGnlJ9FHwinZUiXaMjMnRoHX0EB+7x703URNugfQvSDOTDzqo6KlXfJuiGvyREMSCwejINIwyckCW35wuf9mWngQYasLvQd8pdLlrIFa81iIcEu1GLi8SZM2f3dCORATdEcZWoav8FYVodZ8ZncLJYeMvn2Phg/9gwWK4u/bbxcGf52d4+oMj5aKdgeYiWxIysQ3Soq6b/DPWVenlsb2Rbu+howmwBJEv1XH69ZTp3lwWadAQkzRRGbsIENqFXakEmepySi6Xfi5X7GYMQNKVQsUoMfeFVC1ctuUIqmAq1rvq/HD+rl8BmzwjCp4aVDTyRzKuRD6L8IO3fQM8PY8N0gAnXQ9gx1Sswejo4oFoj/fFWFIZfM5VRj/27GLKKM/F7jgtQW4y8q1Q1L7On0htnQzm3B7JuZ6iuSA0XLbNpJxGcPCTkqCeBWXqo5Vk1kJxCm48o8sZMiJ0nm1V8cQrVd/uaExEb4NBFFYY/xshsqJpfrvYT9R5gbRr4uyTz9h7d3XgQoAJEMPJFkDZGCbZNwYaKAjlvzamAFnuwBlFmNhvsqLDZctBauLsWOFVjVwNA/EuysYOcEiJb311h24Vu45hsOG/oYlLFrbZngqA="
-  - secure: M/ffKiA1inknBVmlzXg9VqsRJihfZyzn4oJ/JF1y4k7du/FSe1q/wpyYWrPN/qotpEfO+UZKh1UHbfMQab7DJ3wsQyvwLp9LD8hildKpmktHAcBWZNMf+MYn4NsykLitZVwve/kg2ptrvDqVN7nNsIzUVDCAxhVP6rPv5wGeaTVPtjJ6GhgSIywbBfoW344elE5KE4QzECmrnt/02Pt9A8FfJjVZ+/boaj8/0VMLgxglpMVCww57UsUdwRfwyHSusv4mcFCHQtzXyecZ6Yxw1en5UbO+I68cTq4a27JO1jnjWNX6uIT8wWpAurujd4HvfmJeITRnan01+3DBMTkAH08QffGMjPTYM4P2XcCP4uA5+XeerOiu/yxaTCq/cElbrLWbKllk2VgB+OBl2baV6jKE/fgSisofTYt0I2Ic2CiuSpXmTicTyXYGv3cHynvw5FlpgBKjw70eZh8F8GYHKmk1RprV3n7gSmpxG69EuGv7yIG1EVJOXSNU/WkrzwtQYi52LZ9C8itmczZ3oasiPI2sUvuZbJs5+UrVRW8Nbm7/3hpE5qaxZj7UgkJovd6PS2LUZC5xBvJb0qK0wVp/iLcPELd7/Sp7ewE+URsklfUqXGASt11cuMxI0kGi5ghwoG72vLqtmFkUzImFOjhJIuvSZJSn+nQi7gMGj4nEPYQ=
   - secure: mjRT9tToZDB7ZIY2TglFIyKvHs6+Rt86gUMSCagmk7sur00/XQnY/XCuPNhIyr2wow0e8QrS+peOEz+SyZLQTnoMHnpq8DCoUrrGr2XZA0aOFJVvVG3jgDZeoC0nKpQXurai7qjO+FppQPcjP5slbHz8Fas56CPUdMHo1aXdoEdmCdh9/+yjeZ/LxvDNYTPQ/jY+v55EUbDWoTUu3k3kDg6mDPpavtUCA1sBocO8i4gsu/Oh+0/j8c2uPr9OTa9ew7jPgMsGH9J7ZlsOhh7xj0TmYTDapmBINRnsWmHy6iN0o++xusGh5frVHOeE9YxKzSVpW4ZKOgAoeMIy6UeQoECmLNXECK2XoRiNMkji9aZbxajbD2Wu0Oy7rRP8lOxl71jgd4mvVV+qBMVmN/73LHzYwkVQuxbHtMbvgOVdg81f0oD1T5tOlR3B1fGBWGX44NTUg8unZNJ1vhx9ms4shVXYP682DBeqlY8/RiqUsP+2XqexQR0FjQUZQqu9iSUKUSrBoCjdEH43cyFZjVeHGwsn0MHOJDWwjkISKVPwWfj8etVm8BoVcQETF0jyBTIjCiYFKxN4i6GfY1JIy/AqCSF0jsS6UKfy/m6kHliScTde5n1tIPcRyx55vshotz7jXDrPgU7jcuo8RUyL+UrBirFgNgY3tUkWLg4PUu0CVyY=
+  - secure: F4hmUJY5bSA8ZuRhN8+zt24ZOGyAu+YvWiWipxPf/VnoAnSUx5XFupVHE5ngFI2bKmh5UafYfHeWigqh19tP8YRFXU+IirvS4/WOmwTrVmTNiOw0qieU+y6CDL1CQTpBNmAL8ZSsm5BhFlLEk7tO+At3jAIsrMbWAAXmp1fvQSOwKGUUNT51evrlh7ewYFyQurJZUVJgecZqp2olVc2tqjXHDNoOdOzkvKXFV5HA8nEnRiTU1c1U4OffOzV/ZrqIuqNwLdGOBRjPY9om2dYB7DCfbfM+yDnb6p5xdnigX78BeADDdG44/3DH89siM6T7KlFhJzYmahFi58NZ+yXCHgdvi4uOHLQj6qLBXsAoINcLE6wSJhY0ymVMLgsiJA+2r6c0RoF5Ro8MvIH8Ceta22WJaTXtT71cqcHuznD4CBUfDm5LOMDmH6m2drBs7wkWEwpLlDTXhnBTNu9bPejUhvkCht8ndmmLq1UoswvhYiS2NgsAqov5LBqspAJ31fu9FB+jHWrzglnWjX/tZ2IF6jmCZjatnHsdQQ32WjYpR8Gt9v7/zRUymbO8G6twROcyMC2sgSKqXkMnxB6D48QvvVD77IpaPAEFoRXI+ktT5YZVVXGUzDhvwcA2JRFaUJ9SDAapYf5tcwK6r80O+ZJ5ul6P/81cOG8WqbY2gBwrjjs=
+  - secure: "vx3JhbeNhTipF8hBDujinTeiAQTxCK6HDrT1LG7bipLgs9gaAKY5a7+dWJzHTAA6AtEC1gR0JUG3vuDGs1eF37qb+ZO1mx0GAy18VlVlHl2qEhC0WoQeoTSVsmFmZlUxfviLcGfjtvgwN+683jDULmx1g0uf62iPitEL6KhfWuwXoqf9JBnjhxID9aVWWS9bVpyYNPMXofaZfl0o/scaATzsCHMtA7XQz22mPbMZrI8GBSBjPY61jIgls1yFZaCwO6aOKmo44CPMBDVPWluU1NIn0xUwV6p5yxbKVQaFfMHdLjNzO1RcQmZlWSwrQYEmfFZvMgIHzecx4hQz+GrLc9VCiNuR2OTnBnHTqtUUBlnV/Y1IoCukTrd8MR60Yr3pOiotw2OwlyH9gkBjLR96QZXNWnIN+QPhqWi5qss9nut56YsZ18Hr14jrMFlADl/6RBCESgIWT0Vz4dY+Gpn9zfJT4TOf+lBPCqdqOYqR+tt5nam8zpiaDCzKoQQKJ0F0DQEJaosttVf/LN1zQzGwobdpBqh9gvJ2Fnm6wzP8V+5A7t5ZCJ5QhGuNsQGrvZebHH57I37p9lfdm1sjfIzVWF3S/a0Kltq+BF6wARNvx/vpnF7E1IgqlIBRijHO5gltSyOsx4zcjn1dKkFO/MwqTexz5gTpF3Y391lPJNtEIBU="
