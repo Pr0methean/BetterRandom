@@ -21,9 +21,9 @@ echo -n '<settingsSecurity><master>' > ~/.m2/settings-security.xml
 echo -n $(mvn -emp "${password}") >> ~/.m2/settings-security.xml
 echo '</master></settingsSecurity>' >> ~/.m2/settings-security.xml
 read -s -p "Sonatype password: " password
+echo ""
 password_crypt=$(mvn -ep "${password}")
 unset password
-echo ""
 read -s -p "Sonatype PGP password: " pgp_pass
 echo ""
 rm ~/.m2/settings.xml
