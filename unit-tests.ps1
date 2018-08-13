@@ -29,6 +29,7 @@ if ( $STATUS ) {
         $JOB_ID = [guid]::NewGuid()
     }
     git clone "https://github.com/Pr0methean/betterrandom-coverage.git"
+    git checkout master
     if ( Test-Path "betterrandom-coverage/${COMMIT}" ) {
         echo "[unit-tests.ps1] Aggregating with JaCoCo reports from other jobs."
         cp betterrandom-coverage/${COMMIT}/*.exec target
