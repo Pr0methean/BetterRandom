@@ -15,7 +15,7 @@ mv ${SUBFOLDER} ../../../docs/betterrandom-pit-reports
 cd ../../../docs
 git add betterrandom-pit-reports
 git commit -m "Update PIT mutation reports"
-git remote set-url origin "https://${GH_TOKEN}@github.com/Pr0methean/pr0methean.github.io.git"
+git remote set-url origin "https://Pr0methean:${GH_TOKEN}@github.com/Pr0methean/pr0methean.github.io.git"
 git push
 while [ ! $? ]; do
   git pull --rebase # Merge
