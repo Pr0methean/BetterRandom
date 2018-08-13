@@ -6,10 +6,9 @@ if [ ! $? ]; then
   exit 1
 fi
 cd ../docs
+git checkout master
+git pull --rebase
 git remote set-url origin "https://${GH_TOKEN}@github.com/Pr0methean/pr0methean.github.io.git"
-git pull --rebase
-git checkout origin/master
-git pull --rebase
 rm -rf betterrandom-pit-reports
 cd ../betterrandom/target/pit-reports
 SUBFOLDER=$(LC_COLLATE=C; /usr/bin/printf '%s\c' */)
