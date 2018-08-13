@@ -19,6 +19,7 @@ import static io.github.pr0methean.betterrandom.TestUtils.assertGreaterOrEqual;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertFalse;
 import static org.testng.Assert.assertNotSame;
+import static org.testng.Assert.assertNull;
 import static org.testng.Assert.assertSame;
 import static org.testng.Assert.fail;
 
@@ -250,10 +251,14 @@ public enum RandomTestUtils {
         "Monte Carlo value for Pi is outside acceptable range:" + pi);
   }
 
-  public static void testThreadLocalReseeding(SeedGenerator testSeedGenerator, BaseRandom rng) {
+  public static void testReseeding(SeedGenerator testSeedGenerator, BaseRandom rng,
+      final boolean setSeedGenerator) {
     final byte[] oldSeed = rng.getSeed();
     while (rng.getEntropyBits() > Long.SIZE) {
       rng.nextLong();
+    }
+    if (setSeedGenerator) {
+      rng.setSeedGenerator(testSeedGenerator);
     }
     RandomSeederThread.setPriority(testSeedGenerator, Thread.MAX_PRIORITY);
     try {
@@ -281,6 +286,10 @@ public enum RandomTestUtils {
       throw new RuntimeException(e);
     } finally {
       RandomSeederThread.setPriority(testSeedGenerator, Thread.NORM_PRIORITY);
+      if (setSeedGenerator) {
+        RandomTestUtils.removeAndAssertEmpty(testSeedGenerator, rng);
+        assertNull(rng.getSeedGenerator());
+      }
     }
   }
 

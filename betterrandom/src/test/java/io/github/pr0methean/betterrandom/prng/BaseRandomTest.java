@@ -29,7 +29,6 @@ import io.github.pr0methean.betterrandom.seed.SecureRandomSeedGenerator;
 import io.github.pr0methean.betterrandom.seed.SeedException;
 import io.github.pr0methean.betterrandom.seed.SeedGenerator;
 import io.github.pr0methean.betterrandom.seed.SemiFakeSeedGenerator;
-import java.io.IOException;
 import java.io.Serializable;
 import java.lang.reflect.InvocationTargetException;
 import java.nio.ByteBuffer;
@@ -373,12 +372,7 @@ public abstract class BaseRandomTest extends PowerMockTestCase {
   public void testRandomSeederThreadIntegration() throws Exception {
     final SeedGenerator seedGenerator = new SemiFakeSeedGenerator(new Random());
     final BaseRandom rng = createRng();
-    try {
-      RandomTestUtils.testThreadLocalReseeding(seedGenerator, rng);
-    } finally {
-      RandomTestUtils.removeAndAssertEmpty(seedGenerator, rng);
-    }
-    assertNull(rng.getSeedGenerator());
+    RandomTestUtils.testReseeding(seedGenerator, rng, true);
   }
 
   @Test(timeOut = 10_000) public void testWithProbability() {
