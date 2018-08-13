@@ -60,7 +60,7 @@ if [ "${STATUS}" = 0 ] && [ "${NO_JACOCO}" != "true" ]; then
   git remote set-url origin "https://Pr0methean:${GH_TOKEN}@github.com/Pr0methean/betterrandom-coverage.git"
   git push
   while [ ! $? ]; do
-    git pull --rebase # Merge
+    git pull --commit # Merge
     cd ..
     /bin/cp betterrandom-coverage/${COMMIT}/*.exec target
     mvn "jacoco:report-aggregate"

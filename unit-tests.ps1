@@ -48,7 +48,7 @@ if ( $STATUS ) {
     git push
     while (! $?) {
       cd ..
-      git pull --rebase # Merge
+      git pull --commit # Merge
       cp betterrandom-coverage/${COMMIT}/*.exec target
       mvn "jacoco:report-aggregate"
       mv target/jacoco.exec "betterrandom-coverage/${COMMIT}/${JOB_ID}.exec"
