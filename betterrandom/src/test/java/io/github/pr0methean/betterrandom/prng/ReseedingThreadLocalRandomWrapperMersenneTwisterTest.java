@@ -47,7 +47,7 @@ public class ReseedingThreadLocalRandomWrapperMersenneTwisterTest
   @SuppressWarnings("BusyWait") @Override @Test public void testReseeding() {
     final SeedGenerator testSeedGenerator = getTestSeedGenerator();
     final BaseRandom rng = new ReseedingThreadLocalRandomWrapper(testSeedGenerator, mtSupplier);
-    RandomTestUtils.testThreadLocalReseeding(testSeedGenerator, rng);
+    RandomTestUtils.testReseeding(testSeedGenerator, rng, false);
   }
 
   /** Assertion-free since reseeding may cause divergent output. */
