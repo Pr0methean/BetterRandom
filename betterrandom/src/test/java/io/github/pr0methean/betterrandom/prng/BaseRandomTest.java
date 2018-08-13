@@ -392,7 +392,7 @@ public abstract class BaseRandomTest extends PowerMockTestCase {
       if (waits >= 1000) {
         fail(String.format("Timed out waiting for %s to be reseeded!", rng));
       }
-      Thread.sleep(100); // entropy update may not be co-atomic with seed update
+      Thread.sleep(300); // entropy update may not be co-atomic with seed update
       assertGreaterOrEqual(rng.getEntropyBits(), (newSeed.length * 8L) - 1);
     } finally {
       RandomTestUtils.removeAndAssertEmpty(seedGenerator, rng);
