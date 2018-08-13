@@ -1,6 +1,6 @@
 </password>
     </server>
     <server>
-      <id>sonatype-nexus-staging</id>
+      <id>sonatype-nexus-snapshots</id>
       <username>Pr0methean</username>
       <password>
