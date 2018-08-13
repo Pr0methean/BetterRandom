@@ -1,5 +1,6 @@
 </password>
     </server>
     <server>
-      <id>gpg.passphrase</id>
-      <passphrase>
+      <id>sonatype-nexus-staging</id>
+      <username>Pr0methean</username>
+      <password>
