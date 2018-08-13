@@ -13,7 +13,7 @@ environment:
    - COMMAND: c:\MinGW\msys\1.0\bin\sh .\benchmark.sh
    - COMMAND: c:\cygwin64\bin\sh .\benchmark.sh
   access_token:
-    secure: UrMOuu5SzFyDvmnIwDu4EJol6YwyLJJ3yAAvA8URK7x8cmssL4106Wr8MmS01GGL
+    secure: 5Wg2c80QbC1euiaWuhQaBCE4uv1TVuPVruH5WlfvFeL2jiRQQplLkeaJh7CTdEXj
   random_dot_org_key:
     secure: SdVpsz4/hDKlxV/jEehj9kEUmbIrrq5yvDOWYrHyxN+WE1z8CNeeTnv8BuQ6XsnN
   APPVEYOR_RDP_PASSWORD:
