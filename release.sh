@@ -24,16 +24,18 @@ rm -rf ../../.m2/repository/io/github/pr0methean/betterrandom/ &&\
   mvn -DskipTests -Darguments=-DskipTests -Dmaven.test.skip=true -P release-sign-artifacts \
       clean compile pre-integration-test deploy ${MAYBE_P} ${MAYBE_RELEASE}
   if [ $? ]; then
-    # https://unix.stackexchange.com/a/23244/79452
-    n=${1##*[!0-9]}; p=${1%%$n}
-    NEWVERSION="$p$((n+1))-SNAPSHOT"
-    mvn versions:set -DnewVersion=${NEWVERSION}
-    sed -i "s/$1/${NEWVERSION}/" ../benchmark/pom.xml
-    sed -i "s/$1/${NEWVERSION}/" ../FifoFiller/pom.xml
-    git add pom.xml
-    git add ../benchmark/pom.xml
-    git add ../FifoFiller/pom.xml
-    git commit -m "🤖 Update version numbers"
+    if [ "$#" -ge 1 ]; then
+      # https://unix.stackexchange.com/a/23244/79452
+      n=${1##*[!0-9]}; p=${1%%$n}
+      NEWVERSION="$p$((n+1))-SNAPSHOT"
+      mvn versions:set -DnewVersion=${NEWVERSION}
+      sed -i "s/$1/${NEWVERSION}/" ../benchmark/pom.xml
+      sed -i "s/$1/${NEWVERSION}/" ../FifoFiller/pom.xml
+      git add pom.xml
+      git add ../benchmark/pom.xml
+      git add ../FifoFiller/pom.xml
+      git commit -m "🤖 Update version numbers"
+    fi
   else
     if [ "$#" -ge 1 ]; then
       git tag -d "BetterRandom-Java7-$1"
