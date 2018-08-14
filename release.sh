@@ -27,6 +27,8 @@ rm -rf ../../.m2/repository/io/github/pr0methean/betterrandom/ &&\
     if [ "$#" -ge 1 ]; then
       cd ..
       ./publish-javadoc.sh
+      git tag "BetterRandom-$1"
+      git push origin "BetterRandom-$1"
       cd betterrandom
       # https://unix.stackexchange.com/a/23244/79452
       n=${1##*[!0-9]}; p=${1%%$n}
