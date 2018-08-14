@@ -32,4 +32,3 @@ git push
 cd ..
 git add docs
 git commit -m "🤖 Update submodule"
-git push
