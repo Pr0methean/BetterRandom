@@ -29,7 +29,7 @@ public class ReseedingThreadLocalRandomWrapperTest extends ThreadLocalRandomWrap
     final SeedGenerator testSeedGenerator = getTestSeedGenerator();
     final BaseRandom rng = new ReseedingThreadLocalRandomWrapper(testSeedGenerator,
         pcgSupplier);
-    RandomTestUtils.testThreadLocalReseeding(testSeedGenerator, rng);
+    RandomTestUtils.testReseeding(testSeedGenerator, rng, false);
   }
 
   /** Assertion-free since reseeding may cause divergent output. */

@@ -1,3 +1,8 @@
+# 2.4.4
+* `RandomSeederThread` no longer overrides `Thread.interrupt()`.
+* `getSeedGenerator` now behaves as specified when called on a `ReseedingSplittableRandomAdapter` or
+  `ReseedingThreadLocalRandomWrapper`.
+
 # 2.4.3
 * Reduces unit-test flakiness further on systems where `DefaultSeedGenerator` is slow.
 

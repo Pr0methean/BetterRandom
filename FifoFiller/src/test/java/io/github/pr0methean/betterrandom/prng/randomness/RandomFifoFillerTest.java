@@ -42,9 +42,10 @@ public class RandomFifoFillerTest
             Process mkfifo =
                 Runtime.getRuntime().exec(new String[]{"/usr/bin/mkfifo", tempPipeName});
             mkfifo.waitFor();
-            Process consumer = Runtime.getRuntime()
-                .exec(new String[]{"/usr/bin/xxd", "-l", "1000", tempPipeName});
-            RandomFifoFiller.main(new String[]{"java.util.Random", tempPipeName});
+            Process consumer = Runtime.getRuntime().exec(new String[]{
+                "/usr/bin/xxd", "-l", "1000", tempPipeName});
+            RandomFifoFiller.main(new String[]{
+                "io.github.pr0methean.betterrandom.prng.Pcg64Random", tempPipeName});
             consumer.waitFor();
             assert consumer.exitValue() == 0 : "Error consuming the random number stream";
         } finally {

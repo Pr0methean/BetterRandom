@@ -10,6 +10,7 @@ import java.util.Random;
 import java8.util.function.Function;
 import java8.util.function.LongFunction;
 import java8.util.function.Supplier;
+import javax.annotation.Nullable;
 
 /**
  * A {@link ThreadLocalRandomWrapper} that reseeds all its instances using the
@@ -18,6 +19,7 @@ import java8.util.function.Supplier;
 public class ReseedingThreadLocalRandomWrapper extends ThreadLocalRandomWrapper {
 
   private static final long serialVersionUID = -3235519018032714059L;
+  private final SeedGenerator seedGenerator;
 
   /**
    * Wraps the given {@link Supplier}. Uses the given {@link RandomSeederThread} to reseed PRNGs,
@@ -37,6 +39,7 @@ public class ReseedingThreadLocalRandomWrapper extends ThreadLocalRandomWrapper 
         return out;
       }
     });
+    this.seedGenerator = seedGenerator;
   }
 
   /**
@@ -59,6 +62,7 @@ public class ReseedingThreadLocalRandomWrapper extends ThreadLocalRandomWrapper 
         return out;
       }
     });
+    this.seedGenerator = seedGenerator;
   }
 
   /**
@@ -73,5 +77,9 @@ public class ReseedingThreadLocalRandomWrapper extends ThreadLocalRandomWrapper 
       final LongFunction<Random> legacyCreator, final SeedGenerator seedGenerator) {
     return new ReseedingThreadLocalRandomWrapper(Java8Constants.LONG_BYTES, seedGenerator,
         wrapLongCreatorAsByteArrayCreator(legacyCreator));
+  }
+
+  @Override public SeedGenerator getSeedGenerator() {
+    return seedGenerator;
   }
 }

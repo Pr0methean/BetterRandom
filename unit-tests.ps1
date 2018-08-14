@@ -29,6 +29,7 @@ if ( $STATUS ) {
         $JOB_ID = [guid]::NewGuid()
     }
     git clone "https://github.com/Pr0methean/betterrandom-coverage.git"
+    git checkout master
     if ( Test-Path "betterrandom-coverage/${COMMIT}" ) {
         echo "[unit-tests.ps1] Aggregating with JaCoCo reports from other jobs."
         cp betterrandom-coverage/${COMMIT}/*.exec target
@@ -43,10 +44,10 @@ if ( $STATUS ) {
     cd betterrandom-coverage
     git add .
     git commit -m "Coverage report from job $JOB_ID"
-    git remote add originauth "https://${GH_TOKEN}@github.com/Pr0methean/betterrandom-coverage.git"
-    git push --set-upstream originauth master
+    git remote set-url origin "https://Pr0methean:${GH_TOKEN}@github.com/Pr0methean/betterrandom-coverage.git"
+    git push
     while (! $?) {
-      git pull --rebase originauth # Merge
+      git pull --commit # Merge
       cd ..
       cp betterrandom-coverage/${COMMIT}/*.exec target
       mvn "jacoco:report-aggregate"
@@ -54,7 +55,7 @@ if ( $STATUS ) {
       cd betterrandom-coverage
       git add .
       git commit --amend --no-edit
-      git push --set-upstream originauth master
+      git push
     }
     cd ..
     if ( $TRAVIS ) {

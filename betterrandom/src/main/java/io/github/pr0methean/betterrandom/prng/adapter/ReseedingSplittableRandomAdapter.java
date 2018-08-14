@@ -72,6 +72,10 @@ public class ReseedingSplittableRandomAdapter extends BaseSplittableRandomAdapte
     }
   }
 
+  @Override public SeedGenerator getSeedGenerator() {
+    return seedGenerator;
+  }
+
   @Override public long getEntropyBits() {
     return threadLocal.get().getEntropyBits();
   }
