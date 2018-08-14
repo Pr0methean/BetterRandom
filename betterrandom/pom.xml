@@ -53,6 +53,7 @@
           <plugin>
             <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-javadoc-plugin</artifactId>
+            <version>3.0.0-M1</version>
             <executions>
               <execution>
                 <id>attach-javadocs</id>
@@ -318,15 +319,6 @@
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-javadoc-plugin</artifactId>
           <version>3.0.0-M1</version>
-          <executions>
-            <execution>
-              <id>attach-javadoc</id>
-              <phase>verify</phase>
-              <goals>
-                <goal>jar</goal>
-              </goals>
-            </execution>
-          </executions>
           <configuration>
             <javadocVersion>1.8.0</javadocVersion>
             <notimestamp>true</notimestamp>
@@ -456,20 +448,6 @@
             <execution>
               <goals>
                 <goal>test-jar</goal>
-              </goals>
-            </execution>
-          </executions>
-        </plugin>
-        <plugin>
-          <groupId>org.apache.maven.plugins</groupId>
-          <artifactId>maven-source-plugin</artifactId>
-          <version>3.0.1</version>
-          <executions>
-            <execution>
-              <id>attach-sources</id>
-              <phase>verify</phase>
-              <goals>
-                <goal>jar-no-fork</goal>
               </goals>
             </execution>
           </executions>
@@ -699,43 +677,4 @@
       <url>https://github.com/Pr0methean</url>
     </developer>
   </developers>
-  <reporting>
-    <plugins>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-javadoc-plugin</artifactId>
-        <version>3.0.0-M1</version>
-        <configuration>
-          <javadocVersion>1.8.0</javadocVersion>
-          <sourcepath>${user.home}/j2se-src:${basedir}/src/main/java</sourcepath>
-          <notimestamp>true</notimestamp>
-          <show>protected</show>
-          <links>
-            <link>https://docs.oracle.com/javase/7/docs/api</link>
-            <link>https://google.github.io/guava/releases/${guava.version}/api/docs</link>
-          </links>
-          <tags>
-            <tag>
-              <name>apiNote</name>
-              <placement>a</placement>
-
-              <head>API Note:</head>
-            </tag>
-            <tag>
-              <name>implSpec</name>
-              <placement>a</placement>
-
-              <head>Implementation Requirements:</head>
-            </tag>
-            <tag>
-              <name>implNote</name>
-              <placement>a</placement>
-
-              <head>Implementation Note:</head>
-            </tag>
-          </tags>
-        </configuration>
-      </plugin>
-    </plugins>
-  </reporting>
 </project>
