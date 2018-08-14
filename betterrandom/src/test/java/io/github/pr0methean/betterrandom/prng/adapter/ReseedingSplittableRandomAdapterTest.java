@@ -62,7 +62,7 @@ public class ReseedingSplittableRandomAdapterTest extends SingleThreadSplittable
   }
 
   @SuppressWarnings("BusyWait") @Override @Test public void testReseeding() {
-    RandomTestUtils.testThreadLocalReseeding(getTestSeedGenerator(), createRng());
+    RandomTestUtils.testReseeding(getTestSeedGenerator(), createRng(), false);
   }
 
   /** Test for crashes only, since setSeed is a no-op. */

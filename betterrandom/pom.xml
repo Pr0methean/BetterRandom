@@ -4,6 +4,15 @@
   <modelVersion>4.0.0</modelVersion>
   <profiles>
     <profile>
+      <id>windows</id>
+      <activation>
+        <os><family>windows</family></os>
+      </activation>
+      <properties>
+        <test.argline />
+      </properties>
+    </profile>
+    <profile>
       <id>jdk8</id>
       <activation>
         <jdk>(,1.8]</jdk>
@@ -115,6 +124,7 @@
             <version>1.4.0</version>
             <configuration>
               <jvmArgs>
+                <value>-Djava.security.egd=file:/dev/./urandom</value>
                 <value>--add-opens</value>
                 <value>java.xml/jdk.xml.internal=ALL-UNNAMED</value>
               </jvmArgs>
@@ -134,6 +144,30 @@
       </activation>
       <build>
         <plugins>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-source-plugin</artifactId>
+            <executions>
+              <execution>
+                <id>attach-sources</id>
+                <goals>
+                  <goal>jar</goal>
+                </goals>
+              </execution>
+            </executions>
+          </plugin>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-javadoc-plugin</artifactId>
+            <executions>
+              <execution>
+                <id>attach-javadocs</id>
+                <goals>
+                  <goal>jar</goal>
+                </goals>
+              </execution>
+            </executions>
+          </plugin>
           <plugin>
             <groupId>org.sonatype.plugins</groupId>
             <artifactId>nexus-staging-maven-plugin</artifactId>
@@ -201,15 +235,16 @@
     <jacoco.version>0.8.1</jacoco.version>
     <powermock.version>2.0.0-beta.5</powermock.version>
     <mockito.version>2.19.0</mockito.version>
-    <test.jdk8.argline />
-    <test.jdk9.argline>--add-opens java.xml/jdk.xml.internal=ALL-UNNAMED</test.jdk9.argline>
+    <test.argline>-Djava.security.egd=file:/dev/./urandom</test.argline>
+    <test.jdk8.argline>${test.argline}</test.jdk8.argline>
+    <test.jdk9.argline>${test.argline} --add-opens java.xml/jdk.xml.internal=ALL-UNNAMED</test.jdk9.argline>
     <testng.parallel>tests</testng.parallel>
     <testng.perCoreThreadCount>1</testng.perCoreThreadCount>
     <testng.verbose>2</testng.verbose>
   </properties>
   <groupId>io.github.pr0methean.betterrandom</groupId>
   <artifactId>BetterRandom</artifactId>
-  <version>2.4.4-SNAPSHOT</version>
+  <version>2.4.5-SNAPSHOT</version>
   <name>BetterRandom</name>
   <description>Better, faster random-number generation in Java.
   </description>
@@ -664,7 +699,7 @@
         <configuration>
           <threads>4</threads>
           <coverageThreshold>90</coverageThreshold>
-          <mutationThreshold>80</mutationThreshold>
+          <mutationThreshold>70</mutationThreshold>
           <avoidCallsTo>
             <avoidCallsTo>org.slf4j</avoidCallsTo>
           </avoidCallsTo>
