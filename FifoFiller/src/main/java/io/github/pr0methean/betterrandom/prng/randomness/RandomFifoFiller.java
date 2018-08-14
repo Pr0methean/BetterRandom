@@ -15,6 +15,8 @@
 // ============================================================================
 package io.github.pr0methean.betterrandom.prng.randomness;
 
+import io.github.pr0methean.betterrandom.seed.SecureRandomSeedGenerator;
+import io.github.pr0methean.betterrandom.seed.SeedGenerator;
 import java.io.BufferedOutputStream;
 import java.io.DataOutputStream;
 import java.io.File;
@@ -49,9 +51,12 @@ public final class RandomFifoFiller
             System.out.println("\t<Fully-qualified RNG class name> <Output file>");
             System.exit(1);
         }
-        Class<? extends Random> rngClass = Class.forName(args[0]).asSubclass(Random.class);
-        File outputFile = new File(args[1]);
-        generateOutputFile(rngClass.newInstance(), outputFile);
+        generateOutputFile(
+            Class.forName(args[0])
+                .asSubclass(Random.class)
+                .getConstructor(SeedGenerator.class)
+                .newInstance(SecureRandomSeedGenerator.SECURE_RANDOM_SEED_GENERATOR),
+            new File(args[1]));
     }
 
 

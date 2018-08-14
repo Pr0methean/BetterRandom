@@ -29,7 +29,6 @@ import io.github.pr0methean.betterrandom.seed.SecureRandomSeedGenerator;
 import io.github.pr0methean.betterrandom.seed.SeedException;
 import io.github.pr0methean.betterrandom.seed.SeedGenerator;
 import io.github.pr0methean.betterrandom.seed.SemiFakeSeedGenerator;
-import java.io.IOException;
 import java.io.Serializable;
 import java.lang.reflect.InvocationTargetException;
 import java.nio.ByteBuffer;
@@ -373,31 +372,7 @@ public abstract class BaseRandomTest extends PowerMockTestCase {
   public void testRandomSeederThreadIntegration() throws Exception {
     final SeedGenerator seedGenerator = new SemiFakeSeedGenerator(new Random());
     final BaseRandom rng = createRng();
-    final byte[] oldSeed = rng.getSeed();
-    while (rng.getEntropyBits() > Long.SIZE) {
-      rng.nextLong();
-    }
-    RandomSeederThread.setPriority(seedGenerator, Thread.MAX_PRIORITY);
-    rng.setSeedGenerator(seedGenerator);
-    try {
-      int waits = 0;
-      byte[] newSeed;
-      do {
-        assertSame(rng.getSeedGenerator(), seedGenerator);
-        rng.nextBoolean();
-        Thread.sleep(10);
-        waits++;
-        newSeed = rng.getSeed();
-      } while (Arrays.equals(newSeed, oldSeed) && (waits < 1000));
-      if (waits >= 1000) {
-        fail(String.format("Timed out waiting for %s to be reseeded!", rng));
-      }
-      Thread.sleep(100); // entropy update may not be co-atomic with seed update
-      assertGreaterOrEqual(rng.getEntropyBits(), (newSeed.length * 8L) - 1);
-    } finally {
-      RandomTestUtils.removeAndAssertEmpty(seedGenerator, rng);
-    }
-    assertNull(rng.getSeedGenerator());
+    RandomTestUtils.testReseeding(seedGenerator, rng, true);
   }
 
   @Test(timeOut = 10_000) public void testWithProbability() {
@@ -710,15 +685,23 @@ public abstract class BaseRandomTest extends PowerMockTestCase {
   }
 
   @Test(timeOut = 90_000) public void testThreadSafetySetSeed() {
-    testThreadSafetyVsCrashesOnly(30, functionsForThreadCrashTest);
+    testThreadSafetyVsCrashesOnly(30,
+        Collections.singletonList(setSeed),
+        functionsForThreadCrashTest);
   }
 
   protected void testThreadSafetyVsCrashesOnly(final int timeoutSec,
       final List<NamedFunction<Random, Double>> functions) {
+    testThreadSafetyVsCrashesOnly(timeoutSec, functions, functions);
+  }
+
+  protected void testThreadSafetyVsCrashesOnly(final int timeoutSec,
+      final List<NamedFunction<Random, Double>> functionsThread1,
+      final List<NamedFunction<Random, Double>> functionsThread2) {
     final int seedLength = createRng().getNewSeedLength();
     final byte[] seed = getTestSeedGenerator().generateSeed(seedLength);
-    for (final NamedFunction<Random, Double> supplier1 : functions) {
-      for (final NamedFunction<Random, Double> supplier2 : functions) {
+    for (final NamedFunction<Random, Double> supplier1 : functionsThread1) {
+      for (final NamedFunction<Random, Double> supplier2 : functionsThread2) {
         runParallel(supplier1, supplier2, seed, timeoutSec,
             (supplier1 == setSeed || supplier2 == setSeed) ? 200 : 1000);
       }
