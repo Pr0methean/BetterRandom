@@ -25,6 +25,9 @@ rm -rf ../../.m2/repository/io/github/pr0methean/betterrandom/ &&\
       clean compile pre-integration-test deploy ${MAYBE_P} ${MAYBE_RELEASE}
   if [ $? ]; then
     if [ "$#" -ge 1 ]; then
+      cd ..
+      ./publish-javadoc.sh
+      cd betterrandom
       # https://unix.stackexchange.com/a/23244/79452
       n=${1##*[!0-9]}; p=${1%%$n}
       NEWVERSION="$p$((n+1))-SNAPSHOT"
