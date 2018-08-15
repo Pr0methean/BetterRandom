@@ -596,7 +596,7 @@
         <version>1.2.4</version>
         <configuration>
           <threads>4</threads>
-          <coverageThreshold>90</coverageThreshold>
+          <coverageThreshold>85</coverageThreshold>
           <mutationThreshold>70</mutationThreshold>
           <avoidCallsTo>
             <avoidCallsTo>org.slf4j</avoidCallsTo>
