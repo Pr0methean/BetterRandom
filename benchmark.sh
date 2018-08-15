@@ -4,9 +4,6 @@ if [ "$ANDROID" = 1 ]; then
 else
   MAYBE_ANDROID_FLAG=""
 fi
-if [ "$APPVEYOR" != "" ]; then
-  RANDOM_DOT_ORG_KEY=$(powershell 'Write-Host ($env:random_dot_org_key) -NoNewLine')
-fi
 cd betterrandom
 NO_GIT_PATH="${PATH}"
 if [ "${APPVEYOR}" != "" ]; then
@@ -19,7 +16,6 @@ if [ "${APPVEYOR}" != "" ]; then
 else
   JAVA_OPTS="-Djava.security.egd=file:/dev/./urandom"
 fi
-
 cd betterrandom
 PATH="${NO_GIT_PATH}" mvn -DskipTests -Darguments=-DskipTests\
     -Dmaven.test.skip=true ${MAYBE_ANDROID_FLAG}\
