@@ -20,13 +20,10 @@ else
   JAVA_OPTS="-Djava.security.egd=file:/dev/./urandom"
 fi
 
-# This is in a variable for git-merge compatibility with the master branch.
-MAYBE_PROGUARD="pre-integration-test"
-
 cd betterrandom
 PATH="${NO_GIT_PATH}" mvn -DskipTests -Darguments=-DskipTests\
     -Dmaven.test.skip=true ${MAYBE_ANDROID_FLAG}\
-    clean ${MAYBE_PROGUARD} install &&\
+    clean install &&\
 cd ../benchmark &&\
 PATH="${NO_GIT_PATH}" mvn -DskipTests ${MAYBE_ANDROID_FLAG} package &&\
 cd target &&\
