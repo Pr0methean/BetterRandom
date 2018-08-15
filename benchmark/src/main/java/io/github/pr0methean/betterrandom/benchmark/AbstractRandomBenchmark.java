@@ -46,11 +46,11 @@ abstract class AbstractRandomBenchmark {
     }
   }
 
-  @Setup(Level.Trial) public void setUp() {
+  @Setup(Level.Trial) public void setUp() throws Exception {
     prng = createPrng();
   }
 
-  @EntryPoint protected abstract Random createPrng() throws SeedException;
+  @EntryPoint protected abstract Random createPrng() throws SeedException, Exception;
 
   byte innerTestBytesSequential() {
     for (final byte[] column : bytes) {

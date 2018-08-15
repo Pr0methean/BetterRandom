@@ -54,7 +54,7 @@ public abstract class AbstractRandomBenchmarkWithReseeding extends AbstractRando
 
   @Override
   @Setup(Level.Trial)
-  public void setUp() {
+  public void setUp() throws Exception {
     super.setUp();
     RandomSeederThread.add(SecureRandomSeedGenerator.SECURE_RANDOM_SEED_GENERATOR, prng);
   }
