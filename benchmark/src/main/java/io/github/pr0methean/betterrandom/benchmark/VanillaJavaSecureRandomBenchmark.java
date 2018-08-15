@@ -7,6 +7,6 @@ import java.util.Random;
 public class VanillaJavaSecureRandomBenchmark extends AbstractRandomBenchmark {
 
   @Override protected Random createPrng() throws SeedException {
-    return new SecureRandom();
+    return SecureRandom.getInstance("SHA1PRNG");
   }
 }
