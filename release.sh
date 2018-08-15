@@ -34,6 +34,9 @@ rm -rf ../../.m2/repository/io/github/pr0methean/betterrandom/ &&\
       n=${1##*[!0-9]}; p=${1%%$n}
       NEWVERSION="$p$((n+1))-SNAPSHOT"
       mvn versions:set -DnewVersion=${NEWVERSION}
+      # For some reason we end up with -SNAPSHOT-SNAPSHOT without next 2 lines:
+      sed -i "s/$1-SNAPSHOT/${NEWVERSION}/" ../benchmark/pom.xml
+      sed -i "s/$1-SNAPSHOT/${NEWVERSION}/" ../FifoFiller/pom.xml
       sed -i "s/$1/${NEWVERSION}/" ../benchmark/pom.xml
       sed -i "s/$1/${NEWVERSION}/" ../FifoFiller/pom.xml
       git add pom.xml
