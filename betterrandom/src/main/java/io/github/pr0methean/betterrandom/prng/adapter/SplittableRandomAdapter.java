@@ -159,7 +159,11 @@ public class SplittableRandomAdapter extends DirectSplittableRandomAdapter {
         entropyBits.get().updateAndGet(oldValue -> Math.max(oldValue, SEED_LENGTH_BITS));
       }
       if (seeds != null) {
-        seeds.set(BinaryUtils.convertLongToBytes(seed));
+        if (seeds.get() == null) {
+          seeds.set(BinaryUtils.convertLongToBytes(seed).clone());
+        } else {
+          System.arraycopy(seed, 0, seeds.get(), 0, Long.BYTES);
+        }
       }
     }
   }
