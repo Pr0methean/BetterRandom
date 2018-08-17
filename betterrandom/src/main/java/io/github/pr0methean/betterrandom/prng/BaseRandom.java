@@ -15,6 +15,7 @@ import io.github.pr0methean.betterrandom.util.EntryPoint;
 import java.io.IOException;
 import java.io.InvalidObjectException;
 import java.io.ObjectInputStream;
+import java.nio.ByteBuffer;
 import java.util.List;
 import java.util.Random;
 import java.util.concurrent.atomic.AtomicLong;
@@ -26,6 +27,7 @@ import java.util.stream.DoubleStream;
 import java.util.stream.IntStream;
 import java.util.stream.LongStream;
 import javax.annotation.Nullable;
+import jdk.internal.jline.internal.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -63,6 +65,10 @@ public abstract class BaseRandom extends Random
    * a slow type conversion).
    */
   protected byte[] seed;
+  /**
+   * A {@link ByteBuffer} that wraps {@link #seed} if requested; null otherwise.
+   */
+  @Nullable protected transient ByteBuffer seedBuffer;
   /**
    * Set by the constructor once either {@link Random#Random()} or {@link Random#Random(long)} has
    * returned. Intended for {@link #setSeed(long)}, which may have to ignore calls while this is
@@ -722,7 +728,19 @@ public abstract class BaseRandom extends Random
    * Called in constructor and readObject to initialize transient fields.
    */
   protected void initTransientFields() {
+    if (usesByteBuffer()) {
+      seedBuffer = ByteBuffer.wrap(seed);
+    }
     superConstructorFinished = true;
+  }
+
+  /**
+   * If overridden to return true, {@link #seedBuffer} is initialized with a buffer that wraps
+   * {@link #seed}; otherwise, that field remains null.
+   * @return true to wrap seed in a ByteBuffer; false otherwise
+   */
+  protected boolean usesByteBuffer() {
+    return false;
   }
 
   private void readObject(final ObjectInputStream in) throws IOException, ClassNotFoundException {
