@@ -48,8 +48,9 @@ public class XorShiftRandom extends BaseRandom {
   private int state4;
   private int state5;
 
-  // Used for setSeed.
-  private final ByteBuffer seedBuffer;
+  @Override protected boolean usesByteBuffer() {
+    return true;
+  }
 
   /**
    * Creates an RNG and seeds it with the specified seed data.
@@ -57,7 +58,6 @@ public class XorShiftRandom extends BaseRandom {
    */
   public XorShiftRandom(final byte[] seed) {
     super(seed);
-    seedBuffer = ByteBuffer.wrap(this.seed);
   }
 
   /**
