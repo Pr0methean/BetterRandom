@@ -1,3 +1,6 @@
+# 2.4.5
+* Improves performance of `XorShiftRandom.setSeed()`.
+
 # 2.4.4
 * `RandomSeederThread` no longer overrides `Thread.interrupt()`.
 * `getSeedGenerator` now behaves as specified when called on a `ReseedingSplittableRandomAdapter` or
