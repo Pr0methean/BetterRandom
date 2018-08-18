@@ -79,8 +79,10 @@ public class ReseedingSplittableRandomAdapter extends BaseSplittableRandomAdapte
   }
 
   @Override public void setSeedGenerator(final SeedGenerator seedGenerator) {
-    throw new UnsupportedOperationException(
-        "ReseedingSplittableRandomAdapter's binding to RandomSeederThread is immutable");
+    if (seedGenerator != this.seedGenerator) {
+      throw new UnsupportedOperationException(
+          "ReseedingSplittableRandomAdapter's binding to RandomSeederThread is immutable");
+    }
   }
 
   @Override protected boolean useParallelStreams() {
