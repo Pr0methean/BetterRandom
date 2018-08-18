@@ -46,10 +46,6 @@ public class XorShiftRandom extends BaseRandom {
   private int state4;
   private int state5;
 
-  @Override protected boolean usesByteBuffer() {
-    return true;
-  }
-
   /**
    * Creates an RNG and seeds it with the specified seed data.
    * @param seed 20 bytes of seed data used to initialise the RNG.
@@ -74,6 +70,10 @@ public class XorShiftRandom extends BaseRandom {
    */
   public XorShiftRandom(final SeedGenerator seedGenerator) throws SeedException {
     this(seedGenerator.generateSeed(SEED_SIZE_BYTES));
+  }
+
+  @Override protected boolean usesByteBuffer() {
+    return true;
   }
 
   @Override protected ToStringHelper addSubclassFields(final ToStringHelper original) {
