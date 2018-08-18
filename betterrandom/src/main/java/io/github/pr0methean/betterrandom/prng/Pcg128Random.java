@@ -64,7 +64,6 @@ public class Pcg128Random extends BaseRandom implements SeekableRandom {
   private static final ThreadLocal<ByteBuffer> ACC_PLUS = makeByteArrayThreadLocal();
   private static final ThreadLocal<ByteBuffer> ADJ_MULT = makeByteArrayThreadLocal();
   public static final double RANDOM_DOUBLE_INCR = 0x1.0p-53;
-  private ByteBuffer seedBuffer;
 
   public Pcg128Random() {
     this(DefaultSeedGenerator.DEFAULT_SEED_GENERATOR);
@@ -79,6 +78,10 @@ public class Pcg128Random extends BaseRandom implements SeekableRandom {
     if (seed.length != SEED_SIZE_BYTES) {
       throw new IllegalArgumentException("Pcg128Random requires a 16-byte seed");
     }
+  }
+
+  @Override protected boolean usesByteBuffer() {
+    return true;
   }
 
   @Override public synchronized void setSeed(long seed) {
@@ -128,7 +131,6 @@ public class Pcg128Random extends BaseRandom implements SeekableRandom {
       throw new IllegalArgumentException("Pcg128Random requires a 16-byte seed");
     }
     super.setSeedInternal(seed);
-    seedBuffer = ByteBuffer.wrap(this.seed);
   }
 
   @Override protected int next(int bits) {

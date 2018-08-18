@@ -101,11 +101,8 @@ public enum Byte16ArrayArithmetic {
    * @param operandB the second input
    */
   public static void xorInto(ByteBuffer resultB, ByteBuffer operandB) {
-    byte[] result = resultB.array();
-    byte[] operand = operandB.array();
-    for (int i = 0; i < result.length; i++) {
-      result[i] ^= operand[i];
-    }
+    resultB.putLong(0, resultB.getLong(0) ^ operandB.getLong(0));
+    resultB.putLong(Long.BYTES, resultB.getLong(Long.BYTES) ^ operandB.getLong(Long.BYTES));
   }
 
   /**
@@ -114,11 +111,8 @@ public enum Byte16ArrayArithmetic {
    * @param operandB the second input
    */
   public static void orInto(ByteBuffer resultB, ByteBuffer operandB) {
-    byte[] result = resultB.array();
-    byte[] operand = operandB.array();
-    for (int i = 0; i < result.length; i++) {
-      result[i] |= operand[i];
-    }
+    resultB.putLong(0, resultB.getLong(0) | operandB.getLong(0));
+    resultB.putLong(Long.BYTES, resultB.getLong(Long.BYTES) | operandB.getLong(Long.BYTES));
   }
 
   /**
