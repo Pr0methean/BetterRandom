@@ -298,7 +298,7 @@ public enum RandomTestUtils {
             "Array modified after being returned by getSeed()");
         Thread.sleep(100);
         waits++;
-        if (waits > 100) {
+        if (waits > 200) {
           fail(String.format("Timed out waiting for %s to be reseeded!", rng));
         }
         thirdSeed = rng.getSeed();
