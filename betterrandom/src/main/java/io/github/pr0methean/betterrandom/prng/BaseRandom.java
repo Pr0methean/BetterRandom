@@ -63,7 +63,7 @@ public abstract class BaseRandom extends Random
    * actual internal state of the PRNG is stored elsewhere (since otherwise getSeed() would require
    * a slow type conversion).
    */
-  protected byte[] seed;
+  protected volatile byte[] seed;
   /**
    * A {@link ByteBuffer} that wraps {@link #seed} if requested; null otherwise.
    */
