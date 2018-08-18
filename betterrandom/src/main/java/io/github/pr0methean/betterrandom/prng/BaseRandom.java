@@ -107,8 +107,8 @@ public abstract class BaseRandom extends Random
     if (seed == null) {
       throw new IllegalArgumentException("Seed must not be null");
     }
-    setSeedInternal(seed);
     initTransientFields();
+    setSeedInternal(seed);
   }
 
   /**
@@ -706,6 +706,9 @@ public abstract class BaseRandom extends Random
   protected void setSeedInternal(final byte[] seed) {
     if ((this.seed == null) || (this.seed.length != seed.length)) {
       this.seed = seed.clone();
+      if (usesByteBuffer()) {
+        seedBuffer = ByteBuffer.wrap(seed);
+      }
     } else {
       System.arraycopy(seed, 0, this.seed, 0, seed.length);
     }
@@ -727,9 +730,6 @@ public abstract class BaseRandom extends Random
    * Called in constructor and readObject to initialize transient fields.
    */
   protected void initTransientFields() {
-    if (usesByteBuffer()) {
-      seedBuffer = ByteBuffer.wrap(seed);
-    }
     superConstructorFinished = true;
   }
 
