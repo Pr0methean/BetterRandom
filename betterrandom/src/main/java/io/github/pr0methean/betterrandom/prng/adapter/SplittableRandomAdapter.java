@@ -7,7 +7,6 @@ import io.github.pr0methean.betterrandom.seed.DefaultSeedGenerator;
 import io.github.pr0methean.betterrandom.seed.RandomSeederThread;
 import io.github.pr0methean.betterrandom.seed.SeedException;
 import io.github.pr0methean.betterrandom.seed.SeedGenerator;
-import io.github.pr0methean.betterrandom.util.BinaryUtils;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.nio.ByteBuffer;
@@ -131,7 +130,9 @@ public class SplittableRandomAdapter extends DirectSplittableRandomAdapter {
    * @throws UnsupportedOperationException always.
    */
   @Override public void setSeedGenerator(@Nullable final SeedGenerator seedGenerator) {
-    throw new UnsupportedOperationException("Use ReseedingSplittableRandomAdapter instead");
+    if (seedGenerator != null) {
+      throw new UnsupportedOperationException("Use ReseedingSplittableRandomAdapter instead");
+    }
   }
 
   @Override public byte[] getSeed() {
