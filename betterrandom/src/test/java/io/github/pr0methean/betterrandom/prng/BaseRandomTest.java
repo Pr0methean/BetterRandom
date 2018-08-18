@@ -195,7 +195,10 @@ public abstract class BaseRandomTest extends PowerMockTestCase {
     rng.setSeed(seed);
     // Create second RNG using same seed.
     final BaseRandom duplicateRNG = createRng(seed);
-    assertEquals(rng.nextGaussian(), duplicateRNG.nextGaussian());
+    // Do not inline this; dump() must be evaluated before nextGaussian
+    String failureMessage = String.format("Mismatch in output between %n%s%n and %n%s%n",
+        rng.dump(), duplicateRNG.dump());
+    assertEquals(rng.nextGaussian(), duplicateRNG.nextGaussian(), failureMessage);
   }
 
   @Test(timeOut = 15_000, expectedExceptions = IllegalArgumentException.class)

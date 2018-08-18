@@ -7,10 +7,10 @@ import io.github.pr0methean.betterrandom.seed.DefaultSeedGenerator;
 import io.github.pr0methean.betterrandom.seed.RandomSeederThread;
 import io.github.pr0methean.betterrandom.seed.SeedException;
 import io.github.pr0methean.betterrandom.seed.SeedGenerator;
-import io.github.pr0methean.betterrandom.util.BinaryUtils;
 import io.github.pr0methean.betterrandom.util.Java8Constants;
 import java.io.IOException;
 import java.io.ObjectInputStream;
+import java.nio.ByteBuffer;
 import java.util.concurrent.atomic.AtomicLong;
 import java8.util.SplittableRandom;
 import javax.annotation.Nullable;
@@ -29,6 +29,7 @@ public class SplittableRandomAdapter extends DirectSplittableRandomAdapter {
   private transient ThreadLocal<SplittableRandom> splittableRandoms;
   private transient ThreadLocal<AtomicLong> entropyBits;
   private transient ThreadLocal<byte[]> seeds;
+  private transient ThreadLocal<ByteBuffer> seedBuffers;
 
   /**
    * Use the provided seed generation strategy to create the seed for the master {@link
@@ -91,7 +92,7 @@ public class SplittableRandomAdapter extends DirectSplittableRandomAdapter {
   @Override protected void creditEntropyForNewSeed(final int seedLength) {
     if (entropyBits != null) {
       // Kludge for Java 7's lack of updateAndGet. Should be safe since entropyBits is thread-local.
-      entropyBits.get().set(seedLength * 8L);
+      entropyBits.get().set(seedLength * Java8Constants.LONG_BYTES);
     }
   }
 
@@ -116,11 +117,16 @@ public class SplittableRandomAdapter extends DirectSplittableRandomAdapter {
       };
 
       // getSeed() will return the master seed on each thread where setSeed() hasn't yet been called
+<<<<<<< HEAD
       seeds = new ThreadLocal<byte[]>() {
         @Override public byte[] initialValue() {
           return seed;
         }
       };
+=======
+      seeds = ThreadLocal.withInitial(() -> seed.clone());
+      seedBuffers = ThreadLocal.withInitial(() -> ByteBuffer.wrap(seeds.get()));
+>>>>>>> master
     } finally {
       lock.unlock();
     }
@@ -168,10 +174,14 @@ public class SplittableRandomAdapter extends DirectSplittableRandomAdapter {
     if (splittableRandoms != null) {
       splittableRandoms.set(new SplittableRandom(seed));
       if (entropyBits != null) {
+<<<<<<< HEAD
         creditEntropyForNewSeed(Java8Constants.LONG_BYTES);
+=======
+        creditEntropyForNewSeed(8);
+>>>>>>> master
       }
       if (seeds != null) {
-        seeds.set(BinaryUtils.convertLongToBytes(seed));
+        seedBuffers.get().putLong(0, seed);
       }
     }
   }

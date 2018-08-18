@@ -184,10 +184,16 @@ public class RandomWrapper extends BaseRandom {
    *     seed.
    */
   @Override public byte[] getSeed() {
-    if (unknownSeed) {
-      throw new UnsupportedOperationException();
+    lock.lock();
+    try {
+      if (unknownSeed) {
+        throw new UnsupportedOperationException();
+      }
+      return wrapped instanceof RepeatableRandom
+          ? ((RepeatableRandom) wrapped).getSeed() : seed.clone();
+    } finally {
+      lock.unlock();
     }
-    return super.getSeed();
   }
 
   @SuppressWarnings("LockAcquiredButNotSafelyReleased")
