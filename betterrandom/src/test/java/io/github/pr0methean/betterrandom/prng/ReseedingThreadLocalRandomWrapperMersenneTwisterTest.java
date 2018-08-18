@@ -71,6 +71,16 @@ public class ReseedingThreadLocalRandomWrapperMersenneTwisterTest
     prng.nextInt();
   }
 
+  /** setSeedGenerator doesn't work on this class and shouldn't pretend to. */
+  @Override @Test(expectedExceptions = UnsupportedOperationException.class)
+  public void testRandomSeederThreadIntegration() {
+    createRng().setSeedGenerator(SecureRandomSeedGenerator.SECURE_RANDOM_SEED_GENERATOR);
+  }
+  
+  @Override @Test public void testSetSeedGeneratorNoOp() {
+    createRng().setSeedGenerator(getTestSeedGenerator());
+  }
+
   @Override protected BaseRandom createRng() throws SeedException {
     return new ReseedingThreadLocalRandomWrapper(getTestSeedGenerator(), mtSupplier);
   }
