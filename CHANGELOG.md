@@ -1,6 +1,13 @@
 # 2.5.0
 * Adds `Pcg128Random`, a variant of `Pcg64Random` that uses a 128-bit seed and state.
 
+# 2.4.5
+* Improves performance of `XorShiftRandom.setSeed()`.
+* Fixes a bug that could cause `SplittableRandomAdapter.getSeed()` to return a value other than the
+  actual seed for the calling thread.
+* Fixes a bug in `RandomWrapper.getSeed()` when wrapping a `RepeatableRandom` that uses thread-local
+  seeds; it could previously have returned the seed from a different thread.
+
 # 2.4.4
 * `RandomSeederThread` no longer overrides `Thread.interrupt()`.
 * `getSeedGenerator` now behaves as specified when called on a `ReseedingSplittableRandomAdapter` or

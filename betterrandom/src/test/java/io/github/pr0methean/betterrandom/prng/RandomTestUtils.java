@@ -21,6 +21,7 @@ import static org.testng.Assert.assertFalse;
 import static org.testng.Assert.assertNotSame;
 import static org.testng.Assert.assertNull;
 import static org.testng.Assert.assertSame;
+import static org.testng.Assert.assertTrue;
 import static org.testng.Assert.fail;
 
 import io.github.pr0methean.betterrandom.CloneViaSerialization;
@@ -254,8 +255,11 @@ public enum RandomTestUtils {
   public static void testReseeding(SeedGenerator testSeedGenerator, BaseRandom rng,
       final boolean setSeedGenerator) {
     final byte[] oldSeed = rng.getSeed();
-    while (rng.getEntropyBits() > Long.SIZE) {
+    final byte[] oldSeedClone = oldSeed.clone();
+    while (rng.getEntropyBits() > 0) {
       rng.nextLong();
+      assertTrue(Arrays.equals(oldSeed, oldSeedClone),
+          "Array modified after being returned by getSeed()");
     }
     if (setSeedGenerator) {
       rng.setSeedGenerator(testSeedGenerator);
@@ -263,25 +267,34 @@ public enum RandomTestUtils {
     RandomSeederThread.setPriority(testSeedGenerator, Thread.MAX_PRIORITY);
     try {
       int waits = 0;
-      byte[] newSeed;
+      byte[] secondSeed;
       do {
+        assertTrue(Arrays.equals(oldSeed, oldSeedClone),
+            "Array modified after being returned by getSeed()");
         assertSame(rng.getSeedGenerator(), testSeedGenerator);
-        rng.nextBoolean();
-        Thread.sleep(10);
+        Thread.sleep(100);
         waits++;
-        newSeed = rng.getSeed();
-      } while (Arrays.equals(newSeed, oldSeed) && (waits < 1000));
-      if (waits >= 1000) {
-        fail(String.format("Timed out waiting for %s to be reseeded!", rng));
-      }
-      while (rng.getEntropyBits() < (newSeed.length * 8L) - 1) {
-        waits++;
-        if (waits > 20) {
-          fail(String.format("Timed out waiting for entropy count of %s to increase", rng));
+        if (waits > 100) {
+          fail(String.format("Timed out waiting for %s to be reseeded!", rng));
         }
-        Thread.sleep(50); // entropy update may not be co-atomic with seed update
+        secondSeed = rng.getSeed();
+      } while (Arrays.equals(secondSeed, oldSeed));
+      assertGreaterOrEqual(rng.getEntropyBits(), (secondSeed.length * 8L) - 1);
+      final byte[] secondSeedClone = secondSeed.clone();
+      byte[] thirdSeed;
+      while (rng.getEntropyBits() > 0) {
+        rng.nextLong();
       }
-      assertGreaterOrEqual(rng.getEntropyBits(), (newSeed.length * 8L) - 1);
+      do {
+        assertTrue(Arrays.equals(secondSeed, secondSeedClone),
+            "Array modified after being returned by getSeed()");
+        Thread.sleep(100);
+        waits++;
+        if (waits > 200) {
+          fail(String.format("Timed out waiting for %s to be reseeded!", rng));
+        }
+        thirdSeed = rng.getSeed();
+      } while (Arrays.equals(thirdSeed, secondSeed));
     } catch (final InterruptedException e) {
       throw new RuntimeException(e);
     } finally {

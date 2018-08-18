@@ -10,6 +10,7 @@ import io.github.pr0methean.betterrandom.seed.SeedGenerator;
 import io.github.pr0methean.betterrandom.util.BinaryUtils;
 import java.io.IOException;
 import java.io.ObjectInputStream;
+import java.nio.ByteBuffer;
 import java.util.SplittableRandom;
 import java.util.concurrent.atomic.AtomicLong;
 import javax.annotation.Nullable;
@@ -28,6 +29,7 @@ public class SplittableRandomAdapter extends DirectSplittableRandomAdapter {
   private transient ThreadLocal<SplittableRandom> splittableRandoms;
   private transient ThreadLocal<AtomicLong> entropyBits;
   private transient ThreadLocal<byte[]> seeds;
+  private transient ThreadLocal<ByteBuffer> seedBuffers;
 
   /**
    * Use the provided seed generation strategy to create the seed for the master {@link
@@ -90,7 +92,7 @@ public class SplittableRandomAdapter extends DirectSplittableRandomAdapter {
   @Override protected void creditEntropyForNewSeed(final int seedLength) {
     if (entropyBits != null) {
       entropyBits.get().updateAndGet(
-          oldCount -> Math.max(oldCount, Math.min(seedLength, getNewSeedLength()) * 8L));
+          oldCount -> Math.max(oldCount, Long.SIZE));
     }
   }
 
@@ -108,7 +110,8 @@ public class SplittableRandomAdapter extends DirectSplittableRandomAdapter {
       });
       entropyBits = ThreadLocal.withInitial(() -> new AtomicLong(SEED_LENGTH_BITS));
       // getSeed() will return the master seed on each thread where setSeed() hasn't yet been called
-      seeds = ThreadLocal.withInitial(() -> seed);
+      seeds = ThreadLocal.withInitial(() -> seed.clone());
+      seedBuffers = ThreadLocal.withInitial(() -> ByteBuffer.wrap(seeds.get()));
     } finally {
       lock.unlock();
     }
@@ -156,10 +159,10 @@ public class SplittableRandomAdapter extends DirectSplittableRandomAdapter {
     if (splittableRandoms != null) {
       splittableRandoms.set(new SplittableRandom(seed));
       if (entropyBits != null) {
-        entropyBits.get().updateAndGet(oldValue -> Math.max(oldValue, SEED_LENGTH_BITS));
+        creditEntropyForNewSeed(8);
       }
       if (seeds != null) {
-        seeds.set(BinaryUtils.convertLongToBytes(seed));
+        seedBuffers.get().putLong(0, seed);
       }
     }
   }
