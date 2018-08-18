@@ -67,9 +67,18 @@ public abstract class DirectSplittableRandomAdapter extends BaseSplittableRandom
    * Replaces {@link #underlying} with a new {@link SplittableRandom} that uses the given seed.
    */
   @Override public void setSeed(final long seed) {
+    boolean locked = false;
     if (superConstructorFinished) {
+      lock.lock();
+      locked = true;
       super.setSeedInternal(BinaryUtils.convertLongToBytes(seed));
     }
-    underlying = new SplittableRandom(seed);
+    try {
+      underlying = new SplittableRandom(seed);
+    } finally {
+      if (locked) {
+        lock.unlock();
+      }
+    }
   }
 }
