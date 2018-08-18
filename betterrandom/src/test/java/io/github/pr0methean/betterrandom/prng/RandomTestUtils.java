@@ -21,6 +21,7 @@ import static org.testng.Assert.assertFalse;
 import static org.testng.Assert.assertNotSame;
 import static org.testng.Assert.assertNull;
 import static org.testng.Assert.assertSame;
+import static org.testng.Assert.assertTrue;
 import static org.testng.Assert.fail;
 
 import io.github.pr0methean.betterrandom.CloneViaSerialization;
@@ -254,6 +255,7 @@ public enum RandomTestUtils {
   public static void testReseeding(SeedGenerator testSeedGenerator, BaseRandom rng,
       final boolean setSeedGenerator) {
     final byte[] oldSeed = rng.getSeed();
+    final byte[] oldSeedClone = oldSeed.clone();
     while (rng.getEntropyBits() > Long.SIZE) {
       rng.nextLong();
     }
@@ -265,6 +267,8 @@ public enum RandomTestUtils {
       int waits = 0;
       byte[] newSeed;
       do {
+        assertTrue(Arrays.equals(oldSeed, oldSeedClone),
+            "Array modified after being returned by getSeed()");
         assertSame(rng.getSeedGenerator(), testSeedGenerator);
         rng.nextBoolean();
         Thread.sleep(10);
