@@ -42,6 +42,10 @@ public class ReseedingThreadLocalRandomWrapperFailingSeedGeneratorTest
     // No-op.
   }
 
+  @Override @Test(enabled = false) public void testThreadSafetySetSeed() {
+    // No-op.
+  }
+
   @Override @Test(enabled = false) public void testAllPublicConstructors()
       throws SeedException, IllegalAccessException, InstantiationException,
       InvocationTargetException {
