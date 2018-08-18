@@ -12,6 +12,11 @@ import org.testng.annotations.Test;
 public class ReseedingThreadLocalRandomWrapperFailingSeedGeneratorTest
     extends ReseedingThreadLocalRandomWrapperTest {
 
+  public ReseedingThreadLocalRandomWrapperFailingSeedGeneratorTest() {
+    pcgSupplier = (Serializable & Supplier<BaseRandom>)
+        () -> new Pcg64Random(semiFakeSeedGenerator);
+  }
+
   @Override protected EntropyCheckMode getEntropyCheckMode() {
     return EntropyCheckMode.EXACT;
   }
