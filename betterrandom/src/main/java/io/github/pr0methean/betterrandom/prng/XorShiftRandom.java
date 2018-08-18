@@ -93,10 +93,10 @@ public class XorShiftRandom extends BaseRandom {
     lock.lock();
     try {
       seedBuffer.putInt(0, state1);
-      seedBuffer.putInt(4, state2);
-      seedBuffer.putInt(8, state3);
-      seedBuffer.putInt(12, state4);
-      seedBuffer.putInt(16, state5);
+      seedBuffer.putInt(Integer.BYTES, state2);
+      seedBuffer.putInt(2 * Integer.BYTES, state3);
+      seedBuffer.putInt(3 * Integer.BYTES, state4);
+      seedBuffer.putInt(4 * Integer.BYTES, state5);
       return seed.clone();
     } finally {
       lock.unlock();
@@ -109,10 +109,10 @@ public class XorShiftRandom extends BaseRandom {
     }
     super.setSeedInternal(seed);
     state1 = seedBuffer.getInt(0);
-    state2 = seedBuffer.getInt(4);
-    state3 = seedBuffer.getInt(8);
-    state4 = seedBuffer.getInt(12);
-    state5 = seedBuffer.getInt(16);
+    state2 = seedBuffer.getInt(Integer.BYTES);
+    state3 = seedBuffer.getInt(2 * Integer.BYTES);
+    state4 = seedBuffer.getInt(3 * Integer.BYTES);
+    state5 = seedBuffer.getInt(4 * Integer.BYTES);
   }
 
   @Override protected int next(final int bits) {
