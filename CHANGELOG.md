@@ -2,6 +2,8 @@
 * Improves performance of `XorShiftRandom.setSeed()`.
 * Fixes a bug that could cause `SplittableRandomAdapter.getSeed()` to return a value other than the
   actual seed for the calling thread.
+* Fixes a bug in `RandomWrapper.getSeed()` when wrapping a `RepeatableRandom` that uses thread-local
+  seeds; it could previously have returned the seed from a different thread.
 
 # 2.4.4
 * `RandomSeederThread` no longer overrides `Thread.interrupt()`.
