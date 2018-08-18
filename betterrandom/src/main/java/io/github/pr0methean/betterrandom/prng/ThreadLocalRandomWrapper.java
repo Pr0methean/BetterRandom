@@ -78,7 +78,9 @@ public class ThreadLocalRandomWrapper extends RandomWrapper {
    * @throws UnsupportedOperationException always.
    */
   @Override public void setSeedGenerator(final SeedGenerator seedGenerator) {
-    throw new UnsupportedOperationException("This can't be reseeded by a RandomSeederThread");
+    if (seedGenerator != null) {
+      throw new UnsupportedOperationException("This can't be reseeded by a RandomSeederThread");
+    }
   }
 
   @Override protected boolean withProbabilityInternal(final double probability) {
