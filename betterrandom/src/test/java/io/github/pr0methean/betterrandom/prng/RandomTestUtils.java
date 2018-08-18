@@ -276,7 +276,7 @@ public enum RandomTestUtils {
       }
       while (rng.getEntropyBits() < (newSeed.length * 8L) - 1) {
         waits++;
-        if (waits > 20) {
+        if (waits > 4) {
           fail(String.format("Timed out waiting for entropy count of %s to increase", rng));
         }
         Thread.sleep(50); // entropy update may not be co-atomic with seed update
