@@ -117,16 +117,11 @@ public class SplittableRandomAdapter extends DirectSplittableRandomAdapter {
       };
 
       // getSeed() will return the master seed on each thread where setSeed() hasn't yet been called
-<<<<<<< HEAD
       seeds = new ThreadLocal<byte[]>() {
         @Override public byte[] initialValue() {
-          return seed;
+          return seed.clone();
         }
       };
-=======
-      seeds = ThreadLocal.withInitial(() -> seed.clone());
-      seedBuffers = ThreadLocal.withInitial(() -> ByteBuffer.wrap(seeds.get()));
->>>>>>> master
     } finally {
       lock.unlock();
     }
@@ -174,11 +169,7 @@ public class SplittableRandomAdapter extends DirectSplittableRandomAdapter {
     if (splittableRandoms != null) {
       splittableRandoms.set(new SplittableRandom(seed));
       if (entropyBits != null) {
-<<<<<<< HEAD
         creditEntropyForNewSeed(Java8Constants.LONG_BYTES);
-=======
-        creditEntropyForNewSeed(8);
->>>>>>> master
       }
       if (seeds != null) {
         seedBuffers.get().putLong(0, seed);
