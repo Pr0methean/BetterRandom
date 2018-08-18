@@ -706,9 +706,7 @@ public abstract class BaseRandom extends Random
   protected void setSeedInternal(final byte[] seed) {
     if ((this.seed == null) || (this.seed.length != seed.length)) {
       this.seed = seed.clone();
-      if (usesByteBuffer()) {
-        seedBuffer = ByteBuffer.wrap(this.seed);
-      }
+      initSeedBuffer();
     } else {
       System.arraycopy(seed, 0, this.seed, 0, seed.length);
     }
@@ -745,10 +743,17 @@ public abstract class BaseRandom extends Random
   private void readObject(final ObjectInputStream in) throws IOException, ClassNotFoundException {
     in.defaultReadObject();
     initTransientFields();
+    initSeedBuffer();
     setSeedInternal(seed);
     SeedGenerator currentSeedGenerator = getSeedGenerator();
     if (currentSeedGenerator != null) {
       RandomSeederThread.add(currentSeedGenerator, this);
+    }
+  }
+
+  private void initSeedBuffer() {
+    if (usesByteBuffer()) {
+      seedBuffer = ByteBuffer.wrap(this.seed);
     }
   }
 
