@@ -720,8 +720,8 @@ public abstract class BaseRandom extends Random
    * @param seedLength the length of the new seed in bytes
    */
   protected void creditEntropyForNewSeed(final int seedLength) {
-    entropyBits.updateAndGet(
-        oldCount -> Math.max(oldCount, Math.min(seedLength, getNewSeedLength()) * 8L));
+    final long effectiveBits = Math.min(seedLength, getNewSeedLength()) * 8L;
+    entropyBits.updateAndGet(oldCount -> Math.max(oldCount, effectiveBits));
   }
 
   /**
