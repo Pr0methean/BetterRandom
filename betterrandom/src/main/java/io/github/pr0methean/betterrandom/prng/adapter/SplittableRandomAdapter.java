@@ -108,7 +108,7 @@ public class SplittableRandomAdapter extends DirectSplittableRandomAdapter {
       });
       entropyBits = ThreadLocal.withInitial(() -> new AtomicLong(SEED_LENGTH_BITS));
       // getSeed() will return the master seed on each thread where setSeed() hasn't yet been called
-      seeds = ThreadLocal.withInitial(() -> seed);
+      seeds = ThreadLocal.withInitial(() -> seed.clone());
     } finally {
       lock.unlock();
     }
@@ -159,12 +159,7 @@ public class SplittableRandomAdapter extends DirectSplittableRandomAdapter {
         entropyBits.get().updateAndGet(oldValue -> Math.max(oldValue, SEED_LENGTH_BITS));
       }
       if (seeds != null) {
-        final byte[] currentSeed = seeds.get();
-        if (currentSeed == null) {
-          seeds.set(BinaryUtils.convertLongToBytes(seed).clone());
-        } else {
-          System.arraycopy(seed, 0, currentSeed, 0, Long.BYTES);
-        }
+        System.arraycopy(seed, 0, seeds.get(), 0, Long.BYTES);
       }
     }
   }
