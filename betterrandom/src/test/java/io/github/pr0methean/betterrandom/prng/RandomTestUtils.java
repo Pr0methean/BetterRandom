@@ -273,15 +273,16 @@ public enum RandomTestUtils {
         rng.nextBoolean();
         Thread.sleep(10);
         waits++;
+        if (waits > 1000) {
+          fail(String.format("Timed out waiting for %s to be reseeded!", rng));
+        }
         newSeed = rng.getSeed();
-      } while (Arrays.equals(newSeed, oldSeed) && (waits < 1000));
-      if (waits >= 1000) {
-        fail(String.format("Timed out waiting for %s to be reseeded!", rng));
-      }
+      } while (Arrays.equals(newSeed, oldSeed));
       while (rng.getEntropyBits() < (newSeed.length * 8L) - 1) {
         waits++;
         if (waits > 20) {
-          fail(String.format("Timed out waiting for entropy count of %s to increase", rng));
+          fail(String.format("Timed out waiting for entropy count to increase on:%n%s",
+              rng.dump()));
         }
         Thread.sleep(50); // entropy update may not be co-atomic with seed update
       }
