@@ -13,23 +13,23 @@ public class ReseedingThreadLocalRandomWrapperFailingSeedGeneratorTest
     pcgSupplier = new Pcg64RandomColonColonNew(semiFakeSeedGenerator);
   }
 
-  @Override @Test(enabled = false) public void testWrapLegacy() throws SeedException {
+  @Override @Test(enabled = false) public void testWrapLegacy() {
     // No-op.
   }
 
-  @Override @Test(enabled = false) public void testSetSeedAfterNextLong() throws SeedException {
+  @Override @Test(enabled = false) public void testSetSeedAfterNextLong() {
     // No-op.
   }
 
-  @Override @Test(enabled = false) public void testSetSeedAfterNextInt() throws SeedException {
+  @Override @Test(enabled = false) public void testSetSeedAfterNextInt() {
     // No-op.
   }
 
-  @Override @Test(enabled = false) public void testSerializable() throws SeedException {
+  @Override @Test(enabled = false) public void testSerializable() {
     // No-op.
   }
 
-  @Override @Test(enabled = false) public void testSeedTooLong() throws SeedException {
+  @Override @Test(enabled = false) public void testSeedTooLong() {
     // No-op.
   }
 
@@ -41,9 +41,7 @@ public class ReseedingThreadLocalRandomWrapperFailingSeedGeneratorTest
     // No-op.
   }
 
-  @Override @Test(enabled = false) public void testAllPublicConstructors()
-      throws SeedException, IllegalAccessException, InstantiationException,
-      InvocationTargetException {
+  @Override @Test(enabled = false) public void testAllPublicConstructors() {
     // No-op.
   }
 
