@@ -13,6 +13,40 @@ public class ReseedingThreadLocalRandomWrapperFailingSeedGeneratorTest
     pcgSupplier = new Pcg64RandomColonColonNew(semiFakeSeedGenerator);
   }
 
+  @Override @Test(enabled = false) public void testWrapLegacy() throws SeedException {
+    // No-op.
+  }
+
+  @Override @Test(enabled = false) public void testSetSeedAfterNextLong() throws SeedException {
+    // No-op.
+  }
+
+  @Override @Test(enabled = false) public void testSetSeedAfterNextInt() throws SeedException {
+    // No-op.
+  }
+
+  @Override @Test(enabled = false) public void testSerializable() throws SeedException {
+    // No-op.
+  }
+
+  @Override @Test(enabled = false) public void testSeedTooLong() throws SeedException {
+    // No-op.
+  }
+
+  @Override @Test(enabled = false) public void testThreadSafety() {
+    // No-op.
+  }
+
+  @Override @Test(enabled = false) public void testThreadSafetySetSeed() {
+    // No-op.
+  }
+
+  @Override @Test(enabled = false) public void testAllPublicConstructors()
+      throws SeedException, IllegalAccessException, InstantiationException,
+      InvocationTargetException {
+    // No-op.
+  }
+
   @Override protected EntropyCheckMode getEntropyCheckMode() {
     return EntropyCheckMode.EXACT;
   }
