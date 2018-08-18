@@ -107,8 +107,8 @@ public abstract class BaseRandom extends Random
     if (seed == null) {
       throw new IllegalArgumentException("Seed must not be null");
     }
-    initTransientFields();
     setSeedInternal(seed);
+    initTransientFields();
   }
 
   /**
