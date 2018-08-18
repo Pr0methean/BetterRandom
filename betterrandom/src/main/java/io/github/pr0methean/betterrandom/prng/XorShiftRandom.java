@@ -15,6 +15,8 @@
 // ============================================================================
 package io.github.pr0methean.betterrandom.prng;
 
+import static io.github.pr0methean.betterrandom.util.Java8Constants.INT_BYTES;
+
 import com.google.common.base.MoreObjects.ToStringHelper;
 import io.github.pr0methean.betterrandom.seed.DefaultSeedGenerator;
 import io.github.pr0methean.betterrandom.seed.SeedException;
@@ -93,10 +95,10 @@ public class XorShiftRandom extends BaseRandom {
     lock.lock();
     try {
       seedBuffer.putInt(0, state1);
-      seedBuffer.putInt(Integer.BYTES, state2);
-      seedBuffer.putInt(2 * Integer.BYTES, state3);
-      seedBuffer.putInt(3 * Integer.BYTES, state4);
-      seedBuffer.putInt(4 * Integer.BYTES, state5);
+      seedBuffer.putInt(INT_BYTES, state2);
+      seedBuffer.putInt(2 * INT_BYTES, state3);
+      seedBuffer.putInt(3 * INT_BYTES, state4);
+      seedBuffer.putInt(4 * INT_BYTES, state5);
       return seed.clone();
     } finally {
       lock.unlock();
@@ -109,10 +111,10 @@ public class XorShiftRandom extends BaseRandom {
     }
     super.setSeedInternal(seed);
     state1 = seedBuffer.getInt(0);
-    state2 = seedBuffer.getInt(Integer.BYTES);
-    state3 = seedBuffer.getInt(2 * Integer.BYTES);
-    state4 = seedBuffer.getInt(3 * Integer.BYTES);
-    state5 = seedBuffer.getInt(4 * Integer.BYTES);
+    state2 = seedBuffer.getInt(INT_BYTES);
+    state3 = seedBuffer.getInt(2 * INT_BYTES);
+    state4 = seedBuffer.getInt(3 * INT_BYTES);
+    state5 = seedBuffer.getInt(4 * INT_BYTES);
   }
 
   @Override protected int next(final int bits) {
