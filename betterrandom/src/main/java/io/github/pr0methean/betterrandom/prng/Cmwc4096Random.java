@@ -80,10 +80,6 @@ public class Cmwc4096Random extends BaseRandom {
     return original.add("state", Arrays.toString(state));
   }
 
-  @Override public byte[] getSeed() {
-    return seed.clone();
-  }
-
   /**
    * Reseeds this PRNG using the {@link DefaultSeedGenerator}, since it needs a longer seed.
    * @param seed ignored
