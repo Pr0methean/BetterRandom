@@ -269,6 +269,8 @@ public enum RandomTestUtils {
       int waits = 0;
       byte[] secondSeed;
       do {
+        assertTrue(Arrays.equals(oldSeed, oldSeedClone),
+            "Array modified after being returned by getSeed()");
         assertSame(rng.getSeedGenerator(), testSeedGenerator);
         Thread.sleep(10);
         waits++;
