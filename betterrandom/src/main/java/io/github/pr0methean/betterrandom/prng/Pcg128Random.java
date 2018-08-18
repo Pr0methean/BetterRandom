@@ -53,7 +53,6 @@ public class Pcg128Random extends BaseRandom implements SeekableRandom {
 
   private static final ThreadLocal<ByteBuffer> rot = makeByteArrayThreadLocal();
   private static final ThreadLocal<ByteBuffer> OLD_SEED = makeByteArrayThreadLocal();
-  private static final ThreadLocal<ByteBuffer> NEW_SEED = makeByteArrayThreadLocal();
   private static final ThreadLocal<ByteBuffer> XORSHIFTED = makeByteArrayThreadLocal();
   private static final ThreadLocal<ByteBuffer> XORSHIFTED_2 = makeByteArrayThreadLocal();
   private static final ThreadLocal<ByteBuffer> RESULT_TERM_1 = makeByteArrayThreadLocal();
@@ -148,10 +147,8 @@ public class Pcg128Random extends BaseRandom implements SeekableRandom {
     byte[] oldSeed;
     try {
       oldSeed = copyInto(OLD_SEED, seed).array();
-      ByteBuffer newSeed = copyInto(NEW_SEED, seed);
-      multiplyInto(newSeed, MULTIPLIER_BUFFER);
-      addInto(newSeed, INCREMENT_BUFFER);
-      System.arraycopy(newSeed, 0, seed, 0, seed.length);
+      multiplyInto(seedBuffer, MULTIPLIER_BUFFER);
+      addInto(seedBuffer, INCREMENT_BUFFER);
     } finally {
       lock.unlock();
     }
