@@ -3,6 +3,7 @@ package io.github.pr0methean.betterrandom.prng;
 import io.github.pr0methean.betterrandom.prng.RandomTestUtils.EntropyCheckMode;
 import io.github.pr0methean.betterrandom.seed.FailingSeedGenerator;
 import io.github.pr0methean.betterrandom.seed.SeedException;
+import io.github.pr0methean.betterrandom.seed.SeedGenerator;
 import java.io.Serializable;
 import java.util.function.Supplier;
 import org.testng.annotations.Test;
@@ -23,8 +24,7 @@ public class ReseedingThreadLocalRandomWrapperFailingSeedGeneratorTest
     // No-op.
   }
 
-  @Override protected BaseRandom createRng() throws SeedException {
-    return new ReseedingThreadLocalRandomWrapper(FailingSeedGenerator.FAILING_SEED_GENERATOR,
-        pcgSupplier);
+  @Override protected SeedGenerator getTestSeedGenerator() {
+    return FailingSeedGenerator.FAILING_SEED_GENERATOR;
   }
 }
