@@ -707,7 +707,7 @@ public abstract class BaseRandom extends Random
     if ((this.seed == null) || (this.seed.length != seed.length)) {
       this.seed = seed.clone();
       if (usesByteBuffer()) {
-        seedBuffer = ByteBuffer.wrap(seed);
+        seedBuffer = ByteBuffer.wrap(this.seed);
       }
     } else {
       System.arraycopy(seed, 0, this.seed, 0, seed.length);
