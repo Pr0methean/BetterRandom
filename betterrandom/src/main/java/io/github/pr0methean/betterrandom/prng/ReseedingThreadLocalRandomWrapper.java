@@ -79,6 +79,13 @@ public class ReseedingThreadLocalRandomWrapper extends ThreadLocalRandomWrapper 
         wrapLongCreatorAsByteArrayCreator(legacyCreator));
   }
 
+  @Override public void setSeedGenerator(final SeedGenerator seedGenerator) {
+    if (seedGenerator != this.seedGenerator) {
+      throw new UnsupportedOperationException(
+          "ReseedingThreadLocalRandomWrapper's binding to RandomSeederThread is immutable");
+    }
+  }
+
   @Override public SeedGenerator getSeedGenerator() {
     return seedGenerator;
   }

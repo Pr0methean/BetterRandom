@@ -142,7 +142,9 @@ public class SplittableRandomAdapter extends DirectSplittableRandomAdapter {
    * @throws UnsupportedOperationException always.
    */
   @Override public void setSeedGenerator(@Nullable final SeedGenerator seedGenerator) {
-    throw new UnsupportedOperationException("Use ReseedingSplittableRandomAdapter instead");
+    if (seedGenerator != null) {
+      throw new UnsupportedOperationException("Use ReseedingSplittableRandomAdapter instead");
+    }
   }
 
   @Override public byte[] getSeed() {

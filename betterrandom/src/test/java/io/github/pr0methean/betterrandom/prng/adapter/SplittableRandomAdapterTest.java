@@ -48,6 +48,10 @@ public class SplittableRandomAdapterTest extends SingleThreadSplittableRandomAda
     createRng().setSeedGenerator(getTestSeedGenerator());
   }
 
+  @Test public void testSetSeedGeneratorNoOp() {
+    createRng().setSeedGenerator(null);
+  }
+
   /** Assertion-free because thread-local. */
   @Override @Test public void testThreadSafety() {
     testThreadSafetyVsCrashesOnly(30, functionsForThreadSafetyTest);

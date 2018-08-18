@@ -3,6 +3,7 @@ package io.github.pr0methean.betterrandom.prng;
 import static io.github.pr0methean.betterrandom.TestUtils.assertGreaterOrEqual;
 
 import io.github.pr0methean.betterrandom.prng.RandomTestUtils.EntropyCheckMode;
+import io.github.pr0methean.betterrandom.seed.SecureRandomSeedGenerator;
 import io.github.pr0methean.betterrandom.seed.SeedException;
 import io.github.pr0methean.betterrandom.seed.SeedGenerator;
 import java.util.Random;
@@ -23,6 +24,16 @@ public class ReseedingThreadLocalRandomWrapperTest extends ThreadLocalRandomWrap
 
   @Override protected Class<? extends BaseRandom> getClassUnderTest() {
     return ReseedingThreadLocalRandomWrapper.class;
+  }
+
+  /** setSeedGenerator doesn't work on this class and shouldn't pretend to. */
+  @Override @Test(expectedExceptions = UnsupportedOperationException.class)
+  public void testRandomSeederThreadIntegration() {
+    createRng().setSeedGenerator(SecureRandomSeedGenerator.SECURE_RANDOM_SEED_GENERATOR);
+  }
+
+  @Test public void testSetSeedGeneratorNoOp() {
+    createRng().setSeedGenerator(getTestSeedGenerator());
   }
 
   @SuppressWarnings("BusyWait") @Override @Test public void testReseeding() {
