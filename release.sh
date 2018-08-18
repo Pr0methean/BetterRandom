@@ -27,11 +27,16 @@ rm -rf ../../.m2/repository/io/github/pr0methean/betterrandom/ &&\
     if [ "$#" -ge 1 ]; then
       cd ..
       ./publish-javadoc.sh
+      git tag "BetterRandom-$1"
+      git push origin "BetterRandom-$1"
       cd betterrandom
       # https://unix.stackexchange.com/a/23244/79452
       n=${1##*[!0-9]}; p=${1%%$n}
       NEWVERSION="$p$((n+1))-SNAPSHOT"
       mvn versions:set -DnewVersion=${NEWVERSION}
+      # For some reason we end up with -SNAPSHOT-SNAPSHOT without next 2 lines:
+      sed -i "s/$1-SNAPSHOT/${NEWVERSION}/" ../benchmark/pom.xml
+      sed -i "s/$1-SNAPSHOT/${NEWVERSION}/" ../FifoFiller/pom.xml
       sed -i "s/$1/${NEWVERSION}/" ../benchmark/pom.xml
       sed -i "s/$1/${NEWVERSION}/" ../FifoFiller/pom.xml
       git add pom.xml
