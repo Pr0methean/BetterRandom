@@ -256,8 +256,10 @@ public enum RandomTestUtils {
       final boolean setSeedGenerator) {
     final byte[] oldSeed = rng.getSeed();
     final byte[] oldSeedClone = oldSeed.clone();
-    while (rng.getEntropyBits() > Long.SIZE) {
+    while (rng.getEntropyBits() > 0) {
       rng.nextLong();
+      assertTrue(Arrays.equals(oldSeed, oldSeedClone),
+          "Array modified after being returned by getSeed()");
     }
     if (setSeedGenerator) {
       rng.setSeedGenerator(testSeedGenerator);
@@ -267,10 +269,7 @@ public enum RandomTestUtils {
       int waits = 0;
       byte[] newSeed;
       do {
-        assertTrue(Arrays.equals(oldSeed, oldSeedClone),
-            "Array modified after being returned by getSeed()");
         assertSame(rng.getSeedGenerator(), testSeedGenerator);
-        rng.nextBoolean();
         Thread.sleep(10);
         waits++;
         if (waits > 1000) {
@@ -278,15 +277,6 @@ public enum RandomTestUtils {
         }
         newSeed = rng.getSeed();
       } while (Arrays.equals(newSeed, oldSeed));
-      waits = 0;
-      while (rng.getEntropyBits() < (newSeed.length * 8L) - 1) {
-        waits++;
-        if (waits > 4) {
-          fail(String.format("Timed out waiting for entropy count to increase on:%n%s",
-              rng.dump()));
-        }
-        Thread.sleep(50); // entropy update may not be co-atomic with seed update
-      }
       assertGreaterOrEqual(rng.getEntropyBits(), (newSeed.length * 8L) - 1);
     } catch (final InterruptedException e) {
       throw new RuntimeException(e);
