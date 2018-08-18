@@ -58,10 +58,14 @@ public class ThreadLocalRandomWrapperTest extends BaseRandomTest {
     // No-op: ThreadLocalRandomWrapper isn't repeatable.
   }
 
-  /** Seeding of this PRNG is thread-local, so setSeederThread makes no sense. */
+  /** setSeedGenerator doesn't work on this class and shouldn't pretend to. */
   @Override @Test(expectedExceptions = UnsupportedOperationException.class)
   public void testRandomSeederThreadIntegration() {
     createRng().setSeedGenerator(getTestSeedGenerator());
+  }
+
+  @Test public void testSetSeedGeneratorNoOp() {
+    createRng().setSeedGenerator(null);
   }
 
   /** Assertion-free because ThreadLocalRandomWrapper isn't repeatable. */

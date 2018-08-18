@@ -4,6 +4,8 @@
   actual seed for the calling thread.
 * Fixes a bug in `RandomWrapper.getSeed()` when wrapping a `RepeatableRandom` that uses thread-local
   seeds; it could previously have returned the seed from a different thread.
+* `setSeedGenerator` will now never throw an exception if the seed generator it attempts to set is
+  the one already in use, even if changing it isn't supported.
 
 # 2.4.4
 * `RandomSeederThread` no longer overrides `Thread.interrupt()`.
