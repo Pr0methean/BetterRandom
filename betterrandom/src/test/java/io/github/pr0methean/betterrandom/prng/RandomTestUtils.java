@@ -267,7 +267,7 @@ public enum RandomTestUtils {
     RandomSeederThread.setPriority(testSeedGenerator, Thread.MAX_PRIORITY);
     try {
       int waits = 0;
-      byte[] newSeed;
+      byte[] secondSeed;
       do {
         assertSame(rng.getSeedGenerator(), testSeedGenerator);
         Thread.sleep(10);
@@ -275,9 +275,24 @@ public enum RandomTestUtils {
         if (waits > 1000) {
           fail(String.format("Timed out waiting for %s to be reseeded!", rng));
         }
-        newSeed = rng.getSeed();
-      } while (Arrays.equals(newSeed, oldSeed));
-      assertGreaterOrEqual(rng.getEntropyBits(), (newSeed.length * 8L) - 1);
+        secondSeed = rng.getSeed();
+      } while (Arrays.equals(secondSeed, oldSeed));
+      assertGreaterOrEqual(rng.getEntropyBits(), (secondSeed.length * 8L) - 1);
+      final byte[] secondSeedClone = secondSeed.clone();
+      byte[] thirdSeed;
+      while (rng.getEntropyBits() > 0) {
+        rng.nextLong();
+      }
+      do {
+        assertTrue(Arrays.equals(secondSeed, secondSeedClone),
+            "Array modified after being returned by getSeed()");
+        Thread.sleep(10);
+        waits++;
+        if (waits > 1000) {
+          fail(String.format("Timed out waiting for %s to be reseeded!", rng));
+        }
+        thirdSeed = rng.getSeed();
+      } while (Arrays.equals(thirdSeed, secondSeed));
     } catch (final InterruptedException e) {
       throw new RuntimeException(e);
     } finally {
