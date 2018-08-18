@@ -4,6 +4,7 @@ import static io.github.pr0methean.betterrandom.TestUtils.assertGreaterOrEqual;
 
 import io.github.pr0methean.betterrandom.TestingDeficiency;
 import io.github.pr0methean.betterrandom.prng.RandomTestUtils.EntropyCheckMode;
+import io.github.pr0methean.betterrandom.seed.DevRandomSeedGenerator;
 import io.github.pr0methean.betterrandom.seed.SecureRandomSeedGenerator;
 import io.github.pr0methean.betterrandom.seed.SeedException;
 import io.github.pr0methean.betterrandom.seed.SeedGenerator;
@@ -74,7 +75,7 @@ public class ReseedingThreadLocalRandomWrapperMersenneTwisterTest
   /** setSeedGenerator doesn't work on this class and shouldn't pretend to. */
   @Override @Test(expectedExceptions = UnsupportedOperationException.class)
   public void testRandomSeederThreadIntegration() {
-    createRng().setSeedGenerator(SecureRandomSeedGenerator.SECURE_RANDOM_SEED_GENERATOR);
+    createRng().setSeedGenerator(DevRandomSeedGenerator.DEV_RANDOM_SEED_GENERATOR);
   }
   
   @Override @Test public void testSetSeedGeneratorNoOp() {
