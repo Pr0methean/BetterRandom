@@ -17,7 +17,7 @@ import org.testng.annotations.Test;
 @Test(testName = "ThreadLocalRandomWrapper")
 public class ThreadLocalRandomWrapperTest extends BaseRandomTest {
 
-  protected final Supplier<BaseRandom> pcgSupplier
+  protected Supplier<BaseRandom> pcgSupplier
       = new Pcg64RandomColonColonNew(getTestSeedGenerator());
 
   @Override public void testSerializable()

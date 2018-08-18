@@ -10,8 +10,7 @@ public class ReseedingThreadLocalRandomWrapperFailingSeedGeneratorTest
     extends ReseedingThreadLocalRandomWrapperTest {
 
   public ReseedingThreadLocalRandomWrapperFailingSeedGeneratorTest() {
-    pcgSupplier = (Serializable & Supplier<BaseRandom>)
-        () -> new Pcg64Random(semiFakeSeedGenerator);
+    pcgSupplier = new Pcg64RandomColonColonNew(semiFakeSeedGenerator);
   }
 
   @Override protected EntropyCheckMode getEntropyCheckMode() {
