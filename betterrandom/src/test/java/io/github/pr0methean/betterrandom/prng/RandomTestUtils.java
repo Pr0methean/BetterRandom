@@ -278,9 +278,10 @@ public enum RandomTestUtils {
         }
         newSeed = rng.getSeed();
       } while (Arrays.equals(newSeed, oldSeed));
+      waits = 0;
       while (rng.getEntropyBits() < (newSeed.length * 8L) - 1) {
         waits++;
-        if (waits > 20) {
+        if (waits > 4) {
           fail(String.format("Timed out waiting for entropy count to increase on:%n%s",
               rng.dump()));
         }
