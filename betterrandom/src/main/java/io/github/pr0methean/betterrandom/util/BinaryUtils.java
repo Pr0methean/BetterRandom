@@ -72,7 +72,7 @@ public enum BinaryUtils {
     }
     return buffer.toString();
   }
-  
+
   /**
    * Converts an array of ints into a String of hexadecimal characters (0 - F), taking only the
    * least significant byte of each int. Prepends a newline, unless returning "null".
@@ -151,7 +151,7 @@ public enum BinaryUtils {
    * @return The 64-bit integer represented by the eight bytes.
    */
   public static long convertBytesToLong(final byte[] bytes, final int offset) {
-    System.arraycopy(bytes, offset, LONG_BYTE_ARRAY.get(), 0, Long.BYTES);
+    System.arraycopy(bytes, offset, LONG_BYTE_ARRAY.get(), 0, LONG_BYTES);
     return LONG_BYTE_BUFFER.get().getLong(0);
   }
 

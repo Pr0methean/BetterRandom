@@ -73,7 +73,7 @@ public class RandomWrapper extends BaseRandom {
    * @param seed 8 bytes of seed data used to initialise the RNG.
    */
   public RandomWrapper(final byte[] seed) {
-    this(BinaryUtils.convertBytesToLong(checkLength(seed, Long.BYTES)));
+    this(BinaryUtils.convertBytesToLong(checkLength(seed, LONG_BYTES)));
   }
 
   /**
