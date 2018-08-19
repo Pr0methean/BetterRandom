@@ -23,6 +23,7 @@ import io.github.pr0methean.betterrandom.seed.SeedGenerator;
 import io.github.pr0methean.betterrandom.util.BinaryUtils;
 import io.github.pr0methean.betterrandom.util.Byte16ArrayArithmetic;
 import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
 import java.security.GeneralSecurityException;
 import java.security.InvalidKeyException;
 import java.security.MessageDigest;
@@ -322,15 +323,6 @@ public class AesCounterRandom extends BaseRandom implements SeekableRandom {
         blocksDelta--;
       }
       blocksDelta -= BLOCKS_AT_ONCE; // Compensate for the increment during nextBlock() below
-      final byte[] addendDigits = new byte[COUNTER_SIZE_BYTES];
-      System.arraycopy(BinaryUtils.convertLongToBytes(blocksDelta), 0, addendDigits,
-          COUNTER_SIZE_BYTES - Long.BYTES, Long.BYTES);
-      if (blocksDelta < 0) {
-        // Sign extend
-        for (int i = 0; i < (COUNTER_SIZE_BYTES - Long.BYTES); i++) {
-          addendDigits[i] = -1;
-        }
-      }
       Byte16ArrayArithmetic.addInto(counter, blocksDelta * INTS_PER_BLOCK, true);
       nextBlock();
       index = newIndex;
