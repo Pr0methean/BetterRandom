@@ -49,7 +49,7 @@ public class BinaryUtilsTest {
   }
 
   private void assertEqualsHex(long actual, long expected) {
-    assertEquals(actual, expected, String.format("Expected %x, got %x", actual, expected));
+    assertEquals(actual, expected, String.format("Expected %x, got %x", expected, actual));
   }
 
   @Test public void testConvertLongToBytes() throws Exception {
@@ -123,7 +123,7 @@ public class BinaryUtilsTest {
    */
   @Test(timeOut = 1000) public void testConvertNegativeBytesToLong() {
     final byte[] bytes = fromBigEndian(new byte[]{-121, 30, 107, -100, -76, -8, 53, 81});
-    final long expected = 0xfffffffffff83551L;
+    final long expected = 0x871e6b9cb4f83551L;
     final long result = convertBytesToLong(bytes);
     assertEqualsHex(result, expected);
   }
