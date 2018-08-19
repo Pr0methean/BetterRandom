@@ -47,7 +47,7 @@ public class RandomWrapper extends BaseRandom {
   protected static final byte[] DUMMY_SEED = new byte[8];
   private static final long serialVersionUID = -6526304552538799385L;
   private volatile Random wrapped;
-  private volatile boolean unknownSeed = true;
+  private volatile boolean unknownSeed;
   private boolean haveParallelStreams;
 
   /**
@@ -65,10 +65,7 @@ public class RandomWrapper extends BaseRandom {
    * @throws SeedException If there is a problem generating a seedArray.
    */
   @EntryPoint public RandomWrapper(final SeedGenerator seedGenerator) throws SeedException {
-    super(seedGenerator, LONG_BYTES);
-    wrapped = new Random(seedBuffer.getLong(0));
-    unknownSeed = false;
-    haveParallelStreams = hasParallelStreams(wrapped);
+    this(BinaryUtils.convertBytesToLong(seedGenerator.generateSeed(LONG_BYTES)));
   }
 
   /**
@@ -76,14 +73,7 @@ public class RandomWrapper extends BaseRandom {
    * @param seed 8 bytes of seed data used to initialise the RNG.
    */
   public RandomWrapper(final byte[] seed) {
-    super(seed);
-    if (seed.length != LONG_BYTES) {
-      throw new IllegalArgumentException(
-          "RandomWrapper requires an 8-byte seed when defaulting to java.util.Random");
-    }
-    wrapped = new Random(seedBuffer.getLong(0));
-    unknownSeed = false;
-    haveParallelStreams = hasParallelStreams(wrapped);
+    this(BinaryUtils.convertBytesToLong(checkLength(seed, Long.BYTES)));
   }
 
   /**
@@ -255,9 +245,8 @@ public class RandomWrapper extends BaseRandom {
         ((SecureRandom) wrapped).setSeed(seed);
         unknownSeed = false;
         return;
-      } else if (seed.length != LONG_BYTES) {
-        throw new IllegalArgumentException(
-            "RandomWrapper requires an 8-byte seed when not wrapping a ByteArrayReseedableRandom");
+      } else {
+        checkLength(seed, LONG_BYTES);
       }
       if (asByteArrayReseedable != null) {
         asByteArrayReseedable.setSeed(seed);
@@ -270,6 +259,20 @@ public class RandomWrapper extends BaseRandom {
       if (locked) {
         lock.unlock();
       }
+    }
+  }
+
+  @Override protected boolean supportsMultipleSeedLengths() {
+    if (lock == null) {
+      return true; // safe during init
+    }
+    lock.lock();
+    try {
+      final Random currentWrapped = getWrapped();
+      return !(currentWrapped instanceof BaseRandom)
+          || ((BaseRandom) currentWrapped).supportsMultipleSeedLengths();
+    } finally {
+      lock.unlock();
     }
   }
 

@@ -34,7 +34,6 @@ import java.util.Random;
 import javax.crypto.Cipher;
 import javax.crypto.NoSuchPaddingException;
 import javax.crypto.spec.SecretKeySpec;
-import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
@@ -228,10 +227,7 @@ public class AesCounterRandom extends BaseRandom implements SeekableRandom {
    * using SHA-256.
    */
   @Override public void setSeed(final byte[] seed) {
-    if (seed.length > MAX_TOTAL_SEED_LENGTH_BYTES) {
-      throw new IllegalArgumentException(
-          "Seed too long: maximum " + MAX_TOTAL_SEED_LENGTH_BYTES + " bytes");
-    }
+    checkNotTooLong(seed);
     try {
       final byte[] key;
       if (seed.length == MAX_KEY_LENGTH_BYTES) {
@@ -273,6 +269,13 @@ public class AesCounterRandom extends BaseRandom implements SeekableRandom {
     }
   }
 
+  private void checkNotTooLong(byte[] seed) {
+    if (seed.length > MAX_TOTAL_SEED_LENGTH_BYTES) {
+      throw new IllegalArgumentException(String.format(
+          "Seed length is %d bytes; maximum is %d bytes", seed.length, MAX_TOTAL_SEED_LENGTH_BYTES));
+    }
+  }
+
   /**
    * Combines the given seed with the existing seed using SHA-256.
    */
@@ -285,18 +288,17 @@ public class AesCounterRandom extends BaseRandom implements SeekableRandom {
   }
 
   @Override protected void setSeedInternal(final byte[] seed) {
-    final int seedLength = seed.length;
-    if ((seedLength < 16) || (seedLength > MAX_TOTAL_SEED_LENGTH_BYTES)) {
-      throw new IllegalArgumentException(String
-          .format("Seed length is %d bytes; need 16 to %d bytes", seedLength,
-              MAX_TOTAL_SEED_LENGTH_BYTES));
+    checkNotTooLong(seed);
+    if (seed.length < 16) {
+      throw new IllegalArgumentException(String.format(
+          "Seed length is %d bytes; need at least 16 bytes", seed.length));
     }
     super.setSeedInternal(seed);
     // determine how much of seed can go to key
     final int keyLength = getKeyLength(seed);
     final byte[] key = Arrays.copyOfRange(seed, 0, keyLength);
     // rest goes to counter
-    int bytesToCopyToCounter = seedLength - keyLength;
+    int bytesToCopyToCounter = seed.length - keyLength;
     System.arraycopy(seed, keyLength, counter, 0, bytesToCopyToCounter);
     System.arraycopy(ZEROES, 0, counter, bytesToCopyToCounter,
         COUNTER_SIZE_BYTES - bytesToCopyToCounter);
@@ -335,7 +337,7 @@ public class AesCounterRandom extends BaseRandom implements SeekableRandom {
       }
       blocksDelta -= BLOCKS_AT_ONCE; // Compensate for the increment during nextBlock() below
       final byte[] addendDigits = new byte[COUNTER_SIZE_BYTES];
-      System.arraycopy(BinaryUtils.convertLongToBytes(blocksDelta, ByteOrder.LITTLE_ENDIAN), 0,
+      System.arraycopy(BinaryUtils.convertLongToBytes(blocksDelta, ByteOrder.BIG_ENDIAN), 0,
           addendDigits, COUNTER_SIZE_BYTES - LONG_BYTES,
           LONG_BYTES);
       if (blocksDelta < 0) {
@@ -357,5 +359,9 @@ public class AesCounterRandom extends BaseRandom implements SeekableRandom {
     } finally {
       lock.unlock();
     }
+  }
+
+  @Override protected boolean supportsMultipleSeedLengths() {
+    return true;
   }
 }

@@ -89,9 +89,6 @@ public class Cmwc4096Random extends BaseRandom {
   }
 
   @Override protected void setSeedInternal(final byte[] seed) {
-    if ((seed == null) || (seed.length != SEED_SIZE_BYTES)) {
-      throw new IllegalArgumentException("CMWC RNG requires 16kb of seed data.");
-    }
     super.setSeedInternal(seed);
     state = BinaryUtils.convertBytesToInts(seed);
     carry = 362436; // TODO: This should be randomly generated.

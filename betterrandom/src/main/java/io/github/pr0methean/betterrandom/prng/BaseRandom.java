@@ -771,11 +771,18 @@ public abstract class BaseRandom extends Random
    * @param seed The new seed.
    */
   protected void setSeedInternal(final byte[] seed) {
+    if (!supportsMultipleSeedLengths()) {
+      checkLength(seed, getNewSeedLength());
+    }
+    boolean initSeedBuffer = (seedBuffer == null);
     if ((this.seed == null) || (this.seed.length != seed.length)) {
       this.seed = seed.clone();
-      initSeedBuffer();
+      initSeedBuffer = true;
     } else {
       System.arraycopy(seed, 0, this.seed, 0, seed.length);
+    }
+    if (initSeedBuffer) {
+      initSeedBuffer();
     }
     nextNextGaussian.set(NAN_LONG_BITS); // Invalidate Gaussian that was generated from old seed
     creditEntropyForNewSeed(seed.length);
@@ -799,6 +806,25 @@ public abstract class BaseRandom extends Random
    */
   protected void initTransientFields() {
     superConstructorFinished = true;
+  }
+
+  /**
+   * Checks that the given seed is the expected length, then returns it.
+   *
+   * @param seed the seed to check
+   * @param expectedLength the expected length
+   * @return {@code seed}
+   * @throws IllegalArgumentException if {@code seed == null || seed.length != expectedLength}
+   */
+  protected static byte[] checkLength(byte[] seed, int requiredLength) {
+    if (seed == null) {
+      throw new IllegalArgumentException("Seed must not be null");
+    }
+    if (seed.length != requiredLength) {
+      throw new IllegalArgumentException(
+          String.format("Seed length must be %d but got %d", requiredLength, seed.length));
+    }
+    return seed;
   }
 
   /**
@@ -893,4 +919,16 @@ public abstract class BaseRandom extends Random
   }
 
   @Override public abstract int getNewSeedLength();
+
+  /**
+   * If true, the subclass takes responsibility for checking whether the seed is non-null and has a
+   * valid length, and should throw an {@link IllegalArgumentException} in
+   * {@link #setSeedInternal(byte[])} if not.
+   *
+   * @return true if this PRNG supports seed lengths other than {@link #getNewSeedLength()}; false
+   * otherwise.
+   */
+  protected boolean supportsMultipleSeedLengths() {
+    return false;
+  }
 }
