@@ -236,7 +236,7 @@
     <jacoco.version>0.8.1</jacoco.version>
     <powermock.version>2.0.0-beta.5</powermock.version>
     <mockito.version>2.19.0</mockito.version>
-    <test.argline>-agentpath:/home/ubuntu/lightweight-java-profiler/build-64/liblagent.so -Djava.security.egd=file:/dev/./urandom</test.argline>
+    <test.argline>-Djava.security.egd=file:/dev/./urandom</test.argline>
     <test.jdk8.argline>${test.argline}</test.jdk8.argline>
     <test.jdk9.argline>${test.argline} --add-opens java.xml/jdk.xml.internal=ALL-UNNAMED</test.jdk9.argline>
     <testng.parallel>tests</testng.parallel>
