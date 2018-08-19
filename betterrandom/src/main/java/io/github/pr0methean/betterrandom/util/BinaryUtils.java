@@ -18,6 +18,7 @@ package io.github.pr0methean.betterrandom.util;
 import static java.lang.ThreadLocal.withInitial;
 
 import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
 import javax.annotation.Nullable;
 
 /**
@@ -30,11 +31,11 @@ public enum BinaryUtils {
   private static final ThreadLocal<byte[]> LONG_BYTE_ARRAY =
       withInitial(() -> new byte[Long.BYTES]);
   private static final ThreadLocal<ByteBuffer> LONG_BYTE_BUFFER =
-      withInitial(() -> ByteBuffer.wrap(LONG_BYTE_ARRAY.get()));
+      withInitial(() -> ByteBuffer.wrap(LONG_BYTE_ARRAY.get()).order(ByteOrder.nativeOrder()));
   private static final ThreadLocal<byte[]> INT_BYTE_ARRAY =
       withInitial(() -> new byte[Integer.BYTES]);
   private static final ThreadLocal<ByteBuffer> INT_BYTE_BUFFER =
-      withInitial(() -> ByteBuffer.wrap(INT_BYTE_ARRAY.get()));
+      withInitial(() -> ByteBuffer.wrap(INT_BYTE_ARRAY.get()).order(ByteOrder.nativeOrder()));
 
   // Mask for casting a byte to an int, bit-by-bit (with
   // bitwise AND) with no special consideration for the sign bit.
@@ -138,13 +139,8 @@ public enum BinaryUtils {
    * @return The 64-bit integer represented by the eight bytes.
    */
   public static long convertBytesToLong(final byte[] bytes, final int offset) {
-    long value = 0;
-    for (int i = offset; i < (offset + 8); i++) {
-      final byte b = bytes[i];
-      value <<= 8;
-      value |= b;
-    }
-    return value;
+    System.arraycopy(bytes, offset, LONG_BYTE_ARRAY.get(), 0, Long.BYTES);
+    return LONG_BYTE_BUFFER.get().getLong(0);
   }
 
   /**
@@ -156,6 +152,21 @@ public enum BinaryUtils {
   public static byte[] convertLongToBytes(final long input) {
     LONG_BYTE_BUFFER.get().putLong(0, input);
     return LONG_BYTE_ARRAY.get();
+  }
+
+  /**
+   * Converts a long to an array of bytes.
+   * @param input a long.
+   * @return an array of 8 bytes containing the long's value in
+   *     {@link java.nio.ByteOrder#BIG_ENDIAN} order.
+   */
+  public static byte[] convertLongToBytes(final long input, ByteOrder byteOrder) {
+    final ByteBuffer buffer = LONG_BYTE_BUFFER.get();
+    buffer.order(byteOrder);
+    buffer.putLong(0, input);
+    byte[] out = LONG_BYTE_ARRAY.get();
+    buffer.order(ByteOrder.nativeOrder());
+    return out;
   }
 
   /**
