@@ -18,6 +18,7 @@ package io.github.pr0methean.betterrandom.util;
 import static io.github.pr0methean.betterrandom.util.Java8Constants.LONG_BYTES;
 
 import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
 import javax.annotation.Nullable;
 
 /**
@@ -34,7 +35,7 @@ public enum BinaryUtils {
   };
   private static final ThreadLocal<ByteBuffer> LONG_BYTE_BUFFER = new ThreadLocal<ByteBuffer>() {
     @Override public ByteBuffer initialValue() {
-      return ByteBuffer.wrap(LONG_BYTE_ARRAY.get());
+      return ByteBuffer.wrap(LONG_BYTE_ARRAY.get()).order(ByteOrder.nativeOrder());
     }
   };
   private static final ThreadLocal<byte[]> INT_BYTE_ARRAY = new ThreadLocal<byte[]>() {
@@ -44,7 +45,7 @@ public enum BinaryUtils {
   };
   private static final ThreadLocal<ByteBuffer> INT_BYTE_BUFFER = new ThreadLocal<ByteBuffer>() {
     @Override public ByteBuffer initialValue() {
-      return ByteBuffer.wrap(INT_BYTE_ARRAY.get());
+      return ByteBuffer.wrap(INT_BYTE_ARRAY.get()).order(ByteOrder.nativeOrder());
     }
   };
 

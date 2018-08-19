@@ -11,6 +11,11 @@ import io.github.pr0methean.betterrandom.util.Java8Constants;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.nio.ByteBuffer;
+<<<<<<< HEAD
+=======
+import java.nio.ByteOrder;
+import java.util.SplittableRandom;
+>>>>>>> master
 import java.util.concurrent.atomic.AtomicLong;
 import java8.util.SplittableRandom;
 import javax.annotation.Nullable;
@@ -124,7 +129,7 @@ public class SplittableRandomAdapter extends DirectSplittableRandomAdapter {
       };
       seedBuffers = new ThreadLocal<ByteBuffer>() {
         @Override protected ByteBuffer initialValue() {
-          return ByteBuffer.wrap(seeds.get());
+          return ByteBuffer.wrap(seeds.get()).order(ByteOrder.nativeOrder());
         }
       };
     } finally {
