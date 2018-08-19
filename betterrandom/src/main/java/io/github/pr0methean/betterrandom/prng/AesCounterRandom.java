@@ -21,6 +21,7 @@ import io.github.pr0methean.betterrandom.seed.DefaultSeedGenerator;
 import io.github.pr0methean.betterrandom.seed.SeedException;
 import io.github.pr0methean.betterrandom.seed.SeedGenerator;
 import io.github.pr0methean.betterrandom.util.BinaryUtils;
+import java.nio.ByteOrder;
 import java.security.GeneralSecurityException;
 import java.security.InvalidKeyException;
 import java.security.MessageDigest;
@@ -331,7 +332,8 @@ public class AesCounterRandom extends BaseRandom implements SeekableRandom {
       }
       blocksDelta -= BLOCKS_AT_ONCE; // Compensate for the increment during nextBlock() below
       final byte[] addendDigits = new byte[counter.length];
-      System.arraycopy(BinaryUtils.convertLongToBytes(blocksDelta), 0, addendDigits,
+      System.arraycopy(BinaryUtils.convertLongToBytes(blocksDelta, ByteOrder.LITTLE_ENDIAN),
+          0, addendDigits,
           counter.length - Long.BYTES, Long.BYTES);
       if (blocksDelta < 0) {
         // Sign extend
