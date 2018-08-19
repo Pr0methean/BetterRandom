@@ -176,7 +176,7 @@ public class AesCounterRandom extends BaseRandom implements SeekableRandom {
   }
 
   private void incrementCounter() {
-    for (int i = 0; i < counter.length; i++) {
+    for (int i = 0; i < COUNTER_SIZE_BYTES; i++) {
       ++counter[i];
       if (counter[i] != 0) // Check whether we need to loop again to carry the one.
       {
@@ -331,20 +331,20 @@ public class AesCounterRandom extends BaseRandom implements SeekableRandom {
         blocksDelta--;
       }
       blocksDelta -= BLOCKS_AT_ONCE; // Compensate for the increment during nextBlock() below
-      final byte[] addendDigits = new byte[counter.length];
+      final byte[] addendDigits = new byte[COUNTER_SIZE_BYTES];
       System.arraycopy(BinaryUtils.convertLongToBytes(blocksDelta, ByteOrder.LITTLE_ENDIAN),
           0, addendDigits,
-          counter.length - Long.BYTES, Long.BYTES);
+          COUNTER_SIZE_BYTES - Long.BYTES, Long.BYTES);
       if (blocksDelta < 0) {
         // Sign extend
-        for (int i = 0; i < (counter.length - Long.BYTES); i++) {
+        for (int i = 0; i < (COUNTER_SIZE_BYTES - Long.BYTES); i++) {
           addendDigits[i] = -1;
         }
       }
       boolean carry = false;
-      for (int i = 0; i < counter.length; i++) {
+      for (int i = 0; i < COUNTER_SIZE_BYTES; i++) {
         final int oldCounterUnsigned = counter[i] < 0 ? counter[i] + 256 : counter[i];
-        counter[i] += addendDigits[counter.length - i - 1] + (carry ? 1 : 0);
+        counter[i] += addendDigits[COUNTER_SIZE_BYTES - i - 1] + (carry ? 1 : 0);
         final int newCounterUnsigned = counter[i] < 0 ? counter[i] + 256 : counter[i];
         carry = (oldCounterUnsigned > newCounterUnsigned)
             || (carry && (oldCounterUnsigned == newCounterUnsigned));
