@@ -263,17 +263,7 @@ public class RandomWrapper extends BaseRandom {
   }
 
   @Override protected boolean supportsMultipleSeedLengths() {
-    if (lock == null) {
-      return true; // safe during init
-    }
-    lock.lock();
-    try {
-      final Random currentWrapped = getWrapped();
-      return !(currentWrapped instanceof BaseRandom)
-          || ((BaseRandom) currentWrapped).supportsMultipleSeedLengths();
-    } finally {
-      lock.unlock();
-    }
+    return true; // Seed-length checking can be done by wrapped
   }
 
   @Override public boolean preferSeedWithLong() {
