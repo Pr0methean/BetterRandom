@@ -122,6 +122,11 @@ public class SplittableRandomAdapter extends DirectSplittableRandomAdapter {
           return seed.clone();
         }
       };
+      seedBuffers = new ThreadLocal<ByteBuffer>() {
+        @Override protected ByteBuffer initialValue() {
+          return ByteBuffer.wrap(seeds.get());
+        }
+      };
     } finally {
       lock.unlock();
     }
