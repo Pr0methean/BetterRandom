@@ -155,6 +155,21 @@ public enum BinaryUtils {
   }
 
   /**
+   * Converts a long to an array of bytes.
+   * @param input a long.
+   * @return an array of 8 bytes containing the long's value in
+   *     {@link java.nio.ByteOrder#BIG_ENDIAN} order.
+   */
+  public static byte[] convertLongToBytes(final long input, ByteOrder byteOrder) {
+    final ByteBuffer buffer = LONG_BYTE_BUFFER.get();
+    buffer.order(byteOrder);
+    buffer.putLong(0, input);
+    byte[] out = LONG_BYTE_ARRAY.get();
+    buffer.order(ByteOrder.nativeOrder());
+    return out;
+  }
+
+  /**
    * <p>convertIntToBytes.</p>
    * @param input an int.
    * @return an array of 4 bytes containing the int's value in
