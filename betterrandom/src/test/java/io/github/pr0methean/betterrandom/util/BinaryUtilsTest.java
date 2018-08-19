@@ -16,6 +16,7 @@
 package io.github.pr0methean.betterrandom.util;
 
 import static io.github.pr0methean.betterrandom.util.BinaryUtils.convertBytesToLong;
+import static org.testng.Assert.assertEquals;
 
 import java.nio.ByteOrder;
 import java.util.Arrays;
@@ -38,13 +39,17 @@ public class BinaryUtilsTest {
     byte[] out = in.clone();
     if (ByteOrder.nativeOrder() == ByteOrder.LITTLE_ENDIAN) {
       // Reverse the copy
-      for (int i = 0; i < out.length; i++) {
+      for (int i = 0; i < out.length / 2; i++) {
         byte temp = out[i];
         out[i] = out[out.length - 1 - i];
         out[out.length - 1 - i] = temp;
       }
     }
     return out;
+  }
+
+  private void assertEqualsHex(long actual, long expected) {
+    assertEquals(actual, expected, String.format("Expected %x, got %x", actual, expected));
   }
 
   @Test public void testConvertLongToBytes() throws Exception {
@@ -110,7 +115,7 @@ public class BinaryUtilsTest {
    */
   @Test(timeOut = 1000) public void testConvertBytesToLong() {
     final long result = convertBytesToLong(fromBigEndian(LONG_BYTES));
-    assert LONG == result : "Expected " + LONG + ", was " + result;
+    assertEqualsHex(result, LONG);
   }
 
   /**
@@ -118,8 +123,8 @@ public class BinaryUtilsTest {
    */
   @Test(timeOut = 1000) public void testConvertNegativeBytesToLong() {
     final byte[] bytes = fromBigEndian(new byte[]{-121, 30, 107, -100, -76, -8, 53, 81});
-    final long expected = -510639L;
+    final long expected = 0xfffffffffff83551L;
     final long result = convertBytesToLong(bytes);
-    assert expected == result : "Expected " + expected + ", was " + result;
+    assertEqualsHex(result, expected);
   }
 }
