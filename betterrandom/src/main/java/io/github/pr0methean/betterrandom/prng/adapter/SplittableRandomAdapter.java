@@ -145,9 +145,7 @@ public class SplittableRandomAdapter extends DirectSplittableRandomAdapter {
    * {@inheritDoc} Applies only to the calling thread.
    */
   @Override public void setSeed(final byte[] seed) {
-    if (seed.length != Long.BYTES) {
-      throw new IllegalArgumentException("SplittableRandomAdapter requires an 8-byte seed");
-    }
+    checkLength(seed, Long.BYTES);
     setSeed(convertBytesToLong(seed));
   }
 
