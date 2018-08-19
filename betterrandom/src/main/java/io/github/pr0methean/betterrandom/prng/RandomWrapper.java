@@ -66,7 +66,7 @@ public class RandomWrapper extends BaseRandom {
    */
   @EntryPoint public RandomWrapper(final SeedGenerator seedGenerator) throws SeedException {
     super(seedGenerator, LONG_BYTES);
-    wrapped = new Random(BinaryUtils.convertBytesToLong(seed));
+    wrapped = new Random(seedBuffer.getLong(0));
     unknownSeed = false;
     haveParallelStreams = hasParallelStreams(wrapped);
   }
@@ -81,7 +81,7 @@ public class RandomWrapper extends BaseRandom {
       throw new IllegalArgumentException(
           "RandomWrapper requires an 8-byte seed when defaulting to java.util.Random");
     }
-    wrapped = new Random(BinaryUtils.convertBytesToLong(seed));
+    wrapped = new Random(seedBuffer.getLong(0));
     unknownSeed = false;
     haveParallelStreams = hasParallelStreams(wrapped);
   }
@@ -112,6 +112,10 @@ public class RandomWrapper extends BaseRandom {
   private static boolean hasParallelStreams(Random wrapped) {
     return (wrapped instanceof BaseRandom && ((BaseRandom) wrapped).useParallelStreams()) || (
         wrapped instanceof Java8CompatRandom && ((Java8CompatRandom) wrapped).longs().isParallel());
+  }
+
+  @Override protected boolean usesByteBuffer() {
+    return true;
   }
 
   private static byte[] getSeedOrDummy(final Random wrapped) {
@@ -259,7 +263,7 @@ public class RandomWrapper extends BaseRandom {
         asByteArrayReseedable.setSeed(seed);
         unknownSeed = false;
       } else {
-        wrapped.setSeed(BinaryUtils.convertBytesToLong(seed));
+        wrapped.setSeed(seedBuffer.getLong(0));
         unknownSeed = false;
       }
     } finally {

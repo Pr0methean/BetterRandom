@@ -151,7 +151,7 @@ public enum BinaryUtils {
    * @return The 64-bit integer represented by the eight bytes.
    */
   public static long convertBytesToLong(final byte[] bytes, final int offset) {
-    System.arraycopy(bytes, offset, LONG_BYTE_ARRAY, 0, Long.BYTES);
+    System.arraycopy(bytes, offset, LONG_BYTE_ARRAY.get(), 0, Long.BYTES);
     return LONG_BYTE_BUFFER.get().getLong(0);
   }
 
@@ -164,6 +164,21 @@ public enum BinaryUtils {
   public static byte[] convertLongToBytes(final long input) {
     LONG_BYTE_BUFFER.get().putLong(0, input);
     return LONG_BYTE_ARRAY.get();
+  }
+
+  /**
+   * Converts a long to an array of bytes.
+   * @param input a long.
+   * @return an array of 8 bytes containing the long's value in
+   *     {@link java.nio.ByteOrder#BIG_ENDIAN} order.
+   */
+  public static byte[] convertLongToBytes(final long input, ByteOrder byteOrder) {
+    final ByteBuffer buffer = LONG_BYTE_BUFFER.get();
+    buffer.order(byteOrder);
+    buffer.putLong(0, input);
+    byte[] out = LONG_BYTE_ARRAY.get();
+    buffer.order(ByteOrder.nativeOrder());
+    return out;
   }
 
   /**

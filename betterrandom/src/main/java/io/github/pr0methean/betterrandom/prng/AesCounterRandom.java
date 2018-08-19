@@ -24,6 +24,7 @@ import io.github.pr0methean.betterrandom.seed.DefaultSeedGenerator;
 import io.github.pr0methean.betterrandom.seed.SeedException;
 import io.github.pr0methean.betterrandom.seed.SeedGenerator;
 import io.github.pr0methean.betterrandom.util.BinaryUtils;
+import java.nio.ByteOrder;
 import java.security.GeneralSecurityException;
 import java.security.InvalidKeyException;
 import java.security.MessageDigest;
@@ -334,18 +335,19 @@ public class AesCounterRandom extends BaseRandom implements SeekableRandom {
       }
       blocksDelta -= BLOCKS_AT_ONCE; // Compensate for the increment during nextBlock() below
       final byte[] addendDigits = new byte[counter.length];
-      System.arraycopy(BinaryUtils.convertLongToBytes(blocksDelta), 0, addendDigits,
-          counter.length - LONG_BYTES, LONG_BYTES);
+      System.arraycopy(BinaryUtils.convertLongToBytes(blocksDelta, ByteOrder.LITTLE_ENDIAN),
+          0, addendDigits,
+          COUNTER_SIZE_BYTES - LONG_BYTES, LONG_BYTES);
       if (blocksDelta < 0) {
         // Sign extend
-        for (int i = 0; i < (counter.length - LONG_BYTES); i++) {
+        for (int i = 0; i < (COUNTER_SIZE_BYTES - LONG_BYTES); i++) {
           addendDigits[i] = -1;
         }
       }
       boolean carry = false;
-      for (int i = 0; i < counter.length; i++) {
+      for (int i = 0; i < COUNTER_SIZE_BYTES; i++) {
         final int oldCounterUnsigned = counter[i] < 0 ? counter[i] + 256 : counter[i];
-        counter[i] += addendDigits[counter.length - i - 1] + (carry ? 1 : 0);
+        counter[i] += addendDigits[COUNTER_SIZE_BYTES - i - 1] + (carry ? 1 : 0);
         final int newCounterUnsigned = counter[i] < 0 ? counter[i] + 256 : counter[i];
         carry = (oldCounterUnsigned > newCounterUnsigned)
             || (carry && (oldCounterUnsigned == newCounterUnsigned));

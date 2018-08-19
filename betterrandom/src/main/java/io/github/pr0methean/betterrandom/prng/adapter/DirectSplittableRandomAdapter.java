@@ -44,6 +44,10 @@ public abstract class DirectSplittableRandomAdapter extends BaseSplittableRandom
     setSeed(seed);
   }
 
+  @Override protected boolean usesByteBuffer() {
+    return true;
+  }
+
   @Override protected ToStringHelper addSubclassFields(final ToStringHelper original) {
     return original.add("underlying", underlying);
   }
@@ -61,7 +65,7 @@ public abstract class DirectSplittableRandomAdapter extends BaseSplittableRandom
       throw new IllegalArgumentException("DirectSplittableRandomAdapter requires an 8-byte seed");
     }
     super.setSeedInternal(seed);
-    underlying = new SplittableRandom(BinaryUtils.convertBytesToLong(seed));
+    underlying = new SplittableRandom(seedBuffer.getLong(0));
   }
 
   /**
