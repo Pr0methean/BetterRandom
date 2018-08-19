@@ -1,3 +1,6 @@
+# 2.4.6
+* All instances of `ByteBuffer` now use the machine's native byte order.
+
 # 2.4.5
 * Improves performance of `XorShiftRandom.setSeed()`.
 * Fixes a bug that could cause `SplittableRandomAdapter.getSeed()` to return a value other than the
