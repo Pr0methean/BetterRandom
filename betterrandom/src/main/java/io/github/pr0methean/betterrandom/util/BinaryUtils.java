@@ -158,8 +158,8 @@ public enum BinaryUtils {
   /**
    * Converts a long to an array of bytes.
    * @param input a long.
-   * @return a byte array of length {@link Java8Constants#LONG_BYTES} containing the long's value in
-   *     {@link java.nio.ByteOrder#BIG_ENDIAN} order.
+   * @return an array of 8 bytes containing the long's value in
+   *     {@link java.nio.ByteOrder#nativeOrder()}.
    */
   public static byte[] convertLongToBytes(final long input) {
     LONG_BYTE_BUFFER.get().putLong(0, input);
@@ -169,8 +169,9 @@ public enum BinaryUtils {
   /**
    * Converts a long to an array of bytes.
    * @param input a long.
+   * @param byteOrder the byte order to use
    * @return an array of 8 bytes containing the long's value in
-   *     {@link java.nio.ByteOrder#BIG_ENDIAN} order.
+   *     the specified order.
    */
   public static byte[] convertLongToBytes(final long input, ByteOrder byteOrder) {
     final ByteBuffer buffer = LONG_BYTE_BUFFER.get();
@@ -185,7 +186,7 @@ public enum BinaryUtils {
    * <p>convertIntToBytes.</p>
    * @param input an int.
    * @return an array of 4 bytes containing the int's value in
-   *     {@link java.nio.ByteOrder#BIG_ENDIAN} order.
+   *     {@link java.nio.ByteOrder#nativeOrder()} order.
    */
   public static byte[] convertIntToBytes(final int input) {
     INT_BYTE_BUFFER.get().putInt(0, input);
@@ -194,8 +195,8 @@ public enum BinaryUtils {
 
   /**
    * Convert a byte array to a long, reversing {@link #convertLongToBytes(long)}.
-   * @param bytes a byte array of length {@link Java8Constants#LONG_BYTES} in
-   *     {@link java.nio.ByteOrder#BIG_ENDIAN} order.
+   * @param bytes a byte array of length {@link Long#BYTES} in
+   *     {@link java.nio.ByteOrder#nativeOrder()} order.
    * @return {@code bytes} as a long.
    */
   public static long convertBytesToLong(final byte[] bytes) {

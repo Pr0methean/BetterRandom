@@ -812,9 +812,9 @@ public abstract class BaseRandom extends Random
    * Checks that the given seed is the expected length, then returns it.
    *
    * @param seed the seed to check
-   * @param expectedLength the expected length
+   * @param requiredLength the expected length
    * @return {@code seed}
-   * @throws IllegalArgumentException if {@code seed == null || seed.length != expectedLength}
+   * @throws IllegalArgumentException if {@code seed == null || seed.length != requiredLength}
    */
   protected static byte[] checkLength(byte[] seed, int requiredLength) {
     if (seed == null) {
