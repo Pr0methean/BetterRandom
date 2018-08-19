@@ -179,7 +179,7 @@ public class AesCounterRandom extends BaseRandom implements SeekableRandom {
   }
 
   private void incrementCounter() {
-    for (int i = 0; i < counter.length; i++) {
+    for (int i = 0; i < COUNTER_SIZE_BYTES; i++) {
       ++counter[i];
       if (counter[i] != 0) // Check whether we need to loop again to carry the one.
       {
@@ -334,10 +334,10 @@ public class AesCounterRandom extends BaseRandom implements SeekableRandom {
         blocksDelta--;
       }
       blocksDelta -= BLOCKS_AT_ONCE; // Compensate for the increment during nextBlock() below
-      final byte[] addendDigits = new byte[counter.length];
-      System.arraycopy(BinaryUtils.convertLongToBytes(blocksDelta, ByteOrder.LITTLE_ENDIAN),
-          0, addendDigits,
-          COUNTER_SIZE_BYTES - LONG_BYTES, LONG_BYTES);
+      final byte[] addendDigits = new byte[COUNTER_SIZE_BYTES];
+      System.arraycopy(BinaryUtils.convertLongToBytes(blocksDelta, ByteOrder.LITTLE_ENDIAN), 0,
+          addendDigits, COUNTER_SIZE_BYTES - LONG_BYTES,
+          LONG_BYTES);
       if (blocksDelta < 0) {
         // Sign extend
         for (int i = 0; i < (COUNTER_SIZE_BYTES - LONG_BYTES); i++) {
