@@ -780,10 +780,7 @@ public abstract class BaseRandom extends Random
 
   private void initSeedBuffer() {
     if (usesByteBuffer()) {
-      System.out.println("Initializing seedBuffer");
       seedBuffer = ByteBuffer.wrap(this.seed).order(ByteOrder.nativeOrder());
-    } else {
-      System.out.println("usesByteBuffer() returned false");
     }
   }
 
