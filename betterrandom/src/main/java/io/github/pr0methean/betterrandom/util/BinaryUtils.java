@@ -151,13 +151,8 @@ public enum BinaryUtils {
    * @return The 64-bit integer represented by the eight bytes.
    */
   public static long convertBytesToLong(final byte[] bytes, final int offset) {
-    long value = 0;
-    for (int i = offset; i < (offset + 8); i++) {
-      final byte b = bytes[i];
-      value <<= 8;
-      value |= b;
-    }
-    return value;
+    System.arraycopy(bytes, offset, LONG_BYTE_ARRAY, 0, Long.BYTES);
+    return LONG_BYTE_BUFFER.get().getLong(0);
   }
 
   /**
