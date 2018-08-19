@@ -225,9 +225,13 @@ public class AesCounterRandom extends BaseRandom implements SeekableRandom {
    * using SHA-256.
    */
   @Override public void setSeed(final byte[] seed) {
-    if (seed.length > MAX_TOTAL_SEED_LENGTH_BYTES) {
-      throw new IllegalArgumentException(
-          "Seed too long: maximum " + MAX_TOTAL_SEED_LENGTH_BYTES + " bytes");
+    if (seed == null) {
+      throw new IllegalArgumentException("Seed must not be null");
+    }
+    int seedLength = seed.length;
+    if ((seedLength < 16) || (seedLength > MAX_TOTAL_SEED_LENGTH_BYTES)) {
+      throw new IllegalArgumentException(String.format(
+          "Seed length is %d bytes; need 16 to %d bytes", seedLength, MAX_TOTAL_SEED_LENGTH_BYTES));
     }
     try {
       final byte[] key;
@@ -282,18 +286,12 @@ public class AesCounterRandom extends BaseRandom implements SeekableRandom {
   }
 
   @Override protected void setSeedInternal(final byte[] seed) {
-    final int seedLength = seed.length;
-    if ((seedLength < 16) || (seedLength > MAX_TOTAL_SEED_LENGTH_BYTES)) {
-      throw new IllegalArgumentException(String
-          .format("Seed length is %d bytes; need 16 to %d bytes", seedLength,
-              MAX_TOTAL_SEED_LENGTH_BYTES));
-    }
     super.setSeedInternal(seed);
     // determine how much of seed can go to key
     final int keyLength = getKeyLength(seed);
     final byte[] key = Arrays.copyOfRange(seed, 0, keyLength);
     // rest goes to counter
-    int bytesToCopyToCounter = seedLength - keyLength;
+    int bytesToCopyToCounter = seed.length - keyLength;
     System.arraycopy(seed, keyLength, counter, 0, bytesToCopyToCounter);
     System.arraycopy(ZEROES, 0, counter, bytesToCopyToCounter,
         COUNTER_SIZE_BYTES - bytesToCopyToCounter);
@@ -332,7 +330,7 @@ public class AesCounterRandom extends BaseRandom implements SeekableRandom {
       }
       blocksDelta -= BLOCKS_AT_ONCE; // Compensate for the increment during nextBlock() below
       final byte[] addendDigits = new byte[COUNTER_SIZE_BYTES];
-      System.arraycopy(BinaryUtils.convertLongToBytes(blocksDelta, ByteOrder.LITTLE_ENDIAN),
+      System.arraycopy(BinaryUtils.convertLongToBytes(blocksDelta, ByteOrder.BIG_ENDIAN),
           0, addendDigits,
           COUNTER_SIZE_BYTES - Long.BYTES, Long.BYTES);
       if (blocksDelta < 0) {
@@ -354,5 +352,9 @@ public class AesCounterRandom extends BaseRandom implements SeekableRandom {
     } finally {
       lock.unlock();
     }
+  }
+
+  @Override protected boolean supportsMultipleSeedLengths() {
+    return true;
   }
 }
