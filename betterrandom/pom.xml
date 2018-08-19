@@ -458,7 +458,7 @@
             <argLine>@{argLine} ${test.jdk9.argline}</argLine>
             <suiteXmlFiles>
               <suiteXmlFile>src/test/testng.xml</suiteXmlFile>
-              <suiteXmlFile>src/test/testng-seed.xml</suiteXmlFile>
+              <!-- <suiteXmlFile>src/test/testng-seed.xml</suiteXmlFile> -->
             </suiteXmlFiles>
             <parallel>${testng.parallel}</parallel>
             <threadCount>${testng.perCoreThreadCount}</threadCount>
