@@ -168,13 +168,12 @@ public class ThreadLocalRandomWrapper extends RandomWrapper {
 
   @SuppressWarnings("VariableNotUsedInsideIf") @Override
   protected void setSeedInternal(final byte[] seed) {
-    if (seed == null) {
-      throw new IllegalArgumentException("Seed must not be null");
-    }
     if (threadLocal != null) {
       final BaseRandom wrapped = getWrapped();
       wrapped.setSeed(seed);
       wrapped.creditEntropyForNewSeed(seed.length);
+    } else if (seed == null) {
+      throw new IllegalArgumentException("Seed must not be null");
     }
     if (this.seed == null) {
       this.seed = seed.clone(); // Needed for serialization

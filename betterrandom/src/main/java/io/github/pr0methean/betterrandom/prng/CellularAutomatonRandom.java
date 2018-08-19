@@ -171,9 +171,6 @@ public class CellularAutomatonRandom extends BaseRandom {
 
   @Override
   protected void setSeedInternal(final byte[] seed) {
-    if (seed.length != SEED_SIZE_BYTES) {
-      throw new IllegalArgumentException("Cellular Automaton RNG requires a 32-bit (4-byte) seed.");
-    }
     boolean locked = false;
     if (lock != null) {
       lock.lock();
