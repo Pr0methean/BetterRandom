@@ -68,7 +68,7 @@ public class Pcg64Random extends BaseRandom implements SeekableRandom {
   }
 
   @Override public byte[] getSeed() {
-    return BinaryUtils.convertLongToBytes(internal.get()).clone();
+    return BinaryUtils.convertLongToBytes(internal.get());
   }
 
   @SuppressWarnings("NonSynchronizedMethodOverridesSynchronizedMethod") @Override
@@ -159,7 +159,7 @@ public class Pcg64Random extends BaseRandom implements SeekableRandom {
 
   private void writeObject(final ObjectOutputStream out) throws IOException {
     // Copy the long seed back to the array seed
-    System.arraycopy(BinaryUtils.convertLongToBytes(internal.get()), 0, seed, 0, Long.BYTES);
+    BinaryUtils.convertLongToBytes(internal.get(), seed, 0);
     out.defaultWriteObject();
   }
 }
