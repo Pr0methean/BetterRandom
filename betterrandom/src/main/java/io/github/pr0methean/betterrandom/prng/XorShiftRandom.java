@@ -19,10 +19,7 @@ import com.google.common.base.MoreObjects.ToStringHelper;
 import io.github.pr0methean.betterrandom.seed.DefaultSeedGenerator;
 import io.github.pr0methean.betterrandom.seed.SeedException;
 import io.github.pr0methean.betterrandom.seed.SeedGenerator;
-<<<<<<< HEAD
-=======
 import io.github.pr0methean.betterrandom.util.BinaryUtils;
->>>>>>> parent of f8d45ca4... Optimize XorShiftRandom
 import java.util.Random;
 
 /**
@@ -49,7 +46,7 @@ public class XorShiftRandom extends BaseRandom {
   private int state3;
   private int state4;
   private int state5;
-  
+
   /**
    * Creates an RNG and seeds it with the specified seed data.
    * @param seed 20 bytes of seed data used to initialise the RNG.
@@ -92,11 +89,11 @@ public class XorShiftRandom extends BaseRandom {
   @Override public byte[] getSeed() {
     lock.lock();
     try {
-      seedBuffer.putInt(0, state1);
-      seedBuffer.putInt(Integer.BYTES, state2);
-      seedBuffer.putInt(2 * Integer.BYTES, state3);
-      seedBuffer.putInt(3 * Integer.BYTES, state4);
-      seedBuffer.putInt(4 * Integer.BYTES, state5);
+      BinaryUtils.convertIntToBytes(state1, seed, 0);
+      BinaryUtils.convertIntToBytes(state2, seed, Integer.BYTES);
+      BinaryUtils.convertIntToBytes(state3, seed, Integer.BYTES * 2);
+      BinaryUtils.convertIntToBytes(state4, seed, Integer.BYTES * 3);
+      BinaryUtils.convertIntToBytes(state5, seed, Integer.BYTES * 4);
       return seed.clone();
     } finally {
       lock.unlock();
