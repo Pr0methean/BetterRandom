@@ -15,7 +15,6 @@ import io.github.pr0methean.betterrandom.util.EntryPoint;
 import java.io.IOException;
 import java.io.InvalidObjectException;
 import java.io.ObjectInputStream;
-import java.nio.ByteBuffer;
 import java.util.List;
 import java.util.Random;
 import java.util.concurrent.atomic.AtomicLong;
@@ -64,10 +63,6 @@ public abstract class BaseRandom extends Random
    * a slow type conversion).
    */
   protected volatile byte[] seed;
-  /**
-   * A {@link ByteBuffer} that wraps {@link #seed} if requested; null otherwise.
-   */
-  @Nullable protected transient ByteBuffer seedBuffer;
   /**
    * Set by the constructor once either {@link Random#Random()} or {@link Random#Random(long)} has
    * returned. Intended for {@link #setSeed(long)}, which may have to ignore calls while this is
@@ -707,15 +702,10 @@ public abstract class BaseRandom extends Random
     if (!supportsMultipleSeedLengths()) {
       checkLength(seed, getNewSeedLength());
     }
-    boolean initSeedBuffer = (seedBuffer == null);
     if ((this.seed == null) || (this.seed.length != seed.length)) {
       this.seed = seed.clone();
-      initSeedBuffer = true;
     } else {
       System.arraycopy(seed, 0, this.seed, 0, seed.length);
-    }
-    if (initSeedBuffer) {
-      initSeedBuffer();
     }
     nextNextGaussian.set(NAN_LONG_BITS); // Invalidate Gaussian that was generated from old seed
     creditEntropyForNewSeed(seed.length);
@@ -757,29 +747,13 @@ public abstract class BaseRandom extends Random
     return seed;
   }
 
-  /**
-   * If overridden to return true, {@link #seedBuffer} is initialized with a buffer that wraps
-   * {@link #seed}; otherwise, that field remains null.
-   * @return true to wrap seed in a ByteBuffer; false otherwise
-   */
-  protected boolean usesByteBuffer() {
-    return false;
-  }
-
   private void readObject(final ObjectInputStream in) throws IOException, ClassNotFoundException {
     in.defaultReadObject();
     initTransientFields();
-    initSeedBuffer();
     setSeedInternal(seed);
     SeedGenerator currentSeedGenerator = getSeedGenerator();
     if (currentSeedGenerator != null) {
       RandomSeederThread.add(currentSeedGenerator, this);
-    }
-  }
-
-  private void initSeedBuffer() {
-    if (usesByteBuffer()) {
-      seedBuffer = ByteBuffer.wrap(this.seed);
     }
   }
 
