@@ -143,9 +143,11 @@ public enum BinaryUtils {
 
   /**
    * Converts a long to an array of bytes.
+   * <p>
+   * The returned array will be reused on subsequent calls to this method from the same thread, so a
+   * defensive copy may be necessary.
    * @param input a long.
-   * @return an array of 8 bytes containing the long's value in
-   *     {@link java.nio.ByteOrder#nativeOrder()}.
+   * @return an array of 8 bytes containing the long's value in big-endian order.
    */
   public static byte[] convertLongToBytes(final long input) {
     byte[] output = LONG_ARRAYS.get();
@@ -179,9 +181,11 @@ public enum BinaryUtils {
 
   /**
    * Convert an int to an array of 4 bytes.
+   * <p>
+   * The returned array will be reused on subsequent calls to this method from the same thread, so a
+   * defensive copy may be necessary.
    * @param input an int.
-   * @return an array of 4 bytes containing the int's value in
-   *     {@link java.nio.ByteOrder#nativeOrder()} order.
+   * @return an array of 4 bytes containing the int's value in big-endian order.
    */
   public static byte[] convertIntToBytes(final int input) {
     byte[] output = INT_ARRAYS.get();
