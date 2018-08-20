@@ -28,6 +28,10 @@ public enum BinaryUtils {
   // bitwise AND) with no special consideration for the sign bit.
   private static final int BITWISE_BYTE_TO_INT = 0x000000FF;
   private static final long BITWISE_BYTE_TO_LONG = BITWISE_BYTE_TO_INT;
+  private static final ThreadLocal<byte[]> INT_ARRAYS = ThreadLocal.withInitial(
+      () -> new byte[Integer.BYTES]);
+  private static final ThreadLocal<byte[]> LONG_ARRAYS = ThreadLocal.withInitial(
+      () -> new byte[Long.BYTES]);
 
   private static final char[] HEX_CHARS =
       {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F'};
@@ -144,7 +148,7 @@ public enum BinaryUtils {
    *     {@link java.nio.ByteOrder#nativeOrder()}.
    */
   public static byte[] convertLongToBytes(final long input) {
-    byte[] output = new byte[Long.BYTES];
+    byte[] output = LONG_ARRAYS.get();
     convertLongToBytes(input, output, 0);
     return output;
   }
@@ -180,7 +184,7 @@ public enum BinaryUtils {
    *     {@link java.nio.ByteOrder#nativeOrder()} order.
    */
   public static byte[] convertIntToBytes(final int input) {
-    byte[] output = new byte[Integer.BYTES];
+    byte[] output = INT_ARRAYS.get();
     convertIntToBytes(input, output, 0);
     return output;
   }
