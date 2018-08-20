@@ -7,15 +7,10 @@ import static io.github.pr0methean.betterrandom.prng.BaseRandom.ENTROPY_OF_FLOAT
 import static io.github.pr0methean.betterrandom.prng.RandomTestUtils.assertMonteCarloPiEstimateSane;
 import static io.github.pr0methean.betterrandom.prng.RandomTestUtils.checkRangeAndEntropy;
 import static io.github.pr0methean.betterrandom.prng.RandomTestUtils.checkStream;
-import static org.mockito.ArgumentMatchers.any;
-import static org.powermock.api.mockito.PowerMockito.when;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertFalse;
 import static org.testng.Assert.assertNotEquals;
-import static org.testng.Assert.assertNull;
-import static org.testng.Assert.assertSame;
 import static org.testng.Assert.assertTrue;
-import static org.testng.Assert.fail;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
@@ -29,9 +24,9 @@ import io.github.pr0methean.betterrandom.seed.SecureRandomSeedGenerator;
 import io.github.pr0methean.betterrandom.seed.SeedException;
 import io.github.pr0methean.betterrandom.seed.SeedGenerator;
 import io.github.pr0methean.betterrandom.seed.SemiFakeSeedGenerator;
+import io.github.pr0methean.betterrandom.util.BinaryUtils;
 import java.io.Serializable;
 import java.lang.reflect.InvocationTargetException;
-import java.nio.ByteBuffer;
 import java.security.GeneralSecurityException;
 import java.util.Arrays;
 import java.util.Collections;
@@ -79,9 +74,7 @@ public abstract class BaseRandomTest extends PowerMockTestCase {
       BaseRandom baseRandom = (BaseRandom) random;
       baseRandom.setSeed(semiFakeSeedGenerator.generateSeed(baseRandom.getNewSeedLength()));
     } else {
-      final ByteBuffer buffer = ByteBuffer.allocate(8);
-      semiFakeSeedGenerator.generateSeed(buffer.array());
-      random.setSeed(buffer.getLong(0));
+      random.setSeed(BinaryUtils.convertBytesToLong(semiFakeSeedGenerator.generateSeed(8)));
     }
     return 0.0;
   }, "BaseRandom::setSeed(byte[])");
