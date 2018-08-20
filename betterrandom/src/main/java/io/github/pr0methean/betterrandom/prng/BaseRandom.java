@@ -67,7 +67,7 @@ public abstract class BaseRandom extends Random
   /**
    * A {@link ByteBuffer} that wraps {@link #seed} if requested; null otherwise.
    */
-  @Nullable protected transient volatile ByteBuffer seedBuffer;
+  @Nullable protected transient ByteBuffer seedBuffer;
   /**
    * Set by the constructor once either {@link Random#Random()} or {@link Random#Random(long)} has
    * returned. Intended for {@link #setSeed(long)}, which may have to ignore calls while this is
