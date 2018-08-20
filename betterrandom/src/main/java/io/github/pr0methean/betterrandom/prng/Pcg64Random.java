@@ -47,16 +47,15 @@ public class Pcg64Random extends BaseRandom implements SeekableRandom {
 
   @EntryPoint public Pcg64Random(final byte[] seed) {
     super(seed);
-    internal = new AtomicLong(seedBuffer.getLong(0));
+    if (seed.length != Long.BYTES) {
+      throw new IllegalArgumentException("Pcg64Random requires an 8-byte seed");
+    }
+    internal = new AtomicLong(BinaryUtils.convertBytesToLong(seed));
   }
 
   @EntryPoint public Pcg64Random(final long seed) {
     super(seed);
     internal = new AtomicLong(seed);
-  }
-
-  @Override protected boolean usesByteBuffer() {
-    return true;
   }
 
   @Override protected long nextLongNoEntropyDebit() {
@@ -121,7 +120,7 @@ public class Pcg64Random extends BaseRandom implements SeekableRandom {
     if (internal != null) {
       lock.lock();
       try {
-        internal.set(seedBuffer.getLong(0));
+        internal.set(BinaryUtils.convertBytesToLong(seed));
       } finally {
         lock.unlock();
       }
