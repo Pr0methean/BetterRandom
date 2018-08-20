@@ -10,7 +10,6 @@ import io.github.pr0methean.betterrandom.seed.SeedGenerator;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.nio.ByteBuffer;
-import java.nio.ByteOrder;
 import java.util.SplittableRandom;
 import java.util.concurrent.atomic.AtomicLong;
 import javax.annotation.Nullable;
@@ -111,8 +110,7 @@ public class SplittableRandomAdapter extends DirectSplittableRandomAdapter {
       entropyBits = ThreadLocal.withInitial(() -> new AtomicLong(SEED_LENGTH_BITS));
       // getSeed() will return the master seed on each thread where setSeed() hasn't yet been called
       seeds = ThreadLocal.withInitial(() -> seed.clone());
-      seedBuffers = ThreadLocal.withInitial(
-          () -> ByteBuffer.wrap(seeds.get()).order(ByteOrder.nativeOrder()));
+      seedBuffers = ThreadLocal.withInitial(() -> ByteBuffer.wrap(seeds.get()));
     } finally {
       lock.unlock();
     }

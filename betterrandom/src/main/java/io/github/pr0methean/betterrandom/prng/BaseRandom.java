@@ -16,7 +16,6 @@ import java.io.IOException;
 import java.io.InvalidObjectException;
 import java.io.ObjectInputStream;
 import java.nio.ByteBuffer;
-import java.nio.ByteOrder;
 import java.util.List;
 import java.util.Random;
 import java.util.concurrent.atomic.AtomicLong;
@@ -780,7 +779,7 @@ public abstract class BaseRandom extends Random
 
   private void initSeedBuffer() {
     if (usesByteBuffer()) {
-      seedBuffer = ByteBuffer.wrap(this.seed).order(ByteOrder.nativeOrder());
+      seedBuffer = ByteBuffer.wrap(this.seed);
     }
   }
 

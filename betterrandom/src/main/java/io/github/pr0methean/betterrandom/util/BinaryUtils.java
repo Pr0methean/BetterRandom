@@ -18,7 +18,6 @@ package io.github.pr0methean.betterrandom.util;
 import static java.lang.ThreadLocal.withInitial;
 
 import java.nio.ByteBuffer;
-import java.nio.ByteOrder;
 import javax.annotation.Nullable;
 
 /**
@@ -31,11 +30,11 @@ public enum BinaryUtils {
   private static final ThreadLocal<byte[]> LONG_BYTE_ARRAY =
       withInitial(() -> new byte[Long.BYTES]);
   private static final ThreadLocal<ByteBuffer> LONG_BYTE_BUFFER =
-      withInitial(() -> ByteBuffer.wrap(LONG_BYTE_ARRAY.get()).order(ByteOrder.nativeOrder()));
+      withInitial(() -> ByteBuffer.wrap(LONG_BYTE_ARRAY.get()));
   private static final ThreadLocal<byte[]> INT_BYTE_ARRAY =
       withInitial(() -> new byte[Integer.BYTES]);
   private static final ThreadLocal<ByteBuffer> INT_BYTE_BUFFER =
-      withInitial(() -> ByteBuffer.wrap(INT_BYTE_ARRAY.get()).order(ByteOrder.nativeOrder()));
+      withInitial(() -> ByteBuffer.wrap(INT_BYTE_ARRAY.get()));
 
   // Mask for casting a byte to an int, bit-by-bit (with
   // bitwise AND) with no special consideration for the sign bit.
