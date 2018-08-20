@@ -19,6 +19,10 @@ import com.google.common.base.MoreObjects.ToStringHelper;
 import io.github.pr0methean.betterrandom.seed.DefaultSeedGenerator;
 import io.github.pr0methean.betterrandom.seed.SeedException;
 import io.github.pr0methean.betterrandom.seed.SeedGenerator;
+<<<<<<< HEAD
+=======
+import io.github.pr0methean.betterrandom.util.BinaryUtils;
+>>>>>>> parent of f8d45ca4... Optimize XorShiftRandom
 import java.util.Random;
 
 /**
@@ -45,11 +49,7 @@ public class XorShiftRandom extends BaseRandom {
   private int state3;
   private int state4;
   private int state5;
-
-  @Override protected boolean usesByteBuffer() {
-    return true;
-  }
-
+  
   /**
    * Creates an RNG and seeds it with the specified seed data.
    * @param seed 20 bytes of seed data used to initialise the RNG.
@@ -105,15 +105,15 @@ public class XorShiftRandom extends BaseRandom {
 
   @Override protected void setSeedInternal(final byte[] seed) {
     super.setSeedInternal(seed);
-    state1 = seedBuffer.getInt(0);
-    state2 = seedBuffer.getInt(Integer.BYTES);
-    state3 = seedBuffer.getInt(2 * Integer.BYTES);
-    state4 = seedBuffer.getInt(3 * Integer.BYTES);
-    state5 = seedBuffer.getInt(4 * Integer.BYTES);
+    final int[] state = BinaryUtils.convertBytesToInts(this.seed);
+    state1 = state[0];
+    state2 = state[1];
+    state3 = state[2];
+    state4 = state[3];
+    state5 = state[4];
   }
 
   @Override protected int next(final int bits) {
-    int value;
     lock.lock();
     try {
       final int t = (state1 ^ (state1 >> 7));
@@ -122,11 +122,11 @@ public class XorShiftRandom extends BaseRandom {
       state3 = state4;
       state4 = state5;
       state5 = (state5 ^ (state5 << 6)) ^ (t ^ (t << 13));
-      value = (state2 + state2 + 1) * state5;
+      final int value = (state2 + state2 + 1) * state5;
+      return value >>> (32 - bits);
     } finally {
       lock.unlock();
     }
-    return value >>> (32 - bits);
   }
 
   @Override public int getNewSeedLength() {
