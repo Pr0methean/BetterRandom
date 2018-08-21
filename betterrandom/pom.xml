@@ -245,7 +245,7 @@
   </properties>
   <groupId>io.github.pr0methean.betterrandom</groupId>
   <artifactId>BetterRandom</artifactId>
-  <version>2.4.6-SNAPSHOT</version>
+  <version>2.4.7-SNAPSHOT</version>
   <name>BetterRandom</name>
   <description>Better, faster random-number generation in Java.
   </description>
@@ -381,7 +381,7 @@
             <sourcepath>${user.home}/j2se-src:${basedir}/src/main/java</sourcepath>
             <subpackages>io.github.pr0methean</subpackages>
             <links>
-              <link>http://checkstyle-addons.github.io/jsr305-javadoc/${jsr305.version}</link>
+              <link>http://checkstyle-addons.github.io/jsr305-javadoc/3.0.1</link>
               <link>https://checkerframework.org/api</link>
               <link>https://docs.oracle.com/javase/8/docs/api</link>
               <link>https://google.github.io/guava/releases/${guava.version}/api/docs</link>

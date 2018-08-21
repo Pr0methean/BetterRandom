@@ -77,6 +77,8 @@ public class AesCounterRandom extends BaseRandom implements SeekableRandom {
   private static final String HASH_ALGORITHM = "SHA-256";
   private static final int MAX_TOTAL_SEED_LENGTH_BYTES;
   @SuppressWarnings("CanBeFinal") private static int MAX_KEY_LENGTH_BYTES = 0;
+  private static final ThreadLocal<byte[]> ADDEND_DIGITS
+      = ThreadLocal.withInitial(() -> new byte[COUNTER_SIZE_BYTES]);
 
   static {
     try {

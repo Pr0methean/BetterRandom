@@ -15,10 +15,6 @@
 // ============================================================================
 package io.github.pr0methean.betterrandom.util;
 
-import static java.lang.ThreadLocal.withInitial;
-
-import java.nio.ByteBuffer;
-import java.nio.ByteOrder;
 import javax.annotation.Nullable;
 
 /**
@@ -28,18 +24,14 @@ import javax.annotation.Nullable;
 public enum BinaryUtils {
   ;
 
-  private static final ThreadLocal<byte[]> LONG_BYTE_ARRAY =
-      withInitial(() -> new byte[Long.BYTES]);
-  private static final ThreadLocal<ByteBuffer> LONG_BYTE_BUFFER =
-      withInitial(() -> ByteBuffer.wrap(LONG_BYTE_ARRAY.get()).order(ByteOrder.nativeOrder()));
-  private static final ThreadLocal<byte[]> INT_BYTE_ARRAY =
-      withInitial(() -> new byte[Integer.BYTES]);
-  private static final ThreadLocal<ByteBuffer> INT_BYTE_BUFFER =
-      withInitial(() -> ByteBuffer.wrap(INT_BYTE_ARRAY.get()).order(ByteOrder.nativeOrder()));
-
   // Mask for casting a byte to an int, bit-by-bit (with
   // bitwise AND) with no special consideration for the sign bit.
   private static final int BITWISE_BYTE_TO_INT = 0x000000FF;
+  private static final long BITWISE_BYTE_TO_LONG = BITWISE_BYTE_TO_INT;
+  private static final ThreadLocal<byte[]> INT_ARRAYS = ThreadLocal.withInitial(
+      () -> new byte[Integer.BYTES]);
+  private static final ThreadLocal<byte[]> LONG_ARRAYS = ThreadLocal.withInitial(
+      () -> new byte[Long.BYTES]);
 
   private static final char[] HEX_CHARS =
       {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F'};
@@ -132,58 +124,79 @@ public enum BinaryUtils {
   }
 
   /**
-   * Utility method to convert an array of bytes into a long.  Byte ordered is assumed to be
-   * big-endian.
+   * Take eight bytes from the specified position in the specified block and convert them into a
+   * long, using the big-endian convention.
    * @param bytes The data to read from.
-   * @param offset The position to start reading the 8-byte long from.
-   * @return The 64-bit integer represented by the eight bytes.
+   * @param offset The position to start reading the long from.
+   * @return The 32-bit integer represented by the eight bytes.
    */
   public static long convertBytesToLong(final byte[] bytes, final int offset) {
-    System.arraycopy(bytes, offset, LONG_BYTE_ARRAY.get(), 0, Long.BYTES);
-    return LONG_BYTE_BUFFER.get().getLong(0);
+    return (BITWISE_BYTE_TO_LONG & bytes[offset + 7])
+        | ((BITWISE_BYTE_TO_LONG & bytes[offset + 6]) << 8L)
+        | ((BITWISE_BYTE_TO_LONG & bytes[offset + 5]) << 16L)
+        | ((BITWISE_BYTE_TO_LONG & bytes[offset + 4]) << 24L)
+        | ((BITWISE_BYTE_TO_LONG & bytes[offset + 3]) << 32L)
+        | ((BITWISE_BYTE_TO_LONG & bytes[offset + 2]) << 40L)
+        | ((BITWISE_BYTE_TO_LONG & bytes[offset + 1]) << 48L)
+        | ((BITWISE_BYTE_TO_LONG & bytes[offset]) << 56L);
   }
 
   /**
    * Converts a long to an array of bytes.
+   * <p>
+   * The returned array will be reused on subsequent calls to this method from the same thread, so a
+   * defensive copy may be necessary.
    * @param input a long.
-   * @return an array of 8 bytes containing the long's value in
-   *     {@link java.nio.ByteOrder#BIG_ENDIAN} order.
+   * @return an array of 8 bytes containing the long's value in big-endian order.
    */
   public static byte[] convertLongToBytes(final long input) {
-    LONG_BYTE_BUFFER.get().putLong(0, input);
-    return LONG_BYTE_ARRAY.get();
+    byte[] output = LONG_ARRAYS.get();
+    convertLongToBytes(input, output, 0);
+    return output;
+  }
+
+  public static void convertLongToBytes(long input, byte[] output, int offset) {
+    output[offset] = (byte)(input >> 56L);
+    output[offset + 1] = (byte)(input >> 48L);
+    output[offset + 2] = (byte)(input >> 40L);
+    output[offset + 3] = (byte)(input >> 32L);
+    output[offset + 4] = (byte)(input >> 24L);
+    output[offset + 5] = (byte)(input >> 16L);
+    output[offset + 6] = (byte)(input >> 8L);
+    output[offset + 7] = (byte)(input);
   }
 
   /**
-   * Converts a long to an array of bytes.
-   * @param input a long.
-   * @return an array of 8 bytes containing the long's value in
-   *     {@link java.nio.ByteOrder#BIG_ENDIAN} order.
+   * Writes an int to 4 cells of a byte array.
+   * @param input the int to write
+   * @param output the array to write to
+   * @param offset the first index to write to
    */
-  public static byte[] convertLongToBytes(final long input, ByteOrder byteOrder) {
-    final ByteBuffer buffer = LONG_BYTE_BUFFER.get();
-    buffer.order(byteOrder);
-    buffer.putLong(0, input);
-    byte[] out = LONG_BYTE_ARRAY.get();
-    buffer.order(ByteOrder.nativeOrder());
-    return out;
+  public static void convertIntToBytes(final int input, final byte[] output, int offset) {
+    output[offset] = (byte)(input >> 24);
+    output[offset + 1] = (byte)(input >> 16);
+    output[offset + 2] = (byte)(input >> 8);
+    output[offset + 3] = (byte)(input);
   }
 
   /**
-   * <p>convertIntToBytes.</p>
+   * Convert an int to an array of 4 bytes.
+   * <p>
+   * The returned array will be reused on subsequent calls to this method from the same thread, so a
+   * defensive copy may be necessary.
    * @param input an int.
-   * @return an array of 4 bytes containing the int's value in
-   *     {@link java.nio.ByteOrder#BIG_ENDIAN} order.
+   * @return an array of 4 bytes containing the int's value in big-endian order.
    */
   public static byte[] convertIntToBytes(final int input) {
-    INT_BYTE_BUFFER.get().putInt(0, input);
-    return INT_BYTE_ARRAY.get();
+    byte[] output = INT_ARRAYS.get();
+    convertIntToBytes(input, output, 0);
+    return output;
   }
 
   /**
    * Convert a byte array to a long, reversing {@link #convertLongToBytes(long)}.
    * @param bytes a byte array of length {@link Long#BYTES} in
-   *     {@link java.nio.ByteOrder#BIG_ENDIAN} order.
+   *     {@link java.nio.ByteOrder#nativeOrder()} order.
    * @return {@code bytes} as a long.
    */
   public static long convertBytesToLong(final byte[] bytes) {
