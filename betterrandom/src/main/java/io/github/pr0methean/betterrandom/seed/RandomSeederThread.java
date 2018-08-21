@@ -4,13 +4,10 @@ import com.google.common.cache.CacheBuilder;
 import io.github.pr0methean.betterrandom.ByteArrayReseedableRandom;
 import io.github.pr0methean.betterrandom.EntropyCountingRandom;
 import io.github.pr0methean.betterrandom.prng.BaseRandom;
+import io.github.pr0methean.betterrandom.util.BinaryUtils;
 import io.github.pr0methean.betterrandom.util.LooperThread;
-import java.nio.ByteBuffer;
-import java.nio.ByteOrder;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -50,8 +47,6 @@ public final class RandomSeederThread extends LooperThread {
       CacheBuilder.newBuilder().weakKeys().initialCapacity(1)
           .<Random, Boolean>build().asMap());
   private final byte[] longSeedArray = new byte[8];
-  private final ByteBuffer longSeedBuffer
-      = ByteBuffer.wrap(longSeedArray).order(ByteOrder.nativeOrder());
   private final Set<ByteArrayReseedableRandom> byteArrayPrngsThisIteration
       = Collections.newSetFromMap(new WeakHashMap<>());
   private final Set<Random> otherPrngsThisIteration
@@ -263,7 +258,7 @@ public final class RandomSeederThread extends LooperThread {
 
   private void reseedWithLong(Random random) {
     seedGenerator.generateSeed(longSeedArray);
-    random.setSeed(longSeedBuffer.getLong(0));
+    random.setSeed(BinaryUtils.convertBytesToLong(longSeedArray));
   }
 
   private static boolean stillDefinitelyHasEntropy(Object random) {
