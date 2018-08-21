@@ -18,7 +18,6 @@ package io.github.pr0methean.betterrandom.util;
 import static io.github.pr0methean.betterrandom.util.BinaryUtils.convertBytesToLong;
 import static org.testng.Assert.assertEquals;
 
-import java.nio.ByteOrder;
 import java.util.Arrays;
 import org.testng.annotations.Test;
 
@@ -35,29 +34,16 @@ public class BinaryUtilsTest {
   private static final byte[] INT_BYTES = {8, 4, 2, 1};
   private static final int INT = 134480385;
 
-  private byte[] fromBigEndian(byte[] in) {
-    byte[] out = in.clone();
-    if (ByteOrder.nativeOrder() == ByteOrder.LITTLE_ENDIAN) {
-      // Reverse the copy
-      for (int i = 0; i < out.length / 2; i++) {
-        byte temp = out[i];
-        out[i] = out[out.length - 1 - i];
-        out[out.length - 1 - i] = temp;
-      }
-    }
-    return out;
-  }
-
   private void assertEqualsHex(long actual, long expected) {
     assertEquals(actual, expected, String.format("Expected %x, got %x", expected, actual));
   }
 
   @Test public void testConvertLongToBytes() throws Exception {
-    assert Arrays.equals(fromBigEndian(LONG_BYTES), BinaryUtils.convertLongToBytes(LONG));
+    assert Arrays.equals(LONG_BYTES.clone(), BinaryUtils.convertLongToBytes(LONG));
   }
 
   @Test public void testConvertIntToBytes() throws Exception {
-    assert Arrays.equals(fromBigEndian(INT_BYTES), BinaryUtils.convertIntToBytes(INT));
+    assert Arrays.equals(INT_BYTES.clone(), BinaryUtils.convertIntToBytes(INT));
   }
 
   @Test(timeOut = 1000) public void testConvertBytesToHexString() {
@@ -114,7 +100,7 @@ public class BinaryUtilsTest {
    * convention.
    */
   @Test(timeOut = 1000) public void testConvertBytesToLong() {
-    final long result = convertBytesToLong(fromBigEndian(LONG_BYTES));
+    final long result = convertBytesToLong(LONG_BYTES.clone());
     assertEqualsHex(result, LONG);
   }
 
@@ -122,7 +108,7 @@ public class BinaryUtilsTest {
    * Regression test for failure to correctly convert values that contain negative bytes.
    */
   @Test(timeOut = 1000) public void testConvertNegativeBytesToLong() {
-    final byte[] bytes = fromBigEndian(new byte[]{-121, 30, 107, -100, -76, -8, 53, 81});
+    final byte[] bytes = new byte[]{-121, 30, 107, -100, -76, -8, 53, 81}.clone();
     final long expected = 0x871e6b9cb4f83551L;
     final long result = convertBytesToLong(bytes);
     assertEqualsHex(result, expected);

@@ -21,6 +21,7 @@ import com.google.common.base.MoreObjects.ToStringHelper;
 import io.github.pr0methean.betterrandom.seed.DefaultSeedGenerator;
 import io.github.pr0methean.betterrandom.seed.SeedException;
 import io.github.pr0methean.betterrandom.seed.SeedGenerator;
+import io.github.pr0methean.betterrandom.util.BinaryUtils;
 import java.util.Random;
 
 /**
@@ -74,10 +75,6 @@ public class XorShiftRandom extends BaseRandom {
     this(seedGenerator.generateSeed(SEED_SIZE_BYTES));
   }
 
-  @Override protected boolean usesByteBuffer() {
-    return true;
-  }
-
   @Override protected ToStringHelper addSubclassFields(final ToStringHelper original) {
     return original.add("state1", state1).add("state2", state2).add("state3", state3)
         .add("state4", state4).add("state5", state5);
@@ -94,11 +91,11 @@ public class XorShiftRandom extends BaseRandom {
   @Override public byte[] getSeed() {
     lock.lock();
     try {
-      seedBuffer.putInt(0, state1);
-      seedBuffer.putInt(INT_BYTES, state2);
-      seedBuffer.putInt(2 * INT_BYTES, state3);
-      seedBuffer.putInt(3 * INT_BYTES, state4);
-      seedBuffer.putInt(4 * INT_BYTES, state5);
+      BinaryUtils.convertIntToBytes(state1, seed, 0);
+      BinaryUtils.convertIntToBytes(state2, seed, INT_BYTES);
+      BinaryUtils.convertIntToBytes(state3, seed, INT_BYTES * 2);
+      BinaryUtils.convertIntToBytes(state4, seed, INT_BYTES * 3);
+      BinaryUtils.convertIntToBytes(state5, seed, INT_BYTES * 4);
       return seed.clone();
     } finally {
       lock.unlock();
@@ -107,15 +104,15 @@ public class XorShiftRandom extends BaseRandom {
 
   @Override protected void setSeedInternal(final byte[] seed) {
     super.setSeedInternal(seed);
-    state1 = seedBuffer.getInt(0);
-    state2 = seedBuffer.getInt(INT_BYTES);
-    state3 = seedBuffer.getInt(2 * INT_BYTES);
-    state4 = seedBuffer.getInt(3 * INT_BYTES);
-    state5 = seedBuffer.getInt(4 * INT_BYTES);
+    final int[] state = BinaryUtils.convertBytesToInts(this.seed);
+    state1 = state[0];
+    state2 = state[1];
+    state3 = state[2];
+    state4 = state[3];
+    state5 = state[4];
   }
 
   @Override protected int next(final int bits) {
-    int value;
     lock.lock();
     try {
       final int t = (state1 ^ (state1 >> 7));
@@ -124,11 +121,11 @@ public class XorShiftRandom extends BaseRandom {
       state3 = state4;
       state4 = state5;
       state5 = (state5 ^ (state5 << 6)) ^ (t ^ (t << 13));
-      value = (state2 + state2 + 1) * state5;
+      final int value = (state2 + state2 + 1) * state5;
+      return value >>> (32 - bits);
     } finally {
       lock.unlock();
     }
-    return value >>> (32 - bits);
   }
 
   @Override public int getNewSeedLength() {

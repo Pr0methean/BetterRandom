@@ -104,10 +104,6 @@ public class RandomWrapper extends BaseRandom {
         wrapped instanceof Java8CompatRandom && ((Java8CompatRandom) wrapped).longs().isParallel());
   }
 
-  @Override protected boolean usesByteBuffer() {
-    return true;
-  }
-
   private static byte[] getSeedOrDummy(final Random wrapped) {
     return (wrapped instanceof RepeatableRandom) ? ((RepeatableRandom) wrapped).getSeed()
         : DUMMY_SEED;
@@ -252,7 +248,7 @@ public class RandomWrapper extends BaseRandom {
         asByteArrayReseedable.setSeed(seed);
         unknownSeed = false;
       } else {
-        wrapped.setSeed(seedBuffer.getLong(0));
+        wrapped.setSeed(BinaryUtils.convertBytesToLong(seed));
         unknownSeed = false;
       }
     } finally {

@@ -1,3 +1,8 @@
+# 2.4.7
+* No longer uses `ByteBuffer` for type conversion, because this increased memory usage with no real
+  performance benefit. Type conversions have been refactored so that object reuse is as good as
+  before, with less reliance on `ThreadLocal<byte[]>` objects.
+
 # 2.4.6
 * All instances of `ByteBuffer` now use the machine's native byte order.
 

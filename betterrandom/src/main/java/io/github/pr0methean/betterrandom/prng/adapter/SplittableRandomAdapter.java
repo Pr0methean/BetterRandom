@@ -7,6 +7,7 @@ import io.github.pr0methean.betterrandom.seed.DefaultSeedGenerator;
 import io.github.pr0methean.betterrandom.seed.RandomSeederThread;
 import io.github.pr0methean.betterrandom.seed.SeedException;
 import io.github.pr0methean.betterrandom.seed.SeedGenerator;
+import io.github.pr0methean.betterrandom.util.BinaryUtils;
 import io.github.pr0methean.betterrandom.util.Java8Constants;
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -30,7 +31,6 @@ public class SplittableRandomAdapter extends DirectSplittableRandomAdapter {
   private transient ThreadLocal<SplittableRandom> splittableRandoms;
   private transient ThreadLocal<AtomicLong> entropyBits;
   private transient ThreadLocal<byte[]> seeds;
-  private transient ThreadLocal<ByteBuffer> seedBuffers;
 
   /**
    * Use the provided seed generation strategy to create the seed for the master {@link
@@ -123,11 +123,6 @@ public class SplittableRandomAdapter extends DirectSplittableRandomAdapter {
           return seed.clone();
         }
       };
-      seedBuffers = new ThreadLocal<ByteBuffer>() {
-        @Override protected ByteBuffer initialValue() {
-          return ByteBuffer.wrap(seeds.get()).order(ByteOrder.nativeOrder());
-        }
-      };
     } finally {
       lock.unlock();
     }
@@ -178,7 +173,7 @@ public class SplittableRandomAdapter extends DirectSplittableRandomAdapter {
         creditEntropyForNewSeed(Java8Constants.LONG_BYTES);
       }
       if (seeds != null) {
-        seedBuffers.get().putLong(0, seed);
+        BinaryUtils.convertLongToBytes(seed, seeds.get(), 0);
       }
     }
   }
