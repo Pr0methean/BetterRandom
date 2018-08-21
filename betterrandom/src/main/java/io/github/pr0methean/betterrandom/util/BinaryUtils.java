@@ -15,6 +15,7 @@
 // ============================================================================
 package io.github.pr0methean.betterrandom.util;
 
+import static io.github.pr0methean.betterrandom.util.Java8Constants.INT_BYTES;
 import static io.github.pr0methean.betterrandom.util.Java8Constants.LONG_BYTES;
 
 import javax.annotation.Nullable;
@@ -33,7 +34,7 @@ public enum BinaryUtils {
   };
   private static final ThreadLocal<byte[]> INT_BYTE_ARRAY = new ThreadLocal<byte[]>() {
     @Override public byte[] initialValue() {
-      return new byte[Java8Constants.INT_BYTES];
+      return new byte[INT_BYTES];
     }
   };
 
@@ -41,10 +42,6 @@ public enum BinaryUtils {
   // bitwise AND) with no special consideration for the sign bit.
   private static final int BITWISE_BYTE_TO_INT = 0x000000FF;
   private static final long BITWISE_BYTE_TO_LONG = BITWISE_BYTE_TO_INT;
-  private static final ThreadLocal<byte[]> INT_ARRAYS = ThreadLocal.withInitial(
-      () -> new byte[Integer.BYTES]);
-  private static final ThreadLocal<byte[]> LONG_ARRAYS = ThreadLocal.withInitial(
-      () -> new byte[Long.BYTES]);
 
   private static final char[] HEX_CHARS =
       {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F'};
@@ -163,7 +160,7 @@ public enum BinaryUtils {
    * @return an array of 8 bytes containing the long's value in big-endian order.
    */
   public static byte[] convertLongToBytes(final long input) {
-    byte[] output = LONG_ARRAYS.get();
+    byte[] output = LONG_BYTE_ARRAY.get();
     convertLongToBytes(input, output, 0);
     return output;
   }
@@ -201,7 +198,7 @@ public enum BinaryUtils {
    * @return an array of 4 bytes containing the int's value in big-endian order.
    */
   public static byte[] convertIntToBytes(final int input) {
-    byte[] output = INT_ARRAYS.get();
+    byte[] output = INT_BYTE_ARRAY.get();
     convertIntToBytes(input, output, 0);
     return output;
   }
