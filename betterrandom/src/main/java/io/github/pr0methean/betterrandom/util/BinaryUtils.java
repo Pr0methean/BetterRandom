@@ -28,9 +28,9 @@ public enum BinaryUtils {
   // bitwise AND) with no special consideration for the sign bit.
   private static final int BITWISE_BYTE_TO_INT = 0x000000FF;
   private static final long BITWISE_BYTE_TO_LONG = BITWISE_BYTE_TO_INT;
-  private static final ThreadLocal<byte[]> INT_ARRAYS = ThreadLocal.withInitial(
+  private static final ThreadLocal<byte[]> INT_BYTE_ARRAY = ThreadLocal.withInitial(
       () -> new byte[Integer.BYTES]);
-  private static final ThreadLocal<byte[]> LONG_ARRAYS = ThreadLocal.withInitial(
+  private static final ThreadLocal<byte[]> LONG_BYTE_ARRAY = ThreadLocal.withInitial(
       () -> new byte[Long.BYTES]);
 
   private static final char[] HEX_CHARS =
@@ -52,7 +52,7 @@ public enum BinaryUtils {
     }
     return buffer.toString();
   }
-  
+
   /**
    * Converts an array of ints into a String of hexadecimal characters (0 - F), taking only the
    * least significant byte of each int. Prepends a newline, unless returning "null".
@@ -150,7 +150,7 @@ public enum BinaryUtils {
    * @return an array of 8 bytes containing the long's value in big-endian order.
    */
   public static byte[] convertLongToBytes(final long input) {
-    byte[] output = LONG_ARRAYS.get();
+    byte[] output = LONG_BYTE_ARRAY.get();
     convertLongToBytes(input, output, 0);
     return output;
   }
@@ -188,7 +188,7 @@ public enum BinaryUtils {
    * @return an array of 4 bytes containing the int's value in big-endian order.
    */
   public static byte[] convertIntToBytes(final int input) {
-    byte[] output = INT_ARRAYS.get();
+    byte[] output = INT_BYTE_ARRAY.get();
     convertIntToBytes(input, output, 0);
     return output;
   }
