@@ -24,7 +24,6 @@ import io.github.pr0methean.betterrandom.seed.DefaultSeedGenerator;
 import io.github.pr0methean.betterrandom.seed.SeedException;
 import io.github.pr0methean.betterrandom.seed.SeedGenerator;
 import io.github.pr0methean.betterrandom.util.BinaryUtils;
-import java.nio.ByteOrder;
 import java.security.GeneralSecurityException;
 import java.security.InvalidKeyException;
 import java.security.MessageDigest;
@@ -79,7 +78,7 @@ public class AesCounterRandom extends BaseRandom implements SeekableRandom {
   private static final int MAX_TOTAL_SEED_LENGTH_BYTES;
   private static final byte[] ZEROES = new byte[COUNTER_SIZE_BYTES];
   @SuppressWarnings("CanBeFinal") private static int MAX_KEY_LENGTH_BYTES = 0;
-  private static final ThreadLocal<byte[]> ADDEND_DIGITS = new ThreadLocal() {
+  private static final ThreadLocal<byte[]> ADDEND_DIGITS = new ThreadLocal<byte[]>() {
     @Override
     protected byte[] initialValue() {
       return new byte[COUNTER_SIZE_BYTES];
@@ -343,8 +342,8 @@ public class AesCounterRandom extends BaseRandom implements SeekableRandom {
       }
       blocksDelta -= BLOCKS_AT_ONCE; // Compensate for the increment during nextBlock() below
       final byte[] addendDigits = ADDEND_DIGITS.get();
-      System.arraycopy(ZEROES, 0, addendDigits, 0, COUNTER_SIZE_BYTES - Long.BYTES);
-      BinaryUtils.convertLongToBytes(blocksDelta, addendDigits, COUNTER_SIZE_BYTES - Long.BYTES);
+      System.arraycopy(ZEROES, 0, addendDigits, 0, COUNTER_SIZE_BYTES - LONG_BYTES);
+      BinaryUtils.convertLongToBytes(blocksDelta, addendDigits, COUNTER_SIZE_BYTES - LONG_BYTES);
       if (blocksDelta < 0) {
         // Sign extend
         for (int i = 0; i < (COUNTER_SIZE_BYTES - LONG_BYTES); i++) {
