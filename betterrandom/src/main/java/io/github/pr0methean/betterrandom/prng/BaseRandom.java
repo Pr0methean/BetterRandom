@@ -52,7 +52,7 @@ public abstract class BaseRandom extends Random
    */
   protected final AtomicReference<SeedGenerator> seedGenerator = new AtomicReference<>(null);
   /** Lock to prevent concurrent modification of the RNG's internal state. */
-  protected final ReentrantLock lock = new ReentrantLock();
+  protected final ReentrantLock lock = new ReentrantLock(true);
   /** Stores the entropy estimate backing {@link #getEntropyBits()}. */
   protected final AtomicLong entropyBits = new AtomicLong(0);
   // Stored as a long since there's no atomic double
