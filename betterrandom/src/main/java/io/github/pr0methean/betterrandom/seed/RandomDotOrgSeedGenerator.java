@@ -155,8 +155,10 @@ public enum RandomDotOrgSeedGenerator implements SeedGenerator {
   /* Package-visible for testing. */
   static HttpURLConnection openConnection(final URL url) throws IOException {
     final Proxy currentProxy = proxy.get();
-    return (HttpURLConnection)
+    HttpURLConnection connection = (HttpURLConnection)
         ((currentProxy == null) ? url.openConnection() : url.openConnection(currentProxy));
+    connection.setRequestProperty("User-Agent", USER_AGENT);
+    return connection;
   }
 
   /**
@@ -182,7 +184,6 @@ public enum RandomDotOrgSeedGenerator implements SeedGenerator {
       if (currentApiKey == null) {
         // Use old API.
         connection = openConnection(new URL(MessageFormat.format(RANDOM_URL, numberOfBytes)));
-        connection.setRequestProperty("User-Agent", USER_AGENT);
         try (BufferedReader reader = new BufferedReader(
             new InputStreamReader(connection.getInputStream()))) {
           int index = -1;
@@ -211,7 +212,6 @@ public enum RandomDotOrgSeedGenerator implements SeedGenerator {
         connection = openConnection(JSON_REQUEST_URL);
         connection.setDoOutput(true);
         connection.setRequestMethod("POST");
-        connection.setRequestProperty("User-Agent", USER_AGENT);
         try (OutputStream out = connection.getOutputStream()) {
           out.write(String.format(JSON_REQUEST_FORMAT, currentApiKey, numberOfBytes * Byte.SIZE,
               REQUEST_ID.incrementAndGet()).getBytes(UTF8));
