@@ -17,7 +17,6 @@ package io.github.pr0methean.betterrandom.seed;
 
 import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
@@ -41,7 +40,6 @@ import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
-import org.slf4j.LoggerFactory;
 
 /**
  * <p>Connects to <a href="https://www.random.org/clients/http/" target="_top">random.org's old
@@ -111,7 +109,8 @@ public enum RandomDotOrgSeedGenerator implements SeedGenerator {
    * package-visible for testing.
    */
   static final int GLOBAL_MAX_REQUEST_SIZE = 10000;
-  private static final Duration RETRY_DELAY = Duration.ofSeconds(10);
+  private static final long RETRY_DELAY_MS = 10000;
+  private static final Duration RETRY_DELAY = Duration.ofMillis(RETRY_DELAY_MS);
   static final Lock cacheLock = new ReentrantLock();
   private static final Charset UTF8 = Charset.forName("UTF-8");
   private static volatile Instant earliestNextAttempt = Instant.MIN;
@@ -175,8 +174,8 @@ public enum RandomDotOrgSeedGenerator implements SeedGenerator {
    * @throws IOException If a connection error occurs.
    * @throws SeedException If random.org sends a malformed response body.
    */
-  @SuppressWarnings("NumericCastThatLosesPrecision") private static void refreshCache(
-      final int requiredBytes) throws IOException {
+  @SuppressWarnings("NumericCastThatLosesPrecision")
+  private static void refreshCache(final int requiredBytes) throws IOException {
     HttpURLConnection connection = null;
     cacheLock.lock();
     try {
@@ -190,15 +189,13 @@ public enum RandomDotOrgSeedGenerator implements SeedGenerator {
       if (currentApiKey == null) {
         // Use old API.
         connection = openConnection(new URL(MessageFormat.format(RANDOM_URL, numberOfBytes)));
-        try (BufferedReader reader = new BufferedReader(
-            new InputStreamReader(connection.getInputStream()))) {
-          int index = -1;
-          for (String line = reader.readLine(); line != null; line = reader.readLine()) {
-            ++index;
-            if (index >= numberOfBytes) {
-              LoggerFactory.getLogger(RandomDotOrgSeedGenerator.class)
-                  .warn("random.org sent more data than requested.");
-              break;
+        try (BufferedReader reader = getResponseReader(connection)) {
+          for (int index = 0; index < cache.length; index++) {
+            String line = reader.readLine();
+            if (line == null) {
+              throw new SeedException(String
+                  .format("Insufficient data received: expected %d bytes, got %d.", cache.length,
+                      index));
             }
             try {
               cache[index] = (byte) Integer.parseInt(line, 16);
@@ -206,11 +203,6 @@ public enum RandomDotOrgSeedGenerator implements SeedGenerator {
             } catch (NumberFormatException e) {
               throw new SeedException("random.org sent non-numeric data", e);
             }
-          }
-          if (index < (cache.length - 1)) {
-            throw new SeedException(String
-                .format("Insufficient data received: expected %d bytes, got %d.", cache.length,
-                    index + 1));
           }
         }
       } else {
@@ -223,8 +215,7 @@ public enum RandomDotOrgSeedGenerator implements SeedGenerator {
               REQUEST_ID.incrementAndGet()).getBytes(UTF8));
         }
         final JSONObject response;
-        try (InputStream in = connection.getInputStream();
-            InputStreamReader reader = new InputStreamReader(in)) {
+        try (BufferedReader reader = getResponseReader(connection)) {
           response = (JSONObject) JSON_PARSER.parse(reader);
         } catch (final ParseException e) {
           throw new SeedException("Unparseable JSON response from random.org", e);
@@ -248,12 +239,11 @@ public enum RandomDotOrgSeedGenerator implements SeedGenerator {
           }
           System.arraycopy(decodedSeed, 0, cache, 0, numberOfBytes);
         }
-        final Number advisoryDelayMs = (Number) result.get("advisoryDelay");
-        if (advisoryDelayMs != null) {
-          final Duration advisoryDelay = Duration.ofMillis(advisoryDelayMs.longValue());
+        final Object advisoryDelayMs = result.get("advisoryDelay");
+        if (advisoryDelayMs instanceof Number) {
           // Wait RETRY_DELAY or the advisory delay, whichever is shorter
-          earliestNextAttempt = CLOCK.instant()
-              .plus((advisoryDelay.compareTo(RETRY_DELAY) > 0) ? RETRY_DELAY : advisoryDelay);
+          long delayMs = Math.min(RETRY_DELAY_MS, ((Number) advisoryDelayMs).longValue());
+          earliestNextAttempt = CLOCK.instant().plusMillis(delayMs);
         }
       }
       cacheOffset = 0;
@@ -263,6 +253,11 @@ public enum RandomDotOrgSeedGenerator implements SeedGenerator {
         connection.disconnect();
       }
     }
+  }
+
+  private static BufferedReader getResponseReader(HttpURLConnection connection)
+      throws IOException {
+    return new BufferedReader(new InputStreamReader(connection.getInputStream()));
   }
 
   private static JSONObject checkedGetObject(final JSONObject parent, final String key) {
