@@ -3,6 +3,15 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <profiles>
+    <profile>
+      <id>windows</id>
+      <activation>
+        <os><family>windows</family></os>
+      </activation>
+      <properties>
+        <test.argline />
+      </properties>
+    </profile>
     <!-- GPG Signature on release -->
     <profile>
       <id>release-sign-artifacts</id>
@@ -103,6 +112,7 @@
     <github.global.server>github</github.global.server>
     <jsr305.version>3.0.2</jsr305.version>
     <guava.version>26.0</guava.version>
+    <proguard.version>6.0.3</proguard.version>
     <jacoco.version>0.8.2</jacoco.version>
     <powermock.version>2.0.0-beta.5</powermock.version>
     <mockito.version>2.21.0</mockito.version>
@@ -240,7 +250,7 @@
       <!-- Overrides transitive dep on 5.2.1 -->
       <groupId>net.sf.proguard</groupId>
       <artifactId>proguard-base</artifactId>
-      <version>5.3.3</version>
+      <version>${proguard.version}</version>
       <scope>runtime</scope>
     </dependency>
     <dependency>
@@ -281,7 +291,7 @@
           </executions>
           <configuration>
             <proguardJar>
-              ${user.home}/.m2/repository/net/sf/proguard/proguard-base/5.3.3/proguard-base-5.3.3.jar
+              ${user.home}/.m2/repository/net/sf/proguard/proguard-base/${proguard.version}/proguard-base-${proguard.version}.jar
             </proguardJar>
             <proguardInclude>${basedir}/proguard.conf</proguardInclude>
             <libs>
