@@ -109,7 +109,7 @@ public enum RandomDotOrgSeedGenerator implements SeedGenerator {
    * package-visible for testing.
    */
   static final int GLOBAL_MAX_REQUEST_SIZE = 10000;
-  private static final long RETRY_DELAY_MS = 10000;
+  private static final int RETRY_DELAY_MS = 10000;
   private static final Duration RETRY_DELAY = Duration.ofMillis(RETRY_DELAY_MS);
   static final Lock cacheLock = new ReentrantLock();
   private static final Charset UTF8 = Charset.forName("UTF-8");
@@ -242,7 +242,7 @@ public enum RandomDotOrgSeedGenerator implements SeedGenerator {
         final Object advisoryDelayMs = result.get("advisoryDelay");
         if (advisoryDelayMs instanceof Number) {
           // Wait RETRY_DELAY or the advisory delay, whichever is shorter
-          long delayMs = Math.min(RETRY_DELAY_MS, ((Number) advisoryDelayMs).longValue());
+          int delayMs = Math.min(RETRY_DELAY_MS, ((Number) advisoryDelayMs).intValue());
           earliestNextAttempt = CLOCK.instant().plusMillis(delayMs);
         }
       }
