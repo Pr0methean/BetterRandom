@@ -31,7 +31,7 @@
           <!-- Overrides transitive dep on 5.2.1 -->
           <groupId>net.sf.proguard</groupId>
           <artifactId>proguard-base</artifactId>
-          <version>5.3.3</version>
+          <version>${proguard.version}</version>
           <scope>runtime</scope>
         </dependency>
       </dependencies>
@@ -69,8 +69,7 @@
               <artifactId>proguard-maven-plugin</artifactId>
               <version>2.0.14</version>
               <configuration>
-                <proguardJar>
-                  ${user.home}/.m2/repository/net/sf/proguard/proguard-base/5.3.3/proguard-base-5.3.3.jar
+                <proguardJar>${user.home}/.m2/repository/net/sf/proguard/proguard-base/${proguard.version}/proguard-base-${proguard.version}.jar
                 </proguardJar>
                 <proguardInclude>${basedir}/proguard.conf</proguardInclude>
                 <libs>
@@ -233,6 +232,7 @@
     <github.global.server>github</github.global.server>
     <jsr305.version>3.0.2</jsr305.version>
     <guava.version>26.0</guava.version>
+    <proguard.version>6.0.3</proguard.version>
     <jacoco.version>0.8.2</jacoco.version>
     <powermock.version>2.0.0-beta.5</powermock.version>
     <mockito.version>2.21.0</mockito.version>
