@@ -52,7 +52,7 @@ public abstract class BaseRandom extends Random
   /** The number of pseudorandom bits in {@link #nextDouble()}. */
   protected static final int ENTROPY_OF_DOUBLE = 53;
 
-  private static final long NAN_LONG_BITS = Double.doubleToLongBits(Double.NaN);
+  private static final long NAN_LONG_BITS = Double.doubleToRawLongBits(Double.NaN);
   private static final Logger LOG = LoggerFactory.getLogger(BaseRandom.class);
   private static final long serialVersionUID = -1556392727255964947L;
   /**
@@ -303,7 +303,7 @@ public abstract class BaseRandom extends Random
     final double out = (nextDouble() * (bound - origin)) + origin;
     if (out >= bound) {
       // correct for rounding
-      return Double.longBitsToDouble(Double.doubleToLongBits(bound) - 1);
+      return Double.longBitsToDouble(Double.doubleToRawLongBits(bound) - 1);
     }
     return out;
   }
