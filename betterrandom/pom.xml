@@ -677,11 +677,11 @@
         <configuration>
           <threads>4</threads>
           <coverageThreshold>85</coverageThreshold>
-          <mutationThreshold>70</mutationThreshold>
+          <mutationThreshold>75</mutationThreshold>
           <avoidCallsTo>
             <avoidCallsTo>org.slf4j</avoidCallsTo>
           </avoidCallsTo>
-          <timeoutFactor>1.5</timeoutFactor>
+          <timeoutFactor>2</timeoutFactor>
           <timeoutConstant>4000</timeoutConstant>
           <testPlugin>testng</testPlugin>
           <failWhenNoMutations>true</failWhenNoMutations>
