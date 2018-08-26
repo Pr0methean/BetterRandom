@@ -1,6 +1,8 @@
 # 2.4.8
 * `DevRandomSeedGenerator` and `RandomDotOrgSeedGenerator` now use buffered input streams to reduce
   the number of I/O calls.
+* Now uses `Double.toRawLongBits` instead of `Double.toLongBits` when generating doubles with an
+  explicit range; this should be slightly faster.
 
 # 2.4.7
 * No longer uses `ByteBuffer` for type conversion, because this increased memory usage with no real
