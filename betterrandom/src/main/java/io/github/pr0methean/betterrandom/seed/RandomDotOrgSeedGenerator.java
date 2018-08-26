@@ -235,7 +235,7 @@ public enum RandomDotOrgSeedGenerator implements SeedGenerator {
         final Object advisoryDelayMs = result.get("advisoryDelay");
         if (advisoryDelayMs instanceof Number) {
           // Wait RETRY_DELAY or the advisory delay, whichever is shorter
-          long delayMs = Math.min(RETRY_DELAY_MS, ((Number) advisoryDelayMs).longValue());
+          int delayMs = Math.min(RETRY_DELAY_MS, ((Number) advisoryDelayMs).intValue());
           earliestNextAttempt.setTime(new Date());
           earliestNextAttempt.add(Calendar.MILLISECOND, delayMs);
         }
