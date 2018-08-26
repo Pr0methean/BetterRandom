@@ -287,6 +287,7 @@ public enum RandomTestUtils {
         }
         secondSeed = rng.getSeed();
       } while (Arrays.equals(secondSeed, oldSeed));
+      Thread.sleep(50);
       assertGreaterOrEqual(rng.getEntropyBits(), (secondSeed.length * 8L) - 1);
       final byte[] secondSeedClone = secondSeed.clone();
       byte[] thirdSeed;
