@@ -76,8 +76,6 @@ public class AesCounterRandom extends BaseRandom implements SeekableRandom {
   private static final int MAX_TOTAL_SEED_LENGTH_BYTES;
   private static final byte[] ZEROES = new byte[COUNTER_SIZE_BYTES];
   @SuppressWarnings("CanBeFinal") private static int MAX_KEY_LENGTH_BYTES = 0;
-  private static final ThreadLocal<byte[]> ADDEND_DIGITS
-      = ThreadLocal.withInitial(() -> new byte[COUNTER_SIZE_BYTES]);
 
   static {
     try {
@@ -99,6 +97,7 @@ public class AesCounterRandom extends BaseRandom implements SeekableRandom {
   private volatile byte[] counterInput;
   private volatile boolean seeded;
   private volatile int index;
+  private transient byte[] addendDigits;
 
   /**
    * Creates a new RNG and seeds it using 256 bits from the {@link DefaultSeedGenerator}.
@@ -163,6 +162,7 @@ public class AesCounterRandom extends BaseRandom implements SeekableRandom {
 
   @Override protected void initTransientFields() {
     super.initTransientFields();
+    addendDigits = new byte[COUNTER_SIZE_BYTES];
     if (counter == null) {
       counter = new byte[COUNTER_SIZE_BYTES];
     }
@@ -335,7 +335,6 @@ public class AesCounterRandom extends BaseRandom implements SeekableRandom {
         blocksDelta--;
       }
       blocksDelta -= BLOCKS_AT_ONCE; // Compensate for the increment during nextBlock() below
-      final byte[] addendDigits = ADDEND_DIGITS.get();
       System.arraycopy(ZEROES, 0, addendDigits, 0, COUNTER_SIZE_BYTES - Long.BYTES);
       BinaryUtils.convertLongToBytes(blocksDelta, addendDigits, COUNTER_SIZE_BYTES - Long.BYTES);
       if (blocksDelta < 0) {
