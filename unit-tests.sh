@@ -53,7 +53,7 @@ if [ "${STATUS}" = 0 ] && [ "${NO_JACOCO}" != "true" ]; then
     /bin/mkdir "betterrandom-coverage/$COMMIT"
     JACOCO_DIR="jacoco"
   fi
-  /bin/mv target/jacoco.exec "betterrandom-coverage/${COMMIT}/${JOB_ID}.exec"
+  /bin/mv target/jacoco.exec "betterrandom-coverage/${COMMIT}/${JOB_ID}.exec" || exit 1
   cd betterrandom-coverage
   git add .
   git commit -m "Coverage report from job $JOB_ID"
