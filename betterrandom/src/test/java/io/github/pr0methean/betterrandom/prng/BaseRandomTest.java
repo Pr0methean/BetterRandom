@@ -50,7 +50,7 @@ import org.testng.Reporter;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.Test;
 
-public abstract class BaseRandomTest extends PowerMockTestCase {
+public abstract class BaseRandomTest {
 
   protected final SeedGenerator semiFakeSeedGenerator
       = new SemiFakeSeedGenerator(new SplittableRandomAdapter(SecureRandomSeedGenerator.SECURE_RANDOM_SEED_GENERATOR));

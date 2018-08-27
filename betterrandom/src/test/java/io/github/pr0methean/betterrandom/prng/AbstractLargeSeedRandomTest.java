@@ -14,6 +14,8 @@ import org.powermock.core.classloader.annotations.MockPolicy;
 import org.powermock.core.classloader.annotations.PowerMockIgnore;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.reflect.Whitebox;
+import org.testng.IObjectFactory;
+import org.testng.annotations.ObjectFactory;
 
 /**
  * A subclass of {@link BaseRandomTest} for when avoiding {@link io.github.pr0methean.betterrandom.seed.DefaultSeedGenerator}
@@ -23,6 +25,11 @@ import org.powermock.reflect.Whitebox;
 @PrepareForTest(DefaultSeedGenerator.class)
 @PowerMockIgnore({"javax.crypto.*", "javax.management.*", "javax.script.*", "jdk.nashorn.*"})
 public abstract class AbstractLargeSeedRandomTest extends BaseRandomTest {
+
+  @ObjectFactory
+  public IObjectFactory getObjectFactory() {
+    return new org.powermock.modules.testng.PowerMockObjectFactory();
+  }
 
   private DefaultSeedGenerator oldDefaultSeedGenerator;
 
