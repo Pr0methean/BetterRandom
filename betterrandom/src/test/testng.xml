@@ -1,7 +1,6 @@
 <!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd">
 <suite name="Main" parallel="tests">
-  <test name="PRNGs">
-    <parameter name="seedSize" value="16"/>
+  <test name="PRNGs Parallel" parallel="instances">
     <classes>
       <class name="io.github.pr0methean.betterrandom.prng.AesCounterRandomTest"/>
       <class name="io.github.pr0methean.betterrandom.prng.CellularAutomatonRandomTest"/>
@@ -12,6 +11,13 @@
       <class name="io.github.pr0methean.betterrandom.prng.RandomWrapperMersenneTwisterRandomTest"/>
       <class name="io.github.pr0methean.betterrandom.prng.RandomWrapperRandomTest"/>
       <class name="io.github.pr0methean.betterrandom.prng.RandomWrapperSecureRandomTest"/>
+      <class name="io.github.pr0methean.betterrandom.prng.XorShiftRandomTest"/>
+      <class
+        name="io.github.pr0methean.betterrandom.prng.adapter.SingleThreadSplittableRandomAdapterTest"/>
+    </classes>
+  </test>
+  <test name="PRNGs Sequential">
+    <classes>
       <class
         name="io.github.pr0methean.betterrandom.prng.ReseedingThreadLocalRandomWrapperMersenneTwisterTest"/>
       <class name="io.github.pr0methean.betterrandom.prng.ReseedingThreadLocalRandomWrapperTest"/>
@@ -20,42 +26,9 @@
       <class
         name="io.github.pr0methean.betterrandom.prng.ThreadLocalRandomWrapperMersenneTwisterTest"/>
       <class name="io.github.pr0methean.betterrandom.prng.ThreadLocalRandomWrapperTest"/>
-      <class name="io.github.pr0methean.betterrandom.prng.XorShiftRandomTest"/>
       <class
         name="io.github.pr0methean.betterrandom.prng.adapter.ReseedingSplittableRandomAdapterTest"/>
-      <class
-        name="io.github.pr0methean.betterrandom.prng.adapter.SingleThreadSplittableRandomAdapterTest"/>
       <class name="io.github.pr0methean.betterrandom.prng.adapter.SplittableRandomAdapterTest"/>
-    </classes>
-  </test>
-  <test name="AES128+8">
-    <parameter name="seedSize" value="17"/>
-    <classes>
-      <class name="io.github.pr0methean.betterrandom.prng.AesCounterRandomTest"/>
-    </classes>
-  </test>
-  <test name="AES192">
-    <parameter name="seedSize" value="24"/>
-    <classes>
-      <class name="io.github.pr0methean.betterrandom.prng.AesCounterRandomTest"/>
-    </classes>
-  </test>
-  <test name="AES256">
-    <parameter name="seedSize" value="32"/>
-    <classes>
-      <class name="io.github.pr0methean.betterrandom.prng.AesCounterRandomTest"/>
-    </classes>
-  </test>
-  <test name="AES256+8">
-    <parameter name="seedSize" value="33"/>
-    <classes>
-      <class name="io.github.pr0methean.betterrandom.prng.AesCounterRandomTest"/>
-    </classes>
-  </test>
-  <test name="AES256+128">
-    <parameter name="seedSize" value="48"/>
-    <classes>
-      <class name="io.github.pr0methean.betterrandom.prng.AesCounterRandomTest"/>
     </classes>
   </test>
   <test name="Misc" parallel="methods">

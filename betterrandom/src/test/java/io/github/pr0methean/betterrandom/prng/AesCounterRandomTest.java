@@ -25,6 +25,7 @@ import javax.crypto.Cipher;
 import org.testng.SkipException;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.DataProvider;
+import org.testng.annotations.Factory;
 import org.testng.annotations.Parameters;
 import org.testng.annotations.Test;
 
@@ -36,7 +37,7 @@ import org.testng.annotations.Test;
 @Test(testName = "AesCounterRandom")
 public class AesCounterRandomTest extends SeekableRandomTest {
 
-  protected int seedSizeBytes;
+  protected final int seedSizeBytes;
 
   private static final int MAX_SIZE;
 
@@ -49,21 +50,18 @@ public class AesCounterRandomTest extends SeekableRandomTest {
     }
   }
 
-  /**
-   * It'd be more elegant to use a {@code @Factory} static method to set the seed size (which could
-   * then be a final field), but that doesn't seem to be compatible with PowerMock; see
-   * https://github.com/powermock/powermock/issues/925
-   *
-   * @param seedSize XML parameter
-   */
-  @Parameters("seedSize")
-  @BeforeClass
-  public void setSeedSize(final int seedSize) {
-    if (seedSize > MAX_SIZE) {
-      assertFalse(seedSize <= 32, "Can't handle a 32-byte seed");
+  @DataProvider
+  public static Object[][] getSeedSizes() {
+    return new Object[][]{ {16}, {17}, {24}, {32}, {33}, {48} };
+  }
+
+  @Factory(dataProvider = "getSeedSizes")
+  public AesCounterRandomTest(int seedSizeBytes) {
+    if (seedSizeBytes > MAX_SIZE) {
+      assertFalse(seedSizeBytes <= 32, "Can't handle a 32-byte seed");
       throw new SkipException("Jurisdiction policy files don't allow this crypto strength");
     }
-    seedSizeBytes = seedSize;
+    this.seedSizeBytes = seedSizeBytes;
   }
 
   @Override protected int getNewSeedLength(BaseRandom basePrng) {
