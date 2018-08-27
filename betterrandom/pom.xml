@@ -616,6 +616,13 @@
           <testPlugin>testng</testPlugin>
           <mutateStaticInitializers>true</mutateStaticInitializers>
           <failWhenNoMutations>true</failWhenNoMutations>
+          <pluginConfiguration>
+            <argLine>@{argLine} ${test.jdk9.argline}</argLine>
+            <suiteXmlFiles>
+              <suiteXmlFile>src/test/testng.xml</suiteXmlFile>
+              <suiteXmlFile>src/test/testng-seed.xml</suiteXmlFile>
+            </suiteXmlFiles>
+          </pluginConfiguration>
         </configuration>
       </plugin>
       <plugin>
