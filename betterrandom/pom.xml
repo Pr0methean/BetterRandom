@@ -686,13 +686,6 @@
           <timeoutConstant>4000</timeoutConstant>
           <testPlugin>testng</testPlugin>
           <failWhenNoMutations>true</failWhenNoMutations>
-          <pluginConfiguration>
-            <argLine>@{argLine} ${test.jdk9.argline}</argLine>
-            <suiteXmlFiles>
-              <suiteXmlFile>src/test/testng.xml</suiteXmlFile>
-              <suiteXmlFile>src/test/testng-seed.xml</suiteXmlFile>
-            </suiteXmlFiles>
-          </pluginConfiguration>
         </configuration>
       </plugin>
       <plugin>
