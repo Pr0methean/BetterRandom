@@ -42,7 +42,9 @@ if ( $STATUS ) {
     }
     mv target/jacoco.exec "betterrandom-coverage/${COMMIT}/${JOB_ID}.exec"
     $STATUS = $?
-    if (! $STATUS) exit $STATUS
+    if (! $STATUS) {
+        exit $STATUS
+    }
     cd betterrandom-coverage
     git add .
     git commit -m "Coverage report from job $JOB_ID"
