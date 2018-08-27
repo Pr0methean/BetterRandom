@@ -120,7 +120,7 @@
           <plugin>
             <groupId>org.pitest</groupId>
             <artifactId>pitest-maven</artifactId>
-            <version>1.4.0</version>
+            <version>${pitest.version}</version>
             <configuration>
               <jvmArgs>
                 <value>-Djava.security.egd=file:/dev/./urandom</value>
@@ -236,6 +236,7 @@
     <jacoco.version>0.8.2</jacoco.version>
     <powermock.version>2.0.0-beta.5</powermock.version>
     <mockito.version>2.21.0</mockito.version>
+    <pitest.version>1.4.2</pitest.version>
     <test.argline>-Djava.security.egd=file:/dev/./urandom</test.argline>
     <test.jdk8.argline>${test.argline}</test.jdk8.argline>
     <test.jdk9.argline>${test.argline} --add-opens java.xml/jdk.xml.internal=ALL-UNNAMED</test.jdk9.argline>
@@ -673,7 +674,7 @@
       <plugin>
         <groupId>org.pitest</groupId>
         <artifactId>pitest-maven</artifactId>
-        <version>1.4.0</version>
+        <version>${pitest.version}</version>
         <configuration>
           <threads>4</threads>
           <coverageThreshold>85</coverageThreshold>
