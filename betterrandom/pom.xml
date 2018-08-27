@@ -112,8 +112,8 @@
     <github.global.server>github</github.global.server>
     <jsr305.version>3.0.2</jsr305.version>
     <guava.version>26.0</guava.version>
-    <proguard.version>6.0.3</proguard.version>
-    <jacoco.version>0.8.2</jacoco.version>
+    <proguard.version>5.3.3</proguard.version>
+    <jacoco.version>0.8.1</jacoco.version>
     <powermock.version>2.0.0-beta.5</powermock.version>
     <mockito.version>2.21.0</mockito.version>
     <pitest.version>1.2.4</pitest.version>
