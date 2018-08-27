@@ -1,6 +1,6 @@
 <!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd">
 <suite name="Main" parallel="tests">
-  <test name="PRNGs">
+  <test name="PRNGs Parallel" parallel="classes">
     <parameter name="seedSize" value="16"/>
     <classes>
       <class name="io.github.pr0methean.betterrandom.prng.AesCounterRandomTest"/>
@@ -13,6 +13,16 @@
       <class name="io.github.pr0methean.betterrandom.prng.RandomWrapperRandomTest"/>
       <class name="io.github.pr0methean.betterrandom.prng.RandomWrapperSecureRandomTest"/>
       <class
+        name="io.github.pr0methean.betterrandom.prng.ThreadLocalRandomWrapperMersenneTwisterTest"/>
+      <class name="io.github.pr0methean.betterrandom.prng.ThreadLocalRandomWrapperTest"/>
+      <class name="io.github.pr0methean.betterrandom.prng.XorShiftRandomTest"/>
+      <class
+        name="io.github.pr0methean.betterrandom.prng.adapter.SingleThreadSplittableRandomAdapterTest"/>
+    </classes>
+  </test>
+  <test name="PRNGs Sequential">
+    <classes>
+      <class
         name="io.github.pr0methean.betterrandom.prng.ReseedingThreadLocalRandomWrapperMersenneTwisterTest"/>
       <class name="io.github.pr0methean.betterrandom.prng.ReseedingThreadLocalRandomWrapperTest"/>
       <class
@@ -20,11 +30,8 @@
       <class
         name="io.github.pr0methean.betterrandom.prng.ThreadLocalRandomWrapperMersenneTwisterTest"/>
       <class name="io.github.pr0methean.betterrandom.prng.ThreadLocalRandomWrapperTest"/>
-      <class name="io.github.pr0methean.betterrandom.prng.XorShiftRandomTest"/>
       <class
         name="io.github.pr0methean.betterrandom.prng.adapter.ReseedingSplittableRandomAdapterTest"/>
-      <class
-        name="io.github.pr0methean.betterrandom.prng.adapter.SingleThreadSplittableRandomAdapterTest"/>
       <class name="io.github.pr0methean.betterrandom.prng.adapter.SplittableRandomAdapterTest"/>
     </classes>
   </test>
