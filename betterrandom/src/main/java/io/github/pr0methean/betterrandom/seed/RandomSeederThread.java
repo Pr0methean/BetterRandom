@@ -16,8 +16,6 @@ import java.util.Random;
 import java.util.Set;
 import java.util.WeakHashMap;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.locks.Condition;
@@ -179,20 +177,27 @@ public final class RandomSeederThread extends LooperThread {
    * @return Whether or not the reseed was successfully scheduled.
    */
   private boolean asyncReseed(final Random random) {
-    if (getState() == State.TERMINATED ||
-        (!byteArrayPrngs.contains(random) && !otherPrngs.contains(random))) {
+    if (doesNotContain(random)) {
       return false;
     }
     if (random instanceof EntropyCountingRandom) {
       // Reseed of non-entropy-counting Random happens every iteration anyway
       lock.lock();
       try {
+        if (doesNotContain(random)) {
+          return false;
+        }
         waitForEntropyDrain.signalAll();
       } finally {
         lock.unlock();
       }
     }
     return true;
+  }
+
+  private boolean doesNotContain(Random random) {
+    return getState() == State.TERMINATED
+        || (!byteArrayPrngs.contains(random) && !otherPrngs.contains(random));
   }
 
   @SuppressWarnings({"InfiniteLoopStatement", "ObjectAllocationInLoop", "AwaitNotInLoop"}) @Override
