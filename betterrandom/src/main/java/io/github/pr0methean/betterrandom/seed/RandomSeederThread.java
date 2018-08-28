@@ -6,6 +6,7 @@ import io.github.pr0methean.betterrandom.EntropyCountingRandom;
 import io.github.pr0methean.betterrandom.prng.BaseRandom;
 import io.github.pr0methean.betterrandom.util.BinaryUtils;
 import io.github.pr0methean.betterrandom.util.LooperThread;
+import java.lang.ref.WeakReference;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Iterator;
@@ -195,13 +196,15 @@ public final class RandomSeederThread extends LooperThread {
           lock.unlock();
         }
       } else {
+        final WeakReference<Random> randomRef = new WeakReference<>(random);
         WAKER_UPPER.submit(() -> {
-          if (doesNotContain(random)) {
+          Random random_ = randomRef.get();
+          if (random_ == null || doesNotContain(random_)) {
             return;
           }
           lock.lock();
           try {
-            if (!doesNotContain(random)) {
+            if (!doesNotContain(random_)) {
               waitForEntropyDrain.signalAll();
             }
           } finally {
