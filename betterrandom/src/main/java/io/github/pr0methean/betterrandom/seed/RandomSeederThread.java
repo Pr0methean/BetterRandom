@@ -6,7 +6,6 @@ import io.github.pr0methean.betterrandom.EntropyCountingRandom;
 import io.github.pr0methean.betterrandom.prng.BaseRandom;
 import io.github.pr0methean.betterrandom.util.BinaryUtils;
 import io.github.pr0methean.betterrandom.util.LooperThread;
-import java.lang.ref.WeakReference;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Iterator;
@@ -33,7 +32,6 @@ import org.slf4j.LoggerFactory;
 @SuppressWarnings("ClassExplicitlyExtendsThread")
 public final class RandomSeederThread extends LooperThread {
 
-  private static final ExecutorService WAKER_UPPER = Executors.newSingleThreadExecutor();
   private static final Logger LOG = LoggerFactory.getLogger(RandomSeederThread.class);
   @SuppressWarnings("StaticCollection") private static final Map<SeedGenerator, RandomSeederThread>
       INSTANCES = new ConcurrentHashMap<>(1);
@@ -102,15 +100,23 @@ public final class RandomSeederThread extends LooperThread {
   }
 
   /**
-   * Asynchronously triggers reseeding of the given {@link EntropyCountingRandom} if it is
-   * associated with a live RandomSeederThread corresponding to the given {@link SeedGenerator}.
+   * Notifies the thread for the given {@link SeedGenerator} that PRNGs are waiting to be reseeded.
    * @param seedGenerator the {@link SeedGenerator} that should reseed {@code random}
-   * @param random a {@link Random} to be reseeded
-   * @return Whether or not the reseed was successfully scheduled.
+   * @return Whether or not the thread exists and is now awake.
    */
-  public static boolean asyncReseed(final SeedGenerator seedGenerator, final Random random) {
+  public static boolean wakeUp(final SeedGenerator seedGenerator) {
     final RandomSeederThread thread = getInstance(seedGenerator);
-    return thread != null && thread.asyncReseed(random);
+    if (thread == null) {
+      return false;
+    }
+    if (thread.lock.tryLock()) {
+      try {
+        thread.waitForEntropyDrain.signalAll();
+      } finally {
+        thread.lock.unlock();
+      }
+    }
+    return true;
   }
 
   public static boolean isEmpty(final SeedGenerator seedGenerator) {
@@ -172,55 +178,6 @@ public final class RandomSeederThread extends LooperThread {
     if (thread != null) {
       thread.stopIfEmpty();
     }
-  }
-
-  /**
-   * Asynchronously triggers reseeding of the given {@link EntropyCountingRandom} if it is
-   * associated with a live RandomSeederThread.
-   * @param random a {@link Random} object.
-   * @return Whether or not the reseed was successfully scheduled.
-   */
-  private boolean asyncReseed(final Random random) {
-    if (doesNotContain(random)) {
-      return false;
-    }
-    if (random instanceof EntropyCountingRandom) {
-      // Reseed of non-entropy-counting Random happens every iteration anyway
-      if (lock.tryLock()) {
-        try {
-          if (doesNotContain(random)) {
-            return false;
-          }
-          waitForEntropyDrain.signalAll();
-        } finally {
-          lock.unlock();
-        }
-      } else {
-        final WeakReference<Random> randomRef = new WeakReference<>(random);
-        final WeakReference<RandomSeederThread> threadRef = new WeakReference<>(this);
-        WAKER_UPPER.submit(() -> {
-          Random random_ = randomRef.get();
-          RandomSeederThread thread = threadRef.get();
-          if (thread == null || random_ == null || thread.doesNotContain(random_)) {
-            return;
-          }
-          thread.lock.lock();
-          try {
-            if (!thread.doesNotContain(random_)) {
-              thread.waitForEntropyDrain.signalAll();
-            }
-          } finally {
-            thread.lock.unlock();
-          }
-        });
-      }
-    }
-    return true;
-  }
-
-  private boolean doesNotContain(Random random) {
-    return getState() == State.TERMINATED
-        || (!byteArrayPrngs.contains(random) && !otherPrngs.contains(random));
   }
 
   @SuppressWarnings({"InfiniteLoopStatement", "ObjectAllocationInLoop", "AwaitNotInLoop"}) @Override
