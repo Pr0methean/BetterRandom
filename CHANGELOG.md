@@ -1,3 +1,6 @@
+# 2.4.9
+* `ReseedingSplittableRandomAdapter` should now reseed itself more reliably.
+
 # 2.4.8
 * `DevRandomSeedGenerator` and `RandomDotOrgSeedGenerator` now use buffered input streams to reduce
   the number of I/O calls.
