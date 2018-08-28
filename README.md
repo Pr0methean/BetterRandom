@@ -151,7 +151,7 @@ Java 8 and newer.
 Continuous integration takes place in the following environments:
 
 * Linux (on Travis): OpenJDK and Oracle JDK 8 and up
-* OS X (on Travis): OpenJDK(?) 8 and up, Xcode 6.4 and up
+* OS X (on Travis): OpenJDK 8 and up, Xcode 7.3 and up
 * Windows Server 2008 R2 (on Appveyor): Oracle JDK 8
 * Cygwin (on Appveyor): Oracle JDK 8
 * MinGW (on Appveyor): Oracle JDK 8
