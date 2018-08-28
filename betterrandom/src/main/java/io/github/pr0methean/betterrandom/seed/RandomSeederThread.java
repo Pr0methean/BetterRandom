@@ -6,6 +6,7 @@ import io.github.pr0methean.betterrandom.EntropyCountingRandom;
 import io.github.pr0methean.betterrandom.prng.BaseRandom;
 import io.github.pr0methean.betterrandom.util.BinaryUtils;
 import io.github.pr0methean.betterrandom.util.LooperThread;
+import java.lang.ref.WeakReference;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Iterator;
@@ -182,24 +183,47 @@ public final class RandomSeederThread extends LooperThread {
    * @return Whether or not the reseed was successfully scheduled.
    */
   private boolean asyncReseed(final Random random) {
-    if (getState() == Thread.State.TERMINATED ||
-        (!byteArrayPrngs.contains(random) && !otherPrngs.contains(random))) {
+    if (doesNotContain(random)) {
       return false;
     }
     if (random instanceof EntropyCountingRandom) {
       // Reseed of non-entropy-counting Random happens every iteration anyway
-      WAKER_UPPER.submit(new Runnable() {
-        @Override public void run() {
-          lock.lock();
-          try {
-            waitForEntropyDrain.signalAll();
-          } finally {
-            lock.unlock();
+      if (lock.tryLock()) {
+        try {
+          if (doesNotContain(random)) {
+            return false;
           }
+          waitForEntropyDrain.signalAll();
+        } finally {
+          lock.unlock();
         }
-      });
+      } else {
+        final WeakReference<Random> randomRef = new WeakReference<>(random);
+        final WeakReference<RandomSeederThread> threadRef = new WeakReference<>(this);
+        WAKER_UPPER.submit(new Runnable() {
+          @Override public void run() {
+            Random random_ = randomRef.get();
+            RandomSeederThread thread = threadRef.get();
+            if (thread == null || random_ == null || thread.doesNotContain(random_)) {
+              return;
+            }
+            thread.lock.lock();
+            try {
+              if (!thread.doesNotContain(random_)) {
+                thread.waitForEntropyDrain.signalAll();
+              }
+            } finally {
+              thread.lock.unlock();
+            }
+          }
+        });
     }
     return true;
+  }
+
+  private boolean doesNotContain(Random random) {
+    return getState() == State.TERMINATED
+        || (!byteArrayPrngs.contains(random) && !otherPrngs.contains(random));
   }
 
   @SuppressWarnings({"InfiniteLoopStatement", "ObjectAllocationInLoop", "AwaitNotInLoop"}) @Override
