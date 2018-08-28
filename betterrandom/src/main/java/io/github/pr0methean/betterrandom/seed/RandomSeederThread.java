@@ -16,6 +16,8 @@ import java.util.Random;
 import java.util.Set;
 import java.util.WeakHashMap;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.locks.Condition;
@@ -30,6 +32,7 @@ import org.slf4j.LoggerFactory;
 @SuppressWarnings("ClassExplicitlyExtendsThread")
 public final class RandomSeederThread extends LooperThread {
 
+  private static final ExecutorService WAKER_UPPER = Executors.newSingleThreadExecutor();
   private static final Logger LOG = LoggerFactory.getLogger(RandomSeederThread.class);
   @SuppressWarnings("StaticCollection") private static final Map<SeedGenerator, RandomSeederThread>
       INSTANCES = new ConcurrentHashMap<>(1);
@@ -182,14 +185,29 @@ public final class RandomSeederThread extends LooperThread {
     }
     if (random instanceof EntropyCountingRandom) {
       // Reseed of non-entropy-counting Random happens every iteration anyway
-      lock.lock();
-      try {
-        if (doesNotContain(random)) {
-          return false;
+      if (lock.tryLock()) {
+        try {
+          if (doesNotContain(random)) {
+            return false;
+          }
+          waitForEntropyDrain.signalAll();
+        } finally {
+          lock.unlock();
         }
-        waitForEntropyDrain.signalAll();
-      } finally {
-        lock.unlock();
+      } else {
+        WAKER_UPPER.submit(() -> {
+          if (doesNotContain(random)) {
+            return;
+          }
+          lock.lock();
+          try {
+            if (!doesNotContain(random)) {
+              waitForEntropyDrain.signalAll();
+            }
+          } finally {
+            lock.unlock();
+          }
+        });
       }
     }
     return true;
