@@ -197,18 +197,20 @@ public final class RandomSeederThread extends LooperThread {
         }
       } else {
         final WeakReference<Random> randomRef = new WeakReference<>(random);
+        final WeakReference<RandomSeederThread> threadRef = new WeakReference<>(this);
         WAKER_UPPER.submit(() -> {
           Random random_ = randomRef.get();
-          if (random_ == null || doesNotContain(random_)) {
+          RandomSeederThread thread = threadRef.get();
+          if (thread == null || random_ == null || thread.doesNotContain(random_)) {
             return;
           }
-          lock.lock();
+          thread.lock.lock();
           try {
-            if (!doesNotContain(random_)) {
-              waitForEntropyDrain.signalAll();
+            if (!thread.doesNotContain(random_)) {
+              thread.waitForEntropyDrain.signalAll();
             }
           } finally {
-            lock.unlock();
+            thread.lock.unlock();
           }
         });
       }
