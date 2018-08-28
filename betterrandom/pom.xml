@@ -678,7 +678,9 @@
         <configuration>
           <threads>4</threads>
           <coverageThreshold>85</coverageThreshold>
-          <mutationThreshold>75</mutationThreshold>
+          <mutationThreshold>80</mutationThreshold>
+          <!-- AesCounterRandom excluded due to https://github.com/hcoles/pitest/issues/504 -->
+          <excludedClasses>io.github.pr0methean.betterrandom.prng.AesCounterRandom</excludedClasses>
           <avoidCallsTo>
             <avoidCallsTo>org.slf4j</avoidCallsTo>
           </avoidCallsTo>
