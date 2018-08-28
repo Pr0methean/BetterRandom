@@ -844,7 +844,7 @@ public abstract class BaseRandom extends Random
   private void asyncReseedIfPossible() {
     final SeedGenerator currentSeedGenerator = getSeedGenerator();
     if (currentSeedGenerator != null) {
-      RandomSeederThread.asyncReseed(currentSeedGenerator, this);
+      RandomSeederThread.wakeUp(currentSeedGenerator);
     }
   }
 
