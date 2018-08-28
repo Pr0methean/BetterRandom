@@ -32,7 +32,6 @@ import org.slf4j.LoggerFactory;
 @SuppressWarnings("ClassExplicitlyExtendsThread")
 public final class RandomSeederThread extends LooperThread {
 
-  private static final ExecutorService WAKER_UPPER = Executors.newSingleThreadExecutor();
   private static final Logger LOG = LoggerFactory.getLogger(RandomSeederThread.class);
   @SuppressWarnings("StaticCollection") private static final Map<SeedGenerator, RandomSeederThread>
       INSTANCES = new ConcurrentHashMap<>(1);
@@ -186,14 +185,12 @@ public final class RandomSeederThread extends LooperThread {
     }
     if (random instanceof EntropyCountingRandom) {
       // Reseed of non-entropy-counting Random happens every iteration anyway
-      WAKER_UPPER.submit(() -> {
-        lock.lock();
-        try {
-          waitForEntropyDrain.signalAll();
-        } finally {
-          lock.unlock();
-        }
-      });
+      lock.lock();
+      try {
+        waitForEntropyDrain.signalAll();
+      } finally {
+        lock.unlock();
+      }
     }
     return true;
   }
