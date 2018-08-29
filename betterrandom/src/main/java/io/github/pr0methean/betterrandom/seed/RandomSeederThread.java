@@ -134,29 +134,25 @@ public final class RandomSeederThread extends LooperThread {
   public static void add(final SeedGenerator seedGenerator, final Random... randoms) {
     boolean notSucceeded = true;
     do {
+      final RandomSeederThread thread = getInstance(seedGenerator);
+      thread.lock.lock();
       try {
-        final RandomSeederThread thread = getInstance(seedGenerator);
-        thread.lock.lock();
-        try {
-          if ((thread.getState() == State.TERMINATED) || thread
-              .isInterrupted()) {
-            throw new IllegalStateException("Already shut down");
+        for (Random random : randoms) {
+          if (random instanceof ByteArrayReseedableRandom) {
+            thread.byteArrayPrngs.add((ByteArrayReseedableRandom) random);
+          } else {
+            thread.otherPrngs.add(random);
           }
-          for (Random random : randoms) {
-            if (random instanceof ByteArrayReseedableRandom) {
-              thread.byteArrayPrngs.add((ByteArrayReseedableRandom) random);
-            } else {
-              thread.otherPrngs.add(random);
-            }
-          }
-          thread.waitForEntropyDrain.signalAll();
-          thread.waitWhileEmpty.signalAll();
-        } finally {
-          thread.lock.unlock();
         }
+        thread.waitForEntropyDrain.signalAll();
+        thread.waitWhileEmpty.signalAll();
+      } finally {
+        thread.lock.unlock();
+      }
+      if ((thread.getState() != State.TERMINATED) && !thread.isInterrupted()) {
         notSucceeded = false;
-      } catch (IllegalStateException ignored) {
-        // Get the new instance and try again.
+      } else {
+        thread.clear();
       }
     } while (notSucceeded);
   }
