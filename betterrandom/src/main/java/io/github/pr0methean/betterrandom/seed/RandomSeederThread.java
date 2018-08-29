@@ -101,6 +101,10 @@ public final class RandomSeederThread extends LooperThread {
 
   /**
    * Notifies the thread for the given {@link SeedGenerator} that PRNGs are waiting to be reseeded.
+   * This method does not block, because if it cannot immediately take the lock to signal the
+   * condition, then that means the thread is already running or being woken up.
+   * <p>
+   * Warning: This may return true during a brief window while the thread is shutting down.
    * @param seedGenerator the {@link SeedGenerator} that should reseed {@code random}
    * @return Whether or not the thread exists and is now awake.
    */
