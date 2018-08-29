@@ -1,4 +1,6 @@
-# 2.4.9
+# 2.5.0
+* `RandomSeederThread.asyncReseed` has been replaced with `wakeUp`, and the task queue has been
+  eliminated (since if the thread is locked, it is already awake or being awoken).
 * `ReseedingSplittableRandomAdapter` should now reseed itself more reliably.
 
 # 2.4.8
