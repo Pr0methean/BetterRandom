@@ -135,8 +135,14 @@ public final class RandomSeederThread extends LooperThread {
     boolean notSucceeded = true;
     do {
       final RandomSeederThread thread = getInstance(seedGenerator);
+      if (!isAlive(thread)) {
+        continue;
+      }
       thread.lock.lock();
       try {
+        if (!isAlive(thread)) {
+          continue;
+        }
         for (Random random : randoms) {
           if (random instanceof ByteArrayReseedableRandom) {
             thread.byteArrayPrngs.add((ByteArrayReseedableRandom) random);
@@ -149,12 +155,16 @@ public final class RandomSeederThread extends LooperThread {
       } finally {
         thread.lock.unlock();
       }
-      if ((thread.getState() != State.TERMINATED) && !thread.isInterrupted()) {
+      if (isAlive(thread)) {
         notSucceeded = false;
       } else {
         thread.clear();
       }
     } while (notSucceeded);
+  }
+
+  private static boolean isAlive(RandomSeederThread thread) {
+    return (thread.getState() != State.TERMINATED) && !thread.isInterrupted();
   }
 
   /**
