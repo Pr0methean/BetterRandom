@@ -155,11 +155,7 @@ public final class RandomSeederThread extends LooperThread {
       } finally {
         thread.lock.unlock();
       }
-      if (isAlive(thread)) {
-        notSucceeded = false;
-      } else {
-        thread.clear();
-      }
+      notSucceeded = false;
     } while (notSucceeded);
   }
 
