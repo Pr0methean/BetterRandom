@@ -16,8 +16,6 @@ import java.util.Random;
 import java.util.Set;
 import java.util.WeakHashMap;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.locks.Condition;
@@ -133,7 +131,25 @@ public final class RandomSeederThread extends LooperThread {
     boolean notSucceeded = true;
     do {
       try {
-        getInstance(seedGenerator).add(randoms);
+        final RandomSeederThread thread = getInstance(seedGenerator);
+        thread.lock.lock();
+        try {
+          if ((thread.getState() == State.TERMINATED) || thread
+              .isInterrupted()) {
+            throw new IllegalStateException("Already shut down");
+          }
+          for (Random random : randoms) {
+            if (random instanceof ByteArrayReseedableRandom) {
+              thread.byteArrayPrngs.add((ByteArrayReseedableRandom) random);
+            } else {
+              thread.otherPrngs.add(random);
+            }
+          }
+          thread.waitForEntropyDrain.signalAll();
+          thread.waitWhileEmpty.signalAll();
+        } finally {
+          thread.lock.unlock();
+        }
         notSucceeded = false;
       } catch (IllegalStateException ignored) {
         // Get the new instance and try again.
@@ -150,7 +166,9 @@ public final class RandomSeederThread extends LooperThread {
   public static void remove(final SeedGenerator seedGenerator, final Random... randoms) {
     final RandomSeederThread thread = INSTANCES.get(seedGenerator);
     if (thread != null) {
-      thread.remove(randoms);
+      final List<Random> randomsList = Arrays.asList(randoms);
+      thread.byteArrayPrngs.removeAll(randomsList);
+      thread.otherPrngs.removeAll(randomsList);
     }
   }
 
@@ -288,44 +306,6 @@ public final class RandomSeederThread extends LooperThread {
     } finally {
       lock.unlock();
     }
-  }
-
-  /**
-   * Add one or more {@link Random} instances. The caller must not hold locks on any of these
-   * instances that are also acquired during {@link Random#setSeed(long)} or {@link
-   * ByteArrayReseedableRandom#setSeed(byte[])}, as one of those methods may be called immediately
-   * and this would cause a circular deadlock.
-   * @param randoms One or more {@link Random} instances to be reseeded.
-   */
-  private void add(final Random... randoms) {
-    lock.lock();
-    try {
-      if ((getState() == State.TERMINATED) || isInterrupted()) {
-        throw new IllegalStateException("Already shut down");
-      }
-      for (Random random : randoms) {
-        if (random instanceof ByteArrayReseedableRandom) {
-          byteArrayPrngs.add((ByteArrayReseedableRandom) random);
-        } else {
-          otherPrngs.add(random);
-        }
-      }
-      waitForEntropyDrain.signalAll();
-      waitWhileEmpty.signalAll();
-    } finally {
-      lock.unlock();
-    }
-  }
-
-  /**
-   * Remove one or more {@link Random} instances. If this is called while {@link #getState()} ==
-   * {@link State#RUNNABLE}, they may still be reseeded once more.
-   * @param randoms the {@link Random} instances to remove.
-   */
-  private void remove(final Random... randoms) {
-    final List<Random> randomsList = Arrays.asList(randoms);
-    byteArrayPrngs.removeAll(randomsList);
-    otherPrngs.removeAll(randomsList);
   }
 
   /**
