@@ -107,7 +107,7 @@ public final class RandomSeederThread extends LooperThread {
    * @return Whether or not the thread exists and is now awake.
    */
   public static boolean wakeUp(final SeedGenerator seedGenerator) {
-    final RandomSeederThread thread = getInstance(seedGenerator);
+    final RandomSeederThread thread = INSTANCES.get(seedGenerator);
     if (thread == null) {
       return false;
     }
@@ -122,7 +122,7 @@ public final class RandomSeederThread extends LooperThread {
   }
 
   public static boolean isEmpty(final SeedGenerator seedGenerator) {
-    final RandomSeederThread thread = getInstance(seedGenerator);
+    final RandomSeederThread thread = INSTANCES.get(seedGenerator);
     return thread == null || thread.isEmpty();
   }
 
