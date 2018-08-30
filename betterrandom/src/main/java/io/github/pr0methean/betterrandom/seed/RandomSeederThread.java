@@ -132,6 +132,9 @@ public final class RandomSeederThread extends LooperThread {
    * @param randoms One or more {@link Random} instances to be reseeded
    */
   public static void add(final SeedGenerator seedGenerator, final Random... randoms) {
+    if (randoms.length == 0) {
+      return;
+    }
     boolean notSucceeded = true;
     do {
       final RandomSeederThread thread = getInstance(seedGenerator);
@@ -166,6 +169,9 @@ public final class RandomSeederThread extends LooperThread {
    * @param randoms One or more {@link Random} instances to be reseeded
    */
   public static void remove(final SeedGenerator seedGenerator, final Random... randoms) {
+    if (randoms.length == 0) {
+      return;
+    }
     final RandomSeederThread thread = INSTANCES.get(seedGenerator);
     if (thread != null) {
       final List<Random> randomsList = Arrays.asList(randoms);
