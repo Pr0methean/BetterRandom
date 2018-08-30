@@ -135,12 +135,12 @@ public final class RandomSeederThread extends LooperThread {
     boolean notSucceeded = true;
     do {
       final RandomSeederThread thread = getInstance(seedGenerator);
-      if (isDead(thread)) {
+      if (thread.isDead()) {
         continue;
       }
       thread.lock.lock();
       try {
-        if (isDead(thread)) {
+        if (thread.isDead()) {
           continue;
         }
         for (Random random : randoms) {
@@ -157,10 +157,6 @@ public final class RandomSeederThread extends LooperThread {
       }
       notSucceeded = false;
     } while (notSucceeded);
-  }
-
-  private static boolean isDead(RandomSeederThread thread) {
-    return (thread.getState() == State.TERMINATED) || thread.isInterrupted();
   }
 
   /**
@@ -202,6 +198,10 @@ public final class RandomSeederThread extends LooperThread {
     if (thread != null) {
       thread.stopIfEmpty();
     }
+  }
+
+  private boolean isDead() {
+    return (getState() == State.TERMINATED) || isInterrupted();
   }
 
   @SuppressWarnings({"InfiniteLoopStatement", "ObjectAllocationInLoop", "AwaitNotInLoop"}) @Override
