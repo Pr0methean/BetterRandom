@@ -18,14 +18,12 @@ package io.github.pr0methean.betterrandom.prng;
 import static org.testng.Assert.assertFalse;
 import static org.testng.Assert.assertTrue;
 
-import io.github.pr0methean.betterrandom.DeadlockWatchdogThread;
 import io.github.pr0methean.betterrandom.seed.SeedException;
 import java.security.NoSuchAlgorithmException;
 import java.util.Random;
 import javax.crypto.Cipher;
 import org.testng.SkipException;
 import org.testng.annotations.BeforeClass;
-import org.testng.annotations.DataProvider;
 import org.testng.annotations.Parameters;
 import org.testng.annotations.Test;
 
@@ -60,7 +58,6 @@ public class AesCounterRandomTest extends SeekableRandomTest {
   @Parameters("seedSize")
   @BeforeClass
   public void setSeedSize(final int seedSize) {
-    DeadlockWatchdogThread.ensureStarted();
     if (seedSize > MAX_SIZE) {
       assertFalse(seedSize <= 32, "Can't handle a 32-byte seed");
       throw new SkipException(
