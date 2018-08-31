@@ -13,10 +13,11 @@ public enum Byte16ArrayArithmetic {
   ;
 
   private static final int SIZE_BYTES = 16;
+  public static final int SIZE_BYTES_MINUS_LONG = SIZE_BYTES - Long.BYTES;
   public static final byte[] ZERO = new byte[SIZE_BYTES];
   public static final byte[] ONE = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1};
-  private static final ThreadLocal<byte[]> multiplicationAccumulator = makeByteArrayThreadLocal();
-  private static final ThreadLocal<byte[]> multiplicationStep = makeByteArrayThreadLocal();
+  private static final ThreadLocal<byte[]> multAccum = makeByteArrayThreadLocal();
+  private static final ThreadLocal<byte[]> multStep = makeByteArrayThreadLocal();
   private static final ThreadLocal<byte[]> addendDigits = makeByteArrayThreadLocal();
 
   /**
@@ -27,13 +28,10 @@ public enum Byte16ArrayArithmetic {
    */
   public static void addInto(byte[] counter, long delta, boolean signed) {
     byte[] addendDigits = Byte16ArrayArithmetic.addendDigits.get();
-    System.arraycopy(ZERO, 0, addendDigits, 0, SIZE_BYTES - Long.BYTES);
-    BinaryUtils.convertLongToBytes(delta, addendDigits, SIZE_BYTES - Long.BYTES);
-    if (signed && (delta < 0)) {
-      // Sign extend
-      for (int i = 0; i < (SIZE_BYTES - Long.BYTES); i++) {
-        addendDigits[i] = -1;
-      }
+    BinaryUtils.convertLongToBytes(delta, addendDigits, SIZE_BYTES_MINUS_LONG);
+    final byte signExtend = (byte) ((signed && (delta < 0)) ? -1 : 0);
+    for (int i = 0; i < SIZE_BYTES_MINUS_LONG; i++) {
+      addendDigits[i] = signExtend;
     }
     addInto(counter, addendDigits);
   }
@@ -61,23 +59,23 @@ public enum Byte16ArrayArithmetic {
    */
   @SuppressWarnings("NumericCastThatLosesPrecision") public static void multiplyInto(
       byte[] counter, byte[] multiplier) {
-    byte[] multiplicationAccumulator =
-        copyInto(Byte16ArrayArithmetic.multiplicationAccumulator, ZERO);
-    final byte[] multiplicationStepB = Byte16ArrayArithmetic.multiplicationStep.get();
+    byte[] multAccum = Byte16ArrayArithmetic.multAccum.get();
+    System.arraycopy(ZERO, 0, multAccum, 0, SIZE_BYTES);
+    final byte[] multStep = Byte16ArrayArithmetic.multStep.get();
     for (int multiplierLimb = 0; multiplierLimb < 4; multiplierLimb++) {
       for (int counterLimb = 3 - multiplierLimb; counterLimb < 4; counterLimb++) {
         int destLimb = multiplierLimb + counterLimb - 3;
         long stepValue = convertBytesToInt(counter, Integer.BYTES * counterLimb) *
             ((long) convertBytesToInt(multiplier, Integer.BYTES * multiplierLimb));
         if (destLimb == 0) {
-          convertIntToBytes((int) stepValue, multiplicationStepB, Integer.BYTES * destLimb);
+          convertIntToBytes((int) stepValue, multStep, Integer.BYTES * destLimb);
         } else {
-          convertLongToBytes(stepValue, multiplicationStepB, Integer.BYTES * (destLimb - 1));
+          convertLongToBytes(stepValue, multStep, Integer.BYTES * (destLimb - 1));
         }
-        addInto(multiplicationAccumulator, multiplicationStepB);
+        addInto(multAccum, multStep);
       }
     }
-    System.arraycopy(multiplicationAccumulator, 0, counter, 0, SIZE_BYTES);
+    System.arraycopy(multAccum, 0, counter, 0, SIZE_BYTES);
   }
 
   /**
@@ -129,12 +127,7 @@ public enum Byte16ArrayArithmetic {
   }
 
   public static ThreadLocal<byte[]> makeByteArrayThreadLocal() {
-    return ThreadLocal.withInitial(() -> ZERO.clone());
+    return ThreadLocal.withInitial(() -> new byte[SIZE_BYTES]);
   }
 
-  public static byte[] copyInto(ThreadLocal<byte[]> dest, byte[] src) {
-    byte[] out = dest.get();
-    System.arraycopy(src, 0, out, 0, src.length);
-    return out;
-  }
 }
