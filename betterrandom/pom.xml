@@ -31,7 +31,7 @@
           <!-- Overrides transitive dep on 5.2.1 -->
           <groupId>net.sf.proguard</groupId>
           <artifactId>proguard-base</artifactId>
-          <version>5.3.3</version>
+          <version>${proguard.version}</version>
           <scope>runtime</scope>
         </dependency>
       </dependencies>
@@ -69,8 +69,7 @@
               <artifactId>proguard-maven-plugin</artifactId>
               <version>2.0.14</version>
               <configuration>
-                <proguardJar>
-                  ${user.home}/.m2/repository/net/sf/proguard/proguard-base/5.3.3/proguard-base-5.3.3.jar
+                <proguardJar>${user.home}/.m2/repository/net/sf/proguard/proguard-base/${proguard.version}/proguard-base-${proguard.version}.jar
                 </proguardJar>
                 <proguardInclude>${basedir}/proguard.conf</proguardInclude>
                 <libs>
@@ -121,7 +120,7 @@
           <plugin>
             <groupId>org.pitest</groupId>
             <artifactId>pitest-maven</artifactId>
-            <version>1.4.0</version>
+            <version>${pitest.version}</version>
             <configuration>
               <jvmArgs>
                 <value>-Djava.security.egd=file:/dev/./urandom</value>
@@ -232,10 +231,12 @@
     <prefix />
     <github.global.server>github</github.global.server>
     <jsr305.version>3.0.2</jsr305.version>
-    <guava.version>25.0</guava.version>
-    <jacoco.version>0.8.1</jacoco.version>
+    <guava.version>26.0</guava.version>
+    <proguard.version>6.0.3</proguard.version>
+    <jacoco.version>0.8.2</jacoco.version>
     <powermock.version>2.0.0-beta.5</powermock.version>
-    <mockito.version>2.19.0</mockito.version>
+    <mockito.version>2.21.0</mockito.version>
+    <pitest.version>1.4.2</pitest.version>
     <test.argline>-Djava.security.egd=file:/dev/./urandom</test.argline>
     <test.jdk8.argline>${test.argline}</test.jdk8.argline>
     <test.jdk9.argline>${test.argline} --add-opens java.xml/jdk.xml.internal=ALL-UNNAMED</test.jdk9.argline>
@@ -245,7 +246,7 @@
   </properties>
   <groupId>io.github.pr0methean.betterrandom</groupId>
   <artifactId>BetterRandom</artifactId>
-  <version>2.4.7-SNAPSHOT</version>
+  <version>2.5.1-SNAPSHOT</version>
   <name>BetterRandom</name>
   <description>Better, faster random-number generation in Java.
   </description>
@@ -283,7 +284,7 @@
     <dependency>
       <groupId>org.apache.logging.log4j</groupId>
       <artifactId>log4j-slf4j-impl</artifactId>
-      <version>2.10.0</version>
+      <version>2.11.1</version>
       <scope>test</scope>
     </dependency>
     <dependency>
@@ -300,7 +301,7 @@
     <dependency>
       <groupId>org.testng</groupId>
       <artifactId>testng</artifactId>
-      <version>6.11</version>
+      <version>6.14.3</version>
       <scope>test</scope>
     </dependency>
     <dependency>
@@ -629,7 +630,7 @@
             <dependency>
               <groupId>org.apache.maven.scm</groupId>
               <artifactId>maven-scm-provider-gitexe</artifactId>
-              <version>1.9.5</version>
+              <version>1.10.0</version>
             </dependency>
             <dependency>
               <!-- https://www.eclemma.org/jacoco/trunk/doc/examples/build/pom-offline.xml -->
@@ -673,15 +674,17 @@
       <plugin>
         <groupId>org.pitest</groupId>
         <artifactId>pitest-maven</artifactId>
-        <version>1.4.0</version>
+        <version>${pitest.version}</version>
         <configuration>
           <threads>4</threads>
           <coverageThreshold>85</coverageThreshold>
-          <mutationThreshold>70</mutationThreshold>
+          <mutationThreshold>75</mutationThreshold>
+          <!-- AesCounterRandom excluded due to https://github.com/hcoles/pitest/issues/504 -->
+          <excludedClasses>io.github.pr0methean.betterrandom.prng.AesCounterRandom</excludedClasses>
           <avoidCallsTo>
             <avoidCallsTo>org.slf4j</avoidCallsTo>
           </avoidCallsTo>
-          <timeoutFactor>1.5</timeoutFactor>
+          <timeoutFactor>2</timeoutFactor>
           <timeoutConstant>4000</timeoutConstant>
           <testPlugin>testng</testPlugin>
           <failWhenNoMutations>true</failWhenNoMutations>

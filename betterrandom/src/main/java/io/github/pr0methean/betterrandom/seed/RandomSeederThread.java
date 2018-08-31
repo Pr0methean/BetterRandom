@@ -16,8 +16,6 @@ import java.util.Random;
 import java.util.Set;
 import java.util.WeakHashMap;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.locks.Condition;
@@ -32,7 +30,6 @@ import org.slf4j.LoggerFactory;
 @SuppressWarnings("ClassExplicitlyExtendsThread")
 public final class RandomSeederThread extends LooperThread {
 
-  private static final ExecutorService WAKER_UPPER = Executors.newSingleThreadExecutor();
   private static final Logger LOG = LoggerFactory.getLogger(RandomSeederThread.class);
   @SuppressWarnings("StaticCollection") private static final Map<SeedGenerator, RandomSeederThread>
       INSTANCES = new ConcurrentHashMap<>(1);
@@ -101,19 +98,31 @@ public final class RandomSeederThread extends LooperThread {
   }
 
   /**
-   * Asynchronously triggers reseeding of the given {@link EntropyCountingRandom} if it is
-   * associated with a live RandomSeederThread corresponding to the given {@link SeedGenerator}.
+   * Notifies the thread for the given {@link SeedGenerator} that PRNGs are waiting to be reseeded.
+   * This method does not block, because if it cannot immediately take the lock to signal the
+   * condition, then that means the thread is already running or being woken up.
+   * <p>
+   * Warning: This may return true during a brief window while the thread is shutting down.
    * @param seedGenerator the {@link SeedGenerator} that should reseed {@code random}
-   * @param random a {@link Random} to be reseeded
-   * @return Whether or not the reseed was successfully scheduled.
+   * @return Whether or not the thread exists and is now awake.
    */
-  public static boolean asyncReseed(final SeedGenerator seedGenerator, final Random random) {
-    final RandomSeederThread thread = getInstance(seedGenerator);
-    return thread != null && thread.asyncReseed(random);
+  public static boolean wakeUp(final SeedGenerator seedGenerator) {
+    final RandomSeederThread thread = INSTANCES.get(seedGenerator);
+    if (thread == null) {
+      return false;
+    }
+    if (thread.lock.tryLock()) {
+      try {
+        thread.waitForEntropyDrain.signalAll();
+      } finally {
+        thread.lock.unlock();
+      }
+    }
+    return true;
   }
 
   public static boolean isEmpty(final SeedGenerator seedGenerator) {
-    final RandomSeederThread thread = getInstance(seedGenerator);
+    final RandomSeederThread thread = INSTANCES.get(seedGenerator);
     return thread == null || thread.isEmpty();
   }
 
@@ -123,14 +132,33 @@ public final class RandomSeederThread extends LooperThread {
    * @param randoms One or more {@link Random} instances to be reseeded
    */
   public static void add(final SeedGenerator seedGenerator, final Random... randoms) {
+    if (randoms.length == 0) {
+      return;
+    }
     boolean notSucceeded = true;
     do {
-      try {
-        getInstance(seedGenerator).add(randoms);
-        notSucceeded = false;
-      } catch (IllegalStateException ignored) {
-        // Get the new instance and try again.
+      final RandomSeederThread thread = getInstance(seedGenerator);
+      if (thread.isDead()) {
+        continue;
       }
+      thread.lock.lock();
+      try {
+        if (thread.isDead()) {
+          continue;
+        }
+        for (Random random : randoms) {
+          if (random instanceof ByteArrayReseedableRandom) {
+            thread.byteArrayPrngs.add((ByteArrayReseedableRandom) random);
+          } else {
+            thread.otherPrngs.add(random);
+          }
+        }
+        thread.waitForEntropyDrain.signalAll();
+        thread.waitWhileEmpty.signalAll();
+      } finally {
+        thread.lock.unlock();
+      }
+      notSucceeded = false;
     } while (notSucceeded);
   }
 
@@ -141,9 +169,14 @@ public final class RandomSeederThread extends LooperThread {
    * @param randoms One or more {@link Random} instances to be reseeded
    */
   public static void remove(final SeedGenerator seedGenerator, final Random... randoms) {
+    if (randoms.length == 0) {
+      return;
+    }
     final RandomSeederThread thread = INSTANCES.get(seedGenerator);
     if (thread != null) {
-      thread.remove(randoms);
+      final List<Random> randomsList = Arrays.asList(randoms);
+      thread.byteArrayPrngs.removeAll(randomsList);
+      thread.otherPrngs.removeAll(randomsList);
     }
   }
 
@@ -173,29 +206,8 @@ public final class RandomSeederThread extends LooperThread {
     }
   }
 
-  /**
-   * Asynchronously triggers reseeding of the given {@link EntropyCountingRandom} if it is
-   * associated with a live RandomSeederThread.
-   * @param random a {@link Random} object.
-   * @return Whether or not the reseed was successfully scheduled.
-   */
-  private boolean asyncReseed(final Random random) {
-    if (getState() == State.TERMINATED ||
-        (!byteArrayPrngs.contains(random) && !otherPrngs.contains(random))) {
-      return false;
-    }
-    if (random instanceof EntropyCountingRandom) {
-      // Reseed of non-entropy-counting Random happens every iteration anyway
-      WAKER_UPPER.submit(() -> {
-        lock.lock();
-        try {
-          waitForEntropyDrain.signalAll();
-        } finally {
-          lock.unlock();
-        }
-      });
-    }
-    return true;
+  private boolean isDead() {
+    return (getState() == State.TERMINATED) || isInterrupted();
   }
 
   @SuppressWarnings({"InfiniteLoopStatement", "ObjectAllocationInLoop", "AwaitNotInLoop"}) @Override
@@ -306,44 +318,6 @@ public final class RandomSeederThread extends LooperThread {
     } finally {
       lock.unlock();
     }
-  }
-
-  /**
-   * Add one or more {@link Random} instances. The caller must not hold locks on any of these
-   * instances that are also acquired during {@link Random#setSeed(long)} or {@link
-   * ByteArrayReseedableRandom#setSeed(byte[])}, as one of those methods may be called immediately
-   * and this would cause a circular deadlock.
-   * @param randoms One or more {@link Random} instances to be reseeded.
-   */
-  private void add(final Random... randoms) {
-    lock.lock();
-    try {
-      if ((getState() == State.TERMINATED) || isInterrupted()) {
-        throw new IllegalStateException("Already shut down");
-      }
-      for (Random random : randoms) {
-        if (random instanceof ByteArrayReseedableRandom) {
-          byteArrayPrngs.add((ByteArrayReseedableRandom) random);
-        } else {
-          otherPrngs.add(random);
-        }
-      }
-      waitForEntropyDrain.signalAll();
-      waitWhileEmpty.signalAll();
-    } finally {
-      lock.unlock();
-    }
-  }
-
-  /**
-   * Remove one or more {@link Random} instances. If this is called while {@link #getState()} ==
-   * {@link State#RUNNABLE}, they may still be reseeded once more.
-   * @param randoms the {@link Random} instances to remove.
-   */
-  private void remove(final Random... randoms) {
-    final List<Random> randomsList = Arrays.asList(randoms);
-    byteArrayPrngs.removeAll(randomsList);
-    otherPrngs.removeAll(randomsList);
   }
 
   /**
