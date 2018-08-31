@@ -83,23 +83,25 @@ public enum Byte16ArrayArithmetic {
    */
   @SuppressWarnings("NumericCastThatLosesPrecision") public static void multiplyInto(
       byte[] counter, byte[] mult) {
-    byte[] multAccumulator = Byte16ArrayArithmetic.multAccumulator.get();
-    for (int i = 0; i < SIZE_BYTES_MINUS_LONG; i++) {
-      multAccumulator[i] = 0;
-    }
-    convertLongToBytes(doMultiplicationLimb(counter, mult, 3, 3), multAccumulator,
-            SIZE_BYTES_MINUS_LONG);
-    addInto(multAccumulator, doMultiplicationLimb(counter, mult, 3, 2), false, Integer.BYTES);
-    addInto(multAccumulator, doMultiplicationLimb(counter, mult, 2, 3), false, Integer.BYTES);
-    addInto(multAccumulator, doMultiplicationLimb(counter, mult, 3, 1), false, Integer.BYTES * 2);
-    addInto(multAccumulator, doMultiplicationLimb(counter, mult, 2, 2), false, Integer.BYTES * 2);
-    addInto(multAccumulator, doMultiplicationLimb(counter, mult, 1, 3), false, Integer.BYTES * 2);
-    addInto(multAccumulator, doMultiplicationLimb(counter, mult, 1, 3), false, Integer.BYTES * 2);
-    addInto(multAccumulator, doMultiplicationLimb(counter, mult, 3, 0), false, Integer.BYTES * 3);
-    addInto(multAccumulator, doMultiplicationLimb(counter, mult, 2, 1), false, Integer.BYTES * 3);
-    addInto(multAccumulator, doMultiplicationLimb(counter, mult, 1, 2), false, Integer.BYTES * 3);
-    addInto(multAccumulator, doMultiplicationLimb(counter, mult, 0, 3), false, Integer.BYTES * 3);
-    System.arraycopy(multAccumulator, 0, counter, 0, SIZE_BYTES);
+    long x = convertBytesToLong(counter, Long.BYTES);
+    long y = convertBytesToLong(mult, Long.BYTES);
+
+    // https://stackoverflow.com/a/38880097/833771
+    long x_high = x >>> 32;
+    long x_low = x & 0xFFFFFFFFL;
+    long y_high = y >>> 32;
+    long y_low = y & 0xFFFFFFFFL;
+    long z2 = x_low * y_low;
+    long t = x_high * y_low + (z2 >>> 32);
+    long z1 = t & 0xFFFFFFFFL;
+    long z0 = t >>> 32;
+    z1 += x_low * y_high;
+    long highOut = x_high * y_high + z0 + (z1 >>> 32) + convertBytesToLong(counter, 0) * y
+        + convertBytesToLong(mult, 0) * x;
+
+    long lowOut = x * y;
+    convertLongToBytes(highOut, counter, 0);
+    convertLongToBytes(lowOut, counter, Long.BYTES);
   }
 
   private static long trueShiftRight(long input, int amount) {
