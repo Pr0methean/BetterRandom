@@ -16,11 +16,6 @@ jobs:
   include:
   - language: java
     os: osx
-    osx_image: xcode6.4
-    env: OP=unit-tests JAVA8=true
-    stage: unit tests
-  - language: java
-    os: osx
     osx_image: xcode7.3
     env: OP=unit-tests JAVA8=true
     stage: unit tests
@@ -37,6 +32,11 @@ jobs:
   - language: java
     os: osx
     osx_image: xcode9.4
+    env: OP=unit-tests
+    stage: unit tests
+  - language: java
+    os: osx
+    osx_image: xcode10
     env: OP=unit-tests
     stage: unit tests
   - language: android
@@ -97,11 +97,6 @@ jobs:
     stage: long tests
   - language: java
     os: osx
-    osx_image: xcode6.4
-    env: OP=benchmark JAVA8=true
-    stage: long tests
-  - language: java
-    os: osx
     osx_image: xcode7.3
     env: OP=benchmark JAVA8=true
     stage: long tests
@@ -118,6 +113,11 @@ jobs:
   - language: java
     os: osx
     osx_image: xcode9.4
+    env: OP=benchmark
+    stage: long tests
+  - language: java
+    os: osx
+    osx_image: xcode10
     env: OP=benchmark
     stage: long tests
   - language: android

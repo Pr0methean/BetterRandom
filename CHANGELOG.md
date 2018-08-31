@@ -1,5 +1,21 @@
-# 2.5.0
+# 2.6.0
 * Adds `Pcg128Random`, a variant of `Pcg64Random` that uses a 128-bit seed and state.
+
+# 2.5.1
+* `AesCounterRandom` now reuses the `MessageDigest` instance when reseeding. This should improve
+  performance.
+
+# 2.5.0
+* `RandomSeederThread.asyncReseed` has been replaced with `wakeUp`, and the task queue has been
+  eliminated (since if the thread is locked, it is already awake or being awoken).
+* `ReseedingSplittableRandomAdapter` should now reseed itself more reliably.
+
+# 2.4.8
+* `DevRandomSeedGenerator` and `RandomDotOrgSeedGenerator` now use buffered input streams to reduce
+  the number of I/O calls.
+* Now uses `Double.toRawLongBits` instead of `Double.toLongBits` when generating doubles with an
+  explicit range; this should be slightly faster.
+>>>>>>> master
 
 # 2.4.7
 * No longer uses `ByteBuffer` for type conversion, because this increased memory usage with no real
