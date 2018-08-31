@@ -15,7 +15,6 @@
   the number of I/O calls.
 * Now uses `Double.toRawLongBits` instead of `Double.toLongBits` when generating doubles with an
   explicit range; this should be slightly faster.
->>>>>>> master
 
 # 2.4.7
 * No longer uses `ByteBuffer` for type conversion, because this increased memory usage with no real
