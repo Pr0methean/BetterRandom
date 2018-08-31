@@ -35,7 +35,26 @@ public enum Byte16ArrayArithmetic {
       counter.putLong(0, counter.getLong(0) - 1);
     }
   }
-
+  
+  /*
+    System.arraycopy(ZERO, 0, addendDigits, 0, COUNTER_SIZE_BYTES - Long.BYTES);
+    BinaryUtils.convertLongToBytes(blocksDelta, addendDigits, COUNTER_SIZE_BYTES - Long.BYTES);
+    if (blocksDelta < 0) {
+      // Sign extend
+      for (int i = 0; i < (COUNTER_SIZE_BYTES - Long.BYTES); i++) {
+        addendDigits[i] = -1;
+      }
+    }
+    boolean carry = false;
+    for (int i = 0; i < COUNTER_SIZE_BYTES; i++) {
+      final int oldCounterUnsigned = counter[i] < 0 ? counter[i] + 256 : counter[i];
+      counter[i] += addendDigits[COUNTER_SIZE_BYTES - i - 1] + (carry ? 1 : 0);
+      final int newCounterUnsigned = counter[i] < 0 ? counter[i] + 256 : counter[i];
+      carry = (oldCounterUnsigned > newCounterUnsigned)
+          || (carry && (oldCounterUnsigned == newCounterUnsigned));
+    }
+  */
+    
   /**
    * {@code counter += delta}. Inputs must be the same length.
    * @param counter the first input and the result
