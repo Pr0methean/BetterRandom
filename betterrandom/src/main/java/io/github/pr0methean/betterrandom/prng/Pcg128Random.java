@@ -94,7 +94,17 @@ public class Pcg128Random extends BaseRandom implements SeekableRandom {
 
   // TODO: convert to 128 bits
   @Override public void advance(long delta) {
-    if (delta == 0) {
+    advance((delta < 0) ? -1 : 0, delta);
+  }
+
+  /**
+   * Advances the generator forward {@code highDelta << 64 + lowDelta} steps, but does so in
+   * logarithmic time.
+   * @param highDelta high quadword of the distance to advance
+   * @param lowDelta low quadword of the distance to advance
+   */
+  public void advance(long highDelta, long lowDelta) {
+    if (highDelta == 0 && lowDelta == 0) {
       return;
     }
     // The method used here is based on Brown, "Random Number Generation
@@ -105,8 +115,8 @@ public class Pcg128Random extends BaseRandom implements SeekableRandom {
     System.arraycopy(INCREMENT, 0, curPlus, 0, SEED_SIZE_BYTES);
     System.arraycopy(Byte16ArrayArithmetic.ONE, 0, accMult, 0, SEED_SIZE_BYTES);
     System.arraycopy(Byte16ArrayArithmetic.ZERO, 0, accPlus, 0, SEED_SIZE_BYTES);
-    while (delta != 0) {
-      if ((delta & 1) == 1) {
+    while (lowDelta != 0 || highDelta != 0) {
+      if ((lowDelta & 1) == 1) {
         multiplyInto(accMult, curMult);
         multiplyInto(accPlus, curMult);
         addInto(accPlus, curPlus);
@@ -115,7 +125,9 @@ public class Pcg128Random extends BaseRandom implements SeekableRandom {
       addInto(adjMult, 1, true);
       multiplyInto(curPlus, adjMult);
       multiplyInto(curMult, curMult);
-      delta >>>= 1;
+      lowDelta >>>= 1;
+      lowDelta |= (highDelta & 1L) << 63;
+      highDelta >>>= 1;
     }
     lock.lock();
     try {
