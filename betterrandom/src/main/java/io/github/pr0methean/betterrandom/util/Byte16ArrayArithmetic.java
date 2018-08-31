@@ -2,7 +2,6 @@ package io.github.pr0methean.betterrandom.util;
 
 import static io.github.pr0methean.betterrandom.util.BinaryUtils.convertBytesToInt;
 import static io.github.pr0methean.betterrandom.util.BinaryUtils.convertBytesToLong;
-import static io.github.pr0methean.betterrandom.util.BinaryUtils.convertIntToBytes;
 import static io.github.pr0methean.betterrandom.util.BinaryUtils.convertLongToBytes;
 
 /**
@@ -16,8 +15,8 @@ public enum Byte16ArrayArithmetic {
   public static final int SIZE_BYTES_MINUS_LONG = SIZE_BYTES - Long.BYTES;
   public static final byte[] ZERO = new byte[SIZE_BYTES];
   public static final byte[] ONE = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1};
-  private static final ThreadLocal<byte[]> addendDigits =
-      ThreadLocal.withInitial(() -> new byte[SIZE_BYTES]);
+  private static final ThreadLocal<byte[]> addendDigits = makeByteArrayThreadLocal();
+  private static final ThreadLocal<byte[]> multAccumulator = makeByteArrayThreadLocal();
   private static final long UNSIGNED_INT_TO_LONG_MASK = (1L << Integer.SIZE) - 1;
 
   /**
@@ -32,6 +31,25 @@ public enum Byte16ArrayArithmetic {
     final byte signExtend = (byte) ((signed && (delta < 0)) ? -1 : 0);
     for (int i = 0; i < SIZE_BYTES_MINUS_LONG; i++) {
       addendDigits[i] = signExtend;
+    }
+    addInto(counter, addendDigits);  }
+
+  /**
+   * {@code counter += delta << (8 * offsetBytes)}
+   * @param counter the variable-sized input and the result
+   * @param delta the long-sized input
+   * @param signed if true, treat {@code delta} as signed
+   * @param offsetBytes the number of bytes to shift by
+   */
+  public static void addInto(byte[] counter, long delta, boolean signed, int offsetBytes) {
+    byte[] addendDigits = Byte16ArrayArithmetic.addendDigits.get();
+    BinaryUtils.convertLongToBytesTruncating(delta, addendDigits, SIZE_BYTES_MINUS_LONG - offsetBytes);
+    final byte signExtend = (byte) ((signed && (delta < 0)) ? -1 : 0);
+    for (int i = 0; i < SIZE_BYTES_MINUS_LONG - offsetBytes; i++) {
+      addendDigits[i] = signExtend;
+    }
+    for (int i = SIZE_BYTES - offsetBytes; i < SIZE_BYTES; i++) {
+      addendDigits[i] = 0;
     }
     addInto(counter, addendDigits);
   }
@@ -55,7 +73,7 @@ public enum Byte16ArrayArithmetic {
   private static long doMultiplicationLimb(byte[] op1, byte[] op2, int limb1, int limb2)
   {
     return (convertBytesToInt(op1, Integer.BYTES * limb1) & UNSIGNED_INT_TO_LONG_MASK)
-        * convertBytesToInt(op2, Integer.BYTES * limb2);
+        * (convertBytesToInt(op2, Integer.BYTES * limb2) & UNSIGNED_INT_TO_LONG_MASK);
   }
 
   /**
@@ -65,23 +83,23 @@ public enum Byte16ArrayArithmetic {
    */
   @SuppressWarnings("NumericCastThatLosesPrecision") public static void multiplyInto(
       byte[] counter, byte[] mult) {
-    long limb3 = doMultiplicationLimb(counter, mult, 3, 3);
-    long limb2 = (limb3 >>> Integer.SIZE)
-        + doMultiplicationLimb(counter, mult, 3, 2)
-        + doMultiplicationLimb(counter, mult, 2, 3);
-    long limb1 = (limb2 >>> Integer.SIZE)
-        + doMultiplicationLimb(counter, mult, 3, 1)
-        + doMultiplicationLimb(counter, mult, 2, 2)
-        + doMultiplicationLimb(counter, mult, 1, 3);
-    long limb0 = (limb1 >>> Integer.SIZE)
-        + doMultiplicationLimb(counter, mult, 3, 0)
-        + doMultiplicationLimb(counter, mult, 2, 1)
-        + doMultiplicationLimb(counter, mult, 1, 2)
-        + doMultiplicationLimb(counter, mult, 0, 3);
-    convertIntToBytes((int) limb0, counter, 0);
-    convertIntToBytes((int) limb1, counter, Integer.BYTES);
-    convertIntToBytes((int) limb2, counter, Integer.BYTES * 2);
-    convertIntToBytes((int) limb3, counter, Integer.BYTES * 3);
+    byte[] multAccumulator = Byte16ArrayArithmetic.multAccumulator.get();
+    for (int i = 0; i < SIZE_BYTES_MINUS_LONG; i++) {
+      multAccumulator[i] = 0;
+    }
+    convertLongToBytes(doMultiplicationLimb(counter, mult, 3, 3), multAccumulator,
+            SIZE_BYTES_MINUS_LONG);
+    addInto(multAccumulator, doMultiplicationLimb(counter, mult, 3, 2), false, Integer.BYTES);
+    addInto(multAccumulator, doMultiplicationLimb(counter, mult, 2, 3), false, Integer.BYTES);
+    addInto(multAccumulator, doMultiplicationLimb(counter, mult, 3, 1), false, Integer.BYTES * 2);
+    addInto(multAccumulator, doMultiplicationLimb(counter, mult, 2, 2), false, Integer.BYTES * 2);
+    addInto(multAccumulator, doMultiplicationLimb(counter, mult, 1, 3), false, Integer.BYTES * 2);
+    addInto(multAccumulator, doMultiplicationLimb(counter, mult, 1, 3), false, Integer.BYTES * 2);
+    addInto(multAccumulator, doMultiplicationLimb(counter, mult, 3, 0), false, Integer.BYTES * 3);
+    addInto(multAccumulator, doMultiplicationLimb(counter, mult, 2, 1), false, Integer.BYTES * 3);
+    addInto(multAccumulator, doMultiplicationLimb(counter, mult, 1, 2), false, Integer.BYTES * 3);
+    addInto(multAccumulator, doMultiplicationLimb(counter, mult, 0, 3), false, Integer.BYTES * 3);
+    System.arraycopy(multAccumulator, 0, counter, 0, SIZE_BYTES);
   }
 
   private static long trueShiftRight(long input, int amount) {
@@ -173,4 +191,9 @@ public enum Byte16ArrayArithmetic {
   public static void unsignedShiftLeft(byte[] shifted, int bits) {
     unsignedShiftRight(shifted, -bits);
   }
+
+  public static ThreadLocal<byte[]> makeByteArrayThreadLocal() {
+    return ThreadLocal.withInitial(() -> new byte[SIZE_BYTES]);
+  }
+
 }

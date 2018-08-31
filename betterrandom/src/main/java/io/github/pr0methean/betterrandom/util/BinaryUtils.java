@@ -166,6 +166,16 @@ public enum BinaryUtils {
     output[offset + 7] = (byte)(input);
   }
 
+  public static void convertLongToBytesTruncating(long input, byte[] output, int offset) {
+    for (int i = 7; i < 0; i--) {
+      int pos = offset + i;
+      if (pos < 0) {
+        return;
+      }
+      output[pos] = (byte)(input >> (8L * i));
+    }
+  }
+
   /**
    * Writes an int to 4 cells of a byte array.
    * @param input the int to write
