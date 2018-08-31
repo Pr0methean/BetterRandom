@@ -42,9 +42,10 @@ public class Pcg128Random extends BaseRandom implements SeekableRandom {
           0xffffff81, 0x0000004f};
   private static final int WANTED_OP_BITS = 6;
   public static final int ROTATION1 = (WANTED_OP_BITS + Long.SIZE) / 2;
-  private static final int ROTATION2 = (Long.SIZE - WANTED_OP_BITS);
+  private static final int ROTATION2 = Long.SIZE - WANTED_OP_BITS;
 
   public static final double RANDOM_DOUBLE_INCR = 0x1.0p-53;
+  private static final int MASK = (1 << WANTED_OP_BITS) - 1;
 
   private transient byte[] oldSeed;
   private transient byte[] xorShifted;
@@ -163,7 +164,7 @@ public class Pcg128Random extends BaseRandom implements SeekableRandom {
     unsignedShiftRight(xorShifted, ROTATION2);
 
     // int rot = (int) (oldInternal >>> (SEED_SIZE_BYTES - WANTED_OP_BITS));
-    final int nRot = oldSeed[0] >>> 2;
+    final int nRot = (oldSeed[0] >>> 2) & MASK;
 
     // return ((xorShifted >>> rot) | (xorShifted << ((-rot) & MASK)))
     System.arraycopy(xorShifted, 0, resultTerm1, 0, SEED_SIZE_BYTES);

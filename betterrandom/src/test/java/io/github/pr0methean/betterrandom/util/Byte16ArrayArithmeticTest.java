@@ -20,6 +20,8 @@ public class Byte16ArrayArithmeticTest {
   private static final byte[] OPERAND2 =
       longsToByteArray(0xC26B_1E45_A661_872BL, 0x631B_C188_2D24_D6E9L);
 
+  private static final byte[] ONES = {1,1,1,1, 1,1,1,1, 1,1,1,1, 1,1,1,1};
+
   private static void assertByteArrayEqualsLongs(
       byte[] actual, long expectedMost, long expectedLeast) {
     String message = String.format("Expected %016X%016X, got %s",
@@ -48,10 +50,16 @@ public class Byte16ArrayArithmeticTest {
     assertByteArrayEqualsLongs(result, 0x79EC_964A_738B_2EBAL, 0x9C18_C970_032C_8DD6L);
     Byte16ArrayArithmetic.addInto(result, -0x631bc1882d24d6e9L, false);
     assertByteArrayEqualsLongs(result, 0x79EC_964A_738B_2EBBL, 0x38FD_07E7_D607_B6EDL);
+  }
 
+  @Test public void testMultiplyIntoOnes() {
+    byte[] result = ONES.clone();
+    Byte16ArrayArithmetic.multiplyInto(result, ONES);
+    assertByteArrayEqualsLongs(result, 0x100f_0e0d_0c0b_0a09L, 0x0807_0605_0403_0201L);
   }
 
   @Test public void testMultiplyInto() {
+    // 5c984e32224cdcaac1573c5721c87034347795005a1beffcb7224e11a2439bb5
     byte[] result = OPERAND1.clone();
     Byte16ArrayArithmetic.multiplyInto(result, OPERAND2);
     assertByteArrayEqualsLongs(result, 0x3477_9500_5A1B_EFFCL, 0xB722_4E11_A243_9BB5L);
@@ -61,6 +69,12 @@ public class Byte16ArrayArithmeticTest {
     byte[] result = OPERAND1.clone();
     Byte16ArrayArithmetic.unsignedShiftRight(result, 12);
     assertByteArrayEqualsLongs(result, 0x0007_9EC9_64A7_38B2L, 0xEBA3_8FD0_7E7D_607BL);
+  }
+
+  @Test public void testRotateRight() {
+    byte[] result = OPERAND1.clone();
+    Byte16ArrayArithmetic.rotateRight(result, 12);
+    assertByteArrayEqualsLongs(result, 0x6ED7_9EC9_64A7_38B2L, 0xEBA3_8FD0_7E7D_607BL);
   }
 
   @Test public void testUnsignedShiftRightOffEdge() {

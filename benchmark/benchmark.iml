@@ -48,5 +48,6 @@
     <orderEntry type="library" name="Maven: org.ow2.asm:asm-tree:5.0.3" level="project" />
     <orderEntry type="library" name="Maven: org.ow2.asm:asm-util:5.0.3" level="project" />
     <orderEntry type="library" name="Maven: org.ow2.asm:asm-xml:5.0.3" level="project" />
+    <orderEntry type="module" module-name="BetterRandom" />
   </component>
 </module>
