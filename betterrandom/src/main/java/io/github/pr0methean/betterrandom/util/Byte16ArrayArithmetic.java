@@ -66,18 +66,18 @@ public enum Byte16ArrayArithmetic {
   @SuppressWarnings("NumericCastThatLosesPrecision") public static void multiplyInto(
       byte[] counter, byte[] mult) {
     long limb3 = doMultiplicationLimb(counter, mult, 3, 3);
-    long limb2 = doMultiplicationLimb(counter, mult, 3, 2)
+    long limb2 = (limb3 >>> Integer.SIZE)
+        + doMultiplicationLimb(counter, mult, 3, 2)
         + doMultiplicationLimb(counter, mult, 2, 3);
-    long limb1 = doMultiplicationLimb(counter, mult, 3, 1)
+    long limb1 = (limb2 >>> Integer.SIZE)
+        + doMultiplicationLimb(counter, mult, 3, 1)
         + doMultiplicationLimb(counter, mult, 2, 2)
         + doMultiplicationLimb(counter, mult, 1, 3);
-    long limb0 = doMultiplicationLimb(counter, mult, 3, 0)
+    long limb0 = (limb1 >>> Integer.SIZE)
+        + doMultiplicationLimb(counter, mult, 3, 0)
         + doMultiplicationLimb(counter, mult, 2, 1)
         + doMultiplicationLimb(counter, mult, 1, 2)
         + doMultiplicationLimb(counter, mult, 0, 3);
-    limb2 += (limb3 >>> Integer.SIZE);
-    limb1 += (limb2 >>> Integer.SIZE);
-    limb0 += (limb1 >>> Integer.SIZE);
     convertIntToBytes((int) limb0, counter, 0);
     convertIntToBytes((int) limb1, counter, Integer.BYTES);
     convertIntToBytes((int) limb2, counter, Integer.BYTES * 2);
