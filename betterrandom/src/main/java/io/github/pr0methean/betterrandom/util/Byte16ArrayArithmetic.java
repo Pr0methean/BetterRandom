@@ -16,9 +16,8 @@ public enum Byte16ArrayArithmetic {
   public static final int SIZE_BYTES_MINUS_LONG = SIZE_BYTES - Long.BYTES;
   public static final byte[] ZERO = new byte[SIZE_BYTES];
   public static final byte[] ONE = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1};
-  private static final ThreadLocal<byte[]> multAccum = makeByteArrayThreadLocal();
-  private static final ThreadLocal<byte[]> multStep = makeByteArrayThreadLocal();
-  private static final ThreadLocal<byte[]> addendDigits = makeByteArrayThreadLocal();
+  private static final ThreadLocal<byte[]> addendDigits =
+      ThreadLocal.withInitial(() -> new byte[SIZE_BYTES]);
   private static final long UNSIGNED_INT_TO_LONG_MASK = (1L << Integer.SIZE) - 1;
 
   /**
@@ -174,9 +173,4 @@ public enum Byte16ArrayArithmetic {
   public static void unsignedShiftLeft(byte[] shifted, int bits) {
     unsignedShiftRight(shifted, -bits);
   }
-
-  public static ThreadLocal<byte[]> makeByteArrayThreadLocal() {
-    return ThreadLocal.withInitial(() -> new byte[SIZE_BYTES]);
-  }
-
 }
