@@ -100,6 +100,7 @@ public class AesCounterRandom extends BaseRandom implements SeekableRandom {
   private volatile boolean seeded;
   private volatile int index;
   private transient byte[] addendDigits;
+  private transient MessageDigest hash;
 
   /**
    * Creates a new RNG and seeds it using 256 bits from the {@link DefaultSeedGenerator}.
@@ -173,8 +174,9 @@ public class AesCounterRandom extends BaseRandom implements SeekableRandom {
     }
     try {
       cipher = Cipher.getInstance(ALGORITHM_MODE);
+      hash = MessageDigest.getInstance(HASH_ALGORITHM);
     } catch (NoSuchAlgorithmException | NoSuchPaddingException e) {
-      throw new RuntimeException("JVM doesn't provide " + ALGORITHM_MODE, e);
+      throw new RuntimeException("JVM is missing a required cipher or hash algorithm", e);
     }
   }
 
@@ -229,44 +231,39 @@ public class AesCounterRandom extends BaseRandom implements SeekableRandom {
    */
   @Override public void setSeed(final byte[] seed) {
     checkNotTooLong(seed);
-    try {
-      final byte[] key;
-      if (seed.length == MAX_KEY_LENGTH_BYTES) {
-        key = seed.clone();
-      } else {
-        lock.lock();
-        boolean weAreSeeded;
-        try {
-          weAreSeeded = seeded;
-        } finally {
-          lock.unlock();
-        }
-        if (weAreSeeded) {
-          // Extend the key
-          final byte[] newSeed = new byte[this.seed.length + seed.length];
-          System.arraycopy(this.seed, 0, newSeed, 0, this.seed.length);
-          System.arraycopy(seed, 0, newSeed, this.seed.length, seed.length);
-          final int keyLength = getKeyLength(newSeed);
-          if (newSeed.length > keyLength) {
-            final MessageDigest md = MessageDigest.getInstance(HASH_ALGORITHM);
-            md.update(newSeed);
-            key = Arrays.copyOf(md.digest(), keyLength);
-          } else {
-            key = newSeed;
-          }
-        } else {
-          key = seed.clone();
-        }
-      }
+    final byte[] key;
+    if (seed.length == MAX_KEY_LENGTH_BYTES) {
+      key = seed.clone();
+    } else {
       lock.lock();
+      boolean weAreSeeded;
       try {
-        setSeedInternal(key);
-        entropyBits.addAndGet(8L * (seed.length - key.length));
+        weAreSeeded = seeded;
       } finally {
         lock.unlock();
       }
-    } catch (final NoSuchAlgorithmException e) {
-      throw new RuntimeException(e);
+      if (weAreSeeded) {
+        // Extend the key
+        final byte[] newSeed = new byte[this.seed.length + seed.length];
+        System.arraycopy(this.seed, 0, newSeed, 0, this.seed.length);
+        System.arraycopy(seed, 0, newSeed, this.seed.length, seed.length);
+        final int keyLength = getKeyLength(newSeed);
+        if (newSeed.length > keyLength) {
+          byte[] digest = hash.digest(newSeed);
+          key = digest.length > keyLength ? Arrays.copyOf(digest, keyLength) : digest;
+        } else {
+          key = newSeed;
+        }
+      } else {
+        key = seed.clone();
+      }
+    }
+    lock.lock();
+    try {
+      setSeedInternal(key);
+      entropyBits.addAndGet(8L * (seed.length - key.length));
+    } finally {
+      lock.unlock();
     }
   }
 

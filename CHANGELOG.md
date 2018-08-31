@@ -1,3 +1,7 @@
+# 2.5.1
+* `AesCounterRandom` now reuses the `MessageDigest` instance when reseeding. This should improve
+  performance.
+
 # 2.5.0
 * `RandomSeederThread.asyncReseed` has been replaced with `wakeUp`, and the task queue has been
   eliminated (since if the thread is locked, it is already awake or being awoken).
