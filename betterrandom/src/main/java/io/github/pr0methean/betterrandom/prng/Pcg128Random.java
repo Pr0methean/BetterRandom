@@ -4,6 +4,7 @@ import static io.github.pr0methean.betterrandom.util.BinaryUtils.convertBytesToI
 import static io.github.pr0methean.betterrandom.util.Byte16ArrayArithmetic.addInto;
 import static io.github.pr0methean.betterrandom.util.Byte16ArrayArithmetic.multiplyInto;
 import static io.github.pr0methean.betterrandom.util.Byte16ArrayArithmetic.orInto;
+import static io.github.pr0methean.betterrandom.util.Byte16ArrayArithmetic.rotateRight;
 import static io.github.pr0methean.betterrandom.util.Byte16ArrayArithmetic.unsignedShiftRight;
 import static io.github.pr0methean.betterrandom.util.Byte16ArrayArithmetic.xorInto;
 
@@ -50,8 +51,6 @@ public class Pcg128Random extends BaseRandom implements SeekableRandom {
   private transient byte[] oldSeed;
   private transient byte[] xorShifted;
   private transient byte[] xorShifted2;
-  private transient byte[] resultTerm1;
-  private transient byte[] resultTerm2;
   private transient byte[] curMult;
   private transient byte[] curPlus;
   private transient byte[] accMult;
@@ -63,8 +62,6 @@ public class Pcg128Random extends BaseRandom implements SeekableRandom {
     oldSeed = new byte[SEED_SIZE_BYTES];
     xorShifted = new byte[SEED_SIZE_BYTES];
     xorShifted2 = new byte[SEED_SIZE_BYTES];
-    resultTerm1 = new byte[SEED_SIZE_BYTES];
-    resultTerm2 = new byte[SEED_SIZE_BYTES];
     curMult = new byte[SEED_SIZE_BYTES];
     curPlus = new byte[SEED_SIZE_BYTES];
     accMult = new byte[SEED_SIZE_BYTES];
@@ -167,12 +164,8 @@ public class Pcg128Random extends BaseRandom implements SeekableRandom {
     final int nRot = (oldSeed[0] >>> 2) & MASK;
 
     // return ((xorShifted >>> rot) | (xorShifted << ((-rot) & MASK)))
-    System.arraycopy(xorShifted, 0, resultTerm1, 0, SEED_SIZE_BYTES);
-    unsignedShiftRight(resultTerm1, nRot);
-    System.arraycopy(xorShifted, 0, resultTerm2, 0, SEED_SIZE_BYTES);
-    Byte16ArrayArithmetic.unsignedShiftLeft(resultTerm2, SEED_SIZE_BYTES - nRot);
-    orInto(resultTerm2, resultTerm1);
-    return resultTerm2;
+    rotateRight(xorShifted, nRot);
+    return xorShifted;
   }
 
   @Override protected ToStringHelper addSubclassFields(ToStringHelper original) {
