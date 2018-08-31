@@ -43,8 +43,6 @@ public class Pcg128Random extends BaseRandom implements SeekableRandom {
   private static final int WANTED_OP_BITS = 6;
   public static final int ROTATION1 = (WANTED_OP_BITS + Long.SIZE) / 2;
   private static final int ROTATION2 = (Long.SIZE - WANTED_OP_BITS);
-  private static final int ROTATION3 = (Long.SIZE * 2) - WANTED_OP_BITS;
-  private static final int MASK = (1 << WANTED_OP_BITS) - 1;
 
   public static final double RANDOM_DOUBLE_INCR = 0x1.0p-53;
 
@@ -58,7 +56,6 @@ public class Pcg128Random extends BaseRandom implements SeekableRandom {
   private transient byte[] accMult;
   private transient byte[] accPlus;
   private transient byte[] adjMult;
-  private transient byte[] rot;
 
   @Override protected void initTransientFields() {
     super.initTransientFields();
@@ -72,7 +69,6 @@ public class Pcg128Random extends BaseRandom implements SeekableRandom {
     accMult = new byte[SEED_SIZE_BYTES];
     accPlus = new byte[SEED_SIZE_BYTES];
     adjMult = new byte[SEED_SIZE_BYTES];
-    rot = new byte[SEED_SIZE_BYTES];
   }
 
   public Pcg128Random() {
@@ -166,16 +162,14 @@ public class Pcg128Random extends BaseRandom implements SeekableRandom {
     xorInto(xorShifted, xorShifted2);
     unsignedShiftRight(xorShifted, ROTATION2);
 
-    // int rot = (int) (oldInternal >>> ROTATION3);
-    System.arraycopy(oldSeed, 0, rot, 0, SEED_SIZE_BYTES);
-    unsignedShiftRight(rot, ROTATION3);
-    final int nRot = convertBytesToInt(rot, SEED_SIZE_BYTES - Integer.BYTES);
+    // int rot = (int) (oldInternal >>> (SEED_SIZE_BYTES - WANTED_OP_BITS));
+    final int nRot = oldSeed[0] >>> 2;
 
     // return ((xorShifted >>> rot) | (xorShifted << ((-rot) & MASK)))
     System.arraycopy(xorShifted, 0, resultTerm1, 0, SEED_SIZE_BYTES);
     unsignedShiftRight(resultTerm1, nRot);
     System.arraycopy(xorShifted, 0, resultTerm2, 0, SEED_SIZE_BYTES);
-    Byte16ArrayArithmetic.unsignedShiftLeft(resultTerm2, (2 * Long.SIZE) - nRot);
+    Byte16ArrayArithmetic.unsignedShiftLeft(resultTerm2, SEED_SIZE_BYTES - nRot);
     orInto(resultTerm2, resultTerm1);
     return resultTerm2;
   }

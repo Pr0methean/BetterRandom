@@ -1,10 +1,7 @@
 package io.github.pr0methean.betterrandom.util;
 
 import static org.testng.Assert.assertEquals;
-import static org.testng.Assert.assertNotSame;
-import static org.testng.Assert.assertTrue;
 
-import java.util.Arrays;
 import org.testng.annotations.Test;
 
 @SuppressWarnings("SpellCheckingInspection")
@@ -88,12 +85,5 @@ public class Byte16ArrayArithmeticTest {
     byte[] result = OPERAND1.clone();
     Byte16ArrayArithmetic.xorInto(result, OPERAND2);
     assertByteArrayEqualsLongs(result, 0xBB87_880F_D5EA_A991L, 0x5BE6_C66F_FB23_6004L);
-  }
-
-  @Test public void testCopyInto() {
-    ThreadLocal<byte[]> threadLocal = Byte16ArrayArithmetic.makeByteArrayThreadLocal();
-    byte[] copyOfOperand1 = Byte16ArrayArithmetic.copyInto(threadLocal, OPERAND1);
-    assertTrue(Arrays.equals(copyOfOperand1, OPERAND1));
-    assertNotSame(copyOfOperand1, OPERAND1);
   }
 }
