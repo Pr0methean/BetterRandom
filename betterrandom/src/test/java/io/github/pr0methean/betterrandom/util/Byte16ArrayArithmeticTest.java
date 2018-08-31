@@ -22,6 +22,8 @@ public class Byte16ArrayArithmeticTest {
 
   private static final byte[] ONES = {1,1,1,1, 1,1,1,1, 1,1,1,1, 1,1,1,1};
 
+  private static final byte[] MINUS_ONES = {-1,-1,-1,-1, -1,-1,-1,-1, -1,-1,-1,-1, -1,-1,-1,-1};
+
   private static void assertByteArrayEqualsLongs(
       byte[] actual, long expectedMost, long expectedLeast) {
     String message = String.format("Expected %016X%016X, got %s",
@@ -50,6 +52,12 @@ public class Byte16ArrayArithmeticTest {
     assertByteArrayEqualsLongs(result, 0x79EC_964A_738B_2EBAL, 0x9C18_C970_032C_8DD6L);
     Byte16ArrayArithmetic.addInto(result, -0x631bc1882d24d6e9L, false);
     assertByteArrayEqualsLongs(result, 0x79EC_964A_738B_2EBBL, 0x38FD_07E7_D607_B6EDL);
+  }
+
+  @Test public void testMultiplyIntoMinusOnes() {
+    byte[] result = MINUS_ONES.clone();
+    Byte16ArrayArithmetic.multiplyInto(result, MINUS_ONES);
+    assertByteArrayEqualsLongs(result, 0, 1);
   }
 
   @Test public void testMultiplyIntoOnes() {
