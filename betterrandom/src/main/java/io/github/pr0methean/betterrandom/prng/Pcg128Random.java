@@ -2,8 +2,6 @@ package io.github.pr0methean.betterrandom.prng;
 
 import static io.github.pr0methean.betterrandom.util.BinaryUtils.convertBytesToInt;
 import static io.github.pr0methean.betterrandom.util.Byte16ArrayArithmetic.addInto;
-import static io.github.pr0methean.betterrandom.util.Byte16ArrayArithmetic.copyInto;
-import static io.github.pr0methean.betterrandom.util.Byte16ArrayArithmetic.makeByteArrayThreadLocal;
 import static io.github.pr0methean.betterrandom.util.Byte16ArrayArithmetic.multiplyInto;
 import static io.github.pr0methean.betterrandom.util.Byte16ArrayArithmetic.orInto;
 import static io.github.pr0methean.betterrandom.util.Byte16ArrayArithmetic.unsignedShiftRight;
@@ -48,7 +46,6 @@ public class Pcg128Random extends BaseRandom implements SeekableRandom {
   private static final int ROTATION3 = (Long.SIZE * 2) - WANTED_OP_BITS;
   private static final int MASK = (1 << WANTED_OP_BITS) - 1;
 
-  private static final ThreadLocal<byte[]> rot = makeByteArrayThreadLocal();
   public static final double RANDOM_DOUBLE_INCR = 0x1.0p-53;
 
   private transient byte[] oldSeed;
@@ -61,6 +58,7 @@ public class Pcg128Random extends BaseRandom implements SeekableRandom {
   private transient byte[] accMult;
   private transient byte[] accPlus;
   private transient byte[] adjMult;
+  private transient byte[] rot;
 
   @Override protected void initTransientFields() {
     super.initTransientFields();
@@ -74,6 +72,7 @@ public class Pcg128Random extends BaseRandom implements SeekableRandom {
     accMult = new byte[SEED_SIZE_BYTES];
     accPlus = new byte[SEED_SIZE_BYTES];
     adjMult = new byte[SEED_SIZE_BYTES];
+    rot = new byte[SEED_SIZE_BYTES];
   }
 
   public Pcg128Random() {
@@ -168,7 +167,7 @@ public class Pcg128Random extends BaseRandom implements SeekableRandom {
     unsignedShiftRight(xorShifted, ROTATION2);
 
     // int rot = (int) (oldInternal >>> ROTATION3);
-    byte[] rot = copyInto(Pcg128Random.rot, oldSeed);
+    System.arraycopy(oldSeed, 0, rot, 0, SEED_SIZE_BYTES);
     unsignedShiftRight(rot, ROTATION3);
     final int nRot = convertBytesToInt(rot, SEED_SIZE_BYTES - Integer.BYTES);
 
