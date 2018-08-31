@@ -1,19 +1,23 @@
 package io.github.pr0methean.betterrandom.util;
 
-import java.nio.ByteBuffer;
+import static io.github.pr0methean.betterrandom.util.BinaryUtils.convertBytesToInt;
+import static io.github.pr0methean.betterrandom.util.BinaryUtils.convertBytesToLong;
+import static io.github.pr0methean.betterrandom.util.BinaryUtils.convertIntToBytes;
+import static io.github.pr0methean.betterrandom.util.BinaryUtils.convertLongToBytes;
 
 /**
- * Collection of arithmetic methods that treat {@link ByteBuffer} instances wrapping a
- * {@code byte[16]} array as 128-bit unsigned integers.
+ * Collection of arithmetic methods that treat {@code byte[16]} arrays as 128-bit unsigned integers.
  */
 @SuppressWarnings("AccessStaticViaInstance")
 public enum Byte16ArrayArithmetic {
   ;
 
-  public static final byte[] ZERO = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+  private static final int SIZE_BYTES = 16;
+  public static final byte[] ZERO = new byte[SIZE_BYTES];
   public static final byte[] ONE = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1};
-  private static final ThreadLocal<ByteBuffer> multiplicationAccumulator = makeByteArrayThreadLocal();
-  private static final ThreadLocal<ByteBuffer> multiplicationStep = makeByteArrayThreadLocal();
+  private static final ThreadLocal<byte[]> multiplicationAccumulator = makeByteArrayThreadLocal();
+  private static final ThreadLocal<byte[]> multiplicationStep = makeByteArrayThreadLocal();
+  private static final ThreadLocal<byte[]> addendDigits = makeByteArrayThreadLocal();
 
   /**
    * {@code counter += delta}
@@ -21,54 +25,33 @@ public enum Byte16ArrayArithmetic {
    * @param delta the long-sized input
    * @param signed if true, treat {@code delta} as signed
    */
-  public static void addInto(ByteBuffer counter, long delta, boolean signed) {
-    if (delta == 0) {
-      return;
-    }
-    final long oldLeast = counter.getLong(1);
-    long newLeast = oldLeast + delta;
-    counter.putLong(Long.BYTES, newLeast);
-    int compare = Long.compareUnsigned(newLeast, oldLeast);
-    if (compare < 0 && (delta > 0 || !signed)) {
-      counter.putLong(0, counter.getLong(0) + 1);
-    } else if (compare > 0 && delta < 0 && signed) {
-      counter.putLong(0, counter.getLong(0) - 1);
-    }
-  }
-  
-  /*
-    System.arraycopy(ZERO, 0, addendDigits, 0, COUNTER_SIZE_BYTES - Long.BYTES);
-    BinaryUtils.convertLongToBytes(blocksDelta, addendDigits, COUNTER_SIZE_BYTES - Long.BYTES);
-    if (blocksDelta < 0) {
+  public static void addInto(byte[] counter, long delta, boolean signed) {
+    byte[] addendDigits = Byte16ArrayArithmetic.addendDigits.get();
+    System.arraycopy(ZERO, 0, addendDigits, 0, SIZE_BYTES - Long.BYTES);
+    BinaryUtils.convertLongToBytes(delta, addendDigits, SIZE_BYTES - Long.BYTES);
+    if (signed && (delta < 0)) {
       // Sign extend
-      for (int i = 0; i < (COUNTER_SIZE_BYTES - Long.BYTES); i++) {
+      for (int i = 0; i < (SIZE_BYTES - Long.BYTES); i++) {
         addendDigits[i] = -1;
       }
     }
-    boolean carry = false;
-    for (int i = 0; i < COUNTER_SIZE_BYTES; i++) {
-      final int oldCounterUnsigned = counter[i] < 0 ? counter[i] + 256 : counter[i];
-      counter[i] += addendDigits[COUNTER_SIZE_BYTES - i - 1] + (carry ? 1 : 0);
-      final int newCounterUnsigned = counter[i] < 0 ? counter[i] + 256 : counter[i];
-      carry = (oldCounterUnsigned > newCounterUnsigned)
-          || (carry && (oldCounterUnsigned == newCounterUnsigned));
-    }
-  */
+    addInto(counter, addendDigits);
+  }
     
   /**
    * {@code counter += delta}. Inputs must be the same length.
    * @param counter the first input and the result
    * @param delta the second input
    */
-  public static void addInto(ByteBuffer counter, ByteBuffer delta) {
-    long least = delta.getLong(Long.BYTES);
-    /* if (most >= 0 && least < 0) {
-      most--;
-    } else if (most < 0 && least >= 0) {
-      most++;
-    } */
-    addInto(counter, least, false);
-    counter.putLong(0, counter.getLong(0) + delta.getLong(0));
+  public static void addInto(byte[] counter, byte[] delta) {
+    boolean carry = false;
+    for (int i = SIZE_BYTES - 1; i > 0; i--) {
+      final int oldCounterUnsigned = counter[i] < 0 ? counter[i] + 256 : counter[i];
+      counter[i] += delta[i] + (carry ? 1 : 0);
+      final int newCounterUnsigned = counter[i] < 0 ? counter[i] + 256 : counter[i];
+      carry = (oldCounterUnsigned > newCounterUnsigned)
+          || (carry && (oldCounterUnsigned == newCounterUnsigned));
+    }
   }
 
   /**
@@ -77,24 +60,24 @@ public enum Byte16ArrayArithmetic {
    * @param multiplier the second input
    */
   @SuppressWarnings("NumericCastThatLosesPrecision") public static void multiplyInto(
-      ByteBuffer counter, ByteBuffer multiplier) {
-    ByteBuffer multiplicationAccumulator =
+      byte[] counter, byte[] multiplier) {
+    byte[] multiplicationAccumulator =
         copyInto(Byte16ArrayArithmetic.multiplicationAccumulator, ZERO);
-    final ByteBuffer multiplicationStepB = Byte16ArrayArithmetic.multiplicationStep.get();
+    final byte[] multiplicationStepB = Byte16ArrayArithmetic.multiplicationStep.get();
     for (int multiplierLimb = 0; multiplierLimb < 4; multiplierLimb++) {
       for (int counterLimb = 3 - multiplierLimb; counterLimb < 4; counterLimb++) {
         int destLimb = multiplierLimb + counterLimb - 3;
-        long stepValue = ((long) multiplier.getInt(Integer.BYTES * multiplierLimb))
-            * counter.getInt(Integer.BYTES * counterLimb);
-        multiplicationStepB.putInt(Integer.BYTES * destLimb, (int) stepValue);
-        if (destLimb > 0) {
-          multiplicationStepB.putInt(Integer.BYTES * (destLimb - 1), (int) (stepValue >> Integer.SIZE));
+        long stepValue = convertBytesToInt(counter, Integer.BYTES * counterLimb) *
+            ((long) convertBytesToInt(multiplier, Integer.BYTES * multiplierLimb));
+        if (destLimb == 0) {
+          convertIntToBytes((int) stepValue, multiplicationStepB, Integer.BYTES * destLimb);
+        } else {
+          convertLongToBytes(stepValue, multiplicationStepB, Integer.BYTES * (destLimb - 1));
         }
         addInto(multiplicationAccumulator, multiplicationStepB);
       }
     }
-    counter.putLong(0, multiplicationAccumulator.getLong(0));
-    counter.putLong(Long.BYTES, multiplicationAccumulator.getLong(Long.BYTES));
+    System.arraycopy(multiplicationAccumulator, 0, counter, 0, SIZE_BYTES);
   }
 
   /**
@@ -104,14 +87,14 @@ public enum Byte16ArrayArithmetic {
    * @param bits how many bits to shift by
    * @author Patrick Favre-Bulle
    */
-  public static void unsignedShiftRight(ByteBuffer shiftedB, int bits) {
+  public static void unsignedShiftRight(byte[] shiftedB, int bits) {
     if (bits == 0) {
       return;
     }
-    long oldMost = shiftedB.getLong(0);
-    long oldLeast = shiftedB.getLong(Long.BYTES);
-    shiftedB.putLong(0, (oldMost >>> bits) | (oldLeast >>> (bits + 64)));
-    shiftedB.putLong(Long.BYTES, (oldLeast >>> bits) | (oldMost >>> (bits - 64)));
+    long oldMost = convertBytesToLong(shiftedB);
+    long oldLeast = convertBytesToLong(shiftedB, Long.BYTES);
+    convertLongToBytes((oldMost >>> bits) | (oldLeast >>> (bits + 64)), shiftedB, 0);
+    convertLongToBytes( (oldLeast >>> bits) | (oldMost >>> (bits - 64)), shiftedB, Long.BYTES);
   }
 
   /**
@@ -119,9 +102,10 @@ public enum Byte16ArrayArithmetic {
    * @param resultB the first input and the result
    * @param operandB the second input
    */
-  public static void xorInto(ByteBuffer resultB, ByteBuffer operandB) {
-    resultB.putLong(0, resultB.getLong(0) ^ operandB.getLong(0));
-    resultB.putLong(Long.BYTES, resultB.getLong(Long.BYTES) ^ operandB.getLong(Long.BYTES));
+  public static void xorInto(byte[] resultB, byte[] operandB) {
+    for (int i = 0; i < SIZE_BYTES; i++) {
+      resultB[i] ^= operandB[i];
+    }
   }
 
   /**
@@ -129,9 +113,10 @@ public enum Byte16ArrayArithmetic {
    * @param resultB the first input and the result
    * @param operandB the second input
    */
-  public static void orInto(ByteBuffer resultB, ByteBuffer operandB) {
-    resultB.putLong(0, resultB.getLong(0) | operandB.getLong(0));
-    resultB.putLong(Long.BYTES, resultB.getLong(Long.BYTES) | operandB.getLong(Long.BYTES));
+  public static void orInto(byte[] resultB, byte[] operandB) {
+    for (int i = 0; i < SIZE_BYTES; i++) {
+      resultB[i] |= operandB[i];
+    }
   }
 
   /**
@@ -139,17 +124,17 @@ public enum Byte16ArrayArithmetic {
    * @param shifted the array input and the result
    * @param bits how many bits to shift by
    */
-  public static void unsignedShiftLeft(ByteBuffer shifted, int bits) {
+  public static void unsignedShiftLeft(byte[] shifted, int bits) {
     unsignedShiftRight(shifted, -bits);
   }
 
-  public static ThreadLocal<ByteBuffer> makeByteArrayThreadLocal() {
-    return ThreadLocal.withInitial(() -> ByteBuffer.wrap(ZERO.clone()));
+  public static ThreadLocal<byte[]> makeByteArrayThreadLocal() {
+    return ThreadLocal.withInitial(() -> ZERO.clone());
   }
 
-  public static ByteBuffer copyInto(ThreadLocal<ByteBuffer> dest, byte[] src) {
-    ByteBuffer out = dest.get();
-    System.arraycopy(src, 0, out.array(), 0, src.length);
+  public static byte[] copyInto(ThreadLocal<byte[]> dest, byte[] src) {
+    byte[] out = dest.get();
+    System.arraycopy(src, 0, out, 0, src.length);
     return out;
   }
 }

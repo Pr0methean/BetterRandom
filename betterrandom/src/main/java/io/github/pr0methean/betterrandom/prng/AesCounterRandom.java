@@ -22,8 +22,6 @@ import io.github.pr0methean.betterrandom.seed.SeedException;
 import io.github.pr0methean.betterrandom.seed.SeedGenerator;
 import io.github.pr0methean.betterrandom.util.BinaryUtils;
 import io.github.pr0methean.betterrandom.util.Byte16ArrayArithmetic;
-import java.nio.ByteBuffer;
-import java.nio.ByteOrder;
 import java.security.GeneralSecurityException;
 import java.security.InvalidKeyException;
 import java.security.MessageDigest;
@@ -94,11 +92,10 @@ public class AesCounterRandom extends BaseRandom implements SeekableRandom {
   // WARNING: Don't initialize any instance fields at declaration; they may be initialized too late!
   @SuppressWarnings("InstanceVariableMayNotBeInitializedByReadObject") private transient Cipher
       cipher;
-  private volatile ByteBuffer counter;
+  private volatile byte[] counter;
   private volatile byte[] counterInput;
   private volatile boolean seeded;
   private volatile int index;
-  private transient byte[] addendDigits;
   private transient MessageDigest hash;
 
   /**
@@ -157,16 +154,15 @@ public class AesCounterRandom extends BaseRandom implements SeekableRandom {
   }
 
   @Override public ToStringHelper addSubclassFields(final ToStringHelper original) {
-    return original.add("counter", BinaryUtils.convertBytesToHexString(counter.array()))
+    return original.add("counter", BinaryUtils.convertBytesToHexString(counter))
         .add("cipher", cipher)
         .add("index", index);
   }
 
   @Override protected void initTransientFields() {
     super.initTransientFields();
-    addendDigits = new byte[COUNTER_SIZE_BYTES];
     if (counter == null) {
-      counter = ByteBuffer.wrap(new byte[COUNTER_SIZE_BYTES]);
+      counter = new byte[COUNTER_SIZE_BYTES];
     }
     if (counterInput == null) {
       counterInput = new byte[BYTES_AT_ONCE];
@@ -187,10 +183,10 @@ public class AesCounterRandom extends BaseRandom implements SeekableRandom {
   private void nextBlock() {
     for (int i = 0; i < BLOCKS_AT_ONCE; i++) {
       Byte16ArrayArithmetic.addInto(counter, 1, true);
-      System.arraycopy(counter.array(), 0, counterInput, i * COUNTER_SIZE_BYTES, COUNTER_SIZE_BYTES);
+      System.arraycopy(counter, 0, counterInput, i * COUNTER_SIZE_BYTES, COUNTER_SIZE_BYTES);
     }
     try {
-      cipher.doFinal(counterInput, 0, COUNTER_SIZE_BYTES * BLOCKS_AT_ONCE, currentBlock);
+      cipher.doFinal(counterInput, 0, BYTES_AT_ONCE, currentBlock);
     } catch (final GeneralSecurityException ex) {
       // Should never happen.  If initialisation succeeds without exceptions
       // we should be able to proceed indefinitely without exceptions.
@@ -285,9 +281,8 @@ public class AesCounterRandom extends BaseRandom implements SeekableRandom {
     final byte[] key = Arrays.copyOfRange(seed, 0, keyLength);
     // rest goes to counter
     int bytesToCopyToCounter = seed.length - keyLength;
-    byte[] counterArray = counter.array();
-    System.arraycopy(seed, keyLength, counterArray, 0, bytesToCopyToCounter);
-    System.arraycopy(Byte16ArrayArithmetic.ZERO, 0, counterArray, bytesToCopyToCounter,
+    System.arraycopy(seed, keyLength, counter, 0, bytesToCopyToCounter);
+    System.arraycopy(Byte16ArrayArithmetic.ZERO, 0, counter, bytesToCopyToCounter,
         COUNTER_SIZE_BYTES - bytesToCopyToCounter);
     try {
       cipher.init(Cipher.ENCRYPT_MODE, new SecretKeySpec(key, ALGORITHM));
