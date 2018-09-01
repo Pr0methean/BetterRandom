@@ -89,7 +89,7 @@ public class Pcg128Random extends BaseRandom implements SeekableRandom {
   }
 
   @Override protected double nextDoubleNoEntropyDebit() {
-    return (nextLongNoEntropyDebit() >> (Long.SIZE - ENTROPY_OF_DOUBLE)) * RANDOM_DOUBLE_INCR;
+    return (nextLongNoEntropyDebit() >>> (Long.SIZE - ENTROPY_OF_DOUBLE)) * RANDOM_DOUBLE_INCR;
   }
 
   // TODO: convert to 128 bits
