@@ -53,9 +53,6 @@ public class Pcg128Random extends BaseRandom implements SeekableRandom {
   private static ThreadLocal<byte[]> oldSeed = Byte16ArrayArithmetic.makeByteArrayThreadLocal();
   private static ThreadLocal<byte[]> xorShifted = Byte16ArrayArithmetic.makeByteArrayThreadLocal();
   private static ThreadLocal<byte[]> xorShifted2 = Byte16ArrayArithmetic.makeByteArrayThreadLocal();
-  private static ThreadLocal<byte[]> resultTerm1 = Byte16ArrayArithmetic.makeByteArrayThreadLocal();
-  private static ThreadLocal<byte[]> resultTerm2 = Byte16ArrayArithmetic.makeByteArrayThreadLocal();
-
   private transient byte[] curMult;
   private transient byte[] curPlus;
   private transient byte[] accMult;
@@ -175,8 +172,6 @@ public class Pcg128Random extends BaseRandom implements SeekableRandom {
     }
     byte[] xorShifted = Pcg128Random.xorShifted.get();
     byte[] xorShifted2 = Pcg128Random.xorShifted2.get();
-    byte[] resultTerm1 = Pcg128Random.xorShifted2.get();
-    byte[] resultTerm2 = Pcg128Random.xorShifted2.get();
     // int xorShifted = (int) (((oldInternal >>> ROTATION1) ^ oldInternal) >>> ROTATION2);
     System.arraycopy(oldSeed, 0, xorShifted, 0, SEED_SIZE_BYTES);
     System.arraycopy(oldSeed, 0, xorShifted2, 0, SEED_SIZE_BYTES);
@@ -188,12 +183,8 @@ public class Pcg128Random extends BaseRandom implements SeekableRandom {
     final int nRot = (oldSeed[0] >>> 2) & MASK;
 
     // return ((xorShifted >>> rot) | (xorShifted << ((-rot) & MASK)))
-    System.arraycopy(xorShifted, 0, resultTerm1, 0, SEED_SIZE_BYTES);
-    unsignedShiftRight(resultTerm1, nRot);
-    System.arraycopy(xorShifted, 0, resultTerm2, 0, SEED_SIZE_BYTES);
-    Byte16ArrayArithmetic.unsignedShiftLeft(resultTerm2, SEED_SIZE_BYTES - nRot);
-    orInto(resultTerm2, resultTerm1);
-    return resultTerm2;
+    rotateRight(xorShifted, nRot);
+    return xorShifted;
   }
 
   @Override protected ToStringHelper addSubclassFields(ToStringHelper original) {
