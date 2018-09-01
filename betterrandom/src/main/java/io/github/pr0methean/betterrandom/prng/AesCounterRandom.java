@@ -318,7 +318,7 @@ public class AesCounterRandom extends BaseRandom implements SeekableRandom {
         blocksDelta--;
       }
       blocksDelta -= BLOCKS_AT_ONCE; // Compensate for the increment during nextBlock() below
-      Byte16ArrayArithmetic.addInto(counter, blocksDelta * INTS_PER_BLOCK, true);
+      Byte16ArrayArithmetic.addInto(counter, blocksDelta, true);
       nextBlock();
       index = newIndex;
     } finally {
