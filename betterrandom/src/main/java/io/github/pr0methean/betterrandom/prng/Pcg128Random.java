@@ -48,9 +48,9 @@ public class Pcg128Random extends BaseRandom implements SeekableRandom {
   public static final double RANDOM_DOUBLE_INCR = 0x1.0p-53;
   private static final int MASK = (1 << WANTED_OP_BITS) - 1;
 
-  private transient byte[] oldSeed;
-  private transient byte[] xorShifted;
-  private transient byte[] xorShifted2;
+  private static ThreadLocal<byte[]> oldSeed = Byte16ArrayArithmetic.makeByteArrayThreadLocal();
+  private static ThreadLocal<byte[]> xorShifted = Byte16ArrayArithmetic.makeByteArrayThreadLocal();
+  private static ThreadLocal<byte[]> xorShifted2 = Byte16ArrayArithmetic.makeByteArrayThreadLocal();
   private transient byte[] curMult;
   private transient byte[] curPlus;
   private transient byte[] accMult;
@@ -59,9 +59,6 @@ public class Pcg128Random extends BaseRandom implements SeekableRandom {
 
   @Override protected void initTransientFields() {
     super.initTransientFields();
-    oldSeed = new byte[SEED_SIZE_BYTES];
-    xorShifted = new byte[SEED_SIZE_BYTES];
-    xorShifted2 = new byte[SEED_SIZE_BYTES];
     curMult = new byte[SEED_SIZE_BYTES];
     curPlus = new byte[SEED_SIZE_BYTES];
     accMult = new byte[SEED_SIZE_BYTES];
@@ -156,6 +153,7 @@ public class Pcg128Random extends BaseRandom implements SeekableRandom {
   }
 
   private byte[] internalNext() {
+    byte[] oldSeed = Pcg128Random.oldSeed.get();
     lock.lock();
     try {
       System.arraycopy(seed, 0, oldSeed, 0, SEED_SIZE_BYTES);
@@ -164,7 +162,8 @@ public class Pcg128Random extends BaseRandom implements SeekableRandom {
     } finally {
       lock.unlock();
     }
-
+    byte[] xorShifted = Pcg128Random.xorShifted.get();
+    byte[] xorShifted2 = Pcg128Random.xorShifted2.get();
     // int xorShifted = (int) (((oldInternal >>> ROTATION1) ^ oldInternal) >>> ROTATION2);
     System.arraycopy(oldSeed, 0, xorShifted, 0, SEED_SIZE_BYTES);
     System.arraycopy(oldSeed, 0, xorShifted2, 0, SEED_SIZE_BYTES);
