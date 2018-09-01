@@ -16,6 +16,8 @@ import io.github.pr0methean.betterrandom.seed.SeedGenerator;
 import io.github.pr0methean.betterrandom.util.BinaryUtils;
 import io.github.pr0methean.betterrandom.util.Byte16ArrayArithmetic;
 import io.github.pr0methean.betterrandom.util.EntryPoint;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 /**
  * <p>From the original description, "PCG is a family of simple fast space-efficient statistically
@@ -56,6 +58,7 @@ public class Pcg128Random extends BaseRandom implements SeekableRandom {
   private transient byte[] accMult;
   private transient byte[] accPlus;
   private transient byte[] adjMult;
+  private final Lock advancementLock = new ReentrantLock(); // guards *Mult and *Plus
 
   @Override protected void initTransientFields() {
     super.initTransientFields();
@@ -101,30 +104,35 @@ public class Pcg128Random extends BaseRandom implements SeekableRandom {
    * @param lowDelta low quadword of the distance to advance
    */
   public void advance(long highDelta, long lowDelta) {
-    if (highDelta == 0 && lowDelta == 0) {
-      return;
-    }
-    // The method used here is based on Brown, "Random Number Generation
-    // with Arbitrary Stride,", Transactions of the American Nuclear
-    // Society (Nov. 1994).  The algorithm is very similar to fast
-    // exponentiation.
-    System.arraycopy(MULTIPLIER, 0, curMult, 0, SEED_SIZE_BYTES);
-    System.arraycopy(INCREMENT, 0, curPlus, 0, SEED_SIZE_BYTES);
-    System.arraycopy(Byte16ArrayArithmetic.ONE, 0, accMult, 0, SEED_SIZE_BYTES);
-    System.arraycopy(Byte16ArrayArithmetic.ZERO, 0, accPlus, 0, SEED_SIZE_BYTES);
-    while (lowDelta != 0 || highDelta != 0) {
-      if ((lowDelta & 1) == 1) {
-        multiplyInto(accMult, curMult);
-        multiplyInto(accPlus, curMult);
-        addInto(accPlus, curPlus);
+    advancementLock.lock();
+    try {
+      if (highDelta == 0 && lowDelta == 0) {
+        return;
       }
-      System.arraycopy(curMult, 0, adjMult, 0, SEED_SIZE_BYTES);
-      addInto(adjMult, 1, true);
-      multiplyInto(curPlus, adjMult);
-      multiplyInto(curMult, curMult);
-      lowDelta >>>= 1;
-      lowDelta |= (highDelta & 1L) << 63;
-      highDelta >>>= 1;
+      // The method used here is based on Brown, "Random Number Generation
+      // with Arbitrary Stride,", Transactions of the American Nuclear
+      // Society (Nov. 1994).  The algorithm is very similar to fast
+      // exponentiation.
+      System.arraycopy(MULTIPLIER, 0, curMult, 0, SEED_SIZE_BYTES);
+      System.arraycopy(INCREMENT, 0, curPlus, 0, SEED_SIZE_BYTES);
+      System.arraycopy(Byte16ArrayArithmetic.ONE, 0, accMult, 0, SEED_SIZE_BYTES);
+      System.arraycopy(Byte16ArrayArithmetic.ZERO, 0, accPlus, 0, SEED_SIZE_BYTES);
+      while (lowDelta != 0 || highDelta != 0) {
+        if ((lowDelta & 1) == 1) {
+          multiplyInto(accMult, curMult);
+          multiplyInto(accPlus, curMult);
+          addInto(accPlus, curPlus);
+        }
+        System.arraycopy(curMult, 0, adjMult, 0, SEED_SIZE_BYTES);
+        addInto(adjMult, 1, true);
+        multiplyInto(curPlus, adjMult);
+        multiplyInto(curMult, curMult);
+        lowDelta >>>= 1;
+        lowDelta |= (highDelta & 1L) << 63;
+        highDelta >>>= 1;
+      }
+    } finally {
+      advancementLock.unlock();
     }
     lock.lock();
     try {
