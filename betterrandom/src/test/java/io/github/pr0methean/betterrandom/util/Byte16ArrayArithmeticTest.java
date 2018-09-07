@@ -1,5 +1,6 @@
 package io.github.pr0methean.betterrandom.util;
 
+import static io.github.pr0methean.betterrandom.util.Byte16ArrayArithmetic.rotateRightLeast64;
 import static org.testng.Assert.assertEquals;
 
 import org.testng.annotations.Test;
@@ -79,10 +80,18 @@ public class Byte16ArrayArithmeticTest {
     assertByteArrayEqualsLongs(result, 0x0007_9EC9_64A7_38B2L, 0xEBA3_8FD0_7E7D_607BL);
   }
 
+  @Test public void testRotateLeft() {
+    byte[] result = OPERAND1.clone();
+    Byte16ArrayArithmetic.rotateRight(result, -12);
+    assertByteArrayEqualsLongs(result, 0xC_964A_738B_2EBA_38FL, 0xD_07E7_D607_B6ED_79EL);
+    assertEquals(rotateRightLeast64(OPERAND1, -12), 0xD_07E7_D607_B6ED_79EL);
+  }
+
   @Test public void testRotateRight() {
     byte[] result = OPERAND1.clone();
     Byte16ArrayArithmetic.rotateRight(result, 12);
     assertByteArrayEqualsLongs(result, 0x6ED7_9EC9_64A7_38B2L, 0xEBA3_8FD0_7E7D_607BL);
+    assertEquals(rotateRightLeast64(OPERAND1, 12), 0xEBA3_8FD0_7E7D_607BL);
   }
 
   @Test public void testUnsignedShiftRightOffEdge() {

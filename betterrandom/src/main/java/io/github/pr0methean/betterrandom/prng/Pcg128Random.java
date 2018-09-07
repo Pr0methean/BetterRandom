@@ -1,10 +1,8 @@
 package io.github.pr0methean.betterrandom.prng;
 
-import static io.github.pr0methean.betterrandom.util.BinaryUtils.convertBytesToInt;
 import static io.github.pr0methean.betterrandom.util.Byte16ArrayArithmetic.addInto;
 import static io.github.pr0methean.betterrandom.util.Byte16ArrayArithmetic.multiplyInto;
-import static io.github.pr0methean.betterrandom.util.Byte16ArrayArithmetic.orInto;
-import static io.github.pr0methean.betterrandom.util.Byte16ArrayArithmetic.rotateRight;
+import static io.github.pr0methean.betterrandom.util.Byte16ArrayArithmetic.rotateRightLeast64;
 import static io.github.pr0methean.betterrandom.util.Byte16ArrayArithmetic.unsignedShiftRight;
 import static io.github.pr0methean.betterrandom.util.Byte16ArrayArithmetic.xorInto;
 
@@ -13,7 +11,6 @@ import io.github.pr0methean.betterrandom.SeekableRandom;
 import io.github.pr0methean.betterrandom.seed.DefaultSeedGenerator;
 import io.github.pr0methean.betterrandom.seed.SeedException;
 import io.github.pr0methean.betterrandom.seed.SeedGenerator;
-import io.github.pr0methean.betterrandom.util.BinaryUtils;
 import io.github.pr0methean.betterrandom.util.Byte16ArrayArithmetic;
 import io.github.pr0methean.betterrandom.util.EntryPoint;
 import java.util.concurrent.locks.Lock;
@@ -151,20 +148,14 @@ public class Pcg128Random extends BaseRandom implements SeekableRandom {
   }
 
   @Override protected int next(int bits) {
-    byte[] result = internalNext();
-    return convertBytesToInt(result, Long.BYTES) >>> (Integer.SIZE - bits);
+    return (int) (nextLongNoEntropyDebit() >>> (Long.SIZE - bits));
   }
 
   @Override protected long nextLongNoEntropyDebit() {
-    byte[] result = internalNext();
-    return BinaryUtils.convertBytesToLong(result, Long.BYTES);
-  }
-
-  private byte[] internalNext() {
-    byte[] oldSeed = Pcg128Random.oldSeed.get();
+    byte[] oldSeed1 = oldSeed.get();
     lock.lock();
     try {
-      System.arraycopy(seed, 0, oldSeed, 0, SEED_SIZE_BYTES);
+      System.arraycopy(seed, 0, oldSeed1, 0, SEED_SIZE_BYTES);
       multiplyInto(seed, MULTIPLIER);
       addInto(seed, INCREMENT);
     } finally {
@@ -173,18 +164,17 @@ public class Pcg128Random extends BaseRandom implements SeekableRandom {
     byte[] xorShifted = Pcg128Random.xorShifted.get();
     byte[] xorShifted2 = Pcg128Random.xorShifted2.get();
     // int xorShifted = (int) (((oldInternal >>> ROTATION1) ^ oldInternal) >>> ROTATION2);
-    System.arraycopy(oldSeed, 0, xorShifted, 0, SEED_SIZE_BYTES);
-    System.arraycopy(oldSeed, 0, xorShifted2, 0, SEED_SIZE_BYTES);
+    System.arraycopy(oldSeed1, 0, xorShifted, 0, SEED_SIZE_BYTES);
+    System.arraycopy(oldSeed1, 0, xorShifted2, 0, SEED_SIZE_BYTES);
     unsignedShiftRight(xorShifted2, ROTATION1);
     xorInto(xorShifted, xorShifted2);
     unsignedShiftRight(xorShifted, ROTATION2);
 
     // int rot = (int) (oldInternal >>> (SEED_SIZE_BYTES - WANTED_OP_BITS));
-    final int nRot = (oldSeed[0] >>> 2) & MASK;
+    final int nRot = (oldSeed1[0] >>> 2) & MASK;
 
     // return ((xorShifted >>> rot) | (xorShifted << ((-rot) & MASK)))
-    rotateRight(xorShifted, nRot);
-    return xorShifted;
+    return rotateRightLeast64(xorShifted, nRot);
   }
 
   @Override protected ToStringHelper addSubclassFields(ToStringHelper original) {
