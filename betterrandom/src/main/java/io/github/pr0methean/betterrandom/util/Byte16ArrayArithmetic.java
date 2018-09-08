@@ -88,12 +88,12 @@ public enum Byte16ArrayArithmetic {
 
     // https://stackoverflow.com/a/38880097/833771
     long x_high = x >>> 32;
-    long x_low = x & 0xFFFFFFFFL;
+    long x_low = x & UNSIGNED_INT_TO_LONG_MASK;
     long y_high = y >>> 32;
-    long y_low = y & 0xFFFFFFFFL;
+    long y_low = y & UNSIGNED_INT_TO_LONG_MASK;
     long z2 = x_low * y_low;
     long t = x_high * y_low + (z2 >>> 32);
-    long z1 = t & 0xFFFFFFFFL;
+    long z1 = t & UNSIGNED_INT_TO_LONG_MASK;
     long z0 = t >>> 32;
     z1 += x_low * y_high;
     long highOut = x_high * y_high + z0 + (z1 >>> 32) + convertBytesToLong(counter, 0) * y
