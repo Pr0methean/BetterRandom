@@ -159,7 +159,7 @@ public class RandomDotOrgSeedGeneratorHermeticTest extends PowerMockTestCase {
     }
   }
 
-  @Test
+  @SuppressWarnings("ThrowableNotThrown") @Test
   public void testOverShortResponse() throws Exception {
     RandomDotOrgSeedGenerator.setApiKey(null);
     RandomDotOrgSeedGenerator.setMaxRequestSize(GLOBAL_MAX_REQUEST_SIZE);

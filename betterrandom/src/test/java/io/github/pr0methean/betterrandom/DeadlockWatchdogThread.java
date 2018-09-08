@@ -52,7 +52,7 @@ public class DeadlockWatchdogThread extends LooperThread {
     }
   }
 
-  @SuppressWarnings({"CallToSystemExit", "ConstantConditions"}) @Override public boolean iterate()
+  @SuppressWarnings({"CallToSystemExit", "ConstantConditions", "ObjectAllocationInLoop"}) @Override public boolean iterate()
       throws InterruptedException {
     sleep(60_000);
     boolean deadlockFound = false;

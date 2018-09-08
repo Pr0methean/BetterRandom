@@ -44,7 +44,7 @@ public class SplittableRandomAdapterTest extends SingleThreadSplittableRandomAda
 
   /** Seeding of this PRNG is thread-local, so setSeederThread makes no sense. */
   @Override @Test(expectedExceptions = UnsupportedOperationException.class)
-  public void testRandomSeederThreadIntegration() throws Exception {
+  public void testRandomSeederThreadIntegration() {
     createRng().setSeedGenerator(getTestSeedGenerator());
   }
 

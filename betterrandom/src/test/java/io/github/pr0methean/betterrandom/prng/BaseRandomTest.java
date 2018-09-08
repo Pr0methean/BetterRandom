@@ -365,7 +365,7 @@ public abstract class BaseRandomTest extends PowerMockTestCase {
    * @throws Exception
    */
   @SuppressWarnings("BusyWait") @Test(timeOut = 60_000)
-  public void testRandomSeederThreadIntegration() throws Exception {
+  public void testRandomSeederThreadIntegration() {
     final SeedGenerator seedGenerator = new SemiFakeSeedGenerator(new Random());
     final BaseRandom rng = createRng();
     RandomTestUtils.testReseeding(seedGenerator, rng, true);

@@ -31,8 +31,7 @@ public class LooperThreadTest {
     }
   };
 
-  @Test public void testConstructors()
-      throws IllegalAccessException, InstantiationException, InvocationTargetException {
+  @Test public void testConstructors() {
     TestUtils.testConstructors(LooperThread.class, false, ImmutableMap
         .of(ThreadGroup.class, new ThreadGroup("Test ThreadGroup"), Runnable.class, TARGET,
             String.class, "Test LooperThread", long.class, STACK_SIZE), thread -> {
