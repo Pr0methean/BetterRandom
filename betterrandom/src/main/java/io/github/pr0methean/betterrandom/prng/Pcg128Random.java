@@ -127,15 +127,15 @@ public class Pcg128Random extends BaseRandom implements SeekableRandom {
         lowDelta |= (highDelta & 1L) << 63;
         highDelta >>>= 1;
       }
+      lock.lock();
+      try {
+        multiplyInto(seed, accMult);
+        addInto(seed, accPlus);
+      } finally {
+        lock.unlock();
+      }
     } finally {
       advancementLock.unlock();
-    }
-    lock.lock();
-    try {
-      multiplyInto(seed, accMult);
-      addInto(seed, accPlus);
-    } finally {
-      lock.unlock();
     }
   }
 
