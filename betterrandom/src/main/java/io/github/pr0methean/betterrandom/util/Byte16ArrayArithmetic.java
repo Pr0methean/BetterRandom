@@ -16,7 +16,6 @@ public enum Byte16ArrayArithmetic {
   public static final byte[] ZERO = new byte[SIZE_BYTES];
   public static final byte[] ONE = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1};
   private static final ThreadLocal<byte[]> addendDigits = makeByteArrayThreadLocal();
-  private static final ThreadLocal<byte[]> multAccumulator = makeByteArrayThreadLocal();
   private static final long UNSIGNED_INT_TO_LONG_MASK = (1L << Integer.SIZE) - 1;
 
   /**
