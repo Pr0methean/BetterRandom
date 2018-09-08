@@ -97,6 +97,7 @@ public class AesCounterRandom extends BaseRandom implements SeekableRandom {
   private volatile boolean seeded;
   private volatile int index;
   private transient MessageDigest hash;
+  private transient byte[] addendDigits;
 
   /**
    * Creates a new RNG and seeds it using 256 bits from the {@link DefaultSeedGenerator}.
@@ -161,6 +162,7 @@ public class AesCounterRandom extends BaseRandom implements SeekableRandom {
 
   @Override protected void initTransientFields() {
     super.initTransientFields();
+    addendDigits = new byte[COUNTER_SIZE_BYTES];
     if (counter == null) {
       counter = new byte[COUNTER_SIZE_BYTES];
     }
@@ -320,7 +322,7 @@ public class AesCounterRandom extends BaseRandom implements SeekableRandom {
         blocksDelta--;
       }
       blocksDelta -= BLOCKS_AT_ONCE; // Compensate for the increment during nextBlock() below
-      Byte16ArrayArithmetic.addInto(counter, blocksDelta);
+      Byte16ArrayArithmetic.addInto(counter, blocksDelta, addendDigits);
       nextBlock();
       index = newIndex;
     } finally {
