@@ -47,32 +47,27 @@ public enum Byte16ArrayArithmetic {
     for (int i = 0; i < SIZE_BYTES_MINUS_LONG - offsetBytes; i++) {
       addendDigits[i] = signExtend;
     }
-    for (int i = SIZE_BYTES - offsetBytes; i < SIZE_BYTES; i++) {
-      addendDigits[i] = 0;
-    }
-    addInto(counter, addendDigits);
+    addInto(counter, addendDigits, SIZE_BYTES - offsetBytes);
   }
-    
+
   /**
    * {@code counter += delta}. Inputs must be the same length.
    * @param counter the first input and the result
    * @param delta the second input
    */
   public static void addInto(byte[] counter, byte[] delta) {
+    addInto(counter, delta, 15);
+  }
+
+  private static void addInto(byte[] counter, byte[] delta, int lastIndex) {
     boolean carry = false;
-    for (int i = SIZE_BYTES - 1; i >= 0; i--) {
+    for (int i = lastIndex; i >= 0; i--) {
       final int oldCounterUnsigned = counter[i] < 0 ? counter[i] + 256 : counter[i];
       counter[i] += delta[i] + (carry ? 1 : 0);
       final int newCounterUnsigned = counter[i] < 0 ? counter[i] + 256 : counter[i];
       carry = (oldCounterUnsigned > newCounterUnsigned)
           || (carry && (oldCounterUnsigned == newCounterUnsigned));
     }
-  }
-
-  private static long doMultiplicationLimb(byte[] op1, byte[] op2, int limb1, int limb2)
-  {
-    return (convertBytesToInt(op1, Integer.BYTES * limb1) & UNSIGNED_INT_TO_LONG_MASK)
-        * (convertBytesToInt(op2, Integer.BYTES * limb2) & UNSIGNED_INT_TO_LONG_MASK);
   }
 
   /**
