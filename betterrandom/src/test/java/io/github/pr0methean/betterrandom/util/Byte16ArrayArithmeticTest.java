@@ -1,5 +1,6 @@
 package io.github.pr0methean.betterrandom.util;
 
+import static io.github.pr0methean.betterrandom.util.Byte16ArrayArithmetic.rotateRightLeast64;
 import static org.testng.Assert.assertEquals;
 
 import org.testng.annotations.Test;
@@ -77,12 +78,36 @@ public class Byte16ArrayArithmeticTest {
     byte[] result = OPERAND1.clone();
     Byte16ArrayArithmetic.unsignedShiftRight(result, 12);
     assertByteArrayEqualsLongs(result, 0x0007_9EC9_64A7_38B2L, 0xEBA3_8FD0_7E7D_607BL);
+    Byte16ArrayArithmetic.unsignedShiftRight(result, 68);
+    assertByteArrayEqualsLongs(result, 0, 0x0_0007_9EC9_64A7_38BL);
+  }
+
+  @Test public void testRotateLeft() {
+    byte[] result = OPERAND1.clone();
+    Byte16ArrayArithmetic.rotateRight(result, -12);
+    assertByteArrayEqualsLongs(result, 0xC_964A_738B_2EBA_38FL, 0xD_07E7_D607_B6ED_79EL);
+    assertEquals(rotateRightLeast64(OPERAND1, -12), 0xD_07E7_D607_B6ED_79EL);
+  }
+
+  @Test public void testRotateRightLong() {
+    byte[] result = OPERAND1.clone();
+    Byte16ArrayArithmetic.rotateRight(result, 116);
+    assertByteArrayEqualsLongs(result, 0xC_964A_738B_2EBA_38FL, 0xD_07E7_D607_B6ED_79EL);
+    assertEquals(rotateRightLeast64(OPERAND1, 116), 0xD_07E7_D607_B6ED_79EL);
   }
 
   @Test public void testRotateRight() {
     byte[] result = OPERAND1.clone();
     Byte16ArrayArithmetic.rotateRight(result, 12);
     assertByteArrayEqualsLongs(result, 0x6ED7_9EC9_64A7_38B2L, 0xEBA3_8FD0_7E7D_607BL);
+    assertEquals(rotateRightLeast64(OPERAND1, 12), 0xEBA3_8FD0_7E7D_607BL);
+  }
+
+  @Test public void testRotateLeftLong() {
+    byte[] result = OPERAND1.clone();
+    Byte16ArrayArithmetic.rotateRight(result, -116);
+    assertByteArrayEqualsLongs(result, 0x6ED7_9EC9_64A7_38B2L, 0xEBA3_8FD0_7E7D_607BL);
+    assertEquals(rotateRightLeast64(OPERAND1, -116), 0xEBA3_8FD0_7E7D_607BL);
   }
 
   @Test public void testUnsignedShiftRightOffEdge() {
@@ -95,6 +120,9 @@ public class Byte16ArrayArithmeticTest {
     byte[] result = OPERAND1.clone();
     Byte16ArrayArithmetic.unsignedShiftLeft(result, 12);
     assertByteArrayEqualsLongs(result, 0xC964_A738_B2EB_A38FL, 0xD07E_7D60_7B6E_D000L);
+    Byte16ArrayArithmetic.unsignedShiftLeft(result, 68);
+    assertByteArrayEqualsLongs(result, 0x07E_7D60_7B6E_D000_0L, 0);
+
   }
 
   @Test public void testUnsignedShiftLeftOffEdge() {
