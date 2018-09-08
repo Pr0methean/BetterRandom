@@ -281,7 +281,9 @@ public class AesCounterRandom extends BaseRandom implements SeekableRandom {
     final byte[] key = (seed.length == keyLength) ? seed : Arrays.copyOfRange(seed, 0, keyLength);
     // rest goes to counter
     int bytesToCopyToCounter = seed.length - keyLength;
-    System.arraycopy(seed, keyLength, counter, 0, bytesToCopyToCounter);
+    if (bytesToCopyToCounter > 0) {
+      System.arraycopy(seed, keyLength, counter, 0, bytesToCopyToCounter);
+    }
     System.arraycopy(Byte16ArrayArithmetic.ZERO, 0, counter, bytesToCopyToCounter,
         COUNTER_SIZE_BYTES - bytesToCopyToCounter);
     try {
