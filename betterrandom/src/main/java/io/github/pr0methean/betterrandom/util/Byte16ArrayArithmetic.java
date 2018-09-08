@@ -14,22 +14,21 @@ public enum Byte16ArrayArithmetic {
   public static final int SIZE_BYTES_MINUS_LONG = SIZE_BYTES - Long.BYTES;
   public static final byte[] ZERO = new byte[SIZE_BYTES];
   public static final byte[] ONE = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1};
-  private static final ThreadLocal<byte[]> addendDigits = makeByteArrayThreadLocal();
   private static final long UNSIGNED_INT_TO_LONG_MASK = (1L << Integer.SIZE) - 1;
 
   /**
    * {@code counter += delta}  
    * @param counter the variable-sized input and the result
-   * @param delta the long-sized input 
+   * @param delta the long-sized input
+   * @param addendDigits working register
    */
-  public static void addInto(byte[] counter, long delta) {
-    byte[] addendDigits1 = addendDigits.get();
-    BinaryUtils.convertLongToBytes(delta, addendDigits1, SIZE_BYTES_MINUS_LONG);
+  public static void addInto(byte[] counter, long delta, byte[] addendDigits) {
+    BinaryUtils.convertLongToBytes(delta, addendDigits, SIZE_BYTES_MINUS_LONG);
     final byte signExtend = (byte) (delta < 0 ? -1 : 0);
     for (int i = 0; i < SIZE_BYTES_MINUS_LONG; i++) {
-      addendDigits1[i] = signExtend;
+      addendDigits[i] = signExtend;
     }
-    addInto(counter, addendDigits1);
+    addInto(counter, addendDigits);
   }
 
   /**
