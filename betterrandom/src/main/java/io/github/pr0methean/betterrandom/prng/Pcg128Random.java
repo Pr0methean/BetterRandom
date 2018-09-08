@@ -143,7 +143,12 @@ public class Pcg128Random extends BaseRandom implements SeekableRandom {
     if (seed.length != SEED_SIZE_BYTES) {
       throw new IllegalArgumentException("Pcg128Random requires a 16-byte seed");
     }
-    super.setSeedInternal(seed);
+    advancementLock.lock();
+    try {
+      super.setSeedInternal(seed);
+    } finally {
+      advancementLock.unlock();
+    }
   }
 
   @Override protected int next(int bits) {
