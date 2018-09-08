@@ -31,7 +31,7 @@ public class FakeHttpsUrlConnection extends HttpsURLConnection {
   }
 
   @Override
-  public InputStream getInputStream() throws IOException {
+  public InputStream getInputStream() {
     if (disconnected) {
       throw new IllegalStateException("Already disconnected");
     }
@@ -39,7 +39,7 @@ public class FakeHttpsUrlConnection extends HttpsURLConnection {
   }
 
   @Override
-  public OutputStream getOutputStream() throws IOException {
+  public OutputStream getOutputStream() {
     return os;
   }
 
@@ -54,7 +54,7 @@ public class FakeHttpsUrlConnection extends HttpsURLConnection {
   }
 
   @Override
-  public Certificate[] getServerCertificates() throws SSLPeerUnverifiedException {
+  public Certificate[] getServerCertificates() {
     return CERTIFICATES;
   }
 
@@ -69,21 +69,8 @@ public class FakeHttpsUrlConnection extends HttpsURLConnection {
   }
 
   @Override
-  public void connect() throws IOException {
+  public void connect() {
     connected = true;
-  }
-
-  @Nullable
-  public Proxy getProxy() {
-    return proxy;
-  }
-
-  public byte[] getRequestBody() {
-    return os.toByteArray();
-  }
-
-  public boolean isDisconnected() {
-    return disconnected;
   }
 
   @Override

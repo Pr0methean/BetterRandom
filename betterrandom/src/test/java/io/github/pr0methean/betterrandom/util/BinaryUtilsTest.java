@@ -38,11 +38,11 @@ public class BinaryUtilsTest {
     assertEquals(actual, expected, String.format("Expected %x, got %x", expected, actual));
   }
 
-  @Test public void testConvertLongToBytes() throws Exception {
+  @Test public void testConvertLongToBytes() {
     assert Arrays.equals(LONG_BYTES.clone(), BinaryUtils.convertLongToBytes(LONG));
   }
 
-  @Test public void testConvertIntToBytes() throws Exception {
+  @Test public void testConvertIntToBytes() {
     assert Arrays.equals(INT_BYTES.clone(), BinaryUtils.convertIntToBytes(INT));
   }
 

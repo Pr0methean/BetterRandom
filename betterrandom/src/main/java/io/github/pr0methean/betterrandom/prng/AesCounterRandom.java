@@ -252,7 +252,7 @@ public class AesCounterRandom extends BaseRandom implements SeekableRandom {
     }
   }
 
-  private void checkNotTooLong(byte[] seed) {
+  private static void checkNotTooLong(byte[] seed) {
     if (seed.length > MAX_TOTAL_SEED_LENGTH_BYTES) {
       throw new IllegalArgumentException(String.format(
           "Seed length is %d bytes; maximum is %d bytes", seed.length, MAX_TOTAL_SEED_LENGTH_BYTES));
