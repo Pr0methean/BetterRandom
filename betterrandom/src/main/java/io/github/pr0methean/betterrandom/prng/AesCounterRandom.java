@@ -182,7 +182,7 @@ public class AesCounterRandom extends BaseRandom implements SeekableRandom {
    */
   private void nextBlock() {
     for (int i = 0; i < BLOCKS_AT_ONCE; i++) {
-      Byte16ArrayArithmetic.addInto(counter, 1, true);
+      Byte16ArrayArithmetic.addInto(counter, Byte16ArrayArithmetic.ONE);
       System.arraycopy(counter, 0, counterInput, i * COUNTER_SIZE_BYTES, COUNTER_SIZE_BYTES);
     }
     try {
@@ -320,7 +320,7 @@ public class AesCounterRandom extends BaseRandom implements SeekableRandom {
         blocksDelta--;
       }
       blocksDelta -= BLOCKS_AT_ONCE; // Compensate for the increment during nextBlock() below
-      Byte16ArrayArithmetic.addInto(counter, blocksDelta, true);
+      Byte16ArrayArithmetic.addInto(counter, blocksDelta);
       nextBlock();
       index = newIndex;
     } finally {
