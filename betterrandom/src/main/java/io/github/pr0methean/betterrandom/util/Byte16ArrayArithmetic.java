@@ -156,11 +156,28 @@ public enum Byte16ArrayArithmetic {
     long oldMost = convertBytesToLong(shifted);
     long oldLeast = convertBytesToLong(shifted, Long.BYTES);
     convertLongToBytes(
-        shiftedMost(bits, oldMost, oldLeast) | shiftedMost(bits - 128, oldMost, oldLeast),
+        shiftedMost(bits, oldMost, oldLeast) | shiftedMost(otherShift(bits), oldMost, oldLeast),
         shifted, 0);
-    convertLongToBytes(
-        shiftedLeast(bits, oldMost, oldLeast) | shiftedLeast(bits - 128, oldMost, oldLeast),
+    convertLongToBytes(rotateRightLeast64(bits, oldMost, oldLeast),
         shifted, Long.BYTES);
+  }
+
+  private static long rotateRightLeast64(int bits, long oldMost, long oldLeast) {
+    return shiftedLeast(bits, oldMost, oldLeast) | shiftedLeast(otherShift(bits), oldMost, oldLeast);
+  }
+
+  private static int otherShift(int bits) {
+    return bits > 0 ? bits - 128 : bits + 128;
+  }
+
+  /**
+   * {@code return (long) ((shifted >>> bits) | shifted << (128 - bits))}
+   * @param shifted the array input and the result
+   * @param bits how many bits to shift by
+   */
+  public static long rotateRightLeast64(byte[] shifted, int bits) {
+    return rotateRightLeast64(bits, convertBytesToLong(shifted),
+        convertBytesToLong(shifted, Long.BYTES));
   }
 
   /**
