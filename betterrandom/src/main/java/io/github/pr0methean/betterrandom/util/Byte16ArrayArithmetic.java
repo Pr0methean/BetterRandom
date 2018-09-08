@@ -131,6 +131,22 @@ public enum Byte16ArrayArithmetic {
     convertLongToBytes(shiftedLeast(bits, oldMost, oldLeast), shifted, Long.BYTES);
   }
 
+  /**
+   * {@code return (long)(shifted >>> bits)}
+   * From <a href="https://github.com/patrickfav/bytes-java/blob/743a6ab60649e6ce7ec972412bdcb42010a46077/src/main/java/at/favre/lib/bytes/Util.java#L395">this source</a>.
+   * @param shifted the array input and the result
+   * @param bits how many bits to shift by
+   * @author Patrick Favre-Bulle
+   */
+  public static long unsignedShiftRightLeast64(byte[] shifted, int bits) {
+    long oldLeast = convertBytesToLong(shifted, Long.BYTES);
+    if (bits == 0) {
+      return oldLeast;
+    }
+    long oldMost = convertBytesToLong(shifted);
+    return shiftedLeast(bits, oldMost, oldLeast);
+  }
+
   private static long shiftedMost(int bits, long oldMost, long oldLeast) {
     return trueShiftRight(oldMost, bits) | trueShiftRight(oldLeast, bits + 64);
   }

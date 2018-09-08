@@ -4,6 +4,7 @@ import static io.github.pr0methean.betterrandom.util.Byte16ArrayArithmetic.addIn
 import static io.github.pr0methean.betterrandom.util.Byte16ArrayArithmetic.multiplyInto;
 import static io.github.pr0methean.betterrandom.util.Byte16ArrayArithmetic.rotateRightLeast64;
 import static io.github.pr0methean.betterrandom.util.Byte16ArrayArithmetic.unsignedShiftRight;
+import static io.github.pr0methean.betterrandom.util.Byte16ArrayArithmetic.unsignedShiftRightLeast64;
 import static io.github.pr0methean.betterrandom.util.Byte16ArrayArithmetic.xorInto;
 
 import com.google.common.base.MoreObjects.ToStringHelper;
@@ -167,11 +168,10 @@ public class Pcg128Random extends BaseRandom implements SeekableRandom {
     System.arraycopy(oldSeed, 0, xorShifted, 0, SEED_SIZE_BYTES);
     unsignedShiftRight(xorShifted, ROTATION1);
     xorInto(xorShifted, oldSeed);
-    unsignedShiftRight(xorShifted, ROTATION2);
-
+    long preRotate = unsignedShiftRightLeast64(xorShifted, ROTATION2);
     // int rot = (int) (oldInternal >>> (SEED_SIZE_BYTES - WANTED_OP_BITS));
-    long preRotate = BinaryUtils.convertBytesToLong(xorShifted, Long.BYTES);
     final int rot = (oldSeed[0] >>> 2) & MASK;
+    // return ((xorshifted >>> rot) | (xorshifted << ((-rot) & MASK))) >>> (Integer.SIZE - bits);
     return (preRotate >>> rot) | (preRotate << ((-rot) & MASK));
   }
 

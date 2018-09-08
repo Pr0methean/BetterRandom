@@ -78,8 +78,10 @@ public class Byte16ArrayArithmeticTest {
     byte[] result = OPERAND1.clone();
     Byte16ArrayArithmetic.unsignedShiftRight(result, 12);
     assertByteArrayEqualsLongs(result, 0x0007_9EC9_64A7_38B2L, 0xEBA3_8FD0_7E7D_607BL);
+    assertEquals(Byte16ArrayArithmetic.unsignedShiftRightLeast64(OPERAND1, 12), 0xEBA3_8FD0_7E7D_607BL);
     Byte16ArrayArithmetic.unsignedShiftRight(result, 68);
     assertByteArrayEqualsLongs(result, 0, 0x0_0007_9EC9_64A7_38BL);
+    assertEquals(Byte16ArrayArithmetic.unsignedShiftRightLeast64(OPERAND1, 80), 0x0_0007_9EC9_64A7_38BL);
   }
 
   @Test public void testRotateLeft() {
@@ -120,8 +122,10 @@ public class Byte16ArrayArithmeticTest {
     byte[] result = OPERAND1.clone();
     Byte16ArrayArithmetic.unsignedShiftLeft(result, 12);
     assertByteArrayEqualsLongs(result, 0xC964_A738_B2EB_A38FL, 0xD07E_7D60_7B6E_D000L);
+    assertEquals(Byte16ArrayArithmetic.unsignedShiftRightLeast64(OPERAND1, -12), 0xD07E_7D60_7B6E_D000L);
     Byte16ArrayArithmetic.unsignedShiftLeft(result, 68);
     assertByteArrayEqualsLongs(result, 0x07E_7D60_7B6E_D000_0L, 0);
+    assertEquals(Byte16ArrayArithmetic.unsignedShiftRightLeast64(OPERAND1, -80), 0);
 
   }
 
