@@ -2,7 +2,6 @@ package io.github.pr0methean.betterrandom.prng;
 
 import static io.github.pr0methean.betterrandom.util.Byte16ArrayArithmetic.addInto;
 import static io.github.pr0methean.betterrandom.util.Byte16ArrayArithmetic.multiplyInto;
-import static io.github.pr0methean.betterrandom.util.Byte16ArrayArithmetic.rotateRightLeast64;
 import static io.github.pr0methean.betterrandom.util.Byte16ArrayArithmetic.unsignedShiftRight;
 import static io.github.pr0methean.betterrandom.util.Byte16ArrayArithmetic.unsignedShiftRightLeast64;
 import static io.github.pr0methean.betterrandom.util.Byte16ArrayArithmetic.xorInto;
@@ -12,7 +11,6 @@ import io.github.pr0methean.betterrandom.SeekableRandom;
 import io.github.pr0methean.betterrandom.seed.DefaultSeedGenerator;
 import io.github.pr0methean.betterrandom.seed.SeedException;
 import io.github.pr0methean.betterrandom.seed.SeedGenerator;
-import io.github.pr0methean.betterrandom.util.BinaryUtils;
 import io.github.pr0methean.betterrandom.util.Byte16ArrayArithmetic;
 import io.github.pr0methean.betterrandom.util.EntryPoint;
 import java.util.concurrent.locks.Lock;
