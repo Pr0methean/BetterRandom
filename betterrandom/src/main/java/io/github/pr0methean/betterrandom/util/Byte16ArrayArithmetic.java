@@ -1,6 +1,5 @@
 package io.github.pr0methean.betterrandom.util;
 
-import static io.github.pr0methean.betterrandom.util.BinaryUtils.convertBytesToInt;
 import static io.github.pr0methean.betterrandom.util.BinaryUtils.convertBytesToLong;
 import static io.github.pr0methean.betterrandom.util.BinaryUtils.convertLongToBytes;
 
@@ -34,34 +33,13 @@ public enum Byte16ArrayArithmetic {
     addInto(counter, addendDigits);  }
 
   /**
-   * {@code counter += delta << (8 * offsetBytes)}
-   * @param counter the variable-sized input and the result
-   * @param delta the long-sized input
-   * @param signed if true, treat {@code delta} as signed
-   * @param offsetBytes the number of bytes to shift by
-   */
-  public static void addInto(byte[] counter, long delta, boolean signed, int offsetBytes) {
-    byte[] addendDigits = Byte16ArrayArithmetic.addendDigits.get();
-    BinaryUtils.convertLongToBytesTruncating(delta, addendDigits, SIZE_BYTES_MINUS_LONG - offsetBytes);
-    final byte signExtend = (byte) ((signed && (delta < 0)) ? -1 : 0);
-    for (int i = 0; i < SIZE_BYTES_MINUS_LONG - offsetBytes; i++) {
-      addendDigits[i] = signExtend;
-    }
-    addInto(counter, addendDigits, SIZE_BYTES - offsetBytes);
-  }
-
-  /**
    * {@code counter += delta}. Inputs must be the same length.
    * @param counter the first input and the result
    * @param delta the second input
    */
   public static void addInto(byte[] counter, byte[] delta) {
-    addInto(counter, delta, 15);
-  }
-
-  private static void addInto(byte[] counter, byte[] delta, int lastIndex) {
     boolean carry = false;
-    for (int i = lastIndex; i >= 0; i--) {
+    for (int i = 15; i >= 0; i--) {
       final int oldCounterUnsigned = counter[i] < 0 ? counter[i] + 256 : counter[i];
       counter[i] += delta[i] + (carry ? 1 : 0);
       final int newCounterUnsigned = counter[i] < 0 ? counter[i] + 256 : counter[i];
@@ -198,17 +176,6 @@ public enum Byte16ArrayArithmetic {
   public static void xorInto(byte[] result, byte[] operandB) {
     for (int i = 0; i < SIZE_BYTES; i++) {
       result[i] ^= operandB[i];
-    }
-  }
-
-  /**
-   * {@code result |= operand}. Inputs must be the same length.
-   * @param result the first input and the result
-   * @param operandB the second input
-   */
-  public static void orInto(byte[] result, byte[] operandB) {
-    for (int i = 0; i < SIZE_BYTES; i++) {
-      result[i] |= operandB[i];
     }
   }
 
