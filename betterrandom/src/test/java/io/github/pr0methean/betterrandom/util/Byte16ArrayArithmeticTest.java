@@ -112,10 +112,10 @@ public class Byte16ArrayArithmeticTest {
 
   @Test public void testUnsignedShiftLeft() {
     byte[] result = OPERAND1.clone();
-    Byte16ArrayArithmetic.unsignedShiftLeft(result, 12);
+    Byte16ArrayArithmetic.unsignedShiftRight(result, -12);
     assertByteArrayEqualsLongs(result, 0xC964_A738_B2EB_A38FL, 0xD07E_7D60_7B6E_D000L);
     assertEquals(Byte16ArrayArithmetic.unsignedShiftRightLeast64(OPERAND1, -12), 0xD07E_7D60_7B6E_D000L);
-    Byte16ArrayArithmetic.unsignedShiftLeft(result, 68);
+    Byte16ArrayArithmetic.unsignedShiftRight(result, -68);
     assertByteArrayEqualsLongs(result, 0x07E_7D60_7B6E_D000_0L, 0);
     assertEquals(Byte16ArrayArithmetic.unsignedShiftRightLeast64(OPERAND1, -80), 0);
 
@@ -123,7 +123,7 @@ public class Byte16ArrayArithmeticTest {
 
   @Test public void testUnsignedShiftLeftOffEdge() {
     byte[] result = OPERAND1.clone();
-    Byte16ArrayArithmetic.unsignedShiftLeft(result, 128);
+    Byte16ArrayArithmetic.unsignedShiftRight(result, -128);
     assertByteArrayEqualsLongs(result, 0, 0);
   }
 

@@ -179,15 +179,6 @@ public enum Byte16ArrayArithmetic {
     }
   }
 
-  /**
-   * {@code shifted <<= bits}
-   * @param shifted the array input and the result
-   * @param bits how many bits to shift by
-   */
-  public static void unsignedShiftLeft(byte[] shifted, int bits) {
-    unsignedShiftRight(shifted, -bits);
-  }
-
   public static ThreadLocal<byte[]> makeByteArrayThreadLocal() {
     return ThreadLocal.withInitial(() -> new byte[SIZE_BYTES]);
   }
