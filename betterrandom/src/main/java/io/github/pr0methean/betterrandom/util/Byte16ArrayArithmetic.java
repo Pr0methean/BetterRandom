@@ -18,19 +18,19 @@ public enum Byte16ArrayArithmetic {
   private static final long UNSIGNED_INT_TO_LONG_MASK = (1L << Integer.SIZE) - 1;
 
   /**
-   * {@code counter += delta}
+   * {@code counter += delta}  
    * @param counter the variable-sized input and the result
-   * @param delta the long-sized input
-   * @param signed if true, treat {@code delta} as signed
+   * @param delta the long-sized input 
    */
-  public static void addInto(byte[] counter, long delta, boolean signed) {
-    byte[] addendDigits = Byte16ArrayArithmetic.addendDigits.get();
-    BinaryUtils.convertLongToBytes(delta, addendDigits, SIZE_BYTES_MINUS_LONG);
-    final byte signExtend = (byte) ((signed && (delta < 0)) ? -1 : 0);
+  public static void addInto(byte[] counter, long delta) {
+    byte[] addendDigits1 = addendDigits.get();
+    BinaryUtils.convertLongToBytes(delta, addendDigits1, SIZE_BYTES_MINUS_LONG);
+    final byte signExtend = (byte) (delta < 0 ? -1 : 0);
     for (int i = 0; i < SIZE_BYTES_MINUS_LONG; i++) {
-      addendDigits[i] = signExtend;
+      addendDigits1[i] = signExtend;
     }
-    addInto(counter, addendDigits);  }
+    addInto(counter, addendDigits1);
+  }
 
   /**
    * {@code counter += delta}. Inputs must be the same length.

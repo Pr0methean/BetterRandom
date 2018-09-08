@@ -120,7 +120,7 @@ public class Pcg128Random extends BaseRandom implements SeekableRandom {
           addInto(accPlus, curPlus);
         }
         System.arraycopy(curMult, 0, adjMult, 0, SEED_SIZE_BYTES);
-        addInto(adjMult, 1, true);
+        addInto(adjMult, Byte16ArrayArithmetic.ONE);
         multiplyInto(curPlus, adjMult);
         multiplyInto(curMult, curMult);
         lowDelta >>>= 1;
