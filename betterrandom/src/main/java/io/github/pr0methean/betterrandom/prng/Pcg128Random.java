@@ -127,8 +127,7 @@ public class Pcg128Random extends BaseRandom implements SeekableRandom {
       }
       lock.lock();
       try {
-        multiplyInto(seed, accMult);
-        addInto(seed, accPlus);
+        multiplyIntoAndAddInto(seed, accMult, accPlus);
       } finally {
         lock.unlock();
       }
