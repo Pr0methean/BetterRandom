@@ -134,10 +134,4 @@ public class Byte16ArrayArithmeticTest {
     Byte16ArrayArithmetic.unsignedShiftRight(result, -128);
     assertByteArrayEqualsLongs(result, 0, 0);
   }
-
-  @Test public void testXorInto() {
-    byte[] result = OPERAND1.clone();
-    Byte16ArrayArithmetic.xorInto(result, OPERAND2);
-    assertByteArrayEqualsLongs(result, 0xBB87_880F_D5EA_A991L, 0x5BE6_C66F_FB23_6004L);
-  }
 }
