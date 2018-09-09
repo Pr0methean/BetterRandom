@@ -75,6 +75,39 @@ public enum Byte16ArrayArithmetic {
     convertLongToBytes(lowOut, counter, Long.BYTES);
   }
 
+  /**
+   * {@code counter *= mult; counter += add}
+   * @param counter the first input and the result
+   * @param mult the input to multiply by
+   * @param add the input to add after multiplying
+   */
+  @SuppressWarnings("NumericCastThatLosesPrecision") public static void multiplyIntoAndAddInto(
+      byte[] counter, byte[] mult, byte[] add) {
+    long x = convertBytesToLong(counter, Long.BYTES);
+    long y = convertBytesToLong(mult, Long.BYTES);
+
+    // https://stackoverflow.com/a/38880097/833771
+    long x_high = x >>> 32;
+    long x_low = x & UNSIGNED_INT_TO_LONG_MASK;
+    long y_high = y >>> 32;
+    long y_low = y & UNSIGNED_INT_TO_LONG_MASK;
+    long z2 = x_low * y_low;
+    long t = x_high * y_low + (z2 >>> 32);
+    long z1 = t & UNSIGNED_INT_TO_LONG_MASK;
+    long z0 = t >>> 32;
+    z1 += x_low * y_high;
+    long lowProduct = x * y;
+    long lowOut = lowProduct + convertBytesToLong(add, Long.BYTES);
+    long highOut = (x_high * y_high) + z0 + (z1 >>> 32)
+        + (convertBytesToLong(counter, 0) * y)
+        + (convertBytesToLong(mult, 0) * x)
+        + convertBytesToLong(add, 0)
+        + (Long.compareUnsigned(lowProduct, lowOut) > 0 ? 1 : 0);
+
+    convertLongToBytes(highOut, counter, 0);
+    convertLongToBytes(lowOut, counter, Long.BYTES);
+  }
+
   private static long trueShiftRight(long input, int amount) {
     if (amount <= -Long.SIZE || amount >= Long.SIZE) {
       return 0;
