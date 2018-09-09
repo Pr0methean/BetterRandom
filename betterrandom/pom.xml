@@ -157,6 +157,29 @@
     </profile>
     <profile>
       <id>pit</id>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.pitest</groupId>
+            <artifactId>pitest-maven</artifactId>
+            <version>${pitest.version}</version>
+            <configuration>
+              <threads>4</threads>
+              <coverageThreshold>85</coverageThreshold>
+              <mutationThreshold>75</mutationThreshold>
+              <!-- AesCounterRandom excluded due to https://github.com/hcoles/pitest/issues/504 -->
+              <excludedClasses>io.github.pr0methean.betterrandom.prng.AesCounterRandom</excludedClasses>
+              <avoidCallsTo>
+                <avoidCallsTo>org.slf4j</avoidCallsTo>
+              </avoidCallsTo>
+              <timeoutFactor>2</timeoutFactor>
+              <timeoutConstant>4000</timeoutConstant>
+              <testPlugin>testng</testPlugin>
+              <failWhenNoMutations>true</failWhenNoMutations>
+            </configuration>
+          </plugin>
+        </plugins>
+      </build>
       <dependencies>
         <dependency>
           <groupId>org.testng</groupId>
@@ -693,25 +716,6 @@
       </plugins>
     </pluginManagement>
     <plugins>
-      <plugin>
-        <groupId>org.pitest</groupId>
-        <artifactId>pitest-maven</artifactId>
-        <version>${pitest.version}</version>
-        <configuration>
-          <threads>4</threads>
-          <coverageThreshold>85</coverageThreshold>
-          <mutationThreshold>75</mutationThreshold>
-          <!-- AesCounterRandom excluded due to https://github.com/hcoles/pitest/issues/504 -->
-          <excludedClasses>io.github.pr0methean.betterrandom.prng.AesCounterRandom</excludedClasses>
-          <avoidCallsTo>
-            <avoidCallsTo>org.slf4j</avoidCallsTo>
-          </avoidCallsTo>
-          <timeoutFactor>2</timeoutFactor>
-          <timeoutConstant>4000</timeoutConstant>
-          <testPlugin>testng</testPlugin>
-          <failWhenNoMutations>true</failWhenNoMutations>
-        </configuration>
-      </plugin>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-enforcer-plugin</artifactId>
