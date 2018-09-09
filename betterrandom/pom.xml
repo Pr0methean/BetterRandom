@@ -28,6 +28,12 @@
           <version>1.7.25</version>
         </dependency>
         <dependency>
+          <groupId>org.apache.logging.log4j</groupId>
+          <artifactId>log4j-slf4j-impl</artifactId>
+          <version>2.11.1</version>
+          <scope>test</scope>
+        </dependency>
+        <dependency>
           <!-- Overrides transitive dep on 5.2.1 -->
           <groupId>net.sf.proguard</groupId>
           <artifactId>proguard-base</artifactId>
@@ -109,6 +115,11 @@
         <maven.compiler.target>1.9</maven.compiler.target>
       </properties>
       <dependencies>
+        <dependency>
+          <groupId>org.apache.logging.log4j</groupId>
+          <artifactId>log4j-slf4j18-impl</artifactId>
+          <version>2.11.1</version>
+        </dependency>
         <dependency>
           <groupId>org.slf4j</groupId>
           <artifactId>slf4j-api</artifactId>
@@ -281,12 +292,6 @@
   </distributionManagement>
 
   <dependencies>
-    <dependency>
-      <groupId>org.apache.logging.log4j</groupId>
-      <artifactId>log4j-slf4j-impl</artifactId>
-      <version>2.11.1</version>
-      <scope>test</scope>
-    </dependency>
     <dependency>
       <!-- https://mvnrepository.com/artifact/org.apache.maven.plugins/maven-deploy-plugin -->
       <groupId>org.apache.maven.plugins</groupId>
