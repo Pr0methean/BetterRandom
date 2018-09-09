@@ -246,7 +246,7 @@
     <proguard.version>6.0.3</proguard.version>
     <jacoco.version>0.8.2</jacoco.version>
     <powermock.version>2.0.0-beta.5</powermock.version>
-    <mockito.version>2.21.0</mockito.version>
+    <mockito.version>2.22.0</mockito.version>
     <pitest.version>1.4.2</pitest.version>
     <test.argline>-Djava.security.egd=file:/dev/./urandom</test.argline>
     <test.jdk8.argline>${test.argline}</test.jdk8.argline>
@@ -306,7 +306,7 @@
     <dependency>
       <groupId>org.testng</groupId>
       <artifactId>testng</artifactId>
-      <version>6.14.3</version>
+      <version>7.0.0-beta1</version>
       <scope>test</scope>
     </dependency>
     <dependency>
