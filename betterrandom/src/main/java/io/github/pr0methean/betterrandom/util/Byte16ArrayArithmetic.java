@@ -75,6 +75,35 @@ public enum Byte16ArrayArithmetic {
     convertLongToBytes(lowOut, counter, Long.BYTES);
   }
 
+  /**
+   * {@code counter += mult2 * mult1}
+   * @param counter the first input and the result
+   * @param mult2 the second input
+   */
+  @SuppressWarnings("NumericCastThatLosesPrecision") public static void multiplyAndAddInto(
+      byte[] counter, byte[] mult1, byte[] mult2) {
+    long x = convertBytesToLong(mult1, Long.BYTES);
+    long y = convertBytesToLong(mult2, Long.BYTES);
+
+    // https://stackoverflow.com/a/38880097/833771
+    long x_high = x >>> 32;
+    long x_low = x & UNSIGNED_INT_TO_LONG_MASK;
+    long y_high = y >>> 32;
+    long y_low = y & UNSIGNED_INT_TO_LONG_MASK;
+    long z2 = x_low * y_low;
+    long t = x_high * y_low + (z2 >>> 32);
+    long z1 = t & UNSIGNED_INT_TO_LONG_MASK;
+    long z0 = t >>> 32;
+    z1 += x_low * y_high;
+    final long lowProduct = x * y;
+    final long lowOut = lowProduct + convertBytesToLong(counter, Long.BYTES);
+    final long highOut = x_high * y_high + z0 + (z1 >>> 32) + convertBytesToLong(mult1, 0) * y
+        + convertBytesToLong(mult2, 0) * x + convertBytesToLong(counter, 0)
+        + (lowOut < lowProduct ? 1 : 0);
+    convertLongToBytes(highOut, counter, 0);
+    convertLongToBytes(lowOut, counter, Long.BYTES);
+  }
+
   private static long trueShiftRight(long input, int amount) {
     if (amount <= -Long.SIZE || amount >= Long.SIZE) {
       return 0;
