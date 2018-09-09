@@ -50,8 +50,6 @@ public class Pcg128Random extends BaseRandom implements SeekableRandom {
   public static final double RANDOM_DOUBLE_INCR = 0x1.0p-53;
   private static final int MASK = (1 << WANTED_OP_BITS) - 1;
 
-  private static ThreadLocal<byte[]> oldSeed = Byte16ArrayArithmetic.makeByteArrayThreadLocal();
-  private static ThreadLocal<byte[]> xorShifted = Byte16ArrayArithmetic.makeByteArrayThreadLocal();
   private transient byte[] curMult;
   private transient byte[] curPlus;
   private transient byte[] accMult;
