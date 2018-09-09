@@ -202,19 +202,4 @@ public enum Byte16ArrayArithmetic {
         convertBytesToLong(shifted, Long.BYTES));
   }
 
-  /**
-   * {@code result ^= operand}. Inputs must be the same length.
-   * @param result the first input and the result
-   * @param operandB the second input
-   */
-  public static void xorInto(byte[] result, byte[] operandB) {
-    for (int i = 0; i < SIZE_BYTES; i++) {
-      result[i] ^= operandB[i];
-    }
-  }
-
-  public static ThreadLocal<byte[]> makeByteArrayThreadLocal() {
-    return ThreadLocal.withInitial(() -> new byte[SIZE_BYTES]);
-  }
-
 }

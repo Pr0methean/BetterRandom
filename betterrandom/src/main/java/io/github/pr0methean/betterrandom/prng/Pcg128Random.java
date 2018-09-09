@@ -5,9 +5,6 @@ import static io.github.pr0methean.betterrandom.util.Byte16ArrayArithmetic.multi
 import static io.github.pr0methean.betterrandom.util.Byte16ArrayArithmetic.multiplyIntoAndAddInto;
 import static io.github.pr0methean.betterrandom.util.Byte16ArrayArithmetic.shiftedLeast;
 import static io.github.pr0methean.betterrandom.util.Byte16ArrayArithmetic.shiftedMost;
-import static io.github.pr0methean.betterrandom.util.Byte16ArrayArithmetic.unsignedShiftRight;
-import static io.github.pr0methean.betterrandom.util.Byte16ArrayArithmetic.unsignedShiftRightLeast64;
-import static io.github.pr0methean.betterrandom.util.Byte16ArrayArithmetic.xorInto;
 
 import com.google.common.base.MoreObjects.ToStringHelper;
 import io.github.pr0methean.betterrandom.SeekableRandom;
