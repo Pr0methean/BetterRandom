@@ -313,11 +313,11 @@ public class AesCounterRandom extends BaseRandom implements SeekableRandom {
     lock.lock();
     try {
       int newIndex = index + deltaWithinBlock;
-      while (newIndex >= COUNTER_SIZE_BYTES) {
+      if (newIndex >= COUNTER_SIZE_BYTES) {
         newIndex -= COUNTER_SIZE_BYTES;
         blocksDelta++;
       }
-      while (newIndex < 0) {
+      if (newIndex < 0) {
         newIndex += COUNTER_SIZE_BYTES;
         blocksDelta--;
       }
