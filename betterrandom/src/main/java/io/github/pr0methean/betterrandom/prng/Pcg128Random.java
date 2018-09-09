@@ -2,6 +2,8 @@ package io.github.pr0methean.betterrandom.prng;
 
 import static io.github.pr0methean.betterrandom.util.Byte16ArrayArithmetic.addInto;
 import static io.github.pr0methean.betterrandom.util.Byte16ArrayArithmetic.multiplyInto;
+import static io.github.pr0methean.betterrandom.util.Byte16ArrayArithmetic.shiftedLeast;
+import static io.github.pr0methean.betterrandom.util.Byte16ArrayArithmetic.shiftedMost;
 import static io.github.pr0methean.betterrandom.util.Byte16ArrayArithmetic.unsignedShiftRight;
 import static io.github.pr0methean.betterrandom.util.Byte16ArrayArithmetic.unsignedShiftRightLeast64;
 import static io.github.pr0methean.betterrandom.util.Byte16ArrayArithmetic.xorInto;
@@ -11,6 +13,7 @@ import io.github.pr0methean.betterrandom.SeekableRandom;
 import io.github.pr0methean.betterrandom.seed.DefaultSeedGenerator;
 import io.github.pr0methean.betterrandom.seed.SeedException;
 import io.github.pr0methean.betterrandom.seed.SeedGenerator;
+import io.github.pr0methean.betterrandom.util.BinaryUtils;
 import io.github.pr0methean.betterrandom.util.Byte16ArrayArithmetic;
 import io.github.pr0methean.betterrandom.util.EntryPoint;
 import java.util.concurrent.locks.Lock;
@@ -156,24 +159,23 @@ public class Pcg128Random extends BaseRandom implements SeekableRandom {
   }
 
   @Override protected long nextLongNoEntropyDebit() {
-    byte[] oldSeed = Pcg128Random.oldSeed.get();
+    long oldSeedMost, oldSeedLeast;
     lock.lock();
     try {
-      System.arraycopy(seed, 0, oldSeed, 0, SEED_SIZE_BYTES);
+      oldSeedMost = BinaryUtils.convertBytesToLong(seed, 0);
+      oldSeedLeast = BinaryUtils.convertBytesToLong(seed, Long.BYTES);
       multiplyInto(seed, MULTIPLIER);
       addInto(seed, INCREMENT);
     } finally {
       lock.unlock();
     }
-    byte[] xorShifted = Pcg128Random.xorShifted.get();
     // Calculate output function (XSH RR), uses old state for max ILP
     // int xorShifted = (int) (((oldInternal >>> ROTATION1) ^ oldInternal) >>> ROTATION2);
-    System.arraycopy(oldSeed, 0, xorShifted, 0, SEED_SIZE_BYTES);
-    unsignedShiftRight(xorShifted, ROTATION1);
-    xorInto(xorShifted, oldSeed);
-    long preRotate = unsignedShiftRightLeast64(xorShifted, ROTATION2);
+    long xorShiftedMost = shiftedMost(ROTATION1, oldSeedMost, oldSeedLeast) ^ oldSeedMost;
+    long xorShiftedLeast = shiftedLeast(ROTATION1, oldSeedMost, oldSeedLeast) ^ oldSeedLeast;
+    long preRotate = shiftedLeast(ROTATION2, xorShiftedMost, xorShiftedLeast);
     // int rot = (int) (oldInternal >>> (SEED_SIZE_BYTES - WANTED_OP_BITS));
-    final int rot = (oldSeed[0] >>> 2) & MASK;
+    final int rot = ((int)(oldSeedMost >>> 58)) & MASK;
     // return ((xorshifted >>> rot) | (xorshifted << ((-rot) & MASK))) >>> (Integer.SIZE - bits);
     return (preRotate >>> rot) | (preRotate << ((-rot) & MASK));
   }

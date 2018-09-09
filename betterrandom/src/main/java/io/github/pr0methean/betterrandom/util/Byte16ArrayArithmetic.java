@@ -118,11 +118,13 @@ public enum Byte16ArrayArithmetic {
     return shiftedLeast(bits, oldMost, oldLeast);
   }
 
-  private static long shiftedMost(int bits, long oldMost, long oldLeast) {
+  /** TODO: Document this. */
+  public static long shiftedMost(int bits, long oldMost, long oldLeast) {
     return trueShiftRight(oldMost, bits) | trueShiftRight(oldLeast, bits + 64);
   }
 
-  private static long shiftedLeast(int bits, long oldMost, long oldLeast) {
+  /** TODO: Document this. */
+  public static long shiftedLeast(int bits, long oldMost, long oldLeast) {
     return trueShiftRight(oldLeast, bits) | trueShiftRight(oldMost, bits - 64);
   }
 
