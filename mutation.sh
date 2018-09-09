@@ -1,7 +1,7 @@
 #!/bin/bash
 cd betterrandom
 set -eo pipefail # TODO: Find a pipefail method that's not Bash-specific
-mvn clean test-compile org.pitest:pitest-maven:mutationCoverage 2>&1 | tee >(grep -qv "BUILD FAILURE")
+mvn -Ppit clean test-compile org.pitest:pitest-maven:mutationCoverage 2>&1 | tee >(grep -qv "BUILD FAILURE")
 if [ ! $? ]; then
   exit 1
 fi
