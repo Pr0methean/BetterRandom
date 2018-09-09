@@ -2,6 +2,7 @@ package io.github.pr0methean.betterrandom.prng;
 
 import static io.github.pr0methean.betterrandom.util.Byte16ArrayArithmetic.addInto;
 import static io.github.pr0methean.betterrandom.util.Byte16ArrayArithmetic.multiplyInto;
+import static io.github.pr0methean.betterrandom.util.Byte16ArrayArithmetic.multiplyIntoAndAddInto;
 import static io.github.pr0methean.betterrandom.util.Byte16ArrayArithmetic.shiftedLeast;
 import static io.github.pr0methean.betterrandom.util.Byte16ArrayArithmetic.shiftedMost;
 import static io.github.pr0methean.betterrandom.util.Byte16ArrayArithmetic.unsignedShiftRight;
@@ -117,8 +118,7 @@ public class Pcg128Random extends BaseRandom implements SeekableRandom {
       while (lowDelta != 0 || highDelta != 0) {
         if ((lowDelta & 1) == 1) {
           multiplyInto(accMult, curMult);
-          multiplyInto(accPlus, curMult);
-          addInto(accPlus, curPlus);
+          multiplyIntoAndAddInto(accPlus, curMult, curPlus);
         }
         System.arraycopy(curMult, 0, adjMult, 0, SEED_SIZE_BYTES);
         addInto(adjMult, Byte16ArrayArithmetic.ONE);
@@ -167,8 +167,7 @@ public class Pcg128Random extends BaseRandom implements SeekableRandom {
     try {
       oldSeedMost = BinaryUtils.convertBytesToLong(seed, 0);
       oldSeedLeast = BinaryUtils.convertBytesToLong(seed, Long.BYTES);
-      multiplyInto(seed, MULTIPLIER);
-      addInto(seed, INCREMENT);
+      multiplyIntoAndAddInto(seed, MULTIPLIER, INCREMENT);
     } finally {
       lock.unlock();
     }

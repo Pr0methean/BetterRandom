@@ -54,6 +54,13 @@ public class Byte16ArrayArithmeticTest {
     assertByteArrayEqualsLongs(result, 0, 1);
   }
 
+  @Test public void testMultiplyIntoAndAddInto() {
+    byte[] result = OPERAND1.clone();
+    Byte16ArrayArithmetic.multiplyIntoAndAddInto(result, OPERAND1, OPERAND2);
+    assertByteArrayEqualsLongs(result,
+        0x837a_715f_10d1_6e7fL, 0x046b_bd4d_ecd0_ae52L);
+  }
+
   @Test public void testMultiplyIntoOnes() {
     byte[] result = ONES.clone();
     Byte16ArrayArithmetic.multiplyInto(result, ONES);
