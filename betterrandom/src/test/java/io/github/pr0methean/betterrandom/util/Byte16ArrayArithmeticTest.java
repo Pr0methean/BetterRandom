@@ -1,6 +1,7 @@
 package io.github.pr0methean.betterrandom.util;
 
 import static io.github.pr0methean.betterrandom.util.Byte16ArrayArithmetic.rotateRightLeast64;
+import static io.github.pr0methean.betterrandom.util.Java8Constants.LONG_BYTES;
 import static org.testng.Assert.assertEquals;
 
 import org.testng.annotations.Test;
@@ -11,7 +12,7 @@ public class Byte16ArrayArithmeticTest {
   private static byte[] longsToByteArray(final long most, final long least) {
     final byte[] out = new byte[16];
     BinaryUtils.convertLongToBytes(most, out, 0);
-    BinaryUtils.convertLongToBytes(least, out, Long.BYTES);
+    BinaryUtils.convertLongToBytes(least, out, LONG_BYTES);
     return out;
   }
 
@@ -30,7 +31,7 @@ public class Byte16ArrayArithmeticTest {
     final String message = String.format("Expected %016X%016X, got %s",
         expectedMost, expectedLeast, BinaryUtils.convertBytesToHexString(actual));
     assertEquals(BinaryUtils.convertBytesToLong(actual, 0), expectedMost, message);
-    assertEquals(BinaryUtils.convertBytesToLong(actual, Long.BYTES), expectedLeast, message);
+    assertEquals(BinaryUtils.convertBytesToLong(actual, LONG_BYTES), expectedLeast, message);
   }
 
   @Test public void testAddIntoBb() {

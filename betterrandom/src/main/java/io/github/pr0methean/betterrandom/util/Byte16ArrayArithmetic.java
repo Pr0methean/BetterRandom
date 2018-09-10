@@ -103,7 +103,7 @@ public enum Byte16ArrayArithmetic {
         + (convertBytesToLong(counter, 0) * y)
         + (convertBytesToLong(mult, 0) * x)
         + convertBytesToLong(add, 0)
-        + (Long.compareUnsigned(lowProduct, lowOut) > 0 ? 1 : 0);
+        + ((lowProduct + Long.MIN_VALUE > lowOut + Long.MIN_VALUE) ? 1 : 0);
 
     convertLongToBytes(highOut, counter, 0);
     convertLongToBytes(lowOut, counter, LONG_BYTES);
