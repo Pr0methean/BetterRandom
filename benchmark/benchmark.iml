@@ -11,7 +11,7 @@
       <sourceFolder url="file://$MODULE_DIR$/src/main/resources" type="java-resource" />
       <excludeFolder url="file://$MODULE_DIR$/target" />
     </content>
-    <orderEntry type="jdk" jdkName="1.7" jdkType="JavaSDK" />
+    <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="library" name="Maven: org.checkerframework:checker-qual:2.1.14" level="project" />
     <orderEntry type="library" name="Maven: org.checkerframework:checker:2.1.14" level="project" />
@@ -51,5 +51,6 @@
     <orderEntry type="library" name="Maven: org.ow2.asm:asm-util:5.0.3" level="project" />
     <orderEntry type="library" name="Maven: org.ow2.asm:asm-xml:5.0.3" level="project" />
     <orderEntry type="library" name="Maven: com.google.guava:guava:18.0" level="project" />
+    <orderEntry type="module" module-name="BetterRandom" />
   </component>
 </module>
