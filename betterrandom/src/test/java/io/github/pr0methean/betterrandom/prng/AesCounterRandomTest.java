@@ -43,7 +43,7 @@ public class AesCounterRandomTest extends SeekableRandomTest {
     try {
       MAX_SIZE = Cipher.getMaxAllowedKeyLength("AES") / 8
             + AesCounterRandom.COUNTER_SIZE_BYTES;
-    } catch (NoSuchAlgorithmException e) {
+    } catch (final NoSuchAlgorithmException e) {
       throw new AssertionError(e);
     }
   }
@@ -66,7 +66,7 @@ public class AesCounterRandomTest extends SeekableRandomTest {
     seedSizeBytes = seedSize;
   }
 
-  @Override protected int getNewSeedLength(BaseRandom basePrng) {
+  @Override protected int getNewSeedLength(final BaseRandom basePrng) {
     return seedSizeBytes;
   }
 

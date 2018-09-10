@@ -22,7 +22,7 @@ public enum Byte16ArrayArithmetic {
    * @param delta the long-sized input
    * @param addendDigits working register
    */
-  public static void addInto(byte[] counter, long delta, byte[] addendDigits) {
+  public static void addInto(final byte[] counter, final long delta, final byte[] addendDigits) {
     BinaryUtils.convertLongToBytes(delta, addendDigits, SIZE_BYTES_MINUS_LONG);
     final byte signExtend = (byte) (delta < 0 ? -1 : 0);
     for (int i = 0; i < SIZE_BYTES_MINUS_LONG; i++) {
@@ -36,7 +36,7 @@ public enum Byte16ArrayArithmetic {
    * @param counter the first input and the result
    * @param delta the second input
    */
-  public static void addInto(byte[] counter, byte[] delta) {
+  public static void addInto(final byte[] counter, final byte[] delta) {
     boolean carry = false;
     for (int i = 15; i >= 0; i--) {
       final int oldCounterUnsigned = counter[i] < 0 ? counter[i] + 256 : counter[i];
@@ -53,24 +53,24 @@ public enum Byte16ArrayArithmetic {
    * @param mult the second input
    */
   @SuppressWarnings("NumericCastThatLosesPrecision") public static void multiplyInto(
-      byte[] counter, byte[] mult) {
-    long x = convertBytesToLong(counter, Long.BYTES);
-    long y = convertBytesToLong(mult, Long.BYTES);
+      final byte[] counter, final byte[] mult) {
+    final long x = convertBytesToLong(counter, Long.BYTES);
+    final long y = convertBytesToLong(mult, Long.BYTES);
 
     // https://stackoverflow.com/a/38880097/833771
-    long x_high = x >>> 32;
-    long x_low = x & UNSIGNED_INT_TO_LONG_MASK;
-    long y_high = y >>> 32;
-    long y_low = y & UNSIGNED_INT_TO_LONG_MASK;
-    long z2 = x_low * y_low;
-    long t = x_high * y_low + (z2 >>> 32);
+    final long x_high = x >>> 32;
+    final long x_low = x & UNSIGNED_INT_TO_LONG_MASK;
+    final long y_high = y >>> 32;
+    final long y_low = y & UNSIGNED_INT_TO_LONG_MASK;
+    final long z2 = x_low * y_low;
+    final long t = x_high * y_low + (z2 >>> 32);
     long z1 = t & UNSIGNED_INT_TO_LONG_MASK;
-    long z0 = t >>> 32;
+    final long z0 = t >>> 32;
     z1 += x_low * y_high;
-    long highOut = x_high * y_high + z0 + (z1 >>> 32) + convertBytesToLong(counter, 0) * y
+    final long highOut = x_high * y_high + z0 + (z1 >>> 32) + convertBytesToLong(counter, 0) * y
         + convertBytesToLong(mult, 0) * x;
 
-    long lowOut = x * y;
+    final long lowOut = x * y;
     convertLongToBytes(highOut, counter, 0);
     convertLongToBytes(lowOut, counter, Long.BYTES);
   }
@@ -82,23 +82,23 @@ public enum Byte16ArrayArithmetic {
    * @param add the input to add after multiplying
    */
   @SuppressWarnings("NumericCastThatLosesPrecision") public static void multiplyIntoAndAddInto(
-      byte[] counter, byte[] mult, byte[] add) {
-    long x = convertBytesToLong(counter, Long.BYTES);
-    long y = convertBytesToLong(mult, Long.BYTES);
+      final byte[] counter, final byte[] mult, final byte[] add) {
+    final long x = convertBytesToLong(counter, Long.BYTES);
+    final long y = convertBytesToLong(mult, Long.BYTES);
 
     // https://stackoverflow.com/a/38880097/833771
-    long x_high = x >>> 32;
-    long x_low = x & UNSIGNED_INT_TO_LONG_MASK;
-    long y_high = y >>> 32;
-    long y_low = y & UNSIGNED_INT_TO_LONG_MASK;
-    long z2 = x_low * y_low;
-    long t = x_high * y_low + (z2 >>> 32);
+    final long x_high = x >>> 32;
+    final long x_low = x & UNSIGNED_INT_TO_LONG_MASK;
+    final long y_high = y >>> 32;
+    final long y_low = y & UNSIGNED_INT_TO_LONG_MASK;
+    final long z2 = x_low * y_low;
+    final long t = x_high * y_low + (z2 >>> 32);
     long z1 = t & UNSIGNED_INT_TO_LONG_MASK;
-    long z0 = t >>> 32;
+    final long z0 = t >>> 32;
     z1 += x_low * y_high;
-    long lowProduct = x * y;
-    long lowOut = lowProduct + convertBytesToLong(add, Long.BYTES);
-    long highOut = (x_high * y_high) + z0 + (z1 >>> 32)
+    final long lowProduct = x * y;
+    final long lowOut = lowProduct + convertBytesToLong(add, Long.BYTES);
+    final long highOut = (x_high * y_high) + z0 + (z1 >>> 32)
         + (convertBytesToLong(counter, 0) * y)
         + (convertBytesToLong(mult, 0) * x)
         + convertBytesToLong(add, 0)
@@ -108,7 +108,7 @@ public enum Byte16ArrayArithmetic {
     convertLongToBytes(lowOut, counter, Long.BYTES);
   }
 
-  private static long trueShiftRight(long input, int amount) {
+  private static long trueShiftRight(final long input, final int amount) {
     if (amount <= -Long.SIZE || amount >= Long.SIZE) {
       return 0;
     }
@@ -125,12 +125,12 @@ public enum Byte16ArrayArithmetic {
    * @param bits how many bits to shift by
    * @author Patrick Favre-Bulle
    */
-  public static void unsignedShiftRight(byte[] shifted, int bits) {
+  public static void unsignedShiftRight(final byte[] shifted, final int bits) {
     if (bits == 0) {
       return;
     }
-    long oldMost = convertBytesToLong(shifted);
-    long oldLeast = convertBytesToLong(shifted, Long.BYTES);
+    final long oldMost = convertBytesToLong(shifted);
+    final long oldLeast = convertBytesToLong(shifted, Long.BYTES);
     convertLongToBytes(shiftedMost(bits, oldMost, oldLeast), shifted, 0);
     convertLongToBytes(shiftedLeast(bits, oldMost, oldLeast), shifted, Long.BYTES);
   }
@@ -142,12 +142,12 @@ public enum Byte16ArrayArithmetic {
    * @param bits how many bits to shift by
    * @author Patrick Favre-Bulle
    */
-  public static long unsignedShiftRightLeast64(byte[] shifted, int bits) {
-    long oldLeast = convertBytesToLong(shifted, Long.BYTES);
+  public static long unsignedShiftRightLeast64(final byte[] shifted, final int bits) {
+    final long oldLeast = convertBytesToLong(shifted, Long.BYTES);
     if (bits == 0) {
       return oldLeast;
     }
-    long oldMost = convertBytesToLong(shifted);
+    final long oldMost = convertBytesToLong(shifted);
     return shiftedLeast(bits, oldMost, oldLeast);
   }
 
@@ -158,7 +158,7 @@ public enum Byte16ArrayArithmetic {
    * @param oldLeast lower 64 bits of input
    * @return the upper 64 bits of {@code (oldMost << 64LL + oldLeast) >>> bits}
    */
-  public static long shiftedMost(int bits, long oldMost, long oldLeast) {
+  public static long shiftedMost(final int bits, final long oldMost, final long oldLeast) {
     return trueShiftRight(oldMost, bits) | trueShiftRight(oldLeast, bits + 64);
   }
 
@@ -169,7 +169,7 @@ public enum Byte16ArrayArithmetic {
    * @param oldLeast lower 64 bits of input
    * @return the lower 64 bits of {@code (oldMost << 64LL + oldLeast) >>> bits}
    */
-  public static long shiftedLeast(int bits, long oldMost, long oldLeast) {
+  public static long shiftedLeast(final int bits, final long oldMost, final long oldLeast) {
     return trueShiftRight(oldLeast, bits) | trueShiftRight(oldMost, bits - 64);
   }
 
@@ -179,7 +179,7 @@ public enum Byte16ArrayArithmetic {
    * @param bits how many bits to shift by
    * @author Patrick Favre-Bulle
    */
-  public static void rotateRight(byte[] shifted, int bits) {
+  public static void rotateRight(final byte[] shifted, int bits) {
     bits %= 128;
     if (bits == 0) {
       return;
@@ -187,8 +187,8 @@ public enum Byte16ArrayArithmetic {
     if (bits < 0) {
       bits += 128;
     }
-    long oldMost = convertBytesToLong(shifted);
-    long oldLeast = convertBytesToLong(shifted, Long.BYTES);
+    final long oldMost = convertBytesToLong(shifted);
+    final long oldLeast = convertBytesToLong(shifted, Long.BYTES);
     convertLongToBytes(
         shiftedMost(bits, oldMost, oldLeast) | shiftedMost(otherShift(bits), oldMost, oldLeast),
         shifted, 0);
@@ -196,11 +196,11 @@ public enum Byte16ArrayArithmetic {
         shifted, Long.BYTES);
   }
 
-  private static long rotateRightLeast64(int bits, long oldMost, long oldLeast) {
+  private static long rotateRightLeast64(final int bits, final long oldMost, final long oldLeast) {
     return shiftedLeast(bits, oldMost, oldLeast) | shiftedLeast(otherShift(bits), oldMost, oldLeast);
   }
 
-  private static int otherShift(int bits) {
+  private static int otherShift(final int bits) {
     return bits > 0 ? bits - 128 : bits + 128;
   }
 
@@ -209,7 +209,7 @@ public enum Byte16ArrayArithmetic {
    * @param shifted the array input and the result
    * @param bits how many bits to shift by
    */
-  public static long rotateRightLeast64(byte[] shifted, int bits) {
+  public static long rotateRightLeast64(final byte[] shifted, final int bits) {
     return rotateRightLeast64(bits, convertBytesToLong(shifted),
         convertBytesToLong(shifted, Long.BYTES));
   }

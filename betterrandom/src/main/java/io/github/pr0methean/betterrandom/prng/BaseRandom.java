@@ -736,7 +736,7 @@ public abstract class BaseRandom extends Random
    * @return {@code seed}
    * @throws IllegalArgumentException if {@code seed == null || seed.length != requiredLength}
    */
-  protected static byte[] checkLength(byte[] seed, int requiredLength) {
+  protected static byte[] checkLength(final byte[] seed, final int requiredLength) {
     if (seed == null) {
       throw new IllegalArgumentException("Seed must not be null");
     }
@@ -751,7 +751,7 @@ public abstract class BaseRandom extends Random
     in.defaultReadObject();
     initTransientFields();
     setSeedInternal(seed);
-    SeedGenerator currentSeedGenerator = getSeedGenerator();
+    final SeedGenerator currentSeedGenerator = getSeedGenerator();
     if (currentSeedGenerator != null) {
       RandomSeederThread.add(currentSeedGenerator, this);
     }

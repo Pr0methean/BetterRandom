@@ -27,7 +27,7 @@ public class FakeSeedGenerator implements SeedGenerator {
   }
 
   @Override
-  public boolean equals(Object o) {
+  public boolean equals(final Object o) {
     return this == o
         || (o instanceof FakeSeedGenerator
             && name.equals(((FakeSeedGenerator) o).name));

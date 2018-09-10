@@ -172,7 +172,7 @@ public class AesCounterRandom extends BaseRandom implements SeekableRandom {
     try {
       cipher = Cipher.getInstance(ALGORITHM_MODE);
       hash = MessageDigest.getInstance(HASH_ALGORITHM);
-    } catch (NoSuchAlgorithmException | NoSuchPaddingException e) {
+    } catch (final NoSuchAlgorithmException | NoSuchPaddingException e) {
       throw new RuntimeException("JVM is missing a required cipher or hash algorithm", e);
     }
   }
@@ -236,7 +236,7 @@ public class AesCounterRandom extends BaseRandom implements SeekableRandom {
         System.arraycopy(seed, 0, newSeed, this.seed.length, seed.length);
         final int keyLength = getKeyLength(newSeed);
         if (newSeed.length > keyLength) {
-          byte[] digest = hash.digest(newSeed);
+          final byte[] digest = hash.digest(newSeed);
           key = digest.length > keyLength ? Arrays.copyOf(digest, keyLength) : digest;
         } else {
           key = newSeed;
@@ -254,7 +254,7 @@ public class AesCounterRandom extends BaseRandom implements SeekableRandom {
     }
   }
 
-  private static void checkNotTooLong(byte[] seed) {
+  private static void checkNotTooLong(final byte[] seed) {
     if (seed.length > MAX_TOTAL_SEED_LENGTH_BYTES) {
       throw new IllegalArgumentException(String.format(
           "Seed length is %d bytes; maximum is %d bytes", seed.length, MAX_TOTAL_SEED_LENGTH_BYTES));
@@ -282,7 +282,7 @@ public class AesCounterRandom extends BaseRandom implements SeekableRandom {
     final int keyLength = getKeyLength(seed);
     final byte[] key = (seed.length == keyLength) ? seed : Arrays.copyOfRange(seed, 0, keyLength);
     // rest goes to counter
-    int bytesToCopyToCounter = seed.length - keyLength;
+    final int bytesToCopyToCounter = seed.length - keyLength;
     if (bytesToCopyToCounter > 0) {
       System.arraycopy(seed, keyLength, counter, 0, bytesToCopyToCounter);
     }
@@ -309,7 +309,7 @@ public class AesCounterRandom extends BaseRandom implements SeekableRandom {
       return;
     }
     long blocksDelta = delta / INTS_PER_BLOCK;
-    int deltaWithinBlock = (int) (delta % INTS_PER_BLOCK) * Integer.BYTES;
+    final int deltaWithinBlock = (int) (delta % INTS_PER_BLOCK) * Integer.BYTES;
     lock.lock();
     try {
       int newIndex = index + deltaWithinBlock;

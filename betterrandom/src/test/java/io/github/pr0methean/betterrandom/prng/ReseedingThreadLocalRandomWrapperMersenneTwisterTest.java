@@ -19,7 +19,7 @@ public class ReseedingThreadLocalRandomWrapperMersenneTwisterTest
 
   public ReseedingThreadLocalRandomWrapperMersenneTwisterTest() {
     // Must be done first, or else lambda won't be serializable.
-    SeedGenerator seedGenerator = getTestSeedGenerator();
+    final SeedGenerator seedGenerator = getTestSeedGenerator();
 
     mtSupplier = (Serializable & Supplier<BaseRandom>)
         () -> new MersenneTwisterRandom(seedGenerator);

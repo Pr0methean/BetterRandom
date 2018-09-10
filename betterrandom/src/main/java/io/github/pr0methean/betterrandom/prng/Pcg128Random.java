@@ -68,18 +68,18 @@ public class Pcg128Random extends BaseRandom implements SeekableRandom {
     this(DefaultSeedGenerator.DEFAULT_SEED_GENERATOR);
   }
 
-  @EntryPoint public Pcg128Random(SeedGenerator seedGenerator) throws SeedException {
+  @EntryPoint public Pcg128Random(final SeedGenerator seedGenerator) throws SeedException {
     this(seedGenerator.generateSeed(SEED_SIZE_BYTES));
   }
 
-  @EntryPoint public Pcg128Random(byte[] seed) {
+  @EntryPoint public Pcg128Random(final byte[] seed) {
     super(seed);
     if (seed.length != SEED_SIZE_BYTES) {
       throw new IllegalArgumentException("Pcg128Random requires a 16-byte seed");
     }
   }
 
-  @Override public synchronized void setSeed(long seed) {
+  @Override public synchronized void setSeed(final long seed) {
     fallbackSetSeedIfInitialized();
   }
 
@@ -88,7 +88,7 @@ public class Pcg128Random extends BaseRandom implements SeekableRandom {
   }
 
   // TODO: convert to 128 bits
-  @Override public void advance(long delta) {
+  @Override public void advance(final long delta) {
     advance((delta < 0) ? -1 : 0, delta);
   }
 
@@ -136,11 +136,11 @@ public class Pcg128Random extends BaseRandom implements SeekableRandom {
     }
   }
 
-  @Override public void setSeedInternal(byte[] seed) {
+  @Override public void setSeedInternal(final byte[] seed) {
     if (seed.length != SEED_SIZE_BYTES) {
       throw new IllegalArgumentException("Pcg128Random requires a 16-byte seed");
     }
-    boolean locked = (advancementLock != null);
+    final boolean locked = (advancementLock != null);
     if (locked) {
       advancementLock.lock();
     }
@@ -153,7 +153,7 @@ public class Pcg128Random extends BaseRandom implements SeekableRandom {
     }
   }
 
-  @Override protected int next(int bits) {
+  @Override protected int next(final int bits) {
     return (int) (nextLongNoEntropyDebit() >>> (Long.SIZE - bits));
   }
 
@@ -169,16 +169,16 @@ public class Pcg128Random extends BaseRandom implements SeekableRandom {
     }
     // Calculate output function (XSH RR), uses old state for max ILP
     // int xorShifted = (int) (((oldInternal >>> ROTATION1) ^ oldInternal) >>> ROTATION2);
-    long xorShiftedMost = shiftedMost(ROTATION1, oldSeedMost, oldSeedLeast) ^ oldSeedMost;
-    long xorShiftedLeast = shiftedLeast(ROTATION1, oldSeedMost, oldSeedLeast) ^ oldSeedLeast;
-    long preRotate = shiftedLeast(ROTATION2, xorShiftedMost, xorShiftedLeast);
+    final long xorShiftedMost = shiftedMost(ROTATION1, oldSeedMost, oldSeedLeast) ^ oldSeedMost;
+    final long xorShiftedLeast = shiftedLeast(ROTATION1, oldSeedMost, oldSeedLeast) ^ oldSeedLeast;
+    final long preRotate = shiftedLeast(ROTATION2, xorShiftedMost, xorShiftedLeast);
     // int rot = (int) (oldInternal >>> (SEED_SIZE_BYTES - WANTED_OP_BITS));
     final int rot = ((int)(oldSeedMost >>> 58)) & MASK;
     // return ((xorshifted >>> rot) | (xorshifted << ((-rot) & MASK))) >>> (Integer.SIZE - bits);
     return (preRotate >>> rot) | (preRotate << ((-rot) & MASK));
   }
 
-  @Override protected ToStringHelper addSubclassFields(ToStringHelper original) {
+  @Override protected ToStringHelper addSubclassFields(final ToStringHelper original) {
     return original;
   }
 

@@ -150,12 +150,12 @@ public enum BinaryUtils {
    * @return an array of 8 bytes containing the long's value in big-endian order.
    */
   public static byte[] convertLongToBytes(final long input) {
-    byte[] output = LONG_BYTE_ARRAY.get();
+    final byte[] output = LONG_BYTE_ARRAY.get();
     convertLongToBytes(input, output, 0);
     return output;
   }
 
-  public static void convertLongToBytes(long input, byte[] output, int offset) {
+  public static void convertLongToBytes(final long input, final byte[] output, final int offset) {
     output[offset] = (byte)(input >> 56L);
     output[offset + 1] = (byte)(input >> 48L);
     output[offset + 2] = (byte)(input >> 40L);
@@ -172,7 +172,7 @@ public enum BinaryUtils {
    * @param output the array to write to
    * @param offset the first index to write to
    */
-  public static void convertIntToBytes(final int input, final byte[] output, int offset) {
+  public static void convertIntToBytes(final int input, final byte[] output, final int offset) {
     output[offset] = (byte)(input >> 24);
     output[offset + 1] = (byte)(input >> 16);
     output[offset + 2] = (byte)(input >> 8);
@@ -188,7 +188,7 @@ public enum BinaryUtils {
    * @return an array of 4 bytes containing the int's value in big-endian order.
    */
   public static byte[] convertIntToBytes(final int input) {
-    byte[] output = INT_BYTE_ARRAY.get();
+    final byte[] output = INT_BYTE_ARRAY.get();
     convertIntToBytes(input, output, 0);
     return output;
   }
