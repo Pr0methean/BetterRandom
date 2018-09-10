@@ -63,6 +63,12 @@ THE POSSIBILITY OF SUCH DAMAGE.
       <version>1.5.6</version>
     </dependency>
     <dependency>
+      <groupId>org.apache.logging.log4j</groupId>
+      <artifactId>log4j-slf4j18-impl</artifactId>
+      <version>2.11.1</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
       <groupId>org.openjdk.jmh</groupId>
       <artifactId>jmh-core</artifactId>
       <version>${jmh.version}</version>
@@ -76,7 +82,7 @@ THE POSSIBILITY OF SUCH DAMAGE.
     <dependency>
       <artifactId>BetterRandom-Java7</artifactId>
       <groupId>io.github.pr0methean.betterrandom</groupId>
-      <version>2.5.1</version>
+      <version>2.5.2-SNAPSHOT</version>
     </dependency>
     <!-- https://mvnrepository.com/artifact/com.google.code.java-allocation-instrumenter/java-allocation-instrumenter -->
     <dependency>
@@ -191,7 +197,7 @@ THE POSSIBILITY OF SUCH DAMAGE.
         </plugin>
         <plugin>
           <artifactId>maven-install-plugin</artifactId>
-          <version>2.5.1</version>
+          <version>2.5.2-SNAPSHOT</version>
         </plugin>
         <plugin>
           <artifactId>maven-jar-plugin</artifactId>

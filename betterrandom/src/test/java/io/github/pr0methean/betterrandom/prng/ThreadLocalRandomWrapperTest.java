@@ -116,7 +116,7 @@ public class ThreadLocalRandomWrapperTest extends BaseRandomTest {
   }
 
   @Override protected BaseRandom createRng(final byte[] seed) throws SeedException {
-    BaseRandom rng = createRng();
+    final BaseRandom rng = createRng();
     rng.setSeed(seed);
     return rng;
   }

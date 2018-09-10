@@ -178,7 +178,7 @@ public class CellularAutomatonRandom extends BaseRandom {
     }
     try {
       super.setSeedInternal(seed);
-      currentCellIndex = AUTOMATON_LENGTH - 1;
+      currentCellIndex = LAST_CELL_INDEX;
       if (cells == null) {
         cells = new int[AUTOMATON_LENGTH];
       }
@@ -187,7 +187,6 @@ public class CellularAutomatonRandom extends BaseRandom {
       cells[AUTOMATON_LENGTH - 2] = seed[1] + 128;
       cells[AUTOMATON_LENGTH - 3] = seed[2] + 128;
       cells[AUTOMATON_LENGTH - 4] = seed[3] + 128;
-      currentCellIndex = LAST_CELL_INDEX;
 
       int seedAsInt = BinaryUtils.convertBytesToInt(seed, 0);
       if (seedAsInt != 0xFFFFFFFF) {

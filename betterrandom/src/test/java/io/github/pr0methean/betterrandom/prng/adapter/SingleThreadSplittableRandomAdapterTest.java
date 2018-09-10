@@ -32,7 +32,7 @@ public class SingleThreadSplittableRandomAdapterTest extends BaseRandomTest {
     return adapter;
   }
 
-  @Test public void testGetSplittableRandom() throws Exception {
+  @Test public void testGetSplittableRandom() {
     // TODO
   }
 
@@ -42,11 +42,11 @@ public class SingleThreadSplittableRandomAdapterTest extends BaseRandomTest {
     // and deserialization should be idempotent
     final BaseSplittableRandomAdapter adapter2 = CloneViaSerialization.clone(adapter);
     final BaseSplittableRandomAdapter adapter3 = CloneViaSerialization.clone(adapter);
-    final BaseSplittableRandomAdapter adapter4 = CloneViaSerialization.clone(adapter2);
+    // final BaseSplittableRandomAdapter adapter4 = CloneViaSerialization.clone(adapter2);
     assertEquivalent(adapter2, adapter3, 20,
         "Deserializing twice doesn't yield same object");
-    // FIXME Failing: assertEquivalent(adapter2, adapter4, 20,
-    //     "Serialization round-trip is not idempotent");
+    // FIXME Failing:
+    // assertEquivalent(adapter2, adapter4, 20, "Serialization round-trip is not idempotent");
   }
 
   @Override public void testSetSeedLong() throws SeedException {

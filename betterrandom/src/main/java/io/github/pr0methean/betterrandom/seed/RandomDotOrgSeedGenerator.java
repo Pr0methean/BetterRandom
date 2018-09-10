@@ -153,7 +153,7 @@ public enum RandomDotOrgSeedGenerator implements SeedGenerator {
   /* Package-visible for testing. */
   static HttpURLConnection openConnection(final URL url) throws IOException {
     final Proxy currentProxy = proxy.get();
-    HttpURLConnection connection = (HttpURLConnection)
+    final HttpURLConnection connection = (HttpURLConnection)
         ((currentProxy == null) ? url.openConnection() : url.openConnection(currentProxy));
     connection.setRequestProperty("User-Agent", USER_AGENT);
     return connection;
@@ -182,9 +182,9 @@ public enum RandomDotOrgSeedGenerator implements SeedGenerator {
       if (currentApiKey == null) {
         // Use old API.
         connection = openConnection(new URL(MessageFormat.format(RANDOM_URL, numberOfBytes)));
-        try (BufferedReader reader = getResponseReader(connection)) {
+        try (final BufferedReader reader = getResponseReader(connection)) {
           for (int index = 0; index < cache.length; index++) {
-            String line = reader.readLine();
+            final String line = reader.readLine();
             if (line == null) {
               throw new SeedException(String
                   .format("Insufficient data received: expected %d bytes, got %d.", cache.length,
@@ -193,7 +193,7 @@ public enum RandomDotOrgSeedGenerator implements SeedGenerator {
             try {
               cache[index] = (byte) Integer.parseInt(line, 16);
               // Can't use Byte.parseByte, since it expects signed
-            } catch (NumberFormatException e) {
+            } catch (final NumberFormatException e) {
               throw new SeedException("random.org sent non-numeric data", e);
             }
           }
@@ -203,12 +203,12 @@ public enum RandomDotOrgSeedGenerator implements SeedGenerator {
         connection = openConnection(JSON_REQUEST_URL);
         connection.setDoOutput(true);
         connection.setRequestMethod("POST");
-        try (OutputStream out = connection.getOutputStream()) {
+        try (final OutputStream out = connection.getOutputStream()) {
           out.write(String.format(JSON_REQUEST_FORMAT, currentApiKey, numberOfBytes * Byte.SIZE,
               REQUEST_ID.incrementAndGet()).getBytes(UTF8));
         }
         final JSONObject response;
-        try (BufferedReader reader = getResponseReader(connection)) {
+        try (final BufferedReader reader = getResponseReader(connection)) {
           response = (JSONObject) JSON_PARSER.parse(reader);
         } catch (ParseException e) {
           throw new SeedException("Unparseable JSON response from random.org", e);
@@ -235,7 +235,7 @@ public enum RandomDotOrgSeedGenerator implements SeedGenerator {
         final Object advisoryDelayMs = result.get("advisoryDelay");
         if (advisoryDelayMs instanceof Number) {
           // Wait RETRY_DELAY or the advisory delay, whichever is shorter
-          int delayMs = Math.min(RETRY_DELAY_MS, ((Number) advisoryDelayMs).intValue());
+          final int delayMs = Math.min(RETRY_DELAY_MS, ((Number) advisoryDelayMs).intValue());
           earliestNextAttempt.setTime(new Date());
           earliestNextAttempt.add(Calendar.MILLISECOND, delayMs);
         }
@@ -249,7 +249,7 @@ public enum RandomDotOrgSeedGenerator implements SeedGenerator {
     }
   }
 
-  private static BufferedReader getResponseReader(HttpURLConnection connection)
+  private static BufferedReader getResponseReader(final HttpURLConnection connection)
       throws IOException {
     return new BufferedReader(new InputStreamReader(connection.getInputStream()));
   }

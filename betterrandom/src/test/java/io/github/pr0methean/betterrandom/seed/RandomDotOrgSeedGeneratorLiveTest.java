@@ -84,7 +84,7 @@ public class RandomDotOrgSeedGeneratorLiveTest extends AbstractSeedGeneratorTest
   }
 
   @Test
-  public void testSetProxyReal() throws Exception {
+  public void testSetProxyReal() {
     if (!canRunRandomDotOrgLargeTest()) {
       throw new SkipException("Test can't run on this platform");
     }
@@ -105,7 +105,7 @@ public class RandomDotOrgSeedGeneratorLiveTest extends AbstractSeedGeneratorTest
     while (address == null) {
       try {
         address = InetAddress.getByName("api.random.org");
-      } catch (UnknownHostException e) {
+      } catch (final UnknownHostException e) {
         failedLookups++;
       }
     }

@@ -8,6 +8,7 @@
       <class name="io.github.pr0methean.betterrandom.prng.Cmwc4096RandomTest"/>
       <class name="io.github.pr0methean.betterrandom.prng.MersenneTwisterRandomTest"/>
       <class name="io.github.pr0methean.betterrandom.prng.Pcg64RandomTest"/>
+      <class name="io.github.pr0methean.betterrandom.prng.Pcg128RandomTest"/>
       <class name="io.github.pr0methean.betterrandom.prng.RandomWrapperAesCounterRandomTest"/>
       <class name="io.github.pr0methean.betterrandom.prng.RandomWrapperMersenneTwisterRandomTest"/>
       <class name="io.github.pr0methean.betterrandom.prng.RandomWrapperRandomTest"/>

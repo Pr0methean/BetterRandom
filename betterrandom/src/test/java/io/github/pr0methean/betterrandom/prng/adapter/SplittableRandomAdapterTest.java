@@ -29,7 +29,7 @@ public class SplittableRandomAdapterTest extends SingleThreadSplittableRandomAda
   @Override @Test(enabled = false)
   public void testRepeatabilityNextGaussian() throws SeedException {
     final BaseRandom rng = createRng();
-    byte[] seed = getTestSeedGenerator().generateSeed(getNewSeedLength(rng));
+    final byte[] seed = getTestSeedGenerator().generateSeed(getNewSeedLength(rng));
     rng.nextGaussian();
     rng.setSeed(seed);
     // Create second RNG using same seed.
@@ -44,7 +44,7 @@ public class SplittableRandomAdapterTest extends SingleThreadSplittableRandomAda
 
   /** Seeding of this PRNG is thread-local, so setSeederThread makes no sense. */
   @Override @Test(expectedExceptions = UnsupportedOperationException.class)
-  public void testRandomSeederThreadIntegration() throws Exception {
+  public void testRandomSeederThreadIntegration() {
     createRng().setSeedGenerator(getTestSeedGenerator());
   }
 
