@@ -24,6 +24,7 @@ import io.github.pr0methean.betterrandom.seed.DefaultSeedGenerator;
 import io.github.pr0methean.betterrandom.seed.SeedException;
 import io.github.pr0methean.betterrandom.seed.SeedGenerator;
 import io.github.pr0methean.betterrandom.util.BinaryUtils;
+import io.github.pr0methean.betterrandom.util.Byte16ArrayArithmetic;
 import java.security.GeneralSecurityException;
 import java.security.InvalidKeyException;
 import java.security.MessageDigest;
@@ -76,7 +77,6 @@ public class AesCounterRandom extends BaseRandom implements SeekableRandom {
   private static final int BYTES_AT_ONCE = COUNTER_SIZE_BYTES * BLOCKS_AT_ONCE;
   private static final String HASH_ALGORITHM = "SHA-256";
   private static final int MAX_TOTAL_SEED_LENGTH_BYTES;
-  private static final byte[] ZEROES = new byte[COUNTER_SIZE_BYTES];
   @SuppressWarnings("CanBeFinal") private static int MAX_KEY_LENGTH_BYTES = 0;
 
   static {
@@ -99,8 +99,8 @@ public class AesCounterRandom extends BaseRandom implements SeekableRandom {
   private volatile byte[] counterInput;
   private volatile boolean seeded;
   private volatile int index;
-  private transient byte[] addendDigits;
   private transient MessageDigest hash;
+  private transient byte[] addendDigits;
 
   /**
    * Creates a new RNG and seeds it using 256 bits from the {@link DefaultSeedGenerator}.
@@ -175,18 +175,8 @@ public class AesCounterRandom extends BaseRandom implements SeekableRandom {
     try {
       cipher = Cipher.getInstance(ALGORITHM_MODE);
       hash = MessageDigest.getInstance(HASH_ALGORITHM);
-    } catch (NoSuchAlgorithmException | NoSuchPaddingException e) {
+    } catch (final NoSuchAlgorithmException | NoSuchPaddingException e) {
       throw new RuntimeException("JVM is missing a required cipher or hash algorithm", e);
-    }
-  }
-
-  private void incrementCounter() {
-    for (int i = 0; i < COUNTER_SIZE_BYTES; i++) {
-      ++counter[i];
-      if (counter[i] != 0) // Check whether we need to loop again to carry the one.
-      {
-        break;
-      }
     }
   }
 
@@ -197,11 +187,11 @@ public class AesCounterRandom extends BaseRandom implements SeekableRandom {
    */
   private void nextBlock() {
     for (int i = 0; i < BLOCKS_AT_ONCE; i++) {
-      incrementCounter();
+      Byte16ArrayArithmetic.addInto(counter, Byte16ArrayArithmetic.ONE);
       System.arraycopy(counter, 0, counterInput, i * COUNTER_SIZE_BYTES, COUNTER_SIZE_BYTES);
     }
     try {
-      cipher.doFinal(counterInput, 0, COUNTER_SIZE_BYTES * BLOCKS_AT_ONCE, currentBlock);
+      cipher.doFinal(counterInput, 0, BYTES_AT_ONCE, currentBlock);
     } catch (final GeneralSecurityException ex) {
       // Should never happen.  If initialisation succeeds without exceptions
       // we should be able to proceed indefinitely without exceptions.
@@ -249,7 +239,7 @@ public class AesCounterRandom extends BaseRandom implements SeekableRandom {
         System.arraycopy(seed, 0, newSeed, this.seed.length, seed.length);
         final int keyLength = getKeyLength(newSeed);
         if (newSeed.length > keyLength) {
-          byte[] digest = hash.digest(newSeed);
+          final byte[] digest = hash.digest(newSeed);
           key = digest.length > keyLength ? Arrays.copyOf(digest, keyLength) : digest;
         } else {
           key = newSeed;
@@ -267,7 +257,7 @@ public class AesCounterRandom extends BaseRandom implements SeekableRandom {
     }
   }
 
-  private void checkNotTooLong(byte[] seed) {
+  private static void checkNotTooLong(final byte[] seed) {
     if (seed.length > MAX_TOTAL_SEED_LENGTH_BYTES) {
       throw new IllegalArgumentException(String.format(
           "Seed length is %d bytes; maximum is %d bytes", seed.length, MAX_TOTAL_SEED_LENGTH_BYTES));
@@ -277,7 +267,6 @@ public class AesCounterRandom extends BaseRandom implements SeekableRandom {
   /**
    * Combines the given seed with the existing seed using SHA-256.
    */
-  @Override @SuppressWarnings("contracts.postcondition.not.satisfied")
   public void setSeed(final long seed) {
     if (superConstructorFinished) {
       final byte[] seedBytes = BinaryUtils.convertLongToBytes(seed);
@@ -294,11 +283,13 @@ public class AesCounterRandom extends BaseRandom implements SeekableRandom {
     super.setSeedInternal(seed);
     // determine how much of seed can go to key
     final int keyLength = getKeyLength(seed);
-    final byte[] key = Arrays.copyOfRange(seed, 0, keyLength);
+    final byte[] key = (seed.length == keyLength) ? seed : Arrays.copyOfRange(seed, 0, keyLength);
     // rest goes to counter
-    int bytesToCopyToCounter = seed.length - keyLength;
-    System.arraycopy(seed, keyLength, counter, 0, bytesToCopyToCounter);
-    System.arraycopy(ZEROES, 0, counter, bytesToCopyToCounter,
+    final int bytesToCopyToCounter = seed.length - keyLength;
+    if (bytesToCopyToCounter > 0) {
+      System.arraycopy(seed, keyLength, counter, 0, bytesToCopyToCounter);
+    }
+    System.arraycopy(Byte16ArrayArithmetic.ZERO, 0, counter, bytesToCopyToCounter,
         COUNTER_SIZE_BYTES - bytesToCopyToCounter);
     try {
       cipher.init(Cipher.ENCRYPT_MODE, new SecretKeySpec(key, ALGORITHM));
@@ -321,35 +312,20 @@ public class AesCounterRandom extends BaseRandom implements SeekableRandom {
       return;
     }
     long blocksDelta = delta / INTS_PER_BLOCK;
-    int deltaWithinBlock = (int) (delta % INTS_PER_BLOCK) * INT_BYTES;
+    final int deltaWithinBlock = (int) (delta % INTS_PER_BLOCK) * INT_BYTES;
     lock.lock();
     try {
       int newIndex = index + deltaWithinBlock;
-      while (newIndex >= COUNTER_SIZE_BYTES) {
+      if (newIndex >= COUNTER_SIZE_BYTES) {
         newIndex -= COUNTER_SIZE_BYTES;
         blocksDelta++;
       }
-      while (newIndex < 0) {
+      if (newIndex < 0) {
         newIndex += COUNTER_SIZE_BYTES;
         blocksDelta--;
       }
       blocksDelta -= BLOCKS_AT_ONCE; // Compensate for the increment during nextBlock() below
-      System.arraycopy(ZEROES, 0, addendDigits, 0, COUNTER_SIZE_BYTES - LONG_BYTES);
-      BinaryUtils.convertLongToBytes(blocksDelta, addendDigits, COUNTER_SIZE_BYTES - LONG_BYTES);
-      if (blocksDelta < 0) {
-        // Sign extend
-        for (int i = 0; i < (COUNTER_SIZE_BYTES - LONG_BYTES); i++) {
-          addendDigits[i] = -1;
-        }
-      }
-      boolean carry = false;
-      for (int i = 0; i < COUNTER_SIZE_BYTES; i++) {
-        final int oldCounterUnsigned = counter[i] < 0 ? counter[i] + 256 : counter[i];
-        counter[i] += addendDigits[COUNTER_SIZE_BYTES - i - 1] + (carry ? 1 : 0);
-        final int newCounterUnsigned = counter[i] < 0 ? counter[i] + 256 : counter[i];
-        carry = (oldCounterUnsigned > newCounterUnsigned)
-            || (carry && (oldCounterUnsigned == newCounterUnsigned));
-      }
+      Byte16ArrayArithmetic.addInto(counter, blocksDelta, addendDigits);
       nextBlock();
       index = newIndex;
     } finally {

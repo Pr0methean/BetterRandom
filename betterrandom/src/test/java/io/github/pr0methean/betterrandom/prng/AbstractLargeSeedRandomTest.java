@@ -30,7 +30,7 @@ public abstract class AbstractLargeSeedRandomTest extends BaseRandomTest {
 
   protected void mockDefaultSeedGenerator() {
     oldDefaultSeedGenerator = DefaultSeedGenerator.DEFAULT_SEED_GENERATOR;
-    DefaultSeedGenerator mockDefaultSeedGenerator = PowerMockito.mock(DefaultSeedGenerator.class);
+    final DefaultSeedGenerator mockDefaultSeedGenerator = PowerMockito.mock(DefaultSeedGenerator.class);
     when(mockDefaultSeedGenerator.generateSeed(anyInt())).thenAnswer(new Answer<byte[]>() {
       @Override public byte[] answer(InvocationOnMock invocation) throws Throwable {
         return semiFakeSeedGenerator.generateSeed((Integer) (invocation.getArgument(0)));

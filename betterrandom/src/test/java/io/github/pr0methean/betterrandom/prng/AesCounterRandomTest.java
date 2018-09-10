@@ -24,7 +24,6 @@ import java.util.Random;
 import javax.crypto.Cipher;
 import org.testng.SkipException;
 import org.testng.annotations.BeforeClass;
-import org.testng.annotations.DataProvider;
 import org.testng.annotations.Parameters;
 import org.testng.annotations.Test;
 
@@ -44,7 +43,7 @@ public class AesCounterRandomTest extends SeekableRandomTest {
     try {
       MAX_SIZE = Cipher.getMaxAllowedKeyLength("AES") / 8
             + AesCounterRandom.COUNTER_SIZE_BYTES;
-    } catch (NoSuchAlgorithmException e) {
+    } catch (final NoSuchAlgorithmException e) {
       throw new AssertionError(e);
     }
   }
@@ -61,12 +60,13 @@ public class AesCounterRandomTest extends SeekableRandomTest {
   public void setSeedSize(final int seedSize) {
     if (seedSize > MAX_SIZE) {
       assertFalse(seedSize <= 32, "Can't handle a 32-byte seed");
-      throw new SkipException("Jurisdiction policy files don't allow this crypto strength");
+      throw new SkipException(
+          "Test can't run without jurisdiction policy files that allow larger AES keys");
     }
     seedSizeBytes = seedSize;
   }
 
-  @Override protected int getNewSeedLength(BaseRandom basePrng) {
+  @Override protected int getNewSeedLength(final BaseRandom basePrng) {
     return seedSizeBytes;
   }
 
@@ -86,6 +86,9 @@ public class AesCounterRandomTest extends SeekableRandomTest {
 
   @SuppressWarnings("ObjectAllocationInLoop") @Override @Test(timeOut = 40_000)
   public void testSetSeedAfterNextLong() throws SeedException {
+    if (seedSizeBytes > 16) {
+      throw new SkipException("Skipping a redundant test");
+    }
     // can't use a real SeedGenerator since we need longs, so use a Random
     final Random masterRNG = new Random();
     final long[] seeds =
