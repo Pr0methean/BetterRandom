@@ -151,12 +151,24 @@ public enum Byte16ArrayArithmetic {
     return shiftedLeast(bits, oldMost, oldLeast);
   }
 
-  /** TODO: Document this. */
+  /**
+   * Returns the upper 64 bits of {@code (oldMost << 64LL + oldLeast) >>> bits}.
+   * @param bits how many bits to shift by
+   * @param oldMost upper 64 bits of input
+   * @param oldLeast lower 64 bits of input
+   * @return the upper 64 bits of {@code (oldMost << 64LL + oldLeast) >>> bits}
+   */
   public static long shiftedMost(int bits, long oldMost, long oldLeast) {
     return trueShiftRight(oldMost, bits) | trueShiftRight(oldLeast, bits + 64);
   }
 
-  /** TODO: Document this. */
+  /**
+   * Returns the lower 64 bits of {@code (oldMost << 64LL + oldLeast) >>> bits}.
+   * @param bits how many bits to shift by
+   * @param oldMost upper 64 bits of input
+   * @param oldLeast lower 64 bits of input
+   * @return the lower 64 bits of {@code (oldMost << 64LL + oldLeast) >>> bits}
+   */
   public static long shiftedLeast(int bits, long oldMost, long oldLeast) {
     return trueShiftRight(oldLeast, bits) | trueShiftRight(oldMost, bits - 64);
   }
