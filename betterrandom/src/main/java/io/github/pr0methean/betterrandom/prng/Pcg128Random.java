@@ -5,6 +5,7 @@ import static io.github.pr0methean.betterrandom.util.Byte16ArrayArithmetic.multi
 import static io.github.pr0methean.betterrandom.util.Byte16ArrayArithmetic.multiplyIntoAndAddInto;
 import static io.github.pr0methean.betterrandom.util.Byte16ArrayArithmetic.shiftedLeast;
 import static io.github.pr0methean.betterrandom.util.Byte16ArrayArithmetic.shiftedMost;
+import static io.github.pr0methean.betterrandom.util.Java8Constants.LONG_BYTES;
 
 import com.google.common.base.MoreObjects.ToStringHelper;
 import io.github.pr0methean.betterrandom.SeekableRandom;
@@ -32,7 +33,7 @@ import java.util.concurrent.locks.ReentrantLock;
  */
 public class Pcg128Random extends BaseRandom implements SeekableRandom {
 
-  private static final int SEED_SIZE_BYTES = 2 * Long.BYTES;
+  private static final int SEED_SIZE_BYTES = 2 * LONG_BYTES;
   private static final byte[] MULTIPLIER =
       {0x00000023, 0x00000060, 0xffffffed, 0x00000005, 0x0000001f, 0xffffffc6, 0x0000005d,
           0xffffffa4, 0x00000043, 0xffffff85, 0xffffffdf, 0x00000064, 0xffffff9f, 0xffffffcc,
@@ -162,7 +163,7 @@ public class Pcg128Random extends BaseRandom implements SeekableRandom {
     lock.lock();
     try {
       oldSeedMost = BinaryUtils.convertBytesToLong(seed, 0);
-      oldSeedLeast = BinaryUtils.convertBytesToLong(seed, Long.BYTES);
+      oldSeedLeast = BinaryUtils.convertBytesToLong(seed, LONG_BYTES);
       multiplyIntoAndAddInto(seed, MULTIPLIER, INCREMENT);
     } finally {
       lock.unlock();
