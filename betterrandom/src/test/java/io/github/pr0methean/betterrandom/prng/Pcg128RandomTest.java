@@ -9,7 +9,7 @@ public class Pcg128RandomTest extends SeekableRandomTest {
     return new Pcg128Random(getTestSeedGenerator());
   }
 
-  @Override protected BaseRandom createRng(byte[] seed) {
+  @Override protected BaseRandom createRng(final byte[] seed) {
     return new Pcg128Random(seed);
   }
 }

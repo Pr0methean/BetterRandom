@@ -152,13 +152,13 @@ public abstract class BaseRandomTest extends PowerMockTestCase {
    */
   @Test(timeOut = 15_000) public void testRepeatabilityNextGaussian() throws SeedException {
     final BaseRandom rng = createRng();
-    byte[] seed = getTestSeedGenerator().generateSeed(getNewSeedLength(rng));
+    final byte[] seed = getTestSeedGenerator().generateSeed(getNewSeedLength(rng));
     rng.nextGaussian();
     rng.setSeed(seed);
     // Create second RNG using same seed.
     final BaseRandom duplicateRNG = createRng(seed);
     // Do not inline this; dump() must be evaluated before nextGaussian
-    String failureMessage = String.format("Mismatch in output between %n%s%n and %n%s%n",
+    final String failureMessage = String.format("Mismatch in output between %n%s%n and %n%s%n",
         rng.dump(), duplicateRNG.dump());
     assertEquals(rng.nextGaussian(), duplicateRNG.nextGaussian(), failureMessage);
   }
@@ -312,7 +312,7 @@ public abstract class BaseRandomTest extends PowerMockTestCase {
   }
 
   @Test(timeOut = 15_000) public void testSetSeedZero() throws SeedException {
-    int length = getNewSeedLength(createRng());
+    final int length = getNewSeedLength(createRng());
     final byte[] zeroSeed = new byte[length];
     final byte[] realSeed = new byte[length];
     do {
@@ -712,8 +712,8 @@ public abstract class BaseRandomTest extends PowerMockTestCase {
     for (final NamedFunction<Random, Double> supplier : functions) {
       for (int i = 0; i < 5; i++) {
         // This loop is necessary to control the false pass rate, especially during mutation testing.
-        SortedSet<Double> sequentialOutput = runSequential(supplier, supplier, seed);
-        SortedSet<Double> parallelOutput = runParallel(supplier, supplier, seed, 10, 1000);
+        final SortedSet<Double> sequentialOutput = runSequential(supplier, supplier, seed);
+        final SortedSet<Double> parallelOutput = runParallel(supplier, supplier, seed, 10, 1000);
         assertEquals(sequentialOutput, parallelOutput,
             "output differs between sequential & parallel calls to " + supplier);
       }
@@ -732,8 +732,8 @@ public abstract class BaseRandomTest extends PowerMockTestCase {
   }
 
   protected SortedSet<Double> runParallel(final NamedFunction<Random, Double> supplier1,
-      final NamedFunction<Random, Double> supplier2, final byte[] seed, int timeoutSec,
-      int iterations) {
+      final NamedFunction<Random, Double> supplier2, final byte[] seed, final int timeoutSec,
+      final int iterations) {
     // See https://www.yegor256.com/2018/03/27/how-to-test-thread-safety.html for why a
     // CountDownLatch is used.
     final CountDownLatch latch = new CountDownLatch(2);
@@ -784,7 +784,7 @@ public abstract class BaseRandomTest extends PowerMockTestCase {
     private final int iterations;
 
     public GeneratorForkJoinTask(final Random prng, final SortedSet<T> set,
-        final NamedFunction<Random, T> function, CountDownLatch latch, int iterations) {
+        final NamedFunction<Random, T> function, final CountDownLatch latch, final int iterations) {
       this.prng = prng;
       this.set = set;
       this.function = function;
@@ -804,7 +804,7 @@ public abstract class BaseRandomTest extends PowerMockTestCase {
       latch.countDown();
       try {
         latch.await();
-      } catch (InterruptedException e) {
+      } catch (final InterruptedException e) {
         throw new AssertionError("Interrupted", e);
       }
       for (int i = 0; i < iterations; i++) {

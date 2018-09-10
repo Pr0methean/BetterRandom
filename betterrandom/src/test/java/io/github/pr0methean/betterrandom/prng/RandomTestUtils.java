@@ -160,16 +160,16 @@ public enum RandomTestUtils {
   }
 
   public static void assertEquivalent(final Random rng1, final Random rng2,
-      final int iterations, String message) {
+      final int iterations, final String message) {
     assertEquivalentOrDistinct(rng1, rng2, iterations, message, true);
   }
 
   public static void assertDistinct(final Random rng1, final Random rng2,
-      final int iterations, String message) {
+      final int iterations, final String message) {
     assertEquivalentOrDistinct(rng1, rng2, iterations, message, false);
   }
 
-  public static String toString(Random rng) {
+  public static String toString(final Random rng) {
     return rng instanceof Dumpable ? ((Dumpable) rng).dump() : rng.toString();
   }
 
@@ -252,7 +252,7 @@ public enum RandomTestUtils {
         "Monte Carlo value for Pi is outside acceptable range:" + pi);
   }
 
-  public static void testReseeding(SeedGenerator testSeedGenerator, BaseRandom rng,
+  public static void testReseeding(final SeedGenerator testSeedGenerator, final BaseRandom rng,
       final boolean setSeedGenerator) {
     final byte[] oldSeed = rng.getSeed();
     final byte[] oldSeedClone = oldSeed.clone();
@@ -307,13 +307,13 @@ public enum RandomTestUtils {
     }
   }
 
-  public static void removeAndAssertEmpty(SeedGenerator seedGenerator, BaseRandom prng) {
+  public static void removeAndAssertEmpty(final SeedGenerator seedGenerator, final BaseRandom prng) {
     prng.setSeedGenerator(null);
     RandomSeederThread.stopIfEmpty(seedGenerator);
     assertFalse(RandomSeederThread.hasInstance(seedGenerator));
   }
 
-  public static void removeAndAssertEmpty(SeedGenerator seedGenerator, Random prng) {
+  public static void removeAndAssertEmpty(final SeedGenerator seedGenerator, final Random prng) {
     RandomSeederThread.remove(seedGenerator, prng);
     RandomSeederThread.stopIfEmpty(seedGenerator);
     assertFalse(RandomSeederThread.hasInstance(seedGenerator));

@@ -25,12 +25,12 @@ public class BaseRandomStaticTest {
   @Test(enabled = false) public void testReadObjectNoData()
       throws IOException, ClassNotFoundException {
     final BaseRandom switchedRandom;
-    try (ByteArrayOutputStream byteOutStream = new ByteArrayOutputStream();
-        ObjectOutputStream objectOutStream = new ObjectOutputStream(byteOutStream)) {
+    try (final ByteArrayOutputStream byteOutStream = new ByteArrayOutputStream();
+        final ObjectOutputStream objectOutStream = new ObjectOutputStream(byteOutStream)) {
       objectOutStream.writeObject(new Switcheroo());
       final byte[] serialCopy = byteOutStream.toByteArray();
       // Read the object back-in.
-      try (ObjectInputStream objectInStream = new SwitcherooInputStream(
+      try (final ObjectInputStream objectInStream = new SwitcherooInputStream(
           new ByteArrayInputStream(serialCopy))) {
         switchedRandom = (BaseRandom) objectInStream.readObject(); // ClassCastException
       }

@@ -80,7 +80,7 @@ public class FakeHttpsUrlConnection extends HttpsURLConnection {
         is.close();
       }
       os.close();
-    } catch (IOException e) {
+    } catch (final IOException e) {
       LoggerFactory.getLogger(FakeHttpsUrlConnection.class).error("Failed to close streams", e);
     }
   }

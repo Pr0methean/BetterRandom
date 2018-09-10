@@ -112,7 +112,7 @@ public class ReseedingSplittableRandomAdapterTest extends SingleThreadSplittable
   }
 
   @Test public void testFinalize() throws SeedException {
-    SeedGenerator generator = new FakeSeedGenerator();
+    final SeedGenerator generator = new FakeSeedGenerator();
     ReseedingSplittableRandomAdapter.getInstance(generator);
     try {
       Runtime.getRuntime().runFinalization();

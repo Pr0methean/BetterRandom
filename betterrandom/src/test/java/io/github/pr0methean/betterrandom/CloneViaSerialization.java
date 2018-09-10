@@ -21,17 +21,17 @@ public enum CloneViaSerialization {
   }
 
   public static <T extends Serializable> T fromByteArray(final byte[] serialCopy) {
-    try (ObjectInputStream objectInStream = new ObjectInputStream(
+    try (final ObjectInputStream objectInStream = new ObjectInputStream(
         new ByteArrayInputStream(serialCopy))) {
       return (T) (objectInStream.readObject());
-    } catch (IOException | ClassNotFoundException e) {
+    } catch (final IOException | ClassNotFoundException e) {
       throw new RuntimeException(e);
     }
   }
 
   public static <T extends Serializable> byte[] toByteArray(final T object) {
-    try (ByteArrayOutputStream byteOutStream = new ByteArrayOutputStream();
-        ObjectOutputStream objectOutStream = new ObjectOutputStream(byteOutStream)) {
+    try (final ByteArrayOutputStream byteOutStream = new ByteArrayOutputStream();
+        final ObjectOutputStream objectOutStream = new ObjectOutputStream(byteOutStream)) {
       objectOutStream.writeObject(object);
       return byteOutStream.toByteArray();
     } catch (final IOException e) {

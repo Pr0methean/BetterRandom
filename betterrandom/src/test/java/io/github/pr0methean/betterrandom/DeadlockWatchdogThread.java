@@ -11,7 +11,7 @@ import org.slf4j.LoggerFactory;
 public class DeadlockWatchdogThread extends LooperThread {
 
   private static final class StackTraceHolder extends Throwable {
-    public StackTraceHolder(String name, StackTraceElement[] stackTrace) {
+    public StackTraceHolder(final String name, final StackTraceElement[] stackTrace) {
       super(name, null, false, true);
       setStackTrace(stackTrace);
     }
@@ -70,7 +70,7 @@ public class DeadlockWatchdogThread extends LooperThread {
     for (final long id : threadsOfInterest) {
       final ThreadInfo threadInfo = THREAD_MX_BEAN.getThreadInfo(id, MAX_STACK_DEPTH);
       final StackTraceElement[] stackTrace = threadInfo.getStackTrace();
-      Throwable t = new StackTraceHolder(threadInfo.getThreadName(), stackTrace);
+      final Throwable t = new StackTraceHolder(threadInfo.getThreadName(), stackTrace);
       if (deadlockFound) {
         LOG.error("A deadlocked thread:", t);
       } else {

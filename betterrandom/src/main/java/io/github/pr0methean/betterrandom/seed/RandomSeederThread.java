@@ -146,7 +146,7 @@ public final class RandomSeederThread extends LooperThread {
         if (thread.isDead()) {
           continue;
         }
-        for (Random random : randoms) {
+        for (final Random random : randoms) {
           if (random instanceof ByteArrayReseedableRandom) {
             thread.byteArrayPrngs.add((ByteArrayReseedableRandom) random);
           } else {
@@ -195,7 +195,7 @@ public final class RandomSeederThread extends LooperThread {
    * @param priority the thread priority
    * @see Thread#setPriority(int)
    */
-  public static void setPriority(final SeedGenerator seedGenerator, int priority) {
+  public static void setPriority(final SeedGenerator seedGenerator, final int priority) {
     getInstance(seedGenerator).setPriority(priority);
   }
 
@@ -268,12 +268,12 @@ public final class RandomSeederThread extends LooperThread {
     clear();
   }
 
-  private void reseedWithLong(Random random) {
+  private void reseedWithLong(final Random random) {
     seedGenerator.generateSeed(longSeedArray);
     random.setSeed(BinaryUtils.convertBytesToLong(longSeedArray));
   }
 
-  private static boolean stillDefinitelyHasEntropy(Object random) {
+  private static boolean stillDefinitelyHasEntropy(final Object random) {
     return (random instanceof EntropyCountingRandom) &&
         (((EntropyCountingRandom) random).getEntropyBits() > 0);
   }
@@ -281,7 +281,7 @@ public final class RandomSeederThread extends LooperThread {
   private void clear() {
     lock.lock();
     try {
-      for (ByteArrayReseedableRandom random : byteArrayPrngs) {
+      for (final ByteArrayReseedableRandom random : byteArrayPrngs) {
         if (random instanceof BaseRandom) {
           ((BaseRandom) random).setSeedGenerator(null);
         }
@@ -300,7 +300,7 @@ public final class RandomSeederThread extends LooperThread {
    * Removes all PRNGs from a given seed generator's thread.
    * @param seedGenerator the {@link SeedGenerator} of the thread to clear
    */
-  public static void clear(SeedGenerator seedGenerator) {
+  public static void clear(final SeedGenerator seedGenerator) {
     final RandomSeederThread thread = INSTANCES.get(seedGenerator);
     if (thread != null) {
       thread.clear();
