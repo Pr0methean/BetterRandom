@@ -739,8 +739,8 @@ public abstract class BaseRandomTest extends PowerMockTestCase {
     final CountDownLatch latch = new CountDownLatch(2);
     final Random parallelPrng = createRng(seed);
     final SortedSet<Double> output = new ConcurrentSkipListSet<>();
-    pool.execute(new GeneratorForkJoinTask(parallelPrng, output, supplier1, latch, iterations));
-    pool.execute(new GeneratorForkJoinTask(parallelPrng, output, supplier2, latch, iterations));
+    pool.execute(new GeneratorForkJoinTask<>(parallelPrng, output, supplier1, latch, iterations));
+    pool.execute(new GeneratorForkJoinTask<>(parallelPrng, output, supplier2, latch, iterations));
     assertTrue(pool.awaitQuiescence(timeoutSec, TimeUnit.SECONDS),
         String.format("Timed out waiting for %s and %s to finish", supplier1, supplier2));
     return output;
@@ -750,10 +750,10 @@ public abstract class BaseRandomTest extends PowerMockTestCase {
       final NamedFunction<Random, Double> supplier2, final byte[] seed) {
     final Random sequentialPrng = createRng(seed);
     final SortedSet<Double> output = new TreeSet<>();
-    new GeneratorForkJoinTask(sequentialPrng, output, supplier1, new CountDownLatch(1),
+    new GeneratorForkJoinTask<>(sequentialPrng, output, supplier1, new CountDownLatch(1),
         1000)
         .exec();
-    new GeneratorForkJoinTask(sequentialPrng, output, supplier2, new CountDownLatch(1),
+    new GeneratorForkJoinTask<>(sequentialPrng, output, supplier2, new CountDownLatch(1),
         1000)
         .exec();
     return output;

@@ -15,7 +15,7 @@ import org.testng.annotations.Test;
 public class ReseedingThreadLocalRandomWrapperMersenneTwisterTest
     extends ThreadLocalRandomWrapperMersenneTwisterTest {
 
-  private Supplier<? extends BaseRandom> mtSupplier;
+  private final Supplier<? extends BaseRandom> mtSupplier;
 
   public ReseedingThreadLocalRandomWrapperMersenneTwisterTest() {
     // Must be done first, or else lambda won't be serializable.

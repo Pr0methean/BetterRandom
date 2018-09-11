@@ -33,7 +33,7 @@ public class SingleThreadSplittableRandomAdapterTest extends BaseRandomTest {
   }
 
   @Test public void testGetSplittableRandom() {
-    // TODO
+    createRng().getSplittableRandom().nextLong();
   }
 
   @TestingDeficiency @Override @Test public void testSerializable() throws SeedException {
