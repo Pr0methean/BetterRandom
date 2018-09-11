@@ -106,8 +106,12 @@ public class ThreadLocalRandomWrapper extends RandomWrapper {
     };
   }
 
-  @Override protected boolean withProbabilityInternal(final double probability) {
-    return getWrapped().withProbabilityInternal(probability);
+  @Override protected boolean withProbabilityInternal(double probability) {
+    throw new AssertionError("Caller should be delegating at a higher level");
+  }
+
+  @Override public boolean withProbability(final double probability) {
+    return getWrapped().withProbability(probability);
   }
 
   @Override public long nextLong() {
@@ -189,18 +193,17 @@ public class ThreadLocalRandomWrapper extends RandomWrapper {
     if (threadLocal != null) {
       final BaseRandom wrapped = getWrapped();
       wrapped.setSeed(seed);
-      wrapped.creditEntropyForNewSeed(LONG_BYTES);
     }
   }
 
   @SuppressWarnings("VariableNotUsedInsideIf") @Override
   protected void setSeedInternal(final byte[] seed) {
+    if (seed == null) {
+      throw new IllegalArgumentException("Seed must not be null");
+    }
     if (threadLocal != null) {
       final BaseRandom wrapped = getWrapped();
       wrapped.setSeed(seed);
-      wrapped.creditEntropyForNewSeed(seed.length);
-    } else if (seed == null) {
-      throw new IllegalArgumentException("Seed must not be null");
     }
     if (this.seed == null) {
       this.seed = seed.clone(); // Needed for serialization
@@ -208,7 +211,7 @@ public class ThreadLocalRandomWrapper extends RandomWrapper {
   }
 
   @Override protected void debitEntropy(final long bits) {
-    getWrapped().debitEntropy(bits);
+    throw new AssertionError("Caller should be delegating at a higher level");
   }
 
   @Override public long getEntropyBits() {
