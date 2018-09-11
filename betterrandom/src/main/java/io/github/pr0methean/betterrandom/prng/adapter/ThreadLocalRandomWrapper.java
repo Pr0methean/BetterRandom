@@ -153,6 +153,10 @@ public class ThreadLocalRandomWrapper extends RandomWrapper {
     return true;
   }
 
+  @Override public double nextDouble() {
+    return getWrapped().nextDouble();
+  }
+
   @Override protected ToStringHelper addSubclassFields(final ToStringHelper original) {
     return original.add("wrapped on this thread", getWrapped().dump());
   }
