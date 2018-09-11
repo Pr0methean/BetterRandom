@@ -247,7 +247,7 @@ public abstract class BaseRandom extends Random
    * generator's sequence. Unlike the inherited implementation in {@link Random#nextLong()}, ones in
    * BetterRandom generally <i>can</i> be expected to return all 2<sup>64</sup> possible values.
    */
-  @Override public final long nextLong() {
+  @Override public long nextLong() {
     final long out = nextLongNoEntropyDebit();
     debitEntropy(Long.SIZE);
     return out;
@@ -372,7 +372,7 @@ public abstract class BaseRandom extends Random
     return super.nextFloat();
   }
 
-  @Override public final double nextDouble() {
+  @Override public double nextDouble() {
     debitEntropy(ENTROPY_OF_DOUBLE);
     return nextDoubleNoEntropyDebit();
   }
