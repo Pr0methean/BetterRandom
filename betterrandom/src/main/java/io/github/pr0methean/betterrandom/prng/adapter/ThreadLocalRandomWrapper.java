@@ -1,10 +1,10 @@
-package io.github.pr0methean.betterrandom.prng;
+package io.github.pr0methean.betterrandom.prng.adapter;
 
 import static io.github.pr0methean.betterrandom.util.BinaryUtils.convertBytesToLong;
 import static io.github.pr0methean.betterrandom.util.Java8Constants.LONG_BYTES;
 
 import com.google.common.base.MoreObjects.ToStringHelper;
-import io.github.pr0methean.betterrandom.prng.adapter.RandomWrapper;
+import io.github.pr0methean.betterrandom.prng.BaseRandom;
 import io.github.pr0methean.betterrandom.seed.SeedException;
 import io.github.pr0methean.betterrandom.seed.SeedGenerator;
 import io.github.pr0methean.betterrandom.util.SerializableSupplier;
@@ -110,6 +110,10 @@ public class ThreadLocalRandomWrapper extends RandomWrapper {
     return getWrapped().withProbabilityInternal(probability);
   }
 
+  @Override public long nextLong() {
+    return getWrapped().nextLong();
+  }
+
   @Override public long nextLong(final long bound) {
     return getWrapped().nextLong(bound);
   }
@@ -144,7 +148,7 @@ public class ThreadLocalRandomWrapper extends RandomWrapper {
   }
 
   @Override protected long nextLongNoEntropyDebit() {
-    return getWrapped().nextLongNoEntropyDebit();
+    throw new AssertionError("Caller should be delegating at a higher level");
   }
 
   @Override public boolean nextBoolean() {
@@ -156,7 +160,7 @@ public class ThreadLocalRandomWrapper extends RandomWrapper {
   }
 
   @Override public double nextDoubleNoEntropyDebit() {
-    return getWrapped().nextDoubleNoEntropyDebit();
+    throw new AssertionError("Caller should be delegating at a higher level");
   }
 
   @Override public double nextGaussian() {
