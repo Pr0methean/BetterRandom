@@ -88,7 +88,7 @@ public class RandomDotOrgSeedGeneratorHermeticTest extends PowerMockTestCase {
   private final Proxy proxy = createTorProxy();
   private boolean usingSmallRequests = false;
 
-  private void mockRandomDotOrgResponse(final byte[] response) throws Exception {
+  private void mockRandomDotOrgResponse(final byte[] response) {
     PowerMockito.doAnswer(invocationOnMock -> {
       final URL url = invocationOnMock.getArgument(0);
       address = url.toString();
