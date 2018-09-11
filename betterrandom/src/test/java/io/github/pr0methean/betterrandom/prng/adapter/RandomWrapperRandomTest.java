@@ -13,9 +13,13 @@
 //   See the License for the specific language governing permissions and
 //   limitations under the License.
 // ============================================================================
-package io.github.pr0methean.betterrandom.prng;
+package io.github.pr0methean.betterrandom.prng.adapter;
 
 import com.google.common.collect.ImmutableList;
+import io.github.pr0methean.betterrandom.prng.BaseRandom;
+import io.github.pr0methean.betterrandom.prng.BaseRandomTest;
+import io.github.pr0methean.betterrandom.prng.RandomTestUtils;
+import io.github.pr0methean.betterrandom.prng.adapter.RandomWrapper;
 import io.github.pr0methean.betterrandom.seed.SeedException;
 import java.util.Collections;
 import java.util.Map;

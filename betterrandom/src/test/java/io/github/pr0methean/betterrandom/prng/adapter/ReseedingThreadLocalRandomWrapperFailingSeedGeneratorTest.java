@@ -1,11 +1,12 @@
-package io.github.pr0methean.betterrandom.prng;
+package io.github.pr0methean.betterrandom.prng.adapter;
 
+import io.github.pr0methean.betterrandom.prng.BaseRandom;
+import io.github.pr0methean.betterrandom.prng.Pcg64Random;
 import io.github.pr0methean.betterrandom.prng.RandomTestUtils.EntropyCheckMode;
 import io.github.pr0methean.betterrandom.seed.FailingSeedGenerator;
 import io.github.pr0methean.betterrandom.seed.SeedException;
 import io.github.pr0methean.betterrandom.seed.SeedGenerator;
 import java.io.Serializable;
-import java.lang.reflect.InvocationTargetException;
 import java.util.function.Supplier;
 import org.testng.annotations.Test;
 
