@@ -1,3 +1,10 @@
+# 2.7.0
+* Moves `*RandomWrapper` to the subpackage `io.github.pr0methean.betterrandom.prng.adapter`, with
+  the exception of `ThreadLocalRandomWrapper` which currently depends on some internals of
+  `BaseRandom`.
+* `BaseRandom.useParallelStreams` is now named `usesParallelStreams` and is now a public method,
+  since it affects wrapper behavior.
+
 # 2.6.0
 * Adds `Pcg128Random`, a variant of `Pcg64Random` that uses a 128-bit seed and state.
 
