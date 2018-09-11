@@ -23,7 +23,7 @@ public enum TestUtils {
    * @param params A map of parameter types to values.
    * @param test The consumer to pass the instances to.
    */
-  @SuppressWarnings("ObjectAllocationInLoop") public static <T> void testConstructors(
+  @SuppressWarnings({"ObjectAllocationInLoop", "unchecked"}) public static <T> void testConstructors(
       final Class<? extends T> clazz, final boolean includeProtected,
       final Map<Class<?>, Object> params, final Consumer<? super T> test) {
     for (final Constructor<?> constructor : clazz.getDeclaredConstructors()) {

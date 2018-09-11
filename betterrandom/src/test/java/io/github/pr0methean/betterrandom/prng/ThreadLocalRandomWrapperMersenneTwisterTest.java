@@ -11,7 +11,7 @@ import org.testng.annotations.Test;
 @Test(testName = "ThreadLocalRandomWrapper:MersenneTwisterRandom")
 public class ThreadLocalRandomWrapperMersenneTwisterTest extends ThreadLocalRandomWrapperTest {
 
-  private MersenneTwisterRandomColonColonNew mtSupplier
+  private final MersenneTwisterRandomColonColonNew mtSupplier
       = new MersenneTwisterRandomColonColonNew(getTestSeedGenerator());
 
   @Override public Map<Class<?>, Object> constructorParams() {

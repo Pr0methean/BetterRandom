@@ -14,7 +14,7 @@ import org.testng.annotations.Test;
 public class ReseedingThreadLocalRandomWrapperMersenneTwisterTest
     extends ThreadLocalRandomWrapperMersenneTwisterTest {
 
-  private MersenneTwisterRandomColonColonNew mtSupplier
+  private final MersenneTwisterRandomColonColonNew mtSupplier
       = new MersenneTwisterRandomColonColonNew(getTestSeedGenerator());
 
   @TestingDeficiency

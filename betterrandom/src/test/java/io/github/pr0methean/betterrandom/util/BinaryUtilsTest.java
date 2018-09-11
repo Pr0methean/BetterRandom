@@ -34,7 +34,7 @@ public class BinaryUtilsTest {
   private static final byte[] INT_BYTES = {8, 4, 2, 1};
   private static final int INT = 134480385;
 
-  private void assertEqualsHex(final long actual, final long expected) {
+  private static void assertEqualsHex(final long actual, final long expected) {
     assertEquals(actual, expected, String.format("Expected %x, got %x", expected, actual));
   }
 

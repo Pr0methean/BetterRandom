@@ -308,7 +308,7 @@ public abstract class BaseRandom extends Random
     return out;
   }
 
-  private <T extends BaseStream<?, T>> T maybeParallel(final T in) {
+  @SuppressWarnings("unchecked") private <T extends BaseStream<?, T>> T maybeParallel(final T in) {
     return useParallelStreams() ? in.parallel() : in;
   }
 
