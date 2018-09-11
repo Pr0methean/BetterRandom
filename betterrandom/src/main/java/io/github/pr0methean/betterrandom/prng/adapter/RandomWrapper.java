@@ -106,7 +106,7 @@ public class RandomWrapper extends BaseRandom {
     return String.format("RandomWrapper (currently around %s)", wrapped);
   }
 
-  @Override protected boolean useParallelStreams() {
+  @Override public boolean usesParallelStreams() {
     return haveParallelStreams;
   }
 
