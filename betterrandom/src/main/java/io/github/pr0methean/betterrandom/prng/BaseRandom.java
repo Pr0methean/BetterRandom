@@ -148,9 +148,9 @@ public abstract class BaseRandom extends Random
   }
 
   /**
-   * @return true if this PRNG should create parallel streams; false otherwise.
+   * @return true if this PRNG creates parallel streams; false otherwise.
    */
-  public boolean useParallelStreams() {
+  public boolean usesParallelStreams() {
     return false;
   }
 
@@ -309,7 +309,7 @@ public abstract class BaseRandom extends Random
   }
 
   @SuppressWarnings("unchecked") private <T extends BaseStream<?, T>> T maybeParallel(final T in) {
-    return useParallelStreams() ? in.parallel() : in;
+    return usesParallelStreams() ? in.parallel() : in;
   }
 
   /**

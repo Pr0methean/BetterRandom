@@ -72,7 +72,7 @@ public class SplittableRandomAdapter extends DirectSplittableRandomAdapter {
     initSubclassTransientFields();
   }
 
-  @Override public boolean useParallelStreams() {
+  @Override public boolean usesParallelStreams() {
     return true;
   }
 

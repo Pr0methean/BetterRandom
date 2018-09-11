@@ -29,7 +29,6 @@ import io.github.pr0methean.betterrandom.seed.SeedGenerator;
 import io.github.pr0methean.betterrandom.util.BinaryUtils;
 import io.github.pr0methean.betterrandom.util.Dumpable;
 import io.github.pr0methean.betterrandom.util.EntryPoint;
-import io.github.pr0methean.betterrandom.util.Java8Constants;
 import java.security.SecureRandom;
 import java.util.Random;
 import javax.annotation.Nullable;
@@ -102,7 +101,7 @@ public class RandomWrapper extends BaseRandom {
   }
 
   private static boolean hasParallelStreams(Random wrapped) {
-    return (wrapped instanceof BaseRandom && ((BaseRandom) wrapped).useParallelStreams()) || (
+    return (wrapped instanceof BaseRandom && ((BaseRandom) wrapped).usesParallelStreams()) || (
         wrapped instanceof Java8CompatRandom && ((Java8CompatRandom) wrapped).longs().isParallel());
   }
 
@@ -115,7 +114,11 @@ public class RandomWrapper extends BaseRandom {
     return String.format("RandomWrapper (currently around %s)", wrapped);
   }
 
-  @Override public boolean useParallelStreams() {
+<<<<<<< HEAD
+  @Override public boolean usesParallelStreams() {
+=======
+  @Override public boolean usesParallelStreams() {
+>>>>>>> master
     return haveParallelStreams;
   }
 
