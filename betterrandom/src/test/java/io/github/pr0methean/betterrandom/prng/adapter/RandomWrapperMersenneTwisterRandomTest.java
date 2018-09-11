@@ -1,9 +1,12 @@
-package io.github.pr0methean.betterrandom.prng;
+package io.github.pr0methean.betterrandom.prng.adapter;
 
 import com.google.common.collect.ImmutableList;
+import io.github.pr0methean.betterrandom.prng.BaseRandom;
+import io.github.pr0methean.betterrandom.prng.MersenneTwisterRandom;
+import io.github.pr0methean.betterrandom.prng.MersenneTwisterRandomTest;
+import io.github.pr0methean.betterrandom.prng.adapter.RandomWrapper;
 import io.github.pr0methean.betterrandom.seed.SeedException;
 import io.github.pr0methean.betterrandom.seed.SeedGenerator;
-import java.lang.reflect.InvocationTargetException;
 import java.util.Random;
 import org.testng.annotations.Test;
 

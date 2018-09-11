@@ -1,6 +1,10 @@
-package io.github.pr0methean.betterrandom.prng;
+package io.github.pr0methean.betterrandom.prng.adapter;
 
 import com.google.common.collect.ImmutableList;
+import io.github.pr0methean.betterrandom.prng.AesCounterRandom;
+import io.github.pr0methean.betterrandom.prng.AesCounterRandomTest;
+import io.github.pr0methean.betterrandom.prng.BaseRandom;
+import io.github.pr0methean.betterrandom.prng.adapter.RandomWrapper;
 import io.github.pr0methean.betterrandom.seed.SeedException;
 import java.util.Random;
 import org.testng.annotations.Test;

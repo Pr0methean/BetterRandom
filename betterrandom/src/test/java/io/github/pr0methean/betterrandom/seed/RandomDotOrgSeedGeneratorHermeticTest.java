@@ -92,12 +92,19 @@ public class RandomDotOrgSeedGeneratorHermeticTest extends PowerMockTestCase {
   private boolean usingSmallRequests = false;
 
   private void mockRandomDotOrgResponse(final byte[] response) throws Exception {
+<<<<<<< HEAD
     PowerMockito.doAnswer(new Answer<HttpsURLConnection>() {
       @Override public HttpsURLConnection answer(InvocationOnMock invocation) throws Throwable {
         final URL url = invocation.getArgument(0);
         address = url.toString();
         return new FakeHttpsUrlConnection(url, null, response);
       }
+=======
+    PowerMockito.doAnswer(invocationOnMock -> {
+      final URL url = invocationOnMock.getArgument(0);
+      address = url.toString();
+      return new FakeHttpsUrlConnection(url, null, response);
+>>>>>>> master
     }).when(RandomDotOrgSeedGenerator.class, "openConnection", any(URL.class));
   }
 

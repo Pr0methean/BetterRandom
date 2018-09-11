@@ -3,7 +3,7 @@ package io.github.pr0methean.betterrandom.benchmark;
 import static io.github.pr0methean.betterrandom.seed.SecureRandomSeedGenerator.SECURE_RANDOM_SEED_GENERATOR;
 
 import io.github.pr0methean.betterrandom.prng.AesCounterRandom;
-import io.github.pr0methean.betterrandom.prng.ReseedingThreadLocalRandomWrapper;
+import io.github.pr0methean.betterrandom.prng.adapter.ReseedingThreadLocalRandomWrapper;
 import java.util.Random;
 import java8.util.function.Supplier;
 
