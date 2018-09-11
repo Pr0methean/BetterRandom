@@ -1,6 +1,7 @@
 <!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd">
 <suite name="Main" parallel="tests">
   <test name="Adapter PRNGs">
+    <parameter name="seedSize" value="16"/>
     <classes>
       <class name="io.github.pr0methean.betterrandom.prng.adapter.RandomWrapperAesCounterRandomTest"/>
       <class name="io.github.pr0methean.betterrandom.prng.adapter.RandomWrapperMersenneTwisterRandomTest"/>
