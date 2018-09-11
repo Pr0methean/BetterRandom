@@ -1,14 +1,7 @@
 <!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd">
 <suite name="Main" parallel="tests">
-  <test name="PRNGs">
-    <parameter name="seedSize" value="16"/>
+  <test name="Adapter PRNGs">
     <classes>
-      <class name="io.github.pr0methean.betterrandom.prng.AesCounterRandomTest"/>
-      <class name="io.github.pr0methean.betterrandom.prng.CellularAutomatonRandomTest"/>
-      <class name="io.github.pr0methean.betterrandom.prng.Cmwc4096RandomTest"/>
-      <class name="io.github.pr0methean.betterrandom.prng.MersenneTwisterRandomTest"/>
-      <class name="io.github.pr0methean.betterrandom.prng.Pcg64RandomTest"/>
-      <class name="io.github.pr0methean.betterrandom.prng.Pcg128RandomTest"/>
       <class name="io.github.pr0methean.betterrandom.prng.adapter.RandomWrapperAesCounterRandomTest"/>
       <class name="io.github.pr0methean.betterrandom.prng.adapter.RandomWrapperMersenneTwisterRandomTest"/>
       <class name="io.github.pr0methean.betterrandom.prng.adapter.RandomWrapperRandomTest"/>
@@ -21,12 +14,23 @@
       <class
         name="io.github.pr0methean.betterrandom.prng.adapter.ThreadLocalRandomWrapperMersenneTwisterTest"/>
       <class name="io.github.pr0methean.betterrandom.prng.adapter.ThreadLocalRandomWrapperTest"/>
-      <class name="io.github.pr0methean.betterrandom.prng.XorShiftRandomTest"/>
       <class
         name="io.github.pr0methean.betterrandom.prng.adapter.ReseedingSplittableRandomAdapterTest"/>
       <class
         name="io.github.pr0methean.betterrandom.prng.adapter.SingleThreadSplittableRandomAdapterTest"/>
       <class name="io.github.pr0methean.betterrandom.prng.adapter.SplittableRandomAdapterTest"/>
+    </classes>
+  </test>
+  <test name="PRNGs">
+    <parameter name="seedSize" value="16"/>
+    <classes>
+      <class name="io.github.pr0methean.betterrandom.prng.AesCounterRandomTest"/>
+      <class name="io.github.pr0methean.betterrandom.prng.CellularAutomatonRandomTest"/>
+      <class name="io.github.pr0methean.betterrandom.prng.Cmwc4096RandomTest"/>
+      <class name="io.github.pr0methean.betterrandom.prng.MersenneTwisterRandomTest"/>
+      <class name="io.github.pr0methean.betterrandom.prng.Pcg64RandomTest"/>
+      <class name="io.github.pr0methean.betterrandom.prng.Pcg128RandomTest"/>
+      <class name="io.github.pr0methean.betterrandom.prng.XorShiftRandomTest"/>
     </classes>
   </test>
   <test name="AES128+8">
