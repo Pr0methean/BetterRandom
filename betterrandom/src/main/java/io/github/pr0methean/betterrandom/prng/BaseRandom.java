@@ -151,8 +151,7 @@ public abstract class BaseRandom extends Random
    * @param probability The probability of returning true.
    * @return True with probability equal to the {@code probability} parameter; false otherwise.
    */
-  @SuppressWarnings("FloatingPointEquality") public final boolean withProbability(
-      final double probability) {
+  @SuppressWarnings("FloatingPointEquality") public boolean withProbability(final double probability) {
     if (probability >= 1) {
       return true;
     }
