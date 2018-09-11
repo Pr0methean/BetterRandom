@@ -1,10 +1,10 @@
-package io.github.pr0methean.betterrandom.prng.adapter;
+package io.github.pr0methean.betterrandom.prng;
 
 import static io.github.pr0methean.betterrandom.util.BinaryUtils.convertBytesToLong;
 import static io.github.pr0methean.betterrandom.util.Java8Constants.LONG_BYTES;
 
 import com.google.common.base.MoreObjects.ToStringHelper;
-import io.github.pr0methean.betterrandom.prng.BaseRandom;
+import io.github.pr0methean.betterrandom.prng.adapter.RandomWrapper;
 import io.github.pr0methean.betterrandom.seed.SeedException;
 import io.github.pr0methean.betterrandom.seed.SeedGenerator;
 import io.github.pr0methean.betterrandom.util.SerializableSupplier;
