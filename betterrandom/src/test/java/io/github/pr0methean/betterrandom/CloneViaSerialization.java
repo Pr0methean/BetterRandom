@@ -20,7 +20,7 @@ public enum CloneViaSerialization {
     return fromByteArray(toByteArray(object));
   }
 
-  public static <T extends Serializable> T fromByteArray(final byte[] serialCopy) {
+  @SuppressWarnings("unchecked") public static <T extends Serializable> T fromByteArray(final byte[] serialCopy) {
     try (final ObjectInputStream objectInStream = new ObjectInputStream(
         new ByteArrayInputStream(serialCopy))) {
       return (T) (objectInStream.readObject());
