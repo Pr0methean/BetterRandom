@@ -7,7 +7,7 @@ import io.github.pr0methean.betterrandom.prng.AesCounterRandom;
 import io.github.pr0methean.betterrandom.prng.BaseRandom;
 import io.github.pr0methean.betterrandom.prng.BaseRandomTest;
 import io.github.pr0methean.betterrandom.prng.Pcg64Random;
-import io.github.pr0methean.betterrandom.prng.adapter.ThreadLocalRandomWrapper;
+import io.github.pr0methean.betterrandom.prng.ThreadLocalRandomWrapper;
 import io.github.pr0methean.betterrandom.seed.SeedException;
 import io.github.pr0methean.betterrandom.seed.SeedGenerator;
 import java.io.Serializable;
