@@ -91,7 +91,7 @@ public class ReseedingSplittableRandomAdapter extends BaseSplittableRandomAdapte
     }
   }
 
-  @Override protected boolean useParallelStreams() {
+  @Override public boolean useParallelStreams() {
     return true;
   }
 

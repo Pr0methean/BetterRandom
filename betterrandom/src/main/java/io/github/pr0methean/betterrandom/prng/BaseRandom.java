@@ -150,7 +150,7 @@ public abstract class BaseRandom extends Random
   /**
    * @return true if this PRNG should create parallel streams; false otherwise.
    */
-  protected boolean useParallelStreams() {
+  public boolean useParallelStreams() {
     return false;
   }
 
