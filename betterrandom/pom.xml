@@ -39,13 +39,6 @@
           <version>2.11.1</version>
           <scope>test</scope>
         </dependency>
-        <dependency>
-          <!-- Overrides transitive dep on 5.2.1 -->
-          <groupId>net.sf.proguard</groupId>
-          <artifactId>proguard-base</artifactId>
-          <version>${proguard.version}</version>
-          <scope>runtime</scope>
-        </dependency>
       </dependencies>
       <build>
         <pluginManagement>
@@ -76,39 +69,8 @@
                 </execution>
               </executions>
             </plugin>
-            <plugin>
-              <groupId>com.github.wvengen</groupId>
-              <artifactId>proguard-maven-plugin</artifactId>
-              <version>2.0.14</version>
-              <configuration>
-                <proguardJar>${user.home}/.m2/repository/net/sf/proguard/proguard-base/${proguard.version}/proguard-base-${proguard.version}.jar
-                </proguardJar>
-                <proguardInclude>${basedir}/proguard.conf</proguardInclude>
-                <libs>
-                  <lib>${java.home}/lib/rt.jar</lib>
-                  <lib>${java.home}/lib/jce.jar</lib>
-                </libs>
-              </configuration>
-            </plugin>
           </plugins>
         </pluginManagement>
-        <plugins>
-          <plugin>
-            <groupId>com.github.wvengen</groupId>
-            <artifactId>proguard-maven-plugin</artifactId>
-            <version>2.0.14</version>
-            <executions>
-              <execution>
-                <id>proguard</id>
-                <!-- Work around lack of a post-package phase (proguard requires existing jar -->
-                <phase>pre-integration-test</phase>
-                <goals>
-                  <goal>proguard</goal>
-                </goals>
-              </execution>
-            </executions>
-          </plugin>
-        </plugins>
       </build>
     </profile>
     <profile>
@@ -339,6 +301,13 @@
 
   <dependencies>
     <dependency>
+      <!-- Overrides transitive dep on 5.2.1 -->
+      <groupId>net.sf.proguard</groupId>
+      <artifactId>proguard-base</artifactId>
+      <version>${proguard.version}</version>
+      <scope>runtime</scope>
+    </dependency>
+    <dependency>
       <!-- https://mvnrepository.com/artifact/org.apache.maven.plugins/maven-deploy-plugin -->
       <groupId>org.apache.maven.plugins</groupId>
       <artifactId>maven-deploy-plugin</artifactId>
@@ -412,7 +381,20 @@
     </resources>
     <pluginManagement>
       <plugins>
-
+        <plugin>
+          <groupId>com.github.wvengen</groupId>
+          <artifactId>proguard-maven-plugin</artifactId>
+          <version>2.0.14</version>
+          <configuration>
+            <proguardJar>${user.home}/.m2/repository/net/sf/proguard/proguard-base/${proguard.version}/proguard-base-${proguard.version}.jar
+            </proguardJar>
+            <proguardInclude>${basedir}/proguard.conf</proguardInclude>
+            <libs>
+              <lib>${java.home}/lib/rt.jar</lib>
+              <lib>${java.home}/lib/jce.jar</lib>
+            </libs>
+          </configuration>
+        </plugin>
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-javadoc-plugin</artifactId>
@@ -716,6 +698,21 @@
       </plugins>
     </pluginManagement>
     <plugins>
+      <plugin>
+        <groupId>com.github.wvengen</groupId>
+        <artifactId>proguard-maven-plugin</artifactId>
+        <version>2.0.14</version>
+        <executions>
+          <execution>
+            <id>proguard</id>
+            <!-- Work around lack of a post-package phase (proguard requires existing jar -->
+            <phase>pre-integration-test</phase>
+            <goals>
+              <goal>proguard</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-enforcer-plugin</artifactId>
