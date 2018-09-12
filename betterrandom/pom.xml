@@ -44,6 +44,17 @@
         <pluginManagement>
           <plugins>
             <plugin>
+              <groupId>com.github.wvengen</groupId>
+              <artifactId>proguard-maven-plugin</artifactId>
+              <version>${proguard.plugin.version}</version>
+              <configuration>
+                <libs>
+                  <lib>${java.home}/lib/rt.jar</lib>
+                  <lib>${java.home}/lib/jce.jar</lib>
+                </libs>
+              </configuration>
+            </plugin>
+            <plugin>
               <groupId>org.apache.maven.plugins</groupId>
               <artifactId>maven-surefire-plugin</artifactId>
               <version>2.21.0</version>
@@ -252,6 +263,7 @@
     <jsr305.version>3.0.2</jsr305.version>
     <guava.version>26.0</guava.version>
     <proguard.version>6.0.3</proguard.version>
+    <proguard.plugin.version>2.0.14</proguard.plugin.version>
     <jacoco.version>0.8.2</jacoco.version>
     <powermock.version>2.0.0-beta.5</powermock.version>
     <mockito.version>2.22.0</mockito.version>
@@ -384,15 +396,11 @@
         <plugin>
           <groupId>com.github.wvengen</groupId>
           <artifactId>proguard-maven-plugin</artifactId>
-          <version>2.0.14</version>
+          <version>${proguard.plugin.version}</version>
           <configuration>
             <proguardJar>${user.home}/.m2/repository/net/sf/proguard/proguard-base/${proguard.version}/proguard-base-${proguard.version}.jar
             </proguardJar>
             <proguardInclude>${basedir}/proguard.conf</proguardInclude>
-            <libs>
-              <lib>${java.home}/lib/rt.jar</lib>
-              <lib>${java.home}/lib/jce.jar</lib>
-            </libs>
           </configuration>
         </plugin>
         <plugin>
@@ -701,7 +709,7 @@
       <plugin>
         <groupId>com.github.wvengen</groupId>
         <artifactId>proguard-maven-plugin</artifactId>
-        <version>2.0.14</version>
+        <version>${proguard.plugin.version}</version>
         <executions>
           <execution>
             <id>proguard</id>
