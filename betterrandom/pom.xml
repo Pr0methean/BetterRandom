@@ -112,6 +112,21 @@
         </dependency>
       </dependencies>
       <build>
+        <pluginManagement>
+          <plugins>
+            <plugin>
+              <groupId>com.github.wvengen</groupId>
+              <artifactId>proguard-maven-plugin</artifactId>
+              <version>${proguard.plugin.version}</version>
+              <configuration>
+                <options>
+                  <!-- FIXME: https://www.guardsquare.com/en/products/proguard/manual/troubleshooting#unexpectedclass -->
+                  <option>-ignorewarnings</option>
+                </options>
+              </configuration>
+            </plugin>
+          </plugins>
+        </pluginManagement>
         <plugins>
           <plugin>
             <groupId>org.pitest</groupId>
