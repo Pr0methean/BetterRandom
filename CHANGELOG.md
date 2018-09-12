@@ -1,3 +1,6 @@
+# 2.7.1
+* Can now be built with Proguard on newer JDK versions.
+
 # 2.7.0
 * Moves `*RandomWrapper` to the subpackage `io.github.pr0methean.betterrandom.prng.adapter`.
 * `BaseRandom.useParallelStreams` is now named `usesParallelStreams` and is now a public method,
