@@ -4,8 +4,6 @@ if [ "${ANDROID}" = 1 ]; then
 else
   MAYBE_ANDROID_FLAG=""
 fi
-MAYBE_JACOCO_PREPARE="compile jacoco:instrument jacoco:prepare-agent"
-MAYBE_JACOCO_REPORT="jacoco:restore-instrumented-classes jacoco:report"
 NO_GIT_PATH="${PATH}"
 if [ "${APPVEYOR}" != "" ]; then
   export RANDOM_DOT_ORG_KEY=$(powershell 'Write-Host ($env:random_dot_org_key) -NoNewLine')
@@ -16,8 +14,8 @@ if [ "${APPVEYOR}" != "" ]; then
 fi
 cd betterrandom
 # Coverage test
-PATH="${NO_GIT_PATH}" mvn ${MAYBE_ANDROID_FLAG} clean ${MAYBE_JACOCO_PREPARE} \
-    test ${MAYBE_JACOCO_REPORT} -e
+PATH="${NO_GIT_PATH}" mvn ${MAYBE_ANDROID_FLAG} clean compile jacoco:instrument \
+    jacoco:prepare-agent test jacoco:restore-instrumented-classes jacoco:report -e
 STATUS=$?
 if [ "${STATUS}" = 0 ]; then
   if [ "${TRAVIS}" = "true" ]; then
