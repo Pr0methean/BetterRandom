@@ -1,15 +1,8 @@
 package io.github.pr0methean.betterrandom.prng.adapter;
 
-import io.github.pr0methean.betterrandom.prng.BaseRandom;
-import io.github.pr0methean.betterrandom.prng.Pcg64Random;
 import io.github.pr0methean.betterrandom.prng.RandomTestUtils.EntropyCheckMode;
 import io.github.pr0methean.betterrandom.seed.FailingSeedGenerator;
 import io.github.pr0methean.betterrandom.seed.SeedGenerator;
-<<<<<<< HEAD:betterrandom/src/test/java/io/github/pr0methean/betterrandom/prng/ReseedingThreadLocalRandomWrapperFailingSeedGeneratorTest.java
-=======
-import java.io.Serializable;
-import java.util.function.Supplier;
->>>>>>> master:betterrandom/src/test/java/io/github/pr0methean/betterrandom/prng/adapter/ReseedingThreadLocalRandomWrapperFailingSeedGeneratorTest.java
 import org.testng.annotations.Test;
 
 @Test(testName = "ReseedingThreadLocalRandomWrapper:FailingSeedGenerator")
