@@ -280,20 +280,29 @@ public enum RandomTestUtils {
         assertTrue(Arrays.equals(oldSeed, oldSeedClone),
             "Array modified after being returned by getSeed()");
         assertSame(rng.getSeedGenerator(), testSeedGenerator);
-        Thread.sleep(100);
         waits++;
         if (waits > 100) {
           fail(String.format("Timed out waiting for %s to be reseeded!", rng));
         }
+        Thread.sleep(100);
         secondSeed = rng.getSeed();
       } while (Arrays.equals(secondSeed, oldSeed));
-      Thread.sleep(50);
-      assertGreaterOrEqual(rng.getEntropyBits(), (secondSeed.length * 8L) - 1);
       final byte[] secondSeedClone = secondSeed.clone();
+      waits = 0;
+      while (rng.getEntropyBits() < (secondSeed.length * 8L) - 1) {
+        assertTrue(Arrays.equals(secondSeed, secondSeedClone),
+            "Array modified after being returned by getSeed()");
+        waits++;
+        if (waits > 10) {
+          fail(String.format("Timed out waiting for entropy count to increase on %s", rng));
+        }
+        Thread.sleep(10);
+      }
       byte[] thirdSeed;
       while (rng.getEntropyBits() > 0) {
         rng.nextLong();
       }
+      waits = 0;
       do {
         assertTrue(Arrays.equals(secondSeed, secondSeedClone),
             "Array modified after being returned by getSeed()");
