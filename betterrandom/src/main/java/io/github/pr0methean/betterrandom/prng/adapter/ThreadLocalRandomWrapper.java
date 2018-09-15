@@ -73,12 +73,16 @@ public class ThreadLocalRandomWrapper extends RandomWrapper {
         bytes -> new RandomWrapper(legacyCreator.apply(BinaryUtils.convertBytesToLong(bytes))));
   }
 
+  @Nullable @Override public SeedGenerator getSeedGenerator() {
+    return null;
+  }
+
   /**
    * Not supported, because this class uses a thread-local seed.
    * @param seedGenerator ignored.
    * @throws UnsupportedOperationException always.
    */
-  @Override public void setSeedGenerator(final SeedGenerator seedGenerator) {
+  @Override public void setSeedGenerator(@Nullable final SeedGenerator seedGenerator) {
     if (seedGenerator != null) {
       throw new UnsupportedOperationException("This can't be reseeded by a RandomSeederThread");
     }
