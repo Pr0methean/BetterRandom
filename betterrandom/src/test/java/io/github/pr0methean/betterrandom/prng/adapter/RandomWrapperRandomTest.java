@@ -15,6 +15,8 @@
 // ============================================================================
 package io.github.pr0methean.betterrandom.prng.adapter;
 
+import static org.testng.Assert.assertTrue;
+
 import com.google.common.collect.ImmutableList;
 import io.github.pr0methean.betterrandom.prng.BaseRandom;
 import io.github.pr0methean.betterrandom.prng.BaseRandomTest;
@@ -82,11 +84,15 @@ public class RandomWrapperRandomTest extends BaseRandomTest {
         "Generated sequences do not match.");
   }
 
-  @Override protected BaseRandom createRng() throws SeedException {
+  @Override protected RandomWrapper createRng() throws SeedException {
     return new RandomWrapper(getTestSeedGenerator());
   }
 
-  @Override protected BaseRandom createRng(final byte[] seed) throws SeedException {
+  @Override protected RandomWrapper createRng(final byte[] seed) throws SeedException {
     return new RandomWrapper(seed);
+  }
+
+  @Test public void testGetWrapped() {
+    assertTrue(getClassUnderTest().isInstance(createRng().getWrapped()));
   }
 }
