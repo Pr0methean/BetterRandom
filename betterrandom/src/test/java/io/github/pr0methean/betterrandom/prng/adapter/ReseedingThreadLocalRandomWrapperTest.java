@@ -1,7 +1,5 @@
 package io.github.pr0methean.betterrandom.prng.adapter;
 
-import static io.github.pr0methean.betterrandom.TestUtils.assertGreaterOrEqual;
-
 import io.github.pr0methean.betterrandom.prng.BaseRandom;
 import io.github.pr0methean.betterrandom.prng.Pcg64Random;
 import io.github.pr0methean.betterrandom.prng.RandomTestUtils;
@@ -77,7 +75,6 @@ public class ReseedingThreadLocalRandomWrapperTest extends ThreadLocalRandomWrap
   }
 
   @Override protected BaseRandom createRng() throws SeedException {
-    return new ReseedingThreadLocalRandomWrapper(getTestSeedGenerator(),
-        (Serializable & Supplier<BaseRandom>) pcgSupplier);
+    return new ReseedingThreadLocalRandomWrapper(getTestSeedGenerator(), pcgSupplier);
   }
 }
