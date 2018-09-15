@@ -285,10 +285,11 @@ public enum RandomTestUtils {
         assertTrue(Arrays.equals(secondSeed, secondSeedClone),
             "Array modified after being returned by getSeed()");
         waits++;
-        if (waits > 10) {
+        if (waits > 5) {
           fail(String.format("Timed out waiting for entropy count to increase on %s", rng));
         }
-        Thread.sleep(10);
+        // FIXME: Flaky if we only sleep for 10 ms at a time
+        Thread.sleep(100);
       }
       byte[] thirdSeed;
       while (rng.getEntropyBits() > 0) {
