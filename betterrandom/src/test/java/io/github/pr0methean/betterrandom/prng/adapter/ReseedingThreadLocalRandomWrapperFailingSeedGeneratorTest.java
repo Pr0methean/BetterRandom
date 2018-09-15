@@ -64,6 +64,10 @@ public class ReseedingThreadLocalRandomWrapperFailingSeedGeneratorTest
     // No-op.
   }
 
+  @Override @Test(enabled = false) public void testGetWrapped() {
+    // No-op.
+  }
+
   @Override protected SeedGenerator getTestSeedGenerator() {
     return FailingSeedGenerator.FAILING_SEED_GENERATOR;
   }

@@ -1,6 +1,7 @@
 package io.github.pr0methean.betterrandom.prng.adapter;
 
 import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertSame;
 
 import io.github.pr0methean.betterrandom.CloneViaSerialization;
 import io.github.pr0methean.betterrandom.prng.AesCounterRandom;
@@ -113,13 +114,17 @@ public class ThreadLocalRandomWrapperTest extends BaseRandomTest {
     ThreadLocalRandomWrapper.wrapLegacy(Random::new, getTestSeedGenerator()).nextInt();
   }
 
-  @Override protected BaseRandom createRng() throws SeedException {
+  @Override protected ThreadLocalRandomWrapper createRng() throws SeedException {
     return new ThreadLocalRandomWrapper(pcgSupplier);
   }
 
-  @Override protected BaseRandom createRng(final byte[] seed) throws SeedException {
-    final BaseRandom rng = createRng();
+  @Override protected ThreadLocalRandomWrapper createRng(final byte[] seed) throws SeedException {
+    final ThreadLocalRandomWrapper rng = createRng();
     rng.setSeed(seed);
     return rng;
+  }
+
+  @Test public void testGetWrapped() {
+    assertSame(createRng().getWrapped().getClass(), Pcg64Random.class);
   }
 }
