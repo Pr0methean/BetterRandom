@@ -1,9 +1,10 @@
 package io.github.pr0methean.betterrandom.prng.adapter;
 
+import static org.testng.Assert.assertSame;
+
 import com.google.common.collect.ImmutableList;
 import io.github.pr0methean.betterrandom.prng.BaseRandom;
 import io.github.pr0methean.betterrandom.prng.BaseRandomTest;
-import io.github.pr0methean.betterrandom.prng.adapter.RandomWrapper;
 import io.github.pr0methean.betterrandom.seed.SeedException;
 import java.security.GeneralSecurityException;
 import java.security.NoSuchAlgorithmException;
@@ -90,13 +91,13 @@ public class RandomWrapperSecureRandomTest extends BaseRandomTest {
     // No-op.
   }
 
-  @Override protected BaseRandom createRng() throws SeedException {
+  @Override protected RandomWrapper createRng() throws SeedException {
     final RandomWrapper wrapper = createRngInternal();
     wrapper.setSeed(SEED_GEN.nextLong());
     return wrapper;
   }
 
-  @Override protected BaseRandom createRng(final byte[] seed) throws SeedException {
+  @Override protected RandomWrapper createRng(final byte[] seed) throws SeedException {
     final RandomWrapper wrapper = createRngInternal();
     wrapper.setSeed(seed);
     return wrapper;
@@ -106,5 +107,9 @@ public class RandomWrapperSecureRandomTest extends BaseRandomTest {
   @Override @Test public void testThreadSafety() {
     testThreadSafetyVsCrashesOnly(30,
         ImmutableList.of(NEXT_LONG, NEXT_INT, NEXT_DOUBLE, NEXT_GAUSSIAN, SET_WRAPPED));
+  }
+
+  @Test public void testGetWrapped() {
+    assertSame(createRng().getWrapped().getClass(), SecureRandom.class);
   }
 }

@@ -15,6 +15,7 @@
 // ============================================================================
 package io.github.pr0methean.betterrandom.prng.adapter;
 
+import static org.testng.Assert.assertSame;
 import static org.testng.Assert.assertTrue;
 
 import com.google.common.collect.ImmutableList;
@@ -93,6 +94,6 @@ public class RandomWrapperRandomTest extends BaseRandomTest {
   }
 
   @Test public void testGetWrapped() {
-    assertTrue(getClassUnderTest().isInstance(createRng().getWrapped()));
+    assertSame(createRng().getWrapped().getClass(), Random.class);
   }
 }

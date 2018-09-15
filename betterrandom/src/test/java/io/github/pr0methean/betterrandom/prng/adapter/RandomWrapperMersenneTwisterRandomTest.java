@@ -1,6 +1,9 @@
 package io.github.pr0methean.betterrandom.prng.adapter;
 
+import static org.testng.Assert.assertSame;
+
 import com.google.common.collect.ImmutableList;
+import io.github.pr0methean.betterrandom.prng.AesCounterRandom;
 import io.github.pr0methean.betterrandom.prng.BaseRandom;
 import io.github.pr0methean.betterrandom.prng.MersenneTwisterRandom;
 import io.github.pr0methean.betterrandom.prng.MersenneTwisterRandomTest;
@@ -44,5 +47,9 @@ public class RandomWrapperMersenneTwisterRandomTest extends MersenneTwisterRando
 
   @Override protected RandomWrapper createRng(final byte[] seed) throws SeedException {
     return new RandomWrapper(new MersenneTwisterRandom(seed));
+  }
+
+  @Test public void testGetWrapped() {
+    assertSame(createRng().getWrapped().getClass(), MersenneTwisterRandom.class);
   }
 }
