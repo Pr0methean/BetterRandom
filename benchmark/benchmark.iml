@@ -14,6 +14,7 @@
     <orderEntry type="module" module-name="BetterRandom" />
     <orderEntry type="library" name="Maven: io.github.pr0methean.betterrandom:BetterRandom:2.5.2-SNAPSHOT" level="project" />
     <orderEntry type="library" name="Maven: io.github.pr0methean.betterrandom:BetterRandom:2.7.1-SNAPSHOT" level="project" />
+    <orderEntry type="library" name="Maven: io.github.pr0methean.betterrandom:BetterRandom:2.7.1-SNAPSHOT" level="project" />
     <orderEntry type="library" scope="TEST" name="Maven: org.apache.logging.log4j:log4j-slf4j18-impl:2.11.1" level="project" />
     <orderEntry type="library" scope="TEST" name="Maven: org.slf4j:slf4j-api:1.8.0-alpha2" level="project" />
     <orderEntry type="library" scope="TEST" name="Maven: org.apache.logging.log4j:log4j-api:2.11.1" level="project" />

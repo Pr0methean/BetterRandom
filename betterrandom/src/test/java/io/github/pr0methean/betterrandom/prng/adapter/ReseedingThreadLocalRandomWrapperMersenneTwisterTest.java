@@ -83,7 +83,7 @@ public class ReseedingThreadLocalRandomWrapperMersenneTwisterTest
     createRng().setSeedGenerator(getTestSeedGenerator());
   }
 
-  @Override protected BaseRandom createRng() throws SeedException {
+  @Override protected ReseedingThreadLocalRandomWrapper createRng() throws SeedException {
     return new ReseedingThreadLocalRandomWrapper(getTestSeedGenerator(), mtSupplier);
   }
 }
