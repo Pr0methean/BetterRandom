@@ -74,7 +74,7 @@ public class ReseedingThreadLocalRandomWrapperTest extends ThreadLocalRandomWrap
     prng.nextInt();
   }
 
-  @Override protected BaseRandom createRng() throws SeedException {
+  @Override protected ReseedingThreadLocalRandomWrapper createRng() throws SeedException {
     return new ReseedingThreadLocalRandomWrapper(getTestSeedGenerator(), pcgSupplier);
   }
 }
