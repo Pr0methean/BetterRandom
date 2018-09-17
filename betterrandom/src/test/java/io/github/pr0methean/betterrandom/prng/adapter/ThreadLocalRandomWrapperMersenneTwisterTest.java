@@ -1,7 +1,10 @@
 package io.github.pr0methean.betterrandom.prng.adapter;
 
+import static org.testng.Assert.assertSame;
+
 import io.github.pr0methean.betterrandom.prng.BaseRandom;
 import io.github.pr0methean.betterrandom.prng.MersenneTwisterRandom;
+import io.github.pr0methean.betterrandom.prng.Pcg64Random;
 import io.github.pr0methean.betterrandom.seed.SeedException;
 import io.github.pr0methean.betterrandom.seed.SeedGenerator;
 import io.github.pr0methean.betterrandom.util.SerializableSupplier;
@@ -15,6 +18,10 @@ public class ThreadLocalRandomWrapperMersenneTwisterTest extends ThreadLocalRand
 
   private final MersenneTwisterRandomColonColonNew mtSupplier
       = new MersenneTwisterRandomColonColonNew(getTestSeedGenerator());
+  
+  @Override @Test public void testGetWrapped() {
+    assertSame(createRng().getWrapped().getClass(), MersenneTwisterRandom.class);
+  }
 
   @Override public Map<Class<?>, Object> constructorParams() {
     final Map<Class<?>, Object> params = super.constructorParams();
@@ -23,10 +30,10 @@ public class ThreadLocalRandomWrapperMersenneTwisterTest extends ThreadLocalRand
     return params;
   }
 
-  @Override protected BaseRandom createRng() throws SeedException {
+  @Override protected ThreadLocalRandomWrapper createRng() throws SeedException {
     return new ThreadLocalRandomWrapper(mtSupplier);
   }
-
+  
   protected static class MersenneTwisterRandomColonColonNew
       implements SerializableSupplier<MersenneTwisterRandom>, Function<byte[], BaseRandom> {
 
