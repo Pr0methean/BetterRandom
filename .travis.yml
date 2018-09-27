@@ -61,7 +61,7 @@ jobs:
     stage: unit tests
   - language: java
     os: linux
-    jdk: oraclejdk11
+    jdk: oraclejdk10 # TODO: Upgrade to 11 once https://github.com/hcoles/pitest/issues/519 is fixed
     env: OP=mutation
     stage: long tests
   - language: java
