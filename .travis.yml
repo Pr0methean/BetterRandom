@@ -92,7 +92,7 @@ jobs:
     stage: unit tests
   - language: java
     os: linux
-    jdk: oraclejdk10
+    jdk: oraclejdk11
     env: OP=mutation
     stage: long tests
   - language: java
