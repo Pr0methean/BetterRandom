@@ -77,11 +77,6 @@ jobs:
     stage: unit tests
   - language: java
     os: linux
-    jdk: oraclejdk10
-    env: OP=unit-tests
-    stage: unit tests
-  - language: java
-    os: linux
     jdk: openjdk11
     env: OP=unit-tests
     stage: unit tests
