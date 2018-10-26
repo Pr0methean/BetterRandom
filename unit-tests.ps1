@@ -33,6 +33,7 @@ if ( $STATUS ) {
     if ( Test-Path "betterrandom-coverage/${COMMIT}" ) {
         echo "[unit-tests.ps1] Aggregating with JaCoCo reports from other jobs."
         cp betterrandom-coverage/${COMMIT}/*.exec target
+        
         mvn "jacoco:report-aggregate"
         $JACOCO_DIR = "jacoco-aggregate"
     } else {
@@ -52,6 +53,7 @@ if ( $STATUS ) {
     git push
     while (! $?) {
       cd ..
+      git fetch --all
       git pull --commit # Merge
       cp betterrandom-coverage/${COMMIT}/*.exec target
       mvn "jacoco:report-aggregate"
