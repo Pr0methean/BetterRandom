@@ -41,7 +41,7 @@ if ( $STATUS ) {
         mkdir "betterrandom-coverage/${COMMIT}"
         $JACOCO_DIR = "jacoco"
     }
-    mv target/jacoco.exec "betterrandom-coverage/${COMMIT}/${JOB_ID}.exec"
+    mv betterrandom/target/jacoco.exec "betterrandom-coverage/${COMMIT}/${JOB_ID}.exec"
     $STATUS = $?
     if (! $STATUS) {
         exit $STATUS
