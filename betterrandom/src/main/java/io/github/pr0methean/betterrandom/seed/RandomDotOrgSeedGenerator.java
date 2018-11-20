@@ -182,7 +182,7 @@ public enum RandomDotOrgSeedGenerator implements SeedGenerator {
         // Use old API.
         connection = openConnection(new URL(MessageFormat.format(RANDOM_URL, length)));
         try (final BufferedReader reader = getResponseReader(connection)) {
-          for (int index = 0; index < seed.length; index++) {
+          for (int index = 0; index < length; index++) {
             final String line = reader.readLine();
             if (line == null) {
               throw new SeedException(String
