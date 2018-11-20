@@ -48,7 +48,7 @@ public class FakeSeedGenerator implements SeedGenerator {
     return calls.get();
   }
 
-  public void resetCalls() {
+  public void reset() {
     calls.set(0);
   }
 }
