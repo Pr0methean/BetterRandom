@@ -1,5 +1,6 @@
 package io.github.pr0methean.betterrandom.seed;
 
+import static io.github.pr0methean.betterrandom.seed.RandomDotOrgSeedGenerator.MAX_REQUEST_SIZE;
 import static io.github.pr0methean.betterrandom.seed.RandomDotOrgSeedGenerator.setProxy;
 import static io.github.pr0methean.betterrandom.seed.RandomDotOrgUtils.createTorProxy;
 import static io.github.pr0methean.betterrandom.seed.SeedTestUtils.testGenerator;
@@ -8,11 +9,17 @@ import static org.powermock.api.mockito.PowerMockito.spy;
 import static org.testng.Assert.assertTrue;
 import static org.testng.AssertJUnit.assertEquals;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.net.Proxy;
 import java.net.URL;
 import java.nio.charset.Charset;
+import java.util.Arrays;
+import java.util.Base64;
 import java.util.UUID;
 import javax.annotation.Nullable;
+
+import io.github.pr0methean.betterrandom.prng.adapter.SplittableRandomAdapter;
 import org.json.simple.parser.ParseException;
 import org.powermock.api.mockito.PowerMockito;
 import org.powermock.api.mockito.mockpolicies.Slf4jMockPolicy;
@@ -79,6 +86,31 @@ public class RandomDotOrgSeedGeneratorHermeticTest extends PowerMockTestCase {
           + "85\n05\n86\n4d\nea\n40\n17\nd1\n9e\ncc\n42\nf5\ndb\n9c\na6\n98\nb9\n93\n4e\n36\nf6\nb5\n94\nb3\n1e\n73\nf6\n2c\n12\nad\n"
           + "71\n93\n1e\n6c\n7c\n23\nd8\nfa\n4c\n24\nc5\nb4\n3a\nd4\ne0\nf8\n9c\n4a\ne6\n15\n97\n5d\n48\na0\n0d")
           .getBytes(UTF8);
+  private static final byte[] MAX_SIZE_SEED_CHUNK = new byte[MAX_REQUEST_SIZE];
+  private static final byte[] MAX_SIZE_RESPONSE_NEW_API, MAX_SIZE_RESPONSE_OLD_API;
+  private static final byte[] EXPECTED_SEED = new byte[MAX_REQUEST_SIZE + 1];
+  static {
+    new SplittableRandomAdapter().nextBytes(MAX_SIZE_SEED_CHUNK);
+    System.arraycopy(MAX_SIZE_SEED_CHUNK, 0, EXPECTED_SEED, 0, MAX_REQUEST_SIZE);
+    EXPECTED_SEED[MAX_REQUEST_SIZE] = MAX_SIZE_SEED_CHUNK[0];
+    try {
+      ByteArrayOutputStream responseBuilder = new ByteArrayOutputStream();
+      responseBuilder.write("{\"jsonrpc\":\"2.0\",\"result\":{\"random\":{\"data\":[\""
+          .getBytes(UTF8));
+      responseBuilder.write(Base64.getEncoder().encode(MAX_SIZE_SEED_CHUNK));
+      responseBuilder.write(("\"],"
+          + "\"completionTime\":\"2018-05-06 19:54:31Z\"},\"bitsUsed\":256,\"bitsLeft\":996831,"
+          + "\"requestsLeft\":199912,\"advisoryDelay\":290},\"id\":27341}").getBytes(UTF8));
+      MAX_SIZE_RESPONSE_NEW_API = responseBuilder.toByteArray();
+      responseBuilder = new ByteArrayOutputStream();
+      for (int i = 0; i < MAX_REQUEST_SIZE; i++) {
+        responseBuilder.write(String.format("%02x\n", MAX_SIZE_SEED_CHUNK[i]).getBytes(UTF8));
+      }
+      MAX_SIZE_RESPONSE_OLD_API = responseBuilder.toByteArray();
+    } catch (IOException e) {
+      throw new AssertionError(e);
+    }
+  }
   @Nullable private String address = null;
   private final Proxy proxy = createTorProxy();
   private boolean usingSmallRequests = false;
@@ -186,6 +218,35 @@ public class RandomDotOrgSeedGeneratorHermeticTest extends PowerMockTestCase {
         + "\"completionTime\":\"2018-05-06 19:54:31Z\"},\"bitsUsed\":256,\"bitsLeft\":996831,"
         + "\"requestsLeft\":199912,\"advisoryDelay\":290},\"id\":27341}").getBytes(UTF8));
     expectAndGetException(SeedTestUtils.SEED_SIZE);
+  }
+
+  private void testLargeRequest() {
+    final int seedLength = MAX_REQUEST_SIZE + 1;
+    byte[] seed = RandomDotOrgSeedGenerator.RANDOM_DOT_ORG_SEED_GENERATOR.generateSeed(seedLength);
+    Assert.assertEquals(seed.length, seedLength, "Failed to generate seed of length " + seedLength);
+    assertTrue(Arrays.equals(seed, EXPECTED_SEED), "Seed output not as expected");
+  }
+
+  /**
+   * Try to acquire a large number of bytes, more than are cached internally by the seed generator
+   * implementation.
+   */
+  @Test(timeOut = 120000) public void testLargeRequestOldApi() throws Exception {
+    RandomDotOrgSeedGenerator.setApiKey(null);
+    // Request more bytes than can be gotten in one Web request.
+    mockRandomDotOrgResponse(MAX_SIZE_RESPONSE_OLD_API);
+    testLargeRequest();
+  }
+
+  /**
+   * Try to acquire a large number of bytes, more than are cached internally by the seed generator
+   * implementation.
+   */
+  @Test(timeOut = 120000) public void testLargeRequestNewApi() throws Exception {
+    RandomDotOrgUtils.setApiKey();
+    // Request more bytes than can be gotten in one Web request.
+    mockRandomDotOrgResponse(MAX_SIZE_RESPONSE_NEW_API);
+    testLargeRequest();
   }
 
   @AfterMethod public void tearDownMethod() {

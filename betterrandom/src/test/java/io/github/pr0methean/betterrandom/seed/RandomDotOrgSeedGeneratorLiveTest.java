@@ -62,38 +62,6 @@ public class RandomDotOrgSeedGeneratorLiveTest extends AbstractSeedGeneratorTest
     }
   }
 
-  /**
-   * Try to acquire a large number of bytes, more than are cached internally by the seed generator
-   * implementation.
-   */
-  @Test(timeOut = 120000) public void testLargeRequestOldApi() throws SeedException {
-    if (canRunRandomDotOrgLargeTest()) {
-      RandomDotOrgSeedGenerator.setApiKey(null);
-      // Request more bytes than can be gotten in one Web request.
-      final int seedLength = RandomDotOrgSeedGenerator.MAX_REQUEST_SIZE + 1;
-      assertEquals(seedGenerator.generateSeed(seedLength).length, seedLength,
-          "Failed to generate seed of length " + seedLength);
-    } else {
-      throw new SkipException("Test can't run on this platform");
-    }
-  }
-
-  /**
-   * Try to acquire a large number of bytes, more than are cached internally by the seed generator
-   * implementation.
-   */
-  @Test(timeOut = 120000) public void testLargeRequestNewApi() throws SeedException {
-    if (canRunRandomDotOrgLargeTest()) {
-      RandomDotOrgUtils.setApiKey();
-      // Request more bytes than can be gotten in one Web request.
-      final int seedLength = RandomDotOrgSeedGenerator.MAX_REQUEST_SIZE + 1;
-      assertEquals(seedGenerator.generateSeed(seedLength).length, seedLength,
-          "Failed to generate seed of length " + seedLength);
-    } else {
-      throw new SkipException("Test can't run on this platform");
-    }
-  }
-
   @Override public void testToString() {
     super.testToString();
     Assert.assertNotNull(RandomDotOrgSeedGenerator.DELAYED_RETRY.toString());
