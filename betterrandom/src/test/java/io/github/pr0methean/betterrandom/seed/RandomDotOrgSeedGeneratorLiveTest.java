@@ -15,6 +15,7 @@
 // ============================================================================
 package io.github.pr0methean.betterrandom.seed;
 
+import static io.github.pr0methean.betterrandom.seed.RandomDotOrgSeedGenerator.RANDOM_DOT_ORG_SEED_GENERATOR;
 import static io.github.pr0methean.betterrandom.seed.RandomDotOrgSeedGenerator.setProxy;
 import static io.github.pr0methean.betterrandom.seed.RandomDotOrgUtils.canRunRandomDotOrgLargeTest;
 import static io.github.pr0methean.betterrandom.seed.RandomDotOrgUtils.haveApiKey;
@@ -41,13 +42,13 @@ public class RandomDotOrgSeedGeneratorLiveTest extends AbstractSeedGeneratorTest
   protected final Proxy proxy = RandomDotOrgUtils.createTorProxy();
 
   public RandomDotOrgSeedGeneratorLiveTest() {
-    super(RandomDotOrgSeedGenerator.RANDOM_DOT_ORG_SEED_GENERATOR);
+    super(RANDOM_DOT_ORG_SEED_GENERATOR);
   }
 
   @Test(timeOut = 120000) public void testGeneratorOldApi() throws SeedException {
     if (canRunRandomDotOrgLargeTest()) {
       RandomDotOrgSeedGenerator.setApiKey(null);
-      SeedTestUtils.testGenerator(seedGenerator, true);
+      SeedTestUtils.testGenerator(RANDOM_DOT_ORG_SEED_GENERATOR, true);
     } else {
       throw new SkipException("Test can't run on this platform");
     }
@@ -56,7 +57,7 @@ public class RandomDotOrgSeedGeneratorLiveTest extends AbstractSeedGeneratorTest
   @Test(timeOut = 120000) public void testGeneratorNewApi() throws SeedException {
     if (canRunRandomDotOrgLargeTest() && haveApiKey()) {
       RandomDotOrgUtils.setApiKey();
-      SeedTestUtils.testGenerator(seedGenerator, true);
+      SeedTestUtils.testGenerator(RANDOM_DOT_ORG_SEED_GENERATOR, true);
     } else {
       throw new SkipException("Test can't run on this platform");
     }
@@ -68,13 +69,26 @@ public class RandomDotOrgSeedGeneratorLiveTest extends AbstractSeedGeneratorTest
   }
 
   @Test
+  public void testSetProxyOff() {
+    if (!canRunRandomDotOrgLargeTest()) {
+      throw new SkipException("Test can't run on this platform");
+    }
+    setProxy(Proxy.NO_PROXY);
+    try {
+      SeedTestUtils.testGenerator(RANDOM_DOT_ORG_SEED_GENERATOR, true);
+    } finally {
+      setProxy(null);
+    }
+  }
+
+  @Test
   public void testSetProxyReal() {
     if (!canRunRandomDotOrgLargeTest()) {
       throw new SkipException("Test can't run on this platform");
     }
     setProxy(proxy);
     try {
-      SeedTestUtils.testGenerator(seedGenerator, true);
+      SeedTestUtils.testGenerator(RANDOM_DOT_ORG_SEED_GENERATOR, true);
     } finally {
       setProxy(null);
     }
