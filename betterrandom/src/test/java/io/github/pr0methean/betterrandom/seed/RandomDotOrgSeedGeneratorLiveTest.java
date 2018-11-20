@@ -16,9 +16,11 @@
 package io.github.pr0methean.betterrandom.seed;
 
 import static io.github.pr0methean.betterrandom.seed.RandomDotOrgSeedGenerator.RANDOM_DOT_ORG_SEED_GENERATOR;
+import static io.github.pr0methean.betterrandom.seed.RandomDotOrgSeedGenerator.setApiKey;
 import static io.github.pr0methean.betterrandom.seed.RandomDotOrgSeedGenerator.setProxy;
 import static io.github.pr0methean.betterrandom.seed.RandomDotOrgUtils.canRunRandomDotOrgLargeTest;
 import static io.github.pr0methean.betterrandom.seed.RandomDotOrgUtils.haveApiKey;
+import static io.github.pr0methean.betterrandom.seed.RandomDotOrgUtils.setApiKey;
 import static org.testng.Assert.assertEquals;
 
 import java.net.InetAddress;
@@ -47,7 +49,7 @@ public class RandomDotOrgSeedGeneratorLiveTest extends AbstractSeedGeneratorTest
 
   @Test(timeOut = 120000) public void testGeneratorOldApi() throws SeedException {
     if (canRunRandomDotOrgLargeTest()) {
-      RandomDotOrgSeedGenerator.setApiKey(null);
+      setApiKey(null);
       SeedTestUtils.testGenerator(RANDOM_DOT_ORG_SEED_GENERATOR, true);
     } else {
       throw new SkipException("Test can't run on this platform");
@@ -56,7 +58,7 @@ public class RandomDotOrgSeedGeneratorLiveTest extends AbstractSeedGeneratorTest
 
   @Test(timeOut = 120000) public void testGeneratorNewApi() throws SeedException {
     if (canRunRandomDotOrgLargeTest() && haveApiKey()) {
-      RandomDotOrgUtils.setApiKey();
+      setApiKey();
       SeedTestUtils.testGenerator(RANDOM_DOT_ORG_SEED_GENERATOR, true);
     } else {
       throw new SkipException("Test can't run on this platform");
@@ -83,13 +85,15 @@ public class RandomDotOrgSeedGeneratorLiveTest extends AbstractSeedGeneratorTest
 
   @Test
   public void testSetProxyReal() {
-    if (!canRunRandomDotOrgLargeTest()) {
-      throw new SkipException("Test can't run on this platform");
+    if (!haveApiKey()) {
+      throw new SkipException("Test can't run without an API key");
     }
+    setApiKey();
     setProxy(proxy);
     try {
       SeedTestUtils.testGenerator(RANDOM_DOT_ORG_SEED_GENERATOR, true);
     } finally {
+      setApiKey(null);
       setProxy(null);
     }
   }
@@ -113,7 +117,7 @@ public class RandomDotOrgSeedGeneratorLiveTest extends AbstractSeedGeneratorTest
 
   @AfterMethod
   public void tearDownMethod() {
-    RandomDotOrgSeedGenerator.setApiKey(null);
+    setApiKey(null);
   }
 
 }
