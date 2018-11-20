@@ -31,7 +31,7 @@ public class SecureRandomSeedGeneratorTest extends AbstractSeedGeneratorTest {
   }
 
   @Test(timeOut = 15000) public void testGenerator() throws SeedException {
-    SeedTestUtils.testGenerator(seedGenerator);
+    SeedTestUtils.testGenerator(seedGenerator, true);
   }
 
   @Test public void testIsWorthTrying() {

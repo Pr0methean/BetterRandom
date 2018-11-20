@@ -47,7 +47,7 @@ public class RandomDotOrgSeedGeneratorLiveTest extends AbstractSeedGeneratorTest
   @Test(timeOut = 120000) public void testGeneratorOldApi() throws SeedException {
     if (canRunRandomDotOrgLargeTest()) {
       RandomDotOrgSeedGenerator.setApiKey(null);
-      SeedTestUtils.testGenerator(seedGenerator);
+      SeedTestUtils.testGenerator(seedGenerator, true);
     } else {
       throw new SkipException("Test can't run on this platform");
     }
@@ -56,7 +56,7 @@ public class RandomDotOrgSeedGeneratorLiveTest extends AbstractSeedGeneratorTest
   @Test(timeOut = 120000) public void testGeneratorNewApi() throws SeedException {
     if (canRunRandomDotOrgLargeTest() && haveApiKey()) {
       RandomDotOrgUtils.setApiKey();
-      SeedTestUtils.testGenerator(seedGenerator);
+      SeedTestUtils.testGenerator(seedGenerator, true);
     } else {
       throw new SkipException("Test can't run on this platform");
     }
@@ -90,7 +90,7 @@ public class RandomDotOrgSeedGeneratorLiveTest extends AbstractSeedGeneratorTest
     }
     setProxy(proxy);
     try {
-      SeedTestUtils.testGenerator(seedGenerator);
+      SeedTestUtils.testGenerator(seedGenerator, true);
     } finally {
       setProxy(null);
     }
