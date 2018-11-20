@@ -15,7 +15,6 @@ public enum RandomDotOrgUtils {
   ;
 
   private static final int TOR_PORT = 9050;
-  private static final int SMALL_REQUEST_SIZE = 32;
 
   public static boolean haveApiKey() {
     return System.getenv("RANDOM_DOT_ORG_KEY") != null;
@@ -42,11 +41,4 @@ public enum RandomDotOrgUtils {
     return !TestUtils.isAppveyor() && !("osx".equals(System.getenv("TRAVIS_OS_NAME")));
   }
 
-  static boolean maybeSetMaxRequestSize() {
-    if (!canRunRandomDotOrgLargeTest()) {
-      RandomDotOrgSeedGenerator.setMaxRequestSize(SMALL_REQUEST_SIZE);
-      return true;
-    }
-    return false;
-  }
 }

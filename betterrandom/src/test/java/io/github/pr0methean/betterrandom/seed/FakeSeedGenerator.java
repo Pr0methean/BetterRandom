@@ -1,5 +1,7 @@
 package io.github.pr0methean.betterrandom.seed;
 
+import java.util.Arrays;
+
 public class FakeSeedGenerator implements SeedGenerator {
 
   private static final long serialVersionUID = 2310664903337315190L;
@@ -18,7 +20,7 @@ public class FakeSeedGenerator implements SeedGenerator {
   }
 
   @Override public void generateSeed(final byte[] output) throws SeedException {
-    // No-op.
+    Arrays.fill(output, (byte) 1);
   }
 
   @Override

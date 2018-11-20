@@ -46,7 +46,7 @@ import org.json.simple.parser.ParseException;
  * API</a> (via HTTPS) and downloads a set of random bits to use as seed data.  It is generally
  * better to use the {@link DevRandomSeedGenerator} where possible, as it should be much quicker.
  * This seed generator is most useful on Microsoft Windows without Cygwin, and other platforms that
- * do not provide {@literal /dev/random}.</p>
+ * do not provide {@literal /dev/random} (or where that device is very slow).</p>
  * <p>Random.org collects randomness from atmospheric noise using 9 radios, located at undisclosed
  * addresses in Dublin and Copenhagen and tuned to undisclosed AM/FM frequencies. (The secrecy is
  * intended to help prevent tampering with the output using a well-placed radio transmitter, and the
@@ -93,7 +93,6 @@ public enum RandomDotOrgSeedGenerator implements SeedGenerator {
    * considerations involved in this choice of clock.
    */
   private static final Clock CLOCK = Clock.systemUTC();
-  private static final int MAX_CACHE_SIZE = 625; // 5000 bits = 1/50 daily limit per API key
   private static final String BASE_URL = "https://www.random.org";
   /**
    * The URL from which the random bytes are retrieved (old API).
@@ -108,15 +107,12 @@ public enum RandomDotOrgSeedGenerator implements SeedGenerator {
    * Random.org does not allow requests for more than 10k integers at once. This field is
    * package-visible for testing.
    */
-  static final int GLOBAL_MAX_REQUEST_SIZE = 10000;
+  static final int MAX_REQUEST_SIZE = 10000;
   private static final int RETRY_DELAY_MS = 10000;
   private static final Duration RETRY_DELAY = Duration.ofMillis(RETRY_DELAY_MS);
   static final Lock cacheLock = new ReentrantLock();
   private static final Charset UTF8 = Charset.forName("UTF-8");
   private static volatile Instant earliestNextAttempt = Instant.MIN;
-  static volatile byte[] cache = new byte[MAX_CACHE_SIZE];
-  static volatile int cacheOffset = cache.length;
-  private static volatile int maxRequestSize = GLOBAL_MAX_REQUEST_SIZE;
   private static final URL JSON_REQUEST_URL;
   /**
    * The proxy to use with random.org, or null to use the JVM default. Package-visible for testing.
@@ -167,38 +163,32 @@ public enum RandomDotOrgSeedGenerator implements SeedGenerator {
   }
 
   /**
-   * @param requiredBytes The preferred number of bytes to request from random.org. The
-   *     implementation may request more and cache the excess (to avoid making lots of small
-   *     requests). Alternatively, it may request fewer if the required number is greater than that
-   *     permitted by random.org for a single request.
+   * @param requiredBytes the number of bytes to request from random.org
+   * @param seed the array to save them to
+   * @param offset the first index to save them to in the array
    * @throws IOException If a connection error occurs.
    * @throws SeedException If random.org sends a malformed response body.
    */
   @SuppressWarnings("NumericCastThatLosesPrecision")
-  private static void refreshCache(final int requiredBytes) throws IOException {
+  private static void downloadBytes(final int requiredBytes, byte[] seed, int offset)
+      throws IOException {
     HttpURLConnection connection = null;
     cacheLock.lock();
     try {
-      int numberOfBytes = Math.max(requiredBytes, cache.length);
-      numberOfBytes = Math.min(numberOfBytes, maxRequestSize);
-      if (numberOfBytes != cache.length) {
-        cache = new byte[numberOfBytes];
-        cacheOffset = numberOfBytes;
-      }
       final UUID currentApiKey = API_KEY.get();
       if (currentApiKey == null) {
         // Use old API.
-        connection = openConnection(new URL(MessageFormat.format(RANDOM_URL, numberOfBytes)));
+        connection = openConnection(new URL(MessageFormat.format(RANDOM_URL, requiredBytes)));
         try (final BufferedReader reader = getResponseReader(connection)) {
-          for (int index = 0; index < cache.length; index++) {
+          for (int index = 0; index < seed.length; index++) {
             final String line = reader.readLine();
             if (line == null) {
               throw new SeedException(String
-                  .format("Insufficient data received: expected %d bytes, got %d.", cache.length,
+                  .format("Insufficient data received: expected %d bytes, got %d.", seed.length,
                       index));
             }
             try {
-              cache[index] = (byte) Integer.parseInt(line, 16);
+              seed[offset + index] = (byte) Integer.parseInt(line, 16);
               // Can't use Byte.parseByte, since it expects signed
             } catch (final NumberFormatException e) {
               throw new SeedException("random.org sent non-numeric data", e);
@@ -211,7 +201,7 @@ public enum RandomDotOrgSeedGenerator implements SeedGenerator {
         connection.setDoOutput(true);
         connection.setRequestMethod("POST");
         try (final OutputStream out = connection.getOutputStream()) {
-          out.write(String.format(JSON_REQUEST_FORMAT, currentApiKey, numberOfBytes * Byte.SIZE,
+          out.write(String.format(JSON_REQUEST_FORMAT, currentApiKey, requiredBytes * Byte.SIZE,
               REQUEST_ID.incrementAndGet()).getBytes(UTF8));
         }
         final JSONObject response;
@@ -233,11 +223,11 @@ public enum RandomDotOrgSeedGenerator implements SeedGenerator {
           final String base64seed =
               ((data instanceof JSONArray) ? ((JSONArray) data).get(0) : data).toString();
           final byte[] decodedSeed = BASE64.decode(base64seed);
-          if (decodedSeed.length < numberOfBytes) {
+          if (decodedSeed.length < requiredBytes) {
             throw new SeedException(String.format(
-                "Too few bytes returned: expected %d bytes, got '%s'", numberOfBytes, base64seed));
+                "Too few bytes returned: expected %d bytes, got '%s'", requiredBytes, base64seed));
           }
-          System.arraycopy(decodedSeed, 0, cache, 0, numberOfBytes);
+          System.arraycopy(decodedSeed, 0, seed, 0, requiredBytes);
         }
         final Object advisoryDelayMs = result.get("advisoryDelay");
         if (advisoryDelayMs instanceof Number) {
@@ -246,7 +236,6 @@ public enum RandomDotOrgSeedGenerator implements SeedGenerator {
           earliestNextAttempt = CLOCK.instant().plusMillis(delayMs);
         }
       }
-      cacheOffset = 0;
     } finally {
       cacheLock.unlock();
       if (connection != null) {
@@ -268,48 +257,19 @@ public enum RandomDotOrgSeedGenerator implements SeedGenerator {
     return child;
   }
 
-  /**
-   * Sets the maximum request size that we will expect random.org to allow. If more than {@link
-   * #GLOBAL_MAX_REQUEST_SIZE}, will be set to that value instead.
-   * @param maxRequestSize the new maximum request size in bytes.
-   */
-  public static void setMaxRequestSize(int maxRequestSize) {
-    maxRequestSize = Math.min(maxRequestSize, GLOBAL_MAX_REQUEST_SIZE);
-    final int maxNewCacheSize = Math.min(maxRequestSize, MAX_CACHE_SIZE);
-    cacheLock.lock();
-    try {
-      final int sizeChange = maxNewCacheSize - cache.length;
-      if (sizeChange > 0) {
-        final byte[] newCache = new byte[maxNewCacheSize];
-        final int newCacheOffset = cacheOffset + sizeChange;
-        System.arraycopy(cache, cacheOffset, newCache, newCacheOffset, cache.length - cacheOffset);
-        cache = newCache;
-        cacheOffset = newCacheOffset;
-      }
-      RandomDotOrgSeedGenerator.maxRequestSize = maxRequestSize;
-    } finally {
-      cacheLock.unlock();
-    }
-  }
-
   @Override @SuppressWarnings("AssignmentToStaticFieldFromInstanceMethod")
-  public void generateSeed(final byte[] seedData) throws SeedException {
+  public void generateSeed(final byte[] seed) throws SeedException {
     if (!isWorthTrying()) {
       throw new SeedException("Not retrying so soon after an IOException");
     }
-    final int length = seedData.length;
+    final int length = seed.length;
     cacheLock.lock();
     try {
       int count = 0;
       while (count < length) {
-        if (cacheOffset < cache.length) {
-          final int numberOfBytes = Math.min(length - count, cache.length - cacheOffset);
-          System.arraycopy(cache, cacheOffset, seedData, count, numberOfBytes);
-          count += numberOfBytes;
-          cacheOffset += numberOfBytes;
-        } else {
-          refreshCache(length - count);
-        }
+        int batchSize = Math.min(length - count, MAX_REQUEST_SIZE);
+        downloadBytes(batchSize, seed, count);
+        count += batchSize;
       }
     } catch (final IOException ex) {
       earliestNextAttempt = CLOCK.instant().plus(RETRY_DELAY);
