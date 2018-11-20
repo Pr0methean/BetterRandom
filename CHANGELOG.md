@@ -1,3 +1,13 @@
+# 2.8.0
+* `DefaultSeedGenerator` can now be configured to delegate to any `SeedGenerator` instance.
+* Adds `BufferedSeedGenerator`, a delegating implementation of `SeedGenerator` with a buffer to
+  reduce the number of I/O calls.
+* The default `DefaultSeedGenerator` now uses a 128-byte buffer when it calls
+  `DevRandomSeedGenerator`.
+* Adds `SeedGeneratorPreferenceList`, an implementation of `SeedGenerator` with a list of delegates
+  that tries them until one succeeds.
+* Tests of `RandomDotOrgSeedGenerator` for large requests are now hermetic.
+
 # 2.7.1
 * Refactored `ThreadLocalRandomWrapper.getSeedGenerator()`.
 
