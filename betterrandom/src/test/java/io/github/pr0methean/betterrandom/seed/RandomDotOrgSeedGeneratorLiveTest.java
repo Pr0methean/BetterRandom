@@ -15,25 +15,23 @@
 // ============================================================================
 package io.github.pr0methean.betterrandom.seed;
 
-import static io.github.pr0methean.betterrandom.seed.RandomDotOrgSeedGenerator.RANDOM_DOT_ORG_SEED_GENERATOR;
-import static io.github.pr0methean.betterrandom.seed.RandomDotOrgSeedGenerator.setApiKey;
-import static io.github.pr0methean.betterrandom.seed.RandomDotOrgSeedGenerator.setProxy;
-import static io.github.pr0methean.betterrandom.seed.RandomDotOrgUtils.canRunRandomDotOrgLargeTest;
-import static io.github.pr0methean.betterrandom.seed.RandomDotOrgUtils.haveApiKey;
-import static io.github.pr0methean.betterrandom.seed.RandomDotOrgUtils.setApiKey;
-import static org.testng.Assert.assertEquals;
-
+import io.github.pr0methean.betterrandom.TestingDeficiency;
 import java.net.InetAddress;
 import java.net.Proxy;
 import java.net.UnknownHostException;
-
-import io.github.pr0methean.betterrandom.TestingDeficiency;
 import org.testng.Assert;
 import org.testng.Reporter;
 import org.testng.SkipException;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
+
+import static io.github.pr0methean.betterrandom.seed.RandomDotOrgSeedGenerator.RANDOM_DOT_ORG_SEED_GENERATOR;
+import static io.github.pr0methean.betterrandom.seed.RandomDotOrgSeedGenerator.setApiKey;
+import static io.github.pr0methean.betterrandom.seed.RandomDotOrgSeedGenerator.setProxy;
+import static io.github.pr0methean.betterrandom.seed.RandomDotOrgUtils.canRunRandomDotOrgLargeTest;
+import static io.github.pr0methean.betterrandom.seed.RandomDotOrgUtils.haveApiKey;
+import static io.github.pr0methean.betterrandom.seed.RandomDotOrgUtils.setApiKey;
 
 /**
  * Unit test for the seed generator that connects to random.org to get seed data.

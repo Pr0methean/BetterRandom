@@ -1,7 +1,5 @@
 package io.github.pr0methean.betterrandom.prng;
 
-import static io.github.pr0methean.betterrandom.util.Java8Constants.LONG_BYTES;
-
 import com.google.common.base.MoreObjects.ToStringHelper;
 import io.github.pr0methean.betterrandom.SeekableRandom;
 import io.github.pr0methean.betterrandom.seed.DefaultSeedGenerator;
@@ -12,6 +10,8 @@ import io.github.pr0methean.betterrandom.util.EntryPoint;
 import java.io.IOException;
 import java.io.ObjectOutputStream;
 import java.util.concurrent.atomic.AtomicLong;
+
+import static io.github.pr0methean.betterrandom.util.Java8Constants.LONG_BYTES;
 
 /**
  * <p>From the original description, "PCG is a family of simple fast space-efficient statistically

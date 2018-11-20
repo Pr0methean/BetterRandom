@@ -1,6 +1,5 @@
 package io.github.pr0methean.betterrandom.seed;
 
-import java.util.Objects;
 import java.util.Random;
 
 public class SemiFakeSeedGenerator implements SeedGenerator {

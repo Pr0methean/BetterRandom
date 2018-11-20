@@ -15,10 +15,10 @@
 // ============================================================================
 package io.github.pr0methean.betterrandom.util;
 
+import javax.annotation.Nullable;
+
 import static io.github.pr0methean.betterrandom.util.Java8Constants.INT_BYTES;
 import static io.github.pr0methean.betterrandom.util.Java8Constants.LONG_BYTES;
-
-import javax.annotation.Nullable;
 
 /**
  * Utility methods for working with binary and hex data.

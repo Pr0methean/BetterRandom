@@ -15,11 +15,11 @@
 // ============================================================================
 package io.github.pr0methean.betterrandom.seed;
 
-import static org.testng.Assert.assertTrue;
-
 import java.io.File;
 import org.testng.SkipException;
 import org.testng.annotations.Test;
+
+import static org.testng.Assert.assertTrue;
 
 /**
  * Unit test for the seed generator that reads data from /dev/random (on platforms that provide

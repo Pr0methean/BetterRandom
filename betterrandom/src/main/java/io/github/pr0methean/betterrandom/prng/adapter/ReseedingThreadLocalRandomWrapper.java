@@ -11,7 +11,6 @@ import java.util.Random;
 import java8.util.function.Function;
 import java8.util.function.LongFunction;
 import java8.util.function.Supplier;
-import javax.annotation.Nullable;
 
 /**
  * A {@link ThreadLocalRandomWrapper} that reseeds all its instances using the

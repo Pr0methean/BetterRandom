@@ -15,9 +15,6 @@
 // ============================================================================
 package io.github.pr0methean.betterrandom.prng;
 
-import static io.github.pr0methean.betterrandom.util.Java8Constants.INT_BYTES;
-import static io.github.pr0methean.betterrandom.util.Java8Constants.LONG_BYTES;
-
 import com.google.common.base.MoreObjects.ToStringHelper;
 import io.github.pr0methean.betterrandom.SeekableRandom;
 import io.github.pr0methean.betterrandom.seed.DefaultSeedGenerator;
@@ -35,6 +32,8 @@ import javax.crypto.Cipher;
 import javax.crypto.NoSuchPaddingException;
 import javax.crypto.spec.SecretKeySpec;
 import org.slf4j.LoggerFactory;
+
+import static io.github.pr0methean.betterrandom.util.Java8Constants.INT_BYTES;
 
 /**
  * <p>Non-linear random number generator based on the AES block cipher in counter mode. Uses the

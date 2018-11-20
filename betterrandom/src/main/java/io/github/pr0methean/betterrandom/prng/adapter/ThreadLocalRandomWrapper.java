@@ -1,8 +1,5 @@
 package io.github.pr0methean.betterrandom.prng.adapter;
 
-import static io.github.pr0methean.betterrandom.util.BinaryUtils.convertBytesToLong;
-import static io.github.pr0methean.betterrandom.util.Java8Constants.LONG_BYTES;
-
 import com.google.common.base.MoreObjects.ToStringHelper;
 import io.github.pr0methean.betterrandom.prng.BaseRandom;
 import io.github.pr0methean.betterrandom.seed.SeedException;
@@ -15,6 +12,9 @@ import java8.util.function.Function;
 import java8.util.function.LongFunction;
 import java8.util.function.Supplier;
 import javax.annotation.Nullable;
+
+import static io.github.pr0methean.betterrandom.util.BinaryUtils.convertBytesToLong;
+import static io.github.pr0methean.betterrandom.util.Java8Constants.LONG_BYTES;
 
 /**
  * Wraps a {@link ThreadLocal}&lt;{@link BaseRandom}&gt; in order to provide concurrency that most

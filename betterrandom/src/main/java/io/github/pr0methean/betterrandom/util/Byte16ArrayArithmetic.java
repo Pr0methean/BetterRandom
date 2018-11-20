@@ -24,7 +24,7 @@ public enum Byte16ArrayArithmetic {
    * @param addendDigits working register
    */
   public static void addInto(final byte[] counter, final long delta, final byte[] addendDigits) {
-    BinaryUtils.convertLongToBytes(delta, addendDigits, SIZE_BYTES_MINUS_LONG);
+    convertLongToBytes(delta, addendDigits, SIZE_BYTES_MINUS_LONG);
     final byte signExtend = (byte) (delta < 0 ? -1 : 0);
     for (int i = 0; i < SIZE_BYTES_MINUS_LONG; i++) {
       addendDigits[i] = signExtend;

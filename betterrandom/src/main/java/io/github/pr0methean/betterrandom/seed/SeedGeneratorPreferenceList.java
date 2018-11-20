@@ -1,7 +1,6 @@
 package io.github.pr0methean.betterrandom.seed;
 
 import io.github.pr0methean.betterrandom.util.EntryPoint;
-
 import java.util.Collection;
 import java.util.concurrent.CopyOnWriteArrayList;
 

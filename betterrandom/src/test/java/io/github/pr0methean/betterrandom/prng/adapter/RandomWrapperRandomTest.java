@@ -15,19 +15,17 @@
 // ============================================================================
 package io.github.pr0methean.betterrandom.prng.adapter;
 
-import static org.testng.Assert.assertSame;
-import static org.testng.Assert.assertTrue;
-
 import com.google.common.collect.ImmutableList;
 import io.github.pr0methean.betterrandom.prng.BaseRandom;
 import io.github.pr0methean.betterrandom.prng.BaseRandomTest;
 import io.github.pr0methean.betterrandom.prng.RandomTestUtils;
-import io.github.pr0methean.betterrandom.prng.adapter.RandomWrapper;
 import io.github.pr0methean.betterrandom.seed.SeedException;
 import java.util.Collections;
 import java.util.Map;
 import java.util.Random;
 import org.testng.annotations.Test;
+
+import static org.testng.Assert.assertSame;
 
 /**
  * Unit test for the JDK RNG.

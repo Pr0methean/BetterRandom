@@ -1,17 +1,5 @@
 package io.github.pr0methean.betterrandom.prng;
 
-import static io.github.pr0methean.betterrandom.TestUtils.assertGreaterOrEqual;
-import static io.github.pr0methean.betterrandom.TestUtils.assertLessOrEqual;
-import static io.github.pr0methean.betterrandom.prng.BaseRandom.ENTROPY_OF_DOUBLE;
-import static io.github.pr0methean.betterrandom.prng.BaseRandom.ENTROPY_OF_FLOAT;
-import static io.github.pr0methean.betterrandom.prng.RandomTestUtils.assertMonteCarloPiEstimateSane;
-import static io.github.pr0methean.betterrandom.prng.RandomTestUtils.checkRangeAndEntropy;
-import static io.github.pr0methean.betterrandom.prng.RandomTestUtils.checkStream;
-import static org.testng.Assert.assertEquals;
-import static org.testng.Assert.assertFalse;
-import static org.testng.Assert.assertNotEquals;
-import static org.testng.Assert.assertTrue;
-
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import io.github.pr0methean.betterrandom.CloneViaSerialization;
@@ -50,6 +38,18 @@ import org.powermock.modules.testng.PowerMockTestCase;
 import org.testng.Reporter;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.Test;
+
+import static io.github.pr0methean.betterrandom.TestUtils.assertGreaterOrEqual;
+import static io.github.pr0methean.betterrandom.TestUtils.assertLessOrEqual;
+import static io.github.pr0methean.betterrandom.prng.BaseRandom.ENTROPY_OF_DOUBLE;
+import static io.github.pr0methean.betterrandom.prng.BaseRandom.ENTROPY_OF_FLOAT;
+import static io.github.pr0methean.betterrandom.prng.RandomTestUtils.assertMonteCarloPiEstimateSane;
+import static io.github.pr0methean.betterrandom.prng.RandomTestUtils.checkRangeAndEntropy;
+import static io.github.pr0methean.betterrandom.prng.RandomTestUtils.checkStream;
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertFalse;
+import static org.testng.Assert.assertNotEquals;
+import static org.testng.Assert.assertTrue;
 
 public abstract class BaseRandomTest extends PowerMockTestCase {
 
