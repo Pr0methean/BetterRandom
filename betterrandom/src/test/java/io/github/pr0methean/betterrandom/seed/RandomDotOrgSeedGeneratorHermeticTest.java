@@ -15,12 +15,15 @@ import java.net.Proxy;
 import java.net.URL;
 import java.nio.charset.Charset;
 import java.util.Arrays;
-import java.util.Base64;
 import java.util.UUID;
 import javax.annotation.Nullable;
+import javax.net.ssl.HttpsURLConnection;
+import javax.xml.bind.DatatypeConverter;
 
 import io.github.pr0methean.betterrandom.prng.adapter.SplittableRandomAdapter;
 import org.json.simple.parser.ParseException;
+import org.mockito.invocation.InvocationOnMock;
+import org.mockito.stubbing.Answer;
 import org.powermock.api.mockito.PowerMockito;
 import org.powermock.api.mockito.mockpolicies.Slf4jMockPolicy;
 import org.powermock.core.classloader.annotations.MockPolicy;
@@ -95,12 +98,12 @@ public class RandomDotOrgSeedGeneratorHermeticTest extends PowerMockTestCase {
     EXPECTED_SEED[MAX_REQUEST_SIZE] = MAX_SIZE_SEED_CHUNK[0];
     try {
       ByteArrayOutputStream responseBuilder = new ByteArrayOutputStream();
-      responseBuilder.write("{\"jsonrpc\":\"2.0\",\"result\":{\"random\":{\"data\":[\""
-          .getBytes(UTF8));
-      responseBuilder.write(Base64.getEncoder().encode(MAX_SIZE_SEED_CHUNK));
-      responseBuilder.write(("\"],"
+      responseBuilder.write(("{\"jsonrpc\":\"2.0\",\"result\":{\"random\":{\"data\":[\""
+          + DatatypeConverter.printBase64Binary(MAX_SIZE_SEED_CHUNK)
+          + "\"],"
           + "\"completionTime\":\"2018-05-06 19:54:31Z\"},\"bitsUsed\":256,\"bitsLeft\":996831,"
-          + "\"requestsLeft\":199912,\"advisoryDelay\":290},\"id\":27341}").getBytes(UTF8));
+          + "\"requestsLeft\":199912,\"advisoryDelay\":290},\"id\":27341}"
+      ).getBytes(UTF8));
       MAX_SIZE_RESPONSE_NEW_API = responseBuilder.toByteArray();
       responseBuilder = new ByteArrayOutputStream();
       for (int i = 0; i < MAX_REQUEST_SIZE; i++) {
@@ -182,7 +185,6 @@ public class RandomDotOrgSeedGeneratorHermeticTest extends PowerMockTestCase {
   @SuppressWarnings("ThrowableNotThrown") @Test
   public void testOverShortResponseOldApi() throws Exception {
     RandomDotOrgSeedGenerator.setApiKey(null);
-    RandomDotOrgSeedGenerator.setMaxRequestSize(GLOBAL_MAX_REQUEST_SIZE);
     mockRandomDotOrgResponse(RESPONSE_32_OLD_API);
     expectAndGetException(625);
   }
