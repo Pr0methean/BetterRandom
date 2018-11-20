@@ -1,0 +1,41 @@
+# http://www.appveyor.com/docs/appveyor-yml
+init:
+  # 32-bit Cygwin causes conflicts
+  - rmdir c:\cygwin /s /q
+environment:
+  JAVA_HOME: C:\Program Files\Java\jdk1.8.0
+  JAVA8: true
+  matrix:
+   - COMMAND: powershell .\unit-tests.ps1
+   - COMMAND: c:\MinGW\msys\1.0\bin\sh .\unit-tests.sh
+   -
+     COMMAND: c:\cygwin64\bin\sh .\unit-tests.sh
+     CYGWIN_NOWINPATH: 1
+   - COMMAND: powershell .\benchmark.ps1
+   - COMMAND: c:\MinGW\msys\1.0\bin\sh .\benchmark.sh
+   -
+     COMMAND: c:\cygwin64\bin\sh .\benchmark.sh
+     CYGWIN_NOWINPATH: 1
+  access_token:
+    secure: 5Wg2c80QbC1euiaWuhQaBCE4uv1TVuPVruH5WlfvFeL2jiRQQplLkeaJh7CTdEXj
+  random_dot_org_key:
+    secure: SdVpsz4/hDKlxV/jEehj9kEUmbIrrq5yvDOWYrHyxN+WE1z8CNeeTnv8BuQ6XsnN
+  APPVEYOR_RDP_PASSWORD:
+    secure: prROYXFdZ1WD7poOqYxXuRIF6KkKWjAWAWZX5PaHABM=
+install:
+  # Log versions for debugging
+  - java -version
+  - mvn --version
+build_script:
+  # shell scripts both build and test, so all we need to do here is set the character encoding and work around the path issue
+  - if [%CYGWIN_NOWINPATH%]==[1] set Path=C:\cygwin64\bin;%Path%
+  - chcp 65001
+test_script:
+  - '%COMMAND%'
+cache:
+  - C:\maven\
+  - C:\Users\appveyor\.m2
+matrix:
+  fast_finish: true
+  allow_failures:
+    - ALLOW_FAILURE: true

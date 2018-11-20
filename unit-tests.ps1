@@ -33,6 +33,7 @@ if ( $STATUS ) {
     if ( Test-Path "betterrandom-coverage/${COMMIT}" ) {
         echo "[unit-tests.ps1] Aggregating with JaCoCo reports from other jobs."
         cp betterrandom-coverage/${COMMIT}/*.exec target
+        
         mvn "jacoco:report-aggregate"
         $JACOCO_DIR = "jacoco-aggregate"
     } else {
@@ -40,7 +41,7 @@ if ( $STATUS ) {
         mkdir "betterrandom-coverage/${COMMIT}"
         $JACOCO_DIR = "jacoco"
     }
-    mv target/jacoco.exec "betterrandom-coverage/${COMMIT}/${JOB_ID}.exec"
+    mv betterrandom/target/jacoco.exec "betterrandom-coverage/${COMMIT}/${JOB_ID}.exec"
     $STATUS = $?
     if (! $STATUS) {
         exit $STATUS
@@ -51,8 +52,9 @@ if ( $STATUS ) {
     git remote set-url origin "https://Pr0methean:${GH_TOKEN}@github.com/Pr0methean/betterrandom-coverage.git"
     git push
     while (! $?) {
-      git pull --commit # Merge
       cd ..
+      git fetch --all
+      git pull --commit # Merge
       cp betterrandom-coverage/${COMMIT}/*.exec target
       mvn "jacoco:report-aggregate"
       mv target/jacoco.exec "betterrandom-coverage/${COMMIT}/${JOB_ID}.exec"
