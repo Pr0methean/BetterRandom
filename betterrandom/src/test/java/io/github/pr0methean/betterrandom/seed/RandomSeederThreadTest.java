@@ -1,15 +1,15 @@
 package io.github.pr0methean.betterrandom.seed;
 
-import static io.github.pr0methean.betterrandom.seed.RandomSeederThread.stopAllEmpty;
-import static org.testng.Assert.assertEquals;
-import static org.testng.Assert.assertFalse;
-import static org.testng.Assert.assertTrue;
-
 import io.github.pr0methean.betterrandom.prng.RandomTestUtils;
 import java.util.Arrays;
 import java.util.Locale;
 import java.util.Random;
 import org.testng.annotations.Test;
+
+import static io.github.pr0methean.betterrandom.seed.RandomSeederThread.stopAllEmpty;
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertFalse;
+import static org.testng.Assert.assertTrue;
 
 public class RandomSeederThreadTest {
 

@@ -1,9 +1,5 @@
 package io.github.pr0methean.betterrandom.prng;
 
-import static io.github.pr0methean.betterrandom.prng.BaseRandom.entropyOfInt;
-import static io.github.pr0methean.betterrandom.prng.BaseRandom.entropyOfLong;
-import static org.testng.Assert.assertEquals;
-
 import io.github.pr0methean.betterrandom.TestingDeficiency;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -14,6 +10,10 @@ import java.io.ObjectOutputStream;
 import java.io.ObjectStreamClass;
 import java.io.Serializable;
 import org.testng.annotations.Test;
+
+import static io.github.pr0methean.betterrandom.prng.BaseRandom.entropyOfInt;
+import static io.github.pr0methean.betterrandom.prng.BaseRandom.entropyOfLong;
+import static org.testng.Assert.assertEquals;
 
 /**
  * Tests for {@link BaseRandom} that are not heritable by tests of subclasses.

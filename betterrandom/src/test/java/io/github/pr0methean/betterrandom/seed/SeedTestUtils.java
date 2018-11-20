@@ -1,8 +1,8 @@
 package io.github.pr0methean.betterrandom.seed;
 
-import static org.testng.Assert.assertFalse;
-
 import java.util.Arrays;
+
+import static org.testng.Assert.assertFalse;
 
 enum SeedTestUtils {
   ;

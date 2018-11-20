@@ -15,9 +15,9 @@
 // ============================================================================
 package io.github.pr0methean.betterrandom.seed;
 
-import static org.testng.Assert.assertTrue;
-
 import org.testng.annotations.Test;
+
+import static org.testng.Assert.assertTrue;
 
 /**
  * Unit test for the seed generator that uses {@link java.security.SecureRandom} to produce seed

@@ -1,9 +1,9 @@
 package io.github.pr0methean.betterrandom.util;
 
+import org.testng.annotations.Test;
+
 import static io.github.pr0methean.betterrandom.util.Byte16ArrayArithmetic.rotateRightLeast64;
 import static org.testng.Assert.assertEquals;
-
-import org.testng.annotations.Test;
 
 @SuppressWarnings("SpellCheckingInspection")
 public class Byte16ArrayArithmeticTest {

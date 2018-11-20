@@ -10,7 +10,6 @@ import java.util.Random;
 import java.util.function.Function;
 import java.util.function.LongFunction;
 import java.util.function.Supplier;
-import javax.annotation.Nullable;
 
 /**
  * A {@link ThreadLocalRandomWrapper} that reseeds all its instances using the

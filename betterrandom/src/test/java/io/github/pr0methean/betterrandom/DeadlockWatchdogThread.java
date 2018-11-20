@@ -10,6 +10,12 @@ import org.slf4j.LoggerFactory;
 @SuppressWarnings("unused") // intermittently needed for debugging
 public class DeadlockWatchdogThread extends LooperThread {
 
+  private static final ThreadMXBean THREAD_MX_BEAN = ManagementFactory.getThreadMXBean();
+  private static final Logger LOG = LoggerFactory.getLogger(DeadlockWatchdogThread.class);
+  private static final int MAX_STACK_DEPTH = 20;
+  private static final int DEADLOCK_STATUS = 0xDEAD10CC;
+  private static DeadlockWatchdogThread INSTANCE = new DeadlockWatchdogThread();
+
   private static final class StackTraceHolder extends Throwable {
     public StackTraceHolder(final String name, final StackTraceElement[] stackTrace) {
       super(name, null, false, true);
@@ -21,12 +27,6 @@ public class DeadlockWatchdogThread extends LooperThread {
       return this;
     }
   }
-
-  private static final ThreadMXBean THREAD_MX_BEAN = ManagementFactory.getThreadMXBean();
-  private static final Logger LOG = LoggerFactory.getLogger(DeadlockWatchdogThread.class);
-  private static final int MAX_STACK_DEPTH = 20;
-  private static final int DEADLOCK_STATUS = 0xDEAD10CC;
-  private static DeadlockWatchdogThread INSTANCE = new DeadlockWatchdogThread();
 
   private DeadlockWatchdogThread() {
     super("DeadlockWatchdogThread");
