@@ -229,7 +229,7 @@ public enum RandomDotOrgSeedGenerator implements SeedGenerator {
             throw new SeedException(String.format(
                 "Too few bytes returned: expected %d bytes, got '%s'", length, base64seed));
           }
-          System.arraycopy(decodedSeed, 0, seed, 0, length);
+          System.arraycopy(decodedSeed, 0, seed, offset, length);
         }
         final Object advisoryDelayMs = result.get("advisoryDelay");
         if (advisoryDelayMs instanceof Number) {
