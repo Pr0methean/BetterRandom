@@ -137,7 +137,7 @@ public class RandomDotOrgSeedGeneratorHermeticTest extends PowerMockTestCase {
   @Test public void testOverLongResponse() throws Exception {
     RandomDotOrgSeedGenerator.setApiKey(null);
     mockRandomDotOrgResponse(RESPONSE_625_OLD_API);
-    expectAndGetException(32);
+    testGenerator(RandomDotOrgSeedGenerator.RANDOM_DOT_ORG_SEED_GENERATOR);
   }
 
   @SuppressWarnings("ThrowableNotThrown") @Test
