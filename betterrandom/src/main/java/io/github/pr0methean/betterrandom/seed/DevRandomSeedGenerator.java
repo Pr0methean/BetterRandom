@@ -15,10 +15,10 @@
 // ============================================================================
 package io.github.pr0methean.betterrandom.seed;
 
-import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.concurrent.atomic.AtomicBoolean;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -41,7 +41,7 @@ public enum DevRandomSeedGenerator implements SeedGenerator {
       "/dev/random";
   private static final File DEV_RANDOM = new File(DEV_RANDOM_STRING);
   private static final AtomicBoolean DEV_RANDOM_DOES_NOT_EXIST = new AtomicBoolean(false);
-  private static volatile BufferedInputStream inputStream;
+  private static volatile InputStream inputStream;
 
   /**
    * @throws SeedException if {@literal /dev/random} does not exist or is not accessible.
@@ -56,7 +56,7 @@ public enum DevRandomSeedGenerator implements SeedGenerator {
       if (inputStream == null) {
         synchronized (DevRandomSeedGenerator.class) {
           if (inputStream == null) {
-            inputStream = new BufferedInputStream(new FileInputStream(DEV_RANDOM));
+            inputStream = new FileInputStream(DEV_RANDOM);
           }
         }
       }
