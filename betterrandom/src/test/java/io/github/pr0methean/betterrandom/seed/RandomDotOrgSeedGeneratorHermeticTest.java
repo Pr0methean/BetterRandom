@@ -1,14 +1,6 @@
 package io.github.pr0methean.betterrandom.seed;
 
-import static io.github.pr0methean.betterrandom.seed.RandomDotOrgSeedGenerator.MAX_REQUEST_SIZE;
-import static io.github.pr0methean.betterrandom.seed.RandomDotOrgSeedGenerator.setProxy;
-import static io.github.pr0methean.betterrandom.seed.RandomDotOrgUtils.createTorProxy;
-import static io.github.pr0methean.betterrandom.seed.SeedTestUtils.testGenerator;
-import static org.mockito.ArgumentMatchers.any;
-import static org.powermock.api.mockito.PowerMockito.spy;
-import static org.testng.Assert.assertTrue;
-import static org.testng.AssertJUnit.assertEquals;
-
+import io.github.pr0methean.betterrandom.prng.adapter.SplittableRandomAdapter;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.net.Proxy;
@@ -18,8 +10,6 @@ import java.util.Arrays;
 import java.util.Base64;
 import java.util.UUID;
 import javax.annotation.Nullable;
-
-import io.github.pr0methean.betterrandom.prng.adapter.SplittableRandomAdapter;
 import org.json.simple.parser.ParseException;
 import org.powermock.api.mockito.PowerMockito;
 import org.powermock.api.mockito.mockpolicies.Slf4jMockPolicy;
@@ -31,6 +21,15 @@ import org.testng.Assert;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
+
+import static io.github.pr0methean.betterrandom.seed.RandomDotOrgSeedGenerator.MAX_REQUEST_SIZE;
+import static io.github.pr0methean.betterrandom.seed.RandomDotOrgSeedGenerator.setProxy;
+import static io.github.pr0methean.betterrandom.seed.RandomDotOrgUtils.createTorProxy;
+import static io.github.pr0methean.betterrandom.seed.SeedTestUtils.testGenerator;
+import static org.mockito.ArgumentMatchers.any;
+import static org.powermock.api.mockito.PowerMockito.spy;
+import static org.testng.Assert.assertTrue;
+import static org.testng.AssertJUnit.assertEquals;
 
 @PowerMockIgnore({"javax.management.*", "javax.script.*", "jdk.nashorn.*"})
 @MockPolicy(Slf4jMockPolicy.class)

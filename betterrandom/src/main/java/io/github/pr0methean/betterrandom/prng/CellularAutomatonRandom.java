@@ -15,13 +15,13 @@
 // ============================================================================
 package io.github.pr0methean.betterrandom.prng;
 
-import static io.github.pr0methean.betterrandom.util.BinaryUtils.convertIntToBytes;
-
 import com.google.common.base.MoreObjects.ToStringHelper;
 import io.github.pr0methean.betterrandom.seed.DefaultSeedGenerator;
 import io.github.pr0methean.betterrandom.seed.SeedException;
 import io.github.pr0methean.betterrandom.seed.SeedGenerator;
 import io.github.pr0methean.betterrandom.util.BinaryUtils;
+
+import static io.github.pr0methean.betterrandom.util.BinaryUtils.convertIntToBytes;
 
 /**
  * Java port of the <a href="http://home.southernct.edu/~pasqualonia1/ca/report.html"
