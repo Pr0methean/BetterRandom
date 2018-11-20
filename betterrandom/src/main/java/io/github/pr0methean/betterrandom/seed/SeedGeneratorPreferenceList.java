@@ -22,7 +22,7 @@ public class SeedGeneratorPreferenceList extends CopyOnWriteArrayList<SeedGenera
    *     consulting the delegate seed generators.
    */
   @EntryPoint
-  public SeedGeneratorPreferenceList(Collection<SeedGenerator> contents,
+  public SeedGeneratorPreferenceList(Collection<? extends SeedGenerator> contents,
       boolean isAlwaysWorthTrying) {
     addAll(contents);
     this.isAlwaysWorthTrying = isAlwaysWorthTrying;
