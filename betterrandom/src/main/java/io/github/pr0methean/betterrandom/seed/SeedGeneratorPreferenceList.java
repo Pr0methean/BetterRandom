@@ -1,12 +1,14 @@
 package io.github.pr0methean.betterrandom.seed;
 
+import io.github.pr0methean.betterrandom.util.EntryPoint;
+
 import java.util.Collection;
-import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
  * A {@link SeedGenerator} implementation that iterates over multiple delegates until one succeeds.
  */
-public class SeedGeneratorPreferenceList extends ConcurrentLinkedQueue<SeedGenerator>
+public class SeedGeneratorPreferenceList extends CopyOnWriteArrayList<SeedGenerator>
     implements SeedGenerator {
 
   private static final long serialVersionUID = -4429919137592899776L;
@@ -19,6 +21,7 @@ public class SeedGeneratorPreferenceList extends ConcurrentLinkedQueue<SeedGener
    * @param isAlwaysWorthTrying true if {@link #isWorthTrying()} should return true without
    *     consulting the delegate seed generators.
    */
+  @EntryPoint
   public SeedGeneratorPreferenceList(Collection<SeedGenerator> contents,
       boolean isAlwaysWorthTrying) {
     addAll(contents);
