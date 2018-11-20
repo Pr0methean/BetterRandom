@@ -15,7 +15,7 @@ public class BufferedSeedGeneratorTest extends AbstractSeedGeneratorTest {
     byte[] seed = seedGenerator.generateSeed(length);
     assertEquals(seed.length, length);
     for (int i = 0; i < length; i++) {
-      assertEquals(seed[i], 1);
+      assertEquals(seed[i], 1, "BufferedSeedGenerator failed to populate index " + i);
     }
   }
 
