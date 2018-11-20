@@ -113,7 +113,6 @@ public class RandomDotOrgSeedGeneratorHermeticTest extends PowerMockTestCase {
   }
   @Nullable private String address = null;
   private final Proxy proxy = createTorProxy();
-  private boolean usingSmallRequests = false;
 
   private void mockRandomDotOrgResponse(final byte[] response) throws Exception {
     PowerMockito.doAnswer(invocationOnMock -> {
@@ -140,7 +139,7 @@ public class RandomDotOrgSeedGeneratorHermeticTest extends PowerMockTestCase {
 
   @Test public void testSetProxyOldApi() throws Exception {
     setProxy(proxy);
-    mockRandomDotOrgResponse(usingSmallRequests ? RESPONSE_32_OLD_API : RESPONSE_625_OLD_API);
+    mockRandomDotOrgResponse(RESPONSE_625_OLD_API);
     RandomDotOrgSeedGenerator.setApiKey(null);
     try {
       testGenerator(RandomDotOrgSeedGenerator.RANDOM_DOT_ORG_SEED_GENERATOR, false);
@@ -154,7 +153,7 @@ public class RandomDotOrgSeedGeneratorHermeticTest extends PowerMockTestCase {
   @Test public void testSetProxyJsonApi() throws Exception {
     RandomDotOrgSeedGenerator.setApiKey(UUID.randomUUID());
     setProxy(proxy);
-    mockRandomDotOrgResponse(usingSmallRequests ? RESPONSE_32_JSON : RESPONSE_625_JSON);
+    mockRandomDotOrgResponse(RESPONSE_625_JSON);
     try {
       testGenerator(RandomDotOrgSeedGenerator.RANDOM_DOT_ORG_SEED_GENERATOR, false);
       assertTrue(address.startsWith("https://api.random.org/json-rpc/1/invoke"));
@@ -165,16 +164,29 @@ public class RandomDotOrgSeedGeneratorHermeticTest extends PowerMockTestCase {
     }
   }
 
-  @Test public void testOverLongResponse() throws Exception {
+  @Test public void testOverLongResponseOldApi() throws Exception {
     RandomDotOrgSeedGenerator.setApiKey(null);
     mockRandomDotOrgResponse(RESPONSE_625_OLD_API);
     testGenerator(RandomDotOrgSeedGenerator.RANDOM_DOT_ORG_SEED_GENERATOR, false);
   }
 
+  @Test public void testOverLongResponseJson() throws Exception {
+    RandomDotOrgSeedGenerator.setApiKey(UUID.randomUUID());
+    mockRandomDotOrgResponse(RESPONSE_625_JSON);
+    testGenerator(RandomDotOrgSeedGenerator.RANDOM_DOT_ORG_SEED_GENERATOR, false);
+  }
+
   @SuppressWarnings("ThrowableNotThrown") @Test
-  public void testOverShortResponse() throws Exception {
+  public void testOverShortResponseOldApi() throws Exception {
     RandomDotOrgSeedGenerator.setApiKey(null);
     mockRandomDotOrgResponse(RESPONSE_32_OLD_API);
+    expectAndGetException(625);
+  }
+
+  @SuppressWarnings("ThrowableNotThrown") @Test
+  public void testOverShortResponseJsonApi() throws Exception {
+    RandomDotOrgSeedGenerator.setApiKey(UUID.randomUUID());
+    mockRandomDotOrgResponse(RESPONSE_32_JSON);
     expectAndGetException(625);
   }
 
@@ -243,7 +255,7 @@ public class RandomDotOrgSeedGeneratorHermeticTest extends PowerMockTestCase {
    * implementation.
    */
   @Test(timeOut = 120000) public void testLargeRequestNewApi() throws Exception {
-    RandomDotOrgUtils.setApiKey();
+    RandomDotOrgSeedGenerator.setApiKey(UUID.randomUUID());
     // Request more bytes than can be gotten in one Web request.
     mockRandomDotOrgResponse(MAX_SIZE_RESPONSE_NEW_API);
     testLargeRequest();
