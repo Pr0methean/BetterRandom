@@ -11,13 +11,15 @@ enum SeedTestUtils {
   @SuppressWarnings("MismatchedReadAndWriteOfArray") private static final byte[] ALL_ZEROES =
       new byte[SEED_SIZE];
 
-  public static void testGenerator(final SeedGenerator seedGenerator) throws SeedException {
+  public static void testGenerator(final SeedGenerator seedGenerator, boolean expectNonIdempotent) {
     final byte[] seed = seedGenerator.generateSeed(SEED_SIZE);
     assert seed.length == SEED_SIZE : "Failed to generate seed of correct length";
     assertFalse(Arrays.equals(seed, ALL_ZEROES));
-    final byte[] secondSeed = new byte[SEED_SIZE];
-    seedGenerator.generateSeed(secondSeed); // Check that other syntax also works
-    assertFalse(Arrays.equals(secondSeed, ALL_ZEROES));
-    assertFalse(Arrays.equals(seed, secondSeed));
+    if (expectNonIdempotent) {
+      final byte[] secondSeed = new byte[SEED_SIZE];
+      seedGenerator.generateSeed(secondSeed); // Check that other syntax also works
+      assertFalse(Arrays.equals(secondSeed, ALL_ZEROES));
+      assertFalse(Arrays.equals(seed, secondSeed));
+    }
   }
 }

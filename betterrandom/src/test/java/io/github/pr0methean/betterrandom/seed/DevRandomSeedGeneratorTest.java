@@ -37,7 +37,7 @@ public class DevRandomSeedGeneratorTest extends AbstractSeedGeneratorTest {
     if (!new File("/dev/random").exists()) {
       throw new SkipException("This test can't run on a platform without /dev/random");
     }
-    SeedTestUtils.testGenerator(seedGenerator);
+    SeedTestUtils.testGenerator(seedGenerator, true);
     assertTrue(seedGenerator.isWorthTrying());
   }
 }

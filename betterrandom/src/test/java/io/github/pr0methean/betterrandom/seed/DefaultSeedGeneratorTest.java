@@ -31,7 +31,7 @@ public class DefaultSeedGeneratorTest extends AbstractSeedGeneratorTest {
   }
 
   @Test public void testBasicFunction() throws SeedException {
-    SeedTestUtils.testGenerator(seedGenerator);
+    SeedTestUtils.testGenerator(seedGenerator, true);
   }
 
   @Test public void testIsWorthTrying() {

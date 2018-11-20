@@ -94,8 +94,7 @@ public class RandomDotOrgSeedGeneratorHermeticTest extends PowerMockTestCase {
   private static SeedException expectAndGetException(int seedSize) {
     SeedException exception = null;
     try {
-      RandomDotOrgSeedGenerator.RANDOM_DOT_ORG_SEED_GENERATOR.generateSeed(
-          seedSize);
+      RandomDotOrgSeedGenerator.RANDOM_DOT_ORG_SEED_GENERATOR.generateSeed(seedSize);
       Assert.fail("Should have thrown SeedException");
     } catch (final SeedException expected) {
       exception = expected;
@@ -112,7 +111,7 @@ public class RandomDotOrgSeedGeneratorHermeticTest extends PowerMockTestCase {
     mockRandomDotOrgResponse(usingSmallRequests ? RESPONSE_32_OLD_API : RESPONSE_625_OLD_API);
     RandomDotOrgSeedGenerator.setApiKey(null);
     try {
-      testGenerator(RandomDotOrgSeedGenerator.RANDOM_DOT_ORG_SEED_GENERATOR);
+      testGenerator(RandomDotOrgSeedGenerator.RANDOM_DOT_ORG_SEED_GENERATOR, false);
       assertTrue(address.startsWith("https://www.random.org/integers"));
       assertEquals(proxy, RandomDotOrgSeedGenerator.proxy.get());
     } finally {
@@ -125,7 +124,7 @@ public class RandomDotOrgSeedGeneratorHermeticTest extends PowerMockTestCase {
     setProxy(proxy);
     mockRandomDotOrgResponse(usingSmallRequests ? RESPONSE_32_JSON : RESPONSE_625_JSON);
     try {
-      testGenerator(RandomDotOrgSeedGenerator.RANDOM_DOT_ORG_SEED_GENERATOR);
+      testGenerator(RandomDotOrgSeedGenerator.RANDOM_DOT_ORG_SEED_GENERATOR, false);
       assertTrue(address.startsWith("https://api.random.org/json-rpc/1/invoke"));
       assertEquals(proxy, RandomDotOrgSeedGenerator.proxy.get());
     } finally {
@@ -137,7 +136,7 @@ public class RandomDotOrgSeedGeneratorHermeticTest extends PowerMockTestCase {
   @Test public void testOverLongResponse() throws Exception {
     RandomDotOrgSeedGenerator.setApiKey(null);
     mockRandomDotOrgResponse(RESPONSE_625_OLD_API);
-    testGenerator(RandomDotOrgSeedGenerator.RANDOM_DOT_ORG_SEED_GENERATOR);
+    testGenerator(RandomDotOrgSeedGenerator.RANDOM_DOT_ORG_SEED_GENERATOR, false);
   }
 
   @SuppressWarnings("ThrowableNotThrown") @Test
