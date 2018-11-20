@@ -101,7 +101,6 @@ public enum RandomDotOrgSeedGenerator implements SeedGenerator {
    */
   static final int MAX_REQUEST_SIZE = 10000;
   private static final int RETRY_DELAY_MS = 10000;
-  private static final Duration RETRY_DELAY = Duration.ofMillis(RETRY_DELAY_MS);
   static final Lock lock = new ReentrantLock();
   private static final Charset UTF8 = Charset.forName("UTF-8");
   private static final TimeZone UTC = TimeZone.getTimeZone("UTC");
@@ -218,12 +217,12 @@ public enum RandomDotOrgSeedGenerator implements SeedGenerator {
         } else {
           final String base64seed =
               ((data instanceof JSONArray) ? ((JSONArray) data).get(0) : data).toString();
-          final byte[] decodedSeed = BASE64.decode(base64seed);
+          final byte[] decodedSeed = DatatypeConverter.parseBase64Binary(base64seed);
           if (decodedSeed.length < length) {
             throw new SeedException(String.format(
                 "Too few bytes returned: expected %d bytes, got '%s'", length, base64seed));
           }
-          System.arraycopy(decodedSeed, 0, seed, 0, numberOfBytes);
+          System.arraycopy(decodedSeed, 0, seed, offset, length);
         }
         final Object advisoryDelayMs = result.get("advisoryDelay");
         if (advisoryDelayMs instanceof Number) {
@@ -292,12 +291,6 @@ public enum RandomDotOrgSeedGenerator implements SeedGenerator {
     return BASE_URL + (useRetryDelay ? " (with retry delay)" : " (without retry delay)");
   }
 
-  /**
-   * Generates and returns a seed value for a random number generator as a new array.
-   * @param length The length of the seed to generate (in bytes).
-   * @return A byte array containing the seed data.
-   * @throws SeedException If a seed cannot be generated for any reason.
-   */
   @Override public byte[] generateSeed(final int length) throws SeedException {
     if (length <= 0) {
       return EMPTY_SEED;
