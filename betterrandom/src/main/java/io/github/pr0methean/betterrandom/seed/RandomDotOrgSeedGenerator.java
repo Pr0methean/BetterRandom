@@ -110,7 +110,7 @@ public enum RandomDotOrgSeedGenerator implements SeedGenerator {
   static final int MAX_REQUEST_SIZE = 10000;
   private static final int RETRY_DELAY_MS = 10000;
   private static final Duration RETRY_DELAY = Duration.ofMillis(RETRY_DELAY_MS);
-  static final Lock lock = new ReentrantLock();
+  private static final Lock lock = new ReentrantLock();
   private static final Charset UTF8 = Charset.forName("UTF-8");
   private static volatile Instant earliestNextAttempt = Instant.MIN;
   private static final URL JSON_REQUEST_URL;
