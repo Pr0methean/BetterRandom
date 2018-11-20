@@ -27,7 +27,8 @@ install:
   - java -version
   - mvn --version
 build_script:
-  # shell scripts both build and test, so all we need to do here is set the character encoding
+  # shell scripts both build and test, so all we need to do here is set the character encoding and work around the path issue
+  - if [%CYGWIN_NOWINPATH%]==[1] set Path=C:\cygwin64\bin;%Path%
   - chcp 65001
 test_script:
   - '%COMMAND%'
