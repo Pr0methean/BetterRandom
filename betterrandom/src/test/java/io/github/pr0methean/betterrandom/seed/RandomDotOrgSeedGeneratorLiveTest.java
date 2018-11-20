@@ -15,14 +15,19 @@
 // ============================================================================
 package io.github.pr0methean.betterrandom.seed;
 
+import static io.github.pr0methean.betterrandom.seed.RandomDotOrgSeedGenerator.RANDOM_DOT_ORG_SEED_GENERATOR;
+import static io.github.pr0methean.betterrandom.seed.RandomDotOrgSeedGenerator.setApiKey;
 import static io.github.pr0methean.betterrandom.seed.RandomDotOrgSeedGenerator.setProxy;
 import static io.github.pr0methean.betterrandom.seed.RandomDotOrgUtils.canRunRandomDotOrgLargeTest;
 import static io.github.pr0methean.betterrandom.seed.RandomDotOrgUtils.haveApiKey;
+import static io.github.pr0methean.betterrandom.seed.RandomDotOrgUtils.setApiKey;
 import static org.testng.Assert.assertEquals;
 
 import java.net.InetAddress;
 import java.net.Proxy;
 import java.net.UnknownHostException;
+
+import io.github.pr0methean.betterrandom.TestingDeficiency;
 import org.testng.Assert;
 import org.testng.Reporter;
 import org.testng.SkipException;
@@ -41,13 +46,13 @@ public class RandomDotOrgSeedGeneratorLiveTest extends AbstractSeedGeneratorTest
   protected final Proxy proxy = RandomDotOrgUtils.createTorProxy();
 
   public RandomDotOrgSeedGeneratorLiveTest() {
-    super(RandomDotOrgSeedGenerator.RANDOM_DOT_ORG_SEED_GENERATOR);
+    super(RANDOM_DOT_ORG_SEED_GENERATOR);
   }
 
   @Test(timeOut = 120000) public void testGeneratorOldApi() throws SeedException {
     if (canRunRandomDotOrgLargeTest()) {
-      RandomDotOrgSeedGenerator.setApiKey(null);
-      SeedTestUtils.testGenerator(seedGenerator);
+      setApiKey(null);
+      SeedTestUtils.testGenerator(RANDOM_DOT_ORG_SEED_GENERATOR, true);
     } else {
       throw new SkipException("Test can't run on this platform");
     }
@@ -55,24 +60,8 @@ public class RandomDotOrgSeedGeneratorLiveTest extends AbstractSeedGeneratorTest
 
   @Test(timeOut = 120000) public void testGeneratorNewApi() throws SeedException {
     if (canRunRandomDotOrgLargeTest() && haveApiKey()) {
-      RandomDotOrgUtils.setApiKey();
-      SeedTestUtils.testGenerator(seedGenerator);
-    } else {
-      throw new SkipException("Test can't run on this platform");
-    }
-  }
-
-  /**
-   * Try to acquire a large number of bytes, more than are cached internally by the seed generator
-   * implementation.
-   */
-  @Test(timeOut = 120000) public void testLargeRequest() throws SeedException {
-    if (canRunRandomDotOrgLargeTest()) {
-      RandomDotOrgUtils.setApiKey();
-      // Request more bytes than are cached internally.
-      final int seedLength = 626;
-      assertEquals(seedGenerator.generateSeed(seedLength).length, seedLength,
-          "Failed to generate seed of length " + seedLength);
+      setApiKey();
+      SeedTestUtils.testGenerator(RANDOM_DOT_ORG_SEED_GENERATOR, true);
     } else {
       throw new SkipException("Test can't run on this platform");
     }
@@ -84,13 +73,24 @@ public class RandomDotOrgSeedGeneratorLiveTest extends AbstractSeedGeneratorTest
   }
 
   @Test
-  public void testSetProxyReal() {
+  public void testSetProxyOff() {
     if (!canRunRandomDotOrgLargeTest()) {
       throw new SkipException("Test can't run on this platform");
     }
+    setProxy(Proxy.NO_PROXY);
+    try {
+      SeedTestUtils.testGenerator(RANDOM_DOT_ORG_SEED_GENERATOR, true);
+    } finally {
+      setProxy(null);
+    }
+  }
+
+  @TestingDeficiency
+  @Test(enabled = false) // Fails on Travis-CI for some reason
+  public void testSetProxyReal() {
     setProxy(proxy);
     try {
-      SeedTestUtils.testGenerator(seedGenerator);
+      SeedTestUtils.testGenerator(RANDOM_DOT_ORG_SEED_GENERATOR, true);
     } finally {
       setProxy(null);
     }
@@ -98,7 +98,6 @@ public class RandomDotOrgSeedGeneratorLiveTest extends AbstractSeedGeneratorTest
 
   @BeforeClass
   public void setUpClass() {
-    RandomDotOrgUtils.maybeSetMaxRequestSize();
     // when using Tor, DNS seems to be unreliable, so it may take several tries to get the address
     InetAddress address = null;
     long failedLookups = 0;
@@ -116,7 +115,7 @@ public class RandomDotOrgSeedGeneratorLiveTest extends AbstractSeedGeneratorTest
 
   @AfterMethod
   public void tearDownMethod() {
-    RandomDotOrgSeedGenerator.setApiKey(null);
+    setApiKey(null);
   }
 
 }

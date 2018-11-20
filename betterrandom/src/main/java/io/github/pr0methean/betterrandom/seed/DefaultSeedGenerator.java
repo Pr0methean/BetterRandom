@@ -15,11 +15,20 @@
 // ============================================================================
 package io.github.pr0methean.betterrandom.seed;
 
+import java.util.Arrays;
+
 /**
- * Seed generator that maintains multiple strategies for seed generation and will delegate to the
- * best one available at any moment. Uses, in order of preference: <ol> <li>{@link
- * DevRandomSeedGenerator}</li> <li>{@link RandomDotOrgSeedGenerator#DELAYED_RETRY}</li> <li>{@link
- * SecureRandomSeedGenerator}</li> </ol>
+ * <p>
+ * Seed generator that is the default for the program where it is running. PRNGs that are serialized
+ * using one program's default and deserialized in another program will use the latter's default
+ * seed generator.
+ * </p><p>
+ * The default implementation maintains multiple strategies for seed generation and will delegate to
+ * the best one available at any moment. It uses, in order of preference: <ol>
+ * <li>{@link DevRandomSeedGenerator} with 128-byte buffer</li>
+ * <li>{@link RandomDotOrgSeedGenerator#DELAYED_RETRY} with 625-byte buffer</li>
+ * <li>{@link SecureRandomSeedGenerator} with no buffer</li>
+ * </ol></p>
  * @author Daniel Dyer
  */
 public enum DefaultSeedGenerator implements SeedGenerator {
@@ -29,12 +38,23 @@ public enum DefaultSeedGenerator implements SeedGenerator {
    */
   DEFAULT_SEED_GENERATOR;
 
-  /**
-   * Delegate generators.
-   */
-  private static final SeedGenerator[] GENERATORS =
-      {DevRandomSeedGenerator.DEV_RANDOM_SEED_GENERATOR, RandomDotOrgSeedGenerator.DELAYED_RETRY,
-          SecureRandomSeedGenerator.SECURE_RANDOM_SEED_GENERATOR};
+  private static volatile SeedGenerator delegate = new
+      SeedGeneratorPreferenceList(Arrays.asList(
+          new BufferedSeedGenerator(DevRandomSeedGenerator.DEV_RANDOM_SEED_GENERATOR, 128),
+          new BufferedSeedGenerator(RandomDotOrgSeedGenerator.DELAYED_RETRY, 625),
+          SecureRandomSeedGenerator.SECURE_RANDOM_SEED_GENERATOR),
+      true);
+
+  public static SeedGenerator get() {
+    return delegate;
+  }
+
+  public static void set(SeedGenerator delegate) {
+    if (delegate == null) {
+      throw new IllegalArgumentException("Can't set the default seed generator to null");
+    }
+    DefaultSeedGenerator.delegate = delegate;
+  }
 
   /**
    * {@inheritDoc}
@@ -44,19 +64,12 @@ public enum DefaultSeedGenerator implements SeedGenerator {
    * to work) strategy.
    */
   @Override public void generateSeed(final byte[] output) throws SeedException {
-    for (final SeedGenerator generator : GENERATORS) {
-      if (generator.isWorthTrying()) {
-        try {
-          generator.generateSeed(output);
-          return;
-        } catch (final SeedException ignored) {
-          // Try the next one
-        }
-      }
-    }
-    // This shouldn't happen as at least one the generators should be
-    // able to generate a seed.
-    throw new SeedException("All available seed generation strategies failed.");
+    delegate.generateSeed(output);
+  }
+
+  @Override
+  public byte[] generateSeed(int length) throws SeedException {
+    return delegate.generateSeed(length);
   }
 
   /**
