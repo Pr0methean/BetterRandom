@@ -186,7 +186,7 @@ public enum RandomDotOrgSeedGenerator implements SeedGenerator {
             final String line = reader.readLine();
             if (line == null) {
               throw new SeedException(String
-                  .format("Insufficient data received: expected %d bytes, got %d.", seed.length,
+                  .format("Insufficient data received: expected %d bytes, got %d.", length,
                       index));
             }
             try {
