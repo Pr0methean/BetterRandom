@@ -110,7 +110,7 @@ public enum RandomDotOrgSeedGenerator implements SeedGenerator {
   static final int MAX_REQUEST_SIZE = 10000;
   private static final int RETRY_DELAY_MS = 10000;
   private static final Duration RETRY_DELAY = Duration.ofMillis(RETRY_DELAY_MS);
-  static final Lock cacheLock = new ReentrantLock();
+  static final Lock lock = new ReentrantLock();
   private static final Charset UTF8 = Charset.forName("UTF-8");
   private static volatile Instant earliestNextAttempt = Instant.MIN;
   private static final URL JSON_REQUEST_URL;
@@ -163,22 +163,24 @@ public enum RandomDotOrgSeedGenerator implements SeedGenerator {
   }
 
   /**
-   * @param requiredBytes the number of bytes to request from random.org
+   * Performs a single request for random bytes.
+   *
    * @param seed the array to save them to
    * @param offset the first index to save them to in the array
+   * @param length the number of bytes to request from random.org
    * @throws IOException If a connection error occurs.
    * @throws SeedException If random.org sends a malformed response body.
    */
   @SuppressWarnings("NumericCastThatLosesPrecision")
-  private static void downloadBytes(final int requiredBytes, byte[] seed, int offset)
+  private static void downloadBytes(byte[] seed, int offset, final int length)
       throws IOException {
     HttpURLConnection connection = null;
-    cacheLock.lock();
+    lock.lock();
     try {
       final UUID currentApiKey = API_KEY.get();
       if (currentApiKey == null) {
         // Use old API.
-        connection = openConnection(new URL(MessageFormat.format(RANDOM_URL, requiredBytes)));
+        connection = openConnection(new URL(MessageFormat.format(RANDOM_URL, length)));
         try (final BufferedReader reader = getResponseReader(connection)) {
           for (int index = 0; index < seed.length; index++) {
             final String line = reader.readLine();
@@ -201,7 +203,7 @@ public enum RandomDotOrgSeedGenerator implements SeedGenerator {
         connection.setDoOutput(true);
         connection.setRequestMethod("POST");
         try (final OutputStream out = connection.getOutputStream()) {
-          out.write(String.format(JSON_REQUEST_FORMAT, currentApiKey, requiredBytes * Byte.SIZE,
+          out.write(String.format(JSON_REQUEST_FORMAT, currentApiKey, length * Byte.SIZE,
               REQUEST_ID.incrementAndGet()).getBytes(UTF8));
         }
         final JSONObject response;
@@ -223,11 +225,11 @@ public enum RandomDotOrgSeedGenerator implements SeedGenerator {
           final String base64seed =
               ((data instanceof JSONArray) ? ((JSONArray) data).get(0) : data).toString();
           final byte[] decodedSeed = BASE64.decode(base64seed);
-          if (decodedSeed.length < requiredBytes) {
+          if (decodedSeed.length < length) {
             throw new SeedException(String.format(
-                "Too few bytes returned: expected %d bytes, got '%s'", requiredBytes, base64seed));
+                "Too few bytes returned: expected %d bytes, got '%s'", length, base64seed));
           }
-          System.arraycopy(decodedSeed, 0, seed, 0, requiredBytes);
+          System.arraycopy(decodedSeed, 0, seed, 0, length);
         }
         final Object advisoryDelayMs = result.get("advisoryDelay");
         if (advisoryDelayMs instanceof Number) {
@@ -237,7 +239,7 @@ public enum RandomDotOrgSeedGenerator implements SeedGenerator {
         }
       }
     } finally {
-      cacheLock.unlock();
+      lock.unlock();
       if (connection != null) {
         connection.disconnect();
       }
@@ -263,12 +265,12 @@ public enum RandomDotOrgSeedGenerator implements SeedGenerator {
       throw new SeedException("Not retrying so soon after an IOException");
     }
     final int length = seed.length;
-    cacheLock.lock();
+    lock.lock();
     try {
       int count = 0;
       while (count < length) {
         int batchSize = Math.min(length - count, MAX_REQUEST_SIZE);
-        downloadBytes(batchSize, seed, count);
+        downloadBytes(seed, count, batchSize);
         count += batchSize;
       }
     } catch (final IOException ex) {
@@ -278,7 +280,7 @@ public enum RandomDotOrgSeedGenerator implements SeedGenerator {
       // Might be thrown if resource access is restricted (such as in an applet sandbox).
       throw new SeedException("SecurityManager prevented access to " + BASE_URL, ex);
     } finally {
-      cacheLock.unlock();
+      lock.unlock();
     }
   }
 
