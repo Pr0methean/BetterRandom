@@ -98,7 +98,6 @@ public class RandomDotOrgSeedGeneratorLiveTest extends AbstractSeedGeneratorTest
 
   @BeforeClass
   public void setUpClass() {
-    RandomDotOrgUtils.maybeSetMaxRequestSize();
     // when using Tor, DNS seems to be unreliable, so it may take several tries to get the address
     InetAddress address = null;
     long failedLookups = 0;

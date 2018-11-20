@@ -1,12 +1,7 @@
 package io.github.pr0methean.betterrandom.seed;
 
-import static io.github.pr0methean.betterrandom.seed.RandomDotOrgSeedGenerator.GLOBAL_MAX_REQUEST_SIZE;
-import static io.github.pr0methean.betterrandom.seed.RandomDotOrgSeedGenerator.cache;
-import static io.github.pr0methean.betterrandom.seed.RandomDotOrgSeedGenerator.cacheLock;
-import static io.github.pr0methean.betterrandom.seed.RandomDotOrgSeedGenerator.cacheOffset;
 import static io.github.pr0methean.betterrandom.seed.RandomDotOrgSeedGenerator.setProxy;
 import static io.github.pr0methean.betterrandom.seed.RandomDotOrgUtils.createTorProxy;
-import static io.github.pr0methean.betterrandom.seed.RandomDotOrgUtils.maybeSetMaxRequestSize;
 import static io.github.pr0methean.betterrandom.seed.SeedTestUtils.testGenerator;
 import static org.mockito.ArgumentMatchers.any;
 import static org.powermock.api.mockito.PowerMockito.spy;
@@ -96,11 +91,11 @@ public class RandomDotOrgSeedGeneratorHermeticTest extends PowerMockTestCase {
     }).when(RandomDotOrgSeedGenerator.class, "openConnection", any(URL.class));
   }
 
-  private static SeedException expectAndGetException() {
+  private static SeedException expectAndGetException(int seedSize) {
     SeedException exception = null;
     try {
       RandomDotOrgSeedGenerator.RANDOM_DOT_ORG_SEED_GENERATOR.generateSeed(
-          SeedTestUtils.SEED_SIZE);
+          seedSize);
       Assert.fail("Should have thrown SeedException");
     } catch (final SeedException expected) {
       exception = expected;
@@ -110,13 +105,6 @@ public class RandomDotOrgSeedGeneratorHermeticTest extends PowerMockTestCase {
 
   @BeforeMethod public void setUpMethod() {
     spy(RandomDotOrgSeedGenerator.class);
-    usingSmallRequests = maybeSetMaxRequestSize();
-    assertTrue(cacheLock.tryLock()); // If this blocks, then our tests risk interfering
-    try {
-      cacheOffset = cache.length;
-    } finally {
-      cacheLock.unlock();
-    }
   }
 
   @Test public void testSetProxyOldApi() throws Exception {
@@ -148,34 +136,22 @@ public class RandomDotOrgSeedGeneratorHermeticTest extends PowerMockTestCase {
 
   @Test public void testOverLongResponse() throws Exception {
     RandomDotOrgSeedGenerator.setApiKey(null);
-    RandomDotOrgSeedGenerator.setMaxRequestSize(32);
     mockRandomDotOrgResponse(RESPONSE_625_OLD_API);
-    try {
-      testGenerator(RandomDotOrgSeedGenerator.RANDOM_DOT_ORG_SEED_GENERATOR);
-    } finally {
-      if (!usingSmallRequests) {
-        RandomDotOrgSeedGenerator.setMaxRequestSize(GLOBAL_MAX_REQUEST_SIZE);
-      }
-    }
+    expectAndGetException(32);
   }
 
   @SuppressWarnings("ThrowableNotThrown") @Test
   public void testOverShortResponse() throws Exception {
     RandomDotOrgSeedGenerator.setApiKey(null);
-    RandomDotOrgSeedGenerator.setMaxRequestSize(GLOBAL_MAX_REQUEST_SIZE);
     mockRandomDotOrgResponse(RESPONSE_32_OLD_API);
-    try {
-      expectAndGetException();
-    } finally {
-      maybeSetMaxRequestSize();
-    }
+    expectAndGetException(625);
   }
 
   @Test public void testInvalidResponseJsonApi() throws Exception {
     RandomDotOrgSeedGenerator.setApiKey(UUID.randomUUID());
     try {
       mockRandomDotOrgResponse("Not JSON".getBytes(UTF8));
-      assertTrue(expectAndGetException().getCause() instanceof ParseException);
+      assertTrue(expectAndGetException(SeedTestUtils.SEED_SIZE).getCause() instanceof ParseException);
     } finally {
       RandomDotOrgSeedGenerator.setApiKey(null);
     }
@@ -184,7 +160,7 @@ public class RandomDotOrgSeedGeneratorHermeticTest extends PowerMockTestCase {
   @Test public void testInvalidResponseOldApi() throws Exception {
     RandomDotOrgSeedGenerator.setApiKey(null);
     mockRandomDotOrgResponse("Not numbers".getBytes(UTF8));
-    assertTrue(expectAndGetException().getCause() instanceof NumberFormatException);
+    assertTrue(expectAndGetException(SeedTestUtils.SEED_SIZE).getCause() instanceof NumberFormatException);
   }
 
   @Test public void testResponseError() throws Exception {
@@ -193,7 +169,7 @@ public class RandomDotOrgSeedGeneratorHermeticTest extends PowerMockTestCase {
       mockRandomDotOrgResponse(("{\"jsonrpc\":\"2.0\",\"error\":\"Oh noes, an error\",\"result\":{\"random\":{\"data\":"
           + "[\"gAlhFSSjLy+u5P/Cz92BH4R3NZ0+j8UHNeIR02CChoQ=\"]," + "\"completionTime\":\"2018-05-06 19:54:31Z\"},\"bitsUsed\":256,\"bitsLeft\":996831,"
           + "\"requestsLeft\":199912,\"advisoryDelay\":290},\"id\":27341}").getBytes(UTF8));
-      assertEquals("Wrong exception message", "Oh noes, an error", expectAndGetException().getMessage());
+      assertEquals("Wrong exception message", "Oh noes, an error", expectAndGetException(SeedTestUtils.SEED_SIZE).getMessage());
     } finally {
       RandomDotOrgSeedGenerator.setApiKey(null);
     }
@@ -202,7 +178,7 @@ public class RandomDotOrgSeedGeneratorHermeticTest extends PowerMockTestCase {
   @SuppressWarnings("ThrowableNotThrown") @Test public void testResponseNoResult()
       throws Exception {
     mockRandomDotOrgResponse("{\"jsonrpc\":\"2.0\"}".getBytes(UTF8));
-    expectAndGetException();
+    expectAndGetException(SeedTestUtils.SEED_SIZE);
   }
 
   @SuppressWarnings("ThrowableNotThrown") @Test public void testResponseNoRandom()
@@ -210,7 +186,7 @@ public class RandomDotOrgSeedGeneratorHermeticTest extends PowerMockTestCase {
     mockRandomDotOrgResponse(("{\"jsonrpc\":\"2.0\",\"result\":{"
         + "\"completionTime\":\"2018-05-06 19:54:31Z\"},\"bitsUsed\":256,\"bitsLeft\":996831,"
         + "\"requestsLeft\":199912,\"advisoryDelay\":290},\"id\":27341}").getBytes(UTF8));
-    expectAndGetException();
+    expectAndGetException(SeedTestUtils.SEED_SIZE);
   }
 
   @AfterMethod public void tearDownMethod() {
