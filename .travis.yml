@@ -108,7 +108,7 @@ jobs:
   - language: java
     os: linux
     jdk: oraclejdk8
-    env: OP=benchmark JAVA8=true LIMITED_CRYPTO=true ARGS=io.github.pr0methean.betterrandom.prng.AesCounterRandom
+    env: OP=benchmark JAVA8=true LIMITED_CRYPTO=true ARGS=io.github.pr0methean.betterrandom.benchmark.AesCounterRandomBenchmark
     stage: long tests
     sudo: required
   - language: java
