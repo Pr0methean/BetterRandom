@@ -10,7 +10,6 @@ import java.util.concurrent.locks.ReentrantLock;
  * reduce the number of I/O calls.
  */
 public class BufferedSeedGenerator implements SeedGenerator {
-
   private static final long serialVersionUID = -2100305696539110970L;
 
   private final SeedGenerator delegate;
@@ -61,5 +60,10 @@ public class BufferedSeedGenerator implements SeedGenerator {
   @Override
   public boolean isWorthTrying() {
     return pos < size || delegate.isWorthTrying();
+  }
+
+  @Override
+  public String toString() {
+    return String.format("BufferedSeedGenerator(%s,%d)", delegate, size);
   }
 }
