@@ -221,16 +221,15 @@ public enum RandomDotOrgSeedGenerator implements SeedGenerator {
         final Object data = random.get("data");
         if (data == null) {
           throw new SeedException("'data' missing from 'random': " + random);
-        } else {
-          final String base64seed =
-              ((data instanceof JSONArray) ? ((JSONArray) data).get(0) : data).toString();
-          final byte[] decodedSeed = BASE64.decode(base64seed);
-          if (decodedSeed.length < length) {
-            throw new SeedException(String.format(
-                "Too few bytes returned: expected %d bytes, got '%s'", length, base64seed));
-          }
-          System.arraycopy(decodedSeed, 0, seed, offset, length);
         }
+        final String base64seed =
+            ((data instanceof JSONArray) ? ((JSONArray) data).get(0) : data).toString();
+        final byte[] decodedSeed = BASE64.decode(base64seed);
+        if (decodedSeed.length < length) {
+          throw new SeedException(String.format(
+              "Too few bytes returned: expected %d bytes, got '%s'", length, base64seed));
+        }
+        System.arraycopy(decodedSeed, 0, seed, offset, length);
         final Object advisoryDelayMs = result.get("advisoryDelay");
         if (advisoryDelayMs instanceof Number) {
           // Wait RETRY_DELAY or the advisory delay, whichever is shorter
