@@ -101,7 +101,7 @@ public enum RandomDotOrgSeedGenerator implements SeedGenerator {
    */
   static final int MAX_REQUEST_SIZE = 10000;
   private static final int RETRY_DELAY_MS = 10000;
-  static final Lock lock = new ReentrantLock();
+  private static final Lock lock = new ReentrantLock();
   private static final Charset UTF8 = Charset.forName("UTF-8");
   private static final TimeZone UTC = TimeZone.getTimeZone("UTC");
   private static volatile Calendar earliestNextAttempt = Calendar.getInstance(UTC);
