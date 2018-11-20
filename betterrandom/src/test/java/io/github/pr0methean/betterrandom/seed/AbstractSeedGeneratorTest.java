@@ -6,7 +6,7 @@ import org.testng.annotations.Test;
 
 public abstract class AbstractSeedGeneratorTest extends PowerMockTestCase {
 
-  protected final SeedGenerator seedGenerator;
+  protected SeedGenerator seedGenerator;
 
   protected AbstractSeedGeneratorTest(final SeedGenerator seedGenerator) {
     this.seedGenerator = seedGenerator;

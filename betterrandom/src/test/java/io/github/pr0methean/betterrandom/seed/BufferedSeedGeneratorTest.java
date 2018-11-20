@@ -20,12 +20,13 @@ public class BufferedSeedGeneratorTest extends AbstractSeedGeneratorTest {
   }
 
   public BufferedSeedGeneratorTest() {
-    super(new BufferedSeedGenerator(FAKE_SEED_GENERATOR, BUFFER_SIZE));
+    super(null);
   }
 
   @BeforeMethod
   public void setUp() {
-    FAKE_SEED_GENERATOR.resetCalls();
+    seedGenerator = new BufferedSeedGenerator(FAKE_SEED_GENERATOR, BUFFER_SIZE);
+    FAKE_SEED_GENERATOR.reset();
   }
 
   @Test
