@@ -185,7 +185,7 @@ addons:
 script:
 - ifconfig | grep inet
 - "./remove_unlimited_crypto.sh"
-- "./${OP}.sh" ${ARGS}
+- "./${OP}.sh ${ARGS}"
 env:
   global:
   - secure: hNHSZ5o9LfVdTJGm0GfD8OqrFtds2zlufzHWHq20smKZqYZyQ3f2dnkk6j5V+UMYbR1/hiXDfV1FkcE/RqkFEMgE+yycBGkoB9Z+jCjQe+3AZZjQGV9mUDNZ7tqVSA0xksIfn3Y7bv7VamhfV3JXZjQUpJtaeYNvqf7/EN6EWo97dQK2G2vX4p0Yuv9Pp7NySrROSgHcb+jOhY6g+xsGXg5PdA3HZUZzVNNwtD/yEZvtSOtBSP9RBjZDLjL8sLT5UgQzczo4Lt6CYCovPLVeXcXEFjeroXXmLnb8HdqwEeuEOH1mdhS10kflAjjeWdURDbj12sXhTDadJAKzniGbwk4JyMu+8GZLVXrRf8/tRKJccrPZ7Pmtdjzs4wcoYxLk/E4uaQTsayWlZQp+qM1qi4jKvizI2uyF2FHVAH6EYPy+ytmUiPzd9+0DfYBeu10GNTbWz6uyc8llHNGIn8N1bnbCOSsMJXMovml5Cn10eSil2JclWCyaoYgGW6DO9i+qEvAJcHGj4RiBXy3yRraYBGX3oylJKxArfUhxpnFU0BJ76i7XHyMPuIX5joC0hO16+bhfShEaH0jEUumFgbq/lCiaef6jXb6KOocXwr1hmTG+GOHDuuS6z/GKTvfAgkDXgN9qCDI3oq5LIvkOgl7oqhSqSNoHdggcI6Z4J+QGjRw=
