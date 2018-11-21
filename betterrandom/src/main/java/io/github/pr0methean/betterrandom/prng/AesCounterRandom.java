@@ -175,7 +175,8 @@ public class AesCounterRandom extends BaseRandom implements SeekableRandom {
       cipher = Cipher.getInstance(ALGORITHM_MODE);
       hash = MessageDigest.getInstance(HASH_ALGORITHM);
     } catch (final NoSuchAlgorithmException | NoSuchPaddingException e) {
-      throw new InternalError("JVM is missing a required cipher or hash algorithm", e);
+      throw new InternalError("JVM is missing a required cipher or hash algorithm: "
+          + e.getMessage());
     }
   }
 
