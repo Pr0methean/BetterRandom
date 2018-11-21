@@ -25,7 +25,7 @@ public class LooperThreadTest {
       try {
         Thread.sleep(1);
       } catch (InterruptedException e) {
-        throw new RuntimeException(e);
+        throw new AssertionError(e);
       }
     }
   };

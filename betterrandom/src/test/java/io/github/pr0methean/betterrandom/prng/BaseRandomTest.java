@@ -425,7 +425,8 @@ public abstract class BaseRandomTest extends PowerMockTestCase {
     assertFalse(Arrays.equals(testBytes, new byte[TEST_BYTE_ARRAY_LENGTH]));
     final long entropy = prng.getEntropyBits();
     final long expectedEntropy = oldEntropy - (8 * TEST_BYTE_ARRAY_LENGTH);
-    switch (getEntropyCheckMode()) {
+    EntropyCheckMode entropyCheckMode = getEntropyCheckMode();
+    switch (entropyCheckMode) {
       case EXACT:
         assertEquals(entropy, expectedEntropy);
         break;
@@ -434,6 +435,8 @@ public abstract class BaseRandomTest extends PowerMockTestCase {
         break;
       case OFF:
         break;
+      default:
+        throw new AssertionError("Unhandled entropy check mode " + entropyCheckMode);
     }
   }
 
