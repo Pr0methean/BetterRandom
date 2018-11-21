@@ -8,22 +8,19 @@ import static org.testng.Assert.assertEquals;
 @SuppressWarnings("SpellCheckingInspection")
 public class Byte16ArrayArithmeticTest {
 
+  private static final byte[] OPERAND1 =
+      longsToByteArray(0x79EC_964A_738B_2EBAL, 0x38FD_07E7_D607_B6EDL);
+  private static final byte[] OPERAND2 =
+      longsToByteArray(0xC26B_1E45_A661_872BL, 0x631B_C188_2D24_D6E9L);
+  private static final byte[] ONES = {1,1,1,1, 1,1,1,1, 1,1,1,1, 1,1,1,1};
+  private static final byte[] MINUS_ONES = {-1,-1,-1,-1, -1,-1,-1,-1, -1,-1,-1,-1, -1,-1,-1,-1};
+
   private static byte[] longsToByteArray(final long most, final long least) {
     final byte[] out = new byte[16];
     BinaryUtils.convertLongToBytes(most, out, 0);
     BinaryUtils.convertLongToBytes(least, out, Long.BYTES);
     return out;
   }
-
-  private static final byte[] OPERAND1 =
-      longsToByteArray(0x79EC_964A_738B_2EBAL, 0x38FD_07E7_D607_B6EDL);
-
-  private static final byte[] OPERAND2 =
-      longsToByteArray(0xC26B_1E45_A661_872BL, 0x631B_C188_2D24_D6E9L);
-
-  private static final byte[] ONES = {1,1,1,1, 1,1,1,1, 1,1,1,1, 1,1,1,1};
-
-  private static final byte[] MINUS_ONES = {-1,-1,-1,-1, -1,-1,-1,-1, -1,-1,-1,-1, -1,-1,-1,-1};
 
   private static void assertByteArrayEqualsLongs(
       final byte[] actual, final long expectedMost, final long expectedLeast) {

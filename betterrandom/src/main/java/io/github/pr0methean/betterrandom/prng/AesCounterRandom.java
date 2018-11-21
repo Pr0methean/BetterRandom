@@ -80,7 +80,7 @@ public class AesCounterRandom extends BaseRandom implements SeekableRandom {
     try {
       MAX_KEY_LENGTH_BYTES = Cipher.getMaxAllowedKeyLength(ALGORITHM_MODE) / 8;
     } catch (final GeneralSecurityException e) {
-      throw new RuntimeException(e);
+      throw new InternalError(e);
     }
     LoggerFactory.getLogger(AesCounterRandom.class)
         .info("Maximum allowed key length for AES is {} bytes", MAX_KEY_LENGTH_BYTES);
@@ -173,7 +173,7 @@ public class AesCounterRandom extends BaseRandom implements SeekableRandom {
       cipher = Cipher.getInstance(ALGORITHM_MODE);
       hash = MessageDigest.getInstance(HASH_ALGORITHM);
     } catch (final NoSuchAlgorithmException | NoSuchPaddingException e) {
-      throw new RuntimeException("JVM is missing a required cipher or hash algorithm", e);
+      throw new InternalError("JVM is missing a required cipher or hash algorithm", e);
     }
   }
 
@@ -291,7 +291,7 @@ public class AesCounterRandom extends BaseRandom implements SeekableRandom {
     try {
       cipher.init(Cipher.ENCRYPT_MODE, new SecretKeySpec(key, ALGORITHM));
     } catch (final InvalidKeyException e) {
-      throw new RuntimeException("Invalid key: " + Arrays.toString(key), e);
+      throw new InternalError("Invalid key: " + Arrays.toString(key), e);
     }
     if (currentBlock != null) {
       index = BYTES_AT_ONCE;
