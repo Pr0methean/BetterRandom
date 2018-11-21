@@ -2,7 +2,6 @@ package io.github.pr0methean.betterrandom.prng.adapter;
 
 import io.github.pr0methean.betterrandom.prng.BaseRandom;
 import java.util.SplittableRandom;
-import java.util.function.DoubleSupplier;
 
 /**
  * Abstract class for implementations of {@link BaseRandom} that wrap one or more {@link
@@ -136,7 +135,8 @@ public abstract class BaseSplittableRandomAdapter extends BaseRandom {
   }
 
   /**
-   * Delegates to {@link SplittableRandom#nextDouble()} via {@link #internalNextGaussian(DoubleSupplier)}.
+   * Delegates to {@link SplittableRandom#nextDouble()} via
+   * {@link #internalNextGaussian(java.util.function.DoubleSupplier)}.
    */
   @Override public double nextGaussian() {
     // Upper bound. 2 Gaussians are generated from 2 nextDouble calls, which once made are either
