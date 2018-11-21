@@ -29,7 +29,7 @@ public class RandomWrapperSecureRandomTest extends BaseRandomTest {
     try {
       return new RandomWrapper(SecureRandom.getInstance("SHA1PRNG"));
     } catch (final NoSuchAlgorithmException e) {
-      throw new RuntimeException(e);
+      throw new AssertionError(e);
     }
   }
 

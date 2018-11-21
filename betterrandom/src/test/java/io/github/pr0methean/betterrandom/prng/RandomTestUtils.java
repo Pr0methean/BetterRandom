@@ -34,6 +34,7 @@ import org.testng.Reporter;
 
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertFalse;
+import static org.testng.Assert.assertNotEquals;
 import static org.testng.Assert.assertNotSame;
 import static org.testng.Assert.assertNull;
 import static org.testng.Assert.assertSame;
@@ -74,6 +75,8 @@ public enum RandomTestUtils {
         break;
       case OFF:
         break;
+      default:
+        throw new AssertionError("Unhandled EntropyCheckMode " + entropyCheckMode);
     }
   }
 
@@ -117,10 +120,10 @@ public enum RandomTestUtils {
   public static void doEqualsSanityChecks(final Supplier<? extends Random> ctor) {
     final Random rng = ctor.get();
     final Random rng2 = ctor.get();
-    assert !(rng.equals(rng2));
-    assert rng.equals(rng) : "RNG doesn't compare equal to itself";
-    assert !(rng.equals(null)) : "RNG compares equal to null";
-    assert !(rng.equals(new Random())) : "RNG compares equal to new Random()";
+    assertNotEquals(rng, rng2);
+    assertEquals(rng, rng, "RNG doesn't compare equal to itself");
+    assertNotEquals(rng, null, "RNG compares equal to null");
+    assertNotEquals(rng, new Random(), "RNG compares equal to new Random()");
   }
 
   /**
@@ -314,7 +317,7 @@ public enum RandomTestUtils {
         thirdSeed = rng.getSeed();
       } while (Arrays.equals(thirdSeed, secondSeed));
     } catch (final InterruptedException e) {
-      throw new RuntimeException(e);
+      throw new AssertionError(e);
     } finally {
       RandomSeederThread.setPriority(testSeedGenerator, Thread.NORM_PRIORITY);
       if (setSeedGenerator) {

@@ -160,7 +160,8 @@ public class Pcg128Random extends BaseRandom implements SeekableRandom {
   }
 
   @Override protected long nextLongNoEntropyDebit() {
-    long oldSeedMost, oldSeedLeast;
+    long oldSeedMost;
+    long oldSeedLeast;
     lock.lock();
     try {
       oldSeedMost = BinaryUtils.convertBytesToLong(seed, 0);

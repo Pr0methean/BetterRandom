@@ -137,7 +137,8 @@ public abstract class BaseSplittableRandomAdapter extends BaseRandom {
   }
 
   /**
-   * Delegates to {@link SplittableRandom#nextDouble()} via {@link #internalNextGaussian(DoubleSupplier)}.
+   * Delegates to {@link SplittableRandom#nextDouble()} via
+   * {@link #internalNextGaussian(java8.util.function.DoubleSupplier)}.
    */
   @Override public double nextGaussian() {
     // Upper bound. 2 Gaussians are generated from 2 nextDouble calls, which once made are either

@@ -117,7 +117,7 @@ public enum RandomDotOrgSeedGenerator implements SeedGenerator {
       JSON_REQUEST_URL = new URL("https://api.random.org/json-rpc/1/invoke");
     } catch (final MalformedURLException e) {
       // Should never happen.
-      throw new RuntimeException(e);
+      throw new InternalError(e);
     }
   }
 
