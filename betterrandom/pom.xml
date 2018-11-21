@@ -430,7 +430,7 @@
               <link>http://checkstyle-addons.github.io/jsr305-javadoc/3.0.1</link>
               <link>https://checkerframework.org/api</link>
               <link>https://docs.oracle.com/javase/8/docs/api</link>
-              <link>https://google.github.io/guava/releases/${guava.version}/api/docs</link>
+              <link>https://google.github.io/guava/releases/snapshot-jre/api/docs</link>
             </links>
             <tags>
               <tag>
