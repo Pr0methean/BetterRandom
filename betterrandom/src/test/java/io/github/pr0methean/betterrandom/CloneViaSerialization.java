@@ -25,7 +25,7 @@ public enum CloneViaSerialization {
         new ByteArrayInputStream(serialCopy))) {
       return (T) (objectInStream.readObject());
     } catch (final IOException | ClassNotFoundException e) {
-      throw new RuntimeException(e);
+      throw new AssertionError(e);
     }
   }
 
@@ -35,7 +35,7 @@ public enum CloneViaSerialization {
       objectOutStream.writeObject(object);
       return byteOutStream.toByteArray();
     } catch (final IOException e) {
-      throw new RuntimeException(e);
+      throw new AssertionError(e);
     }
   }
 }

@@ -9,7 +9,7 @@ import static io.github.pr0methean.betterrandom.seed.SecureRandomSeedGenerator.S
 
 public class AesCounterRandomBenchmark extends AbstractRandomBenchmarkWithReseeding {
 
-  @Param({"16", "32"}) int seedSize;
+  @Param({"16", "32"}) public int seedSize;
 
   @Override protected Random createPrng() throws SeedException {
     return new AesCounterRandom(SECURE_RANDOM_SEED_GENERATOR.generateSeed(seedSize));

@@ -51,7 +51,7 @@ abstract class AbstractRandomBenchmark {
 
   @EntryPoint protected abstract Random createPrng() throws Exception;
 
-  byte innerTestBytesSequential() {
+  protected byte innerTestBytesSequential() {
     for (final byte[] column : bytes) {
       prng.nextBytes(column);
     }
