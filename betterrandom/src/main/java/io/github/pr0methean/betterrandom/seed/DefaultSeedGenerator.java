@@ -24,11 +24,11 @@ import java.util.Arrays;
  * seed generator.
  * </p><p>
  * The default implementation maintains multiple strategies for seed generation and will delegate to
- * the best one available at any moment. It uses, in order of preference: <ol>
+ * the best one available at any moment. It uses, in order of preference:</p><ol>
  * <li>{@link DevRandomSeedGenerator} with 128-byte buffer</li>
  * <li>{@link RandomDotOrgSeedGenerator#DELAYED_RETRY} with 625-byte buffer</li>
  * <li>{@link SecureRandomSeedGenerator} with no buffer</li>
- * </ol></p>
+ * </ol>
  * @author Daniel Dyer
  */
 public enum DefaultSeedGenerator implements SeedGenerator {
