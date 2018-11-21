@@ -42,7 +42,7 @@ public class LooperThreadTest {
             try {
               assertTrue(thread.awaitIteration(1, TimeUnit.SECONDS));
             } catch (final InterruptedException e) {
-              throw new RuntimeException(e);
+              throw new AssertionError(e);
             }
           }
         });
