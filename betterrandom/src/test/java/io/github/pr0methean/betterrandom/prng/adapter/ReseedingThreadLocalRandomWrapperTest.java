@@ -46,7 +46,7 @@ public class ReseedingThreadLocalRandomWrapperTest extends ThreadLocalRandomWrap
     createRng().setSeedGenerator(getTestSeedGenerator());
   }
 
-  @SuppressWarnings("BusyWait") @Override @Test public void testReseeding() {
+  @SuppressWarnings("BusyWait") @Override @Test(singleThreaded = true) public void testReseeding() {
     final SeedGenerator testSeedGenerator = getTestSeedGenerator();
     final BaseRandom rng = new ReseedingThreadLocalRandomWrapper(testSeedGenerator,
         pcgSupplier);
