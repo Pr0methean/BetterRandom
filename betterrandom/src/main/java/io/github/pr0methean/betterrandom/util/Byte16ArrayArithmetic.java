@@ -137,10 +137,11 @@ public enum Byte16ArrayArithmetic {
   }
 
   /**
-   * {@code return (long)(shifted >>> bits)}
+   * Returns the lower 64 bits of the shifted input.
    * From <a href="https://github.com/patrickfav/bytes-java/blob/743a6ab60649e6ce7ec972412bdcb42010a46077/src/main/java/at/favre/lib/bytes/Util.java#L395">this source</a>.
    * @param shifted the array input and the result
    * @param bits how many bits to shift by
+   * @return {@code (long)(shifted >>> bits)}
    * @author Patrick Favre-Bulle
    */
   public static long unsignedShiftRightLeast64(final byte[] shifted, final int bits) {
@@ -206,9 +207,10 @@ public enum Byte16ArrayArithmetic {
   }
 
   /**
-   * {@code return (long) ((shifted >>> bits) | shifted << (128 - bits))}
+   * Returns the lower 64 bits of the result when the input is rotated.
    * @param shifted the array input and the result
    * @param bits how many bits to shift by
+   * @return {@code (long) ((shifted >>> bits) | shifted << (128 - bits))}
    */
   public static long rotateRightLeast64(final byte[] shifted, final int bits) {
     return rotateRightLeast64(bits, convertBytesToLong(shifted),
