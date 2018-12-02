@@ -61,9 +61,10 @@ import static java.util.Calendar.YEAR;
  * one IP address; if you operate from a fixed address (at least if you use IPv4), you can <a
  * href="https://www.random.org/quota/">check
  * your quota and buy more</a>. On the new API, the quota is per key rather than per IP, and
- * commercial service tiers are to come in early 2018, shortly after the new API leaves beta.</p>
+ * commercial-use pricing follows a <a href="https://api.random.org/pricing">different
+ * scheme</a>.</p>
  * @author Daniel Dyer (old API)
- * @author Chris Hennick (new API)
+ * @author Chris Hennick (new API & refactoring)
  */
 public enum RandomDotOrgSeedGenerator implements SeedGenerator {
   /**
