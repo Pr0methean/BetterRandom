@@ -63,7 +63,7 @@ import org.json.simple.parser.ParseException;
  * commercial-use pricing follows a <a href="https://api.random.org/pricing">different
  * scheme</a>.</p>
  * @author Daniel Dyer (old API)
- * @author Chris Hennick (new API & refactoring)
+ * @author Chris Hennick (new API; refactoring)
  */
 public enum RandomDotOrgSeedGenerator implements SeedGenerator {
   /**
