@@ -2,6 +2,11 @@
 <suite name="Main" parallel="tests">
   <test name="Adapter PRNGs">
     <parameter name="seedSize" value="16"/>
+    <groups>
+      <run>
+        <exclude name="sequential"/>
+      </run>
+    </groups>
     <classes>
       <class name="io.github.pr0methean.betterrandom.prng.adapter.RandomWrapperAesCounterRandomTest"/>
       <class name="io.github.pr0methean.betterrandom.prng.adapter.RandomWrapperMersenneTwisterRandomTest"/>

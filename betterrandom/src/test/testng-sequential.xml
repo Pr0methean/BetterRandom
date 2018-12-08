@@ -1,5 +1,5 @@
 <!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd">
-<suite name="Seeding" parallel="tests">
+<suite name="Sequential" parallel="none">
   <test name="Seeding" parallel="none">
     <classes>
       <class name="io.github.pr0methean.betterrandom.seed.BufferedSeedGeneratorTest"/>
@@ -10,6 +10,18 @@
       <class name="io.github.pr0methean.betterrandom.seed.RandomSeederThreadTest"/>
       <class name="io.github.pr0methean.betterrandom.seed.SecureRandomSeedGeneratorTest"/>
       <class name="io.github.pr0methean.betterrandom.seed.SeedGeneratorPreferenceListTest"/>
+    </classes>
+  </test>
+  <test name="Adapter PRNGs Sequential" parallel="none">
+    <parameter name="seedSize" value="16"/>
+    <groups>
+      <run>
+        <include name="sequential"/>
+      </run>
+    </groups>
+    <classes>
+      <class name="io.github.pr0methean.betterrandom.prng.adapter.ReseedingThreadLocalRandomWrapperMersenneTwisterTest"/>
+      <class name="io.github.pr0methean.betterrandom.prng.adapter.ReseedingThreadLocalRandomWrapperTest"/>
     </classes>
   </test>
 </suite>
