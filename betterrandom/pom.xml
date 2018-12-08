@@ -480,7 +480,7 @@
             <argLine>@{argLine} ${test.jdk9.argline}</argLine>
             <suiteXmlFiles>
               <suiteXmlFile>src/test/testng.xml</suiteXmlFile>
-              <suiteXmlFile>src/test/testng-seed.xml</suiteXmlFile>
+              <suiteXmlFile>src/test/testng-sequential.xml</suiteXmlFile>
             </suiteXmlFiles>
             <trimStackTrace>false</trimStackTrace>
             <forkedProcessTimeoutInSeconds>600</forkedProcessTimeoutInSeconds>
@@ -504,7 +504,7 @@
             <argLine>@{argLine} ${test.jdk9.argline}</argLine>
             <suiteXmlFiles>
               <suiteXmlFile>src/test/testng.xml</suiteXmlFile>
-              <suiteXmlFile>src/test/testng-seed.xml</suiteXmlFile>
+              <suiteXmlFile>src/test/testng-sequential.xml</suiteXmlFile>
             </suiteXmlFiles>
             <parallel>${testng.parallel}</parallel>
             <threadCount>${testng.perCoreThreadCount}</threadCount>
