@@ -1,6 +1,7 @@
 package io.github.pr0methean.betterrandom.prng;
 
 import io.github.pr0methean.betterrandom.TestingDeficiency;
+import io.github.pr0methean.betterrandom.util.BinaryUtils;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -21,21 +22,14 @@ import static org.testng.Assert.assertEquals;
 @Test(testName = "BaseRandom statics")
 public class BaseRandomStaticTest {
 
-  @TestingDeficiency // FIXME: The switcheroo isn't happening!
-  @Test(enabled = false) public void testReadObjectNoData()
+  @Test public void testReadObjectNoData()
       throws IOException, ClassNotFoundException {
-    final BaseRandom switchedRandom;
-    try (final ByteArrayOutputStream byteOutStream = new ByteArrayOutputStream();
-        final ObjectOutputStream objectOutStream = new ObjectOutputStream(byteOutStream)) {
-      objectOutStream.writeObject(new Switcheroo());
-      final byte[] serialCopy = byteOutStream.toByteArray();
-      // Read the object back-in.
-      try (final ObjectInputStream objectInStream = new SwitcherooInputStream(
-          new ByteArrayInputStream(serialCopy))) {
-        switchedRandom = (BaseRandom) objectInStream.readObject(); // ClassCastException
-      }
+    try (final ObjectInputStream ois = new ObjectInputStream(new ByteArrayInputStream(
+        BinaryUtils.convertHexStringToBytes(
+            "aced000573720037696f2e6769746875622e7072306d65746865616e2e62657474657272616e646f6d2e" +
+            "70726e672e416573436f756e74657252616e646f6d5291dc26ea2fa68a0200007870")))) {
+      ((AesCounterRandom) ois.readObject()).nextInt();
     }
-    switchedRandom.nextInt();
   }
 
   @Test public void testEntropyOfInt() {
