@@ -23,12 +23,19 @@ import static org.testng.Assert.assertEquals;
 @Test(testName = "BaseRandom statics")
 public class BaseRandomStaticTest {
 
+  /**
+   * This is the serialized form of an instance of a class that has the same name and
+   * {@code serialVersionUID} as {@link AesCounterRandom}, but has no fields and does not extend
+   * {@link BaseRandom}.
+   */
+  private static final String AESCOUNTERRANDOM_THAT_DOES_NOT_EXTEND_BASERANDOM =
+      "aced000573720037696f2e6769746875622e7072306d65746865616e2e62657474657272616e646f6d2e70726" +
+          "e672e416573436f756e74657252616e646f6d5291dc26ea2fa68a0200007870";
+
   @Test(expectedExceptions = InvalidObjectException.class) public void testReadObjectNoData()
       throws IOException, ClassNotFoundException {
     try (final ObjectInputStream ois = new ObjectInputStream(new ByteArrayInputStream(
-        BinaryUtils.convertHexStringToBytes(
-            "aced000573720037696f2e6769746875622e7072306d65746865616e2e62657474657272616e646f6d2e" +
-            "70726e672e416573436f756e74657252616e646f6d5291dc26ea2fa68a0200007870")))) {
+        BinaryUtils.convertHexStringToBytes(AESCOUNTERRANDOM_THAT_DOES_NOT_EXTEND_BASERANDOM)))) {
       ((AesCounterRandom) ois.readObject()).nextInt();
     }
 
