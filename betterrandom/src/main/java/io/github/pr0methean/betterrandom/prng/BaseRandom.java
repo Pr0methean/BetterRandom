@@ -786,15 +786,8 @@ public abstract class BaseRandom extends Random
    */
   @SuppressWarnings("OverriddenMethodCallDuringObjectConstruction") private void readObjectNoData()
       throws InvalidObjectException {
-    LOG.warn("BaseRandom.readObjectNoData() invoked; using DefaultSeedGenerator");
-    try {
-      fallbackSetSeed();
-    } catch (final RuntimeException e) {
-      throw (InvalidObjectException) (new InvalidObjectException(
-          "Failed to deserialize or generate a seed").initCause(e.getCause()));
-    }
-    initTransientFields();
-    setSeedInternal(seed);
+    throw new InvalidObjectException(
+        "This subclass can't be deserialized, because it wasn't a subclass at serialization time");
   }
 
   /**
