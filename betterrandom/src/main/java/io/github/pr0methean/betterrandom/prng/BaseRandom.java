@@ -57,6 +57,7 @@ public abstract class BaseRandom extends Random
   protected final AtomicLong entropyBits = new AtomicLong(0);
   // Stored as a long since there's no atomic double
   private final AtomicLong nextNextGaussian = new AtomicLong(NAN_LONG_BITS);
+
   /**
    * The seed this PRNG was seeded with, as a byte array. Used by {@link #getSeed()} even if the
    * actual internal state of the PRNG is stored elsewhere (since otherwise getSeed() would require
@@ -788,8 +789,11 @@ public abstract class BaseRandom extends Random
       throws InvalidObjectException {
     LOG.warn("BaseRandom.readObjectNoData() invoked; using DefaultSeedGenerator");
     try {
+      if (nextNextGaussian == null) {
+        getClass().getField("nextNextGaussian").set(this, new AtomicLong(NAN_LONG_BITS));
+      }
       fallbackSetSeed();
-    } catch (final RuntimeException e) {
+    } catch (final RuntimeException | NoSuchFieldException | IllegalAccessException e) {
       throw (InvalidObjectException) (new InvalidObjectException(
           "Failed to deserialize or generate a seed").initCause(e.getCause()));
     }
