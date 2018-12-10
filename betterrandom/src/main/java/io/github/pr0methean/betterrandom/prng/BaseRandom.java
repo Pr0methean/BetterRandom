@@ -790,7 +790,7 @@ public abstract class BaseRandom extends Random
     LOG.warn("BaseRandom.readObjectNoData() invoked; using DefaultSeedGenerator");
     try {
       if (nextNextGaussian == null) {
-        getClass().getField("nextNextGaussian").set(this, new AtomicLong(NAN_LONG_BITS));
+        BaseRandom.class.getField("nextNextGaussian").set(this, new AtomicLong(NAN_LONG_BITS));
       }
       fallbackSetSeed();
     } catch (final RuntimeException | NoSuchFieldException | IllegalAccessException e) {
