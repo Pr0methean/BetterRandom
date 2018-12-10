@@ -15,6 +15,8 @@ import io.github.pr0methean.betterrandom.util.EntryPoint;
 import java.io.IOException;
 import java.io.InvalidObjectException;
 import java.io.ObjectInputStream;
+import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
 import java.util.List;
 import java.util.Random;
 import java.util.concurrent.atomic.AtomicLong;
@@ -785,12 +787,21 @@ public abstract class BaseRandom extends Random
    * DefaultSeedGenerator}.
    * @throws InvalidObjectException if the {@link DefaultSeedGenerator} fails.
    */
-  @SuppressWarnings("OverriddenMethodCallDuringObjectConstruction") private void readObjectNoData()
+  @SuppressWarnings("OverriddenMethodCallDuringObjectConstruction")
+  protected void readObjectNoData()
       throws InvalidObjectException {
     LOG.warn("BaseRandom.readObjectNoData() invoked; using DefaultSeedGenerator");
     try {
+      Field modifiersField = Field.class.getDeclaredField("modifiers");
+      modifiersField.setAccessible(true);
       if (nextNextGaussian == null) {
-        BaseRandom.class.getField("nextNextGaussian").set(this, new AtomicLong(NAN_LONG_BITS));
+        setFinalFieldReflectively(modifiersField, "nextNextGaussian", new AtomicLong(NAN_LONG_BITS));
+      }
+      if (entropyBits == null) {
+        setFinalFieldReflectively(modifiersField, "entropyBits", new AtomicLong(0));
+      }
+      if (lock == null) {
+        setFinalFieldReflectively(modifiersField, "lock", new ReentrantLock());
       }
       fallbackSetSeed();
     } catch (final RuntimeException | NoSuchFieldException | IllegalAccessException e) {
@@ -799,6 +810,15 @@ public abstract class BaseRandom extends Random
     }
     initTransientFields();
     setSeedInternal(seed);
+  }
+
+  protected void setFinalFieldReflectively(Field modifiersField, String fieldName, Object value) throws NoSuchFieldException, IllegalAccessException {
+    Field rNextNextGaussian = BaseRandom.class.getDeclaredField(fieldName);
+    rNextNextGaussian.setAccessible(true);
+    int oldMods = rNextNextGaussian.getModifiers();
+    modifiersField.setInt(rNextNextGaussian, rNextNextGaussian.getModifiers() & ~Modifier.FINAL);
+    rNextNextGaussian.set(this, value);
+    modifiersField.setInt(rNextNextGaussian, oldMods);
   }
 
   /**

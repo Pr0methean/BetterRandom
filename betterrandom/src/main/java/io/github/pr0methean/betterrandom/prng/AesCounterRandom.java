@@ -22,6 +22,8 @@ import io.github.pr0methean.betterrandom.seed.SeedException;
 import io.github.pr0methean.betterrandom.seed.SeedGenerator;
 import io.github.pr0methean.betterrandom.util.BinaryUtils;
 import io.github.pr0methean.betterrandom.util.Byte16ArrayArithmetic;
+import java.io.InvalidObjectException;
+import java.lang.reflect.Field;
 import java.security.GeneralSecurityException;
 import java.security.InvalidKeyException;
 import java.security.MessageDigest;
@@ -332,5 +334,18 @@ public class AesCounterRandom extends BaseRandom implements SeekableRandom {
 
   @Override protected boolean supportsMultipleSeedLengths() {
     return true;
+  }
+
+  @Override protected void readObjectNoData() throws InvalidObjectException {
+    super.readObjectNoData();
+    if (currentBlock == null) {
+      try {
+        Field modifiersField = Field.class.getDeclaredField("modifiers");
+        modifiersField.setAccessible(true);
+        setFinalFieldReflectively(modifiersField, "currentBlock", new byte[BYTES_AT_ONCE]);
+      } catch (NoSuchFieldException | IllegalAccessException e) {
+        throw (InvalidObjectException) (new InvalidObjectException("Failed to deserialize or generate a seed").initCause(e));
+      }
+    }
   }
 }
