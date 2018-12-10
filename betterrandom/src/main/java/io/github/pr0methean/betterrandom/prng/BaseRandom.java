@@ -795,7 +795,7 @@ public abstract class BaseRandom extends Random
       fallbackSetSeed();
     } catch (final RuntimeException | NoSuchFieldException | IllegalAccessException e) {
       throw (InvalidObjectException) (new InvalidObjectException(
-          "Failed to deserialize or generate a seed").initCause(e.getCause()));
+          "Failed to deserialize or generate a seed").initCause(e));
     }
     initTransientFields();
     setSeedInternal(seed);
