@@ -1,10 +1,12 @@
 package io.github.pr0methean.betterrandom.prng;
 
 import io.github.pr0methean.betterrandom.TestingDeficiency;
+import io.github.pr0methean.betterrandom.util.BinaryUtils;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InvalidObjectException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.ObjectStreamClass;
@@ -21,21 +23,22 @@ import static org.testng.Assert.assertEquals;
 @Test(testName = "BaseRandom statics")
 public class BaseRandomStaticTest {
 
-  @TestingDeficiency // FIXME: The switcheroo isn't happening!
-  @Test(enabled = false) public void testReadObjectNoData()
+  /**
+   * This is the serialized form of an instance of a class that has the same name and
+   * {@code serialVersionUID} as {@link AesCounterRandom}, but has no fields and does not extend
+   * {@link BaseRandom}.
+   */
+  private static final String AESCOUNTERRANDOM_THAT_DOES_NOT_EXTEND_BASERANDOM =
+      "aced000573720037696f2e6769746875622e7072306d65746865616e2e62657474657272616e646f6d2e70726" +
+          "e672e416573436f756e74657252616e646f6d5291dc26ea2fa68a0200007870";
+
+  @Test(expectedExceptions = InvalidObjectException.class) public void testReadObjectNoData()
       throws IOException, ClassNotFoundException {
-    final BaseRandom switchedRandom;
-    try (final ByteArrayOutputStream byteOutStream = new ByteArrayOutputStream();
-        final ObjectOutputStream objectOutStream = new ObjectOutputStream(byteOutStream)) {
-      objectOutStream.writeObject(new Switcheroo());
-      final byte[] serialCopy = byteOutStream.toByteArray();
-      // Read the object back-in.
-      try (final ObjectInputStream objectInStream = new SwitcherooInputStream(
-          new ByteArrayInputStream(serialCopy))) {
-        switchedRandom = (BaseRandom) objectInStream.readObject(); // ClassCastException
-      }
+    try (final ObjectInputStream ois = new ObjectInputStream(new ByteArrayInputStream(
+        BinaryUtils.convertHexStringToBytes(AESCOUNTERRANDOM_THAT_DOES_NOT_EXTEND_BASERANDOM)))) {
+      ((AesCounterRandom) ois.readObject()).nextInt();
     }
-    switchedRandom.nextInt();
+
   }
 
   @Test public void testEntropyOfInt() {
@@ -57,23 +60,5 @@ public class BaseRandomStaticTest {
     assertEquals(entropyOfLong(1 << 22, 1L << 42), 42);
     assertEquals(entropyOfLong(-(1L << 42), 0), 42);
     assertEquals(entropyOfLong(-(1L << 42), 1), 43);
-  }
-
-  private static class Switcheroo implements Serializable {
-
-    private static final long serialVersionUID = 5949778642428995210L;
-  }
-
-  private static class SwitcherooInputStream extends ObjectInputStream {
-
-    public SwitcherooInputStream(final InputStream in) throws IOException {
-      super(in);
-    }
-
-    @Override protected Class<?> resolveClass(final ObjectStreamClass desc)
-        throws IOException, ClassNotFoundException {
-      return (Switcheroo.serialVersionUID == desc.getSerialVersionUID()) ? AesCounterRandom.class
-          : super.resolveClass(desc);
-    }
   }
 }

@@ -1,3 +1,9 @@
+# 2.8.1
+* `readObjectNoData` no longer pretends to succeed. Deserializing a subclass of `BaseRandom` will
+  now fail with an `InvalidObjectException` if the serialized version did not extend `BaseRandom`.
+* `testReseeding` for some adapter PRNG tests should now be much less flaky.
+* Update documentation for `RandomDotOrgSeedGenerator`.
+
 # 2.8.0
 * `DefaultSeedGenerator` can now be configured to delegate to any `SeedGenerator` instance.
 * Adds `BufferedSeedGenerator`, a delegating implementation of `SeedGenerator` with a buffer to
