@@ -11,8 +11,7 @@ import javax.crypto.Cipher;
 
 /**
  * Non-linear random number generator based on a cipher that encrypts an incrementing counter.
- * fed. Subclasses must specify the key length for a given total seed length; whatever part
- * of the seed does not become the key, becomes the counter's initial value. When reseeded with a
+ * fed. Subclasses must specify the key length for a given total seed length;  When reseeded with a
  * seed of less than the maximum key length, the new seed is combined with the existing key using a
  * hash algorithm specified by the subclass.
  *
@@ -46,13 +45,39 @@ public abstract class CipherCounterRandom extends BaseRandom {
    */
   public abstract int getMaxKeyLengthBytes();
 
-  protected abstract int getKeyLength(byte[] input);
+  /**
+   * Returns the length of the key that should be extracted from a seed of a given length. During
+   * the initial seeding, whatever part of the seed does not become the key, becomes the counter's
+   * initial value.
+   *
+   * @param inputLength the length of the whole seed
+   * @return the length of the key
+   */
+  protected abstract int getKeyLength(int inputLength);
 
+  /**
+   * Returns the length of the counter.
+   *
+   * @return the length of the counter
+   */
   public abstract int getCounterSizeBytes();
 
+  /**
+   * Returns how many consecutive values of the counter are encrypted at once, in order to reduce
+   * the number of calls to Cipher methods. Each counter value encrypts to yield a "block" of
+   * pseudorandom data. Changing this value won't change the output if the cipher is running in
+   * block mode, but it may impact performance.
+   *
+   * @return the number of blocks (counter values) to encrypt at once
+   */
   public abstract int getBlocksAtOnce();
 
-  public int getBytesAtOnce() {
+  /**
+   * Returns the number of random bytes that can be precalculated at once, which is normally
+   * {@code getCounterSizeBytes() * getBlocksAtOnce()}.
+   * @return the number of random bytes that can be precalculated at once
+   */
+  protected int getBytesAtOnce() {
     return getCounterSizeBytes() * getBlocksAtOnce();
   }
 
@@ -124,7 +149,7 @@ public abstract class CipherCounterRandom extends BaseRandom {
   @Override public void setSeed(final byte[] seed) {
     checkNotTooLong(seed);
     final byte[] key;
-    if (seed.length == getMaxTotalSeedLengthBytes()) {
+    if (seed.length == getMaxKeyLengthBytes()) {
       key = seed.clone();
     } else {
       lock.lock();
@@ -139,7 +164,7 @@ public abstract class CipherCounterRandom extends BaseRandom {
         final byte[] newSeed = new byte[this.seed.length + seed.length];
         System.arraycopy(this.seed, 0, newSeed, 0, this.seed.length);
         System.arraycopy(seed, 0, newSeed, this.seed.length, seed.length);
-        final int keyLength = getKeyLength(newSeed);
+        final int keyLength = getKeyLength(newSeed.length);
         if (newSeed.length > keyLength) {
           final byte[] digest = hash.digest(newSeed);
           key = digest.length > keyLength ? Arrays.copyOf(digest, keyLength) : digest;
@@ -172,8 +197,7 @@ public abstract class CipherCounterRandom extends BaseRandom {
    */
   public void setSeed(final long seed) {
     if (superConstructorFinished) {
-      final byte[] seedBytes = BinaryUtils.convertLongToBytes(seed);
-      setSeed(seedBytes);
+      setSeed(BinaryUtils.convertLongToBytes(seed));
     }
   }
 
@@ -185,7 +209,7 @@ public abstract class CipherCounterRandom extends BaseRandom {
     }
     super.setSeedInternal(seed);
     // determine how much of seed can go to key
-    final int keyLength = getKeyLength(seed);
+    final int keyLength = getKeyLength(seed.length);
     final byte[] key = (seed.length == keyLength) ? seed : Arrays.copyOfRange(seed, 0, keyLength);
     // rest goes to counter
     final int bytesToCopyToCounter = seed.length - keyLength;
