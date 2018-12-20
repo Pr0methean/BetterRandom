@@ -30,7 +30,7 @@ public class BaseRandomStaticTest {
    */
   private static final String AESCOUNTERRANDOM_THAT_DOES_NOT_EXTEND_BASERANDOM =
       "aced000573720037696f2e6769746875622e7072306d65746865616e2e62657474657272616e646f6d2e70726" +
-          "e672e416573436f756e74657252616e646f6d5291dc26ea2fa68a0200007870";
+          "e672e416573436f756e74657252616e646f6d42ba5decf4fa6c060200007870";
 
   @Test(expectedExceptions = InvalidObjectException.class) public void testReadObjectNoData()
       throws IOException, ClassNotFoundException {
