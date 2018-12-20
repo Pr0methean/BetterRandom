@@ -119,8 +119,12 @@ public class AesCounterRandomTest extends SeekableRandomTest {
   }
 
   @Test(timeOut = 15000) public void testMaxSeedLengthOk() {
+    Random rng = createRng();
     if (seedSizeBytes > 16) {
       throw new SkipException("Skipping a redundant test");
+    }
+    if (!(rng instanceof CipherCounterRandom)) {
+      throw new SkipException("Skipping an inapplicable test");
     }
     int max = ((CipherCounterRandom) createRng()).getMaxKeyLengthBytes();
     assert max >= 16 : "Should allow a 16-byte key";
