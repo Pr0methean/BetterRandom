@@ -32,7 +32,7 @@ public class RandomSeederThreadTest {
       assertFalse(RandomSeederThread.isEmpty(seedGenerator));
       if (ON_LINUX) {
         // FIXME: sleep gets interrupted on Travis-CI OSX & on Appveyor
-        Thread.sleep(250);
+        Thread.sleep(100);
         assertFalse(RandomSeederThread.isEmpty(seedGenerator));
       }
     } finally {
