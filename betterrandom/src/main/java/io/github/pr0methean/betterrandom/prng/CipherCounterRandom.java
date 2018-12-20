@@ -19,7 +19,7 @@ import javax.crypto.Cipher;
  * @author Chris Hennick
  */
 public abstract class CipherCounterRandom extends BaseRandom {
-  private static final long serialVersionUID = 5949778642428995210L;
+  private static final long serialVersionUID = -7872636191973295031L;
   protected final byte[] currentBlock;
   protected volatile byte[] counter;
   protected volatile int index;

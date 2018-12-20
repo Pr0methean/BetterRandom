@@ -41,7 +41,7 @@ import org.slf4j.LoggerFactory;
  */
 public class AesCounterRandom extends CipherCounterRandom implements SeekableRandom {
 
-  private static final long serialVersionUID = -7872636191973295031L;
+  private static final long serialVersionUID = 4808258824475143174L;
   private static final int DEFAULT_SEED_SIZE_BYTES = 32;
 
   /**
