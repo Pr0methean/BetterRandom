@@ -4,6 +4,7 @@ import com.google.common.base.MoreObjects;
 import io.github.pr0methean.betterrandom.SeekableRandom;
 import io.github.pr0methean.betterrandom.util.BinaryUtils;
 import io.github.pr0methean.betterrandom.util.Byte16ArrayArithmetic;
+import io.github.pr0methean.betterrandom.util.Java8Constants;
 import java.security.GeneralSecurityException;
 import java.security.InvalidKeyException;
 import java.security.MessageDigest;
@@ -53,9 +54,9 @@ public abstract class CipherCounterRandom extends BaseRandom implements Seekable
     if (delta == 0) {
       return;
     }
-    final long intsPerBlock = getCounterSizeBytes() / Integer.BYTES;
+    final long intsPerBlock = getCounterSizeBytes() / Java8Constants.INT_BYTES;
     long blocksDelta = delta / intsPerBlock;
-    final int deltaWithinBlock = (int) (delta % intsPerBlock) * Integer.BYTES;
+    final int deltaWithinBlock = (int) (delta % intsPerBlock) * Java8Constants.INT_BYTES;
     lock.lock();
     try {
       int newIndex = index + deltaWithinBlock;
@@ -248,7 +249,8 @@ public abstract class CipherCounterRandom extends BaseRandom implements Seekable
     try {
       setKey(key);
     } catch (final InvalidKeyException e) {
-      throw new InternalError("Invalid key: " + Arrays.toString(key), e);
+      throw (InternalError) (
+          new InternalError("Invalid key: " + Arrays.toString(key)).initCause(e));
     }
     if (currentBlock != null) {
       index = getBytesAtOnce();
