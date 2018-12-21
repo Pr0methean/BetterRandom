@@ -1,6 +1,7 @@
 package io.github.pr0methean.betterrandom.prng;
 
 import com.google.common.base.MoreObjects;
+import io.github.pr0methean.betterrandom.SeekableRandom;
 import io.github.pr0methean.betterrandom.util.BinaryUtils;
 import io.github.pr0methean.betterrandom.util.Byte16ArrayArithmetic;
 import java.security.GeneralSecurityException;
@@ -21,7 +22,7 @@ import javax.crypto.Cipher;
  * @author Daniel Dyer
  * @author Chris Hennick
  */
-public abstract class CipherCounterRandom extends BaseRandom {
+public abstract class CipherCounterRandom extends BaseRandom implements SeekableRandom {
   private static final long serialVersionUID = -7872636191973295031L;
   protected final byte[] currentBlock;
   protected volatile byte[] counter;
@@ -47,6 +48,33 @@ public abstract class CipherCounterRandom extends BaseRandom {
    * @return the maximum length in bytes of a key.
    */
   public abstract int getMaxKeyLengthBytes();
+
+  @Override public void advance(final long delta) {
+    if (delta == 0) {
+      return;
+    }
+    final long intsPerBlock = getCounterSizeBytes() / Integer.BYTES;
+    long blocksDelta = delta / intsPerBlock;
+    final int deltaWithinBlock = (int) (delta % intsPerBlock) * Integer.BYTES;
+    lock.lock();
+    try {
+      int newIndex = index + deltaWithinBlock;
+      if (newIndex >= AesCounterRandom.COUNTER_SIZE_BYTES) {
+        newIndex -= AesCounterRandom.COUNTER_SIZE_BYTES;
+        blocksDelta++;
+      }
+      if (newIndex < 0) {
+        newIndex += AesCounterRandom.COUNTER_SIZE_BYTES;
+        blocksDelta--;
+      }
+      blocksDelta -= getBlocksAtOnce(); // Compensate for the increment during nextBlock() below
+      Byte16ArrayArithmetic.addInto(counter, blocksDelta, addendDigits);
+      nextBlock();
+      index = newIndex;
+    } finally {
+      lock.unlock();
+    }
+  }
 
   /**
    * Returns the length of the key that should be extracted from a seed of a given length. During
