@@ -1,3 +1,6 @@
+# 2.9.0
+* `AesCounterRandom` now has a cipher-agnostic superclass, `CipherCounterRandom`.
+
 # 2.8.1
 * `readObjectNoData` no longer pretends to succeed. Deserializing a subclass of `BaseRandom` will
   now fail with an `InvalidObjectException` if the serialized version did not extend `BaseRandom`.
