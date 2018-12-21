@@ -10,10 +10,13 @@ import java.util.Arrays;
 import javax.crypto.Cipher;
 
 /**
- * Non-linear random number generator based on a cipher that encrypts an incrementing counter.
+ * <p>Non-linear random number generator based on a cipher that encrypts an incrementing counter.
  * fed. Subclasses must specify the key length for a given total seed length;  When reseeded with a
  * seed of less than the maximum key length, the new seed is combined with the existing key using a
- * hash algorithm specified by the subclass.
+ * hash algorithm specified by the subclass.</p>
+ *
+ * <p>When used with a fixed seed, the maintainer believes this implementation conforms to NIST SP
+ * 800-90A Rev. 1 section 10.2.1. However, the reseeding process differs from section 10.2.1.4.</p>
  *
  * @author Daniel Dyer
  * @author Chris Hennick
