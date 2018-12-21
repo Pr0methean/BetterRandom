@@ -39,7 +39,7 @@ import org.slf4j.LoggerFactory;
  * @author Daniel Dyer
  * @author Chris Hennick
  */
-public class AesCounterRandom extends CipherCounterRandom implements SeekableRandom {
+public class AesCounterRandom extends CipherCounterRandom {
 
   private static final long serialVersionUID = 4808258824475143174L;
   private static final int DEFAULT_SEED_SIZE_BYTES = 32;
@@ -168,32 +168,6 @@ public class AesCounterRandom extends CipherCounterRandom implements SeekableRan
   /** Returns the longest supported seed length. */
   @Override public int getNewSeedLength() {
     return getMaxTotalSeedLengthBytes();
-  }
-
-  @Override public void advance(final long delta) {
-    if (delta == 0) {
-      return;
-    }
-    long blocksDelta = delta / INTS_PER_BLOCK;
-    final int deltaWithinBlock = (int) (delta % INTS_PER_BLOCK) * Integer.BYTES;
-    lock.lock();
-    try {
-      int newIndex = index + deltaWithinBlock;
-      if (newIndex >= COUNTER_SIZE_BYTES) {
-        newIndex -= COUNTER_SIZE_BYTES;
-        blocksDelta++;
-      }
-      if (newIndex < 0) {
-        newIndex += COUNTER_SIZE_BYTES;
-        blocksDelta--;
-      }
-      blocksDelta -= BLOCKS_AT_ONCE; // Compensate for the increment during nextBlock() below
-      Byte16ArrayArithmetic.addInto(counter, blocksDelta, addendDigits);
-      nextBlock();
-      index = newIndex;
-    } finally {
-      lock.unlock();
-    }
   }
 
   @Override protected boolean supportsMultipleSeedLengths() {
