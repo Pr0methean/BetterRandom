@@ -34,7 +34,6 @@ import static org.testng.Assert.assertTrue;
  */
 @Test(testName = "AesCounterRandom")
 public class AesCounterRandomTest extends SeekableRandomTest {
-
   protected int seedSizeBytes;
 
   private static final int MAX_SIZE;
@@ -120,11 +119,16 @@ public class AesCounterRandomTest extends SeekableRandomTest {
   }
 
   @Test(timeOut = 15000) public void testMaxSeedLengthOk() {
+    Random rng = createRng();
     if (seedSizeBytes > 16) {
       throw new SkipException("Skipping a redundant test");
     }
-    assert AesCounterRandom.getMaxKeyLengthBytes() >= 16 : "Should allow a 16-byte key";
-    assert AesCounterRandom.getMaxKeyLengthBytes() <= 32
+    if (!(rng instanceof CipherCounterRandom)) {
+      throw new SkipException("Skipping an inapplicable test");
+    }
+    int max = ((CipherCounterRandom) createRng()).getMaxKeyLengthBytes();
+    assert max >= 16 : "Should allow a 16-byte key";
+    assert max <= 32
         : "Shouldn't allow a key longer than 32 bytes";
   }
 
