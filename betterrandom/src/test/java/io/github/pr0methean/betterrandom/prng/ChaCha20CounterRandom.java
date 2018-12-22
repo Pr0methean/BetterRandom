@@ -100,9 +100,11 @@ public class ChaCha20CounterRandom extends CipherCounterRandom {
   // FIXME
   @Override
   public void advance(final long delta) {
+    /*
     if (delta == 0) {
       return;
     }
+    */
     final long intsPerBlock = getCounterSizeBytes() / Integer.BYTES;
     long blocksDelta = delta / intsPerBlock;
     final int deltaWithinBlock = (int) (delta % intsPerBlock) * Integer.BYTES;
@@ -117,6 +119,7 @@ public class ChaCha20CounterRandom extends CipherCounterRandom {
         newIndex += COUNTER_SIZE_BYTES;
         blocksDelta--;
       }
+      blocksDelta--;
       blocksDelta -= getBlocksAtOnce(); // Compensate for the increment during nextBlock() below
       Byte16ArrayArithmetic.addInto(counter, blocksDelta, addendDigits);
       nextBlock();
@@ -130,5 +133,8 @@ public class ChaCha20CounterRandom extends CipherCounterRandom {
   protected void doCipher(byte[] input, byte[] output) {
     cipher.reset();
     cipher.processBytes(input, 0, getBytesAtOnce(), output, 0);
+    System.out.format("doCipher in %s: %s -> %s%n", dump(),
+        BinaryUtils.convertBytesToHexString(input),
+        BinaryUtils.convertBytesToHexString(output));
   }
 }
