@@ -41,6 +41,11 @@ public abstract class CipherCounterRandom extends BaseRandom implements Seekable
     currentBlock = new byte[getBytesAtOnce()];
   }
 
+  @Override
+  public int getNewSeedLength() {
+    return getMaxKeyLengthBytes();
+  }
+
   /**
    * Returns the maximum length in bytes of a key for this PRNG's cipher. If the seed is longer than
    * this, part of it becomes the counter's initial value. Otherwise, the full seed becomes the key

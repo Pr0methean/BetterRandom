@@ -67,9 +67,4 @@ public class ChaCha20CounterRandom extends CipherCounterRandom {
   protected void setKey(byte[] key) throws InvalidKeyException {
     cipher.init(Cipher.ENCRYPT_MODE, new SecretKeySpec(key, "CHACHA"));
   }
-
-  @Override
-  public int getNewSeedLength() {
-    return 0;
-  }
 }

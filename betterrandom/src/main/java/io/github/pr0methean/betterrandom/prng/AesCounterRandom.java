@@ -170,15 +170,6 @@ public class AesCounterRandom extends CipherCounterRandom {
     cipher.init(Cipher.ENCRYPT_MODE, new SecretKeySpec(key, ALGORITHM));
   }
 
-  /** Returns the longest supported seed length. */
-  @Override public int getNewSeedLength() {
-    return getMaxTotalSeedLengthBytes();
-  }
-
-  @Override protected boolean supportsMultipleSeedLengths() {
-    return true;
-  }
-
   @Override
   protected int getKeyLength(int inputLength) {
     return (inputLength > MAX_KEY_LENGTH_BYTES) ? MAX_KEY_LENGTH_BYTES
