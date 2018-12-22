@@ -112,7 +112,9 @@ public abstract class CipherCounterRandom extends BaseRandom implements Seekable
     return getCounterSizeBytes() * getBlocksAtOnce();
   }
 
-  public abstract int getMaxTotalSeedLengthBytes();
+  public int getMaxTotalSeedLengthBytes() {
+    return getMaxKeyLengthBytes() + getCounterSizeBytes();
+  }
 
   @Override public MoreObjects.ToStringHelper addSubclassFields(final MoreObjects.ToStringHelper original) {
     return original.add("counter", BinaryUtils.convertBytesToHexString(counter))
