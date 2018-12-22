@@ -4,6 +4,7 @@ import io.github.pr0methean.betterrandom.seed.SeedException;
 import java.util.Random;
 import org.testng.SkipException;
 import org.testng.annotations.BeforeClass;
+import org.testng.annotations.Optional;
 import org.testng.annotations.Parameters;
 import org.testng.annotations.Test;
 
@@ -24,7 +25,7 @@ public abstract class CipherCounterRandomTest extends SeekableRandomTest {
    */
   @Parameters("seedSize")
   @BeforeClass
-  public void setSeedSize(final int seedSize) {
+  public void setSeedSize(@Optional("16") final int seedSize) {
     if (seedSize > getExpectedMaxSize()) {
       assertFalse(seedSize <= 32, "Can't handle a 32-byte seed");
       throw new SkipException(
