@@ -98,6 +98,9 @@ public class ChaCha20CounterRandom extends CipherCounterRandom {
 
   @Override
   public void advance(long delta) {
+    if (delta == 0) {
+      return;
+    }
     lock.lock();
     try {
       cipher.skip(delta + getBytesAtOnce() - index);
