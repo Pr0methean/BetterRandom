@@ -10,6 +10,10 @@ import javax.crypto.spec.SecretKeySpec;
 import org.bouncycastle.jcajce.provider.digest.SHA3;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 
+/**
+ * A second subclass of {@link CipherCounterRandom}, used to test that abstract class for
+ * AES-specific behavior (since it was split off as a parent of {@link AesCounterRandom}).
+ */
 public class ChaCha20CounterRandom extends CipherCounterRandom {
   private static final Provider BOUNCY_CASTLE = new BouncyCastleProvider();
   private static final int LARGE_KEY_LENGTH = 32;
