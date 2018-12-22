@@ -76,7 +76,12 @@ public class ChaCha20CounterRandom extends CipherCounterRandom {
 
   @Override
   protected void createCipher() {
-    cipher = new ChaChaEngine(20);
+    lock.lock();
+    try {
+      cipher = new ChaChaEngine(20);
+    } finally {
+      lock.unlock();
+    }
   }
 
   @Override
@@ -88,6 +93,17 @@ public class ChaCha20CounterRandom extends CipherCounterRandom {
     return original.add("counter", BinaryUtils.convertBytesToHexString(counter))
         .add("cipher", cipher)
         .add("index", index);
+  }
+
+  @Override
+  public void advance(long delta) {
+    lock.lock();
+    try {
+      cipher.skip(delta);
+      super.advance(delta);
+    } finally {
+      lock.unlock();
+    }
   }
 
   @Override
