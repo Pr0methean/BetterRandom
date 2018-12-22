@@ -123,7 +123,10 @@ public abstract class CipherCounterRandom extends BaseRandom implements Seekable
 
   @Override public MoreObjects.ToStringHelper addSubclassFields(final MoreObjects.ToStringHelper original) {
     return original.add("counter", BinaryUtils.convertBytesToHexString(counter))
-        .add("cipher", cipher)
+        .add("cipher.iv", cipher.getIV())
+        .add("cipher.algorithm", cipher.getAlgorithm())
+        .add("cipher.provider", cipher.getProvider())
+        .add("cipher.parameters", cipher.getParameters())
         .add("index", index);
   }
 
