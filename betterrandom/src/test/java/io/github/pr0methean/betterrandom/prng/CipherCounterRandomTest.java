@@ -44,7 +44,7 @@ public abstract class CipherCounterRandomTest extends SeekableRandomTest {
       throw new SkipException("Skipping a redundant test");
     }
     createRng(
-        getTestSeedGenerator().generateSeed(49)); // Should throw an exception.
+        getTestSeedGenerator().generateSeed(129)); // Should throw an exception.
   }
 
   @Override @Test(enabled = false)
