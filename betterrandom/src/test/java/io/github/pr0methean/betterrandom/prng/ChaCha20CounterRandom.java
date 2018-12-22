@@ -14,13 +14,13 @@ import org.bouncycastle.jce.provider.BouncyCastleProvider;
  * A second subclass of {@link CipherCounterRandom}, used to test that abstract class for
  * AES-specific behavior (since it was split off as a parent of {@link AesCounterRandom}).
  */
-public class ChaCha20CounterRandom extends CipherCounterRandom {
+class ChaCha20CounterRandom extends CipherCounterRandom {
   private static final Provider BOUNCY_CASTLE = new BouncyCastleProvider();
   private static final int LARGE_KEY_LENGTH = 32;
   private static final int SMALL_KEY_LENGTH = 16;
 
 
-  public ChaCha20CounterRandom(byte[] seed) {
+  ChaCha20CounterRandom(byte[] seed) {
     super(seed);
   }
 
@@ -52,8 +52,9 @@ public class ChaCha20CounterRandom extends CipherCounterRandom {
   @Override
   protected Cipher createCipher() {
     try {
-      return Cipher.getInstance("ChaCha20/ECB/NoPadding", BOUNCY_CASTLE);
-    } catch (NoSuchAlgorithmException | NoSuchPaddingException e) {
+      return (Cipher)
+          (BOUNCY_CASTLE.getService("Cipher", "CHACHA").newInstance(null));
+    } catch (NoSuchAlgorithmException e) {
       throw new AssertionError(e);
     }
   }
