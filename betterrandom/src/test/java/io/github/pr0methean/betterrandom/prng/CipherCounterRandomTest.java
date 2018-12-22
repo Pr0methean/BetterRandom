@@ -96,8 +96,8 @@ public abstract class CipherCounterRandomTest extends SeekableRandomTest {
     }
     int max = ((CipherCounterRandom) createRng()).getMaxKeyLengthBytes();
     assert max >= 16 : "Should allow a 16-byte key";
-    assert max <= 32
-        : "Shouldn't allow a key longer than 32 bytes";
+    assert max <= getExpectedMaxSize()
+        : "Shouldn't allow a key longer than " + getExpectedMaxSize() + "bytes";
   }
 
   @Override protected abstract BaseRandom createRng() throws SeedException;
