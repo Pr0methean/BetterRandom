@@ -102,10 +102,25 @@ public class ChaCha20CounterRandom extends CipherCounterRandom {
     if (delta == 0) {
       return;
     }
+    final long intsPerBlock = getCounterSizeBytes() / Integer.BYTES;
+    long blocksDelta = delta / intsPerBlock;
+    final int deltaWithinBlock = (int) (delta % intsPerBlock) * Integer.BYTES;
     lock.lock();
     try {
-      cipher.skip(Integer.BYTES * delta - (getBytesAtOnce() - index));
-      super.advance(delta);
+      int newIndex = index + deltaWithinBlock;
+      if (newIndex >= COUNTER_SIZE_BYTES) {
+        newIndex -= COUNTER_SIZE_BYTES;
+        blocksDelta++;
+      }
+      if (newIndex < 0) {
+        newIndex += COUNTER_SIZE_BYTES;
+        blocksDelta--;
+      }
+      blocksDelta -= getBlocksAtOnce(); // Compensate for the increment during nextBlock() below
+      Byte16ArrayArithmetic.addInto(counter, blocksDelta, addendDigits);
+      cipher.skip(blocksDelta * getBytesAtOnce() + index - newIndex);
+      nextBlock();
+      index = newIndex;
     } finally {
       lock.unlock();
     }
