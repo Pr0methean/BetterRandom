@@ -1,5 +1,7 @@
 package io.github.pr0methean.betterrandom.prng;
 
+import org.junit.Test;
+
 import static org.testng.Assert.assertTrue;
 
 /**
@@ -9,6 +11,29 @@ public class ChaCha20CounterRandomTest extends CipherCounterRandomTest {
   @Override
   protected Class<? extends BaseRandom> getClassUnderTest() {
     return ChaCha20CounterRandom.class;
+  }
+
+  @Override
+  @Test
+  public void testAdvanceForward(int delta) {
+    super.testAdvanceForward(delta);
+  }
+
+  @Override
+  @Test
+  public void testAdvanceZero() {
+    super.testAdvanceZero();
+  }
+
+  @Override
+  public void testNextInt() {
+    super.testNextInt();
+  }
+
+  @Override
+  @Test
+  public void testAdvanceBackward(int delta) {
+    super.testAdvanceBackward(delta);
   }
 
   @Override
