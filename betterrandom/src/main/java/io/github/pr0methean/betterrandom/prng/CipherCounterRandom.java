@@ -258,8 +258,7 @@ public abstract class CipherCounterRandom extends BaseRandom implements Seekable
     if (bytesToCopyToCounter > 0) {
       System.arraycopy(seed, keyLength, counter, 0, bytesToCopyToCounter);
     }
-    System.arraycopy(Byte16ArrayArithmetic.ZERO, 0, counter, bytesToCopyToCounter,
-        getCounterSizeBytes() - bytesToCopyToCounter);
+    Arrays.fill(counter, bytesToCopyToCounter, getCounterSizeBytes(), (byte) 0);
     try {
       setKey(key);
     } catch (final InvalidKeyException e) {
