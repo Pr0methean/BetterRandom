@@ -93,6 +93,7 @@ public class ChaCha20CounterRandom extends CipherCounterRandom {
   @Override public MoreObjects.ToStringHelper addSubclassFields(final MoreObjects.ToStringHelper original) {
     return original.add("counter", BinaryUtils.convertBytesToHexString(counter))
         .add("cipher", cipher)
+        .add("cipher.position", cipher.getPosition())
         .add("index", index);
   }
 
