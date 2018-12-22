@@ -15,18 +15,21 @@
 // ============================================================================
 package io.github.pr0methean.betterrandom.prng;
 
-import io.github.pr0methean.betterrandom.SeekableRandom;
+import com.google.common.base.MoreObjects;
 import io.github.pr0methean.betterrandom.seed.DefaultSeedGenerator;
 import io.github.pr0methean.betterrandom.seed.SeedException;
 import io.github.pr0methean.betterrandom.seed.SeedGenerator;
-import io.github.pr0methean.betterrandom.util.Byte16ArrayArithmetic;
+import io.github.pr0methean.betterrandom.util.BinaryUtils;
 import java.security.GeneralSecurityException;
 import java.security.InvalidKeyException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Random;
+import javax.crypto.BadPaddingException;
 import javax.crypto.Cipher;
+import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.NoSuchPaddingException;
+import javax.crypto.ShortBufferException;
 import javax.crypto.spec.SecretKeySpec;
 import org.slf4j.LoggerFactory;
 
@@ -53,6 +56,10 @@ public class AesCounterRandom extends CipherCounterRandom {
   private static final String ALGORITHM = "AES";
   @SuppressWarnings("HardcodedFileSeparator") private static final String ALGORITHM_MODE =
       ALGORITHM + "/ECB/NoPadding";
+  // WARNING: Don't initialize any instance fields at declaration; they may be initialized too late!
+  @SuppressWarnings("InstanceVariableMayNotBeInitializedByReadObject")
+  protected transient Cipher
+      cipher;
 
   @Override
   public int getCounterSizeBytes() {
@@ -157,9 +164,9 @@ public class AesCounterRandom extends CipherCounterRandom {
   }
 
   @Override
-  protected Cipher createCipher() {
+  protected void createCipher() {
     try {
-      return Cipher.getInstance(ALGORITHM_MODE);
+      cipher = Cipher.getInstance(ALGORITHM_MODE);
     } catch (NoSuchAlgorithmException | NoSuchPaddingException e) {
       throw new InternalError("Required cipher missing");
     }
@@ -179,5 +186,19 @@ public class AesCounterRandom extends CipherCounterRandom {
   @Override
   public int getMaxKeyLengthBytes() {
     return MAX_KEY_LENGTH_BYTES;
+  }
+
+  @Override public MoreObjects.ToStringHelper addSubclassFields(final MoreObjects.ToStringHelper original) {
+    return original.add("counter", BinaryUtils.convertBytesToHexString(counter))
+        .add("cipher.iv", cipher.getIV())
+        .add("cipher.algorithm", cipher.getAlgorithm())
+        .add("cipher.provider", cipher.getProvider())
+        .add("cipher.parameters", cipher.getParameters())
+        .add("index", index);
+  }
+
+  @Override
+  protected void doCipher(byte[] input, byte[] output) throws ShortBufferException, IllegalBlockSizeException, BadPaddingException {
+    cipher.doFinal(input, 0, getBytesAtOnce(), output);
   }
 }
