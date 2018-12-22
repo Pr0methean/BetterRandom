@@ -74,6 +74,11 @@ public class AesCounterRandom extends CipherCounterRandom {
     return MAX_TOTAL_SEED_LENGTH_BYTES;
   }
 
+  @Override
+  protected int getMinSeedLength() {
+    return 16;
+  }
+
   /**
    * 128-bit counter. Package-visible for testing. Note to forkers: when running a cipher in ECB
    * mode, this counter's length should equal the cipher's block size.

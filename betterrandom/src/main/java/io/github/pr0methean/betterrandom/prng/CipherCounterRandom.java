@@ -245,7 +245,7 @@ public abstract class CipherCounterRandom extends BaseRandom implements Seekable
 
   @Override protected void setSeedInternal(final byte[] seed) {
     checkNotTooLong(seed);
-    if (seed.length < 16) {
+    if (seed.length < getMinSeedLength()) {
       throw new IllegalArgumentException(String.format(
           "Seed length is %d bytes; need at least 16 bytes", seed.length));
     }
@@ -269,6 +269,12 @@ public abstract class CipherCounterRandom extends BaseRandom implements Seekable
     } // else it'll be initialized in ctor
     seeded = true;
   }
+
+  /**
+   * Returns the minimum seed length.
+   * @return the minimum seed length
+   */
+  protected abstract int getMinSeedLength();
 
   protected abstract void setKey(byte[] key) throws InvalidKeyException;
 }
