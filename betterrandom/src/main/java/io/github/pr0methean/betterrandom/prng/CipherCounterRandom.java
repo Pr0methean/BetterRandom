@@ -144,6 +144,10 @@ public abstract class CipherCounterRandom extends BaseRandom implements Seekable
 
   protected abstract MessageDigest createHash();
 
+  /**
+   * Creates the cipher that {@link #doCipher(byte[], byte[])} will invoke. {@link #setKey(byte[])}
+   * will be called before the cipher is used.
+   */
   protected abstract void createCipher();
 
   /**
@@ -166,6 +170,15 @@ public abstract class CipherCounterRandom extends BaseRandom implements Seekable
     }
   }
 
+  /**
+   * Executes the cipher.
+   *
+   * @param input an array of input whose length is equal to {@link #getBytesAtOnce()}
+   * @param output an array of output whose length is equal to {@link #getBytesAtOnce()}
+   * @throws ShortBufferException
+   * @throws IllegalBlockSizeException
+   * @throws BadPaddingException
+   */
   protected abstract void doCipher(byte[] input, byte[] output) throws ShortBufferException, IllegalBlockSizeException, BadPaddingException;
 
   @Override protected final int next(final int bits) {
@@ -276,5 +289,11 @@ public abstract class CipherCounterRandom extends BaseRandom implements Seekable
    */
   protected abstract int getMinSeedLength();
 
+  /**
+   * Sets the key on the cipher. Always called with {@code lock} held.
+   *
+   * @param key the new key
+   * @throws InvalidKeyException if the cipher rejects the key
+   */
   protected abstract void setKey(byte[] key) throws InvalidKeyException;
 }
