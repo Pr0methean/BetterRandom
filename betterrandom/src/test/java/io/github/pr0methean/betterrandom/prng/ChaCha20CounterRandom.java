@@ -118,7 +118,7 @@ public class ChaCha20CounterRandom extends CipherCounterRandom {
       }
       blocksDelta -= getBlocksAtOnce(); // Compensate for the increment during nextBlock() below
       Byte16ArrayArithmetic.addInto(counter, blocksDelta, addendDigits);
-      cipher.skip(blocksDelta * getBytesAtOnce() + index - newIndex);
+      cipher.skip(blocksDelta * COUNTER_SIZE_BYTES + index - newIndex);
       nextBlock();
       index = newIndex;
     } finally {
