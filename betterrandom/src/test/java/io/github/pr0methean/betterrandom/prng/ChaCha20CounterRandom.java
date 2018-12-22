@@ -35,6 +35,11 @@ public class ChaCha20CounterRandom extends CipherCounterRandom {
   }
 
   @Override
+  protected int getMinSeedLength() {
+    return 16;
+  }
+
+  @Override
   public int getCounterSizeBytes() {
     return 64;
   }
