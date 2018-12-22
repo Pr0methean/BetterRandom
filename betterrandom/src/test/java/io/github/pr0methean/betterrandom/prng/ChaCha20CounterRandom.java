@@ -1,15 +1,14 @@
 package io.github.pr0methean.betterrandom.prng;
 
+import com.google.common.base.MoreObjects;
+import io.github.pr0methean.betterrandom.util.BinaryUtils;
 import java.security.GeneralSecurityException;
-import java.security.InvalidKeyException;
 import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
-import java.security.Provider;
 import javax.crypto.Cipher;
-import javax.crypto.NoSuchPaddingException;
-import javax.crypto.spec.SecretKeySpec;
+import org.bouncycastle.crypto.engines.ChaChaEngine;
+import org.bouncycastle.crypto.params.KeyParameter;
+import org.bouncycastle.crypto.params.ParametersWithIV;
 import org.bouncycastle.jcajce.provider.digest.SHA3;
-import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.slf4j.LoggerFactory;
 
 /**
@@ -17,10 +16,13 @@ import org.slf4j.LoggerFactory;
  * AES-specific behavior (since it was split off as a parent of {@link AesCounterRandom}).
  */
 public class ChaCha20CounterRandom extends CipherCounterRandom {
-  private static final Provider BOUNCY_CASTLE = new BouncyCastleProvider();
   private static final int LARGE_KEY_LENGTH = 32;
   private static final int SMALL_KEY_LENGTH = 16;
   private static final String ALGORITHM_MODE = "CHACHA/ECB/NoPadding";
+  /**
+   * I know this to be a valid IV because I got it when using BouncyCastle's ChaCha through JCE.
+   */
+  private static final byte[] FIXED_IV = {125, 13, -27, -122, 104, -89, 127, 81};
   @SuppressWarnings("CanBeFinal") private static int MAX_KEY_LENGTH_BYTES = 0;
 
   static {
@@ -33,6 +35,10 @@ public class ChaCha20CounterRandom extends CipherCounterRandom {
         .info("Maximum allowed key length for ChaCha is {} bytes", MAX_KEY_LENGTH_BYTES);
     MAX_KEY_LENGTH_BYTES = Math.min(MAX_KEY_LENGTH_BYTES, LARGE_KEY_LENGTH);
   }
+
+  // WARNING: Don't initialize any instance fields at declaration; they may be initialized too late!
+  @SuppressWarnings("InstanceVariableMayNotBeInitializedByReadObject")
+  private transient ChaChaEngine cipher;
 
   public ChaCha20CounterRandom(byte[] seed) {
     super(seed);
@@ -69,17 +75,23 @@ public class ChaCha20CounterRandom extends CipherCounterRandom {
   }
 
   @Override
-  protected Cipher createCipher() {
-    try {
-      return Cipher.getInstance(ALGORITHM_MODE, BOUNCY_CASTLE);
-    } catch (NoSuchAlgorithmException | NoSuchPaddingException e) {
-      throw new AssertionError(e);
-    }
+  protected void createCipher() {
+    cipher = new ChaChaEngine(20);
   }
 
   @Override
-  protected void setKey(byte[] key) throws InvalidKeyException {
-    cipher = createCipher();
-    cipher.init(Cipher.ENCRYPT_MODE, new SecretKeySpec(key, "CHACHA"));
+  protected void setKey(byte[] key) {
+    cipher.init(true, new ParametersWithIV(new KeyParameter(key), FIXED_IV));
+  }
+
+  @Override public MoreObjects.ToStringHelper addSubclassFields(final MoreObjects.ToStringHelper original) {
+    return original.add("counter", BinaryUtils.convertBytesToHexString(counter))
+        .add("cipher", cipher)
+        .add("index", index);
+  }
+
+  @Override
+  protected void doCipher(byte[] input, byte[] output) {
+    cipher.processBytes(input, 0, getBytesAtOnce(), output, 0);
   }
 }

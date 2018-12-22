@@ -8,7 +8,10 @@ import java.security.GeneralSecurityException;
 import java.security.InvalidKeyException;
 import java.security.MessageDigest;
 import java.util.Arrays;
+import javax.crypto.BadPaddingException;
 import javax.crypto.Cipher;
+import javax.crypto.IllegalBlockSizeException;
+import javax.crypto.ShortBufferException;
 
 /**
  * <p>Non-linear random number generator based on a cipher that encrypts an incrementing counter.
@@ -28,10 +31,6 @@ public abstract class CipherCounterRandom extends BaseRandom implements Seekable
   protected volatile byte[] counter;
   protected volatile int index;
   protected transient byte[] addendDigits;
-  // WARNING: Don't initialize any instance fields at declaration; they may be initialized too late!
-  @SuppressWarnings("InstanceVariableMayNotBeInitializedByReadObject")
-  protected transient Cipher
-      cipher;
   private volatile byte[] counterInput;
   private volatile boolean seeded;
   private transient MessageDigest hash;
@@ -121,15 +120,6 @@ public abstract class CipherCounterRandom extends BaseRandom implements Seekable
     return getMaxKeyLengthBytes() + getCounterSizeBytes();
   }
 
-  @Override public MoreObjects.ToStringHelper addSubclassFields(final MoreObjects.ToStringHelper original) {
-    return original.add("counter", BinaryUtils.convertBytesToHexString(counter))
-        .add("cipher.iv", cipher.getIV())
-        .add("cipher.algorithm", cipher.getAlgorithm())
-        .add("cipher.provider", cipher.getProvider())
-        .add("cipher.parameters", cipher.getParameters())
-        .add("index", index);
-  }
-
   @Override protected void initTransientFields() {
     super.initTransientFields();
     addendDigits = new byte[getCounterSizeBytes()];
@@ -139,7 +129,7 @@ public abstract class CipherCounterRandom extends BaseRandom implements Seekable
     if (counterInput == null) {
       counterInput = new byte[getBytesAtOnce()];
     }
-    cipher = createCipher();
+    createCipher();
     hash = createHash();
   }
 
@@ -154,7 +144,7 @@ public abstract class CipherCounterRandom extends BaseRandom implements Seekable
 
   protected abstract MessageDigest createHash();
 
-  protected abstract Cipher createCipher();
+  protected abstract void createCipher();
 
   /**
    * Generates BLOCKS_AT_ONCE 128-bit (16-byte) blocks. Copies them to currentBlock.
@@ -168,13 +158,15 @@ public abstract class CipherCounterRandom extends BaseRandom implements Seekable
       System.arraycopy(counter, 0, counterInput, i * AesCounterRandom.COUNTER_SIZE_BYTES, AesCounterRandom.COUNTER_SIZE_BYTES);
     }
     try {
-      cipher.doFinal(counterInput, 0, getBytesAtOnce(), currentBlock);
+      doCipher(counterInput, currentBlock);
     } catch (final GeneralSecurityException ex) {
       // Should never happen.  If initialisation succeeds without exceptions
       // we should be able to proceed indefinitely without exceptions.
       throw new IllegalStateException("Failed creating next random block.", ex);
     }
   }
+
+  protected abstract void doCipher(byte[] input, byte[] output) throws ShortBufferException, IllegalBlockSizeException, BadPaddingException;
 
   @Override protected final int next(final int bits) {
     lock.lock();
