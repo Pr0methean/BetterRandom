@@ -1,6 +1,5 @@
 package io.github.pr0methean.betterrandom.prng;
 
-import com.google.common.base.MoreObjects;
 import io.github.pr0methean.betterrandom.SeekableRandom;
 import io.github.pr0methean.betterrandom.util.BinaryUtils;
 import io.github.pr0methean.betterrandom.util.Byte16ArrayArithmetic;
@@ -9,7 +8,6 @@ import java.security.InvalidKeyException;
 import java.security.MessageDigest;
 import java.util.Arrays;
 import javax.crypto.BadPaddingException;
-import javax.crypto.Cipher;
 import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.ShortBufferException;
 
@@ -26,6 +24,11 @@ import javax.crypto.ShortBufferException;
  * @author Chris Hennick
  */
 public abstract class CipherCounterRandom extends BaseRandom implements SeekableRandom {
+  /**
+   * 128-bit counter. Package-visible for testing. Note to forkers: when running a cipher in ECB
+   * mode, this counter's length should equal the cipher's block size.
+   */
+  static final int COUNTER_SIZE_BYTES = 16;
   private static final long serialVersionUID = -7872636191973295031L;
   protected final byte[] currentBlock;
   protected volatile byte[] counter;
@@ -63,12 +66,12 @@ public abstract class CipherCounterRandom extends BaseRandom implements Seekable
     lock.lock();
     try {
       int newIndex = index + deltaWithinBlock;
-      if (newIndex >= AesCounterRandom.COUNTER_SIZE_BYTES) {
-        newIndex -= AesCounterRandom.COUNTER_SIZE_BYTES;
+      if (newIndex >= COUNTER_SIZE_BYTES) {
+        newIndex -= COUNTER_SIZE_BYTES;
         blocksDelta++;
       }
       if (newIndex < 0) {
-        newIndex += AesCounterRandom.COUNTER_SIZE_BYTES;
+        newIndex += COUNTER_SIZE_BYTES;
         blocksDelta--;
       }
       blocksDelta -= getBlocksAtOnce(); // Compensate for the increment during nextBlock() below
@@ -159,7 +162,7 @@ public abstract class CipherCounterRandom extends BaseRandom implements Seekable
     int blocks = getBlocksAtOnce();
     for (int i = 0; i < blocks; i++) {
       Byte16ArrayArithmetic.addInto(counter, Byte16ArrayArithmetic.ONE);
-      System.arraycopy(counter, 0, counterInput, i * AesCounterRandom.COUNTER_SIZE_BYTES, AesCounterRandom.COUNTER_SIZE_BYTES);
+      System.arraycopy(counter, 0, counterInput, i * COUNTER_SIZE_BYTES, COUNTER_SIZE_BYTES);
     }
     try {
       doCipher(counterInput, currentBlock);
