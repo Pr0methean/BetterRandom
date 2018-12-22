@@ -13,7 +13,7 @@ public abstract class SeekableRandomTest extends BaseRandomTest {
   private static final int ITERATIONS = 10; // because bugs may depend on the initial seed value
   private static final int DELTA = 37;
 
-  @DataProvider(name = "deltas") public static Object[][] getDeltas() {
+  @DataProvider(name = "deltas", parallel = true) public static Object[][] getDeltas() {
     return new Object[][]{{1}, {4}, {16}, {17}, {37}};
   }
 
@@ -28,7 +28,7 @@ public abstract class SeekableRandomTest extends BaseRandomTest {
       }
       copy2.advance(delta);
       RandomTestUtils.assertEquivalent(copy1AsRandom, copy2AsRandom, delta + 8,
-          "Output mismatch after advancing forward");
+          "Output mismatch after advancing forward by " + delta);
     }
   }
 
@@ -52,7 +52,7 @@ public abstract class SeekableRandomTest extends BaseRandomTest {
       }
       copy1.advance(-delta);
       RandomTestUtils.assertEquivalent(copy1AsRandom, copy2AsRandom, delta + 8,
-          "Output mismatch after advancing backward");
+          "Output mismatch after advancing backward by " + delta);
     }
   }
 }
