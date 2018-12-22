@@ -2,6 +2,7 @@ package io.github.pr0methean.betterrandom.prng;
 
 import com.google.common.base.MoreObjects;
 import io.github.pr0methean.betterrandom.util.BinaryUtils;
+import io.github.pr0methean.betterrandom.util.Byte16ArrayArithmetic;
 import java.security.GeneralSecurityException;
 import java.security.MessageDigest;
 import javax.crypto.Cipher;
@@ -97,10 +98,27 @@ public class ChaCha20CounterRandom extends CipherCounterRandom {
 
   @Override
   public void advance(long delta) {
+    if (delta == 0) {
+      return;
+    }
+    final long intsPerBlock = getCounterSizeBytes() / Integer.BYTES;
+    long blocksDelta = delta / intsPerBlock;
+    final int deltaWithinBlock = (int) (delta % intsPerBlock) * Integer.BYTES;
     lock.lock();
     try {
+      int newIndex = index + deltaWithinBlock;
+      if (newIndex >= COUNTER_SIZE_BYTES) {
+        newIndex -= COUNTER_SIZE_BYTES;
+        blocksDelta++;
+      }
+      if (newIndex < 0) {
+        newIndex += COUNTER_SIZE_BYTES;
+        blocksDelta--;
+      }
+      Byte16ArrayArithmetic.addInto(counter, blocksDelta, addendDigits);
+      nextBlock();
+      index = newIndex;
       cipher.skip(delta);
-      super.advance(delta);
     } finally {
       lock.unlock();
     }
