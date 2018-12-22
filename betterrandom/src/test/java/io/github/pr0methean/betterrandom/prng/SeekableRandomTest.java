@@ -2,6 +2,7 @@ package io.github.pr0methean.betterrandom.prng;
 
 import io.github.pr0methean.betterrandom.SeekableRandom;
 import java.util.Random;
+import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
 /**
@@ -12,17 +13,21 @@ public abstract class SeekableRandomTest extends BaseRandomTest {
   private static final int ITERATIONS = 10; // because bugs may depend on the initial seed value
   private static final int DELTA = 37;
 
-  @Test public void testAdvanceForward() {
+  @DataProvider(name = "deltas") public static Object[][] getDeltas() {
+    return new Object[][]{{1}, {4}, {16}, {17}, {37}};
+  }
+
+  @Test(dataProvider = "deltas") public void testAdvanceForward(int delta) {
     for (int i = 0; i < ITERATIONS; i++) {
       final Random copy1AsRandom = createRng();
       final SeekableRandom copy1 = (SeekableRandom) copy1AsRandom;
       final Random copy2AsRandom = createRng(copy1.getSeed());
       final SeekableRandom copy2 = (SeekableRandom) copy2AsRandom;
-      for (int j = 0; j < DELTA; j++) {
+      for (int j = 0; j < delta; j++) {
         copy1AsRandom.nextInt();
       }
-      copy2.advance(DELTA);
-      RandomTestUtils.assertEquivalent(copy1AsRandom, copy2AsRandom, DELTA,
+      copy2.advance(delta);
+      RandomTestUtils.assertEquivalent(copy1AsRandom, copy2AsRandom, delta + 8,
           "Output mismatch after advancing forward");
     }
   }
@@ -37,16 +42,16 @@ public abstract class SeekableRandomTest extends BaseRandomTest {
         "Output mismatch after advancing by zero");
   }
 
-  @Test public void testAdvanceBackward() {
+  @Test(dataProvider = "deltas") public void testAdvanceBackward(int delta) {
     for (int i = 0; i < ITERATIONS; i++) {
       final Random copy1AsRandom = createRng();
       final SeekableRandom copy1 = (SeekableRandom) copy1AsRandom;
       final Random copy2AsRandom = createRng(copy1.getSeed());
-      for (int j = 0; j < DELTA; j++) {
+      for (int j = 0; j < delta; j++) {
         copy1AsRandom.nextInt();
       }
-      copy1.advance(-DELTA);
-      RandomTestUtils.assertEquivalent(copy1AsRandom, copy2AsRandom, DELTA,
+      copy1.advance(-delta);
+      RandomTestUtils.assertEquivalent(copy1AsRandom, copy2AsRandom, delta + 8,
           "Output mismatch after advancing backward");
     }
   }

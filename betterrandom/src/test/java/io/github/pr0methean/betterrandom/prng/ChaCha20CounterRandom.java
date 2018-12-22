@@ -67,7 +67,7 @@ public class ChaCha20CounterRandom extends CipherCounterRandom {
 
   @Override
   public int getBlocksAtOnce() {
-    return 1;
+    return 2;
   }
 
   @Override
@@ -97,6 +97,7 @@ public class ChaCha20CounterRandom extends CipherCounterRandom {
         .add("index", index);
   }
 
+  // FIXME
   @Override
   public void advance(final long delta) {
     if (delta == 0) {
@@ -117,12 +118,7 @@ public class ChaCha20CounterRandom extends CipherCounterRandom {
         blocksDelta--;
       }
       blocksDelta -= getBlocksAtOnce(); // Compensate for the increment during nextBlock() below
-      if (delta > 0) {
-        // FIXME: Why is there an extra off-by-one when advancing forward?
-        blocksDelta -= getBlocksAtOnce();
-      }
       Byte16ArrayArithmetic.addInto(counter, blocksDelta, addendDigits);
-      cipher.skip(blocksDelta * COUNTER_SIZE_BYTES);
       nextBlock();
       index = newIndex;
     } finally {
@@ -132,6 +128,7 @@ public class ChaCha20CounterRandom extends CipherCounterRandom {
 
   @Override
   protected void doCipher(byte[] input, byte[] output) {
+    cipher.reset();
     cipher.processBytes(input, 0, getBytesAtOnce(), output, 0);
   }
 }

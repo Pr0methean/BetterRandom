@@ -280,9 +280,7 @@ public abstract class CipherCounterRandom extends BaseRandom implements Seekable
     } catch (final InvalidKeyException e) {
       throw new InternalError("Invalid key: " + Arrays.toString(key), e);
     }
-    if (currentBlock != null) {
-      index = getBytesAtOnce();
-    } // else it'll be initialized in ctor
+    index = getBytesAtOnce();
     seeded = true;
   }
 
