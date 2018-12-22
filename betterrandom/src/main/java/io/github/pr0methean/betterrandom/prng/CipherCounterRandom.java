@@ -135,6 +135,15 @@ public abstract class CipherCounterRandom extends BaseRandom implements Seekable
     hash = createHash();
   }
 
+  /**
+   * Returns true, because the seed can either be a counter IV plus a key, or just a key.
+   * @return true
+   */
+  @Override
+  protected boolean supportsMultipleSeedLengths() {
+    return true;
+  }
+
   protected abstract MessageDigest createHash();
 
   protected abstract Cipher createCipher();
