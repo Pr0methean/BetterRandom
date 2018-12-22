@@ -104,7 +104,7 @@ public class ChaCha20CounterRandom extends CipherCounterRandom {
     }
     lock.lock();
     try {
-      cipher.skip(delta + getBytesAtOnce() - index);
+      cipher.skip(delta - index);
       super.advance(delta);
     } finally {
       lock.unlock();
