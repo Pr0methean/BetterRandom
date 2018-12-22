@@ -24,7 +24,6 @@ public class ChaCha20CounterRandomTest extends CipherCounterRandomTest {
 
   @Override
   protected BaseRandom createRng(byte[] seed) {
-    assertTrue(seed.length > 0, "createRng called with empty array");
     return new ChaCha20CounterRandom(seed);
   }
 }
