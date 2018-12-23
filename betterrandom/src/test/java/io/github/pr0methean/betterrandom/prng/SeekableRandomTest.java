@@ -13,8 +13,8 @@ public abstract class SeekableRandomTest extends BaseRandomTest {
   private static final int ITERATIONS = 10; // because bugs may depend on the initial seed value
   private static final int DELTA = 37;
 
-  @DataProvider(name = "deltas", parallel = true) public static Object[][] getDeltas() {
-    return new Object[][]{{1}, {4}, {16}, {17}, {37}};
+  @DataProvider(name = "deltas"/*, parallel = true*/) public static Object[][] getDeltas() {
+    return new Object[][]{{1}, {2}, {3}, {4}, {5}, {8}, {9}, {16}, {17}, {37}};
   }
 
   @Test(dataProvider = "deltas") public void testAdvanceForward(int delta) {
