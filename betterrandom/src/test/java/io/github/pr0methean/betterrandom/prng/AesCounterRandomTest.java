@@ -33,7 +33,7 @@ public class AesCounterRandomTest extends CipherCounterRandomTest {
   static {
     try {
       MAX_SIZE = Cipher.getMaxAllowedKeyLength("AES") / 8
-            + CipherCounterRandom.COUNTER_SIZE_BYTES;
+            + CipherCounterRandom.DEFAULT_COUNTER_SIZE_BYTES;
     } catch (final NoSuchAlgorithmException e) {
       throw new AssertionError(e);
     }

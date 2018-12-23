@@ -6,7 +6,6 @@ import io.github.pr0methean.betterrandom.util.Byte16ArrayArithmetic;
 import java.security.MessageDigest;
 import org.bouncycastle.crypto.engines.TwofishEngine;
 import org.bouncycastle.crypto.params.KeyParameter;
-import org.bouncycastle.crypto.params.ParametersWithIV;
 import org.bouncycastle.jcajce.provider.digest.SHA3;
 
 /**
@@ -80,18 +79,18 @@ public class TwoFishCounterRandom extends CipherCounterRandom {
     if (delta == 0) {
       return;
     }
-    final long intsPerBlock = COUNTER_SIZE_BYTES / Integer.BYTES;
+    final long intsPerBlock = getCounterSizeBytes() / Integer.BYTES;
     long blocksDelta = delta / intsPerBlock;
     final int deltaWithinBlock = (int) (delta % intsPerBlock) * Integer.BYTES;
     lock.lock();
     try {
       int newIndex = index + deltaWithinBlock;
-      if (newIndex >= COUNTER_SIZE_BYTES) {
-        newIndex -= COUNTER_SIZE_BYTES;
+      if (newIndex >= getCounterSizeBytes()) {
+        newIndex -= getCounterSizeBytes();
         blocksDelta++;
       }
       if (newIndex < 0) {
-        newIndex += COUNTER_SIZE_BYTES;
+        newIndex += getCounterSizeBytes();
         blocksDelta--;
       }
       blocksDelta -= getBlocksAtOnce(); // Compensate for the increment during nextBlock() below
