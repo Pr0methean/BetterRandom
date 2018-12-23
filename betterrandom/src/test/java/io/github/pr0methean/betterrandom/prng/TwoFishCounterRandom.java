@@ -4,7 +4,7 @@ import com.google.common.base.MoreObjects;
 import io.github.pr0methean.betterrandom.util.BinaryUtils;
 import io.github.pr0methean.betterrandom.util.Byte16ArrayArithmetic;
 import java.security.MessageDigest;
-import org.bouncycastle.crypto.engines.ChaChaEngine;
+import org.bouncycastle.crypto.engines.TwofishEngine;
 import org.bouncycastle.crypto.params.KeyParameter;
 import org.bouncycastle.crypto.params.ParametersWithIV;
 import org.bouncycastle.jcajce.provider.digest.SHA3;
@@ -13,20 +13,16 @@ import org.bouncycastle.jcajce.provider.digest.SHA3;
  * A second subclass of {@link CipherCounterRandom}, used to test that abstract class for
  * AES-specific behavior (since it was split off as a parent of {@link AesCounterRandom}).
  */
-public class ChaCha20CounterRandom extends CipherCounterRandom {
+public class TwoFishCounterRandom extends CipherCounterRandom {
   private static final int LARGE_KEY_LENGTH = 32;
   private static final int SMALL_KEY_LENGTH = 16;
-  /**
-   * I know this to be a valid IV because I got it when using BouncyCastle's ChaCha through JCE.
-   */
-  private static final byte[] FIXED_IV = {-122, -89, -27, 13, 81, 104, 125, 127};
   @SuppressWarnings("CanBeFinal") private static int MAX_KEY_LENGTH_BYTES = LARGE_KEY_LENGTH;
 
   // WARNING: Don't initialize any instance fields at declaration; they may be initialized too late!
   @SuppressWarnings("InstanceVariableMayNotBeInitializedByReadObject")
-  private transient ChaChaEngine cipher;
+  private transient TwofishEngine cipher;
 
-  public ChaCha20CounterRandom(byte[] seed) {
+  public TwoFishCounterRandom(byte[] seed) {
     super(seed);
   }
 
@@ -37,7 +33,8 @@ public class ChaCha20CounterRandom extends CipherCounterRandom {
 
   @Override
   protected int getKeyLength(int inputLength) {
-    return inputLength >= LARGE_KEY_LENGTH ? LARGE_KEY_LENGTH : SMALL_KEY_LENGTH;
+    return (inputLength > MAX_KEY_LENGTH_BYTES) ? MAX_KEY_LENGTH_BYTES
+        : ((inputLength >= 24) ? 24 : 16);
   }
 
   @Override
@@ -47,7 +44,7 @@ public class ChaCha20CounterRandom extends CipherCounterRandom {
 
   @Override
   public int getBlocksAtOnce() {
-    return 1;
+    return 4;
   }
 
   @Override
@@ -59,7 +56,7 @@ public class ChaCha20CounterRandom extends CipherCounterRandom {
   protected void createCipher() {
     lock.lock();
     try {
-      cipher = new ChaChaEngine(22);
+      cipher = new TwofishEngine();
     } finally {
       lock.unlock();
     }
@@ -67,13 +64,12 @@ public class ChaCha20CounterRandom extends CipherCounterRandom {
 
   @Override
   protected void setKey(byte[] key) {
-    cipher.init(true, new ParametersWithIV(new KeyParameter(key), FIXED_IV));
+    cipher.init(true, new KeyParameter(key));
   }
 
   @Override public MoreObjects.ToStringHelper addSubclassFields(final MoreObjects.ToStringHelper original) {
     return original.add("counter", BinaryUtils.convertBytesToHexString(counter))
         .add("cipher", cipher)
-        .add("cipher.position", cipher.getPosition())
         .add("index", index);
   }
 
@@ -109,6 +105,6 @@ public class ChaCha20CounterRandom extends CipherCounterRandom {
   @Override
   protected void doCipher(byte[] input, byte[] output) {
     cipher.reset();
-    cipher.processBytes(input, 0, getBytesAtOnce(), output, 0);
+    cipher.processBlock(input, 0, output, 0);
   }
 }

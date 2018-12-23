@@ -32,7 +32,7 @@
     <classes>
       <class name="io.github.pr0methean.betterrandom.prng.AesCounterRandomTest"/>
       <class name="io.github.pr0methean.betterrandom.prng.CellularAutomatonRandomTest"/>
-      <class name="io.github.pr0methean.betterrandom.prng.ChaCha20CounterRandomTest"/>
+      <class name="io.github.pr0methean.betterrandom.prng.TwoFishCounterRandomTest"/>
       <class name="io.github.pr0methean.betterrandom.prng.Cmwc4096RandomTest"/>
       <class name="io.github.pr0methean.betterrandom.prng.MersenneTwisterRandomTest"/>
       <class name="io.github.pr0methean.betterrandom.prng.Pcg64RandomTest"/>
@@ -44,41 +44,41 @@
     <parameter name="seedSize" value="17"/>
     <classes>
       <class name="io.github.pr0methean.betterrandom.prng.AesCounterRandomTest"/>
-      <class name="io.github.pr0methean.betterrandom.prng.ChaCha20CounterRandomTest"/>
+      <class name="io.github.pr0methean.betterrandom.prng.TwoFishCounterRandomTest"/>
     </classes>
   </test>
   <test name="Crypto PRNGs 24-byte">
     <parameter name="seedSize" value="24"/>
     <classes>
       <class name="io.github.pr0methean.betterrandom.prng.AesCounterRandomTest"/>
-      <class name="io.github.pr0methean.betterrandom.prng.ChaCha20CounterRandomTest"/>
+      <class name="io.github.pr0methean.betterrandom.prng.TwoFishCounterRandomTest"/>
     </classes>
   </test>
   <test name="Crypto PRNGs 32-byte">
     <parameter name="seedSize" value="32"/>
     <classes>
       <class name="io.github.pr0methean.betterrandom.prng.AesCounterRandomTest"/>
-      <class name="io.github.pr0methean.betterrandom.prng.ChaCha20CounterRandomTest"/>
+      <class name="io.github.pr0methean.betterrandom.prng.TwoFishCounterRandomTest"/>
     </classes>
   </test>
   <test name="Crypto PRNGs 33-byte">
     <parameter name="seedSize" value="33"/>
     <classes>
       <class name="io.github.pr0methean.betterrandom.prng.AesCounterRandomTest"/>
-      <class name="io.github.pr0methean.betterrandom.prng.ChaCha20CounterRandomTest"/>
+      <class name="io.github.pr0methean.betterrandom.prng.TwoFishCounterRandomTest"/>
     </classes>
   </test>
   <test name="Crypto PRNGs 48-byte">
     <parameter name="seedSize" value="48"/>
     <classes>
       <class name="io.github.pr0methean.betterrandom.prng.AesCounterRandomTest"/>
-      <class name="io.github.pr0methean.betterrandom.prng.ChaCha20CounterRandomTest"/>
+      <class name="io.github.pr0methean.betterrandom.prng.TwoFishCounterRandomTest"/>
     </classes>
   </test>
   <test name="ChaCha20CounterRandom 96-byte">
     <parameter name="seedSize" value="48"/>
     <classes>
-      <class name="io.github.pr0methean.betterrandom.prng.ChaCha20CounterRandomTest"/>
+      <class name="io.github.pr0methean.betterrandom.prng.TwoFishCounterRandomTest"/>
     </classes>
   </test>
   <test name="Misc" parallel="methods">
