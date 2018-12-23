@@ -32,8 +32,8 @@ public class AesCounterRandomTest extends CipherCounterRandomTest {
 
   static {
     try {
-      MAX_SIZE = Cipher.getMaxAllowedKeyLength("AES") / 8
-            + CipherCounterRandom.DEFAULT_COUNTER_SIZE_BYTES;
+      int maxKeySize = Math.min(Cipher.getMaxAllowedKeyLength("AES") / 8, 32);
+      MAX_SIZE = maxKeySize + CipherCounterRandom.DEFAULT_COUNTER_SIZE_BYTES;
     } catch (final NoSuchAlgorithmException e) {
       throw new AssertionError(e);
     }
