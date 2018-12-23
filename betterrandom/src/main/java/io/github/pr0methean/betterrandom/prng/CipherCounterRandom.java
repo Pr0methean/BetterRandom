@@ -1,6 +1,5 @@
 package io.github.pr0methean.betterrandom.prng;
 
-import com.google.common.base.MoreObjects;
 import io.github.pr0methean.betterrandom.SeekableRandom;
 import io.github.pr0methean.betterrandom.util.BinaryUtils;
 import io.github.pr0methean.betterrandom.util.Byte16ArrayArithmetic;
@@ -9,13 +8,19 @@ import java.security.GeneralSecurityException;
 import java.security.InvalidKeyException;
 import java.security.MessageDigest;
 import java.util.Arrays;
-import javax.crypto.Cipher;
+import javax.crypto.BadPaddingException;
+import javax.crypto.IllegalBlockSizeException;
+import javax.crypto.ShortBufferException;
 
 /**
  * <p>Non-linear random number generator based on a cipher that encrypts an incrementing counter.
  * fed. Subclasses must specify the key length for a given total seed length;  When reseeded with a
  * seed of less than the maximum key length, the new seed is combined with the existing key using a
  * hash algorithm specified by the subclass.</p>
+ *
+ * <p>All interaction with the cipher is through abstract methods, so that both JCE and other cipher
+ * APIs such as Bouncy Castle can be used. If using a JCE cipher, extending {@link AesCounterRandom}
+ * may be simpler than extending this class directly.</p>
  *
  * <p>When used with a fixed seed, the maintainer believes this implementation conforms to NIST SP
  * 800-90A Rev. 1 section 10.2.1. However, the reseeding process differs from section 10.2.1.4.</p>
@@ -24,22 +29,33 @@ import javax.crypto.Cipher;
  * @author Chris Hennick
  */
 public abstract class CipherCounterRandom extends BaseRandom implements SeekableRandom {
+
+  static final int DEFAULT_COUNTER_SIZE_BYTES = 16;
   private static final long serialVersionUID = -7872636191973295031L;
   protected final byte[] currentBlock;
   protected volatile byte[] counter;
   protected volatile int index;
   protected transient byte[] addendDigits;
-  // WARNING: Don't initialize any instance fields at declaration; they may be initialized too late!
-  @SuppressWarnings("InstanceVariableMayNotBeInitializedByReadObject")
-  protected transient Cipher
-      cipher;
-  protected volatile byte[] counterInput;
+  private volatile byte[] counterInput;
   private volatile boolean seeded;
   private transient MessageDigest hash;
 
   public CipherCounterRandom(byte[] seed) {
     super(seed);
     currentBlock = new byte[getBytesAtOnce()];
+  }
+
+  /**
+   * Returns the length of the counter, which should equal the cipher's block size.
+   * @return the length of the counter
+   */
+  public int getCounterSizeBytes() {
+    return DEFAULT_COUNTER_SIZE_BYTES;
+  }
+
+  @Override
+  public int getNewSeedLength() {
+    return getMaxKeyLengthBytes();
   }
 
   /**
@@ -60,12 +76,12 @@ public abstract class CipherCounterRandom extends BaseRandom implements Seekable
     lock.lock();
     try {
       int newIndex = index + deltaWithinBlock;
-      if (newIndex >= AesCounterRandom.COUNTER_SIZE_BYTES) {
-        newIndex -= AesCounterRandom.COUNTER_SIZE_BYTES;
+      if (newIndex >= getCounterSizeBytes()) {
+        newIndex -= getCounterSizeBytes();
         blocksDelta++;
       }
       if (newIndex < 0) {
-        newIndex += AesCounterRandom.COUNTER_SIZE_BYTES;
+        newIndex += getCounterSizeBytes();
         blocksDelta--;
       }
       blocksDelta -= getBlocksAtOnce(); // Compensate for the increment during nextBlock() below
@@ -88,13 +104,6 @@ public abstract class CipherCounterRandom extends BaseRandom implements Seekable
   protected abstract int getKeyLength(int inputLength);
 
   /**
-   * Returns the length of the counter.
-   *
-   * @return the length of the counter
-   */
-  public abstract int getCounterSizeBytes();
-
-  /**
    * Returns how many consecutive values of the counter are encrypted at once, in order to reduce
    * the number of calls to Cipher methods. Each counter value encrypts to yield a "block" of
    * pseudorandom data. Changing this value won't change the output if the cipher is running in
@@ -113,12 +122,8 @@ public abstract class CipherCounterRandom extends BaseRandom implements Seekable
     return getCounterSizeBytes() * getBlocksAtOnce();
   }
 
-  public abstract int getMaxTotalSeedLengthBytes();
-
-  @Override public MoreObjects.ToStringHelper addSubclassFields(final MoreObjects.ToStringHelper original) {
-    return original.add("counter", BinaryUtils.convertBytesToHexString(counter))
-        .add("cipher", cipher)
-        .add("index", index);
+  public int getMaxTotalSeedLengthBytes() {
+    return getMaxKeyLengthBytes() + getCounterSizeBytes();
   }
 
   @Override protected void initTransientFields() {
@@ -130,13 +135,26 @@ public abstract class CipherCounterRandom extends BaseRandom implements Seekable
     if (counterInput == null) {
       counterInput = new byte[getBytesAtOnce()];
     }
-    cipher = createCipher();
+    createCipher();
     hash = createHash();
+  }
+
+  /**
+   * Returns true, because the seed can either be a counter IV plus a key, or just a key.
+   * @return true
+   */
+  @Override
+  protected boolean supportsMultipleSeedLengths() {
+    return true;
   }
 
   protected abstract MessageDigest createHash();
 
-  protected abstract Cipher createCipher();
+  /**
+   * Creates the cipher that {@link #doCipher(byte[], byte[])} will invoke. {@link #setKey(byte[])}
+   * will be called before the cipher is used.
+   */
+  protected abstract void createCipher();
 
   /**
    * Generates BLOCKS_AT_ONCE 128-bit (16-byte) blocks. Copies them to currentBlock.
@@ -147,16 +165,27 @@ public abstract class CipherCounterRandom extends BaseRandom implements Seekable
     int blocks = getBlocksAtOnce();
     for (int i = 0; i < blocks; i++) {
       Byte16ArrayArithmetic.addInto(counter, Byte16ArrayArithmetic.ONE);
-      System.arraycopy(counter, 0, counterInput, i * AesCounterRandom.COUNTER_SIZE_BYTES, AesCounterRandom.COUNTER_SIZE_BYTES);
+      System.arraycopy(counter, 0, counterInput, i * getCounterSizeBytes(), getCounterSizeBytes());
     }
     try {
-      cipher.doFinal(counterInput, 0, getBytesAtOnce(), currentBlock);
+      doCipher(counterInput, currentBlock);
     } catch (final GeneralSecurityException ex) {
       // Should never happen.  If initialisation succeeds without exceptions
       // we should be able to proceed indefinitely without exceptions.
       throw new IllegalStateException("Failed creating next random block.", ex);
     }
   }
+
+  /**
+   * Executes the cipher.
+   *
+   * @param input an array of input whose length is equal to {@link #getBytesAtOnce()}
+   * @param output an array of output whose length is equal to {@link #getBytesAtOnce()}
+   * @throws ShortBufferException
+   * @throws IllegalBlockSizeException
+   * @throws BadPaddingException
+   */
+  protected abstract void doCipher(byte[] input, byte[] output) throws ShortBufferException, IllegalBlockSizeException, BadPaddingException;
 
   @Override protected final int next(final int bits) {
     lock.lock();
@@ -235,6 +264,10 @@ public abstract class CipherCounterRandom extends BaseRandom implements Seekable
 
   @Override protected void setSeedInternal(final byte[] seed) {
     checkNotTooLong(seed);
+    if (seed.length < getMinSeedLength()) {
+      throw new IllegalArgumentException(String.format(
+          "Seed length is %d bytes; need at least 16 bytes", seed.length));
+    }
     super.setSeedInternal(seed);
     // determine how much of seed can go to key
     final int keyLength = getKeyLength(seed.length);
@@ -244,19 +277,28 @@ public abstract class CipherCounterRandom extends BaseRandom implements Seekable
     if (bytesToCopyToCounter > 0) {
       System.arraycopy(seed, keyLength, counter, 0, bytesToCopyToCounter);
     }
-    System.arraycopy(Byte16ArrayArithmetic.ZERO, 0, counter, bytesToCopyToCounter,
-        getCounterSizeBytes() - bytesToCopyToCounter);
+    Arrays.fill(counter, bytesToCopyToCounter, getCounterSizeBytes(), (byte) 0);
     try {
       setKey(key);
     } catch (final InvalidKeyException e) {
       throw (InternalError) (
           new InternalError("Invalid key: " + Arrays.toString(key)).initCause(e));
     }
-    if (currentBlock != null) {
-      index = getBytesAtOnce();
-    } // else it'll be initialized in ctor
+    index = getBytesAtOnce();
     seeded = true;
   }
 
+  /**
+   * Returns the minimum seed length.
+   * @return the minimum seed length
+   */
+  protected abstract int getMinSeedLength();
+
+  /**
+   * Sets the key on the cipher. Always called with {@code lock} held.
+   *
+   * @param key the new key
+   * @throws InvalidKeyException if the cipher rejects the key
+   */
   protected abstract void setKey(byte[] key) throws InvalidKeyException;
 }

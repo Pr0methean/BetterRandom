@@ -30,11 +30,11 @@ public class RandomWrapperAesCounterRandomTest extends AesCounterRandomTest {
         ImmutableList.of(NEXT_LONG, NEXT_INT, NEXT_DOUBLE, NEXT_GAUSSIAN, setSeed, setWrapped));
   }
 
-  @Override @Test(enabled = false) public void testAdvanceForward() {
+  @Override @Test(enabled = false) public void testAdvanceForward(int delta) {
     // No-op: RandomWrapper isn't seekable
   }
 
-  @Override @Test(enabled = false) public void testAdvanceBackward() {
+  @Override @Test(enabled = false) public void testAdvanceBackward(int delta) {
     // No-op: RandomWrapper isn't seekable
   }
 

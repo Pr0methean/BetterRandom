@@ -27,8 +27,11 @@ import java.security.InvalidKeyException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Random;
+import javax.crypto.BadPaddingException;
 import javax.crypto.Cipher;
+import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.NoSuchPaddingException;
+import javax.crypto.ShortBufferException;
 import javax.crypto.spec.SecretKeySpec;
 import org.slf4j.LoggerFactory;
 
@@ -57,11 +60,10 @@ public class AesCounterRandom extends CipherCounterRandom {
   private static final String ALGORITHM = "AES";
   @SuppressWarnings("HardcodedFileSeparator") private static final String ALGORITHM_MODE =
       ALGORITHM + "/ECB/NoPadding";
-
-  @Override
-  public int getCounterSizeBytes() {
-    return COUNTER_SIZE_BYTES;
-  }
+  // WARNING: Don't initialize any instance fields at declaration; they may be initialized too late!
+  @SuppressWarnings("InstanceVariableMayNotBeInitializedByReadObject")
+  protected transient Cipher
+      cipher;
 
   @Override
   public int getBlocksAtOnce() {
@@ -78,12 +80,14 @@ public class AesCounterRandom extends CipherCounterRandom {
     return MAX_TOTAL_SEED_LENGTH_BYTES;
   }
 
-  /**
-   * 128-bit counter. Package-visible for testing. Note to forkers: when running a cipher in ECB
-   * mode, this counter's length should equal the cipher's block size.
-   */
-  static final int COUNTER_SIZE_BYTES = 16;
+  @Override
+  protected int getMinSeedLength() {
+    return 16;
+  }
+
+  private static final int COUNTER_SIZE_BYTES = 16;
   private static final int INTS_PER_BLOCK = COUNTER_SIZE_BYTES / INT_BYTES;
+
   /**
    * Number of blocks to encrypt at once, to construct/GC fewer arrays. This takes advantage of the
    * fact that in ECB mode, concatenating and then encrypting gives the same output as encrypting
@@ -91,6 +95,12 @@ public class AesCounterRandom extends CipherCounterRandom {
    * size is 128 bits at all key lengths.)
    */
   private static final int BLOCKS_AT_ONCE = 16;
+
+  @Override
+  public int getCounterSizeBytes() {
+    return COUNTER_SIZE_BYTES;
+  }
+
   private static final int BYTES_AT_ONCE = COUNTER_SIZE_BYTES * BLOCKS_AT_ONCE;
   private static final String HASH_ALGORITHM = "SHA-256";
   private static final int MAX_TOTAL_SEED_LENGTH_BYTES;
@@ -163,12 +173,6 @@ public class AesCounterRandom extends CipherCounterRandom {
         : ((inputLength >= 24) ? 24 : 16);
   }
 
-  @Override public ToStringHelper addSubclassFields(final ToStringHelper original) {
-    return original.add("counter", BinaryUtils.convertBytesToHexString(counter))
-        .add("cipher", cipher)
-        .add("index", index);
-  }
-
   @Override
   protected MessageDigest createHash() {
     try {
@@ -179,9 +183,9 @@ public class AesCounterRandom extends CipherCounterRandom {
   }
 
   @Override
-  protected Cipher createCipher() {
+  protected void createCipher() {
     try {
-      return Cipher.getInstance(ALGORITHM_MODE);
+      cipher = Cipher.getInstance(ALGORITHM_MODE);
     } catch (NoSuchAlgorithmException | NoSuchPaddingException e) {
       throw new InternalError("Required cipher missing");
     }
@@ -233,5 +237,19 @@ public class AesCounterRandom extends CipherCounterRandom {
 
   @Override protected boolean supportsMultipleSeedLengths() {
     return true;
+  }
+
+  @Override public MoreObjects.ToStringHelper addSubclassFields(final MoreObjects.ToStringHelper original) {
+    return original.add("counter", BinaryUtils.convertBytesToHexString(counter))
+        .add("cipher.iv", cipher.getIV())
+        .add("cipher.algorithm", cipher.getAlgorithm())
+        .add("cipher.provider", cipher.getProvider())
+        .add("cipher.parameters", cipher.getParameters())
+        .add("index", index);
+  }
+
+  @Override
+  protected void doCipher(byte[] input, byte[] output) throws ShortBufferException, IllegalBlockSizeException, BadPaddingException {
+    cipher.doFinal(input, 0, getBytesAtOnce(), output);
   }
 }

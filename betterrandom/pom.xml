@@ -120,7 +120,7 @@
     <test.argline>-Djava.security.egd=file:/dev/./urandom</test.argline>
     <testng.parallel>tests</testng.parallel>
     <testng.perCoreThreadCount>1</testng.perCoreThreadCount>
-    <testng.verbose>3</testng.verbose>
+    <testng.verbose>1</testng.verbose>
   </properties>
   <groupId>io.github.pr0methean.betterrandom</groupId>
   <artifactId>BetterRandom-Java7</artifactId>
@@ -227,6 +227,12 @@
       <groupId>org.apache.commons</groupId>
       <artifactId>commons-math3</artifactId>
       <version>3.6.1</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.bouncycastle</groupId>
+      <artifactId>bcprov-jdk15on</artifactId>
+      <version>1.60</version>
       <scope>test</scope>
     </dependency>
     <!-- https://mvnrepository.com/artifact/com.google.guava/guava -->
@@ -572,7 +578,7 @@
             </dependency>
           </dependencies>
           <configuration>
-            <stagingRepositoryId></stagingRepositoryId>
+            <stagingRepositoryId/>
             <autoVersionSubmodules>true</autoVersionSubmodules>
             <useReleaseProfile>false</useReleaseProfile>
             <releaseProfiles>release-sign-artifacts</releaseProfiles>

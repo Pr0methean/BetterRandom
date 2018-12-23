@@ -19,6 +19,7 @@ import io.github.pr0methean.betterrandom.CloneViaSerialization;
 import io.github.pr0methean.betterrandom.TestUtils;
 import io.github.pr0methean.betterrandom.seed.RandomSeederThread;
 import io.github.pr0methean.betterrandom.seed.SeedGenerator;
+import io.github.pr0methean.betterrandom.util.BinaryUtils;
 import io.github.pr0methean.betterrandom.util.Dumpable;
 import java.util.Arrays;
 import java.util.HashSet;
@@ -32,6 +33,7 @@ import java8.util.stream.Stream;
 import org.apache.commons.math3.stat.descriptive.SynchronizedDescriptiveStatistics;
 import org.testng.Reporter;
 
+import static io.github.pr0methean.betterrandom.util.BinaryUtils.convertBytesToHexString;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertFalse;
 import static org.testng.Assert.assertNotEquals;
@@ -138,29 +140,16 @@ public enum RandomTestUtils {
     return uniqueHashCodes.size() >= EXPECTED_UNIQUE_HASHES;
   }
 
-  /**
-   * Test to ensure that two distinct RNGs with the same seed return the same sequence of numbers
-   * and compare as equal.
-   * @param rng1 The first RNG.  Its output is compared to that of {@code rng2}.
-   * @param rng2 The second RNG.  Its output is compared to that of {@code rng1}.
-   * @param iterations The number of values to generate from each RNG and compare.
-   * @return true if the two RNGs produce the same sequence of values, false otherwise.
-   */
-  public static boolean testEquivalence(final Random rng1, final Random rng2,
-      final int iterations) {
-    for (int i = 0; i < iterations; i++) {
-      if (rng1.nextInt() != rng2.nextInt()) {
-        return false;
-      }
-    }
-    return true;
-  }
-
   private static void assertEquivalentOrDistinct(final Random rng1, final Random rng2,
       final int iterations, final String message, final boolean shouldBeEquivalent) {
-    final String fullMessage
-        = String.format("%s:%n%s%nvs.%n%s%n", message, toString(rng1), toString(rng2));
-    if (testEquivalence(rng1, rng2, iterations) != shouldBeEquivalent) {
+    byte[] out1 = new byte[iterations];
+    rng1.nextBytes(out1);
+    byte[] out2 = new byte[iterations];
+    rng2.nextBytes(out2);
+    final String fullMessage = String.format(
+        "%s:%n%s -> %s%nvs.%n%s -> %s%n", message, toString(rng1),
+        convertBytesToHexString(out1), toString(rng2), convertBytesToHexString(out2));
+    if (Arrays.equals(out1, out2) != shouldBeEquivalent) {
       throw new AssertionError(fullMessage);
     }
   }
