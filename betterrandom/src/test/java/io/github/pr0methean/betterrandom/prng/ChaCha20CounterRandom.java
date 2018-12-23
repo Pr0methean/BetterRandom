@@ -59,7 +59,7 @@ public class ChaCha20CounterRandom extends CipherCounterRandom {
   protected void createCipher() {
     lock.lock();
     try {
-      cipher = new ChaChaEngine(20);
+      cipher = new ChaChaEngine(22);
     } finally {
       lock.unlock();
     }
