@@ -44,7 +44,8 @@ public class TwoFishCounterRandom extends CipherCounterRandom {
 
   @Override
   public int getBlocksAtOnce() {
-    return 4;
+    // FIXME: Some tests fail when this is changed.
+    return 1;
   }
 
   @Override
@@ -93,7 +94,7 @@ public class TwoFishCounterRandom extends CipherCounterRandom {
         newIndex += COUNTER_SIZE_BYTES;
         blocksDelta--;
       }
-      blocksDelta--; // Compensate for the increment during nextBlock() below
+      blocksDelta -= getBlocksAtOnce(); // Compensate for the increment during nextBlock() below
       Byte16ArrayArithmetic.addInto(counter, blocksDelta, addendDigits);
       nextBlock();
       index = newIndex;
