@@ -87,6 +87,12 @@ jobs:
     stage: unit tests
   - language: java
     os: linux
+    jdk: oraclejdk8
+    env: OP=benchmark JAVA8=true LIMITED_CRYPTO=true ARGS=io.github.pr0methean.betterrandom.benchmark.AesCounterRandomBenchmark
+    stage: long tests
+    sudo: required
+  - language: java
+    os: linux
     jdk: oraclejdk11
     env: OP=mutation
     stage: long tests
@@ -105,12 +111,6 @@ jobs:
     jdk: openjdk8
     env: OP=benchmark ANDROID=1 JAVA8=true
     stage: long tests
-  - language: java
-    os: linux
-    jdk: oraclejdk8
-    env: OP=benchmark JAVA8=true LIMITED_CRYPTO=true ARGS=io.github.pr0methean.betterrandom.benchmark.AesCounterRandomBenchmark
-    stage: long tests
-    sudo: required
   - language: java
     os: linux
     jdk: openjdk8
@@ -176,7 +176,7 @@ jobs:
     jdk: oraclejdk11
     env: OP=dieharder CLASS=adapter.SingleThreadSplittableRandomAdapter
     stage: long tests
-  fast_finish: true
+fast_finish: true
 addons:
   apt:
     packages:
