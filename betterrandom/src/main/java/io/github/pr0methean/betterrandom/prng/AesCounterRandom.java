@@ -81,6 +81,7 @@ public class AesCounterRandom extends CipherCounterRandom {
     return 16;
   }
 
+  private static final int COUNTER_SIZE_BYTES = 16;
   private static final int INTS_PER_BLOCK = COUNTER_SIZE_BYTES / Integer.BYTES;
   /**
    * Number of blocks to encrypt at once, to construct/GC fewer arrays. This takes advantage of the
@@ -89,6 +90,12 @@ public class AesCounterRandom extends CipherCounterRandom {
    * size is 128 bits at all key lengths.)
    */
   private static final int BLOCKS_AT_ONCE = 16;
+
+  @Override
+  public int getCounterSizeBytes() {
+    return COUNTER_SIZE_BYTES;
+  }
+
   private static final int BYTES_AT_ONCE = COUNTER_SIZE_BYTES * BLOCKS_AT_ONCE;
   private static final String HASH_ALGORITHM = "SHA-256";
   private static final int MAX_TOTAL_SEED_LENGTH_BYTES;

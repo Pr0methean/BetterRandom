@@ -31,10 +31,14 @@ import javax.crypto.ShortBufferException;
  */
 public abstract class CipherCounterRandom extends BaseRandom implements SeekableRandom {
   /**
-   * 128-bit counter. Package-visible for testing. Note to forkers: when running a cipher in ECB
-   * mode, this counter's length should equal the cipher's block size.
+   * Returns the length of the counter, which should equal the cipher's block size.
+   * @return the length of the counter
    */
-  static final int COUNTER_SIZE_BYTES = 16;
+  public int getCounterSizeBytes() {
+    return DEFAULT_COUNTER_SIZE_BYTES;
+  }
+
+  static final int DEFAULT_COUNTER_SIZE_BYTES = 16;
   private static final long serialVersionUID = -7872636191973295031L;
   protected final byte[] currentBlock;
   protected volatile byte[] counter;
@@ -66,18 +70,18 @@ public abstract class CipherCounterRandom extends BaseRandom implements Seekable
     if (delta == 0) {
       return;
     }
-    final long intsPerBlock = COUNTER_SIZE_BYTES / Integer.BYTES;
+    final long intsPerBlock = getCounterSizeBytes() / Integer.BYTES;
     long blocksDelta = delta / intsPerBlock;
     final int deltaWithinBlock = (int) (delta % intsPerBlock) * Integer.BYTES;
     lock.lock();
     try {
       int newIndex = index + deltaWithinBlock;
-      if (newIndex >= COUNTER_SIZE_BYTES) {
-        newIndex -= COUNTER_SIZE_BYTES;
+      if (newIndex >= getCounterSizeBytes()) {
+        newIndex -= getCounterSizeBytes();
         blocksDelta++;
       }
       if (newIndex < 0) {
-        newIndex += COUNTER_SIZE_BYTES;
+        newIndex += getCounterSizeBytes();
         blocksDelta--;
       }
       blocksDelta -= getBlocksAtOnce(); // Compensate for the increment during nextBlock() below
@@ -115,18 +119,18 @@ public abstract class CipherCounterRandom extends BaseRandom implements Seekable
    * @return the number of random bytes that can be precalculated at once
    */
   protected int getBytesAtOnce() {
-    return COUNTER_SIZE_BYTES * getBlocksAtOnce();
+    return getCounterSizeBytes() * getBlocksAtOnce();
   }
 
   public int getMaxTotalSeedLengthBytes() {
-    return getMaxKeyLengthBytes() + COUNTER_SIZE_BYTES;
+    return getMaxKeyLengthBytes() + getCounterSizeBytes();
   }
 
   @Override protected void initTransientFields() {
     super.initTransientFields();
-    addendDigits = new byte[COUNTER_SIZE_BYTES];
+    addendDigits = new byte[getCounterSizeBytes()];
     if (counter == null) {
-      counter = new byte[COUNTER_SIZE_BYTES];
+      counter = new byte[getCounterSizeBytes()];
     }
     if (counterInput == null) {
       counterInput = new byte[getBytesAtOnce()];
@@ -161,7 +165,7 @@ public abstract class CipherCounterRandom extends BaseRandom implements Seekable
     int blocks = getBlocksAtOnce();
     for (int i = 0; i < blocks; i++) {
       Byte16ArrayArithmetic.addInto(counter, Byte16ArrayArithmetic.ONE);
-      System.arraycopy(counter, 0, counterInput, i * COUNTER_SIZE_BYTES, COUNTER_SIZE_BYTES);
+      System.arraycopy(counter, 0, counterInput, i * getCounterSizeBytes(), getCounterSizeBytes());
     }
     try {
       doCipher(counterInput, currentBlock);
@@ -273,7 +277,7 @@ public abstract class CipherCounterRandom extends BaseRandom implements Seekable
     if (bytesToCopyToCounter > 0) {
       System.arraycopy(seed, keyLength, counter, 0, bytesToCopyToCounter);
     }
-    Arrays.fill(counter, bytesToCopyToCounter, COUNTER_SIZE_BYTES, (byte) 0);
+    Arrays.fill(counter, bytesToCopyToCounter, getCounterSizeBytes(), (byte) 0);
     try {
       setKey(key);
     } catch (final InvalidKeyException e) {
