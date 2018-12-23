@@ -62,11 +62,6 @@ public class AesCounterRandom extends CipherCounterRandom {
       cipher;
 
   @Override
-  public int getCounterSizeBytes() {
-    return COUNTER_SIZE_BYTES;
-  }
-
-  @Override
   public int getBlocksAtOnce() {
     return BLOCKS_AT_ONCE;
   }

@@ -64,7 +64,7 @@ public abstract class CipherCounterRandom extends BaseRandom implements Seekable
     if (delta == 0) {
       return;
     }
-    final long intsPerBlock = getCounterSizeBytes() / Integer.BYTES;
+    final long intsPerBlock = COUNTER_SIZE_BYTES / Integer.BYTES;
     long blocksDelta = delta / intsPerBlock;
     final int deltaWithinBlock = (int) (delta % intsPerBlock) * Integer.BYTES;
     lock.lock();
@@ -98,13 +98,6 @@ public abstract class CipherCounterRandom extends BaseRandom implements Seekable
   protected abstract int getKeyLength(int inputLength);
 
   /**
-   * Returns the length of the counter.
-   *
-   * @return the length of the counter
-   */
-  public abstract int getCounterSizeBytes();
-
-  /**
    * Returns how many consecutive values of the counter are encrypted at once, in order to reduce
    * the number of calls to Cipher methods. Each counter value encrypts to yield a "block" of
    * pseudorandom data. Changing this value won't change the output if the cipher is running in
@@ -120,18 +113,18 @@ public abstract class CipherCounterRandom extends BaseRandom implements Seekable
    * @return the number of random bytes that can be precalculated at once
    */
   protected int getBytesAtOnce() {
-    return getCounterSizeBytes() * getBlocksAtOnce();
+    return COUNTER_SIZE_BYTES * getBlocksAtOnce();
   }
 
   public int getMaxTotalSeedLengthBytes() {
-    return getMaxKeyLengthBytes() + getCounterSizeBytes();
+    return getMaxKeyLengthBytes() + COUNTER_SIZE_BYTES;
   }
 
   @Override protected void initTransientFields() {
     super.initTransientFields();
-    addendDigits = new byte[getCounterSizeBytes()];
+    addendDigits = new byte[COUNTER_SIZE_BYTES];
     if (counter == null) {
-      counter = new byte[getCounterSizeBytes()];
+      counter = new byte[COUNTER_SIZE_BYTES];
     }
     if (counterInput == null) {
       counterInput = new byte[getBytesAtOnce()];
@@ -278,7 +271,7 @@ public abstract class CipherCounterRandom extends BaseRandom implements Seekable
     if (bytesToCopyToCounter > 0) {
       System.arraycopy(seed, keyLength, counter, 0, bytesToCopyToCounter);
     }
-    Arrays.fill(counter, bytesToCopyToCounter, getCounterSizeBytes(), (byte) 0);
+    Arrays.fill(counter, bytesToCopyToCounter, COUNTER_SIZE_BYTES, (byte) 0);
     try {
       setKey(key);
     } catch (final InvalidKeyException e) {
