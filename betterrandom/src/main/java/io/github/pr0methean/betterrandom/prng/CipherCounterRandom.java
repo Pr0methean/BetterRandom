@@ -17,8 +17,6 @@ import javax.crypto.ShortBufferException;
  * seed of less than the maximum key length, the new seed is combined with the existing key using a
  * hash algorithm specified by the subclass.</p>
  *
- * <p>The counter length is fixed at 16 bytes to make use of {@link Byte16ArrayArithmetic}.</p>
- *
  * <p>All interaction with the cipher is through abstract methods, so that both JCE and other cipher
  * APIs such as Bouncy Castle can be used. If using a JCE cipher, extending {@link AesCounterRandom}
  * may be simpler than extending this class directly.</p>
