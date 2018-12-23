@@ -28,13 +28,6 @@ import javax.crypto.ShortBufferException;
  * @author Chris Hennick
  */
 public abstract class CipherCounterRandom extends BaseRandom implements SeekableRandom {
-  /**
-   * Returns the length of the counter, which should equal the cipher's block size.
-   * @return the length of the counter
-   */
-  public int getCounterSizeBytes() {
-    return DEFAULT_COUNTER_SIZE_BYTES;
-  }
 
   static final int DEFAULT_COUNTER_SIZE_BYTES = 16;
   private static final long serialVersionUID = -7872636191973295031L;
@@ -49,6 +42,14 @@ public abstract class CipherCounterRandom extends BaseRandom implements Seekable
   public CipherCounterRandom(byte[] seed) {
     super(seed);
     currentBlock = new byte[getBytesAtOnce()];
+  }
+
+  /**
+   * Returns the length of the counter, which should equal the cipher's block size.
+   * @return the length of the counter
+   */
+  public int getCounterSizeBytes() {
+    return DEFAULT_COUNTER_SIZE_BYTES;
   }
 
   @Override
