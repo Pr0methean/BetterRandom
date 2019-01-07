@@ -1,4 +1,9 @@
 # http://www.appveyor.com/docs/appveyor-yml
+branches:
+  except:
+    - /^BetterRandom.*/
+    - java7
+    - /dependabot.*/
 init:
   # 32-bit Cygwin causes conflicts
   - rmdir c:\cygwin /s /q
