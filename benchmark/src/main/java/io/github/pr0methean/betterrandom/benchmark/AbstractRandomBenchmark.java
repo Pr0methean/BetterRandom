@@ -7,6 +7,7 @@ import org.openjdk.jmh.annotations.Level;
 import org.openjdk.jmh.annotations.Scope;
 import org.openjdk.jmh.annotations.Setup;
 import org.openjdk.jmh.annotations.State;
+import org.openjdk.jmh.annotations.Timeout;
 import org.openjdk.jmh.profile.GCProfiler;
 import org.openjdk.jmh.profile.HotspotMemoryProfiler;
 import org.openjdk.jmh.profile.HotspotRuntimeProfiler;
@@ -57,7 +58,7 @@ abstract class AbstractRandomBenchmark {
     }
     return bytes[prng.nextInt(COLUMNS)][prng.nextInt(ROWS)];
   }
-
+  @Timeout(time = 10) // seconds per iteration
   @Benchmark public byte testBytesSequential() {
     return innerTestBytesSequential();
   }
