@@ -1,7 +1,7 @@
 if: tag IS blank
 branches:
   except:
-    dependabot.* # redundant to pull-request builds
+    /dependabot.*/ # redundant to pull-request builds
 cache:
   directories:
   - "$HOME/.m2"
