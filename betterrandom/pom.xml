@@ -567,7 +567,7 @@
         </plugin>
         <plugin>
           <artifactId>maven-compiler-plugin</artifactId>
-          <version>3.7.0</version>
+          <version>3.8.0</version>
           <configuration>
             <staleMillis>3600000</staleMillis>
             <fork>true</fork>
