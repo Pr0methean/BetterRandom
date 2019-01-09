@@ -162,22 +162,22 @@ jobs:
   - language: java
     os: linux
     jdk: oraclejdk11
-    env: OP=dieharder CLASS=Pcg64Random
-    stage: long tests
-  - language: java
-    os: linux
-    jdk: oraclejdk11
-    env: OP=dieharder CLASS=Pcg128Random
-    stage: long tests
-  - language: java
-    os: linux
-    jdk: oraclejdk11
     env: OP=dieharder CLASS=XorShiftRandom
     stage: long tests
   - language: java
     os: linux
     jdk: oraclejdk11
     env: OP=dieharder CLASS=adapter.SingleThreadSplittableRandomAdapter
+    stage: long tests
+  - language: java
+    os: linux
+    jdk: oraclejdk11
+    env: OP=dieharder CLASS=Pcg64Random
+    stage: long tests
+  - language: java
+    os: linux
+    jdk: oraclejdk11
+    env: OP=dieharder CLASS=Pcg128Random
     stage: long tests
 fast_finish: true
 addons:
