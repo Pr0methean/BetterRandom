@@ -37,10 +37,13 @@ import io.github.pr0methean.betterrandom.seed.SecureRandomSeedGenerator;
 import java.util.UUID;
 import org.openjdk.jmh.annotations.Benchmark;
 import org.openjdk.jmh.annotations.Level;
+import org.openjdk.jmh.annotations.Measurement;
 import org.openjdk.jmh.annotations.Scope;
 import org.openjdk.jmh.annotations.Setup;
 import org.openjdk.jmh.annotations.State;
 import org.openjdk.jmh.annotations.TearDown;
+import org.openjdk.jmh.annotations.Timeout;
+import org.openjdk.jmh.annotations.Warmup;
 
 @SuppressWarnings("MethodMayBeStatic")
 @State(Scope.Benchmark)
@@ -64,6 +67,9 @@ public abstract class AbstractRandomBenchmarkWithReseeding extends AbstractRando
     RandomSeederThread.remove(SecureRandomSeedGenerator.SECURE_RANDOM_SEED_GENERATOR, prng);
   }
 
+  @Timeout(time = 60) // seconds per iteration
+  @Measurement(iterations = 5, time = 4)
+  @Warmup(iterations = 5, time = 4)
   @Benchmark public byte testBytesSequentialReseeding() {
     return innerTestBytesSequential();
   }
