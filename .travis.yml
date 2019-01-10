@@ -179,7 +179,8 @@ jobs:
     jdk: oraclejdk11
     env: OP=dieharder CLASS=adapter.SingleThreadSplittableRandomAdapter
     stage: long tests
-fast_finish: true
+matrix:
+  fast_finish: true
 addons:
   apt:
     packages:
