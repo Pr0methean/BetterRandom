@@ -51,7 +51,7 @@ abstract class AbstractRandomBenchmark {
     }
     return bytes[prng.nextInt(COLUMNS)][prng.nextInt(ROWS)];
   }
-  @Timeout(time = 10) // seconds per iteration
+  @Timeout(time = 60) // seconds per iteration
   @Benchmark public byte testBytesSequential() {
     return innerTestBytesSequential();
   }
