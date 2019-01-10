@@ -84,13 +84,6 @@ THE POSSIBILITY OF SUCH DAMAGE.
       <groupId>io.github.pr0methean.betterrandom</groupId>
       <version>3.0.1-SNAPSHOT</version>
     </dependency>
-    <!-- https://mvnrepository.com/artifact/com.google.code.java-allocation-instrumenter/java-allocation-instrumenter -->
-    <dependency>
-      <groupId>com.google.code.java-allocation-instrumenter</groupId>
-      <artifactId>java-allocation-instrumenter</artifactId>
-      <version>3.0.1</version>
-    </dependency>
-
   </dependencies>
 
   <properties>

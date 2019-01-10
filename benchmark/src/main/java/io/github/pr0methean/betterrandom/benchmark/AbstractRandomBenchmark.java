@@ -7,11 +7,6 @@ import org.openjdk.jmh.annotations.Level;
 import org.openjdk.jmh.annotations.Scope;
 import org.openjdk.jmh.annotations.Setup;
 import org.openjdk.jmh.annotations.State;
-import org.openjdk.jmh.profile.GCProfiler;
-import org.openjdk.jmh.profile.HotspotMemoryProfiler;
-import org.openjdk.jmh.profile.HotspotRuntimeProfiler;
-import org.openjdk.jmh.profile.HotspotThreadProfiler;
-import org.openjdk.jmh.profile.StackProfiler;
 import org.openjdk.jmh.results.format.ResultFormatType;
 import org.openjdk.jmh.runner.Runner;
 import org.openjdk.jmh.runner.RunnerException;
@@ -34,9 +29,7 @@ abstract class AbstractRandomBenchmark {
   @SuppressWarnings("ObjectAllocationInLoop") public static void main(final String[] args)
       throws RunnerException {
     final ChainedOptionsBuilder options =
-        new OptionsBuilder().addProfiler(HotspotThreadProfiler.class)
-            .addProfiler(HotspotRuntimeProfiler.class).addProfiler(HotspotMemoryProfiler.class)
-            .addProfiler(GCProfiler.class).addProfiler(StackProfiler.class).shouldFailOnError(true)
+        new OptionsBuilder().shouldFailOnError(true)
             .forks(1).resultFormat(ResultFormatType.CSV).detectJvmArgs();
     for (int nThreads = 1; nThreads <= 2; nThreads++) {
       new Runner(
