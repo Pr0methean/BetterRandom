@@ -288,7 +288,7 @@
     <prefix />
     <github.global.server>github</github.global.server>
     <jsr305.version>3.0.2</jsr305.version>
-    <guava.version>26.0</guava.version>
+    <guava.version>27.0.1-jre</guava.version>
     <proguard.version>6.0.3</proguard.version>
     <jacoco.version>0.8.2</jacoco.version>
     <powermock.version>2.0.0-beta.5</powermock.version>
@@ -390,7 +390,7 @@
     <dependency>
       <groupId>com.google.guava</groupId>
       <artifactId>guava</artifactId>
-      <version>${guava.version}-jre</version>
+      <version>${guava.version}</version>
     </dependency>
     <!-- https://mvnrepository.com/artifact/com.google.code.findbugs/jsr305 -->
     <dependency>
@@ -536,7 +536,7 @@
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-jar-plugin</artifactId>
-          <version>3.0.2</version>
+          <version>3.1.1</version>
           <configuration>
             <archive>
               <manifest>
@@ -556,7 +556,7 @@
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-dependency-plugin</artifactId>
-          <version>3.0.2</version>
+          <version>3.1.1</version>
           <executions>
             <execution>
               <goals>
@@ -567,7 +567,7 @@
         </plugin>
         <plugin>
           <artifactId>maven-compiler-plugin</artifactId>
-          <version>3.7.0</version>
+          <version>3.8.0</version>
           <configuration>
             <staleMillis>3600000</staleMillis>
             <fork>true</fork>
@@ -641,7 +641,7 @@
           <!-- Deploy the web site -->
           <groupId>com.github.github</groupId>
           <artifactId>site-maven-plugin</artifactId>
-          <version>0.9</version>
+          <version>0.12</version>
           <executions>
             <execution>
               <goals>
@@ -681,7 +681,7 @@
             <dependency>
               <groupId>org.apache.maven.scm</groupId>
               <artifactId>maven-scm-provider-gitexe</artifactId>
-              <version>1.10.0</version>
+              <version>1.11.1</version>
             </dependency>
             <dependency>
               <!-- https://www.eclemma.org/jacoco/trunk/doc/examples/build/pom-offline.xml -->
