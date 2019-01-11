@@ -165,12 +165,6 @@
       <version>1.6.1</version>
     </dependency>
     <dependency>
-      <!-- Works around an issue in newer versions of JCommander otherwise used by TestNG -->
-      <groupId>com.beust</groupId>
-      <artifactId>jcommander</artifactId>
-      <version>1.72</version>
-    </dependency>
-    <dependency>
       <groupId>org.slf4j</groupId>
       <artifactId>slf4j-api</artifactId>
       <version>1.7.25</version>
