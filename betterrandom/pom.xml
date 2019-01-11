@@ -168,7 +168,7 @@
       <!-- Works around an issue in newer versions of JCommander otherwise used by TestNG -->
       <groupId>com.beust</groupId>
       <artifactId>jcommander</artifactId>
-      <version>1.48</version>
+      <version>1.72</version>
     </dependency>
     <dependency>
       <groupId>org.slf4j</groupId>
