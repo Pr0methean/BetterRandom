@@ -6,6 +6,7 @@ import io.github.pr0methean.betterrandom.CloneViaSerialization;
 import io.github.pr0methean.betterrandom.TestUtils;
 import io.github.pr0methean.betterrandom.prng.RandomTestUtils.EntropyCheckMode;
 import io.github.pr0methean.betterrandom.prng.adapter.SplittableRandomAdapter;
+import io.github.pr0methean.betterrandom.seed.DefaultSeedGenerator;
 import io.github.pr0methean.betterrandom.seed.FakeSeedGenerator;
 import io.github.pr0methean.betterrandom.seed.RandomSeederThread;
 import io.github.pr0methean.betterrandom.seed.SecureRandomSeedGenerator;
@@ -33,9 +34,9 @@ import java.util.function.DoubleConsumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
 import org.apache.commons.math3.stat.descriptive.SynchronizedDescriptiveStatistics;
-import org.powermock.modules.testng.PowerMockTestCase;
 import org.testng.Reporter;
 import org.testng.annotations.AfterClass;
+import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
 import static io.github.pr0methean.betterrandom.TestUtils.assertGreaterOrEqual;
@@ -50,10 +51,11 @@ import static org.testng.Assert.assertFalse;
 import static org.testng.Assert.assertNotEquals;
 import static org.testng.Assert.assertTrue;
 
-public abstract class BaseRandomTest extends PowerMockTestCase {
+public abstract class BaseRandomTest {
 
   protected final SeedGenerator semiFakeSeedGenerator
       = new SemiFakeSeedGenerator(new SplittableRandomAdapter(SecureRandomSeedGenerator.SECURE_RANDOM_SEED_GENERATOR));
+  private SeedGenerator oldSeedGenerator;
 
   /**
    * The square root of 12, rounded from an extended-precision calculation that was done by Wolfram
@@ -112,6 +114,15 @@ public abstract class BaseRandomTest extends PowerMockTestCase {
 
   protected EntropyCheckMode getEntropyCheckMode() {
     return EntropyCheckMode.EXACT;
+  }
+
+  @BeforeClass public void setUp() {
+    oldSeedGenerator = DefaultSeedGenerator.get();
+    DefaultSeedGenerator.set(semiFakeSeedGenerator);
+  }
+
+  @AfterClass public void tearDown() {
+    DefaultSeedGenerator.set(oldSeedGenerator);
   }
 
   @Test(timeOut = 120_000) public void testAllPublicConstructors()

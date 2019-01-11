@@ -18,6 +18,7 @@ package io.github.pr0methean.betterrandom.seed;
 import java.security.Permission;
 import org.testng.annotations.Test;
 
+import static org.testng.Assert.assertSame;
 import static org.testng.Assert.assertTrue;
 
 /**
@@ -26,15 +27,19 @@ import static org.testng.Assert.assertTrue;
  */
 public class DefaultSeedGeneratorTest extends AbstractSeedGeneratorTest {
 
+  private final SeedGenerator instance;
   public DefaultSeedGeneratorTest() {
     super(DefaultSeedGenerator.DEFAULT_SEED_GENERATOR);
+    instance = DefaultSeedGenerator.get();
   }
 
   @Test public void testBasicFunction() throws SeedException {
+    assertSame(DefaultSeedGenerator.get(), instance, "Test not isolated");
     SeedTestUtils.testGenerator(seedGenerator, true);
   }
 
   @Test public void testIsWorthTrying() {
+    assertSame(DefaultSeedGenerator.get(), instance, "Test not isolated");
     // Should always be true
     assertTrue(seedGenerator.isWorthTrying());
   }
@@ -45,6 +50,7 @@ public class DefaultSeedGeneratorTest extends AbstractSeedGeneratorTest {
    */
   @SuppressWarnings("CallToSystemSetSecurityManager") @Test(timeOut = 120000)
   public void testRestrictedEnvironment() throws SeedException {
+    assertSame(DefaultSeedGenerator.get(), instance, "Test not isolated");
     final Thread affectedThread = Thread.currentThread();
     final SecurityManager securityManager = System.getSecurityManager();
     try {
