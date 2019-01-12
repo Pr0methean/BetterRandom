@@ -106,6 +106,7 @@
   <packaging>jar</packaging>
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <argLine /><!-- see https://github.com/metasfresh/metasfresh-parent/commit/bdbe20d51a6936ccc11581b6702fc21a6663ce0f -->
     <prefix />
     <maven.compiler.source>1.7</maven.compiler.source>
     <maven.compiler.target>1.7</maven.compiler.target>
