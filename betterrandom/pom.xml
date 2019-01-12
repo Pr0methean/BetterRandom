@@ -168,7 +168,9 @@
               <coverageThreshold>85</coverageThreshold>
               <mutationThreshold>75</mutationThreshold>
               <!-- AesCounterRandom excluded due to https://github.com/hcoles/pitest/issues/504 -->
-              <excludedClasses>io.github.pr0methean.betterrandom.prng.AesCounterRandom</excludedClasses>
+              <excludedClasses>
+                <excludedClass>io.github.pr0methean.betterrandom.prng.AesCounterRandom</excludedClass>
+              </excludedClasses>
               <avoidCallsTo>
                 <avoidCallsTo>org.slf4j</avoidCallsTo>
               </avoidCallsTo>
