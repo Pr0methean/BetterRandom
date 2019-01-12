@@ -303,7 +303,7 @@
   </properties>
   <groupId>io.github.pr0methean.betterrandom</groupId>
   <artifactId>BetterRandom</artifactId>
-  <version>3.0.1</version>
+  <version>3.0.2-SNAPSHOT</version>
   <name>BetterRandom</name>
   <description>Better, faster random-number generation in Java.
   </description>
