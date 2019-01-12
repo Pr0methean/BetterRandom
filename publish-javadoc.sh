@@ -30,5 +30,4 @@ git commit -m "🤖 Update Javadocs for GitHub Pages"
 git pull --commit
 git push
 cd ../..
-git add docs
-git commit -m "🤖 Update submodule"
+git submodule update
