@@ -9,7 +9,6 @@
         <os><family>windows</family></os>
       </activation>
       <properties>
-	<argLine /> <!-- See https://github.com/metasfresh/metasfresh-parent/commit/bdbe20d51a6936ccc11581b6702fc21a6663ce0f -->
         <test.argline />
       </properties>
     </profile>
@@ -119,6 +118,7 @@
     <mockito.version>2.21.0</mockito.version>
     <pitest.version>1.2.4</pitest.version>
     <test.argline>-Djava.security.egd=file:/dev/./urandom</test.argline>
+    <argLine /> <!-- See https://github.com/metasfresh/metasfresh-parent/commit/bdbe20d51a6936ccc11581b6702fc21a6663ce0f -->
     <testng.parallel>tests</testng.parallel>
     <testng.perCoreThreadCount>1</testng.perCoreThreadCount>
     <testng.verbose>3</testng.verbose>
