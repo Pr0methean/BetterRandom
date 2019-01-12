@@ -1,3 +1,6 @@
+# 3.0.1
+* Update dependencies.
+
 # 3.0.0
 * `CipherCounterRandom` is now compatible with non-JCE ciphers, with a proof-of-concept
   implementation in the test root using the Bouncy Castle implementation of Twofish.
