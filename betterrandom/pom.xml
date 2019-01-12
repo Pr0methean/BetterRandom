@@ -9,6 +9,7 @@
         <os><family>windows</family></os>
       </activation>
       <properties>
+	<argLine /> <!-- See https://github.com/metasfresh/metasfresh-parent/commit/bdbe20d51a6936ccc11581b6702fc21a6663ce0f -->
         <test.argline />
       </properties>
     </profile>
