@@ -27,7 +27,8 @@ sed -i 's/<head>/<head><script async src="\/\/pagead2.googlesyndication.com\/pag
 find . -iname "*.html" -exec sed -i 's/<li><a href="[^\"]*" target="_top">Frames<\/a><\/li>//; s/<li><a href="[^\"]*" target="_top">No&nbsp;Frames<\/a><\/li>//; s/<head>/<head><!-- Google Tag Manager --><script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({"gtm.start": new Date().getTime(),event:"gtm.js"});var f=d.getElementsByTagName(s)[0], j=d.createElement(s),dl=l!="dataLayer"?"&l="+l:"";j.async=true;j.src="https:\/\/www.googletagmanager.com\/gtm.js?id="+i+dl;f.parentNode.insertBefore(j,f);})(window,document,"script","dataLayer","GTM-K9NNCTT");<\/script><!-- End Google Tag Manager -->/; s/<body>/<body><noscript><iframe src="https:\/\/www.googletagmanager.com\/ns.html?id=GTM-K9NNCTT" height="0" width="0" style="display:none;visibility:hidden"><\/iframe><\/noscript>/; s/overview-summary.html/index.html/g' {} \;
 git add .
 git commit -m "🤖 Update Javadocs for GitHub Pages"
+git branch
 git pull --commit
 git push
 cd ../..
-git submodule update
+git submodule update --remote

@@ -1,3 +1,4 @@
 [submodule "docs"]
 	path = docs
 	url = https://github.com/Pr0methean/pr0methean.github.io.git
+	branch = master
