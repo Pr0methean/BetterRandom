@@ -168,7 +168,9 @@
               <coverageThreshold>85</coverageThreshold>
               <mutationThreshold>75</mutationThreshold>
               <!-- AesCounterRandom excluded due to https://github.com/hcoles/pitest/issues/504 -->
-              <excludedClasses>io.github.pr0methean.betterrandom.prng.AesCounterRandom</excludedClasses>
+              <excludedClasses>
+                <excludedClass>io.github.pr0methean.betterrandom.prng.AesCounterRandom</excludedClass>
+              </excludedClasses>
               <avoidCallsTo>
                 <avoidCallsTo>org.slf4j</avoidCallsTo>
               </avoidCallsTo>
@@ -185,6 +187,13 @@
           <groupId>org.testng</groupId>
           <artifactId>testng</artifactId>
           <version>6.14.3</version>
+          <scope>test</scope>
+        </dependency>
+        <dependency>
+          <!-- Needed to override a transitive dep in Powermock that breaks Pitest -->
+          <groupId>org.javassist</groupId>
+          <artifactId>javassist</artifactId>
+          <version>3.22.0-CR1</version>
           <scope>test</scope>
         </dependency>
       </dependencies>
@@ -291,7 +300,7 @@
     <guava.version>27.0.1-jre</guava.version>
     <proguard.version>6.0.3</proguard.version>
     <jacoco.version>0.8.2</jacoco.version>
-    <powermock.version>2.0.0-beta.5</powermock.version>
+    <powermock.version>2.0.0</powermock.version>
     <mockito.version>2.23.4</mockito.version>
     <pitest.version>1.4.3</pitest.version>
     <test.argline>-Djava.security.egd=file:/dev/./urandom</test.argline>
