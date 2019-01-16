@@ -27,11 +27,8 @@ import java.security.InvalidKeyException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Random;
-import javax.crypto.BadPaddingException;
 import javax.crypto.Cipher;
-import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.NoSuchPaddingException;
-import javax.crypto.ShortBufferException;
 import javax.crypto.spec.SecretKeySpec;
 import org.slf4j.LoggerFactory;
 
@@ -249,7 +246,7 @@ public class AesCounterRandom extends CipherCounterRandom {
   }
 
   @Override
-  protected void doCipher(byte[] input, byte[] output) throws ShortBufferException, IllegalBlockSizeException, BadPaddingException {
+  protected void doCipher(byte[] input, byte[] output) throws GeneralSecurityException {
     cipher.doFinal(input, 0, getBytesAtOnce(), output);
   }
 }
