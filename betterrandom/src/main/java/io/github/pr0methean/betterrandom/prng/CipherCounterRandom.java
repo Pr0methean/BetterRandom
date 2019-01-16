@@ -7,9 +7,6 @@ import java.security.GeneralSecurityException;
 import java.security.InvalidKeyException;
 import java.security.MessageDigest;
 import java.util.Arrays;
-import javax.crypto.BadPaddingException;
-import javax.crypto.IllegalBlockSizeException;
-import javax.crypto.ShortBufferException;
 
 /**
  * <p>Non-linear random number generator based on a cipher that encrypts an incrementing counter.
@@ -180,11 +177,9 @@ public abstract class CipherCounterRandom extends BaseRandom implements Seekable
    *
    * @param input an array of input whose length is equal to {@link #getBytesAtOnce()}
    * @param output an array of output whose length is equal to {@link #getBytesAtOnce()}
-   * @throws ShortBufferException
-   * @throws IllegalBlockSizeException
-   * @throws BadPaddingException
+   * @throws GeneralSecurityException if an internal error occurs in the cipher
    */
-  protected abstract void doCipher(byte[] input, byte[] output) throws ShortBufferException, IllegalBlockSizeException, BadPaddingException;
+  protected abstract void doCipher(byte[] input, byte[] output) throws GeneralSecurityException;
 
   @Override protected final int next(final int bits) {
     lock.lock();
@@ -204,7 +199,7 @@ public abstract class CipherCounterRandom extends BaseRandom implements Seekable
 
   /**
    * {@inheritDoc} If the seed is not of the maximum length, it is combined with the existing seed
-   * using SHA-256.
+   * using the hash algorithm.
    */
   @Override public void setSeed(final byte[] seed) {
     checkNotTooLong(seed);
@@ -253,7 +248,7 @@ public abstract class CipherCounterRandom extends BaseRandom implements Seekable
   }
 
   /**
-   * Combines the given seed with the existing seed using SHA-256.
+   * Combines the given seed with the existing seed using the hash algorithm.
    */
   public void setSeed(final long seed) {
     if (superConstructorFinished) {
