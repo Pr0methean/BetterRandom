@@ -1,3 +1,9 @@
+# 3.0.2
+* `CipherCounterRandom.doCipher` overrides can now throw any `GeneralSecurityException`, not just
+  the subclasses that the method throws in `AesCounterRandom`.
+* Fixes Javadoc warnings.
+* Simplifies pom.xml for Javadoc generation.
+
 # 3.0.1
 * Update dependencies.
 
