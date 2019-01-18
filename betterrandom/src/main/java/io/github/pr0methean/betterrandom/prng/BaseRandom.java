@@ -596,7 +596,7 @@ public abstract class BaseRandom extends Random
   /**
    * Returns a pseudorandom {@code long} value between the specified origin (inclusive) and the
    * specified bound (exclusive). This implementation is adapted from the reference implementation
-   * of {@link Random#longs(long, long)} in that method's Javadoc.
+   * of Random.longs(long, long) from JDK 8.
    * @param origin the least value returned
    * @param bound the upper bound (exclusive)
    * @return a pseudorandom {@code long} value between the origin (inclusive) and the bound

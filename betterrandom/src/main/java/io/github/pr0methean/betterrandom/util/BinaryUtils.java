@@ -205,8 +205,7 @@ public enum BinaryUtils {
 
   /**
    * Convert a byte array to a long, reversing {@link #convertLongToBytes(long)}.
-   * @param bytes a byte array of length {@link Long#BYTES} in
-   *     {@link java.nio.ByteOrder#nativeOrder()} order.
+   * @param bytes an 8-byte array in {@link java.nio.ByteOrder#nativeOrder()} order.
    * @return {@code bytes} as a long.
    */
   public static long convertBytesToLong(final byte[] bytes) {

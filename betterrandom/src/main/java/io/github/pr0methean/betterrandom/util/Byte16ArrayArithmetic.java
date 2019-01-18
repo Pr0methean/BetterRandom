@@ -124,7 +124,6 @@ public enum Byte16ArrayArithmetic {
    * From <a href="https://github.com/patrickfav/bytes-java/blob/743a6ab60649e6ce7ec972412bdcb42010a46077/src/main/java/at/favre/lib/bytes/Util.java#L395">this source</a>.
    * @param shifted the array input and the result
    * @param bits how many bits to shift by
-   * @author Patrick Favre-Bulle
    */
   public static void unsignedShiftRight(final byte[] shifted, final int bits) {
     if (bits == 0) {
@@ -142,7 +141,6 @@ public enum Byte16ArrayArithmetic {
    * @param shifted the array input and the result
    * @param bits how many bits to shift by
    * @return {@code (long)(shifted >>> bits)}
-   * @author Patrick Favre-Bulle
    */
   public static long unsignedShiftRightLeast64(final byte[] shifted, final int bits) {
     final long oldLeast = convertBytesToLong(shifted, LONG_BYTES);
@@ -179,7 +177,6 @@ public enum Byte16ArrayArithmetic {
    * {@code shifted = (shifted >>> bits) | shifted << (128 - bits)}
    * @param shifted the array input and the result
    * @param bits how many bits to shift by
-   * @author Patrick Favre-Bulle
    */
   public static void rotateRight(final byte[] shifted, int bits) {
     bits %= 128;
