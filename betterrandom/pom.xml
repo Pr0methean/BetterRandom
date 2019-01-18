@@ -324,44 +324,6 @@
               <link>https://docs.oracle.com/javase/8/docs/api</link>
               <link>https://google.github.io/guava/releases/snapshot-jre/api/docs</link>
             </links>
-            <tags>
-              <tag>
-                <name>apiNote</name>
-                <placement>a</placement>
-
-                <head>API Note:</head>
-              </tag>
-              <tag>
-                <name>implSpec</name>
-                <placement>a</placement>
-
-                <head>Implementation Requirements:</head>
-              </tag>
-              <tag>
-                <name>spec</name>
-                <placement>a</placement>
-
-                <head>Specification:</head>
-              </tag>
-              <tag>
-                <name>revised</name>
-                <placement>a</placement>
-
-                <head>Revised in Version:</head>
-              </tag>
-              <tag>
-                <name>implNote</name>
-                <placement>a</placement>
-
-                <head>Implementation Note:</head>
-              </tag>
-              <tag>
-                <name>jls</name>
-                <placement>a</placement>
-
-                <head>Java Language Specification:</head>
-              </tag>
-            </tags>
           </configuration>
         </plugin>
         <plugin>
