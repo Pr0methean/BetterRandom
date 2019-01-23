@@ -28,7 +28,7 @@ public abstract class DirectSplittableRandomAdapter extends BaseSplittableRandom
 
   /**
    * Wraps a {@link SplittableRandom} with the specified seed.
-   * @param seed 8 bytes of seed data used to initialise the RNG.
+   * @param seed 8 bytes of seed data used to initialize the RNG.
    */
   protected DirectSplittableRandomAdapter(final byte[] seed) {
     super(seed);

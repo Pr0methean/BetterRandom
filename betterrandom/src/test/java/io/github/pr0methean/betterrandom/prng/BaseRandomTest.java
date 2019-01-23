@@ -249,7 +249,7 @@ public abstract class BaseRandomTest extends PowerMockTestCase {
   }
 
   /**
-   * RNG must not accept a null seed otherwise it will not be properly initialised.
+   * RNG must not accept a null seed otherwise it will not be properly initialized.
    */
   @Test(timeOut = 15_000, expectedExceptions = IllegalArgumentException.class)
   public void testNullSeed() throws SeedException {
