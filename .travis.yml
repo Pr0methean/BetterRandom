@@ -177,7 +177,7 @@ jobs:
   - language: java
     os: linux
     jdk: oraclejdk11
-    env: OP=dieharder CLASS=adapter.SingleThreadSplittableRandomAdapter
+    env: OP=dieharder CLASS=concurrent.SingleThreadSplittableRandomAdapter
     stage: long tests
 matrix:
   fast_finish: true
