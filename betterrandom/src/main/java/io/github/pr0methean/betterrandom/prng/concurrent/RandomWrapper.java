@@ -33,9 +33,9 @@ import javax.annotation.Nullable;
 /**
  * <p>Wraps any {@link Random} as a {@link RepeatableRandom} and {@link ByteArrayReseedableRandom}.
  * Can be used to encapsulate away a change of implementation in midstream.</p>
- * <p>Caution: This depends on the underlying {@link Random} for thread-safety. When used with a
- * vanilla {@link Random}, this means that its output for the same seed will vary when accessed
- * concurrently from multiple threads, if the calls include e.g. {@link #nextLong()},
+ * <p>Caution: This depends on the delegate's thread-safety. When used with a vanilla {@link
+ * Random}, this means that its output for the same seed will vary when accessed concurrently
+ * from multiple threads, at least on JDK 7 and 8, if the calls include e.g. {@link #nextLong()},
  * {@link #nextGaussian()} or {@link #nextDouble()}. However, {@link #nextInt()} will still be
  * transactional.</p>
  * @author Chris Hennick
@@ -49,34 +49,33 @@ public class RandomWrapper extends BaseRandom {
   private boolean haveParallelStreams;
 
   /**
-   * Wraps a {@link Random} and seeds it using the default seeding strategy.
-   * @throws SeedException if any.
+   * Wraps a {@link Random} that is seeded using the default seeding strategy.
+   * @throws SeedException if thrown by {@link DefaultSeedGenerator}
    */
   public RandomWrapper() throws SeedException {
     this(DefaultSeedGenerator.DEFAULT_SEED_GENERATOR.generateSeed(Long.BYTES));
   }
 
   /**
-   * Wraps a {@link Random} and seeds it using the provided seedArray generation strategy.
-   * @param seedGenerator The seedArray generation strategy that will provide the seedArray
-   *     value for this RNG.
-   * @throws SeedException If there is a problem generating a seedArray.
+   * Wraps a {@link Random} that is seeded using the provided seed generation strategy.
+   * @param seedGenerator The seed generation strategy that will provide the seed for this PRNG
+   * @throws SeedException if thrown by {@code seedGenerator}
    */
   @EntryPoint public RandomWrapper(final SeedGenerator seedGenerator) throws SeedException {
     this(BinaryUtils.convertBytesToLong(seedGenerator.generateSeed(Long.BYTES)));
   }
 
   /**
-   * Wraps a new {@link Random} seeded it with the specified seed data.
-   * @param seed 8 bytes of seed data used to initialise the RNG.
+   * Wraps a {@link Random} that is seeded with the specified seed.
+   * @param seed seed used to initialise the {@link Random}; must be 8 bytes
    */
   public RandomWrapper(final byte[] seed) {
     this(BinaryUtils.convertBytesToLong(checkLength(seed, Long.BYTES)));
   }
 
   /**
-   * Wraps a new {@link Random} seeded with the specified seed.
-   * @param seed seed used to initialise the {@link Random}.
+   * Wraps a {@link Random} that is seeded with the specified seed.
+   * @param seed seed used to initialise the {@link Random}
    */
   @EntryPoint public RandomWrapper(final long seed) {
     super(seed);
@@ -117,8 +116,8 @@ public class RandomWrapper extends BaseRandom {
   }
 
   /**
-   * Returns the {@link Random} instance this RandomWrapper is currently wrapping.
-   * @return The wrapped {@link Random}.
+   * Returns the PRNG this RandomWrapper is currently wrapping.
+   * @return the wrapped {@link Random} instance
    */
   @EntryPoint public Random getWrapped() {
     lock.lock();
@@ -130,8 +129,8 @@ public class RandomWrapper extends BaseRandom {
   }
 
   /**
-   * Replaces the underlying {@link Random} instance with the given one on subsequent calls.
-   * @param wrapped The new {@link Random} instance to wrap.
+   * Replaces the wrapped PRNG with the given one on subsequent calls.
+   * @param wrapped an {@link Random} instance to wrap
    */
   @EntryPoint public void setWrapped(final Random wrapped) {
     lock.lock();
