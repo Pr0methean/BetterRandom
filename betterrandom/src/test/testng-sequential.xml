@@ -12,7 +12,7 @@
       <class name="io.github.pr0methean.betterrandom.seed.SeedGeneratorPreferenceListTest"/>
     </classes>
   </test>
-  <test name="Adapter PRNGs Sequential" parallel="none">
+  <test name="Concurrent PRNGs Sequential" parallel="none">
     <parameter name="seedSize" value="16"/>
     <groups>
       <run>
@@ -20,8 +20,8 @@
       </run>
     </groups>
     <classes>
-      <class name="io.github.pr0methean.betterrandom.prng.adapter.ReseedingThreadLocalRandomWrapperMersenneTwisterTest"/>
-      <class name="io.github.pr0methean.betterrandom.prng.adapter.ReseedingThreadLocalRandomWrapperTest"/>
+      <class name="io.github.pr0methean.betterrandom.prng.concurrent.ReseedingThreadLocalRandomWrapperMersenneTwisterTest"/>
+      <class name="io.github.pr0methean.betterrandom.prng.concurrent.ReseedingThreadLocalRandomWrapperTest"/>
     </classes>
   </test>
 </suite>
