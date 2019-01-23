@@ -1,6 +1,6 @@
 package io.github.pr0methean.betterrandom.seed;
 
-import io.github.pr0methean.betterrandom.prng.adapter.SplittableRandomAdapter;
+import io.github.pr0methean.betterrandom.prng.concurrent.SplittableRandomAdapter;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.net.Proxy;

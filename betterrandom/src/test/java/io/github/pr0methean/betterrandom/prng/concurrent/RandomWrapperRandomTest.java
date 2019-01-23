@@ -13,7 +13,7 @@
 //   See the License for the specific language governing permissions and
 //   limitations under the License.
 // ============================================================================
-package io.github.pr0methean.betterrandom.prng.adapter;
+package io.github.pr0methean.betterrandom.prng.concurrent;
 
 import com.google.common.collect.ImmutableList;
 import io.github.pr0methean.betterrandom.prng.BaseRandom;
@@ -52,8 +52,8 @@ public class RandomWrapperRandomTest extends BaseRandomTest {
 
   /**
    * Assertion-free with respect to the long/double methods because, contrary to its contract to be
-   * thread-safe, {@link Random#nextLong()} is not transactional. Rather, it uses two calls to
-   * {@link Random#next(int)} that can interleave with calls from other threads.
+   * thread-safe, {@link Random#nextLong()} is not transactional. Rather, it uses two subroutine
+   * calls that can interleave with calls from other threads.
    */
   @Override public void testThreadSafety() {
     testThreadSafety(ImmutableList.of(NEXT_INT), Collections.emptyList());

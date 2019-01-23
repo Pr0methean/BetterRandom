@@ -13,7 +13,7 @@
 //   See the License for the specific language governing permissions and
 //   limitations under the License.
 // ============================================================================
-package io.github.pr0methean.betterrandom.prng.adapter;
+package io.github.pr0methean.betterrandom.prng.concurrent;
 
 import com.google.common.base.MoreObjects.ToStringHelper;
 import io.github.pr0methean.betterrandom.ByteArrayReseedableRandom;
