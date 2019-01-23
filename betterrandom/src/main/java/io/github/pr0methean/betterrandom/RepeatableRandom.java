@@ -27,7 +27,7 @@ public interface RepeatableRandom {
 
   /**
    * Returns the seed.
-   * @return The seed data used to initialise this pseudo-random number generator.
+   * @return The seed data used to initialize this pseudo-random number generator.
    */
   @EntryPoint byte[] getSeed();
 }

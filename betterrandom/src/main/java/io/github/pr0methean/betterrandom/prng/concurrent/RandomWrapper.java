@@ -67,7 +67,7 @@ public class RandomWrapper extends BaseRandom {
 
   /**
    * Wraps a {@link Random} that is seeded with the specified seed.
-   * @param seed seed used to initialise the {@link Random}; must be 8 bytes
+   * @param seed seed used to initialize the {@link Random}; must be 8 bytes
    */
   public RandomWrapper(final byte[] seed) {
     this(BinaryUtils.convertBytesToLong(checkLength(seed, Long.BYTES)));
@@ -75,7 +75,7 @@ public class RandomWrapper extends BaseRandom {
 
   /**
    * Wraps a {@link Random} that is seeded with the specified seed.
-   * @param seed seed used to initialise the {@link Random}
+   * @param seed seed used to initialize the {@link Random}
    */
   @EntryPoint public RandomWrapper(final long seed) {
     super(seed);
