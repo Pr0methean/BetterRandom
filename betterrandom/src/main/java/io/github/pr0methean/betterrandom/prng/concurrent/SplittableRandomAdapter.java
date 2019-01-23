@@ -101,7 +101,7 @@ public class SplittableRandomAdapter extends DirectSplittableRandomAdapter {
         // Necessary because SplittableRandom.split() isn't itself thread-safe.
         lock.lock();
         try {
-          return underlying.split();
+          return delegate.split();
         } finally {
           lock.unlock();
         }

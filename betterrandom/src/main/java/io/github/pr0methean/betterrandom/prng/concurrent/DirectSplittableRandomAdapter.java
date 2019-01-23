@@ -24,7 +24,7 @@ public abstract class DirectSplittableRandomAdapter extends BaseSplittableRandom
    * {@link SplittableRandomAdapter}) and have the splits delegated to.
    */
   @SuppressWarnings("InstanceVariableMayNotBeInitializedByReadObject")
-  protected transient volatile SplittableRandom underlying; // SplittableRandom isn't Serializable
+  protected transient volatile SplittableRandom delegate; // SplittableRandom isn't Serializable
 
   /**
    * Wraps a {@link SplittableRandom} with the specified seed.
@@ -44,7 +44,7 @@ public abstract class DirectSplittableRandomAdapter extends BaseSplittableRandom
   }
 
   @Override protected ToStringHelper addSubclassFields(final ToStringHelper original) {
-    return original.add("underlying", underlying);
+    return original.add("delegate", delegate);
   }
 
   private void readObject(final ObjectInputStream in) throws IOException, ClassNotFoundException {
@@ -53,20 +53,24 @@ public abstract class DirectSplittableRandomAdapter extends BaseSplittableRandom
   }
 
   /**
-   * Replaces {@link #underlying} with a new {@link SplittableRandom} that uses the given seed.
+   * Replaces the delegate with a new {@link SplittableRandom} that uses the given seed.
+   *
+   * @param seed the new seed; must be 8 bytes
    */
   @Override protected void setSeedInternal(final byte[] seed) {
     super.setSeedInternal(seed);
-    underlying = new SplittableRandom(BinaryUtils.convertBytesToLong(seed));
+    delegate = new SplittableRandom(BinaryUtils.convertBytesToLong(seed));
   }
 
   /**
-   * Replaces {@link #underlying} with a new {@link SplittableRandom} that uses the given seed.
+   * Replaces the delegate with a new {@link SplittableRandom} that uses the given seed.
+   *
+   * @param seed the new seed
    */
   @Override public void setSeed(final long seed) {
     if (superConstructorFinished) {
       super.setSeedInternal(BinaryUtils.convertLongToBytes(seed));
     }
-    underlying = new SplittableRandom(seed);
+    delegate = new SplittableRandom(seed);
   }
 }
