@@ -1,7 +1,7 @@
 package io.github.pr0methean.betterrandom.benchmark;
 
 import io.github.pr0methean.betterrandom.prng.AesCounterRandom;
-import io.github.pr0methean.betterrandom.prng.adapter.ReseedingThreadLocalRandomWrapper;
+import io.github.pr0methean.betterrandom.prng.concurrent.ReseedingThreadLocalRandomWrapper;
 import java.util.Random;
 import java8.util.function.Supplier;
 

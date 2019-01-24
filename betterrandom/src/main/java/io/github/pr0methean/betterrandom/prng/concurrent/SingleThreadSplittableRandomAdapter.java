@@ -1,4 +1,4 @@
-package io.github.pr0methean.betterrandom.prng.adapter;
+package io.github.pr0methean.betterrandom.prng.concurrent;
 
 import io.github.pr0methean.betterrandom.seed.DefaultSeedGenerator;
 import io.github.pr0methean.betterrandom.seed.SeedException;
@@ -18,8 +18,7 @@ public class SingleThreadSplittableRandomAdapter extends DirectSplittableRandomA
   private static final long serialVersionUID = -1125374167384636394L;
 
   /**
-   * Use the provided seed generation strategy to create the seed for the underlying {@link
-   * SplittableRandom}.
+   * Use the provided seed generation strategy to create the seed for the {@link SplittableRandom}.
    * @param seedGenerator The seed generation strategy that will provide the seed value for this
    *     RNG.
    * @throws SeedException if there is a problem generating a seed.
@@ -30,8 +29,7 @@ public class SingleThreadSplittableRandomAdapter extends DirectSplittableRandomA
   }
 
   /**
-   * Use the {@link DefaultSeedGenerator} to create the seed for the underlying {@link
-   * SplittableRandom}.
+   * Use the {@link DefaultSeedGenerator} to create the seed for the {@link SplittableRandom}.
    * @throws SeedException if the {@link DefaultSeedGenerator} fails to generate a seed.
    */
   public SingleThreadSplittableRandomAdapter() throws SeedException {
@@ -39,7 +37,7 @@ public class SingleThreadSplittableRandomAdapter extends DirectSplittableRandomA
   }
 
   /**
-   * Use the provided seed for the underlying {@link SplittableRandom}.
+   * Use the provided seed for the {@link SplittableRandom}.
    * @param seed The seed. Must be 8 bytes.
    */
   public SingleThreadSplittableRandomAdapter(final byte[] seed) {
@@ -47,7 +45,7 @@ public class SingleThreadSplittableRandomAdapter extends DirectSplittableRandomA
   }
 
   /**
-   * Use the provided seed for the underlying {@link SplittableRandom}.
+   * Use the provided seed for the {@link SplittableRandom}.
    * @param seed The seed.
    */
   public SingleThreadSplittableRandomAdapter(final long seed) {
@@ -64,10 +62,10 @@ public class SingleThreadSplittableRandomAdapter extends DirectSplittableRandomA
 
   /**
    * Returns this SingleThreadSplittableRandomAdapter's only {@link SplittableRandom}.
-   * @return {@link #underlying}
+   * @return the SplittableRandom
    */
   @Override protected SplittableRandom getSplittableRandom() {
-    return underlying;
+    return delegate;
   }
 
   private void readObject(final ObjectInputStream in) throws IOException, ClassNotFoundException {

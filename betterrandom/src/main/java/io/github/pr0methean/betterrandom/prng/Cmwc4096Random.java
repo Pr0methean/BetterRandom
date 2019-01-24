@@ -70,7 +70,7 @@ public class Cmwc4096Random extends BaseRandom {
 
   /**
    * Creates an RNG and seeds it with the specified seed data.
-   * @param seed 16384 bytes of seed data used to initialise the RNG.
+   * @param seed 16384 bytes of seed data used to initialize the RNG.
    */
   public Cmwc4096Random(final byte[] seed) {
     super(seed);

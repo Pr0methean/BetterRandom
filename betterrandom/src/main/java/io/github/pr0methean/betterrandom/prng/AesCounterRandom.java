@@ -145,7 +145,7 @@ public class AesCounterRandom extends CipherCounterRandom {
 
   /**
    * Creates an RNG and seeds it with the specified seed data.
-   * @param seed The seed data used to initialise the RNG. Length must be at least 16 and no
+   * @param seed The seed data used to initialize the RNG. Length must be at least 16 and no
    *     more than {@link #getMaxKeyLengthBytes()} + 16.
    */
   public AesCounterRandom(final byte[] seed) {

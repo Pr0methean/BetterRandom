@@ -27,7 +27,7 @@ import static io.github.pr0methean.betterrandom.util.Java8Constants.LONG_BYTES;
  * </p><p>
  * Sharing a single instance across threads that are frequently using it concurrently isn't
  * recommended, unless memory is too constrained to use with a
- * {@link io.github.pr0methean.betterrandom.prng.adapter.ThreadLocalRandomWrapper}.
+ * {@link io.github.pr0methean.betterrandom.prng.concurrent.ThreadLocalRandomWrapper}.
  * </p>
  * @author M.E. O'Neill (algorithm and C++ implementation)
  * @author Chris Hennick (Java port)

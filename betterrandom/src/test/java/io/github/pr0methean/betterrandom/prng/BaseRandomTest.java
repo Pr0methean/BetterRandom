@@ -5,7 +5,7 @@ import com.google.common.collect.ImmutableMap;
 import io.github.pr0methean.betterrandom.CloneViaSerialization;
 import io.github.pr0methean.betterrandom.TestUtils;
 import io.github.pr0methean.betterrandom.prng.RandomTestUtils.EntropyCheckMode;
-import io.github.pr0methean.betterrandom.prng.adapter.SplittableRandomAdapter;
+import io.github.pr0methean.betterrandom.prng.concurrent.SplittableRandomAdapter;
 import io.github.pr0methean.betterrandom.seed.FakeSeedGenerator;
 import io.github.pr0methean.betterrandom.seed.RandomSeederThread;
 import io.github.pr0methean.betterrandom.seed.SecureRandomSeedGenerator;
@@ -286,7 +286,7 @@ public abstract class BaseRandomTest extends PowerMockTestCase {
   }
 
   /**
-   * RNG must not accept a null seed otherwise it will not be properly initialised.
+   * RNG must not accept a null seed otherwise it will not be properly initialized.
    */
   @Test(timeOut = 15_000, expectedExceptions = IllegalArgumentException.class)
   public void testNullSeed() throws SeedException {

@@ -51,7 +51,7 @@ public class XorShiftRandom extends BaseRandom {
 
   /**
    * Creates an RNG and seeds it with the specified seed data.
-   * @param seed 20 bytes of seed data used to initialise the RNG.
+   * @param seed 20 bytes of seed data used to initialize the RNG.
    */
   public XorShiftRandom(final byte[] seed) {
     super(seed);

@@ -1,4 +1,4 @@
-package io.github.pr0methean.betterrandom.prng.adapter;
+package io.github.pr0methean.betterrandom.prng.concurrent;
 
 import com.google.common.base.Joiner;
 import io.github.pr0methean.betterrandom.seed.SeedException;

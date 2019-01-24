@@ -1,4 +1,4 @@
-package io.github.pr0methean.betterrandom.prng.adapter;
+package io.github.pr0methean.betterrandom.prng.concurrent;
 
 import com.google.common.base.MoreObjects.ToStringHelper;
 import io.github.pr0methean.betterrandom.seed.DefaultSeedGenerator;
@@ -98,15 +98,13 @@ public class SplittableRandomAdapter extends DirectSplittableRandomAdapter {
   private void initSubclassTransientFields() {
     lock.lock();
     try {
-      splittableRandoms = new ThreadLocal<SplittableRandom>() {
-        @Override public SplittableRandom initialValue() {
-          // Necessary because SplittableRandom.split() isn't itself thread-safe.
-          lock.lock();
-          try {
-            return underlying.split();
-          } finally {
-            lock.unlock();
-          }
+      splittableRandoms = ThreadLocal.withInitial(() -> {
+        // Necessary because SplittableRandom.split() isn't itself thread-safe.
+        lock.lock();
+        try {
+          return underlying.split();
+        } finally {
+          lock.unlock();
         }
       };
       entropyBits = new ThreadLocal<AtomicLong>() {

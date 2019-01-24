@@ -3,4 +3,4 @@
  * delegate the actual random-number generation. Some use a thread-local delegate to emulate a
  * single concurrent PRNG.
  */
-package io.github.pr0methean.betterrandom.prng.adapter;
+package io.github.pr0methean.betterrandom.prng.concurrent;

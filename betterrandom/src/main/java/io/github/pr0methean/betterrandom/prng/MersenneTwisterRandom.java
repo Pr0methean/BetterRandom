@@ -76,7 +76,7 @@ public class MersenneTwisterRandom extends BaseRandom {
 
   /**
    * Creates an RNG and seeds it with the specified seed data.
-   * @param seed 16 bytes of seed data used to initialise the RNG.
+   * @param seed 16 bytes of seed data used to initialize the RNG.
    */
   public MersenneTwisterRandom(final byte[] seed) {
     super(seed);
