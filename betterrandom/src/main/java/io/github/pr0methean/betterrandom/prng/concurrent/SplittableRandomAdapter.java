@@ -98,13 +98,15 @@ public class SplittableRandomAdapter extends DirectSplittableRandomAdapter {
   private void initSubclassTransientFields() {
     lock.lock();
     try {
-      splittableRandoms = ThreadLocal.withInitial(() -> {
-        // Necessary because SplittableRandom.split() isn't itself thread-safe.
-        lock.lock();
-        try {
-          return underlying.split();
-        } finally {
-          lock.unlock();
+      splittableRandoms = new ThreadLocal<SplittableRandom>() {
+        @Override public AtomicLong initialValue() {
+          // Necessary because SplittableRandom.split() isn't itself thread-safe.
+          lock.lock();
+          try {
+            return underlying.split();
+          } finally {
+            lock.unlock();
+          }
         }
       };
       entropyBits = new ThreadLocal<AtomicLong>() {
