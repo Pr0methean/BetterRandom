@@ -99,7 +99,7 @@ public class SplittableRandomAdapter extends DirectSplittableRandomAdapter {
     lock.lock();
     try {
       splittableRandoms = new ThreadLocal<SplittableRandom>() {
-        @Override public AtomicLong initialValue() {
+        @Override public SplittableRandom initialValue() {
           // Necessary because SplittableRandom.split() isn't itself thread-safe.
           lock.lock();
           try {
