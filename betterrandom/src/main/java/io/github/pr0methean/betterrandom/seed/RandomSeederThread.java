@@ -48,7 +48,7 @@ public final class RandomSeederThread extends LooperThread {
   private final Set<Random> otherPrngsThisIteration
       = Collections.newSetFromMap(new WeakHashMap<Random, Boolean>(1));
   private final WeakHashMap<ByteArrayReseedableRandom, byte[]> seedArrays = new WeakHashMap<>(1);
-  private static final AtomicInteger defaultPriority = new AtomicInteger(Thread.NORM_PRIORITY);
+  private static final AtomicInteger defaultPriority = new AtomicInteger(Thread.NORM_PRIORITY + 1);
 
   /**
    * Private constructor because only one instance per seed source.
