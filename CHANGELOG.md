@@ -3,6 +3,7 @@
   starved out. It is still "best efforts", but best efforts are now more likely to suffice.
 
 # 3.0.2
+* Subpackage `adapter` has been renamed `concurrent`.
 * `CipherCounterRandom.doCipher` overrides can now throw any `GeneralSecurityException`, not just
   the subclasses that the method throws in `AesCounterRandom`.
 * Fixes Javadoc warnings.
