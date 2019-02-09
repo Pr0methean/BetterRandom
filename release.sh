@@ -13,8 +13,8 @@ rm -rf ../../.m2/repository/io/github/pr0methean/betterrandom/ &&\
 (
   if [ "$#" -ge 1 ]; then
     mvn versions:set -DnewVersion=$1
-    sed -i "s/${OLDVERSION}/$1/" ../benchmark/pom.xml
-    sed -i "s/${OLDVERSION}/$1/" ../FifoFiller/pom.xml
+    sed -i "s/${OLDVERSION}<!--updateme-->/$1<!--updateme-->/" ../benchmark/pom.xml
+    sed -i "s/${OLDVERSION}<!--updateme-->/$1<!--updateme-->/" ../FifoFiller/pom.xml
     git add pom.xml
     git add ../benchmark/pom.xml
     git add ../FifoFiller/pom.xml
@@ -36,10 +36,10 @@ rm -rf ../../.m2/repository/io/github/pr0methean/betterrandom/ &&\
       mvn versions:set -DnewVersion=${NEWVERSION}
       rm pom.xml.versionsBackup
       # For some reason we end up with -SNAPSHOT-SNAPSHOT without next 2 lines:
-      sed -i "s/$1-SNAPSHOT/${NEWVERSION}/" ../benchmark/pom.xml
-      sed -i "s/$1-SNAPSHOT/${NEWVERSION}/" ../FifoFiller/pom.xml
-      sed -i "s/$1/${NEWVERSION}/" ../benchmark/pom.xml
-      sed -i "s/$1/${NEWVERSION}/" ../FifoFiller/pom.xml
+      sed -i "s/$1-SNAPSHOT<!--updateme-->/${NEWVERSION}<!--updateme-->/" ../benchmark/pom.xml
+      sed -i "s/$1-SNAPSHOT<!--updateme-->/${NEWVERSION}<!--updateme-->/" ../FifoFiller/pom.xml
+      sed -i "s/$1<!--updateme-->/${NEWVERSION}<!--updateme-->/" ../benchmark/pom.xml
+      sed -i "s/$1<!--updateme-->/${NEWVERSION}<!--updateme-->/" ../FifoFiller/pom.xml
       git add pom.xml
       git add ../benchmark/pom.xml
       git add ../FifoFiller/pom.xml
