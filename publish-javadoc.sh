@@ -28,14 +28,17 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=\
 })(window,document,'script','dataLayer','GTM-K9NNCTT');</script>\
 <script async src='//pagead2.googlesyndication.com\/pagead\/js\/adsbygoogle.js'></script>\
 <script>(adsbygoogle = window.adsbygoogle || []).push({google_ad_client: 'ca-pub-9922551172827508', \
-enable_page_level_ads: true});</script>"
+enable_page_level_ads: true});</script>" -- index.html
 
 # Disable frames, step 2
 find . -iname "*.html" -exec sed -i 's/<li><a href="[^\"]*" target="_top">Frames<\/a><\/li>//; s/<li><a href="[^\"]*" target="_top">No&nbsp;Frames<\/a><\/li>//; s/overview-summary.html/index.html/g' {} \;
 git add .
+cd ..
+find . -iname '*.html' | replace './' '' > sitemap.txt
+git add sitemap.txt
 git commit -m "🤖 Update Javadocs for GitHub Pages"
 git branch
 git pull --commit
 git push
-cd ../..
+cd ..
 git submodule update --remote
