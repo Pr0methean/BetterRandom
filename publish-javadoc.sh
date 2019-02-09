@@ -34,7 +34,7 @@ enable_page_level_ads: true});</script>" -- index.html
 find . -iname "*.html" -exec sed -i 's/<li><a href="[^\"]*" target="_top">Frames<\/a><\/li>//; s/<li><a href="[^\"]*" target="_top">No&nbsp;Frames<\/a><\/li>//; s/overview-summary.html/index.html/g' {} \;
 git add .
 cd ..
-find . -iname '*.html' | replace './' '' > sitemap.txt
+find . -iname '*.html' | replace './' 'https://pr0methean.github.io/' > sitemap.txt
 git add sitemap.txt
 git commit -m "🤖 Update Javadocs for GitHub Pages"
 git branch
