@@ -1,4 +1,5 @@
 #!/bin/sh
+export MAVEN_OPTS="-Xmx384m"
 cd betterrandom
 if [ "$#" -ge 1 ]; then
   MAYBE_P="-P"
