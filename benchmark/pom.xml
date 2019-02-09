@@ -82,7 +82,7 @@ THE POSSIBILITY OF SUCH DAMAGE.
     <dependency>
       <artifactId>BetterRandom-Java7</artifactId>
       <groupId>io.github.pr0methean.betterrandom</groupId>
-      <version>3.0.3-SNAPSHOT</version>
+      <version>3.0.3</version>
     </dependency>
   </dependencies>
 
@@ -186,11 +186,11 @@ THE POSSIBILITY OF SUCH DAMAGE.
         </plugin>
         <plugin>
           <artifactId>maven-deploy-plugin</artifactId>
-          <version>3.0.3-SNAPSHOT</version>
+          <version>3.0.4-SNAPSHOT</version>
         </plugin>
         <plugin>
           <artifactId>maven-install-plugin</artifactId>
-          <version>3.0.3-SNAPSHOT</version>
+          <version>3.0.4-SNAPSHOT</version>
         </plugin>
         <plugin>
           <artifactId>maven-jar-plugin</artifactId>
@@ -198,7 +198,7 @@ THE POSSIBILITY OF SUCH DAMAGE.
         </plugin>
         <plugin>
           <artifactId>maven-javadoc-plugin</artifactId>
-          <version>3.0.3-SNAPSHOT</version>
+          <version>3.0.4-SNAPSHOT</version>
         </plugin>
         <plugin>
           <artifactId>maven-resources-plugin</artifactId>
@@ -210,7 +210,7 @@ THE POSSIBILITY OF SUCH DAMAGE.
         </plugin>
         <plugin>
           <artifactId>maven-source-plugin</artifactId>
-          <version>3.0.3-SNAPSHOT</version>
+          <version>3.0.4-SNAPSHOT</version>
         </plugin>
         <plugin>
           <artifactId>maven-surefire-plugin</artifactId>
