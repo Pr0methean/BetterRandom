@@ -30,6 +30,11 @@ import org.slf4j.LoggerFactory;
 @SuppressWarnings("ClassExplicitlyExtendsThread")
 public final class RandomSeederThread extends LooperThread {
 
+  /**
+   * The initial default priority for new seeder threads.
+   */
+  public static final int DEFAULT_DEFAULT_PRIORITY = Thread.NORM_PRIORITY + 1;
+
   private static final Logger LOG = LoggerFactory.getLogger(RandomSeederThread.class);
   @SuppressWarnings("StaticCollection") private static final Map<SeedGenerator, RandomSeederThread>
       INSTANCES = new ConcurrentHashMap<>(1);
@@ -49,7 +54,7 @@ public final class RandomSeederThread extends LooperThread {
   private final Set<Random> otherPrngsThisIteration
       = Collections.newSetFromMap(new WeakHashMap<>(1));
   private final WeakHashMap<ByteArrayReseedableRandom, byte[]> seedArrays = new WeakHashMap<>(1);
-  private static final AtomicInteger defaultPriority = new AtomicInteger(Thread.NORM_PRIORITY + 1);
+  private static final AtomicInteger defaultPriority = new AtomicInteger(DEFAULT_DEFAULT_PRIORITY);
 
   /**
    * Private constructor because only one instance per seed source.

@@ -300,10 +300,12 @@ public enum RandomTestUtils {
     } catch (final InterruptedException e) {
       throw new AssertionError(e);
     } finally {
-      RandomSeederThread.setPriority(testSeedGenerator, Thread.NORM_PRIORITY);
       if (setSeedGenerator) {
         RandomTestUtils.removeAndAssertEmpty(testSeedGenerator, rng);
         assertNull(rng.getSeedGenerator());
+      } else {
+        RandomSeederThread.setPriority(testSeedGenerator,
+            RandomSeederThread.DEFAULT_DEFAULT_PRIORITY);
       }
     }
   }
