@@ -1,5 +1,6 @@
 # 3.1.0
-* `RandomSeederThread` now exposes the constant `DEFAULT_DEFAULT_PRIORITY`.
+* `RandomSeederThread` now exposes the constant `DEFAULT_DEFAULT_PRIORITY` and the method
+  `getDefaultPriority()`.
 
 # 3.0.3
 * `RandomSeederThread`'s default priority is increased slightly, to decrease the risk that it is
