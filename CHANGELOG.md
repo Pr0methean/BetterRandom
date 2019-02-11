@@ -1,3 +1,6 @@
+# 3.1.0
+* `RandomSeederThread` now exposes the constant `DEFAULT_DEFAULT_PRIORITY`.
+
 # 3.0.3
 * `RandomSeederThread`'s default priority is increased slightly, to decrease the risk that it is
   starved out. It is still "best efforts", but best efforts are now more likely to suffice.
