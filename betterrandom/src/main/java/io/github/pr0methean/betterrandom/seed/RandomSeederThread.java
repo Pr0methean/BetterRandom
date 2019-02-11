@@ -195,6 +195,15 @@ public final class RandomSeederThread extends LooperThread {
   }
 
   /**
+   * Gets the default priority for new random-seeder threads.
+   * @return the thread priority
+   * @see Thread#setPriority(int)
+   */
+  public static int getDefaultPriority() {
+    return defaultPriority.get();
+  }
+
+  /**
    * Sets the priority of a random-seeder thread, starting it if it's not already running.
    * @param seedGenerator the {@link SeedGenerator} of the thread whose priority should change
    * @param priority the thread priority

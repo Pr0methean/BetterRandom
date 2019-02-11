@@ -313,7 +313,7 @@ public enum RandomTestUtils {
         assertNull(rng.getSeedGenerator());
       } else {
         RandomSeederThread.setPriority(testSeedGenerator,
-            RandomSeederThread.DEFAULT_DEFAULT_PRIORITY);
+            RandomSeederThread.getDefaultPriority());
       }
     }
   }
