@@ -42,6 +42,16 @@ jobs:
     osx_image: xcode10
     env: OP=unit-tests
     stage: unit tests
+  - language: java
+    os: osx
+    osx_image: xcode10.1
+    env: OP=unit-tests
+    stage: unit tests
+  - language: java
+    os: osx
+    osx_image: xcode10.2
+    env: OP=unit-tests
+    stage: unit tests
   - language: android
     os: linux
     jdk: openjdk8
@@ -106,7 +116,7 @@ jobs:
     stage: long tests
   - language: java
     os: osx
-    osx_image: xcode10
+    osx_image: xcode10.1
     env: OP=benchmark
     stage: long tests
   - language: android
