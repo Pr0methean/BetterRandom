@@ -12,6 +12,7 @@ git:
   depth: 10
   quiet: true
   submodules: true
+sudo: required
 stages:
 - unit tests
 - long tests
