@@ -25,7 +25,7 @@ if [ "${APPVEYOR}" != "" ]; then
 fi
 cd betterrandom
 # Coverage test
-PATH="${NO_GIT_PATH}" mvn ${MAYBE_ANDROID_FLAG} clean ${MAYBE_JACOCO_PREPARE} \
+PATH="${NO_GIT_PATH}" sudo nice -n -5 mvn ${MAYBE_ANDROID_FLAG} clean ${MAYBE_JACOCO_PREPARE} \
     test ${MAYBE_JACOCO_REPORT} -e
 STATUS=$?
 if [ "${STATUS}" = 0 ] && [ "${NO_JACOCO}" != "true" ]; then
@@ -88,7 +88,7 @@ if [ "${JAVA8}" = "true" ]; then
   PATH="${NO_GIT_PATH}" mvn -DskipTests -Dmaven.test.skip=true ${MAYBE_ANDROID_FLAG} \
       pre-integration-test && \
       echo "[unit-tests.sh] Testing against Proguarded jar." && \
-      PATH="${NO_GIT_PATH}" mvn -Dmaven.main.skip=true ${MAYBE_ANDROID_FLAG} integration-test -e
+      PATH="${NO_GIT_PATH}" sudo nice -n -5 mvn -Dmaven.main.skip=true ${MAYBE_ANDROID_FLAG} integration-test -e
   STATUS=$?
 fi
 cd ..
