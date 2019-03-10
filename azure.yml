@@ -21,7 +21,7 @@ resources:
   - container: linux # reusable alias
     image: ubuntu:16.04
 jobs:
-- job: OSX Unit Tests
+- job: UnitOSX
   strategy:
     matrix:
       Java08:
