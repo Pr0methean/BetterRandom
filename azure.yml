@@ -28,8 +28,8 @@ jobs:
     matrix:
       OracleJdk08:
         javaInstall: 'sudo add-apt-repository ppa:webupd8team/java && sudo apt-get update && sudo apt-get install oracle-java8-installer' 
-      OracleJdk09:
-        javaInstall: 'sudo add-apt-repository ppa:webupd8team/java && sudo apt-get update && sudo apt-get install oracle-java9-installer' 
+#      OracleJdk09:
+#        javaInstall: 'sudo add-apt-repository ppa:webupd8team/java && sudo apt-get update && sudo apt-get install oracle-java9-installer' 
       OracleJdk10:
         javaInstall: 'sudo add-apt-repository ppa:linuxuprising/java && sudo apt-get update && sudo apt-get install oracle-java10-installer'
       OracleJdk11:
@@ -39,9 +39,9 @@ jobs:
       OpenJdk09:
         javaInstall: 'sudo apt-get install openjdk-9-jdk'
       OpenJdk11:
-        javaInstall: 'sudo apt-get install openjdk-11-jdk'
+        javaInstall: 'sudo apt-get update && sudo apt-get install openjdk-11-jdk'
       OpenJdk12:
-        javaInstall: 'sudo apt-get install openjdk-12-jdk'
+        javaInstall: 'sudo apt-get update && sudo apt-get install openjdk-12-jdk'
   pool:
     vmImage: 'ubuntu-16.04'
   steps:
@@ -54,4 +54,7 @@ jobs:
   pool:
     vmImage: 'windows-2019'
   steps:
-  - script: ./unit-tests.ps1
+  - task: PowerShell@2
+    inputs:
+      targetType: 'filePath'
+      filePath: ./unit-tests.ps1
