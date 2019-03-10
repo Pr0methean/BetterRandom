@@ -43,7 +43,7 @@ jobs:
       OpenJdk11:
         javaInstall: 'sudo apt-get update && sudo apt dist-upgrade && sudo apt-get install openjdk-11-jdk'
       OpenJdk12:
-        javaInstall: 'sudo add-apt-package "deb http://http.us.debian.org/debian unstable main non-free contrib" && sudo apt-get update && sudo apt-get install openjdk-12-jdk'
+        javaInstall: 'sudo add-apt-repository "deb http://http.us.debian.org/debian unstable main non-free contrib" && sudo apt-get update && sudo apt-get install openjdk-12-jdk'
   pool:
     vmImage: 'ubuntu-16.04'
   steps:
