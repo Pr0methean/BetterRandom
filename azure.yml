@@ -27,6 +27,7 @@ jobs:
   strategy:
     matrix:
       OracleJdk08:
+        JAVA8: 'true'
         javaInstall: 'sudo add-apt-repository ppa:webupd8team/java && sudo apt-get update && sudo apt-get install oracle-java8-installer' 
 #      OracleJdk09:
 #        javaInstall: 'sudo add-apt-repository ppa:webupd8team/java && sudo apt-get update && sudo apt-get install oracle-java9-installer' 
@@ -35,6 +36,7 @@ jobs:
 #      OracleJdk11:
 #        javaInstall: 'sudo add-apt-repository ppa:linuxuprising/java && sudo apt-get update && sudo apt-get install oracle-java11-installer'
       OpenJdk08:
+        JAVA8: 'true'
         javaInstall: 'sudo apt-get install openjdk-8-jdk'
       OpenJdk09:
         javaInstall: 'sudo apt-get -o Dpkg::Options::="--force-overwrite" install openjdk-9-jdk'
