@@ -22,7 +22,7 @@ jobs:
   pool:
     vmImage: 'macOs-10.13'
   steps:
-  - script: unit-tests.sh
+  - script: ./unit-tests.sh
 - job: UnitLinux
   strategy:
     matrix:
@@ -45,10 +45,13 @@ jobs:
   pool:
     vmImage: 'ubuntu-16.04'
   steps:
+  # Pre-accept licences
+  - script: echo debconf shared/accepted-oracle-license-v1-1 select true | sudo debconf-set-selections
+  - script: echo debconf shared/accepted-oracle-license-v1-1 seen true | sudo debconf-set-selections
   - script: $(javaInstall)
-  - script: unit-tests.sh
+  - script: ./unit-tests.sh
 - job: UnitWindows
   pool:
     vmImage: 'windows-2019'
   steps:
-  - script: unit-tests.ps1
+  - script: ./unit-tests.ps1
