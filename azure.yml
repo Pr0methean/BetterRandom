@@ -42,5 +42,5 @@ jobs:
       versionSpec: $(javaVersion)
       jdkArchitectureOption: x64
       jdkSourceOption: azureStorage
-      jdkDestinationDirectory: $(JAVA_HOME)
+      jdkDestinationDirectory: jdk
   - script: unit-tests.sh
