@@ -46,6 +46,9 @@ jobs:
         javaInstall: 'sudo add-apt-repository "deb http://http.us.debian.org/debian unstable main non-free contrib" && sudo apt-get update && sudo apt-get --allow-unauthenticated install openjdk-12-jdk'
   pool:
     vmImage: 'ubuntu-16.04'
+  variables:
+    ACCEPT_EULA: y
+    DEBIAN_FRONTEND: noninteractive
   steps:
   # Pre-accept licences
   - script: echo debconf shared/accepted-oracle-license-v1-1 select true | sudo debconf-set-selections
