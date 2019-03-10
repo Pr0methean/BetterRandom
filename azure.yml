@@ -41,16 +41,11 @@ jobs:
       OpenJdk11:
         javaInstall: 'sudo apt-get install openjdk-11-jdk'
       OpenJdk12:
-        javaVersion: 'sudo apt-get install openjdk-12-jdk'
+        javaInstall: 'sudo apt-get install openjdk-12-jdk'
   pool:
     vmImage: 'ubuntu-16.04'
   steps:
-  - task: JavaToolInstaller@0
-    inputs:
-      versionSpec: $(javaVersion)
-      jdkArchitectureOption: x64
-      jdkSourceOption: azureStorage
-      jdkDestinationDirectory: jdk
+  - script: $(javaInstall)
   - script: unit-tests.sh
 - job: UnitWindows
   pool:
