@@ -3,6 +3,7 @@ trigger:
     include:
     - master
     - java7
+    - azurePipeline
   paths:
     exclude:
     - README.md
@@ -18,41 +19,29 @@ pr:
     - CHANGELOG.md
 jobs:
 - job: UnitOSX
-  strategy:
-    matrix:
-      Java08:
-        javaVersion: '8'
-      Java09:
-        javaVersion: '9'
-      Java10:
-        javaVersion: '10'
-      Java11:
-        javaVersion: '11'
-      Java12:
-        javaVersion: '12'
   pool:
     vmImage: 'macOs-10.13'
   steps:
-  - task: JavaToolInstaller@0
-    inputs:
-      versionSpec: $(javaVersion)
-      jdkArchitectureOption: x64
-      jdkSourceOption: azureStorage
-      jdkDestinationDirectory: jdk
   - script: unit-tests.sh
 - job: UnitLinux
   strategy:
     matrix:
-      Java08:
-        javaVersion: '8'
-      Java09:
-        javaVersion: '9'
-      Java10:
-        javaVersion: '10'
-      Java11:
-        javaVersion: '11'
-      Java12:
-        javaVersion: '12'
+      OracleJdk08:
+        javaInstall: 'sudo add-apt-repository ppa:webupd8team/java && sudo apt-get update && sudo apt-get install oracle-java8-installer' 
+      OracleJdk09:
+        javaInstall: 'sudo add-apt-repository ppa:webupd8team/java && sudo apt-get update && sudo apt-get install oracle-java9-installer' 
+      OracleJdk10:
+        javaInstall: 'sudo add-apt-repository ppa:linuxuprising/java && sudo apt-get update && sudo apt-get install oracle-java10-installer'
+      OracleJdk11:
+        javaInstall: 'sudo add-apt-repository ppa:linuxuprising/java && sudo apt-get update && sudo apt-get install oracle-java11-installer'
+      OpenJdk08:
+        javaInstall: 'sudo apt-get install openjdk-8-jdk'
+      OpenJdk09:
+        javaInstall: 'sudo apt-get install openjdk-9-jdk'
+      OpenJdk11:
+        javaInstall: 'sudo apt-get install openjdk-11-jdk'
+      OpenJdk12:
+        javaVersion: 'sudo apt-get install openjdk-12-jdk'
   pool:
     vmImage: 'ubuntu-16.04'
   steps:
@@ -64,25 +53,7 @@ jobs:
       jdkDestinationDirectory: jdk
   - script: unit-tests.sh
 - job: UnitWindows
-  strategy:
-    matrix:
-      Java08:
-        javaVersion: '8'
-      Java09:
-        javaVersion: '9'
-      Java10:
-        javaVersion: '10'
-      Java11:
-        javaVersion: '11'
-      Java12:
-        javaVersion: '12'
   pool:
     vmImage: 'windows-2019'
   steps:
-  - task: JavaToolInstaller@0
-    inputs:
-      versionSpec: $(javaVersion)
-#      jdkArchitectureOption: x64
-      jdkSourceOption: AzureStorage
-      jdkDestinationDirectory: jdk
   - script: unit-tests.ps1
