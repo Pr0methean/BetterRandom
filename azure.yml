@@ -25,15 +25,15 @@ jobs:
   strategy:
     matrix:
       Java08:
-      - javaVersion: '8'
+        javaVersion: '8'
       Java09:
-      - javaVersion: '9'
+        javaVersion: '9'
       Java10:
-      - javaVersion: '10'
+        javaVersion: '10'
       Java11:
-      - javaVersion: '11'
+        javaVersion: '11'
       Java12:
-      - javaVersion: '12'
+        javaVersion: '12'
   pool:
     vmImage: 'macOs-10.13'
   steps:
