@@ -16,10 +16,6 @@ pr:
     exclude:
     - README.md
     - CHANGELOG.md
-resources:
-  containers:
-  - container: linux # reusable alias
-    image: ubuntu:16.04
 jobs:
 - job: UnitOSX
   strategy:
@@ -44,3 +40,49 @@ jobs:
       jdkSourceOption: azureStorage
       jdkDestinationDirectory: jdk
   - script: unit-tests.sh
+- job: UnitLinux
+  strategy:
+    matrix:
+      Java08:
+        javaVersion: '8'
+      Java09:
+        javaVersion: '9'
+      Java10:
+        javaVersion: '10'
+      Java11:
+        javaVersion: '11'
+      Java12:
+        javaVersion: '12'
+  pool:
+    vmImage: 'ubuntu-16.04'
+  steps:
+  - task: JavaToolInstaller@0
+    inputs:
+      versionSpec: $(javaVersion)
+      jdkArchitectureOption: x64
+      jdkSourceOption: azureStorage
+      jdkDestinationDirectory: jdk
+  - script: unit-tests.sh
+- job: UnitWindows
+  strategy:
+    matrix:
+      Java08:
+        javaVersion: '8'
+      Java09:
+        javaVersion: '9'
+      Java10:
+        javaVersion: '10'
+      Java11:
+        javaVersion: '11'
+      Java12:
+        javaVersion: '12'
+  pool:
+    vmImage: 'windows-2019'
+  steps:
+  - task: JavaToolInstaller@0
+    inputs:
+      versionSpec: $(javaVersion)
+      jdkArchitectureOption: x64
+      jdkSourceOption: azureStorage
+      jdkDestinationDirectory: jdk
+  - script: unit-tests.ps1
