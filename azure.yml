@@ -1,0 +1,33 @@
+trigger: &trigger
+  branches:
+    include:
+    - master
+    - java7
+  paths:
+    exclude:
+    - README.md
+    - CHANGELOG.md
+pr:
+  <<: *trigger
+resources:
+  containers:
+  - container: linux # reusable alias
+    image: ubuntu:16.04
+jobs:
+- job: Linux Unit Tests
+  strategy:
+    matrix:
+      javaVersion:
+        - '8'
+        - '9'
+        - '10'
+        - '11'
+        - '12'
+  pool:
+    vmImage: 'macOs-10.13'
+  steps: &unitTestSteps
+  - task: JavaToolInstaller@0
+    inputs:
+      versionSpec: $(javaVersion)
+      jdkArchitectureOption: x64
+  - script: unit-tests.sh
