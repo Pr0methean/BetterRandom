@@ -12,6 +12,7 @@ git:
   depth: 10
   quiet: true
   submodules: true
+sudo: required # for "sudo renice -10 $$"; repeated per job when also needed for other reasons
 stages:
 - unit tests
 - long tests

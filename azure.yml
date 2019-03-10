@@ -1,0 +1,88 @@
+trigger:
+  branches:
+    include:
+    - master
+    - java7
+  paths:
+    exclude:
+    - README.md
+    - CHANGELOG.md
+pr:
+  branches:
+    include:
+    - master
+    - java7
+  paths:
+    exclude:
+    - README.md
+    - CHANGELOG.md
+jobs:
+- job: UnitOSX
+  strategy:
+    matrix:
+      Java08:
+        javaVersion: '8'
+      Java09:
+        javaVersion: '9'
+      Java10:
+        javaVersion: '10'
+      Java11:
+        javaVersion: '11'
+      Java12:
+        javaVersion: '12'
+  pool:
+    vmImage: 'macOs-10.13'
+  steps:
+  - task: JavaToolInstaller@0
+    inputs:
+      versionSpec: $(javaVersion)
+      jdkArchitectureOption: x64
+      jdkSourceOption: azureStorage
+      jdkDestinationDirectory: jdk
+  - script: unit-tests.sh
+- job: UnitLinux
+  strategy:
+    matrix:
+      Java08:
+        javaVersion: '8'
+      Java09:
+        javaVersion: '9'
+      Java10:
+        javaVersion: '10'
+      Java11:
+        javaVersion: '11'
+      Java12:
+        javaVersion: '12'
+  pool:
+    vmImage: 'ubuntu-16.04'
+  steps:
+  - task: JavaToolInstaller@0
+    inputs:
+      versionSpec: $(javaVersion)
+      jdkArchitectureOption: x64
+      jdkSourceOption: azureStorage
+      jdkDestinationDirectory: jdk
+  - script: unit-tests.sh
+- job: UnitWindows
+  strategy:
+    matrix:
+      Java08:
+        javaVersion: '8'
+      Java09:
+        javaVersion: '9'
+      Java10:
+        javaVersion: '10'
+      Java11:
+        javaVersion: '11'
+      Java12:
+        javaVersion: '12'
+  pool:
+    vmImage: 'windows-2019'
+  steps:
+  - task: JavaToolInstaller@0
+    inputs:
+      versionSpec: $(javaVersion)
+#      jdkArchitectureOption: x64
+      jdkSourceOption: AzureStorage
+      jdkDestinationDirectory: jdk
+  - script: unit-tests.ps1
