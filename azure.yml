@@ -82,7 +82,7 @@ jobs:
   - task: JavaToolInstaller@0
     inputs:
       versionSpec: $(javaVersion)
-      jdkArchitectureOption: x64
-      jdkSourceOption: azureStorage
+#      jdkArchitectureOption: x64
+      jdkSourceOption: AzureStorage
       jdkDestinationDirectory: jdk
   - script: unit-tests.ps1
