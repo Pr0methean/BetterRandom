@@ -64,7 +64,30 @@ jobs:
   - script: source ./install-jdk.sh -l $(javaLicence) -f $(javaVersion) -e -v
   - script: echo "JAVA_HOME=${JAVA_HOME}"
   - script: ./unit-tests.sh
-- job: UnitBash
+- job: UnitMac
+  variables:
+    JAVA_HOME: jdk
+  strategy:
+    matrix:
+      OpenJdk08Mac:
+        JAVA8: 'true'
+    11.0.2, x86_64:	"OpenJDK 11.0.2"	
+    10.0.2, x86_64:	"Java SE 10.0.2"	
+    9.0.4, x86_64:	"Java SE 9.0.4"	
+    1.8.0_202, x86_64:	"Java SE 8"	
+    1.7.0_80, x86_64:	"Java SE 7"	/Library/Java/JavaVirtualMachines/jdk1.7.0_80.jdk/Contents/Home
+        JAVA_HOME: '/Library/Java/JavaVirtualMachines/jdk1.8.0_202.jdk/Contents/Home'
+      OpenJdk09Mac:
+        JAVA_HOME: '/Library/Java/JavaVirtualMachines/jdk-9.0.4.jdk/Contents/Home'
+      OpenJdk10Mac:
+        JAVA_HOME: '/Library/Java/JavaVirtualMachines/jdk-10.0.2.jdk/Contents/Home'
+      OpenJdk11Mac:
+        JAVA_HOME: '/Library/Java/JavaVirtualMachines/openjdk-11.0.2.jdk/Contents/Home'
+  pool:
+    vmImage: $(vmImage)
+  steps:
+  - script: ./unit-tests.sh
+- job: UnitLinux
   variables:
     JAVA_HOME: jdk
   strategy:
@@ -85,22 +108,9 @@ jobs:
       OpenJNine11Linux:
         javaUrl: $(openjnine11linux)
         vmImage: 'ubuntu-16.04'
-      OpenJdk08Mac:
-        JAVA8: 'true'
-        javaUrl: $(openjdk08mac)
-        vmImage: 'macOs-10.13'
-      OpenJdk09Mac:
-        javaUrl: $(openjdk09mac)
-        vmImage: 'macOs-10.13'
-      OpenJdk10Mac:
-        javaUrl: $(openjdk10mac)
-        vmImage: 'macOs-10.13'
-      OpenJdk11Mac:
-        javaUrl: $(openjdk11mac)
-        vmImage: 'macOs-10.13'
-      OpenJNine11Mac:
-        javaUrl: $(openjnine11mac)
-        vmImage: 'macOs-10.13'
+#      OpenJNine11Mac:
+#        javaUrl: $(openjnine11mac)
+#        vmImage: 'macOs-10.13'
   pool:
     vmImage: $(vmImage)
   steps:

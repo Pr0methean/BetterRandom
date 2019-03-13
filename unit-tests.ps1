@@ -28,7 +28,8 @@ if ( $STATUS ) {
         $COMMIT = git rev-parse HEAD
         $JOB_ID = [guid]::NewGuid()
     }
-    GIT_CURL_VERBOSE=1 git clone "https://github.com/Pr0methean/betterrandom-coverage.git" *>&1
+    $Env:GIT_CURL_VERBOSE=1
+    git clone "https://github.com/Pr0methean/betterrandom-coverage.git" *>&1
     git checkout master *>&1
     if ( Test-Path "betterrandom-coverage/${COMMIT}" ) {
         echo "[unit-tests.ps1] Aggregating with JaCoCo reports from other jobs."
