@@ -1,3 +1,21 @@
+variables:
+  openjdk11linux: 'https://github.com/AdoptOpenJDK/openjdk11-binaries/releases/download/jdk-11.0.2%2B9/OpenJDK11U-jdk_x64_linux_hotspot_11.0.2_9.tar.gz' 
+  openjdk10linux: 'https://github.com/AdoptOpenJDK/openjdk10-releases/releases/download/jdk-10.0.2%2B13/OpenJDK10_x64_Linux_jdk-10.0.2%2B13.tar.gz'
+  openjdk09linux: 'https://github.com/AdoptOpenJDK/openjdk9-binaries/releases/download/jdk-9.0.4%2B11/OpenJDK9U-jdk_x64_linux_hotspot_9.0.4_11.tar.gz'
+  openjdk08linux: 'https://github.com/AdoptOpenJDK/openjdk8-binaries/releases/download/jdk8u202-b08/OpenJDK8U-jdk_x64_linux_hotspot_8u202b08.tar.gz'
+  openjdk11mac: 'https://github.com/AdoptOpenJDK/openjdk11-binaries/releases/download/jdk-11.0.2%2B9/OpenJDK11U-jdk_x64_mac_hotspot_11.0.2_9.tar.gz'
+  openjdk10mac: 'https://github.com/AdoptOpenJDK/openjdk10-releases/releases/download/jdk-10.0.2%2B13/OpenJDK10_x64_Mac_jdk-10.0.2%2B13.tar.gz'
+  openjdk09mac: 'https://github.com/AdoptOpenJDK/openjdk9-binaries/releases/download/jdk-9%2B181/OpenJDK9U-jdk_x64_mac_hotspot_9_181.tar.gz'
+  openjdk08mac: 'https://github.com/AdoptOpenJDK/openjdk8-binaries/releases/download/jdk8u202-b08/OpenJDK8U-jdk_x64_mac_hotspot_8u202b08.tar.gz'
+  openjdk11win: 'https://github.com/AdoptOpenJDK/openjdk11-binaries/releases/download/jdk-11.0.2%2B9/OpenJDK11U-jdk_x64_windows_hotspot_11.0.2_9.zip'
+  openjdk10win: 'https://github.com/AdoptOpenJDK/openjdk10-releases/releases/download/jdk-10.0.2%2B13/OpenJDK10_x64_Win_jdk-10.0.2%2B13.zip'
+  openjdk09win: 'https://github.com/AdoptOpenJDK/openjdk9-binaries/releases/download/jdk-9.0.4%2B11/OpenJDK9U-jdk_x64_windows_hotspot_9.0.4_11.zip'
+  openjdk08win: 'https://github.com/AdoptOpenJDK/openjdk8-binaries/releases/download/jdk8u202-b08/OpenJDK8U-jdk_x64_windows_hotspot_8u202b08.zip'
+  openjnine11linux: 'https://github.com/AdoptOpenJDK/openjdk11-binaries/releases/download/jdk-11.0.2%2B9_openj9-0.12.1/OpenJDK11U-jdk_x64_linux_openj9_11.0.2_9_openj9-0.12.1_openj9-0.12.1.tar.gz'
+  openjnine11mac: 'https://github.com/AdoptOpenJDK/openjdk11-binaries/releases/download/jdk-11.0.2%2B9_openj9-0.12.1/OpenJDK11U-jdk_x64_mac_openj9_11.0.2_9_openj9-0.12.1_openj9-0.12.1.tar.gz'
+  openjnine11win: 'https://github.com/AdoptOpenJDK/openjdk11-binaries/releases/download/jdk-11.0.2%2B9_openj9-0.12.1/OpenJDK11U-jdk_x64_windows_openj9_11.0.2_9_openj9-0.12.1_openj9-0.12.1.zip'
+#  openjnine10linux: 'https://github.com/AdoptOpenJDK/openjdk10-openj9-releases/releases/download/jdk-10.0.2%2B13_openj9-0.9.0/OpenJDK10-OPENJ9_x64_Linux_jdk-10.0.2.13_openj9-0.9.0.tar.gz'
+#  openjnine09linux: 'https://github.com/AdoptOpenJDK/openjdk9-openj9-releases/releases/download/jdk-9.0.4%2B12_openj9-0.9.0/OpenJDK9-OPENJ9_x64_Linux_jdk-9.0.4.12_openj9-0.9.0.tar.gz'
 trigger:
   branches:
     include:
@@ -17,43 +35,83 @@ pr:
     exclude:
     - README.md
     - CHANGELOG.md
-jobs:
-- job: UnitOSX
-  pool:
-    vmImage: 'macOs-10.13'
-  steps:
-  - script: ./unit-tests.sh
-- job: UnitLinux
+- job: UnitOracle
   strategy:
     matrix:
-      OracleJdk08:
-        JAVA8: 'true'
-        javaInstall: 'sudo add-apt-repository ppa:webupd8team/java && sudo apt-get update && sudo apt-get install oracle-java8-installer' 
-#      OracleJdk09:
-#        javaInstall: 'sudo add-apt-repository ppa:webupd8team/java && sudo apt-get update && sudo apt-get install oracle-java9-installer' 
-#      OracleJdk10:
-#        javaInstall: 'sudo add-apt-repository ppa:linuxuprising/java && sudo apt-get update && sudo apt-get install oracle-java10-installer'
-      OracleJdk11:
-        javaInstall: 'sudo add-apt-repository ppa:linuxuprising/java && sudo apt-get update && sudo apt-get install oracle-java11-installer'
-      OpenJdk08:
-        JAVA8: 'true'
-        javaInstall: 'sudo apt-get install openjdk-8-jdk'
-      OpenJdk09:
-        javaInstall: 'sudo apt-get -o Dpkg::Options::="--force-overwrite" install openjdk-9-jdk'
-      OpenJdk11:
-        javaInstall: 'sudo apt-get update && sudo apt -y dist-upgrade && sudo apt-get install openjdk-11-jdk'
-      OpenJdk12:
-        javaInstall: 'sudo add-apt-repository "deb http://http.us.debian.org/debian unstable main non-free contrib" && sudo apt-get update && sudo apt-get --allow-unauthenticated install openjdk-12-jdk'
+#      OracleJdk08:
+#        JAVA8: 'true'
+#        javaLicence: BCL
+#        javaVersion: '8'
+#      OracleJdk08_LimitedCrypto:
+#        JAVA8: 'true'
+#        LIMITED_CRYPTO: 'true'
+#        javaLicence: BCL
+#        javaVersion: '8'
+      LinuxJdk11:
+        javaLicence: BCL
+        javaVersion: '11'
+        installJdkOs: 'linux-x64'
+        vmImage: 'ubuntu-16.04'
+      OsxJdk11:
+        javaLicence: BCL
+        javaVersion: '11'
+        installJdkOs: 'osx-x64'
+        vmImage: 'macOs-10.13'        
   pool:
-    vmImage: 'ubuntu-16.04'
+    vmImage: $(vmImage)
   variables:
-    ACCEPT_EULA: y
-    DEBIAN_FRONTEND: noninteractive
+    JAVA_HOME: ~/jdk
   steps:
-  # Pre-accept licences
-  - script: echo debconf shared/accepted-oracle-license-v1-1 select true | sudo debconf-set-selections
-  - script: echo debconf shared/accepted-oracle-license-v1-1 seen true | sudo debconf-set-selections
-  - script: $(javaInstall)
+  - script: ./install-jdk.sh -l $(javaLicence) -f $(javaVersion) -t $(JAVA_HOME)
+  - script: ./unit-tests.sh
+- job: UnitBash
+  variables:
+    JAVA_HOME: ~/jdk
+  strategy:
+    matrix:
+      OpenJdk08Linux:
+        JAVA8: 'true'
+        javaUrl: $(openjdk08linux)
+	vmImage: 'ubuntu-16.04'
+      OpenJdk09Linux:
+        javaUrl: $(openjdk09linux)
+	vmImage: 'ubuntu-16.04'
+      OpenJdk10Linux:
+        javaUrl: $(openjdk10linux)
+	vmImage: 'ubuntu-16.04'
+      OpenJdk11Linux:
+        javaUrl: $(openjdk11linux)
+	vmImage: 'ubuntu-16.04'
+      OpenJNine11Linux:
+        javaUrl: $(openjnine11linux)
+	vmImage: 'ubuntu-16.04'
+      OpenJdk08Mac:
+        JAVA8: 'true'
+        javaUrl: $(openjdk08linux)
+	vmImage: 'macOs-10.13'
+      OpenJdk09Mac:
+        javaUrl: $(openjdk09linux)
+	vmImage: 'macOs-10.13'
+      OpenJdk10Mac:
+        javaUrl: $(openjdk10linux)
+	vmImage: 'macOs-10.13'
+      OpenJdk11Mac:
+        javaUrl: $(openjdk11linux)
+	vmImage: 'macOs-10.13'
+      OpenJNine11Mac:
+        javaUrl: $(openjnine11linux)
+	vmImage: 'macOs-10.13'
+  pool:
+    vmImage: $(vmImage)
+  variables:
+  steps:
+  - script: wget $(javaUrl) -O jdk.tar.gz
+  - task: JavaToolInstaller@0
+    inputs:
+      jdkSourceOption: localDirectory
+      jdkFile: jdk.tar.gz
+      jdkDestinationDirectory: $(JAVA_HOME)
+      jdkArchitectureOption: x64
   - script: ./unit-tests.sh
 - job: UnitWindows
   pool:
