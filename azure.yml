@@ -88,19 +88,19 @@ jobs:
         vmImage: 'ubuntu-16.04'
       OpenJdk08Mac:
         JAVA8: 'true'
-        javaUrl: $(openjdk08linux)
+        javaUrl: $(openjdk08mac)
         vmImage: 'macOs-10.13'
       OpenJdk09Mac:
-        javaUrl: $(openjdk09linux)
+        javaUrl: $(openjdk09mac)
         vmImage: 'macOs-10.13'
       OpenJdk10Mac:
-        javaUrl: $(openjdk10linux)
+        javaUrl: $(openjdk10mac)
         vmImage: 'macOs-10.13'
       OpenJdk11Mac:
-        javaUrl: $(openjdk11linux)
+        javaUrl: $(openjdk11mac)
         vmImage: 'macOs-10.13'
       OpenJNine11Mac:
-        javaUrl: $(openjnine11linux)
+        javaUrl: $(openjnine11mac)
         vmImage: 'macOs-10.13'
   pool:
     vmImage: $(vmImage)
