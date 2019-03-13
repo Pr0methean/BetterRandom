@@ -80,7 +80,7 @@ jobs:
       OpenJdk11Mac:
         JAVA_HOME: '/Library/Java/JavaVirtualMachines/openjdk-11.0.2.jdk/Contents/Home'
   pool:
-    vmImage: $(vmImage)
+    vmImage: 'macOs-10.13'
   steps:
   - script: ./unit-tests.sh
 - job: UnitLinux
