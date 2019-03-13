@@ -62,7 +62,7 @@ jobs:
     vmImage: $(vmImage)
   steps:
   - script: source ./install-jdk.sh -l $(javaLicence) -f $(javaVersion) -t jdk -e -v
-  - script: echo "JAVA_HOME = ${JAVA_HOME}"
+  - script: echo "JAVA_HOME=${JAVA_HOME}"
   - script: ./unit-tests.sh
 - job: UnitBash
   variables:
@@ -112,6 +112,7 @@ jobs:
       cleanDestinationDirectory: true 
       jdkDestinationDirectory: $(JAVA_HOME)
       jdkArchitectureOption: x64
+  - script: echo "JAVA_HOME=${JAVA_HOME}"
   - script: ./unit-tests.sh
 - job: UnitWindows
   pool:
