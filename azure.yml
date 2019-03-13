@@ -104,7 +104,6 @@ jobs:
         vmImage: 'macOs-10.13'
   pool:
     vmImage: $(vmImage)
-  variables:
   steps:
   - script: wget $(javaUrl) -O jdk.tar.gz
   - task: JavaToolInstaller@0
