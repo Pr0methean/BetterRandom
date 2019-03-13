@@ -28,6 +28,8 @@ if ( $STATUS ) {
         $COMMIT = git rev-parse HEAD
         $JOB_ID = [guid]::NewGuid()
     }
+    $env:GIT_CURL_VERBOSE = 1
+    $env:GIT_TRACE = 1
     git clone --verbose "https://github.com/Pr0methean/betterrandom-coverage.git" *>&1
     git checkout master *>&1
     if ( Test-Path "betterrandom-coverage/${COMMIT}" ) {
