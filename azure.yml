@@ -63,6 +63,7 @@ jobs:
   steps:
   - script: source ./install-jdk.sh -l $(javaLicence) -f $(javaVersion) -t jdk -e -v
   - script: echo "JAVA_HOME=${JAVA_HOME}"
+  - script: /usr/libexec/java_home -V
   - script: ./unit-tests.sh
 - job: UnitBash
   variables:
@@ -113,6 +114,7 @@ jobs:
       jdkDestinationDirectory: $(JAVA_HOME)
       jdkArchitectureOption: x64
   - script: echo "JAVA_HOME=${JAVA_HOME}"
+  - script: /usr/libexec/java_home -V
   - script: ./unit-tests.sh
 - job: UnitWindows
   pool:
