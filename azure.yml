@@ -19,22 +19,22 @@ variables:
 trigger:
   branches:
     include:
-    - master
-    - java7
-    - azurePipeline
+#    - master
+#    - java7
+    - azurePipeline201903
   paths:
     exclude:
     - README.md
     - CHANGELOG.md
-pr:
-  branches:
-    include:
-    - master
-    - java7
-  paths:
-    exclude:
-    - README.md
-    - CHANGELOG.md
+#pr:
+#  branches:
+#    include:
+#    - master
+#    - java7
+#  paths:
+#    exclude:
+#    - README.md
+#    - CHANGELOG.md
 jobs:
 - job: UnitOracle
   strategy:
