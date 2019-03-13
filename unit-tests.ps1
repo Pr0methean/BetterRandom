@@ -22,14 +22,14 @@ if ( $STATUS ) {
         $GH_TOKEN = "$env:access_token"
         $COMMIT = "$env:APPVEYOR_REPO_COMMIT"
         $JOB_ID = "appveyor_$env:APPVEYOR_BUILD_NUMBER.$env:APPVEYOR_JOB_NUMBER"
-        git config --global user.email "appveyor@appveyor.com"
+        git config --global user.email "appveyor@appveyor.com" 2>&1
     } else {
     # Not in CI
         $COMMIT = git rev-parse HEAD
         $JOB_ID = [guid]::NewGuid()
     }
-    git clone "https://github.com/Pr0methean/betterrandom-coverage.git"
-    git checkout master
+    git clone "https://github.com/Pr0methean/betterrandom-coverage.git" 2>&1
+    git checkout master 2>&1
     if ( Test-Path "betterrandom-coverage/${COMMIT}" ) {
         echo "[unit-tests.ps1] Aggregating with JaCoCo reports from other jobs."
         cp betterrandom-coverage/${COMMIT}/*.exec target
@@ -60,8 +60,8 @@ if ( $STATUS ) {
       mv target/jacoco.exec "betterrandom-coverage/${COMMIT}/${JOB_ID}.exec"
       cd betterrandom-coverage
       git add .
-      git commit --amend --no-edit
-      git push
+      git commit --amend --no-edit 2>&1
+      git push 2>&1
     }
     cd ..
     if ( $TRAVIS ) {
@@ -75,7 +75,7 @@ if ( $STATUS ) {
         (New-Object System.Net.WebClient).DownloadFile("https://github.com/codecov/codecov-exe/releases/download/1.0.3/Codecov.zip", (Join-Path $pwd "Codecov.zip")) # Download Codecov.zip from github release.
         Expand-Archive .\Codecov.zip -DestinationPath . # UnZip the file.
         .\Codecov\codecov.exe # Run codecov.exe with whatever commands you need.
-        git config --global user.email "travis@travis-ci.org"
+        git config --global user.email "travis@travis-ci.org" 2>&1
     }
     if ( ! $JAVA9 ) {
         echo "[unit-tests.ps1] Running Proguard."
