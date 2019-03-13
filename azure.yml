@@ -35,6 +35,7 @@ pr:
     exclude:
     - README.md
     - CHANGELOG.md
+jobs:
 - job: UnitOracle
   strategy:
     matrix:
