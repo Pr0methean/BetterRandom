@@ -61,13 +61,13 @@ jobs:
   pool:
     vmImage: $(vmImage)
   variables:
-    JAVA_HOME: ~/jdk
+    JAVA_HOME: jdk
   steps:
-  - script: ./install-jdk.sh -l $(javaLicence) -f $(javaVersion) -t $(JAVA_HOME)
+  - script: source ./install-jdk.sh -l $(javaLicence) -f $(javaVersion) -t $(JAVA_HOME)
   - script: ./unit-tests.sh
 - job: UnitBash
   variables:
-    JAVA_HOME: ~/jdk
+    JAVA_HOME: jdk
   strategy:
     matrix:
       OpenJdk08Linux:
