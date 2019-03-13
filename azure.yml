@@ -63,7 +63,7 @@ jobs:
   variables:
     JAVA_HOME: jdk
   steps:
-  - script: source ./install-jdk.sh -l $(javaLicence) -f $(javaVersion) -t $(JAVA_HOME)
+  - script: source ./install-jdk.sh -l $(javaLicence) -f $(javaVersion) -t $(JAVA_HOME) -e -v
   - script: export JAVA_HOME=$(JAVA_HOME)
   - script: ./unit-tests.sh
 - job: UnitBash
