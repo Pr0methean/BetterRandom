@@ -69,13 +69,9 @@ jobs:
     JAVA_HOME: jdk
   strategy:
     matrix:
+      # Java 7 is /Library/Java/JavaVirtualMachines/jdk1.7.0_80.jdk/Contents/Home
       OpenJdk08Mac:
         JAVA8: 'true'
-    11.0.2, x86_64:	"OpenJDK 11.0.2"	
-    10.0.2, x86_64:	"Java SE 10.0.2"	
-    9.0.4, x86_64:	"Java SE 9.0.4"	
-    1.8.0_202, x86_64:	"Java SE 8"	
-    1.7.0_80, x86_64:	"Java SE 7"	/Library/Java/JavaVirtualMachines/jdk1.7.0_80.jdk/Contents/Home
         JAVA_HOME: '/Library/Java/JavaVirtualMachines/jdk1.8.0_202.jdk/Contents/Home'
       OpenJdk09Mac:
         JAVA_HOME: '/Library/Java/JavaVirtualMachines/jdk-9.0.4.jdk/Contents/Home'
