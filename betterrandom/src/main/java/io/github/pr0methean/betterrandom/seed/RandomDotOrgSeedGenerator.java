@@ -24,6 +24,7 @@ import java.net.MalformedURLException;
 import java.net.Proxy;
 import java.net.URL;
 import java.nio.charset.Charset;
+import java.security.KeyManagementException;
 import java.security.NoSuchAlgorithmException;
 import java.text.MessageFormat;
 import java.time.Clock;
@@ -137,8 +138,9 @@ public enum RandomDotOrgSeedGenerator implements SeedGenerator {
       } catch (NoSuchAlgorithmException e) {
         context = SSLContext.getInstance("TLSv1.2");
       }
+      context.init(null, null, null);
       TLS_MINIMUM_1POINT2 = context.getSocketFactory();
-    } catch (final MalformedURLException | NoSuchAlgorithmException e) {
+    } catch (final MalformedURLException | NoSuchAlgorithmException | KeyManagementException e) {
       // Should never happen.
       throw new InternalError(e);
     }
