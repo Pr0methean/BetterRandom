@@ -24,6 +24,7 @@ import java.net.MalformedURLException;
 import java.net.Proxy;
 import java.net.URL;
 import java.nio.charset.Charset;
+import java.security.NoSuchAlgorithmException;
 import java.text.MessageFormat;
 import java.time.Clock;
 import java.time.Duration;
@@ -36,6 +37,9 @@ import java.util.concurrent.atomic.AtomicReference;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 import javax.annotation.Nullable;
+import javax.net.ssl.HttpsURLConnection;
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.SSLSocketFactory;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
@@ -116,6 +120,10 @@ public enum RandomDotOrgSeedGenerator implements SeedGenerator {
   private static volatile Instant earliestNextAttempt = Instant.MIN;
   private static final URL JSON_REQUEST_URL;
   /**
+   * Prevents downgrade attacks against the random.org connection even with no JVM args.
+   */
+  private static final SSLSocketFactory TLS_MINIMUM_1POINT2;
+  /**
    * The proxy to use with random.org, or null to use the JVM default. Package-visible for testing.
    */
   static final AtomicReference<Proxy> proxy = new AtomicReference<>(null);
@@ -123,7 +131,14 @@ public enum RandomDotOrgSeedGenerator implements SeedGenerator {
   static {
     try {
       JSON_REQUEST_URL = new URL("https://api.random.org/json-rpc/1/invoke");
-    } catch (final MalformedURLException e) {
+      SSLContext context;
+      try {
+        context = SSLContext.getInstance("TLSv1.3");
+      } catch (NoSuchAlgorithmException e) {
+        context = SSLContext.getInstance("TLSv1.2");
+      }
+      TLS_MINIMUM_1POINT2 = context.getSocketFactory();
+    } catch (final MalformedURLException | NoSuchAlgorithmException e) {
       // Should never happen.
       throw new InternalError(e);
     }
@@ -157,8 +172,9 @@ public enum RandomDotOrgSeedGenerator implements SeedGenerator {
   /* Package-visible for testing. */
   static HttpURLConnection openConnection(final URL url) throws IOException {
     final Proxy currentProxy = proxy.get();
-    final HttpURLConnection connection = (HttpURLConnection)
+    final HttpsURLConnection connection = (HttpsURLConnection)
         ((currentProxy == null) ? url.openConnection() : url.openConnection(currentProxy));
+    connection.setSSLSocketFactory(TLS_MINIMUM_1POINT2); // prevent TLS below 1.2
     connection.setRequestProperty("User-Agent", USER_AGENT);
     return connection;
   }
