@@ -10,7 +10,6 @@ import java.security.NoSuchAlgorithmException;
 import java.util.UUID;
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLSocketFactory;
-import org.slf4j.LoggerFactory;
 
 /**
  * Utility methods used in {@link RandomDotOrgSeedGeneratorHermeticTest} and
@@ -53,8 +52,7 @@ public enum RandomDotOrgUtils {
       if (javaVersion == 1) {
         javaVersion = Integer.parseInt(versionNumberParts[1]);
       }
-      LoggerFactory.getLogger(RandomDotOrgUtils.class)
-          .info("Detected JDK version " + javaVersion);
+      System.out.println("Detected JDK version " + javaVersion);
       SSLContext context = SSLContext.getInstance(javaVersion >= 11 ? "TLSv1.3" : "TLSv1.2");
       context.init(null, null, null);
       return context.getSocketFactory();
