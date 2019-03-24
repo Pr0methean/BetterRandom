@@ -24,6 +24,8 @@ import org.testng.annotations.Test;
 
 import static io.github.pr0methean.betterrandom.seed.RandomDotOrgSeedGenerator.MAX_REQUEST_SIZE;
 import static io.github.pr0methean.betterrandom.seed.RandomDotOrgSeedGenerator.setProxy;
+import static io.github.pr0methean.betterrandom.seed.RandomDotOrgSeedGenerator.setSslSocketFactory;
+import static io.github.pr0methean.betterrandom.seed.RandomDotOrgUtils.createSocketFactory;
 import static io.github.pr0methean.betterrandom.seed.RandomDotOrgUtils.createTorProxy;
 import static io.github.pr0methean.betterrandom.seed.SeedTestUtils.testGenerator;
 import static org.mockito.ArgumentMatchers.any;
@@ -258,6 +260,15 @@ public class RandomDotOrgSeedGeneratorHermeticTest extends PowerMockTestCase {
     // Request more bytes than can be gotten in one Web request.
     mockRandomDotOrgResponse(MAX_SIZE_RESPONSE_NEW_API);
     testLargeRequest();
+  }
+
+  @Test public void testSetSslSocketFactory() {
+    setSslSocketFactory(createSocketFactory());
+    try {
+      testGenerator(RandomDotOrgSeedGenerator.RANDOM_DOT_ORG_SEED_GENERATOR, false);
+    } finally {
+      setSslSocketFactory(null);
+    }
   }
 
   @AfterMethod public void tearDownMethod() {
