@@ -48,16 +48,18 @@ jobs:
 #        LIMITED_CRYPTO: 'true'
 #        javaLicence: BCL
 #        javaVersion: '8'
-      LinuxJdk11:
+      OracleJdk11Linux:
         javaLicence: BCL
         javaVersion: '11'
         installJdkOs: 'linux-x64'
         vmImage: 'ubuntu-16.04'
-      OsxJdk11:
+        coverageName: OpenJdk11Linux
+      OracleJdk11Mac:
         javaLicence: BCL
         javaVersion: '11'
         installJdkOs: 'osx-x64'
         vmImage: 'macOs-10.13'        
+        coverageName: OpenJdk11Mac
   pool:
     vmImage: $(vmImage)
   steps:
@@ -132,6 +134,8 @@ jobs:
   - script: ./unit-tests.sh
   - template: azureTemplate/publishCoverage.yml
 - job: UnitWindows
+  variables:
+    coverageName: Windows
   pool:
     vmImage: 'windows-2019'
   steps:
@@ -139,6 +143,7 @@ jobs:
     inputs:
       targetType: 'filePath'
       filePath: ./unit-tests.ps1
+  - template: azureTemplate/publishCoverage.yml      
 - job: MergeCoverage
   dependsOn:
   - UnitWindows
@@ -148,5 +153,6 @@ jobs:
   pool:
     vmImage: 'ubuntu-16.04'
   steps:
+  - bash: ls -R
   - bash: mv *.exec target
   - bash: mvn "jacoco:report-aggregate"
