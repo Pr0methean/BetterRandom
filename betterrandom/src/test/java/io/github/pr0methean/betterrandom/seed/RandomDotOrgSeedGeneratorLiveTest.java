@@ -19,17 +19,22 @@ import io.github.pr0methean.betterrandom.TestingDeficiency;
 import java.net.InetAddress;
 import java.net.Proxy;
 import java.net.UnknownHostException;
+import javax.net.ssl.SSLSocketFactory;
 import org.testng.Assert;
 import org.testng.Reporter;
 import org.testng.SkipException;
 import org.testng.annotations.AfterMethod;
+import org.testng.annotations.AfterSuite;
 import org.testng.annotations.BeforeClass;
+import org.testng.annotations.BeforeSuite;
 import org.testng.annotations.Test;
 
 import static io.github.pr0methean.betterrandom.seed.RandomDotOrgSeedGenerator.RANDOM_DOT_ORG_SEED_GENERATOR;
 import static io.github.pr0methean.betterrandom.seed.RandomDotOrgSeedGenerator.setApiKey;
 import static io.github.pr0methean.betterrandom.seed.RandomDotOrgSeedGenerator.setProxy;
+import static io.github.pr0methean.betterrandom.seed.RandomDotOrgSeedGenerator.setSslSocketFactory;
 import static io.github.pr0methean.betterrandom.seed.RandomDotOrgUtils.canRunRandomDotOrgLargeTest;
+import static io.github.pr0methean.betterrandom.seed.RandomDotOrgUtils.createSocketFactory;
 import static io.github.pr0methean.betterrandom.seed.RandomDotOrgUtils.haveApiKey;
 import static io.github.pr0methean.betterrandom.seed.RandomDotOrgUtils.setApiKey;
 
@@ -42,7 +47,7 @@ import static io.github.pr0methean.betterrandom.seed.RandomDotOrgUtils.setApiKey
 public class RandomDotOrgSeedGeneratorLiveTest extends AbstractSeedGeneratorTest {
 
   protected final Proxy proxy = RandomDotOrgUtils.createTorProxy();
-
+  protected final SSLSocketFactory sslSocketFactory = RandomDotOrgUtils.createSocketFactory();
   public RandomDotOrgSeedGeneratorLiveTest() {
     super(RANDOM_DOT_ORG_SEED_GENERATOR);
   }
@@ -116,4 +121,13 @@ public class RandomDotOrgSeedGeneratorLiveTest extends AbstractSeedGeneratorTest
     setApiKey(null);
   }
 
+  @BeforeSuite
+  public void setUpSuite() {
+    setSslSocketFactory(createSocketFactory()); // run all tests with POODLE protection
+  }
+
+  @AfterSuite
+  public void tearDownSuite() {
+    setSslSocketFactory(null);
+  }
 }
