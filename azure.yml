@@ -63,6 +63,7 @@ jobs:
   steps:
   - script: source ./install-jdk.sh -l $(javaLicence) -f $(javaVersion) -e -v
   - script: ./unit-tests.sh
+  - bash: ls -R
   - template: azureTemplate/publishCoverage.yml
 - job: UnitMac
   variables:
@@ -87,6 +88,7 @@ jobs:
     vmImage: 'macOs-10.13'
   steps:
   - script: ./unit-tests.sh
+  - bash: ls -R
   - template: azureTemplate/publishCoverage.yml
 - job: UnitLinux
   variables:
@@ -130,6 +132,7 @@ jobs:
       jdkDestinationDirectory: $(JAVA_HOME)
       jdkArchitectureOption: x64
   - script: ./unit-tests.sh
+  - bash: ls -R
   - template: azureTemplate/publishCoverage.yml
 - job: UnitWindows
   pool:
