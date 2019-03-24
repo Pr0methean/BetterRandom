@@ -22,7 +22,6 @@ cd betterrandom
 # Coverage test
 PATH="${NO_GIT_PATH}" mvn ${MAYBE_ANDROID_FLAG} clean compile jacoco:instrument jacoco:prepare-agent \
     test jacoco:restore-instrumented-classes jacoco:report -e || exit 1
-ls -R # TEMPORARY DEBUG CODE
 if [ "${JAVA8}" = "true" ]; then
   echo "[unit-tests.sh] Running Proguard."
   PATH="${NO_GIT_PATH}" mvn -DskipTests -Dmaven.test.skip=true ${MAYBE_ANDROID_FLAG} \

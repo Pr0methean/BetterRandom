@@ -3,4 +3,4 @@ steps:
   displayName: Publish Coverage Report
   inputs:
     artifactName: $(coverageName)
-    targetPath: target/jacoco.exec
+    targetPath: ./target/jacoco.exec
