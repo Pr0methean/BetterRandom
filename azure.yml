@@ -62,8 +62,8 @@ jobs:
     vmImage: $(vmImage)
   steps:
   - script: source ./install-jdk.sh -l $(javaLicence) -f $(javaVersion) -e -v
-  - script: echo "JAVA_HOME=${JAVA_HOME}"
   - script: ./unit-tests.sh
+  - template: azureTemplate/publishCoverage.yml
 - job: UnitMac
   variables:
     JAVA_HOME: jdk
@@ -73,16 +73,21 @@ jobs:
       OpenJdk08Mac:
         JAVA8: 'true'
         JAVA_HOME: '/Library/Java/JavaVirtualMachines/jdk1.8.0_202.jdk/Contents/Home'
+        coverageName: OpenJdk08Mac
       OpenJdk09Mac:
         JAVA_HOME: '/Library/Java/JavaVirtualMachines/jdk-9.0.4.jdk/Contents/Home'
+        coverageName: OpenJdk09Mac
       OpenJdk10Mac:
         JAVA_HOME: '/Library/Java/JavaVirtualMachines/jdk-10.0.2.jdk/Contents/Home'
+        coverageName: OpenJdk10Mac
       OpenJdk11Mac:
         JAVA_HOME: '/Library/Java/JavaVirtualMachines/openjdk-11.0.2.jdk/Contents/Home'
+        coverageName: OpenJdk11Mac
   pool:
     vmImage: 'macOs-10.13'
   steps:
   - script: ./unit-tests.sh
+  - template: azureTemplate/publishCoverage.yml
 - job: UnitLinux
   variables:
     JAVA_HOME: jdk
@@ -90,20 +95,25 @@ jobs:
     matrix:
       OpenJdk08Linux:
         JAVA8: 'true'
-        javaUrl: $(openjdk08linux)
+        javaUrl: $(OpenJdk08Linux)
         vmImage: 'ubuntu-16.04'
+        coverageName: LinuxOpenJDK8
       OpenJdk09Linux:
-        javaUrl: $(openjdk09linux)
+        javaUrl: $(OpenJdk09Linux)
         vmImage: 'ubuntu-16.04'
+        coverageName: LinuxOpenJDK9
       OpenJdk10Linux:
-        javaUrl: $(openjdk10linux)
+        javaUrl: $(OpenJdk10Linux)
         vmImage: 'ubuntu-16.04'
+        coverageName: LinuxOpenJDK10
       OpenJdk11Linux:
-        javaUrl: $(openjdk11linux)
+        javaUrl: $(OpenJdk11Linux)
         vmImage: 'ubuntu-16.04'
+        coverageName: LinuxOpenJDK11
       OpenJNine11Linux:
-        javaUrl: $(openjnine11linux)
+        javaUrl: $(OpenJNine11Linux)
         vmImage: 'ubuntu-16.04'
+        coverageName: LinuxOpenJNine11
 #      OpenJNine11Mac:
 #        javaUrl: $(openjnine11mac)
 #        vmImage: 'macOs-10.13'
@@ -112,14 +122,15 @@ jobs:
   steps:
   - script: wget $(javaUrl) -O jdk.tar.gz
   - task: JavaToolInstaller@0
+    displayName: Install Java
     inputs:
       jdkSourceOption: localDirectory
       jdkFile: jdk.tar.gz
       cleanDestinationDirectory: true 
       jdkDestinationDirectory: $(JAVA_HOME)
       jdkArchitectureOption: x64
-  - script: echo "JAVA_HOME=${JAVA_HOME}"
   - script: ./unit-tests.sh
+  - template: azureTemplate/publishCoverage.yml
 - job: UnitWindows
   pool:
     vmImage: 'windows-2019'
@@ -128,3 +139,14 @@ jobs:
     inputs:
       targetType: 'filePath'
       filePath: ./unit-tests.ps1
+- job: MergeCoverage
+  dependsOn:
+  - UnitWindows
+  - UnitMac
+  - UnitLinux
+  - UnitOracle
+  pool:
+    vmImage: 'ubuntu-16.04'
+  steps:
+  - bash: mv *.xml target
+  - bash: mvn "jacoco:report-aggregate"
