@@ -15,7 +15,7 @@ mvn "$MAYBE_ANDROID_FLAG" "clean" "compile" "jacoco:instrument" "jacoco:prepare-
     "test" "jacoco:restore-instrumented-classes" "jacoco:report" -e
 $STATUS = $?
 if ( $STATUS ) {
-    if ( ! $JAVA9 ) {
+    if ( $JAVA8 ) {
         echo "[unit-tests.ps1] Running Proguard."
         mvn -DskipTests "-Dmaven.test.skip=true" "$MAYBE_ANDROID_FLAG" package pre-integration-test
         echo "[unit-tests.ps1] Testing against Proguarded jar."
