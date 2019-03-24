@@ -1,3 +1,7 @@
+# 3.1.1
+* `RandomDotOrgSeedGenerator` now exposes `setSslSocketFactory` so you have more options for
+  preventing downgrade attacks (such as POODLE) and weak ciphers.
+
 # 3.1.0
 * `RandomSeederThread` now exposes the constant `DEFAULT_DEFAULT_PRIORITY` and the method
   `getDefaultPriority()`.

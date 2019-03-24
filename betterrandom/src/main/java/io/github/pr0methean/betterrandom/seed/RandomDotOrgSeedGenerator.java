@@ -34,6 +34,8 @@ import java.util.concurrent.atomic.AtomicReference;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 import javax.annotation.Nullable;
+import javax.net.ssl.HttpsURLConnection;
+import javax.net.ssl.SSLSocketFactory;
 import javax.xml.bind.DatatypeConverter;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
@@ -111,6 +113,11 @@ public enum RandomDotOrgSeedGenerator implements SeedGenerator {
    * The proxy to use with random.org, or null to use the JVM default. Package-visible for testing.
    */
   static final AtomicReference<Proxy> proxy = new AtomicReference<>(null);
+  /**
+   * The SSLSocketFactory to use with random.org.
+   */
+  private static final AtomicReference<SSLSocketFactory> socketFactory
+      = new AtomicReference<>(null);
 
   static {
     earliestNextAttempt.add(YEAR, -1);
@@ -147,11 +154,27 @@ public enum RandomDotOrgSeedGenerator implements SeedGenerator {
     RandomDotOrgSeedGenerator.proxy.set(proxy);
   }
 
+  /**
+   * Sets the socket factory to use to connect to random.org. If null, the JVM default is used. This
+   * method provides flexibility in how the user protects against downgrade attacks such as POODLE
+   * and weak cipher suites, even if the random.org connection needs separate handling from
+   * connections to other services by the same application.
+   *
+   * @param socketFactory a socket factory, or null for the JVM default
+   */
+  public static void setSslSocketFactory(@Nullable final SSLSocketFactory socketFactory) {
+    RandomDotOrgSeedGenerator.socketFactory.set(socketFactory);
+  }
+
   /* Package-visible for testing. */
   static HttpURLConnection openConnection(final URL url) throws IOException {
     final Proxy currentProxy = proxy.get();
-    final HttpURLConnection connection = (HttpURLConnection)
+    final HttpsURLConnection connection = (HttpsURLConnection)
         ((currentProxy == null) ? url.openConnection() : url.openConnection(currentProxy));
+    final SSLSocketFactory currentSocketFactory = socketFactory.get();
+    if (currentSocketFactory != null) {
+      connection.setSSLSocketFactory(currentSocketFactory);
+    }
     connection.setRequestProperty("User-Agent", USER_AGENT);
     return connection;
   }

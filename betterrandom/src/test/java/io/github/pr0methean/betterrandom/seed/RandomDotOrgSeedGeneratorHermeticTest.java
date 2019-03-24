@@ -27,6 +27,8 @@ import org.testng.annotations.Test;
 
 import static io.github.pr0methean.betterrandom.seed.RandomDotOrgSeedGenerator.MAX_REQUEST_SIZE;
 import static io.github.pr0methean.betterrandom.seed.RandomDotOrgSeedGenerator.setProxy;
+import static io.github.pr0methean.betterrandom.seed.RandomDotOrgSeedGenerator.setSslSocketFactory;
+import static io.github.pr0methean.betterrandom.seed.RandomDotOrgUtils.createSocketFactory;
 import static io.github.pr0methean.betterrandom.seed.RandomDotOrgUtils.createTorProxy;
 import static io.github.pr0methean.betterrandom.seed.SeedTestUtils.testGenerator;
 import static org.mockito.ArgumentMatchers.any;
@@ -34,7 +36,7 @@ import static org.powermock.api.mockito.PowerMockito.spy;
 import static org.testng.Assert.assertTrue;
 import static org.testng.AssertJUnit.assertEquals;
 
-@PowerMockIgnore({"javax.management.*", "javax.script.*", "jdk.nashorn.*"})
+@PowerMockIgnore({"javax.management.*", "javax.script.*", "jdk.nashorn.*", "javax.net.ssl.*", "javax.security.*"})
 @MockPolicy(Slf4jMockPolicy.class)
 @PrepareForTest(RandomDotOrgSeedGenerator.class)
 @Test(singleThreaded = true)
@@ -264,6 +266,15 @@ public class RandomDotOrgSeedGeneratorHermeticTest extends PowerMockTestCase {
     // Request more bytes than can be gotten in one Web request.
     mockRandomDotOrgResponse(MAX_SIZE_RESPONSE_NEW_API);
     testLargeRequest();
+  }
+
+  @Test public void testSetSslSocketFactory() {
+    setSslSocketFactory(createSocketFactory());
+    try {
+      testGenerator(RandomDotOrgSeedGenerator.RANDOM_DOT_ORG_SEED_GENERATOR, false);
+    } finally {
+      setSslSocketFactory(null);
+    }
   }
 
   @AfterMethod public void tearDownMethod() {
