@@ -53,13 +53,13 @@ jobs:
         javaVersion: '11'
         installJdkOs: 'linux-x64'
         vmImage: 'ubuntu-16.04'
-        coverageName: OpenJdk11Linux
+        coverageName: OracleJdk11Linux
       OracleJdk11Mac:
         javaLicence: BCL
         javaVersion: '11'
         installJdkOs: 'osx-x64'
         vmImage: 'macOs-10.13'        
-        coverageName: OpenJdk11Mac
+        coverageName: OracleJdk11Mac
   pool:
     vmImage: $(vmImage)
   steps:
