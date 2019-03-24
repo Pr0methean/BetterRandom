@@ -1,5 +1,5 @@
-script:
-  task: PublishPipelineArtifact@0
+steps:
+- task: PublishPipelineArtifact@0
     displayName: Publish Coverage Report
     inputs:
       artifactName: $(coverageName)
