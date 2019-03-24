@@ -27,7 +27,7 @@ fi
 cd betterrandom
 # Coverage test
 PATH="${NO_GIT_PATH}" mvn ${MAYBE_ANDROID_FLAG} clean ${MAYBE_JACOCO_PREPARE} \
-    test ${MAYBE_JACOCO_REPORT} -e
+    test ${MAYBE_JACOCO_REPORT} -e || exit 1
 if [ "${JAVA8}" = "true" ]; then
   echo "[unit-tests.sh] Running Proguard."
   PATH="${NO_GIT_PATH}" mvn -DskipTests -Dmaven.test.skip=true ${MAYBE_ANDROID_FLAG} \
@@ -37,4 +37,3 @@ if [ "${JAVA8}" = "true" ]; then
   STATUS=$?
 fi
 cd ..
-exit "$STATUS"
