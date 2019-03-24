@@ -54,7 +54,7 @@ public enum RandomDotOrgUtils {
         javaVersion = Integer.parseInt(versionNumberParts[1]);
       }
       LoggerFactory.getLogger(RandomDotOrgUtils.class)
-          .info("Detected JDK version {0}", javaVersion);
+          .info("Detected JDK version " + javaVersion);
       SSLContext context = SSLContext.getInstance(javaVersion >= 11 ? "TLSv1.3" : "TLSv1.2");
       context.init(null, null, null);
       return context.getSocketFactory();

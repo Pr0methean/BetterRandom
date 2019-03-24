@@ -17,7 +17,7 @@
     <orderEntry type="library" name="Maven: com.googlecode.json-simple:json-simple:1.1.1" level="project" />
     <orderEntry type="library" name="Maven: junit:junit:4.10" level="project" />
     <orderEntry type="library" name="Maven: org.hamcrest:hamcrest-core:1.1" level="project" />
-    <orderEntry type="library" name="Maven: com.google.guava:guava:27.0.1-jre" level="project" />
+    <orderEntry type="library" name="Maven: com.google.guava:guava:27.1-jre" level="project" />
     <orderEntry type="library" name="Maven: com.google.guava:failureaccess:1.0.1" level="project" />
     <orderEntry type="library" name="Maven: com.google.guava:listenablefuture:9999.0-empty-to-avoid-conflict-with-guava" level="project" />
     <orderEntry type="library" name="Maven: org.checkerframework:checker-qual:2.5.2" level="project" />
@@ -41,7 +41,7 @@
     <orderEntry type="library" name="Maven: org.apache.maven:maven-model:2.2.1" level="project" />
     <orderEntry type="library" name="Maven: org.apache.maven:maven-artifact:2.2.1" level="project" />
     <orderEntry type="library" name="Maven: org.codehaus.plexus:plexus-utils:3.0.15" level="project" />
-    <orderEntry type="library" name="Maven: org.slf4j:slf4j-api:1.7.25" level="project" />
+    <orderEntry type="library" name="Maven: org.slf4j:slf4j-api:1.7.26" level="project" />
     <orderEntry type="library" scope="RUNTIME" name="Maven: net.sf.proguard:proguard-base:6.0.3" level="project" />
   </component>
 </module>
