@@ -310,7 +310,8 @@
     <test.jdk8.argline>${test.argline}</test.jdk8.argline>
     <test.jdk9.argline>${test.argline} --add-opens java.xml/jdk.xml.internal=ALL-UNNAMED</test.jdk9.argline>
     <testng.parallel>tests</testng.parallel>
-    <testng.perCoreThreadCount>1</testng.perCoreThreadCount>
+    <testng.threadCount>1</testng.threadCount>
+    <testng.perCoreThreadCount>false</testng.perCoreThreadCount>
     <testng.verbose>3</testng.verbose>
   </properties>
   <groupId>io.github.pr0methean.betterrandom</groupId>
@@ -460,8 +461,8 @@
             <forkedProcessTimeoutInSeconds>600</forkedProcessTimeoutInSeconds>
             <forkedProcessExitTimeoutInSeconds>600</forkedProcessExitTimeoutInSeconds>
             <parallel>${testng.parallel}</parallel>
-            <threadCount>${testng.perCoreThreadCount}</threadCount>
-            <perCoreThreadCount>true</perCoreThreadCount>
+            <threadCount>${testng.threadCount}</threadCount>
+            <perCoreThreadCount>${testng.perCoreThreadCount}</perCoreThreadCount>
             <properties>
               <property>
                 <name>surefire.testng.verbose</name>
@@ -481,8 +482,8 @@
               <suiteXmlFile>src/test/testng-sequential.xml</suiteXmlFile>
             </suiteXmlFiles>
             <parallel>${testng.parallel}</parallel>
-            <threadCount>${testng.perCoreThreadCount}</threadCount>
-            <perCoreThreadCount>true</perCoreThreadCount>
+            <threadCount>${testng.threadCount}</threadCount>
+            <perCoreThreadCount>${testng.perCoreThreadCount}</perCoreThreadCount>
             <properties>
               <property>
                 <name>surefire.testng.verbose</name>
