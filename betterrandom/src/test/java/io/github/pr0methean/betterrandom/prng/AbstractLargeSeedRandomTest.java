@@ -21,7 +21,8 @@ import static org.powermock.api.mockito.PowerMockito.when;
  */
 @MockPolicy(Slf4jMockPolicy.class)
 @PrepareForTest(DefaultSeedGenerator.class)
-@PowerMockIgnore({"javax.crypto.*", "javax.management.*", "javax.script.*", "jdk.nashorn.*"})
+@PowerMockIgnore({"javax.crypto.*", "javax.management.*", "javax.script.*", "jdk.nashorn.*", "javax.net.ssl.*",
+    "javax.security.*"})
 public abstract class AbstractLargeSeedRandomTest extends BaseRandomTest {
 
   private DefaultSeedGenerator oldDefaultSeedGenerator;
