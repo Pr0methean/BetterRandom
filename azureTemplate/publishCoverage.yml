@@ -2,5 +2,5 @@ steps:
 - task: PublishPipelineArtifact@0
   displayName: Publish Coverage Report
   inputs:
-    artifactName: $(coverageName)
+    artifactName: Coverage_$(coverageName)
     targetPath: ./betterrandom/target/jacoco.exec
