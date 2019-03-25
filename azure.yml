@@ -47,7 +47,7 @@ jobs:
         displayName: Download & Install Java
       - script: ./unit-tests.sh
         displayName: Build & Test
-      - template: azureTemplate/publishCoverage.yml
+      - template: etc/azureTemplate/publishCoverage.yml
   - job: UnitLinux
     variables:
       JAVA_HOME: jdk
@@ -92,7 +92,7 @@ jobs:
           jdkArchitectureOption: x64
       - script: ./unit-tests.sh
         displayName: Build & Test
-      - template: azureTemplate/publishCoverage.yml
+      - template: etc/azureTemplate/publishCoverage.yml
   - job: UnitOracle
     strategy:
       matrix:
@@ -111,10 +111,10 @@ jobs:
     pool:
       vmImage: $(vmImage)
     steps:
-      - template: azureTemplate/downloadJava.yml
+      - template: etc/azureTemplate/downloadJava.yml
       - script: ./unit-tests.sh
         displayName: Build & Test
-      - template: azureTemplate/publishCoverage.yml
+      - template: etc/azureTemplate/publishCoverage.yml
   - job: UnitMac
     variables:
       JAVA_HOME: jdk
@@ -139,7 +139,7 @@ jobs:
     steps:
       - script: ./unit-tests.sh
         displayName: Build & Test
-      - template: azureTemplate/publishCoverage.yml
+      - template: etc/azureTemplate/publishCoverage.yml
   - job: UnitWindows
     variables:
       coverageName: Windows
@@ -151,7 +151,7 @@ jobs:
           JAVA8: 'true'
           targetType: 'filePath'
           filePath: ./unit-tests.ps1
-      - template: azureTemplate/publishCoverage.yml
+      - template: etc/azureTemplate/publishCoverage.yml
   - job: MergeCoverage
     variables:
       coverageName: Combined
@@ -163,40 +163,40 @@ jobs:
     pool:
       vmImage: 'ubuntu-16.04'
     steps:
-      - template: azureTemplate/downloadCoverage.yml
+      - template: etc/azureTemplate/downloadCoverage.yml
         parameters:
           inputName: OracleLimitedCrypto
-      - template: azureTemplate/downloadCoverage.yml
+      - template: etc/azureTemplate/downloadCoverage.yml
         parameters:
           inputName: OracleJdk11Linux
-      - template: azureTemplate/downloadCoverage.yml
+      - template: etc/azureTemplate/downloadCoverage.yml
         parameters:
           inputName: OracleJdk11Mac
-      - template: azureTemplate/downloadCoverage.yml
+      - template: etc/azureTemplate/downloadCoverage.yml
         parameters:
           inputName: OpenJdk08Mac
-      - template: azureTemplate/downloadCoverage.yml
+      - template: etc/azureTemplate/downloadCoverage.yml
         parameters:
           inputName: OpenJdk09Mac
-      - template: azureTemplate/downloadCoverage.yml
+      - template: etc/azureTemplate/downloadCoverage.yml
         parameters:
           inputName: OpenJdk10Mac
-      - template: azureTemplate/downloadCoverage.yml
+      - template: etc/azureTemplate/downloadCoverage.yml
         parameters:
           inputName: OpenJdk11Mac
-      - template: azureTemplate/downloadCoverage.yml
+      - template: etc/azureTemplate/downloadCoverage.yml
         parameters:
           inputName: OpenJdk08Linux
-      - template: azureTemplate/downloadCoverage.yml
+      - template: etc/azureTemplate/downloadCoverage.yml
         parameters:
           inputName: OpenJdk09Linux
-      - template: azureTemplate/downloadCoverage.yml
+      - template: etc/azureTemplate/downloadCoverage.yml
         parameters:
           inputName: OpenJdk10Linux
-      - template: azureTemplate/downloadCoverage.yml
+      - template: etc/azureTemplate/downloadCoverage.yml
         parameters:
           inputName: OpenJdk11Linux
-      - template: azureTemplate/downloadCoverage.yml
+      - template: etc/azureTemplate/downloadCoverage.yml
         parameters:
           inputName: OpenJNine11Linux
       - script: ./aggregate.sh
