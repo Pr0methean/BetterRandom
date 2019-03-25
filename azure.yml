@@ -63,7 +63,7 @@ jobs:
   pool:
     vmImage: $(vmImage)
   steps:
-  - script: source ./install-jdk.sh -l $(javaLicence) -f $(javaVersion) -e -v
+  - template: azureTemplate/downloadJava.yml
   - script: ./unit-tests.sh
   - template: azureTemplate/publishCoverage.yml
 - job: UnitMac
