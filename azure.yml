@@ -53,19 +53,19 @@ jobs:
         javaVersion: '11'
         installJdkOs: 'linux-x64'
         vmImage: 'ubuntu-16.04'
-        coverageName: OracleJdk11Linux
+        inputName: OracleJdk11Linux
       OracleJdk11Mac:
         javaLicence: BCL
         javaVersion: '11'
         installJdkOs: 'osx-x64'
         vmImage: 'macOs-10.13'        
-        coverageName: OracleJdk11Mac
+        inputName: OracleJdk11Mac
   pool:
     vmImage: $(vmImage)
   steps:
   - template: azureTemplate/downloadJava.yml
   - script: ./unit-tests.sh
-    displayName: Run Tests
+    displayName: Build & Test
   - template: azureTemplate/publishCoverage.yml
 - job: UnitMac
   variables:
@@ -76,21 +76,21 @@ jobs:
       OpenJdk08Mac:
         JAVA8: 'true'
         JAVA_HOME: '/Library/Java/JavaVirtualMachines/jdk1.8.0_202.jdk/Contents/Home'
-        coverageName: OpenJdk08Mac
+        inputName: OpenJdk08Mac
       OpenJdk09Mac:
         JAVA_HOME: '/Library/Java/JavaVirtualMachines/jdk-9.0.4.jdk/Contents/Home'
-        coverageName: OpenJdk09Mac
+        inputName: OpenJdk09Mac
       OpenJdk10Mac:
         JAVA_HOME: '/Library/Java/JavaVirtualMachines/jdk-10.0.2.jdk/Contents/Home'
-        coverageName: OpenJdk10Mac
+        inputName: OpenJdk10Mac
       OpenJdk11Mac:
         JAVA_HOME: '/Library/Java/JavaVirtualMachines/openjdk-11.0.2.jdk/Contents/Home'
-        coverageName: OpenJdk11Mac
+        inputName: OpenJdk11Mac
   pool:
     vmImage: 'macOs-10.13'
   steps:
   - script: ./unit-tests.sh
-    displayName: Run Tests
+    displayName: Build & Test
   - template: azureTemplate/publishCoverage.yml
 - job: UnitLinux
   variables:
@@ -101,23 +101,23 @@ jobs:
         JAVA8: 'true'
         javaUrl: $(OpenJdk08Linux)
         vmImage: 'ubuntu-16.04'
-        coverageName: LinuxOpenJDK8
+        inputName: LinuxOpenJDK8
       OpenJdk09Linux:
         javaUrl: $(OpenJdk09Linux)
         vmImage: 'ubuntu-16.04'
-        coverageName: LinuxOpenJDK9
+        inputName: LinuxOpenJDK9
       OpenJdk10Linux:
         javaUrl: $(OpenJdk10Linux)
         vmImage: 'ubuntu-16.04'
-        coverageName: LinuxOpenJDK10
+        inputName: LinuxOpenJDK10
       OpenJdk11Linux:
         javaUrl: $(OpenJdk11Linux)
         vmImage: 'ubuntu-16.04'
-        coverageName: LinuxOpenJDK11
+        inputName: LinuxOpenJDK11
       OpenJNine11Linux:
         javaUrl: $(OpenJNine11Linux)
         vmImage: 'ubuntu-16.04'
-        coverageName: LinuxOpenJNine11
+        inputName: LinuxOpenJNine11
 #      OpenJNine11Mac:
 #        javaUrl: $(openjnine11mac)
 #        vmImage: 'macOs-10.13'
@@ -135,11 +135,11 @@ jobs:
       jdkDestinationDirectory: $(JAVA_HOME)
       jdkArchitectureOption: x64
   - script: ./unit-tests.sh
-    displayName: Run Tests
+    displayName: Build & Test
   - template: azureTemplate/publishCoverage.yml
 - job: UnitWindows
   variables:
-    coverageName: Windows
+    inputName: Windows
   pool:
     vmImage: 'windows-2019'
   steps:
@@ -150,7 +150,7 @@ jobs:
   - template: azureTemplate/publishCoverage.yml      
 - job: MergeCoverage
   variables:
-    coverageName: Combined
+    inputName: Combined
   dependsOn:
   - UnitWindows
   - UnitMac
@@ -161,37 +161,37 @@ jobs:
   steps:
   - template: azureTemplate/downloadCoverage.yml
     parameters:
-      coverageName: OracleJdk11Linux
+      inputName: OracleJdk11Linux
   - template: azureTemplate/downloadCoverage.yml
     parameters:
-      coverageName: OracleJdk11Mac
+      inputName: OracleJdk11Mac
   - template: azureTemplate/downloadCoverage.yml
     parameters:
-      coverageName: OpenJdk08Mac
+      inputName: OpenJdk08Mac
   - template: azureTemplate/downloadCoverage.yml
     parameters:
-      coverageName: OpenJdk09Mac
+      inputName: OpenJdk09Mac
   - template: azureTemplate/downloadCoverage.yml
     parameters:
-      coverageName: OpenJdk10Mac
+      inputName: OpenJdk10Mac
   - template: azureTemplate/downloadCoverage.yml
     parameters:
-      coverageName: OpenJdk11Mac
+      inputName: OpenJdk11Mac
   - template: azureTemplate/downloadCoverage.yml
     parameters:
-      coverageName: OpenJdk08Linux
+      inputName: OpenJdk08Linux
   - template: azureTemplate/downloadCoverage.yml
     parameters:
-      coverageName: OpenJdk09Linux
+      inputName: OpenJdk09Linux
   - template: azureTemplate/downloadCoverage.yml
     parameters:
-      coverageName: OpenJdk10Linux
+      inputName: OpenJdk10Linux
   - template: azureTemplate/downloadCoverage.yml
     parameters:
-      coverageName: OpenJdk11Linux
+      inputName: OpenJdk11Linux
   - template: azureTemplate/downloadCoverage.yml
     parameters:
-      coverageName: OpenJNine11Linux
+      inputName: OpenJNine11Linux
   - bash: mkdir target
   - bash: mv $(System.ArtifactsDirectory)/*.exec target
   - bash: mv travis-resources/jacoco_merge.yml ./pom.xml
