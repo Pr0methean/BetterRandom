@@ -3,6 +3,7 @@ package io.github.pr0methean.betterrandom.prng;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import io.github.pr0methean.betterrandom.CloneViaSerialization;
+import io.github.pr0methean.betterrandom.NamedFunction;
 import io.github.pr0methean.betterrandom.TestUtils;
 import io.github.pr0methean.betterrandom.prng.RandomTestUtils.EntropyCheckMode;
 import io.github.pr0methean.betterrandom.prng.concurrent.SplittableRandomAdapter;
@@ -13,7 +14,6 @@ import io.github.pr0methean.betterrandom.seed.SeedException;
 import io.github.pr0methean.betterrandom.seed.SeedGenerator;
 import io.github.pr0methean.betterrandom.seed.SemiFakeSeedGenerator;
 import io.github.pr0methean.betterrandom.util.BinaryUtils;
-import java.io.Serializable;
 import java.lang.reflect.InvocationTargetException;
 import java.security.GeneralSecurityException;
 import java.util.Arrays;
@@ -30,7 +30,6 @@ import java.util.concurrent.ForkJoinPool;
 import java.util.concurrent.ForkJoinTask;
 import java.util.concurrent.TimeUnit;
 import java.util.function.DoubleConsumer;
-import java.util.function.Function;
 import java.util.function.Supplier;
 import org.apache.commons.math3.stat.descriptive.SynchronizedDescriptiveStatistics;
 import org.powermock.modules.testng.PowerMockTestCase;
@@ -817,22 +816,4 @@ public abstract class BaseRandomTest extends PowerMockTestCase {
     }
   }
 
-  protected static final class NamedFunction<T, R> implements Function<T, R>, Serializable {
-
-    private final Function<T, R> function;
-    private final String name;
-
-    public NamedFunction(final Function<T, R> function, final String name) {
-      this.function = function;
-      this.name = name;
-    }
-
-    @Override public R apply(final T t) {
-      return function.apply(t);
-    }
-
-    @Override public String toString() {
-      return name;
-    }
-  }
 }
