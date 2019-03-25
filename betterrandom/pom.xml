@@ -338,7 +338,7 @@
     <testng.parallel>tests</testng.parallel>
     <testng.threadCount>2</testng.threadCount>
     <testng.perCoreThreadCount>false</testng.perCoreThreadCount>
-    <testng.verbose>3</testng.verbose>
+    <testng.verbose>5</testng.verbose>
     <testng.timeout>1200</testng.timeout>
   </properties>
   <groupId>io.github.pr0methean.betterrandom</groupId>
