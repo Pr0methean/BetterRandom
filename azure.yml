@@ -89,8 +89,6 @@ jobs:
   steps:
   - script: sudo ./installOracleJdk8.sh
     displayName: Download & Install Java
-  - script: ./remove_unlimited_crypto.sh
-    displayName: Remove Unlimited Crypto
   - template: azureTemplate/downloadJava.yml
   - script: ./unit-tests.sh
     displayName: Build & Test

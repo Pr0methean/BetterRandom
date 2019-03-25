@@ -5,4 +5,6 @@ echo "deb-src http://ppa.launchpad.net/webupd8team/java/ubuntu xenial main" | te
 apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys EEA14886
 apt-get update
 apt-get install oracle-java8-installer
+mv -f travis-resources/local_policy.jar ${JAVA_HOME}/jre/lib/security/local_policy.jar
+mv -f travis-resources/US_export_policy.jar ${JAVA_HOME}/jre/lib/security/US_export_policy.jar
 exit
