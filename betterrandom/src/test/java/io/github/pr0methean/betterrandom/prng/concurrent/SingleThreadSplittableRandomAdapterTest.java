@@ -2,6 +2,7 @@ package io.github.pr0methean.betterrandom.prng.concurrent;
 
 import io.github.pr0methean.betterrandom.CloneViaSerialization;
 import io.github.pr0methean.betterrandom.TestingDeficiency;
+import io.github.pr0methean.betterrandom.prng.AbstractLargeSeedRandomTest;
 import io.github.pr0methean.betterrandom.prng.BaseRandom;
 import io.github.pr0methean.betterrandom.prng.BaseRandomTest;
 import io.github.pr0methean.betterrandom.seed.SeedException;
@@ -9,7 +10,7 @@ import org.testng.annotations.Test;
 
 import static io.github.pr0methean.betterrandom.prng.RandomTestUtils.assertEquivalent;
 
-public class SingleThreadSplittableRandomAdapterTest extends BaseRandomTest {
+public class SingleThreadSplittableRandomAdapterTest extends AbstractLargeSeedRandomTest {
 
   @Override protected Class<? extends BaseRandom> getClassUnderTest() {
     return SingleThreadSplittableRandomAdapter.class;
