@@ -135,6 +135,7 @@ jobs:
       jdkDestinationDirectory: $(JAVA_HOME)
       jdkArchitectureOption: x64
   - script: ./unit-tests.sh
+    displayName: Run Tests
   - template: azureTemplate/publishCoverage.yml
 - job: UnitWindows
   variables:

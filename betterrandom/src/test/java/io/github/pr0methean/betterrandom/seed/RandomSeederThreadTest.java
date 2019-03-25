@@ -4,6 +4,7 @@ import io.github.pr0methean.betterrandom.prng.RandomTestUtils;
 import java.util.Arrays;
 import java.util.Locale;
 import java.util.Random;
+import java.util.concurrent.locks.LockSupport;
 import org.testng.annotations.Test;
 
 import static io.github.pr0methean.betterrandom.seed.RandomSeederThread.stopAllEmpty;
@@ -20,7 +21,7 @@ public class RandomSeederThreadTest {
       = System.getProperty("os.name", "generic").toLowerCase(Locale.ENGLISH)
           .contains("nux");
 
-  @Test(timeOut = 60_000) public void testAddRemoveAndIsEmpty() throws Exception {
+  @Test(timeOut = 25_000) public void testAddRemoveAndIsEmpty() throws Exception {
     final Random prng = new Random(TEST_SEED);
     final byte[] bytesWithOldSeed = new byte[TEST_OUTPUT_SIZE];
     prng.nextBytes(bytesWithOldSeed);
@@ -30,11 +31,8 @@ public class RandomSeederThreadTest {
       assertTrue(RandomSeederThread.isEmpty(seedGenerator));
       RandomSeederThread.add(seedGenerator, prng);
       assertFalse(RandomSeederThread.isEmpty(seedGenerator));
-      if (ON_LINUX) {
-        // FIXME: sleep gets interrupted on Travis-CI OSX & on Appveyor
-        Thread.sleep(100);
-        assertFalse(RandomSeederThread.isEmpty(seedGenerator));
-      }
+      sleepUninterruptibly(100_000_000); // FIXME: Why does this sleep get interrupted?!
+      assertFalse(RandomSeederThread.isEmpty(seedGenerator));
     } finally {
       RandomTestUtils.removeAndAssertEmpty(seedGenerator, prng);
     }
@@ -123,5 +121,14 @@ public class RandomSeederThreadTest {
     } finally {
       RandomTestUtils.removeAndAssertEmpty(generator, prng);
     }
+  }
+
+  private void sleepUninterruptibly(long nanos) {
+    long curTime = System.nanoTime();
+    long endTime = curTime + nanos;
+    do {
+      LockSupport.parkNanos(endTime - curTime);
+      curTime = System.nanoTime();
+    } while (curTime < endTime);
   }
 }
