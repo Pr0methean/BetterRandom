@@ -89,7 +89,6 @@ jobs:
   steps:
   - script: sudo ./installOracleJdk8.sh
     displayName: Download & Install Java
-  - template: azureTemplate/downloadJava.yml
   - script: ./unit-tests.sh
     displayName: Build & Test
   - template: azureTemplate/publishCoverage.yml
