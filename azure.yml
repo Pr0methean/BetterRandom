@@ -45,23 +45,23 @@ jobs:
         JAVA8: 'true'
         javaUrl: $(OpenJdk08Linux)
         vmImage: 'ubuntu-16.04'
-        inputName: LinuxOpenJDK8
+        coverageName: LinuxOpenJDK8
       OpenJdk09Linux:
         javaUrl: $(OpenJdk09Linux)
         vmImage: 'ubuntu-16.04'
-        inputName: LinuxOpenJDK9
+        coverageName: LinuxOpenJDK9
       OpenJdk10Linux:
         javaUrl: $(OpenJdk10Linux)
         vmImage: 'ubuntu-16.04'
-        inputName: LinuxOpenJDK10
+        coverageName: LinuxOpenJDK10
       OpenJdk11Linux:
         javaUrl: $(OpenJdk11Linux)
         vmImage: 'ubuntu-16.04'
-        inputName: LinuxOpenJDK11
+        coverageName: LinuxOpenJDK11
       OpenJNine11Linux:
         javaUrl: $(OpenJNine11Linux)
         vmImage: 'ubuntu-16.04'
-        inputName: LinuxOpenJNine11
+        coverageName: LinuxOpenJNine11
   #      OpenJNine11Mac:
   #        javaUrl: $(openjnine11mac)
   #        vmImage: 'macOs-10.13'
@@ -98,13 +98,13 @@ jobs:
         javaVersion: '11'
         installJdkOs: 'linux-x64'
         vmImage: 'ubuntu-16.04'
-        inputName: OracleJdk11Linux
+        coverageName: OracleJdk11Linux
       OracleJdk11Mac:
         javaLicence: BCL
         javaVersion: '11'
         installJdkOs: 'osx-x64'
-        vmImage: 'macOs-10.13'        
-        inputName: OracleJdk11Mac
+        vmImage: 'macOs-10.13'
+        coverageName: OracleJdk11Mac
   pool:
     vmImage: $(vmImage)
   steps:
@@ -121,16 +121,16 @@ jobs:
       OpenJdk08Mac:
         JAVA8: 'true'
         JAVA_HOME: '/Library/Java/JavaVirtualMachines/jdk1.8.0_202.jdk/Contents/Home'
-        inputName: OpenJdk08Mac
+        coverageName: OpenJdk08Mac
       OpenJdk09Mac:
         JAVA_HOME: '/Library/Java/JavaVirtualMachines/jdk-9.0.4.jdk/Contents/Home'
-        inputName: OpenJdk09Mac
+        coverageName: OpenJdk09Mac
       OpenJdk10Mac:
         JAVA_HOME: '/Library/Java/JavaVirtualMachines/jdk-10.0.2.jdk/Contents/Home'
-        inputName: OpenJdk10Mac
+        coverageName: OpenJdk10Mac
       OpenJdk11Mac:
         JAVA_HOME: '/Library/Java/JavaVirtualMachines/openjdk-11.0.2.jdk/Contents/Home'
-        inputName: OpenJdk11Mac
+        coverageName: OpenJdk11Mac
   pool:
     vmImage: 'macOs-10.13'
   steps:
@@ -139,7 +139,7 @@ jobs:
   - template: azureTemplate/publishCoverage.yml
 - job: UnitWindows
   variables:
-    inputName: Windows
+    coverageName: Windows
   pool:
     vmImage: 'windows-2019'
   steps:
@@ -150,7 +150,7 @@ jobs:
   - template: azureTemplate/publishCoverage.yml      
 - job: MergeCoverage
   variables:
-    inputName: Combined
+    coverageName: Combined
   dependsOn:
   - UnitWindows
   - UnitMac
