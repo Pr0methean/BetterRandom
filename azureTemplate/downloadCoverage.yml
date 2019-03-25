@@ -2,6 +2,6 @@ parameters:
   inputName: ''
 steps:
 - task: DownloadPipelineArtifact@1
-  displayName: 'Download Coverage: $(coverageName)'
+  displayName: 'Download Coverage: ${{ parameters.inputName }}'
   inputs:
-    artifactName: Coverage_$(inputName)
+    artifactName: Coverage_${{ parameters.inputName }}
