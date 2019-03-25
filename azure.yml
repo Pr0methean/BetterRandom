@@ -69,7 +69,7 @@ jobs:
     vmImage: $(vmImage)
   steps:
     - script: wget $(javaUrl) -O jdk.tar.gz
-      displayName: Download Java
+      displayName: Download Java Installer
     - task: JavaToolInstaller@0
       displayName: Install Java
       inputs:
@@ -81,18 +81,23 @@ jobs:
     - script: ./unit-tests.sh
       displayName: Build & Test
     - template: azureTemplate/publishCoverage.yml
+- job: UnitOracleLimitedCrypto
+  pool:
+    vmImage: 'ubuntu-16.04'
+  variables:
+    coverageName: OracleLimitedCrypto
+  steps:
+  - script: ./installOracleJdk8.sh
+    displayName: Download & Install Java
+  - script: ./remove_unlimited_crypto.sh
+    displayName: Remove Unlimited Crypto
+  - template: azureTemplate/downloadJava.yml
+  - script: ./unit-tests.sh
+    displayName: Build & Test
+  - template: azureTemplate/publishCoverage.yml
 - job: UnitOracle
   strategy:
     matrix:
-#      OracleJdk08:
-#        JAVA8: 'true'
-#        javaLicence: BCL
-#        javaVersion: '8'
-#      OracleJdk08_LimitedCrypto:
-#        JAVA8: 'true'
-#        LIMITED_CRYPTO: 'true'
-#        javaLicence: BCL
-#        javaVersion: '8'
       OracleJdk11Linux:
         javaLicence: BCL
         javaVersion: '11'
@@ -159,6 +164,9 @@ jobs:
   pool:
     vmImage: 'ubuntu-16.04'
   steps:
+  - template: azureTemplate/downloadCoverage.yml
+    parameters:
+      inputName: OracleLimitedCrypto
   - template: azureTemplate/downloadCoverage.yml
     parameters:
       inputName: OracleJdk11Linux
