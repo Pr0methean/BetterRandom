@@ -16,6 +16,7 @@
 package io.github.pr0methean.betterrandom.seed;
 
 import java.security.Permission;
+import org.testng.annotations.BeforeSuite;
 import org.testng.annotations.Test;
 
 import static org.testng.Assert.assertTrue;
@@ -25,6 +26,10 @@ import static org.testng.Assert.assertTrue;
  * @author Daniel Dyer
  */
 public class DefaultSeedGeneratorTest extends AbstractSeedGeneratorTest {
+
+  @BeforeSuite public void reportEgdProperty() {
+    System.out.println("EGD = " + System.getProperty("java.security.egd"));
+  }
 
   public DefaultSeedGeneratorTest() {
     super(DefaultSeedGenerator.DEFAULT_SEED_GENERATOR);
