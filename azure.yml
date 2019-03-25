@@ -87,7 +87,7 @@ jobs:
   variables:
     coverageName: OracleLimitedCrypto
   steps:
-  - script: ./installOracleJdk8.sh
+  - script: sudo ./installOracleJdk8.sh
     displayName: Download & Install Java
   - script: ./remove_unlimited_crypto.sh
     displayName: Remove Unlimited Crypto
