@@ -255,7 +255,7 @@ public abstract class BaseRandomTest extends PowerMockTestCase {
     createRng(null);
   }
 
-  @Test(timeOut = 15_000) public void testSerializable()
+  @Test(timeOut = 45_000) public void testSerializable()
       throws SeedException {
     // Serialise an RNG.
     final BaseRandom rng = createRng();
