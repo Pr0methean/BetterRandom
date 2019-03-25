@@ -339,6 +339,7 @@
     <testng.threadCount>2</testng.threadCount>
     <testng.perCoreThreadCount>false</testng.perCoreThreadCount>
     <testng.verbose>3</testng.verbose>
+    <testng.timeout>1200</testng.timeout>
   </properties>
   <groupId>io.github.pr0methean.betterrandom</groupId>
   <artifactId>BetterRandom</artifactId>
@@ -484,11 +485,10 @@
               <suiteXmlFile>src/test/testng-sequential.xml</suiteXmlFile>
             </suiteXmlFiles>
             <trimStackTrace>false</trimStackTrace>
-            <forkedProcessTimeoutInSeconds>600</forkedProcessTimeoutInSeconds>
-            <forkedProcessExitTimeoutInSeconds>600</forkedProcessExitTimeoutInSeconds>
             <parallel>${testng.parallel}</parallel>
             <threadCount>${testng.threadCount}</threadCount>
             <perCoreThreadCount>${testng.perCoreThreadCount}</perCoreThreadCount>
+            <forkedProcessTimeoutInSeconds>${testng.timeout}</forkedProcessTimeoutInSeconds>
             <properties>
               <property>
                 <name>surefire.testng.verbose</name>
@@ -510,6 +510,7 @@
             <parallel>${testng.parallel}</parallel>
             <threadCount>${testng.threadCount}</threadCount>
             <perCoreThreadCount>${testng.perCoreThreadCount}</perCoreThreadCount>
+            <forkedProcessTimeoutInSeconds>${testng.timeout}</forkedProcessTimeoutInSeconds>
             <properties>
               <property>
                 <name>surefire.testng.verbose</name>
