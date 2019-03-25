@@ -45,23 +45,23 @@ jobs:
         JAVA8: 'true'
         javaUrl: $(OpenJdk08Linux)
         vmImage: 'ubuntu-16.04'
-        coverageName: LinuxOpenJDK8
+        coverageName: OpenJdk08Linux
       OpenJdk09Linux:
         javaUrl: $(OpenJdk09Linux)
         vmImage: 'ubuntu-16.04'
-        coverageName: LinuxOpenJDK9
+        coverageName: OpenJdk09Linux
       OpenJdk10Linux:
         javaUrl: $(OpenJdk10Linux)
         vmImage: 'ubuntu-16.04'
-        coverageName: LinuxOpenJDK10
+        coverageName: OpenJdk10Linux
       OpenJdk11Linux:
         javaUrl: $(OpenJdk11Linux)
         vmImage: 'ubuntu-16.04'
-        coverageName: LinuxOpenJDK11
+        coverageName: OpenJdk11Linux
       OpenJNine11Linux:
         javaUrl: $(OpenJNine11Linux)
         vmImage: 'ubuntu-16.04'
-        coverageName: LinuxOpenJNine11
+        coverageName: OpenJNine11Linux
   #      OpenJNine11Mac:
   #        javaUrl: $(openjnine11mac)
   #        vmImage: 'macOs-10.13'
