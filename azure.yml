@@ -196,4 +196,9 @@ jobs:
   - bash: mv $(System.ArtifactsDirectory)/*.exec target
   - bash: mv travis-resources/jacoco_merge.yml ./pom.xml
   - bash: mvn "jacoco:report-aggregate"
-  - template: azureTemplate/publishCoverage.yml
+  - task: PublishCodeCoverageResults@1
+    inputs:
+      #codeCoverageTool: 'JaCoCo' # Options: cobertura, jaCoCo
+      summaryFileLocation: target/jacoco.exec
+      additionalCodeCoverageFiles: target/**/*.exec
+      failIfCoverageEmpty: true
