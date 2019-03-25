@@ -12,11 +12,17 @@ import io.github.pr0methean.betterrandom.seed.SeedGenerator;
 import java.io.Serializable;
 import java.util.Random;
 import java.util.function.Supplier;
+import org.testng.annotations.BeforeSuite;
 import org.testng.annotations.Test;
 
 @Test(testName = "ReseedingThreadLocalRandomWrapper:MersenneTwisterRandom")
 public class ReseedingThreadLocalRandomWrapperMersenneTwisterTest
     extends ThreadLocalRandomWrapperMersenneTwisterTest {
+
+  @BeforeSuite
+  public void reportEgdProperty() {
+    System.out.println("EGD = " + System.getProperty("java.security.egd"));
+  }
 
   private final Supplier<? extends BaseRandom> mtSupplier;
 
