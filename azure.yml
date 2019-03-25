@@ -157,6 +157,6 @@ jobs:
   pool:
     vmImage: 'ubuntu-16.04'
   steps:
-  - bash: ls -R
-  - bash: mv *.exec target
+  - bash: ls -R '$(System.ArtifactsDirectory)'
+  - bash: mv $(System.ArtifactsDirectory)/*.exec target
   - bash: mvn "jacoco:report-aggregate"
