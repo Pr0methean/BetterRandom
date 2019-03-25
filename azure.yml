@@ -161,37 +161,37 @@ jobs:
   steps:
   - template: azureTemplate/downloadCoverage.yml
     parameters:
-    - coverageName: OracleJdk11Linux
+      coverageName: OracleJdk11Linux
   - template: azureTemplate/downloadCoverage.yml
     parameters:
-    - coverageName: OracleJdk11Mac
+      coverageName: OracleJdk11Mac
   - template: azureTemplate/downloadCoverage.yml
     parameters:
-    - coverageName: OpenJdk08Mac
+      coverageName: OpenJdk08Mac
   - template: azureTemplate/downloadCoverage.yml
     parameters:
-    - coverageName: OpenJdk09Mac
+      coverageName: OpenJdk09Mac
   - template: azureTemplate/downloadCoverage.yml
     parameters:
-    - coverageName: OpenJdk10Mac
+      coverageName: OpenJdk10Mac
   - template: azureTemplate/downloadCoverage.yml
     parameters:
-    - coverageName: OpenJdk11Mac
+      coverageName: OpenJdk11Mac
   - template: azureTemplate/downloadCoverage.yml
     parameters:
-    - coverageName: OpenJdk08Linux
+      coverageName: OpenJdk08Linux
   - template: azureTemplate/downloadCoverage.yml
     parameters:
-    - coverageName: OpenJdk09Linux
+      coverageName: OpenJdk09Linux
   - template: azureTemplate/downloadCoverage.yml
     parameters:
-    - coverageName: OpenJdk10Linux
+      coverageName: OpenJdk10Linux
   - template: azureTemplate/downloadCoverage.yml
     parameters:
-    - coverageName: OpenJdk11Linux
+      coverageName: OpenJdk11Linux
   - template: azureTemplate/downloadCoverage.yml
     parameters:
-    - coverageName: OpenJNine11Linux
+      coverageName: OpenJNine11Linux
   - bash: mkdir target
   - bash: mv $(System.ArtifactsDirectory)/*.exec target
   - bash: mv travis-resources/jacoco_merge.yml ./pom.xml
