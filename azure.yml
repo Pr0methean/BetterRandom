@@ -36,6 +36,51 @@ trigger:
 #    - README.md
 #    - CHANGELOG.md
 jobs:
+- job: UnitLinux
+  variables:
+    JAVA_HOME: jdk
+  strategy:
+    matrix:
+      OpenJdk08Linux:
+        JAVA8: 'true'
+        javaUrl: $(OpenJdk08Linux)
+        vmImage: 'ubuntu-16.04'
+        inputName: LinuxOpenJDK8
+      OpenJdk09Linux:
+        javaUrl: $(OpenJdk09Linux)
+        vmImage: 'ubuntu-16.04'
+        inputName: LinuxOpenJDK9
+      OpenJdk10Linux:
+        javaUrl: $(OpenJdk10Linux)
+        vmImage: 'ubuntu-16.04'
+        inputName: LinuxOpenJDK10
+      OpenJdk11Linux:
+        javaUrl: $(OpenJdk11Linux)
+        vmImage: 'ubuntu-16.04'
+        inputName: LinuxOpenJDK11
+      OpenJNine11Linux:
+        javaUrl: $(OpenJNine11Linux)
+        vmImage: 'ubuntu-16.04'
+        inputName: LinuxOpenJNine11
+  #      OpenJNine11Mac:
+  #        javaUrl: $(openjnine11mac)
+  #        vmImage: 'macOs-10.13'
+  pool:
+    vmImage: $(vmImage)
+  steps:
+    - script: wget $(javaUrl) -O jdk.tar.gz
+      displayName: Download Java
+    - task: JavaToolInstaller@0
+      displayName: Install Java
+      inputs:
+        jdkSourceOption: localDirectory
+        jdkFile: jdk.tar.gz
+        cleanDestinationDirectory: true
+        jdkDestinationDirectory: $(JAVA_HOME)
+        jdkArchitectureOption: x64
+    - script: ./unit-tests.sh
+      displayName: Build & Test
+    - template: azureTemplate/publishCoverage.yml
 - job: UnitOracle
   strategy:
     matrix:
@@ -53,13 +98,13 @@ jobs:
         javaVersion: '11'
         installJdkOs: 'linux-x64'
         vmImage: 'ubuntu-16.04'
-        coverageName: OracleJdk11Linux
+        inputName: OracleJdk11Linux
       OracleJdk11Mac:
         javaLicence: BCL
         javaVersion: '11'
         installJdkOs: 'osx-x64'
         vmImage: 'macOs-10.13'        
-        coverageName: OracleJdk11Mac
+        inputName: OracleJdk11Mac
   pool:
     vmImage: $(vmImage)
   steps:
@@ -76,70 +121,25 @@ jobs:
       OpenJdk08Mac:
         JAVA8: 'true'
         JAVA_HOME: '/Library/Java/JavaVirtualMachines/jdk1.8.0_202.jdk/Contents/Home'
-        coverageName: OpenJdk08Mac
+        inputName: OpenJdk08Mac
       OpenJdk09Mac:
         JAVA_HOME: '/Library/Java/JavaVirtualMachines/jdk-9.0.4.jdk/Contents/Home'
-        coverageName: OpenJdk09Mac
+        inputName: OpenJdk09Mac
       OpenJdk10Mac:
         JAVA_HOME: '/Library/Java/JavaVirtualMachines/jdk-10.0.2.jdk/Contents/Home'
-        coverageName: OpenJdk10Mac
+        inputName: OpenJdk10Mac
       OpenJdk11Mac:
         JAVA_HOME: '/Library/Java/JavaVirtualMachines/openjdk-11.0.2.jdk/Contents/Home'
-        coverageName: OpenJdk11Mac
+        inputName: OpenJdk11Mac
   pool:
     vmImage: 'macOs-10.13'
   steps:
   - script: ./unit-tests.sh
     displayName: Build & Test
   - template: azureTemplate/publishCoverage.yml
-- job: UnitLinux
-  variables:
-    JAVA_HOME: jdk
-  strategy:
-    matrix:
-      OpenJdk08Linux:
-        JAVA8: 'true'
-        javaUrl: $(OpenJdk08Linux)
-        vmImage: 'ubuntu-16.04'
-        coverageName: LinuxOpenJDK8
-      OpenJdk09Linux:
-        javaUrl: $(OpenJdk09Linux)
-        vmImage: 'ubuntu-16.04'
-        coverageName: LinuxOpenJDK9
-      OpenJdk10Linux:
-        javaUrl: $(OpenJdk10Linux)
-        vmImage: 'ubuntu-16.04'
-        coverageName: LinuxOpenJDK10
-      OpenJdk11Linux:
-        javaUrl: $(OpenJdk11Linux)
-        vmImage: 'ubuntu-16.04'
-        coverageName: LinuxOpenJDK11
-      OpenJNine11Linux:
-        javaUrl: $(OpenJNine11Linux)
-        vmImage: 'ubuntu-16.04'
-        coverageName: LinuxOpenJNine11
-#      OpenJNine11Mac:
-#        javaUrl: $(openjnine11mac)
-#        vmImage: 'macOs-10.13'
-  pool:
-    vmImage: $(vmImage)
-  steps:
-  - script: wget $(javaUrl) -O jdk.tar.gz
-    displayName: Download Java
-  - task: JavaToolInstaller@0
-    displayName: Install Java
-    inputs:
-      jdkSourceOption: localDirectory
-      jdkFile: jdk.tar.gz
-      cleanDestinationDirectory: true 
-      jdkDestinationDirectory: $(JAVA_HOME)
-      jdkArchitectureOption: x64
-  - script: ./unit-tests.sh
-    displayName: Build & Test
-  - template: azureTemplate/publishCoverage.yml
 - job: UnitWindows
   variables:
-    coverageName: Windows
+    inputName: Windows
   pool:
     vmImage: 'windows-2019'
   steps:
@@ -150,7 +150,7 @@ jobs:
   - template: azureTemplate/publishCoverage.yml      
 - job: MergeCoverage
   variables:
-    coverageName: Combined
+    inputName: Combined
   dependsOn:
   - UnitWindows
   - UnitMac
