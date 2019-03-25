@@ -149,6 +149,8 @@ jobs:
       filePath: ./unit-tests.ps1
   - template: azureTemplate/publishCoverage.yml      
 - job: MergeCoverage
+  variables:
+    coverageName: Combined
   dependsOn:
   - UnitWindows
   - UnitMac
@@ -157,6 +159,30 @@ jobs:
   pool:
     vmImage: 'ubuntu-16.04'
   steps:
-  - bash: ls -R '$(System.ArtifactsDirectory)'
+  - template: azureTemplate/downloadCoverage.yml
+    parameters: coverageName: OracleJdk11Linux
+  - template: azureTemplate/downloadCoverage.yml
+    parameters: coverageName: OracleJdk11Mac
+  - template: azureTemplate/downloadCoverage.yml
+    parameters: coverageName: OpenJdk08Mac
+  - template: azureTemplate/downloadCoverage.yml
+    parameters: coverageName: OpenJdk09Mac
+  - template: azureTemplate/downloadCoverage.yml
+    parameters: coverageName: OpenJdk10Mac
+  - template: azureTemplate/downloadCoverage.yml
+    parameters: coverageName: OpenJdk11Mac
+  - template: azureTemplate/downloadCoverage.yml
+    parameters: coverageName: OpenJdk08Linux
+  - template: azureTemplate/downloadCoverage.yml
+    parameters: coverageName: OpenJdk09Linux
+  - template: azureTemplate/downloadCoverage.yml
+    parameters: coverageName: OpenJdk10Linux
+  - template: azureTemplate/downloadCoverage.yml
+    parameters: coverageName: OpenJdk11Linux
+  - template: azureTemplate/downloadCoverage.yml
+    parameters: coverageName: OpenJNine11Linux
+  - bash: mkdir target
   - bash: mv $(System.ArtifactsDirectory)/*.exec target
+  - bash: mv travis-resources/jacoco_merge.yml ./pom.xml
   - bash: mvn "jacoco:report-aggregate"
+  - template: azureTemplate/publishCoverage.yml

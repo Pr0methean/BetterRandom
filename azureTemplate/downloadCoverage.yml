@@ -1,0 +1,7 @@
+parameters:
+  coverageName: ''
+steps:
+- task: DownloadPipelineArtifact@1
+  displayName: 'Download Coverage: $(coverageName)'
+  inputs:
+    artifactName: Coverage_$(coverageName)
