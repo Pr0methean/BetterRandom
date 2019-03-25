@@ -85,6 +85,7 @@ jobs:
   pool:
     vmImage: 'ubuntu-16.04'
   variables:
+    JAVA8: 'true'
     coverageName: OracleLimitedCrypto
   steps:
   - script: sudo ./installOracleJdk8.sh
@@ -147,6 +148,7 @@ jobs:
   steps:
   - task: PowerShell@2
     inputs:
+      JAVA8: 'true'
       targetType: 'filePath'
       filePath: ./unit-tests.ps1
   - template: azureTemplate/publishCoverage.yml      
