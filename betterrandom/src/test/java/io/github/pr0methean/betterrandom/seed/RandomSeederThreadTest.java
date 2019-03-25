@@ -20,7 +20,7 @@ public class RandomSeederThreadTest {
       = System.getProperty("os.name", "generic").toLowerCase(Locale.ENGLISH)
           .contains("nux");
 
-  @Test(timeOut = 25_000) public void testAddRemoveAndIsEmpty() throws Exception {
+  @Test(timeOut = 60_000) public void testAddRemoveAndIsEmpty() throws Exception {
     final Random prng = new Random(TEST_SEED);
     final byte[] bytesWithOldSeed = new byte[TEST_OUTPUT_SIZE];
     prng.nextBytes(bytesWithOldSeed);
