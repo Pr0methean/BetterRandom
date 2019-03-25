@@ -40,9 +40,9 @@ public enum DefaultSeedGenerator implements SeedGenerator {
 
   private static volatile SeedGenerator delegate = new
       SeedGeneratorPreferenceList(Arrays.asList(
-          SecureRandomSeedGenerator.SECURE_RANDOM_SEED_GENERATOR,
+          SecureRandomSeedGenerator.SECURE_RANDOM_SEED_GENERATOR),
           new BufferedSeedGenerator(DevRandomSeedGenerator.DEV_RANDOM_SEED_GENERATOR, 128),
-          new BufferedSeedGenerator(RandomDotOrgSeedGenerator.DELAYED_RETRY, 625)),
+          new BufferedSeedGenerator(RandomDotOrgSeedGenerator.DELAYED_RETRY, 625),
       true);
 
   public static SeedGenerator get() {
