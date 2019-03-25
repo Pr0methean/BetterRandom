@@ -16,6 +16,7 @@
 package io.github.pr0methean.betterrandom.prng;
 
 import io.github.pr0methean.betterrandom.seed.SeedException;
+import org.testng.annotations.BeforeSuite;
 import org.testng.annotations.Test;
 
 /**
@@ -25,6 +26,11 @@ import org.testng.annotations.Test;
  */
 @Test(testName = "MersenneTwisterRandom")
 public class MersenneTwisterRandomTest extends BaseRandomTest {
+
+  @BeforeSuite
+  public void reportEgdProperty() {
+    System.out.println("EGD = " + System.getProperty("java.security.egd"));
+  }
 
   @Override protected Class<? extends BaseRandom> getClassUnderTest() {
     return MersenneTwisterRandom.class;
