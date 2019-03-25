@@ -65,6 +65,7 @@ jobs:
   steps:
   - template: azureTemplate/downloadJava.yml
   - script: ./unit-tests.sh
+    displayName: Run Tests
   - template: azureTemplate/publishCoverage.yml
 - job: UnitMac
   variables:
@@ -89,6 +90,7 @@ jobs:
     vmImage: 'macOs-10.13'
   steps:
   - script: ./unit-tests.sh
+    displayName: Run Tests
   - template: azureTemplate/publishCoverage.yml
 - job: UnitLinux
   variables:
@@ -123,6 +125,7 @@ jobs:
     vmImage: $(vmImage)
   steps:
   - script: wget $(javaUrl) -O jdk.tar.gz
+    displayName: Download Java
   - task: JavaToolInstaller@0
     displayName: Install Java
     inputs:
