@@ -199,10 +199,8 @@ jobs:
       - template: azureTemplate/downloadCoverage.yml
         parameters:
           inputName: OpenJNine11Linux
-      - bash: mkdir target
-      - bash: mv $(System.ArtifactsDirectory)/*.exec target
-      - bash: mv travis-resources/jacoco_merge.yml ./pom.xml
-      - bash: mvn "jacoco:report-aggregate"
+      - script: ./aggregate.sh
+        displayName: Merge Coverage Reports
       - task: PublishCodeCoverageResults@1
         inputs:
           #codeCoverageTool: 'JaCoCo' # Options: cobertura, jaCoCo
