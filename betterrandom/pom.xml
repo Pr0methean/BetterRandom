@@ -142,6 +142,32 @@
       <build>
         <plugins>
           <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-surefire-plugin</artifactId>
+            <version>2.22.1</version>
+            <configuration>
+              <argLine>@{argLine} ${test.jdk9.argline}</argLine>
+            </configuration>
+          </plugin>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-failsafe-plugin</artifactId>
+            <version>2.22.1</version>
+            <configuration>
+              <argLine>@{argLine} ${test.jdk9.argline}</argLine>
+            </configuration>
+            <executions>
+              <execution>
+                <!-- Check that Proguard isn't breaking anything -->
+                <id>test</id>
+                <phase>integration-test</phase>
+                <goals>
+                  <goal>integration-test</goal>
+                </goals>
+              </execution>
+            </executions>
+          </plugin>
+          <plugin>
             <groupId>org.pitest</groupId>
             <artifactId>pitest-maven</artifactId>
             <version>${pitest.version}</version>
@@ -308,7 +334,7 @@
     <pitest.version>1.4.6</pitest.version>
     <test.argline>-Djava.security.egd=file:/dev/./urandom</test.argline>
     <test.jdk8.argline>${test.argline}</test.jdk8.argline>
-    <test.jdk9.argline>${test.argline} --add-opens java.xml/jdk.xml.internal=ALL-UNNAMED</test.jdk9.argline>
+    <test.jdk9.argline>${test.argline} --add-opens java.base/jdk.internal.loader=ALL-UNNAMED --add-opens java.xml/jdk.xml.internal=ALL-UNNAMED</test.jdk9.argline>
     <testng.parallel>tests</testng.parallel>
     <testng.threadCount>1</testng.threadCount>
     <testng.perCoreThreadCount>false</testng.perCoreThreadCount>
