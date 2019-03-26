@@ -73,6 +73,7 @@ jobs:
       - template: etc/azureTemplate/downloadCoverage.yml
         parameters:
           inputName: OpenJdk11Mac
+      - script: ls -R
       - script: ./aggregate.sh
         displayName: Merge Coverage Reports
       - script: ls -R
