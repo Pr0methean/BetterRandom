@@ -143,12 +143,13 @@ jobs:
   - job: UnitWindows
     variables:
       coverageName: Windows
+      JAVA8: 'true'
     pool:
       vmImage: 'windows-2019'
     steps:
       - task: PowerShell@2
+        displayName: Build & Test
         inputs:
-          JAVA8: 'true'
           targetType: 'filePath'
           filePath: ./unit-tests.ps1
       - template: etc/azureTemplate/publishCoverage.yml
