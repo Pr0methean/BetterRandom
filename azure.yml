@@ -22,6 +22,7 @@ trigger:
       #    - master
       #    - java7
       - azurePipeline201903
+      - azurePipeline201903a
   paths:
     exclude:
       - README.md
