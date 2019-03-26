@@ -81,6 +81,6 @@ jobs:
       - task: PublishCodeCoverageResults@1
         inputs:
           #codeCoverageTool: 'JaCoCo' # Options: cobertura, jaCoCo
-          summaryFileLocation: target/jacoco.exec
-          additionalCodeCoverageFiles: target/**/*.exec
+          summaryFileLocation: target/site/jacoco-aggregate/jacoco.xml
+          additionalCodeCoverageFiles: target/site/jacoco-aggregate/**
           failIfCoverageEmpty: true
