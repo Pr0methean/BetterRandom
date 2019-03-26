@@ -78,6 +78,7 @@ jobs:
           targetFolder: target
       - script: ./aggregate.sh
         displayName: Merge Coverage Reports
+      - script: ls -R
       - task: PublishCodeCoverageResults@1
         inputs:
           #codeCoverageTool: 'JaCoCo' # Options: cobertura, jaCoCo
