@@ -59,3 +59,26 @@ jobs:
     dependsOn:
       - UnitMac
     pool: server # not a real job, so doesn't need an agent
+  - job: MergeCoverage
+    variables:
+      coverageName: Combined
+    dependsOn:
+      - AllUnitTests
+    pool:
+      vmImage: 'ubuntu-16.04'
+    steps:
+      - template: etc/azureTemplate/downloadCoverage.yml
+        parameters:
+          inputName: OpenJdk10Mac
+      - template: etc/azureTemplate/downloadCoverage.yml
+        parameters:
+          inputName: OpenJdk11Mac
+      - script: ./aggregate.sh
+        displayName: Merge Coverage Reports
+      - script: ls -R
+      - task: PublishCodeCoverageResults@1
+        inputs:
+          codeCoverageTool: 'JaCoCo' # Options: cobertura, jaCoCo
+          summaryFileLocation: '$(System.DefaultWorkingDirectory)/betterrandom/target/site/jacoco-aggregate/jacoco.xml'
+          reportDirectory: '$(System.DefaultWorkingDirectory)/betterrandom/target/site/jacoco-aggregate'
+          failIfCoverageEmpty: true
