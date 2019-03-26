@@ -80,6 +80,9 @@ jobs:
           reports: '$(System.DefaultWorkingDirectory)/betterrandom/target/**.exec'
       - task: PublishBuildArtifacts@1
         inputs:
-          pathtoPublish: '$(System.DefaultWorkingDirectory)/betterrandom/target/site/jacoco-aggregate'
-          parallel: true
-          artifactName: 'Coverage Merged'
+          pathtoPublish: '$(System.DefaultWorkingDirectory)/coveragereport/index.htm'
+          artifactName: 'Coverage HTML'
+      - task: PublishCodeCoverageResults@1
+        inputs:
+          summaryFileLocation: '$(System.DefaultWorkingDirectory)/coveragereport/cobertura.xml'
+          codeCoverageTool: cobertura
