@@ -2,6 +2,6 @@ steps:
   - task: PublishCodeCoverageResults@1
     inputs:
       codeCoverageTool: 'JaCoCo' # Options: cobertura, jaCoCo
-      summaryFileLocation: '$(System.DefaultWorkingDirectory)/**/site/jacoco/jacoco.xml'
-      reportDirectory: '$(System.DefaultWorkingDirectory)/**/site/jacoco'
+      summaryFileLocation: '$(System.DefaultWorkingDirectory)/betterrandom/target/site/jacoco/jacoco.xml'
+      reportDirectory: '$(System.DefaultWorkingDirectory)/betterrandom/target/site/jacoco'
       failIfCoverageEmpty: true
