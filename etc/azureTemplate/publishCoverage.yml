@@ -1,8 +1,3 @@
 steps:
-- script: mv ./betterrandom/target/jacoco.exec ./betterrandom/target/jacoco_$(coverageName).exec
-  displayName: Give Coverage Report Unique Name
-- task: PublishPipelineArtifact@0
-  displayName: Publish Coverage Report
-  inputs:
-    artifactName: Coverage_$(coverageName)
-    targetPath: ./betterrandom/target/jacoco_$(coverageName).exec
+- script: coveralls.sh
+  displayName: Upload coverage to Coveralls
