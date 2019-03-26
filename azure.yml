@@ -74,9 +74,10 @@ jobs:
         parameters:
           inputName: OpenJdk11Mac
       - script: ls -R
-      - script: ./aggregate.sh
-        displayName: Merge Coverage Reports
-      - script: ls -R
+      - task: ReportGenerator # https://marketplace.visualstudio.com/items?itemName=Palmmedia.reportgenerator
+        displayName: Generate Merged Coverage Report
+        inputs:
+          reports: '$(System.DefaultWorkingDirectory)/betterrandom/target/**.exec'
       - task: PublishBuildArtifacts@1
         inputs:
           pathtoPublish: '$(System.DefaultWorkingDirectory)/betterrandom/target/site/jacoco-aggregate'
