@@ -1,3 +1,3 @@
 #!/bin/bash
 cd betterrandom
-mvn coveralls:report
+mvn coveralls:report -DrepoToken=${COVERALLS_TOKEN}
