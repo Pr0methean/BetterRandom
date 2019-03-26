@@ -83,5 +83,5 @@ jobs:
         inputs:
           codeCoverageTool: 'JaCoCo' # Options: cobertura, jaCoCo
           summaryFileLocation: target/site/jacoco-aggregate/jacoco.xml
-          reportDirectory: target/site/jacoco-aggregate
+          reportDirectory: target
           failIfCoverageEmpty: true
