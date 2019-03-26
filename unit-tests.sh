@@ -1,5 +1,4 @@
 #!/bin/sh
-sudo renice -10 $$
 if [ "${ANDROID}" = 1 ]; then
   MAYBE_ANDROID_FLAG="-Pandroid"
 else
