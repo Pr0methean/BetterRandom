@@ -1,3 +1,5 @@
 steps:
-- script: ./coveralls.sh
+- bash: ./coveralls.sh
+  env:
+    COVERALLS_TOKEN: $(COVERALLS_TOKEN)
   displayName: Upload coverage to Coveralls
