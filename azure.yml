@@ -81,7 +81,7 @@ jobs:
       - script: ls -R
       - task: PublishCodeCoverageResults@1
         inputs:
-          #codeCoverageTool: 'JaCoCo' # Options: cobertura, jaCoCo
+          codeCoverageTool: 'JaCoCo' # Options: cobertura, jaCoCo
           summaryFileLocation: target/site/jacoco-aggregate/jacoco.xml
-          additionalCodeCoverageFiles: target/site/jacoco-aggregate/**
+          reportDirectory: target/site/jacoco-aggregate
           failIfCoverageEmpty: true
