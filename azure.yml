@@ -41,19 +41,6 @@ jobs:
       JAVA_HOME: jdk
     strategy:
       matrix:
-        OpenJdk08Linux:
-          JAVA8: 'true'
-          javaUrl: $(OpenJdk08Linux)
-          vmImage: 'ubuntu-16.04'
-          coverageName: OpenJdk08Linux
-        OpenJdk09Linux:
-          javaUrl: $(OpenJdk09Linux)
-          vmImage: 'ubuntu-16.04'
-          coverageName: OpenJdk09Linux
-        OpenJdk10Linux:
-          javaUrl: $(OpenJdk10Linux)
-          vmImage: 'ubuntu-16.04'
-          coverageName: OpenJdk10Linux
         OpenJdk11Linux:
           javaUrl: $(OpenJdk11Linux)
           vmImage: 'ubuntu-16.04'
@@ -81,86 +68,10 @@ jobs:
       - script: ./unit-tests.sh
         displayName: Build & Test
       - template: etc/azureTemplate/publishCoverage.yml
-  - job: UnitOracleLimitedCrypto
-    pool:
-      vmImage: 'ubuntu-16.04'
-    variables:
-      JAVA8: 'true'
-      coverageName: OracleLimitedCrypto
-    steps:
-      - script: sudo ./installOracleJdk8.sh
-        displayName: Download & Install Java
-      - script: ./unit-tests.sh
-        displayName: Build & Test
-      - template: etc/azureTemplate/publishCoverage.yml
-  - job: UnitOracle
-    strategy:
-      matrix:
-        OracleJdk11Linux:
-          javaLicence: BCL
-          javaVersion: '11'
-          installJdkOs: 'linux-x64'
-          vmImage: 'ubuntu-16.04'
-          coverageName: OracleJdk11Linux
-        OracleJdk11Mac:
-          javaLicence: BCL
-          javaVersion: '11'
-          installJdkOs: 'osx-x64'
-          vmImage: 'macOs-10.13'
-          coverageName: OracleJdk11Mac
-    pool:
-      vmImage: $(vmImage)
-    steps:
-      - template: etc/azureTemplate/downloadJava.yml
-      - script: ./unit-tests.sh
-        displayName: Build & Test
-      - template: etc/azureTemplate/publishCoverage.yml
-  - job: UnitMac
-    variables:
-      JAVA_HOME: jdk
-    strategy:
-      matrix:
-        # Java 7 is /Library/Java/JavaVirtualMachines/jdk1.7.0_80.jdk/Contents/Home
-        OpenJdk08Mac:
-          JAVA8: 'true'
-          JAVA_HOME: '/Library/Java/JavaVirtualMachines/jdk1.8.0_202.jdk/Contents/Home'
-          coverageName: OpenJdk08Mac
-        OpenJdk09Mac:
-          JAVA_HOME: '/Library/Java/JavaVirtualMachines/jdk-9.0.4.jdk/Contents/Home'
-          coverageName: OpenJdk09Mac
-        OpenJdk10Mac:
-          JAVA_HOME: '/Library/Java/JavaVirtualMachines/jdk-10.0.2.jdk/Contents/Home'
-          coverageName: OpenJdk10Mac
-        OpenJdk11Mac:
-          JAVA_HOME: '/Library/Java/JavaVirtualMachines/openjdk-11.0.2.jdk/Contents/Home'
-          coverageName: OpenJdk11Mac
-    pool:
-      vmImage: 'macOs-10.13'
-    steps:
-      - script: ./unit-tests.sh
-        displayName: Build & Test
-      - template: etc/azureTemplate/publishCoverage.yml
-  - job: UnitWindows
-    variables:
-      coverageName: Windows
-      JAVA8: 'true'
-    pool:
-      vmImage: 'windows-2019'
-    steps:
-      - task: PowerShell@2
-        displayName: Build & Test
-        inputs:
-          targetType: 'filePath'
-          filePath: ./unit-tests.ps1
-      - template: etc/azureTemplate/publishCoverage.yml
   - job: AllUnitTests # empty job used in dependsOn for DRY reasons
     displayName: All unit tests are done.
     dependsOn:
-      - UnitWindows
-      - UnitMac
       - UnitLinux
-      - UnitOracle
-      - UnitOracleLimitedCrypto
     pool: server # not a real job, so doesn't need an agent
   - job: MergeCoverage
     variables:
@@ -170,36 +81,6 @@ jobs:
     pool:
       vmImage: 'ubuntu-16.04'
     steps:
-      - template: etc/azureTemplate/downloadCoverage.yml
-        parameters:
-          inputName: OracleLimitedCrypto
-      - template: etc/azureTemplate/downloadCoverage.yml
-        parameters:
-          inputName: OracleJdk11Linux
-      - template: etc/azureTemplate/downloadCoverage.yml
-        parameters:
-          inputName: OracleJdk11Mac
-      - template: etc/azureTemplate/downloadCoverage.yml
-        parameters:
-          inputName: OpenJdk08Mac
-      - template: etc/azureTemplate/downloadCoverage.yml
-        parameters:
-          inputName: OpenJdk09Mac
-      - template: etc/azureTemplate/downloadCoverage.yml
-        parameters:
-          inputName: OpenJdk10Mac
-      - template: etc/azureTemplate/downloadCoverage.yml
-        parameters:
-          inputName: OpenJdk11Mac
-      - template: etc/azureTemplate/downloadCoverage.yml
-        parameters:
-          inputName: OpenJdk08Linux
-      - template: etc/azureTemplate/downloadCoverage.yml
-        parameters:
-          inputName: OpenJdk09Linux
-      - template: etc/azureTemplate/downloadCoverage.yml
-        parameters:
-          inputName: OpenJdk10Linux
       - template: etc/azureTemplate/downloadCoverage.yml
         parameters:
           inputName: OpenJdk11Linux
