@@ -74,7 +74,7 @@ jobs:
         parameters:
           inputName: OpenJdk11Mac
       - script: ls -R
-      - task: ReportGenerator # https://marketplace.visualstudio.com/items?itemName=Palmmedia.reportgenerator
+      - task: ReportGenerator@1 # https://marketplace.visualstudio.com/items?itemName=Palmmedia.reportgenerator
         displayName: Generate Merged Coverage Report
         inputs:
           reports: '$(System.DefaultWorkingDirectory)/betterrandom/target/**.exec'
