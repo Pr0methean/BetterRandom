@@ -36,18 +36,6 @@ trigger:
 #    - README.md
 #    - CHANGELOG.md
 jobs:
-  - job: UnitOracleLimitedCrypto
-    pool:
-      vmImage: 'ubuntu-16.04'
-    variables:
-      JAVA8: 'true'
-      coverageName: OracleLimitedCrypto
-    steps:
-      - script: sudo ./installOracleJdk8.sh
-        displayName: Download & Install Java
-      - script: ./unit-tests.sh
-        displayName: Build & Test
-      - template: etc/azureTemplate/publishCoverage.yml
   - job: UnitLinux
     variables:
       JAVA_HOME: jdk
@@ -90,6 +78,18 @@ jobs:
           cleanDestinationDirectory: true
           jdkDestinationDirectory: $(JAVA_HOME)
           jdkArchitectureOption: x64
+      - script: ./unit-tests.sh
+        displayName: Build & Test
+      - template: etc/azureTemplate/publishCoverage.yml
+  - job: UnitOracleLimitedCrypto
+    pool:
+      vmImage: 'ubuntu-16.04'
+    variables:
+      JAVA8: 'true'
+      coverageName: OracleLimitedCrypto
+    steps:
+      - script: sudo ./installOracleJdk8.sh
+        displayName: Download & Install Java
       - script: ./unit-tests.sh
         displayName: Build & Test
       - template: etc/azureTemplate/publishCoverage.yml
