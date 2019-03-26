@@ -36,42 +36,27 @@ trigger:
 #    - README.md
 #    - CHANGELOG.md
 jobs:
-  - job: UnitLinux
+  - job: UnitMac
     variables:
       JAVA_HOME: jdk
     strategy:
       matrix:
-        OpenJdk11Linux:
-          javaUrl: $(OpenJdk11Linux)
-          vmImage: 'ubuntu-16.04'
-          coverageName: OpenJdk11Linux
-        OpenJNine11Linux:
-          javaUrl: $(OpenJNine11Linux)
-          vmImage: 'ubuntu-16.04'
-          coverageName: OpenJNine11Linux
-    #      OpenJNine11Mac:
-    #        javaUrl: $(openjnine11mac)
-    #        vmImage: 'macOs-10.13'
+        OpenJdk10Mac:
+          JAVA_HOME: '/Library/Java/JavaVirtualMachines/jdk-10.0.2.jdk/Contents/Home'
+          coverageName: OpenJdk10Mac
+        OpenJdk11Mac:
+          JAVA_HOME: '/Library/Java/JavaVirtualMachines/openjdk-11.0.2.jdk/Contents/Home'
+          coverageName: OpenJdk11Mac
     pool:
-      vmImage: $(vmImage)
+      vmImage: 'macOs-10.13'
     steps:
-      - script: wget $(javaUrl) -O jdk.tar.gz
-        displayName: Download Java Installer
-      - task: JavaToolInstaller@0
-        displayName: Install Java
-        inputs:
-          jdkSourceOption: localDirectory
-          jdkFile: jdk.tar.gz
-          cleanDestinationDirectory: true
-          jdkDestinationDirectory: $(JAVA_HOME)
-          jdkArchitectureOption: x64
       - script: ./unit-tests.sh
         displayName: Build & Test
       - template: etc/azureTemplate/publishCoverage.yml
   - job: AllUnitTests # empty job used in dependsOn for DRY reasons
     displayName: All unit tests are done.
     dependsOn:
-      - UnitLinux
+      - UnitMac
     pool: server # not a real job, so doesn't need an agent
   - job: MergeCoverage
     variables:
@@ -83,10 +68,10 @@ jobs:
     steps:
       - template: etc/azureTemplate/downloadCoverage.yml
         parameters:
-          inputName: OpenJdk11Linux
+          inputName: OpenJdk10Mac
       - template: etc/azureTemplate/downloadCoverage.yml
         parameters:
-          inputName: OpenJNine11Linux
+          inputName: OpenJdk11Mac
       - task: CopyFiles@2
         inputs:
           sourceFolder: $(System.ArtifactsDirectory)
