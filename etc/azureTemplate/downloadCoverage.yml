@@ -5,3 +5,4 @@ steps:
   displayName: 'Download Coverage: ${{ parameters.inputName }}'
   inputs:
     artifactName: Coverage_${{ parameters.inputName }}
+    downloadPath: ./target
