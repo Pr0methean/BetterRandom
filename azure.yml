@@ -153,15 +153,20 @@ jobs:
           targetType: 'filePath'
           filePath: ./unit-tests.ps1
       - template: etc/azureTemplate/publishCoverage.yml
-  - job: MergeCoverage
-    variables:
-      coverageName: Combined
+  - job: AllUnitTests # empty job used in dependsOn for DRY reasons
+    displayName: All unit tests are done.
     dependsOn:
       - UnitWindows
       - UnitMac
       - UnitLinux
       - UnitOracle
       - UnitOracleLimitedCrypto
+    pool: server # not a real job, so doesn't need an agent
+  - job: MergeCoverage
+    variables:
+      coverageName: Combined
+    dependsOn:
+      - AllUnitTests
     pool:
       vmImage: 'ubuntu-16.04'
     steps:
@@ -201,6 +206,10 @@ jobs:
       - template: etc/azureTemplate/downloadCoverage.yml
         parameters:
           inputName: OpenJNine11Linux
+      - task: CopyFiles@2
+        inputs:
+          sourceFolder: $(System.ArtifactsDirectory)
+          targetFolder: target
       - script: ./aggregate.sh
         displayName: Merge Coverage Reports
       - task: PublishCodeCoverageResults@1
