@@ -76,9 +76,8 @@ jobs:
       - script: ./aggregate.sh
         displayName: Merge Coverage Reports
       - script: ls -R
-      - task: PublishCodeCoverageResults@1
+      - task: PublishBuildArtifacts@1
         inputs:
-          codeCoverageTool: 'JaCoCo' # Options: cobertura, jaCoCo
-          summaryFileLocation: '$(System.DefaultWorkingDirectory)/betterrandom/target/site/jacoco-aggregate/jacoco.xml'
-          reportDirectory: '$(System.DefaultWorkingDirectory)/betterrandom/target/site/jacoco-aggregate'
-          failIfCoverageEmpty: true
+          pathtoPublish: '$(System.DefaultWorkingDirectory)/betterrandom/target/site/jacoco-aggregate'
+          parallel: true
+          artifactName: 'Coverage Merged'
