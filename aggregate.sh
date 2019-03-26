@@ -1,4 +1,4 @@
 #!/bin/bash
-ls -R target
-mv etc/jacoco_merge.xml ./pom.xml
+mv etc/jacoco_merge.xml betterrandom/pom.xml
+cd betterrandom
 mvn "jacoco:report-aggregate"

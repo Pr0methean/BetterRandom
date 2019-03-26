@@ -1,7 +1,8 @@
 steps:
-  - task: PublishCodeCoverageResults@1
-    inputs:
-      codeCoverageTool: 'JaCoCo' # Options: cobertura, jaCoCo
-      summaryFileLocation: '$(System.DefaultWorkingDirectory)/betterrandom/target/site/jacoco/jacoco.xml'
-      reportDirectory: '$(System.DefaultWorkingDirectory)/betterrandom/target/site/jacoco'
-      failIfCoverageEmpty: true
+- script: mv ./betterrandom/target/jacoco.exec ./betterrandom/target/jacoco_$(coverageName).exec
+  displayName: Give Coverage Report Unique Name
+- task: PublishPipelineArtifact@0
+  displayName: Publish Coverage Report
+  inputs:
+    artifactName: Coverage_$(coverageName)
+    targetPath: ./betterrandom/target/jacoco_$(coverageName).exec
