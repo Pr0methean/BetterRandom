@@ -1,5 +1,5 @@
 steps:
-- bash: ./coveralls.sh
+- bash: 'curl -s https://codecov.io/bash | bash'
+  displayName: Upload coverage to Codecov
   env:
-    COVERALLS_TOKEN: $(COVERALLS_TOKEN)
-  displayName: Upload coverage to Coveralls
+    CODECOV_TOKEN: $(CODECOV_TOKEN)
