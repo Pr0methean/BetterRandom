@@ -1,3 +1,4 @@
+steps:
 - script: ./unit-tests.sh
   displayName: Build & Test
   env:
