@@ -1,0 +1,4 @@
+- script: ./unit-tests.sh
+  displayName: Build & Test
+  env:
+    RANDOM_DOT_ORG_KEY: $(RANDOM_DOT_ORG_KEY)

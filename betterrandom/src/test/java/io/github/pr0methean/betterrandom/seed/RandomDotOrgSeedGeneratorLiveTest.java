@@ -15,7 +15,6 @@
 // ============================================================================
 package io.github.pr0methean.betterrandom.seed;
 
-import io.github.pr0methean.betterrandom.TestingDeficiency;
 import java.net.InetAddress;
 import java.net.Proxy;
 import java.net.UnknownHostException;
@@ -33,7 +32,6 @@ import static io.github.pr0methean.betterrandom.seed.RandomDotOrgSeedGenerator.R
 import static io.github.pr0methean.betterrandom.seed.RandomDotOrgSeedGenerator.setApiKey;
 import static io.github.pr0methean.betterrandom.seed.RandomDotOrgSeedGenerator.setProxy;
 import static io.github.pr0methean.betterrandom.seed.RandomDotOrgSeedGenerator.setSslSocketFactory;
-import static io.github.pr0methean.betterrandom.seed.RandomDotOrgUtils.canRunRandomDotOrgLargeTest;
 import static io.github.pr0methean.betterrandom.seed.RandomDotOrgUtils.createSocketFactory;
 import static io.github.pr0methean.betterrandom.seed.RandomDotOrgUtils.haveApiKey;
 import static io.github.pr0methean.betterrandom.seed.RandomDotOrgUtils.setApiKey;
@@ -53,7 +51,7 @@ public class RandomDotOrgSeedGeneratorLiveTest extends AbstractSeedGeneratorTest
   }
 
   @Test(timeOut = 120000) public void testGeneratorOldApi() throws SeedException {
-    if (canRunRandomDotOrgLargeTest()) {
+    if (true) {
       setApiKey(null);
       SeedTestUtils.testGenerator(RANDOM_DOT_ORG_SEED_GENERATOR, true);
     } else {
@@ -62,7 +60,7 @@ public class RandomDotOrgSeedGeneratorLiveTest extends AbstractSeedGeneratorTest
   }
 
   @Test(timeOut = 120000) public void testGeneratorNewApi() throws SeedException {
-    if (canRunRandomDotOrgLargeTest() && haveApiKey()) {
+    if (true && haveApiKey()) {
       setApiKey();
       SeedTestUtils.testGenerator(RANDOM_DOT_ORG_SEED_GENERATOR, true);
     } else {
@@ -77,7 +75,7 @@ public class RandomDotOrgSeedGeneratorLiveTest extends AbstractSeedGeneratorTest
 
   @Test
   public void testSetProxyOff() {
-    if (!canRunRandomDotOrgLargeTest()) {
+    if (!true) {
       throw new SkipException("Test can't run on this platform");
     }
     setProxy(Proxy.NO_PROXY);
@@ -88,8 +86,6 @@ public class RandomDotOrgSeedGeneratorLiveTest extends AbstractSeedGeneratorTest
     }
   }
 
-  @TestingDeficiency
-  @Test(enabled = false) // Fails on Travis-CI for some reason
   public void testSetProxyReal() {
     setProxy(proxy);
     try {

@@ -79,8 +79,7 @@ jobs:
           cleanDestinationDirectory: true
           jdkDestinationDirectory: $(JAVA_HOME)
           jdkArchitectureOption: x64
-      - script: ./unit-tests.sh
-        displayName: Build & Test
+      - template: etc/azureTemplate/unitTestsSh.yml
       - template: etc/azureTemplate/publishCoverage.yml
   - job: UnitOracleLimitedCrypto
     pool:
@@ -91,8 +90,7 @@ jobs:
     steps:
       - script: sudo ./installOracleJdk8.sh
         displayName: Download & Install Java
-      - script: ./unit-tests.sh
-        displayName: Build & Test
+      - template: etc/azureTemplate/unitTestsSh.yml
       - template: etc/azureTemplate/publishCoverage.yml
   - job: UnitOracle
     strategy:
@@ -113,8 +111,7 @@ jobs:
       vmImage: $(vmImage)
     steps:
       - template: etc/azureTemplate/downloadJava.yml
-      - script: ./unit-tests.sh
-        displayName: Build & Test
+      - template: etc/azureTemplate/unitTestsSh.yml
       - template: etc/azureTemplate/publishCoverage.yml
   - job: UnitMac
     variables:
@@ -138,8 +135,7 @@ jobs:
     pool:
       vmImage: 'macOs-10.13'
     steps:
-      - script: ./unit-tests.sh
-        displayName: Build & Test
+      - template: etc/azureTemplate/unitTestsSh.yml
       - template: etc/azureTemplate/publishCoverage.yml
   - job: UnitWindows
     variables:
@@ -153,6 +149,8 @@ jobs:
         inputs:
           targetType: 'filePath'
           filePath: ./unit-tests.ps1
+          env:
+            RANDOM_DOT_ORG_KEY: $(RANDOM_DOT_ORG_KEY)
       - template: etc/azureTemplate/publishCoverage.yml
   - job: AllUnitTests # empty job used in dependsOn for DRY reasons
     displayName: All unit tests are done.
