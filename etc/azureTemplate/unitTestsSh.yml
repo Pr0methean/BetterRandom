@@ -1,5 +1,5 @@
 steps:
-- script: sudo apt-get install tor
+- script: sudo apt install tor
   displayName: Install Tor
 - script: sudo service tor start
   displayName: Start Tor
