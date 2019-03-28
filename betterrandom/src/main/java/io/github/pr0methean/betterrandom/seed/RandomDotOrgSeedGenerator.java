@@ -17,6 +17,7 @@ package io.github.pr0methean.betterrandom.seed;
 
 import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
@@ -261,6 +262,19 @@ public enum RandomDotOrgSeedGenerator implements SeedGenerator {
           earliestNextAttempt = CLOCK.instant().plusMillis(delayMs);
         }
       }
+    } catch (IOException e) {
+      if (connection != null) {
+        InputStream error = connection.getErrorStream();
+        byte[] copyBuffer = new byte[256];
+        while (true) {
+          int bytes = error.read(copyBuffer);
+          if (bytes <= 0) {
+            break;
+          }
+          System.out.write(copyBuffer, 0, bytes);
+        }
+      }
+      throw e;
     } finally {
       lock.unlock();
       if (connection != null) {
