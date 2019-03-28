@@ -265,7 +265,10 @@ public enum RandomDotOrgSeedGenerator implements SeedGenerator {
         }
       }
     } catch (Exception e) {
-      if (connection != null) {
+      System.err.println("EXCEPTION IN RANDOMDOTORGSEEDGENERATOR");
+      if (connection == null) {
+        System.err.println("Connection is null!");
+      } else {
         InputStream error = connection.getErrorStream();
         if (error != null) {
           byte[] copyBuffer = new byte[256];
@@ -274,7 +277,6 @@ public enum RandomDotOrgSeedGenerator implements SeedGenerator {
             if (bytes <= 0) {
               break;
             }
-            System.err.println("IOEXCEPTION IN RANDOMDOTORGSEEDGENERATOR");
             e.printStackTrace(System.err);
             System.err.write(copyBuffer, 0, bytes);
             System.err.println();
