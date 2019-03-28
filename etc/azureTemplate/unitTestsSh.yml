@@ -1,7 +1,7 @@
 parameters:
-  packageManager: 'apt'
+  packageManager: 'sudo apt'
 steps:
-- script: 'sudo ${{ parameters.packageManager }} install tor'
+- script: '${{ parameters.packageManager }} install tor'
   displayName: Install Tor
 - script: sudo service tor start
   displayName: Start Tor
