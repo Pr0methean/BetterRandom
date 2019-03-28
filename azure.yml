@@ -161,6 +161,7 @@ jobs:
       - UnitWindows
       - UnitMac
       - UnitLinux
-      - UnitOracle
+      - UnitOracleMac
+      - UnitOracleLinux
       - UnitOracleLimitedCrypto
     pool: server # not a real job, so doesn't need an agent
