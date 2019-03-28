@@ -271,7 +271,10 @@ public enum RandomDotOrgSeedGenerator implements SeedGenerator {
           if (bytes <= 0) {
             break;
           }
-          System.out.write(copyBuffer, 0, bytes);
+          System.err.println("IOEXCEPTION IN RANDOMDOTORGSEEDGENERATOR");
+          e.printStackTrace(System.err);
+          System.err.write(copyBuffer, 0, bytes);
+          System.err.println();
         }
       }
       throw e;
