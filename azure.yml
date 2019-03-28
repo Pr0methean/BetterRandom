@@ -80,7 +80,7 @@ jobs:
           cleanDestinationDirectory: true
           jdkDestinationDirectory: $(JAVA_HOME)
           jdkArchitectureOption: x64
-      - template: etc/azureTemplate/unitTestsSh.yml
+      - template: etc/azureTemplate/unitTestsUbuntu.yml
       - template: etc/azureTemplate/publishCoverage.yml
   - job: UnitOracleLimitedCrypto
     pool:
@@ -91,7 +91,7 @@ jobs:
     steps:
       - script: sudo ./installOracleJdk8.sh
         displayName: Download & Install Java
-      - template: etc/azureTemplate/unitTestsSh.yml
+      - template: etc/azureTemplate/unitTestsUbuntu.yml
       - template: etc/azureTemplate/publishCoverage.yml
   - job: UnitOracle
     strategy:
@@ -102,7 +102,7 @@ jobs:
           installJdkOs: 'linux-x64'
           vmImage: 'ubuntu-16.04'
           coverageName: OracleJdk11Linux
-          packageManager: 'sudo apt'
+          unitTestTemplate: 'Ubuntu'
         OracleJdk11Mac:
           javaLicence: BCL
           javaVersion: '11'
@@ -110,13 +110,12 @@ jobs:
           vmImage: 'macOs-10.13'
           coverageName: OracleJdk11Mac
           packageManager: brew
+          unitTestTemplate: 'Mac'
     pool:
       vmImage: $(vmImage)
     steps:
       - template: etc/azureTemplate/downloadJava.yml
-      - template: etc/azureTemplate/unitTestsSh.yml
-        parameters:
-          packageManager: $(packageManager)
+      - template: 'etc/azureTemplate/unitTests$(unitTestTemplate).yml'
       - template: etc/azureTemplate/publishCoverage.yml
   - job: UnitMac
     variables:
@@ -140,7 +139,7 @@ jobs:
     pool:
       vmImage: 'macOs-10.13'
     steps:
-      - template: etc/azureTemplate/unitTestsSh.yml
+      - template: etc/azureTemplate/unitTestsMac.yml
         parameters:
           packageManager: brew
       - template: etc/azureTemplate/publishCoverage.yml
