@@ -116,7 +116,7 @@ jobs:
       - template: etc/azureTemplate/downloadJava.yml
       - template: etc/azureTemplate/unitTestsSh.yml
         parameters:
-          - packageManager: $(packageManager)
+          packageManager: $(packageManager)
       - template: etc/azureTemplate/publishCoverage.yml
   - job: UnitMac
     variables:
@@ -142,7 +142,7 @@ jobs:
     steps:
       - template: etc/azureTemplate/unitTestsSh.yml
         parameters:
-          - packageManager: brew
+          packageManager: brew
       - template: etc/azureTemplate/publishCoverage.yml
   - job: UnitWindows
     variables:
