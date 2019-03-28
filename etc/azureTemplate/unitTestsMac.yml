@@ -1,6 +1,8 @@
 steps:
 - script: brew install tor
-  displayName: Install & Start Tor
+  displayName: Install Tor
+- script: brew services start tor
+  displayName: Start Tor
 - script: ./unit-tests.sh
   displayName: Build & Test
   env:
