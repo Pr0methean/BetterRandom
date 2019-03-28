@@ -102,7 +102,7 @@ jobs:
           installJdkOs: 'linux-x64'
           vmImage: 'ubuntu-16.04'
           coverageName: OracleJdk11Linux
-          unitTestTemplate: 'Ubuntu'
+          unitTestTemplate: 'etc/azureTemplate/unitTestsUbuntu.yml'
         OracleJdk11Mac:
           javaLicence: BCL
           javaVersion: '11'
@@ -110,12 +110,12 @@ jobs:
           vmImage: 'macOs-10.13'
           coverageName: OracleJdk11Mac
           packageManager: brew
-          unitTestTemplate: 'Mac'
+          unitTestTemplate: 'etc/azureTemplate/unitTestsMac.yml'
     pool:
       vmImage: $(vmImage)
     steps:
       - template: etc/azureTemplate/downloadJava.yml
-      - template: 'etc/azureTemplate/unitTests$(unitTestTemplate).yml'
+      - template: $(unitTestTemplate)
       - template: etc/azureTemplate/publishCoverage.yml
   - job: UnitMac
     variables:
