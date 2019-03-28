@@ -1,8 +1,0 @@
-parameters:
-  inputName: ''
-steps:
-- task: DownloadPipelineArtifact@1
-  displayName: 'Download Coverage: ${{ parameters.inputName }}'
-  inputs:
-    artifactName: Coverage_${{ parameters.inputName }}
-    downloadPath: '$(System.DefaultWorkingDirectory)/betterrandom/target'
