@@ -102,7 +102,7 @@ jobs:
           installJdkOs: 'linux-x64'
           vmImage: 'ubuntu-16.04'
           coverageName: OracleJdk11Linux
-          packageManager: apt
+          packageManager: 'sudo apt'
         OracleJdk11Mac:
           javaLicence: BCL
           javaVersion: '11'
