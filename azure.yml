@@ -93,29 +93,29 @@ jobs:
         displayName: Download & Install Java
       - template: etc/azureTemplate/unitTestsUbuntu.yml
       - template: etc/azureTemplate/publishCoverage.yml
-  - job: UnitOracle
-    strategy:
-      matrix:
-        OracleJdk11Linux:
-          javaLicence: BCL
-          javaVersion: '11'
-          installJdkOs: 'linux-x64'
-          vmImage: 'ubuntu-16.04'
-          coverageName: OracleJdk11Linux
-          unitTestTemplate: 'etc/azureTemplate/unitTestsUbuntu.yml'
-        OracleJdk11Mac:
-          javaLicence: BCL
-          javaVersion: '11'
-          installJdkOs: 'osx-x64'
-          vmImage: 'macOs-10.13'
-          coverageName: OracleJdk11Mac
-          packageManager: brew
-          unitTestTemplate: 'etc/azureTemplate/unitTestsMac.yml'
+  - job: UnitOracleLinux
+    variables:
+      javaLicence: BCL
+      javaVersion: '11'
+      installJdkOs: 'linux-x64'
+      coverageName: OracleJdk11Linux
     pool:
-      vmImage: $(vmImage)
+      vmImage: 'ubuntu-16.04'
     steps:
       - template: etc/azureTemplate/downloadJava.yml
-      - template: $(unitTestTemplate)
+      - template: etc/azureTemplate/unitTestsUbuntu.yml
+      - template: etc/azureTemplate/publishCoverage.yml
+  - job: UnitOracleMac
+    variables:
+      javaLicence: BCL
+      javaVersion: '11'
+      installJdkOs: 'osx-x64'
+      coverageName: OracleJdk11Mac
+    pool:
+      vmImage: 'macOs-10.13'
+    steps:
+      - template: etc/azureTemplate/downloadJava.yml
+      - template: etc/azureTemplate/unitTestsMac.yml
       - template: etc/azureTemplate/publishCoverage.yml
   - job: UnitMac
     variables:
