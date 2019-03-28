@@ -31,6 +31,8 @@ import java.time.Duration;
 import java.time.Instant;
 import java.util.Base64;
 import java.util.Base64.Decoder;
+import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.atomic.AtomicReference;
@@ -265,16 +267,28 @@ public enum RandomDotOrgSeedGenerator implements SeedGenerator {
     } catch (IOException e) {
       if (connection != null) {
         InputStream error = connection.getErrorStream();
-        byte[] copyBuffer = new byte[256];
-        while (true) {
-          int bytes = error.read(copyBuffer);
-          if (bytes <= 0) {
-            break;
+        if (error != null) {
+          byte[] copyBuffer = new byte[256];
+          while (true) {
+            int bytes = error.read(copyBuffer);
+            if (bytes <= 0) {
+              break;
+            }
+            System.err.println("IOEXCEPTION IN RANDOMDOTORGSEEDGENERATOR");
+            e.printStackTrace(System.err);
+            System.err.write(copyBuffer, 0, bytes);
+            System.err.println();
           }
-          System.err.println("IOEXCEPTION IN RANDOMDOTORGSEEDGENERATOR");
-          e.printStackTrace(System.err);
-          System.err.write(copyBuffer, 0, bytes);
-          System.err.println();
+        } else {
+          System.err.println("Error stream is null");
+        }
+        Map<String, List<String>> headers = connection.getHeaderFields();
+        if (headers == null || headers.size() < 1) {
+          System.err.println("Null or empty headers");
+        } else {
+          for (String key : headers.keySet()) {
+            System.err.format("%s: %s\n", key, String.join(",", headers.get(key).toArray(new String[0])));
+          }
         }
       }
       throw e;
