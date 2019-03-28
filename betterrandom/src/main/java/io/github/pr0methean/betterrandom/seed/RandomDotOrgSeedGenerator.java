@@ -264,7 +264,7 @@ public enum RandomDotOrgSeedGenerator implements SeedGenerator {
           earliestNextAttempt = CLOCK.instant().plusMillis(delayMs);
         }
       }
-    } catch (IOException e) {
+    } catch (Exception e) {
       if (connection != null) {
         InputStream error = connection.getErrorStream();
         if (error != null) {
