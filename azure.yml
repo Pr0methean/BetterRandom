@@ -150,7 +150,7 @@ jobs:
     pool:
       vmImage: 'windows-2019'
     steps:
-      - script: ./unit-tests.ps1
+      - script: unit-tests.ps1
         displayName: Build & Test
         env:
           RANDOM_DOT_ORG_KEY: $(RANDOM_DOT_ORG_KEY)

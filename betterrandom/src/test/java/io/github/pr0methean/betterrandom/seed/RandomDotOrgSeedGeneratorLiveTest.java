@@ -18,7 +18,6 @@ package io.github.pr0methean.betterrandom.seed;
 import java.net.InetAddress;
 import java.net.Proxy;
 import java.net.UnknownHostException;
-import javax.net.ssl.SSLSocketFactory;
 import org.testng.Assert;
 import org.testng.Reporter;
 import org.testng.SkipException;
@@ -45,7 +44,6 @@ import static io.github.pr0methean.betterrandom.seed.RandomDotOrgUtils.setApiKey
 public class RandomDotOrgSeedGeneratorLiveTest extends AbstractSeedGeneratorTest {
 
   protected final Proxy proxy = RandomDotOrgUtils.createProxy();
-  protected final SSLSocketFactory sslSocketFactory = RandomDotOrgUtils.createSocketFactory();
   public RandomDotOrgSeedGeneratorLiveTest() {
     super(RANDOM_DOT_ORG_SEED_GENERATOR);
   }
