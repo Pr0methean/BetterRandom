@@ -81,6 +81,9 @@ public class RandomDotOrgSeedGeneratorLiveTest extends AbstractSeedGeneratorTest
 
   @Test
   public void testSetProxyReal() {
+    if (System.getProperty("os.name").toLowerCase().startsWith("windows")) {
+      throw new SkipException("Proxy not installed on Windows");
+    }
     setProxy(proxy);
     try {
       if (haveApiKey()) {
