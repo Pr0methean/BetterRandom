@@ -1,5 +1,5 @@
 steps:
-- script: >
+- script: |
     sudo apt install tinyproxy
     sudo service tinyproxy start
   displayName: Install & Start Proxy
