@@ -82,6 +82,7 @@ public class RandomDotOrgSeedGeneratorLiveTest extends AbstractSeedGeneratorTest
     }
   }
 
+  @Test(enabled = false) // due to a bug in random.org's DDOS protection
   public void testSetProxyReal() {
     setProxy(proxy);
     try {
