@@ -1,8 +1,8 @@
 steps:
-- script: brew install tinyproxy
-  displayName: Install Proxy
-- script: brew services start tinyproxy
-  displayName: Start Proxy
+- script: >
+    brew install tinyproxy
+    brew services start tinyproxy
+  displayName: Install & Start Proxy
 - script: ./unit-tests.sh
   displayName: Build & Test
   env:
