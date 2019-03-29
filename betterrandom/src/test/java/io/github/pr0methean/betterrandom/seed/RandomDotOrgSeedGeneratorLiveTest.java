@@ -71,9 +71,6 @@ public class RandomDotOrgSeedGeneratorLiveTest extends AbstractSeedGeneratorTest
 
   @Test
   public void testSetProxyOff() {
-    if (!true) {
-      throw new SkipException("Test can't run on this platform");
-    }
     setProxy(Proxy.NO_PROXY);
     try {
       SeedTestUtils.testGenerator(RANDOM_DOT_ORG_SEED_GENERATOR, true);
