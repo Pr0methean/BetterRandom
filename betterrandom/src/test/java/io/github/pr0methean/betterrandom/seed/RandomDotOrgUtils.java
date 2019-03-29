@@ -16,7 +16,7 @@ import javax.net.ssl.SSLSocketFactory;
 public enum RandomDotOrgUtils {
   ;
 
-  private static final int TOR_PORT = 9050;
+  private static final int PROXY_PORT = 8888;
 
   public static boolean haveApiKey() {
     return System.getenv("RANDOM_DOT_ORG_KEY") != null;
@@ -28,8 +28,8 @@ public enum RandomDotOrgUtils {
         .setApiKey((apiKeyString == null) ? null : UUID.fromString(apiKeyString));
   }
 
-  public static Proxy createTorProxy() {
-    return new Proxy(Type.SOCKS, new InetSocketAddress("localhost", TOR_PORT));
+  public static Proxy createProxy() {
+    return new Proxy(Type.HTTP, new InetSocketAddress("localhost", PROXY_PORT));
   }
 
   public static SSLSocketFactory createSocketFactory() {

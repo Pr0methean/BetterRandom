@@ -1,8 +1,8 @@
 steps:
-- script: sudo apt install tor
-  displayName: Install Tor
-- script: sudo service tor start
-  displayName: Start Tor
+- script: sudo apt install tinyproxy
+  displayName: Install Proxy
+- script: sudo service tinyproxy start
+  displayName: Start Proxy
 - script: ./unit-tests.sh
   displayName: Build & Test
   env:

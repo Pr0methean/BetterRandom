@@ -44,7 +44,7 @@ import static io.github.pr0methean.betterrandom.seed.RandomDotOrgUtils.setApiKey
 @Test(singleThreaded = true)
 public class RandomDotOrgSeedGeneratorLiveTest extends AbstractSeedGeneratorTest {
 
-  protected final Proxy proxy = RandomDotOrgUtils.createTorProxy();
+  protected final Proxy proxy = RandomDotOrgUtils.createProxy();
   protected final SSLSocketFactory sslSocketFactory = RandomDotOrgUtils.createSocketFactory();
   public RandomDotOrgSeedGeneratorLiveTest() {
     super(RANDOM_DOT_ORG_SEED_GENERATOR);
@@ -79,7 +79,7 @@ public class RandomDotOrgSeedGeneratorLiveTest extends AbstractSeedGeneratorTest
     }
   }
 
-  @Test(enabled = false) // due to a bug in random.org's DDOS protection
+  @Test
   public void testSetProxyReal() {
     setProxy(proxy);
     try {
