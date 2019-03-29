@@ -303,7 +303,7 @@
     <jacoco.version>0.8.3</jacoco.version>
     <powermock.version>2.0.0</powermock.version>
     <mockito.version>2.25.1</mockito.version>
-    <pitest.version>1.4.6</pitest.version>
+    <pitest.version>1.4.7</pitest.version>
     <test.argline>-Djava.security.egd=file:/dev/./urandom</test.argline>
     <test.jdk8.argline>${test.argline}</test.jdk8.argline>
     <test.jdk9.argline>${test.argline} --add-opens java.xml/jdk.xml.internal=ALL-UNNAMED</test.jdk9.argline>
