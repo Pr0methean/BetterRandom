@@ -151,11 +151,11 @@ jobs:
       vmImage: 'windows-2019'
     steps:
       - task: PowerShell@2
+        displayName: Build & Test
         inputs:
           filePath: unit-tests.ps1
-          env:
-            RANDOM_DOT_ORG_KEY: $(RANDOM_DOT_ORG_KEY)
-        displayName: Build & Test
+        env:
+          RANDOM_DOT_ORG_KEY: $(RANDOM_DOT_ORG_KEY)
       - template: etc/azureTemplate/publishCoverage.yml
   - job: AllUnitTests # empty job used in dependsOn for DRY reasons
     displayName: All unit tests are done.
