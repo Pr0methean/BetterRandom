@@ -1,5 +1,5 @@
 parameters:
-  - whichTest: '' # run all by default
+  whichTest: '' # run all by default
 steps:
 - script: ./benchmark.sh ${{ parameters.whichTest }}
   env:
