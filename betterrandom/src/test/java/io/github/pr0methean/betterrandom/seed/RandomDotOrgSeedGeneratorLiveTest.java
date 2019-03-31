@@ -15,8 +15,10 @@
 // ============================================================================
 package io.github.pr0methean.betterrandom.seed;
 
+import java.io.IOException;
 import java.net.InetAddress;
 import java.net.Proxy;
+import java.net.URL;
 import java.net.UnknownHostException;
 import org.testng.Assert;
 import org.testng.Reporter;
@@ -79,8 +81,10 @@ public class RandomDotOrgSeedGeneratorLiveTest extends AbstractSeedGeneratorTest
 
   @Test
   public void testSetProxyReal() {
-    if (System.getProperty("os.name").toLowerCase().startsWith("windows")) {
-      throw new SkipException("Proxy not installed on Windows");
+    try {
+      new URL("https://google.com").openConnection(proxy).getContent();
+    } catch (IOException e) {
+      throw new SkipException("This test requires an HTTP proxy on localhost:8888");
     }
     setProxy(proxy);
     try {
