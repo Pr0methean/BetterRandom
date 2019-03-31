@@ -3,5 +3,6 @@ parameters:
 steps:
 - script: ./benchmark.sh ${{ parameters.whichTest }}
   env:
+    JAVA_HOME: $(JAVA_HOME)
     RANDOM_DOT_ORG_KEY: $(RANDOM_DOT_ORG_KEY)
   displayName: Build & Run Benchmarks
