@@ -1,0 +1,5 @@
+steps:
+- script: ./benchmark.sh
+  env:
+    RANDOM_DOT_ORG_KEY: $(RANDOM_DOT_ORG_KEY)
+  displayName: Build & Run Benchmarks
