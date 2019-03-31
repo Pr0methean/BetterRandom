@@ -204,7 +204,7 @@ jobs:
       - template: etc/azureTemplate/installJavaJti.yml
       - template: etc/azureTemplate/benchmark.yml
         parameters:
-          - whichTest: 'io.github.pr0methean.betterrandom.benchmark.AesCounterRandomBenchmark'
+          whichTest: 'io.github.pr0methean.betterrandom.benchmark.AesCounterRandomBenchmark'
   - job: BenchmarkOracleLinux
     dependsOn:
       - AllUnitTests
