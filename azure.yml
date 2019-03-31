@@ -176,7 +176,6 @@ jobs:
           JAVA8: 'true'
           javaUrl: $(OpenJdk08Linux)
           vmImage: 'ubuntu-16.04'
-          coverageName: OpenJdk08Linux
         OpenJdk12Linux:
           javaUrl: $(OpenJdk12Linux)
           vmImage: 'ubuntu-16.04'
