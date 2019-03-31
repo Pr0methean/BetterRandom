@@ -1,5 +1,7 @@
+parameters:
+  - whichTest: '' # run all by default
 steps:
-- script: ./benchmark.sh
+- script: ./benchmark.sh ${{ parameters.whichTest }}
   env:
     RANDOM_DOT_ORG_KEY: $(RANDOM_DOT_ORG_KEY)
   displayName: Build & Run Benchmarks

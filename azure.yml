@@ -4,6 +4,7 @@ variables:
   openjdk10linux: 'https://github.com/AdoptOpenJDK/openjdk10-releases/releases/download/jdk-10.0.2%2B13/OpenJDK10_x64_Linux_jdk-10.0.2%2B13.tar.gz'
   openjdk09linux: 'https://github.com/AdoptOpenJDK/openjdk9-binaries/releases/download/jdk-9.0.4%2B11/OpenJDK9U-jdk_x64_linux_hotspot_9.0.4_11.tar.gz'
   openjdk08linux: 'https://github.com/AdoptOpenJDK/openjdk8-binaries/releases/download/jdk8u202-b08/OpenJDK8U-jdk_x64_linux_hotspot_8u202b08.tar.gz'
+  openjdk12mac: 'https://github.com/AdoptOpenJDK/openjdk12-binaries/releases/download/jdk-12%2B33/OpenJDK12U-jdk_x64_mac_hotspot_12_33.tar.gz'
   openjdk11mac: 'https://github.com/AdoptOpenJDK/openjdk11-binaries/releases/download/jdk-11.0.2%2B9/OpenJDK11U-jdk_x64_mac_hotspot_11.0.2_9.tar.gz'
   openjdk10mac: 'https://github.com/AdoptOpenJDK/openjdk10-releases/releases/download/jdk-10.0.2%2B13/OpenJDK10_x64_Mac_jdk-10.0.2%2B13.tar.gz'
   openjdk09mac: 'https://github.com/AdoptOpenJDK/openjdk9-binaries/releases/download/jdk-9%2B181/OpenJDK9U-jdk_x64_mac_hotspot_9_181.tar.gz'
@@ -42,32 +43,32 @@ jobs:
       JAVA_HOME: jdk
     strategy:
       matrix:
-        OpenJdk08Linux:
+        OpenJdk08:
           JAVA8: 'true'
           javaUrl: $(OpenJdk08Linux)
           vmImage: 'ubuntu-16.04'
           coverageName: OpenJdk08Linux
-        OpenJdk09Linux:
+        OpenJdk09:
           javaUrl: $(OpenJdk09Linux)
           vmImage: 'ubuntu-16.04'
           coverageName: OpenJdk09Linux
-        OpenJdk10Linux:
+        OpenJdk10:
           javaUrl: $(OpenJdk10Linux)
           vmImage: 'ubuntu-16.04'
           coverageName: OpenJdk10Linux
-        OpenJdk11Linux:
+        OpenJdk11:
           javaUrl: $(OpenJdk11Linux)
           vmImage: 'ubuntu-16.04'
           coverageName: OpenJdk11Linux
-        OpenJdk12Linux:
+        OpenJdk12:
           javaUrl: $(OpenJdk12Linux)
           vmImage: 'ubuntu-16.04'
           coverageName: OpenJdk12Linux
-        OpenJNine08Linux:
+        OpenJNine08:
           javaUrl: $(OpenJNine08Linux)
           vmImage: 'ubuntu-16.04'
           coverageName: OpenJNine08Linux
-        OpenJNine12Linux:
+        OpenJNine12:
           javaUrl: $(OpenJNine12Linux)
           vmImage: 'ubuntu-16.04'
           coverageName: OpenJNine12Linux
@@ -121,25 +122,26 @@ jobs:
     strategy:
       matrix:
         # Java 7 is /Library/Java/JavaVirtualMachines/jdk1.7.0_80.jdk/Contents/Home
-        OpenJdk08Mac:
+        OpenJdk08:
           JAVA8: 'true'
           JAVA_HOME: '/Library/Java/JavaVirtualMachines/jdk1.8.0_202.jdk/Contents/Home'
           coverageName: OpenJdk08Mac
-        OpenJdk09Mac:
+        OpenJdk09:
           JAVA_HOME: '/Library/Java/JavaVirtualMachines/jdk-9.0.4.jdk/Contents/Home'
           coverageName: OpenJdk09Mac
-        OpenJdk10Mac:
+        OpenJdk10:
           JAVA_HOME: '/Library/Java/JavaVirtualMachines/jdk-10.0.2.jdk/Contents/Home'
           coverageName: OpenJdk10Mac
-        OpenJdk11Mac:
+        OpenJdk11:
           JAVA_HOME: '/Library/Java/JavaVirtualMachines/openjdk-11.0.2.jdk/Contents/Home'
           coverageName: OpenJdk11Mac
+        OpenJdk12:
+          JAVA_HOME: '/Library/Java/JavaVirtualMachines/jdk-12.jdk/Contents/Home'
+          coverageName: OpenJdk12Mac
     pool:
       vmImage: 'macOs-10.13'
     steps:
       - template: etc/azureTemplate/unitTestsMac.yml
-        parameters:
-          packageManager: brew
       - template: etc/azureTemplate/publishCoverage.yml
   - job: UnitWindows
     variables:
@@ -190,3 +192,73 @@ jobs:
     steps:
       - template: etc/azureTemplate/installJavaJti.yml
       - template: etc/azureTemplate/benchmark.yml
+  - job: BenchmarkOracleLimitedCrypto
+    dependsOn:
+      - AllUnitTests
+    pool:
+      vmImage: 'ubuntu-16.04'
+    variables:
+      JAVA8: 'true'
+      coverageName: OracleLimitedCrypto
+    steps:
+      - template: etc/azureTemplate/installJavaJti.yml
+      - template: etc/azureTemplate/benchmark.yml
+        parameters:
+          - whichTest: 'io.github.pr0methean.betterrandom.benchmark.AesCounterRandomBenchmark'
+  - job: BenchmarkOracleLinux
+    dependsOn:
+      - AllUnitTests
+    variables:
+      javaLicence: BCL
+      javaVersion: '11'
+      installJdkOs: 'linux-x64'
+      coverageName: OracleJdk11Linux
+    pool:
+      vmImage: 'ubuntu-16.04'
+    steps:
+      - template: etc/azureTemplate/installJavaBach.yml
+      - template: etc/azureTemplate/benchmark.yml
+  - job: BenchmarkOracleMac
+    dependsOn:
+      - AllUnitTests
+    variables:
+      javaLicence: BCL
+      javaVersion: '11'
+      installJdkOs: 'osx-x64'
+    pool:
+      vmImage: 'macOs-10.13'
+    steps:
+      - template: etc/azureTemplate/installJavaBach.yml
+      - template: etc/azureTemplate/benchmark.yml
+  - job: BenchmarkMac
+    dependsOn:
+      - AllUnitTests
+    variables:
+      JAVA_HOME: jdk
+    strategy:
+      matrix:
+        # Java 7 is /Library/Java/JavaVirtualMachines/jdk1.7.0_80.jdk/Contents/Home
+        OpenJdk08Mac:
+          JAVA8: 'true'
+          JAVA_HOME: '/Library/Java/JavaVirtualMachines/jdk1.8.0_202.jdk/Contents/Home'
+        OpenJdk12:
+          JAVA_HOME: '/Library/Java/JavaVirtualMachines/jdk-12.jdk/Contents/Home'
+    pool:
+      vmImage: 'macOs-10.13'
+    steps:
+      - template: etc/azureTemplate/benchmark.yml
+  - job: BenchmarkWindows
+    dependsOn:
+      - AllUnitTests
+    variables:
+      coverageName: Windows
+      JAVA8: 'true'
+    pool:
+      vmImage: 'windows-2019'
+    steps:
+      - task: PowerShell@2
+        displayName: Build & Benchmark
+        inputs:
+          filePath: benchmark.ps1
+        env:
+          RANDOM_DOT_ORG_KEY: $(RANDOM_DOT_ORG_KEY)
