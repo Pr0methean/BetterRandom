@@ -124,23 +124,26 @@ jobs:
         # Java 7 is /Library/Java/JavaVirtualMachines/jdk1.7.0_80.jdk/Contents/Home
         OpenJdk08:
           JAVA8: 'true'
-          JAVA_HOME: '/Library/Java/JavaVirtualMachines/jdk1.8.0_202.jdk/Contents/Home'
+          javaVersion: 8
           coverageName: OpenJdk08Mac
         OpenJdk09:
-          JAVA_HOME: '/Library/Java/JavaVirtualMachines/jdk-9.0.4.jdk/Contents/Home'
+          javaVersion: 9
           coverageName: OpenJdk09Mac
         OpenJdk10:
-          JAVA_HOME: '/Library/Java/JavaVirtualMachines/jdk-10.0.2.jdk/Contents/Home'
+          javaVersion: 10
           coverageName: OpenJdk10Mac
         OpenJdk11:
-          JAVA_HOME: '/Library/Java/JavaVirtualMachines/openjdk-11.0.2.jdk/Contents/Home'
+          javaVersion: 11
           coverageName: OpenJdk11Mac
         OpenJdk12:
-          JAVA_HOME: '/Library/Java/JavaVirtualMachines/jdk-12.jdk/Contents/Home'
+          javaVersion: 12
           coverageName: OpenJdk12Mac
     pool:
       vmImage: 'macOs-10.13'
     steps:
+      - template: etc/azureTemplate/installJavaMacLocal.yml
+        parameters:
+          - javaVersion: $(javaVersion)
       - template: etc/azureTemplate/unitTestsMac.yml
       - template: etc/azureTemplate/publishCoverage.yml
   - job: UnitWindows
@@ -240,13 +243,19 @@ jobs:
         # Java 7 is /Library/Java/JavaVirtualMachines/jdk1.7.0_80.jdk/Contents/Home
         OpenJdk08Mac:
           JAVA8: 'true'
-          JAVA_HOME: '/Library/Java/JavaVirtualMachines/jdk1.8.0_202.jdk/Contents/Home'
+          javaVersion: 8
         OpenJdk12:
-          JAVA_HOME: '/Library/Java/JavaVirtualMachines/jdk-12.jdk/Contents/Home'
+          javaVersion: 12
     pool:
       vmImage: 'macOs-10.13'
     steps:
+      - template: etc/azureTemplate/installJavaMacLocal.yml
+        parameters:
+          - javaVersion: $(javaVersion)
       - template: etc/azureTemplate/benchmark.yml
+        env:
+          JAVA_HOME: $(JAVA_HOME)
+          RANDOM_DOT_ORG_KEY: $(RANDOM_DOT_ORG_KEY)
   - job: BenchmarkWindows
     dependsOn:
       - AllUnitTests

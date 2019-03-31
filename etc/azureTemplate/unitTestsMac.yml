@@ -1,3 +1,5 @@
+parameters:
+  javaVersion: ''
 steps:
 - script: |
     brew install tinyproxy

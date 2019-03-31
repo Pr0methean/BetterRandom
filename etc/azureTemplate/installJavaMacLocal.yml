@@ -1,0 +1,6 @@
+parameters:
+  javaVersion: ''
+steps:
+  - bash: |
+      echo -n '##vso[task.setvariable JAVA_HOME=a]'
+      /usr/libexec/java_home -v {{ parameters.javaVersion }}
