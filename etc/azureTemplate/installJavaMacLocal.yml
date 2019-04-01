@@ -6,4 +6,4 @@ steps:
       /usr/libexec/java_home -v $javaVersion
     displayName: Set Java Home
     env:
-      javaVersion: {{ parameters.javaVersion }}
+      javaVersion: '{{ parameters.javaVersion }}'
