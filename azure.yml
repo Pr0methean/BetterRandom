@@ -95,9 +95,9 @@ jobs:
   - job: UnitOracleLinux
     variables:
       javaLicence: BCL
-      javaVersion: '11'
+      javaVersion: '12'
       installJdkOs: 'linux-x64'
-      coverageName: OracleJdk11Linux
+      coverageName: OracleJdk12Linux
     pool:
       vmImage: 'ubuntu-16.04'
     steps:
@@ -107,9 +107,9 @@ jobs:
   - job: UnitOracleMac
     variables:
       javaLicence: BCL
-      javaVersion: '11'
+      javaVersion: '12'
       installJdkOs: 'osx-x64'
-      coverageName: OracleJdk11Mac
+      coverageName: OracleJdk12Mac
     pool:
       vmImage: 'macOs-10.13'
     steps:
@@ -202,9 +202,11 @@ jobs:
       vmImage: 'ubuntu-16.04'
     variables:
       JAVA8: 'true'
+      javaLicence: BCL
+      javaVersion: '12'
       coverageName: OracleLimitedCrypto
     steps:
-      - template: etc/azureTemplate/installJavaJti.yml
+      - template: etc/azureTemplate/installJavaBach.yml
       - template: etc/azureTemplate/benchmark.yml
         parameters:
           whichTest: 'io.github.pr0methean.betterrandom.benchmark.AesCounterRandomBenchmark'
@@ -213,9 +215,8 @@ jobs:
       - AllUnitTests
     variables:
       javaLicence: BCL
-      javaVersion: '11'
+      javaVersion: '12'
       installJdkOs: 'linux-x64'
-      coverageName: OracleJdk11Linux
     pool:
       vmImage: 'ubuntu-16.04'
     steps:
@@ -226,7 +227,7 @@ jobs:
       - AllUnitTests
     variables:
       javaLicence: BCL
-      javaVersion: '11'
+      javaVersion: '12'
       installJdkOs: 'osx-x64'
     pool:
       vmImage: 'macOs-10.13'
