@@ -2,7 +2,7 @@ parameters:
   javaVersion: ''
 steps:
   - bash: |
-      JAVA_HOME=$(/usr/libexec/java_home -v ${javaVersion})
+      JAVA_HOME=$(/usr/libexec/java_home -v ${javaVersion} | sed s_/_\\/_g)
       echo "##vso[task.setvariable JAVA_HOME=a]${JAVA_HOME}"
     env:
       javaVersion: ${{ parameters.javaVersion }}
