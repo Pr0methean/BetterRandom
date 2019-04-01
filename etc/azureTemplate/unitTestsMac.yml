@@ -1,3 +1,5 @@
+# Tinyproxy is used only on the Mac, because it takes over 30 seconds to install and start on Azure
+# (as of 2019-03-31) and is only needed for one unit test.
 parameters:
   javaVersion: ''
 steps:
