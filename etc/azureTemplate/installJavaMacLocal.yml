@@ -4,5 +4,6 @@ steps:
   - bash: |
       echo -n '##vso[task.setvariable JAVA_HOME=a]'
       /usr/libexec/java_home -v $javaVersion
+    displayName: Set Java Home
     env:
-      - javaVersion: {{ parameters.javaVersion }}
+      javaVersion: {{ parameters.javaVersion }}
