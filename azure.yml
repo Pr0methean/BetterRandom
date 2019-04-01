@@ -47,31 +47,31 @@ jobs:
           JAVA8: 'true'
           javaUrl: $(OpenJdk08Linux)
           vmImage: 'ubuntu-16.04'
-          coverageName: OpenJdk08Linux
+          artifactEnvName: OpenJdk08Linux
         OpenJdk09:
           javaUrl: $(OpenJdk09Linux)
           vmImage: 'ubuntu-16.04'
-          coverageName: OpenJdk09Linux
+          artifactEnvName: OpenJdk09Linux
         OpenJdk10:
           javaUrl: $(OpenJdk10Linux)
           vmImage: 'ubuntu-16.04'
-          coverageName: OpenJdk10Linux
+          artifactEnvName: OpenJdk10Linux
         OpenJdk11:
           javaUrl: $(OpenJdk11Linux)
           vmImage: 'ubuntu-16.04'
-          coverageName: OpenJdk11Linux
+          artifactEnvName: OpenJdk11Linux
         OpenJdk12:
           javaUrl: $(OpenJdk12Linux)
           vmImage: 'ubuntu-16.04'
-          coverageName: OpenJdk12Linux
+          artifactEnvName: OpenJdk12Linux
         OpenJNine08:
           javaUrl: $(OpenJNine08Linux)
           vmImage: 'ubuntu-16.04'
-          coverageName: OpenJNine08Linux
+          artifactEnvName: OpenJNine08Linux
         OpenJNine12:
           javaUrl: $(OpenJNine12Linux)
           vmImage: 'ubuntu-16.04'
-          coverageName: OpenJNine12Linux
+          artifactEnvName: OpenJNine12Linux
     #      OpenJNine12Mac:
     #        javaUrl: $(openjnine12mac)
     #        vmImage: 'macOs-10.13'
@@ -86,7 +86,7 @@ jobs:
       vmImage: 'ubuntu-16.04'
     variables:
       JAVA8: 'true'
-      coverageName: OracleLimitedCrypto
+      artifactEnvName: OracleLimitedCrypto
     steps:
       - script: sudo ./installOracleJdk8.sh
         displayName: Download & Install Java
@@ -97,7 +97,7 @@ jobs:
       javaLicence: BCL
       javaVersion: '11'
       installJdkOs: 'linux-x64'
-      coverageName: OracleJdk12Linux
+      artifactEnvName: OracleJdk12Linux
     pool:
       vmImage: 'ubuntu-16.04'
     steps:
@@ -109,7 +109,7 @@ jobs:
       javaLicence: BCL
       javaVersion: '11'
       installJdkOs: 'osx-x64'
-      coverageName: OracleJdk12Mac
+      artifactEnvName: OracleJdk12Mac
     pool:
       vmImage: 'macOs-10.13'
     steps:
@@ -125,19 +125,19 @@ jobs:
         OpenJdk08:
           JAVA8: 'true'
           javaVersion: 8
-          coverageName: OpenJdk08Mac
+          artifactEnvName: OpenJdk08Mac
         OpenJdk09:
           javaVersion: 9
-          coverageName: OpenJdk09Mac
+          artifactEnvName: OpenJdk09Mac
         OpenJdk10:
           javaVersion: 10
-          coverageName: OpenJdk10Mac
+          artifactEnvName: OpenJdk10Mac
         OpenJdk11:
           javaVersion: 11
-          coverageName: OpenJdk11Mac
+          artifactEnvName: OpenJdk11Mac
         OpenJdk12:
           javaVersion: 12
-          coverageName: OpenJdk12Mac
+          artifactEnvName: OpenJdk12Mac
     pool:
       vmImage: 'macOs-10.13'
     steps:
@@ -148,7 +148,7 @@ jobs:
       - template: etc/azureTemplate/publishCoverage.yml
   - job: UnitWindows
     variables:
-      coverageName: Windows
+      artifactEnvName: Windows
       JAVA8: 'true'
     pool:
       vmImage: 'windows-2019'
@@ -181,15 +181,19 @@ jobs:
           JAVA8: 'true'
           javaUrl: $(OpenJdk08Linux)
           vmImage: 'ubuntu-16.04'
+          artifactEnvName: 'OpenJDK08Linux'
         OpenJdk12Linux:
           javaUrl: $(OpenJdk12Linux)
           vmImage: 'ubuntu-16.04'
+          artifactEnvName: 'OpenJDK12Linux'
         OpenJNine08Linux:
           javaUrl: $(OpenJNine08Linux)
           vmImage: 'ubuntu-16.04'
+          artifactEnvName: 'OpenJNine08Linux'
         OpenJNine12Linux:
           javaUrl: $(OpenJNine12Linux)
           vmImage: 'ubuntu-16.04'
+          artifactEnvName: 'OpenJNine12Linux'
     pool:
       vmImage: $(vmImage)
     steps:
@@ -204,7 +208,7 @@ jobs:
       JAVA8: 'true'
       javaLicence: BCL
       javaVersion: '11'
-      coverageName: OracleLimitedCrypto
+      artifactEnvName: OracleLimitedCrypto
     steps:
       - template: etc/azureTemplate/installJavaBach.yml
       - template: etc/azureTemplate/benchmark.yml
@@ -217,6 +221,7 @@ jobs:
       javaLicence: BCL
       javaVersion: '11'
       installJdkOs: 'linux-x64'
+      artifactEnvName: OracleLinux
     pool:
       vmImage: 'ubuntu-16.04'
     steps:
@@ -238,6 +243,7 @@ jobs:
     dependsOn:
       - AllUnitTests
     variables:
+      artifactEnvName: OracleMac
       JAVA_HOME: jdk
     strategy:
       matrix:
@@ -258,7 +264,7 @@ jobs:
     dependsOn:
       - AllUnitTests
     variables:
-      coverageName: Windows
+      artifactEnvName: Windows
       JAVA8: 'true'
     pool:
       vmImage: 'windows-2019'
