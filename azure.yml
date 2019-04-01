@@ -95,7 +95,7 @@ jobs:
   - job: UnitOracleLinux
     variables:
       javaLicence: BCL
-      javaVersion: '12'
+      javaVersion: '11'
       installJdkOs: 'linux-x64'
       coverageName: OracleJdk12Linux
     pool:
@@ -107,7 +107,7 @@ jobs:
   - job: UnitOracleMac
     variables:
       javaLicence: BCL
-      javaVersion: '12'
+      javaVersion: '11'
       installJdkOs: 'osx-x64'
       coverageName: OracleJdk12Mac
     pool:
@@ -203,7 +203,7 @@ jobs:
     variables:
       JAVA8: 'true'
       javaLicence: BCL
-      javaVersion: '12'
+      javaVersion: '11'
       coverageName: OracleLimitedCrypto
     steps:
       - template: etc/azureTemplate/installJavaBach.yml
@@ -215,7 +215,7 @@ jobs:
       - AllUnitTests
     variables:
       javaLicence: BCL
-      javaVersion: '12'
+      javaVersion: '11'
       installJdkOs: 'linux-x64'
     pool:
       vmImage: 'ubuntu-16.04'
@@ -227,7 +227,7 @@ jobs:
       - AllUnitTests
     variables:
       javaLicence: BCL
-      javaVersion: '12'
+      javaVersion: '11'
       installJdkOs: 'osx-x64'
     pool:
       vmImage: 'macOs-10.13'
