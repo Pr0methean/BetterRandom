@@ -33,6 +33,8 @@ import java.util.function.DoubleConsumer;
 import java.util.function.Supplier;
 import org.apache.commons.math3.stat.descriptive.SynchronizedDescriptiveStatistics;
 import org.powermock.modules.testng.PowerMockTestCase;
+import org.testng.IRetryAnalyzer;
+import org.testng.ITestResult;
 import org.testng.Reporter;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.Test;
@@ -363,7 +365,7 @@ public abstract class BaseRandomTest extends PowerMockTestCase {
    *
    * @throws Exception
    */
-  @SuppressWarnings("BusyWait") @Test(timeOut = 60_000)
+  @SuppressWarnings("BusyWait") @Test(timeOut = 60_000, retryAnalyzer = FlakyTestAnalyzer.class)
   public void testRandomSeederThreadIntegration() {
     final SeedGenerator seedGenerator = new SemiFakeSeedGenerator(new Random());
     final BaseRandom rng = createRng();
@@ -816,4 +818,21 @@ public abstract class BaseRandomTest extends PowerMockTestCase {
     }
   }
 
+  /** From https://www.toolsqa.com/selenium-webdriver/retry-failed-tests-testng/ */
+  protected class FlakyTestAnalyzer implements IRetryAnalyzer {
+    int counter = 0;
+    int retryLimit = 1;
+
+    @Override
+    public boolean retry(ITestResult result) {
+
+      if(counter < retryLimit)
+      {
+        counter++;
+        return true;
+      }
+      return false;
+    }
+  }
+  }
 }
