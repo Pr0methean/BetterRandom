@@ -9,10 +9,10 @@ steps:
 - task: PublishBuildArtifacts@1
   displayName: Publish Results (1 Thread)
   inputs:
-    pathtoPublish: target/benchmark_results_one_thread.txt
+    pathtoPublish: benchmark/target/benchmark_results_one_thread.txt
     artifactName: Benchmark - $(artifactEnvName) - 1 Thread
 - task: PublishBuildArtifacts@1
   displayName: Publish Results (2 Threads)
   inputs:
-    pathtoPublish: target/benchmark_results_two_threads.txt
+    pathtoPublish: benchmark/target/benchmark_results_two_threads.txt
     artifactName: Benchmark - $(artifactEnvName) - 2 Threads
