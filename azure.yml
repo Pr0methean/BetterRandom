@@ -293,3 +293,40 @@ jobs:
         inputs:
           pathtoPublish: betterrandom/target/pit-reports
           artifactName: Mutation Coverage
+  - job: Dieharder
+    dependsOn:
+      - AllUnitTests
+    variables:
+      javaUrl: $(OpenJNine12Linux)
+    strategy:
+      matrix:
+        AesCounterRandom:
+          class: AesCounterRandom
+        CellularAutomatonRandom:
+          class: CellularAutomatonRandom
+        Cmwc4096Random:
+          class: Cmwc4096Random
+        MersenneTwisterRandom:
+          class: MersenneTwisterRandom
+        XorShiftRandom:
+          class: XorShiftRandom
+        Pcg128Random:
+          class: Pcg128Random
+        Pcg64Random:
+          class: Pcg64Random
+        SingleThreadSplittableRandomAdapter:
+          class: 'concurrent.SingleThreadSplittableRandomAdapter'
+    pool:
+      vmImage: 'ubuntu-16.04'
+        - template: etc/azureTemplate/installJavaJti.yml
+        - script: sudo apt install dieharder
+          displayName: Install DieHarder
+        - script: ./dieharder.sh
+          displayName: Build BetterRandom & Run DieHarder Tests
+          env:
+            CLASS: $(class)
+        - task: PublishBuildArtifacts@1
+          displayName: Publish Report
+          inputs:
+            pathtoPublish: dieharder.txt
+            artifactName: DieHarder Randomness Tests - $(class)
