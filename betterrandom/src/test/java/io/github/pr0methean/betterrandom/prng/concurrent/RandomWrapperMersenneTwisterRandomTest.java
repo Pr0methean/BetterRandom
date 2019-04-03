@@ -48,6 +48,12 @@ public class RandomWrapperMersenneTwisterRandomTest extends MersenneTwisterRando
     return new RandomWrapper(new MersenneTwisterRandom(seed));
   }
 
+  // FIXME: This test takes too long!
+  @Override @Test(timeOut = 120_000)
+  public void testSerializable() throws SeedException {
+    super.testSerializable();
+  }
+
   @Test public void testGetWrapped() {
     assertSame(createRng().getWrapped().getClass(), MersenneTwisterRandom.class);
   }
