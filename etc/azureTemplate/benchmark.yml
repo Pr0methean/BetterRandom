@@ -8,9 +8,9 @@ steps:
   displayName: Build & Run Benchmarks
 - task: PublishBuildArtifacts@1
   inputs:
-    pathtoPublish: benchmark_results_one_thread.txt
+    pathtoPublish: target/benchmark_results_one_thread.txt
     artifactName: Benchmark - $(artifactEnvName) - 1 Thread
 - task: PublishBuildArtifacts@1
   inputs:
-    pathtoPublish: benchmark_results_two_threads.txt
+    pathtoPublish: target/benchmark_results_two_threads.txt
     artifactName: Benchmark - $(artifactEnvName) - 2 Threads
