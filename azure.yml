@@ -181,7 +181,7 @@ jobs:
     dependsOn:
       - AllUnitTests
     variables:
-      javaUrl: $(OpenJNine12Linux)
+      javaUrl: $(OpenJdk12Linux)
       JAVA_HOME: jdk
     pool:
       vmImage: 'ubuntu-16.04'
