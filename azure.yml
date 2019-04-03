@@ -17,6 +17,7 @@ variables:
   openjnine12linux: 'https://github.com/AdoptOpenJDK/openjdk12-binaries/releases/download/jdk-12%2B33_openj9-0.13.0/OpenJDK12U-jdk_x64_linux_openj9_12_33_openj9-0.13.0.tar.gz'
   openjnine12mac: 'https://github.com/AdoptOpenJDK/openjdk12-binaries/releases/download/jdk-12%2B33_openj9-0.13.0/OpenJDK12U-jdk_x64_mac_openj9_12_33_openj9-0.13.0.tar.gz'
   torForWindows: 'https://www.torproject.org/dist/torbrowser/8.0.8/torbrowser-install-win64-8.0.8_en-US.exe'
+  JAVA_HOME: jdk
 trigger:
   branches:
     include:
@@ -39,44 +40,32 @@ trigger:
 #    - CHANGELOG.md
 jobs:
   - job: UnitLinux
-    variables:
-      JAVA_HOME: jdk
     strategy:
       matrix:
         OpenJdk08:
           JAVA8: 'true'
           javaUrl: $(OpenJdk08Linux)
-          vmImage: 'ubuntu-16.04'
           artifactEnvName: OpenJdk08Linux
         OpenJdk09:
           javaUrl: $(OpenJdk09Linux)
-          vmImage: 'ubuntu-16.04'
           artifactEnvName: OpenJdk09Linux
         OpenJdk10:
           javaUrl: $(OpenJdk10Linux)
-          vmImage: 'ubuntu-16.04'
           artifactEnvName: OpenJdk10Linux
         OpenJdk11:
           javaUrl: $(OpenJdk11Linux)
-          vmImage: 'ubuntu-16.04'
           artifactEnvName: OpenJdk11Linux
         OpenJdk12:
           javaUrl: $(OpenJdk12Linux)
-          vmImage: 'ubuntu-16.04'
           artifactEnvName: OpenJdk12Linux
         OpenJNine08:
           javaUrl: $(OpenJNine08Linux)
-          vmImage: 'ubuntu-16.04'
           artifactEnvName: OpenJNine08Linux
         OpenJNine12:
           javaUrl: $(OpenJNine12Linux)
-          vmImage: 'ubuntu-16.04'
           artifactEnvName: OpenJNine12Linux
-    #      OpenJNine12Mac:
-    #        javaUrl: $(openjnine12mac)
-    #        vmImage: 'macOs-10.13'
     pool:
-      vmImage: $(vmImage)
+      vmImage: 'ubuntu-16.04'
     steps:
       - template: etc/azureTemplate/installJavaJti.yml
       - template: etc/azureTemplate/unitTestsUbuntu.yml
@@ -117,8 +106,6 @@ jobs:
       - template: etc/azureTemplate/unitTestsMac.yml
       - template: etc/azureTemplate/publishCoverage.yml
   - job: UnitMac
-    variables:
-      JAVA_HOME: jdk
     strategy:
       matrix:
         # Java 7 is /Library/Java/JavaVirtualMachines/jdk1.7.0_80.jdk/Contents/Home
@@ -173,8 +160,6 @@ jobs:
   - job: BenchmarkLinux
     dependsOn:
       - AllUnitTests
-    variables:
-      JAVA_HOME: jdk
     strategy:
       matrix:
         OpenJdk08Linux:
@@ -244,7 +229,6 @@ jobs:
       - AllUnitTests
     variables:
       artifactEnvName: OracleMac
-      JAVA_HOME: jdk
     strategy:
       matrix:
         # Java 7 is /Library/Java/JavaVirtualMachines/jdk1.7.0_80.jdk/Contents/Home
