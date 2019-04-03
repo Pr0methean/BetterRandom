@@ -54,8 +54,8 @@ abstract class AbstractRandomBenchmark {
     return bytes[prng.nextInt(COLUMNS)][prng.nextInt(ROWS)];
   }
   @Timeout(time = 60) // seconds per iteration
-  @Measurement(iterations = 1, time = 4)
-  @Warmup(iterations = 1, time = 4)
+  @Measurement(iterations = 5, time = 4)
+  @Warmup(iterations = 5, time = 4)
   @Benchmark public byte testBytesSequential() {
     return innerTestBytesSequential();
   }

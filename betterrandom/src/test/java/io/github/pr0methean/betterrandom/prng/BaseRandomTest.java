@@ -834,5 +834,4 @@ public abstract class BaseRandomTest extends PowerMockTestCase {
       return false;
     }
   }
-  }
 }
