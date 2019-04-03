@@ -33,7 +33,7 @@ public class DevRandomSeedGeneratorTest extends AbstractSeedGeneratorTest {
     super(DevRandomSeedGenerator.DEV_RANDOM_SEED_GENERATOR);
   }
 
-  @Test(timeOut = 30000) public void testGenerator() {
+  @Test(timeOut = 60_000) public void testGenerator() {
     if (new File("/dev/random").exists()) {
       SeedTestUtils.testGenerator(seedGenerator, true);
       assertTrue(seedGenerator.isWorthTrying());
