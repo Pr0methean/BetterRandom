@@ -160,6 +160,25 @@ jobs:
       - UnitOracleLinux
       - UnitOracleLimitedCrypto
     pool: server # not a real job, so doesn't need an agent
+  - job: Mutation
+    dependsOn:
+      - AllUnitTests
+    variables:
+      javaUrl: $(OpenJNine12Linux)
+      JAVA_HOME: jdk
+    pool:
+      vmImage: 'ubuntu-16.04'
+    steps:
+      - template: etc/azureTemplate/installJavaJti.yml
+      - script: ./mutation.sh
+        displayName: Build & Run Mutation Tests
+        env:
+          RANDOM_DOT_ORG_KEY: $(RANDOM_DOT_ORG_KEY)
+      - task: PublishBuildArtifacts@1
+        displayName: Publish Mutation Report
+        inputs:
+          pathtoPublish: betterrandom/target/pit-reports
+          artifactName: Mutation Coverage
   - job: BenchmarkLinux
     dependsOn:
       - AllUnitTests
@@ -265,25 +284,6 @@ jobs:
           filePath: benchmark.ps1
         env:
           RANDOM_DOT_ORG_KEY: $(RANDOM_DOT_ORG_KEY)
-  - job: Mutation
-    dependsOn:
-      - AllUnitTests
-    variables:
-      javaUrl: $(OpenJNine12Linux)
-      JAVA_HOME: jdk
-    pool:
-      vmImage: 'ubuntu-16.04'
-    steps:
-      - template: etc/azureTemplate/installJavaJti.yml
-      - script: ./mutation.sh
-        displayName: Build & Run Mutation Tests
-        env:
-          RANDOM_DOT_ORG_KEY: $(RANDOM_DOT_ORG_KEY)
-      - task: PublishBuildArtifacts@1
-        displayName: Publish Mutation Report
-        inputs:
-          pathtoPublish: betterrandom/target/pit-reports
-          artifactName: Mutation Coverage
   - job: Dieharder
     dependsOn:
       - AllUnitTests
