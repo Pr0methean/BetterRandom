@@ -819,7 +819,7 @@ public abstract class BaseRandomTest extends PowerMockTestCase {
   }
 
   /** From https://www.toolsqa.com/selenium-webdriver/retry-failed-tests-testng/ */
-  protected class FlakyTestAnalyzer implements IRetryAnalyzer {
+  protected static class FlakyTestAnalyzer implements IRetryAnalyzer {
     int counter = 0;
     int retryLimit = 1;
 
