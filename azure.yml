@@ -318,15 +318,16 @@ jobs:
           class: 'concurrent.SingleThreadSplittableRandomAdapter'
     pool:
       vmImage: 'ubuntu-16.04'
-        - template: etc/azureTemplate/installJavaJti.yml
-        - script: sudo apt install dieharder
-          displayName: Install DieHarder
-        - script: ./dieharder.sh
-          displayName: Build BetterRandom & Run DieHarder Tests
-          env:
-            CLASS: $(class)
-        - task: PublishBuildArtifacts@1
-          displayName: Publish Report
-          inputs:
-            pathtoPublish: dieharder.txt
-            artifactName: DieHarder Randomness Tests - $(class)
+    steps:
+      - template: etc/azureTemplate/installJavaJti.yml
+      - script: sudo apt install dieharder
+        displayName: Install DieHarder
+      - script: ./dieharder.sh
+        displayName: Build BetterRandom & Run DieHarder Tests
+        env:
+          CLASS: $(class)
+      - task: PublishBuildArtifacts@1
+        displayName: Publish Report
+        inputs:
+          pathtoPublish: dieharder.txt
+          artifactName: DieHarder Randomness Tests - $(class)
