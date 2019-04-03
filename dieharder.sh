@@ -93,4 +93,4 @@ java ${JAVA_OPTS} -jar "${JAR}" io.github.pr0methean.betterrandom.prng.${CLASS} 
     dieharder -S 1 -d 207 -g 200
     dieharder -S 1 -d 208 -g 200
     dieharder -S 1 -d 209 -g 200
-) < prng_out)
+) < prng_out | tee ../dieharder.txt)
