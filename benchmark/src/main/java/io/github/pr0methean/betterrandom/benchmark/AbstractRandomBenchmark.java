@@ -2,7 +2,6 @@ package io.github.pr0methean.betterrandom.benchmark;
 
 import io.github.pr0methean.betterrandom.util.EntryPoint;
 import java.util.Random;
-import java.util.concurrent.TimeUnit;
 import org.openjdk.jmh.annotations.Benchmark;
 import org.openjdk.jmh.annotations.Level;
 import org.openjdk.jmh.annotations.Measurement;
@@ -55,8 +54,8 @@ abstract class AbstractRandomBenchmark {
     return bytes[prng.nextInt(COLUMNS)][prng.nextInt(ROWS)];
   }
   @Timeout(time = 60) // seconds per iteration
-  @Measurement(iterations = 5, time = 4)
-  @Warmup(iterations = 5, time = 4)
+  @Measurement(iterations = 1, time = 4)
+  @Warmup(iterations = 1, time = 4)
   @Benchmark public byte testBytesSequential() {
     return innerTestBytesSequential();
   }
