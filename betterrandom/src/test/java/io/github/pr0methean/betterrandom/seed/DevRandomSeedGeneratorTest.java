@@ -16,10 +16,10 @@
 package io.github.pr0methean.betterrandom.seed;
 
 import java.io.File;
-import org.testng.SkipException;
 import org.testng.annotations.Test;
 
 import static org.testng.Assert.assertTrue;
+import static org.testng.Assert.fail;
 
 /**
  * Unit test for the seed generator that reads data from /dev/random (on platforms that provide
@@ -34,10 +34,14 @@ public class DevRandomSeedGeneratorTest extends AbstractSeedGeneratorTest {
   }
 
   @Test(timeOut = 30000) public void testGenerator() {
-    if (!new File("/dev/random").exists()) {
-      throw new SkipException("This test can't run on a platform without /dev/random");
+    if (new File("/dev/random").exists()) {
+      SeedTestUtils.testGenerator(seedGenerator, true);
+      assertTrue(seedGenerator.isWorthTrying());
+    } else {
+      try {
+        DevRandomSeedGenerator.DEV_RANDOM_SEED_GENERATOR.generateSeed(new byte[1]);
+        fail("Should have thrown a SeedException");
+      } catch (SeedException expected) {}
     }
-    SeedTestUtils.testGenerator(seedGenerator, true);
-    assertTrue(seedGenerator.isWorthTrying());
   }
 }
