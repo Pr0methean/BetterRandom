@@ -1,5 +1,5 @@
 #!/bin/sh
-if [ "${ANDROID}" = 1 ]; then
+if [ "${ANDROID}" = "true" ]; then
   MAYBE_ANDROID_FLAG="-Pandroid"
 else
   MAYBE_ANDROID_FLAG=""
