@@ -17,7 +17,6 @@ variables:
   openjnine12linux: 'https://github.com/AdoptOpenJDK/openjdk12-binaries/releases/download/jdk-12%2B33_openj9-0.13.0/OpenJDK12U-jdk_x64_linux_openj9_12_33_openj9-0.13.0.tar.gz'
   openjnine12mac: 'https://github.com/AdoptOpenJDK/openjdk12-binaries/releases/download/jdk-12%2B33_openj9-0.13.0/OpenJDK12U-jdk_x64_mac_openj9_12_33_openj9-0.13.0.tar.gz'
   torForWindows: 'https://www.torproject.org/dist/torbrowser/8.0.8/torbrowser-install-win64-8.0.8_en-US.exe'
-  JAVA_HOME: jdk
 trigger:
   branches:
     include:
@@ -40,6 +39,8 @@ trigger:
 #    - CHANGELOG.md
 jobs:
   - job: UnitLinux
+    variables:
+      JAVA_HOME: jdk
     strategy:
       matrix:
         OpenJdk08:
@@ -106,6 +107,8 @@ jobs:
       - template: etc/azureTemplate/unitTestsMac.yml
       - template: etc/azureTemplate/publishCoverage.yml
   - job: UnitMac
+    variables:
+      JAVA_HOME: jdk
     strategy:
       matrix:
         # Java 7 is /Library/Java/JavaVirtualMachines/jdk1.7.0_80.jdk/Contents/Home
@@ -160,6 +163,8 @@ jobs:
   - job: BenchmarkLinux
     dependsOn:
       - AllUnitTests
+    variables:
+      JAVA_HOME: jdk
     strategy:
       matrix:
         OpenJdk08Linux:
@@ -229,6 +234,7 @@ jobs:
       - AllUnitTests
     variables:
       artifactEnvName: OracleMac
+      JAVA_HOME: jdk
     strategy:
       matrix:
         # Java 7 is /Library/Java/JavaVirtualMachines/jdk1.7.0_80.jdk/Contents/Home
@@ -264,6 +270,7 @@ jobs:
       - AllUnitTests
     variables:
       javaUrl: $(OpenJNine12Linux)
+      JAVA_HOME: jdk
     pool:
       vmImage: 'ubuntu-16.04'
     steps:
@@ -282,6 +289,7 @@ jobs:
       - AllUnitTests
     variables:
       javaUrl: $(OpenJNine12Linux)
+      JAVA_HOME: jdk
     strategy:
       matrix:
         AesCounterRandom:
