@@ -193,6 +193,7 @@
             <artifactId>pitest-maven</artifactId>
             <version>${pitest.version}</version>
             <configuration>
+              <jvmArgs>-Djava.security.egd=file:/dev/./urandom</jvmArgs>
               <threads>4</threads>
               <coverageThreshold>85</coverageThreshold>
               <mutationThreshold>75</mutationThreshold>
