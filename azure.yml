@@ -307,6 +307,7 @@ jobs:
         parameters:
           whichTest: 'io.github.pr0methean.betterrandom.benchmark.AesCounterRandomBenchmark'
   - job: Dieharder
+    timeoutInMinutes: 80
     dependsOn:
       - AllUnitTests
     variables:
