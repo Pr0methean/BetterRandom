@@ -2,7 +2,6 @@ package io.github.pr0methean.betterrandom.benchmark;
 
 import io.github.pr0methean.betterrandom.util.EntryPoint;
 import java.util.Random;
-import java.util.concurrent.TimeUnit;
 import org.openjdk.jmh.annotations.Benchmark;
 import org.openjdk.jmh.annotations.Level;
 import org.openjdk.jmh.annotations.Measurement;

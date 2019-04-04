@@ -24,7 +24,7 @@ import org.testng.annotations.Test;
  * @author Chris Hennick
  */
 @Test(testName = "MersenneTwisterRandom")
-public class MersenneTwisterRandomTest extends BaseRandomTest {
+public class MersenneTwisterRandomTest extends AbstractLargeSeedRandomTest {
 
   @Override protected Class<? extends BaseRandom> getClassUnderTest() {
     return MersenneTwisterRandom.class;

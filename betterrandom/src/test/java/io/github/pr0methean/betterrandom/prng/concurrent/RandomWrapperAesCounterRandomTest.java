@@ -1,6 +1,7 @@
 package io.github.pr0methean.betterrandom.prng.concurrent;
 
 import com.google.common.collect.ImmutableList;
+import io.github.pr0methean.betterrandom.NamedFunction;
 import io.github.pr0methean.betterrandom.prng.AesCounterRandom;
 import io.github.pr0methean.betterrandom.prng.AesCounterRandomTest;
 import io.github.pr0methean.betterrandom.prng.BaseRandom;

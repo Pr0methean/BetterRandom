@@ -1,0 +1,5 @@
+steps:
+- bash: 'curl -s https://codecov.io/bash | bash'
+  displayName: Upload coverage to Codecov
+  env:
+    CODECOV_TOKEN: $(CODECOV_TOKEN)

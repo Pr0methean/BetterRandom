@@ -142,6 +142,32 @@
       <build>
         <plugins>
           <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-surefire-plugin</artifactId>
+            <version>2.22.1</version>
+            <configuration>
+              <argLine>@{argLine} ${test.jdk9.argline}</argLine>
+            </configuration>
+          </plugin>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-failsafe-plugin</artifactId>
+            <version>2.22.1</version>
+            <configuration>
+              <argLine>@{argLine} ${test.jdk9.argline}</argLine>
+            </configuration>
+            <executions>
+              <execution>
+                <!-- Check that Proguard isn't breaking anything -->
+                <id>test</id>
+                <phase>integration-test</phase>
+                <goals>
+                  <goal>integration-test</goal>
+                </goals>
+              </execution>
+            </executions>
+          </plugin>
+          <plugin>
             <groupId>org.pitest</groupId>
             <artifactId>pitest-maven</artifactId>
             <version>${pitest.version}</version>
@@ -150,6 +176,8 @@
                 <value>-Djava.security.egd=file:/dev/./urandom</value>
                 <value>--add-opens</value>
                 <value>java.xml/jdk.xml.internal=ALL-UNNAMED</value>
+                <value>--add-opens</value>
+                <value>java.base/jdk.internal.loader=ALL-UNNAMED</value>
               </jvmArgs>
             </configuration>
           </plugin>
@@ -165,6 +193,7 @@
             <artifactId>pitest-maven</artifactId>
             <version>${pitest.version}</version>
             <configuration>
+              <jvmArgs>-Djava.security.egd=file:/dev/./urandom</jvmArgs>
               <threads>4</threads>
               <coverageThreshold>85</coverageThreshold>
               <mutationThreshold>75</mutationThreshold>
@@ -306,10 +335,12 @@
     <pitest.version>1.4.6</pitest.version>
     <test.argline>-Djava.security.egd=file:/dev/./urandom</test.argline>
     <test.jdk8.argline>${test.argline}</test.jdk8.argline>
-    <test.jdk9.argline>${test.argline} --add-opens java.xml/jdk.xml.internal=ALL-UNNAMED</test.jdk9.argline>
+    <test.jdk9.argline>${test.argline} --add-opens java.base/jdk.internal.loader=ALL-UNNAMED --add-opens java.xml/jdk.xml.internal=ALL-UNNAMED</test.jdk9.argline>
     <testng.parallel>tests</testng.parallel>
-    <testng.perCoreThreadCount>1</testng.perCoreThreadCount>
-    <testng.verbose>1</testng.verbose>
+    <testng.threadCount>2</testng.threadCount>
+    <testng.perCoreThreadCount>false</testng.perCoreThreadCount>
+    <testng.verbose>3</testng.verbose>
+    <testng.timeout>1200</testng.timeout>
   </properties>
   <groupId>io.github.pr0methean.betterrandom</groupId>
   <artifactId>BetterRandom</artifactId>
@@ -455,11 +486,10 @@
               <suiteXmlFile>src/test/testng-sequential.xml</suiteXmlFile>
             </suiteXmlFiles>
             <trimStackTrace>false</trimStackTrace>
-            <forkedProcessTimeoutInSeconds>600</forkedProcessTimeoutInSeconds>
-            <forkedProcessExitTimeoutInSeconds>600</forkedProcessExitTimeoutInSeconds>
             <parallel>${testng.parallel}</parallel>
-            <threadCount>${testng.perCoreThreadCount}</threadCount>
-            <perCoreThreadCount>true</perCoreThreadCount>
+            <threadCount>${testng.threadCount}</threadCount>
+            <perCoreThreadCount>${testng.perCoreThreadCount}</perCoreThreadCount>
+            <forkedProcessTimeoutInSeconds>${testng.timeout}</forkedProcessTimeoutInSeconds>
             <properties>
               <property>
                 <name>surefire.testng.verbose</name>
@@ -479,8 +509,9 @@
               <suiteXmlFile>src/test/testng-sequential.xml</suiteXmlFile>
             </suiteXmlFiles>
             <parallel>${testng.parallel}</parallel>
-            <threadCount>${testng.perCoreThreadCount}</threadCount>
-            <perCoreThreadCount>true</perCoreThreadCount>
+            <threadCount>${testng.threadCount}</threadCount>
+            <perCoreThreadCount>${testng.perCoreThreadCount}</perCoreThreadCount>
+            <forkedProcessTimeoutInSeconds>${testng.timeout}</forkedProcessTimeoutInSeconds>
             <properties>
               <property>
                 <name>surefire.testng.verbose</name>
@@ -596,6 +627,13 @@
           <configuration>
             <failOnServiceError>true</failOnServiceError>
           </configuration>
+          <dependencies>
+            <dependency>
+              <groupId>javax.xml.bind</groupId>
+              <artifactId>jaxb-api</artifactId>
+              <version>2.3.1</version>
+            </dependency>
+          </dependencies>
         </plugin>
         <plugin>
           <!-- Required for com.github.github:site-maven-plugin -->

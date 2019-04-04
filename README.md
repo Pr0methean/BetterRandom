@@ -98,11 +98,11 @@ public class AesCounterRandomDemo {
 
 ## ReseedingSplittableRandomAdapter for fast, high-quality, parallel duplicate-bridge dealing
 ```
-import static io.github.pr0methean.betterrandom.seed.DefaultSeedGenerator.DEFAULT_SEED_GENERATOR;
+import static io.github.pr0methean.betterrandom.seed.SecureRandomSeedGenerator.SECURE_RANDOM_SEED_GENERATOR;
 
-import edu.emory.mathcs.backport.java.util.Collections;
 import io.github.pr0methean.betterrandom.seed.SeedException;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
