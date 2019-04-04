@@ -187,6 +187,10 @@ jobs:
       vmImage: 'ubuntu-16.04'
     steps:
       - template: etc/azureTemplate/installJavaJti.yml
+      - script: |
+          sudo apt install haveged
+          sudo service haveged start
+        displayName: Install Haveged
       - script: ./mutation.sh
         displayName: Build & Run Mutation Tests
         env:
@@ -225,21 +229,6 @@ jobs:
     steps:
       - template: etc/azureTemplate/installJavaJti.yml
       - template: etc/azureTemplate/benchmark.yml
-  - job: BenchmarkOracleLimitedCrypto
-    dependsOn:
-      - AllUnitTests
-    pool:
-      vmImage: 'ubuntu-16.04'
-    variables:
-      JAVA8: 'true'
-      javaLicence: BCL
-      javaVersion: '11'
-      artifactEnvName: OracleLimitedCrypto
-    steps:
-      - template: etc/azureTemplate/installJavaBach.yml
-      - template: etc/azureTemplate/benchmark.yml
-        parameters:
-          whichTest: 'io.github.pr0methean.betterrandom.benchmark.AesCounterRandomBenchmark'
   - job: BenchmarkOracleLinux
     dependsOn:
       - AllUnitTests
@@ -301,6 +290,21 @@ jobs:
           filePath: benchmark.ps1
         env:
           RANDOM_DOT_ORG_KEY: $(RANDOM_DOT_ORG_KEY)
+  - job: BenchmarkOracleLimitedCrypto
+    dependsOn:
+      - AllUnitTests
+    pool:
+      vmImage: 'ubuntu-16.04'
+    variables:
+      JAVA8: 'true'
+      javaLicence: BCL
+      javaVersion: '11'
+      artifactEnvName: OracleLimitedCrypto
+    steps:
+      - template: etc/azureTemplate/installJavaBach.yml
+      - template: etc/azureTemplate/benchmark.yml
+        parameters:
+          whichTest: 'io.github.pr0methean.betterrandom.benchmark.AesCounterRandomBenchmark'
   - job: Dieharder
     dependsOn:
       - AllUnitTests
