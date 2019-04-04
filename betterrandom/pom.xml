@@ -194,7 +194,7 @@
             <version>${pitest.version}</version>
             <configuration>
               <jvmArgs>-Djava.security.egd=file:/dev/./urandom</jvmArgs>
-              <threads>3</threads>
+              <threads>4</threads>
               <coverageThreshold>85</coverageThreshold>
               <mutationThreshold>75</mutationThreshold>
               <!-- AesCounterRandom excluded due to https://github.com/hcoles/pitest/issues/504 -->

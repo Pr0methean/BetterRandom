@@ -183,6 +183,7 @@ jobs:
     variables:
       javaUrl: $(OpenJdk12Linux)
       JAVA_HOME: jdk
+    timeoutInMinutes: 120 # FIXME: Remove once reliably passing in 50
     pool:
       vmImage: 'ubuntu-16.04'
     steps:
