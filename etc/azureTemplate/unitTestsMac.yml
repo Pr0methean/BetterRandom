@@ -1,0 +1,13 @@
+# Tinyproxy is used only on the Mac, because it takes over 30 seconds to install and start on Azure
+# (as of 2019-03-31) and is only needed for one unit test.
+parameters:
+  javaVersion: ''
+steps:
+- script: |
+    brew install tinyproxy
+    brew services start tinyproxy
+  displayName: Install & Start Proxy
+- script: ./unit-tests.sh
+  displayName: Build & Test
+  env:
+    RANDOM_DOT_ORG_KEY: $(RANDOM_DOT_ORG_KEY)

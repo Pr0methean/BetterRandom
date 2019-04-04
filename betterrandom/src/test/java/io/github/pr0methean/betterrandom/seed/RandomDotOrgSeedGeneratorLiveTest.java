@@ -15,11 +15,11 @@
 // ============================================================================
 package io.github.pr0methean.betterrandom.seed;
 
-import io.github.pr0methean.betterrandom.TestingDeficiency;
+import java.io.IOException;
 import java.net.InetAddress;
 import java.net.Proxy;
+import java.net.URL;
 import java.net.UnknownHostException;
-import javax.net.ssl.SSLSocketFactory;
 import org.testng.Assert;
 import org.testng.Reporter;
 import org.testng.SkipException;
@@ -33,7 +33,6 @@ import static io.github.pr0methean.betterrandom.seed.RandomDotOrgSeedGenerator.R
 import static io.github.pr0methean.betterrandom.seed.RandomDotOrgSeedGenerator.setApiKey;
 import static io.github.pr0methean.betterrandom.seed.RandomDotOrgSeedGenerator.setProxy;
 import static io.github.pr0methean.betterrandom.seed.RandomDotOrgSeedGenerator.setSslSocketFactory;
-import static io.github.pr0methean.betterrandom.seed.RandomDotOrgUtils.canRunRandomDotOrgLargeTest;
 import static io.github.pr0methean.betterrandom.seed.RandomDotOrgUtils.createSocketFactory;
 import static io.github.pr0methean.betterrandom.seed.RandomDotOrgUtils.haveApiKey;
 import static io.github.pr0methean.betterrandom.seed.RandomDotOrgUtils.setApiKey;
@@ -46,23 +45,18 @@ import static io.github.pr0methean.betterrandom.seed.RandomDotOrgUtils.setApiKey
 @Test(singleThreaded = true)
 public class RandomDotOrgSeedGeneratorLiveTest extends AbstractSeedGeneratorTest {
 
-  protected final Proxy proxy = RandomDotOrgUtils.createTorProxy();
-  protected final SSLSocketFactory sslSocketFactory = RandomDotOrgUtils.createSocketFactory();
+  protected final Proxy proxy = RandomDotOrgUtils.createProxy();
   public RandomDotOrgSeedGeneratorLiveTest() {
     super(RANDOM_DOT_ORG_SEED_GENERATOR);
   }
 
   @Test(timeOut = 120000) public void testGeneratorOldApi() throws SeedException {
-    if (canRunRandomDotOrgLargeTest()) {
-      setApiKey(null);
-      SeedTestUtils.testGenerator(RANDOM_DOT_ORG_SEED_GENERATOR, true);
-    } else {
-      throw new SkipException("Test can't run on this platform");
-    }
+    setApiKey(null);
+    SeedTestUtils.testGenerator(RANDOM_DOT_ORG_SEED_GENERATOR, true);
   }
 
   @Test(timeOut = 120000) public void testGeneratorNewApi() throws SeedException {
-    if (canRunRandomDotOrgLargeTest() && haveApiKey()) {
+    if (haveApiKey()) {
       setApiKey();
       SeedTestUtils.testGenerator(RANDOM_DOT_ORG_SEED_GENERATOR, true);
     } else {
@@ -77,9 +71,6 @@ public class RandomDotOrgSeedGeneratorLiveTest extends AbstractSeedGeneratorTest
 
   @Test
   public void testSetProxyOff() {
-    if (!canRunRandomDotOrgLargeTest()) {
-      throw new SkipException("Test can't run on this platform");
-    }
     setProxy(Proxy.NO_PROXY);
     try {
       SeedTestUtils.testGenerator(RANDOM_DOT_ORG_SEED_GENERATOR, true);
@@ -88,14 +79,22 @@ public class RandomDotOrgSeedGeneratorLiveTest extends AbstractSeedGeneratorTest
     }
   }
 
-  @TestingDeficiency
-  @Test(enabled = false) // Fails on Travis-CI for some reason
+  @Test
   public void testSetProxyReal() {
+    try {
+      new URL("https://google.com").openConnection(proxy).getContent();
+    } catch (IOException e) {
+      throw new SkipException("This test requires an HTTP proxy on localhost:8888");
+    }
     setProxy(proxy);
     try {
+      if (haveApiKey()) {
+        setApiKey();
+      }
       SeedTestUtils.testGenerator(RANDOM_DOT_ORG_SEED_GENERATOR, true);
     } finally {
       setProxy(null);
+      setApiKey(null);
     }
   }
 

@@ -12,6 +12,36 @@
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="library" name="Maven: org.apache.maven.plugins:maven-deploy-plugin:2.8.2" level="project" />
+    <orderEntry type="library" scope="TEST" name="Maven: org.bouncycastle:bcprov-jdk15on:1.60" level="project" />
+    <orderEntry type="library" scope="TEST" name="Maven: org.apache.logging.log4j:log4j-slf4j-impl:2.11.1" level="project" />
+    <orderEntry type="library" scope="TEST" name="Maven: org.apache.logging.log4j:log4j-api:2.11.1" level="project" />
+    <orderEntry type="library" scope="TEST" name="Maven: org.apache.logging.log4j:log4j-core:2.11.1" level="project" />
+    <orderEntry type="library" scope="TEST" name="Maven: org.mockito:mockito-core:2.25.0" level="project" />
+    <orderEntry type="library" name="Maven: com.googlecode.json-simple:json-simple:1.1.1" level="project" />
+    <orderEntry type="library" name="Maven: junit:junit:4.10" level="project" />
+    <orderEntry type="library" name="Maven: org.hamcrest:hamcrest-core:1.1" level="project" />
+    <orderEntry type="library" scope="TEST" name="Maven: org.mockito:mockito-core:2.25.1" level="project" />
+    <orderEntry type="library" scope="TEST" name="Maven: net.bytebuddy:byte-buddy:1.9.7" level="project" />
+    <orderEntry type="library" scope="TEST" name="Maven: net.bytebuddy:byte-buddy-agent:1.9.7" level="project" />
+    <orderEntry type="library" scope="TEST" name="Maven: org.objenesis:objenesis:2.6" level="project" />
+    <orderEntry type="library" scope="TEST" name="Maven: org.powermock:powermock-core:2.0.0" level="project" />
+    <orderEntry type="library" scope="TEST" name="Maven: org.powermock:powermock-reflect:2.0.0" level="project" />
+    <orderEntry type="library" scope="TEST" name="Maven: org.javassist:javassist:3.24.0-GA" level="project" />
+    <orderEntry type="library" scope="TEST" name="Maven: org.powermock:powermock-module-testng:2.0.0" level="project" />
+    <orderEntry type="library" scope="TEST" name="Maven: org.powermock:powermock-module-testng-common:2.0.0" level="project" />
+    <orderEntry type="library" scope="TEST" name="Maven: org.powermock:powermock-api-mockito2:2.0.0" level="project" />
+    <orderEntry type="library" scope="TEST" name="Maven: org.powermock:powermock-api-support:2.0.0" level="project" />
+    <orderEntry type="library" scope="TEST" name="Maven: org.apache.commons:commons-math3:3.6.1" level="project" />
+    <orderEntry type="library" scope="TEST" name="Maven: org.bouncycastle:bcprov-jdk15on:1.61" level="project" />
+    <orderEntry type="library" name="Maven: com.google.guava:guava:27.1-jre" level="project" />
+    <orderEntry type="library" name="Maven: com.google.guava:failureaccess:1.0.1" level="project" />
+    <orderEntry type="library" name="Maven: com.google.guava:listenablefuture:9999.0-empty-to-avoid-conflict-with-guava" level="project" />
+    <orderEntry type="library" name="Maven: org.checkerframework:checker-qual:2.5.2" level="project" />
+    <orderEntry type="library" name="Maven: com.google.errorprone:error_prone_annotations:2.2.0" level="project" />
+    <orderEntry type="library" name="Maven: com.google.j2objc:j2objc-annotations:1.1" level="project" />
+    <orderEntry type="library" name="Maven: org.codehaus.mojo:animal-sniffer-annotations:1.17" level="project" />
+    <orderEntry type="library" name="Maven: com.google.code.findbugs:jsr305:3.0.2" level="project" />
+    <orderEntry type="library" name="Maven: org.apache.maven.plugins:maven-deploy-plugin:maven-plugin:2.8.2" level="project" />
     <orderEntry type="library" name="Maven: org.apache.maven:maven-plugin-api:2.2.1" level="project" />
     <orderEntry type="library" name="Maven: org.apache.maven:maven-project:2.2.1" level="project" />
     <orderEntry type="library" name="Maven: org.apache.maven:maven-settings:2.2.1" level="project" />
@@ -27,37 +57,13 @@
     <orderEntry type="library" name="Maven: org.apache.maven:maven-model:2.2.1" level="project" />
     <orderEntry type="library" name="Maven: org.apache.maven:maven-artifact:2.2.1" level="project" />
     <orderEntry type="library" name="Maven: org.codehaus.plexus:plexus-utils:3.0.15" level="project" />
-    <orderEntry type="library" name="Maven: com.googlecode.json-simple:json-simple:1.1.1" level="project" />
-    <orderEntry type="library" name="Maven: junit:junit:4.10" level="project" />
-    <orderEntry type="library" name="Maven: org.hamcrest:hamcrest-core:1.1" level="project" />
-    <orderEntry type="library" scope="TEST" name="Maven: org.mockito:mockito-core:2.24.0" level="project" />
-    <orderEntry type="library" scope="TEST" name="Maven: net.bytebuddy:byte-buddy:1.9.7" level="project" />
-    <orderEntry type="library" scope="TEST" name="Maven: net.bytebuddy:byte-buddy-agent:1.9.7" level="project" />
-    <orderEntry type="library" scope="TEST" name="Maven: org.objenesis:objenesis:2.6" level="project" />
-    <orderEntry type="library" scope="TEST" name="Maven: org.powermock:powermock-core:2.0.0" level="project" />
-    <orderEntry type="library" scope="TEST" name="Maven: org.powermock:powermock-reflect:2.0.0" level="project" />
-    <orderEntry type="library" scope="TEST" name="Maven: org.javassist:javassist:3.24.0-GA" level="project" />
-    <orderEntry type="library" scope="TEST" name="Maven: org.powermock:powermock-module-testng:2.0.0" level="project" />
-    <orderEntry type="library" scope="TEST" name="Maven: org.powermock:powermock-module-testng-common:2.0.0" level="project" />
-    <orderEntry type="library" scope="TEST" name="Maven: org.powermock:powermock-api-mockito2:2.0.0" level="project" />
-    <orderEntry type="library" scope="TEST" name="Maven: org.powermock:powermock-api-support:2.0.0" level="project" />
-    <orderEntry type="library" scope="TEST" name="Maven: org.apache.commons:commons-math3:3.6.1" level="project" />
-    <orderEntry type="library" scope="TEST" name="Maven: org.bouncycastle:bcprov-jdk15on:1.60" level="project" />
-    <orderEntry type="library" name="Maven: com.google.guava:guava:27.0.1-jre" level="project" />
-    <orderEntry type="library" name="Maven: com.google.guava:failureaccess:1.0.1" level="project" />
-    <orderEntry type="library" name="Maven: com.google.guava:listenablefuture:9999.0-empty-to-avoid-conflict-with-guava" level="project" />
-    <orderEntry type="library" name="Maven: org.checkerframework:checker-qual:2.5.2" level="project" />
-    <orderEntry type="library" name="Maven: com.google.errorprone:error_prone_annotations:2.2.0" level="project" />
-    <orderEntry type="library" name="Maven: com.google.j2objc:j2objc-annotations:1.1" level="project" />
-    <orderEntry type="library" name="Maven: org.codehaus.mojo:animal-sniffer-annotations:1.17" level="project" />
-    <orderEntry type="library" name="Maven: com.google.code.findbugs:jsr305:3.0.2" level="project" />
     <orderEntry type="library" scope="TEST" name="Maven: org.testng:testng:6.14.3" level="project" />
     <orderEntry type="library" scope="TEST" name="Maven: com.beust:jcommander:1.72" level="project" />
     <orderEntry type="library" scope="TEST" name="Maven: org.apache-extras.beanshell:bsh:2.0b6" level="project" />
-    <orderEntry type="library" name="Maven: org.slf4j:slf4j-api:1.7.25" level="project" />
-    <orderEntry type="library" scope="TEST" name="Maven: org.apache.logging.log4j:log4j-slf4j-impl:2.11.1" level="project" />
-    <orderEntry type="library" scope="TEST" name="Maven: org.apache.logging.log4j:log4j-api:2.11.1" level="project" />
-    <orderEntry type="library" scope="TEST" name="Maven: org.apache.logging.log4j:log4j-core:2.11.1" level="project" />
+    <orderEntry type="library" name="Maven: org.slf4j:slf4j-api:1.7.26" level="project" />
+    <orderEntry type="library" scope="TEST" name="Maven: org.apache.logging.log4j:log4j-slf4j-impl:2.11.2" level="project" />
+    <orderEntry type="library" scope="TEST" name="Maven: org.apache.logging.log4j:log4j-api:2.11.2" level="project" />
+    <orderEntry type="library" scope="TEST" name="Maven: org.apache.logging.log4j:log4j-core:2.11.2" level="project" />
     <orderEntry type="library" scope="RUNTIME" name="Maven: net.sf.proguard:proguard-base:6.0.3" level="project" />
   </component>
 </module>

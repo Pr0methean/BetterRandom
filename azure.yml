@@ -1,88 +1,348 @@
+variables:
+- group: Secrets
+- name: openjdk12linux
+  value: 'https://github.com/AdoptOpenJDK/openjdk12-binaries/releases/download/jdk-12%2B33/OpenJDK12U-jdk_x64_linux_hotspot_12_33.tar.gz'
+- name: openjdk11linux
+  value: 'https://github.com/AdoptOpenJDK/openjdk11-binaries/releases/download/jdk-11.0.2%2B9/OpenJDK11U-jdk_x64_linux_hotspot_11.0.2_9.tar.gz'
+- name: openjdk10linux
+  value: 'https://github.com/AdoptOpenJDK/openjdk10-releases/releases/download/jdk-10.0.2%2B13/OpenJDK10_x64_Linux_jdk-10.0.2%2B13.tar.gz'
+- name: openjdk09linux
+  value: 'https://github.com/AdoptOpenJDK/openjdk9-binaries/releases/download/jdk-9.0.4%2B11/OpenJDK9U-jdk_x64_linux_hotspot_9.0.4_11.tar.gz'
+- name: openjdk08linux
+  value: 'https://github.com/AdoptOpenJDK/openjdk8-binaries/releases/download/jdk8u202-b08/OpenJDK8U-jdk_x64_linux_hotspot_8u202b08.tar.gz'
+- name: openjdk12mac
+  value: 'https://github.com/AdoptOpenJDK/openjdk12-binaries/releases/download/jdk-12%2B33/OpenJDK12U-jdk_x64_mac_hotspot_12_33.tar.gz'
+- name: openjdk11mac
+  value: 'https://github.com/AdoptOpenJDK/openjdk11-binaries/releases/download/jdk-11.0.2%2B9/OpenJDK11U-jdk_x64_mac_hotspot_11.0.2_9.tar.gz'
+- name: openjdk10mac
+  value: 'https://github.com/AdoptOpenJDK/openjdk10-releases/releases/download/jdk-10.0.2%2B13/OpenJDK10_x64_Mac_jdk-10.0.2%2B13.tar.gz'
+- name: openjdk09mac
+  value: 'https://github.com/AdoptOpenJDK/openjdk9-binaries/releases/download/jdk-9%2B181/OpenJDK9U-jdk_x64_mac_hotspot_9_181.tar.gz'
+- name: openjdk08mac
+  value: 'https://github.com/AdoptOpenJDK/openjdk8-binaries/releases/download/jdk8u202-b08/OpenJDK8U-jdk_x64_mac_hotspot_8u202b08.tar.gz'
+- name: openjdk11win
+  value: 'https://github.com/AdoptOpenJDK/openjdk11-binaries/releases/download/jdk-11.0.2%2B9/OpenJDK11U-jdk_x64_windows_hotspot_11.0.2_9.zip'
+- name: openjdk10win
+  value: 'https://github.com/AdoptOpenJDK/openjdk10-releases/releases/download/jdk-10.0.2%2B13/OpenJDK10_x64_Win_jdk-10.0.2%2B13.zip'
+- name: openjdk09win
+  value: 'https://github.com/AdoptOpenJDK/openjdk9-binaries/releases/download/jdk-9.0.4%2B11/OpenJDK9U-jdk_x64_windows_hotspot_9.0.4_11.zip'
+- name: openjdk08win
+  value: 'https://github.com/AdoptOpenJDK/openjdk8-binaries/releases/download/jdk8u202-b08/OpenJDK8U-jdk_x64_windows_hotspot_8u202b08.zip'
+- name: openjnine08linux
+  value: 'https://github.com/AdoptOpenJDK/openjdk8-binaries/releases/download/jdk8u202-b08_openj9-0.12.1/OpenJDK8U-jdk_x64_linux_openj9_8u202b08_openj9-0.12.1.tar.gz'
+- name: openjnine12linux
+  value: 'https://github.com/AdoptOpenJDK/openjdk12-binaries/releases/download/jdk-12%2B33_openj9-0.13.0/OpenJDK12U-jdk_x64_linux_openj9_12_33_openj9-0.13.0.tar.gz'
+- name: openjnine12mac
+  value: 'https://github.com/AdoptOpenJDK/openjdk12-binaries/releases/download/jdk-12%2B33_openj9-0.13.0/OpenJDK12U-jdk_x64_mac_openj9_12_33_openj9-0.13.0.tar.gz'
 trigger:
   branches:
     include:
-    - master
-    - java7
+      #    - master
+      #    - java7
+      - azurePipeline201903
+      - azurePipeline201903a
   paths:
     exclude:
-    - README.md
-    - CHANGELOG.md
-pr:
-  branches:
-    include:
-    - master
-    - java7
-  paths:
-    exclude:
-    - README.md
-    - CHANGELOG.md
+      - README.md
+      - CHANGELOG.md
+#pr:
+#  branches:
+#    include:
+#    - master
+#    - java7
+#  paths:
+#    exclude:
+#    - README.md
+#    - CHANGELOG.md
 jobs:
-- job: UnitOSX
-  strategy:
-    matrix:
-      Java08:
-        javaVersion: '8'
-      Java09:
-        javaVersion: '9'
-      Java10:
-        javaVersion: '10'
-      Java11:
-        javaVersion: '11'
-      Java12:
-        javaVersion: '12'
-  pool:
-    vmImage: 'macOs-10.13'
-  steps:
-  - task: JavaToolInstaller@0
-    inputs:
-      versionSpec: $(javaVersion)
-      jdkArchitectureOption: x64
-      jdkSourceOption: azureStorage
-      jdkDestinationDirectory: jdk
-  - script: unit-tests.sh
-- job: UnitLinux
-  strategy:
-    matrix:
-      Java08:
-        javaVersion: '8'
-      Java09:
-        javaVersion: '9'
-      Java10:
-        javaVersion: '10'
-      Java11:
-        javaVersion: '11'
-      Java12:
-        javaVersion: '12'
-  pool:
-    vmImage: 'ubuntu-16.04'
-  steps:
-  - task: JavaToolInstaller@0
-    inputs:
-      versionSpec: $(javaVersion)
-      jdkArchitectureOption: x64
-      jdkSourceOption: azureStorage
-      jdkDestinationDirectory: jdk
-  - script: unit-tests.sh
-- job: UnitWindows
-  strategy:
-    matrix:
-      Java08:
-        javaVersion: '8'
-      Java09:
-        javaVersion: '9'
-      Java10:
-        javaVersion: '10'
-      Java11:
-        javaVersion: '11'
-      Java12:
-        javaVersion: '12'
-  pool:
-    vmImage: 'windows-2019'
-  steps:
-  - task: JavaToolInstaller@0
-    inputs:
-      versionSpec: $(javaVersion)
-#      jdkArchitectureOption: x64
-      jdkSourceOption: AzureStorage
-      jdkDestinationDirectory: jdk
-  - script: unit-tests.ps1
+  - job: UnitLinux
+    variables:
+      JAVA_HOME: jdk
+    strategy:
+      matrix:
+        OpenJdk08:
+          JAVA8: 'true'
+          javaUrl: $(OpenJdk08Linux)
+          artifactEnvName: OpenJdk08Linux
+        OpenJdk09:
+          javaUrl: $(OpenJdk09Linux)
+          artifactEnvName: OpenJdk09Linux
+        OpenJdk10:
+          javaUrl: $(OpenJdk10Linux)
+          artifactEnvName: OpenJdk10Linux
+        OpenJdk11:
+          javaUrl: $(OpenJdk11Linux)
+          artifactEnvName: OpenJdk11Linux
+        OpenJdk12:
+          javaUrl: $(OpenJdk12Linux)
+          artifactEnvName: OpenJdk12Linux
+        OpenJNine08:
+          javaUrl: $(OpenJNine08Linux)
+          artifactEnvName: OpenJNine08Linux
+        OpenJNine12:
+          javaUrl: $(OpenJNine12Linux)
+          artifactEnvName: OpenJNine12Linux
+    pool:
+      vmImage: 'ubuntu-16.04'
+    steps:
+      - template: etc/azureTemplate/installJavaJti.yml
+      - template: etc/azureTemplate/unitTestsUbuntu.yml
+      - template: etc/azureTemplate/publishCoverage.yml
+  - job: UnitOracleLimitedCrypto
+    pool:
+      vmImage: 'ubuntu-16.04'
+    variables:
+      JAVA8: 'true'
+      artifactEnvName: OracleLimitedCrypto
+    steps:
+      - script: sudo ./installOracleJdk8.sh
+        displayName: Download & Install Java
+      - template: etc/azureTemplate/unitTestsUbuntu.yml
+      - template: etc/azureTemplate/publishCoverage.yml
+  - job: UnitOracleLinux
+    variables:
+      javaLicence: BCL
+      javaVersion: '11'
+      installJdkOs: 'linux-x64'
+      artifactEnvName: OracleJdk12Linux
+    pool:
+      vmImage: 'ubuntu-16.04'
+    steps:
+      - template: etc/azureTemplate/installJavaBach.yml
+      - template: etc/azureTemplate/unitTestsUbuntu.yml
+      - template: etc/azureTemplate/publishCoverage.yml
+  - job: UnitOracleMac
+    variables:
+      javaLicence: BCL
+      javaVersion: '11'
+      installJdkOs: 'osx-x64'
+      artifactEnvName: OracleJdk12Mac
+    pool:
+      vmImage: 'macOs-10.13'
+    steps:
+      - template: etc/azureTemplate/installJavaBach.yml
+      - template: etc/azureTemplate/unitTestsMac.yml
+      - template: etc/azureTemplate/publishCoverage.yml
+  - job: UnitMac
+    variables:
+      JAVA_HOME: jdk
+    strategy:
+      matrix:
+        # Java 7 is /Library/Java/JavaVirtualMachines/jdk1.7.0_80.jdk/Contents/Home
+        OpenJdk08:
+          JAVA8: 'true'
+          javaVersion: 8
+          artifactEnvName: OpenJdk08Mac
+        OpenJdk09:
+          javaVersion: 9
+          artifactEnvName: OpenJdk09Mac
+        OpenJdk10:
+          javaVersion: 10
+          artifactEnvName: OpenJdk10Mac
+        OpenJdk11:
+          javaVersion: 11
+          artifactEnvName: OpenJdk11Mac
+        OpenJdk12:
+          javaVersion: 12
+          artifactEnvName: OpenJdk12Mac
+    pool:
+      vmImage: 'macOs-10.13'
+    steps:
+      - template: etc/azureTemplate/installJavaMacLocal.yml
+        parameters:
+          javaVersion: $(javaVersion)
+      - template: etc/azureTemplate/unitTestsMac.yml
+      - template: etc/azureTemplate/publishCoverage.yml
+  - job: UnitWindows
+    variables:
+      artifactEnvName: Windows
+      JAVA8: 'true'
+    pool:
+      vmImage: 'windows-2019'
+    steps:
+      - task: PowerShell@2
+        displayName: Build & Test
+        inputs:
+          filePath: unit-tests.ps1
+        env:
+          RANDOM_DOT_ORG_KEY: $(RANDOM_DOT_ORG_KEY)
+      - template: etc/azureTemplate/publishCoverage.yml
+  - job: AllUnitTests # empty job used in dependsOn for DRY reasons
+    displayName: All unit tests are done.
+    dependsOn:
+      - UnitWindows
+      - UnitMac
+      - UnitLinux
+      - UnitOracleMac
+      - UnitOracleLinux
+      - UnitOracleLimitedCrypto
+    pool: server # not a real job, so doesn't need an agent
+  - job: Mutation
+    dependsOn:
+      - AllUnitTests
+    variables:
+      javaUrl: $(OpenJdk12Linux)
+      JAVA_HOME: jdk
+    timeoutInMinutes: 120 # FIXME: Remove once reliably passing in 50
+    pool:
+      vmImage: 'ubuntu-16.04'
+    steps:
+      - template: etc/azureTemplate/installJavaJti.yml
+      - script: |
+          sudo apt install haveged
+          sudo service haveged start
+        displayName: Install Haveged
+      - script: ./mutation.sh
+        displayName: Build & Run Mutation Tests
+        env:
+          RANDOM_DOT_ORG_KEY: $(RANDOM_DOT_ORG_KEY)
+      - task: PublishBuildArtifacts@1
+        displayName: Publish Mutation Report
+        inputs:
+          pathtoPublish: betterrandom/target/pit-reports
+          artifactName: Mutation Coverage
+  - job: BenchmarkLinux
+    dependsOn:
+      - AllUnitTests
+    variables:
+      JAVA_HOME: jdk
+    strategy:
+      matrix:
+        OpenJdk08Linux:
+          JAVA8: 'true'
+          javaUrl: $(OpenJdk08Linux)
+          vmImage: 'ubuntu-16.04'
+          artifactEnvName: 'OpenJDK08Linux'
+        OpenJdk12Linux:
+          javaUrl: $(OpenJdk12Linux)
+          vmImage: 'ubuntu-16.04'
+          artifactEnvName: 'OpenJDK12Linux'
+        OpenJNine08Linux:
+          javaUrl: $(OpenJNine08Linux)
+          vmImage: 'ubuntu-16.04'
+          artifactEnvName: 'OpenJNine08Linux'
+        OpenJNine12Linux:
+          javaUrl: $(OpenJNine12Linux)
+          vmImage: 'ubuntu-16.04'
+          artifactEnvName: 'OpenJNine12Linux'
+    pool:
+      vmImage: $(vmImage)
+    steps:
+      - template: etc/azureTemplate/installJavaJti.yml
+      - template: etc/azureTemplate/benchmark.yml
+  - job: BenchmarkOracleLinux
+    dependsOn:
+      - AllUnitTests
+    variables:
+      javaLicence: BCL
+      javaVersion: '11'
+      installJdkOs: 'linux-x64'
+      artifactEnvName: OracleLinux
+    pool:
+      vmImage: 'ubuntu-16.04'
+    steps:
+      - template: etc/azureTemplate/installJavaBach.yml
+      - template: etc/azureTemplate/benchmark.yml
+  - job: BenchmarkOracleMac
+    dependsOn:
+      - AllUnitTests
+    variables:
+      javaLicence: BCL
+      javaVersion: '11'
+      installJdkOs: 'osx-x64'
+    pool:
+      vmImage: 'macOs-10.13'
+    steps:
+      - template: etc/azureTemplate/installJavaBach.yml
+      - template: etc/azureTemplate/benchmark.yml
+  - job: BenchmarkMac
+    dependsOn:
+      - AllUnitTests
+    variables:
+      artifactEnvName: OracleMac
+      JAVA_HOME: jdk
+    strategy:
+      matrix:
+        # Java 7 is /Library/Java/JavaVirtualMachines/jdk1.7.0_80.jdk/Contents/Home
+        OpenJdk08Mac:
+          JAVA8: 'true'
+          javaVersion: 8
+        OpenJdk12:
+          javaVersion: 12
+    pool:
+      vmImage: 'macOs-10.13'
+    steps:
+      - template: etc/azureTemplate/installJavaMacLocal.yml
+        parameters:
+          javaVersion: $(javaVersion)
+      - template: etc/azureTemplate/benchmark.yml
+  - job: BenchmarkWindows
+    dependsOn:
+      - AllUnitTests
+    variables:
+      artifactEnvName: Windows
+      JAVA8: 'true'
+    pool:
+      vmImage: 'windows-2019'
+    steps:
+      - task: PowerShell@2
+        displayName: Build & Benchmark
+        inputs:
+          filePath: benchmark.ps1
+        env:
+          RANDOM_DOT_ORG_KEY: $(RANDOM_DOT_ORG_KEY)
+  - job: BenchmarkOracleLimitedCrypto
+    dependsOn:
+      - AllUnitTests
+    pool:
+      vmImage: 'ubuntu-16.04'
+    variables:
+      JAVA8: 'true'
+      javaLicence: BCL
+      javaVersion: '11'
+      artifactEnvName: OracleLimitedCrypto
+    steps:
+      - template: etc/azureTemplate/installJavaBach.yml
+      - template: etc/azureTemplate/benchmark.yml
+        parameters:
+          whichTest: 'io.github.pr0methean.betterrandom.benchmark.AesCounterRandomBenchmark'
+  - job: Dieharder
+    timeoutInMinutes: 80
+    dependsOn:
+      - AllUnitTests
+    variables:
+      javaUrl: $(OpenJNine12Linux)
+      JAVA_HOME: jdk
+    strategy:
+      matrix:
+        AesCounterRandom:
+          class: AesCounterRandom
+        CellularAutomatonRandom:
+          class: CellularAutomatonRandom
+        Cmwc4096Random:
+          class: Cmwc4096Random
+        MersenneTwisterRandom:
+          class: MersenneTwisterRandom
+        XorShiftRandom:
+          class: XorShiftRandom
+        Pcg128Random:
+          class: Pcg128Random
+        Pcg64Random:
+          class: Pcg64Random
+        SingleThreadSplittableRandomAdapter:
+          class: 'concurrent.SingleThreadSplittableRandomAdapter'
+    pool:
+      vmImage: 'ubuntu-16.04'
+    steps:
+      - template: etc/azureTemplate/installJavaJti.yml
+      - script: sudo apt install dieharder
+        displayName: Install DieHarder
+      - script: ./dieharder.sh
+        displayName: Build BetterRandom & Run DieHarder Tests
+        env:
+          CLASS: $(class)
+      - task: PublishBuildArtifacts@1
+        displayName: Publish Report
+        inputs:
+          pathtoPublish: dieharder.txt
+          artifactName: DieHarder Randomness Tests - $(class)
