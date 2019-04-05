@@ -44,9 +44,10 @@ jobs:
         OpenJdk11:
           JAVA_HOME: /usr/lib/jvm/zulu-11-azure-amd64
           artifactEnvName: OpenJdk11Linux
-        OpenJdk12:
-          JAVA_HOME: /usr/lib/jvm/zulu-12-azure-amd64
-          artifactEnvName: OpenJdk12Linux
+#https://github.com/Microsoft/azure-pipelines-image-generation/commit/4afff89de2e3ff3ca34a445c20c7ef9e3ce306b1#commitcomment-33056031
+#        OpenJdk12:
+#          JAVA_HOME: /usr/lib/jvm/zulu-12-azure-amd64
+#          artifactEnvName: OpenJdk12Linux
     pool:
       vmImage: 'ubuntu-16.04'
     steps:
@@ -218,10 +219,14 @@ jobs:
           JAVA_HOME: /usr/lib/jvm/zulu-8-azure-amd64
           vmImage: 'ubuntu-16.04'
           artifactEnvName: 'OpenJDK08Linux'
-        OpenJdk12Linux:
-          JAVA_HOME: /usr/lib/jvm/zulu-12-azure-amd64
-          vmImage: 'ubuntu-16.04'
-          artifactEnvName: 'OpenJDK12Linux'
+        OpenJdk11:
+          JAVA_HOME: /usr/lib/jvm/zulu-11-azure-amd64
+          artifactEnvName: OpenJdk11Linux
+#https://github.com/Microsoft/azure-pipelines-image-generation/commit/4afff89de2e3ff3ca34a445c20c7ef9e3ce306b1#commitcomment-33056031
+#        OpenJdk12Linux:
+#          JAVA_HOME: /usr/lib/jvm/zulu-12-azure-amd64
+#          vmImage: 'ubuntu-16.04'
+#          artifactEnvName: 'OpenJDK12Linux'
     pool:
       vmImage: $(vmImage)
     steps:
