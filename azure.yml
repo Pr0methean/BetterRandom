@@ -34,7 +34,7 @@ pr:
       - .submodules
       - docs/
 jobs:
-  - job: UnitLinuxZing
+  - job: UnitLinuxZulu
     strategy:
       matrix:
         OpenJdk08:
@@ -147,23 +147,39 @@ jobs:
   - job: UnitWindows
     variables:
       artifactEnvName: Windows
-      JAVA8: 'true'
+    strategy:
+      matrix:
+        OpenJdk08:
+          JAVA8: 'true'
+          JAVA_HOME_SOURCE: JAVA_HOME_8_X64
+          artifactEnvName: OpenJdk08Linux
+        OpenJdk11:
+          JAVA_HOME_SOURCE: JAVA_HOME_11_X64
+          artifactEnvName: OpenJdk11Linux
+        OpenJdk12:
+          JAVA_HOME_SOURCE: JAVA_HOME_12_X64
+          artifactEnvName: OpenJdk12Linux 
     pool:
       vmImage: 'windows-2019'
     steps:
+      - powershell: 'echo "##vso[task.setvariable variable=JAVA_HOME]$JAVA_HOME_SOURCE"'
+        displayName: Set JAVA_HOME
+        env:
+          JAVA_HOME_SOURCE: $(JAVA_HOME_SOURCE)
       - task: PowerShell@2
         displayName: Build & Test
         inputs:
           filePath: unit-tests.ps1
         env:
           RANDOM_DOT_ORG_KEY: $(RANDOM_DOT_ORG_KEY)
+          JAVA_HOME: $(JAVA_HOME)
       - template: etc/azureTemplate/publishCoverage.yml
   - job: AllUnitTests # empty job used in dependsOn for DRY reasons
     displayName: All unit tests are done.
     dependsOn:
       - UnitWindows
       - UnitMac
-      - UnitLinuxZing
+      - UnitLinuxZulu
       - UnitLinuxAdoptOpenJDK
       - UnitOracleMac
       - UnitOracleLinux
@@ -192,7 +208,7 @@ jobs:
         inputs:
           pathtoPublish: betterrandom/target/pit-reports
           artifactName: Mutation Coverage
-  - job: BenchmarkLinuxZing
+  - job: BenchmarkLinuxZulu
     dependsOn:
       - AllUnitTests
     strategy:
@@ -284,13 +300,30 @@ jobs:
       JAVA8: 'true'
     pool:
       vmImage: 'windows-2019'
+    strategy:
+      matrix:
+        OpenJdk08:
+          JAVA8: 'true'
+          JAVA_HOME_SOURCE: JAVA_HOME_8_X64
+          artifactEnvName: OpenJdk08Linux
+        OpenJdk11:
+          JAVA_HOME_SOURCE: JAVA_HOME_11_X64
+          artifactEnvName: OpenJdk11Linux
+        OpenJdk12:
+          JAVA_HOME_SOURCE: JAVA_HOME_12_X64
+          artifactEnvName: OpenJdk12Linux 
     steps:
+      - powershell: 'echo "##vso[task.setvariable variable=JAVA_HOME]$JAVA_HOME_SOURCE"'
+        displayName: Set JAVA_HOME
+        env:
+          JAVA_HOME_SOURCE: $(JAVA_HOME_SOURCE)
       - task: PowerShell@2
         displayName: Build & Benchmark
         inputs:
           filePath: benchmark.ps1
         env:
           RANDOM_DOT_ORG_KEY: $(RANDOM_DOT_ORG_KEY)
+          JAVA_HOME: $(JAVA_HOME)
   - job: BenchmarkOracleLimitedCrypto
     dependsOn:
       - AllUnitTests
