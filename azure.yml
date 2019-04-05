@@ -37,10 +37,12 @@ variables:
 trigger:
   batch: true
   branches:
-    include: master
+    include:
+      - master
   pr:
     branches:
-      exclude: java7
+      exclude:
+        - java7
   paths:
     exclude:
       - README.md
