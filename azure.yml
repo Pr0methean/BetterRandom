@@ -163,7 +163,8 @@ jobs:
     dependsOn:
       - UnitWindows
       - UnitMac
-      - UnitLinux
+      - UnitLinuxZing
+      - UnitLinuxAdoptOpenJDK
       - UnitOracleMac
       - UnitOracleLinux
       - UnitOracleLimitedCrypto
