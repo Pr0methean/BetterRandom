@@ -21,6 +21,8 @@ trigger:
     exclude:
       - README.md
       - CHANGELOG.md
+      - .submodules
+      - docs/
 pr:
   branches:
     exclude:
@@ -29,6 +31,8 @@ pr:
     exclude:
       - README.md
       - CHANGELOG.md
+      - .submodules
+      - docs/
 jobs:
   - job: UnitLinuxZing
     strategy:
