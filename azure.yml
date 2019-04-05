@@ -39,23 +39,18 @@ trigger:
   branches:
     include:
       - master
-  pr:
-    branches:
-      exclude:
-        - java7
   paths:
     exclude:
       - README.md
       - CHANGELOG.md
-#pr:
-#  branches:
-#    include:
-#    - master
-#    - java7
-#  paths:
-#    exclude:
-#    - README.md
-#    - CHANGELOG.md
+pr:
+  branches:
+    exclude:
+      - java7
+  paths:
+    exclude:
+      - README.md
+      - CHANGELOG.md
 jobs:
   - job: UnitLinux
     variables:
