@@ -24,7 +24,7 @@ import org.testng.annotations.Test;
  * @author Chris Hennick
  */
 @Test(testName = "CellularAutomatonRandom")
-public class CellularAutomatonRandomTest extends BaseRandomTest {
+public class CellularAutomatonRandomTest extends AbstractLargeSeedRandomTest {
 
   @Override public void testSetSeedLong() throws SeedException {
     final BaseRandom rng = createRng();

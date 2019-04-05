@@ -28,8 +28,8 @@ import org.testng.annotations.Test;
 import static io.github.pr0methean.betterrandom.seed.RandomDotOrgSeedGenerator.MAX_REQUEST_SIZE;
 import static io.github.pr0methean.betterrandom.seed.RandomDotOrgSeedGenerator.setProxy;
 import static io.github.pr0methean.betterrandom.seed.RandomDotOrgSeedGenerator.setSslSocketFactory;
+import static io.github.pr0methean.betterrandom.seed.RandomDotOrgUtils.createProxy;
 import static io.github.pr0methean.betterrandom.seed.RandomDotOrgUtils.createSocketFactory;
-import static io.github.pr0methean.betterrandom.seed.RandomDotOrgUtils.createTorProxy;
 import static io.github.pr0methean.betterrandom.seed.SeedTestUtils.testGenerator;
 import static org.mockito.ArgumentMatchers.any;
 import static org.powermock.api.mockito.PowerMockito.spy;
@@ -116,7 +116,7 @@ public class RandomDotOrgSeedGeneratorHermeticTest extends PowerMockTestCase {
     }
   }
   @Nullable private String address = null;
-  private final Proxy proxy = createTorProxy();
+  private final Proxy proxy = createProxy();
   private boolean usingSmallRequests = false;
 
   private void mockRandomDotOrgResponse(final byte[] response) throws Exception {

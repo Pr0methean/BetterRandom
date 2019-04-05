@@ -16,8 +16,9 @@
 package io.github.pr0methean.betterrandom.prng.concurrent;
 
 import com.google.common.collect.ImmutableList;
+import io.github.pr0methean.betterrandom.NamedFunction;
+import io.github.pr0methean.betterrandom.prng.AbstractLargeSeedRandomTest;
 import io.github.pr0methean.betterrandom.prng.BaseRandom;
-import io.github.pr0methean.betterrandom.prng.BaseRandomTest;
 import io.github.pr0methean.betterrandom.prng.RandomTestUtils;
 import io.github.pr0methean.betterrandom.seed.SeedException;
 import java.util.Collections;
@@ -33,7 +34,7 @@ import static org.testng.Assert.assertSame;
  * @author Chris Hennick
  */
 @Test(testName = "RandomWrapper")
-public class RandomWrapperRandomTest extends BaseRandomTest {
+public class RandomWrapperRandomTest extends AbstractLargeSeedRandomTest {
 
   private static final NamedFunction<Random, Double> SET_WRAPPED =
       new NamedFunction<Random, Double>("setWrapped") {

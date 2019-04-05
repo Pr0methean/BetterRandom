@@ -1,6 +1,7 @@
 package io.github.pr0methean.betterrandom.prng.concurrent;
 
 import io.github.pr0methean.betterrandom.CloneViaSerialization;
+import io.github.pr0methean.betterrandom.prng.AbstractLargeSeedRandomTest;
 import io.github.pr0methean.betterrandom.prng.AesCounterRandom;
 import io.github.pr0methean.betterrandom.prng.BaseRandom;
 import io.github.pr0methean.betterrandom.prng.BaseRandomTest;
@@ -19,7 +20,7 @@ import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertSame;
 
 @Test(testName = "ThreadLocalRandomWrapper")
-public class ThreadLocalRandomWrapperTest extends BaseRandomTest {
+public class ThreadLocalRandomWrapperTest extends AbstractLargeSeedRandomTest {
 
   protected Supplier<BaseRandom> pcgSupplier
       = new Pcg64RandomColonColonNew(getTestSeedGenerator());

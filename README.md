@@ -1,9 +1,7 @@
 # More randomness. Less time. Still an instance of java.util.Random.
-
-[![Maven Central](https://maven-badges.herokuapp.com/maven-central/io.github.pr0methean.betterrandom/BetterRandom-Java7/badge.svg)](https://maven-badges.herokuapp.com/maven-central/io.github.pr0methean.betterrandom/BetterRandom-Java7/badge.svg)
-[![Build Status (Travis - Linux & OS X)](https://travis-ci.org/Pr0methean/BetterRandom.svg?branch=master)](https://travis-ci.org/Pr0methean/BetterRandom)
-[![Build status (Appveyor - Windows)](https://ci.appveyor.com/api/projects/status/fg6siyo4ft98gfff?svg=true)](https://ci.appveyor.com/project/Pr0methean/betterrandom)
-[![Coverage Status](https://coveralls.io/repos/github/Pr0methean/BetterRandom/badge.svg?branch=master)](https://coveralls.io/github/Pr0methean/BetterRandom?branch=master)
+[![Build Status](https://dev.azure.com/polymorpheus/BetterRandom/_apis/build/status/BetterRandom-CI?branchName=master)](https://dev.azure.com/polymorpheus/BetterRandom/_build/latest?definitionId=2&branchName=java7)
+[![Maven Central](https://maven-badges.herokuapp.com/maven-central/io.github.pr0methean.betterrandom/BetterRandom/badge.svg)](https://search.maven.org/#search%7Cgav%7C1%7Cg%3A%22io.github.pr0methean.betterrandom%22%20AND%20a%3A%22BetterRandom%22)
+[![Coverage](https://codecov.io/gh/Pr0methean/BetterRandom/branch/master/graph/badge.svg)](https://codecov.io/gh/Pr0methean/BetterRandom)
 [![Codacy Badge](https://api.codacy.com/project/badge/Grade/98a727e6ce3340598e9ae7757f3997fc)](https://www.codacy.com/app/Pr0methean/BetterRandom?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=Pr0methean/BetterRandom&amp;utm_campaign=Badge_Grade)
 [![codebeat badge](https://codebeat.co/badges/4339b354-590c-4871-b441-d694dc5a33ea)](https://codebeat.co/projects/github-com-pr0methean-betterrandom-master)
 [![BCH compliance](https://bettercodehub.com/edge/badge/Pr0methean/BetterRandom?branch=master)](https://bettercodehub.com/)
@@ -100,11 +98,11 @@ public class AesCounterRandomDemo {
 
 ## ReseedingSplittableRandomAdapter for fast, high-quality, parallel duplicate-bridge dealing
 ```
-import static io.github.pr0methean.betterrandom.seed.DefaultSeedGenerator.DEFAULT_SEED_GENERATOR;
+import static io.github.pr0methean.betterrandom.seed.SecureRandomSeedGenerator.SECURE_RANDOM_SEED_GENERATOR;
 
-import edu.emory.mathcs.backport.java.util.Collections;
 import io.github.pr0methean.betterrandom.seed.SeedException;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;

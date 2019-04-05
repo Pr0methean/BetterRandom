@@ -8,7 +8,7 @@ import java.util.List;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
-import static io.github.pr0methean.betterrandom.seed.DefaultSeedGenerator.DEFAULT_SEED_GENERATOR;
+import static io.github.pr0methean.betterrandom.seed.SecureRandomSeedGenerator.SECURE_RANDOM_SEED_GENERATOR;
 
 public enum ReseedingSplittableRandomAdapterDemo {
   ;
@@ -34,7 +34,7 @@ public enum ReseedingSplittableRandomAdapterDemo {
     };
     final ScheduledThreadPoolExecutor executor = new ScheduledThreadPoolExecutor(4);
     final ReseedingSplittableRandomAdapter random =
-        ReseedingSplittableRandomAdapter.getInstance(DEFAULT_SEED_GENERATOR);
+        ReseedingSplittableRandomAdapter.getInstance(SECURE_RANDOM_SEED_GENERATOR);
     for (i = 0; i < 20; i++) {
       executor.submit(new Runnable() {
         @Override public void run() {

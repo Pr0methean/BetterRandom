@@ -1,6 +1,7 @@
 package io.github.pr0methean.betterrandom.prng.concurrent;
 
 import com.google.common.collect.ImmutableList;
+import io.github.pr0methean.betterrandom.NamedFunction;
 import io.github.pr0methean.betterrandom.prng.BaseRandom;
 import io.github.pr0methean.betterrandom.prng.MersenneTwisterRandom;
 import io.github.pr0methean.betterrandom.prng.MersenneTwisterRandomTest;
@@ -47,6 +48,12 @@ public class RandomWrapperMersenneTwisterRandomTest extends MersenneTwisterRando
 
   @Override protected RandomWrapper createRng(final byte[] seed) throws SeedException {
     return new RandomWrapper(new MersenneTwisterRandom(seed));
+  }
+
+  // FIXME: This test takes too long!
+  @Override @Test(timeOut = 120_000)
+  public void testSerializable() throws SeedException {
+    super.testSerializable();
   }
 
   @Test public void testGetWrapped() {

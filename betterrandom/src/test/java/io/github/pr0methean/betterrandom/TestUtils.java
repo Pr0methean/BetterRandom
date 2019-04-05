@@ -47,14 +47,6 @@ public enum TestUtils {
     }
   }
 
-  /**
-   * Appveyor doesn't seem to be allowed any random.org usage at all, even with a valid API key.
-   * @return true if we're running on Appveyor, false otherwise
-   */
-  @SuppressWarnings("CallToSystemGetenv") @TestingDeficiency public static boolean isAppveyor() {
-    return System.getenv("APPVEYOR") != null;
-  }
-
   public static void assertLessOrEqual(final long actual, final long expected) {
     if (actual > expected) {
       throw new AssertionError(

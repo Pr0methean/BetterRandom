@@ -19,7 +19,6 @@ import io.github.pr0methean.betterrandom.CloneViaSerialization;
 import io.github.pr0methean.betterrandom.TestUtils;
 import io.github.pr0methean.betterrandom.seed.RandomSeederThread;
 import io.github.pr0methean.betterrandom.seed.SeedGenerator;
-import io.github.pr0methean.betterrandom.util.BinaryUtils;
 import io.github.pr0methean.betterrandom.util.Dumpable;
 import java.util.Arrays;
 import java.util.HashSet;
@@ -268,11 +267,10 @@ public enum RandomTestUtils {
       int waits = 0;
       byte[] secondSeed;
       do {
-        assertTrue(Arrays.equals(oldSeed, oldSeedClone),
-            "Array modified after being returned by getSeed()");
+        assertEquals(oldSeedClone, oldSeed, "Array modified after being returned by getSeed()");
         assertSame(rng.getSeedGenerator(), testSeedGenerator);
         waits++;
-        if (waits > 1000) {
+        if (waits > 2000) {
           fail(String.format("Timed out waiting for %s to be reseeded!", rng));
         }
         Thread.sleep(20);
@@ -281,8 +279,7 @@ public enum RandomTestUtils {
       final byte[] secondSeedClone = secondSeed.clone();
       waits = 0;
       while (rng.getEntropyBits() < (secondSeed.length * 8L) - 1) {
-        assertTrue(Arrays.equals(secondSeed, secondSeedClone),
-            "Array modified after being returned by getSeed()");
+        assertEquals(secondSeedClone, secondSeed, "Array modified after being returned by getSeed()");
         waits++;
         if (waits > 5) {
           fail(String.format("Timed out waiting for entropy count to increase on %s", rng));
@@ -296,7 +293,7 @@ public enum RandomTestUtils {
       }
       waits = 0;
       do {
-        assertTrue(Arrays.equals(secondSeed, secondSeedClone),
+        assertEquals(secondSeedClone, secondSeed,
             "Array modified after being returned by getSeed()");
         Thread.sleep(100);
         waits++;

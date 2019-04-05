@@ -3,6 +3,7 @@ package io.github.pr0methean.betterrandom.prng;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import io.github.pr0methean.betterrandom.CloneViaSerialization;
+import io.github.pr0methean.betterrandom.NamedFunction;
 import io.github.pr0methean.betterrandom.TestUtils;
 import io.github.pr0methean.betterrandom.prng.RandomTestUtils.EntropyCheckMode;
 import io.github.pr0methean.betterrandom.prng.concurrent.SplittableRandomAdapter;
@@ -13,7 +14,6 @@ import io.github.pr0methean.betterrandom.seed.SeedException;
 import io.github.pr0methean.betterrandom.seed.SeedGenerator;
 import io.github.pr0methean.betterrandom.seed.SemiFakeSeedGenerator;
 import io.github.pr0methean.betterrandom.util.BinaryUtils;
-import java.io.Serializable;
 import java.lang.reflect.InvocationTargetException;
 import java.security.GeneralSecurityException;
 import java.util.Arrays;
@@ -35,6 +35,8 @@ import java8.util.function.Function;
 import java8.util.function.Supplier;
 import org.apache.commons.math3.stat.descriptive.SynchronizedDescriptiveStatistics;
 import org.powermock.modules.testng.PowerMockTestCase;
+import org.testng.IRetryAnalyzer;
+import org.testng.ITestResult;
 import org.testng.Reporter;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.Test;
@@ -293,7 +295,7 @@ public abstract class BaseRandomTest extends PowerMockTestCase {
     createRng(null);
   }
 
-  @Test(timeOut = 15_000) public void testSerializable()
+  @Test(timeOut = 45_000) public void testSerializable()
       throws SeedException {
     // Serialise an RNG.
     final BaseRandom rng = createRng();
@@ -408,7 +410,7 @@ public abstract class BaseRandomTest extends PowerMockTestCase {
    *
    * @throws Exception
    */
-  @SuppressWarnings("BusyWait") @Test(timeOut = 60_000)
+  @SuppressWarnings("BusyWait") @Test(timeOut = 60_000, retryAnalyzer = FlakyTestAnalyzer.class)
   public void testRandomSeederThreadIntegration() {
     final SeedGenerator seedGenerator = new SemiFakeSeedGenerator(new Random());
     final BaseRandom rng = createRng();
@@ -917,12 +919,35 @@ public abstract class BaseRandomTest extends PowerMockTestCase {
     }
   }
 
-  protected abstract static class NamedFunction<T, R> implements Function<T, R>, Serializable {
+  /** From https://www.toolsqa.com/selenium-webdriver/retry-failed-tests-testng/ */
+  public static class FlakyTestAnalyzer implements IRetryAnalyzer {
+    int counter = 0;
+    int retryLimit = 1;
 
+    @Override
+    public boolean retry(ITestResult result) {
+
+      if(counter < retryLimit)
+      {
+        counter++;
+        return true;
+      }
+      return false;
+    }
+  }
+
+  protected static final class NamedFunction<T, R> implements Function<T, R>, Serializable {
+
+    private final Function<T, R> function;
     private final String name;
 
-    public NamedFunction(String name) {
+    public NamedFunction(final Function<T, R> function, final String name) {
+      this.function = function;
       this.name = name;
+    }
+
+    @Override public R apply(final T t) {
+      return function.apply(t);
     }
 
     @Override public String toString() {
