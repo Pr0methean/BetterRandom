@@ -217,7 +217,6 @@ jobs:
         OpenJdk08Linux:
           JAVA8: 'true'
           JAVA_HOME: /usr/lib/jvm/zulu-8-azure-amd64
-          vmImage: 'ubuntu-16.04'
           artifactEnvName: 'OpenJDK08Linux'
         OpenJdk11:
           JAVA_HOME: /usr/lib/jvm/zulu-11-azure-amd64
@@ -225,10 +224,9 @@ jobs:
 #https://github.com/Microsoft/azure-pipelines-image-generation/commit/4afff89de2e3ff3ca34a445c20c7ef9e3ce306b1#commitcomment-33056031
 #        OpenJdk12Linux:
 #          JAVA_HOME: /usr/lib/jvm/zulu-12-azure-amd64
-#          vmImage: 'ubuntu-16.04'
 #          artifactEnvName: 'OpenJDK12Linux'
     pool:
-      vmImage: $(vmImage)
+      vmImage: 'ubuntu-16.04'
     steps:
       - template: etc/azureTemplate/benchmark.yml
   - job: BenchmarkLinuxAdoptOpenJdk
@@ -240,14 +238,12 @@ jobs:
       matrix:
         OpenJNine08Linux:
           javaUrl: $(OpenJNine08Linux)
-          vmImage: 'ubuntu-16.04'
           artifactEnvName: 'OpenJNine08Linux'
         OpenJNine12Linux:
           javaUrl: $(OpenJNine12Linux)
-          vmImage: 'ubuntu-16.04'
           artifactEnvName: 'OpenJNine12Linux'
     pool:
-      vmImage: $(vmImage)
+      vmImage: 'ubuntu-16.04'
     steps:
       - template: etc/azureTemplate/installJavaJti.yml
       - template: etc/azureTemplate/benchmark.yml
