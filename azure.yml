@@ -203,7 +203,7 @@ jobs:
         displayName: Build & Run Mutation Tests
         env:
           RANDOM_DOT_ORG_KEY: $(RANDOM_DOT_ORG_KEY)
-          JAVA_HOME: $(JAVA_HOME)
+          JAVA_HOME: /usr/lib/jvm/zulu-11-azure-amd64
       - task: PublishBuildArtifacts@1
         displayName: Publish Mutation Report
         inputs:
