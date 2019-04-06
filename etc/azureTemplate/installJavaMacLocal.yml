@@ -6,4 +6,4 @@ steps:
       echo "##vso[task.setvariable variable=JAVA_HOME]${JAVA_HOME}"
     env:
       javaVersion: ${{ parameters.javaVersion }}
-    displayName: Set Java Home
+    displayName: Set JAVA_HOME
