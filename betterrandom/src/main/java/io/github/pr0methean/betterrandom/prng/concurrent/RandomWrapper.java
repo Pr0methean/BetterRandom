@@ -42,11 +42,12 @@ import javax.annotation.Nullable;
  */
 public class RandomWrapper extends BaseRandom {
 
+  private static final boolean RANDOM_HAS_PARALLEL_STREAMS = new Random().longs().isParallel();
   protected static final byte[] DUMMY_SEED = new byte[8];
   private static final long serialVersionUID = -6526304552538799385L;
   private volatile Random wrapped;
   private volatile boolean unknownSeed;
-  private boolean haveParallelStreams;
+  private volatile boolean haveParallelStreams;
 
   /**
    * Wraps a {@link Random} that is seeded using the default seeding strategy.
@@ -70,7 +71,10 @@ public class RandomWrapper extends BaseRandom {
    * @param seed seed used to initialize the {@link Random}; must be 8 bytes
    */
   public RandomWrapper(final byte[] seed) {
-    this(BinaryUtils.convertBytesToLong(checkLength(seed, Long.BYTES)));
+    super(checkLength(seed, Long.BYTES));
+    wrapped = new Random(BinaryUtils.convertBytesToLong(seed));
+    unknownSeed = false;
+    haveParallelStreams = RANDOM_HAS_PARALLEL_STREAMS;
   }
 
   /**
@@ -78,10 +82,10 @@ public class RandomWrapper extends BaseRandom {
    * @param seed seed used to initialize the {@link Random}
    */
   @EntryPoint public RandomWrapper(final long seed) {
-    super(seed);
+    super(BinaryUtils.convertLongToBytes(seed));
     wrapped = new Random(seed);
     unknownSeed = false;
-    haveParallelStreams = wrapped.longs().isParallel();
+    haveParallelStreams = RANDOM_HAS_PARALLEL_STREAMS;
   }
 
   /**

@@ -1,3 +1,8 @@
+# 3.1.2
+* `RandomWrapper` instance creation should now be slightly faster.
+* Fixes a bug where a `RandomWrapper` whose underlying PRNG had been replaced with a different
+  class might incorrectly produce a mix of sequential and parallel streams.
+
 # 3.1.1
 * `RandomDotOrgSeedGenerator` now exposes `setSslSocketFactory` so you have more options for
   preventing downgrade attacks (such as POODLE) and weak ciphers.
