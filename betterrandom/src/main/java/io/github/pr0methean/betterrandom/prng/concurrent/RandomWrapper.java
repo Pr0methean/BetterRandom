@@ -42,12 +42,10 @@ import javax.annotation.Nullable;
  */
 public class RandomWrapper extends BaseRandom {
 
-  private static final boolean RANDOM_HAS_PARALLEL_STREAMS = new Random().longs().isParallel();
   protected static final byte[] DUMMY_SEED = new byte[8];
   private static final long serialVersionUID = -6526304552538799385L;
   private volatile Random wrapped;
   private volatile boolean unknownSeed;
-  private volatile boolean haveParallelStreams;
 
   /**
    * Wraps a {@link Random} that is seeded using the default seeding strategy.
@@ -74,7 +72,6 @@ public class RandomWrapper extends BaseRandom {
     super(checkLength(seed, Long.BYTES));
     wrapped = new Random(BinaryUtils.convertBytesToLong(seed));
     unknownSeed = false;
-    haveParallelStreams = RANDOM_HAS_PARALLEL_STREAMS;
   }
 
   /**
@@ -85,7 +82,6 @@ public class RandomWrapper extends BaseRandom {
     super(BinaryUtils.convertLongToBytes(seed));
     wrapped = new Random(seed);
     unknownSeed = false;
-    haveParallelStreams = RANDOM_HAS_PARALLEL_STREAMS;
   }
 
   /**
@@ -97,7 +93,6 @@ public class RandomWrapper extends BaseRandom {
     unknownSeed = !(wrapped instanceof RepeatableRandom);
     readEntropyOfWrapped(wrapped);
     this.wrapped = wrapped;
-    haveParallelStreams = wrapped.longs().isParallel();
   }
 
   private static byte[] getSeedOrDummy(final Random wrapped) {
@@ -110,7 +105,7 @@ public class RandomWrapper extends BaseRandom {
   }
 
   @Override public boolean usesParallelStreams() {
-    return haveParallelStreams;
+    return true; // Streams should be parallel, in case a parallel PRNG is switched in later
   }
 
   @Override protected int next(final int bits) {
@@ -143,7 +138,6 @@ public class RandomWrapper extends BaseRandom {
       readEntropyOfWrapped(wrapped);
       seed = getSeedOrDummy(wrapped);
       unknownSeed = !(wrapped instanceof RepeatableRandom);
-      haveParallelStreams = wrapped.longs().isParallel();
     } finally {
       lock.unlock();
     }
