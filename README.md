@@ -140,14 +140,25 @@ public class SplittableRandomAdapterDemo {
 }
 
 ```
-# Supported environments
+# Tested environments
 
 BetterRandom has 2 versions, one for Java 7 -- including Android API levels below 24 -- and one for
 Java 8 and newer.
 
 ## Java 8 (master branch)
 
-Continuous integration takes place in the following environments:
+Beginning with version 3.1.2, continuous integration has been moved to Azure Pipelines and includes
+the following environments:
+
+* Ubuntu: OpenJDK 8,9,10,11,12; OpenJ9 8 and 12; Oracle HotSpot 8 and 11
+* OSX: OpenJDK 8,9,10,11; Oracle HotSpot 11
+* Windows: OpenJDK 8,11,12
+
+OpenJDK 8, 11 and 12 on Ubuntu and Windows are Azul Zulu builds. OpenJ9 and OpenJDK 9 and 10 are
+AdoptOpenJDK builds. For OpenJDK on OSX, the preinstalled builds on Microsoft's OSX system images
+are used; their provenance is unclear.
+
+For versions up to 3.1.1, continuous integration took place in the following environments:
 
 * Linux (on Travis): OpenJDK and Oracle JDK 8 and up
 * OS X (on Travis): OpenJDK 8 and up, Xcode 7.3 and up
@@ -168,7 +179,8 @@ devices have API level 24 or newer, as
 18.09 LTS has been released (which will mean Java 7 will be *two* major long-term-support versions
 out of date).
 
-Continuous integration takes place in OpenJDK 7 on Linux.
+Continuous integration takes place in OpenJDK 7 on Linux. Up to and including version 3.1.1, this was
+done on Travis CI; beginning with 3.1.2, Azure Pipelines will be used.
 
 # Alternative random number generators
 
