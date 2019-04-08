@@ -173,6 +173,11 @@ jobs:
         displayName: Set JAVA_HOME
         env:
           JAVA_HOME_SOURCE: $(JAVA_HOME_SOURCE)
+      - powershell: 'java -version'
+        displayName: Log Java Version
+        env:
+          JAVA_HOME: $(JAVA_HOME)
+        ignoreLASTEXITCODE: true # sometimes spuriously exits with failure on Windows Zing
       - task: PowerShell@2
         displayName: Build & Test
         inputs:
@@ -306,7 +311,6 @@ jobs:
       - AllUnitTests
     variables:
       artifactEnvName: Windows
-      JAVA8: 'true'
     pool:
       vmImage: 'windows-2019'
     strategy:
@@ -330,6 +334,7 @@ jobs:
         displayName: Log Java Version
         env:
           JAVA_HOME: $(JAVA_HOME)
+        ignoreLASTEXITCODE: true # sometimes spuriously exits with failure on Windows Zing
       - task: PowerShell@2
         displayName: Build & Benchmark
         inputs:
