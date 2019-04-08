@@ -22,7 +22,7 @@ trigger:
     include:
       - '*'
     exclude:
-      - dependabot
+      - 'dependabot/*'
       - java7
   paths:
     exclude:
@@ -32,8 +32,8 @@ trigger:
       - docs/
 pr:
   branches:
-    exclude:
-      - java7
+    include:
+      - master
   paths:
     exclude:
       - README.md
@@ -117,7 +117,7 @@ jobs:
       javaLicence: BCL
       javaVersion: '11'
       installJdkOs: 'osx-x64'
-      artifactEnvName: OracleJdk12Mac
+      artifactEnvName: OracleJdk11Mac
     pool:
       vmImage: 'macOs-10.13'
     steps:
