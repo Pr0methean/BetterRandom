@@ -1,4 +1,8 @@
 steps:
+- script: 'java -version'
+  displayName: Log Java Version
+  env:
+    JAVA_HOME: $(JAVA_HOME)
 - script: ./unit-tests.sh
   displayName: Build & Test
   env:
