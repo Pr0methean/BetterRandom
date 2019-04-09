@@ -169,15 +169,11 @@ jobs:
     pool:
       vmImage: 'windows-2019'
     steps:
-      - powershell: 'echo "##vso[task.setvariable variable=JAVA_HOME]$JAVA_HOME_SOURCE"'
+      - powershell: |
+          echo "##vso[task.setvariable variable=JAVA_HOME]$JAVA_HOME_SOURCE"'
+          java -version
         displayName: Set JAVA_HOME
-        env:
           JAVA_HOME_SOURCE: $(JAVA_HOME_SOURCE)
-      - powershell: 'java -version; exit 0'
-        displayName: Log Java Version
-        env:
-          JAVA_HOME: $(JAVA_HOME)
-        ignoreLASTEXITCODE: true # sometimes spuriously exits with failure on Windows Zing
       - task: PowerShell@2
         displayName: Build & Test
         inputs:
@@ -326,15 +322,11 @@ jobs:
           JAVA_HOME_SOURCE: JAVA_HOME_12_X64
           artifactEnvName: OpenJdk12Linux 
     steps:
-      - powershell: 'echo "##vso[task.setvariable variable=JAVA_HOME]$JAVA_HOME_SOURCE"'
+      - powershell: |
+          echo "##vso[task.setvariable variable=JAVA_HOME]$JAVA_HOME_SOURCE"'
+          java -version
         displayName: Set JAVA_HOME
-        env:
           JAVA_HOME_SOURCE: $(JAVA_HOME_SOURCE)
-      - powershell: 'java -version; exit 0'
-        displayName: Log Java Version
-        env:
-          JAVA_HOME: $(JAVA_HOME)
-        ignoreLASTEXITCODE: true # sometimes spuriously exits with failure on Windows Zing
       - task: PowerShell@2
         displayName: Build & Benchmark
         inputs:
