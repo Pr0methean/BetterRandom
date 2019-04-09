@@ -170,7 +170,7 @@ jobs:
       vmImage: 'windows-2019'
     steps:
       - powershell: |
-          echo "##vso[task.setvariable variable=JAVA_HOME]$JAVA_HOME_SOURCE"'
+          echo "##vso[task.setvariable variable=JAVA_HOME]$JAVA_HOME_SOURCE"
           java -version
         displayName: Set JAVA_HOME
         env:
@@ -324,7 +324,7 @@ jobs:
           artifactEnvName: OpenJdk12Linux 
     steps:
       - powershell: |
-          echo "##vso[task.setvariable variable=JAVA_HOME]$JAVA_HOME_SOURCE"'
+          echo "##vso[task.setvariable variable=JAVA_HOME]$JAVA_HOME_SOURCE"
           java -version
         displayName: Set
         env:
