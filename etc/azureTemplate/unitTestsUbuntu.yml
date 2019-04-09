@@ -1,5 +1,5 @@
 steps:
-- script: 'java -version 2>&1'
+- script: 'java -version'
   displayName: Log Java Version
   env:
     JAVA_HOME: $(JAVA_HOME)
