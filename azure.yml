@@ -173,7 +173,7 @@ jobs:
         displayName: Set JAVA_HOME
         env:
           JAVA_HOME_SOURCE: $(JAVA_HOME_SOURCE)
-      - powershell: 'java -version 2>&1'
+      - powershell: 'java -version; exit 0'
         displayName: Log Java Version
         env:
           JAVA_HOME: $(JAVA_HOME)
@@ -330,7 +330,7 @@ jobs:
         displayName: Set JAVA_HOME
         env:
           JAVA_HOME_SOURCE: $(JAVA_HOME_SOURCE)
-      - powershell: 'java -version 2>&1'
+      - powershell: 'java -version; exit 0'
         displayName: Log Java Version
         env:
           JAVA_HOME: $(JAVA_HOME)
