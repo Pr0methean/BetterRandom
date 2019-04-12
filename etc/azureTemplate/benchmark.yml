@@ -6,6 +6,7 @@ steps:
   env:
     JAVA_HOME: $(JAVA_HOME)
     RANDOM_DOT_ORG_KEY: $(RANDOM_DOT_ORG_KEY)
+- template: publishTargetFolderIfFailed.yml
 - task: PublishBuildArtifacts@1
   displayName: Publish Results (1 Thread)
   inputs:
