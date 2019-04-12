@@ -34,6 +34,24 @@
           <version>2.3.2</version>
         </dependency>
       </dependencies>
+      <pluginManagement>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-surefire-plugin</artifactId>
+          <version>2.22.1</version>
+          <configuration>
+            <argLine>@{argLine} @{test.jdk9.argline}</argLine>
+          </configuration>
+        </plugin>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-failsafe-plugin</artifactId>
+          <version>2.22.1</version>
+          <configuration>
+            <argLine>@{argLine} @{test.jdk9.argline}</argLine>
+          </configuration>
+        </plugin>
+      </pluginManagement>
     </profile>
     <!-- GPG Signature on release -->
     <profile>
@@ -143,7 +161,6 @@
     <mockito.version>2.27.0</mockito.version>
     <pitest.version>1.3.2</pitest.version>
     <test.argline>-Djava.security.egd=file:/dev/./urandom</test.argline>
-    <test.jdk8.argline>${test.argline}</test.jdk8.argline>
     <test.jdk9.argline>${test.argline} --add-opens java.base/jdk.internal.loader=ALL-UNNAMED --add-opens java.xml/jdk.xml.internal=ALL-UNNAMED</test.jdk9.argline>
     <testng.parallel>tests</testng.parallel>
     <testng.threadCount>1</testng.threadCount>
