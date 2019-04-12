@@ -414,6 +414,8 @@
             <target>1.7</target>
             <staleMillis>3600000</staleMillis>
             <fork>true</fork>
+            <executable>${JAVA_HOME_7_X64}/bin/javac</executable>
+            <compilerVersion>1.3</compilerVersion>
             <compilerArguments>
               <Xmaxerrs>10000</Xmaxerrs>
               <Xmaxwarns>10000</Xmaxwarns>
