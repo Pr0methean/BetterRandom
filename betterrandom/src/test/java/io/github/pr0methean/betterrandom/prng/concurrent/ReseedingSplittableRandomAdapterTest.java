@@ -60,7 +60,8 @@ public class ReseedingSplittableRandomAdapterTest extends SingleThreadSplittable
     // No-op.
   }
 
-  @SuppressWarnings("BusyWait") @Override @Test public void testReseeding() {
+  @SuppressWarnings("BusyWait") @Override @Test(retryAnalyzer = FlakyTestAnalyzer.class)
+  public void testReseeding() {
     RandomTestUtils.testReseeding(getTestSeedGenerator(), createRng(), false);
   }
 
