@@ -53,9 +53,67 @@
                 <argLine>@{argLine} @{test.jdk9.argline}</argLine>
               </configuration>
             </plugin>
+            <plugin>
+              <groupId>org.pitest</groupId>
+              <artifactId>pitest-maven</artifactId>
+              <version>${pitest.version}</version>
+              <configuration>
+                <jvmArgs>
+                  <value>-Djava.security.egd=file:/dev/./urandom</value>
+                  <value>--add-opens</value>
+                  <value>java.xml/jdk.xml.internal=ALL-UNNAMED</value>
+                  <value>--add-opens</value>
+                  <value>java.base/jdk.internal.loader=ALL-UNNAMED</value>
+                </jvmArgs>
+              </configuration>
+            </plugin>
           </plugins>
         </pluginManagement>
       </build>
+    </profile>
+    <profile>
+      <id>pit</id>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.pitest</groupId>
+            <artifactId>pitest-maven</artifactId>
+            <version>${pitest.version}</version>
+            <configuration>
+              <jvmArgs>-Djava.security.egd=file:/dev/./urandom</jvmArgs>
+              <threads>4</threads>
+              <coverageThreshold>85</coverageThreshold>
+              <mutationThreshold>75</mutationThreshold>
+              <!-- AesCounterRandom excluded due to https://github.com/hcoles/pitest/issues/504 -->
+              <excludedClasses>
+                <excludedClass>io.github.pr0methean.betterrandom.prng.AesCounterRandom</excludedClass>
+              </excludedClasses>
+              <avoidCallsTo>
+                <avoidCallsTo>org.slf4j</avoidCallsTo>
+              </avoidCallsTo>
+              <timeoutFactor>2</timeoutFactor>
+              <timeoutConstant>4000</timeoutConstant>
+              <testPlugin>testng</testPlugin>
+              <failWhenNoMutations>true</failWhenNoMutations>
+            </configuration>
+          </plugin>
+        </plugins>
+      </build>
+      <dependencies>
+        <dependency>
+          <groupId>org.testng</groupId>
+          <artifactId>testng</artifactId>
+          <version>6.14.3</version>
+          <scope>test</scope>
+        </dependency>
+        <dependency>
+          <!-- Needed to override a transitive dep in Powermock that breaks Pitest -->
+          <groupId>org.javassist</groupId>
+          <artifactId>javassist</artifactId>
+          <version>3.22.0-GA</version>
+          <scope>test</scope>
+        </dependency>
+      </dependencies>
     </profile>
     <!-- GPG Signature on release -->
     <profile>
