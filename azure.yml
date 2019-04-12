@@ -12,10 +12,6 @@ variables:
   value: 'https://github.com/AdoptOpenJDK/openjdk12-binaries/releases/download/jdk-12%2B33_openj9-0.13.0/OpenJDK12U-jdk_x64_linux_openj9_12_33_openj9-0.13.0.tar.gz'
 - name: openjdk12linux
   value: 'https://cdn.azul.com/zulu/bin/zulu12.1.3-ca-jdk12-linux_x64.tar.gz'
-- name: openjdk10linux
-  value: 'https://github.com/AdoptOpenJDK/openjdk10-releases/releases/download/jdk-10.0.2%2B13/OpenJDK10_x64_Linux_jdk-10.0.2%2B13.tar.gz'
-- name: openjdk09linux
-  value: 'https://github.com/AdoptOpenJDK/openjdk9-binaries/releases/download/jdk-9.0.4%2B11/OpenJDK9U-jdk_x64_linux_hotspot_9.0.4_11.tar.gz'
 trigger:
   batch: true
   branches:
@@ -68,12 +64,6 @@ jobs:
       JAVA_HOME: jdk
     strategy:
       matrix:
-        OpenJdk09:
-          javaUrl: $(OpenJdk09Linux)
-          artifactEnvName: OpenJdk09Linux
-        OpenJdk10:
-          javaUrl: $(OpenJdk10Linux)
-          artifactEnvName: OpenJdk10Linux
         OpenJdk12:
           javaUrl: $(OpenJdk12Linux)
           artifactEnvName: OpenJdk12Linux
@@ -134,12 +124,6 @@ jobs:
           JAVA8: 'true'
           javaVersion: 8
           artifactEnvName: OpenJdk08Mac
-        OpenJdk09:
-          javaVersion: 9
-          artifactEnvName: OpenJdk09Mac
-        OpenJdk10:
-          javaVersion: 10
-          artifactEnvName: OpenJdk10Mac
         OpenJdk11:
           javaVersion: 11
           artifactEnvName: OpenJdk11Mac
