@@ -9,7 +9,7 @@
         <os><family>windows</family></os>
       </activation>
       <properties>
-        <test.argline />
+        <test.argline/>
       </properties>
     </profile>
     <!-- GPG Signature on release -->
@@ -119,7 +119,7 @@
     <powermock.version>2.0.0-beta.5</powermock.version>
     <mockito.version>2.25.1</mockito.version>
     <pitest.version>1.3.2</pitest.version>
-    <test.argline>-Djava.security.egd=file:/dev/./urandom</test.argline>
+    <test.argline>-XX:+IgnoreUnrecognizedVMOptions --add-modules java.xml.bind -Djava.security.egd=file:/dev/./urandom</test.argline>
     <test.jdk8.argline>${test.argline}</test.jdk8.argline>
     <test.jdk9.argline>${test.argline} --add-opens java.base/jdk.internal.loader=ALL-UNNAMED --add-opens java.xml/jdk.xml.internal=ALL-UNNAMED</test.jdk9.argline>
     <testng.parallel>tests</testng.parallel>
