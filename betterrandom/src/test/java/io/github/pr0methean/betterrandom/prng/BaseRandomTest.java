@@ -31,7 +31,6 @@ import java8.util.concurrent.ForkJoinPool;
 import java8.util.concurrent.ForkJoinTask;
 import java8.util.function.Consumer;
 import java8.util.function.DoubleConsumer;
-import java8.util.function.Function;
 import java8.util.function.Supplier;
 import org.apache.commons.math3.stat.descriptive.SynchronizedDescriptiveStatistics;
 import org.powermock.modules.testng.PowerMockTestCase;
@@ -933,25 +932,6 @@ public abstract class BaseRandomTest extends PowerMockTestCase {
         return true;
       }
       return false;
-    }
-  }
-
-  protected static final class NamedFunction<T, R> implements Function<T, R>, Serializable {
-
-    private final Function<T, R> function;
-    private final String name;
-
-    public NamedFunction(final Function<T, R> function, final String name) {
-      this.function = function;
-      this.name = name;
-    }
-
-    @Override public R apply(final T t) {
-      return function.apply(t);
-    }
-
-    @Override public String toString() {
-      return name;
     }
   }
 }
