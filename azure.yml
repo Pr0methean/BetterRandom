@@ -1,7 +1,7 @@
 variables:
 - group: Secrets
-- name: zuluLinux07
-  value: '/usr/lib/jvm/zulu-7-azure-amd64'
+- name: zuluLinux08
+  value: '/usr/lib/jvm/zulu-8-azure-amd64'
 - name: zuluLinuxLatest #https://github.com/Microsoft/azure-pipelines-image-generation/commit/4afff89de2e3ff3ca34a445c20c7ef9e3ce306b1#commitcomment-33056031
   value: '/usr/lib/jvm/zulu-11-azure-amd64'
 trigger:
@@ -30,7 +30,7 @@ pr:
 jobs:
   - job: UnitTest
     variables:
-      JAVA_HOME: $(zuluLinux07)
+      JAVA_HOME: $(zuluLinux08)
       artifactEnvName: OpenJdk07Linux
     pool:
       vmImage: 'ubuntu-16.04'
@@ -45,7 +45,7 @@ jobs:
     dependsOn:
       - UnitTest
     variables:
-      JAVA_HOME: $(zuluLinux07)
+      JAVA_HOME: $(zuluLinux08)
     timeoutInMinutes: 120 # FIXME: Remove once reliably passing in 50
     pool:
       vmImage: 'ubuntu-16.04'
@@ -58,7 +58,7 @@ jobs:
         displayName: Build & Run Mutation Tests
         env:
           RANDOM_DOT_ORG_KEY: $(RANDOM_DOT_ORG_KEY)
-          JAVA_HOME: $(zuluLinux07)
+          JAVA_HOME: $(zuluLinux08)
       - task: PublishBuildArtifacts@1
         displayName: Publish Mutation Report
         inputs:
@@ -68,7 +68,7 @@ jobs:
     dependsOn:
       - UnitTest
     variables:
-      JAVA_HOME: $(zuluLinux07)
+      JAVA_HOME: $(zuluLinux08)
       artifactEnvName: 'OpenJDK07Linux'
     pool:
       vmImage: 'ubuntu-16.04'
