@@ -150,13 +150,13 @@ Java 8 and newer.
 Beginning with version 3.1.2, continuous integration has been moved to Azure Pipelines and includes
 the following environments:
 
-* Ubuntu: OpenJDK 8,9,10,11,12; OpenJ9 8 and 12; Oracle HotSpot 8 and 11
-* OSX: OpenJDK 8,9,10,11; Oracle HotSpot 11
+* Ubuntu: OpenJDK 8,11,12; OpenJ9 8 and 12; Oracle HotSpot 8 and 11
+* OSX: OpenJDK 8,11; Oracle HotSpot 11
 * Windows: OpenJDK 8,11,12
 
-OpenJDK 8, 11 and 12 on Ubuntu and Windows are Azul Zulu builds. OpenJ9 and OpenJDK 9 and 10 are
-AdoptOpenJDK builds. For OpenJDK on OSX, the preinstalled builds on Microsoft's OSX system images
-are used; their provenance is unclear.
+OpenJDK 8, 11 and 12 on Ubuntu and Windows are Azul Zulu builds. OpenJ9 is AdoptOpenJDK.
+For OpenJDK on OSX, the preinstalled builds on Microsoft's OSX system images are used;
+their provenance is unclear, but they are to be replaced with Azul Zulu in April 2019.
 
 For versions up to 3.1.1, continuous integration took place in the following environments:
 
