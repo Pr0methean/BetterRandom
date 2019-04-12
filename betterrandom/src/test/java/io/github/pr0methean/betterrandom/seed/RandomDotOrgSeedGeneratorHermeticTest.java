@@ -36,7 +36,8 @@ import static org.powermock.api.mockito.PowerMockito.spy;
 import static org.testng.Assert.assertTrue;
 import static org.testng.AssertJUnit.assertEquals;
 
-@PowerMockIgnore({"javax.management.*", "javax.script.*", "jdk.nashorn.*", "javax.net.ssl.*", "javax.security.*"})
+@PowerMockIgnore({"javax.management.*", "javax.script.*", "jdk.nashorn.*", "javax.net.ssl.*", "javax.security.*",
+    "javax.xml.*", "com.sun.*"})
 @MockPolicy(Slf4jMockPolicy.class)
 @PrepareForTest(RandomDotOrgSeedGenerator.class)
 @Test(singleThreaded = true)

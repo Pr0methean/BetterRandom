@@ -7,7 +7,7 @@ import org.testng.annotations.Test;
 
 import static org.testng.Assert.assertEquals;
 
-@PowerMockIgnore({"javax.net.ssl.*", "javax.security.*"})
+@PowerMockIgnore({"javax.net.ssl.*", "javax.security.*", "javax.xml.*", "com.sun.*"})
 public abstract class AbstractSeedGeneratorTest extends PowerMockTestCase {
 
   protected SeedGenerator seedGenerator;
