@@ -25,6 +25,11 @@
         </dependency>
         <dependency>
           <groupId>com.sun.xml.bind</groupId>
+          <artifactId>jaxb-core</artifactId>
+          <version>2.3.0.1</version>
+        </dependency>
+        <dependency>
+          <groupId>com.sun.xml.bind</groupId>
           <artifactId>jaxb-impl</artifactId>
           <version>2.3.2</version>
         </dependency>
@@ -137,7 +142,7 @@
     <powermock.version>2.0.0-beta.5</powermock.version>
     <mockito.version>2.25.1</mockito.version>
     <pitest.version>1.3.2</pitest.version>
-    <test.argline>-XX:+IgnoreUnrecognizedVMOptions --add-modules java.xml.bind -Djava.security.egd=file:/dev/./urandom</test.argline>
+    <test.argline>-Djava.security.egd=file:/dev/./urandom</test.argline>
     <test.jdk8.argline>${test.argline}</test.jdk8.argline>
     <test.jdk9.argline>${test.argline} --add-opens java.base/jdk.internal.loader=ALL-UNNAMED --add-opens java.xml/jdk.xml.internal=ALL-UNNAMED</test.jdk9.argline>
     <testng.parallel>tests</testng.parallel>
