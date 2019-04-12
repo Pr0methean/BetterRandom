@@ -1,3 +1,8 @@
+# 3.1.2
+* `RandomWrapper` instance creation should now be slightly faster.
+* Streams from a `RandomWrapper` will always be parallel streams, since otherwise they could not
+  benefit from having a concurrent PRNG swapped in if created while a sequential one was present.
+
 # 3.1.1
 * `RandomDotOrgSeedGenerator` now exposes `setSslSocketFactory` so you have more options for
   preventing downgrade attacks (such as POODLE) and weak ciphers.

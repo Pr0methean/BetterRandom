@@ -1,78 +1,69 @@
 variables:
 - group: Secrets
-- name: openjdk12linux
-  value: 'https://github.com/AdoptOpenJDK/openjdk12-binaries/releases/download/jdk-12%2B33/OpenJDK12U-jdk_x64_linux_hotspot_12_33.tar.gz'
-- name: openjdk11linux
-  value: 'https://github.com/AdoptOpenJDK/openjdk11-binaries/releases/download/jdk-11.0.2%2B9/OpenJDK11U-jdk_x64_linux_hotspot_11.0.2_9.tar.gz'
-- name: openjdk10linux
-  value: 'https://github.com/AdoptOpenJDK/openjdk10-releases/releases/download/jdk-10.0.2%2B13/OpenJDK10_x64_Linux_jdk-10.0.2%2B13.tar.gz'
-- name: openjdk09linux
-  value: 'https://github.com/AdoptOpenJDK/openjdk9-binaries/releases/download/jdk-9.0.4%2B11/OpenJDK9U-jdk_x64_linux_hotspot_9.0.4_11.tar.gz'
-- name: openjdk08linux
-  value: 'https://github.com/AdoptOpenJDK/openjdk8-binaries/releases/download/jdk8u202-b08/OpenJDK8U-jdk_x64_linux_hotspot_8u202b08.tar.gz'
-- name: openjdk12mac
-  value: 'https://github.com/AdoptOpenJDK/openjdk12-binaries/releases/download/jdk-12%2B33/OpenJDK12U-jdk_x64_mac_hotspot_12_33.tar.gz'
-- name: openjdk11mac
-  value: 'https://github.com/AdoptOpenJDK/openjdk11-binaries/releases/download/jdk-11.0.2%2B9/OpenJDK11U-jdk_x64_mac_hotspot_11.0.2_9.tar.gz'
-- name: openjdk10mac
-  value: 'https://github.com/AdoptOpenJDK/openjdk10-releases/releases/download/jdk-10.0.2%2B13/OpenJDK10_x64_Mac_jdk-10.0.2%2B13.tar.gz'
-- name: openjdk09mac
-  value: 'https://github.com/AdoptOpenJDK/openjdk9-binaries/releases/download/jdk-9%2B181/OpenJDK9U-jdk_x64_mac_hotspot_9_181.tar.gz'
-- name: openjdk08mac
-  value: 'https://github.com/AdoptOpenJDK/openjdk8-binaries/releases/download/jdk8u202-b08/OpenJDK8U-jdk_x64_mac_hotspot_8u202b08.tar.gz'
-- name: openjdk11win
-  value: 'https://github.com/AdoptOpenJDK/openjdk11-binaries/releases/download/jdk-11.0.2%2B9/OpenJDK11U-jdk_x64_windows_hotspot_11.0.2_9.zip'
-- name: openjdk10win
-  value: 'https://github.com/AdoptOpenJDK/openjdk10-releases/releases/download/jdk-10.0.2%2B13/OpenJDK10_x64_Win_jdk-10.0.2%2B13.zip'
-- name: openjdk09win
-  value: 'https://github.com/AdoptOpenJDK/openjdk9-binaries/releases/download/jdk-9.0.4%2B11/OpenJDK9U-jdk_x64_windows_hotspot_9.0.4_11.zip'
-- name: openjdk08win
-  value: 'https://github.com/AdoptOpenJDK/openjdk8-binaries/releases/download/jdk8u202-b08/OpenJDK8U-jdk_x64_windows_hotspot_8u202b08.zip'
+- name: zuluLinux08
+  value: '/usr/lib/jvm/zulu-8-azure-amd64'
+- name: zuluLinux11
+  value: '/usr/lib/jvm/zulu-11-azure-amd64'
+- name: zuluLinuxLatest #https://github.com/Microsoft/azure-pipelines-image-generation/commit/4afff89de2e3ff3ca34a445c20c7ef9e3ce306b1#commitcomment-33056031
+  value: '/usr/lib/jvm/zulu-11-azure-amd64'  
 - name: openjnine08linux
   value: 'https://github.com/AdoptOpenJDK/openjdk8-binaries/releases/download/jdk8u202-b08_openj9-0.12.1/OpenJDK8U-jdk_x64_linux_openj9_8u202b08_openj9-0.12.1.tar.gz'
 - name: openjnine12linux
   value: 'https://github.com/AdoptOpenJDK/openjdk12-binaries/releases/download/jdk-12%2B33_openj9-0.13.0/OpenJDK12U-jdk_x64_linux_openj9_12_33_openj9-0.13.0.tar.gz'
-- name: openjnine12mac
-  value: 'https://github.com/AdoptOpenJDK/openjdk12-binaries/releases/download/jdk-12%2B33_openj9-0.13.0/OpenJDK12U-jdk_x64_mac_openj9_12_33_openj9-0.13.0.tar.gz'
+- name: openjdk12linux
+  value: 'https://cdn.azul.com/zulu/bin/zulu12.1.3-ca-jdk12-linux_x64.tar.gz'
 trigger:
   batch: true
   branches:
-    exclude: java7
-  pr:
-    branches:
-      exclude: java7
+    include:
+      - '*'
+    exclude:
+      - 'dependabot/*'
+      - java7
   paths:
     exclude:
       - README.md
       - CHANGELOG.md
-#pr:
-#  branches:
-#    include:
-#    - master
-#    - java7
-#  paths:
-#    exclude:
-#    - README.md
-#    - CHANGELOG.md
+      - .submodules
+      - docs/
+pr:
+  branches:
+    include:
+      - master
+  paths:
+    exclude:
+      - README.md
+      - CHANGELOG.md
+      - .submodules
+      - docs/
 jobs:
+  - job: UnitLinuxPreinstalledZulu
+    strategy:
+      matrix:
+        OpenJdk08:
+          JAVA8: 'true'
+          JAVA_HOME: $(zuluLinux08)
+          artifactEnvName: OpenJdk08Linux
+        OpenJdk11:
+          JAVA_HOME: $(zuluLinux11)
+          artifactEnvName: OpenJdk11Linux
+#        OpenJdkLatest:
+#          JAVA_HOME: $(zuluLinuxLatest)
+#          artifactEnvName: OpenJdk12Linux
+    pool:
+      vmImage: 'ubuntu-16.04'
+    steps:
+    - script: ./unit-tests.sh
+      displayName: Build & Test
+      env:
+        JAVA_HOME: $(JAVA_HOME)
+        RANDOM_DOT_ORG_KEY: $(RANDOM_DOT_ORG_KEY)
+    - template: etc/azureTemplate/publishCoverage.yml
   - job: UnitLinux
     variables:
       JAVA_HOME: jdk
     strategy:
       matrix:
-        OpenJdk08:
-          JAVA8: 'true'
-          javaUrl: $(OpenJdk08Linux)
-          artifactEnvName: OpenJdk08Linux
-        OpenJdk09:
-          javaUrl: $(OpenJdk09Linux)
-          artifactEnvName: OpenJdk09Linux
-        OpenJdk10:
-          javaUrl: $(OpenJdk10Linux)
-          artifactEnvName: OpenJdk10Linux
-        OpenJdk11:
-          javaUrl: $(OpenJdk11Linux)
-          artifactEnvName: OpenJdk11Linux
         OpenJdk12:
           javaUrl: $(OpenJdk12Linux)
           artifactEnvName: OpenJdk12Linux
@@ -116,7 +107,7 @@ jobs:
       javaLicence: BCL
       javaVersion: '11'
       installJdkOs: 'osx-x64'
-      artifactEnvName: OracleJdk12Mac
+      artifactEnvName: OracleJdk11Mac
     pool:
       vmImage: 'macOs-10.13'
     steps:
@@ -133,18 +124,9 @@ jobs:
           JAVA8: 'true'
           javaVersion: 8
           artifactEnvName: OpenJdk08Mac
-        OpenJdk09:
-          javaVersion: 9
-          artifactEnvName: OpenJdk09Mac
-        OpenJdk10:
-          javaVersion: 10
-          artifactEnvName: OpenJdk10Mac
         OpenJdk11:
           javaVersion: 11
           artifactEnvName: OpenJdk11Mac
-        OpenJdk12:
-          javaVersion: 12
-          artifactEnvName: OpenJdk12Mac
     pool:
       vmImage: 'macOs-10.13'
     steps:
@@ -156,22 +138,45 @@ jobs:
   - job: UnitWindows
     variables:
       artifactEnvName: Windows
-      JAVA8: 'true'
+    strategy:
+      matrix:
+        OpenJdk08:
+          JAVA8: 'true'
+          JAVA_HOME_SOURCE: JAVA_HOME_8_X64
+          artifactEnvName: OpenJdk08Linux
+        OpenJdk11:
+          JAVA_HOME_SOURCE: JAVA_HOME_11_X64
+          artifactEnvName: OpenJdk11Linux
+        OpenJdk12:
+          JAVA_HOME_SOURCE: JAVA_HOME_12_X64
+          artifactEnvName: OpenJdk12Linux 
     pool:
       vmImage: 'windows-2019'
     steps:
+      - powershell: 'echo "##vso[task.setvariable variable=JAVA_HOME]$JAVA_HOME_SOURCE"'
+        displayName: Set JAVA_HOME
+        env:
+          JAVA_HOME_SOURCE: $(JAVA_HOME_SOURCE)
+      #FIXME: Failing even with ignoreLASTEXITCODE
+      #- powershell: 'java -version'
+      #  displayName: Log Java Version
+      #  env:
+      #    JAVA_HOME: $(JAVA_HOME)
+      #  ignoreLASTEXITCODE: true # sometimes spuriously exits with failure on Windows Zing
       - task: PowerShell@2
         displayName: Build & Test
         inputs:
           filePath: unit-tests.ps1
         env:
           RANDOM_DOT_ORG_KEY: $(RANDOM_DOT_ORG_KEY)
+          JAVA_HOME: $(JAVA_HOME)
       - template: etc/azureTemplate/publishCoverage.yml
   - job: AllUnitTests # empty job used in dependsOn for DRY reasons
     displayName: All unit tests are done.
     dependsOn:
       - UnitWindows
       - UnitMac
+      - UnitLinuxPreinstalledZulu
       - UnitLinux
       - UnitOracleMac
       - UnitOracleLinux
@@ -181,13 +186,11 @@ jobs:
     dependsOn:
       - AllUnitTests
     variables:
-      javaUrl: $(OpenJdk12Linux)
-      JAVA_HOME: jdk
+      JAVA_HOME: $(zuluLinuxLatest)
     timeoutInMinutes: 120 # FIXME: Remove once reliably passing in 50
     pool:
       vmImage: 'ubuntu-16.04'
     steps:
-      - template: etc/azureTemplate/installJavaJti.yml
       - script: |
           sudo apt install haveged
           sudo service haveged start
@@ -196,11 +199,32 @@ jobs:
         displayName: Build & Run Mutation Tests
         env:
           RANDOM_DOT_ORG_KEY: $(RANDOM_DOT_ORG_KEY)
+          JAVA_HOME: $(zuluLinux11)
       - task: PublishBuildArtifacts@1
         displayName: Publish Mutation Report
         inputs:
           pathtoPublish: betterrandom/target/pit-reports
           artifactName: Mutation Coverage
+  - job: BenchmarkLinuxPreinstalledZulu
+    dependsOn:
+      - AllUnitTests
+    strategy:
+      matrix:
+        OpenJdk08:
+          JAVA8: 'true'
+          JAVA_HOME: $(zuluLinux08)
+          artifactEnvName: 'OpenJDK08Linux'
+        OpenJdk11:
+          JAVA_HOME: $(zuluLinux11)
+          artifactEnvName: OpenJdk11Linux
+#        Uncomment when the image with Zulu 12 is released
+#        OpenJdkLatest:
+#          JAVA_HOME: $(zuluLinuxLatest)
+#          artifactEnvName: 'OpenJDKLatestLinux'
+    pool:
+      vmImage: 'ubuntu-16.04'
+    steps:
+      - template: etc/azureTemplate/benchmark.yml
   - job: BenchmarkLinux
     dependsOn:
       - AllUnitTests
@@ -208,25 +232,17 @@ jobs:
       JAVA_HOME: jdk
     strategy:
       matrix:
-        OpenJdk08Linux:
-          JAVA8: 'true'
-          javaUrl: $(OpenJdk08Linux)
-          vmImage: 'ubuntu-16.04'
-          artifactEnvName: 'OpenJDK08Linux'
-        OpenJdk12Linux:
-          javaUrl: $(OpenJdk12Linux)
-          vmImage: 'ubuntu-16.04'
-          artifactEnvName: 'OpenJDK12Linux'
-        OpenJNine08Linux:
+        OpenJNine08:
           javaUrl: $(OpenJNine08Linux)
-          vmImage: 'ubuntu-16.04'
           artifactEnvName: 'OpenJNine08Linux'
-        OpenJNine12Linux:
+        OpenJNine12:
           javaUrl: $(OpenJNine12Linux)
-          vmImage: 'ubuntu-16.04'
+          artifactEnvName: 'OpenJNine12Linux'
+        OpenJdk12:
+          javaUrl: $(OpenJNine12Linux)
           artifactEnvName: 'OpenJNine12Linux'
     pool:
-      vmImage: $(vmImage)
+      vmImage: 'ubuntu-16.04'
     steps:
       - template: etc/azureTemplate/installJavaJti.yml
       - template: etc/azureTemplate/benchmark.yml
@@ -264,11 +280,11 @@ jobs:
     strategy:
       matrix:
         # Java 7 is /Library/Java/JavaVirtualMachines/jdk1.7.0_80.jdk/Contents/Home
-        OpenJdk08Mac:
+        OpenJdk08:
           JAVA8: 'true'
           javaVersion: 8
         OpenJdk12:
-          javaVersion: 12
+          javaVersion: 11
     pool:
       vmImage: 'macOs-10.13'
     steps:
@@ -281,16 +297,38 @@ jobs:
       - AllUnitTests
     variables:
       artifactEnvName: Windows
-      JAVA8: 'true'
     pool:
       vmImage: 'windows-2019'
+    strategy:
+      matrix:
+        OpenJdk08:
+          JAVA8: 'true'
+          JAVA_HOME_SOURCE: JAVA_HOME_8_X64
+          artifactEnvName: OpenJdk08Linux
+        OpenJdk11:
+          JAVA_HOME_SOURCE: JAVA_HOME_11_X64
+          artifactEnvName: OpenJdk11Linux
+        OpenJdk12:
+          JAVA_HOME_SOURCE: JAVA_HOME_12_X64
+          artifactEnvName: OpenJdk12Linux 
     steps:
+      - powershell: 'echo "##vso[task.setvariable variable=JAVA_HOME]$JAVA_HOME_SOURCE"'
+        displayName: Set Java Home
+        env:
+          JAVA_HOME_SOURCE: $(JAVA_HOME_SOURCE)
+      #FIXME: Failing even with ignoreLASTEXITCODE
+      #- powershell: 'java -version'
+      #  displayName: Log Java Version
+      #  env:
+      #    JAVA_HOME: $(JAVA_HOME)
+      #  ignoreLASTEXITCODE: true # sometimes spuriously exits with failure on Windows Zing
       - task: PowerShell@2
         displayName: Build & Benchmark
         inputs:
           filePath: benchmark.ps1
         env:
           RANDOM_DOT_ORG_KEY: $(RANDOM_DOT_ORG_KEY)
+          JAVA_HOME: $(JAVA_HOME)
   - job: BenchmarkOracleLimitedCrypto
     dependsOn:
       - AllUnitTests

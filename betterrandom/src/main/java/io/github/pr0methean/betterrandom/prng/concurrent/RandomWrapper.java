@@ -49,7 +49,6 @@ public class RandomWrapper extends BaseRandom {
   private static final long serialVersionUID = -6526304552538799385L;
   private volatile Random wrapped;
   private volatile boolean unknownSeed;
-  private boolean haveParallelStreams;
 
   /**
    * Wraps a {@link Random} that is seeded using the default seeding strategy.
@@ -73,7 +72,9 @@ public class RandomWrapper extends BaseRandom {
    * @param seed seed used to initialize the {@link Random}; must be 8 bytes
    */
   public RandomWrapper(final byte[] seed) {
-    this(BinaryUtils.convertBytesToLong(checkLength(seed, LONG_BYTES)));
+    super(checkLength(seed, LONG_BYTES));
+    wrapped = new Random(BinaryUtils.convertBytesToLong(seed));
+    unknownSeed = false;
   }
 
   /**
@@ -81,10 +82,9 @@ public class RandomWrapper extends BaseRandom {
    * @param seed seed used to initialize the {@link Random}
    */
   @EntryPoint public RandomWrapper(final long seed) {
-    super(seed);
+    super(BinaryUtils.convertLongToBytes(seed));
     wrapped = new Random(seed);
     unknownSeed = false;
-    haveParallelStreams = hasParallelStreams(wrapped);
   }
 
   /**
@@ -96,12 +96,6 @@ public class RandomWrapper extends BaseRandom {
     unknownSeed = !(wrapped instanceof RepeatableRandom);
     readEntropyOfWrapped(wrapped);
     this.wrapped = wrapped;
-    haveParallelStreams = hasParallelStreams(wrapped);
-  }
-
-  private static boolean hasParallelStreams(Random wrapped) {
-    return (wrapped instanceof BaseRandom && ((BaseRandom) wrapped).usesParallelStreams()) || (
-        wrapped instanceof Java8CompatRandom && ((Java8CompatRandom) wrapped).longs().isParallel());
   }
 
   private static byte[] getSeedOrDummy(final Random wrapped) {
@@ -114,7 +108,7 @@ public class RandomWrapper extends BaseRandom {
   }
 
   @Override public boolean usesParallelStreams() {
-    return haveParallelStreams;
+    return true; // Streams should be parallel, in case a parallel PRNG is switched in later
   }
 
   @Override protected int next(final int bits) {
@@ -147,7 +141,6 @@ public class RandomWrapper extends BaseRandom {
       readEntropyOfWrapped(wrapped);
       seed = getSeedOrDummy(wrapped);
       unknownSeed = !(wrapped instanceof RepeatableRandom);
-      haveParallelStreams = hasParallelStreams(wrapped);
     } finally {
       lock.unlock();
     }

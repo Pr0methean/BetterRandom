@@ -7,7 +7,12 @@ steps:
     brew install tinyproxy
     brew services start tinyproxy
   displayName: Install & Start Proxy
+- script: 'java -version'
+  displayName: Log Java Version
+  env:
+    JAVA_HOME: $(JAVA_HOME)
 - script: ./unit-tests.sh
   displayName: Build & Test
   env:
     RANDOM_DOT_ORG_KEY: $(RANDOM_DOT_ORG_KEY)
+    JAVA_HOME: $(JAVA_HOME)
