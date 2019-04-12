@@ -47,6 +47,13 @@ public class RandomWrapperAesCounterRandomTest extends AesCounterRandomTest {
     return RandomWrapper.class;
   }
 
+  // FIXME: This test is too slow when built on JDK 7, even when *run* on JDK 11!
+  @Test(timeOut = 40_000, groups = "non-deterministic")
+  @Override
+  public void testDistribution() throws SeedException {
+    super.testDistribution();
+  }
+
   @Override @Test(enabled = false) public void testAllPublicConstructors() {
     // No-op: redundant to super insofar as it works.
   }
