@@ -1,25 +1,16 @@
 variables:
 - group: Secrets
-- name: zuluLinux08
-  value: '/usr/lib/jvm/zulu-8-azure-amd64'
-- name: zuluLinux11
-  value: '/usr/lib/jvm/zulu-11-azure-amd64'
+- name: zuluLinux07
+  value: '/usr/lib/jvm/zulu-7-azure-amd64'
 - name: zuluLinuxLatest #https://github.com/Microsoft/azure-pipelines-image-generation/commit/4afff89de2e3ff3ca34a445c20c7ef9e3ce306b1#commitcomment-33056031
-  value: '/usr/lib/jvm/zulu-11-azure-amd64'  
-- name: openjnine08linux
-  value: 'https://github.com/AdoptOpenJDK/openjdk8-binaries/releases/download/jdk8u202-b08_openj9-0.12.1/OpenJDK8U-jdk_x64_linux_openj9_8u202b08_openj9-0.12.1.tar.gz'
-- name: openjnine12linux
-  value: 'https://github.com/AdoptOpenJDK/openjdk12-binaries/releases/download/jdk-12%2B33_openj9-0.13.0/OpenJDK12U-jdk_x64_linux_openj9_12_33_openj9-0.13.0.tar.gz'
-- name: openjdk12linux
-  value: 'https://cdn.azul.com/zulu/bin/zulu12.1.3-ca-jdk12-linux_x64.tar.gz'
+  value: '/usr/lib/jvm/zulu-11-azure-amd64'
 trigger:
   batch: true
   branches:
     include:
       - '*'
     exclude:
-      - 'dependabot/*'
-      - java7
+      - 'dependabot*'
   paths:
     exclude:
       - README.md
@@ -37,19 +28,10 @@ pr:
       - .submodules
       - docs/
 jobs:
-  - job: UnitLinuxPreinstalledZulu
-    strategy:
-      matrix:
-        OpenJdk08:
-          JAVA8: 'true'
-          JAVA_HOME: $(zuluLinux08)
-          artifactEnvName: OpenJdk08Linux
-        OpenJdk11:
-          JAVA_HOME: $(zuluLinux11)
-          artifactEnvName: OpenJdk11Linux
-#        OpenJdkLatest:
-#          JAVA_HOME: $(zuluLinuxLatest)
-#          artifactEnvName: OpenJdk12Linux
+  - job: UnitTest
+    variables:
+      JAVA_HOME: $(zuluLinux07)
+      artifactEnvName: OpenJdk07Linux
     pool:
       vmImage: 'ubuntu-16.04'
     steps:
@@ -59,134 +41,11 @@ jobs:
         JAVA_HOME: $(JAVA_HOME)
         RANDOM_DOT_ORG_KEY: $(RANDOM_DOT_ORG_KEY)
     - template: etc/azureTemplate/publishCoverage.yml
-  - job: UnitLinux
-    variables:
-      JAVA_HOME: jdk
-    strategy:
-      matrix:
-        OpenJdk12:
-          javaUrl: $(OpenJdk12Linux)
-          artifactEnvName: OpenJdk12Linux
-        OpenJNine08:
-          javaUrl: $(OpenJNine08Linux)
-          artifactEnvName: OpenJNine08Linux
-        OpenJNine12:
-          javaUrl: $(OpenJNine12Linux)
-          artifactEnvName: OpenJNine12Linux
-    pool:
-      vmImage: 'ubuntu-16.04'
-    steps:
-      - template: etc/azureTemplate/installJavaJti.yml
-      - template: etc/azureTemplate/unitTestsUbuntu.yml
-      - template: etc/azureTemplate/publishCoverage.yml
-  - job: UnitOracleLimitedCrypto
-    pool:
-      vmImage: 'ubuntu-16.04'
-    variables:
-      JAVA8: 'true'
-      artifactEnvName: OracleLimitedCrypto
-    steps:
-      - script: sudo ./installOracleJdk8.sh
-        displayName: Download & Install Java
-      - template: etc/azureTemplate/unitTestsUbuntu.yml
-      - template: etc/azureTemplate/publishCoverage.yml
-  - job: UnitOracleLinux
-    variables:
-      javaLicence: BCL
-      javaVersion: '11'
-      installJdkOs: 'linux-x64'
-      artifactEnvName: OracleJdk12Linux
-    pool:
-      vmImage: 'ubuntu-16.04'
-    steps:
-      - template: etc/azureTemplate/installJavaBach.yml
-      - template: etc/azureTemplate/unitTestsUbuntu.yml
-      - template: etc/azureTemplate/publishCoverage.yml
-  - job: UnitOracleMac
-    variables:
-      javaLicence: BCL
-      javaVersion: '11'
-      installJdkOs: 'osx-x64'
-      artifactEnvName: OracleJdk11Mac
-    pool:
-      vmImage: 'macOs-10.13'
-    steps:
-      - template: etc/azureTemplate/installJavaBach.yml
-      - template: etc/azureTemplate/unitTestsMac.yml
-      - template: etc/azureTemplate/publishCoverage.yml
-  - job: UnitMac
-    variables:
-      JAVA_HOME: jdk
-    strategy:
-      matrix:
-        # Java 7 is /Library/Java/JavaVirtualMachines/jdk1.7.0_80.jdk/Contents/Home
-        OpenJdk08:
-          JAVA8: 'true'
-          javaVersion: 8
-          artifactEnvName: OpenJdk08Mac
-        OpenJdk11:
-          javaVersion: 11
-          artifactEnvName: OpenJdk11Mac
-    pool:
-      vmImage: 'macOs-10.13'
-    steps:
-      - template: etc/azureTemplate/installJavaMacLocal.yml
-        parameters:
-          javaVersion: $(javaVersion)
-      - template: etc/azureTemplate/unitTestsMac.yml
-      - template: etc/azureTemplate/publishCoverage.yml
-  - job: UnitWindows
-    variables:
-      artifactEnvName: Windows
-    strategy:
-      matrix:
-        OpenJdk08:
-          JAVA8: 'true'
-          JAVA_HOME_SOURCE: JAVA_HOME_8_X64
-          artifactEnvName: OpenJdk08Linux
-        OpenJdk11:
-          JAVA_HOME_SOURCE: JAVA_HOME_11_X64
-          artifactEnvName: OpenJdk11Linux
-        OpenJdk12:
-          JAVA_HOME_SOURCE: JAVA_HOME_12_X64
-          artifactEnvName: OpenJdk12Linux 
-    pool:
-      vmImage: 'windows-2019'
-    steps:
-      - powershell: 'echo "##vso[task.setvariable variable=JAVA_HOME]$JAVA_HOME_SOURCE"'
-        displayName: Set JAVA_HOME
-        env:
-          JAVA_HOME_SOURCE: $(JAVA_HOME_SOURCE)
-      #FIXME: Failing even with ignoreLASTEXITCODE
-      #- powershell: 'java -version'
-      #  displayName: Log Java Version
-      #  env:
-      #    JAVA_HOME: $(JAVA_HOME)
-      #  ignoreLASTEXITCODE: true # sometimes spuriously exits with failure on Windows Zing
-      - task: PowerShell@2
-        displayName: Build & Test
-        inputs:
-          filePath: unit-tests.ps1
-        env:
-          RANDOM_DOT_ORG_KEY: $(RANDOM_DOT_ORG_KEY)
-          JAVA_HOME: $(JAVA_HOME)
-      - template: etc/azureTemplate/publishCoverage.yml
-  - job: AllUnitTests # empty job used in dependsOn for DRY reasons
-    displayName: All unit tests are done.
-    dependsOn:
-      - UnitWindows
-      - UnitMac
-      - UnitLinuxPreinstalledZulu
-      - UnitLinux
-      - UnitOracleMac
-      - UnitOracleLinux
-      - UnitOracleLimitedCrypto
-    pool: server # not a real job, so doesn't need an agent
   - job: Mutation
     dependsOn:
-      - AllUnitTests
+      - UnitTest
     variables:
-      JAVA_HOME: $(zuluLinuxLatest)
+      JAVA_HOME: $(zuluLinux07)
     timeoutInMinutes: 120 # FIXME: Remove once reliably passing in 50
     pool:
       vmImage: 'ubuntu-16.04'
@@ -199,188 +58,19 @@ jobs:
         displayName: Build & Run Mutation Tests
         env:
           RANDOM_DOT_ORG_KEY: $(RANDOM_DOT_ORG_KEY)
-          JAVA_HOME: $(zuluLinux11)
+          JAVA_HOME: $(zuluLinux07)
       - task: PublishBuildArtifacts@1
         displayName: Publish Mutation Report
         inputs:
           pathtoPublish: betterrandom/target/pit-reports
           artifactName: Mutation Coverage
-  - job: BenchmarkLinuxPreinstalledZulu
+  - job: Benchmark
     dependsOn:
-      - AllUnitTests
-    strategy:
-      matrix:
-        OpenJdk08:
-          JAVA8: 'true'
-          JAVA_HOME: $(zuluLinux08)
-          artifactEnvName: 'OpenJDK08Linux'
-        OpenJdk11:
-          JAVA_HOME: $(zuluLinux11)
-          artifactEnvName: OpenJdk11Linux
-#        Uncomment when the image with Zulu 12 is released
-#        OpenJdkLatest:
-#          JAVA_HOME: $(zuluLinuxLatest)
-#          artifactEnvName: 'OpenJDKLatestLinux'
+      - UnitTest
+    variables:
+      JAVA_HOME: $(zuluLinux07)
+      artifactEnvName: 'OpenJDK07Linux'
     pool:
       vmImage: 'ubuntu-16.04'
     steps:
       - template: etc/azureTemplate/benchmark.yml
-  - job: BenchmarkLinux
-    dependsOn:
-      - AllUnitTests
-    variables:
-      JAVA_HOME: jdk
-    strategy:
-      matrix:
-        OpenJNine08:
-          javaUrl: $(OpenJNine08Linux)
-          artifactEnvName: 'OpenJNine08Linux'
-        OpenJNine12:
-          javaUrl: $(OpenJNine12Linux)
-          artifactEnvName: 'OpenJNine12Linux'
-        OpenJdk12:
-          javaUrl: $(OpenJNine12Linux)
-          artifactEnvName: 'OpenJNine12Linux'
-    pool:
-      vmImage: 'ubuntu-16.04'
-    steps:
-      - template: etc/azureTemplate/installJavaJti.yml
-      - template: etc/azureTemplate/benchmark.yml
-  - job: BenchmarkOracleLinux
-    dependsOn:
-      - AllUnitTests
-    variables:
-      javaLicence: BCL
-      javaVersion: '11'
-      installJdkOs: 'linux-x64'
-      artifactEnvName: OracleLinux
-    pool:
-      vmImage: 'ubuntu-16.04'
-    steps:
-      - template: etc/azureTemplate/installJavaBach.yml
-      - template: etc/azureTemplate/benchmark.yml
-  - job: BenchmarkOracleMac
-    dependsOn:
-      - AllUnitTests
-    variables:
-      javaLicence: BCL
-      javaVersion: '11'
-      installJdkOs: 'osx-x64'
-    pool:
-      vmImage: 'macOs-10.13'
-    steps:
-      - template: etc/azureTemplate/installJavaBach.yml
-      - template: etc/azureTemplate/benchmark.yml
-  - job: BenchmarkMac
-    dependsOn:
-      - AllUnitTests
-    variables:
-      artifactEnvName: OracleMac
-      JAVA_HOME: jdk
-    strategy:
-      matrix:
-        # Java 7 is /Library/Java/JavaVirtualMachines/jdk1.7.0_80.jdk/Contents/Home
-        OpenJdk08:
-          JAVA8: 'true'
-          javaVersion: 8
-        OpenJdk12:
-          javaVersion: 11
-    pool:
-      vmImage: 'macOs-10.13'
-    steps:
-      - template: etc/azureTemplate/installJavaMacLocal.yml
-        parameters:
-          javaVersion: $(javaVersion)
-      - template: etc/azureTemplate/benchmark.yml
-  - job: BenchmarkWindows
-    dependsOn:
-      - AllUnitTests
-    variables:
-      artifactEnvName: Windows
-    pool:
-      vmImage: 'windows-2019'
-    strategy:
-      matrix:
-        OpenJdk08:
-          JAVA8: 'true'
-          JAVA_HOME_SOURCE: JAVA_HOME_8_X64
-          artifactEnvName: OpenJdk08Linux
-        OpenJdk11:
-          JAVA_HOME_SOURCE: JAVA_HOME_11_X64
-          artifactEnvName: OpenJdk11Linux
-        OpenJdk12:
-          JAVA_HOME_SOURCE: JAVA_HOME_12_X64
-          artifactEnvName: OpenJdk12Linux 
-    steps:
-      - powershell: 'echo "##vso[task.setvariable variable=JAVA_HOME]$JAVA_HOME_SOURCE"'
-        displayName: Set Java Home
-        env:
-          JAVA_HOME_SOURCE: $(JAVA_HOME_SOURCE)
-      #FIXME: Failing even with ignoreLASTEXITCODE
-      #- powershell: 'java -version'
-      #  displayName: Log Java Version
-      #  env:
-      #    JAVA_HOME: $(JAVA_HOME)
-      #  ignoreLASTEXITCODE: true # sometimes spuriously exits with failure on Windows Zing
-      - task: PowerShell@2
-        displayName: Build & Benchmark
-        inputs:
-          filePath: benchmark.ps1
-        env:
-          RANDOM_DOT_ORG_KEY: $(RANDOM_DOT_ORG_KEY)
-          JAVA_HOME: $(JAVA_HOME)
-  - job: BenchmarkOracleLimitedCrypto
-    dependsOn:
-      - AllUnitTests
-    pool:
-      vmImage: 'ubuntu-16.04'
-    variables:
-      JAVA8: 'true'
-      javaLicence: BCL
-      javaVersion: '11'
-      artifactEnvName: OracleLimitedCrypto
-    steps:
-      - template: etc/azureTemplate/installJavaBach.yml
-      - template: etc/azureTemplate/benchmark.yml
-        parameters:
-          whichTest: 'io.github.pr0methean.betterrandom.benchmark.AesCounterRandomBenchmark'
-  - job: Dieharder
-    timeoutInMinutes: 80
-    dependsOn:
-      - AllUnitTests
-    variables:
-      javaUrl: $(OpenJNine12Linux)
-      JAVA_HOME: jdk
-    strategy:
-      matrix:
-        AesCounterRandom:
-          class: AesCounterRandom
-        CellularAutomatonRandom:
-          class: CellularAutomatonRandom
-        Cmwc4096Random:
-          class: Cmwc4096Random
-        MersenneTwisterRandom:
-          class: MersenneTwisterRandom
-        XorShiftRandom:
-          class: XorShiftRandom
-        Pcg128Random:
-          class: Pcg128Random
-        Pcg64Random:
-          class: Pcg64Random
-        SingleThreadSplittableRandomAdapter:
-          class: 'concurrent.SingleThreadSplittableRandomAdapter'
-    pool:
-      vmImage: 'ubuntu-16.04'
-    steps:
-      - template: etc/azureTemplate/installJavaJti.yml
-      - script: sudo apt install dieharder
-        displayName: Install DieHarder
-      - script: ./dieharder.sh
-        displayName: Build BetterRandom & Run DieHarder Tests
-        env:
-          CLASS: $(class)
-      - task: PublishBuildArtifacts@1
-        displayName: Publish Report
-        inputs:
-          pathtoPublish: dieharder.txt
-          artifactName: DieHarder Randomness Tests - $(class)
