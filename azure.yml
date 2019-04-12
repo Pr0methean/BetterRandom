@@ -40,6 +40,12 @@ jobs:
       env:
         JAVA_HOME: $(JAVA_HOME)
         RANDOM_DOT_ORG_KEY: $(RANDOM_DOT_ORG_KEY)
+    - task: PublishBuildArtifacts@1
+      displayName: Publish Diagnostics
+      condition: failed()
+      inputs:
+        pathtoPublish: 'betterrandom/target'
+        artifactName: 'BuildOutputAndLogs'
     - template: etc/azureTemplate/publishCoverage.yml
   - job: Mutation
     dependsOn:
