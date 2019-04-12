@@ -20,7 +20,6 @@ import io.github.pr0methean.betterrandom.ByteArrayReseedableRandom;
 import io.github.pr0methean.betterrandom.EntropyCountingRandom;
 import io.github.pr0methean.betterrandom.RepeatableRandom;
 import io.github.pr0methean.betterrandom.prng.BaseRandom;
-import io.github.pr0methean.betterrandom.prng.Java8CompatRandom;
 import io.github.pr0methean.betterrandom.seed.DefaultSeedGenerator;
 import io.github.pr0methean.betterrandom.seed.SeedException;
 import io.github.pr0methean.betterrandom.seed.SeedGenerator;
@@ -108,7 +107,7 @@ public class RandomWrapper extends BaseRandom {
   }
 
   @Override public boolean usesParallelStreams() {
-    return true; // Streams should be parallel, in case a parallel PRNG is switched in later
+    return false; // Streams should be parallel, in case a parallel PRNG is switched in later
   }
 
   @Override protected int next(final int bits) {
