@@ -123,7 +123,7 @@
     <test.jdk8.argline>${test.argline}</test.jdk8.argline>
     <test.jdk9.argline>${test.argline} --add-opens java.base/jdk.internal.loader=ALL-UNNAMED --add-opens java.xml/jdk.xml.internal=ALL-UNNAMED</test.jdk9.argline>
     <testng.parallel>tests</testng.parallel>
-    <testng.threadCount>2</testng.threadCount>
+    <testng.threadCount>1</testng.threadCount>
     <testng.perCoreThreadCount>false</testng.perCoreThreadCount>
     <testng.verbose>3</testng.verbose>
     <testng.timeout>1200</testng.timeout>
