@@ -19,7 +19,6 @@ trigger:
       - '*'
     exclude:
       - 'dependabot/*'
-      - java7
   paths:
     exclude:
       - README.md
