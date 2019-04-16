@@ -2,6 +2,7 @@
 * `RandomWrapper` instance creation should now be slightly faster.
 * Streams from a `RandomWrapper` will always be parallel streams, since otherwise they could not
   benefit from having a concurrent PRNG swapped in if created while a sequential one was present.
+* `RandomDotOrgSeedGenerator` now uses the version 2 JSON API when configured with an API key.
 
 # 3.1.1
 * `RandomDotOrgSeedGenerator` now exposes `setSslSocketFactory` so you have more options for

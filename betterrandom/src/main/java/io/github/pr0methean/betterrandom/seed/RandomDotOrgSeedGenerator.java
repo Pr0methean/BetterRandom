@@ -122,7 +122,7 @@ public enum RandomDotOrgSeedGenerator implements SeedGenerator {
   static {
     earliestNextAttempt.add(YEAR, -1);
     try {
-      JSON_REQUEST_URL = new URL("https://api.random.org/json-rpc/1/invoke");
+      JSON_REQUEST_URL = new URL("https://api.random.org/json-rpc/2/invoke");
     } catch (final MalformedURLException e) {
       // Should never happen.
       throw new InternalError(e.getMessage());
