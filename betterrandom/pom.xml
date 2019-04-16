@@ -224,7 +224,7 @@
     <guava.version>27.1-android</guava.version>
     <proguard.version>5.3.3</proguard.version>
     <jacoco.version>0.8.3</jacoco.version>
-    <powermock.version>2.0.0-beta.5</powermock.version>
+    <powermock.version>2.0.0</powermock.version>
     <mockito.version>2.27.0</mockito.version>
     <pitest.version>1.4.7</pitest.version>
     <test.argline>-Djava.security.egd=file:/dev/./urandom</test.argline>
