@@ -182,6 +182,7 @@ public enum RandomDotOrgSeedGenerator implements SeedGenerator {
     if (currentSocketFactory != null) {
       connection.setSSLSocketFactory(currentSocketFactory);
     }
+    connection.setRequestProperty("Content-Type", "application/json");
     connection.setRequestProperty("User-Agent", USER_AGENT);
     return connection;
   }
