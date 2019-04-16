@@ -164,7 +164,7 @@ public class RandomDotOrgSeedGeneratorHermeticTest extends PowerMockTestCase {
     mockRandomDotOrgResponse(RESPONSE_625_JSON);
     try {
       testGenerator(RandomDotOrgSeedGenerator.RANDOM_DOT_ORG_SEED_GENERATOR, false);
-      assertTrue(address.startsWith("https://api.random.org/json-rpc/1/invoke"));
+      assertTrue(address.startsWith("https://api.random.org/json-rpc/2/invoke"));
       assertEquals(proxy, RandomDotOrgSeedGenerator.proxy.get());
     } finally {
       setProxy(null);
