@@ -1,5 +1,5 @@
 variables:
-- group: Secrets
+- group: Build Secrets
 - name: zuluLinux08
   value: '/usr/lib/jvm/zulu-8-azure-amd64'
 - name: zuluLinux11
