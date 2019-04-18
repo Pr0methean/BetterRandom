@@ -40,7 +40,6 @@ jobs:
       env:
         JAVA_HOME: $(JAVA_HOME)
         RANDOM_DOT_ORG_KEY: $(RANDOM_DOT_ORG_KEY)
-    - template: etc/azureTemplate/publishTargetFolderIfFailed.yml
     - template: etc/azureTemplate/publishCoverage.yml
   - job: Mutation
     dependsOn:
