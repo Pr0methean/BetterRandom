@@ -1,5 +1,5 @@
 variables:
-- group: Secrets
+- group: Build Secrets
 - name: zuluLinux07
   value: '/usr/lib/jvm/zulu-7-azure-amd64'
 - name: zuluLinuxLatest #https://github.com/Microsoft/azure-pipelines-image-generation/commit/4afff89de2e3ff3ca34a445c20c7ef9e3ce306b1#commitcomment-33056031
