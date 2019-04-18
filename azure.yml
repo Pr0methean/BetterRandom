@@ -59,7 +59,6 @@ jobs:
           RANDOM_DOT_ORG_KEY: $(RANDOM_DOT_ORG_KEY)
           JAVA_HOME: $(zuluLinuxLatest)
         continueOnError: true # https://github.com/hcoles/pitest/issues/597
-      - template: etc/azureTemplate/publishTargetFolderIfFailed.yml
       - task: PublishBuildArtifacts@1
         displayName: Publish Mutation Report
         inputs:
