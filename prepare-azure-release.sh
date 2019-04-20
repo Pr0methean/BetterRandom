@@ -6,8 +6,8 @@ git config --global user.email "4961925+Pr0methean@users.noreply.github.com"
 mkdir ~/.m2
 
 # Set up passwords
-gpg --import $(PGPKEY_PATH)
-rm $(PGPKEY_PATH)
+gpg --import ${PGPKEY_PATH}
+rm ${PGPKEY_PATH}
 
 echo -n '<settingsSecurity><master>' > ~/.m2/settings-security.xml
 echo -n $(mvn -emp "${MVN_MASTER_PASS}") >> ~/.m2/settings-security.xml
