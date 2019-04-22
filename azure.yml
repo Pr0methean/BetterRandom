@@ -383,20 +383,3 @@ jobs:
         inputs:
           pathtoPublish: dieharder.txt
           artifactName: DieHarder Randomness Tests - $(class)
-  - job: Trigger Release Pipeline
-    dependsOn:
-      - Mutation
-      - BenchmarkLinuxPreinstalledZulu
-      - BenchmarkLinux
-      - BenchmarkOracleLimitedCrypto
-      - BenchmarkOracleLinux
-      - BenchmarkMac
-      - BenchmarkOracleMac
-      - BenchmarkWindows
-      - Dieharder
-    steps:
-      - task: PublishBuildArtifacts@1
-        displayName: Trigger Release Pipeline
-        inputs:
-          pathtoPublish: README.md
-          artifactName: Dummy Artifact for Release Trigger
