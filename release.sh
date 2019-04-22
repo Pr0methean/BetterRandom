@@ -22,8 +22,9 @@ if [ "$#" -ge 1 ]; then
 fi
 mvn -DskipTests -Darguments=-DskipTests -Dmaven.test.skip=true -P!jdk9 -P release-sign-artifacts \
     clean compile pre-integration-test deploy ${MAYBE_P} ${MAYBE_RELEASE}
-if [ $? ]; then
-  if [ "${VERSION}" -ne "" ]; then
+STATUS=$?
+if [ -n "${VERSION}" ]; then
+  if [ ${STATUS} -eq 0 ]; then
     cd ..
     ./publish-javadoc.sh
     git tag "BetterRandom-${VERSION}"
@@ -43,9 +44,7 @@ if [ $? ]; then
     git add ../benchmark/pom.xml
     git add ../FifoFiller/pom.xml
     git commit -m "🤖 Update version numbers"
-  fi
-else
-  if [ "${VERSION}" -ne "" ]; then
+  else
     git tag -d "BetterRandom-Java7-${VERSION}"
     git push --delete origin "BetterRandom-Java7-${VERSION}"
     git revert --no-edit ${VERSION_COMMIT}
