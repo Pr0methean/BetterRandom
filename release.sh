@@ -21,7 +21,7 @@ rm -rf ../../.m2/repository/io/github/pr0methean/betterrandom/ &&\
     git commit -m "🤖 Update version numbers"
     VERSION_COMMIT=$(git rev-parse HEAD)
   fi
-  mvn -DskipTests -Darguments=-DskipTests -Dmaven.test.skip=true -P release-sign-artifacts \
+  mvn -DskipTests -Darguments=-DskipTests -Dmaven.test.skip=true -P!jdk9 -P release-sign-artifacts \
       clean compile pre-integration-test deploy ${MAYBE_P} ${MAYBE_RELEASE}
   if [ $? ]; then
     if [ "${VERSION}" -ne "" ]; then
