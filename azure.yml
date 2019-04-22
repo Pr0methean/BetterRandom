@@ -74,14 +74,3 @@ jobs:
       vmImage: 'ubuntu-16.04'
     steps:
       - template: etc/azureTemplate/benchmark.yml
-  - job: Trigger Release Pipeline
-    dependsOn:
-      - Mutation
-      - Benchmark
-      - Dieharder
-    steps:
-      - task: PublishBuildArtifacts@1
-        displayName: Trigger Release Pipeline
-        inputs:
-          pathtoPublish: README.md
-          artifactName: Dummy Artifact for Release Trigger
