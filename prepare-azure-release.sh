@@ -6,7 +6,8 @@ git config --global user.email "4961925+Pr0methean@users.noreply.github.com"
 mkdir ~/.m2
 
 # Set up passwords
-gpg --import ${PGPKEY_PATH}
+# FIXME: Why does this hang if run without timeout?
+timeout 60s gpg --import ${PGPKEY_PATH} </dev/null
 rm ${PGPKEY_PATH}
 
 echo -n '<settingsSecurity><master>' > ~/.m2/settings-security.xml
