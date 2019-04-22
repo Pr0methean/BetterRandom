@@ -1,4 +1,6 @@
 #!/bin/bash
+SONATYPE_PASS=$(echo ${SONATYPE_PASS} | recode ascii..html)
+PGP_PASS=$(echo ${PGP_PASS} | recode ascii..html)
 echo '[prepare-azure-release.sh] Installing Apt packages...'
 sudo apt-get -y install markdown dieharder
 echo '[prepare-azure-release.sh] Installing Gems...'
@@ -12,17 +14,22 @@ timeout 60s gpg --import ${PGPKEY_PATH} </dev/null
 rm ${PGPKEY_PATH}
 echo '[prepare-azure-release.sh] Configuring Maven...'
 mkdir ~/.m2
-echo -n '<settingsSecurity><master>' > ~/.m2/settings-security.xml
-echo -n $(mvn -emp "${MVN_MASTER_PASS}") >> ~/.m2/settings-security.xml
-echo '</master></settingsSecurity>' >> ~/.m2/settings-security.xml
-password_crypt=$(mvn -ep "${SONATYPE_PASS}")
-rm ~/.m2/settings.xml
-cat settings.xml.part1 > ~/.m2/settings_temp.xml
-echo -n "${password_crypt}" >> ~/.m2/settings_temp.xml
-cat settings.xml.part2 >> ~/.m2/settings_temp.xml
-echo -n "${password_crypt}" >> ~/.m2/settings_temp.xml
-unset password_crypt
-cat settings.xml.part3 >> ~/.m2/settings_temp.xml
-echo -n $(mvn -ep "${PGP_PASS}") >> ~/.m2/settings_temp.xml
-cat settings.xml.part4 >> ~/.m2/settings_temp.xml
-mv ~/.m2/settings_temp.xml ~/.m2/settings.xml
+echo "<settings>
+  <servers>
+    <server>
+      <id>sonatype-nexus-staging</id>
+      <username>Pr0methean</username>
+      <password>${SONATYPE_PASS}</password>
+    </server>
+    <server>
+      <id>sonatype-nexus-snapshots</id>
+      <username>Pr0methean</username>
+      <password>${SONATYPE_PASS}</password>
+    </server>
+    <server>
+      <id>gpg.passphrase</id>
+      <passphrase>${PGP_PASS}</passphrase>
+    </server>
+  </servers>
+</settings>" > ~/.m2/settings.xml
+
