@@ -54,6 +54,11 @@ public class RandomWrapperMersenneTwisterRandomTest extends MersenneTwisterRando
     super.testSerializable();
   }
 
+  @Override @Test(retryAnalyzer = FlakyTestAnalyzer.class)
+  public void testReseeding() throws SeedException {
+    super.testReseeding();
+  }
+
   @Test public void testGetWrapped() {
     assertSame(createRng().getWrapped().getClass(), MersenneTwisterRandom.class);
   }
