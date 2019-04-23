@@ -1,8 +1,6 @@
 #!/bin/bash
-SONATYPE_PASS=$(echo ${SONATYPE_PASS} | recode ascii..html)
-PGP_PASS=$(echo ${PGP_PASS} | recode ascii..html)
 echo '[prepare-azure-release.sh] Installing Apt packages...'
-sudo apt-get -y install markdown dieharder
+sudo apt-get -y install markdown dieharder recode
 echo '[prepare-azure-release.sh] Installing Gems...'
 gem install github-markup commonmarker
 echo '[prepare-azure-release.sh] Configuring Git...'
@@ -13,6 +11,8 @@ echo '[prepare-azure-release.sh] Configuring PGP...'
 timeout 60s gpg --import ${PGPKEY_PATH} </dev/null
 rm ${PGPKEY_PATH}
 echo '[prepare-azure-release.sh] Configuring Maven...'
+SONATYPE_PASS=$(echo ${SONATYPE_PASS} | recode ascii..html)
+PGP_PASS=$(echo ${PGP_PASS} | recode ascii..html)
 mkdir ~/.m2
 echo "<settings>
   <servers>
