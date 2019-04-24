@@ -1,10 +1,14 @@
 #!/bin/bash
+echo "PGPKEY_PATH=${PGPKEY_PATH}"
+echo "SONATYPE_PASS length ${#SONATYPE_PASS}"
+echo "PGP_PASS length ${#PGP_PASS}"
 echo '[prepare-azure-release.sh] Installing Apt packages...'
 sudo apt-get -y install markdown dieharder recode
 echo '[prepare-azure-release.sh] Installing Gems...'
 gem install github-markup commonmarker
 echo '[prepare-azure-release.sh] Configuring Git...'
 git config --global user.email "4961925+Pr0methean@users.noreply.github.com"
+git config --global user.name "Chris Hennick"
 # Set up passwords
 # FIXME: Why does this hang if run without timeout?
 echo '[prepare-azure-release.sh] Configuring PGP...'
