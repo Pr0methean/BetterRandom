@@ -92,6 +92,7 @@
               <!-- AesCounterRandom excluded due to https://github.com/hcoles/pitest/issues/504 -->
               <excludedClasses>
                 <excludedClass>io.github.pr0methean.betterrandom.prng.AesCounterRandom</excludedClass>
+                <excludedClass>io.github.pr0methean.betterrandom.prng.AesCounterRandomTest</excludedClass>
               </excludedClasses>
               <avoidCallsTo>
                 <avoidCallsTo>org.slf4j</avoidCallsTo>
