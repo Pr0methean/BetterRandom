@@ -5,7 +5,7 @@ echo "MVN_MASTER_PASS length ${#MVN_MASTER_PASS}"
 echo "SONATYPE_PASS length ${#SONATYPE_PASS}"
 echo "PGP_PASS length ${#PGP_PASS}"
 echo '[prepare-azure-release.sh] Installing Apt packages...'
-sudo apt-get -y install gem markdown dieharder recode
+sudo apt-get -y install ruby markdown dieharder recode
 echo '[prepare-azure-release.sh] Installing Gems...'
 gem install github-markup commonmarker
 echo '[prepare-azure-release.sh] Configuring Git...'
