@@ -1,4 +1,5 @@
 #!/bin/bash
+set -euxo pipefail
 echo "PGPKEY_PATH=${PGPKEY_PATH}"
 echo "MVN_MASTER_PASS length ${#MVN_MASTER_PASS}"
 echo "SONATYPE_PASS length ${#SONATYPE_PASS}"
