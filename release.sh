@@ -1,6 +1,6 @@
-#!/bin/sh
+#!/bin/bash
 cd betterrandom
-if [ "${VERSION}" -ne "" ]; then
+if [[ -n "${VERSION}" ]]; then
   MAYBE_P="-P"
   MAYBE_RELEASE="release-sign-artifacts"
   OLDVERSION=$(mvn help:evaluate -Dexpression=project.version | sed -n -e '/^\[.*\]/ !{ /^[0-9]/ { p; q } }' | sed 's/version=//')
@@ -10,7 +10,7 @@ else
 fi &&
 rm -f release.properties &&\
 rm -rf ../../.m2/repository/io/github/pr0methean/betterrandom
-if [ "$#" -ge 1 ]; then
+if [[ -n "${VERSION}" ]]; then
   mvn versions:set -DnewVersion=${VERSION}
   sed -i "s/${OLDVERSION}<!--updateme-->/${VERSION}<!--updateme-->/" ../benchmark/pom.xml
   sed -i "s/${OLDVERSION}<!--updateme-->/${VERSION}<!--updateme-->/" ../FifoFiller/pom.xml
@@ -23,7 +23,7 @@ fi
 mvn -DskipTests -Darguments=-DskipTests -Dmaven.test.skip=true -P!jdk9 -P release-sign-artifacts \
     clean compile pre-integration-test deploy ${MAYBE_P} ${MAYBE_RELEASE}
 STATUS=$?
-if [ -n "${VERSION}" ]; then
+if [[ -n "${VERSION}" ]]; then
   if [ ${STATUS} -eq 0 ]; then
     cd ..
     ./publish-javadoc.sh
