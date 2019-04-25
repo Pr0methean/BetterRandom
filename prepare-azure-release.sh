@@ -4,8 +4,11 @@ echo "PGPKEY_PATH=${PGPKEY_PATH}"
 echo "MVN_MASTER_PASS length ${#MVN_MASTER_PASS}"
 echo "SONATYPE_PASS length ${#SONATYPE_PASS}"
 echo "PGP_PASS length ${#PGP_PASS}"
-echo '[prepare-azure-release.sh] Installing Apt packages...'
+echo '[prepare-azure-release.sh] Configuring Apt...'
+sudo rm /var/lib/apt/lists/*
+sudo rm /var/cache/apt/*.bin
 sudo apt-get update
+echo '[prepare-azure-release.sh] Installing Apt packages...'
 sudo apt-get -y install ruby markdown dieharder recode
 echo '[prepare-azure-release.sh] Installing Gems...'
 gem install github-markup commonmarker
