@@ -265,6 +265,7 @@ jobs:
       javaLicence: BCL
       javaVersion: '11'
       installJdkOs: 'osx-x64'
+      artifactEnvName: OracleMac
     pool:
       vmImage: 'macOs-10.13'
     steps:
@@ -274,7 +275,7 @@ jobs:
     dependsOn:
       - AllUnitTests
     variables:
-      artifactEnvName: OracleMac
+      artifactEnvName: OpenJdkMac
       JAVA_HOME: jdk
     strategy:
       matrix:
