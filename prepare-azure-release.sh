@@ -5,7 +5,8 @@ echo "MVN_MASTER_PASS length ${#MVN_MASTER_PASS}"
 echo "SONATYPE_PASS length ${#SONATYPE_PASS}"
 echo "PGP_PASS length ${#PGP_PASS}"
 echo '[prepare-azure-release.sh] Configuring Apt...'
-sudo rm /var/lib/apt/lists/*
+sudo rm -r /var/lib/apt/lists
+sudo mkdir /var/lib/apt/lists
 sudo rm /var/cache/apt/*.bin
 sudo apt-get update
 echo '[prepare-azure-release.sh] Installing Apt packages...'
