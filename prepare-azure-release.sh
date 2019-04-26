@@ -27,8 +27,8 @@ PGP_PASS=$(echo ${PGP_PASS} | recode ascii..html)
 mkdir ~/.m2
 MASTER_CRYPT=$(mvn -emp ${MVN_MASTER_PASS})
 echo "<settingsSecurity><master>${MASTER_CRYPT}</master></settingsSecurity>" > ~/.m2/settings-security.xml
-SONATYPE_CRYPT=$(mvn -emp ${SONATYPE_PASS})
-PGP_CRYPT=$(mvn -emp ${PGP_PASS})
+SONATYPE_CRYPT=$(mvn -ep ${SONATYPE_PASS})
+PGP_CRYPT=$(mvn -ep ${PGP_PASS})
 echo "<settings>
   <servers>
     <server>
