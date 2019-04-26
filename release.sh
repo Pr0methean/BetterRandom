@@ -1,4 +1,11 @@
 #!/bin/bash
+
+# DEBUG
+echo "[release.sh] SETTINGS-SECURITY.XML"
+cat ~/.m2/settings-security.xml
+echo "[release.sh] SETTINGS.XML"
+cat ~/.m2/settings.xml
+
 cd betterrandom
 if [[ -n "${VERSION}" ]]; then
   MAYBE_P="-P"
