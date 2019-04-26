@@ -17,3 +17,6 @@ git config --global user.name "Chris Hennick"
 echo '[prepare-azure-release.sh] Configuring GnuPG...'
 gpg --import ${PGPKEY_PATH} </dev/null
 rm ${PGPKEY_PATH}
+echo '[prepare-azure-release.sh] Configuring Maven...'
+mv $AGENT_TEMPDIRECTORY/settings.xml ~/.m2
+mv $AGENT_TEMPDIRECTORY/settings-security.xml ~/.m2
