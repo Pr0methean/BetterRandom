@@ -22,13 +22,11 @@ echo '[prepare-azure-release.sh] Configuring GnuPG...'
 gpg --import ${PGPKEY_PATH} </dev/null
 rm ${PGPKEY_PATH}
 echo '[prepare-azure-release.sh] Configuring Maven...'
-SONATYPE_PASS=$(echo ${SONATYPE_PASS} | recode ascii..html)
-PGP_PASS=$(echo ${PGP_PASS} | recode ascii..html)
 mkdir ~/.m2
-MASTER_CRYPT=$(mvn -emp ${MVN_MASTER_PASS})
+MASTER_CRYPT=$(mvn -emp "${MVN_MASTER_PASS}")
 echo "<settingsSecurity><master>${MASTER_CRYPT}</master></settingsSecurity>" > ~/.m2/settings-security.xml
-SONATYPE_CRYPT=$(mvn -ep ${SONATYPE_PASS})
-PGP_CRYPT=$(mvn -ep ${PGP_PASS})
+SONATYPE_CRYPT=$(mvn -ep "${SONATYPE_PASS}")
+PGP_CRYPT=$(mvn -ep "${PGP_PASS}")
 echo "<settings>
   <servers>
     <server>
