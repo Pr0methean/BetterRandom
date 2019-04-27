@@ -1,11 +1,4 @@
 #!/bin/bash
-
-# DEBUG
-echo "[release.sh] SETTINGS-SECURITY.XML"
-cat ~/.m2/settings-security.xml
-echo "[release.sh] SETTINGS.XML"
-cat ~/.m2/settings.xml
-
 cd betterrandom
 if [[ -n "${VERSION}" ]]; then
   MAYBE_P="-P"
@@ -32,10 +25,11 @@ mvn -DskipTests -Darguments=-DskipTests -Dmaven.test.skip=true -P!jdk9 -P releas
 STATUS=$?
 if [[ -n "${VERSION}" ]]; then
   if [ ${STATUS} -eq 0 ]; then
+    git checkout "${BRANCH}"
     cd ..
     ./publish-javadoc.sh
-    git tag "BetterRandom-${VERSION}"
-    git push origin "BetterRandom-${VERSION}"
+    git tag "BetterRandom-Java7-${VERSION}"
+    git push origin "BetterRandom-Java7-${VERSION}"
     cd betterrandom
     # https://unix.stackexchange.com/a/23244/79452
     n=${1##*[!0-9]}; p=${1%%$n}
@@ -51,12 +45,6 @@ if [[ -n "${VERSION}" ]]; then
     git add ../benchmark/pom.xml
     git add ../FifoFiller/pom.xml
     git commit -m "🤖 Update version numbers"
-  else
-    git tag -d "BetterRandom-Java7-${VERSION}"
-    git push --delete origin "BetterRandom-Java7-${VERSION}"
-    git revert --no-edit ${VERSION_COMMIT}
-    mv pom.xml.versionsBackup pom.xml
-    git commit --amend --no-edit
+    git push
   fi
 fi
-git push
