@@ -18,6 +18,6 @@ echo '[prepare-azure-release.sh] Configuring GnuPG...'
 gpg --import ${PGPKEY_PATH} </dev/null
 rm ${PGPKEY_PATH}
 echo '[prepare-azure-release.sh] Configuring Maven...'
+mkdir -p ~/.m2/repository
 mv $AGENT_TEMPDIRECTORY/settings.xml ~/.m2
 mv $AGENT_TEMPDIRECTORY/settings-security.xml ~/.m2
-mkdir ~/.m2/repository
