@@ -25,6 +25,7 @@ mvn -DskipTests -Darguments=-DskipTests -Dmaven.test.skip=true -P!jdk9 -P releas
 STATUS=$?
 if [[ -n "${VERSION}" ]]; then
   if [ ${STATUS} -eq 0 ]; then
+    git checkout "${BRANCH}"
     cd ..
     ./publish-javadoc.sh
     git tag "BetterRandom-${VERSION}"
@@ -44,12 +45,6 @@ if [[ -n "${VERSION}" ]]; then
     git add ../benchmark/pom.xml
     git add ../FifoFiller/pom.xml
     git commit -m "🤖 Update version numbers"
-  else
-    git tag -d "BetterRandom-${VERSION}"
-    git push --delete origin "BetterRandom-${VERSION}"
-    git revert --no-edit ${VERSION_COMMIT}
-    mv pom.xml.versionsBackup pom.xml
-    git commit --amend --no-edit
+    git push
   fi
 fi
-git push
