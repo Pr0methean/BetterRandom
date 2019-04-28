@@ -12,8 +12,8 @@ sudo apt-get -y install ruby2.3-dev markdown dieharder recode
 echo '[prepare-azure-release.sh] Installing Gems...'
 sudo gem install github-markup commonmarker
 echo '[prepare-azure-release.sh] Configuring Git...'
-git config --global user.email "4961925+Pr0methean@users.noreply.github.com"
-git config --global user.name "Chris Hennick"
+mv $AGENT_TEMPDIRECTORY/.gitconfig ~
+mv $AGENT_TEMPDIRECTORY/.git-credentials ~
 # Set up passwords
 echo '[prepare-azure-release.sh] Configuring GnuPG...'
 gpg --import ${PGPKEY_PATH} </dev/null
