@@ -7,7 +7,6 @@ sudo mkdir /var/lib/apt/lists
 sudo rm /var/cache/apt/*.bin
 sudo apt-get update
 echo '[prepare-azure-release.sh] Installing Apt packages...'
-sudo apt-get update
 sudo apt-get -y install ruby2.3-dev markdown dieharder recode
 echo '[prepare-azure-release.sh] Installing Gems...'
 sudo gem install github-markup commonmarker
