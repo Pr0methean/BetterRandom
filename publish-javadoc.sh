@@ -4,15 +4,15 @@ rm -r docs/betterrandom-java7/io
 echo '<!DOCTYPE html><html><head /><body style="font-family: sans-serif;">' > betterrandom/src/main/javadoc/overview.html
 ruby ./render-readme-for-javadoc.rb >> betterrandom/src/main/javadoc/overview.html
 echo '</body></html>' >> betterrandom/src/main/javadoc/overview.html
-cd betterrandom
+cd betterrandom || exit 1
 mvn javadoc:javadoc
 rm src/main/javadoc/overview.html # Only needed temporarily
 cd ..
 cp -r betterrandom/target/site/apidocs/* docs/betterrandom-java7
-cd docs
+cd docs || exit 1
 git checkout master
 git pull
-cd betterrandom-java7
+cd betterrandom-java7 || exit 1
 
 # Disable frames, step 1
 mv overview-summary.html index.html
