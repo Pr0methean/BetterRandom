@@ -11,6 +11,7 @@ fi &&
 rm -f release.properties &&\
 rm -rf ../../.m2/repository/io/github/pr0methean/betterrandom
 if [[ -n "${VERSION}" ]]; then
+  git checkout "${BRANCH}"
   mvn versions:set -DnewVersion=${VERSION}
   sed -i "s/${OLDVERSION}<!--updateme-->/${VERSION}<!--updateme-->/" ../benchmark/pom.xml
   sed -i "s/${OLDVERSION}<!--updateme-->/${VERSION}<!--updateme-->/" ../FifoFiller/pom.xml
@@ -18,18 +19,17 @@ if [[ -n "${VERSION}" ]]; then
   git add ../benchmark/pom.xml
   git add ../FifoFiller/pom.xml
   git commit -m "🤖 Update version numbers"
-  VERSION_COMMIT=$(git rev-parse HEAD)
 fi
 mvn -DskipTests -Darguments=-DskipTests -Dmaven.test.skip=true -P!jdk9 -P release-sign-artifacts \
     clean compile pre-integration-test deploy ${MAYBE_P} ${MAYBE_RELEASE}
 STATUS=$?
 if [[ -n "${VERSION}" ]]; then
   if [ ${STATUS} -eq 0 ]; then
-    git checkout "${BRANCH}"
     cd ..
     ./publish-javadoc.sh
     git tag "BetterRandom-Java7-${VERSION}"
     git push origin "BetterRandom-Java7-${VERSION}"
+    git checkout "${BRANCH}"
     cd betterrandom
     # https://unix.stackexchange.com/a/23244/79452
     n=${1##*[!0-9]}; p=${1%%$n}
