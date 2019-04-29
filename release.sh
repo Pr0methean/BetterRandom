@@ -1,4 +1,5 @@
 #!/bin/bash
+echo "[release.sh] Running on branch ${BRANCH}"
 cd betterrandom
 if [[ -n "${VERSION}" ]]; then
   MAYBE_P="-P"
