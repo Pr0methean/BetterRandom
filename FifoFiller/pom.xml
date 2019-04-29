@@ -24,7 +24,7 @@
     <dependency>
       <groupId>io.github.pr0methean.betterrandom</groupId>
       <artifactId>BetterRandom-Java7</artifactId>
-      <version>3.1.2-SNAPSHOT<!--updateme--></version>
+      <version>3.1.3-SNAPSHOT<!--updateme--></version>
     </dependency>
   </dependencies>
   <build>
