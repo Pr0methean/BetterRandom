@@ -1,6 +1,6 @@
 #!/bin/bash
 echo "[release.sh] Running on branch ${BRANCH}"
-cd betterrandom
+cd betterrandom || exit 1
 if [[ -n "${VERSION}" ]]; then
   MAYBE_P="-P"
   MAYBE_RELEASE="release-sign-artifacts"
@@ -13,7 +13,7 @@ rm -f release.properties &&\
 rm -rf ../../.m2/repository/io/github/pr0methean/betterrandom
 if [[ -n "${VERSION}" ]]; then
   git checkout "${BRANCH}"
-  mvn versions:set -DnewVersion=${VERSION}
+  mvn versions:set "-DnewVersion=${VERSION}"
   sed -i "s/${OLDVERSION}<!--updateme-->/${VERSION}<!--updateme-->/" ../benchmark/pom.xml
   sed -i "s/${OLDVERSION}<!--updateme-->/${VERSION}<!--updateme-->/" ../FifoFiller/pom.xml
   git add pom.xml
@@ -31,11 +31,11 @@ if [[ -n "${VERSION}" ]]; then
     git tag "BetterRandom-${VERSION}"
     git push origin "BetterRandom-${VERSION}"
     git checkout "${BRANCH}"
-    cd betterrandom
+    cd betterrandom || exit 1
     # https://unix.stackexchange.com/a/23244/79452
     n=${1##*[!0-9]}; p=${1%%$n}
     NEWVERSION="$p$((n+1))-SNAPSHOT"
-    mvn versions:set -DnewVersion=${NEWVERSION}
+    mvn versions:set "-DnewVersion=${NEWVERSION}"
     rm pom.xml.versionsBackup
     # For some reason we end up with -SNAPSHOT-SNAPSHOT without next 2 lines:
     sed -i "s/${VERSION}-SNAPSHOT<!--updateme-->/${NEWVERSION}<!--updateme-->/" ../benchmark/pom.xml
