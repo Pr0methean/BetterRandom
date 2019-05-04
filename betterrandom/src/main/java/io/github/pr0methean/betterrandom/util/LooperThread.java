@@ -5,13 +5,12 @@ import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
-import javax.annotation.Nullable;
 
 /**
- * Thread that loops a given task until interrupted (or until JVM shutdown, if it {@link
- * #isDaemon() is a daemon thread}), with the iterations being transactional.
+ * Wraps a thread that loops a given task until interrupted (or until JVM shutdown, if it
+ * {@linkplain #isDaemon() is a daemon thread}), with the iterations being transactional.
  */
-public abstract class LooperThread {
+public abstract class LooperThread implements Runnable {
 
   protected final AtomicLong finishedIterations = new AtomicLong(0);
   /**
@@ -21,17 +20,13 @@ public abstract class LooperThread {
   protected final Lock lock = new ReentrantLock(true);
   protected final Condition endOfIteration = lock.newCondition();
   protected final Thread thread;
-  /**
-   * The {@link Runnable} that was passed into this thread's constructor, if any.
-   */
-  @Nullable protected Runnable target;
 
   /**
    * Constructs a LooperThread with all properties as defaults. Protected because it does not set a
    * target, and thus should only be used in subclasses that override {@link #iterate()}.
    */
   protected LooperThread() {
-    thread = new Thread();
+    thread = new Thread(this);
   }
 
   /**
@@ -42,7 +37,7 @@ public abstract class LooperThread {
    */
   @Deprecated
   protected LooperThread(String name) {
-    thread = new Thread(name);
+    thread = new Thread(this, name);
   }
 
   /**
@@ -172,29 +167,26 @@ public abstract class LooperThread {
     thread.setUncaughtExceptionHandler(eh);
   }
 
-  private class Runner implements Runnable {
-
-    /**
-     * Runs {@link #iterate()} until either it returns false or this thread is interrupted.
-     */
-    @Override public void run() {
-      while (true) {
+  /**
+   * Runs {@link #iterate()} until either it returns false or this thread is interrupted.
+   */
+  @Override public void run() {
+    while (true) {
+      try {
+        lock.lockInterruptibly();
         try {
-          lock.lockInterruptibly();
-          try {
-            final boolean shouldContinue = iterate();
-            finishedIterations.getAndIncrement();
-            if (!shouldContinue) {
-              break;
-            }
-          } finally {
-            endOfIteration.signalAll();
-            lock.unlock();
+          final boolean shouldContinue = iterate();
+          finishedIterations.getAndIncrement();
+          if (!shouldContinue) {
+            break;
           }
-        } catch (final InterruptedException ignored) {
-          interrupt();
-          break;
+        } finally {
+          endOfIteration.signalAll();
+          lock.unlock();
         }
+      } catch (final InterruptedException ignored) {
+        interrupt();
+        break;
       }
     }
   }
