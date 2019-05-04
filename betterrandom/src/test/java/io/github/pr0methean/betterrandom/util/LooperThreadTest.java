@@ -48,12 +48,6 @@ public class LooperThreadTest {
     exceptionHandlerRun.set(false);
   }
 
-  @SuppressWarnings("CallToThreadRun")
-  @Test(expectedExceptions = UnsupportedOperationException.class)
-  public void testMustOverrideIterate() {
-    new LooperThread().run();
-  }
-
   @Test public void testDefaultUncaughtExceptionHandler() throws InterruptedException {
     final AtomicBoolean defaultHandlerCalled = new AtomicBoolean(false);
     final UncaughtExceptionHandler oldHandler = Thread.getDefaultUncaughtExceptionHandler();
@@ -84,7 +78,7 @@ public class LooperThreadTest {
 
   private static class FailingLooperThread extends LooperThread {
 
-    public FailingLooperThread() {
+    private FailingLooperThread() {
       super("FailingLooperThread");
     }
 
@@ -95,12 +89,12 @@ public class LooperThreadTest {
 
   private static class SleepingLooperThread extends LooperThread {
 
-    public SleepingLooperThread() {
+    private SleepingLooperThread() {
       super("SleepingLooperThread");
     }
 
     @Override public boolean iterate() throws InterruptedException {
-      sleep(10);
+      Thread.sleep(10);
       return finishedIterations.get() < 50;
     }
   }
