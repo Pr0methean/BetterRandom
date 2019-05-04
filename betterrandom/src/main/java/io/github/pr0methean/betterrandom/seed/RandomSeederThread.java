@@ -62,6 +62,7 @@ public final class RandomSeederThread extends LooperThread {
     super(threadFactory);
     Objects.requireNonNull(seedGenerator, "seedGenerator must not be null");
     this.seedGenerator = seedGenerator;
+    start();
   }
 
   /**
@@ -285,6 +286,7 @@ public final class RandomSeederThread extends LooperThread {
   }
 
   private void shutDown() {
+    Objects.requireNonNull(seedGenerator);
     INSTANCES.remove(seedGenerator, this);
     interrupt();
     clear();
