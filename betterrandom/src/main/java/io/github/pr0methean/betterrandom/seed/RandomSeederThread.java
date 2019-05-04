@@ -62,7 +62,6 @@ public final class RandomSeederThread extends LooperThread {
     super(threadFactory);
     Objects.requireNonNull(seedGenerator, "seedGenerator must not be null");
     this.seedGenerator = seedGenerator;
-    start();
   }
 
   /**
@@ -86,7 +85,11 @@ public final class RandomSeederThread extends LooperThread {
    */
   private static RandomSeederThread getInstance(final SeedGenerator seedGenerator) {
     Objects.requireNonNull(seedGenerator, "seedGenerator must not be null");
-    return INSTANCES.computeIfAbsent(seedGenerator, RandomSeederThread::new);
+    return INSTANCES.computeIfAbsent(seedGenerator, seedGenerator_ -> {
+      RandomSeederThread newThread = new RandomSeederThread(seedGenerator_);
+      newThread.start();
+      return newThread;
+    });
   }
 
   /**

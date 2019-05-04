@@ -28,10 +28,7 @@ public class DeadlockWatchdogThread extends LooperThread {
     }
   }
 
-  private DeadlockWatchdogThread() {
-    super("DeadlockWatchdogThread");
-    thread.start();
-  }
+  private DeadlockWatchdogThread() {}
 
   public static void ensureStarted() {
     synchronized (DeadlockWatchdogThread.class) {
