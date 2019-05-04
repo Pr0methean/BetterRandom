@@ -30,6 +30,7 @@ public class DeadlockWatchdogThread extends LooperThread {
 
   private DeadlockWatchdogThread() {
     super("DeadlockWatchdogThread");
+    thread.start();
   }
 
   public static void ensureStarted() {
