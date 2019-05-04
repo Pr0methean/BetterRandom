@@ -11,7 +11,7 @@ import javax.annotation.Nullable;
  * Thread that loops a given task until interrupted (or until JVM shutdown, if it {@link
  * #isDaemon() is a daemon thread}), with the iterations being transactional.
  */
-public abstract class LooperThread implements Runnable {
+public abstract class LooperThread {
 
   protected final AtomicLong finishedIterations = new AtomicLong(0);
   /**
@@ -82,10 +82,6 @@ public abstract class LooperThread implements Runnable {
 
   public void start() {
     thread.start();
-  }
-
-  public void run() {
-    thread.run();
   }
 
   public void interrupt() {

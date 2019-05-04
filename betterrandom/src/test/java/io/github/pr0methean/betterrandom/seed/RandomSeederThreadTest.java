@@ -79,24 +79,13 @@ public class RandomSeederThreadTest {
       final Random prng = new Random();
       RandomSeederThread.add(generator, prng);
       try {
-        boolean threadFound = false;
-        final Thread[] threads = new Thread[10 + Thread.activeCount()];
-        final int nThreads = Thread.enumerate(threads);
-        for (int i = 0; i < nThreads; i++) {
-          if ((threads[i] instanceof RandomSeederThread)
-              && "RandomSeederThread for testSetDefaultPriority".equals(threads[i].getName())) {
-            assertEquals(threads[i].getPriority(), 7);
-            threadFound = true;
-            break;
-          }
-        }
-        assertTrue(threadFound, "Couldn't find the seeder thread!");
+        assertOneThreadPriority7();
         prng.nextInt(); // prevent GC before this point
       } finally {
         RandomTestUtils.removeAndAssertEmpty(generator, prng);
       }
     } finally {
-      RandomSeederThread.setDefaultPriority(Thread.NORM_PRIORITY);
+      RandomSeederThread.setDefaultPriority(Thread.NORM_PRIORITY + 1);
     }
   }
 
@@ -106,21 +95,23 @@ public class RandomSeederThreadTest {
     RandomSeederThread.add(generator, prng);
     try {
       RandomSeederThread.setPriority(generator, 7);
-      boolean threadFound = false;
-      final Thread[] threads = new Thread[10 + Thread.activeCount()];
-      final int nThreads = Thread.enumerate(threads);
-      for (int i = 0; i < nThreads; i++) {
-        if ((threads[i] instanceof RandomSeederThread)
-            && "RandomSeederThread for testSetPriority".equals(threads[i].getName())) {
-          assertEquals(threads[i].getPriority(), 7);
-          threadFound = true;
-          break;
-        }
-      }
-      assertTrue(threadFound, "Couldn't find the seeder thread!");
+      assertOneThreadPriority7();
+      prng.nextInt(); // prevent GC before this point
     } finally {
       RandomTestUtils.removeAndAssertEmpty(generator, prng);
     }
+  }
+
+  private static void assertOneThreadPriority7() {
+    final Thread[] threads = new Thread[10 + Thread.activeCount()];
+    final int nThreads = Thread.enumerate(threads);
+    int priority7 = 0;
+    for (int i = 0; i < nThreads; i++) {
+      if (threads[i].getPriority() == 7) {
+        priority7++;
+      }
+    }
+    assertEquals(priority7, 1);
   }
 
   private void sleepUninterruptibly(long nanos) {
