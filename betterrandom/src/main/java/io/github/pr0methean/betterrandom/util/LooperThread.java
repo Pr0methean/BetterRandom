@@ -10,7 +10,7 @@ import java.util.concurrent.locks.ReentrantLock;
  * Wraps a thread that loops a given task until interrupted (or until JVM shutdown, if it
  * {@linkplain #isDaemon() is a daemon thread}), with the iterations being transactional.
  */
-public abstract class LooperThread implements Runnable {
+public abstract class LooperThread {
 
   protected final AtomicLong finishedIterations = new AtomicLong(0);
   /**
@@ -26,7 +26,7 @@ public abstract class LooperThread implements Runnable {
    * target, and thus should only be used in subclasses that override {@link #iterate()}.
    */
   protected LooperThread() {
-    thread = new Thread(this);
+    thread = new Thread(this::run);
   }
 
   /**
@@ -37,7 +37,7 @@ public abstract class LooperThread implements Runnable {
    */
   @Deprecated
   protected LooperThread(String name) {
-    thread = new Thread(this, name);
+    thread = new Thread(this::run, name);
   }
 
   /**
@@ -170,7 +170,7 @@ public abstract class LooperThread implements Runnable {
   /**
    * Runs {@link #iterate()} until either it returns false or this thread is interrupted.
    */
-  @Override public void run() {
+  private void run() {
     while (true) {
       try {
         lock.lockInterruptibly();
