@@ -39,7 +39,7 @@ public class DeadlockWatchdogThread extends LooperThread {
       }
       if (INSTANCE.getState() == Thread.State.NEW) {
         INSTANCE.setDaemon(true);
-        INSTANCE.setPriority(Thread.thread.MAX_PRIORITY);
+        INSTANCE.setPriority(Thread.MAX_PRIORITY);
         INSTANCE.start();
       }
     }
