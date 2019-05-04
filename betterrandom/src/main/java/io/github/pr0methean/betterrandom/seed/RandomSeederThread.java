@@ -57,7 +57,7 @@ public final class RandomSeederThread extends LooperThread {
   private final WeakHashMap<ByteArrayReseedableRandom, byte[]> seedArrays = new WeakHashMap<>(1);
   private static final AtomicInteger defaultPriority = new AtomicInteger(DEFAULT_DEFAULT_PRIORITY);
 
-  public RandomSeederThread(final SeedGenerator seedGenerator, ThreadFactory threadFactory) {
+  private RandomSeederThread(final SeedGenerator seedGenerator, ThreadFactory threadFactory) {
     super(threadFactory);
     this.seedGenerator = seedGenerator;
   }
