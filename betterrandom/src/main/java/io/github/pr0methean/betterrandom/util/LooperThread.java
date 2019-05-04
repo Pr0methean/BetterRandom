@@ -21,14 +21,13 @@ public abstract class LooperThread {
   protected final Lock lock = new ReentrantLock(true);
   protected final Condition endOfIteration = lock.newCondition();
   protected final Thread thread;
+  protected final ThreadFactory factory;
 
   /**
-   * Constructs a LooperThread with all properties as defaults. Protected because it does not set a
-   * target, and thus should only be used in subclasses that override {@link #iterate()}.
+   * Constructs a LooperThread with all properties as defaults.
    */
-  @Deprecated
   protected LooperThread() {
-    thread = new Thread(this::run);
+    this(Thread::new);
   }
 
   /**
@@ -39,11 +38,11 @@ public abstract class LooperThread {
    */
   @Deprecated
   protected LooperThread(String name) {
-    thread = new Thread(this::run, name);
-    thread.start();
+    this(runnable -> new Thread(runnable, name));
   }
 
   protected LooperThread(ThreadFactory factory) {
+    this.factory = factory;
     thread = factory.newThread(this::run);
     thread.start();
   }
