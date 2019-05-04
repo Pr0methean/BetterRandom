@@ -11,109 +11,38 @@ import javax.annotation.Nullable;
  * Thread that loops a given task until interrupted (or until JVM shutdown, if it {@link
  * #isDaemon() is a daemon thread}), with the iterations being transactional.
  */
-public class LooperThread extends Thread {
+public abstract class LooperThread implements Runnable {
 
   protected final AtomicLong finishedIterations = new AtomicLong(0);
   /**
    * The thread holds this lock whenever it is being serialized or cloned or is running {@link
-   * #iterate()} called by {@link #run()}.
+   * #iterate()}.
    */
   protected final Lock lock = new ReentrantLock(true);
   protected final Condition endOfIteration = lock.newCondition();
+  protected final Thread thread;
   /**
    * The {@link Runnable} that was passed into this thread's constructor, if any.
    */
   @Nullable protected Runnable target;
 
   /**
-   * Constructs a LooperThread with the given name and target. {@code target} should only be null if
-   * called from a subclass that overrides {@link #iterate()}.
-   * @param target If not null, the target this thread will run in {@link #iterate()}.
-   * @param name the thread name
-   */
-  public LooperThread(@Nullable final Runnable target, final String name) {
-    super(target, name);
-    this.target = target;
-  }
-
-  /**
-   * Constructs a LooperThread that belongs to the given {@link ThreadGroup} and has the given
-   * target. {@code target} should only be null if called from a subclass that overrides {@link
-   * #iterate()}.
-   * @param group The ThreadGroup this thread will belong to.
-   * @param target If not null, the target this thread will run in {@link #iterate()}.
-   */
-  public LooperThread(final ThreadGroup group, @Nullable final Runnable target) {
-    super(group, target);
-    this.target = target;
-  }
-
-  /**
-   * <p>Constructs a LooperThread with the given name and target, belonging to the given {@link
-   * ThreadGroup} and having the given preferred stack size. {@code target} should only be null if
-   * called from a subclass that overrides {@link #iterate()}.</p>
-   * <p>See {@link Thread#Thread(ThreadGroup, Runnable, String, long)} for caveats about
-   * specifying the stack size.</p>
-   * @param group The ThreadGroup this thread will belong to.
-   * @param target If not null, the target this thread will run in {@link #iterate()}.
-   * @param name the thread name
-   * @param stackSize the desired stack size for the new thread, or zero to indicate that this
-   *     parameter is to be ignored.
-   */
-  public LooperThread(final ThreadGroup group, @Nullable final Runnable target, final String name,
-      final long stackSize) {
-    super(group, target, name, stackSize);
-    this.target = target;
-  }
-
-  /**
-   * Constructs a LooperThread with the given name and belonging to the given {@link ThreadGroup}.
-   * Protected because it does not set a target, and thus should only be used in subclasses that
-   * override {@link #iterate()}.
-   * @param group The ThreadGroup this thread will belong to.
-   * @param name the thread name
-   */
-  protected LooperThread(final ThreadGroup group, final String name) {
-    super(group, name);
-  }
-
-  /**
-   * Constructs a LooperThread with the given target. {@code target} should only be null if called
-   * from a subclass that overrides {@link #iterate()}.
-   * @param target If not null, the target this thread will run in {@link #iterate()}.
-   */
-  public LooperThread(@Nullable final Runnable target) {
-    super(target);
-    this.target = target;
-  }
-
-  /**
-   * Constructs a LooperThread with the given name and target, belonging to the given {@link
-   * ThreadGroup}. {@code target} should only be null if called from a subclass that overrides
-   * {@link #iterate()}.
-   * @param group The ThreadGroup this thread will belong to.
-   * @param target If not null, the target this thread will run in {@link #iterate()}.
-   * @param name the thread name
-   */
-  public LooperThread(final ThreadGroup group, @Nullable final Runnable target, final String name) {
-    super(group, target, name);
-    this.target = target;
-  }
-
-  /**
-   * Constructs a LooperThread with the given name. Protected because it does not set a target, and
-   * thus should only be used in subclasses that override {@link #iterate()}.
-   * @param name the thread name
-   */
-  protected LooperThread(final String name) {
-    super(name);
-  }
-
-  /**
    * Constructs a LooperThread with all properties as defaults. Protected because it does not set a
    * target, and thus should only be used in subclasses that override {@link #iterate()}.
    */
   protected LooperThread() {
+    thread = new Thread();
+  }
+
+  /**
+   * Constructs a LooperThread with a thread name.
+   *
+   * @deprecated Being replaced with a ThreadFactory parameter, so that threads can die and be
+   * replaced.
+   */
+  @Deprecated
+  protected LooperThread(String name) {
+    thread = new Thread(name);
   }
 
   /**
@@ -125,40 +54,8 @@ public class LooperThread extends Thread {
    * @throws UnsupportedOperationException if this method has not been overridden and {@link
    *     #target} was not set to non-null during construction.
    */
-  @SuppressWarnings("BooleanMethodIsAlwaysInverted") protected boolean iterate()
-      throws InterruptedException {
-    if (target == null) {
-      throw new UnsupportedOperationException("This method should be overridden, or else this "
-          + "thread should have been created with a Serializable target!");
-    } else {
-      target.run();
-      return true;
-    }
-  }
-
-  /**
-   * Runs {@link #iterate()} until either it returns false or this thread is interrupted.
-   */
-  @Override public final void run() {
-    while (true) {
-      try {
-        lock.lockInterruptibly();
-        try {
-          final boolean shouldContinue = iterate();
-          finishedIterations.getAndIncrement();
-          if (!shouldContinue) {
-            break;
-          }
-        } finally {
-          endOfIteration.signalAll();
-          lock.unlock();
-        }
-      } catch (final InterruptedException ignored) {
-        interrupt();
-        break;
-      }
-    }
-  }
+  @SuppressWarnings("BooleanMethodIsAlwaysInverted") protected abstract boolean iterate()
+      throws InterruptedException;
 
   /**
    * Wait for the next iteration to finish, with a timeout. May wait longer in the event of a
@@ -173,13 +70,136 @@ public class LooperThread extends Thread {
     final long previousFinishedIterations = finishedIterations.get();
     lock.lock();
     try {
-      while (!isInterrupted() && (getState() != State.TERMINATED) && (finishedIterations.get()
+      while (!isInterrupted() && (getState() != Thread.State.TERMINATED) && (finishedIterations.get()
           == previousFinishedIterations)) {
         endOfIteration.await(time, unit);
       }
       return finishedIterations.get() != previousFinishedIterations;
     } finally {
       lock.unlock();
+    }
+  }
+
+  public void start() {
+    thread.start();
+  }
+
+  public void run() {
+    thread.run();
+  }
+
+  public void interrupt() {
+    thread.interrupt();
+  }
+
+  public boolean isInterrupted() {
+    return thread.isInterrupted();
+  }
+
+  public void setPriority(int newPriority) {
+    thread.setPriority(newPriority);
+  }
+
+  public int getPriority() {
+    return thread.getPriority();
+  }
+
+  public void setName(String name) {
+    thread.setName(name);
+  }
+
+  public String getName() {
+    return thread.getName();
+  }
+
+  public ThreadGroup getThreadGroup() {
+    return thread.getThreadGroup();
+  }
+
+  public int countStackFrames() {
+    return thread.countStackFrames();
+  }
+
+  public void join(long millis) throws InterruptedException {
+    thread.join(millis);
+  }
+
+  public void join(long millis, int nanos) throws InterruptedException {
+    thread.join(millis, nanos);
+  }
+
+  public void join() throws InterruptedException {
+    thread.join();
+  }
+
+  public void setDaemon(boolean on) {
+    thread.setDaemon(on);
+  }
+
+  public boolean isDaemon() {
+    return thread.isDaemon();
+  }
+
+  public void checkAccess() {
+    thread.checkAccess();
+  }
+
+  public String toString() {
+    return thread.toString();
+  }
+
+  public ClassLoader getContextClassLoader() {
+    return thread.getContextClassLoader();
+  }
+
+  public void setContextClassLoader(ClassLoader cl) {
+    thread.setContextClassLoader(cl);
+  }
+
+  public StackTraceElement[] getStackTrace() {
+    return thread.getStackTrace();
+  }
+
+  public long getId() {
+    return thread.getId();
+  }
+
+  public Thread.State getState() {
+    return thread.getState();
+  }
+
+  public Thread.UncaughtExceptionHandler getUncaughtExceptionHandler() {
+    return thread.getUncaughtExceptionHandler();
+  }
+
+  public void setUncaughtExceptionHandler(Thread.UncaughtExceptionHandler eh) {
+    thread.setUncaughtExceptionHandler(eh);
+  }
+
+  private class Runner implements Runnable {
+
+    /**
+     * Runs {@link #iterate()} until either it returns false or this thread is interrupted.
+     */
+    @Override public void run() {
+      while (true) {
+        try {
+          lock.lockInterruptibly();
+          try {
+            final boolean shouldContinue = iterate();
+            finishedIterations.getAndIncrement();
+            if (!shouldContinue) {
+              break;
+            }
+          } finally {
+            endOfIteration.signalAll();
+            lock.unlock();
+          }
+        } catch (final InterruptedException ignored) {
+          interrupt();
+          break;
+        }
+      }
     }
   }
 }

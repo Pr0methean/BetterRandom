@@ -34,12 +34,12 @@ public class DeadlockWatchdogThread extends LooperThread {
 
   public static void ensureStarted() {
     synchronized (DeadlockWatchdogThread.class) {
-      if (INSTANCE.getState() == State.TERMINATED) {
+      if (INSTANCE.getState() == Thread.State.TERMINATED) {
         INSTANCE = new DeadlockWatchdogThread();
       }
-      if (INSTANCE.getState() == State.NEW) {
+      if (INSTANCE.getState() == Thread.State.NEW) {
         INSTANCE.setDaemon(true);
-        INSTANCE.setPriority(Thread.MAX_PRIORITY);
+        INSTANCE.setPriority(Thread.thread.MAX_PRIORITY);
         INSTANCE.start();
       }
     }
@@ -54,7 +54,7 @@ public class DeadlockWatchdogThread extends LooperThread {
 
   @SuppressWarnings({"CallToSystemExit", "ConstantConditions", "ObjectAllocationInLoop"}) @Override public boolean iterate()
       throws InterruptedException {
-    sleep(60_000);
+    Thread.sleep(60_000);
     boolean deadlockFound = false;
     long[] threadsOfInterest = THREAD_MX_BEAN.findDeadlockedThreads();
     if ((threadsOfInterest != null) && (threadsOfInterest.length > 0)) {

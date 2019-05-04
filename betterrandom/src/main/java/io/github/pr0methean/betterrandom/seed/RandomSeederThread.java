@@ -221,7 +221,7 @@ public final class RandomSeederThread extends LooperThread {
   }
 
   private boolean isDead() {
-    return (getState() == State.TERMINATED) || isInterrupted();
+    return (getState() == Thread.State.TERMINATED) || isInterrupted();
   }
 
   @SuppressWarnings({"InfiniteLoopStatement", "ObjectAllocationInLoop", "AwaitNotInLoop"}) @Override
