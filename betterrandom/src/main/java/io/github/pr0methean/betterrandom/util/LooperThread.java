@@ -1,5 +1,6 @@
 package io.github.pr0methean.betterrandom.util;
 
+import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.locks.Condition;
@@ -25,6 +26,7 @@ public abstract class LooperThread {
    * Constructs a LooperThread with all properties as defaults. Protected because it does not set a
    * target, and thus should only be used in subclasses that override {@link #iterate()}.
    */
+  @Deprecated
   protected LooperThread() {
     thread = new Thread(this::run);
   }
@@ -38,6 +40,12 @@ public abstract class LooperThread {
   @Deprecated
   protected LooperThread(String name) {
     thread = new Thread(this::run, name);
+    thread.start();
+  }
+
+  protected LooperThread(ThreadFactory factory) {
+    thread = factory.newThread(this::run);
+    thread.start();
   }
 
   /**
