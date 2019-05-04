@@ -16,6 +16,7 @@ import java.util.Random;
 import java.util.Set;
 import java.util.WeakHashMap;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.locks.Condition;
@@ -56,11 +57,21 @@ public final class RandomSeederThread extends LooperThread {
   private final WeakHashMap<ByteArrayReseedableRandom, byte[]> seedArrays = new WeakHashMap<>(1);
   private static final AtomicInteger defaultPriority = new AtomicInteger(DEFAULT_DEFAULT_PRIORITY);
 
+  public RandomSeederThread(final SeedGenerator seedGenerator, ThreadFactory threadFactory) {
+    super(threadFactory);
+    this.seedGenerator = seedGenerator;
+  }
+
   /**
    * Private constructor because only one instance per seed source.
    */
   private RandomSeederThread(final SeedGenerator seedGenerator) {
-    this.seedGenerator = seedGenerator;
+    this(seedGenerator, runnable -> {
+      Thread thread = new Thread(runnable, "RandomSeederThread for " + seedGenerator);
+      thread.setDaemon(true);
+      thread.setPriority(defaultPriority.get());
+      return thread;
+    });
   }
 
   /**
@@ -71,15 +82,7 @@ public final class RandomSeederThread extends LooperThread {
    * @return a RandomSeederThread that is running and is backed by {@code seedGenerator}.
    */
   private static RandomSeederThread getInstance(final SeedGenerator seedGenerator) {
-    return INSTANCES.computeIfAbsent(seedGenerator, seedGen -> {
-      LOG.info("Creating a RandomSeederThread for {}", seedGen);
-      final RandomSeederThread thread = new RandomSeederThread(seedGen);
-      thread.setName("RandomSeederThread for " + seedGen);
-      thread.setDaemon(true);
-      thread.setPriority(defaultPriority.get());
-      thread.start();
-      return thread;
-    });
+    return INSTANCES.computeIfAbsent(seedGenerator, RandomSeederThread::new);
   }
 
   /**

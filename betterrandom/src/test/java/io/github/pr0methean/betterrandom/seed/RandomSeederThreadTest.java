@@ -79,7 +79,7 @@ public class RandomSeederThreadTest {
       final Random prng = new Random();
       RandomSeederThread.add(generator, prng);
       try {
-        assertOneThreadPriority7();
+        assertOneThreadPriority7("RandomSeederThread for testSetDefaultPriority");
         prng.nextInt(); // prevent GC before this point
       } finally {
         RandomTestUtils.removeAndAssertEmpty(generator, prng);
@@ -95,23 +95,23 @@ public class RandomSeederThreadTest {
     RandomSeederThread.add(generator, prng);
     try {
       RandomSeederThread.setPriority(generator, 7);
-      assertOneThreadPriority7();
+      assertOneThreadPriority7("RandomSeederThread for testSetPriority");
       prng.nextInt(); // prevent GC before this point
     } finally {
       RandomTestUtils.removeAndAssertEmpty(generator, prng);
     }
   }
 
-  private static void assertOneThreadPriority7() {
+  private static void assertOneThreadPriority7(String expectedName) {
     final Thread[] threads = new Thread[10 + Thread.activeCount()];
     final int nThreads = Thread.enumerate(threads);
-    int priority7 = 0;
+    int found = 0;
     for (int i = 0; i < nThreads; i++) {
-      if (threads[i].getPriority() == 7) {
-        priority7++;
+      if (expectedName.equals(threads[i].getName())) {
+        assertEquals(threads[i].getPriority(), 7);
       }
     }
-    assertEquals(priority7, 1);
+    assertEquals(found, 1);
   }
 
   private void sleepUninterruptibly(long nanos) {
