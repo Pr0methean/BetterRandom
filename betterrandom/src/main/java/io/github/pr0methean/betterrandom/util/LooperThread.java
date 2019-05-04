@@ -182,12 +182,11 @@ public abstract class LooperThread {
       try {
         lock.lockInterruptibly();
         try {
-          final boolean shouldContinue = iterate();
-          finishedIterations.getAndIncrement();
-          if (!shouldContinue) {
+          if (!iterate()) {
             break;
           }
         } finally {
+          finishedIterations.getAndIncrement();
           endOfIteration.signalAll();
           lock.unlock();
         }

@@ -12,6 +12,7 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Random;
 import java.util.Set;
 import java.util.WeakHashMap;
@@ -59,6 +60,7 @@ public final class RandomSeederThread extends LooperThread {
 
   private RandomSeederThread(final SeedGenerator seedGenerator, ThreadFactory threadFactory) {
     super(threadFactory);
+    Objects.requireNonNull(seedGenerator, "seedGenerator must not be null");
     this.seedGenerator = seedGenerator;
   }
 
@@ -82,6 +84,7 @@ public final class RandomSeederThread extends LooperThread {
    * @return a RandomSeederThread that is running and is backed by {@code seedGenerator}.
    */
   private static RandomSeederThread getInstance(final SeedGenerator seedGenerator) {
+    Objects.requireNonNull(seedGenerator, "seedGenerator must not be null");
     return INSTANCES.computeIfAbsent(seedGenerator, RandomSeederThread::new);
   }
 
@@ -92,6 +95,7 @@ public final class RandomSeederThread extends LooperThread {
    *     otherwise.
    */
   public static boolean hasInstance(final SeedGenerator seedGenerator) {
+    Objects.requireNonNull(seedGenerator, "seedGenerator must not be null");
     return INSTANCES.containsKey(seedGenerator);
   }
 
@@ -115,6 +119,7 @@ public final class RandomSeederThread extends LooperThread {
    * @return Whether or not the thread exists and is now awake.
    */
   public static boolean wakeUp(final SeedGenerator seedGenerator) {
+    Objects.requireNonNull(seedGenerator, "seedGenerator must not be null");
     final RandomSeederThread thread = INSTANCES.get(seedGenerator);
     if (thread == null) {
       return false;
