@@ -19,7 +19,6 @@ import java.util.WeakHashMap;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.locks.Condition;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -32,15 +31,31 @@ import org.slf4j.LoggerFactory;
 @SuppressWarnings("ClassExplicitlyExtendsThread")
 public final class RandomSeederThread extends LooperThread {
 
-  /**
-   * The initial default priority for new seeder threads.
-   */
-  public static final int DEFAULT_DEFAULT_PRIORITY = Thread.NORM_PRIORITY + 1;
-
   private static final Logger LOG = LoggerFactory.getLogger(RandomSeederThread.class);
   @SuppressWarnings("StaticCollection") private static final Map<SeedGenerator, RandomSeederThread>
       INSTANCES = new ConcurrentHashMap<>(1);
   private static final long POLL_INTERVAL = 60;
+  public static class DefaultThreadFactory implements ThreadFactory {
+    private final String name;
+    private final int priority;
+
+    public DefaultThreadFactory(String name) {
+      this(name, Thread.NORM_PRIORITY + 1);
+    }
+
+    public DefaultThreadFactory(String name, int priority) {
+      this.name = name;
+      this.priority = priority;
+    }
+
+    @Override
+    public Thread newThread(Runnable runnable) {
+      Thread thread = new Thread(runnable, name);
+      thread.setDaemon(true);
+      thread.setPriority(priority);
+      return thread;
+    }
+  }
   private final SeedGenerator seedGenerator;
   private final Condition waitWhileEmpty = lock.newCondition();
   private final Condition waitForEntropyDrain = lock.newCondition();
@@ -56,7 +71,6 @@ public final class RandomSeederThread extends LooperThread {
   private final Set<Random> otherPrngsThisIteration
       = Collections.newSetFromMap(new WeakHashMap<>(1));
   private final WeakHashMap<ByteArrayReseedableRandom, byte[]> seedArrays = new WeakHashMap<>(1);
-  private static final AtomicInteger defaultPriority = new AtomicInteger(DEFAULT_DEFAULT_PRIORITY);
 
   private RandomSeederThread(final SeedGenerator seedGenerator, ThreadFactory threadFactory) {
     super(threadFactory);
@@ -68,12 +82,7 @@ public final class RandomSeederThread extends LooperThread {
    * Private constructor because only one instance per seed source.
    */
   private RandomSeederThread(final SeedGenerator seedGenerator) {
-    this(seedGenerator, runnable -> {
-      Thread thread = new Thread(runnable, "RandomSeederThread for " + seedGenerator);
-      thread.setDaemon(true);
-      thread.setPriority(defaultPriority.get());
-      return thread;
-    });
+    this(seedGenerator, new DefaultThreadFactory("RandomSeederThread for " + seedGenerator));
   }
 
   /**
@@ -195,34 +204,6 @@ public final class RandomSeederThread extends LooperThread {
       thread.byteArrayPrngs.removeAll(randomsList);
       thread.otherPrngs.removeAll(randomsList);
     }
-  }
-
-  /**
-   * Sets the default priority for new random-seeder threads.
-   * @param priority the thread priority
-   * @see Thread#setPriority(int)
-   */
-  public static void setDefaultPriority(final int priority) {
-    defaultPriority.set(priority);
-  }
-
-  /**
-   * Gets the default priority for new random-seeder threads.
-   * @return the thread priority
-   * @see Thread#setPriority(int)
-   */
-  public static int getDefaultPriority() {
-    return defaultPriority.get();
-  }
-
-  /**
-   * Sets the priority of a random-seeder thread, starting it if it's not already running.
-   * @param seedGenerator the {@link SeedGenerator} of the thread whose priority should change
-   * @param priority the thread priority
-   * @see Thread#setPriority(int)
-   */
-  public static void setPriority(final SeedGenerator seedGenerator, final int priority) {
-    getInstance(seedGenerator).setPriority(priority);
   }
 
   public static void stopIfEmpty(final SeedGenerator seedGenerator) {
