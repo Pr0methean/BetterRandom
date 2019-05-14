@@ -329,8 +329,8 @@
     <github.global.server>github</github.global.server>
     <jsr305.version>3.0.2</jsr305.version>
     <guava.version>27.1-jre</guava.version>
-    <proguard.version>6.0.3</proguard.version>
-    <jacoco.version>0.8.3</jacoco.version>
+    <proguard.version>6.1.0</proguard.version>
+    <jacoco.version>0.8.4</jacoco.version>
     <powermock.version>2.0.2</powermock.version>
     <mockito.version>2.27.0</mockito.version>
     <pitest.version>1.4.6</pitest.version>
@@ -533,7 +533,7 @@
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-jar-plugin</artifactId>
-          <version>3.1.1</version>
+          <version>3.1.2</version>
           <configuration>
             <archive>
               <manifest>
