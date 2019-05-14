@@ -244,6 +244,7 @@ public enum RandomTestUtils {
 
   public static void testReseeding(final SeedGenerator testSeedGenerator, final BaseRandom rng,
       final boolean setSeedGenerator) {
+    // TODO: Set max thread priority
     final byte[] oldSeed = rng.getSeed();
     final byte[] oldSeedClone = oldSeed.clone();
     while (rng.getEntropyBits() > 0) {
@@ -254,7 +255,6 @@ public enum RandomTestUtils {
     if (setSeedGenerator) {
       rng.setSeedGenerator(testSeedGenerator);
     }
-    RandomSeederThread.setPriority(testSeedGenerator, Thread.MAX_PRIORITY);
     try {
       int waits = 0;
       byte[] secondSeed;
@@ -300,9 +300,6 @@ public enum RandomTestUtils {
       if (setSeedGenerator) {
         RandomTestUtils.removeAndAssertEmpty(testSeedGenerator, rng);
         assertNull(rng.getSeedGenerator());
-      } else {
-        RandomSeederThread.setPriority(testSeedGenerator,
-            RandomSeederThread.getDefaultPriority());
       }
     }
   }

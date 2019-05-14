@@ -72,36 +72,6 @@ public class RandomSeederThreadTest {
     addedAndLeft.nextInt(); // prevent GC before this point
   }
 
-  @Test public void testSetDefaultPriority() {
-    RandomSeederThread.setDefaultPriority(7);
-    try {
-      final FakeSeedGenerator generator = new FakeSeedGenerator("testSetDefaultPriority");
-      final Random prng = new Random();
-      RandomSeederThread.add(generator, prng);
-      try {
-        assertOneThreadPriority7("RandomSeederThread for testSetDefaultPriority");
-        prng.nextInt(); // prevent GC before this point
-      } finally {
-        RandomTestUtils.removeAndAssertEmpty(generator, prng);
-      }
-    } finally {
-      RandomSeederThread.setDefaultPriority(Thread.NORM_PRIORITY + 1);
-    }
-  }
-
-  @Test public void testSetPriority() {
-    final Random prng = new Random();
-    final FakeSeedGenerator generator = new FakeSeedGenerator("testSetPriority");
-    RandomSeederThread.add(generator, prng);
-    try {
-      RandomSeederThread.setPriority(generator, 7);
-      assertOneThreadPriority7("RandomSeederThread for testSetPriority");
-      prng.nextInt(); // prevent GC before this point
-    } finally {
-      RandomTestUtils.removeAndAssertEmpty(generator, prng);
-    }
-  }
-
   private static void assertOneThreadPriority7(String expectedName) {
     final Thread[] threads = new Thread[10 + Thread.activeCount()];
     final int nThreads = Thread.enumerate(threads);
