@@ -1,0 +1,5 @@
+steps:
+- script: |
+    sudo apt install haveged
+    sudo service haveged start
+  displayName: Install Haveged
