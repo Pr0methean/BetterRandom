@@ -36,14 +36,14 @@ public class ReseedingThreadLocalRandomWrapperTest extends ThreadLocalRandomWrap
     return ReseedingThreadLocalRandomWrapper.class;
   }
 
-  /** setSeedGenerator doesn't work on this class and shouldn't pretend to. */
+  /** setRandomSeeder doesn't work on this class and shouldn't pretend to. */
   @Override @Test(expectedExceptions = UnsupportedOperationException.class)
   public void testRandomSeederThreadIntegration() {
-    createRng().setSeedGenerator(SecureRandomSeedGenerator.SECURE_RANDOM_SEED_GENERATOR);
+    createRng().setRandomSeeder(SecureRandomSeedGenerator.SECURE_RANDOM_SEED_GENERATOR);
   }
 
   @Test public void testSetSeedGeneratorNoOp() {
-    createRng().setSeedGenerator(getTestSeedGenerator());
+    createRng().setRandomSeeder(getTestSeedGenerator());
   }
 
   @SuppressWarnings("BusyWait") @Override @Test(groups = "sequential") public void testReseeding() {

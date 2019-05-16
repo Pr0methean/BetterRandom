@@ -58,7 +58,7 @@ public class RandomWrapper extends BaseRandom {
   /**
    * Wraps a {@link Random} that is seeded using the provided seed generation strategy.
    * @param seedGenerator The seed generation strategy that will provide the seed for this PRNG
-   * @throws SeedException if thrown by {@code seedGenerator}
+   * @throws SeedException if thrown by {@code randomSeeder}
    */
   @EntryPoint public RandomWrapper(final SeedGenerator seedGenerator) throws SeedException {
     this(BinaryUtils.convertBytesToLong(seedGenerator.generateSeed(Long.BYTES)));

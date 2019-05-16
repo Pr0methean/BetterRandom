@@ -54,8 +54,8 @@ public class ReseedingSplittableRandomAdapter extends BaseSplittableRandomAdapte
   /**
    * Returns the instance backed by the given {@link SeedGenerator}.
    * @param seedGenerator The seed generator the returned adapter is to use.
-   * @return the ReseedingSplittableRandomAdapter backed by {@code seedGenerator}.
-   * @throws SeedException if {@code seedGenerator} throws one while generating the initial
+   * @return the ReseedingSplittableRandomAdapter backed by {@code randomSeeder}.
+   * @throws SeedException if {@code randomSeeder} throws one while generating the initial
    *     seed.
    */
   @SuppressWarnings("SynchronizationOnStaticField")
@@ -66,7 +66,7 @@ public class ReseedingSplittableRandomAdapter extends BaseSplittableRandomAdapte
     }
   }
 
-  @Override public SeedGenerator getSeedGenerator() {
+  @Override public SeedGenerator getRandomSeeder() {
     return seedGenerator;
   }
 
@@ -78,8 +78,8 @@ public class ReseedingSplittableRandomAdapter extends BaseSplittableRandomAdapte
     return threadLocal.get().getSeed();
   }
 
-  @Override public void setSeedGenerator(final SeedGenerator seedGenerator) {
-    if (seedGenerator != this.seedGenerator) {
+  public void setRandomSeeder(final SeedGenerator randomSeeder) {
+    if (randomSeeder != this.seedGenerator) {
       throw new UnsupportedOperationException(
           "ReseedingSplittableRandomAdapter's binding to RandomSeederThread is immutable");
     }
@@ -111,7 +111,7 @@ public class ReseedingSplittableRandomAdapter extends BaseSplittableRandomAdapte
 
   @Override protected SplittableRandom getSplittableRandom() {
     final SingleThreadSplittableRandomAdapter adapterForThread = threadLocal.get();
-    adapterForThread.setSeedGenerator(seedGenerator);
+    adapterForThread.setRandomSeeder(new RandomSeederThread(seedGenerator));
     return adapterForThread.getSplittableRandom();
   }
 

@@ -253,14 +253,14 @@ public enum RandomTestUtils {
           "Array modified after being returned by getSeed()");
     }
     if (setSeedGenerator) {
-      rng.setSeedGenerator(testSeedGenerator);
+      rng.setRandomSeeder(new RandomSeederThread(testSeedGenerator));
     }
     try {
       int waits = 0;
       byte[] secondSeed;
       do {
         assertEquals(oldSeedClone, oldSeed, "Array modified after being returned by getSeed()");
-        assertSame(rng.getSeedGenerator(), testSeedGenerator);
+        assertSame(rng.getRandomSeeder(), testSeedGenerator);
         waits++;
         if (waits > 2000) {
           fail(String.format("Timed out waiting for %s to be reseeded!", rng));
@@ -299,13 +299,13 @@ public enum RandomTestUtils {
     } finally {
       if (setSeedGenerator) {
         RandomTestUtils.removeAndAssertEmpty(testSeedGenerator, rng);
-        assertNull(rng.getSeedGenerator());
+        assertNull(rng.getRandomSeeder());
       }
     }
   }
 
   public static void removeAndAssertEmpty(final SeedGenerator seedGenerator, final BaseRandom prng) {
-    prng.setSeedGenerator(null);
+    prng.setRandomSeeder(null);
     RandomSeederThread.stopIfEmpty(seedGenerator);
     assertFalse(RandomSeederThread.hasInstance(seedGenerator));
   }

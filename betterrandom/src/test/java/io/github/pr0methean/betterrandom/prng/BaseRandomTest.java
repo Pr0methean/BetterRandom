@@ -265,11 +265,11 @@ public abstract class BaseRandomTest extends PowerMockTestCase {
     // Can't use a SemiFakeSeedGenerator, because Random.equals() breaks equality check
     final SeedGenerator seedGenerator = new FakeSeedGenerator(
         getClass().getSimpleName() + "::testSerializable #" + rng.nextInt());
-    rng.setSeedGenerator(seedGenerator);
+    rng.setRandomSeeder(new RandomSeederThread(seedGenerator));
     try {
       final BaseRandom rng2 = CloneViaSerialization.clone(rng);
-      assertEquals(seedGenerator, rng2.getSeedGenerator());
-      rng2.setSeedGenerator(null);
+      assertEquals(seedGenerator, rng2.getRandomSeeder());
+      rng2.setRandomSeeder(null);
     } finally {
       RandomTestUtils.removeAndAssertEmpty(seedGenerator, rng);
     }
@@ -360,8 +360,8 @@ public abstract class BaseRandomTest extends PowerMockTestCase {
   }
 
   /**
-   * This also tests {@link BaseRandom#getSeedGenerator()} and
-   * {@link BaseRandom#setSeedGenerator(SeedGenerator)}.
+   * This also tests {@link BaseRandom#getRandomSeeder()} and
+   * {@link BaseRandom#setRandomSeeder(SeedGenerator)}.
    *
    * @throws Exception
    */

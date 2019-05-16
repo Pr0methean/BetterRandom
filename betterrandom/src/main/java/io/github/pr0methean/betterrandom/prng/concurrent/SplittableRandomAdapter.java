@@ -124,11 +124,11 @@ public class SplittableRandomAdapter extends DirectSplittableRandomAdapter {
 
   /**
    * Not supported, because this class uses a thread-local seed.
-   * @param seedGenerator ignored.
+   * @param randomSeeder ignored.
    * @throws UnsupportedOperationException always.
    */
-  @Override public void setSeedGenerator(@Nullable final SeedGenerator seedGenerator) {
-    if (seedGenerator != null) {
+  @Override public void setRandomSeeder(@Nullable final SeedGenerator randomSeeder) {
+    if (randomSeeder != null) {
       throw new UnsupportedOperationException("Use ReseedingSplittableRandomAdapter instead");
     }
   }

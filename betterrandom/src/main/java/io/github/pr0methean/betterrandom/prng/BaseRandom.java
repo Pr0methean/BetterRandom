@@ -50,7 +50,7 @@ public abstract class BaseRandom extends Random
    * taken and {@link #getEntropyBits()} called immediately afterward would return zero or
    * negative.
    */
-  protected final AtomicReference<SeedGenerator> seedGenerator = new AtomicReference<>(null);
+  protected final AtomicReference<RandomSeederThread> randomSeeder = new AtomicReference<>(null);
   /** Lock to prevent concurrent modification of the RNG's internal state. */
   protected final ReentrantLock lock = new ReentrantLock();
   /** Stores the entropy estimate backing {@link #getEntropyBits()}. */
@@ -84,14 +84,14 @@ public abstract class BaseRandom extends Random
 
   /**
    * Creates a new RNG and seeds it using the provided seed generation strategy.
-   * @param seedGenerator The seed generation strategy that will provide the seed value for this
+   * @param randomSeeder The seed generation strategy that will provide the seed value for this
    *     RNG.
    * @param seedLength The seed length in bytes.
    * @throws SeedException If there is a problem generating a seed.
    */
-  protected BaseRandom(final SeedGenerator seedGenerator, final int seedLength)
+  protected BaseRandom(final SeedGenerator randomSeeder, final int seedLength)
       throws SeedException {
-    this(seedGenerator.generateSeed(seedLength));
+    this(randomSeeder.generateSeed(seedLength));
   }
 
   /**
@@ -601,7 +601,7 @@ public abstract class BaseRandom extends Random
     try {
       return addSubclassFields(
           MoreObjects.toStringHelper(this).add("seed", BinaryUtils.convertBytesToHexString(seed))
-              .add("entropyBits", entropyBits.get()).add("seedGenerator", seedGenerator))
+              .add("entropyBits", entropyBits.get()).add("randomSeeder", randomSeeder))
           .toString();
     } finally {
       lock.unlock();
@@ -663,18 +663,14 @@ public abstract class BaseRandom extends Random
    * Registers this PRNG with the {@link RandomSeederThread} for the corresponding {@link
    * SeedGenerator}, to schedule reseeding when we run out of entropy. Unregisters this PRNG with
    * the previous {@link RandomSeederThread} if it had a different one.
-   * @param seedGenerator a {@link SeedGenerator} whose {@link RandomSeederThread} will be used
+   * @param randomSeeder a {@link SeedGenerator} whose {@link RandomSeederThread} will be used
    *     to reseed this PRNG, or null to stop using one.
    */
-  @SuppressWarnings({"EqualityOperatorComparesObjects", "ObjectEquality"})
-  public void setSeedGenerator(@Nullable final SeedGenerator seedGenerator) {
-    final SeedGenerator oldSeedGenerator = this.seedGenerator.getAndSet(seedGenerator);
-    if (seedGenerator != oldSeedGenerator) {
-      if (oldSeedGenerator != null) {
-        RandomSeederThread.remove(oldSeedGenerator, this);
-      }
-      if (seedGenerator != null) {
-        RandomSeederThread.add(seedGenerator, this);
+  public void setRandomSeeder(@Nullable final RandomSeederThread randomSeeder) {
+    RandomSeederThread old = this.randomSeeder.getAndSet(randomSeeder);
+    if (old != randomSeeder) {
+      if (old != null) {
+        old.remove(this);
       }
     }
   }
@@ -683,8 +679,8 @@ public abstract class BaseRandom extends Random
    * Returns the current seed generator for this PRNG.
    * @return the current seed generator, or null if there is none
    */
-  @Nullable public SeedGenerator getSeedGenerator() {
-    return seedGenerator.get();
+  @Nullable public RandomSeederThread getRandomSeeder() {
+    return randomSeeder.get();
   }
 
   @Override public boolean preferSeedWithLong() {
@@ -750,9 +746,9 @@ public abstract class BaseRandom extends Random
     in.defaultReadObject();
     initTransientFields();
     setSeedInternal(seed);
-    final SeedGenerator currentSeedGenerator = getSeedGenerator();
-    if (currentSeedGenerator != null) {
-      RandomSeederThread.add(currentSeedGenerator, this);
+    final RandomSeederThread currentSeeder = getRandomSeeder();
+    if (currentSeeder != null) {
+      currentSeeder.add(this);
     }
   }
 
@@ -772,9 +768,9 @@ public abstract class BaseRandom extends Random
   }
 
   private void asyncReseedIfPossible() {
-    final SeedGenerator currentSeedGenerator = getSeedGenerator();
-    if (currentSeedGenerator != null) {
-      RandomSeederThread.wakeUp(currentSeedGenerator);
+    final RandomSeederThread currentSeeder = getRandomSeeder();
+    if (currentSeeder != null) {
+      currentSeeder.wakeUp();
     }
   }
 
