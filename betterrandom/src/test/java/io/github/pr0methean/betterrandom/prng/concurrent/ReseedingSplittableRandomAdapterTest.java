@@ -91,11 +91,12 @@ public class ReseedingSplittableRandomAdapterTest extends SingleThreadSplittable
   /** setRandomSeeder doesn't work on this class and shouldn't pretend to. */
   @Override @Test(expectedExceptions = UnsupportedOperationException.class)
   public void testRandomSeederThreadIntegration() {
-    createRng().setRandomSeeder(SecureRandomSeedGenerator.SECURE_RANDOM_SEED_GENERATOR);
+    createRng().setRandomSeeder(
+        new RandomSeederThread(SecureRandomSeedGenerator.SECURE_RANDOM_SEED_GENERATOR));
   }
 
   @Test public void testSetSeedGeneratorNoOp() {
-    createRng().setRandomSeeder(getTestSeedGenerator());
+    createRng().setRandomSeeder(new RandomSeederThread(getTestSeedGenerator()));
   }
 
   @Override @Test(enabled = false) public void testSeedTooShort() {

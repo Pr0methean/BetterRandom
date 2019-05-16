@@ -4,6 +4,7 @@ import io.github.pr0methean.betterrandom.prng.BaseRandom;
 import io.github.pr0methean.betterrandom.prng.Pcg64Random;
 import io.github.pr0methean.betterrandom.prng.RandomTestUtils;
 import io.github.pr0methean.betterrandom.prng.RandomTestUtils.EntropyCheckMode;
+import io.github.pr0methean.betterrandom.seed.RandomSeederThread;
 import io.github.pr0methean.betterrandom.seed.SecureRandomSeedGenerator;
 import io.github.pr0methean.betterrandom.seed.SeedException;
 import io.github.pr0methean.betterrandom.seed.SeedGenerator;
@@ -39,11 +40,12 @@ public class ReseedingThreadLocalRandomWrapperTest extends ThreadLocalRandomWrap
   /** setRandomSeeder doesn't work on this class and shouldn't pretend to. */
   @Override @Test(expectedExceptions = UnsupportedOperationException.class)
   public void testRandomSeederThreadIntegration() {
-    createRng().setRandomSeeder(SecureRandomSeedGenerator.SECURE_RANDOM_SEED_GENERATOR);
+    createRng().setRandomSeeder(
+        new RandomSeederThread(SecureRandomSeedGenerator.SECURE_RANDOM_SEED_GENERATOR));
   }
 
   @Test public void testSetSeedGeneratorNoOp() {
-    createRng().setRandomSeeder(getTestSeedGenerator());
+    createRng().setRandomSeeder(new RandomSeederThread(getTestSeedGenerator()));
   }
 
   @SuppressWarnings("BusyWait") @Override @Test(groups = "sequential") public void testReseeding() {
