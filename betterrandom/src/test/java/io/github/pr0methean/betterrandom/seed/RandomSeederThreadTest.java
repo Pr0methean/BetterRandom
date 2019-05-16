@@ -8,7 +8,6 @@ import java.util.concurrent.locks.LockSupport;
 import org.testng.annotations.Test;
 
 import static io.github.pr0methean.betterrandom.seed.RandomSeederThread.stopAllEmpty;
-import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertFalse;
 import static org.testng.Assert.assertTrue;
 
@@ -70,18 +69,6 @@ public class RandomSeederThreadTest {
     assertFalse(RandomSeederThread.hasInstance(addedToAndRemoved));
     assertTrue(RandomSeederThread.hasInstance(addedToAndLeft));
     addedAndLeft.nextInt(); // prevent GC before this point
-  }
-
-  private static void assertOneThreadPriority7(String expectedName) {
-    final Thread[] threads = new Thread[10 + Thread.activeCount()];
-    final int nThreads = Thread.enumerate(threads);
-    int found = 0;
-    for (int i = 0; i < nThreads; i++) {
-      if (expectedName.equals(threads[i].getName())) {
-        assertEquals(threads[i].getPriority(), 7);
-      }
-    }
-    assertEquals(found, 1);
   }
 
   private void sleepUninterruptibly(long nanos) {

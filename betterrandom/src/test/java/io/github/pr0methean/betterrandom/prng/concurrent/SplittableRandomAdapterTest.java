@@ -3,6 +3,7 @@ package io.github.pr0methean.betterrandom.prng.concurrent;
 import io.github.pr0methean.betterrandom.TestingDeficiency;
 import io.github.pr0methean.betterrandom.prng.BaseRandom;
 import io.github.pr0methean.betterrandom.prng.RandomTestUtils;
+import io.github.pr0methean.betterrandom.seed.RandomSeederThread;
 import io.github.pr0methean.betterrandom.seed.SeedException;
 import org.testng.annotations.Test;
 
@@ -45,7 +46,7 @@ public class SplittableRandomAdapterTest extends SingleThreadSplittableRandomAda
   /** Seeding of this PRNG is thread-local, so setSeederThread makes no sense. */
   @Override @Test(expectedExceptions = UnsupportedOperationException.class)
   public void testRandomSeederThreadIntegration() {
-    createRng().setRandomSeeder(getTestSeedGenerator());
+    createRng().setRandomSeeder(new RandomSeederThread(getTestSeedGenerator()));
   }
 
   @Test public void testSetSeedGeneratorNoOp() {
