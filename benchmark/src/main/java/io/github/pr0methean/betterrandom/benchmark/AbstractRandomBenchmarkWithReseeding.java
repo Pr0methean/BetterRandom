@@ -79,9 +79,9 @@ public abstract class AbstractRandomBenchmarkWithReseeding extends AbstractRando
   @Group("contended")
   public byte testBytesContendedReseeding()
       throws SeedException, InterruptedException {
-    seedGenerator.add(prng);
+    randomSeeder.add(prng);
     final byte b = innerTestBytesContended();
-    seedGenerator.remove(prng);
+    randomSeeder.remove(prng);
     return b;
   }
   */

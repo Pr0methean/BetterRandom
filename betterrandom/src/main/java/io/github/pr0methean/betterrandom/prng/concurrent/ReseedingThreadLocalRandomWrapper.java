@@ -33,7 +33,7 @@ public class ReseedingThreadLocalRandomWrapper extends ThreadLocalRandomWrapper 
       final Supplier<? extends BaseRandom> initializer) throws SeedException {
     super((Serializable & Supplier<? extends BaseRandom>) () -> {
       final BaseRandom out = initializer.get();
-      out.setSeedGenerator(seedGenerator);
+      out.setRandomSeeder(new RandomSeederThread(seedGenerator));
       return out;
     });
     this.seedGenerator = seedGenerator;
@@ -55,7 +55,7 @@ public class ReseedingThreadLocalRandomWrapper extends ThreadLocalRandomWrapper 
     super(seedSize, seedGenerator,
         (Serializable & Function<byte[], ? extends BaseRandom>) (seed) -> {
           final BaseRandom out = creator.apply(seed);
-          out.setSeedGenerator(seedGenerator);
+          out.setRandomSeeder(new RandomSeederThread(seedGenerator));
           return out;
         });
     this.seedGenerator = seedGenerator;
@@ -75,14 +75,14 @@ public class ReseedingThreadLocalRandomWrapper extends ThreadLocalRandomWrapper 
         bytes -> new RandomWrapper(legacyCreator.apply(BinaryUtils.convertBytesToLong(bytes))));
   }
 
-  @Override public void setSeedGenerator(final SeedGenerator seedGenerator) {
-    if (seedGenerator != this.seedGenerator) {
+  @Override public void setRandomSeeder(final SeedGenerator randomSeeder) {
+    if (randomSeeder != this.seedGenerator) {
       throw new UnsupportedOperationException(
           "ReseedingThreadLocalRandomWrapper's binding to RandomSeederThread is immutable");
     }
   }
 
-  @Override public SeedGenerator getSeedGenerator() {
+  @Override public SeedGenerator getRandomSeeder() {
     return seedGenerator;
   }
 }

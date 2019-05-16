@@ -4,7 +4,6 @@ import io.github.pr0methean.betterrandom.CloneViaSerialization;
 import io.github.pr0methean.betterrandom.prng.AbstractLargeSeedRandomTest;
 import io.github.pr0methean.betterrandom.prng.AesCounterRandom;
 import io.github.pr0methean.betterrandom.prng.BaseRandom;
-import io.github.pr0methean.betterrandom.prng.BaseRandomTest;
 import io.github.pr0methean.betterrandom.prng.Pcg64Random;
 import io.github.pr0methean.betterrandom.seed.SeedException;
 import io.github.pr0methean.betterrandom.seed.SeedGenerator;
@@ -64,14 +63,14 @@ public class ThreadLocalRandomWrapperTest extends AbstractLargeSeedRandomTest {
     // No-op: ThreadLocalRandomWrapper isn't repeatable.
   }
 
-  /** setSeedGenerator doesn't work on this class and shouldn't pretend to. */
+  /** setRandomSeeder doesn't work on this class and shouldn't pretend to. */
   @Override @Test(expectedExceptions = UnsupportedOperationException.class)
   public void testRandomSeederThreadIntegration() {
-    createRng().setSeedGenerator(getTestSeedGenerator());
+    createRng().setRandomSeeder(getTestSeedGenerator());
   }
 
   @Test public void testSetSeedGeneratorNoOp() {
-    createRng().setSeedGenerator(null);
+    createRng().setRandomSeeder(null);
   }
 
   /** Assertion-free because ThreadLocalRandomWrapper isn't repeatable. */
