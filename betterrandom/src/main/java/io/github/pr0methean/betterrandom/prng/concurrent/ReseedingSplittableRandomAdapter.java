@@ -66,10 +66,6 @@ public class ReseedingSplittableRandomAdapter extends BaseSplittableRandomAdapte
     }
   }
 
-  @Override public SeedGenerator getRandomSeeder() {
-    return seedGenerator;
-  }
-
   @Override public long getEntropyBits() {
     return threadLocal.get().getEntropyBits();
   }
@@ -78,8 +74,9 @@ public class ReseedingSplittableRandomAdapter extends BaseSplittableRandomAdapte
     return threadLocal.get().getSeed();
   }
 
-  public void setRandomSeeder(final SeedGenerator randomSeeder) {
-    if (randomSeeder != this.seedGenerator) {
+  @Override
+  public void setRandomSeeder(final RandomSeederThread randomSeeder) {
+    if (!this.randomSeeder.equals(randomSeeder)) {
       throw new UnsupportedOperationException(
           "ReseedingSplittableRandomAdapter's binding to RandomSeederThread is immutable");
     }

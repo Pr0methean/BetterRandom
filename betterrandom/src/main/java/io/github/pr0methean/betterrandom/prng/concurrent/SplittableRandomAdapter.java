@@ -127,7 +127,7 @@ public class SplittableRandomAdapter extends DirectSplittableRandomAdapter {
    * @param randomSeeder ignored.
    * @throws UnsupportedOperationException always.
    */
-  @Override public void setRandomSeeder(@Nullable final SeedGenerator randomSeeder) {
+  @Override public void setRandomSeeder(@Nullable final RandomSeederThread randomSeeder) {
     if (randomSeeder != null) {
       throw new UnsupportedOperationException("Use ReseedingSplittableRandomAdapter instead");
     }
