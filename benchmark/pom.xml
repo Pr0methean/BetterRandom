@@ -209,7 +209,7 @@ THE POSSIBILITY OF SUCH DAMAGE.
         </plugin>
         <plugin>
           <artifactId>maven-source-plugin</artifactId>
-          <version>3.0.2</version>
+          <version>3.1.0</version>
         </plugin>
         <plugin>
           <artifactId>maven-surefire-plugin</artifactId>
