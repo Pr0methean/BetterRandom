@@ -64,7 +64,7 @@ jobs:
         inputs:
           pathtoPublish: betterrandom/target/pit-reports
           artifactName: Mutation Coverage
-   job: Benchmark
+  - job: Benchmark
     dependsOn:
       - UnitTest
     variables:
