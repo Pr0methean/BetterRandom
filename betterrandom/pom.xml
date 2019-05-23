@@ -227,7 +227,7 @@
     <jacoco.version>0.8.4</jacoco.version>
     <powermock.version>2.0.2</powermock.version>
     <mockito.version>2.27.0</mockito.version>
-    <pitest.version>1.4.7</pitest.version>
+    <pitest.version>1.4.8</pitest.version>
     <test.argline>-Djava.security.egd=file:/dev/./urandom</test.argline>
     <test.jdk9.argline>${test.argline} --add-opens java.base/jdk.internal.loader=ALL-UNNAMED --add-opens java.xml/jdk.xml.internal=ALL-UNNAMED</test.jdk9.argline>
     <testng.parallel>tests</testng.parallel>
