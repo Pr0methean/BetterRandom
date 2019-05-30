@@ -332,7 +332,7 @@
     <proguard.version>6.1.0</proguard.version>
     <jacoco.version>0.8.4</jacoco.version>
     <powermock.version>2.0.2</powermock.version>
-    <mockito.version>2.28.1</mockito.version>
+    <mockito.version>2.28.2</mockito.version>
     <pitest.version>1.4.8</pitest.version>
     <test.argline>-Djava.security.egd=file:/dev/./urandom</test.argline>
     <test.jdk8.argline>${test.argline}</test.jdk8.argline>
