@@ -3,8 +3,8 @@ package io.github.pr0methean.betterrandom.seed;
 import java.util.Arrays;
 import org.testng.annotations.Test;
 
-import static edu.emory.mathcs.backport.java.util.Collections.singletonList;
 import static io.github.pr0methean.betterrandom.seed.FailingSeedGenerator.FAILING_SEED_GENERATOR;
+import static java.util.Collections.singletonList;
 import static org.testng.Assert.assertFalse;
 import static org.testng.Assert.assertTrue;
 
