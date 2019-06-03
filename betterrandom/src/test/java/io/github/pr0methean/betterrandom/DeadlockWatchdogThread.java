@@ -28,7 +28,14 @@ public class DeadlockWatchdogThread extends LooperThread {
     }
   }
 
-  private DeadlockWatchdogThread() {}
+  private DeadlockWatchdogThread() {
+    super(runnable -> {
+      Thread thread = new Thread(runnable);
+      thread.setDaemon(true);
+      thread.setPriority(Thread.MAX_PRIORITY);
+      return thread;
+    });
+  }
 
   public static void ensureStarted() {
     synchronized (DeadlockWatchdogThread.class) {
@@ -36,8 +43,6 @@ public class DeadlockWatchdogThread extends LooperThread {
         INSTANCE = new DeadlockWatchdogThread();
       }
       if (INSTANCE.getState() == Thread.State.NEW) {
-        INSTANCE.setDaemon(true);
-        INSTANCE.setPriority(Thread.MAX_PRIORITY);
         INSTANCE.start();
       }
     }

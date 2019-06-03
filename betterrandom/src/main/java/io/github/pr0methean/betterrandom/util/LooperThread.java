@@ -3,13 +3,14 @@ package io.github.pr0methean.betterrandom.util;
 import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicLong;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
 /**
- * Wraps a thread that loops a given task until interrupted (or until JVM shutdown, if it
- * {@linkplain #isDaemon() is a daemon thread}), with the iterations being transactional.
+ * Wraps a thread that loops a given task until interrupted, with the iterations being
+ * transactional.
  */
 public abstract class LooperThread {
 
@@ -20,7 +21,7 @@ public abstract class LooperThread {
    */
   protected final Lock lock = new ReentrantLock(true);
   protected final Condition endOfIteration = lock.newCondition();
-  protected final Thread thread;
+  protected final AtomicReference<Thread> thread = new AtomicReference<Thread>();
   protected final ThreadFactory factory;
 
   /**
@@ -43,7 +44,7 @@ public abstract class LooperThread {
 
   protected LooperThread(ThreadFactory factory) {
     this.factory = factory;
-    thread = factory.newThread(this::run);
+    thread.set(factory.newThread(this::run));
   }
 
   /**
@@ -82,95 +83,40 @@ public abstract class LooperThread {
   }
 
   public void start() {
-    thread.start();
+    thread.get().start();
   }
 
   public void interrupt() {
-    thread.interrupt();
+    thread.get().interrupt();
   }
 
   public boolean isInterrupted() {
-    return thread.isInterrupted();
-  }
-
-  public void setPriority(int newPriority) {
-    thread.setPriority(newPriority);
-  }
-
-  public int getPriority() {
-    return thread.getPriority();
-  }
-
-  public void setName(String name) {
-    thread.setName(name);
-  }
-
-  public String getName() {
-    return thread.getName();
-  }
-
-  public ThreadGroup getThreadGroup() {
-    return thread.getThreadGroup();
-  }
-
-  public int countStackFrames() {
-    return thread.countStackFrames();
+    return thread.get().isInterrupted();
   }
 
   public void join(long millis) throws InterruptedException {
-    thread.join(millis);
+    thread.get().join(millis);
   }
 
   public void join(long millis, int nanos) throws InterruptedException {
-    thread.join(millis, nanos);
+    thread.get().join(millis, nanos);
   }
 
   public void join() throws InterruptedException {
-    thread.join();
+    thread.get().join();
   }
 
-  public void setDaemon(boolean on) {
-    thread.setDaemon(on);
-  }
-
-  public boolean isDaemon() {
-    return thread.isDaemon();
-  }
-
-  public void checkAccess() {
-    thread.checkAccess();
-  }
-
+  @Override
   public String toString() {
     return thread.toString();
   }
 
-  public ClassLoader getContextClassLoader() {
-    return thread.getContextClassLoader();
-  }
-
-  public void setContextClassLoader(ClassLoader cl) {
-    thread.setContextClassLoader(cl);
-  }
-
-  public StackTraceElement[] getStackTrace() {
-    return thread.getStackTrace();
-  }
-
-  public long getId() {
-    return thread.getId();
-  }
-
-  public Thread.State getState() {
-    return thread.getState();
-  }
-
-  public Thread.UncaughtExceptionHandler getUncaughtExceptionHandler() {
-    return thread.getUncaughtExceptionHandler();
+  protected Thread.State getState() {
+    return thread.get().getState();
   }
 
   public void setUncaughtExceptionHandler(Thread.UncaughtExceptionHandler eh) {
-    thread.setUncaughtExceptionHandler(eh);
+    thread.get().setUncaughtExceptionHandler(eh);
   }
 
   /**
