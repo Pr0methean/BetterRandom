@@ -668,11 +668,13 @@ public abstract class BaseRandom extends Random
    */
   public void setRandomSeeder(@Nullable final RandomSeederThread randomSeeder) {
     RandomSeederThread old = this.randomSeeder.getAndSet(randomSeeder);
-    if (old != randomSeeder && old != null) {
+    if (old != randomSeeder) {
       if (old != null) {
         old.remove(this);
       }
-      randomSeeder.add(this);
+      if (randomSeeder != null) {
+        randomSeeder.add(this);
+      }
     }
   }
 
