@@ -6,6 +6,9 @@ import io.github.pr0methean.betterrandom.EntropyCountingRandom;
 import io.github.pr0methean.betterrandom.prng.BaseRandom;
 import io.github.pr0methean.betterrandom.util.BinaryUtils;
 import io.github.pr0methean.betterrandom.util.LooperThread;
+import java.io.IOException;
+import java.io.ObjectOutputStream;
+import java.io.Serializable;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -83,7 +86,9 @@ public final class RandomSeederThread extends LooperThread {
     }
   }
 
-  public static class DefaultThreadFactory implements ThreadFactory {
+  public static class DefaultThreadFactory implements ThreadFactory, Serializable {
+
+    private static final long serialVersionUID = -5806852086706570346L;
     private final String name;
     private final int priority;
 
@@ -357,6 +362,15 @@ public final class RandomSeederThread extends LooperThread {
         LOG.info("Stopping empty RandomSeederThread for {}", seedGenerator);
         shutDown();
       }
+    } finally {
+      lock.unlock();
+    }
+  }
+
+  private void writeObject(ObjectOutputStream out) throws IOException {
+    lock.lock();
+    try {
+      out.defaultWriteObject();
     } finally {
       lock.unlock();
     }
