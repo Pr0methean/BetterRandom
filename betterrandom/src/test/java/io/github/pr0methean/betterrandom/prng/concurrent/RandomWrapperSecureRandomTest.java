@@ -35,7 +35,7 @@ public class RandomWrapperSecureRandomTest extends AbstractLargeSeedRandomTest {
     return RandomWrapper.class;
   }
 
-  @Override public Map<Class<?>, Object> constructorParams() {
+  @Override protected Map<Class<?>, Object> constructorParams() {
     final Map<Class<?>, Object> params = super.constructorParams();
     params.put(Random.class, new SecureRandom());
     return params;

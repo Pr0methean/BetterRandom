@@ -98,7 +98,7 @@ public class ThreadLocalRandomWrapperTest extends AbstractLargeSeedRandomTest {
     testThreadSafetyVsCrashesOnly(30, functionsForThreadSafetyTest);
   }
 
-  @Override public Map<Class<?>, Object> constructorParams() {
+  @Override protected Map<Class<?>, Object> constructorParams() {
     final Map<Class<?>, Object> params = super.constructorParams();
     params.put(Supplier.class, pcgSupplier);
     params
