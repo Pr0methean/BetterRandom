@@ -16,11 +16,10 @@ public abstract class LooperThread {
 
   protected final AtomicLong finishedIterations = new AtomicLong(0);
   /**
-   * The thread holds this lock whenever it is being serialized or cloned or is running {@link
-   * #iterate()}.
+   * The thread holds this lock whenever it is running {@link #iterate()}.
    */
-  protected final Lock lock = new ReentrantLock(true);
-  protected final Condition endOfIteration = lock.newCondition();
+  protected transient final Lock lock = new ReentrantLock(true);
+  protected transient final Condition endOfIteration = lock.newCondition();
   protected final AtomicReference<Thread> thread = new AtomicReference<Thread>();
   protected final ThreadFactory factory;
 
