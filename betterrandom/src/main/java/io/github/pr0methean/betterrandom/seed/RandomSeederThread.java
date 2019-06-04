@@ -31,7 +31,7 @@ import org.slf4j.LoggerFactory;
  * @author Chris Hennick
  */
 @SuppressWarnings("ClassExplicitlyExtendsThread")
-public final class RandomSeederThread extends LooperThread {
+public final class RandomSeederThread extends LooperThread implements Serializable {
 
   private static final Logger LOG = LoggerFactory.getLogger(RandomSeederThread.class);
   @SuppressWarnings("StaticCollection") private static final Map<SeedGenerator, RandomSeederThread>
