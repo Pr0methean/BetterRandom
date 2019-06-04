@@ -365,7 +365,7 @@ public abstract class BaseRandomTest extends PowerMockTestCase {
    *
    * @throws Exception
    */
-  @SuppressWarnings("BusyWait") @Test(timeOut = 60_000, retryAnalyzer = FlakyTestAnalyzer.class)
+  @SuppressWarnings("BusyWait") @Test(timeOut = 60_000, retryAnalyzer = FlakyRetryAnalyzer.class)
   public void testRandomSeederThreadIntegration() {
     final SeedGenerator seedGenerator = new SemiFakeSeedGenerator(new Random());
     final BaseRandom rng = createRng();
@@ -819,7 +819,7 @@ public abstract class BaseRandomTest extends PowerMockTestCase {
   }
 
   /** From https://www.toolsqa.com/selenium-webdriver/retry-failed-tests-testng/ */
-  public static class FlakyTestAnalyzer implements IRetryAnalyzer {
+  public static class FlakyRetryAnalyzer implements IRetryAnalyzer {
     int counter = 0;
     int retryLimit = 1;
 
