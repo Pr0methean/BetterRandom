@@ -1,11 +1,13 @@
 package io.github.pr0methean.betterrandom.seed;
 
+import com.google.common.cache.CacheBuilder;
 import io.github.pr0methean.betterrandom.ByteArrayReseedableRandom;
 import io.github.pr0methean.betterrandom.EntropyCountingRandom;
 import io.github.pr0methean.betterrandom.prng.BaseRandom;
 import io.github.pr0methean.betterrandom.util.BinaryUtils;
 import io.github.pr0methean.betterrandom.util.LooperThread;
 import java.io.IOException;
+import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.util.Collections;
@@ -125,10 +127,8 @@ public final class RandomSeederThread extends LooperThread implements Serializab
   private final SeedGenerator seedGenerator;
   private final Condition waitWhileEmpty = lock.newCondition();
   private final Condition waitForEntropyDrain = lock.newCondition();
-  private final Set<ByteArrayReseedableRandom> byteArrayPrngs = Collections.newSetFromMap(
-      Collections.synchronizedMap(new WeakHashMap<>()));
-  private final Set<Random> otherPrngs = Collections.newSetFromMap(
-      Collections.synchronizedMap(new WeakHashMap<>()));
+  private transient Set<ByteArrayReseedableRandom> byteArrayPrngs;
+  private transient Set<Random> otherPrngs;
   private final byte[] longSeedArray = new byte[8];
   private final Set<ByteArrayReseedableRandom> byteArrayPrngsThisIteration
       = Collections.newSetFromMap(new WeakHashMap<>(1));
@@ -140,6 +140,16 @@ public final class RandomSeederThread extends LooperThread implements Serializab
     super(threadFactory);
     Objects.requireNonNull(seedGenerator, "randomSeeder must not be null");
     this.seedGenerator = seedGenerator;
+    initTransientFields();
+  }
+
+  private void initTransientFields() {
+    byteArrayPrngs = Collections.newSetFromMap(
+        CacheBuilder.newBuilder().weakKeys().initialCapacity(1)
+            .<ByteArrayReseedableRandom, Boolean>build().asMap());
+    otherPrngs = Collections.newSetFromMap(
+        CacheBuilder.newBuilder().weakKeys().initialCapacity(1)
+            .<Random, Boolean>build().asMap());
   }
 
   /**
@@ -362,6 +372,11 @@ public final class RandomSeederThread extends LooperThread implements Serializab
     } finally {
       lock.unlock();
     }
+  }
+
+  private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
+    in.defaultReadObject();
+    initTransientFields();
   }
 
   private void writeObject(ObjectOutputStream out) throws IOException {
