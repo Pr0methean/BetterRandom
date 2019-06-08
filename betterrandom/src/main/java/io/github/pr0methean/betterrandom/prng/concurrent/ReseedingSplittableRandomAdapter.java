@@ -8,7 +8,6 @@ import java.util.Collections;
 import java.util.Map;
 import java.util.SplittableRandom;
 import java.util.WeakHashMap;
-import javax.annotation.Nullable;
 
 /**
  * Like {@link SplittableRandomAdapter}, but uses a {@link RandomSeederThread} to replace each
@@ -101,20 +100,25 @@ public class ReseedingSplittableRandomAdapter extends BaseSplittableRandomAdapte
     threadLocal.get().debitEntropy(bits);
   }
 
-  @Override public boolean equals(@Nullable final Object o) {
-    return (this == o) || ((o instanceof ReseedingSplittableRandomAdapter) && seedGenerator
-        .equals(((ReseedingSplittableRandomAdapter) o).seedGenerator));
-  }
-
   @Override protected void setSeedInternal(final byte[] seed) {
     this.seed = seed.clone();
   }
 
-  @Override public int hashCode() {
-    return seedGenerator.hashCode() + 1;
-  }
-
   @Override public String toString() {
     return "ReseedingSplittableRandomAdapter using " + seedGenerator;
+  }
+
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) return true;
+    if (o == null || getClass() != o.getClass()) return false;
+    ReseedingSplittableRandomAdapter that = (ReseedingSplittableRandomAdapter) o;
+    return seedGenerator.equals(that.seedGenerator) &&
+        randomSeeder.equals(that.randomSeeder);
+  }
+
+  @Override
+  public int hashCode() {
+    return 31 * seedGenerator.hashCode() + randomSeeder.hashCode();
   }
 }
