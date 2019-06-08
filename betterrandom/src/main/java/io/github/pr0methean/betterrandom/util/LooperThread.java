@@ -43,7 +43,9 @@ public abstract class LooperThread {
 
   protected LooperThread(ThreadFactory factory) {
     this.factory = factory;
-    thread.set(factory.newThread(this::run));
+    Thread thread = factory.newThread(this::run);
+    this.thread.set(thread);
+    thread.start();
   }
 
   /**
