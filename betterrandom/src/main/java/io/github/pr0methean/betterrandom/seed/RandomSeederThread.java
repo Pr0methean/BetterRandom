@@ -1,10 +1,13 @@
 package io.github.pr0methean.betterrandom.seed;
 
+import com.google.common.cache.CacheBuilder;
 import io.github.pr0methean.betterrandom.ByteArrayReseedableRandom;
 import io.github.pr0methean.betterrandom.EntropyCountingRandom;
 import io.github.pr0methean.betterrandom.prng.BaseRandom;
 import io.github.pr0methean.betterrandom.util.BinaryUtils;
+import io.github.pr0methean.betterrandom.util.LooperThread;
 import java.io.IOException;
+import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.util.Collections;
@@ -12,9 +15,11 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Random;
+import java.util.Set;
 import java.util.WeakHashMap;
 import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.locks.Condition;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -24,10 +29,28 @@ import org.slf4j.LoggerFactory;
  * @author Chris Hennick
  */
 @SuppressWarnings("ClassExplicitlyExtendsThread")
-public final class RandomSeederThread extends RandomSeederThreadTransients implements Serializable {
-
+public final class RandomSeederThread extends LooperThread {
+  private transient Set<ByteArrayReseedableRandom> byteArrayPrngs;
+  private transient Set<Random> otherPrngs;
+  private transient Set<ByteArrayReseedableRandom> byteArrayPrngsThisIteration;
+  private transient Set<Random> otherPrngsThisIteration;
+  private transient Condition waitWhileEmpty;
+  private transient Condition waitForEntropyDrain;
   private static final Logger LOG = LoggerFactory.getLogger(RandomSeederThread.class);
   private static final long POLL_INTERVAL = 60;
+
+  private void initTransientFields() {
+    byteArrayPrngs = Collections.newSetFromMap(
+        CacheBuilder.newBuilder().weakKeys().initialCapacity(1)
+            .<ByteArrayReseedableRandom, Boolean>build().asMap());
+    otherPrngs = Collections.newSetFromMap(
+        CacheBuilder.newBuilder().weakKeys().initialCapacity(1)
+            .<Random, Boolean>build().asMap());
+    byteArrayPrngsThisIteration = Collections.newSetFromMap(new WeakHashMap<>(1));
+    otherPrngsThisIteration = Collections.newSetFromMap(new WeakHashMap<>(1));
+    waitWhileEmpty = lock.newCondition();
+    waitForEntropyDrain = lock.newCondition();
+  }
 
   public void wakeUp() {
     if (lock.tryLock()) {
@@ -144,6 +167,7 @@ public final class RandomSeederThread extends RandomSeederThreadTransients imple
     super(threadFactory);
     Objects.requireNonNull(seedGenerator, "randomSeeder must not be null");
     this.seedGenerator = seedGenerator;
+    initTransientFields();
     start();
   }
 
@@ -269,6 +293,11 @@ public final class RandomSeederThread extends RandomSeederThreadTransients imple
     } finally {
       lock.unlock();
     }
+  }
+
+  private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
+    in.defaultReadObject();
+    initTransientFields();
   }
 
   private void writeObject(ObjectOutputStream out) throws IOException {
