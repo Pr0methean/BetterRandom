@@ -90,7 +90,9 @@ public class ReseedingSplittableRandomAdapterTest extends SingleThreadSplittable
   }
 
   @Test public void testSetSeedGeneratorNoOp() {
-    createRng().setRandomSeeder(new RandomSeederThread(getTestSeedGenerator()));
+    RandomSeederThread thread = new RandomSeederThread(getTestSeedGenerator());
+    ReseedingSplittableRandomAdapter.getInstance(thread, getTestSeedGenerator())
+        .setRandomSeeder(thread);
   }
 
   @Override @Test(enabled = false) public void testSeedTooShort() {
