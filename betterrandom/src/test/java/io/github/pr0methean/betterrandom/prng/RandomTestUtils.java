@@ -32,7 +32,6 @@ import org.testng.Reporter;
 
 import static io.github.pr0methean.betterrandom.util.BinaryUtils.convertBytesToHexString;
 import static org.testng.Assert.assertEquals;
-import static org.testng.Assert.assertFalse;
 import static org.testng.Assert.assertNotEquals;
 import static org.testng.Assert.assertNotSame;
 import static org.testng.Assert.assertNull;
@@ -301,22 +300,23 @@ public enum RandomTestUtils {
       throw new AssertionError(e);
     } finally {
       if (setSeedGenerator) {
-        RandomTestUtils.removeAndAssertEmpty(testSeedGenerator, rng);
+        RandomTestUtils.removeAndAssertEmpty(seeder, rng);
         assertNull(rng.getRandomSeeder());
       }
     }
   }
 
-  public static void removeAndAssertEmpty(final SeedGenerator seedGenerator, final BaseRandom prng) {
+  public static void removeAndAssertEmpty(final RandomSeederThread seederThread, final BaseRandom prng) {
     prng.setRandomSeeder(null);
-    RandomSeederThread.stopIfEmpty(seedGenerator);
-    assertFalse(RandomSeederThread.hasInstance(seedGenerator));
+    seederThread.stopIfEmpty();
+    assertTrue(seederThread.isEmpty());
   }
 
-  public static void removeAndAssertEmpty(final SeedGenerator seedGenerator, final Random prng) {
-    RandomSeederThread.remove(seedGenerator, prng);
-    RandomSeederThread.stopIfEmpty(seedGenerator);
-    assertFalse(RandomSeederThread.hasInstance(seedGenerator));
+  public static void removeAndAssertEmpty(final RandomSeederThread seederThread, final Random prng) {
+    seederThread.remove(prng);
+    seederThread.stopIfEmpty();
+    assertTrue(seederThread.isEmpty());
+    // TODO: Assert stopped
   }
 
   public enum EntropyCheckMode {

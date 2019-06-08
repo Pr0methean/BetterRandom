@@ -49,6 +49,9 @@ import org.openjdk.jmh.annotations.Warmup;
 @State(Scope.Benchmark)
 public abstract class AbstractRandomBenchmarkWithReseeding extends AbstractRandomBenchmark {
 
+  private static final RandomSeederThread RANDOM_SEEDER = new RandomSeederThread(
+      SecureRandomSeedGenerator.SECURE_RANDOM_SEED_GENERATOR);
+
   @SuppressWarnings("CallToSystemGetenv") @Setup public void setApiKey() {
     final String apiKeyString = System.getenv("RANDOM_DOT_ORG_KEY");
     RandomDotOrgSeedGenerator
@@ -59,12 +62,12 @@ public abstract class AbstractRandomBenchmarkWithReseeding extends AbstractRando
   @Setup(Level.Trial)
   public void setUp() throws Exception {
     super.setUp();
-    RandomSeederThread.add(SecureRandomSeedGenerator.SECURE_RANDOM_SEED_GENERATOR, prng);
+    RANDOM_SEEDER.add(prng);
   }
 
   @TearDown(Level.Trial)
   public void tearDown() {
-    RandomSeederThread.remove(SecureRandomSeedGenerator.SECURE_RANDOM_SEED_GENERATOR, prng);
+    RANDOM_SEEDER.remove(prng);
   }
 
   @Timeout(time = 60) // seconds per iteration
