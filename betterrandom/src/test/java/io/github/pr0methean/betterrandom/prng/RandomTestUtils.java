@@ -251,8 +251,9 @@ public enum RandomTestUtils {
       assertTrue(Arrays.equals(oldSeed, oldSeedClone),
           "Array modified after being returned by getSeed()");
     }
-    RandomSeederThread seeder = new RandomSeederThread(testSeedGenerator);
+    RandomSeederThread seeder = null;
     if (setSeedGenerator) {
+      seeder = new RandomSeederThread(testSeedGenerator);
       rng.setRandomSeeder(seeder);
     }
     try {
