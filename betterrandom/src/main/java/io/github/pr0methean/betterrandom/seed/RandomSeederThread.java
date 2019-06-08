@@ -130,11 +130,10 @@ public final class RandomSeederThread extends LooperThread implements Serializab
   private transient Set<ByteArrayReseedableRandom> byteArrayPrngs;
   private transient Set<Random> otherPrngs;
   private final byte[] longSeedArray = new byte[8];
-  private final Set<ByteArrayReseedableRandom> byteArrayPrngsThisIteration
-      = Collections.newSetFromMap(new WeakHashMap<>(1));
-  private final Set<Random> otherPrngsThisIteration
-      = Collections.newSetFromMap(new WeakHashMap<>(1));
-  private final WeakHashMap<ByteArrayReseedableRandom, byte[]> seedArrays = new WeakHashMap<>(1);
+  private transient Set<ByteArrayReseedableRandom> byteArrayPrngsThisIteration;
+  private transient Set<Random> otherPrngsThisIteration;
+  private static Map<ByteArrayReseedableRandom, byte[]> SEED_ARRAYS =
+      Collections.synchronizedMap(new WeakHashMap<>(1));
 
   private RandomSeederThread(final SeedGenerator seedGenerator, ThreadFactory threadFactory) {
     super(threadFactory);
@@ -150,6 +149,8 @@ public final class RandomSeederThread extends LooperThread implements Serializab
     otherPrngs = Collections.newSetFromMap(
         CacheBuilder.newBuilder().weakKeys().initialCapacity(1)
             .<Random, Boolean>build().asMap());
+    byteArrayPrngsThisIteration = Collections.newSetFromMap(new WeakHashMap<>(1));
+    otherPrngsThisIteration = Collections.newSetFromMap(new WeakHashMap<>(1));
   }
 
   /**
@@ -274,7 +275,7 @@ public final class RandomSeederThread extends LooperThread implements Serializab
           reseedWithLong((Random) random);
         } else {
           final byte[] seedArray =
-              seedArrays.computeIfAbsent(random, random_ -> new byte[random_.getNewSeedLength()]);
+              SEED_ARRAYS.computeIfAbsent(random, random_ -> new byte[random_.getNewSeedLength()]);
           seedGenerator.generateSeed(seedArray);
           random.setSeed(seedArray);
         }
@@ -329,7 +330,6 @@ public final class RandomSeederThread extends LooperThread implements Serializab
       byteArrayPrngsThisIteration.clear();
       otherPrngs.clear();
       otherPrngsThisIteration.clear();
-      seedArrays.clear();
     } finally {
       lock.unlock();
     }
