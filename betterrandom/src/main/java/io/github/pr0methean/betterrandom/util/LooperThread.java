@@ -93,15 +93,9 @@ public abstract class LooperThread {
     return thread.get().isInterrupted();
   }
 
-  public void join(long millis) throws InterruptedException {
-    thread.get().join(millis);
-  }
-
-  public void join(long millis, int nanos) throws InterruptedException {
-    thread.get().join(millis, nanos);
-  }
-
-  public void join() throws InterruptedException {
+  /** Only used for testing. */
+  @Deprecated
+  void join() throws InterruptedException {
     thread.get().join();
   }
 
