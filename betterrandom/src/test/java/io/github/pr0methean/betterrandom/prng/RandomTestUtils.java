@@ -261,7 +261,9 @@ public enum RandomTestUtils {
       byte[] secondSeed;
       do {
         assertEquals(oldSeedClone, oldSeed, "Array modified after being returned by getSeed()");
-        assertSame(rng.getRandomSeeder(), seeder);
+        if (setSeedGenerator) {
+          assertSame(rng.getRandomSeeder(), seeder);
+        }
         waits++;
         if (waits > 2000) {
           fail(String.format("Timed out waiting for %s to be reseeded!", rng));
