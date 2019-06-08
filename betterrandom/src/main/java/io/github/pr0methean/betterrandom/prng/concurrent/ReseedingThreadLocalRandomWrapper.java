@@ -18,7 +18,6 @@ import java.util.function.Supplier;
 public class ReseedingThreadLocalRandomWrapper extends ThreadLocalRandomWrapper {
 
   private static final long serialVersionUID = -3235519018032714059L;
-  private final SeedGenerator seedGenerator;
 
   /**
    * Wraps the given {@link Supplier}. Uses the given {@link RandomSeederThread} to reseed PRNGs,
@@ -30,13 +29,27 @@ public class ReseedingThreadLocalRandomWrapper extends ThreadLocalRandomWrapper 
    *     used to reseed each thread's PRNG.
    */
   public ReseedingThreadLocalRandomWrapper(final SeedGenerator seedGenerator,
-      final Supplier<? extends BaseRandom> initializer) throws SeedException {
+                                           final Supplier<? extends BaseRandom> initializer) throws SeedException {
+    this(initializer, new RandomSeederThread(seedGenerator));
+  }
+
+  /**
+   * Wraps the given {@link Supplier}. Uses the given {@link RandomSeederThread} to reseed PRNGs,
+   * but not to initialize them unless the {@link Supplier} does so. This ThreadLocalRandomWrapper
+   * will be serializable if the {@link Supplier} is serializable.
+   * @param initializer a supplier that will be called to provide the initial {@link BaseRandom}
+ *     for each thread.
+   * @param randomSeederThread
+   */
+  public ReseedingThreadLocalRandomWrapper(final Supplier<? extends BaseRandom> initializer,
+                                           final RandomSeederThread randomSeederThread)
+      throws SeedException {
     super((Serializable & Supplier<? extends BaseRandom>) () -> {
       final BaseRandom out = initializer.get();
-      out.setRandomSeeder(new RandomSeederThread(seedGenerator));
+      out.setRandomSeeder(randomSeederThread);
       return out;
     });
-    this.seedGenerator = seedGenerator;
+    randomSeeder.set(randomSeederThread);
   }
 
   /**
@@ -51,14 +64,30 @@ public class ReseedingThreadLocalRandomWrapper extends ThreadLocalRandomWrapper 
    *     Probably a constructor reference.
    */
   public ReseedingThreadLocalRandomWrapper(final int seedSize, final SeedGenerator seedGenerator,
+                                           final Function<byte[], ? extends BaseRandom> creator)
+      throws SeedException {
+    this(seedSize, new RandomSeederThread(seedGenerator), creator);
+  }
+
+  /**
+   * Wraps a seed generator and a function that takes a seed byte array as input. This
+   * ReseedingThreadLocalRandomWrapper will be serializable if the {@link Function} is
+   * serializable.
+   * @param seedSize the size of seed arrays to generate.
+   * @param randomSeederThread The seed generation strategy that will provide the seed value for each
+   *     thread's {@link BaseRandom}, both at initialization and through the corresponding {@link
+   *     RandomSeederThread}.
+   * @param creator a {@link Function} that creates a {@link BaseRandom} from each seed.
+   */
+  public ReseedingThreadLocalRandomWrapper(final int seedSize, final RandomSeederThread randomSeederThread,
       final Function<byte[], ? extends BaseRandom> creator) throws SeedException {
-    super(seedSize, seedGenerator,
+    super(seedSize, randomSeederThread,
         (Serializable & Function<byte[], ? extends BaseRandom>) (seed) -> {
           final BaseRandom out = creator.apply(seed);
-          out.setRandomSeeder(new RandomSeederThread(seedGenerator));
+          out.setRandomSeeder(new RandomSeederThread(randomSeederThread));
           return out;
         });
-    this.seedGenerator = seedGenerator;
+    randomSeeder.set(randomSeederThread);
   }
 
   /**
@@ -76,7 +105,7 @@ public class ReseedingThreadLocalRandomWrapper extends ThreadLocalRandomWrapper 
   }
 
   @Override public void setRandomSeeder(final RandomSeederThread randomSeeder) {
-    if (!this.randomSeeder.get().equals(randomSeeder)) {
+    if (this.randomSeeder.get() != randomSeeder) {
       throw new UnsupportedOperationException(
           "ReseedingThreadLocalRandomWrapper's binding to RandomSeederThread is immutable");
     }
