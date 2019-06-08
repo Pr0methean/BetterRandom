@@ -7,6 +7,7 @@ import io.github.pr0methean.betterrandom.prng.MersenneTwisterRandom;
 import io.github.pr0methean.betterrandom.prng.MersenneTwisterRandomTest;
 import io.github.pr0methean.betterrandom.seed.SeedException;
 import io.github.pr0methean.betterrandom.seed.SeedGenerator;
+import java.util.Collections;
 import java.util.Random;
 import org.testng.annotations.Test;
 
@@ -27,8 +28,13 @@ public class RandomWrapperMersenneTwisterRandomTest extends MersenneTwisterRando
     };
   }
 
+  /**
+   * Assertion-free with respect to the long/double methods because, contrary to its contract to be
+   * thread-safe, {@link Random#nextLong()} is not transactional. Rather, it uses two subroutine
+   * calls that can interleave with calls from other threads.
+   */
   @Override public void testThreadSafety() {
-    super.testThreadSafety();
+    testThreadSafety(ImmutableList.of(NEXT_INT), Collections.emptyList());
     testThreadSafetyVsCrashesOnly(30,
         ImmutableList.of(NEXT_LONG, NEXT_INT, NEXT_DOUBLE, NEXT_GAUSSIAN, setWrapped));
   }
