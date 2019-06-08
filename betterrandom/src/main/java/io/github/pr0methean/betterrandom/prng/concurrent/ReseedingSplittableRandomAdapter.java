@@ -4,8 +4,6 @@ import com.google.common.base.MoreObjects.ToStringHelper;
 import io.github.pr0methean.betterrandom.seed.RandomSeederThread;
 import io.github.pr0methean.betterrandom.seed.SeedException;
 import io.github.pr0methean.betterrandom.seed.SeedGenerator;
-import java.io.IOException;
-import java.io.ObjectInputStream;
 import java.util.Collections;
 import java.util.Map;
 import java.util.SplittableRandom;
@@ -38,7 +36,12 @@ public class ReseedingSplittableRandomAdapter extends BaseSplittableRandomAdapte
     super(seedGenerator.generateSeed(Long.BYTES));
     this.seedGenerator = seedGenerator;
     this.randomSeeder.set(randomSeeder);
-    initSubclassTransientFields();
+    threadLocal = ThreadLocal.withInitial(() -> {
+      SingleThreadSplittableRandomAdapter threadAdapter
+          = new SingleThreadSplittableRandomAdapter(this.seedGenerator);
+      threadAdapter.setRandomSeeder(this.randomSeeder.get());
+      return threadAdapter;
+    });
   }
 
   @Deprecated
@@ -89,20 +92,8 @@ public class ReseedingSplittableRandomAdapter extends BaseSplittableRandomAdapte
     return original.add("threadLocal", threadLocal);
   }
 
-  private void readObject(final ObjectInputStream in) throws IOException, ClassNotFoundException {
-    in.defaultReadObject();
-    initSubclassTransientFields();
-  }
-
-  private ReseedingSplittableRandomAdapter readResolve() {
-    return getInstance(seedGenerator);
-  }
-
-  private void initSubclassTransientFields() {
-    if (threadLocal == null) {
-      threadLocal =
-          ThreadLocal.withInitial(() -> new SingleThreadSplittableRandomAdapter(seedGenerator));
-    }
+  private Object readResolve() {
+    return getInstance(randomSeeder.get(), seedGenerator);
   }
 
   @Override protected SplittableRandom getSplittableRandom() {

@@ -9,6 +9,8 @@ import io.github.pr0methean.betterrandom.seed.RandomSeederThread;
 import io.github.pr0methean.betterrandom.seed.SecureRandomSeedGenerator;
 import io.github.pr0methean.betterrandom.seed.SeedException;
 import io.github.pr0methean.betterrandom.util.BinaryUtils;
+import org.testng.annotations.AfterTest;
+import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
 import static org.testng.Assert.assertEquals;
@@ -16,6 +18,16 @@ import static org.testng.Assert.assertNotEquals;
 
 @SuppressWarnings("BusyWait")
 public class ReseedingSplittableRandomAdapterTest extends SingleThreadSplittableRandomAdapterTest {
+
+  private RandomSeederThread thread;
+
+  @BeforeTest public void setUp() {
+    thread = new RandomSeederThread(getTestSeedGenerator());
+  }
+
+  @AfterTest public void tearDown() {
+    thread.stopIfEmpty();
+  }
 
   @Override protected EntropyCheckMode getEntropyCheckMode() {
     return EntropyCheckMode.LOWER_BOUND;
@@ -85,12 +97,15 @@ public class ReseedingSplittableRandomAdapterTest extends SingleThreadSplittable
   /** setRandomSeeder doesn't work on this class and shouldn't pretend to. */
   @Override @Test(expectedExceptions = UnsupportedOperationException.class)
   public void testRandomSeederThreadIntegration() {
-    createRng().setRandomSeeder(
-        new RandomSeederThread(SecureRandomSeedGenerator.SECURE_RANDOM_SEED_GENERATOR));
+    RandomSeederThread thread = new RandomSeederThread(SecureRandomSeedGenerator.SECURE_RANDOM_SEED_GENERATOR);
+    try {
+      createRng().setRandomSeeder(thread);
+    } finally {
+      thread.stopIfEmpty();
+    }
   }
 
   @Test public void testSetSeedGeneratorNoOp() {
-    RandomSeederThread thread = new RandomSeederThread(getTestSeedGenerator());
     ReseedingSplittableRandomAdapter.getInstance(thread, getTestSeedGenerator())
         .setRandomSeeder(thread);
   }
