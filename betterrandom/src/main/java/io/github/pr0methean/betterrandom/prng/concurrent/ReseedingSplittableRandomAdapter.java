@@ -105,7 +105,7 @@ public class ReseedingSplittableRandomAdapter extends BaseSplittableRandomAdapte
   }
 
   @Override public String toString() {
-    return "ReseedingSplittableRandomAdapter using " + seedGenerator;
+    return "ReseedingSplittableRandomAdapter using " + randomSeeder;
   }
 
   @Override
@@ -117,12 +117,11 @@ public class ReseedingSplittableRandomAdapter extends BaseSplittableRandomAdapte
       return false;
     }
     ReseedingSplittableRandomAdapter that = (ReseedingSplittableRandomAdapter) o;
-    return seedGenerator.equals(that.seedGenerator) &&
-        randomSeeder.equals(that.randomSeeder);
+    return randomSeeder.equals(that.randomSeeder);
   }
 
   @Override
   public int hashCode() {
-    return 31 * seedGenerator.hashCode() + randomSeeder.hashCode();
+    return randomSeeder.hashCode() + 1;
   }
 }
