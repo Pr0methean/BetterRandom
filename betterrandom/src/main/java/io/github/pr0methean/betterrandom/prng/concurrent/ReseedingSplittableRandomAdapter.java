@@ -76,7 +76,7 @@ public class ReseedingSplittableRandomAdapter extends BaseSplittableRandomAdapte
 
   @Override
   public void setRandomSeeder(final RandomSeederThread randomSeeder) {
-    if (!this.randomSeeder.equals(randomSeeder)) {
+    if (!this.randomSeeder.get().equals(randomSeeder)) {
       throw new UnsupportedOperationException(
           "ReseedingSplittableRandomAdapter's binding to RandomSeederThread is immutable");
     }
