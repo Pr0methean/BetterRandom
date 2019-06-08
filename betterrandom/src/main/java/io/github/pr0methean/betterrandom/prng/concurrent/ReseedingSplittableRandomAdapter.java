@@ -44,12 +44,6 @@ public class ReseedingSplittableRandomAdapter extends BaseSplittableRandomAdapte
     });
   }
 
-  @Deprecated
-  public static ReseedingSplittableRandomAdapter getInstance(final SeedGenerator seedGenerator)
-      throws SeedException {
-    return getInstance(new RandomSeederThread(seedGenerator), seedGenerator);
-  }
-
   /**
    * Returns the instance backed by the given {@link SeedGenerator}.
    * @param randomSeeder The random seeder the returned adapter is to use for reseeding.
