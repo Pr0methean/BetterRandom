@@ -36,7 +36,6 @@ import org.powermock.modules.testng.PowerMockTestCase;
 import org.testng.IRetryAnalyzer;
 import org.testng.ITestResult;
 import org.testng.Reporter;
-import org.testng.annotations.AfterClass;
 import org.testng.annotations.Test;
 
 import static io.github.pr0methean.betterrandom.TestUtils.assertGreaterOrEqual;
@@ -272,7 +271,7 @@ public abstract class BaseRandomTest extends PowerMockTestCase {
       assertEquals(randomSeeder, rng2.getRandomSeeder());
       rng2.setRandomSeeder(null);
     } finally {
-      RandomTestUtils.removeAndAssertEmpty(seedGenerator, rng);
+      RandomTestUtils.removeAndAssertEmpty(randomSeeder, rng);
     }
   }
 
@@ -762,12 +761,6 @@ public abstract class BaseRandomTest extends PowerMockTestCase {
         1000)
         .exec();
     return output;
-  }
-
-  @AfterClass public void classTearDown() {
-    RandomSeederThread.clear(getTestSeedGenerator());
-    System.gc();
-    RandomSeederThread.stopAllEmpty();
   }
 
   private enum TestEnum {

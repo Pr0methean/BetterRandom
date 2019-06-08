@@ -9,13 +9,10 @@ import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.util.Collections;
 import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Random;
 import java.util.WeakHashMap;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.TimeUnit;
 import org.slf4j.Logger;
@@ -30,8 +27,6 @@ import org.slf4j.LoggerFactory;
 public final class RandomSeederThread extends RandomSeederThreadTransients implements Serializable {
 
   private static final Logger LOG = LoggerFactory.getLogger(RandomSeederThread.class);
-  @SuppressWarnings("StaticCollection") private static final Map<SeedGenerator, RandomSeederThread>
-      INSTANCES = new ConcurrentHashMap<>(1);
   private static final long POLL_INTERVAL = 60;
 
   public void wakeUp() {
@@ -152,95 +147,11 @@ public final class RandomSeederThread extends RandomSeederThreadTransients imple
   }
 
   /**
-   * Private constructor because only one instance per seed source.
+   * Creates an instance using a {@link DefaultThreadFactory}.
+   * @param seedGenerator the seed generator
    */
   public RandomSeederThread(final SeedGenerator seedGenerator) {
     this(seedGenerator, new DefaultThreadFactory("RandomSeederThread for " + seedGenerator));
-  }
-
-  /**
-   * Obtain the instance for the given {@link SeedGenerator}, creating and starting it if it doesn't
-   * exist.
-   * @param seedGenerator the {@link SeedGenerator} to use to seed PRNGs registered with this
-   *     RandomSeederThread.
-   * @return a RandomSeederThread that is running and is backed by {@code randomSeeder}.
-   */
-  private static RandomSeederThread getInstance(final SeedGenerator seedGenerator) {
-    Objects.requireNonNull(seedGenerator, "randomSeeder must not be null");
-    return INSTANCES.computeIfAbsent(seedGenerator, seedGenerator_ -> {
-      RandomSeederThread newThread = new RandomSeederThread(seedGenerator_);
-      newThread.start();
-      return newThread;
-    });
-  }
-
-  /**
-   * Returns whether a RandomSeederThread using the given {@link SeedGenerator} is running or not.
-   * @param seedGenerator a {@link SeedGenerator} to find an instance for.
-   * @return true if a RandomSeederThread using the given {@link SeedGenerator} is running; false
-   *     otherwise.
-   */
-  public static boolean hasInstance(final SeedGenerator seedGenerator) {
-    Objects.requireNonNull(seedGenerator, "randomSeeder must not be null");
-    return INSTANCES.containsKey(seedGenerator);
-  }
-
-  /**
-   * Shut down all instances with which no {@link Random} instances are registered.
-   */
-  public static void stopAllEmpty() {
-    final List<RandomSeederThread> toStop = new LinkedList<>(INSTANCES.values());
-    for (final RandomSeederThread instance : toStop) {
-      instance.stopIfEmpty();
-    }
-  }
-
-  public static boolean isEmpty(final SeedGenerator seedGenerator) {
-    final RandomSeederThread thread = INSTANCES.get(seedGenerator);
-    return thread == null || thread.isEmpty();
-  }
-
-  /**
-   * Add one or more {@link Random} instances to the thread for the given {@link SeedGenerator}.
-   * @param seedGenerator The {@link SeedGenerator} that will reseed the {@code randoms}
-   * @param randoms One or more {@link Random} instances to be reseeded
-   */
-  public static void add(final SeedGenerator seedGenerator, final Random... randoms) {
-    if (randoms.length == 0) {
-      return;
-    }
-    boolean notSucceeded = true;
-    do {
-      final RandomSeederThread thread = getInstance(seedGenerator);
-      if (thread.isDead()) {
-        continue;
-      }
-      thread.add(randoms);
-      notSucceeded = false;
-    } while (notSucceeded);
-  }
-
-  /**
-   * Remove one or more {@link Random} instances from the thread for the given {@link SeedGenerator}
-   * if such a thread exists and contains them.
-   * @param seedGenerator The {@link SeedGenerator} that will reseed the {@code randoms}
-   * @param randoms One or more {@link Random} instances to be reseeded
-   */
-  public static void remove(final SeedGenerator seedGenerator, final Random... randoms) {
-    if (randoms.length == 0) {
-      return;
-    }
-    final RandomSeederThread thread = INSTANCES.get(seedGenerator);
-    if (thread != null) {
-      thread.remove(randoms);
-    }
-  }
-
-  public static void stopIfEmpty(final SeedGenerator seedGenerator) {
-    final RandomSeederThread thread = INSTANCES.get(seedGenerator);
-    if (thread != null) {
-      thread.stopIfEmpty();
-    }
   }
 
   private boolean isDead() {
@@ -300,8 +211,6 @@ public final class RandomSeederThread extends RandomSeederThreadTransients imple
   }
 
   private void shutDown() {
-    Objects.requireNonNull(seedGenerator);
-    INSTANCES.remove(seedGenerator, this);
     interrupt();
     clear();
   }
@@ -334,21 +243,10 @@ public final class RandomSeederThread extends RandomSeederThreadTransients imple
   }
 
   /**
-   * Removes all PRNGs from a given seed generator's thread.
-   * @param seedGenerator the {@link SeedGenerator} of the thread to clear
-   */
-  public static void clear(final SeedGenerator seedGenerator) {
-    final RandomSeederThread thread = INSTANCES.get(seedGenerator);
-    if (thread != null) {
-      thread.clear();
-    }
-  }
-
-  /**
    * Returns true if no {@link Random} instances are registered with this RandomSeederThread.
    * @return true if no {@link Random} instances are registered with this RandomSeederThread.
    */
-  private boolean isEmpty() {
+  public boolean isEmpty() {
     lock.lock();
     try {
       return byteArrayPrngs.isEmpty() && otherPrngs.isEmpty();
@@ -360,7 +258,7 @@ public final class RandomSeederThread extends RandomSeederThreadTransients imple
   /**
    * Shut down this thread if no {@link Random} instances are registered with it.
    */
-  private void stopIfEmpty() {
+  public void stopIfEmpty() {
     lock.lock();
     try {
       if (isEmpty()) {

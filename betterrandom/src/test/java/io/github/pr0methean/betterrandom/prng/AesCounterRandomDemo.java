@@ -11,7 +11,7 @@ public enum AesCounterRandomDemo {
 
   public static void main(final String[] args) throws SeedException {
     final AesCounterRandom random = new AesCounterRandom(SECURE_RANDOM_SEED_GENERATOR);
-    RandomSeederThread.add(SECURE_RANDOM_SEED_GENERATOR, random);
+    new RandomSeederThread(SECURE_RANDOM_SEED_GENERATOR).add(random);
     final byte[] randomBytes = new byte[32];
     for (int i = 0; i < 20; i++) {
       random.nextBytes(randomBytes);
