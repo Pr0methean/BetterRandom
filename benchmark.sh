@@ -7,7 +7,7 @@ else
 fi
 JAVA_OPTS="-Djava.security.egd=file:/dev/./urandom"
 cd betterrandom
-mvn -DskipTests -Darguments=-DskipTests\
+mvn -B -DskipTests -Darguments=-DskipTests\
     -Dmaven.test.skip=true ${MAYBE_ANDROID_FLAG}\
     clean install &&\
 cd ../benchmark &&\
