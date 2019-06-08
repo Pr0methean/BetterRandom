@@ -140,10 +140,11 @@ public final class RandomSeederThread extends RandomSeederThreadTransients imple
   private static Map<ByteArrayReseedableRandom, byte[]> SEED_ARRAYS =
       Collections.synchronizedMap(new WeakHashMap<>(1));
 
-  private RandomSeederThread(final SeedGenerator seedGenerator, ThreadFactory threadFactory) {
+  public RandomSeederThread(final SeedGenerator seedGenerator, ThreadFactory threadFactory) {
     super(threadFactory);
     Objects.requireNonNull(seedGenerator, "randomSeeder must not be null");
     this.seedGenerator = seedGenerator;
+    start();
   }
 
   /**
