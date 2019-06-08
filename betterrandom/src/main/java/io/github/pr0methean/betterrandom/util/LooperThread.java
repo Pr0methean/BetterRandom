@@ -1,9 +1,11 @@
 package io.github.pr0methean.betterrandom.util;
 
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.Serializable;
 import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicLong;
-import java.util.concurrent.atomic.AtomicReference;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
@@ -12,16 +14,18 @@ import java.util.concurrent.locks.ReentrantLock;
  * Wraps a thread that loops a given task until interrupted, with the iterations being
  * transactional.
  */
-public abstract class LooperThread {
+public abstract class LooperThread implements Serializable {
 
   protected final AtomicLong finishedIterations = new AtomicLong(0);
   /**
    * The thread holds this lock whenever it is running {@link #iterate()}.
    */
-  protected transient final Lock lock = new ReentrantLock(true);
-  protected transient final Condition endOfIteration = lock.newCondition();
-  protected final AtomicReference<Thread> thread = new AtomicReference<Thread>();
+  protected final Lock lock = new ReentrantLock(true);
+  protected final Lock threadLock = new ReentrantLock();
+  protected final Condition endOfIteration = lock.newCondition();
+  protected transient volatile Thread thread;
   protected final ThreadFactory factory;
+  private volatile boolean running; // must be tracked for deserialization
 
   /**
    * Constructs a LooperThread with all properties as defaults.
@@ -43,7 +47,23 @@ public abstract class LooperThread {
 
   protected LooperThread(ThreadFactory factory) {
     this.factory = factory;
-    thread.set(factory.newThread(this::run));
+    initTransientFields();
+  }
+
+  private void initTransientFields() {
+    createThread();
+    if (running) {
+      start();
+    }
+  }
+
+  private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
+    in.defaultReadObject();
+    initTransientFields();
+  }
+
+  protected void createThread() {
+    thread = factory.newThread(this::run);
   }
 
   /**
@@ -81,22 +101,39 @@ public abstract class LooperThread {
     }
   }
 
-  public void start() {
-    thread.get().start();
+  protected void start() {
+    threadLock.lock();
+    try {
+      running = true;
+      thread.start();
+    } finally {
+      threadLock.unlock();
+    }
   }
 
   public void interrupt() {
-    thread.get().interrupt();
+    threadLock.lock();
+    try {
+      running = false;
+      thread.interrupt();
+    } finally {
+      threadLock.unlock();
+    }
   }
 
-  public boolean isInterrupted() {
-    return thread.get().isInterrupted();
+  protected boolean isInterrupted() {
+    threadLock.lock();
+    try {
+      return thread.isInterrupted();
+    } finally {
+      threadLock.unlock();
+    }
   }
 
   /** Only used for testing. */
   @Deprecated
   void join() throws InterruptedException {
-    thread.get().join();
+    thread.join();
   }
 
   @Override
@@ -105,11 +142,12 @@ public abstract class LooperThread {
   }
 
   protected Thread.State getState() {
-    return thread.get().getState();
-  }
-
-  public void setUncaughtExceptionHandler(Thread.UncaughtExceptionHandler eh) {
-    thread.get().setUncaughtExceptionHandler(eh);
+    threadLock.lock();
+    try {
+      return thread.getState();
+    } finally {
+      threadLock.unlock();
+    }
   }
 
   /**
