@@ -66,7 +66,7 @@ public class ReseedingThreadLocalRandomWrapper extends ThreadLocalRandomWrapper 
   public ReseedingThreadLocalRandomWrapper(final int seedSize, final SeedGenerator seedGenerator,
                                            final Function<byte[], ? extends BaseRandom> creator)
       throws SeedException {
-    this(seedSize, new RandomSeederThread(seedGenerator), creator);
+    this(seedSize, new RandomSeederThread(seedGenerator), creator, seedGenerator);
   }
 
   /**
@@ -74,17 +74,16 @@ public class ReseedingThreadLocalRandomWrapper extends ThreadLocalRandomWrapper 
    * ReseedingThreadLocalRandomWrapper will be serializable if the {@link Function} is
    * serializable.
    * @param seedSize the size of seed arrays to generate.
-   * @param randomSeederThread The seed generation strategy that will provide the seed value for each
-   *     thread's {@link BaseRandom}, both at initialization and through the corresponding {@link
-   *     RandomSeederThread}.
+   * @param randomSeederThread The random seeder to use for reseeding.
    * @param creator a {@link Function} that creates a {@link BaseRandom} from each seed.
+   * @param seedGenerator the seed generator for initialization.
    */
   public ReseedingThreadLocalRandomWrapper(final int seedSize, final RandomSeederThread randomSeederThread,
-      final Function<byte[], ? extends BaseRandom> creator) throws SeedException {
-    super(seedSize, randomSeederThread,
+                                           final Function<byte[], ? extends BaseRandom> creator, SeedGenerator seedGenerator) throws SeedException {
+    super(seedSize, seedGenerator,
         (Serializable & Function<byte[], ? extends BaseRandom>) (seed) -> {
           final BaseRandom out = creator.apply(seed);
-          out.setRandomSeeder(new RandomSeederThread(randomSeederThread));
+          out.setRandomSeeder(randomSeederThread);
           return out;
         });
     randomSeeder.set(randomSeederThread);
