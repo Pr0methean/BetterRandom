@@ -45,7 +45,10 @@ public class ReseedingThreadLocalRandomWrapperTest extends ThreadLocalRandomWrap
   }
 
   @Test public void testSetSeedGeneratorNoOp() {
-    createRng().setRandomSeeder(new RandomSeederThread(getTestSeedGenerator()));
+    RandomSeederThread randomSeeder = new RandomSeederThread(getTestSeedGenerator());
+    ReseedingThreadLocalRandomWrapper prng = new ReseedingThreadLocalRandomWrapper(
+        pcgSupplier, randomSeeder);
+    prng.setRandomSeeder(randomSeeder);
   }
 
   @SuppressWarnings("BusyWait") @Override @Test(groups = "sequential") public void testReseeding() {
