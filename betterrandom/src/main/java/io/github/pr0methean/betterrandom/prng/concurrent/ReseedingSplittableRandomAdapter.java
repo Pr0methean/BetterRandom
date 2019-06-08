@@ -82,7 +82,8 @@ public class ReseedingSplittableRandomAdapter extends BaseSplittableRandomAdapte
   }
 
   @Override protected ToStringHelper addSubclassFields(final ToStringHelper original) {
-    return original.add("threadLocal", threadLocal);
+    return original.add("threadLocal", threadLocal)
+        .add("randomSeeder", randomSeeder.get());
   }
 
   private Object readResolve() {
@@ -109,8 +110,12 @@ public class ReseedingSplittableRandomAdapter extends BaseSplittableRandomAdapte
 
   @Override
   public boolean equals(Object o) {
-    if (this == o) return true;
-    if (o == null || getClass() != o.getClass()) return false;
+    if (this == o) {
+      return true;
+    }
+    if (o == null || getClass() != o.getClass()) {
+      return false;
+    }
     ReseedingSplittableRandomAdapter that = (ReseedingSplittableRandomAdapter) o;
     return seedGenerator.equals(that.seedGenerator) &&
         randomSeeder.equals(that.randomSeeder);
