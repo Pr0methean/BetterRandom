@@ -83,6 +83,20 @@ public final class RandomSeederThread extends RandomSeederThreadTransients imple
     }
   }
 
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) return true;
+    if (o == null || getClass() != o.getClass()) return false;
+    RandomSeederThread that = (RandomSeederThread) o;
+    return seedGenerator.equals(that.seedGenerator)
+        && factory.equals(that.factory);
+  }
+
+  @Override
+  public int hashCode() {
+    return 31 * seedGenerator.hashCode() + factory.hashCode();
+  }
+
   public static class DefaultThreadFactory implements ThreadFactory, Serializable {
 
     private static final long serialVersionUID = -5806852086706570346L;
@@ -108,8 +122,12 @@ public final class RandomSeederThread extends RandomSeederThreadTransients imple
 
     @Override
     public boolean equals(Object o) {
-      if (this == o) return true;
-      if (o == null || getClass() != o.getClass()) return false;
+      if (this == o) {
+        return true;
+      }
+      if (o == null || getClass() != o.getClass()) {
+        return false;
+      }
       DefaultThreadFactory that = (DefaultThreadFactory) o;
       return priority == that.priority &&
           name.equals(that.name);
@@ -117,9 +135,10 @@ public final class RandomSeederThread extends RandomSeederThreadTransients imple
 
     @Override
     public int hashCode() {
-      return Objects.hash(name, priority);
+      return 31 * priority + name.hashCode();
     }
   }
+
   private final SeedGenerator seedGenerator;
 
   private final byte[] longSeedArray = new byte[8];
