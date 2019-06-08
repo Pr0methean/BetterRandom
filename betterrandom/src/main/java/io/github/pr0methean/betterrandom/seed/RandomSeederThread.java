@@ -5,7 +5,6 @@ import io.github.pr0methean.betterrandom.EntropyCountingRandom;
 import io.github.pr0methean.betterrandom.prng.BaseRandom;
 import io.github.pr0methean.betterrandom.util.BinaryUtils;
 import java.io.IOException;
-import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.util.Collections;
@@ -371,11 +370,6 @@ public final class RandomSeederThread extends RandomSeederThreadTransients imple
     } finally {
       lock.unlock();
     }
-  }
-
-  private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
-    in.defaultReadObject();
-
   }
 
   private void writeObject(ObjectOutputStream out) throws IOException {
