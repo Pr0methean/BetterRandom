@@ -25,10 +25,6 @@ public class ReseedingSplittableRandomAdapterTest extends SingleThreadSplittable
     return ReseedingSplittableRandomAdapter.getInstance(getTestSeedGenerator());
   }
 
-  @Test public void testGetDefaultInstance() {
-    ReseedingSplittableRandomAdapter.getDefaultInstance().nextLong();
-  }
-
   // FIXME: Why does this need more time than other PRNGs?!
   @Test(timeOut = 120_000) @Override public void testDistribution() throws SeedException {
     super.testDistribution();

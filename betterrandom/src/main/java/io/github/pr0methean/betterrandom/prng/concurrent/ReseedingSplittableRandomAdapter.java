@@ -1,7 +1,6 @@
 package io.github.pr0methean.betterrandom.prng.concurrent;
 
 import com.google.common.base.MoreObjects.ToStringHelper;
-import io.github.pr0methean.betterrandom.seed.DefaultSeedGenerator;
 import io.github.pr0methean.betterrandom.seed.RandomSeederThread;
 import io.github.pr0methean.betterrandom.seed.SeedException;
 import io.github.pr0methean.betterrandom.seed.SeedGenerator;
@@ -23,7 +22,7 @@ public class ReseedingSplittableRandomAdapter extends BaseSplittableRandomAdapte
 
   private static final long serialVersionUID = 6301096404034224037L;
   @SuppressWarnings("StaticCollection")
-  private static final Map<SeedGenerator, ReseedingSplittableRandomAdapter> INSTANCES =
+  private static final Map<RandomSeederThread, ReseedingSplittableRandomAdapter> INSTANCES =
       Collections.synchronizedMap(new WeakHashMap<>(1));
   private final SeedGenerator seedGenerator;
   @SuppressWarnings(
@@ -33,36 +32,36 @@ public class ReseedingSplittableRandomAdapter extends BaseSplittableRandomAdapte
   /**
    * Single instance per SeedGenerator.
    * @param seedGenerator The seed generator this adapter will use.
+   * @param randomSeeder
    */
-  private ReseedingSplittableRandomAdapter(final SeedGenerator seedGenerator) throws SeedException {
+  private ReseedingSplittableRandomAdapter(final SeedGenerator seedGenerator, RandomSeederThread randomSeeder) throws SeedException {
     super(seedGenerator.generateSeed(Long.BYTES));
     this.seedGenerator = seedGenerator;
+    this.randomSeeder.set(randomSeeder);
     initSubclassTransientFields();
   }
 
-  /**
-   * Returns the instance backed by the {@link DefaultSeedGenerator}.
-   * @return The instance backed by the {@link DefaultSeedGenerator}.
-   * @throws SeedException if the {@link DefaultSeedGenerator} throws one while generating the
-   *     initial seed.
-   */
-  @SuppressWarnings("NonThreadSafeLazyInitialization")
-  public static ReseedingSplittableRandomAdapter getDefaultInstance() throws SeedException {
-    return getInstance(DefaultSeedGenerator.DEFAULT_SEED_GENERATOR);
+  @Deprecated
+  public static ReseedingSplittableRandomAdapter getInstance(final SeedGenerator seedGenerator)
+      throws SeedException {
+    return getInstance(new RandomSeederThread(seedGenerator), seedGenerator);
   }
 
   /**
    * Returns the instance backed by the given {@link SeedGenerator}.
-   * @param seedGenerator The seed generator the returned adapter is to use.
+   * @param randomSeeder The random seeder the returned adapter is to use for reseeding.
+   * @param seedGenerator The generator to use for initial seeding, if the instance doesn't already
+   *     exist.
    * @return the ReseedingSplittableRandomAdapter backed by {@code randomSeeder}.
    * @throws SeedException if {@code randomSeeder} throws one while generating the initial
    *     seed.
    */
   @SuppressWarnings("SynchronizationOnStaticField")
-  public static ReseedingSplittableRandomAdapter getInstance(final SeedGenerator seedGenerator)
-      throws SeedException {
+  public static ReseedingSplittableRandomAdapter getInstance(final RandomSeederThread randomSeeder,
+     final SeedGenerator seedGenerator) throws SeedException {
     synchronized (INSTANCES) {
-      return INSTANCES.computeIfAbsent(seedGenerator, ReseedingSplittableRandomAdapter::new);
+      return INSTANCES.computeIfAbsent(randomSeeder,
+          randomSeeder_ -> new ReseedingSplittableRandomAdapter(seedGenerator, randomSeeder_));
     }
   }
 
