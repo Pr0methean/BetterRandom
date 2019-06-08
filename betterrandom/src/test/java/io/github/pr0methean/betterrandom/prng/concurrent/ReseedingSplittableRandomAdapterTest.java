@@ -34,7 +34,7 @@ public class ReseedingSplittableRandomAdapterTest extends SingleThreadSplittable
   }
 
   @Override protected ReseedingSplittableRandomAdapter createRng() throws SeedException {
-    return ReseedingSplittableRandomAdapter.getInstance(getTestSeedGenerator());
+    return ReseedingSplittableRandomAdapter.getInstance(thread, getTestSeedGenerator());
   }
 
   // FIXME: Why does this need more time than other PRNGs?!
@@ -49,7 +49,7 @@ public class ReseedingSplittableRandomAdapterTest extends SingleThreadSplittable
 
   @Override @Test public void testSerializable() throws SeedException {
     final BaseSplittableRandomAdapter adapter =
-        ReseedingSplittableRandomAdapter.getInstance(
+        ReseedingSplittableRandomAdapter.getInstance(thread,
             SecureRandomSeedGenerator.SECURE_RANDOM_SEED_GENERATOR);
     assertEquals(adapter, CloneViaSerialization.clone(adapter));
   }
@@ -119,8 +119,15 @@ public class ReseedingSplittableRandomAdapterTest extends SingleThreadSplittable
   }
 
   @Override @Test public void testDump() throws SeedException {
-    assertNotEquals(ReseedingSplittableRandomAdapter.getInstance(new FakeSeedGenerator()).dump(),
-        ReseedingSplittableRandomAdapter.getInstance(getTestSeedGenerator()).dump());
+    assertNotEquals(ReseedingSplittableRandomAdapter.getInstance(thread, new FakeSeedGenerator()).dump(),
+        ReseedingSplittableRandomAdapter.getInstance(thread, getTestSeedGenerator()).dump());
+    RandomSeederThread thread = new RandomSeederThread(SecureRandomSeedGenerator.SECURE_RANDOM_SEED_GENERATOR);
+    try {
+      assertNotEquals(ReseedingSplittableRandomAdapter.getInstance(thread, new FakeSeedGenerator()).dump(),
+          ReseedingSplittableRandomAdapter.getInstance(thread, getTestSeedGenerator()).dump());
+    } finally {
+      thread.stopIfEmpty();
+    }
   }
 
   /** Assertion-free because thread-local. */
