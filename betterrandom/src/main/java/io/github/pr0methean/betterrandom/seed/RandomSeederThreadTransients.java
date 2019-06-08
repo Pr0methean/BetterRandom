@@ -28,6 +28,9 @@ abstract class RandomSeederThreadTransients extends LooperThread {
   protected final transient Condition waitWhileEmpty = lock.newCondition();
   protected final transient Condition waitForEntropyDrain = lock.newCondition();
 
+  /** Required for deserialization. */
+  public RandomSeederThreadTransients() {}
+
   RandomSeederThreadTransients(ThreadFactory threadFactory) {
     super(threadFactory);
   }
