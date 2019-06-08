@@ -91,7 +91,6 @@ public class ReseedingSplittableRandomAdapter extends BaseSplittableRandomAdapte
 
   @Override protected SplittableRandom getSplittableRandom() {
     final SingleThreadSplittableRandomAdapter adapterForThread = threadLocal.get();
-    adapterForThread.setRandomSeeder(new RandomSeederThread(seedGenerator));
     return adapterForThread.getSplittableRandom();
   }
 
