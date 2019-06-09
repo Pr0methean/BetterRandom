@@ -4,10 +4,7 @@ import io.github.pr0methean.betterrandom.CloneViaSerialization;
 import io.github.pr0methean.betterrandom.prng.BaseRandom;
 import io.github.pr0methean.betterrandom.prng.RandomTestUtils;
 import io.github.pr0methean.betterrandom.prng.RandomTestUtils.EntropyCheckMode;
-import io.github.pr0methean.betterrandom.seed.FakeSeedGenerator;
-import io.github.pr0methean.betterrandom.seed.RandomSeederThread;
-import io.github.pr0methean.betterrandom.seed.SecureRandomSeedGenerator;
-import io.github.pr0methean.betterrandom.seed.SeedException;
+import io.github.pr0methean.betterrandom.seed.*;
 import io.github.pr0methean.betterrandom.util.BinaryUtils;
 import org.testng.annotations.AfterTest;
 import org.testng.annotations.BeforeTest;
@@ -20,6 +17,11 @@ import static org.testng.Assert.assertNotEquals;
 public class ReseedingSplittableRandomAdapterTest extends SingleThreadSplittableRandomAdapterTest {
 
   private RandomSeederThread thread;
+
+  @Override
+  protected SeedGenerator getTestSeedGenerator() {
+    return semiFakeSeedGenerator;
+  }
 
   @BeforeTest public void setUp() {
     thread = new RandomSeederThread(getTestSeedGenerator());
@@ -48,10 +50,18 @@ public class ReseedingSplittableRandomAdapterTest extends SingleThreadSplittable
   }
 
   @Override @Test public void testSerializable() throws SeedException {
-    final BaseSplittableRandomAdapter adapter =
-        ReseedingSplittableRandomAdapter.getInstance(thread,
-            SecureRandomSeedGenerator.SECURE_RANDOM_SEED_GENERATOR);
-    assertEquals(adapter, CloneViaSerialization.clone(adapter));
+    // SemifakeSeedGenerator-based RandomSeederThread can't be used, because SemifakeSeedGenerator doesn't equals() its
+    // clone-by-serialization
+    RandomSeederThread thread = new RandomSeederThread(SecureRandomSeedGenerator.SECURE_RANDOM_SEED_GENERATOR);
+    try {
+      final BaseSplittableRandomAdapter adapter =
+          ReseedingSplittableRandomAdapter.getInstance(thread,
+              SecureRandomSeedGenerator.SECURE_RANDOM_SEED_GENERATOR);
+      final BaseSplittableRandomAdapter clone = CloneViaSerialization.clone(adapter);
+      assertEquals(adapter, clone);
+    } finally {
+      thread.stopIfEmpty();
+    }
   }
 
   @Override protected Class<? extends BaseRandom> getClassUnderTest() {
