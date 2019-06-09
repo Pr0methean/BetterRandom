@@ -119,12 +119,17 @@ public class ReseedingSplittableRandomAdapterTest extends SingleThreadSplittable
   }
 
   @Override @Test public void testDump() throws SeedException {
-    assertNotEquals(ReseedingSplittableRandomAdapter.getInstance(thread, new FakeSeedGenerator()).dump(),
-        ReseedingSplittableRandomAdapter.getInstance(thread, getTestSeedGenerator()).dump());
     RandomSeederThread thread = new RandomSeederThread(SecureRandomSeedGenerator.SECURE_RANDOM_SEED_GENERATOR);
     try {
       assertNotEquals(ReseedingSplittableRandomAdapter.getInstance(thread, new FakeSeedGenerator()).dump(),
           ReseedingSplittableRandomAdapter.getInstance(thread, getTestSeedGenerator()).dump());
+      RandomSeederThread otherThread = new RandomSeederThread(new FakeSeedGenerator());
+      try {
+        assertNotEquals(ReseedingSplittableRandomAdapter.getInstance(otherThread, getTestSeedGenerator()).dump(),
+            ReseedingSplittableRandomAdapter.getInstance(thread, getTestSeedGenerator()).dump());
+      } finally {
+        otherThread.stopIfEmpty();
+      }
     } finally {
       thread.stopIfEmpty();
     }

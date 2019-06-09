@@ -4,6 +4,7 @@ import com.google.common.base.MoreObjects.ToStringHelper;
 import io.github.pr0methean.betterrandom.seed.RandomSeederThread;
 import io.github.pr0methean.betterrandom.seed.SeedException;
 import io.github.pr0methean.betterrandom.seed.SeedGenerator;
+
 import java.util.Collections;
 import java.util.Map;
 import java.util.SplittableRandom;
@@ -82,8 +83,7 @@ public class ReseedingSplittableRandomAdapter extends BaseSplittableRandomAdapte
   }
 
   @Override protected ToStringHelper addSubclassFields(final ToStringHelper original) {
-    return original.add("threadLocal", threadLocal)
-        .add("randomSeeder", randomSeeder.get());
+    return original.add("randomSeeder", randomSeeder.get()).add("seedGenerator", seedGenerator);
   }
 
   private Object readResolve() {
