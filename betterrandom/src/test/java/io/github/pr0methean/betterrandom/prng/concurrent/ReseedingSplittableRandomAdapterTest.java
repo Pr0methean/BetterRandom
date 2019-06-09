@@ -131,8 +131,8 @@ public class ReseedingSplittableRandomAdapterTest extends SingleThreadSplittable
   @Override @Test public void testDump() throws SeedException {
     RandomSeederThread thread = new RandomSeederThread(SecureRandomSeedGenerator.SECURE_RANDOM_SEED_GENERATOR);
     try {
-      assertNotEquals(ReseedingSplittableRandomAdapter.getInstance(thread, new FakeSeedGenerator("Different initializer"))
-              .dump(),
+      assertNotEquals(
+          ReseedingSplittableRandomAdapter.getInstance(thread, new FakeSeedGenerator("Different initializer")).dump(),
           ReseedingSplittableRandomAdapter.getInstance(thread, getTestSeedGenerator()).dump());
       RandomSeederThread otherThread = new RandomSeederThread(new FakeSeedGenerator("Different reseeder"));
       try {
