@@ -5,7 +5,7 @@ parameters:
 steps:
 - script: |
     brew install tinyproxy
-    brew services start tinyproxy
+    sudo brew services start tinyproxy
   displayName: Install & Start Proxy
 - script: 'java -version'
   displayName: Log Java Version
