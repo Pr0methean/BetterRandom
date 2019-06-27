@@ -3,36 +3,36 @@ package io.github.pr0methean.betterrandom.util;
 import com.google.common.collect.ImmutableMap;
 import io.github.pr0methean.betterrandom.MockException;
 import io.github.pr0methean.betterrandom.TestUtils;
-import java.io.Serializable;
+import org.testng.annotations.BeforeTest;
+import org.testng.annotations.Test;
+
 import java.lang.Thread.UncaughtExceptionHandler;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
-import org.testng.annotations.BeforeTest;
-import org.testng.annotations.Test;
 
 import static org.testng.Assert.assertTrue;
 
 @SuppressWarnings("ClassLoaderInstantiation")
 public class LooperThreadTest {
 
-  private static final long STACK_SIZE = 1_234_567;
-  private static final AtomicBoolean shouldThrow = new AtomicBoolean(false);
-  private static final AtomicBoolean exceptionHandlerRun = new AtomicBoolean(false);
-  private static final Runnable TARGET = (Serializable & Runnable) () -> {
-    if (shouldThrow.get()) {
-      throw new MockException();
-    } else {
+  private static class Target implements Runnable {
+    @Override public void run() {
       try {
         Thread.sleep(1);
       } catch (InterruptedException e) {
         throw new AssertionError(e);
       }
     }
-  };
+  }
+
+  private static final long STACK_SIZE = 1_234_567;
+  private static final AtomicBoolean shouldThrow = new AtomicBoolean(false);
+  private static final AtomicBoolean exceptionHandlerRun = new AtomicBoolean(false);
+  private static final Runnable TARGET = new Target();
 
   @Test public void testConstructors() {
     TestUtils.testConstructors(LooperThread.class, false, ImmutableMap
-        .of(ThreadGroup.class, new ThreadGroup("Test ThreadGroup"), Runnable.class, TARGET,
+        .of(ThreadGroup.class, new ThreadGroup("Test ThreadGroup"),
             String.class, "Test LooperThread", long.class, STACK_SIZE), thread -> {
       thread.start();
       try {
@@ -44,7 +44,6 @@ public class LooperThreadTest {
   }
 
   @BeforeTest public void setUp() {
-    shouldThrow.set(false);
     exceptionHandlerRun.set(false);
   }
 

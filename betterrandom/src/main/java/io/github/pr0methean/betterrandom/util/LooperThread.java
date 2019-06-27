@@ -47,23 +47,23 @@ public abstract class LooperThread implements Serializable {
 
   protected LooperThread(ThreadFactory factory) {
     this.factory = factory;
-    initTransientFields();
+    start();
   }
 
-  private void initTransientFields() {
-    createThread();
-    if (running) {
-      start();
+  public boolean isRunning() {
+    threadLock.lock();
+    try {
+      return thread != null && thread.isAlive();
+    } finally {
+      threadLock.unlock();
     }
   }
 
   private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
     in.defaultReadObject();
-    initTransientFields();
-  }
-
-  protected void createThread() {
-    thread = factory.newThread(this::run);
+    if (running) {
+      start();
+    }
   }
 
   /**
@@ -91,8 +91,8 @@ public abstract class LooperThread implements Serializable {
     final long previousFinishedIterations = finishedIterations.get();
     lock.lock();
     try {
-      while (!isInterrupted() && (getState() != Thread.State.TERMINATED) && (finishedIterations.get()
-          == previousFinishedIterations)) {
+      while (!thread.isInterrupted()
+          && (getState() != Thread.State.TERMINATED) && (finishedIterations.get() == previousFinishedIterations)) {
         endOfIteration.await(time, unit);
       }
       return finishedIterations.get() != previousFinishedIterations;
@@ -104,27 +104,24 @@ public abstract class LooperThread implements Serializable {
   protected void start() {
     threadLock.lock();
     try {
-      running = true;
-      thread.start();
+      if (thread == null || !thread.isAlive()) {
+        thread = factory.newThread(this::run);
+        thread.start();
+      }
     } finally {
       threadLock.unlock();
     }
+    running = true;
   }
 
   public void interrupt() {
     threadLock.lock();
     try {
       running = false;
-      thread.interrupt();
-    } finally {
-      threadLock.unlock();
-    }
-  }
-
-  protected boolean isInterrupted() {
-    threadLock.lock();
-    try {
-      return thread.isInterrupted();
+      if (thread != null) {
+        thread.interrupt();
+        thread = null;
+      }
     } finally {
       threadLock.unlock();
     }
@@ -159,6 +156,7 @@ public abstract class LooperThread implements Serializable {
         lock.lockInterruptibly();
         try {
           if (!iterate()) {
+            interrupt();
             break;
           }
         } finally {
