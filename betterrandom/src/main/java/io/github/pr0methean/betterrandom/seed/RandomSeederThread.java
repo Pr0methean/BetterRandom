@@ -1,6 +1,5 @@
 package io.github.pr0methean.betterrandom.seed;
 
-import com.google.common.cache.CacheBuilder;
 import io.github.pr0methean.betterrandom.ByteArrayReseedableRandom;
 import io.github.pr0methean.betterrandom.EntropyCountingRandom;
 import io.github.pr0methean.betterrandom.prng.BaseRandom;
@@ -36,12 +35,8 @@ public final class RandomSeederThread extends LooperThread {
   private static final long STOP_IF_EMPTY_FOR_SECONDS = 5;
 
   private void initTransientFields() {
-    byteArrayPrngs = Collections.newSetFromMap(
-        CacheBuilder.newBuilder().weakKeys().initialCapacity(1)
-            .<ByteArrayReseedableRandom, Boolean>build().asMap());
-    otherPrngs = Collections.newSetFromMap(
-        CacheBuilder.newBuilder().weakKeys().initialCapacity(1)
-            .<Random, Boolean>build().asMap());
+    byteArrayPrngs = Collections.synchronizedSet(Collections.newSetFromMap(new WeakHashMap<>(1)));
+    otherPrngs = Collections.synchronizedSet(Collections.newSetFromMap(new WeakHashMap<>(1)));
     byteArrayPrngsThisIteration = Collections.newSetFromMap(new WeakHashMap<>(1));
     otherPrngsThisIteration = Collections.newSetFromMap(new WeakHashMap<>(1));
     waitWhileEmpty = lock.newCondition();
