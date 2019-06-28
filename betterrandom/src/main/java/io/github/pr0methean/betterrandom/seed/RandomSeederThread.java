@@ -33,6 +33,7 @@ public final class RandomSeederThread extends LooperThread {
   private transient Condition waitForEntropyDrain;
   private static final Logger LOG = LoggerFactory.getLogger(RandomSeederThread.class);
   private static final long POLL_INTERVAL = 60;
+  private static final long STOP_IF_EMPTY_FOR_SECONDS = 5;
 
   private void initTransientFields() {
     byteArrayPrngs = Collections.newSetFromMap(
@@ -179,7 +180,9 @@ public final class RandomSeederThread extends LooperThread {
         otherPrngsThisIteration.addAll(otherPrngs);
         byteArrayPrngsThisIteration.addAll(byteArrayPrngs);
         if (otherPrngsThisIteration.isEmpty() && byteArrayPrngsThisIteration.isEmpty()) {
-          waitWhileEmpty.await();
+          if (!waitWhileEmpty.await(STOP_IF_EMPTY_FOR_SECONDS, TimeUnit.SECONDS)) {
+            return false;
+          }
         } else {
           break;
         }
