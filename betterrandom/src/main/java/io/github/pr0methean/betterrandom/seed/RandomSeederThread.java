@@ -30,20 +30,6 @@ public final class RandomSeederThread extends LooperThread {
     waitWhileEmpty = lock.newCondition();
   }
 
-  public void remove(Random... randoms) {
-    if (randoms.length == 0) {
-      return;
-    }
-    lock.lock();
-    try {
-      for (Random random : randoms) {
-        otherPrngs.remove(random);
-      }
-    } finally {
-      lock.unlock();
-    }
-  }
-
   public void add(Random... randoms) {
     if (randoms.length == 0) {
       return;
@@ -58,20 +44,6 @@ public final class RandomSeederThread extends LooperThread {
     } finally {
       lock.unlock();
     }
-  }
-
-  @Override
-  public boolean equals(Object o) {
-    if (this == o) return true;
-    if (o == null || getClass() != o.getClass()) return false;
-    RandomSeederThread that = (RandomSeederThread) o;
-    return seedGenerator.equals(that.seedGenerator)
-        && factory.equals(that.factory);
-  }
-
-  @Override
-  public int hashCode() {
-    return 31 * seedGenerator.hashCode() + factory.hashCode();
   }
 
   public static class DefaultThreadFactory implements ThreadFactory, Serializable {
@@ -95,24 +67,6 @@ public final class RandomSeederThread extends LooperThread {
       thread.setDaemon(true);
       thread.setPriority(priority);
       return thread;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-      if (this == o) {
-        return true;
-      }
-      if (o == null || getClass() != o.getClass()) {
-        return false;
-      }
-      DefaultThreadFactory that = (DefaultThreadFactory) o;
-      return priority == that.priority &&
-          name.equals(that.name);
-    }
-
-    @Override
-    public int hashCode() {
-      return 31 * priority + name.hashCode();
     }
   }
 

@@ -2,7 +2,6 @@ package io.github.pr0methean.betterrandom.util;
 
 import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.atomic.AtomicLong;
-import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
@@ -18,28 +17,9 @@ public abstract class LooperThread {
    */
   protected final Lock lock = new ReentrantLock(true);
   protected final Lock threadLock = new ReentrantLock();
-  protected final Condition endOfIteration = lock.newCondition();
   protected transient volatile Thread thread;
   protected final ThreadFactory factory;
   private volatile boolean everStarted;
-
-  /**
-   * Constructs a LooperThread with all properties as defaults.
-   */
-  protected LooperThread() {
-    this(Thread::new);
-  }
-
-  /**
-   * Constructs a LooperThread with a thread name.
-   *
-   * @deprecated Being replaced with a ThreadFactory parameter, so that threads can die and be
-   * replaced.
-   */
-  @Deprecated
-  protected LooperThread(String name) {
-    this(runnable -> new Thread(runnable, name));
-  }
 
   protected LooperThread(ThreadFactory factory) {
     this.factory = factory;
@@ -106,7 +86,6 @@ public abstract class LooperThread {
           }
         } finally {
           finishedIterations.getAndIncrement();
-          endOfIteration.signalAll();
           lock.unlock();
         }
       } catch (final InterruptedException ignored) {
