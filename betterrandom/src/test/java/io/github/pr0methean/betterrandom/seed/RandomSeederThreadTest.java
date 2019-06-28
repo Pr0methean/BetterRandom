@@ -4,6 +4,8 @@ import io.github.pr0methean.betterrandom.prng.Pcg64Random;
 import io.github.pr0methean.betterrandom.prng.RandomTestUtils;
 import org.testng.annotations.Test;
 
+import java.lang.ref.PhantomReference;
+import java.lang.ref.ReferenceQueue;
 import java.util.Arrays;
 import java.util.Random;
 import java.util.concurrent.locks.LockSupport;
@@ -64,13 +66,25 @@ public class RandomSeederThreadTest {
     }
   }
 
-  @Test public void testStopIfEmpty() {
+  @Test public void testStopIfEmpty() throws InterruptedException {
     final SeedGenerator seedGenerator = new FakeSeedGenerator("testStopIfEmpty");
     final RandomSeederThread randomSeeder = new RandomSeederThread(seedGenerator);
-    final Random prng = new Random();
-    randomSeeder.add(prng);
+    ReferenceQueue<Object> queue = new ReferenceQueue<>();
+    addPrng(randomSeeder, queue);
+    System.gc();
+    assertNotNull(queue.remove(10_000));
     randomSeeder.stopIfEmpty();
     assertFalse(randomSeeder.isRunning());
+  }
+
+  /** Must be a separate method so that {@code prng} will die on return. */
+  private void addPrng(RandomSeederThread randomSeeder, ReferenceQueue<Object> queue) {
+    Random prng = new Random();
+    new PhantomReference<Object>(prng, queue);
+    randomSeeder.add(prng);
+    randomSeeder.stopIfEmpty();
+    assertTrue(randomSeeder.isRunning());
+    prng.nextBoolean(); // could replace with Reference.reachabilityFence if JDK8 support wasn't needed
   }
 
   private void sleepUninterruptibly(long nanos) {
