@@ -1,10 +1,6 @@
 package io.github.pr0methean.betterrandom.util;
 
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.Serializable;
 import java.util.concurrent.ThreadFactory;
-import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.Lock;
@@ -14,7 +10,7 @@ import java.util.concurrent.locks.ReentrantLock;
  * Wraps a thread that loops a given task until interrupted, with the iterations being
  * transactional.
  */
-public abstract class LooperThread implements Serializable {
+public abstract class LooperThread {
 
   protected final AtomicLong finishedIterations = new AtomicLong(0);
   /**
@@ -25,7 +21,6 @@ public abstract class LooperThread implements Serializable {
   protected final Condition endOfIteration = lock.newCondition();
   protected transient volatile Thread thread;
   protected final ThreadFactory factory;
-  private volatile boolean running; // must be tracked for deserialization
   private volatile boolean everStarted;
 
   /**
@@ -60,13 +55,6 @@ public abstract class LooperThread implements Serializable {
     }
   }
 
-  private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
-    in.defaultReadObject();
-    if (running) {
-      start();
-    }
-  }
-
   /**
    * The task that will be iterated until it returns false. Cannot be abstract for serialization
    * reasons, but must be overridden in subclasses if they are instantiated without a target {@link
@@ -79,29 +67,6 @@ public abstract class LooperThread implements Serializable {
   @SuppressWarnings("BooleanMethodIsAlwaysInverted") protected abstract boolean iterate()
       throws InterruptedException;
 
-  /**
-   * Wait for the next iteration to finish, with a timeout. May wait longer in the event of a
-   * spurious wakeup.
-   * @param time the maximum time to wait
-   * @param unit the time unit of the {@code time} argument
-   * @return {@code false}  the waiting time detectably elapsed before an iteration finished, else
-   *     {@code true}
-   * @throws InterruptedException if thrown by {@link Condition#await(long, TimeUnit)}
-   */
-  public boolean awaitIteration(final long time, final TimeUnit unit) throws InterruptedException {
-    final long previousFinishedIterations = finishedIterations.get();
-    lock.lock();
-    try {
-      while (!thread.isInterrupted()
-          && (getState() != Thread.State.TERMINATED) && (finishedIterations.get() == previousFinishedIterations)) {
-        endOfIteration.await(time, unit);
-      }
-      return finishedIterations.get() != previousFinishedIterations;
-    } finally {
-      lock.unlock();
-    }
-  }
-
   protected void start() {
     threadLock.lock();
     try {
@@ -109,7 +74,6 @@ public abstract class LooperThread implements Serializable {
         thread = factory.newThread(this::run);
         thread.start();
         everStarted = true;
-        running = true;
       }
     } finally {
       threadLock.unlock();
@@ -119,34 +83,10 @@ public abstract class LooperThread implements Serializable {
   public void interrupt() {
     threadLock.lock();
     try {
-      running = false;
       if (thread != null) {
         thread.interrupt();
         thread = null;
       }
-    } finally {
-      threadLock.unlock();
-    }
-  }
-
-  /** Only used for testing. */
-  @Deprecated
-  void join() throws InterruptedException {
-    thread.join();
-  }
-
-  @Override
-  public String toString() {
-    return thread.toString();
-  }
-
-  protected Thread.State getState() {
-    threadLock.lock();
-    try {
-      if (thread == null) {
-        return everStarted ? Thread.State.TERMINATED : Thread.State.NEW;
-      }
-      return thread.getState();
     } finally {
       threadLock.unlock();
     }

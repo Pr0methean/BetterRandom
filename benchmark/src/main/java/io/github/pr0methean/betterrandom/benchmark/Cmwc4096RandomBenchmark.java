@@ -1,6 +1,5 @@
 package io.github.pr0methean.betterrandom.benchmark;
 
-import io.github.pr0methean.betterrandom.prng.Cmwc4096Random;
 import io.github.pr0methean.betterrandom.seed.SeedException;
 import java.util.Random;
 
