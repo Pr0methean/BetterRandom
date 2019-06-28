@@ -336,7 +336,7 @@ Many of these scripts require the environment variable `JAVA8=true` when using J
 
 The following classes are forked from [Uncommons Maths](https://github.com/dwdyer/uncommons-maths/):
 
-* All of `betterrandom.prng` except `BaseRandom` and `betterrandom.prng.adapter`
+* All of `betterrandom.prng` except `BaseRandom`, `Pcg128Random` and `betterrandom.prng.adapter`
 * All of `betterrandom.seed` except `RandomSeederThread`
 * `BinaryUtils`
 * Test classes corresponding to the above.
