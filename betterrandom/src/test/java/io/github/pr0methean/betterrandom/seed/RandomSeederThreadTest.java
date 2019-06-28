@@ -2,11 +2,12 @@ package io.github.pr0methean.betterrandom.seed;
 
 import org.testng.annotations.Test;
 
-import java.lang.ref.PhantomReference;
 import java.lang.ref.ReferenceQueue;
+import java.lang.ref.WeakReference;
 import java.util.Random;
 
-import static org.testng.Assert.*;
+import static org.testng.Assert.assertFalse;
+import static org.testng.Assert.assertTrue;
 
 public class RandomSeederThreadTest {
 
@@ -16,7 +17,8 @@ public class RandomSeederThreadTest {
     ReferenceQueue<Object> queue = new ReferenceQueue<>();
     addPrng(randomSeeder, queue);
     System.gc();
-    assertNotNull(queue.remove(1_000));
+    Thread.sleep(1000);
+    // assertNotNull(queue.remove(1_000));
     randomSeeder.stopIfEmpty();
     assertFalse(randomSeeder.isRunning());
   }
@@ -26,7 +28,7 @@ public class RandomSeederThreadTest {
    */
   private void addPrng(RandomSeederThread randomSeeder, ReferenceQueue<Object> queue) {
     Random prng = new Random();
-    new PhantomReference<Object>(prng, queue);
+    new WeakReference<Object>(prng, queue);
     randomSeeder.add(prng);
     randomSeeder.stopIfEmpty();
     assertTrue(randomSeeder.isRunning());
