@@ -35,8 +35,8 @@ public final class RandomSeederThread extends LooperThread {
   private static final long STOP_IF_EMPTY_FOR_SECONDS = 5;
 
   private void initTransientFields() {
-    byteArrayPrngs = Collections.synchronizedSet(Collections.newSetFromMap(new WeakHashMap<>(1)));
-    otherPrngs = Collections.synchronizedSet(Collections.newSetFromMap(new WeakHashMap<>(1)));
+    byteArrayPrngs = Collections.newSetFromMap(Collections.synchronizedMap(new WeakHashMap<>(1)));
+    otherPrngs = Collections.newSetFromMap(Collections.synchronizedMap(new WeakHashMap<>(1)));
     byteArrayPrngsThisIteration = Collections.newSetFromMap(new WeakHashMap<>(1));
     otherPrngsThisIteration = Collections.newSetFromMap(new WeakHashMap<>(1));
     waitWhileEmpty = lock.newCondition();
@@ -183,33 +183,33 @@ public final class RandomSeederThread extends LooperThread {
         }
       }
       boolean entropyConsumed = false;
-      final Iterator<ByteArrayReseedableRandom> byteArrayPrngsIterator =
-          byteArrayPrngsThisIteration.iterator();
-      while (byteArrayPrngsIterator.hasNext()) {
-        final ByteArrayReseedableRandom random = byteArrayPrngsIterator.next();
-        byteArrayPrngsIterator.remove();
-        if (stillDefinitelyHasEntropy(random)) {
-          continue;
+      try {
+        for (ByteArrayReseedableRandom random : byteArrayPrngsThisIteration) {
+          if (stillDefinitelyHasEntropy(random)) {
+            continue;
+          }
+          entropyConsumed = true;
+          if (random.preferSeedWithLong()) {
+            reseedWithLong((Random) random);
+          } else {
+            final byte[] seedArray =
+                SEED_ARRAYS.computeIfAbsent(random, random_ -> new byte[random_.getNewSeedLength()]);
+            seedGenerator.generateSeed(seedArray);
+            random.setSeed(seedArray);
+          }
         }
-        entropyConsumed = true;
-        if (random.preferSeedWithLong()) {
-          reseedWithLong((Random) random);
-        } else {
-          final byte[] seedArray =
-              SEED_ARRAYS.computeIfAbsent(random, random_ -> new byte[random_.getNewSeedLength()]);
-          seedGenerator.generateSeed(seedArray);
-          random.setSeed(seedArray);
-        }
+      } finally {
+        byteArrayPrngsThisIteration.clear();
       }
-      final Iterator<Random> otherPrngsIterator = otherPrngsThisIteration.iterator();
-      while (otherPrngsIterator.hasNext()) {
-        final Random random = otherPrngsIterator.next();
-        otherPrngsIterator.remove();
-        if (stillDefinitelyHasEntropy(random)) {
-          continue;
+      try {
+        for (Random random : otherPrngsThisIteration) {
+          if (!stillDefinitelyHasEntropy(random)) {
+            entropyConsumed = true;
+            reseedWithLong(random);
+          }
         }
-        entropyConsumed = true;
-        reseedWithLong(random);
+      } finally {
+        otherPrngsThisIteration.clear();
       }
       if (!entropyConsumed) {
         waitForEntropyDrain.await(POLL_INTERVAL, TimeUnit.SECONDS);
