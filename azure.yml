@@ -67,7 +67,7 @@ jobs:
         OpenJNine11:
           javaUrl: $(OpenJNine11Linux)
           artifactEnvName: OpenJNine08Linux
-        OpenJNine12:
+        OpenJNineLatest:
           javaUrl: $(OpenJNineLatestLinux)
           artifactEnvName: OpenJNineLatestLinux
     pool:
@@ -100,6 +100,9 @@ jobs:
         OpenJdk11:
           javaVersion: 11
           artifactEnvName: OpenJdk11Mac
+        OpenJdkLatest:
+          javaVersion: 12
+          artifactEnvName: OpenJdkLatestMac
     pool:
       vmImage: 'macOs-10.13'
     steps:
@@ -120,9 +123,9 @@ jobs:
         OpenJdk11:
           JAVA_HOME_SOURCE: JAVA_HOME_11_X64
           artifactEnvName: OpenJdk11Linux
-        OpenJdk12:
+        OpenJdkLatest:
           JAVA_HOME_SOURCE: JAVA_HOME_12_X64
-          artifactEnvName: OpenJdk12Linux 
+          artifactEnvName: OpenJdkLatestLinux
     pool:
       vmImage: 'windows-2019'
     steps:
@@ -199,10 +202,10 @@ jobs:
       JAVA_HOME: jdk
     strategy:
       matrix:
-        OpenJNine08:
+        OpenJNine11:
           javaUrl: $(OpenJNine11Linux)
           artifactEnvName: 'OpenJNine11Linux'
-        OpenJNine12:
+        OpenJNineLatest:
           javaUrl: $(OpenJNineLatestLinux)
           artifactEnvName: 'OpenJNineLatestLinux'
     pool:
@@ -218,12 +221,13 @@ jobs:
       JAVA_HOME: jdk
     strategy:
       matrix:
-        # Java 7 is /Library/Java/JavaVirtualMachines/jdk1.7.0_80.jdk/Contents/Home
         OpenJdk08:
           JAVA8: 'true'
           javaVersion: 8
-        OpenJdk12:
+        OpenJdk11:
           javaVersion: 11
+        OpenJdkLatest:
+          javaVersion: 12
     pool:
       vmImage: 'macOs-10.13'
     steps:
@@ -247,9 +251,9 @@ jobs:
         OpenJdk11:
           JAVA_HOME_SOURCE: JAVA_HOME_11_X64
           artifactEnvName: OpenJdk11Linux
-        OpenJdk12:
+        OpenJdkLatest:
           JAVA_HOME_SOURCE: JAVA_HOME_12_X64
-          artifactEnvName: OpenJdk12Linux 
+          artifactEnvName: OpenJdkLatestLinux
     steps:
       - powershell: 'echo "##vso[task.setvariable variable=JAVA_HOME]$JAVA_HOME_SOURCE"'
         displayName: Set Java Home
