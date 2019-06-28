@@ -1,5 +1,0 @@
-steps:
-- script: |
-    wget https://raw.githubusercontent.com/sormuras/bach/master/install-jdk.sh
-    source ./install-jdk.sh -l $(javaLicence) -f $(javaVersion) -e -v
-  displayName: Download & Install Java
