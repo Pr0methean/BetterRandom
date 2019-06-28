@@ -2,26 +2,7 @@
 <suite name="Sequential" parallel="none">
   <test name="Seeding" parallel="none">
     <classes>
-      <class name="io.github.pr0methean.betterrandom.seed.BufferedSeedGeneratorTest"/>
-      <class name="io.github.pr0methean.betterrandom.seed.DefaultSeedGeneratorTest"/>
-      <class name="io.github.pr0methean.betterrandom.seed.DevRandomSeedGeneratorTest"/>
-      <class name="io.github.pr0methean.betterrandom.seed.RandomDotOrgSeedGeneratorHermeticTest"/>
-      <class name="io.github.pr0methean.betterrandom.seed.RandomDotOrgSeedGeneratorLiveTest"/>
       <class name="io.github.pr0methean.betterrandom.seed.RandomSeederThreadTest"/>
-      <class name="io.github.pr0methean.betterrandom.seed.SecureRandomSeedGeneratorTest"/>
-      <class name="io.github.pr0methean.betterrandom.seed.SeedGeneratorPreferenceListTest"/>
-    </classes>
-  </test>
-  <test name="Concurrent PRNGs Sequential" parallel="none">
-    <parameter name="seedSize" value="16"/>
-    <groups>
-      <run>
-        <include name="sequential"/>
-      </run>
-    </groups>
-    <classes>
-      <class name="io.github.pr0methean.betterrandom.prng.concurrent.ReseedingThreadLocalRandomWrapperMersenneTwisterTest"/>
-      <class name="io.github.pr0methean.betterrandom.prng.concurrent.ReseedingThreadLocalRandomWrapperTest"/>
     </classes>
   </test>
 </suite>

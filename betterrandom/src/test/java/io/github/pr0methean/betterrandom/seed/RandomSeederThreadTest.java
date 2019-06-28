@@ -16,7 +16,7 @@ public class RandomSeederThreadTest {
     ReferenceQueue<Object> queue = new ReferenceQueue<>();
     addPrng(randomSeeder, queue);
     System.gc();
-    assertNotNull(queue.remove(10_000));
+    assertNotNull(queue.remove(1_000));
     randomSeeder.stopIfEmpty();
     assertFalse(randomSeeder.isRunning());
   }

@@ -1,6 +1,5 @@
 package io.github.pr0methean.betterrandom.seed;
 
-import io.github.pr0methean.betterrandom.util.BinaryUtils;
 import io.github.pr0methean.betterrandom.util.LooperThread;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -15,19 +14,29 @@ import java.util.concurrent.locks.Condition;
  * Thread that loops over {@link Random} instances and reseeds them. (Simplified version for reproducing a bug.)
  * @author Chris Hennick
  */
-@SuppressWarnings("ClassExplicitlyExtendsThread")
 public final class RandomSeederThread extends LooperThread {
+  private static final long BITWISE_BYTE_TO_LONG = 0x000000FF;
   private transient Set<Random> otherPrngs;
   private transient Set<Random> otherPrngsThisIteration;
   private transient Condition waitWhileEmpty;
   private static final Logger LOG = LoggerFactory.getLogger(RandomSeederThread.class);
-  private static final long POLL_INTERVAL = 60;
   private static final long STOP_IF_EMPTY_FOR_SECONDS = 5;
 
-  private void initTransientFields() {
-    otherPrngs = Collections.newSetFromMap(Collections.synchronizedMap(new WeakHashMap<>(1)));
-    otherPrngsThisIteration = Collections.newSetFromMap(new WeakHashMap<>(1));
-    waitWhileEmpty = lock.newCondition();
+  /**
+   * Convert a byte array to a long.
+   * @param bytes a byte array of length {@link Long#BYTES} in
+   *     {@link java.nio.ByteOrder#nativeOrder()} order.
+   * @return {@code bytes} as a long.
+   */
+  private static long convertBytesToLong(final byte[] bytes) {
+    return (BITWISE_BYTE_TO_LONG & bytes[7])
+        | ((BITWISE_BYTE_TO_LONG & bytes[6]) << 8L)
+        | ((BITWISE_BYTE_TO_LONG & bytes[5]) << 16L)
+        | ((BITWISE_BYTE_TO_LONG & bytes[4]) << 24L)
+        | ((BITWISE_BYTE_TO_LONG & bytes[3]) << 32L)
+        | ((BITWISE_BYTE_TO_LONG & bytes[2]) << 40L)
+        | ((BITWISE_BYTE_TO_LONG & bytes[1]) << 48L)
+        | ((BITWISE_BYTE_TO_LONG & bytes[0]) << 56L);
   }
 
   public void add(Random... randoms) {
@@ -78,7 +87,9 @@ public final class RandomSeederThread extends LooperThread {
     super(threadFactory);
     Objects.requireNonNull(seedGenerator, "randomSeeder must not be null");
     this.seedGenerator = seedGenerator;
-    initTransientFields();
+    otherPrngs = Collections.newSetFromMap(Collections.synchronizedMap(new WeakHashMap<>(1)));
+    otherPrngsThisIteration = Collections.newSetFromMap(new WeakHashMap<>(1));
+    waitWhileEmpty = lock.newCondition();
     start();
   }
 
@@ -105,7 +116,8 @@ public final class RandomSeederThread extends LooperThread {
       }
       try {
         for (Random random : otherPrngsThisIteration) {
-          reseedWithLong(random);
+          seedGenerator.generateSeed(longSeedArray);
+          random.setSeed(convertBytesToLong(longSeedArray));
         }
       } finally {
         otherPrngsThisIteration.clear();
@@ -120,11 +132,6 @@ public final class RandomSeederThread extends LooperThread {
   private void shutDown() {
     interrupt();
     clear();
-  }
-
-  private void reseedWithLong(final Random random) {
-    seedGenerator.generateSeed(longSeedArray);
-    random.setSeed(BinaryUtils.convertBytesToLong(longSeedArray));
   }
 
   private void clear() {
