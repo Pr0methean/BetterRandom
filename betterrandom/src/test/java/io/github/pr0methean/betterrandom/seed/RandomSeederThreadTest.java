@@ -1,23 +1,19 @@
 package io.github.pr0methean.betterrandom.seed;
 
+import io.github.pr0methean.betterrandom.prng.Pcg64Random;
 import io.github.pr0methean.betterrandom.prng.RandomTestUtils;
-import java.util.Arrays;
-import java.util.Locale;
-import java.util.Random;
-import java.util.concurrent.locks.LockSupport;
 import org.testng.annotations.Test;
 
-import static org.testng.Assert.assertFalse;
-import static org.testng.Assert.assertTrue;
+import java.util.Arrays;
+import java.util.Random;
+import java.util.concurrent.locks.LockSupport;
+
+import static org.testng.Assert.*;
 
 public class RandomSeederThreadTest {
 
   private static final long TEST_SEED = 0x0123456789ABCDEFL;
   private static final int TEST_OUTPUT_SIZE = 20;
-
-  private static final boolean ON_LINUX
-      = System.getProperty("os.name", "generic").toLowerCase(Locale.ENGLISH)
-          .contains("nux");
 
   @Test(timeOut = 25_000) public void testAddRemoveAndIsEmpty() throws Exception {
     final Random prng = new Random(TEST_SEED);
@@ -37,9 +33,34 @@ public class RandomSeederThreadTest {
     }
     final byte[] bytesWithNewSeed = new byte[TEST_OUTPUT_SIZE];
     prng.nextBytes(bytesWithNewSeed);
-    if (ON_LINUX) {
-      // FIXME: Fails without the Thread.sleep call
-      assertFalse(Arrays.equals(bytesWithOldSeed, bytesWithNewSeed));
+    assertFalse(Arrays.equals(bytesWithOldSeed, bytesWithNewSeed));
+  }
+
+  @Test public void testResurrection() throws InterruptedException {
+    final FakeSeedGenerator seedGenerator = new FakeSeedGenerator("testResurrection");
+    seedGenerator.setThrowException(true);
+    final RandomSeederThread randomSeeder = new RandomSeederThread(seedGenerator);
+    try {
+      Random random = new Pcg64Random();
+      randomSeeder.add(random);
+      try {
+        random.nextLong();
+        random.nextLong();
+        Thread.sleep(100);
+        assertFalse(randomSeeder.isRunning());
+        assertEquals(seedGenerator.countCalls(), 1);
+        seedGenerator.setThrowException(false);
+        randomSeeder.remove(random);
+        randomSeeder.add(random);
+        random.nextBoolean();
+        Thread.sleep(100);
+        assertTrue(randomSeeder.isRunning());
+        assertEquals(seedGenerator.countCalls(), 2);
+      } finally {
+        randomSeeder.remove(random);
+      }
+    } finally {
+      randomSeeder.stopIfEmpty();
     }
   }
 
@@ -49,7 +70,7 @@ public class RandomSeederThreadTest {
     final Random prng = new Random();
     randomSeeder.add(prng);
     randomSeeder.stopIfEmpty();
-    // TODO: Assert stopped
+    assertFalse(randomSeeder.isRunning());
   }
 
   private void sleepUninterruptibly(long nanos) {
