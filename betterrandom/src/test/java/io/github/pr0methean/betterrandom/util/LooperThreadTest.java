@@ -9,26 +9,34 @@ import org.testng.annotations.Test;
 import java.lang.Thread.UncaughtExceptionHandler;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicLong;
 
+import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertTrue;
 
 @SuppressWarnings("ClassLoaderInstantiation")
 public class LooperThreadTest {
 
-  private static class Target implements Runnable {
-    @Override public void run() {
+  private static class TestLooperThread extends LooperThread {
+    AtomicBoolean shouldThrow = new AtomicBoolean(false);
+    AtomicLong iterations = new AtomicLong(0);
+
+    @Override protected boolean iterate() {
+      if (shouldThrow.get()) {
+        throw new MockException();
+      }
       try {
         Thread.sleep(1);
       } catch (InterruptedException e) {
         throw new AssertionError(e);
       }
+      iterations.incrementAndGet();
+      return true;
     }
   }
 
   private static final long STACK_SIZE = 1_234_567;
-  private static final AtomicBoolean shouldThrow = new AtomicBoolean(false);
   private static final AtomicBoolean exceptionHandlerRun = new AtomicBoolean(false);
-  private static final Runnable TARGET = new Target();
 
   @Test public void testConstructors() {
     TestUtils.testConstructors(LooperThread.class, false, ImmutableMap
@@ -72,6 +80,32 @@ public class LooperThreadTest {
       assertTrue(sleepingThread.awaitIteration(3, TimeUnit.SECONDS));
     } finally {
       sleepingThread.interrupt();
+    }
+  }
+
+  @Test public void testResurrect() throws InterruptedException {
+    final TestLooperThread testLooperThread = new TestLooperThread();
+    try {
+      testLooperThread.shouldThrow.set(true);
+      testLooperThread.start();
+      int waits = 100;
+      while (testLooperThread.isRunning()) {
+        waits--;
+        assertTrue(waits >= 0, "Timed out waiting for test looper thread to die");
+        Thread.sleep(10);
+      }
+      assertEquals(testLooperThread.getState(), Thread.State.TERMINATED);
+      testLooperThread.shouldThrow.set(false);
+      testLooperThread.start();
+      assertTrue(testLooperThread.isRunning());
+      waits = 100;
+      while (testLooperThread.iterations.get() == 0) {
+        waits--;
+        assertTrue(waits >= 0, "Timed out waiting for test looper thread to resume running");
+        Thread.sleep(10);
+      }
+    } finally {
+      testLooperThread.interrupt();
     }
   }
 

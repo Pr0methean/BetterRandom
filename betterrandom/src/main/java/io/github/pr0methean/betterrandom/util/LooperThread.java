@@ -26,6 +26,7 @@ public abstract class LooperThread implements Serializable {
   protected transient volatile Thread thread;
   protected final ThreadFactory factory;
   private volatile boolean running; // must be tracked for deserialization
+  private volatile boolean everStarted;
 
   /**
    * Constructs a LooperThread with all properties as defaults.
@@ -107,11 +108,12 @@ public abstract class LooperThread implements Serializable {
       if (thread == null || !thread.isAlive()) {
         thread = factory.newThread(this::run);
         thread.start();
+        everStarted = true;
+        running = true;
       }
     } finally {
       threadLock.unlock();
     }
-    running = true;
   }
 
   public void interrupt() {
@@ -141,6 +143,9 @@ public abstract class LooperThread implements Serializable {
   protected Thread.State getState() {
     threadLock.lock();
     try {
+      if (thread == null) {
+        return everStarted ? Thread.State.TERMINATED : Thread.State.NEW;
+      }
       return thread.getState();
     } finally {
       threadLock.unlock();
