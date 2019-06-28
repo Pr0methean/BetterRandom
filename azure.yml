@@ -219,32 +219,6 @@ jobs:
     steps:
       - template: etc/azureTemplate/installJavaJti.yml
       - template: etc/azureTemplate/benchmark.yml
-  - job: BenchmarkOracleLinux
-    dependsOn:
-      - AllUnitTests
-    variables:
-      javaLicence: BCL
-      javaVersion: '11'
-      installJdkOs: 'linux-x64'
-      artifactEnvName: OracleLinux
-    pool:
-      vmImage: 'ubuntu-16.04'
-    steps:
-      - template: etc/azureTemplate/installJavaBach.yml
-      - template: etc/azureTemplate/benchmark.yml
-  - job: BenchmarkOracleMac
-    dependsOn:
-      - AllUnitTests
-    variables:
-      javaLicence: BCL
-      javaVersion: '11'
-      installJdkOs: 'osx-x64'
-      artifactEnvName: OracleMac
-    pool:
-      vmImage: 'macOs-10.13'
-    steps:
-      - template: etc/azureTemplate/installJavaBach.yml
-      - template: etc/azureTemplate/benchmark.yml
   - job: BenchmarkMac
     dependsOn:
       - AllUnitTests
@@ -310,11 +284,10 @@ jobs:
       vmImage: 'ubuntu-16.04'
     variables:
       JAVA8: 'true'
-      javaLicence: BCL
-      javaVersion: '11'
       artifactEnvName: OracleLimitedCrypto
     steps:
-      - template: etc/azureTemplate/installJavaBach.yml
+      - script: sudo ./installOracleJdk8.sh
+        displayName: Download & Install Java
       - template: etc/azureTemplate/benchmark.yml
         parameters:
           whichTest: 'io.github.pr0methean.betterrandom.benchmark.AesCounterRandomBenchmark'
