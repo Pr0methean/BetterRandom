@@ -2,6 +2,7 @@ package io.github.pr0methean.betterrandom.prng;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
+import com.google.common.util.concurrent.Uninterruptibles;
 import io.github.pr0methean.betterrandom.CloneViaSerialization;
 import io.github.pr0methean.betterrandom.FlakyRetryAnalyzer;
 import io.github.pr0methean.betterrandom.NamedFunction;
@@ -696,7 +697,7 @@ public abstract class BaseRandomTest extends PowerMockTestCase {
       for (int i = 0; i < 5; i++) {
         // This loop is necessary to control the false pass rate, especially during mutation testing.
         final SortedSet<Double> sequentialOutput = runSequential(supplier, supplier, seed);
-        final SortedSet<Double> parallelOutput = runParallel(supplier, supplier, seed, 10, 1000);
+        final SortedSet<Double> parallelOutput = runParallel(supplier, supplier, seed, 25, 1000);
         assertEquals(sequentialOutput, parallelOutput,
             "output differs between sequential & parallel calls to " + supplier);
       }
@@ -708,7 +709,7 @@ public abstract class BaseRandomTest extends PowerMockTestCase {
     for (final NamedFunction<Random, Double> supplier1 : pairwiseFunctions) {
       for (final NamedFunction<Random, Double> supplier2 : pairwiseFunctions) {
         if (supplier1 != supplier2) {
-          runParallel(supplier1, supplier2, seed, 10, 1000);
+          runParallel(supplier1, supplier2, seed, 25, 1000);
         }
       }
     }
@@ -719,7 +720,7 @@ public abstract class BaseRandomTest extends PowerMockTestCase {
       final int iterations) {
     // See https://www.yegor256.com/2018/03/27/how-to-test-thread-safety.html for why a
     // CountDownLatch is used.
-    final CountDownLatch latch = new CountDownLatch(2);
+    CountDownLatch latch = new CountDownLatch(2);
     final Random parallelPrng = createRng(seed);
     final SortedSet<Double> output = new ConcurrentSkipListSet<>();
     pool.execute(new GeneratorForkJoinTask<>(parallelPrng, output, supplier1, latch, iterations));
@@ -779,11 +780,7 @@ public abstract class BaseRandomTest extends PowerMockTestCase {
 
     @Override protected boolean exec() {
       latch.countDown();
-      try {
-        latch.await();
-      } catch (final InterruptedException e) {
-        throw new AssertionError("Interrupted", e);
-      }
+      Uninterruptibles.awaitUninterruptibly(latch);
       for (int i = 0; i < iterations; i++) {
         set.add(function.apply(prng));
       }
