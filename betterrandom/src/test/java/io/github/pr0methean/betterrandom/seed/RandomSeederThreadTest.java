@@ -1,6 +1,7 @@
 package io.github.pr0methean.betterrandom.seed;
 
 import com.google.common.testing.GcFinalization;
+import io.github.pr0methean.betterrandom.FlakyRetryAnalyzer;
 import io.github.pr0methean.betterrandom.prng.Pcg64Random;
 import io.github.pr0methean.betterrandom.prng.RandomTestUtils;
 import org.testng.annotations.Test;
@@ -66,7 +67,8 @@ public class RandomSeederThreadTest {
     }
   }
 
-  @Test public void testStopIfEmpty() throws InterruptedException {
+  @Test(singleThreaded = true, retryAnalyzer = FlakyRetryAnalyzer.class)
+  public void testStopIfEmpty() throws InterruptedException {
     // FIXME: When the commented lines are uncommented, the ref never gets queued!
     final SeedGenerator seedGenerator = new FakeSeedGenerator("testStopIfEmpty");
     final RandomSeederThread randomSeeder = new RandomSeederThread(seedGenerator);
