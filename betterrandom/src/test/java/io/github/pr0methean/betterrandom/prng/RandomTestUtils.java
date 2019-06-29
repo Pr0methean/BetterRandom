@@ -264,7 +264,7 @@ public enum RandomTestUtils {
         if (waits > 2000) {
           fail(String.format("Timed out waiting for %s to be reseeded!", rng));
         }
-        Thread.sleep(20);
+        sleepUninterruptibly(20_000_000);
         secondSeed = rng.getSeed();
       } while (Arrays.equals(secondSeed, oldSeed));
       final byte[] secondSeedClone = secondSeed.clone();
@@ -276,7 +276,7 @@ public enum RandomTestUtils {
           fail(String.format("Timed out waiting for entropy count to increase on %s", rng));
         }
         // FIXME: Flaky if we only sleep for 10 ms at a time
-        Thread.sleep(100);
+        sleepUninterruptibly(100_000_000);
       }
       byte[] thirdSeed;
       while (rng.getEntropyBits() > 0) {
@@ -293,8 +293,6 @@ public enum RandomTestUtils {
         }
         thirdSeed = rng.getSeed();
       } while (Arrays.equals(thirdSeed, secondSeed));
-    } catch (final InterruptedException e) {
-      throw new AssertionError(e);
     } finally {
       if (setSeedGenerator) {
         RandomTestUtils.removeAndAssertEmpty(seeder, rng);
