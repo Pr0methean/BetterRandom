@@ -38,13 +38,15 @@ public abstract class LooperThread implements Serializable {
 
   /**
    * Constructs a LooperThread with a thread name.
-   *
-   * @deprecated Being replaced with a ThreadFactory parameter, so that threads can die and be
-   * replaced.
    */
-  @Deprecated
-  protected LooperThread(String name) {
-    this(runnable -> new Thread(runnable, name));
+  protected LooperThread(final String name) {
+    this(new ThreadFactory() {
+      @Override public Thread newThread(Runnable r) {
+        Thread thread = DEFAULT_THREAD_FACTORY.newThread(r);
+        thread.setName(name);
+        return thread;
+      }
+    });
   }
 
   protected LooperThread(ThreadFactory factory) {
