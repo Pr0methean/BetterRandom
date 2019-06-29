@@ -10,7 +10,6 @@ import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.testng.PowerMockTestCase;
 import org.testng.Assert;
 import org.testng.annotations.AfterMethod;
-import org.testng.annotations.BeforeClass;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
@@ -113,10 +112,6 @@ public class RandomDotOrgSeedGeneratorHermeticTest extends PowerMockTestCase {
     }
   }
 
-  @BeforeClass public void setUp() {
-    PowerMockito.mockStatic(RandomDotOrgSeedGenerator.class);
-  }
-
   @Nullable private String address = null;
   private final Proxy proxy = createProxy();
 
@@ -141,6 +136,11 @@ public class RandomDotOrgSeedGeneratorHermeticTest extends PowerMockTestCase {
 
   @BeforeMethod public void setUpMethod() {
     spy(RandomDotOrgSeedGenerator.class);
+  }
+
+  @AfterMethod public void tearDownMethod() throws Exception {
+    PowerMockito.doCallRealMethod().when(RandomDotOrgSeedGenerator.class, "openConnection", any(URL.class));
+    address = null;
   }
 
   @Test public void testSetProxyOldApi() throws Exception {
@@ -274,9 +274,5 @@ public class RandomDotOrgSeedGeneratorHermeticTest extends PowerMockTestCase {
     } finally {
       setSslSocketFactory(null);
     }
-  }
-
-  @AfterMethod public void tearDownMethod() {
-    address = null;
   }
 }

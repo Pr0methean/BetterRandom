@@ -14,7 +14,7 @@ enum SeedTestUtils {
   public static void testGenerator(final SeedGenerator seedGenerator, boolean expectNonIdempotent) {
     final byte[] seed = seedGenerator.generateSeed(SEED_SIZE);
     assert seed.length == SEED_SIZE : "Failed to generate seed of correct length";
-    assertFalse(Arrays.equals(seed, ALL_ZEROES));
+    assertFalse(Arrays.equals(seed, ALL_ZEROES), "Generated an all-zeroes seed");
     if (expectNonIdempotent) {
       final byte[] secondSeed = new byte[SEED_SIZE];
       seedGenerator.generateSeed(secondSeed); // Check that other syntax also works
