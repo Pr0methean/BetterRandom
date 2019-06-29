@@ -22,7 +22,7 @@ public class ReseedingSplittableRandomAdapter extends BaseSplittableRandomAdapte
   private static final long serialVersionUID = 6301096404034224037L;
   @SuppressWarnings("StaticCollection")
   private static final Map<RandomSeederThread, ReseedingSplittableRandomAdapter> INSTANCES = Collections
-      .synchronizedMap(new WeakHashMap<SeedGenerator, ReseedingSplittableRandomAdapter>(1));
+      .synchronizedMap(new WeakHashMap<RandomSeederThread, ReseedingSplittableRandomAdapter>(1));
   private final SeedGenerator seedGenerator;
   @SuppressWarnings(
       {"ThreadLocalNotStaticFinal", "InstanceVariableMayNotBeInitializedByReadObject"})
@@ -37,12 +37,14 @@ public class ReseedingSplittableRandomAdapter extends BaseSplittableRandomAdapte
     super(seedGenerator.generateSeed(Java8Constants.LONG_BYTES));
     this.seedGenerator = seedGenerator;
     this.randomSeeder.set(randomSeeder);
-    threadLocal = ThreadLocal.withInitial(() -> {
-      SingleThreadSplittableRandomAdapter threadAdapter
-          = new SingleThreadSplittableRandomAdapter(this.seedGenerator);
-      threadAdapter.setRandomSeeder(this.randomSeeder.get());
-      return threadAdapter;
-    });
+    threadLocal = new ThreadLocal<SingleThreadSplittableRandomAdapter>() {
+      @Override protected SingleThreadSplittableRandomAdapter initialValue() {
+        SingleThreadSplittableRandomAdapter threadAdapter =
+            new SingleThreadSplittableRandomAdapter(ReseedingSplittableRandomAdapter.this.seedGenerator);
+        threadAdapter.setRandomSeeder(ReseedingSplittableRandomAdapter.this.randomSeeder.get());
+        return threadAdapter;
+      }
+    };
   }
 
   /**
@@ -60,7 +62,7 @@ public class ReseedingSplittableRandomAdapter extends BaseSplittableRandomAdapte
     ReseedingSplittableRandomAdapter instance = INSTANCES.get(seedGenerator);
     if (instance == null) {
       synchronized (INSTANCES) {
-        ReseedingSplittableRandomAdapter instance = INSTANCES.get(seedGenerator);
+        instance = INSTANCES.get(seedGenerator);
         if (instance == null) {
           instance = new ReseedingSplittableRandomAdapter(seedGenerator, randomSeeder);
           INSTANCES.put(randomSeeder, instance);

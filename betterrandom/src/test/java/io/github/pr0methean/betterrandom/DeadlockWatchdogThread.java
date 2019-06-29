@@ -7,6 +7,7 @@ import org.slf4j.LoggerFactory;
 import java.lang.management.ManagementFactory;
 import java.lang.management.ThreadInfo;
 import java.lang.management.ThreadMXBean;
+import java.util.concurrent.ThreadFactory;
 
 @SuppressWarnings("unused") // intermittently needed for debugging
 public class DeadlockWatchdogThread extends LooperThread {
@@ -31,11 +32,13 @@ public class DeadlockWatchdogThread extends LooperThread {
   }
 
   private DeadlockWatchdogThread() {
-    super(runnable -> {
-      Thread thread = new Thread(runnable);
-      thread.setDaemon(true);
-      thread.setPriority(Thread.MAX_PRIORITY);
-      return thread;
+    super(new ThreadFactory() {
+      @Override public Thread newThread(Runnable runnable) {
+        Thread thread = new Thread(runnable);
+        thread.setDaemon(true);
+        thread.setPriority(Thread.MAX_PRIORITY);
+        return thread;
+      }
     });
   }
 

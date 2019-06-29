@@ -35,10 +35,10 @@ public final class RandomSeederThread extends LooperThread {
   private static final long STOP_IF_EMPTY_FOR_SECONDS = 5;
 
   private void initTransientFields() {
-    byteArrayPrngs = Collections.newSetFromMap(Collections.synchronizedMap(new WeakHashMap<>(1)));
-    otherPrngs = Collections.newSetFromMap(Collections.synchronizedMap(new WeakHashMap<>(1)));
-    byteArrayPrngsThisIteration = Collections.newSetFromMap(new WeakHashMap<>(1));
-    otherPrngsThisIteration = Collections.newSetFromMap(new WeakHashMap<>(1));
+    byteArrayPrngs = Collections.newSetFromMap(Collections.synchronizedMap(new WeakHashMap<ByteArrayReseedableRandom, Boolean>(1)));
+    otherPrngs = Collections.newSetFromMap(Collections.synchronizedMap(new WeakHashMap<Random, Boolean>(1)));
+    byteArrayPrngsThisIteration = Collections.newSetFromMap(new WeakHashMap<ByteArrayReseedableRandom, Boolean>(1));
+    otherPrngsThisIteration = Collections.newSetFromMap(new WeakHashMap<Random, Boolean>(1));
     waitWhileEmpty = lock.newCondition();
     waitForEntropyDrain = lock.newCondition();
   }
@@ -150,7 +150,7 @@ public final class RandomSeederThread extends LooperThread {
   private final byte[] longSeedArray = new byte[8];
 
   private static Map<ByteArrayReseedableRandom, byte[]> SEED_ARRAYS =
-      Collections.synchronizedMap(new WeakHashMap<>(1));
+      Collections.synchronizedMap(new WeakHashMap<ByteArrayReseedableRandom, byte[]>(1));
 
   public RandomSeederThread(final SeedGenerator seedGenerator, ThreadFactory threadFactory) {
     super(threadFactory);
@@ -193,10 +193,10 @@ public final class RandomSeederThread extends LooperThread {
             reseedWithLong((Random) random);
           } else {
             byte[] seedArray = SEED_ARRAYS.get(random);
-          if (seedArray == null) {
-            seedArray = new byte[random.getNewSeedLength()];
-            seedArrays.put(random, seedArray);
-          }
+            if (seedArray == null) {
+              seedArray = new byte[random.getNewSeedLength()];
+              SEED_ARRAYS.put(random, seedArray);
+            }
             seedGenerator.generateSeed(seedArray);
             random.setSeed(seedArray);
           }

@@ -3,6 +3,7 @@ package io.github.pr0methean.betterrandom.util;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.Serializable;
+import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
@@ -27,7 +28,7 @@ public abstract class LooperThread implements Serializable {
    * Constructs a LooperThread with all properties as defaults.
    */
   protected LooperThread() {
-    this(Thread::new);
+    this(Executors.defaultThreadFactory());
   }
 
   /**
@@ -37,8 +38,12 @@ public abstract class LooperThread implements Serializable {
    * replaced.
    */
   @Deprecated
-  protected LooperThread(String name) {
-    this(runnable -> new Thread(runnable, name));
+  protected LooperThread(final String name) {
+    this(new ThreadFactory() {
+      @Override public Thread newThread(Runnable r) {
+        return new Thread(r, name);
+      }
+    });
   }
 
   protected LooperThread(ThreadFactory factory) {
@@ -78,7 +83,11 @@ public abstract class LooperThread implements Serializable {
     threadLock.lock();
     try {
       if (thread == null || !thread.isAlive()) {
-        thread = factory.newThread(this::run);
+        thread = factory.newThread(new Runnable() {
+          @Override public void run() {
+            LooperThread.this.run();
+          }
+        });
         thread.start();
         everStarted = true;
         running = true;
