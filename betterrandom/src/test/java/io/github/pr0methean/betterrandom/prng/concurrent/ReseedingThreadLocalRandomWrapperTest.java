@@ -1,5 +1,6 @@
 package io.github.pr0methean.betterrandom.prng.concurrent;
 
+import io.github.pr0methean.betterrandom.FlakyRetryAnalyzer;
 import io.github.pr0methean.betterrandom.prng.BaseRandom;
 import io.github.pr0methean.betterrandom.prng.Pcg64Random;
 import io.github.pr0methean.betterrandom.prng.RandomTestUtils;
@@ -8,10 +9,11 @@ import io.github.pr0methean.betterrandom.seed.RandomSeederThread;
 import io.github.pr0methean.betterrandom.seed.SecureRandomSeedGenerator;
 import io.github.pr0methean.betterrandom.seed.SeedException;
 import io.github.pr0methean.betterrandom.seed.SeedGenerator;
+import org.testng.annotations.Test;
+
 import java.io.Serializable;
 import java.util.Random;
 import java.util.function.Supplier;
-import org.testng.annotations.Test;
 
 @Test(testName = "ReseedingThreadLocalRandomWrapper")
 public class ReseedingThreadLocalRandomWrapperTest extends ThreadLocalRandomWrapperTest {
@@ -51,7 +53,7 @@ public class ReseedingThreadLocalRandomWrapperTest extends ThreadLocalRandomWrap
     prng.setRandomSeeder(randomSeeder);
   }
 
-  @SuppressWarnings("BusyWait") @Override @Test(groups = "sequential") public void testReseeding() {
+  @SuppressWarnings("BusyWait") @Override @Test(retryAnalyzer = FlakyRetryAnalyzer.class) public void testReseeding() {
     final SeedGenerator testSeedGenerator = getTestSeedGenerator();
     final BaseRandom rng = new ReseedingThreadLocalRandomWrapper(testSeedGenerator,
         pcgSupplier);
