@@ -26,7 +26,6 @@ import org.slf4j.LoggerFactory;
  * EntropyCountingRandom} will be reseeded when it's already had more input than output.
  * @author Chris Hennick
  */
-@SuppressWarnings("ClassExplicitlyExtendsThread")
 public final class RandomSeederThread extends LooperThread {
   private transient Set<ByteArrayReseedableRandom> byteArrayPrngs;
   private transient Set<Random> otherPrngs;
@@ -48,6 +47,7 @@ public final class RandomSeederThread extends LooperThread {
   }
 
   public void wakeUp() {
+    start();
     if (lock.tryLock()) {
       try {
         waitForEntropyDrain.signalAll();
