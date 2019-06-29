@@ -15,8 +15,9 @@
 // ============================================================================
 package io.github.pr0methean.betterrandom.prng;
 
+import static io.github.pr0methean.betterrandom.util.Java8Constants.INT_BYTES;
+
 import com.google.common.base.MoreObjects;
-import com.google.common.base.MoreObjects.ToStringHelper;
 import io.github.pr0methean.betterrandom.seed.DefaultSeedGenerator;
 import io.github.pr0methean.betterrandom.seed.SeedException;
 import io.github.pr0methean.betterrandom.seed.SeedGenerator;
@@ -31,8 +32,6 @@ import javax.crypto.Cipher;
 import javax.crypto.NoSuchPaddingException;
 import javax.crypto.spec.SecretKeySpec;
 import org.slf4j.LoggerFactory;
-
-import static io.github.pr0methean.betterrandom.util.Java8Constants.INT_BYTES;
 
 /**
  * <p>CipherCounterRandom using AES (Rijndael).</p> <p>Keys larger than 128 bits, and thus seeds

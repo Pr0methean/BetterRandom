@@ -1,6 +1,27 @@
 package io.github.pr0methean.betterrandom.seed;
 
+import static io.github.pr0methean.betterrandom.seed.RandomDotOrgSeedGenerator.MAX_REQUEST_SIZE;
+import static io.github.pr0methean.betterrandom.seed.RandomDotOrgSeedGenerator.setProxy;
+import static io.github.pr0methean.betterrandom.seed.RandomDotOrgSeedGenerator.setSslSocketFactory;
+import static io.github.pr0methean.betterrandom.seed.RandomDotOrgUtils.createProxy;
+import static io.github.pr0methean.betterrandom.seed.RandomDotOrgUtils.createSocketFactory;
+import static io.github.pr0methean.betterrandom.seed.SeedTestUtils.testGenerator;
+import static org.mockito.ArgumentMatchers.any;
+import static org.powermock.api.mockito.PowerMockito.spy;
+import static org.testng.Assert.assertTrue;
+import static org.testng.AssertJUnit.assertEquals;
+
 import io.github.pr0methean.betterrandom.prng.concurrent.SplittableRandomAdapter;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.net.Proxy;
+import java.net.URL;
+import java.nio.charset.Charset;
+import java.util.Arrays;
+import java.util.UUID;
+import javax.annotation.Nullable;
+import javax.net.ssl.HttpsURLConnection;
+import javax.xml.bind.DatatypeConverter;
 import org.json.simple.parser.ParseException;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
@@ -14,26 +35,6 @@ import org.testng.Assert;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
-
-import javax.annotation.Nullable;
-import javax.net.ssl.HttpsURLConnection;
-import javax.xml.bind.DatatypeConverter;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.net.Proxy;
-import java.net.URL;
-import java.nio.charset.Charset;
-import java.util.Arrays;
-import java.util.UUID;
-
-import static io.github.pr0methean.betterrandom.seed.RandomDotOrgSeedGenerator.*;
-import static io.github.pr0methean.betterrandom.seed.RandomDotOrgUtils.createProxy;
-import static io.github.pr0methean.betterrandom.seed.RandomDotOrgUtils.createSocketFactory;
-import static io.github.pr0methean.betterrandom.seed.SeedTestUtils.testGenerator;
-import static org.mockito.ArgumentMatchers.any;
-import static org.powermock.api.mockito.PowerMockito.spy;
-import static org.testng.Assert.assertTrue;
-import static org.testng.AssertJUnit.assertEquals;
 
 @PowerMockIgnore({"javax.management.*", "javax.script.*", "jdk.nashorn.*", "javax.net.ssl.*", "javax.security.*",
     "javax.xml.*", "com.sun.*"})

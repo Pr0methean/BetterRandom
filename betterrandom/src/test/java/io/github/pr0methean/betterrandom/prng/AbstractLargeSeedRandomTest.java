@@ -1,5 +1,10 @@
 package io.github.pr0methean.betterrandom.prng;
 
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyInt;
+import static org.powermock.api.mockito.PowerMockito.doAnswer;
+import static org.powermock.api.mockito.PowerMockito.when;
+
 import io.github.pr0methean.betterrandom.seed.DefaultSeedGenerator;
 import io.github.pr0methean.betterrandom.seed.SeedException;
 import java.lang.reflect.InvocationTargetException;
@@ -11,11 +16,6 @@ import org.powermock.core.classloader.annotations.MockPolicy;
 import org.powermock.core.classloader.annotations.PowerMockIgnore;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.reflect.Whitebox;
-
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyInt;
-import static org.powermock.api.mockito.PowerMockito.doAnswer;
-import static org.powermock.api.mockito.PowerMockito.when;
 
 /**
  * A subclass of {@link BaseRandomTest} for when avoiding {@link io.github.pr0methean.betterrandom.seed.DefaultSeedGenerator}

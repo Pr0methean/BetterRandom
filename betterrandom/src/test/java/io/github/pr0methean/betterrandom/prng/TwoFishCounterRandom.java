@@ -1,5 +1,7 @@
 package io.github.pr0methean.betterrandom.prng;
 
+import static io.github.pr0methean.betterrandom.util.Java8Constants.INT_BYTES;
+
 import com.google.common.base.MoreObjects;
 import io.github.pr0methean.betterrandom.util.BinaryUtils;
 import io.github.pr0methean.betterrandom.util.Byte16ArrayArithmetic;
@@ -7,8 +9,6 @@ import java.security.MessageDigest;
 import org.bouncycastle.crypto.engines.TwofishEngine;
 import org.bouncycastle.crypto.params.KeyParameter;
 import org.bouncycastle.jcajce.provider.digest.SHA3;
-
-import static io.github.pr0methean.betterrandom.util.Java8Constants.INT_BYTES;
 
 /**
  * A second subclass of {@link CipherCounterRandom}, used to test that abstract class for

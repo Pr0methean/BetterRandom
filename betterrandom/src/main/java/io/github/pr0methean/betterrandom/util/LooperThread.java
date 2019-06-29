@@ -15,6 +15,11 @@ import java.util.concurrent.locks.ReentrantLock;
 public abstract class LooperThread implements Serializable {
 
   /**
+   * Singleton-ization of {@link Executors#defaultThreadFactory()}.
+   */
+  protected static final ThreadFactory DEFAULT_THREAD_FACTORY = Executors.defaultThreadFactory();
+
+  /**
    * The thread holds this lock whenever it is running {@link #iterate()}.
    */
   protected final Lock lock = new ReentrantLock(true);
@@ -28,7 +33,7 @@ public abstract class LooperThread implements Serializable {
    * Constructs a LooperThread with all properties as defaults.
    */
   protected LooperThread() {
-    this(Executors.defaultThreadFactory());
+    this(DEFAULT_THREAD_FACTORY);
   }
 
   /**

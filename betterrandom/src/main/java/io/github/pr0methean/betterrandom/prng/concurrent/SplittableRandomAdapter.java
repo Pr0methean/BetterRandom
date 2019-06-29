@@ -1,5 +1,7 @@
 package io.github.pr0methean.betterrandom.prng.concurrent;
 
+import static io.github.pr0methean.betterrandom.util.BinaryUtils.convertBytesToLong;
+
 import com.google.common.base.MoreObjects.ToStringHelper;
 import io.github.pr0methean.betterrandom.seed.DefaultSeedGenerator;
 import io.github.pr0methean.betterrandom.seed.RandomSeederThread;
@@ -7,14 +9,11 @@ import io.github.pr0methean.betterrandom.seed.SeedException;
 import io.github.pr0methean.betterrandom.seed.SeedGenerator;
 import io.github.pr0methean.betterrandom.util.BinaryUtils;
 import io.github.pr0methean.betterrandom.util.Java8Constants;
-import java8.util.SplittableRandom;
-
-import javax.annotation.Nullable;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.util.concurrent.atomic.AtomicLong;
-
-import static io.github.pr0methean.betterrandom.util.BinaryUtils.convertBytesToLong;
+import java8.util.SplittableRandom;
+import javax.annotation.Nullable;
 
 /**
  * Thread-safe PRNG that wraps a {@link ThreadLocal}&lt;{@link SplittableRandom}&gt;. Reseeding this

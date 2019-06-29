@@ -15,6 +15,8 @@
 // ============================================================================
 package io.github.pr0methean.betterrandom.seed;
 
+import static java.util.Calendar.YEAR;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -41,8 +43,6 @@ import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
-
-import static java.util.Calendar.YEAR;
 
 /**
  * <p>Connects to <a href="https://www.random.org/clients/http/" target="_top">random.org's old

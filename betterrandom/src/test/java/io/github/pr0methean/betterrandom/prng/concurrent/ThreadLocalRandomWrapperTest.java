@@ -1,5 +1,8 @@
 package io.github.pr0methean.betterrandom.prng.concurrent;
 
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertSame;
+
 import io.github.pr0methean.betterrandom.CloneViaSerialization;
 import io.github.pr0methean.betterrandom.prng.AbstractLargeSeedRandomTest;
 import io.github.pr0methean.betterrandom.prng.AesCounterRandom;
@@ -9,16 +12,12 @@ import io.github.pr0methean.betterrandom.seed.RandomSeederThread;
 import io.github.pr0methean.betterrandom.seed.SeedException;
 import io.github.pr0methean.betterrandom.seed.SeedGenerator;
 import io.github.pr0methean.betterrandom.util.SerializableSupplier;
+import java.util.Map;
+import java.util.Random;
 import java8.util.function.Function;
 import java8.util.function.LongFunction;
 import java8.util.function.Supplier;
 import org.testng.annotations.Test;
-
-import java.util.Map;
-import java.util.Random;
-
-import static org.testng.Assert.assertEquals;
-import static org.testng.Assert.assertSame;
 
 @Test(testName = "ThreadLocalRandomWrapper")
 public class ThreadLocalRandomWrapperTest extends AbstractLargeSeedRandomTest {

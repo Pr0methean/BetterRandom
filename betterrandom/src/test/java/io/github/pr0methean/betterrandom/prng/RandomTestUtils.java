@@ -15,11 +15,25 @@
 // ============================================================================
 package io.github.pr0methean.betterrandom.prng;
 
+import static io.github.pr0methean.betterrandom.util.BinaryUtils.convertBytesToHexString;
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertNotEquals;
+import static org.testng.Assert.assertNotSame;
+import static org.testng.Assert.assertNull;
+import static org.testng.Assert.assertSame;
+import static org.testng.Assert.assertTrue;
+import static org.testng.Assert.fail;
+
 import io.github.pr0methean.betterrandom.CloneViaSerialization;
 import io.github.pr0methean.betterrandom.TestUtils;
 import io.github.pr0methean.betterrandom.seed.RandomSeederThread;
 import io.github.pr0methean.betterrandom.seed.SeedGenerator;
 import io.github.pr0methean.betterrandom.util.Dumpable;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Random;
+import java.util.concurrent.atomic.AtomicLong;
+import java.util.concurrent.locks.LockSupport;
 import java8.util.function.Consumer;
 import java8.util.function.Supplier;
 import java8.util.function.ToLongFunction;
@@ -27,15 +41,6 @@ import java8.util.stream.BaseStream;
 import java8.util.stream.Stream;
 import org.apache.commons.math3.stat.descriptive.SynchronizedDescriptiveStatistics;
 import org.testng.Reporter;
-
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Random;
-import java.util.concurrent.atomic.AtomicLong;
-import java.util.concurrent.locks.LockSupport;
-
-import static io.github.pr0methean.betterrandom.util.BinaryUtils.convertBytesToHexString;
-import static org.testng.Assert.*;
 
 /**
  * Provides methods used for testing the operation of RNG implementations.

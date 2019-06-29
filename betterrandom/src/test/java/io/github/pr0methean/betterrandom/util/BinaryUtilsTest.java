@@ -15,11 +15,11 @@
 // ============================================================================
 package io.github.pr0methean.betterrandom.util;
 
-import java.util.Arrays;
-import org.testng.annotations.Test;
-
 import static io.github.pr0methean.betterrandom.util.BinaryUtils.convertBytesToLong;
 import static org.testng.Assert.assertEquals;
+
+import java.util.Arrays;
+import org.testng.annotations.Test;
 
 /**
  * Unit test for binary/hex utility methods.

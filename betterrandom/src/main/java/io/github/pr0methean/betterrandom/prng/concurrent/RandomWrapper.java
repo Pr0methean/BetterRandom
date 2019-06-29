@@ -15,6 +15,8 @@
 // ============================================================================
 package io.github.pr0methean.betterrandom.prng.concurrent;
 
+import static io.github.pr0methean.betterrandom.util.Java8Constants.LONG_BYTES;
+
 import com.google.common.base.MoreObjects.ToStringHelper;
 import io.github.pr0methean.betterrandom.ByteArrayReseedableRandom;
 import io.github.pr0methean.betterrandom.EntropyCountingRandom;
@@ -26,12 +28,9 @@ import io.github.pr0methean.betterrandom.seed.SeedGenerator;
 import io.github.pr0methean.betterrandom.util.BinaryUtils;
 import io.github.pr0methean.betterrandom.util.Dumpable;
 import io.github.pr0methean.betterrandom.util.EntryPoint;
-
-import javax.annotation.Nullable;
 import java.security.SecureRandom;
 import java.util.Random;
-
-import static io.github.pr0methean.betterrandom.util.Java8Constants.LONG_BYTES;
+import javax.annotation.Nullable;
 
 /**
  * <p>Wraps any {@link Random} as a {@link RepeatableRandom} and {@link ByteArrayReseedableRandom}.

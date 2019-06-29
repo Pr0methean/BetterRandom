@@ -15,14 +15,14 @@
 // ============================================================================
 package io.github.pr0methean.betterrandom.prng;
 
+import static io.github.pr0methean.betterrandom.util.Java8Constants.INT_BYTES;
+
 import com.google.common.base.MoreObjects.ToStringHelper;
 import io.github.pr0methean.betterrandom.seed.DefaultSeedGenerator;
 import io.github.pr0methean.betterrandom.seed.SeedException;
 import io.github.pr0methean.betterrandom.seed.SeedGenerator;
 import io.github.pr0methean.betterrandom.util.BinaryUtils;
 import java.util.Random;
-
-import static io.github.pr0methean.betterrandom.util.Java8Constants.INT_BYTES;
 
 /**
  * <p>Very fast pseudo random number generator.  See <a href="http://school.anhb.uwa.edu.au/personalpages/kwessen/shared/Marsaglia03.html">this

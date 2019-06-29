@@ -15,6 +15,14 @@
 // ============================================================================
 package io.github.pr0methean.betterrandom.seed;
 
+import static io.github.pr0methean.betterrandom.seed.RandomDotOrgSeedGenerator.RANDOM_DOT_ORG_SEED_GENERATOR;
+import static io.github.pr0methean.betterrandom.seed.RandomDotOrgSeedGenerator.setApiKey;
+import static io.github.pr0methean.betterrandom.seed.RandomDotOrgSeedGenerator.setProxy;
+import static io.github.pr0methean.betterrandom.seed.RandomDotOrgSeedGenerator.setSslSocketFactory;
+import static io.github.pr0methean.betterrandom.seed.RandomDotOrgUtils.createSocketFactory;
+import static io.github.pr0methean.betterrandom.seed.RandomDotOrgUtils.haveApiKey;
+import static io.github.pr0methean.betterrandom.seed.RandomDotOrgUtils.setApiKey;
+
 import java.io.IOException;
 import java.net.InetAddress;
 import java.net.Proxy;
@@ -28,14 +36,6 @@ import org.testng.annotations.AfterSuite;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.BeforeSuite;
 import org.testng.annotations.Test;
-
-import static io.github.pr0methean.betterrandom.seed.RandomDotOrgSeedGenerator.RANDOM_DOT_ORG_SEED_GENERATOR;
-import static io.github.pr0methean.betterrandom.seed.RandomDotOrgSeedGenerator.setApiKey;
-import static io.github.pr0methean.betterrandom.seed.RandomDotOrgSeedGenerator.setProxy;
-import static io.github.pr0methean.betterrandom.seed.RandomDotOrgSeedGenerator.setSslSocketFactory;
-import static io.github.pr0methean.betterrandom.seed.RandomDotOrgUtils.createSocketFactory;
-import static io.github.pr0methean.betterrandom.seed.RandomDotOrgUtils.haveApiKey;
-import static io.github.pr0methean.betterrandom.seed.RandomDotOrgUtils.setApiKey;
 
 /**
  * Unit test for the seed generator that connects to random.org to get seed data.

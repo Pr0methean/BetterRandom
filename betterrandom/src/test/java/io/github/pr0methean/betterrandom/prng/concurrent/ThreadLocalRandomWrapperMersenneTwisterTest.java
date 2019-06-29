@@ -1,17 +1,16 @@
 package io.github.pr0methean.betterrandom.prng.concurrent;
 
+import static org.testng.Assert.assertSame;
+
 import io.github.pr0methean.betterrandom.prng.BaseRandom;
 import io.github.pr0methean.betterrandom.prng.MersenneTwisterRandom;
 import io.github.pr0methean.betterrandom.seed.SeedException;
 import io.github.pr0methean.betterrandom.seed.SeedGenerator;
 import io.github.pr0methean.betterrandom.util.SerializableSupplier;
+import java.util.Map;
 import java8.util.function.Function;
 import java8.util.function.Supplier;
 import org.testng.annotations.Test;
-
-import java.util.Map;
-
-import static org.testng.Assert.assertSame;
 
 @Test(testName = "ThreadLocalRandomWrapper:MersenneTwisterRandom")
 public class ThreadLocalRandomWrapperMersenneTwisterTest extends ThreadLocalRandomWrapperTest {

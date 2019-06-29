@@ -13,12 +13,6 @@ import io.github.pr0methean.betterrandom.util.BinaryUtils;
 import io.github.pr0methean.betterrandom.util.Dumpable;
 import io.github.pr0methean.betterrandom.util.EntryPoint;
 import io.github.pr0methean.betterrandom.util.Java8Constants;
-import java8.util.function.*;
-import java8.util.stream.*;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import javax.annotation.Nullable;
 import java.io.IOException;
 import java.io.InvalidObjectException;
 import java.io.ObjectInputStream;
@@ -27,6 +21,22 @@ import java.util.Random;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.concurrent.locks.ReentrantLock;
+import java8.util.function.DoubleSupplier;
+import java8.util.function.IntSupplier;
+import java8.util.function.LongSupplier;
+import java8.util.function.LongToDoubleFunction;
+import java8.util.function.LongToIntFunction;
+import java8.util.function.LongUnaryOperator;
+import java8.util.stream.BaseStream;
+import java8.util.stream.DoubleStream;
+import java8.util.stream.DoubleStreams;
+import java8.util.stream.IntStream;
+import java8.util.stream.IntStreams;
+import java8.util.stream.LongStream;
+import java8.util.stream.LongStreams;
+import javax.annotation.Nullable;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Abstract {@link Random} with a seed field and an implementation of entropy counting.

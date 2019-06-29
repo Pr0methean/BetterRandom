@@ -4,11 +4,14 @@ import io.github.pr0methean.betterrandom.TestingDeficiency;
 import io.github.pr0methean.betterrandom.prng.BaseRandom;
 import io.github.pr0methean.betterrandom.prng.RandomTestUtils;
 import io.github.pr0methean.betterrandom.prng.RandomTestUtils.EntropyCheckMode;
-import io.github.pr0methean.betterrandom.seed.*;
+import io.github.pr0methean.betterrandom.seed.DevRandomSeedGenerator;
+import io.github.pr0methean.betterrandom.seed.RandomSeederThread;
+import io.github.pr0methean.betterrandom.seed.SecureRandomSeedGenerator;
+import io.github.pr0methean.betterrandom.seed.SeedException;
+import io.github.pr0methean.betterrandom.seed.SeedGenerator;
+import java.util.Random;
 import java8.util.function.LongFunction;
 import org.testng.annotations.Test;
-
-import java.util.Random;
 
 @Test(testName = "ReseedingThreadLocalRandomWrapper:MersenneTwisterRandom")
 public class ReseedingThreadLocalRandomWrapperMersenneTwisterTest
