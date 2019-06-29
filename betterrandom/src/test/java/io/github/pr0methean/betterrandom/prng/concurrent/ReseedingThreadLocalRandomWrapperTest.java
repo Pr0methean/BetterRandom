@@ -9,11 +9,10 @@ import io.github.pr0methean.betterrandom.seed.RandomSeederThread;
 import io.github.pr0methean.betterrandom.seed.SecureRandomSeedGenerator;
 import io.github.pr0methean.betterrandom.seed.SeedException;
 import io.github.pr0methean.betterrandom.seed.SeedGenerator;
-import org.testng.annotations.Test;
-
 import java.io.Serializable;
 import java.util.Random;
 import java.util.function.Supplier;
+import org.testng.annotations.Test;
 
 @Test(testName = "ReseedingThreadLocalRandomWrapper")
 public class ReseedingThreadLocalRandomWrapperTest extends ThreadLocalRandomWrapperTest {

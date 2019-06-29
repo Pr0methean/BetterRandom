@@ -1,12 +1,11 @@
 package io.github.pr0methean.betterrandom;
 
 import io.github.pr0methean.betterrandom.util.LooperThread;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.lang.management.ManagementFactory;
 import java.lang.management.ThreadInfo;
 import java.lang.management.ThreadMXBean;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @SuppressWarnings("unused") // intermittently needed for debugging
 public class DeadlockWatchdogThread extends LooperThread {

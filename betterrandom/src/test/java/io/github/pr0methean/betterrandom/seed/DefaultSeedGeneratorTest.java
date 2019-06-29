@@ -15,10 +15,10 @@
 // ============================================================================
 package io.github.pr0methean.betterrandom.seed;
 
+import static org.testng.Assert.assertTrue;
+
 import java.security.Permission;
 import org.testng.annotations.Test;
-
-import static org.testng.Assert.assertTrue;
 
 /**
  * Unit test for {@link DefaultSeedGenerator}.

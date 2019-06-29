@@ -1,5 +1,7 @@
 package io.github.pr0methean.betterrandom.prng.concurrent;
 
+import static org.testng.Assert.assertSame;
+
 import com.google.common.collect.ImmutableList;
 import io.github.pr0methean.betterrandom.NamedFunction;
 import io.github.pr0methean.betterrandom.prng.AesCounterRandom;
@@ -8,8 +10,6 @@ import io.github.pr0methean.betterrandom.prng.BaseRandom;
 import io.github.pr0methean.betterrandom.seed.SeedException;
 import java.util.Random;
 import org.testng.annotations.Test;
-
-import static org.testng.Assert.assertSame;
 
 @Test(testName = "RandomWrapper:AesCounterRandom")
 public class RandomWrapperAesCounterRandomTest extends AesCounterRandomTest {

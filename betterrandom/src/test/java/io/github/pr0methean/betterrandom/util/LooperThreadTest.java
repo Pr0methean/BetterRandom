@@ -1,15 +1,14 @@
 package io.github.pr0methean.betterrandom.util;
 
-import io.github.pr0methean.betterrandom.MockException;
-import org.testng.annotations.BeforeTest;
-import org.testng.annotations.Test;
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertTrue;
 
+import io.github.pr0methean.betterrandom.MockException;
 import java.lang.Thread.UncaughtExceptionHandler;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicLong;
-
-import static org.testng.Assert.assertEquals;
-import static org.testng.Assert.assertTrue;
+import org.testng.annotations.BeforeTest;
+import org.testng.annotations.Test;
 
 @SuppressWarnings("ClassLoaderInstantiation")
 public class LooperThreadTest {

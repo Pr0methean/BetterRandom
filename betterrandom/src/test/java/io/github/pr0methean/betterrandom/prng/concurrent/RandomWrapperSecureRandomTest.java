@@ -1,5 +1,7 @@
 package io.github.pr0methean.betterrandom.prng.concurrent;
 
+import static org.testng.Assert.assertSame;
+
 import com.google.common.collect.ImmutableList;
 import io.github.pr0methean.betterrandom.NamedFunction;
 import io.github.pr0methean.betterrandom.prng.AbstractLargeSeedRandomTest;
@@ -11,8 +13,6 @@ import java.security.SecureRandom;
 import java.util.Map;
 import java.util.Random;
 import org.testng.annotations.Test;
-
-import static org.testng.Assert.assertSame;
 
 @Test(testName = "RandomWrapper:SecureRandom")
 public class RandomWrapperSecureRandomTest extends AbstractLargeSeedRandomTest {
