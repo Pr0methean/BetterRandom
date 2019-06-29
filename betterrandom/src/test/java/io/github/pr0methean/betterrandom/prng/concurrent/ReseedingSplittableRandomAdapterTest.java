@@ -1,5 +1,6 @@
 package io.github.pr0methean.betterrandom.prng.concurrent;
 
+import static io.github.pr0methean.betterrandom.seed.SecureRandomSeedGenerator.SECURE_RANDOM_SEED_GENERATOR;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotEquals;
 
@@ -10,7 +11,6 @@ import io.github.pr0methean.betterrandom.prng.RandomTestUtils;
 import io.github.pr0methean.betterrandom.prng.RandomTestUtils.EntropyCheckMode;
 import io.github.pr0methean.betterrandom.seed.FakeSeedGenerator;
 import io.github.pr0methean.betterrandom.seed.RandomSeederThread;
-import io.github.pr0methean.betterrandom.seed.SecureRandomSeedGenerator;
 import io.github.pr0methean.betterrandom.seed.SeedException;
 import io.github.pr0methean.betterrandom.seed.SeedGenerator;
 import io.github.pr0methean.betterrandom.util.BinaryUtils;
@@ -55,13 +55,11 @@ public class ReseedingSplittableRandomAdapterTest extends SingleThreadSplittable
   }
 
   @Override @Test public void testSerializable() throws SeedException {
-    // SemifakeSeedGenerator-based RandomSeederThread can't be used, because SemifakeSeedGenerator doesn't equals() its
-    // clone-by-serialization
-    RandomSeederThread thread = new RandomSeederThread(SecureRandomSeedGenerator.SECURE_RANDOM_SEED_GENERATOR);
+    SeedGenerator generator = new FakeSeedGenerator("testSerializable");
+    RandomSeederThread thread = new RandomSeederThread(generator);
     try {
       final BaseSplittableRandomAdapter adapter =
-          ReseedingSplittableRandomAdapter.getInstance(thread,
-              SecureRandomSeedGenerator.SECURE_RANDOM_SEED_GENERATOR);
+          ReseedingSplittableRandomAdapter.getInstance(thread, generator);
       final BaseSplittableRandomAdapter clone = CloneViaSerialization.clone(adapter);
       assertEquals(adapter, clone);
     } finally {
@@ -112,7 +110,7 @@ public class ReseedingSplittableRandomAdapterTest extends SingleThreadSplittable
   /** setRandomSeeder doesn't work on this class and shouldn't pretend to. */
   @Override @Test(expectedExceptions = UnsupportedOperationException.class)
   public void testRandomSeederThreadIntegration() {
-    RandomSeederThread thread = new RandomSeederThread(SecureRandomSeedGenerator.SECURE_RANDOM_SEED_GENERATOR);
+    RandomSeederThread thread = new RandomSeederThread(SECURE_RANDOM_SEED_GENERATOR);
     try {
       createRng().setRandomSeeder(thread);
     } finally {
@@ -134,7 +132,7 @@ public class ReseedingSplittableRandomAdapterTest extends SingleThreadSplittable
   }
 
   @Override @Test public void testDump() throws SeedException {
-    RandomSeederThread thread = new RandomSeederThread(SecureRandomSeedGenerator.SECURE_RANDOM_SEED_GENERATOR);
+    RandomSeederThread thread = new RandomSeederThread(SECURE_RANDOM_SEED_GENERATOR);
     try {
       ReseedingSplittableRandomAdapter baseInstance = ReseedingSplittableRandomAdapter.getInstance(thread, getTestSeedGenerator());
       RandomSeederThread otherThread = new RandomSeederThread(new FakeSeedGenerator("Different reseeder"));
