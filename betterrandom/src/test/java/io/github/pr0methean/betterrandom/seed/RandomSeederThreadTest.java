@@ -73,6 +73,7 @@ public class RandomSeederThreadTest {
     // ReferenceQueue<Object> queue = new ReferenceQueue<>();
     addSomethingDeadTo(randomSeeder);
     GcFinalization.awaitFullGc();
+    Thread.sleep(1000); // FIXME: Why is this needed?
     // assertNotNull(queue.remove(10_000));
     randomSeeder.stopIfEmpty();
     assertFalse(randomSeeder.isRunning());
