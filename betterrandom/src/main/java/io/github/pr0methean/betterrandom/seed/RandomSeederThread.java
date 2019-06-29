@@ -120,7 +120,8 @@ public final class RandomSeederThread extends LooperThread {
 
     @Override
     public Thread newThread(Runnable runnable) {
-      Thread thread = new Thread(runnable, name);
+      Thread thread = DEFAULT_THREAD_FACTORY.newThread(runnable);
+      thread.setName(name);
       thread.setDaemon(true);
       thread.setPriority(priority);
       return thread;
