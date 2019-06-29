@@ -4,9 +4,6 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.Serializable;
 import java.util.concurrent.ThreadFactory;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicLong;
-import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
@@ -16,13 +13,11 @@ import java.util.concurrent.locks.ReentrantLock;
  */
 public abstract class LooperThread implements Serializable {
 
-  protected final AtomicLong finishedIterations = new AtomicLong(0);
   /**
    * The thread holds this lock whenever it is running {@link #iterate()}.
    */
   protected final Lock lock = new ReentrantLock(true);
   protected final Lock threadLock = new ReentrantLock();
-  protected final Condition endOfIteration = lock.newCondition();
   protected transient volatile Thread thread;
   protected final ThreadFactory factory;
   private volatile boolean running; // must be tracked for deserialization
@@ -78,29 +73,6 @@ public abstract class LooperThread implements Serializable {
    */
   @SuppressWarnings("BooleanMethodIsAlwaysInverted") protected abstract boolean iterate()
       throws InterruptedException;
-
-  /**
-   * Wait for the next iteration to finish, with a timeout. May wait longer in the event of a
-   * spurious wakeup.
-   * @param time the maximum time to wait
-   * @param unit the time unit of the {@code time} argument
-   * @return {@code false}  the waiting time detectably elapsed before an iteration finished, else
-   *     {@code true}
-   * @throws InterruptedException if thrown by {@link Condition#await(long, TimeUnit)}
-   */
-  public boolean awaitIteration(final long time, final TimeUnit unit) throws InterruptedException {
-    final long previousFinishedIterations = finishedIterations.get();
-    lock.lock();
-    try {
-      while (!thread.isInterrupted()
-          && (getState() != Thread.State.TERMINATED) && (finishedIterations.get() == previousFinishedIterations)) {
-        endOfIteration.await(time, unit);
-      }
-      return finishedIterations.get() != previousFinishedIterations;
-    } finally {
-      lock.unlock();
-    }
-  }
 
   protected void start() {
     threadLock.lock();
@@ -165,8 +137,6 @@ public abstract class LooperThread implements Serializable {
             break;
           }
         } finally {
-          finishedIterations.getAndIncrement();
-          endOfIteration.signalAll();
           lock.unlock();
         }
       } catch (final InterruptedException ignored) {

@@ -5,7 +5,6 @@ import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
 import java.lang.Thread.UncaughtExceptionHandler;
-import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicLong;
 
@@ -58,13 +57,8 @@ public class LooperThreadTest {
   @Test public void testAwaitIteration() throws InterruptedException {
     final SleepingLooperThread sleepingThread = new SleepingLooperThread();
     sleepingThread.start();
-    try {
-      assertTrue(sleepingThread.awaitIteration(3, TimeUnit.SECONDS));
-      // Now do so again, to ensure the thread still runs after returning
-      assertTrue(sleepingThread.awaitIteration(3, TimeUnit.SECONDS));
-    } finally {
-      sleepingThread.interrupt();
-    }
+    Thread.sleep(1000);
+    assertEquals(sleepingThread.finishedIterations.get(), 1);
   }
 
   @Test public void testResurrect() throws InterruptedException {
@@ -105,14 +99,15 @@ public class LooperThreadTest {
   }
 
   private static class SleepingLooperThread extends LooperThread {
-
+    protected final AtomicLong finishedIterations = new AtomicLong(0);
     private SleepingLooperThread() {
       super("SleepingLooperThread");
     }
 
     @Override public boolean iterate() throws InterruptedException {
       Thread.sleep(10);
-      return finishedIterations.get() < 50;
+      finishedIterations.incrementAndGet();
+      return false;
     }
   }
 }
