@@ -65,6 +65,7 @@ public class RandomSeederThreadTest {
   }
 
   @Test public void testStopIfEmpty() throws InterruptedException {
+    // FIXME: When the commented lines are uncommented, the ref never gets queued!
     final SeedGenerator seedGenerator = new FakeSeedGenerator("testStopIfEmpty");
     final RandomSeederThread randomSeeder = new RandomSeederThread(seedGenerator);
     // ReferenceQueue<Object> queue = new ReferenceQueue<>();
@@ -74,7 +75,8 @@ public class RandomSeederThreadTest {
     randomSeeder.stopIfEmpty();
     assertTrue(randomSeeder.isRunning());
     prng.nextBoolean(); // could replace with Reference.reachabilityFence if JDK8 support wasn't needed
-    Thread.sleep(100); // FIXME: System.gc() doesn't seem to do anything, but Thread.sleep() clears the WeakHashMap
+    System.gc();
+    Thread.sleep(100); // FIXME: System.gc() alone doesn't clear the WeakHashMap
     // assertNotNull(queue.remove(10_000));
     randomSeeder.stopIfEmpty();
     assertFalse(randomSeeder.isRunning());
