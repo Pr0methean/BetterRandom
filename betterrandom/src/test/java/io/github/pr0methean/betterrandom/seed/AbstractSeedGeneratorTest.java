@@ -1,9 +1,9 @@
 package io.github.pr0methean.betterrandom.seed;
 
+import static org.testng.Assert.assertEquals;
+
 import org.testng.Assert;
 import org.testng.annotations.Test;
-
-import static org.testng.Assert.assertEquals;
 
 public abstract class AbstractSeedGeneratorTest {
 

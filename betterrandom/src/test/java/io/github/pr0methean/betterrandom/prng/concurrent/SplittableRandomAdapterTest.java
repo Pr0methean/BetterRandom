@@ -1,13 +1,13 @@
 package io.github.pr0methean.betterrandom.prng.concurrent;
 
+import static org.testng.Assert.assertEquals;
+
 import io.github.pr0methean.betterrandom.TestingDeficiency;
 import io.github.pr0methean.betterrandom.prng.BaseRandom;
 import io.github.pr0methean.betterrandom.prng.RandomTestUtils;
 import io.github.pr0methean.betterrandom.seed.RandomSeederThread;
 import io.github.pr0methean.betterrandom.seed.SeedException;
 import org.testng.annotations.Test;
-
-import static org.testng.Assert.assertEquals;
 
 public class SplittableRandomAdapterTest extends SingleThreadSplittableRandomAdapterTest {
 
