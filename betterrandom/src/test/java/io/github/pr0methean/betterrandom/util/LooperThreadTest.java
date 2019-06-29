@@ -1,8 +1,6 @@
 package io.github.pr0methean.betterrandom.util;
 
-import com.google.common.collect.ImmutableMap;
 import io.github.pr0methean.betterrandom.MockException;
-import io.github.pr0methean.betterrandom.TestUtils;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
@@ -35,21 +33,7 @@ public class LooperThreadTest {
     }
   }
 
-  private static final long STACK_SIZE = 1_234_567;
   private static final AtomicBoolean exceptionHandlerRun = new AtomicBoolean(false);
-
-  @Test public void testConstructors() {
-    TestUtils.testConstructors(LooperThread.class, false, ImmutableMap
-        .of(ThreadGroup.class, new ThreadGroup("Test ThreadGroup"),
-            String.class, "Test LooperThread", long.class, STACK_SIZE), thread -> {
-      thread.start();
-      try {
-        assertTrue(thread.awaitIteration(1, TimeUnit.SECONDS));
-      } catch (final InterruptedException e) {
-        throw new AssertionError(e);
-      }
-    });
-  }
 
   @BeforeTest public void setUp() {
     exceptionHandlerRun.set(false);
