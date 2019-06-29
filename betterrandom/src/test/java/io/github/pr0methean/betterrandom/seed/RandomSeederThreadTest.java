@@ -56,6 +56,7 @@ public class RandomSeederThreadTest {
         Thread.sleep(100);
         assertTrue(randomSeeder.isRunning());
         assertEquals(seedGenerator.countCalls(), 2);
+        random.nextBoolean();
       } finally {
         randomSeeder.remove(random);
       }
@@ -69,17 +70,22 @@ public class RandomSeederThreadTest {
     final SeedGenerator seedGenerator = new FakeSeedGenerator("testStopIfEmpty");
     final RandomSeederThread randomSeeder = new RandomSeederThread(seedGenerator);
     // ReferenceQueue<Object> queue = new ReferenceQueue<>();
+    addSomethingDeadTo(randomSeeder);
+    System.gc();
+    Thread.sleep(1000); // FIXME: System.gc() alone doesn't clear the WeakHashMap
+    // assertNotNull(queue.remove(10_000));
+    randomSeeder.stopIfEmpty();
+    assertFalse(randomSeeder.isRunning());
+  }
+
+  /** Making this a subroutine ensures that {@code prng} can be GCed on exit. */
+  private void addSomethingDeadTo(RandomSeederThread randomSeeder) {
     Random prng = new Random();
     // new PhantomReference<Object>(prng, queue);
     randomSeeder.add(prng);
     randomSeeder.stopIfEmpty();
     assertTrue(randomSeeder.isRunning());
     prng.nextBoolean(); // could replace with Reference.reachabilityFence if JDK8 support wasn't needed
-    System.gc();
-    Thread.sleep(1000); // FIXME: System.gc() alone doesn't clear the WeakHashMap
-    // assertNotNull(queue.remove(10_000));
-    randomSeeder.stopIfEmpty();
-    assertFalse(randomSeeder.isRunning());
   }
 
   private void sleepUninterruptibly(long nanos) {
