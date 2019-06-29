@@ -6,6 +6,7 @@ import io.github.pr0methean.betterrandom.prng.Pcg64Random;
 import io.github.pr0methean.betterrandom.prng.RandomTestUtils;
 import org.testng.annotations.Test;
 
+import java.lang.ref.WeakReference;
 import java.util.Arrays;
 import java.util.Random;
 
@@ -72,22 +73,22 @@ public class RandomSeederThreadTest {
     final SeedGenerator seedGenerator = new FakeSeedGenerator("testStopIfEmpty");
     final RandomSeederThread randomSeeder = new RandomSeederThread(seedGenerator);
     // ReferenceQueue<Object> queue = new ReferenceQueue<>();
-    addSomethingDeadTo(randomSeeder);
-    GcFinalization.awaitFullGc();
+    GcFinalization.awaitClear(addSomethingDeadTo(randomSeeder));
     Thread.sleep(1000); // FIXME: Why is this needed?
     // assertNotNull(queue.remove(10_000));
     randomSeeder.stopIfEmpty();
-    assertFalse(randomSeeder.isRunning());
+    assertFalse(randomSeeder.isRunning(), "randomSeeder did not stop");
   }
 
   /** Making this a subroutine ensures that {@code prng} can be GCed on exit. */
-  private void addSomethingDeadTo(RandomSeederThread randomSeeder) {
+  private WeakReference<Random> addSomethingDeadTo(RandomSeederThread randomSeeder) {
     Random prng = new Random();
     // new PhantomReference<Object>(prng, queue);
     randomSeeder.add(prng);
     randomSeeder.stopIfEmpty();
     assertTrue(randomSeeder.isRunning());
     prng.nextBoolean(); // could replace with Reference.reachabilityFence if JDK8 support wasn't needed
+    return new WeakReference<>(prng);
   }
 
 }
