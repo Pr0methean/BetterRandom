@@ -65,7 +65,7 @@ public class RandomSeederThreadTest {
     }
   }
 
-  @Test public void testStopIfEmpty() throws InterruptedException {
+  @Test(singleThreaded = true) public void testStopIfEmpty() throws InterruptedException {
     // FIXME: When the commented lines are uncommented, the ref never gets queued!
     final SeedGenerator seedGenerator = new FakeSeedGenerator("testStopIfEmpty");
     final RandomSeederThread randomSeeder = new RandomSeederThread(seedGenerator);
