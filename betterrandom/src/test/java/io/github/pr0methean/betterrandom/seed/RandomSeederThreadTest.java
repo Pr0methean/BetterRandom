@@ -1,25 +1,21 @@
 package io.github.pr0methean.betterrandom.seed;
 
+import com.google.common.testing.GcFinalization;
+import io.github.pr0methean.betterrandom.FlakyRetryAnalyzer;
+import io.github.pr0methean.betterrandom.prng.Pcg64Random;
 import io.github.pr0methean.betterrandom.prng.RandomTestUtils;
-import java.util.Arrays;
-import java.util.Locale;
-import java.util.Random;
-import java.util.concurrent.locks.LockSupport;
 import org.testng.annotations.Test;
 
-import static io.github.pr0methean.betterrandom.seed.RandomSeederThread.stopAllEmpty;
-import static org.testng.Assert.assertEquals;
-import static org.testng.Assert.assertFalse;
-import static org.testng.Assert.assertTrue;
+import java.lang.ref.WeakReference;
+import java.util.Arrays;
+import java.util.Random;
+
+import static org.testng.Assert.*;
 
 public class RandomSeederThreadTest {
 
   private static final long TEST_SEED = 0x0123456789ABCDEFL;
   private static final int TEST_OUTPUT_SIZE = 20;
-
-  private static final boolean ON_LINUX
-      = System.getProperty("os.name", "generic").toLowerCase(Locale.ENGLISH)
-          .contains("nux");
 
   @Test(timeOut = 25_000) public void testAddRemoveAndIsEmpty() throws Exception {
     final Random prng = new Random(TEST_SEED);
@@ -27,108 +23,72 @@ public class RandomSeederThreadTest {
     prng.nextBytes(bytesWithOldSeed);
     prng.setSeed(TEST_SEED); // Rewind
     final SeedGenerator seedGenerator = new FakeSeedGenerator("testAddRemoveAndIsEmpty");
+    final RandomSeederThread randomSeeder = new RandomSeederThread(seedGenerator);
     try {
-      assertTrue(RandomSeederThread.isEmpty(seedGenerator));
-      RandomSeederThread.add(seedGenerator, prng);
-      assertFalse(RandomSeederThread.isEmpty(seedGenerator));
-      sleepUninterruptibly(100_000_000); // FIXME: Why does this sleep get interrupted?!
-      assertFalse(RandomSeederThread.isEmpty(seedGenerator));
+      assertTrue(randomSeeder.isEmpty());
+      randomSeeder.add(prng);
+      assertFalse(randomSeeder.isEmpty());
+      RandomTestUtils.sleepUninterruptibly(100_000_000); // FIXME: Why does this sleep get interrupted?!
+      assertFalse(randomSeeder.isEmpty());
     } finally {
-      RandomTestUtils.removeAndAssertEmpty(seedGenerator, prng);
+      RandomTestUtils.removeAndAssertEmpty(randomSeeder, prng);
     }
     final byte[] bytesWithNewSeed = new byte[TEST_OUTPUT_SIZE];
     prng.nextBytes(bytesWithNewSeed);
-    if (ON_LINUX) {
-      // FIXME: Fails without the Thread.sleep call
-      assertFalse(Arrays.equals(bytesWithOldSeed, bytesWithNewSeed));
-    }
+    assertFalse(Arrays.equals(bytesWithOldSeed, bytesWithNewSeed));
   }
 
-  @Test public void testStopIfEmpty() {
-    final SeedGenerator seedGenerator = new FakeSeedGenerator("testStopIfEmpty");
-    final Random prng = new Random();
-    RandomSeederThread.add(seedGenerator, prng);
-    RandomSeederThread.stopIfEmpty(seedGenerator);
-    assertTrue(RandomSeederThread.hasInstance(seedGenerator));
-    RandomTestUtils.removeAndAssertEmpty(seedGenerator, prng);
-  }
-
-  @Test public void testStopAllEmpty() {
-    final SeedGenerator neverAddedTo = new FakeSeedGenerator("neverAddedTo");
-    final SeedGenerator addedToAndRemoved = new FakeSeedGenerator("addedToAndRemoved");
-    final SeedGenerator addedToAndLeft = new FakeSeedGenerator("addedToAndLeft");
-    final Random addedAndRemoved = new Random();
-    final Random addedAndLeft = new Random();
-    RandomSeederThread.add(addedToAndRemoved, addedAndRemoved);
-    RandomSeederThread.remove(addedToAndRemoved, addedAndRemoved);
-    RandomSeederThread.add(addedToAndLeft, addedAndLeft);
-    assertFalse(RandomSeederThread.hasInstance(neverAddedTo));
-    assertTrue(RandomSeederThread.hasInstance(addedToAndRemoved));
-    assertTrue(RandomSeederThread.hasInstance(addedToAndLeft));
-    stopAllEmpty();
-    assertFalse(RandomSeederThread.hasInstance(neverAddedTo));
-    assertFalse(RandomSeederThread.hasInstance(addedToAndRemoved));
-    assertTrue(RandomSeederThread.hasInstance(addedToAndLeft));
-    addedAndLeft.nextInt(); // prevent GC before this point
-  }
-
-  @Test public void testSetDefaultPriority() {
-    RandomSeederThread.setDefaultPriority(7);
+  @Test public void testResurrection() throws InterruptedException {
+    final FakeSeedGenerator seedGenerator = new FakeSeedGenerator("testResurrection");
+    seedGenerator.setThrowException(true);
+    final RandomSeederThread randomSeeder = new RandomSeederThread(seedGenerator);
     try {
-      final FakeSeedGenerator generator = new FakeSeedGenerator("testSetDefaultPriority");
-      final Random prng = new Random();
-      RandomSeederThread.add(generator, prng);
+      Random random = new Pcg64Random();
+      randomSeeder.add(random);
       try {
-        boolean threadFound = false;
-        final Thread[] threads = new Thread[10 + Thread.activeCount()];
-        final int nThreads = Thread.enumerate(threads);
-        for (int i = 0; i < nThreads; i++) {
-          if ((threads[i] instanceof RandomSeederThread)
-              && "RandomSeederThread for testSetDefaultPriority".equals(threads[i].getName())) {
-            assertEquals(threads[i].getPriority(), 7);
-            threadFound = true;
-            break;
-          }
-        }
-        assertTrue(threadFound, "Couldn't find the seeder thread!");
-        prng.nextInt(); // prevent GC before this point
+        random.nextLong();
+        random.nextLong();
+        Thread.sleep(100);
+        assertFalse(randomSeeder.isRunning());
+        assertEquals(seedGenerator.countCalls(), 1);
+        seedGenerator.setThrowException(false);
+        randomSeeder.remove(random);
+        randomSeeder.add(random);
+        random.nextBoolean();
+        Thread.sleep(100);
+        assertTrue(randomSeeder.isRunning());
+        assertEquals(seedGenerator.countCalls(), 2);
+        random.nextBoolean();
       } finally {
-        RandomTestUtils.removeAndAssertEmpty(generator, prng);
+        randomSeeder.remove(random);
       }
     } finally {
-      RandomSeederThread.setDefaultPriority(Thread.NORM_PRIORITY);
+      randomSeeder.stopIfEmpty();
     }
   }
 
-  @Test public void testSetPriority() {
-    final Random prng = new Random();
-    final FakeSeedGenerator generator = new FakeSeedGenerator("testSetPriority");
-    RandomSeederThread.add(generator, prng);
-    try {
-      RandomSeederThread.setPriority(generator, 7);
-      boolean threadFound = false;
-      final Thread[] threads = new Thread[10 + Thread.activeCount()];
-      final int nThreads = Thread.enumerate(threads);
-      for (int i = 0; i < nThreads; i++) {
-        if ((threads[i] instanceof RandomSeederThread)
-            && "RandomSeederThread for testSetPriority".equals(threads[i].getName())) {
-          assertEquals(threads[i].getPriority(), 7);
-          threadFound = true;
-          break;
-        }
-      }
-      assertTrue(threadFound, "Couldn't find the seeder thread!");
-    } finally {
-      RandomTestUtils.removeAndAssertEmpty(generator, prng);
-    }
+  @Test(singleThreaded = true, retryAnalyzer = FlakyRetryAnalyzer.class)
+  public void testStopIfEmpty() throws InterruptedException {
+    // FIXME: When the commented lines are uncommented, the ref never gets queued!
+    final SeedGenerator seedGenerator = new FakeSeedGenerator("testStopIfEmpty");
+    final RandomSeederThread randomSeeder = new RandomSeederThread(seedGenerator);
+    // ReferenceQueue<Object> queue = new ReferenceQueue<>();
+    GcFinalization.awaitClear(addSomethingDeadTo(randomSeeder));
+    Thread.sleep(1000); // FIXME: Why is this needed?
+    // assertNotNull(queue.remove(10_000));
+    randomSeeder.stopIfEmpty();
+    assertFalse(randomSeeder.isRunning(), "randomSeeder did not stop");
   }
 
-  private void sleepUninterruptibly(long nanos) {
-    long curTime = System.nanoTime();
-    long endTime = curTime + nanos;
-    do {
-      LockSupport.parkNanos(endTime - curTime);
-      curTime = System.nanoTime();
-    } while (curTime < endTime);
+  /** Making this a subroutine ensures that {@code prng} can be GCed on exit. */
+  private WeakReference<Random> addSomethingDeadTo(RandomSeederThread randomSeeder) {
+    Random prng = new Random();
+    // new PhantomReference<Object>(prng, queue);
+    randomSeeder.add(prng);
+    randomSeeder.stopIfEmpty();
+    assertTrue(randomSeeder.isRunning());
+    prng.nextBoolean(); // could replace with Reference.reachabilityFence if JDK8 support wasn't needed
+    return new WeakReference<>(prng);
   }
+
 }

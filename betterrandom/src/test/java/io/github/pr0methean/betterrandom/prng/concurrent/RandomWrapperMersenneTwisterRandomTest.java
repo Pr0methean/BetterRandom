@@ -1,15 +1,17 @@
 package io.github.pr0methean.betterrandom.prng.concurrent;
 
 import com.google.common.collect.ImmutableList;
+import io.github.pr0methean.betterrandom.FlakyRetryAnalyzer;
 import io.github.pr0methean.betterrandom.NamedFunction;
 import io.github.pr0methean.betterrandom.prng.BaseRandom;
 import io.github.pr0methean.betterrandom.prng.MersenneTwisterRandom;
 import io.github.pr0methean.betterrandom.prng.MersenneTwisterRandomTest;
 import io.github.pr0methean.betterrandom.seed.SeedException;
 import io.github.pr0methean.betterrandom.seed.SeedGenerator;
+import org.testng.annotations.Test;
+
 import java.util.Collections;
 import java.util.Random;
-import org.testng.annotations.Test;
 
 import static org.testng.Assert.assertSame;
 
@@ -63,7 +65,7 @@ public class RandomWrapperMersenneTwisterRandomTest extends MersenneTwisterRando
     super.testSerializable();
   }
 
-  @Override @Test(retryAnalyzer = FlakyTestAnalyzer.class)
+  @Override @Test(retryAnalyzer = FlakyRetryAnalyzer.class)
   public void testReseeding() throws SeedException {
     super.testReseeding();
   }

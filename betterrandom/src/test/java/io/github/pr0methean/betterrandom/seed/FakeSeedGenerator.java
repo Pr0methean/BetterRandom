@@ -1,6 +1,7 @@
 package io.github.pr0methean.betterrandom.seed;
 
 import java.util.Arrays;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicLong;
 
 public class FakeSeedGenerator implements SeedGenerator {
@@ -9,6 +10,7 @@ public class FakeSeedGenerator implements SeedGenerator {
   private final String name;
 
   private final AtomicLong calls = new AtomicLong(0);
+  private final AtomicBoolean throwException = new AtomicBoolean(false);
 
   public FakeSeedGenerator() {
     this("FakeSeedGenerator");
@@ -24,6 +26,9 @@ public class FakeSeedGenerator implements SeedGenerator {
 
   @Override public void generateSeed(final byte[] output) throws SeedException {
     calls.incrementAndGet();
+    if (throwException.get()) {
+      throw new SeedException("FakeSeedGenerator configured to throw exception");
+    }
     Arrays.fill(output, (byte) 1);
   }
 
@@ -63,5 +68,9 @@ public class FakeSeedGenerator implements SeedGenerator {
 
   public void reset() {
     calls.set(0);
+  }
+
+  public void setThrowException(boolean throwException) {
+    this.throwException.set(throwException);
   }
 }

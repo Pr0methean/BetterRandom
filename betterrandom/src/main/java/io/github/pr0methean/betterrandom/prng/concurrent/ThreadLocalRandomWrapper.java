@@ -2,16 +2,18 @@ package io.github.pr0methean.betterrandom.prng.concurrent;
 
 import com.google.common.base.MoreObjects.ToStringHelper;
 import io.github.pr0methean.betterrandom.prng.BaseRandom;
+import io.github.pr0methean.betterrandom.seed.RandomSeederThread;
 import io.github.pr0methean.betterrandom.seed.SeedException;
 import io.github.pr0methean.betterrandom.seed.SeedGenerator;
 import io.github.pr0methean.betterrandom.util.SerializableSupplier;
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.util.Random;
 import java8.util.function.Function;
 import java8.util.function.LongFunction;
 import java8.util.function.Supplier;
+
 import javax.annotation.Nullable;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.util.Random;
 
 import static io.github.pr0methean.betterrandom.util.BinaryUtils.convertBytesToLong;
 import static io.github.pr0methean.betterrandom.util.Java8Constants.LONG_BYTES;
@@ -87,17 +89,17 @@ public class ThreadLocalRandomWrapper extends RandomWrapper {
     };
   }
 
-  @Nullable @Override public SeedGenerator getSeedGenerator() {
+  @Nullable @Override public RandomSeederThread getRandomSeeder() {
     return null;
   }
 
   /**
    * Not supported, because this class uses a thread-local seed.
-   * @param seedGenerator ignored.
+   * @param randomSeeder ignored.
    * @throws UnsupportedOperationException always.
    */
-  @Override public void setSeedGenerator(@Nullable final SeedGenerator seedGenerator) {
-    if (seedGenerator != null) {
+  @Override public void setRandomSeeder(@Nullable final RandomSeederThread randomSeeder) {
+    if (randomSeeder != null) {
       throw new UnsupportedOperationException("This can't be reseeded by a RandomSeederThread");
     }
   }

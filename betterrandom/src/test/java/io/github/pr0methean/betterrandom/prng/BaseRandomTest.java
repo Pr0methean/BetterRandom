@@ -2,31 +2,15 @@ package io.github.pr0methean.betterrandom.prng;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
+import com.google.common.util.concurrent.Uninterruptibles;
 import io.github.pr0methean.betterrandom.CloneViaSerialization;
+import io.github.pr0methean.betterrandom.FlakyRetryAnalyzer;
 import io.github.pr0methean.betterrandom.NamedFunction;
 import io.github.pr0methean.betterrandom.TestUtils;
-import io.github.pr0methean.betterrandom.prng.RandomTestUtils.EntropyCheckMode;
+import io.github.pr0methean.betterrandom.prng.RandomTestUtils.*;
 import io.github.pr0methean.betterrandom.prng.concurrent.SplittableRandomAdapter;
-import io.github.pr0methean.betterrandom.seed.FakeSeedGenerator;
-import io.github.pr0methean.betterrandom.seed.RandomSeederThread;
-import io.github.pr0methean.betterrandom.seed.SecureRandomSeedGenerator;
-import io.github.pr0methean.betterrandom.seed.SeedException;
-import io.github.pr0methean.betterrandom.seed.SeedGenerator;
-import io.github.pr0methean.betterrandom.seed.SemiFakeSeedGenerator;
+import io.github.pr0methean.betterrandom.seed.*;
 import io.github.pr0methean.betterrandom.util.BinaryUtils;
-import java.lang.reflect.InvocationTargetException;
-import java.security.GeneralSecurityException;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Random;
-import java.util.SortedSet;
-import java.util.TreeSet;
-import java.util.concurrent.ConcurrentSkipListSet;
-import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.TimeUnit;
 import java8.util.concurrent.ForkJoinPool;
 import java8.util.concurrent.ForkJoinTask;
 import java8.util.function.Consumer;
@@ -34,23 +18,22 @@ import java8.util.function.DoubleConsumer;
 import java8.util.function.Supplier;
 import org.apache.commons.math3.stat.descriptive.SynchronizedDescriptiveStatistics;
 import org.powermock.modules.testng.PowerMockTestCase;
-import org.testng.IRetryAnalyzer;
-import org.testng.ITestResult;
 import org.testng.Reporter;
-import org.testng.annotations.AfterClass;
 import org.testng.annotations.Test;
+
+import java.lang.reflect.InvocationTargetException;
+import java.security.GeneralSecurityException;
+import java.util.*;
+import java.util.concurrent.ConcurrentSkipListSet;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
 
 import static io.github.pr0methean.betterrandom.TestUtils.assertGreaterOrEqual;
 import static io.github.pr0methean.betterrandom.TestUtils.assertLessOrEqual;
 import static io.github.pr0methean.betterrandom.prng.BaseRandom.ENTROPY_OF_DOUBLE;
 import static io.github.pr0methean.betterrandom.prng.BaseRandom.ENTROPY_OF_FLOAT;
-import static io.github.pr0methean.betterrandom.prng.RandomTestUtils.assertMonteCarloPiEstimateSane;
-import static io.github.pr0methean.betterrandom.prng.RandomTestUtils.checkRangeAndEntropy;
-import static io.github.pr0methean.betterrandom.prng.RandomTestUtils.checkStream;
-import static org.testng.Assert.assertEquals;
-import static org.testng.Assert.assertFalse;
-import static org.testng.Assert.assertNotEquals;
-import static org.testng.Assert.assertTrue;
+import static io.github.pr0methean.betterrandom.prng.RandomTestUtils.*;
+import static org.testng.Assert.*;
 
 public abstract class BaseRandomTest extends PowerMockTestCase {
 
@@ -302,13 +285,14 @@ public abstract class BaseRandomTest extends PowerMockTestCase {
     // Can't use a SemiFakeSeedGenerator, because Random.equals() breaks equality check
     final SeedGenerator seedGenerator = new FakeSeedGenerator(
         getClass().getSimpleName() + "::testSerializable #" + rng.nextInt());
-    rng.setSeedGenerator(seedGenerator);
+    RandomSeederThread randomSeeder = new RandomSeederThread(seedGenerator);
+    rng.setRandomSeeder(randomSeeder);
     try {
       final BaseRandom rng2 = CloneViaSerialization.clone(rng);
-      assertEquals(seedGenerator, rng2.getSeedGenerator());
-      rng2.setSeedGenerator(null);
+      assertEquals(randomSeeder, rng2.getRandomSeeder());
+      rng2.setRandomSeeder(null);
     } finally {
-      RandomTestUtils.removeAndAssertEmpty(seedGenerator, rng);
+      RandomTestUtils.removeAndAssertEmpty(randomSeeder, rng);
     }
   }
 
@@ -404,12 +388,12 @@ public abstract class BaseRandomTest extends PowerMockTestCase {
   }
 
   /**
-   * This also tests {@link BaseRandom#getSeedGenerator()} and
-   * {@link BaseRandom#setSeedGenerator(SeedGenerator)}.
+   * This also tests {@link BaseRandom#getRandomSeeder()} and
+   * {@link BaseRandom#setRandomSeeder(SeedGenerator)}.
    *
    * @throws Exception
    */
-  @SuppressWarnings("BusyWait") @Test(timeOut = 60_000, retryAnalyzer = FlakyTestAnalyzer.class)
+  @SuppressWarnings("BusyWait") @Test(timeOut = 60_000, retryAnalyzer = FlakyRetryAnalyzer.class)
   public void testRandomSeederThreadIntegration() {
     final SeedGenerator seedGenerator = new SemiFakeSeedGenerator(new Random());
     final BaseRandom rng = createRng();
@@ -817,7 +801,7 @@ public abstract class BaseRandomTest extends PowerMockTestCase {
       for (int i = 0; i < 5; i++) {
         // This loop is necessary to control the false pass rate, especially during mutation testing.
         final SortedSet<Double> sequentialOutput = runSequential(supplier, supplier, seed);
-        final SortedSet<Double> parallelOutput = runParallel(supplier, supplier, seed, 10, 1000);
+        final SortedSet<Double> parallelOutput = runParallel(supplier, supplier, seed, 25, 1000);
         assertEquals(sequentialOutput, parallelOutput,
             "output differs between sequential & parallel calls to " + supplier);
       }
@@ -829,7 +813,7 @@ public abstract class BaseRandomTest extends PowerMockTestCase {
     for (final NamedFunction<Random, Double> supplier1 : pairwiseFunctions) {
       for (final NamedFunction<Random, Double> supplier2 : pairwiseFunctions) {
         if (supplier1 != supplier2) {
-          runParallel(supplier1, supplier2, seed, 10, 1000);
+          runParallel(supplier1, supplier2, seed, 25, 1000);
         }
       }
     }
@@ -840,7 +824,7 @@ public abstract class BaseRandomTest extends PowerMockTestCase {
       final int iterations) {
     // See https://www.yegor256.com/2018/03/27/how-to-test-thread-safety.html for why a
     // CountDownLatch is used.
-    final CountDownLatch latch = new CountDownLatch(2);
+    CountDownLatch latch = new CountDownLatch(2);
     final Random parallelPrng = createRng(seed);
     final SortedSet<Double> output = new ConcurrentSkipListSet<>();
     pool.execute(new GeneratorForkJoinTask<>(parallelPrng, output, supplier1, latch, iterations));
@@ -861,12 +845,6 @@ public abstract class BaseRandomTest extends PowerMockTestCase {
         1000)
         .exec();
     return output;
-  }
-
-  @AfterClass public void classTearDown() {
-    RandomSeederThread.clear(getTestSeedGenerator());
-    System.gc();
-    RandomSeederThread.stopAllEmpty();
   }
 
   private enum TestEnum {
@@ -906,11 +884,7 @@ public abstract class BaseRandomTest extends PowerMockTestCase {
 
     @Override protected boolean exec() {
       latch.countDown();
-      try {
-        latch.await();
-      } catch (final InterruptedException e) {
-        throw new AssertionError("Interrupted", e);
-      }
+      Uninterruptibles.awaitUninterruptibly(latch);
       for (int i = 0; i < iterations; i++) {
         set.add(function.apply(prng));
       }
@@ -918,20 +892,4 @@ public abstract class BaseRandomTest extends PowerMockTestCase {
     }
   }
 
-  /** From https://www.toolsqa.com/selenium-webdriver/retry-failed-tests-testng/ */
-  public static class FlakyTestAnalyzer implements IRetryAnalyzer {
-    int counter = 0;
-    int retryLimit = 1;
-
-    @Override
-    public boolean retry(ITestResult result) {
-
-      if(counter < retryLimit)
-      {
-        counter++;
-        return true;
-      }
-      return false;
-    }
-  }
 }

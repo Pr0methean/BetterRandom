@@ -7,11 +7,12 @@ import io.github.pr0methean.betterrandom.seed.SeedException;
 import io.github.pr0methean.betterrandom.seed.SeedGenerator;
 import io.github.pr0methean.betterrandom.util.BinaryUtils;
 import io.github.pr0methean.betterrandom.util.Java8Constants;
+import java8.util.SplittableRandom;
+
+import javax.annotation.Nullable;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.util.concurrent.atomic.AtomicLong;
-import java8.util.SplittableRandom;
-import javax.annotation.Nullable;
 
 import static io.github.pr0methean.betterrandom.util.BinaryUtils.convertBytesToLong;
 
@@ -137,11 +138,11 @@ public class SplittableRandomAdapter extends DirectSplittableRandomAdapter {
 
   /**
    * Not supported, because this class uses a thread-local seed.
-   * @param seedGenerator ignored.
+   * @param randomSeeder ignored.
    * @throws UnsupportedOperationException always.
    */
-  @Override public void setSeedGenerator(@Nullable final SeedGenerator seedGenerator) {
-    if (seedGenerator != null) {
+  @Override public void setRandomSeeder(@Nullable final RandomSeederThread randomSeeder) {
+    if (randomSeeder != null) {
       throw new UnsupportedOperationException("Use ReseedingSplittableRandomAdapter instead");
     }
   }

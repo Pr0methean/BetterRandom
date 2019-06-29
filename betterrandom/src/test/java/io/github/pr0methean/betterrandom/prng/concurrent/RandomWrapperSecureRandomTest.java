@@ -5,12 +5,13 @@ import io.github.pr0methean.betterrandom.NamedFunction;
 import io.github.pr0methean.betterrandom.prng.AbstractLargeSeedRandomTest;
 import io.github.pr0methean.betterrandom.prng.BaseRandom;
 import io.github.pr0methean.betterrandom.seed.SeedException;
+import org.testng.annotations.Test;
+
 import java.security.GeneralSecurityException;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import java.util.Map;
 import java.util.Random;
-import org.testng.annotations.Test;
 
 import static org.testng.Assert.assertSame;
 
@@ -38,7 +39,7 @@ public class RandomWrapperSecureRandomTest extends AbstractLargeSeedRandomTest {
     return RandomWrapper.class;
   }
 
-  @Override public Map<Class<?>, Object> constructorParams() {
+  @Override protected Map<Class<?>, Object> constructorParams() {
     final Map<Class<?>, Object> params = super.constructorParams();
     params.put(Random.class, new SecureRandom());
     return params;

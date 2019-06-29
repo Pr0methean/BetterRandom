@@ -1,34 +1,43 @@
 package io.github.pr0methean.betterrandom.prng.concurrent;
 
 import io.github.pr0methean.betterrandom.CloneViaSerialization;
+import io.github.pr0methean.betterrandom.FlakyRetryAnalyzer;
 import io.github.pr0methean.betterrandom.prng.BaseRandom;
 import io.github.pr0methean.betterrandom.prng.RandomTestUtils;
 import io.github.pr0methean.betterrandom.prng.RandomTestUtils.EntropyCheckMode;
-import io.github.pr0methean.betterrandom.seed.FakeSeedGenerator;
-import io.github.pr0methean.betterrandom.seed.RandomSeederThread;
-import io.github.pr0methean.betterrandom.seed.SecureRandomSeedGenerator;
-import io.github.pr0methean.betterrandom.seed.SeedException;
-import io.github.pr0methean.betterrandom.seed.SeedGenerator;
+import io.github.pr0methean.betterrandom.seed.*;
 import io.github.pr0methean.betterrandom.util.BinaryUtils;
+import org.testng.annotations.AfterTest;
+import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
 import static org.testng.Assert.assertEquals;
-import static org.testng.Assert.assertFalse;
 import static org.testng.Assert.assertNotEquals;
 
 @SuppressWarnings("BusyWait")
 public class ReseedingSplittableRandomAdapterTest extends SingleThreadSplittableRandomAdapterTest {
+
+  private RandomSeederThread thread;
+
+  @Override
+  protected SeedGenerator getTestSeedGenerator() {
+    return semiFakeSeedGenerator;
+  }
+
+  @BeforeTest public void setUp() {
+    thread = new RandomSeederThread(getTestSeedGenerator());
+  }
+
+  @AfterTest public void tearDown() {
+    thread.stopIfEmpty();
+  }
 
   @Override protected EntropyCheckMode getEntropyCheckMode() {
     return EntropyCheckMode.LOWER_BOUND;
   }
 
   @Override protected ReseedingSplittableRandomAdapter createRng() throws SeedException {
-    return ReseedingSplittableRandomAdapter.getInstance(getTestSeedGenerator());
-  }
-
-  @Test public void testGetDefaultInstance() {
-    ReseedingSplittableRandomAdapter.getDefaultInstance().nextLong();
+    return ReseedingSplittableRandomAdapter.getInstance(thread, getTestSeedGenerator());
   }
 
   // FIXME: Why does this need more time than other PRNGs?!
@@ -42,10 +51,18 @@ public class ReseedingSplittableRandomAdapterTest extends SingleThreadSplittable
   }
 
   @Override @Test public void testSerializable() throws SeedException {
-    final BaseSplittableRandomAdapter adapter =
-        ReseedingSplittableRandomAdapter.getInstance(
-            SecureRandomSeedGenerator.SECURE_RANDOM_SEED_GENERATOR);
-    assertEquals(adapter, CloneViaSerialization.clone(adapter));
+    // SemifakeSeedGenerator-based RandomSeederThread can't be used, because SemifakeSeedGenerator doesn't equals() its
+    // clone-by-serialization
+    RandomSeederThread thread = new RandomSeederThread(SecureRandomSeedGenerator.SECURE_RANDOM_SEED_GENERATOR);
+    try {
+      final BaseSplittableRandomAdapter adapter =
+          ReseedingSplittableRandomAdapter.getInstance(thread,
+              SecureRandomSeedGenerator.SECURE_RANDOM_SEED_GENERATOR);
+      final BaseSplittableRandomAdapter clone = CloneViaSerialization.clone(adapter);
+      assertEquals(adapter, clone);
+    } finally {
+      thread.stopIfEmpty();
+    }
   }
 
   @Override protected Class<? extends BaseRandom> getClassUnderTest() {
@@ -60,7 +77,7 @@ public class ReseedingSplittableRandomAdapterTest extends SingleThreadSplittable
     // No-op.
   }
 
-  @SuppressWarnings("BusyWait") @Override @Test(retryAnalyzer = FlakyTestAnalyzer.class)
+  @SuppressWarnings("BusyWait") @Override @Test(retryAnalyzer = FlakyRetryAnalyzer.class)
   public void testReseeding() {
     RandomTestUtils.testReseeding(getTestSeedGenerator(), createRng(), false);
   }
@@ -88,14 +105,20 @@ public class ReseedingSplittableRandomAdapterTest extends SingleThreadSplittable
     createRng().setSeed(0x0123456789ABCDEFL);
   }
 
-  /** setSeedGenerator doesn't work on this class and shouldn't pretend to. */
+  /** setRandomSeeder doesn't work on this class and shouldn't pretend to. */
   @Override @Test(expectedExceptions = UnsupportedOperationException.class)
   public void testRandomSeederThreadIntegration() {
-    createRng().setSeedGenerator(SecureRandomSeedGenerator.SECURE_RANDOM_SEED_GENERATOR);
+    RandomSeederThread thread = new RandomSeederThread(SecureRandomSeedGenerator.SECURE_RANDOM_SEED_GENERATOR);
+    try {
+      createRng().setRandomSeeder(thread);
+    } finally {
+      thread.stopIfEmpty();
+    }
   }
 
   @Test public void testSetSeedGeneratorNoOp() {
-    createRng().setSeedGenerator(getTestSeedGenerator());
+    ReseedingSplittableRandomAdapter.getInstance(thread, getTestSeedGenerator())
+        .setRandomSeeder(thread);
   }
 
   @Override @Test(enabled = false) public void testSeedTooShort() {
@@ -107,19 +130,18 @@ public class ReseedingSplittableRandomAdapterTest extends SingleThreadSplittable
   }
 
   @Override @Test public void testDump() throws SeedException {
-    assertNotEquals(ReseedingSplittableRandomAdapter.getInstance(new FakeSeedGenerator()).dump(),
-        ReseedingSplittableRandomAdapter.getInstance(getTestSeedGenerator()).dump());
-  }
-
-  @Test public void testFinalize() throws SeedException {
-    final SeedGenerator generator = new FakeSeedGenerator();
-    ReseedingSplittableRandomAdapter.getInstance(generator);
+    RandomSeederThread thread = new RandomSeederThread(SecureRandomSeedGenerator.SECURE_RANDOM_SEED_GENERATOR);
     try {
-      Runtime.getRuntime().runFinalization();
+      ReseedingSplittableRandomAdapter baseInstance = ReseedingSplittableRandomAdapter.getInstance(thread, getTestSeedGenerator());
+      RandomSeederThread otherThread = new RandomSeederThread(new FakeSeedGenerator("Different reseeder"));
+      try {
+        assertNotEquals(ReseedingSplittableRandomAdapter.getInstance(otherThread, getTestSeedGenerator()).dump(),
+            baseInstance.dump());
+      } finally {
+        otherThread.stopIfEmpty();
+      }
     } finally {
-      System.gc();
-      RandomSeederThread.stopIfEmpty(generator);
-      assertFalse(RandomSeederThread.hasInstance(generator));
+      thread.stopIfEmpty();
     }
   }
 

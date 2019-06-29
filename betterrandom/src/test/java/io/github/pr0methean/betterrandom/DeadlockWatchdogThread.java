@@ -1,11 +1,12 @@
 package io.github.pr0methean.betterrandom;
 
 import io.github.pr0methean.betterrandom.util.LooperThread;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.lang.management.ManagementFactory;
 import java.lang.management.ThreadInfo;
 import java.lang.management.ThreadMXBean;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 @SuppressWarnings("unused") // intermittently needed for debugging
 public class DeadlockWatchdogThread extends LooperThread {
@@ -14,6 +15,7 @@ public class DeadlockWatchdogThread extends LooperThread {
   private static final Logger LOG = LoggerFactory.getLogger(DeadlockWatchdogThread.class);
   private static final int MAX_STACK_DEPTH = 20;
   private static final int DEADLOCK_STATUS = 0xDEAD10CC;
+  public static final int POLL_INTERVAL = 5_000;
   private static DeadlockWatchdogThread INSTANCE = new DeadlockWatchdogThread();
 
   private static final class StackTraceHolder extends Throwable {
@@ -29,17 +31,20 @@ public class DeadlockWatchdogThread extends LooperThread {
   }
 
   private DeadlockWatchdogThread() {
-    super("DeadlockWatchdogThread");
+    super(runnable -> {
+      Thread thread = new Thread(runnable);
+      thread.setDaemon(true);
+      thread.setPriority(Thread.MAX_PRIORITY);
+      return thread;
+    });
   }
 
   public static void ensureStarted() {
     synchronized (DeadlockWatchdogThread.class) {
-      if (INSTANCE.getState() == State.TERMINATED) {
+      if (INSTANCE.getState() == Thread.State.TERMINATED) {
         INSTANCE = new DeadlockWatchdogThread();
       }
-      if (INSTANCE.getState() == State.NEW) {
-        INSTANCE.setDaemon(true);
-        INSTANCE.setPriority(Thread.MAX_PRIORITY);
+      if (INSTANCE.getState() == Thread.State.NEW) {
         INSTANCE.start();
       }
     }
@@ -54,7 +59,7 @@ public class DeadlockWatchdogThread extends LooperThread {
 
   @SuppressWarnings({"CallToSystemExit", "ConstantConditions", "ObjectAllocationInLoop"}) @Override public boolean iterate()
       throws InterruptedException {
-    sleep(60_000);
+    Thread.sleep(POLL_INTERVAL);
     boolean deadlockFound = false;
     long[] threadsOfInterest = THREAD_MX_BEAN.findDeadlockedThreads();
     if ((threadsOfInterest != null) && (threadsOfInterest.length > 0)) {

@@ -21,10 +21,11 @@ import io.github.pr0methean.betterrandom.prng.AbstractLargeSeedRandomTest;
 import io.github.pr0methean.betterrandom.prng.BaseRandom;
 import io.github.pr0methean.betterrandom.prng.RandomTestUtils;
 import io.github.pr0methean.betterrandom.seed.SeedException;
+import org.testng.annotations.Test;
+
 import java.util.Collections;
 import java.util.Map;
 import java.util.Random;
-import org.testng.annotations.Test;
 
 import static org.testng.Assert.assertSame;
 
@@ -48,7 +49,7 @@ public class RandomWrapperRandomTest extends AbstractLargeSeedRandomTest {
     return RandomWrapper.class;
   }
 
-  @Override public Map<Class<?>, Object> constructorParams() {
+  @Override protected Map<Class<?>, Object> constructorParams() {
     final Map<Class<?>, Object> params = super.constructorParams();
     params.put(Random.class, new Random());
     return params;

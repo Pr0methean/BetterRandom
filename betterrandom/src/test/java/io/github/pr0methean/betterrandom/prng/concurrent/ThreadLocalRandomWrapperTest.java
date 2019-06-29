@@ -4,17 +4,18 @@ import io.github.pr0methean.betterrandom.CloneViaSerialization;
 import io.github.pr0methean.betterrandom.prng.AbstractLargeSeedRandomTest;
 import io.github.pr0methean.betterrandom.prng.AesCounterRandom;
 import io.github.pr0methean.betterrandom.prng.BaseRandom;
-import io.github.pr0methean.betterrandom.prng.BaseRandomTest;
 import io.github.pr0methean.betterrandom.prng.Pcg64Random;
+import io.github.pr0methean.betterrandom.seed.RandomSeederThread;
 import io.github.pr0methean.betterrandom.seed.SeedException;
 import io.github.pr0methean.betterrandom.seed.SeedGenerator;
 import io.github.pr0methean.betterrandom.util.SerializableSupplier;
-import java.util.Map;
-import java.util.Random;
 import java8.util.function.Function;
 import java8.util.function.LongFunction;
 import java8.util.function.Supplier;
 import org.testng.annotations.Test;
+
+import java.util.Map;
+import java.util.Random;
 
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertSame;
@@ -58,14 +59,14 @@ public class ThreadLocalRandomWrapperTest extends AbstractLargeSeedRandomTest {
     // No-op: ThreadLocalRandomWrapper isn't repeatable.
   }
 
-  /** setSeedGenerator doesn't work on this class and shouldn't pretend to. */
+  /** setRandomSeeder doesn't work on this class and shouldn't pretend to. */
   @Override @Test(expectedExceptions = UnsupportedOperationException.class)
   public void testRandomSeederThreadIntegration() {
-    createRng().setSeedGenerator(getTestSeedGenerator());
+    createRng().setRandomSeeder(new RandomSeederThread(getTestSeedGenerator()));
   }
 
   @Test public void testSetSeedGeneratorNoOp() {
-    createRng().setSeedGenerator(null);
+    createRng().setRandomSeeder(null);
   }
 
   /** Assertion-free because ThreadLocalRandomWrapper isn't repeatable. */
@@ -92,7 +93,7 @@ public class ThreadLocalRandomWrapperTest extends AbstractLargeSeedRandomTest {
     testThreadSafetyVsCrashesOnly(30, functionsForThreadSafetyTest);
   }
 
-  @Override public Map<Class<?>, Object> constructorParams() {
+  @Override protected Map<Class<?>, Object> constructorParams() {
     final Map<Class<?>, Object> params = super.constructorParams();
     params.put(Supplier.class, pcgSupplier);
     params.put(Function.class, pcgSupplier);

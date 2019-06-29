@@ -1,14 +1,17 @@
 package io.github.pr0methean.betterrandom.prng.concurrent;
 
+import io.github.pr0methean.betterrandom.FlakyRetryAnalyzer;
 import io.github.pr0methean.betterrandom.prng.BaseRandom;
 import io.github.pr0methean.betterrandom.prng.RandomTestUtils;
 import io.github.pr0methean.betterrandom.prng.RandomTestUtils.EntropyCheckMode;
+import io.github.pr0methean.betterrandom.seed.RandomSeederThread;
 import io.github.pr0methean.betterrandom.seed.SecureRandomSeedGenerator;
 import io.github.pr0methean.betterrandom.seed.SeedException;
 import io.github.pr0methean.betterrandom.seed.SeedGenerator;
-import java.util.Random;
 import java8.util.function.LongFunction;
 import org.testng.annotations.Test;
+
+import java.util.Random;
 
 @Test(testName = "ReseedingThreadLocalRandomWrapper")
 public class ReseedingThreadLocalRandomWrapperTest extends ThreadLocalRandomWrapperTest {
@@ -26,17 +29,21 @@ public class ReseedingThreadLocalRandomWrapperTest extends ThreadLocalRandomWrap
     return ReseedingThreadLocalRandomWrapper.class;
   }
 
-  /** setSeedGenerator doesn't work on this class and shouldn't pretend to. */
+  /** setRandomSeeder doesn't work on this class and shouldn't pretend to. */
   @Override @Test(expectedExceptions = UnsupportedOperationException.class)
   public void testRandomSeederThreadIntegration() {
-    createRng().setSeedGenerator(SecureRandomSeedGenerator.SECURE_RANDOM_SEED_GENERATOR);
+    createRng().setRandomSeeder(
+        new RandomSeederThread(SecureRandomSeedGenerator.SECURE_RANDOM_SEED_GENERATOR));
   }
 
   @Test public void testSetSeedGeneratorNoOp() {
-    createRng().setSeedGenerator(getTestSeedGenerator());
+    RandomSeederThread randomSeeder = new RandomSeederThread(getTestSeedGenerator());
+    ReseedingThreadLocalRandomWrapper prng = new ReseedingThreadLocalRandomWrapper(
+        pcgSupplier, randomSeeder);
+    prng.setRandomSeeder(randomSeeder);
   }
 
-  @SuppressWarnings("BusyWait") @Override @Test(groups = "sequential") public void testReseeding() {
+  @SuppressWarnings("BusyWait") @Override @Test(retryAnalyzer = FlakyRetryAnalyzer.class) public void testReseeding() {
     final SeedGenerator testSeedGenerator = getTestSeedGenerator();
     final BaseRandom rng = new ReseedingThreadLocalRandomWrapper(testSeedGenerator,
         pcgSupplier);

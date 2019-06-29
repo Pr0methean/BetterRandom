@@ -20,16 +20,16 @@ import io.github.pr0methean.betterrandom.ByteArrayReseedableRandom;
 import io.github.pr0methean.betterrandom.EntropyCountingRandom;
 import io.github.pr0methean.betterrandom.RepeatableRandom;
 import io.github.pr0methean.betterrandom.prng.BaseRandom;
-import io.github.pr0methean.betterrandom.prng.Java8CompatRandom;
 import io.github.pr0methean.betterrandom.seed.DefaultSeedGenerator;
 import io.github.pr0methean.betterrandom.seed.SeedException;
 import io.github.pr0methean.betterrandom.seed.SeedGenerator;
 import io.github.pr0methean.betterrandom.util.BinaryUtils;
 import io.github.pr0methean.betterrandom.util.Dumpable;
 import io.github.pr0methean.betterrandom.util.EntryPoint;
+
+import javax.annotation.Nullable;
 import java.security.SecureRandom;
 import java.util.Random;
-import javax.annotation.Nullable;
 
 import static io.github.pr0methean.betterrandom.util.Java8Constants.LONG_BYTES;
 
@@ -61,7 +61,7 @@ public class RandomWrapper extends BaseRandom {
   /**
    * Wraps a {@link Random} that is seeded using the provided seed generation strategy.
    * @param seedGenerator The seed generation strategy that will provide the seed for this PRNG
-   * @throws SeedException if thrown by {@code seedGenerator}
+   * @throws SeedException if thrown by {@code randomSeeder}
    */
   @EntryPoint public RandomWrapper(final SeedGenerator seedGenerator) throws SeedException {
     this(BinaryUtils.convertBytesToLong(seedGenerator.generateSeed(LONG_BYTES)));

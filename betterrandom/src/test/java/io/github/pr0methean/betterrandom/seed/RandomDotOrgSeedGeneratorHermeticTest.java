@@ -1,16 +1,6 @@
 package io.github.pr0methean.betterrandom.seed;
 
 import io.github.pr0methean.betterrandom.prng.concurrent.SplittableRandomAdapter;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.net.Proxy;
-import java.net.URL;
-import java.nio.charset.Charset;
-import java.util.Arrays;
-import java.util.UUID;
-import javax.annotation.Nullable;
-import javax.net.ssl.HttpsURLConnection;
-import javax.xml.bind.DatatypeConverter;
 import org.json.simple.parser.ParseException;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
@@ -25,9 +15,18 @@ import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
-import static io.github.pr0methean.betterrandom.seed.RandomDotOrgSeedGenerator.MAX_REQUEST_SIZE;
-import static io.github.pr0methean.betterrandom.seed.RandomDotOrgSeedGenerator.setProxy;
-import static io.github.pr0methean.betterrandom.seed.RandomDotOrgSeedGenerator.setSslSocketFactory;
+import javax.annotation.Nullable;
+import javax.net.ssl.HttpsURLConnection;
+import javax.xml.bind.DatatypeConverter;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.net.Proxy;
+import java.net.URL;
+import java.nio.charset.Charset;
+import java.util.Arrays;
+import java.util.UUID;
+
+import static io.github.pr0methean.betterrandom.seed.RandomDotOrgSeedGenerator.*;
 import static io.github.pr0methean.betterrandom.seed.RandomDotOrgUtils.createProxy;
 import static io.github.pr0methean.betterrandom.seed.RandomDotOrgUtils.createSocketFactory;
 import static io.github.pr0methean.betterrandom.seed.SeedTestUtils.testGenerator;
@@ -116,6 +115,7 @@ public class RandomDotOrgSeedGeneratorHermeticTest extends PowerMockTestCase {
       throw new AssertionError(e);
     }
   }
+
   @Nullable private String address = null;
   private final Proxy proxy = createProxy();
   private boolean usingSmallRequests = false;
@@ -143,6 +143,11 @@ public class RandomDotOrgSeedGeneratorHermeticTest extends PowerMockTestCase {
 
   @BeforeMethod public void setUpMethod() {
     spy(RandomDotOrgSeedGenerator.class);
+  }
+
+  @AfterMethod public void tearDownMethod() throws Exception {
+    PowerMockito.doCallRealMethod().when(RandomDotOrgSeedGenerator.class, "openConnection", any(URL.class));
+    address = null;
   }
 
   @Test public void testSetProxyOldApi() throws Exception {
@@ -276,9 +281,5 @@ public class RandomDotOrgSeedGeneratorHermeticTest extends PowerMockTestCase {
     } finally {
       setSslSocketFactory(null);
     }
-  }
-
-  @AfterMethod public void tearDownMethod() {
-    address = null;
   }
 }

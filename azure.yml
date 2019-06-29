@@ -17,6 +17,13 @@ trigger:
       - CHANGELOG.md
       - .submodules
       - docs/
+schedules:
+  - cron: "17 0 * * *"
+    displayName: Nightly
+    branches:
+      include:
+        - master
+        - java7
 pr:
   branches:
     include:

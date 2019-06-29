@@ -5,10 +5,11 @@ import io.github.pr0methean.betterrandom.prng.MersenneTwisterRandom;
 import io.github.pr0methean.betterrandom.seed.SeedException;
 import io.github.pr0methean.betterrandom.seed.SeedGenerator;
 import io.github.pr0methean.betterrandom.util.SerializableSupplier;
-import java.util.Map;
 import java8.util.function.Function;
 import java8.util.function.Supplier;
 import org.testng.annotations.Test;
+
+import java.util.Map;
 
 import static org.testng.Assert.assertSame;
 
@@ -22,7 +23,7 @@ public class ThreadLocalRandomWrapperMersenneTwisterTest extends ThreadLocalRand
     assertSame(createRng().getWrapped().getClass(), MersenneTwisterRandom.class);
   }
 
-  @Override public Map<Class<?>, Object> constructorParams() {
+  @Override protected Map<Class<?>, Object> constructorParams() {
     final Map<Class<?>, Object> params = super.constructorParams();
     params.put(Supplier.class, mtSupplier);
     params.put(Function.class, mtSupplier);

@@ -20,10 +20,6 @@ import io.github.pr0methean.betterrandom.TestUtils;
 import io.github.pr0methean.betterrandom.seed.RandomSeederThread;
 import io.github.pr0methean.betterrandom.seed.SeedGenerator;
 import io.github.pr0methean.betterrandom.util.Dumpable;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Random;
-import java.util.concurrent.atomic.AtomicLong;
 import java8.util.function.Consumer;
 import java8.util.function.Supplier;
 import java8.util.function.ToLongFunction;
@@ -32,15 +28,14 @@ import java8.util.stream.Stream;
 import org.apache.commons.math3.stat.descriptive.SynchronizedDescriptiveStatistics;
 import org.testng.Reporter;
 
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Random;
+import java.util.concurrent.atomic.AtomicLong;
+import java.util.concurrent.locks.LockSupport;
+
 import static io.github.pr0methean.betterrandom.util.BinaryUtils.convertBytesToHexString;
-import static org.testng.Assert.assertEquals;
-import static org.testng.Assert.assertFalse;
-import static org.testng.Assert.assertNotEquals;
-import static org.testng.Assert.assertNotSame;
-import static org.testng.Assert.assertNull;
-import static org.testng.Assert.assertSame;
-import static org.testng.Assert.assertTrue;
-import static org.testng.Assert.fail;
+import static org.testng.Assert.*;
 
 /**
  * Provides methods used for testing the operation of RNG implementations.
@@ -252,6 +247,7 @@ public enum RandomTestUtils {
 
   public static void testReseeding(final SeedGenerator testSeedGenerator, final BaseRandom rng,
       final boolean setSeedGenerator) {
+    // TODO: Set max thread priority
     final byte[] oldSeed = rng.getSeed();
     final byte[] oldSeedClone = oldSeed.clone();
     while (rng.getEntropyBits() > 0) {
@@ -259,21 +255,24 @@ public enum RandomTestUtils {
       assertTrue(Arrays.equals(oldSeed, oldSeedClone),
           "Array modified after being returned by getSeed()");
     }
+    RandomSeederThread seeder = null;
     if (setSeedGenerator) {
-      rng.setSeedGenerator(testSeedGenerator);
+      seeder = new RandomSeederThread(testSeedGenerator);
+      rng.setRandomSeeder(seeder);
     }
-    RandomSeederThread.setPriority(testSeedGenerator, Thread.MAX_PRIORITY);
     try {
       int waits = 0;
       byte[] secondSeed;
       do {
         assertEquals(oldSeedClone, oldSeed, "Array modified after being returned by getSeed()");
-        assertSame(rng.getSeedGenerator(), testSeedGenerator);
+        if (setSeedGenerator) {
+          assertSame(rng.getRandomSeeder(), seeder);
+        }
         waits++;
         if (waits > 2000) {
           fail(String.format("Timed out waiting for %s to be reseeded!", rng));
         }
-        Thread.sleep(20);
+        sleepUninterruptibly(20_000_000);
         secondSeed = rng.getSeed();
       } while (Arrays.equals(secondSeed, oldSeed));
       final byte[] secondSeedClone = secondSeed.clone();
@@ -285,7 +284,7 @@ public enum RandomTestUtils {
           fail(String.format("Timed out waiting for entropy count to increase on %s", rng));
         }
         // FIXME: Flaky if we only sleep for 10 ms at a time
-        Thread.sleep(100);
+        sleepUninterruptibly(100_000_000);
       }
       byte[] thirdSeed;
       while (rng.getEntropyBits() > 0) {
@@ -295,36 +294,41 @@ public enum RandomTestUtils {
       do {
         assertEquals(secondSeedClone, secondSeed,
             "Array modified after being returned by getSeed()");
-        Thread.sleep(100);
+        sleepUninterruptibly(100_000_000);
         waits++;
         if (waits > 200) {
           fail(String.format("Timed out waiting for %s to be reseeded!", rng));
         }
         thirdSeed = rng.getSeed();
       } while (Arrays.equals(thirdSeed, secondSeed));
-    } catch (final InterruptedException e) {
-      throw new AssertionError(e);
     } finally {
       if (setSeedGenerator) {
-        RandomTestUtils.removeAndAssertEmpty(testSeedGenerator, rng);
-        assertNull(rng.getSeedGenerator());
-      } else {
-        RandomSeederThread.setPriority(testSeedGenerator,
-            RandomSeederThread.getDefaultPriority());
+        RandomTestUtils.removeAndAssertEmpty(seeder, rng);
+        assertNull(rng.getRandomSeeder());
       }
     }
   }
 
-  public static void removeAndAssertEmpty(final SeedGenerator seedGenerator, final BaseRandom prng) {
-    prng.setSeedGenerator(null);
-    RandomSeederThread.stopIfEmpty(seedGenerator);
-    assertFalse(RandomSeederThread.hasInstance(seedGenerator));
+  public static void removeAndAssertEmpty(final RandomSeederThread seederThread, final BaseRandom prng) {
+    prng.setRandomSeeder(null);
+    seederThread.stopIfEmpty();
+    assertTrue(seederThread.isEmpty());
   }
 
-  public static void removeAndAssertEmpty(final SeedGenerator seedGenerator, final Random prng) {
-    RandomSeederThread.remove(seedGenerator, prng);
-    RandomSeederThread.stopIfEmpty(seedGenerator);
-    assertFalse(RandomSeederThread.hasInstance(seedGenerator));
+  public static void removeAndAssertEmpty(final RandomSeederThread seederThread, final Random prng) {
+    seederThread.remove(prng);
+    seederThread.stopIfEmpty();
+    assertTrue(seederThread.isEmpty());
+    // TODO: Assert stopped
+  }
+
+  public static void sleepUninterruptibly(long nanos) {
+    long curTime = System.nanoTime();
+    long endTime = curTime + nanos;
+    do {
+      LockSupport.parkNanos(endTime - curTime);
+      curTime = System.nanoTime();
+    } while (curTime < endTime);
   }
 
   public enum EntropyCheckMode {
