@@ -8,7 +8,6 @@ import org.testng.annotations.Test;
 
 import java.util.Arrays;
 import java.util.Random;
-import java.util.concurrent.locks.LockSupport;
 
 import static org.testng.Assert.*;
 
@@ -28,7 +27,7 @@ public class RandomSeederThreadTest {
       assertTrue(randomSeeder.isEmpty());
       randomSeeder.add(prng);
       assertFalse(randomSeeder.isEmpty());
-      sleepUninterruptibly(100_000_000); // FIXME: Why does this sleep get interrupted?!
+      RandomTestUtils.sleepUninterruptibly(100_000_000); // FIXME: Why does this sleep get interrupted?!
       assertFalse(randomSeeder.isEmpty());
     } finally {
       RandomTestUtils.removeAndAssertEmpty(randomSeeder, prng);
@@ -91,12 +90,4 @@ public class RandomSeederThreadTest {
     prng.nextBoolean(); // could replace with Reference.reachabilityFence if JDK8 support wasn't needed
   }
 
-  private void sleepUninterruptibly(long nanos) {
-    long curTime = System.nanoTime();
-    long endTime = curTime + nanos;
-    do {
-      LockSupport.parkNanos(endTime - curTime);
-      curTime = System.nanoTime();
-    } while (curTime < endTime);
-  }
 }
