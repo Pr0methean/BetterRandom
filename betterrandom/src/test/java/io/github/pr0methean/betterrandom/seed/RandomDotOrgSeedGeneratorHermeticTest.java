@@ -1,15 +1,6 @@
 package io.github.pr0methean.betterrandom.seed;
 
 import io.github.pr0methean.betterrandom.prng.concurrent.SplittableRandomAdapter;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.net.Proxy;
-import java.net.URL;
-import java.nio.charset.Charset;
-import java.util.Arrays;
-import java.util.Base64;
-import java.util.UUID;
-import javax.annotation.Nullable;
 import org.json.simple.parser.ParseException;
 import org.powermock.api.mockito.PowerMockito;
 import org.powermock.api.mockito.mockpolicies.Slf4jMockPolicy;
@@ -19,12 +10,21 @@ import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.testng.PowerMockTestCase;
 import org.testng.Assert;
 import org.testng.annotations.AfterMethod;
+import org.testng.annotations.BeforeClass;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
-import static io.github.pr0methean.betterrandom.seed.RandomDotOrgSeedGenerator.MAX_REQUEST_SIZE;
-import static io.github.pr0methean.betterrandom.seed.RandomDotOrgSeedGenerator.setProxy;
-import static io.github.pr0methean.betterrandom.seed.RandomDotOrgSeedGenerator.setSslSocketFactory;
+import javax.annotation.Nullable;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.net.Proxy;
+import java.net.URL;
+import java.nio.charset.Charset;
+import java.util.Arrays;
+import java.util.Base64;
+import java.util.UUID;
+
+import static io.github.pr0methean.betterrandom.seed.RandomDotOrgSeedGenerator.*;
 import static io.github.pr0methean.betterrandom.seed.RandomDotOrgUtils.createProxy;
 import static io.github.pr0methean.betterrandom.seed.RandomDotOrgUtils.createSocketFactory;
 import static io.github.pr0methean.betterrandom.seed.SeedTestUtils.testGenerator;
@@ -112,6 +112,11 @@ public class RandomDotOrgSeedGeneratorHermeticTest extends PowerMockTestCase {
       throw new AssertionError(e);
     }
   }
+
+  @BeforeClass public void setUp() {
+    PowerMockito.mockStatic(RandomDotOrgSeedGenerator.class);
+  }
+
   @Nullable private String address = null;
   private final Proxy proxy = createProxy();
 
