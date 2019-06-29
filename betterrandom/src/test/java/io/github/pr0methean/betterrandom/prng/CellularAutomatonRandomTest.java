@@ -15,9 +15,7 @@
 // ============================================================================
 package io.github.pr0methean.betterrandom.prng;
 
-import io.github.pr0methean.betterrandom.DeadlockWatchdogThread;
 import io.github.pr0methean.betterrandom.seed.SeedException;
-import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
 /**
@@ -27,11 +25,6 @@ import org.testng.annotations.Test;
  */
 @Test(testName = "CellularAutomatonRandom")
 public class CellularAutomatonRandomTest extends AbstractLargeSeedRandomTest {
-
-  @BeforeClass
-  public void setUp() {
-    DeadlockWatchdogThread.ensureStarted();
-  }
 
   @Override public void testSetSeedLong() throws SeedException {
     final BaseRandom rng = createRng();
