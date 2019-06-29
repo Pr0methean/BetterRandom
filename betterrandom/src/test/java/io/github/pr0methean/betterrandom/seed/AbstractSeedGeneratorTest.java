@@ -1,14 +1,11 @@
 package io.github.pr0methean.betterrandom.seed;
 
-import org.powermock.core.classloader.annotations.PowerMockIgnore;
-import org.powermock.modules.testng.PowerMockTestCase;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
 import static org.testng.Assert.assertEquals;
 
-@PowerMockIgnore({"javax.net.ssl.*", "javax.security.*"})
-public abstract class AbstractSeedGeneratorTest extends PowerMockTestCase {
+public abstract class AbstractSeedGeneratorTest {
 
   protected SeedGenerator seedGenerator;
 
