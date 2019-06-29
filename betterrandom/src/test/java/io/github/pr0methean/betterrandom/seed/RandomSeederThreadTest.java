@@ -1,5 +1,6 @@
 package io.github.pr0methean.betterrandom.seed;
 
+import com.google.common.testing.GcFinalization;
 import io.github.pr0methean.betterrandom.prng.Pcg64Random;
 import io.github.pr0methean.betterrandom.prng.RandomTestUtils;
 import org.testng.annotations.Test;
@@ -65,14 +66,13 @@ public class RandomSeederThreadTest {
     }
   }
 
-  @Test(singleThreaded = true) public void testStopIfEmpty() throws InterruptedException {
+  @Test public void testStopIfEmpty() throws InterruptedException {
     // FIXME: When the commented lines are uncommented, the ref never gets queued!
     final SeedGenerator seedGenerator = new FakeSeedGenerator("testStopIfEmpty");
     final RandomSeederThread randomSeeder = new RandomSeederThread(seedGenerator);
     // ReferenceQueue<Object> queue = new ReferenceQueue<>();
     addSomethingDeadTo(randomSeeder);
-    System.gc();
-    Thread.sleep(1000); // FIXME: System.gc() alone doesn't clear the WeakHashMap
+    GcFinalization.awaitFullGc();
     // assertNotNull(queue.remove(10_000));
     randomSeeder.stopIfEmpty();
     assertFalse(randomSeeder.isRunning());
