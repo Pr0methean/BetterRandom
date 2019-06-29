@@ -76,7 +76,7 @@ public class RandomSeederThreadTest {
     assertTrue(randomSeeder.isRunning());
     prng.nextBoolean(); // could replace with Reference.reachabilityFence if JDK8 support wasn't needed
     System.gc();
-    Thread.sleep(100); // FIXME: System.gc() alone doesn't clear the WeakHashMap
+    Thread.sleep(1000); // FIXME: System.gc() alone doesn't clear the WeakHashMap
     // assertNotNull(queue.remove(10_000));
     randomSeeder.stopIfEmpty();
     assertFalse(randomSeeder.isRunning());
