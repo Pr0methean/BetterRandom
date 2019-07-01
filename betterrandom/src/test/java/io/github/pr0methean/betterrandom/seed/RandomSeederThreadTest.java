@@ -5,7 +5,6 @@ import static org.testng.Assert.assertFalse;
 import static org.testng.Assert.assertTrue;
 
 import com.google.common.testing.GcFinalization;
-import io.github.pr0methean.betterrandom.FlakyRetryAnalyzer;
 import io.github.pr0methean.betterrandom.prng.Pcg64Random;
 import io.github.pr0methean.betterrandom.prng.RandomTestUtils;
 import java.lang.ref.WeakReference;
@@ -18,7 +17,7 @@ public class RandomSeederThreadTest {
   private static final long TEST_SEED = 0x0123456789ABCDEFL;
   private static final int TEST_OUTPUT_SIZE = 20;
 
-  @Test(timeOut = 25_000) public void testAddRemoveAndIsEmpty() throws Exception {
+  @Test(timeOut = 25_000, invocationCount = 1000) public void testAddRemoveAndIsEmpty() throws Exception {
     final Random prng = new Random(TEST_SEED);
     final byte[] firstBytesWithOldSeed = new byte[TEST_OUTPUT_SIZE];
     final byte[] secondBytesWithOldSeed = new byte[TEST_OUTPUT_SIZE];
@@ -43,7 +42,7 @@ public class RandomSeederThreadTest {
     assertFalse(Arrays.equals(secondBytesWithOldSeed, bytesWithNewSeed), "Repeated output after reseeding");
   }
 
-  @Test(retryAnalyzer = FlakyRetryAnalyzer.class) public void testResurrection() throws InterruptedException {
+  @Test(invocationCount = 1000) public void testResurrection() throws InterruptedException {
     final FakeSeedGenerator seedGenerator = new FakeSeedGenerator("testResurrection");
     seedGenerator.setThrowException(true);
     final RandomSeederThread randomSeeder = new RandomSeederThread(seedGenerator);
@@ -72,7 +71,7 @@ public class RandomSeederThreadTest {
     }
   }
 
-  @Test(singleThreaded = true, retryAnalyzer = FlakyRetryAnalyzer.class)
+  @Test(singleThreaded = true, invocationCount = 1000)
   public void testStopIfEmpty() throws InterruptedException {
     // FIXME: When the commented lines are uncommented, the ref never gets queued!
     final SeedGenerator seedGenerator = new FakeSeedGenerator("testStopIfEmpty");

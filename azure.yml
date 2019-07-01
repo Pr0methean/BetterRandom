@@ -43,12 +43,12 @@ jobs:
     pool:
       vmImage: 'ubuntu-16.04'
     steps:
+    - template: etc/azureTemplate/installHaveged.yml
     - script: ./unit-tests.sh
       displayName: Build & Test
       env:
         JAVA_HOME: $(zuluLinux07)
         RANDOM_DOT_ORG_KEY: $(RANDOM_DOT_ORG_KEY)
-    - template: etc/azureTemplate/installHaveged.yml
     - template: etc/azureTemplate/publishCoverage.yml
   - job: Mutation
     dependsOn:
