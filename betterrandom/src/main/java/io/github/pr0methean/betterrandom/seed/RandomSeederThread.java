@@ -34,7 +34,7 @@ public final class RandomSeederThread extends LooperThread {
   private transient Condition waitForEntropyDrain;
   private static final Logger LOG = LoggerFactory.getLogger(RandomSeederThread.class);
   private static final long POLL_INTERVAL = 60;
-  private final long stopIfEmptyForNanos;
+  private static final long STOP_IF_EMPTY_FOR_SECONDS = 5;
 
   private void initTransientFields() {
     byteArrayPrngs = Collections.newSetFromMap(Collections.synchronizedMap(new WeakHashMap<ByteArrayReseedableRandom, Boolean>(1)));
@@ -157,13 +157,8 @@ public final class RandomSeederThread extends LooperThread {
       Collections.synchronizedMap(new WeakHashMap<ByteArrayReseedableRandom, byte[]>(1));
 
   public RandomSeederThread(final SeedGenerator seedGenerator, ThreadFactory threadFactory) {
-    this(seedGenerator, threadFactory, 5_000_000_000L);
-  }
-
-  public RandomSeederThread(final SeedGenerator seedGenerator, ThreadFactory threadFactory, long stopIfEmptyForNanos) {
     super(threadFactory);
     Objects.requireNonNull(seedGenerator, "randomSeeder must not be null");
-    this.stopIfEmptyForNanos = stopIfEmptyForNanos;
     this.seedGenerator = seedGenerator;
     initTransientFields();
     start();
@@ -184,7 +179,7 @@ public final class RandomSeederThread extends LooperThread {
         otherPrngsThisIteration.addAll(otherPrngs);
         byteArrayPrngsThisIteration.addAll(byteArrayPrngs);
         if (otherPrngsThisIteration.isEmpty() && byteArrayPrngsThisIteration.isEmpty()) {
-          if (!waitWhileEmpty.await(stopIfEmptyForNanos, TimeUnit.NANOSECONDS)) {
+          if (!waitWhileEmpty.await(STOP_IF_EMPTY_FOR_SECONDS, TimeUnit.SECONDS)) {
             return false;
           }
         } else {
