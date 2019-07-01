@@ -2,6 +2,7 @@ package io.github.pr0methean.betterrandom.util;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadFactory;
@@ -26,8 +27,8 @@ public abstract class LooperThread implements Serializable {
   protected final Lock threadLock = new ReentrantLock();
   protected transient volatile Thread thread;
   protected final ThreadFactory factory;
-  private volatile boolean running; // must be tracked for deserialization
-  private volatile boolean everStarted;
+  private volatile boolean running; // determines whether to start when deserialized
+  private volatile boolean everStarted; // tracked for getState()
 
   /**
    * Constructs a LooperThread with all properties as defaults.
@@ -76,8 +77,6 @@ public abstract class LooperThread implements Serializable {
    * Runnable}.
    * @return true if this thread should iterate again.
    * @throws InterruptedException if interrupted in mid-execution.
-   * @throws UnsupportedOperationException if this method has not been overridden and {@link
-   *     #target} was not set to non-null during construction.
    */
   @SuppressWarnings("BooleanMethodIsAlwaysInverted") protected abstract boolean iterate()
       throws InterruptedException;
@@ -151,6 +150,15 @@ public abstract class LooperThread implements Serializable {
         interrupt();
         break;
       }
+    }
+  }
+
+  private void writeObject(ObjectOutputStream out) throws IOException {
+    lock.lock();
+    try {
+      out.defaultWriteObject();
+    } finally {
+      lock.unlock();
     }
   }
 }

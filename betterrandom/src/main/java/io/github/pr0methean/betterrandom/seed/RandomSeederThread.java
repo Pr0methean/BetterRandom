@@ -7,7 +7,6 @@ import io.github.pr0methean.betterrandom.util.BinaryUtils;
 import io.github.pr0methean.betterrandom.util.LooperThread;
 import java.io.IOException;
 import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.util.Collections;
 import java.util.Map;
@@ -296,12 +295,4 @@ public final class RandomSeederThread extends LooperThread {
     initTransientFields();
   }
 
-  private void writeObject(ObjectOutputStream out) throws IOException {
-    lock.lock();
-    try {
-      out.defaultWriteObject();
-    } finally {
-      lock.unlock();
-    }
-  }
 }
