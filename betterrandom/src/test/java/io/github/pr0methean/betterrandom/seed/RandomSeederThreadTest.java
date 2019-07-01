@@ -4,19 +4,35 @@ import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertFalse;
 import static org.testng.Assert.assertTrue;
 
+import com.google.common.collect.ImmutableMap;
 import com.google.common.testing.GcFinalization;
 import io.github.pr0methean.betterrandom.FlakyRetryAnalyzer;
+import io.github.pr0methean.betterrandom.TestUtils;
 import io.github.pr0methean.betterrandom.prng.Pcg64Random;
 import io.github.pr0methean.betterrandom.prng.RandomTestUtils;
 import java.lang.ref.WeakReference;
 import java.util.Arrays;
 import java.util.Random;
+import java.util.concurrent.ThreadFactory;
 import org.testng.annotations.Test;
 
 public class RandomSeederThreadTest {
 
   private static final long TEST_SEED = 0x0123456789ABCDEFL;
   private static final int TEST_OUTPUT_SIZE = 20;
+
+  @Test public void testConstructors() {
+    TestUtils.testConstructors(RandomSeederThread.class, false, ImmutableMap.of(
+        SeedGenerator.class, new FakeSeedGenerator("testConstructors"),
+        ThreadFactory.class, new RandomSeederThread.DefaultThreadFactory("testConstructors"),
+        long.class, 100_000_000L), RandomSeederThread::stopIfEmpty);
+  }
+
+  @Test public void testDefaultThreadFactoryConstructors() {
+    TestUtils.testConstructors(RandomSeederThread.DefaultThreadFactory.class, false, ImmutableMap.of(
+        String.class, "testDefaultThreadFactoryConstructors",
+        int.class, Thread.MAX_PRIORITY), x -> x.newThread(() -> {}));
+  }
 
   @Test(timeOut = 25_000) public void testAddRemoveAndIsEmpty() throws Exception {
     final Random prng = new Random(TEST_SEED);
