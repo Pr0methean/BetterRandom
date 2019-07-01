@@ -14,7 +14,7 @@ if [ "${APPVEYOR}" != "" ]; then
 fi
 cd betterrandom
 # Coverage test
-PATH="${NO_GIT_PATH}" mvn -X ${MAYBE_ANDROID_FLAG} clean compile jacoco:instrument jacoco:prepare-agent \
+PATH="${NO_GIT_PATH}" mvn ${MAYBE_ANDROID_FLAG} clean compile jacoco:instrument jacoco:prepare-agent \
     test jacoco:restore-instrumented-classes jacoco:report -e -B || exit 1
 if [ "${JAVA8}" = "true" ]; then
   echo "[unit-tests.sh] Running Proguard."
