@@ -47,7 +47,7 @@
               <artifactId>maven-surefire-plugin</artifactId>
               <version>2.22.2</version>
               <configuration>
-                <argLine>@{argLine} @{test.jdk9.argline}</argLine>
+                <argLine>@{argLine}</argLine>
               </configuration>
             </plugin>
             <plugin>
@@ -55,7 +55,7 @@
               <artifactId>maven-failsafe-plugin</artifactId>
               <version>2.22.2</version>
               <configuration>
-                <argLine>@{argLine} @{test.jdk9.argline}</argLine>
+                <argLine>@{argLine}</argLine>
               </configuration>
             </plugin>
             <plugin>
@@ -228,8 +228,7 @@
     <powermock.version>2.0.2</powermock.version>
     <mockito.version>2.28.2</mockito.version>
     <pitest.version>1.4.9</pitest.version>
-    <test.argline>-Djava.security.egd=file:/dev/./urandom</test.argline>
-    <test.jdk9.argline>${test.argline} --add-opens java.base/jdk.internal.loader=ALL-UNNAMED --add-opens java.xml/jdk.xml.internal=ALL-UNNAMED</test.jdk9.argline>
+    <test.argline>-XX:+UseParallelGC -Djava.security.egd=file:/dev/./urandom</test.argline>
     <testng.parallel>tests</testng.parallel>
     <testng.threadCount>2</testng.threadCount>
     <testng.perCoreThreadCount>false</testng.perCoreThreadCount>
