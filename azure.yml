@@ -48,6 +48,7 @@ jobs:
       env:
         JAVA_HOME: $(JAVA_HOME)
         RANDOM_DOT_ORG_KEY: $(RANDOM_DOT_ORG_KEY)
+    - template: etc/azureTemplate/installHaveged.yml
     - template: etc/azureTemplate/publishCoverage.yml
   - job: Mutation
     dependsOn:
@@ -56,10 +57,7 @@ jobs:
     pool:
       vmImage: 'ubuntu-16.04'
     steps:
-      - script: |
-          sudo apt install haveged
-          sudo service haveged start
-        displayName: Install Haveged
+      - template: etc/azureTemplate/installHaveged.yml
       - script: ./mutation.sh
         displayName: Build & Run Mutation Tests
         env:
