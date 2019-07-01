@@ -38,7 +38,7 @@ pr:
 jobs:
   - job: UnitTest
     variables:
-      JAVA_HOME: $(zuluLinuxLatest)
+      JAVA_HOME: $(zuluLinux07)
       artifactEnvName: OpenJdk07Linux
     pool:
       vmImage: 'ubuntu-16.04'
@@ -48,6 +48,7 @@ jobs:
       displayName: Build & Test
       env:
         JAVA_HOME: $(zuluLinux07)
+        JAVA_HOME_7_X64: $(zuluLinux07)
         RANDOM_DOT_ORG_KEY: $(RANDOM_DOT_ORG_KEY)
     - template: etc/azureTemplate/publishCoverage.yml
   - job: Mutation
