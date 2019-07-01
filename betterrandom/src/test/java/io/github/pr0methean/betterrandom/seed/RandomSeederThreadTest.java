@@ -20,8 +20,10 @@ public class RandomSeederThreadTest {
 
   @Test(timeOut = 25_000) public void testAddRemoveAndIsEmpty() throws Exception {
     final Random prng = new Random(TEST_SEED);
-    final byte[] bytesWithOldSeed = new byte[TEST_OUTPUT_SIZE];
-    prng.nextBytes(bytesWithOldSeed);
+    final byte[] firstBytesWithOldSeed = new byte[TEST_OUTPUT_SIZE];
+    final byte[] secondBytesWithOldSeed = new byte[TEST_OUTPUT_SIZE];
+    prng.nextBytes(firstBytesWithOldSeed);
+    prng.nextBytes(secondBytesWithOldSeed);
     prng.setSeed(TEST_SEED); // Rewind
     final SeedGenerator seedGenerator = new FakeSeedGenerator("testAddRemoveAndIsEmpty");
     final RandomSeederThread randomSeeder = new RandomSeederThread(seedGenerator);
@@ -29,17 +31,19 @@ public class RandomSeederThreadTest {
       assertTrue(randomSeeder.isEmpty());
       randomSeeder.add(prng);
       assertFalse(randomSeeder.isEmpty());
-      RandomTestUtils.sleepUninterruptibly(100_000_000); // FIXME: Why does this sleep get interrupted?!
+      prng.nextBytes(new byte[TEST_OUTPUT_SIZE]); // Drain the entropy
+      RandomTestUtils.sleepUninterruptibly(1_000_000_000); // FIXME: Why does this sleep get interrupted?!
       assertFalse(randomSeeder.isEmpty());
     } finally {
       RandomTestUtils.removeAndAssertEmpty(randomSeeder, prng);
     }
     final byte[] bytesWithNewSeed = new byte[TEST_OUTPUT_SIZE];
     prng.nextBytes(bytesWithNewSeed);
-    assertFalse(Arrays.equals(bytesWithOldSeed, bytesWithNewSeed));
+    assertFalse(Arrays.equals(firstBytesWithOldSeed, bytesWithNewSeed), "Repeated output after reseeding");
+    assertFalse(Arrays.equals(secondBytesWithOldSeed, bytesWithNewSeed), "Repeated output after reseeding");
   }
 
-  @Test public void testResurrection() throws InterruptedException {
+  @Test(retryAnalyzer = FlakyRetryAnalyzer.class) public void testResurrection() throws InterruptedException {
     final FakeSeedGenerator seedGenerator = new FakeSeedGenerator("testResurrection");
     seedGenerator.setThrowException(true);
     final RandomSeederThread randomSeeder = new RandomSeederThread(seedGenerator);
