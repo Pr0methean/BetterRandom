@@ -25,7 +25,7 @@ public enum TestUtils {
    */
   @SuppressWarnings({"ObjectAllocationInLoop", "unchecked"}) public static <T> void testConstructors(
       final Class<? extends T> clazz, final boolean includeProtected,
-      final Map<Class<?>, Object> params, final Consumer<? super T> test) {
+      final Map<Class<?>, ?> params, final Consumer<? super T> test) {
     for (final Constructor<?> constructor : clazz.getDeclaredConstructors()) {
       final int modifiers = constructor.getModifiers();
       if (Modifier.isPublic(modifiers) || (includeProtected && Modifier.isProtected(modifiers))) {
