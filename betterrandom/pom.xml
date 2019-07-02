@@ -13,70 +13,6 @@
       </properties>
     </profile>
     <profile>
-      <id>jdk9plus</id>
-      <activation>
-        <jdk>[9.0,)</jdk>
-      </activation>
-      <dependencies>
-        <dependency>
-          <groupId>javax.xml.bind</groupId>
-          <artifactId>jaxb-api</artifactId>
-          <version>2.3.1</version>
-        </dependency>
-        <dependency>
-          <groupId>com.sun.xml.bind</groupId>
-          <artifactId>jaxb-core</artifactId>
-          <version>2.3.0.1</version>
-        </dependency>
-        <dependency>
-          <groupId>com.sun.xml.bind</groupId>
-          <artifactId>jaxb-impl</artifactId>
-          <version>2.3.2</version>
-        </dependency>
-        <dependency>
-          <groupId>org.ow2.asm</groupId>
-          <artifactId>asm</artifactId>
-          <version>7.1</version>
-        </dependency>
-      </dependencies>
-      <build>
-        <pluginManagement>
-          <plugins>
-            <plugin>
-              <groupId>org.apache.maven.plugins</groupId>
-              <artifactId>maven-surefire-plugin</artifactId>
-              <version>2.22.2</version>
-              <configuration>
-                <argLine>@{argLine}</argLine>
-              </configuration>
-            </plugin>
-            <plugin>
-              <groupId>org.apache.maven.plugins</groupId>
-              <artifactId>maven-failsafe-plugin</artifactId>
-              <version>2.22.2</version>
-              <configuration>
-                <argLine>@{argLine}</argLine>
-              </configuration>
-            </plugin>
-            <plugin>
-              <groupId>org.pitest</groupId>
-              <artifactId>pitest-maven</artifactId>
-              <version>${pitest.version}</version>
-              <configuration>
-                <jvmArgs>
-                  <value>-Djava.security.egd=file:/dev/./urandom</value>
-                  <value>--add-opens</value>
-                  <value>java.xml/jdk.xml.internal=ALL-UNNAMED</value>
-                  <value>--add-opens</value>
-                  <value>java.base/jdk.internal.loader=ALL-UNNAMED</value>
-                </jvmArgs>
-              </configuration>
-            </plugin>
-          </plugins>
-        </pluginManagement>
-      </build>
-    </profile>
-    <profile>
       <id>pit</id>
       <build>
         <plugins>
@@ -85,7 +21,13 @@
             <artifactId>pitest-maven</artifactId>
             <version>${pitest.version}</version>
             <configuration>
-              <jvmArgs>-Djava.security.egd=file:/dev/./urandom</jvmArgs>
+                <jvmArgs>
+                  <value>-Djava.security.egd=file:/dev/./urandom</value>
+                  <value>--add-opens</value>
+                  <value>java.xml/jdk.xml.internal=ALL-UNNAMED</value>
+                  <value>--add-opens</value>
+                  <value>java.base/jdk.internal.loader=ALL-UNNAMED</value>
+                </jvmArgs>
               <threads>4</threads>
               <coverageThreshold>85</coverageThreshold>
               <mutationThreshold>75</mutationThreshold>

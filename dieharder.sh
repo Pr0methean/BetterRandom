@@ -1,16 +1,9 @@
 #!/bin/sh
 JAVA_OPTS="-Djava.security.egd=file:/dev/./urandom"
 JAVA_BIN="${JAVA_HOME}/bin/java"
-if [ "${JAVA8}" = "true" ]; then
-  echo "[dieharder.sh] Using Java 8 mode. Running Proguard."
-  MAYBE_PROGUARD="pre-integration-test"
-else
-  echo "[dieharder.sh] Using Java 9+ mode."
-  MAYBE_PROGUARD=""
-fi
 cd betterrandom
 mvn -DskipTests -Darguments=-DskipTests -Dmaven.test.skip=true\
-    clean package ${MAYBE_PROGUARD} install
+    clean package pre-integration-test install
 cd ../FifoFiller
 mvn package
 JAR=$(find target -iname '*-with-dependencies.jar')

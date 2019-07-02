@@ -16,12 +16,10 @@ cd betterrandom
 # Coverage test
 PATH="${NO_GIT_PATH}" mvn ${MAYBE_ANDROID_FLAG} clean compile jacoco:instrument jacoco:prepare-agent \
     test jacoco:restore-instrumented-classes jacoco:report -e -B || exit 1
-if [ "${JAVA8}" = "true" ]; then
-  echo "[unit-tests.sh] Running Proguard."
-  PATH="${NO_GIT_PATH}" mvn -DskipTests -Dmaven.test.skip=true ${MAYBE_ANDROID_FLAG} \
-      pre-integration-test -B && \
-      echo "[unit-tests.sh] Testing against Proguarded jar." && \
-      PATH="${NO_GIT_PATH}" mvn -Dmaven.main.skip=true ${MAYBE_ANDROID_FLAG} integration-test -e -B
-  STATUS=$?
-fi
+echo "[unit-tests.sh] Running Proguard."
+PATH="${NO_GIT_PATH}" mvn -DskipTests -Dmaven.test.skip=true ${MAYBE_ANDROID_FLAG} \
+	pre-integration-test -B && \
+echo "[unit-tests.sh] Testing against Proguarded jar." && \
+PATH="${NO_GIT_PATH}" mvn -Dmaven.main.skip=true ${MAYBE_ANDROID_FLAG} integration-test -e -B
+STATUS=$?
 cd ..
