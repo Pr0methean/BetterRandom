@@ -1,3 +1,11 @@
+# 4.0.0
+* `RandomSeederThread` is now accessed through instance methods, and can be constructed with a custom `ThreadFactory`.
+* `RandomSeederThread`'s associated Java thread will stop running if no PRNGs have been associated with it for (by
+  default) 5 seconds.
+* A stopped `RandomSeederThread` will start running again on a new thread when a PRNG is added, or when an
+  already-attached PRNG that extends `BaseRandom` needs to be reseeded. This will occur even if it stopped due to a
+  `SeedException`.
+
 # 3.1.2
 * `RandomWrapper` instance creation should now be slightly faster.
 * Streams from a `RandomWrapper` will always be parallel streams, since otherwise they could not
