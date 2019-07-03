@@ -18,6 +18,8 @@
     <orderEntry type="library" name="Maven: org.checkerframework:checker-qual:2.8.1" level="project" />
     <orderEntry type="library" name="Maven: com.google.guava:guava:28.0-jre" level="project" />
     <orderEntry type="library" name="Maven: org.checkerframework:checker-qual:2.8.1" level="project" />
+    <orderEntry type="library" name="Maven: com.google.guava:guava:28.0-jre" level="project" />
+    <orderEntry type="library" name="Maven: org.checkerframework:checker-qual:2.8.1" level="project" />
     <orderEntry type="library" scope="TEST" name="Maven: org.testng:testng:6.14.3" level="project" />
     <orderEntry type="library" scope="TEST" name="Maven: com.beust:jcommander:1.72" level="project" />
     <orderEntry type="library" scope="TEST" name="Maven: org.apache-extras.beanshell:bsh:2.0b6" level="project" />
