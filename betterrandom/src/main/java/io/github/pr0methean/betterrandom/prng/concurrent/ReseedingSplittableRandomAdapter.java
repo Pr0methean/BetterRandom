@@ -126,7 +126,7 @@ public class ReseedingSplittableRandomAdapter extends BaseSplittableRandomAdapte
       return false;
     }
     ReseedingSplittableRandomAdapter that = (ReseedingSplittableRandomAdapter) o;
-    return randomSeeder.equals(that.randomSeeder);
+    return randomSeeder.get().equals(that.randomSeeder.get());
   }
 
   @Override

@@ -1,8 +1,8 @@
 package io.github.pr0methean.betterrandom.prng.concurrent;
 
 import static io.github.pr0methean.betterrandom.seed.SecureRandomSeedGenerator.SECURE_RANDOM_SEED_GENERATOR;
-import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotEquals;
+import static org.testng.Assert.assertSame;
 
 import io.github.pr0methean.betterrandom.CloneViaSerialization;
 import io.github.pr0methean.betterrandom.FlakyRetryAnalyzer;
@@ -61,7 +61,7 @@ public class ReseedingSplittableRandomAdapterTest extends SingleThreadSplittable
       final BaseSplittableRandomAdapter adapter =
           ReseedingSplittableRandomAdapter.getInstance(thread, generator);
       final BaseSplittableRandomAdapter clone = CloneViaSerialization.clone(adapter);
-      assertEquals(adapter, clone);
+      assertSame(adapter, clone);
     } finally {
       thread.stopIfEmpty();
     }
