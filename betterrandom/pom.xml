@@ -626,6 +626,10 @@
         <artifactId>pitest-maven</artifactId>
         <version>${pitest.version}</version>
         <configuration>
+          <jvmArgs>
+            <value>--add-modules</value>
+            <value>java.xml.bind</value>
+          </jvmArgs>
           <threads>4</threads>
           <coverageThreshold>85</coverageThreshold>
           <mutationThreshold>75</mutationThreshold>
