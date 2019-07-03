@@ -58,10 +58,10 @@ public class ReseedingSplittableRandomAdapter extends BaseSplittableRandomAdapte
   @SuppressWarnings("SynchronizationOnStaticField")
   public static ReseedingSplittableRandomAdapter getInstance(final RandomSeederThread randomSeeder,
      final SeedGenerator seedGenerator) throws SeedException {
-    ReseedingSplittableRandomAdapter instance = INSTANCES.get(seedGenerator);
+    ReseedingSplittableRandomAdapter instance = INSTANCES.get(randomSeeder);
     if (instance == null) {
       synchronized (INSTANCES) {
-        instance = INSTANCES.get(seedGenerator);
+        instance = INSTANCES.get(randomSeeder);
         if (instance == null) {
           instance = new ReseedingSplittableRandomAdapter(seedGenerator, randomSeeder);
           INSTANCES.put(randomSeeder, instance);
