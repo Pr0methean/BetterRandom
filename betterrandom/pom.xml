@@ -21,13 +21,6 @@
             <artifactId>pitest-maven</artifactId>
             <version>${pitest.version}</version>
             <configuration>
-                <jvmArgs>
-                  <value>-Djava.security.egd=file:/dev/./urandom</value>
-                  <value>--add-opens</value>
-                  <value>java.xml/jdk.xml.internal=ALL-UNNAMED</value>
-                  <value>--add-opens</value>
-                  <value>java.base/jdk.internal.loader=ALL-UNNAMED</value>
-                </jvmArgs>
               <threads>4</threads>
               <coverageThreshold>85</coverageThreshold>
               <mutationThreshold>75</mutationThreshold>
