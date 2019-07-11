@@ -3,6 +3,6 @@
     "shouldScanRepo": true
   },
   "checkRunSettings": {
-    "vulnerableCheckRunConclusionLevel": "failure"
+    "vulnerableCheckRunConclusionLevel": "success" # See https://github.com/Pr0methean/BetterRandom/issues/348#issuecomment-509475350
   }
 }
