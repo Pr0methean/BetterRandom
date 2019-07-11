@@ -22,19 +22,20 @@ public class RandomSeederThreadTest {
   private static final int TEST_OUTPUT_SIZE = 20;
 
   @Test public void testConstructors() {
-    TestUtils.testConstructors(RandomSeederThread.class, false, ImmutableMap.of(
-        SeedGenerator.class, new FakeSeedGenerator("testConstructors"),
-        ThreadFactory.class, new RandomSeederThread.DefaultThreadFactory("testConstructors"),
-        long.class, 100_000_000L), RandomSeederThread::stopIfEmpty);
+    TestUtils.testConstructors(RandomSeederThread.class, false, ImmutableMap
+        .of(SeedGenerator.class, new FakeSeedGenerator("testConstructors"), ThreadFactory.class,
+            new RandomSeederThread.DefaultThreadFactory("testConstructors"), long.class,
+            100_000_000L), RandomSeederThread::stopIfEmpty);
   }
 
   @Test public void testDefaultThreadFactoryConstructors() {
-    TestUtils.testConstructors(RandomSeederThread.DefaultThreadFactory.class, false, ImmutableMap.of(
-        String.class, "testDefaultThreadFactoryConstructors",
-        int.class, Thread.MAX_PRIORITY), x -> x.newThread(() -> {}));
+    TestUtils.testConstructors(RandomSeederThread.DefaultThreadFactory.class, false, ImmutableMap
+            .of(String.class, "testDefaultThreadFactoryConstructors", int.class,
+                Thread.MAX_PRIORITY),
+        x -> x.newThread(() -> {}));
   }
 
-  @Test(timeOut = 25_000) public void testAddRemoveAndIsEmpty() throws Exception {
+  @Test(timeOut = 25_000) public void testAddRemoveAndIsEmpty() {
     final Random prng = new Random(TEST_SEED);
     final byte[] firstBytesWithOldSeed = new byte[TEST_OUTPUT_SIZE];
     final byte[] secondBytesWithOldSeed = new byte[TEST_OUTPUT_SIZE];
@@ -48,18 +49,22 @@ public class RandomSeederThreadTest {
       randomSeeder.add(prng);
       assertFalse(randomSeeder.isEmpty());
       prng.nextBytes(new byte[TEST_OUTPUT_SIZE]); // Drain the entropy
-      RandomTestUtils.sleepUninterruptibly(1_000_000_000); // FIXME: Why does this sleep get interrupted?!
+      RandomTestUtils
+          .sleepUninterruptibly(1_000_000_000); // FIXME: Why does this sleep get interrupted?!
       assertFalse(randomSeeder.isEmpty());
     } finally {
       RandomTestUtils.removeAndAssertEmpty(randomSeeder, prng);
     }
     final byte[] bytesWithNewSeed = new byte[TEST_OUTPUT_SIZE];
     prng.nextBytes(bytesWithNewSeed);
-    assertFalse(Arrays.equals(firstBytesWithOldSeed, bytesWithNewSeed), "Repeated output after reseeding");
-    assertFalse(Arrays.equals(secondBytesWithOldSeed, bytesWithNewSeed), "Repeated output after reseeding");
+    assertFalse(Arrays.equals(firstBytesWithOldSeed, bytesWithNewSeed),
+        "Repeated output after reseeding");
+    assertFalse(Arrays.equals(secondBytesWithOldSeed, bytesWithNewSeed),
+        "Repeated output after reseeding");
   }
 
-  @Test(retryAnalyzer = FlakyRetryAnalyzer.class) public void testResurrection() throws InterruptedException {
+  @Test(retryAnalyzer = FlakyRetryAnalyzer.class) public void testResurrection()
+      throws InterruptedException {
     final FakeSeedGenerator seedGenerator = new FakeSeedGenerator("testResurrection");
     seedGenerator.setThrowException(true);
     final RandomSeederThread randomSeeder = new RandomSeederThread(seedGenerator);
@@ -101,14 +106,17 @@ public class RandomSeederThreadTest {
     assertFalse(randomSeeder.isRunning(), "randomSeeder did not stop");
   }
 
-  /** Making this a subroutine ensures that {@code prng} can be GCed on exit. */
+  /**
+   * Making this a subroutine ensures that {@code prng} can be GCed on exit.
+   */
   private WeakReference<Random> addSomethingDeadTo(RandomSeederThread randomSeeder) {
     Random prng = new Random();
     // new PhantomReference<Object>(prng, queue);
     randomSeeder.add(prng);
     randomSeeder.stopIfEmpty();
     assertTrue(randomSeeder.isRunning());
-    prng.nextBoolean(); // could replace with Reference.reachabilityFence if JDK8 support wasn't needed
+    prng.nextBoolean(); // could replace with Reference.reachabilityFence if JDK8 support wasn't
+    // needed
     return new WeakReference<>(prng);
   }
 

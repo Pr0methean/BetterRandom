@@ -18,6 +18,7 @@ package io.github.pr0methean.betterrandom.seed;
 /**
  * Exception thrown by {@link SeedGenerator} implementations when they are unable to generate a new
  * seed for an RNG.
+ *
  * @author Daniel Dyer
  */
 public class SeedException extends RuntimeException {
@@ -26,6 +27,7 @@ public class SeedException extends RuntimeException {
 
   /**
    * <p>Constructor for SeedException.</p>
+   *
    * @param message Details of the problem.
    */
   public SeedException(final String message) {
@@ -34,6 +36,7 @@ public class SeedException extends RuntimeException {
 
   /**
    * <p>Constructor for SeedException.</p>
+   *
    * @param message Details of the problem.
    * @param cause The root cause of the problem.
    */

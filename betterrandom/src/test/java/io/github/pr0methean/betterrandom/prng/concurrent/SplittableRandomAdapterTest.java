@@ -15,7 +15,9 @@ public class SplittableRandomAdapterTest extends SingleThreadSplittableRandomAda
     return SplittableRandomAdapter.class;
   }
 
-  /** SplittableRandomAdapter isn't repeatable until its seed has been specified. */
+  /**
+   * SplittableRandomAdapter isn't repeatable until its seed has been specified.
+   */
   @Override public void testRepeatability() throws SeedException {
     final BaseRandom rng = createRng();
     rng.setSeed(TEST_SEED);
@@ -25,10 +27,12 @@ public class SplittableRandomAdapterTest extends SingleThreadSplittableRandomAda
     RandomTestUtils.assertEquivalent(rng, duplicateRNG, 1000, "Generated sequences do not match");
   }
 
-  /** SplittableRandomAdapter isn't repeatable until its seed has been specified. */
+  /**
+   * SplittableRandomAdapter isn't repeatable until its seed has been specified.
+   */
   @TestingDeficiency // Failing
-  @Override @Test(enabled = false)
-  public void testRepeatabilityNextGaussian() throws SeedException {
+  @Override @Test(enabled = false) public void testRepeatabilityNextGaussian()
+      throws SeedException {
     final BaseRandom rng = createRng();
     final byte[] seed = getTestSeedGenerator().generateSeed(getNewSeedLength(rng));
     rng.nextGaussian();
@@ -43,7 +47,9 @@ public class SplittableRandomAdapterTest extends SingleThreadSplittableRandomAda
     return new SplittableRandomAdapter(getTestSeedGenerator());
   }
 
-  /** Seeding of this PRNG is thread-local, so setSeederThread makes no sense. */
+  /**
+   * Seeding of this PRNG is thread-local, so setSeederThread makes no sense.
+   */
   @Override @Test(expectedExceptions = UnsupportedOperationException.class)
   public void testRandomSeederThreadIntegration() {
     createRng().setRandomSeeder(new RandomSeederThread(getTestSeedGenerator()));
@@ -53,7 +59,9 @@ public class SplittableRandomAdapterTest extends SingleThreadSplittableRandomAda
     createRng().setRandomSeeder(null);
   }
 
-  /** Assertion-free because thread-local. */
+  /**
+   * Assertion-free because thread-local.
+   */
   @Override @Test public void testThreadSafety() {
     testThreadSafetyVsCrashesOnly(30, functionsForThreadSafetyTest);
   }

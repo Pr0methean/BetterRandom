@@ -17,15 +17,17 @@ public enum TestUtils {
   /**
    * Reflectively calls all public constructors, or all public and protected constructors, of the
    * given class with the given parameters. Passes each constructed instance to a consumer.
+   *
    * @param <T> {@code clazz} as a type.
    * @param clazz The class whose constructors are to be tested.
    * @param includeProtected Whether to test protected constructors
    * @param params A map of parameter types to values.
    * @param test The consumer to pass the instances to.
    */
-  @SuppressWarnings({"ObjectAllocationInLoop", "unchecked"}) public static <T> void testConstructors(
-      final Class<? extends T> clazz, final boolean includeProtected,
-      final Map<Class<?>, Object> params, final Consumer<? super T> test) {
+  @SuppressWarnings({"ObjectAllocationInLoop", "unchecked"})
+  public static <T> void testConstructors(final Class<? extends T> clazz,
+      final boolean includeProtected, final Map<Class<?>, Object> params,
+      final Consumer<? super T> test) {
     for (final Constructor<?> constructor : clazz.getDeclaredConstructors()) {
       final int modifiers = constructor.getModifiers();
       if (Modifier.isPublic(modifiers) || (includeProtected && Modifier.isProtected(modifiers))) {

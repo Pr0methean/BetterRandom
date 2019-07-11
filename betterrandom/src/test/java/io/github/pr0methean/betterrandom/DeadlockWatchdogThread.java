@@ -23,7 +23,7 @@ public class DeadlockWatchdogThread extends LooperThread {
       setStackTrace(stackTrace);
     }
 
-    @Override public synchronized Throwable fillInStackTrace() {
+    @Override public Throwable fillInStackTrace() {
       // No-op: we only use the stack trace that's in our constructor parameter
       return this;
     }
@@ -38,26 +38,22 @@ public class DeadlockWatchdogThread extends LooperThread {
     });
   }
 
-  public static void ensureStarted() {
-    synchronized (DeadlockWatchdogThread.class) {
-      if (INSTANCE.getState() == Thread.State.TERMINATED) {
-        INSTANCE = new DeadlockWatchdogThread();
-      }
-      if (INSTANCE.getState() == Thread.State.NEW) {
-        INSTANCE.start();
-      }
-    }
-  }
-
-  public static void stopInstance() {
-    synchronized (DeadlockWatchdogThread.class) {
-      INSTANCE.interrupt();
+  public static synchronized void ensureStarted() {
+    if (INSTANCE.getState() == Thread.State.TERMINATED) {
       INSTANCE = new DeadlockWatchdogThread();
     }
+    if (INSTANCE.getState() == Thread.State.NEW) {
+      INSTANCE.start();
+    }
   }
 
-  @SuppressWarnings({"CallToSystemExit", "ConstantConditions", "ObjectAllocationInLoop"}) @Override public boolean iterate()
-      throws InterruptedException {
+  public static synchronized void stopInstance() {
+    INSTANCE.interrupt();
+    INSTANCE = new DeadlockWatchdogThread();
+  }
+
+  @SuppressWarnings({"CallToSystemExit", "ConstantConditions", "ObjectAllocationInLoop"}) @Override
+  public boolean iterate() throws InterruptedException {
     Thread.sleep(POLL_INTERVAL);
     boolean deadlockFound = false;
     long[] threadsOfInterest = THREAD_MX_BEAN.findDeadlockedThreads();

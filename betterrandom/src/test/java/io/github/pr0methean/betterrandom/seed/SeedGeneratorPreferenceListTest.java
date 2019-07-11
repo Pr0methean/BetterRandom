@@ -13,40 +13,32 @@ public class SeedGeneratorPreferenceListTest extends AbstractSeedGeneratorTest {
     super(null);
   }
 
-  @Override
-  public void testToString() {
-    seedGenerator = new SeedGeneratorPreferenceList(
-        singletonList(new FakeSeedGenerator()), true);
+  @Override public void testToString() {
+    seedGenerator = new SeedGeneratorPreferenceList(singletonList(new FakeSeedGenerator()), true);
     super.testToString();
   }
 
-  @Test
-  public void testFirstSucceeds() {
+  @Test public void testFirstSucceeds() {
     FakeSeedGenerator shouldNotBeUsed = new FakeSeedGenerator() {
-      @Override
-      public void generateSeed(byte[] output) throws SeedException {
+      @Override public void generateSeed(byte[] output) throws SeedException {
         throw new AssertionError("Should not have fallen through to this SeedGenerator");
       }
     };
-    seedGenerator = new SeedGeneratorPreferenceList(
-        Arrays.asList(new FakeSeedGenerator(), shouldNotBeUsed),
-        true);
+    seedGenerator =
+        new SeedGeneratorPreferenceList(Arrays.asList(new FakeSeedGenerator(), shouldNotBeUsed),
+            true);
     generateAndCheckFakeSeed(32);
   }
 
-  @Test
-  public void testSecondSucceeds() {
+  @Test public void testSecondSucceeds() {
     seedGenerator = new SeedGeneratorPreferenceList(
-        Arrays.asList(FAILING_SEED_GENERATOR, new FakeSeedGenerator()),
-        true);
+        Arrays.asList(FAILING_SEED_GENERATOR, new FakeSeedGenerator()), true);
     generateAndCheckFakeSeed(32);
   }
 
-  @Test
-  public void testAlwaysWorthTrying() {
+  @Test public void testAlwaysWorthTrying() {
     FakeSeedGenerator doNotCall = new FakeSeedGenerator() {
-      @Override
-      public boolean isWorthTrying() {
+      @Override public boolean isWorthTrying() {
         throw new AssertionError("isWorthTrying() should not have been called");
       }
     };
@@ -54,10 +46,8 @@ public class SeedGeneratorPreferenceListTest extends AbstractSeedGeneratorTest {
     assertTrue(seedGenerator.isWorthTrying());
   }
 
-  @Test
-  public void testNotAlwaysWorthTrying() {
-    seedGenerator = new SeedGeneratorPreferenceList(
-        singletonList(FAILING_SEED_GENERATOR), false);
+  @Test public void testNotAlwaysWorthTrying() {
+    seedGenerator = new SeedGeneratorPreferenceList(singletonList(FAILING_SEED_GENERATOR), false);
     assertFalse(seedGenerator.isWorthTrying());
   }
 }

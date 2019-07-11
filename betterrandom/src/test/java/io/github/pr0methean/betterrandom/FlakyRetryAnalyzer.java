@@ -3,16 +3,16 @@ package io.github.pr0methean.betterrandom;
 import org.testng.IRetryAnalyzer;
 import org.testng.ITestResult;
 
-/** From https://www.toolsqa.com/selenium-webdriver/retry-failed-tests-testng/ */
+/**
+ * From https://www.toolsqa.com/selenium-webdriver/retry-failed-tests-testng/
+ */
 public class FlakyRetryAnalyzer implements IRetryAnalyzer {
   int counter = 0;
-  int retryLimit = 2;
+  final int retryLimit = 2;
 
-  @Override
-  public boolean retry(ITestResult result) {
+  @Override public boolean retry(ITestResult result) {
 
-    if(counter < retryLimit)
-    {
+    if (counter < retryLimit) {
       counter++;
       return true;
     }

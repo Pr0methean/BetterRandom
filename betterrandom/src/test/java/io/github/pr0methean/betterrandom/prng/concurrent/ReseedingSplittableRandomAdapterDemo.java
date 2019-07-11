@@ -29,9 +29,10 @@ public enum ReseedingSplittableRandomAdapterDemo {
     final ThreadLocal<List<String>> deckCopies =
         ThreadLocal.withInitial(() -> Arrays.asList(cards.clone()));
     final ScheduledThreadPoolExecutor executor = new ScheduledThreadPoolExecutor(4);
-    final RandomSeederThread randomSeederThread = new RandomSeederThread(SECURE_RANDOM_SEED_GENERATOR);
-    final ReseedingSplittableRandomAdapter random =
-        ReseedingSplittableRandomAdapter.getInstance(randomSeederThread, SECURE_RANDOM_SEED_GENERATOR);
+    final RandomSeederThread randomSeederThread =
+        new RandomSeederThread(SECURE_RANDOM_SEED_GENERATOR);
+    final ReseedingSplittableRandomAdapter random = ReseedingSplittableRandomAdapter
+        .getInstance(randomSeederThread, SECURE_RANDOM_SEED_GENERATOR);
     for (i = 0; i < 20; i++) {
       executor.submit(() -> {
         final List<String> deck = deckCopies.get();

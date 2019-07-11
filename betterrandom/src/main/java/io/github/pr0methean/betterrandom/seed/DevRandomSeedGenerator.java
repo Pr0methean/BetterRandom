@@ -29,11 +29,14 @@ import org.slf4j.LoggerFactory;
  * SeedException} is thrown. If it didn't exist during a previous call to this method or to {@link
  * #generateSeed(int)}, then for performance reasons, we assume for the rest of the JVM's lifespan
  * that it still doesn't exist.
+ *
  * @author Daniel Dyer
  */
 public enum DevRandomSeedGenerator implements SeedGenerator {
 
-  /** Singleton instance. */
+  /**
+   * Singleton instance.
+   */
   DEV_RANDOM_SEED_GENERATOR;
 
   private static final Logger LOG = LoggerFactory.getLogger(DevRandomSeedGenerator.class);
@@ -86,7 +89,9 @@ public enum DevRandomSeedGenerator implements SeedGenerator {
     return !(DEV_RANDOM_DOES_NOT_EXIST.get());
   }
 
-  /** Returns "/dev/random". */
+  /**
+   * Returns "/dev/random".
+   */
   @Override public String toString() {
     return DEV_RANDOM_STRING;
   }

@@ -21,12 +21,14 @@ import io.github.pr0methean.betterrandom.util.EntryPoint;
  * Deterministic random number generators are repeatable, which can prove useful for testing and
  * validation.  This interface defines an operation to return the seed data from a repeatable RNG.
  * This seed value can then be reused to create a random source with identical output.
+ *
  * @author Daniel Dyer
  */
 public interface RepeatableRandom {
 
   /**
    * Returns the seed.
+   *
    * @return The seed data used to initialize this pseudo-random number generator.
    */
   @EntryPoint byte[] getSeed();

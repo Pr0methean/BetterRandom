@@ -20,10 +20,11 @@ import org.testng.annotations.Test;
 
 /**
  * Unit test for the cellular automaton RNG.
+ *
  * @author Daniel Dyer
  */
-@Test(testName = "XorShiftRandom")
-public class XorShiftRandomTest extends AbstractLargeSeedRandomTest {
+@Test(testName = "XorShiftRandom") public class XorShiftRandomTest
+    extends AbstractLargeSeedRandomTest {
 
   @Override protected Class<? extends BaseRandom> getClassUnderTest() {
     return XorShiftRandom.class;
