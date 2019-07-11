@@ -12,6 +12,7 @@ public enum CloneViaSerialization {
 
   /**
    * Clones an object by serializing and deserializing it.
+   *
    * @param object The object to clone.
    * @param <T> The type of {@code object}.
    * @return A clone of {@code object}.
@@ -20,7 +21,8 @@ public enum CloneViaSerialization {
     return fromByteArray(toByteArray(object));
   }
 
-  @SuppressWarnings("unchecked") public static <T extends Serializable> T fromByteArray(final byte[] serialCopy) {
+  @SuppressWarnings("unchecked")
+  public static <T extends Serializable> T fromByteArray(final byte[] serialCopy) {
     try (final ObjectInputStream objectInStream = new ObjectInputStream(
         new ByteArrayInputStream(serialCopy))) {
       return (T) (objectInStream.readObject());

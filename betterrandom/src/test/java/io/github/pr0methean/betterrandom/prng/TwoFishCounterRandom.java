@@ -18,42 +18,36 @@ public class TwoFishCounterRandom extends CipherCounterRandom {
   @SuppressWarnings("CanBeFinal") private static int MAX_KEY_LENGTH_BYTES = LARGE_KEY_LENGTH;
 
   // WARNING: Don't initialize any instance fields at declaration; they may be initialized too late!
-  @SuppressWarnings("InstanceVariableMayNotBeInitializedByReadObject")
-  private transient TwofishEngine cipher;
+  @SuppressWarnings(
+      "InstanceVariableMayNotBeInitializedByReadObject") private transient TwofishEngine cipher;
 
   public TwoFishCounterRandom(byte[] seed) {
     super(seed);
   }
 
-  @Override
-  public int getMaxKeyLengthBytes() {
+  @Override public int getMaxKeyLengthBytes() {
     return MAX_KEY_LENGTH_BYTES;
   }
 
-  @Override
-  protected int getKeyLength(int inputLength) {
-    return (inputLength > MAX_KEY_LENGTH_BYTES) ? MAX_KEY_LENGTH_BYTES
-        : ((inputLength >= 24) ? 24 : 16);
+  @Override protected int getKeyLength(int inputLength) {
+    return (inputLength > MAX_KEY_LENGTH_BYTES) ? MAX_KEY_LENGTH_BYTES :
+        ((inputLength >= 24) ? 24 : 16);
   }
 
-  @Override
-  protected int getMinSeedLength() {
+  @Override protected int getMinSeedLength() {
     return SMALL_KEY_LENGTH;
   }
 
-  @Override
-  public int getBlocksAtOnce() {
+  @Override public int getBlocksAtOnce() {
     // FIXME: Some tests fail when this is changed.
     return 1;
   }
 
-  @Override
-  protected MessageDigest createHash() {
+  @Override protected MessageDigest createHash() {
     return new SHA3.Digest256();
   }
 
-  @Override
-  protected void createCipher() {
+  @Override protected void createCipher() {
     lock.lock();
     try {
       cipher = new TwofishEngine();
@@ -62,20 +56,18 @@ public class TwoFishCounterRandom extends CipherCounterRandom {
     }
   }
 
-  @Override
-  protected void setKey(byte[] key) {
+  @Override protected void setKey(byte[] key) {
     cipher.init(true, new KeyParameter(key));
   }
 
-  @Override public MoreObjects.ToStringHelper addSubclassFields(final MoreObjects.ToStringHelper original) {
+  @Override
+  public MoreObjects.ToStringHelper addSubclassFields(final MoreObjects.ToStringHelper original) {
     return original.add("counter", BinaryUtils.convertBytesToHexString(counter))
-        .add("cipher", cipher)
-        .add("index", index);
+        .add("cipher", cipher).add("index", index);
   }
 
   // FIXME
-  @Override
-  public void advance(final long delta) {
+  @Override public void advance(final long delta) {
     if (delta == 0) {
       return;
     }
@@ -102,8 +94,7 @@ public class TwoFishCounterRandom extends CipherCounterRandom {
     }
   }
 
-  @Override
-  protected void doCipher(byte[] input, byte[] output) {
+  @Override protected void doCipher(byte[] input, byte[] output) {
     cipher.reset();
     cipher.processBlock(input, 0, output, 0);
   }

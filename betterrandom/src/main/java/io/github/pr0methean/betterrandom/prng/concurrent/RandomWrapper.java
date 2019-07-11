@@ -38,6 +38,7 @@ import javax.annotation.Nullable;
  * from multiple threads, at least on JDK 7 and 8, if the calls include e.g. {@link #nextLong()},
  * {@link #nextGaussian()} or {@link #nextDouble()}. However, {@link #nextInt()} will still be
  * transactional.</p>
+ *
  * @author Chris Hennick
  */
 public class RandomWrapper extends BaseRandom {
@@ -49,6 +50,7 @@ public class RandomWrapper extends BaseRandom {
 
   /**
    * Wraps a {@link Random} that is seeded using the default seeding strategy.
+   *
    * @throws SeedException if thrown by {@link DefaultSeedGenerator}
    */
   public RandomWrapper() throws SeedException {
@@ -57,6 +59,7 @@ public class RandomWrapper extends BaseRandom {
 
   /**
    * Wraps a {@link Random} that is seeded using the provided seed generation strategy.
+   *
    * @param seedGenerator The seed generation strategy that will provide the seed for this PRNG
    * @throws SeedException if thrown by {@code randomSeeder}
    */
@@ -66,6 +69,7 @@ public class RandomWrapper extends BaseRandom {
 
   /**
    * Wraps a {@link Random} that is seeded with the specified seed.
+   *
    * @param seed seed used to initialize the {@link Random}; must be 8 bytes
    */
   public RandomWrapper(final byte[] seed) {
@@ -76,6 +80,7 @@ public class RandomWrapper extends BaseRandom {
 
   /**
    * Wraps a {@link Random} that is seeded with the specified seed.
+   *
    * @param seed seed used to initialize the {@link Random}
    */
   @EntryPoint public RandomWrapper(final long seed) {
@@ -86,6 +91,7 @@ public class RandomWrapper extends BaseRandom {
 
   /**
    * Creates an instance wrapping the given {@link Random}.
+   *
    * @param wrapped The {@link Random} to wrap.
    */
   @EntryPoint public RandomWrapper(final Random wrapped) {
@@ -96,8 +102,8 @@ public class RandomWrapper extends BaseRandom {
   }
 
   private static byte[] getSeedOrDummy(final Random wrapped) {
-    return (wrapped instanceof RepeatableRandom) ? ((RepeatableRandom) wrapped).getSeed()
-        : DUMMY_SEED;
+    return (wrapped instanceof RepeatableRandom) ? ((RepeatableRandom) wrapped).getSeed() :
+        DUMMY_SEED;
   }
 
   @Override public String toString() {
@@ -109,13 +115,13 @@ public class RandomWrapper extends BaseRandom {
   }
 
   @Override protected int next(final int bits) {
-    return (bits >= 32) ? getWrapped().nextInt()
-        : (bits == 31) ? getWrapped().nextInt() >>> 1
-            : getWrapped().nextInt(1 << bits);
+    return (bits >= 32) ? getWrapped().nextInt() :
+        (bits == 31) ? getWrapped().nextInt() >>> 1 : getWrapped().nextInt(1 << bits);
   }
 
   /**
    * Returns the PRNG this RandomWrapper is currently wrapping.
+   *
    * @return the wrapped {@link Random} instance
    */
   @EntryPoint public Random getWrapped() {
@@ -129,6 +135,7 @@ public class RandomWrapper extends BaseRandom {
 
   /**
    * Replaces the wrapped PRNG with the given one on subsequent calls.
+   *
    * @param wrapped an {@link Random} instance to wrap
    */
   @EntryPoint public void setWrapped(final Random wrapped) {
@@ -144,15 +151,15 @@ public class RandomWrapper extends BaseRandom {
   }
 
   private void readEntropyOfWrapped(final Random wrapped) {
-    entropyBits.set((wrapped instanceof EntropyCountingRandom) ? ((EntropyCountingRandom) wrapped)
-        .getEntropyBits()
-        : ((wrapped instanceof RepeatableRandom) ? (((RepeatableRandom) wrapped).getSeed().length
-            * (long) (Byte.SIZE)) : Long.SIZE));
+    entropyBits.set((wrapped instanceof EntropyCountingRandom) ?
+        ((EntropyCountingRandom) wrapped).getEntropyBits() :
+        ((wrapped instanceof RepeatableRandom) ?
+            (((RepeatableRandom) wrapped).getSeed().length * (long) (Byte.SIZE)) : Long.SIZE));
   }
 
   @Override protected ToStringHelper addSubclassFields(final ToStringHelper original) {
-    return original.add("wrapped",
-        wrapped instanceof Dumpable ? ((Dumpable) wrapped).dump() : wrapped);
+    return original
+        .add("wrapped", wrapped instanceof Dumpable ? ((Dumpable) wrapped).dump() : wrapped);
   }
 
   /**
@@ -160,6 +167,7 @@ public class RandomWrapper extends BaseRandom {
    * {@link Random} that's not a {@link RepeatableRandom}, we won't know the seed until the next
    * {@link #setSeed(byte[])} or {@link #setSeed(long)} call lets us set it ourselves, and so an
    * {@link UnsupportedOperationException} will be thrown until then.
+   *
    * @throws UnsupportedOperationException if this RandomWrapper doesn't know the wrapped PRNG's
    *     seed.
    */
@@ -169,15 +177,15 @@ public class RandomWrapper extends BaseRandom {
       if (unknownSeed) {
         throw new UnsupportedOperationException();
       }
-      return wrapped instanceof RepeatableRandom
-          ? ((RepeatableRandom) wrapped).getSeed() : seed.clone();
+      return wrapped instanceof RepeatableRandom ? ((RepeatableRandom) wrapped).getSeed() :
+          seed.clone();
     } finally {
       lock.unlock();
     }
   }
 
-  @SuppressWarnings("LockAcquiredButNotSafelyReleased")
-  @Override public void setSeed(final long seed) {
+  @SuppressWarnings("LockAcquiredButNotSafelyReleased") @Override
+  public void setSeed(final long seed) {
     boolean locked = false;
     if (lock != null) {
       lock.lock();
@@ -199,10 +207,11 @@ public class RandomWrapper extends BaseRandom {
   /**
    * Delegates to one of {@link ByteArrayReseedableRandom#setSeed(byte[])}, {@link
    * SecureRandom#setSeed(byte[])} or {@link Random#setSeed(long)}.
+   *
    * @param seed The new seed.
    */
-  @SuppressWarnings("LockAcquiredButNotSafelyReleased")
-  @Override protected void setSeedInternal(final byte[] seed) {
+  @SuppressWarnings("LockAcquiredButNotSafelyReleased") @Override protected void setSeedInternal(
+      final byte[] seed) {
     if (seed == null) {
       throw new IllegalArgumentException("Seed must not be null");
     }
@@ -259,8 +268,8 @@ public class RandomWrapper extends BaseRandom {
     lock.lock();
     try {
       final Random currentWrapped = getWrapped();
-      return !(currentWrapped instanceof ByteArrayReseedableRandom)
-          || ((ByteArrayReseedableRandom) currentWrapped).preferSeedWithLong();
+      return !(currentWrapped instanceof ByteArrayReseedableRandom) ||
+          ((ByteArrayReseedableRandom) currentWrapped).preferSeedWithLong();
     } finally {
       lock.unlock();
     }
@@ -275,8 +284,8 @@ public class RandomWrapper extends BaseRandom {
       if (wrapped == null) {
         return 0;
       }
-      return (wrapped instanceof ByteArrayReseedableRandom) ? ((ByteArrayReseedableRandom) wrapped)
-          .getNewSeedLength() : Long.BYTES;
+      return (wrapped instanceof ByteArrayReseedableRandom) ?
+          ((ByteArrayReseedableRandom) wrapped).getNewSeedLength() : Long.BYTES;
     } finally {
       lock.unlock();
     }

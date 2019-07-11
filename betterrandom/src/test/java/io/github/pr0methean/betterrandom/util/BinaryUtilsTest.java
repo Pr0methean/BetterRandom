@@ -23,6 +23,7 @@ import org.testng.annotations.Test;
 
 /**
  * Unit test for binary/hex utility methods.
+ *
  * @author Daniel Dyer
  */
 public class BinaryUtilsTest {
@@ -53,8 +54,8 @@ public class BinaryUtilsTest {
 
   @Test(timeOut = 1000) public void testConvertHexStringToBytes() {
     final byte[] generatedData = BinaryUtils.convertHexStringToBytes(TEST_HEX_STRING);
-    assert Arrays.equals(generatedData, TEST_HEX_BYTES) : "Wrong byte array: " + Arrays
-        .toString(generatedData);
+    assert Arrays.equals(generatedData, TEST_HEX_BYTES) :
+        "Wrong byte array: " + Arrays.toString(generatedData);
   }
 
   @Test(timeOut = 1000, expectedExceptions = IllegalArgumentException.class)

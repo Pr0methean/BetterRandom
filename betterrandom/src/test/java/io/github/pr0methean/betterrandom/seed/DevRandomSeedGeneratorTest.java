@@ -24,10 +24,11 @@ import org.testng.annotations.Test;
 /**
  * Unit test for the seed generator that reads data from /dev/random (on platforms that provide
  * it).
+ *
  * @author Daniel Dyer
  */
-@SuppressWarnings("HardcodedFileSeparator")
-public class DevRandomSeedGeneratorTest extends AbstractSeedGeneratorTest {
+@SuppressWarnings("HardcodedFileSeparator") public class DevRandomSeedGeneratorTest
+    extends AbstractSeedGeneratorTest {
 
   public DevRandomSeedGeneratorTest() {
     super(DevRandomSeedGenerator.DEV_RANDOM_SEED_GENERATOR);
@@ -41,7 +42,8 @@ public class DevRandomSeedGeneratorTest extends AbstractSeedGeneratorTest {
       try {
         DevRandomSeedGenerator.DEV_RANDOM_SEED_GENERATOR.generateSeed(new byte[1]);
         fail("Should have thrown a SeedException");
-      } catch (SeedException expected) {}
+      } catch (SeedException expected) {
+      }
     }
   }
 }

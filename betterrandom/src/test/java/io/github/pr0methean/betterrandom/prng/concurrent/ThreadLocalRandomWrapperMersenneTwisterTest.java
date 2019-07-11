@@ -21,15 +21,14 @@ public class ThreadLocalRandomWrapperMersenneTwisterTest extends ThreadLocalRand
     // Must be done first, or else lambda won't be serializable.
     final SeedGenerator seedGenerator = getTestSeedGenerator();
 
-    mtSupplier = (Serializable & Supplier<BaseRandom>)
-        () -> new MersenneTwisterRandom(seedGenerator);
+    mtSupplier =
+        (Serializable & Supplier<BaseRandom>) () -> new MersenneTwisterRandom(seedGenerator);
   }
 
   @Override protected Map<Class<?>, Object> constructorParams() {
     final Map<Class<?>, Object> params = super.constructorParams();
     params.put(Supplier.class, mtSupplier);
-    params
-        .put(Function.class, (Function<byte[], BaseRandom>) MersenneTwisterRandom::new);
+    params.put(Function.class, (Function<byte[], BaseRandom>) MersenneTwisterRandom::new);
     return params;
   }
 

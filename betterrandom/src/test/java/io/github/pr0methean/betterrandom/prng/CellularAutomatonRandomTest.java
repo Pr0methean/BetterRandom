@@ -20,11 +20,12 @@ import org.testng.annotations.Test;
 
 /**
  * Unit test for the cellular automaton RNG.
+ *
  * @author Daniel Dyer
  * @author Chris Hennick
  */
-@Test(testName = "CellularAutomatonRandom")
-public class CellularAutomatonRandomTest extends AbstractLargeSeedRandomTest {
+@Test(testName = "CellularAutomatonRandom") public class CellularAutomatonRandomTest
+    extends AbstractLargeSeedRandomTest {
 
   @Override public void testSetSeedLong() throws SeedException {
     final BaseRandom rng = createRng();
@@ -32,8 +33,8 @@ public class CellularAutomatonRandomTest extends AbstractLargeSeedRandomTest {
     rng.nextLong(); // ensure they won't both be in initial state before reseeding
     rng.setSeed(0x0123456789ABCDEFL);
     rng2.setSeed(0x0123456789ABCDEFL);
-    RandomTestUtils.assertEquivalent(rng, rng2, 20,
-        "Output mismatch after reseeding with same seed");
+    RandomTestUtils
+        .assertEquivalent(rng, rng2, 20, "Output mismatch after reseeding with same seed");
   }
 
   @Override protected Class<? extends BaseRandom> getClassUnderTest() {

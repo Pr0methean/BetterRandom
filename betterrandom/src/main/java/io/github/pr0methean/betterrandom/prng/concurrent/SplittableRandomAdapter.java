@@ -18,10 +18,11 @@ import javax.annotation.Nullable;
  * Thread-safe PRNG that wraps a {@link ThreadLocal}&lt;{@link SplittableRandom}&gt;. Reseeding this
  * will only affect the calling thread, so this can't be used with a {@link RandomSeederThread}.
  * Instead, use a {@link ReseedingSplittableRandomAdapter}.
+ *
  * @author Chris Hennick
  */
-@SuppressWarnings("ThreadLocalNotStaticFinal")
-public class SplittableRandomAdapter extends DirectSplittableRandomAdapter {
+@SuppressWarnings("ThreadLocalNotStaticFinal") public class SplittableRandomAdapter
+    extends DirectSplittableRandomAdapter {
 
   private static final int SEED_LENGTH_BITS = Long.BYTES * 8;
   private static final long serialVersionUID = 2190439512972880590L;
@@ -32,6 +33,7 @@ public class SplittableRandomAdapter extends DirectSplittableRandomAdapter {
   /**
    * Use the provided seed generation strategy to create the seed for the master {@link
    * SplittableRandom}, which will be split to generate an instance for each thread.
+   *
    * @param seedGenerator The seed generation strategy that will provide the seed value for this
    *     RNG.
    * @throws SeedException if there is a problem generating a seed.
@@ -43,6 +45,7 @@ public class SplittableRandomAdapter extends DirectSplittableRandomAdapter {
   /**
    * Use the provided seed for the master {@link SplittableRandom}, which will be split to generate
    * an instance for each thread.
+   *
    * @param seed The seed. Must be 8 bytes.
    */
   public SplittableRandomAdapter(final byte[] seed) {
@@ -53,6 +56,7 @@ public class SplittableRandomAdapter extends DirectSplittableRandomAdapter {
   /**
    * Use the {@link DefaultSeedGenerator} to generate a seed for the master {@link
    * SplittableRandom}, which will be split to generate an instance for each thread.
+   *
    * @throws SeedException if the {@link DefaultSeedGenerator} fails to generate a seed.
    */
   public SplittableRandomAdapter() throws SeedException {
@@ -62,6 +66,7 @@ public class SplittableRandomAdapter extends DirectSplittableRandomAdapter {
   /**
    * Use the provided seed for the master {@link SplittableRandom}, which will be split to generate
    * an instance for each thread.
+   *
    * @param seed The seed.
    */
   public SplittableRandomAdapter(final long seed) {
@@ -78,7 +83,9 @@ public class SplittableRandomAdapter extends DirectSplittableRandomAdapter {
     initSubclassTransientFields();
   }
 
-  /** Returns the entropy count for the calling thread (it is separate for each thread). */
+  /**
+   * Returns the entropy count for the calling thread (it is separate for each thread).
+   */
   @Override public long getEntropyBits() {
     return entropyBits.get().get();
   }
@@ -89,8 +96,7 @@ public class SplittableRandomAdapter extends DirectSplittableRandomAdapter {
 
   @Override protected void creditEntropyForNewSeed(final int seedLength) {
     if (entropyBits != null) {
-      entropyBits.get().updateAndGet(
-          oldCount -> Math.max(oldCount, Long.SIZE));
+      entropyBits.get().updateAndGet(oldCount -> Math.max(oldCount, Long.SIZE));
     }
   }
 
@@ -124,6 +130,7 @@ public class SplittableRandomAdapter extends DirectSplittableRandomAdapter {
 
   /**
    * Not supported, because this class uses a thread-local seed.
+   *
    * @param randomSeeder ignored.
    * @throws UnsupportedOperationException always.
    */

@@ -20,15 +20,13 @@ public class SeedGeneratorPreferenceList extends CopyOnWriteArrayList<SeedGenera
    * @param isAlwaysWorthTrying true if {@link #isWorthTrying()} should return true without
    *     consulting the delegate seed generators.
    */
-  @EntryPoint
-  public SeedGeneratorPreferenceList(Collection<? extends SeedGenerator> contents,
+  @EntryPoint public SeedGeneratorPreferenceList(Collection<? extends SeedGenerator> contents,
       boolean isAlwaysWorthTrying) {
     addAll(contents);
     this.isAlwaysWorthTrying = isAlwaysWorthTrying;
   }
 
-  @Override
-  public void generateSeed(byte[] output) throws SeedException {
+  @Override public void generateSeed(byte[] output) throws SeedException {
     for (final SeedGenerator generator : this) {
       if (generator.isWorthTrying()) {
         try {
@@ -42,8 +40,7 @@ public class SeedGeneratorPreferenceList extends CopyOnWriteArrayList<SeedGenera
     throw new SeedException("All available seed generation strategies failed.");
   }
 
-  @Override
-  public boolean isWorthTrying() {
+  @Override public boolean isWorthTrying() {
     if (isAlwaysWorthTrying) {
       return true;
     }

@@ -10,12 +10,11 @@ import java.util.concurrent.atomic.AtomicLong;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
-@SuppressWarnings("ClassLoaderInstantiation")
-public class LooperThreadTest {
+@SuppressWarnings("ClassLoaderInstantiation") public class LooperThreadTest {
 
   private static class TestLooperThread extends LooperThread {
-    AtomicBoolean shouldThrow = new AtomicBoolean(false);
-    AtomicLong iterations = new AtomicLong(0);
+    final AtomicBoolean shouldThrow = new AtomicBoolean(false);
+    final AtomicLong iterations = new AtomicLong(0);
 
     @Override protected boolean iterate() {
       if (shouldThrow.get()) {
@@ -99,6 +98,7 @@ public class LooperThreadTest {
 
   private static class SleepingLooperThread extends LooperThread {
     protected final AtomicLong finishedIterations = new AtomicLong(0);
+
     private SleepingLooperThread() {
       super("SleepingLooperThread");
     }

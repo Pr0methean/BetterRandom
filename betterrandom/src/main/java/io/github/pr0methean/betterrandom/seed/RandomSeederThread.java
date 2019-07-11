@@ -23,6 +23,7 @@ import org.slf4j.LoggerFactory;
 /**
  * Thread that loops over {@link Random} instances and reseeds them. No {@link
  * EntropyCountingRandom} will be reseeded when it's already had more input than output.
+ *
  * @author Chris Hennick
  */
 public final class RandomSeederThread extends LooperThread {
@@ -92,17 +93,18 @@ public final class RandomSeederThread extends LooperThread {
     }
   }
 
-  @Override
-  public boolean equals(Object o) {
-    if (this == o) return true;
-    if (o == null || getClass() != o.getClass()) return false;
+  @Override public boolean equals(Object o) {
+    if (this == o) {
+      return true;
+    }
+    if (o == null || getClass() != o.getClass()) {
+      return false;
+    }
     RandomSeederThread that = (RandomSeederThread) o;
-    return seedGenerator.equals(that.seedGenerator)
-        && factory.equals(that.factory);
+    return seedGenerator.equals(that.seedGenerator) && factory.equals(that.factory);
   }
 
-  @Override
-  public int hashCode() {
+  @Override public int hashCode() {
     return 31 * seedGenerator.hashCode() + factory.hashCode();
   }
 
@@ -121,8 +123,7 @@ public final class RandomSeederThread extends LooperThread {
       this.priority = priority;
     }
 
-    @Override
-    public Thread newThread(Runnable runnable) {
+    @Override public Thread newThread(Runnable runnable) {
       Thread thread = DEFAULT_THREAD_FACTORY.newThread(runnable);
       thread.setName(name);
       thread.setDaemon(true);
@@ -130,8 +131,7 @@ public final class RandomSeederThread extends LooperThread {
       return thread;
     }
 
-    @Override
-    public boolean equals(Object o) {
+    @Override public boolean equals(Object o) {
       if (this == o) {
         return true;
       }
@@ -139,12 +139,10 @@ public final class RandomSeederThread extends LooperThread {
         return false;
       }
       DefaultThreadFactory that = (DefaultThreadFactory) o;
-      return priority == that.priority &&
-          name.equals(that.name);
+      return priority == that.priority && name.equals(that.name);
     }
 
-    @Override
-    public int hashCode() {
+    @Override public int hashCode() {
       return 31 * priority + name.hashCode();
     }
   }
@@ -153,14 +151,15 @@ public final class RandomSeederThread extends LooperThread {
 
   private final byte[] longSeedArray = new byte[8];
 
-  private static Map<ByteArrayReseedableRandom, byte[]> SEED_ARRAYS =
+  private static final Map<ByteArrayReseedableRandom, byte[]> SEED_ARRAYS =
       Collections.synchronizedMap(new WeakHashMap<>(1));
 
   public RandomSeederThread(final SeedGenerator seedGenerator, ThreadFactory threadFactory) {
     this(seedGenerator, threadFactory, 5_000_000_000L);
   }
 
-  public RandomSeederThread(final SeedGenerator seedGenerator, ThreadFactory threadFactory, long stopIfEmptyForNanos) {
+  public RandomSeederThread(final SeedGenerator seedGenerator, ThreadFactory threadFactory,
+      long stopIfEmptyForNanos) {
     super(threadFactory);
     Objects.requireNonNull(seedGenerator, "randomSeeder must not be null");
     this.stopIfEmptyForNanos = stopIfEmptyForNanos;
@@ -171,6 +170,7 @@ public final class RandomSeederThread extends LooperThread {
 
   /**
    * Creates an instance using a {@link DefaultThreadFactory}.
+   *
    * @param seedGenerator the seed generator
    */
   public RandomSeederThread(final SeedGenerator seedGenerator) {
@@ -201,8 +201,8 @@ public final class RandomSeederThread extends LooperThread {
           if (random.preferSeedWithLong()) {
             reseedWithLong((Random) random);
           } else {
-            final byte[] seedArray =
-                SEED_ARRAYS.computeIfAbsent(random, random_ -> new byte[random_.getNewSeedLength()]);
+            final byte[] seedArray = SEED_ARRAYS
+                .computeIfAbsent(random, random_ -> new byte[random_.getNewSeedLength()]);
             seedGenerator.generateSeed(seedArray);
             random.setSeed(seedArray);
           }
@@ -264,6 +264,7 @@ public final class RandomSeederThread extends LooperThread {
 
   /**
    * Returns true if no {@link Random} instances are registered with this RandomSeederThread.
+   *
    * @return true if no {@link Random} instances are registered with this RandomSeederThread.
    */
   public boolean isEmpty() {
@@ -290,8 +291,7 @@ public final class RandomSeederThread extends LooperThread {
     }
   }
 
-  @Override
-  public String toString() {
+  @Override public String toString() {
     return String.format("RandomSeederThread (%s, %s)", seedGenerator, factory);
   }
 

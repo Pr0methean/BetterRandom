@@ -20,11 +20,12 @@ import org.testng.annotations.Test;
 
 /**
  * Unit test for the cellular automaton RNG.
+ *
  * @author Daniel Dyer
  * @author Chris Hennick
  */
-@Test(testName = "MersenneTwisterRandom")
-public class MersenneTwisterRandomTest extends AbstractLargeSeedRandomTest {
+@Test(testName = "MersenneTwisterRandom") public class MersenneTwisterRandomTest
+    extends AbstractLargeSeedRandomTest {
 
   @Override protected Class<? extends BaseRandom> getClassUnderTest() {
     return MersenneTwisterRandom.class;

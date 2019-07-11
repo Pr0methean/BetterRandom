@@ -23,14 +23,17 @@ import io.github.pr0methean.betterrandom.util.BinaryUtils;
 import java.util.Random;
 
 /**
- * <p>Very fast pseudo random number generator.  See <a href="http://school.anhb.uwa.edu.au/personalpages/kwessen/shared/Marsaglia03.html">this
- * page</a> (<a href="http://web.archive.org/web/20170313200403/school.anhb.uwa.edu.au/personalpages/kwessen/shared/Marsaglia03.html">archive</a>)
+ * <p>Very fast pseudo random number generator.  See
+ * <a href="http://school.anhb.uwa.edu.au/personalpages/kwessen/shared/Marsaglia03.html">this
+ * page</a> (
+ * <a href="http://web.archive.org/web/20170313200403/school.anhb.uwa.edu.au/personalpages/kwessen/shared/Marsaglia03.html">archive</a>)
  * for a description.  This RNG has a period of about 2<sup>160</sup>, which is not as long as the
  * {@link MersenneTwisterRandom} but it is faster.</p> <p><em>NOTE: Because instances of this class
  * require 160-bit seeds, it is not possible to seed this RNG using the {@link #setSeed(long)}
  * method inherited from {@link Random}.  Calls to this method will have no effect. Instead the
  * seed
  * must be set by a constructor.</em></p>
+ *
  * @author Daniel Dyer
  * @since 1.2
  */
@@ -49,6 +52,7 @@ public class XorShiftRandom extends BaseRandom {
 
   /**
    * Creates an RNG and seeds it with the specified seed data.
+   *
    * @param seed 20 bytes of seed data used to initialize the RNG.
    */
   public XorShiftRandom(final byte[] seed) {
@@ -57,6 +61,7 @@ public class XorShiftRandom extends BaseRandom {
 
   /**
    * Creates a new RNG and seeds it using the {@link DefaultSeedGenerator}.
+   *
    * @throws SeedException if the {@link DefaultSeedGenerator} fails to generate a seed.
    */
   public XorShiftRandom() throws SeedException {
@@ -65,6 +70,7 @@ public class XorShiftRandom extends BaseRandom {
 
   /**
    * Seed the RNG using the provided seed generation strategy.
+   *
    * @param seedGenerator The seed generation strategy that will provide the seed value for this
    *     RNG.
    * @throws SeedException if there is a problem generating a seed.
@@ -80,6 +86,7 @@ public class XorShiftRandom extends BaseRandom {
 
   /**
    * Reseeds this PRNG using the {@link DefaultSeedGenerator}, since it needs a longer seed.
+   *
    * @param seed ignored
    */
   @Override public void setSeed(final long seed) {

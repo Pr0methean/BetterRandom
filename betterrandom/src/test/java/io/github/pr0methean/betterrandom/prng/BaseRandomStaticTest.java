@@ -14,8 +14,7 @@ import org.testng.annotations.Test;
 /**
  * Tests for {@link BaseRandom} that are not heritable by tests of subclasses.
  */
-@Test(testName = "BaseRandom statics")
-public class BaseRandomStaticTest {
+@Test(testName = "BaseRandom statics") public class BaseRandomStaticTest {
 
   /**
    * This is the serialized form of an instance of a class that has the same name and

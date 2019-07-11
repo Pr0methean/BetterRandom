@@ -38,7 +38,9 @@ public class ReseedingThreadLocalRandomWrapperTest extends ThreadLocalRandomWrap
     return ReseedingThreadLocalRandomWrapper.class;
   }
 
-  /** setRandomSeeder doesn't work on this class and shouldn't pretend to. */
+  /**
+   * setRandomSeeder doesn't work on this class and shouldn't pretend to.
+   */
   @Override @Test(expectedExceptions = UnsupportedOperationException.class)
   public void testRandomSeederThreadIntegration() {
     createRng().setRandomSeeder(
@@ -47,24 +49,28 @@ public class ReseedingThreadLocalRandomWrapperTest extends ThreadLocalRandomWrap
 
   @Test public void testSetSeedGeneratorNoOp() {
     RandomSeederThread randomSeeder = new RandomSeederThread(getTestSeedGenerator());
-    ReseedingThreadLocalRandomWrapper prng = new ReseedingThreadLocalRandomWrapper(
-        pcgSupplier, randomSeeder);
+    ReseedingThreadLocalRandomWrapper prng =
+        new ReseedingThreadLocalRandomWrapper(pcgSupplier, randomSeeder);
     prng.setRandomSeeder(randomSeeder);
   }
 
-  @SuppressWarnings("BusyWait") @Override @Test(retryAnalyzer = FlakyRetryAnalyzer.class) public void testReseeding() {
+  @SuppressWarnings("BusyWait") @Override @Test(retryAnalyzer = FlakyRetryAnalyzer.class)
+  public void testReseeding() {
     final SeedGenerator testSeedGenerator = getTestSeedGenerator();
-    final BaseRandom rng = new ReseedingThreadLocalRandomWrapper(testSeedGenerator,
-        pcgSupplier);
+    final BaseRandom rng = new ReseedingThreadLocalRandomWrapper(testSeedGenerator, pcgSupplier);
     RandomTestUtils.testReseeding(testSeedGenerator, rng, false);
   }
 
-  /** Assertion-free since reseeding may cause divergent output. */
+  /**
+   * Assertion-free since reseeding may cause divergent output.
+   */
   @Override @Test(timeOut = 10000) public void testSetSeedLong() {
     createRng().setSeed(0x0123456789ABCDEFL);
   }
 
-  /** Test for crashes only, since setSeed is a no-op. */
+  /**
+   * Test for crashes only, since setSeed is a no-op.
+   */
   @Override @Test public void testSetSeedAfterNextLong() throws SeedException {
     final BaseRandom prng = createRng();
     prng.nextLong();
@@ -72,7 +78,9 @@ public class ReseedingThreadLocalRandomWrapperTest extends ThreadLocalRandomWrap
     prng.nextLong();
   }
 
-  /** Test for crashes only, since setSeed is a no-op. */
+  /**
+   * Test for crashes only, since setSeed is a no-op.
+   */
   @Override @Test public void testSetSeedAfterNextInt() throws SeedException {
     final BaseRandom prng = createRng();
     prng.nextInt();
