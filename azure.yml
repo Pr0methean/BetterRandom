@@ -41,26 +41,6 @@ pr:
       - .submodules
       - docs/
 jobs:
-  - job: Coverity
-    condition: eq(variables['Build.Reason'], 'Schedule') # rate limit 4 per day across both branches
-    variables:
-      JAVA_HOME: $(zuluLinux11)
-    steps:
-    - script: |
-        cd betterrandom
-        wget https://scan.coverity.com/download/linux64 --post-data "token=$(COVERITY_TOKEN)&project=Pr0methean%2FBetterRandom" -O coverity_tool.tgz
-        tar -xzf coverity_tool.tgz
-        mv cov-analysis* cov
-      displayName: Install Coverity
-      env:
-        COVERITY_TOKEN: $(COVERITY_TOKEN)
-    - script: |
-        cd betterrandom
-        ./cov/bin/cov-build --dir cov-int mvn compile
-      displayName: Coverity Build
-      env:
-        JAVA_HOME: $(JAVA_HOME)
-tar -czf coverity.tgz cov-int
   - job: UnitLinuxPreinstalledZulu
     strategy:
       matrix:
