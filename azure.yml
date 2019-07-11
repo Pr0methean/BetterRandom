@@ -41,6 +41,26 @@ pr:
       - .submodules
       - docs/
 jobs:
+  - job: Coverity
+    condition: eq(variables['Build.Reason'], 'Schedule') # rate limit 4 per day across both branches
+    variables:
+      JAVA_HOME: $(zuluLinux11)
+    steps:
+    - script: |
+        cd betterrandom
+        wget https://scan.coverity.com/download/linux64 --post-data "token=$(COVERITY_TOKEN)&project=Pr0methean%2FBetterRandom" -O coverity_tool.tgz
+        tar -xzf coverity_tool.tgz
+        mv cov-analysis* cov
+      displayName: Install Coverity
+      env:
+        COVERITY_TOKEN: $(COVERITY_TOKEN)
+    - script: |
+        cd betterrandom
+        ./cov/bin/cov-build --dir cov-int mvn compile
+      displayName: Coverity Build
+      env:
+        JAVA_HOME: $(JAVA_HOME)
+tar -czf coverity.tgz cov-int
   - job: UnitLinuxPreinstalledZulu
     strategy:
       matrix:
@@ -133,12 +153,10 @@ jobs:
         displayName: Set JAVA_HOME
         env:
           JAVA_HOME_SOURCE: $(JAVA_HOME_SOURCE)
-      #FIXME: Failing even with ignoreLASTEXITCODE
-      #- powershell: 'java -version'
-      #  displayName: Log Java Version
-      #  env:
-      #    JAVA_HOME: $(JAVA_HOME)
-      #  ignoreLASTEXITCODE: true # sometimes spuriously exits with failure on Windows Zing
+      - powershell: 'java -version 2>&1'
+        displayName: Log Java Version
+        env:
+          JAVA_HOME: $(JAVA_HOME)
       - task: PowerShell@2
         displayName: Build & Test
         inputs:
@@ -155,7 +173,7 @@ jobs:
       - UnitLinuxPreinstalledZulu
       - UnitLinux
       - UnitOracleLimitedCrypto
-    pool: server # not a real job, so doesn't need an agent
+    pool: server # not a real job (zero steps), so doesn't need an agent
   - job: Mutation
     dependsOn:
       - AllUnitTests
