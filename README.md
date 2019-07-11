@@ -6,6 +6,7 @@
 [![codebeat badge](https://codebeat.co/badges/4339b354-590c-4871-b441-d694dc5a33ea)](https://codebeat.co/projects/github-com-pr0methean-betterrandom-master)
 [![BCH compliance](https://bettercodehub.com/edge/badge/Pr0methean/BetterRandom?branch=master)](https://bettercodehub.com/)
 [![Dependabot Status](https://api.dependabot.com/badges/status?host=github&repo=Pr0methean/BetterRandom)](https://dependabot.com)
+[![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2FPr0methean%2FBetterRandom.svg?type=shield)](https://app.fossa.io/projects/git%2Bgithub.com%2FPr0methean%2FBetterRandom?ref=badge_shield)
 
 BetterRandom is a library that helps you get the best performance and the best pseudorandomness from
 your pseudorandom-number generators (PRNGs) and their seed sources. With it, you can:
@@ -338,3 +339,7 @@ The following classes are forked from [Uncommons Maths](https://github.com/dwdye
 * All of `betterrandom.seed` except `RandomSeederThread`
 * `BinaryUtils`
 * Test classes corresponding to the above.
+
+
+## License
+[![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2FPr0methean%2FBetterRandom.svg?type=large)](https://app.fossa.io/projects/git%2Bgithub.com%2FPr0methean%2FBetterRandom?ref=badge_large)

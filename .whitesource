@@ -1,0 +1,8 @@
+{
+  "generalSettings": {
+    "shouldScanRepo": true
+  },
+  "checkRunSettings": {
+    "vulnerableCheckRunConclusionLevel": "success" # See https://github.com/Pr0methean/BetterRandom/issues/348#issuecomment-509475350
+  }
+}
