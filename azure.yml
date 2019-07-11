@@ -133,7 +133,8 @@ jobs:
         displayName: Set JAVA_HOME
         env:
           JAVA_HOME_SOURCE: $(JAVA_HOME_SOURCE)
-      - powershell: 'java -version 2>&1'
+      - powershell: java -version 2>&1 | %{ "$_" } # https://github.com/microsoft/azure-pipelines-tasks/issues/10061#issuecomment-510621996
+        errorActionPreference: continue
         displayName: Log Java Version
         env:
           JAVA_HOME: $(JAVA_HOME)
