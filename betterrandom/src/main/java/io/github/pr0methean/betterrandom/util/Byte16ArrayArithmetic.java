@@ -69,7 +69,7 @@ import static io.github.pr0methean.betterrandom.util.Java8Constants.LONG_BYTES;
    */
   public static void multiplyIntoAndAddInto(final byte[] counter, final byte[] mult,
       final byte[] add) {
-    multiplyIntoAndAddInto(counter, mult, convertBytesToLong(add, Long.BYTES),
+    multiplyIntoAndAddInto(counter, mult, convertBytesToLong(add, LONG_BYTES),
         convertBytesToLong(add, 0));
   }
 
