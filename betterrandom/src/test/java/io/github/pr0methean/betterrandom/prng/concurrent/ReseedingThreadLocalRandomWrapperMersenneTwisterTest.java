@@ -20,14 +20,6 @@ public class ReseedingThreadLocalRandomWrapperMersenneTwisterTest
   private final MersenneTwisterRandomColonColonNew mtSupplier
       = new MersenneTwisterRandomColonColonNew(getTestSeedGenerator());
 
-  public ReseedingThreadLocalRandomWrapperMersenneTwisterTest() {
-    // Must be done first, or else lambda won't be serializable.
-    final SeedGenerator seedGenerator = getTestSeedGenerator();
-
-    mtSupplier =
-        (Serializable & Supplier<BaseRandom>) () -> new MersenneTwisterRandom(seedGenerator);
-  }
-
   @TestingDeficiency @Override protected SeedGenerator getTestSeedGenerator() {
     // FIXME: Statistical tests often fail when using semiFakeSeedGenerator
     return SecureRandomSeedGenerator.SECURE_RANDOM_SEED_GENERATOR;
