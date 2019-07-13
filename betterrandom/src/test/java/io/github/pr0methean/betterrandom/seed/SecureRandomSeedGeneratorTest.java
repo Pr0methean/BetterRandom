@@ -22,6 +22,7 @@ import org.testng.annotations.Test;
 /**
  * Unit test for the seed generator that uses {@link java.security.SecureRandom} to produce seed
  * data.
+ *
  * @author Daniel Dyer
  */
 public class SecureRandomSeedGeneratorTest extends AbstractSeedGeneratorTest {

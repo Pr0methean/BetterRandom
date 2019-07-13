@@ -46,4 +46,5 @@ public enum RandomDotOrgUtils {
     } catch (NoSuchAlgorithmException | KeyManagementException e) {
       throw new AssertionError(e);
     }
-  }}
+  }
+}

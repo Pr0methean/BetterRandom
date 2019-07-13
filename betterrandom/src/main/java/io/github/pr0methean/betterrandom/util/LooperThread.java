@@ -75,6 +75,7 @@ public abstract class LooperThread implements Serializable {
    * The task that will be iterated until it returns false. Cannot be abstract for serialization
    * reasons, but must be overridden in subclasses if they are instantiated without a target {@link
    * Runnable}.
+   *
    * @return true if this thread should iterate again.
    * @throws InterruptedException if interrupted in mid-execution.
    */
@@ -108,14 +109,14 @@ public abstract class LooperThread implements Serializable {
     }
   }
 
-  /** Only used for testing. */
-  @Deprecated
-  void join() throws InterruptedException {
+  /**
+   * Only used for testing.
+   */
+  @Deprecated void join() throws InterruptedException {
     thread.join();
   }
 
-  @Override
-  public String toString() {
+  @Override public String toString() {
     return thread.toString();
   }
 

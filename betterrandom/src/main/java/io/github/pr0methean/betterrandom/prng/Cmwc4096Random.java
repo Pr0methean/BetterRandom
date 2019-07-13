@@ -25,7 +25,8 @@ import java.util.Arrays;
 import java.util.Random;
 
 /**
- * <p>A Java version of George Marsaglia's <a href="http://school.anhb.uwa.edu.au/personalpages/kwessen/shared/Marsaglia03.html">Complementary
+ * <p>A Java version of George Marsaglia's
+ * <a href="http://school.anhb.uwa.edu.au/personalpages/kwessen/shared/Marsaglia03.html">Complementary
  * Multiply With Carry (CMWC) RNG</a>. This is a very fast PRNG with an extremely long period
  * (2<sup>131104</sup>). It should be used in preference to the {@link MersenneTwisterRandom} when
  * a
@@ -36,6 +37,7 @@ import java.util.Random;
  * <p><em>NOTE: Because instances of this class require 16-kilobyte seeds, it is not possible to
  * seed this RNG using the {@link #setSeed(long)} method inherited from {@link Random}.  Calls to
  * this method will have no effect. Instead the seed must be set by a constructor.</em></p>
+ *
  * @author Daniel Dyer
  * @since 1.2
  */
@@ -52,6 +54,7 @@ public class Cmwc4096Random extends BaseRandom {
 
   /**
    * Creates a new RNG and seeds it using the default seeding strategy.
+   *
    * @throws SeedException if any.
    */
   public Cmwc4096Random() throws SeedException {
@@ -60,6 +63,7 @@ public class Cmwc4096Random extends BaseRandom {
 
   /**
    * Seed the RNG using the provided seed generation strategy.
+   *
    * @param seedGenerator The seed generation strategy that will provide the seed value for this
    *     RNG.
    * @throws SeedException If there is a problem generating a seed.
@@ -70,6 +74,7 @@ public class Cmwc4096Random extends BaseRandom {
 
   /**
    * Creates an RNG and seeds it with the specified seed data.
+   *
    * @param seed 16384 bytes of seed data used to initialize the RNG.
    */
   public Cmwc4096Random(final byte[] seed) {
@@ -82,6 +87,7 @@ public class Cmwc4096Random extends BaseRandom {
 
   /**
    * Reseeds this PRNG using the {@link DefaultSeedGenerator}, since it needs a longer seed.
+   *
    * @param seed ignored
    */
   @Override public void setSeed(final long seed) {
@@ -113,7 +119,9 @@ public class Cmwc4096Random extends BaseRandom {
     }
   }
 
-  /** Returns the only supported seed length. */
+  /**
+   * Returns the only supported seed length.
+   */
   @Override public int getNewSeedLength() {
     return SEED_SIZE_BYTES;
   }

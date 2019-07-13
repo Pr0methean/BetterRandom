@@ -68,32 +68,15 @@ public final class RandomFifoFiller
      * @param outputFile The file that the random data is written to.
      * @throws IOException If there is a problem writing to the file.
      */
-    @SuppressWarnings("InfiniteLoopStatement")
-    public static void generateOutputFile(Random rng,
-                                          File outputFile) throws IOException
-    {
-        DataOutputStream dataOutput = new DataOutputStream(
-                new BufferedOutputStream(new FileOutputStream(outputFile)));
-        try
-        {
+    @SuppressWarnings("InfiniteLoopStatement") public static void generateOutputFile(Random rng,
+        File outputFile) {
+      try (DataOutputStream dataOutput = new DataOutputStream(
+          new BufferedOutputStream(new FileOutputStream(outputFile)))) {
             while (true) {
                 dataOutput.writeLong(rng.nextLong());
             }
-        }
-        catch (IOException expected)
-        {
+      } catch (IOException expected) {
             // Broken pipe when Dieharder is finished
-        }
-        finally
-        {
-            try
-            {
-                dataOutput.close();
-            }
-            catch (IOException ignored)
-            {
-                // Thrown by close() on some JVMs when the pipe is broken
-            }
         }
     }
 }

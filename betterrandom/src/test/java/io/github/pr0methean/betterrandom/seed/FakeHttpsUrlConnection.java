@@ -23,57 +23,49 @@ public class FakeHttpsUrlConnection extends HttpsURLConnection {
   private final ByteArrayOutputStream os = new ByteArrayOutputStream();
   private final ByteArrayInputStream is;
 
-  public FakeHttpsUrlConnection(final URL url, final Proxy proxy, final byte[] responseBody) {
+  public FakeHttpsUrlConnection(final URL url, @Nullable final Proxy proxy,
+      final byte[] responseBody) {
     super(url);
     this.proxy = proxy;
     is = new ByteArrayInputStream(responseBody);
   }
 
-  @Override
-  public InputStream getInputStream() {
+  @Override public InputStream getInputStream() {
     if (disconnected) {
       throw new IllegalStateException("Already disconnected");
     }
     return is;
   }
 
-  @Override
-  public OutputStream getOutputStream() {
+  @Override public OutputStream getOutputStream() {
     return os;
   }
 
-  @Override
-  public String getCipherSuite() {
+  @Override public String getCipherSuite() {
     return null;
   }
 
-  @Override
-  public Certificate[] getLocalCertificates() {
+  @Override public Certificate[] getLocalCertificates() {
     return CERTIFICATES;
   }
 
-  @Override
-  public Certificate[] getServerCertificates() {
+  @Override public Certificate[] getServerCertificates() {
     return CERTIFICATES;
   }
 
-  @Override
-  public void disconnect() {
+  @Override public void disconnect() {
     disconnected = true;
   }
 
-  @Override
-  public boolean usingProxy() {
+  @Override public boolean usingProxy() {
     return (proxy != null) && !proxy.equals(Proxy.NO_PROXY);
   }
 
-  @Override
-  public void connect() {
+  @Override public void connect() {
     connected = true;
   }
 
-  @Override
-  protected void finalize() {
+  @Override protected void finalize() {
     try {
       if (is != null) {
         is.close();

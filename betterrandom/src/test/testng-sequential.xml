@@ -1,35 +1,35 @@
 <!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd">
-<suite name="Sequential" parallel="none">
-  <test name="Seeding" parallel="none">
-    <classes>
-      <class name="io.github.pr0methean.betterrandom.seed.BufferedSeedGeneratorTest"/>
-      <class name="io.github.pr0methean.betterrandom.seed.DefaultSeedGeneratorTest"/>
-      <class name="io.github.pr0methean.betterrandom.seed.DevRandomSeedGeneratorTest"/>
-      <class name="io.github.pr0methean.betterrandom.seed.RandomDotOrgSeedGeneratorLiveTest"/>
-      <class name="io.github.pr0methean.betterrandom.seed.RandomSeederThreadTest"/>
-      <class name="io.github.pr0methean.betterrandom.seed.SecureRandomSeedGeneratorTest"/>
-      <class name="io.github.pr0methean.betterrandom.seed.SeedGeneratorPreferenceListTest"/>
-    </classes>
-  </test>
-  <test name="RandomDotOrgSeedGeneratorHermeticTest" parallel="none">
-    <classes>
-      <class name="io.github.pr0methean.betterrandom.seed.RandomDotOrgSeedGeneratorHermeticTest"/>
-    </classes>
-  </test>
-  <test name="Concurrent PRNGs Sequential" parallel="none">
-    <parameter name="seedSize" value="16"/>
-    <classes>
-      <class name="io.github.pr0methean.betterrandom.prng.concurrent.ReseedingSplittableRandomAdapterTest"/>
-      <class name="io.github.pr0methean.betterrandom.prng.concurrent.ReseedingThreadLocalRandomWrapperMersenneTwisterTest"/>
-      <class name="io.github.pr0methean.betterrandom.prng.concurrent.ReseedingThreadLocalRandomWrapperTest"/>
-      <class name="io.github.pr0methean.betterrandom.prng.concurrent.RandomWrapperAesCounterRandomTest"/>
-      <class name="io.github.pr0methean.betterrandom.prng.concurrent.RandomWrapperMersenneTwisterRandomTest"/>
-      <class name="io.github.pr0methean.betterrandom.prng.concurrent.RandomWrapperRandomTest"/>
-      <class name="io.github.pr0methean.betterrandom.prng.concurrent.RandomWrapperSecureRandomTest"/>
-      <class name="io.github.pr0methean.betterrandom.prng.concurrent.ReseedingThreadLocalRandomWrapperFailingSeedGeneratorTest"/>
-      <class name="io.github.pr0methean.betterrandom.prng.concurrent.ThreadLocalRandomWrapperMersenneTwisterTest"/>
-      <class name="io.github.pr0methean.betterrandom.prng.concurrent.ThreadLocalRandomWrapperTest"/>
+<suite name="Sequential">
+    <test name="Seeding" parallel="none">
+        <classes>
+            <class name="io.github.pr0methean.betterrandom.seed.BufferedSeedGeneratorTest"/>
+            <class name="io.github.pr0methean.betterrandom.seed.DefaultSeedGeneratorTest"/>
+            <class name="io.github.pr0methean.betterrandom.seed.DevRandomSeedGeneratorTest"/>
+            <class name="io.github.pr0methean.betterrandom.seed.RandomDotOrgSeedGeneratorLiveTest"/>
+            <class name="io.github.pr0methean.betterrandom.seed.RandomSeederThreadTest"/>
+            <class name="io.github.pr0methean.betterrandom.seed.SecureRandomSeedGeneratorTest"/>
+            <class name="io.github.pr0methean.betterrandom.seed.SeedGeneratorPreferenceListTest"/>
+        </classes>
+    </test>
+    <test name="RandomDotOrgSeedGeneratorHermeticTest" parallel="none">
+        <classes>
+            <class name="io.github.pr0methean.betterrandom.seed.RandomDotOrgSeedGeneratorHermeticTest"/>
+        </classes>
+    </test>
+    <test name="Concurrent PRNGs Sequential" parallel="none">
+        <parameter name="seedSize" value="16"/>
+        <classes>
+            <class name="io.github.pr0methean.betterrandom.prng.concurrent.ReseedingSplittableRandomAdapterTest"/>
+            <class name="io.github.pr0methean.betterrandom.prng.concurrent.ReseedingThreadLocalRandomWrapperMersenneTwisterTest"/>
+            <class name="io.github.pr0methean.betterrandom.prng.concurrent.ReseedingThreadLocalRandomWrapperTest"/>
+            <class name="io.github.pr0methean.betterrandom.prng.concurrent.RandomWrapperAesCounterRandomTest"/>
+            <class name="io.github.pr0methean.betterrandom.prng.concurrent.RandomWrapperMersenneTwisterRandomTest"/>
+            <class name="io.github.pr0methean.betterrandom.prng.concurrent.RandomWrapperRandomTest"/>
+            <class name="io.github.pr0methean.betterrandom.prng.concurrent.RandomWrapperSecureRandomTest"/>
+            <class name="io.github.pr0methean.betterrandom.prng.concurrent.ReseedingThreadLocalRandomWrapperFailingSeedGeneratorTest"/>
+            <class name="io.github.pr0methean.betterrandom.prng.concurrent.ThreadLocalRandomWrapperMersenneTwisterTest"/>
+            <class name="io.github.pr0methean.betterrandom.prng.concurrent.ThreadLocalRandomWrapperTest"/>
 
-    </classes>
-  </test>
+        </classes>
+    </test>
 </suite>

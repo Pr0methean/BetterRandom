@@ -43,14 +43,14 @@ public abstract class CipherCounterRandom extends BaseRandom implements Seekable
 
   /**
    * Returns the length of the counter, which should equal the cipher's block size.
+   *
    * @return the length of the counter
    */
   public int getCounterSizeBytes() {
     return DEFAULT_COUNTER_SIZE_BYTES;
   }
 
-  @Override
-  public int getNewSeedLength() {
+  @Override public int getNewSeedLength() {
     return getMaxKeyLengthBytes();
   }
 
@@ -58,6 +58,7 @@ public abstract class CipherCounterRandom extends BaseRandom implements Seekable
    * Returns the maximum length in bytes of a key for this PRNG's cipher. If the seed is longer than
    * this, part of it becomes the counter's initial value. Otherwise, the full seed becomes the key
    * and the counter is initially zero.
+   *
    * @return the maximum length in bytes of a key.
    */
   public abstract int getMaxKeyLengthBytes();
@@ -112,6 +113,7 @@ public abstract class CipherCounterRandom extends BaseRandom implements Seekable
   /**
    * Returns the number of random bytes that can be precalculated at once, which is normally
    * {@code getCounterSizeBytes() * getBlocksAtOnce()}.
+   *
    * @return the number of random bytes that can be precalculated at once
    */
   protected int getBytesAtOnce() {
@@ -137,10 +139,10 @@ public abstract class CipherCounterRandom extends BaseRandom implements Seekable
 
   /**
    * Returns true, because the seed can either be a counter IV plus a key, or just a key.
+   *
    * @return true
    */
-  @Override
-  protected boolean supportsMultipleSeedLengths() {
+  @Override protected boolean supportsMultipleSeedLengths() {
     return true;
   }
 
@@ -154,6 +156,7 @@ public abstract class CipherCounterRandom extends BaseRandom implements Seekable
 
   /**
    * Generates BLOCKS_AT_ONCE 128-bit (16-byte) blocks. Copies them to currentBlock.
+   *
    * @throws IllegalStateException If there is a problem with the cipher that generates the
    *     random data.
    */
@@ -242,8 +245,8 @@ public abstract class CipherCounterRandom extends BaseRandom implements Seekable
   private void checkNotTooLong(final byte[] seed) {
     int maxLength = getMaxTotalSeedLengthBytes();
     if (seed.length > maxLength) {
-      throw new IllegalArgumentException(String.format(
-          "Seed length is %d bytes; maximum is %d bytes", seed.length, maxLength));
+      throw new IllegalArgumentException(
+          String.format("Seed length is %d bytes; maximum is %d bytes", seed.length, maxLength));
     }
   }
 
@@ -259,8 +262,8 @@ public abstract class CipherCounterRandom extends BaseRandom implements Seekable
   @Override protected void setSeedInternal(final byte[] seed) {
     checkNotTooLong(seed);
     if (seed.length < getMinSeedLength()) {
-      throw new IllegalArgumentException(String.format(
-          "Seed length is %d bytes; need at least 16 bytes", seed.length));
+      throw new IllegalArgumentException(
+          String.format("Seed length is %d bytes; need at least 16 bytes", seed.length));
     }
     super.setSeedInternal(seed);
     // determine how much of seed can go to key
@@ -283,6 +286,7 @@ public abstract class CipherCounterRandom extends BaseRandom implements Seekable
 
   /**
    * Returns the minimum seed length.
+   *
    * @return the minimum seed length
    */
   protected abstract int getMinSeedLength();

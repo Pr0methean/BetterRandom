@@ -28,6 +28,7 @@ import java.util.concurrent.locks.ReentrantLock;
  * recommended, unless memory is too constrained to use with a
  * {@link io.github.pr0methean.betterrandom.prng.concurrent.ThreadLocalRandomWrapper}.
  * </p>
+ *
  * @author M.E. O'Neill (algorithm and C++ implementation)
  * @author Chris Hennick (Java port)
  */
@@ -80,7 +81,7 @@ public class Pcg128Random extends BaseRandom implements SeekableRandom {
     }
   }
 
-  @Override public synchronized void setSeed(final long seed) {
+  @Override public void setSeed(final long seed) {
     fallbackSetSeedIfInitialized();
   }
 
@@ -96,6 +97,7 @@ public class Pcg128Random extends BaseRandom implements SeekableRandom {
   /**
    * Advances the generator forward {@code highDelta << 64 + lowDelta} steps, but does so in
    * logarithmic time.
+   *
    * @param highDelta high quadword of the distance to advance
    * @param lowDelta low quadword of the distance to advance
    */
@@ -175,7 +177,7 @@ public class Pcg128Random extends BaseRandom implements SeekableRandom {
     final long xorShiftedLeast = shiftedLeast(ROTATION1, oldSeedMost, oldSeedLeast) ^ oldSeedLeast;
     final long preRotate = shiftedLeast(ROTATION2, xorShiftedMost, xorShiftedLeast);
     // int rot = (int) (oldInternal >>> (SEED_SIZE_BYTES - WANTED_OP_BITS));
-    final int rot = ((int)(oldSeedMost >>> 58)) & MASK;
+    final int rot = ((int) (oldSeedMost >>> 58)) & MASK;
     // return ((xorshifted >>> rot) | (xorshifted << ((-rot) & MASK))) >>> (Integer.SIZE - bits);
     return (preRotate >>> rot) | (preRotate << ((-rot) & MASK));
   }

@@ -83,7 +83,7 @@ public class CellularAutomatonRandom extends BaseRandom {
    * Seed the RNG using the provided seed generation strategy.
    *
    * @param seedGenerator The seed generation strategy that will provide the seed value for this
-   * RNG.
+   *     RNG.
    * @throws SeedException if there is a problem generating a seed.
    */
   public CellularAutomatonRandom(final SeedGenerator seedGenerator) throws SeedException {
@@ -109,14 +109,13 @@ public class CellularAutomatonRandom extends BaseRandom {
   }
 
   private static int convertCellsToInt(final int[] cells, final int offset) {
-    return cells[offset] + (cells[offset + 1] << 8) + (cells[offset + 2] << 16) + (cells[offset + 3]
-        << 24);
+    return cells[offset] + (cells[offset + 1] << 8) + (cells[offset + 2] << 16) +
+        (cells[offset + 3] << 24);
   }
 
-  @Override
-  protected ToStringHelper addSubclassFields(final ToStringHelper original) {
-    return original.add("currentCellIndex", currentCellIndex).add("cells", 
-        BinaryUtils.convertIntLeastBytesToHexString(cells));
+  @Override protected ToStringHelper addSubclassFields(final ToStringHelper original) {
+    return original.add("currentCellIndex", currentCellIndex)
+        .add("cells", BinaryUtils.convertIntLeastBytesToHexString(cells));
   }
 
   private int internalNext() {
@@ -141,8 +140,7 @@ public class CellularAutomatonRandom extends BaseRandom {
     return cellA;
   }
 
-  @Override
-  public int next(final int bits) {
+  @Override public int next(final int bits) {
     lock.lock();
     final int result;
     try {
@@ -154,8 +152,7 @@ public class CellularAutomatonRandom extends BaseRandom {
     return result >>> (32 - bits);
   }
 
-  @Override
-  public void setSeed(final long seed) {
+  @Override public void setSeed(final long seed) {
     final byte[] shortenedSeed = convertIntToBytes(((Long) seed).hashCode());
     if (superConstructorFinished) {
       lock.lock();
@@ -169,8 +166,7 @@ public class CellularAutomatonRandom extends BaseRandom {
     }
   }
 
-  @Override
-  protected void setSeedInternal(final byte[] seed) {
+  @Override protected void setSeedInternal(final byte[] seed) {
     boolean locked = false;
     if (lock != null) {
       lock.lock();
@@ -209,8 +205,7 @@ public class CellularAutomatonRandom extends BaseRandom {
   /**
    * Returns the only supported seed length.
    */
-  @Override
-  public int getNewSeedLength() {
+  @Override public int getNewSeedLength() {
     return SEED_SIZE_BYTES;
   }
 }

@@ -18,8 +18,8 @@ import java.util.function.Function;
 import java.util.function.Supplier;
 import org.testng.annotations.Test;
 
-@Test(testName = "ThreadLocalRandomWrapper")
-public class ThreadLocalRandomWrapperTest extends AbstractLargeSeedRandomTest {
+@Test(testName = "ThreadLocalRandomWrapper") public class ThreadLocalRandomWrapperTest
+    extends AbstractLargeSeedRandomTest {
 
   private final Supplier<BaseRandom> pcgSupplier;
 
@@ -27,12 +27,10 @@ public class ThreadLocalRandomWrapperTest extends AbstractLargeSeedRandomTest {
     // Must be done first, or else lambda won't be serializable.
     final SeedGenerator seedGenerator = getTestSeedGenerator();
 
-    pcgSupplier = (Supplier<BaseRandom> & Serializable)
-        (() -> new Pcg64Random(seedGenerator));
+    pcgSupplier = (Supplier<BaseRandom> & Serializable) (() -> new Pcg64Random(seedGenerator));
   }
 
-  @Override public void testSerializable()
-      throws SeedException {
+  @Override public void testSerializable() throws SeedException {
     // May change after serialization, so test only that it still works at all afterward
     CloneViaSerialization.clone(createRng()).nextInt();
   }
@@ -64,7 +62,9 @@ public class ThreadLocalRandomWrapperTest extends AbstractLargeSeedRandomTest {
     // No-op: ThreadLocalRandomWrapper isn't repeatable.
   }
 
-  /** setRandomSeeder doesn't work on this class and shouldn't pretend to. */
+  /**
+   * setRandomSeeder doesn't work on this class and shouldn't pretend to.
+   */
   @Override @Test(expectedExceptions = UnsupportedOperationException.class)
   public void testRandomSeederThreadIntegration() {
     createRng().setRandomSeeder(new RandomSeederThread(getTestSeedGenerator()));
@@ -74,26 +74,30 @@ public class ThreadLocalRandomWrapperTest extends AbstractLargeSeedRandomTest {
     createRng().setRandomSeeder(null);
   }
 
-  /** Assertion-free because ThreadLocalRandomWrapper isn't repeatable. */
+  /**
+   * Assertion-free because ThreadLocalRandomWrapper isn't repeatable.
+   */
   @Override @Test public void testSetSeedAfterNextLong() throws SeedException {
-    final byte[] seed =
-        getTestSeedGenerator().generateSeed(getNewSeedLength(createRng()));
+    final byte[] seed = getTestSeedGenerator().generateSeed(getNewSeedLength(createRng()));
     final BaseRandom rng = createRng();
     rng.nextLong();
     rng.setSeed(seed);
   }
 
-  /** Assertion-free because ThreadLocalRandomWrapper isn't repeatable. */
+  /**
+   * Assertion-free because ThreadLocalRandomWrapper isn't repeatable.
+   */
   @Override @Test public void testSetSeedAfterNextInt() throws SeedException {
-    final byte[] seed =
-        getTestSeedGenerator().generateSeed(getNewSeedLength(createRng()));
+    final byte[] seed = getTestSeedGenerator().generateSeed(getNewSeedLength(createRng()));
     final BaseRandom rng = createRng();
     rng.nextInt();
     rng.setSeed(seed);
   }
 
 
-  /** Assertion-free because thread-local. */
+  /**
+   * Assertion-free because thread-local.
+   */
   @Override @Test public void testThreadSafety() {
     testThreadSafetyVsCrashesOnly(30, functionsForThreadSafetyTest);
   }
@@ -101,14 +105,13 @@ public class ThreadLocalRandomWrapperTest extends AbstractLargeSeedRandomTest {
   @Override protected Map<Class<?>, Object> constructorParams() {
     final Map<Class<?>, Object> params = super.constructorParams();
     params.put(Supplier.class, pcgSupplier);
-    params
-        .put(Function.class, (Function<byte[], BaseRandom>) Pcg64Random::new);
+    params.put(Function.class, (Function<byte[], BaseRandom>) Pcg64Random::new);
     return params;
   }
 
   @Test public void testExplicitSeedSize() throws SeedException {
-    assertEquals(new ThreadLocalRandomWrapper(200, getTestSeedGenerator(),
-        AesCounterRandom::new).getNewSeedLength(), 200);
+    assertEquals(new ThreadLocalRandomWrapper(200, getTestSeedGenerator(), AesCounterRandom::new)
+        .getNewSeedLength(), 200);
   }
 
   @Test public void testWrapLegacy() throws SeedException {

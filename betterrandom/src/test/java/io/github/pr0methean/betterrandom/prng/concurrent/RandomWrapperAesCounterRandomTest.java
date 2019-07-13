@@ -11,8 +11,8 @@ import io.github.pr0methean.betterrandom.seed.SeedException;
 import java.util.Random;
 import org.testng.annotations.Test;
 
-@Test(testName = "RandomWrapper:AesCounterRandom")
-public class RandomWrapperAesCounterRandomTest extends AesCounterRandomTest {
+@Test(testName = "RandomWrapper:AesCounterRandom") public class RandomWrapperAesCounterRandomTest
+    extends AesCounterRandomTest {
 
   private final NamedFunction<Random, Double> setWrapped = new NamedFunction<>(random -> {
     ((RandomWrapper) random).setWrapped(new AesCounterRandom(getTestSeedGenerator()));
