@@ -3,6 +3,7 @@ package io.github.pr0methean.betterrandom;
 /**
  * A {@link java.util.Random} that can track its inflow and outflow of entropy so we can determine
  * when it needs reseeding again.
+ *
  * @author Chris Hennick
  */
 public interface EntropyCountingRandom {
@@ -13,6 +14,7 @@ public interface EntropyCountingRandom {
    * the number of random bits in the output rounded up. The amount of entropy can go below zero,
    * giving an indication of how far the entropy has been stretched. This estimate is a lower bound
    * if the seed is perfectly random and is not being reused.
+   *
    * @return The current estimated amount of entropy.
    */
   long getEntropyBits();

@@ -29,6 +29,7 @@ import java.util.Arrays;
  * <li>{@link RandomDotOrgSeedGenerator#DELAYED_RETRY} with 625-byte buffer</li>
  * <li>{@link SecureRandomSeedGenerator} with no buffer</li>
  * </ol>
+ *
  * @author Daniel Dyer
  */
 public enum DefaultSeedGenerator implements SeedGenerator {
@@ -38,12 +39,10 @@ public enum DefaultSeedGenerator implements SeedGenerator {
    */
   DEFAULT_SEED_GENERATOR;
 
-  private static volatile SeedGenerator delegate = new
-      SeedGeneratorPreferenceList(Arrays.asList(
-          new BufferedSeedGenerator(DevRandomSeedGenerator.DEV_RANDOM_SEED_GENERATOR, 128),
+  private static volatile SeedGenerator delegate = new SeedGeneratorPreferenceList(Arrays
+      .asList(new BufferedSeedGenerator(DevRandomSeedGenerator.DEV_RANDOM_SEED_GENERATOR, 128),
           new BufferedSeedGenerator(RandomDotOrgSeedGenerator.DELAYED_RETRY, 625),
-          SecureRandomSeedGenerator.SECURE_RANDOM_SEED_GENERATOR),
-      true);
+          SecureRandomSeedGenerator.SECURE_RANDOM_SEED_GENERATOR), true);
 
   public static SeedGenerator get() {
     return delegate;
@@ -67,8 +66,7 @@ public enum DefaultSeedGenerator implements SeedGenerator {
     delegate.generateSeed(output);
   }
 
-  @Override
-  public byte[] generateSeed(int length) throws SeedException {
+  @Override public byte[] generateSeed(int length) throws SeedException {
     return delegate.generateSeed(length);
   }
 

@@ -12,8 +12,7 @@ import java.lang.annotation.Target;
  * BetterRandom is complete, this will only be used in benchmarks and debugging tools, and for
  * constructors that are tested reflectively.
  */
-@Inherited
-@Retention(RetentionPolicy.SOURCE)
+@Inherited @Retention(RetentionPolicy.SOURCE)
 @Target({ElementType.METHOD, ElementType.CONSTRUCTOR, ElementType.TYPE})
 public @interface EntryPoint {
 

@@ -59,8 +59,8 @@ public abstract class BaseRandomTest extends PowerMockTestCase {
           prng.nextInt();
         }
       };
-  protected final SeedGenerator semiFakeSeedGenerator
-      = new SemiFakeSeedGenerator(new SplittableRandomAdapter(SecureRandomSeedGenerator.SECURE_RANDOM_SEED_GENERATOR));
+  protected final SeedGenerator semiFakeSeedGenerator = new SemiFakeSeedGenerator(
+      new SplittableRandomAdapter(SecureRandomSeedGenerator.SECURE_RANDOM_SEED_GENERATOR));
 
   /**
    * The square root of 12, rounded from an extended-precision calculation that was done by Wolfram
@@ -191,8 +191,8 @@ public abstract class BaseRandomTest extends PowerMockTestCase {
     // Create second RNG using same seed.
     final BaseRandom duplicateRNG = createRng(seed);
     // Do not inline this; dump() must be evaluated before nextGaussian
-    final String failureMessage = String.format("Mismatch in output between %n%s%n and %n%s%n",
-        rng.dump(), duplicateRNG.dump());
+    final String failureMessage = String
+        .format("Mismatch in output between %n%s%n and %n%s%n", rng.dump(), duplicateRNG.dump());
     assertEquals(rng.nextGaussian(), duplicateRNG.nextGaussian(), failureMessage);
   }
 
@@ -225,9 +225,11 @@ public abstract class BaseRandomTest extends PowerMockTestCase {
   @Test(timeOut = 30_000, groups = "non-deterministic") public void testIntegerSummaryStats()
       throws SeedException {
     final BaseRandom rng = createRng();
-    // Expected standard deviation for a uniformly distributed population of values in the range 0..n
+    // Expected standard deviation for a uniformly distributed population of values in the range
+    // 0..n
     // approaches n/sqrt(12).
-    // Expected standard deviation for a uniformly distributed population of values in the range 0..n
+    // Expected standard deviation for a uniformly distributed population of values in the range
+    // 0..n
     // approaches n/sqrt(12).
     for (final long n : new long[]{100, 1L << 32, Long.MAX_VALUE}) {
       final int iterations = 10_000;
@@ -293,14 +295,13 @@ public abstract class BaseRandomTest extends PowerMockTestCase {
     createRng(null);
   }
 
-  @Test(timeOut = 45_000) public void testSerializable()
-      throws SeedException {
+  @Test(timeOut = 45_000) public void testSerializable() throws SeedException {
     // Serialise an RNG.
     final BaseRandom rng = createRng();
     RandomTestUtils.assertEquivalentWhenSerializedAndDeserialized(rng);
     // Can't use a SemiFakeSeedGenerator, because Random.equals() breaks equality check
-    final SeedGenerator seedGenerator = new FakeSeedGenerator(
-        getClass().getSimpleName() + "::testSerializable #" + rng.nextInt());
+    final SeedGenerator seedGenerator =
+        new FakeSeedGenerator(getClass().getSimpleName() + "::testSerializable #" + rng.nextInt());
     RandomSeederThread randomSeeder = new RandomSeederThread(seedGenerator);
     rng.setRandomSeeder(randomSeeder);
     try {
@@ -312,41 +313,39 @@ public abstract class BaseRandomTest extends PowerMockTestCase {
     }
   }
 
-  /** Assertion-free since many implementations have a fallback behavior. */
+  /**
+   * Assertion-free since many implementations have a fallback behavior.
+   */
   @Test(timeOut = 60_000) public void testSetSeedLong() {
     createRng().setSeed(0x0123456789ABCDEFL);
   }
 
   @Test(timeOut = 15_000) public void testSetSeedAfterNextLong() throws SeedException {
-    final byte[] seed =
-        getTestSeedGenerator().generateSeed(getNewSeedLength(createRng()));
+    final byte[] seed = getTestSeedGenerator().generateSeed(getNewSeedLength(createRng()));
     final BaseRandom rng = createRng();
     final BaseRandom rng2 = createRng();
     final BaseRandom rng3 = createRng(seed);
     rng.nextLong(); // ensure rng & rng2 won't both be in initial state before reseeding
     rng.setSeed(seed);
     rng2.setSeed(seed);
-    RandomTestUtils.assertEquivalent(rng, rng2, 64,
-        "Output mismatch after reseeding with same seed");
+    RandomTestUtils
+        .assertEquivalent(rng, rng2, 64, "Output mismatch after reseeding with same seed");
     rng.setSeed(seed);
-    RandomTestUtils.assertEquivalent(rng, rng3, 64,
-        "Output mismatch vs a new PRNG with same seed");
+    RandomTestUtils.assertEquivalent(rng, rng3, 64, "Output mismatch vs a new PRNG with same seed");
   }
 
   @Test(timeOut = 15_000) public void testSetSeedAfterNextInt() throws SeedException {
-    final byte[] seed =
-        getTestSeedGenerator().generateSeed(getNewSeedLength(createRng()));
+    final byte[] seed = getTestSeedGenerator().generateSeed(getNewSeedLength(createRng()));
     final BaseRandom rng = createRng();
     final BaseRandom rng2 = createRng();
     final BaseRandom rng3 = createRng(seed);
     rng.nextInt(); // ensure rng & rng2 won't both be in initial state before reseeding
     rng.setSeed(seed);
     rng2.setSeed(seed);
-    RandomTestUtils.assertEquivalent(rng, rng2, 64,
-        "Output mismatch after reseeding with same seed");
+    RandomTestUtils
+        .assertEquivalent(rng, rng2, 64, "Output mismatch after reseeding with same seed");
     rng.setSeed(seed);
-    RandomTestUtils.assertEquivalent(rng, rng3, 64,
-        "Output mismatch vs a new PRNG with same seed");
+    RandomTestUtils.assertEquivalent(rng, rng3, 64, "Output mismatch vs a new PRNG with same seed");
   }
 
   @Test(timeOut = 15_000) public void testSetSeedZero() throws SeedException {
@@ -358,8 +357,8 @@ public abstract class BaseRandomTest extends PowerMockTestCase {
     } while (Arrays.equals(realSeed, zeroSeed));
     final BaseRandom rng = createRng(realSeed);
     final BaseRandom rng2 = createRng(zeroSeed);
-    RandomTestUtils.assertDistinct(rng, rng2, 20,
-        "Output with real seed matches output with all-zeroes seed");
+    RandomTestUtils
+        .assertDistinct(rng, rng2, 20, "Output with real seed matches output with all-zeroes seed");
   }
 
   @Test(timeOut = 15_000) public void testEquals() throws SeedException {
@@ -406,8 +405,6 @@ public abstract class BaseRandomTest extends PowerMockTestCase {
   /**
    * This also tests {@link BaseRandom#getRandomSeeder()} and
    * {@link BaseRandom#setRandomSeeder(SeedGenerator)}.
-   *
-   * @throws Exception
    */
   @SuppressWarnings("BusyWait") @Test(timeOut = 60_000, retryAnalyzer = FlakyRetryAnalyzer.class)
   public void testRandomSeederThreadIntegration() {
@@ -785,8 +782,7 @@ public abstract class BaseRandomTest extends PowerMockTestCase {
   }
 
   @Test(timeOut = 90_000) public void testThreadSafetySetSeed() {
-    testThreadSafetyVsCrashesOnly(30,
-        Collections.singletonList(setSeed),
+    testThreadSafetyVsCrashesOnly(30, Collections.singletonList(setSeed),
         functionsForThreadCrashTest);
   }
 
@@ -815,7 +811,8 @@ public abstract class BaseRandomTest extends PowerMockTestCase {
     final byte[] seed = getTestSeedGenerator().generateSeed(seedLength);
     for (final NamedFunction<Random, Double> supplier : functions) {
       for (int i = 0; i < 5; i++) {
-        // This loop is necessary to control the false pass rate, especially during mutation testing.
+        // This loop is necessary to control the false pass rate, especially during mutation
+        // testing.
         final SortedSet<Double> sequentialOutput = runSequential(supplier, supplier, seed);
         final SortedSet<Double> parallelOutput = runParallel(supplier, supplier, seed, 25, 1000);
         assertEquals(sequentialOutput, parallelOutput,
@@ -854,19 +851,15 @@ public abstract class BaseRandomTest extends PowerMockTestCase {
       final NamedFunction<Random, Double> supplier2, final byte[] seed) {
     final Random sequentialPrng = createRng(seed);
     final SortedSet<Double> output = new TreeSet<>();
-    new GeneratorForkJoinTask<>(sequentialPrng, output, supplier1, new CountDownLatch(1),
-        1000)
+    new GeneratorForkJoinTask<>(sequentialPrng, output, supplier1, new CountDownLatch(1), 1000)
         .exec();
-    new GeneratorForkJoinTask<>(sequentialPrng, output, supplier2, new CountDownLatch(1),
-        1000)
+    new GeneratorForkJoinTask<>(sequentialPrng, output, supplier2, new CountDownLatch(1), 1000)
         .exec();
     return output;
   }
 
   private enum TestEnum {
-    RED,
-    YELLOW,
-    BLUE
+    RED, YELLOW, BLUE
   }
 
   /**

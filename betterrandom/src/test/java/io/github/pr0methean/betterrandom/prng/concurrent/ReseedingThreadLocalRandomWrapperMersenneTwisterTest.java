@@ -20,8 +20,15 @@ public class ReseedingThreadLocalRandomWrapperMersenneTwisterTest
   private final MersenneTwisterRandomColonColonNew mtSupplier
       = new MersenneTwisterRandomColonColonNew(getTestSeedGenerator());
 
-  @TestingDeficiency
-  @Override protected SeedGenerator getTestSeedGenerator() {
+  public ReseedingThreadLocalRandomWrapperMersenneTwisterTest() {
+    // Must be done first, or else lambda won't be serializable.
+    final SeedGenerator seedGenerator = getTestSeedGenerator();
+
+    mtSupplier =
+        (Serializable & Supplier<BaseRandom>) () -> new MersenneTwisterRandom(seedGenerator);
+  }
+
+  @TestingDeficiency @Override protected SeedGenerator getTestSeedGenerator() {
     // FIXME: Statistical tests often fail when using semiFakeSeedGenerator
     return SecureRandomSeedGenerator.SECURE_RANDOM_SEED_GENERATOR;
   }
@@ -48,12 +55,16 @@ public class ReseedingThreadLocalRandomWrapperMersenneTwisterTest
     RandomTestUtils.testReseeding(testSeedGenerator, rng, false);
   }
 
-  /** Assertion-free since reseeding may cause divergent output. */
+  /**
+   * Assertion-free since reseeding may cause divergent output.
+   */
   @Override @Test public void testSetSeedLong() {
     createRng().setSeed(0x0123456789ABCDEFL);
   }
 
-  /** Test for crashes only, since setSeed is a no-op. */
+  /**
+   * Test for crashes only, since setSeed is a no-op.
+   */
   @Override @Test public void testSetSeedAfterNextLong() throws SeedException {
     final BaseRandom prng = createRng();
     prng.nextLong();
@@ -61,7 +72,9 @@ public class ReseedingThreadLocalRandomWrapperMersenneTwisterTest
     prng.nextLong();
   }
 
-  /** Test for crashes only, since setSeed is a no-op. */
+  /**
+   * Test for crashes only, since setSeed is a no-op.
+   */
   @Override @Test public void testSetSeedAfterNextInt() throws SeedException {
     final BaseRandom prng = createRng();
     prng.nextInt();
@@ -69,17 +82,19 @@ public class ReseedingThreadLocalRandomWrapperMersenneTwisterTest
     prng.nextInt();
   }
 
-  /** setRandomSeeder doesn't work on this class and shouldn't pretend to. */
+  /**
+   * setRandomSeeder doesn't work on this class and shouldn't pretend to.
+   */
   @Override @Test(expectedExceptions = UnsupportedOperationException.class)
   public void testRandomSeederThreadIntegration() {
-    createRng().setRandomSeeder(
-        new RandomSeederThread(DevRandomSeedGenerator.DEV_RANDOM_SEED_GENERATOR));
+    createRng()
+        .setRandomSeeder(new RandomSeederThread(DevRandomSeedGenerator.DEV_RANDOM_SEED_GENERATOR));
   }
-  
+
   @Override @Test public void testSetSeedGeneratorNoOp() {
     RandomSeederThread randomSeeder = new RandomSeederThread(getTestSeedGenerator());
-    ReseedingThreadLocalRandomWrapper prng = new ReseedingThreadLocalRandomWrapper(
-        mtSupplier, randomSeeder);
+    ReseedingThreadLocalRandomWrapper prng =
+        new ReseedingThreadLocalRandomWrapper(mtSupplier, randomSeeder);
     prng.setRandomSeeder(randomSeeder);
   }
 

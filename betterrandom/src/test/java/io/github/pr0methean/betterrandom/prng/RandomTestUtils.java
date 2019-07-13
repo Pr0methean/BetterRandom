@@ -44,6 +44,7 @@ import org.testng.Reporter;
 
 /**
  * Provides methods used for testing the operation of RNG implementations.
+ *
  * @author Daniel Dyer
  */
 public enum RandomTestUtils {
@@ -145,21 +146,21 @@ public enum RandomTestUtils {
     rng1.nextBytes(out1);
     byte[] out2 = new byte[iterations];
     rng2.nextBytes(out2);
-    final String fullMessage = String.format(
-        "%s:%n%s -> %s%nvs.%n%s -> %s%n", message, toString(rng1),
-        convertBytesToHexString(out1), toString(rng2), convertBytesToHexString(out2));
+    final String fullMessage = String
+        .format("%s:%n%s -> %s%nvs.%n%s -> %s%n", message, toString(rng1),
+            convertBytesToHexString(out1), toString(rng2), convertBytesToHexString(out2));
     if (Arrays.equals(out1, out2) != shouldBeEquivalent) {
       throw new AssertionError(fullMessage);
     }
   }
 
-  public static void assertEquivalent(final Random rng1, final Random rng2,
-      final int iterations, final String message) {
+  public static void assertEquivalent(final Random rng1, final Random rng2, final int iterations,
+      final String message) {
     assertEquivalentOrDistinct(rng1, rng2, iterations, message, true);
   }
 
-  public static void assertDistinct(final Random rng1, final Random rng2,
-      final int iterations, final String message) {
+  public static void assertDistinct(final Random rng1, final Random rng2, final int iterations,
+      final String message) {
     assertEquivalentOrDistinct(rng1, rng2, iterations, message, false);
   }
 
@@ -171,10 +172,13 @@ public enum RandomTestUtils {
    * This is a rudimentary check to ensure that the output of a given RNG is approximately uniformly
    * distributed.  If the RNG output is not uniformly distributed, this method will return a poor
    * estimate for the value of pi.
+   *
    * @param rng The RNG to test.
    * @param iterations The number of random points to generate for use in the calculation.  This
-   *     value needs to be sufficiently large in order to produce a reasonably accurate result
-   *     (assuming the RNG is uniform). Less than 10,000 is not particularly useful.  100,000 should
+   *     value needs to be sufficiently large in order to produce a reasonably
+   *     accurate result
+   *     (assuming the RNG is uniform). Less than 10,000 is not particularly useful
+   *     .  100,000 should
    *     be sufficient.
    * @return An approximation of pi generated using the provided RNG.
    */
@@ -201,6 +205,7 @@ public enum RandomTestUtils {
   /**
    * Uses Pythagoras' theorem to determine whether the specified coordinates fall within the area of
    * the quadrant of a circle of radius 1 that is centered on the origin.
+   *
    * @param x The x-coordinate of the point (must be between 0 and 1).
    * @param y The y-coordinate of the point (must be between 0 and 1).
    * @return True if the point is within the quadrant, false otherwise.
@@ -213,6 +218,7 @@ public enum RandomTestUtils {
   /**
    * Generates a sequence of integers from a given random number generator and then calculates the
    * standard deviation of the sample.
+   *
    * @param rng The RNG to use.
    * @param maxValue The maximum value for generated integers (values will be in the range [0,
    *     maxValue)).
@@ -224,8 +230,8 @@ public enum RandomTestUtils {
       final long maxValue, final int iterations) {
     final SynchronizedDescriptiveStatistics stats = new SynchronizedDescriptiveStatistics();
     final BaseStream<? extends Number, ?> stream =
-        (maxValue <= Integer.MAX_VALUE) ? rng.ints(iterations, 0, (int) maxValue)
-            : rng.longs(iterations, 0, maxValue);
+        (maxValue <= Integer.MAX_VALUE) ? rng.ints(iterations, 0, (int) maxValue) :
+            rng.longs(iterations, 0, maxValue);
     stream.spliterator().forEachRemaining(new Consumer<Number>() {
       @Override public void accept(Number number) {
         stats.addValue(number.doubleValue());
@@ -283,7 +289,8 @@ public enum RandomTestUtils {
       final byte[] secondSeedClone = secondSeed.clone();
       waits = 0;
       while (rng.getEntropyBits() < (secondSeed.length * 8L) - 1) {
-        assertEquals(secondSeedClone, secondSeed, "Array modified after being returned by getSeed()");
+        assertEquals(secondSeedClone, secondSeed,
+            "Array modified after being returned by getSeed()");
         waits++;
         if (waits > 5) {
           fail(String.format("Timed out waiting for entropy count to increase on %s", rng));
@@ -314,13 +321,15 @@ public enum RandomTestUtils {
     }
   }
 
-  public static void removeAndAssertEmpty(final RandomSeederThread seederThread, final BaseRandom prng) {
+  public static void removeAndAssertEmpty(final RandomSeederThread seederThread,
+      final BaseRandom prng) {
     prng.setRandomSeeder(null);
     seederThread.stopIfEmpty();
     assertTrue(seederThread.isEmpty());
   }
 
-  public static void removeAndAssertEmpty(final RandomSeederThread seederThread, final Random prng) {
+  public static void removeAndAssertEmpty(final RandomSeederThread seederThread,
+      final Random prng) {
     seederThread.remove(prng);
     seederThread.stopIfEmpty();
     assertTrue(seederThread.isEmpty());
@@ -337,8 +346,6 @@ public enum RandomTestUtils {
   }
 
   public enum EntropyCheckMode {
-    EXACT,
-    LOWER_BOUND,
-    OFF
+    EXACT, LOWER_BOUND, OFF
   }
 }

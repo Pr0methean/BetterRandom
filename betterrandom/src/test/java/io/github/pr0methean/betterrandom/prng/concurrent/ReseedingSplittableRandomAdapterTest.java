@@ -18,13 +18,12 @@ import org.testng.annotations.AfterTest;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
-@SuppressWarnings("BusyWait")
-public class ReseedingSplittableRandomAdapterTest extends SingleThreadSplittableRandomAdapterTest {
+@SuppressWarnings("BusyWait") public class ReseedingSplittableRandomAdapterTest
+    extends SingleThreadSplittableRandomAdapterTest {
 
   private RandomSeederThread thread;
 
-  @Override
-  protected SeedGenerator getTestSeedGenerator() {
+  @Override protected SeedGenerator getTestSeedGenerator() {
     return semiFakeSeedGenerator;
   }
 
@@ -84,7 +83,9 @@ public class ReseedingSplittableRandomAdapterTest extends SingleThreadSplittable
     RandomTestUtils.testReseeding(getTestSeedGenerator(), createRng(), false);
   }
 
-  /** Test for crashes only, since setSeed is a no-op. */
+  /**
+   * Test for crashes only, since setSeed is a no-op.
+   */
   @Override @Test public void testSetSeedAfterNextLong() throws SeedException {
     final BaseRandom prng = createRng();
     prng.nextLong();
@@ -93,7 +94,9 @@ public class ReseedingSplittableRandomAdapterTest extends SingleThreadSplittable
     prng.nextLong();
   }
 
-  /** Test for crashes only, since setSeed is a no-op. */
+  /**
+   * Test for crashes only, since setSeed is a no-op.
+   */
   @Override @Test public void testSetSeedAfterNextInt() throws SeedException {
     final BaseRandom prng = createRng();
     prng.nextInt();
@@ -102,12 +105,16 @@ public class ReseedingSplittableRandomAdapterTest extends SingleThreadSplittable
     prng.nextInt();
   }
 
-  /** Assertion-free since reseeding may cause divergent output. */
+  /**
+   * Assertion-free since reseeding may cause divergent output.
+   */
   @Override @Test(timeOut = 10000) public void testSetSeedLong() {
     createRng().setSeed(0x0123456789ABCDEFL);
   }
 
-  /** setRandomSeeder doesn't work on this class and shouldn't pretend to. */
+  /**
+   * setRandomSeeder doesn't work on this class and shouldn't pretend to.
+   */
   @Override @Test(expectedExceptions = UnsupportedOperationException.class)
   public void testRandomSeederThreadIntegration() {
     RandomSeederThread thread = new RandomSeederThread(SECURE_RANDOM_SEED_GENERATOR);
@@ -134,11 +141,14 @@ public class ReseedingSplittableRandomAdapterTest extends SingleThreadSplittable
   @Override @Test public void testDump() throws SeedException {
     RandomSeederThread thread = new RandomSeederThread(SECURE_RANDOM_SEED_GENERATOR);
     try {
-      ReseedingSplittableRandomAdapter baseInstance = ReseedingSplittableRandomAdapter.getInstance(thread, getTestSeedGenerator());
-      RandomSeederThread otherThread = new RandomSeederThread(new FakeSeedGenerator("Different reseeder"));
+      ReseedingSplittableRandomAdapter baseInstance =
+          ReseedingSplittableRandomAdapter.getInstance(thread, getTestSeedGenerator());
+      RandomSeederThread otherThread =
+          new RandomSeederThread(new FakeSeedGenerator("Different reseeder"));
       try {
-        assertNotEquals(ReseedingSplittableRandomAdapter.getInstance(otherThread, getTestSeedGenerator()).dump(),
-            baseInstance.dump());
+        assertNotEquals(
+            ReseedingSplittableRandomAdapter.getInstance(otherThread, getTestSeedGenerator())
+                .dump(), baseInstance.dump());
       } finally {
         otherThread.stopIfEmpty();
       }
@@ -147,7 +157,9 @@ public class ReseedingSplittableRandomAdapterTest extends SingleThreadSplittable
     }
   }
 
-  /** Assertion-free because thread-local. */
+  /**
+   * Assertion-free because thread-local.
+   */
   @Override @Test public void testThreadSafety() {
     testThreadSafetyVsCrashesOnly(30, functionsForThreadSafetyTest);
   }

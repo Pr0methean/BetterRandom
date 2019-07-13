@@ -14,6 +14,7 @@ import java8.util.SplittableRandom;
  * Like {@link SplittableRandomAdapter}, but uses a {@link RandomSeederThread} to replace each
  * thread's {@link SplittableRandom} with a reseeded one as frequently as possible, but not more
  * frequently than it is being used.
+ *
  * @author Chris Hennick
  */
 public class ReseedingSplittableRandomAdapter extends BaseSplittableRandomAdapter {
@@ -23,16 +24,19 @@ public class ReseedingSplittableRandomAdapter extends BaseSplittableRandomAdapte
   private static final Map<RandomSeederThread, ReseedingSplittableRandomAdapter> INSTANCES = Collections
       .synchronizedMap(new WeakHashMap<RandomSeederThread, ReseedingSplittableRandomAdapter>(1));
   private final SeedGenerator seedGenerator;
+  // Making a transient field final only works because we use readResolve, so outside that method
+  // we're always in an instance from our own constructor even when deserialized.
   @SuppressWarnings(
-      {"ThreadLocalNotStaticFinal", "InstanceVariableMayNotBeInitializedByReadObject"})
-  private transient ThreadLocal<SingleThreadSplittableRandomAdapter> threadLocal;
+      {"ThreadLocalNotStaticFinal"}) private final transient ThreadLocal<SingleThreadSplittableRandomAdapter>
+      threadLocal;
 
   /**
    * Single instance per SeedGenerator.
+   *
    * @param seedGenerator The seed generator this adapter will use.
-   * @param randomSeeder
    */
-  private ReseedingSplittableRandomAdapter(final SeedGenerator seedGenerator, RandomSeederThread randomSeeder) throws SeedException {
+  private ReseedingSplittableRandomAdapter(final SeedGenerator seedGenerator,
+      RandomSeederThread randomSeeder) throws SeedException {
     super(seedGenerator.generateSeed(Java8Constants.LONG_BYTES));
     this.seedGenerator = seedGenerator;
     this.randomSeeder.set(randomSeeder);
@@ -48,6 +52,7 @@ public class ReseedingSplittableRandomAdapter extends BaseSplittableRandomAdapte
 
   /**
    * Returns the instance backed by the given {@link SeedGenerator}.
+   *
    * @param randomSeeder The random seeder the returned adapter is to use for reseeding.
    * @param seedGenerator The generator to use for initial seeding, if the instance doesn't already
    *     exist.
@@ -57,7 +62,7 @@ public class ReseedingSplittableRandomAdapter extends BaseSplittableRandomAdapte
    */
   @SuppressWarnings("SynchronizationOnStaticField")
   public static ReseedingSplittableRandomAdapter getInstance(final RandomSeederThread randomSeeder,
-     final SeedGenerator seedGenerator) throws SeedException {
+      final SeedGenerator seedGenerator) throws SeedException {
     ReseedingSplittableRandomAdapter instance = INSTANCES.get(randomSeeder);
     if (instance == null) {
       synchronized (INSTANCES) {
@@ -79,8 +84,7 @@ public class ReseedingSplittableRandomAdapter extends BaseSplittableRandomAdapte
     return threadLocal.get().getSeed();
   }
 
-  @Override
-  public void setRandomSeeder(final RandomSeederThread randomSeeder) {
+  @Override public void setRandomSeeder(final RandomSeederThread randomSeeder) {
     if (!this.randomSeeder.get().equals(randomSeeder)) {
       throw new UnsupportedOperationException(
           "ReseedingSplittableRandomAdapter's binding to RandomSeederThread is immutable");
@@ -117,8 +121,7 @@ public class ReseedingSplittableRandomAdapter extends BaseSplittableRandomAdapte
     return "ReseedingSplittableRandomAdapter using " + randomSeeder;
   }
 
-  @Override
-  public boolean equals(Object o) {
+  @Override public boolean equals(Object o) {
     if (this == o) {
       return true;
     }
@@ -129,8 +132,7 @@ public class ReseedingSplittableRandomAdapter extends BaseSplittableRandomAdapte
     return randomSeeder.get().equals(that.randomSeeder.get());
   }
 
-  @Override
-  public int hashCode() {
+  @Override public int hashCode() {
     return randomSeeder.hashCode() + 1;
   }
 }

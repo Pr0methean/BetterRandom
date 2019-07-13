@@ -25,18 +25,22 @@ import java.security.SecureRandom;
  * is
  * provided as a fall-back option should none of the other provided {@link SeedGenerator}
  * implementations be usable.</p> <p>On Oracle and OpenJDK, SecureRandom uses <a
- * href="http://hg.openjdk.java.net/jdk8/jdk8/jdk/file/tip/src/share/classes/sun/security/provider/SeedGenerator.java">{@code
+ * href="http://hg.openjdk.java.net/jdk8/jdk8/jdk/file/tip/src/share/classes/sun/security
+ * /provider/SeedGenerator.java">{@code
  * sun.security.provider.SeedGenerator}</a>; when {@code /dev/random} isn't available, that
  * SeedGenerator class in turn uses the timing of newly-launched threads as a source of randomness,
  * relying on the unpredictable interactions between different configurations of hardware and
  * software and their workloads.</p>
+ *
  * @author Daniel Dyer
  */
 public enum SecureRandomSeedGenerator implements SeedGenerator {
 
   SECURE_RANDOM_SEED_GENERATOR;
 
-  /** The {@link SecureRandom} that generates the seeds. */
+  /**
+   * The {@link SecureRandom} that generates the seeds.
+   */
   private static final SecureRandom SOURCE = new SecureRandom();
 
   /**

@@ -12,6 +12,7 @@ import java8.util.SplittableRandom;
  * #setSeed(byte[])} replace the {@link SplittableRandom} that's used in the context in which they
  * are called. See {@link ReseedingSplittableRandomAdapter} for an example of when it does
  * <i>not</i> make sense to extend this class.
+ *
  * @author Chris Hennick
  */
 public abstract class DirectSplittableRandomAdapter extends BaseSplittableRandomAdapter {
@@ -23,11 +24,13 @@ public abstract class DirectSplittableRandomAdapter extends BaseSplittableRandom
    * SingleThreadSplittableRandomAdapter} or be split using {@link SplittableRandom#split()} (see
    * {@link SplittableRandomAdapter}) and have the splits delegated to.
    */
-  @SuppressWarnings("InstanceVariableMayNotBeInitializedByReadObject")
-  protected transient volatile SplittableRandom delegate; // SplittableRandom isn't Serializable
+  @SuppressWarnings(
+      "InstanceVariableMayNotBeInitializedByReadObject") protected transient volatile SplittableRandom
+      delegate; // SplittableRandom isn't Serializable
 
   /**
    * Wraps a {@link SplittableRandom} with the specified seed.
+   *
    * @param seed 8 bytes of seed data used to initialize the RNG.
    */
   protected DirectSplittableRandomAdapter(final byte[] seed) {
@@ -36,6 +39,7 @@ public abstract class DirectSplittableRandomAdapter extends BaseSplittableRandom
 
   /**
    * Wraps a {@link SplittableRandom} with the specified seed.
+   *
    * @param seed the seed.
    */
   @EntryPoint protected DirectSplittableRandomAdapter(final long seed) {

@@ -43,8 +43,7 @@ public class SingleThreadSplittableRandomAdapterTest extends AbstractLargeSeedRa
     final BaseSplittableRandomAdapter adapter2 = CloneViaSerialization.clone(adapter);
     final BaseSplittableRandomAdapter adapter3 = CloneViaSerialization.clone(adapter);
     // final BaseSplittableRandomAdapter adapter4 = CloneViaSerialization.clone(adapter2);
-    assertEquivalent(adapter2, adapter3, 20,
-        "Deserializing twice doesn't yield same object");
+    assertEquivalent(adapter2, adapter3, 20, "Deserializing twice doesn't yield same object");
     // FIXME Failing:
     // assertEquivalent(adapter2, adapter4, 20, "Serialization round-trip is not idempotent");
   }

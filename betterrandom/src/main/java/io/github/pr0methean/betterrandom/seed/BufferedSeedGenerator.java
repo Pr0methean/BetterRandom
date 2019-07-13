@@ -34,8 +34,7 @@ public class BufferedSeedGenerator implements SeedGenerator {
     pos = size;
   }
 
-  @Override
-  public void generateSeed(byte[] output) throws SeedException {
+  @Override public void generateSeed(byte[] output) throws SeedException {
     if (output.length >= size) {
       delegate.generateSeed(output);
     } else {
@@ -66,13 +65,11 @@ public class BufferedSeedGenerator implements SeedGenerator {
     return output;
   }
 
-  @Override
-  public boolean isWorthTrying() {
+  @Override public boolean isWorthTrying() {
     return pos < size || delegate.isWorthTrying();
   }
 
-  @Override
-  public String toString() {
+  @Override public String toString() {
     return String.format("BufferedSeedGenerator(%s,%d)", delegate, size);
   }
 }

@@ -14,8 +14,8 @@ import java.util.Map;
 import java.util.Random;
 import org.testng.annotations.Test;
 
-@Test(testName = "RandomWrapper:SecureRandom")
-public class RandomWrapperSecureRandomTest extends AbstractLargeSeedRandomTest {
+@Test(testName = "RandomWrapper:SecureRandom") public class RandomWrapperSecureRandomTest
+    extends AbstractLargeSeedRandomTest {
 
   private static final SecureRandom SEED_GEN = new SecureRandom();
   private static final NamedFunction<Random, Double> SET_WRAPPED =
@@ -107,7 +107,9 @@ public class RandomWrapperSecureRandomTest extends AbstractLargeSeedRandomTest {
     return wrapper;
   }
 
-  /** Assertion-free because SecureRandom isn't necessarily reproducible. */
+  /**
+   * Assertion-free because SecureRandom isn't necessarily reproducible.
+   */
   @Override @Test public void testThreadSafety() {
     testThreadSafetyVsCrashesOnly(30,
         ImmutableList.of(NEXT_LONG, NEXT_INT, NEXT_DOUBLE, NEXT_GAUSSIAN, SET_WRAPPED));

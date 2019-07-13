@@ -39,6 +39,7 @@ import org.slf4j.LoggerFactory;
  * JDKs.</p> <p><em>NOTE: Because instances of this class
  * require 128-bit seeds, it is not possible to seed this RNG using the {@link #setSeed(long)}
  * method inherited from {@link Random} until the seed array has been set.</em></p>
+ *
  * @author Daniel Dyer
  * @author Chris Hennick
  */
@@ -57,27 +58,22 @@ public class AesCounterRandom extends CipherCounterRandom {
   @SuppressWarnings("HardcodedFileSeparator") private static final String ALGORITHM_MODE =
       ALGORITHM + "/ECB/NoPadding";
   // WARNING: Don't initialize any instance fields at declaration; they may be initialized too late!
-  @SuppressWarnings("InstanceVariableMayNotBeInitializedByReadObject")
-  protected transient Cipher
+  @SuppressWarnings("InstanceVariableMayNotBeInitializedByReadObject") protected transient Cipher
       cipher;
 
-  @Override
-  public int getBlocksAtOnce() {
+  @Override public int getBlocksAtOnce() {
     return BLOCKS_AT_ONCE;
   }
 
-  @Override
-  public int getBytesAtOnce() {
+  @Override public int getBytesAtOnce() {
     return BYTES_AT_ONCE;
   }
 
-  @Override
-  public int getMaxTotalSeedLengthBytes() {
+  @Override public int getMaxTotalSeedLengthBytes() {
     return MAX_TOTAL_SEED_LENGTH_BYTES;
   }
 
-  @Override
-  protected int getMinSeedLength() {
+  @Override protected int getMinSeedLength() {
     return 16;
   }
 
@@ -92,8 +88,7 @@ public class AesCounterRandom extends CipherCounterRandom {
    */
   private static final int BLOCKS_AT_ONCE = 16;
 
-  @Override
-  public int getCounterSizeBytes() {
+  @Override public int getCounterSizeBytes() {
     return COUNTER_SIZE_BYTES;
   }
 
@@ -116,6 +111,7 @@ public class AesCounterRandom extends CipherCounterRandom {
 
   /**
    * Creates a new RNG and seeds it using 256 bits from the {@link DefaultSeedGenerator}.
+   *
    * @throws SeedException if the {@link DefaultSeedGenerator} fails to generate a seed.
    */
   public AesCounterRandom() throws SeedException {
@@ -124,6 +120,7 @@ public class AesCounterRandom extends CipherCounterRandom {
 
   /**
    * Seed the RNG using the provided seed generation strategy to create a 256-bit seed.
+   *
    * @param seedGenerator The seed generation strategy that will provide the seed value for this
    *     RNG.
    * @throws SeedException if there is a problem generating a seed.
@@ -134,6 +131,7 @@ public class AesCounterRandom extends CipherCounterRandom {
 
   /**
    * Seed the RNG using the {@link DefaultSeedGenerator} to create a seed of the specified size.
+   *
    * @param seedSizeBytes The number of bytes to use for seed data. Valid values range from 16
    *     to {@link #getMaxKeyLengthBytes()} + 16.
    * @throws SeedException if the {@link DefaultSeedGenerator} fails to generate a seed.
@@ -144,6 +142,7 @@ public class AesCounterRandom extends CipherCounterRandom {
 
   /**
    * Creates an RNG and seeds it with the specified seed data.
+   *
    * @param seed The seed data used to initialize the RNG. Length must be at least 16 and no
    *     more than {@link #getMaxKeyLengthBytes()} + 16.
    */
@@ -169,8 +168,7 @@ public class AesCounterRandom extends CipherCounterRandom {
         : ((inputLength >= 24) ? 24 : 16);
   }
 
-  @Override
-  protected MessageDigest createHash() {
+  @Override protected MessageDigest createHash() {
     try {
       return MessageDigest.getInstance(HASH_ALGORITHM);
     } catch (NoSuchAlgorithmException e) {
@@ -178,8 +176,7 @@ public class AesCounterRandom extends CipherCounterRandom {
     }
   }
 
-  @Override
-  protected void createCipher() {
+  @Override protected void createCipher() {
     try {
       cipher = Cipher.getInstance(ALGORITHM_MODE);
     } catch (NoSuchAlgorithmException | NoSuchPaddingException e) {
@@ -195,8 +192,7 @@ public class AesCounterRandom extends CipherCounterRandom {
     super.setSeedInternal(seed);
   }
 
-  @Override
-  protected void setKey(byte[] key) throws InvalidKeyException {
+  @Override protected void setKey(byte[] key) throws InvalidKeyException {
     cipher.init(Cipher.ENCRYPT_MODE, new SecretKeySpec(key, ALGORITHM));
   }
 
@@ -231,21 +227,15 @@ public class AesCounterRandom extends CipherCounterRandom {
     }
   }
 
-  @Override protected boolean supportsMultipleSeedLengths() {
-    return true;
-  }
-
-  @Override public MoreObjects.ToStringHelper addSubclassFields(final MoreObjects.ToStringHelper original) {
-    return original.add("counter", BinaryUtils.convertBytesToHexString(counter))
-        .add("cipher.iv", cipher.getIV())
-        .add("cipher.algorithm", cipher.getAlgorithm())
-        .add("cipher.provider", cipher.getProvider())
-        .add("cipher.parameters", cipher.getParameters())
-        .add("index", index);
-  }
-
   @Override
-  protected void doCipher(byte[] input, byte[] output) throws GeneralSecurityException {
+  public MoreObjects.ToStringHelper addSubclassFields(final MoreObjects.ToStringHelper original) {
+    return original.add("counter", BinaryUtils.convertBytesToHexString(counter))
+        .add("cipher.iv", cipher.getIV()).add("cipher.algorithm", cipher.getAlgorithm())
+        .add("cipher.provider", cipher.getProvider())
+        .add("cipher.parameters", cipher.getParameters()).add("index", index);
+  }
+
+  @Override protected void doCipher(byte[] input, byte[] output) throws GeneralSecurityException {
     cipher.doFinal(input, 0, getBytesAtOnce(), output);
   }
 }

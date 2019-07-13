@@ -7,8 +7,7 @@ import static io.github.pr0methean.betterrandom.util.Java8Constants.LONG_BYTES;
 /**
  * Collection of arithmetic methods that treat {@code byte[16]} arrays as 128-bit unsigned integers.
  */
-@SuppressWarnings("AccessStaticViaInstance")
-public enum Byte16ArrayArithmetic {
+@SuppressWarnings({"AccessStaticViaInstance"}) public enum Byte16ArrayArithmetic {
   ;
 
   private static final int SIZE_BYTES = 16;
@@ -18,7 +17,8 @@ public enum Byte16ArrayArithmetic {
   private static final long UNSIGNED_INT_TO_LONG_MASK = (1L << Integer.SIZE) - 1;
 
   /**
-   * {@code counter += delta}  
+   * {@code counter += delta}
+   *
    * @param counter the variable-sized input and the result
    * @param delta the long-sized input
    * @param addendDigits working register
@@ -34,6 +34,7 @@ public enum Byte16ArrayArithmetic {
 
   /**
    * {@code counter += delta}. Inputs must be the same length.
+   *
    * @param counter the first input and the result
    * @param delta the second input
    */
@@ -43,47 +44,45 @@ public enum Byte16ArrayArithmetic {
       final int oldCounterUnsigned = counter[i] < 0 ? counter[i] + 256 : counter[i];
       counter[i] += delta[i] + (carry ? 1 : 0);
       final int newCounterUnsigned = counter[i] < 0 ? counter[i] + 256 : counter[i];
-      carry = (oldCounterUnsigned > newCounterUnsigned)
-          || (carry && (oldCounterUnsigned == newCounterUnsigned));
+      carry = (oldCounterUnsigned > newCounterUnsigned) ||
+          (carry && (oldCounterUnsigned == newCounterUnsigned));
     }
   }
 
   /**
    * {@code counter *= multiplier}
+   *
    * @param counter the first input and the result
    * @param mult the second input
    */
   @SuppressWarnings("NumericCastThatLosesPrecision") public static void multiplyInto(
       final byte[] counter, final byte[] mult) {
-    final long x = convertBytesToLong(counter, LONG_BYTES);
-    final long y = convertBytesToLong(mult, LONG_BYTES);
-
-    // https://stackoverflow.com/a/38880097/833771
-    final long x_high = x >>> 32;
-    final long x_low = x & UNSIGNED_INT_TO_LONG_MASK;
-    final long y_high = y >>> 32;
-    final long y_low = y & UNSIGNED_INT_TO_LONG_MASK;
-    final long z2 = x_low * y_low;
-    final long t = x_high * y_low + (z2 >>> 32);
-    long z1 = t & UNSIGNED_INT_TO_LONG_MASK;
-    final long z0 = t >>> 32;
-    z1 += x_low * y_high;
-    final long highOut = x_high * y_high + z0 + (z1 >>> 32) + convertBytesToLong(counter, 0) * y
-        + convertBytesToLong(mult, 0) * x;
-
-    final long lowOut = x * y;
-    convertLongToBytes(highOut, counter, 0);
-    convertLongToBytes(lowOut, counter, LONG_BYTES);
+    multiplyIntoAndAddInto(counter, mult, 0, 0);
   }
 
   /**
    * {@code counter *= mult; counter += add}
+   *
    * @param counter the first input and the result
    * @param mult the input to multiply by
    * @param add the input to add after multiplying
    */
-  @SuppressWarnings("NumericCastThatLosesPrecision") public static void multiplyIntoAndAddInto(
-      final byte[] counter, final byte[] mult, final byte[] add) {
+  public static void multiplyIntoAndAddInto(final byte[] counter, final byte[] mult,
+      final byte[] add) {
+    multiplyIntoAndAddInto(counter, mult, convertBytesToLong(add, Long.BYTES),
+        convertBytesToLong(add, 0));
+  }
+
+  /**
+   * {@code counter *= mult; counter += addHigh <<< 64 + addLow;}
+   *
+   * @param counter the first input and the result
+   * @param mult the input to multiply by
+   * @param addLow low 64 bits to add
+   * @param addHigh high 64 bits to add
+   */
+  @SuppressWarnings("NumericCastThatLosesPrecision") private static void multiplyIntoAndAddInto(
+      final byte[] counter, final byte[] mult, long addLow, long addHigh) {
     final long x = convertBytesToLong(counter, LONG_BYTES);
     final long y = convertBytesToLong(mult, LONG_BYTES);
 
@@ -92,18 +91,15 @@ public enum Byte16ArrayArithmetic {
     final long x_low = x & UNSIGNED_INT_TO_LONG_MASK;
     final long y_high = y >>> 32;
     final long y_low = y & UNSIGNED_INT_TO_LONG_MASK;
-    final long z2 = x_low * y_low;
-    final long t = x_high * y_low + (z2 >>> 32);
-    long z1 = t & UNSIGNED_INT_TO_LONG_MASK;
+    final long t = x_high * y_low + (x_low * y_low >>> 32);
+    final long z1 = (t & UNSIGNED_INT_TO_LONG_MASK) + x_low * y_high;
     final long z0 = t >>> 32;
-    z1 += x_low * y_high;
     final long lowProduct = x * y;
-    final long lowOut = lowProduct + convertBytesToLong(add, LONG_BYTES);
-    final long highOut = (x_high * y_high) + z0 + (z1 >>> 32)
-        + (convertBytesToLong(counter, 0) * y)
-        + (convertBytesToLong(mult, 0) * x)
-        + convertBytesToLong(add, 0)
-        + ((lowProduct + Long.MIN_VALUE > lowOut + Long.MIN_VALUE) ? 1 : 0);
+    final long lowOut = lowProduct + addLow;
+    final long highOut =
+        (x_high * y_high) + z0 + (z1 >>> 32) + (convertBytesToLong(counter, 0) * y) +
+            (convertBytesToLong(mult, 0) * x) + addHigh +
+            (Long.compareUnsigned(lowProduct, lowOut) > 0 ? 1 : 0);
 
     convertLongToBytes(highOut, counter, 0);
     convertLongToBytes(lowOut, counter, LONG_BYTES);
@@ -121,7 +117,9 @@ public enum Byte16ArrayArithmetic {
 
   /**
    * {@code shifted >>>= bits}
-   * From <a href="https://github.com/patrickfav/bytes-java/blob/743a6ab60649e6ce7ec972412bdcb42010a46077/src/main/java/at/favre/lib/bytes/Util.java#L395">this source</a>.
+   * From
+   * <a href="https://github.com/patrickfav/bytes-java/blob/743a6ab60649e6ce7ec972412bdcb42010a46077/src/main/java/at/favre/lib/bytes/Util.java#L395">this source</a>.
+   *
    * @param shifted the array input and the result
    * @param bits how many bits to shift by
    */
@@ -137,7 +135,9 @@ public enum Byte16ArrayArithmetic {
 
   /**
    * Returns the lower 64 bits of the shifted input.
-   * From <a href="https://github.com/patrickfav/bytes-java/blob/743a6ab60649e6ce7ec972412bdcb42010a46077/src/main/java/at/favre/lib/bytes/Util.java#L395">this source</a>.
+   * From
+   * <a href="https://github.com/patrickfav/bytes-java/blob/743a6ab60649e6ce7ec972412bdcb42010a46077/src/main/java/at/favre/lib/bytes/Util.java#L395">this source</a>.
+   *
    * @param shifted the array input and the result
    * @param bits how many bits to shift by
    * @return {@code (long)(shifted >>> bits)}
@@ -153,6 +153,7 @@ public enum Byte16ArrayArithmetic {
 
   /**
    * Returns the upper 64 bits of {@code (oldMost << 64LL + oldLeast) >>> bits}.
+   *
    * @param bits how many bits to shift by
    * @param oldMost upper 64 bits of input
    * @param oldLeast lower 64 bits of input
@@ -164,6 +165,7 @@ public enum Byte16ArrayArithmetic {
 
   /**
    * Returns the lower 64 bits of {@code (oldMost << 64LL + oldLeast) >>> bits}.
+   *
    * @param bits how many bits to shift by
    * @param oldMost upper 64 bits of input
    * @param oldLeast lower 64 bits of input
@@ -175,6 +177,7 @@ public enum Byte16ArrayArithmetic {
 
   /**
    * {@code shifted = (shifted >>> bits) | shifted << (128 - bits)}
+   *
    * @param shifted the array input and the result
    * @param bits how many bits to shift by
    */
@@ -196,7 +199,8 @@ public enum Byte16ArrayArithmetic {
   }
 
   private static long rotateRightLeast64(final int bits, final long oldMost, final long oldLeast) {
-    return shiftedLeast(bits, oldMost, oldLeast) | shiftedLeast(otherShift(bits), oldMost, oldLeast);
+    return shiftedLeast(bits, oldMost, oldLeast) |
+        shiftedLeast(otherShift(bits), oldMost, oldLeast);
   }
 
   private static int otherShift(final int bits) {
@@ -205,6 +209,7 @@ public enum Byte16ArrayArithmetic {
 
   /**
    * Returns the lower 64 bits of the result when the input is rotated.
+   *
    * @param shifted the array input and the result
    * @param bits how many bits to shift by
    * @return {@code (long) ((shifted >>> bits) | shifted << (128 - bits))}

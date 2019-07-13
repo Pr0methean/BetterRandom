@@ -24,15 +24,17 @@ import javax.annotation.Nullable;
 public class ThreadLocalRandomWrapper extends RandomWrapper {
 
   private static final long serialVersionUID = 1199235201518562359L;
-  @SuppressWarnings("NonSerializableFieldInSerializableClass")
-  protected final Supplier<? extends BaseRandom> initializer;
+  @SuppressWarnings(
+      "NonSerializableFieldInSerializableClass") protected final Supplier<? extends BaseRandom>
+      initializer;
   @Nullable private final Integer explicitSeedSize;
-  @SuppressWarnings({"FieldAccessedSynchronizedAndUnsynchronized", "ThreadLocalNotStaticFinal"})
-  protected transient ThreadLocal<BaseRandom> threadLocal;
+  @SuppressWarnings({"FieldAccessedSynchronizedAndUnsynchronized",
+      "ThreadLocalNotStaticFinal"}) protected transient ThreadLocal<BaseRandom> threadLocal;
 
   /**
    * Wraps the given {@link Supplier}. This ThreadLocalRandomWrapper will be serializable if the
    * {@link Supplier} is serializable.
+   *
    * @param initializer a supplier that will be called to provide the initial {@link BaseRandom}
    *     for each thread.
    */
@@ -47,6 +49,7 @@ public class ThreadLocalRandomWrapper extends RandomWrapper {
   /**
    * Wraps a seed generator and a function that takes a seed byte array as input. This
    * ThreadLocalRandomWrapper will be serializable if the {@link Function} is serializable.
+   *
    * @param seedSize the size of seed arrays to generate.
    * @param seedGenerator The seed generation strategy that will provide the seed value for each
    *     thread's {@link BaseRandom}.
@@ -68,6 +71,7 @@ public class ThreadLocalRandomWrapper extends RandomWrapper {
   /**
    * Uses this class and {@link RandomWrapper} to decorate any implementation of {@link Random} that
    * can be constructed from a {@code long} seed into a fully-concurrent one.
+   *
    * @param legacyCreator a function that provides the {@link Random} that underlies the
    *     returned wrapper on each thread, taking a seed as input.
    * @param seedGenerator the seed generator whose output will be fed to {@code legacyCreator}.
@@ -94,6 +98,7 @@ public class ThreadLocalRandomWrapper extends RandomWrapper {
 
   /**
    * Not supported, because this class uses a thread-local seed.
+   *
    * @param randomSeeder ignored.
    * @throws UnsupportedOperationException always.
    */
@@ -197,8 +202,7 @@ public class ThreadLocalRandomWrapper extends RandomWrapper {
     return getWrapped().getSeed();
   }
 
-  @SuppressWarnings("VariableNotUsedInsideIf") @Override
-  public synchronized void setSeed(final long seed) {
+  @SuppressWarnings("VariableNotUsedInsideIf") @Override public void setSeed(final long seed) {
     if (threadLocal != null) {
       final BaseRandom wrapped = getWrapped();
       wrapped.setSeed(seed);
@@ -228,7 +232,7 @@ public class ThreadLocalRandomWrapper extends RandomWrapper {
   }
 
   @SuppressWarnings("VariableNotUsedInsideIf") @Override public int getNewSeedLength() {
-    return (threadLocal == null) ? 0
-        : ((explicitSeedSize == null) ? getWrapped().getNewSeedLength() : explicitSeedSize);
+    return (threadLocal == null) ? 0 :
+        ((explicitSeedSize == null) ? getWrapped().getNewSeedLength() : explicitSeedSize);
   }
 }

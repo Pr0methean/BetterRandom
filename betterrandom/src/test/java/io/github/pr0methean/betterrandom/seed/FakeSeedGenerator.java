@@ -18,6 +18,7 @@ public class FakeSeedGenerator implements SeedGenerator {
 
   /**
    * Creates a named instance.
+   *
    * @param name the name of this FakeSeedGenerator, returned by {@link #toString()}
    */
   public FakeSeedGenerator(final String name) {
@@ -32,8 +33,7 @@ public class FakeSeedGenerator implements SeedGenerator {
     Arrays.fill(output, (byte) 1);
   }
 
-  @Override
-  public String toString() {
+  @Override public String toString() {
     return name;
   }
 
@@ -50,15 +50,12 @@ public class FakeSeedGenerator implements SeedGenerator {
     return true;
   }
 
-  @Override
-  public boolean equals(final Object o) {
-    return this == o
-        || (o instanceof FakeSeedGenerator
-            && name.equals(((FakeSeedGenerator) o).name));
+  @Override public boolean equals(final Object o) {
+    return this == o ||
+        (o instanceof FakeSeedGenerator && name.equals(((FakeSeedGenerator) o).name));
   }
 
-  @Override
-  public int hashCode() {
+  @Override public int hashCode() {
     return name.hashCode();
   }
 

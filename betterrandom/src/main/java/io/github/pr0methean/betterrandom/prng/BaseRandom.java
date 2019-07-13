@@ -40,16 +40,21 @@ import org.slf4j.LoggerFactory;
 
 /**
  * Abstract {@link Random} with a seed field and an implementation of entropy counting.
+ *
  * @author Chris Hennick
  */
 public abstract class BaseRandom extends Random
     implements ByteArrayReseedableRandom, RepeatableRandom, Dumpable, EntropyCountingRandom,
     Java8CompatRandom {
 
-  /** The number of pseudorandom bits in {@link #nextFloat()}. */
+  /**
+   * The number of pseudorandom bits in {@link #nextFloat()}.
+   */
   protected static final int ENTROPY_OF_FLOAT = 24;
 
-  /** The number of pseudorandom bits in {@link #nextDouble()}. */
+  /**
+   * The number of pseudorandom bits in {@link #nextDouble()}.
+   */
   protected static final int ENTROPY_OF_DOUBLE = 53;
 
   private static final long NAN_LONG_BITS = Double.doubleToRawLongBits(Double.NaN);
@@ -61,9 +66,13 @@ public abstract class BaseRandom extends Random
    * negative.
    */
   protected final AtomicReference<RandomSeederThread> randomSeeder = new AtomicReference<>(null);
-  /** Lock to prevent concurrent modification of the RNG's internal state. */
+  /**
+   * Lock to prevent concurrent modification of the RNG's internal state.
+   */
   protected final ReentrantLock lock = new ReentrantLock();
-  /** Stores the entropy estimate backing {@link #getEntropyBits()}. */
+  /**
+   * Stores the entropy estimate backing {@link #getEntropyBits()}.
+   */
   protected final AtomicLong entropyBits = new AtomicLong(0);
   // Stored as a long since there's no atomic double
   private final AtomicLong nextNextGaussian = new AtomicLong(NAN_LONG_BITS);
@@ -85,6 +94,7 @@ public abstract class BaseRandom extends Random
 
   /**
    * Seed the RNG using the {@link DefaultSeedGenerator} to create a seed of the specified size.
+   *
    * @param seedSizeBytes The number of bytes to use for seed data.
    * @throws SeedException if the {@link DefaultSeedGenerator} fails to generate a seed.
    */
@@ -94,6 +104,7 @@ public abstract class BaseRandom extends Random
 
   /**
    * Creates a new RNG and seeds it using the provided seed generation strategy.
+   *
    * @param randomSeeder The seed generation strategy that will provide the seed value for this
    *     RNG.
    * @param seedLength The seed length in bytes.
@@ -106,6 +117,7 @@ public abstract class BaseRandom extends Random
 
   /**
    * Creates a new RNG with the provided seed.
+   *
    * @param seed the seed.
    */
   protected BaseRandom(final byte[] seed) {
@@ -119,6 +131,7 @@ public abstract class BaseRandom extends Random
   /**
    * Creates a new RNG with the provided seed. Only works in subclasses that can accept an 8-byte or
    * shorter seed.
+   *
    * @param seed the seed.
    */
   protected BaseRandom(final long seed) {
@@ -128,6 +141,7 @@ public abstract class BaseRandom extends Random
   /**
    * Calculates the entropy in bits, rounded up, of a random {@code int} between {@code origin}
    * (inclusive) and {@code bound} (exclusive).
+   *
    * @param origin the minimum, inclusive.
    * @param bound the maximum, exclusive.
    * @return the entropy.
@@ -139,6 +153,7 @@ public abstract class BaseRandom extends Random
   /**
    * Calculates the entropy in bits, rounded up, of a random {@code long} between {@code origin}
    * (inclusive) and {@code bound} (exclusive).
+   *
    * @param origin the minimum, inclusive.
    * @param bound the maximum, exclusive.
    * @return the entropy.
@@ -158,10 +173,12 @@ public abstract class BaseRandom extends Random
    * <p>Returns true with the given probability, and records that only 1 bit of entropy is being
    * spent.</p> <p>When {@code probability <= 0}, instantly returns false without recording any
    * entropy spent. Likewise, instantly returns true when {@code probability >= 1}.</p>
+   *
    * @param probability The probability of returning true.
    * @return True with probability equal to the {@code probability} parameter; false otherwise.
    */
-  @SuppressWarnings("FloatingPointEquality") public boolean withProbability(final double probability) {
+  @SuppressWarnings("FloatingPointEquality") public boolean withProbability(
+      final double probability) {
     if (probability >= 1) {
       return true;
     }
@@ -177,6 +194,7 @@ public abstract class BaseRandom extends Random
   /**
    * Called by {@link #withProbability(double)} to generate a boolean with a specified probability
    * of returning true, after checking that {@code probability} is strictly between 0 and 1.
+   *
    * @param probability The probability (between 0 and 1 exclusive) of returning true.
    * @return True with probability equal to the {@code probability} parameter; false otherwise.
    */
@@ -189,6 +207,7 @@ public abstract class BaseRandom extends Random
 
   /**
    * Chooses a random element from the given array.
+   *
    * @param array A non-empty array to choose from.
    * @param <E> The element type of {@code array}; usually inferred by the compiler.
    * @return An element chosen from {@code array} at random, with all elements having equal
@@ -200,6 +219,7 @@ public abstract class BaseRandom extends Random
 
   /**
    * Chooses a random element from the given list.
+   *
    * @param list A non-empty {@link List} to choose from.
    * @param <E> The element type of {@code list}; usually inferred by the compiler.
    * @return An element chosen from {@code list} at random, with all elements having equal
@@ -211,6 +231,7 @@ public abstract class BaseRandom extends Random
 
   /**
    * Chooses a random value of the given enum class.
+   *
    * @param enumClass An enum class having at least one value.
    * @param <E> The type of {@code enumClass}; usually inferred by the compiler.
    * @return A value of {@code enumClass} chosen at random, with all elements having equal
@@ -265,6 +286,7 @@ public abstract class BaseRandom extends Random
   /**
    * Returns a pseudorandom {@code long} value between zero (inclusive) and the specified bound
    * (exclusive).
+   *
    * @param bound the upper bound (exclusive).  Must be positive.
    * @return a pseudorandom {@code long} value between zero (inclusive) and the bound (exclusive)
    * @throws IllegalArgumentException if {@code bound} is not positive
@@ -276,6 +298,7 @@ public abstract class BaseRandom extends Random
   /**
    * Returns a pseudorandom {@code double} value between 0.0 (inclusive) and the specified bound
    * (exclusive).
+   *
    * @param bound the upper bound (exclusive).  Must be positive.
    * @return a pseudorandom {@code double} value between zero (inclusive) and the bound (exclusive)
    * @throws IllegalArgumentException if {@code bound} is not positive
@@ -287,6 +310,7 @@ public abstract class BaseRandom extends Random
   /**
    * Returns a pseudorandom {@code double} value between the specified origin (inclusive) and bound
    * (exclusive).
+   *
    * @param origin the least value returned
    * @param bound the upper bound (exclusive)
    * @return a pseudorandom {@code double} value between the origin (inclusive) and the bound
@@ -368,6 +392,7 @@ public abstract class BaseRandom extends Random
    * <p>Returns a stream producing an effectively unlimited number of pseudorandom doubles that are
    * normally distributed with mean 0.0 and standard deviation 1.0. This implementation uses {@link
    * #nextGaussian()}.</p>
+   *
    * @return a stream of normally-distributed random doubles.
    */
   public DoubleStream gaussians() {
@@ -382,6 +407,7 @@ public abstract class BaseRandom extends Random
    * Returns a stream producing the given number of pseudorandom doubles that are normally
    * distributed with mean 0.0 and standard deviation 1.0. This implementation uses {@link
    * #nextGaussian()}.
+   *
    * @param streamSize the number of doubles to generate.
    * @return a stream of {@code streamSize} normally-distributed random doubles.
    */
@@ -411,6 +437,7 @@ public abstract class BaseRandom extends Random
   /**
    * Returns the next random {@code double} between 0.0 (inclusive) and 1.0 (exclusive), but does
    * not debit entropy.
+   *
    * @return a pseudorandom {@code double}.
    */
   protected double nextDoubleNoEntropyDebit() {
@@ -427,7 +454,7 @@ public abstract class BaseRandom extends Random
    * standard deviation 1.0 from this random number generator's sequence. Unlike the one in {@link
    * Random}, this implementation is lockless.
    */
-  @Override public double nextGaussian() {
+  @SuppressWarnings("NonSynchronizedMethodOverridesSynchronizedMethod") @Override public double nextGaussian() {
     // Upper bound. 2 Gaussians are generated from 2 nextDouble calls, which once made are either
     // used or rerolled.
     debitEntropy(ENTROPY_OF_DOUBLE);
@@ -441,6 +468,7 @@ public abstract class BaseRandom extends Random
   /**
    * Core of a reimplementation of {@link #nextGaussian()} whose locking is overridable and doesn't
    * happen when a value is already stored.
+   *
    * @param nextDouble shall return a random number between 0 and 1, like {@link #nextDouble()},
    *     but shall not debit the entropy count.
    * @return a random number that is normally distributed with mean 0 and standard deviation 1.
@@ -476,12 +504,16 @@ public abstract class BaseRandom extends Random
     }
   }
 
-  /** Performs whatever locking is needed by {@link #nextGaussian()}. */
+  /**
+   * Performs whatever locking is needed by {@link #nextGaussian()}.
+   */
   protected void lockForNextGaussian() {
     lock.lock();
   }
 
-  /** Releases the locks acquired by {@link #lockForNextGaussian()}. */
+  /**
+   * Releases the locks acquired by {@link #lockForNextGaussian()}.
+   */
   protected void unlockForNextGaussian() {
     lock.unlock();
   }
@@ -519,6 +551,7 @@ public abstract class BaseRandom extends Random
   /**
    * Returns a pseudorandom {@code int} value between the specified origin (inclusive) and the
    * specified bound (exclusive).
+   *
    * @param origin the least value returned
    * @param bound the upper bound (exclusive)
    * @return a pseudorandom {@code int} value between the origin (inclusive) and the bound
@@ -597,6 +630,7 @@ public abstract class BaseRandom extends Random
    * Returns a pseudorandom {@code long} value between the specified origin (inclusive) and the
    * specified bound (exclusive). This implementation is adapted from the reference implementation
    * of Random.longs(long, long) from JDK 8.
+   *
    * @param origin the least value returned
    * @param bound the upper bound (exclusive)
    * @return a pseudorandom {@code long} value between the origin (inclusive) and the bound
@@ -638,6 +672,7 @@ public abstract class BaseRandom extends Random
 
   /**
    * Returns the next random {@code long}, but does not debit entropy.
+   *
    * @return a pseudorandom {@code long} with all possible values equally likely.
    */
   protected long nextLongNoEntropyDebit() {
@@ -667,8 +702,7 @@ public abstract class BaseRandom extends Random
     try {
       return addSubclassFields(
           MoreObjects.toStringHelper(this).add("seed", BinaryUtils.convertBytesToHexString(seed))
-              .add("entropyBits", entropyBits.get()).add("randomSeeder", randomSeeder))
-          .toString();
+              .add("entropyBits", entropyBits.get()).add("randomSeeder", randomSeeder)).toString();
     } finally {
       lock.unlock();
     }
@@ -693,9 +727,8 @@ public abstract class BaseRandom extends Random
    *
    * @deprecated Some implementations are very slow.
    */
-  @Deprecated
-  @SuppressWarnings("NonSynchronizedMethodOverridesSynchronizedMethod")
-  @Override public void setSeed(final long seed) {
+  @Deprecated @SuppressWarnings("NonSynchronizedMethodOverridesSynchronizedMethod") @Override
+  public void setSeed(final long seed) {
     final byte[] seedBytes = BinaryUtils.convertLongToBytes(seed);
     if (superConstructorFinished) {
       setSeed(seedBytes);
@@ -720,6 +753,7 @@ public abstract class BaseRandom extends Random
   /**
    * Adds the fields that were not inherited from BaseRandom to the given {@link
    * ToStringHelper} for dumping.
+   *
    * @param original a {@link ToStringHelper} object.
    * @return {@code original} with the fields not inherited from BaseRandom written to it.
    */
@@ -729,6 +763,7 @@ public abstract class BaseRandom extends Random
    * Registers this PRNG with the {@link RandomSeederThread} for the corresponding {@link
    * SeedGenerator}, to schedule reseeding when we run out of entropy. Unregisters this PRNG with
    * the previous {@link RandomSeederThread} if it had a different one.
+   *
    * @param randomSeeder a {@link SeedGenerator} whose {@link RandomSeederThread} will be used
    *     to reseed this PRNG, or null to stop using one.
    */
@@ -746,6 +781,7 @@ public abstract class BaseRandom extends Random
 
   /**
    * Returns the current seed generator for this PRNG.
+   *
    * @return the current seed generator, or null if there is none
    */
   @Nullable public RandomSeederThread getRandomSeeder() {
@@ -760,6 +796,7 @@ public abstract class BaseRandom extends Random
    * Sets the seed, and should be overridden to set other state that derives from the seed. Called
    * by {@link #setSeed(byte[])}, constructors, {@link #readObject(ObjectInputStream)} and {@link
    * #fallbackSetSeed()}. When called after initialization, the {@link #lock} is always held.
+   *
    * @param seed The new seed.
    */
   protected void setSeedInternal(final byte[] seed) {
@@ -778,6 +815,7 @@ public abstract class BaseRandom extends Random
   /**
    * Updates the entropy count to reflect a reseeding. Sets it to the seed length or the internal
    * state size, whichever is shorter, but never less than the existing entropy count.
+   *
    * @param seedLength the length of the new seed in bytes
    */
   protected void creditEntropyForNewSeed(int seedLength) {
@@ -831,6 +869,7 @@ public abstract class BaseRandom extends Random
   /**
    * Record that entropy has been spent, and schedule a reseeding if this PRNG has now spent as much
    * as it's been seeded with.
+   *
    * @param bits The number of bits of entropy spent.
    */
   protected void debitEntropy(final long bits) {
@@ -850,6 +889,7 @@ public abstract class BaseRandom extends Random
    * Used to deserialize a subclass instance that wasn't a subclass instance when it was serialized.
    * Since that means we can't deserialize our seed, we generate a new one with the {@link
    * DefaultSeedGenerator}.
+   *
    * @throws InvalidObjectException if the {@link DefaultSeedGenerator} fails.
    */
   @SuppressWarnings("OverriddenMethodCallDuringObjectConstruction") private void readObjectNoData()
@@ -890,7 +930,7 @@ public abstract class BaseRandom extends Random
    * {@link #setSeedInternal(byte[])} if not.
    *
    * @return true if this PRNG supports seed lengths other than {@link #getNewSeedLength()}; false
-   * otherwise.
+   *     otherwise.
    */
   protected boolean supportsMultipleSeedLengths() {
     return false;

@@ -22,11 +22,12 @@ import org.testng.annotations.Test;
 
 /**
  * Unit test for the AES RNG.
+ *
  * @author Daniel Dyer
  * @author Chris Hennick
  */
-@Test(testName = "AesCounterRandom")
-public class AesCounterRandomTest extends CipherCounterRandomTest {
+@Test(testName = "AesCounterRandom") public class AesCounterRandomTest
+    extends CipherCounterRandomTest {
 
   private static final int MAX_SIZE;
 
@@ -39,8 +40,7 @@ public class AesCounterRandomTest extends CipherCounterRandomTest {
     }
   }
 
-  @Override
-  protected int getExpectedMaxSize() {
+  @Override protected int getExpectedMaxSize() {
     return MAX_SIZE;
   }
 

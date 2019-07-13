@@ -18,7 +18,8 @@ import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.reflect.Whitebox;
 
 /**
- * A subclass of {@link BaseRandomTest} for when avoiding {@link io.github.pr0methean.betterrandom.seed.DefaultSeedGenerator}
+ * A subclass of {@link BaseRandomTest} for when avoiding
+ * {@link io.github.pr0methean.betterrandom.seed.DefaultSeedGenerator}
  * calls is worth the overhead of using PowerMock.
  */
 @MockPolicy(Slf4jMockPolicy.class)

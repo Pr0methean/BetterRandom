@@ -39,13 +39,15 @@ import org.testng.annotations.Test;
 
 /**
  * Unit test for the seed generator that connects to random.org to get seed data.
+ *
  * @author Daniel Dyer
  * @author Chris Hennick
  */
-@Test(singleThreaded = true)
-public class RandomDotOrgSeedGeneratorLiveTest extends AbstractSeedGeneratorTest {
+@Test(singleThreaded = true) public class RandomDotOrgSeedGeneratorLiveTest
+    extends AbstractSeedGeneratorTest {
 
   protected final Proxy proxy = RandomDotOrgUtils.createProxy();
+
   public RandomDotOrgSeedGeneratorLiveTest() {
     super(RANDOM_DOT_ORG_SEED_GENERATOR);
   }
@@ -69,8 +71,7 @@ public class RandomDotOrgSeedGeneratorLiveTest extends AbstractSeedGeneratorTest
     Assert.assertNotNull(RandomDotOrgSeedGenerator.DELAYED_RETRY.toString());
   }
 
-  @Test
-  public void testSetProxyOff() {
+  @Test public void testSetProxyOff() {
     setProxy(Proxy.NO_PROXY);
     try {
       SeedTestUtils.testGenerator(RANDOM_DOT_ORG_SEED_GENERATOR, true);
@@ -79,8 +80,7 @@ public class RandomDotOrgSeedGeneratorLiveTest extends AbstractSeedGeneratorTest
     }
   }
 
-  @Test
-  public void testSetProxyReal() {
+  @Test public void testSetProxyReal() {
     try {
       new URL("https://google.com").openConnection(proxy).getContent();
     } catch (IOException e) {
@@ -98,8 +98,7 @@ public class RandomDotOrgSeedGeneratorLiveTest extends AbstractSeedGeneratorTest
     }
   }
 
-  @BeforeClass
-  public void setUpClass() {
+  @BeforeClass public void setUpClass() {
     // when using Tor, DNS seems to be unreliable, so it may take several tries to get the address
     InetAddress address = null;
     long failedLookups = 0;
@@ -111,22 +110,20 @@ public class RandomDotOrgSeedGeneratorLiveTest extends AbstractSeedGeneratorTest
       }
     }
     if (failedLookups > 0) {
-      Reporter.log("Failed to look up api.random.org address on the first " + failedLookups + " attempts");
+      Reporter.log(
+          "Failed to look up api.random.org address on the first " + failedLookups + " attempts");
     }
   }
 
-  @AfterMethod
-  public void tearDownMethod() {
+  @AfterMethod public void tearDownMethod() {
     setApiKey(null);
   }
 
-  @BeforeSuite
-  public void setUpSuite() {
+  @BeforeSuite public void setUpSuite() {
     setSslSocketFactory(createSocketFactory()); // run all tests with POODLE protection
   }
 
-  @AfterSuite
-  public void tearDownSuite() {
+  @AfterSuite public void tearDownSuite() {
     setSslSocketFactory(null);
   }
 }

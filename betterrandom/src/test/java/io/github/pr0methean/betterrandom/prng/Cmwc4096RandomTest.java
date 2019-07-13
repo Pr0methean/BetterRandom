@@ -20,11 +20,12 @@ import org.testng.annotations.Test;
 
 /**
  * Unit test for the Complementary Multiply With Carry (CMWC) RNG.
+ *
  * @author Daniel Dyer
  * @author Chris Hennick
  */
-@Test(testName = "Cmwc4096Random")
-public class Cmwc4096RandomTest extends AbstractLargeSeedRandomTest {
+@Test(testName = "Cmwc4096Random") public class Cmwc4096RandomTest
+    extends AbstractLargeSeedRandomTest {
 
   @Override protected Class<? extends BaseRandom> getClassUnderTest() {
     return Cmwc4096Random.class;

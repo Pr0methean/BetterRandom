@@ -1,3 +1,8 @@
+# 4.0.1
+* `MersenneTwisterRandom` now makes fewer volatile field writes while reseeding.
+* Fixes a bug where `ThreadLocalRandomWrapper.setSeed()` was unnecessarily synchronized despite being thread-local in
+  effect.
+
 # 4.0.0
 * `RandomSeederThread` is now accessed through instance methods, and can be constructed with a custom `ThreadFactory`.
 * `RandomSeederThread`'s associated Java thread will stop running if no PRNGs have been associated with it for (by

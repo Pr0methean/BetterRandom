@@ -21,6 +21,7 @@ import java.io.Serializable;
  * Strategy interface for seeding random number generators. Implementations that can have multiple
  * equivalent instances should implement {@link Object#equals(Object)} and {@link Object#hashCode()}
  * to support {@link RandomSeederThread}.
+ *
  * @author Daniel Dyer
  * @author Chris Hennick
  */
@@ -30,6 +31,7 @@ public interface SeedGenerator extends Serializable {
 
   /**
    * Generates a seed value for a random number generator in an existing array.
+   *
    * @param output The array that is to be populated with the seed.
    * @throws SeedException If a seed cannot be generated for any reason.
    */
@@ -37,6 +39,7 @@ public interface SeedGenerator extends Serializable {
 
   /**
    * Generates and returns a seed value for a random number generator as a new array.
+   *
    * @param length The length of the seed to generate (in bytes).
    * @return A byte array containing the seed data.
    * @throws SeedException If a seed cannot be generated for any reason.
@@ -47,6 +50,7 @@ public interface SeedGenerator extends Serializable {
    * Returns true if we cannot determine quickly (i.e. without I/O calls) that this SeedGenerator
    * would throw a {@link SeedException} if {@link #generateSeed(int)} or {@link
    * #generateSeed(byte[])} were being called right now.
+   *
    * @return true if this SeedGenerator will get as far as an I/O call or other slow operation in
    *     attempting to generate a seed immediately.
    */

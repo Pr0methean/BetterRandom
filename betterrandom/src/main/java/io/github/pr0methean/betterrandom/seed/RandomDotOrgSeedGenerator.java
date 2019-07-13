@@ -65,6 +65,7 @@ import org.json.simple.parser.ParseException;
  * your quota and buy more</a>. On the new API, the quota is per key rather than per IP, and
  * commercial-use pricing follows a <a href="https://api.random.org/pricing">different
  * scheme</a>.</p>
+ *
  * @author Daniel Dyer (old API)
  * @author Chris Hennick (new API; refactoring)
  */
@@ -82,8 +83,8 @@ public enum RandomDotOrgSeedGenerator implements SeedGenerator {
    * DefaultSeedGenerator} uses this version.
    */
   DELAYED_RETRY(true);
-  private static final String JSON_REQUEST_FORMAT = "{\"jsonrpc\":\"2.0\","
-      + "\"method\":\"generateBlobs\",\"params\":{\"apiKey\":\"%s\",\"n\":1,\"size\":%d},\"id\":%d}";
+  private static final String JSON_REQUEST_FORMAT = "{\"jsonrpc\":\"2.0\"," +
+      "\"method\":\"generateBlobs\",\"params\":{\"apiKey\":\"%s\",\"n\":1,\"size\":%d},\"id\":%d}";
 
   private static final AtomicLong REQUEST_ID = new AtomicLong(0);
   private static final AtomicReference<UUID> API_KEY = new AtomicReference<>(null);
@@ -116,8 +117,8 @@ public enum RandomDotOrgSeedGenerator implements SeedGenerator {
   /**
    * The SSLSocketFactory to use with random.org.
    */
-  private static final AtomicReference<SSLSocketFactory> socketFactory
-      = new AtomicReference<>(null);
+  private static final AtomicReference<SSLSocketFactory> socketFactory =
+      new AtomicReference<>(null);
 
   static {
     earliestNextAttempt.add(YEAR, -1);
@@ -140,6 +141,7 @@ public enum RandomDotOrgSeedGenerator implements SeedGenerator {
 
   /**
    * Sets the API key. If not null, random.org's JSON API is used. Otherwise, the old API is used.
+   *
    * @param apiKey An API key obtained from random.org.
    */
   public static void setApiKey(@Nullable final UUID apiKey) {
@@ -148,6 +150,7 @@ public enum RandomDotOrgSeedGenerator implements SeedGenerator {
 
   /**
    * Sets the proxy to use to connect to random.org. If null, the JVM default is used.
+   *
    * @param proxy a proxy, or null for the JVM default
    */
   public static void setProxy(@Nullable final Proxy proxy) {
@@ -169,8 +172,9 @@ public enum RandomDotOrgSeedGenerator implements SeedGenerator {
   /* Package-visible for testing. */
   static HttpURLConnection openConnection(final URL url) throws IOException {
     final Proxy currentProxy = proxy.get();
-    final HttpsURLConnection connection = (HttpsURLConnection)
-        ((currentProxy == null) ? url.openConnection() : url.openConnection(currentProxy));
+    final HttpsURLConnection connection =
+        (HttpsURLConnection) ((currentProxy == null) ? url.openConnection() :
+            url.openConnection(currentProxy));
     final SSLSocketFactory currentSocketFactory = socketFactory.get();
     if (currentSocketFactory != null) {
       connection.setSSLSocketFactory(currentSocketFactory);
@@ -189,9 +193,8 @@ public enum RandomDotOrgSeedGenerator implements SeedGenerator {
    * @throws IOException If a connection error occurs.
    * @throws SeedException If random.org sends a malformed response body.
    */
-  @SuppressWarnings("NumericCastThatLosesPrecision")
-  private static void downloadBytes(byte[] seed, int offset, final int length)
-      throws IOException {
+  @SuppressWarnings("NumericCastThatLosesPrecision") private static void downloadBytes(byte[] seed,
+      int offset, final int length) throws IOException {
     HttpURLConnection connection = null;
     lock.lock();
     try {
@@ -204,8 +207,7 @@ public enum RandomDotOrgSeedGenerator implements SeedGenerator {
             final String line = reader.readLine();
             if (line == null) {
               throw new SeedException(String
-                  .format("Insufficient data received: expected %d bytes, got %d.", length,
-                      index));
+                  .format("Insufficient data received: expected %d bytes, got %d.", length, index));
             }
             try {
               seed[offset + index] = (byte) Integer.parseInt(line, 16);
@@ -244,8 +246,8 @@ public enum RandomDotOrgSeedGenerator implements SeedGenerator {
             ((data instanceof JSONArray) ? ((JSONArray) data).get(0) : data).toString();
         final byte[] decodedSeed = DatatypeConverter.parseBase64Binary(base64seed);
         if (decodedSeed.length < length) {
-          throw new SeedException(String.format(
-              "Too few bytes returned: expected %d bytes, got '%s'", length, base64seed));
+          throw new SeedException(String
+              .format("Too few bytes returned: expected %d bytes, got '%s'", length, base64seed));
         }
         System.arraycopy(decodedSeed, 0, seed, offset, length);
         final Object advisoryDelayMs = result.get("advisoryDelay");

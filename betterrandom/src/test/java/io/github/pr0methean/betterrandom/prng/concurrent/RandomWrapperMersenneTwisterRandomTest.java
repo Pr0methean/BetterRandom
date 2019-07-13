@@ -45,8 +45,7 @@ public class RandomWrapperMersenneTwisterRandomTest extends MersenneTwisterRando
     return RandomWrapper.class;
   }
 
-  @Override @Test(enabled = false) public void testAllPublicConstructors()
-      throws SeedException {
+  @Override @Test(enabled = false) public void testAllPublicConstructors() throws SeedException {
     // No-op: redundant to super insofar as it works.
   }
 
@@ -59,13 +58,12 @@ public class RandomWrapperMersenneTwisterRandomTest extends MersenneTwisterRando
   }
 
   // FIXME: This test takes too long!
-  @Override @Test(timeOut = 120_000)
-  public void testSerializable() throws SeedException {
+  @Override @Test(timeOut = 120_000) public void testSerializable() throws SeedException {
     super.testSerializable();
   }
 
-  @Override @Test(retryAnalyzer = FlakyRetryAnalyzer.class)
-  public void testReseeding() throws SeedException {
+  @Override @Test(retryAnalyzer = FlakyRetryAnalyzer.class) public void testReseeding()
+      throws SeedException {
     super.testReseeding();
   }
 

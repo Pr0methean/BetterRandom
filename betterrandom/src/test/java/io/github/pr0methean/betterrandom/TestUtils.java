@@ -17,6 +17,7 @@ public enum TestUtils {
   /**
    * Reflectively calls all public constructors, or all public and protected constructors, of the
    * given class with the given parameters. Passes each constructed instance to a consumer.
+   *
    * @param <T> {@code clazz} as a type.
    * @param clazz The class whose constructors are to be tested.
    * @param includeProtected Whether to test protected constructors
