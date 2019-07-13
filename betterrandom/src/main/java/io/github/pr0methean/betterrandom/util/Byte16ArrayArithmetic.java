@@ -99,7 +99,7 @@ import static io.github.pr0methean.betterrandom.util.Java8Constants.LONG_BYTES;
     final long highOut =
         (x_high * y_high) + z0 + (z1 >>> 32) + (convertBytesToLong(counter, 0) * y) +
             (convertBytesToLong(mult, 0) * x) + addHigh +
-            (Long.compareUnsigned(lowProduct, lowOut) > 0 ? 1 : 0);
+            ((lowProduct + Long.MIN_VALUE > lowOut + Long.MIN_VALUE) ? 1 : 0);
 
     convertLongToBytes(highOut, counter, 0);
     convertLongToBytes(lowOut, counter, LONG_BYTES);
