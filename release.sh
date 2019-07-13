@@ -33,7 +33,7 @@ if [[ -n "${VERSION}" ]]; then
     git checkout "${BRANCH}"
     cd betterrandom || exit 1
     # https://unix.stackexchange.com/a/23244/79452
-    n=${1##*[!0-9]}; p=${1%%$n}
+    n=${VERSION##*[!0-9]}; p=${VERSION%%$n}
     NEWVERSION="$p$((n+1))-SNAPSHOT"
     mvn versions:set "-DnewVersion=${NEWVERSION}"
     rm pom.xml.versionsBackup
