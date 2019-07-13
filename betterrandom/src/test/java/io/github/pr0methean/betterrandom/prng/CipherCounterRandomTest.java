@@ -23,9 +23,7 @@ public abstract class CipherCounterRandomTest extends SeekableRandomTest {
    *
    * @param seedSize XML parameter
    */
-  @Parameters("seedSize")
-  @BeforeClass
-  public void setSeedSize(@Optional("16") final int seedSize) {
+  @Parameters("seedSize") @BeforeClass public void setSeedSize(@Optional("16") final int seedSize) {
     if (seedSize > getExpectedMaxSize()) {
       assertFalse(seedSize <= 32, "Can't handle a 32-byte seed");
       throw new SkipException(
@@ -43,12 +41,12 @@ public abstract class CipherCounterRandomTest extends SeekableRandomTest {
     if (seedSizeBytes > 16) {
       throw new SkipException("Skipping a redundant test");
     }
-    createRng(
-        getTestSeedGenerator().generateSeed(getExpectedMaxSize() + 1)); // Should throw an exception.
+    createRng(getTestSeedGenerator()
+        .generateSeed(getExpectedMaxSize() + 1)); // Should throw an exception.
   }
 
-  @Override @Test(enabled = false)
-  public void testRepeatabilityNextGaussian() throws SeedException {
+  @Override @Test(enabled = false) public void testRepeatabilityNextGaussian()
+      throws SeedException {
     // No-op: can't be tested because setSeed merges with the existing seed
   }
 
@@ -62,8 +60,7 @@ public abstract class CipherCounterRandomTest extends SeekableRandomTest {
     final long[] seeds =
         {masterRNG.nextLong(), masterRNG.nextLong(), masterRNG.nextLong(), masterRNG.nextLong()};
     final long otherSeed = masterRNG.nextLong();
-    final AesCounterRandom[] rngs = {
-        new AesCounterRandom(getTestSeedGenerator().generateSeed(16)),
+    final AesCounterRandom[] rngs = {new AesCounterRandom(getTestSeedGenerator().generateSeed(16)),
         new AesCounterRandom(getTestSeedGenerator().generateSeed(16))};
     for (int i = 0; i < 2; i++) {
       for (final long seed : seeds) {
@@ -82,8 +79,7 @@ public abstract class CipherCounterRandomTest extends SeekableRandomTest {
     assert rngs[0].nextLong() != rngs[1].nextLong() : "RNGs converged after 4 setSeed calls";
   }
 
-  @Override @Test(enabled = false)
-  public void testSetSeedAfterNextInt() {
+  @Override @Test(enabled = false) public void testSetSeedAfterNextInt() {
     // No-op.
   }
 
@@ -97,8 +93,8 @@ public abstract class CipherCounterRandomTest extends SeekableRandomTest {
     }
     int max = ((CipherCounterRandom) createRng()).getMaxKeyLengthBytes();
     assert max >= 16 : "Should allow a 16-byte key";
-    assert max <= getExpectedMaxSize()
-        : "Shouldn't allow a key longer than " + getExpectedMaxSize() + "bytes";
+    assert max <= getExpectedMaxSize() :
+        "Shouldn't allow a key longer than " + getExpectedMaxSize() + "bytes";
   }
 
   @Override protected abstract BaseRandom createRng() throws SeedException;

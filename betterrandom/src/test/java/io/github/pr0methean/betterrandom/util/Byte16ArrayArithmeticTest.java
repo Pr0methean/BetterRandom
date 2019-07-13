@@ -5,15 +5,15 @@ import static org.testng.Assert.assertEquals;
 
 import org.testng.annotations.Test;
 
-@SuppressWarnings("SpellCheckingInspection")
-public class Byte16ArrayArithmeticTest {
+@SuppressWarnings("SpellCheckingInspection") public class Byte16ArrayArithmeticTest {
 
   private static final byte[] OPERAND1 =
       longsToByteArray(0x79EC_964A_738B_2EBAL, 0x38FD_07E7_D607_B6EDL);
   private static final byte[] OPERAND2 =
       longsToByteArray(0xC26B_1E45_A661_872BL, 0x631B_C188_2D24_D6E9L);
-  private static final byte[] ONES = {1,1,1,1, 1,1,1,1, 1,1,1,1, 1,1,1,1};
-  private static final byte[] MINUS_ONES = {-1,-1,-1,-1, -1,-1,-1,-1, -1,-1,-1,-1, -1,-1,-1,-1};
+  private static final byte[] ONES = {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1};
+  private static final byte[] MINUS_ONES =
+      {-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1};
 
   private static byte[] longsToByteArray(final long most, final long least) {
     final byte[] out = new byte[16];
@@ -22,10 +22,10 @@ public class Byte16ArrayArithmeticTest {
     return out;
   }
 
-  private static void assertByteArrayEqualsLongs(
-      final byte[] actual, final long expectedMost, final long expectedLeast) {
-    final String message = String.format("Expected %016X%016X, got %s",
-        expectedMost, expectedLeast, BinaryUtils.convertBytesToHexString(actual));
+  private static void assertByteArrayEqualsLongs(final byte[] actual, final long expectedMost,
+      final long expectedLeast) {
+    final String message = String.format("Expected %016X%016X, got %s", expectedMost, expectedLeast,
+        BinaryUtils.convertBytesToHexString(actual));
     assertEquals(BinaryUtils.convertBytesToLong(actual, 0), expectedMost, message);
     assertEquals(BinaryUtils.convertBytesToLong(actual, Long.BYTES), expectedLeast, message);
   }
@@ -54,8 +54,7 @@ public class Byte16ArrayArithmeticTest {
   @Test public void testMultiplyIntoAndAddInto() {
     final byte[] result = OPERAND1.clone();
     Byte16ArrayArithmetic.multiplyIntoAndAddInto(result, OPERAND1, OPERAND2);
-    assertByteArrayEqualsLongs(result,
-        0x837a_715f_10d1_6e7fL, 0x046b_bd4d_ecd0_ae52L);
+    assertByteArrayEqualsLongs(result, 0x837a_715f_10d1_6e7fL, 0x046b_bd4d_ecd0_ae52L);
   }
 
   @Test public void testMultiplyIntoOnes() {
@@ -75,10 +74,12 @@ public class Byte16ArrayArithmeticTest {
     final byte[] result = OPERAND1.clone();
     Byte16ArrayArithmetic.unsignedShiftRight(result, 12);
     assertByteArrayEqualsLongs(result, 0x0007_9EC9_64A7_38B2L, 0xEBA3_8FD0_7E7D_607BL);
-    assertEquals(Byte16ArrayArithmetic.unsignedShiftRightLeast64(OPERAND1, 12), 0xEBA3_8FD0_7E7D_607BL);
+    assertEquals(Byte16ArrayArithmetic.unsignedShiftRightLeast64(OPERAND1, 12),
+        0xEBA3_8FD0_7E7D_607BL);
     Byte16ArrayArithmetic.unsignedShiftRight(result, 68);
     assertByteArrayEqualsLongs(result, 0, 0x0_0007_9EC9_64A7_38BL);
-    assertEquals(Byte16ArrayArithmetic.unsignedShiftRightLeast64(OPERAND1, 80), 0x0_0007_9EC9_64A7_38BL);
+    assertEquals(Byte16ArrayArithmetic.unsignedShiftRightLeast64(OPERAND1, 80),
+        0x0_0007_9EC9_64A7_38BL);
   }
 
   @Test public void testRotateLeft() {
@@ -119,7 +120,8 @@ public class Byte16ArrayArithmeticTest {
     final byte[] result = OPERAND1.clone();
     Byte16ArrayArithmetic.unsignedShiftRight(result, -12);
     assertByteArrayEqualsLongs(result, 0xC964_A738_B2EB_A38FL, 0xD07E_7D60_7B6E_D000L);
-    assertEquals(Byte16ArrayArithmetic.unsignedShiftRightLeast64(OPERAND1, -12), 0xD07E_7D60_7B6E_D000L);
+    assertEquals(Byte16ArrayArithmetic.unsignedShiftRightLeast64(OPERAND1, -12),
+        0xD07E_7D60_7B6E_D000L);
     Byte16ArrayArithmetic.unsignedShiftRight(result, -68);
     assertByteArrayEqualsLongs(result, 0x07E_7D60_7B6E_D000_0L, 0);
     assertEquals(Byte16ArrayArithmetic.unsignedShiftRightLeast64(OPERAND1, -80), 0);

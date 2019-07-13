@@ -22,6 +22,7 @@ import org.testng.annotations.Test;
 
 /**
  * Unit test for {@link DefaultSeedGenerator}.
+ *
  * @author Daniel Dyer
  */
 public class DefaultSeedGeneratorTest extends AbstractSeedGeneratorTest {

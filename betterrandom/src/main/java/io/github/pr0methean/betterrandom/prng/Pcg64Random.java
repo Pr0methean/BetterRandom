@@ -22,6 +22,7 @@ import java.util.concurrent.atomic.AtomicLong;
  * recommended, unless memory is too constrained to use with a
  * {@link io.github.pr0methean.betterrandom.prng.concurrent.ThreadLocalRandomWrapper}.
  * </p>
+ *
  * @author M.E. O'Neill (algorithm and C++ implementation)
  * @author Chris Hennick (Java port)
  */

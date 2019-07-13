@@ -24,7 +24,8 @@ import java.util.Arrays;
 import java.util.Random;
 
 /**
- * <p>Random number generator based on the <a href="http://www.math.sci.hiroshima-u.ac.jp/~m-mat/MT/emt.html"
+ * <p>Random number generator based on the
+ * <a href="http://www.math.sci.hiroshima-u.ac.jp/~m-mat/MT/emt.html"
  * target="_top">Mersenne Twister</a> algorithm developed by Makoto Matsumoto and Takuji
  * Nishimura.</p> <p>This is a very fast random number generator with good statistical properties
  * (it passes the full DIEHARD suite).  This is the best RNG for most experiments.  If a non-linear
@@ -40,6 +41,7 @@ import java.util.Random;
  * from
  * {@link Random}.  Calls to this method will have no effect. Instead the seed must be set by a
  * constructor.</em></p>
+ *
  * @author Makoto Matsumoto and Takuji Nishimura (original C version)
  * @author Daniel Dyer (Java port)
  */
@@ -68,6 +70,7 @@ public class MersenneTwisterRandom extends BaseRandom {
 
   /**
    * Creates a new RNG and seeds it using the default seeding strategy.
+   *
    * @throws SeedException if any.
    */
   public MersenneTwisterRandom() throws SeedException {
@@ -76,6 +79,7 @@ public class MersenneTwisterRandom extends BaseRandom {
 
   /**
    * Creates an RNG and seeds it with the specified seed data.
+   *
    * @param seed 16 bytes of seed data used to initialize the RNG.
    */
   public MersenneTwisterRandom(final byte[] seed) {
@@ -84,6 +88,7 @@ public class MersenneTwisterRandom extends BaseRandom {
 
   /**
    * Seed the RNG using the provided seed generation strategy.
+   *
    * @param seedGenerator The seed generation strategy that will provide the seed value for this
    *     RNG.
    * @throws SeedException If there is a problem generating a seed.
@@ -98,6 +103,7 @@ public class MersenneTwisterRandom extends BaseRandom {
 
   /**
    * Reseeds this PRNG using the {@link DefaultSeedGenerator}, since it needs a longer seed.
+   *
    * @param seed ignored
    */
   @Override public void setSeed(final long seed) {
@@ -117,9 +123,12 @@ public class MersenneTwisterRandom extends BaseRandom {
 
     // This section is translated from the init_genrand code in the C version.
     mt[0] = BOOTSTRAP_SEED;
-    for (mtIndex = 1; mtIndex < N; mtIndex++) {
-      mt[mtIndex] = ((BOOTSTRAP_FACTOR * (mt[mtIndex - 1] ^ (mt[mtIndex - 1] >>> 30))) + mtIndex);
+    int curMtIndex; // volatile field as loop counter may hurt performance
+    for (curMtIndex = 1; curMtIndex < N; curMtIndex++) {
+      mt[curMtIndex] =
+          ((BOOTSTRAP_FACTOR * (mt[curMtIndex - 1] ^ (mt[curMtIndex - 1] >>> 30))) + curMtIndex);
     }
+    mtIndex = curMtIndex;
 
     // This section is translated from the init_by_array code in the C version.
     int i = 1;
@@ -151,7 +160,9 @@ public class MersenneTwisterRandom extends BaseRandom {
     int y;
     lock.lock();
     try {
-      if (mtIndex >= N) // Generate N ints at a time.
+      final int curMtIndex;
+      final int oldMtIndex = mtIndex;
+      if (oldMtIndex >= N) // Generate N ints at a time.
       {
         int kk;
         for (kk = 0; kk < (N - M); kk++) {
@@ -165,11 +176,12 @@ public class MersenneTwisterRandom extends BaseRandom {
         y = (mt[N - 1] & UPPER_MASK) | (mt[0] & LOWER_MASK);
         mt[N - 1] = mt[M - 1] ^ (y >>> 1) ^ MAG01[y & 0x1];
 
-        mtIndex = 0;
+        curMtIndex = 0;
+      } else {
+        curMtIndex = oldMtIndex;
       }
-
-      y = mt[mtIndex];
-      mtIndex++;
+      y = mt[curMtIndex];
+      mtIndex = curMtIndex + 1;
     } finally {
       lock.unlock();
     }
@@ -181,7 +193,9 @@ public class MersenneTwisterRandom extends BaseRandom {
     return y >>> (32 - bits);
   }
 
-  /** Returns the only supported seed length. */
+  /**
+   * Returns the only supported seed length.
+   */
   @Override public int getNewSeedLength() {
     return SEED_SIZE_BYTES;
   }

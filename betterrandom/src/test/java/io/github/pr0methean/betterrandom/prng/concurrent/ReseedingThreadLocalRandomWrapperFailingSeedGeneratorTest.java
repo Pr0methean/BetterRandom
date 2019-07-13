@@ -15,8 +15,8 @@ public class ReseedingThreadLocalRandomWrapperFailingSeedGeneratorTest
     extends ReseedingThreadLocalRandomWrapperTest {
 
   public ReseedingThreadLocalRandomWrapperFailingSeedGeneratorTest() {
-    pcgSupplier = (Serializable & Supplier<BaseRandom>)
-        () -> new Pcg64Random(semiFakeSeedGenerator);
+    pcgSupplier =
+        (Serializable & Supplier<BaseRandom>) () -> new Pcg64Random(semiFakeSeedGenerator);
   }
 
   @Override @Test(enabled = false) public void testWrapLegacy() throws SeedException {
@@ -47,8 +47,7 @@ public class ReseedingThreadLocalRandomWrapperFailingSeedGeneratorTest
     // No-op.
   }
 
-  @Override @Test(enabled = false) public void testAllPublicConstructors()
-      throws SeedException {
+  @Override @Test(enabled = false) public void testAllPublicConstructors() throws SeedException {
     // No-op.
   }
 
