@@ -25,13 +25,6 @@ import org.testng.annotations.Test;
   protected Supplier<BaseRandom> pcgSupplier
       = new Pcg64RandomColonColonNew(getTestSeedGenerator());
 
-  public ThreadLocalRandomWrapperTest() {
-    // Must be done first, or else lambda won't be serializable.
-    final SeedGenerator seedGenerator = getTestSeedGenerator();
-
-    pcgSupplier = (Supplier<BaseRandom> & Serializable) (() -> new Pcg64Random(seedGenerator));
-  }
-
   @Override public void testSerializable() throws SeedException {
     // May change after serialization, so test only that it still works at all afterward
     CloneViaSerialization.clone(createRng()).nextInt();
@@ -107,14 +100,21 @@ import org.testng.annotations.Test;
   @Override protected Map<Class<?>, Object> constructorParams() {
     final Map<Class<?>, Object> params = super.constructorParams();
     params.put(Supplier.class, pcgSupplier);
-    params
-        .put(Function.class, (Function<byte[], BaseRandom>) Pcg64Random::new);
+    params.put(Function.class, new Function<byte[], BaseRandom>() {
+      @Override public BaseRandom apply(byte[] seed) {
+        return new Pcg64Random(seed);
+      }
+    });
     return params;
   }
 
   @Test public void testExplicitSeedSize() throws SeedException {
     assertEquals(new ThreadLocalRandomWrapper(200, getTestSeedGenerator(),
-        AesCounterRandom::new).getNewSeedLength(), 200);
+        new Function<byte[], BaseRandom>() {
+          @Override public BaseRandom apply(byte[] seed) {
+            return new AesCounterRandom(seed);
+          }
+        }).getNewSeedLength(), 200);
   }
 
   @Test public void testWrapLegacy() throws SeedException {
