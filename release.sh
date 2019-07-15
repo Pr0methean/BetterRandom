@@ -1,5 +1,4 @@
 #!/bin/bash
-echo "[release.sh] Running on branch ${BRANCH}"
 cd betterrandom || exit 1
 if [[ -n "${VERSION}" ]]; then
   MAYBE_P="-P"
@@ -12,7 +11,6 @@ fi &&
 rm -f release.properties &&\
 rm -rf ../../.m2/repository/io/github/pr0methean/betterrandom
 if [[ -n "${VERSION}" ]]; then
-  git checkout "${BRANCH}"
   mvn versions:set "-DnewVersion=${VERSION}"
   sed -i "s/${OLDVERSION}<!--updateme-->/${VERSION}<!--updateme-->/" ../benchmark/pom.xml
   sed -i "s/${OLDVERSION}<!--updateme-->/${VERSION}<!--updateme-->/" ../FifoFiller/pom.xml
@@ -21,7 +19,7 @@ if [[ -n "${VERSION}" ]]; then
   git add ../FifoFiller/pom.xml
   git commit -m "🤖 Update version numbers"
 fi
-mvn -DskipTests -Darguments=-DskipTests -Dmaven.test.skip=true -P!jdk9 -P release-sign-artifacts \
+mvn -B -DskipTests -Darguments=-DskipTests -Dmaven.test.skip=true -P!jdk9 -P release-sign-artifacts \
     clean compile pre-integration-test deploy ${MAYBE_P} ${MAYBE_RELEASE}
 STATUS=$?
 if [[ -n "${VERSION}" ]]; then
