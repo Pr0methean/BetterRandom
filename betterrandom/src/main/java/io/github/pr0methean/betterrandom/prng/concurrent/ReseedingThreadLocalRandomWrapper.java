@@ -41,7 +41,9 @@ public class ReseedingThreadLocalRandomWrapper extends ThreadLocalRandomWrapper 
    * will be serializable if the {@link Supplier} is serializable.
    *
    * @param initializer a supplier that will be called to provide the initial
-   *     {@link BaseRandom} for each thread.
+   *     {@link BaseRandom} for each thread
+   * @param randomSeederThread a random seeder that will reseed the PRNG for each thread when
+   *     necessary
    */
   public ReseedingThreadLocalRandomWrapper(final Supplier<? extends BaseRandom> initializer,
       final RandomSeederThread randomSeederThread) throws SeedException {
