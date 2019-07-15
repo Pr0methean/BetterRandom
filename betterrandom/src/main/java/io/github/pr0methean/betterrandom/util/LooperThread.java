@@ -39,6 +39,8 @@ public abstract class LooperThread implements Serializable {
 
   /**
    * Constructs a LooperThread with a thread name.
+   *
+   * @param name the name of the thread to create
    */
   protected LooperThread(final String name) {
     this(new ThreadFactory() {
