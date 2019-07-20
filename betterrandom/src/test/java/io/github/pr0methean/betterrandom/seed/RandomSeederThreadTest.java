@@ -6,6 +6,7 @@ import static org.testng.Assert.assertTrue;
 
 import com.google.common.collect.ImmutableMap;
 import com.google.common.testing.GcFinalization;
+import com.google.common.util.concurrent.Uninterruptibles;
 import io.github.pr0methean.betterrandom.FlakyRetryAnalyzer;
 import io.github.pr0methean.betterrandom.TestUtils;
 import io.github.pr0methean.betterrandom.prng.Pcg64Random;
@@ -14,6 +15,7 @@ import java.lang.ref.WeakReference;
 import java.util.Arrays;
 import java.util.Random;
 import java.util.concurrent.ThreadFactory;
+import java.util.concurrent.TimeUnit;
 import org.testng.annotations.Test;
 
 public class RandomSeederThreadTest {
@@ -49,8 +51,8 @@ public class RandomSeederThreadTest {
       randomSeeder.add(prng);
       assertFalse(randomSeeder.isEmpty());
       prng.nextBytes(new byte[TEST_OUTPUT_SIZE]); // Drain the entropy
-      RandomTestUtils
-          .sleepUninterruptibly(1_000_000_000); // FIXME: Why does this sleep get interrupted?!
+      // FIXME: Why does this sleep get interrupted?!
+      Uninterruptibles.sleepUninterruptibly(1000L, TimeUnit.MILLISECONDS);
       assertFalse(randomSeeder.isEmpty());
     } finally {
       RandomTestUtils.removeAndAssertEmpty(randomSeeder, prng);
