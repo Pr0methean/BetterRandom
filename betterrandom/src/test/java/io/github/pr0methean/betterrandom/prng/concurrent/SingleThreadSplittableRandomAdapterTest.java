@@ -2,7 +2,7 @@ package io.github.pr0methean.betterrandom.prng.concurrent;
 
 import static io.github.pr0methean.betterrandom.prng.RandomTestUtils.assertEquivalent;
 
-import io.github.pr0methean.betterrandom.CloneViaSerialization;
+import com.google.common.testing.SerializableTester;
 import io.github.pr0methean.betterrandom.TestingDeficiency;
 import io.github.pr0methean.betterrandom.prng.AbstractLargeSeedRandomTest;
 import io.github.pr0methean.betterrandom.prng.BaseRandom;
@@ -40,9 +40,9 @@ public class SingleThreadSplittableRandomAdapterTest extends AbstractLargeSeedRa
     final BaseSplittableRandomAdapter adapter = createRng();
     // May change when serialized and deserialized, but deserializing twice should yield same object
     // and deserialization should be idempotent
-    final BaseSplittableRandomAdapter adapter2 = CloneViaSerialization.clone(adapter);
-    final BaseSplittableRandomAdapter adapter3 = CloneViaSerialization.clone(adapter);
-    // final BaseSplittableRandomAdapter adapter4 = CloneViaSerialization.clone(adapter2);
+    final BaseSplittableRandomAdapter adapter2 = SerializableTester.reserialize(adapter);
+    final BaseSplittableRandomAdapter adapter3 = SerializableTester.reserialize(adapter);
+    // final BaseSplittableRandomAdapter adapter4 = SerializableTester.reserialize(adapter2);
     assertEquivalent(adapter2, adapter3, 20, "Deserializing twice doesn't yield same object");
     // FIXME Failing:
     // assertEquivalent(adapter2, adapter4, 20, "Serialization round-trip is not idempotent");
