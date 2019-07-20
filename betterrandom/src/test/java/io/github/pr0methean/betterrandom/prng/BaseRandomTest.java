@@ -14,8 +14,8 @@ import static org.testng.Assert.assertTrue;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
+import com.google.common.testing.SerializableTester;
 import com.google.common.util.concurrent.Uninterruptibles;
-import io.github.pr0methean.betterrandom.CloneViaSerialization;
 import io.github.pr0methean.betterrandom.FlakyRetryAnalyzer;
 import io.github.pr0methean.betterrandom.NamedFunction;
 import io.github.pr0methean.betterrandom.TestUtils;
@@ -305,7 +305,7 @@ public abstract class BaseRandomTest extends PowerMockTestCase {
     RandomSeederThread randomSeeder = new RandomSeederThread(seedGenerator);
     rng.setRandomSeeder(randomSeeder);
     try {
-      final BaseRandom rng2 = CloneViaSerialization.clone(rng);
+      final BaseRandom rng2 = SerializableTester.reserialize(rng);
       assertEquals(randomSeeder, rng2.getRandomSeeder());
       rng2.setRandomSeeder(null);
     } finally {

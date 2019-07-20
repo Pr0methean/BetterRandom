@@ -24,7 +24,8 @@ import static org.testng.Assert.assertSame;
 import static org.testng.Assert.assertTrue;
 import static org.testng.Assert.fail;
 
-import io.github.pr0methean.betterrandom.CloneViaSerialization;
+import com.google.common.testing.SerializableTester;
+import com.google.common.util.concurrent.Uninterruptibles;
 import io.github.pr0methean.betterrandom.TestUtils;
 import io.github.pr0methean.betterrandom.seed.RandomSeederThread;
 import io.github.pr0methean.betterrandom.seed.SeedGenerator;
@@ -32,8 +33,8 @@ import io.github.pr0methean.betterrandom.util.Dumpable;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Random;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicLong;
-import java.util.concurrent.locks.LockSupport;
 import java8.util.function.Consumer;
 import java8.util.function.Supplier;
 import java8.util.function.ToLongFunction;
@@ -242,7 +243,7 @@ public enum RandomTestUtils {
 
   @SuppressWarnings("unchecked")
   public static <T extends Random> void assertEquivalentWhenSerializedAndDeserialized(final T rng) {
-    final T rng2 = CloneViaSerialization.clone(rng);
+    final T rng2 = SerializableTester.reserialize(rng);
     assertNotSame(rng, rng2, "Deserialised RNG should be distinct object.");
     // Both RNGs should generate the same sequence.
     assertEquivalent(rng, rng2, 20, "Output mismatch after serialisation.");
@@ -283,7 +284,7 @@ public enum RandomTestUtils {
         if (waits > 2000) {
           fail(String.format("Timed out waiting for %s to be reseeded!", rng));
         }
-        sleepUninterruptibly(20_000_000);
+        Uninterruptibles.sleepUninterruptibly(20L, TimeUnit.MILLISECONDS);
         secondSeed = rng.getSeed();
       } while (Arrays.equals(secondSeed, oldSeed));
       final byte[] secondSeedClone = secondSeed.clone();
@@ -296,7 +297,7 @@ public enum RandomTestUtils {
           fail(String.format("Timed out waiting for entropy count to increase on %s", rng));
         }
         // FIXME: Flaky if we only sleep for 10 ms at a time
-        sleepUninterruptibly(100_000_000);
+        Uninterruptibles.sleepUninterruptibly(100L, TimeUnit.MILLISECONDS);
       }
       byte[] thirdSeed;
       while (rng.getEntropyBits() > 0) {
@@ -306,7 +307,7 @@ public enum RandomTestUtils {
       do {
         assertEquals(secondSeedClone, secondSeed,
             "Array modified after being returned by getSeed()");
-        sleepUninterruptibly(100_000_000);
+        Uninterruptibles.sleepUninterruptibly(100L, TimeUnit.MILLISECONDS);
         waits++;
         if (waits > 200) {
           fail(String.format("Timed out waiting for %s to be reseeded!", rng));
@@ -334,15 +335,6 @@ public enum RandomTestUtils {
     seederThread.stopIfEmpty();
     assertTrue(seederThread.isEmpty());
     // TODO: Assert stopped
-  }
-
-  public static void sleepUninterruptibly(long nanos) {
-    long curTime = System.nanoTime();
-    long endTime = curTime + nanos;
-    do {
-      LockSupport.parkNanos(endTime - curTime);
-      curTime = System.nanoTime();
-    } while (curTime < endTime);
   }
 
   public enum EntropyCheckMode {
