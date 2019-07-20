@@ -4,7 +4,7 @@ import static io.github.pr0methean.betterrandom.seed.SecureRandomSeedGenerator.S
 import static org.testng.Assert.assertNotEquals;
 import static org.testng.Assert.assertSame;
 
-import io.github.pr0methean.betterrandom.CloneViaSerialization;
+import com.google.common.testing.SerializableTester;
 import io.github.pr0methean.betterrandom.FlakyRetryAnalyzer;
 import io.github.pr0methean.betterrandom.prng.BaseRandom;
 import io.github.pr0methean.betterrandom.prng.RandomTestUtils;
@@ -59,7 +59,7 @@ import org.testng.annotations.Test;
     try {
       final BaseSplittableRandomAdapter adapter =
           ReseedingSplittableRandomAdapter.getInstance(thread, generator);
-      final BaseSplittableRandomAdapter clone = CloneViaSerialization.clone(adapter);
+      final BaseSplittableRandomAdapter clone = SerializableTester.reserialize(adapter);
       assertSame(adapter, clone);
     } finally {
       thread.stopIfEmpty();

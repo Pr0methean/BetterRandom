@@ -3,7 +3,7 @@ package io.github.pr0methean.betterrandom.prng.concurrent;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertSame;
 
-import io.github.pr0methean.betterrandom.CloneViaSerialization;
+import com.google.common.testing.SerializableTester;
 import io.github.pr0methean.betterrandom.prng.AbstractLargeSeedRandomTest;
 import io.github.pr0methean.betterrandom.prng.AesCounterRandom;
 import io.github.pr0methean.betterrandom.prng.BaseRandom;
@@ -32,7 +32,7 @@ import org.testng.annotations.Test;
 
   @Override public void testSerializable() throws SeedException {
     // May change after serialization, so test only that it still works at all afterward
-    CloneViaSerialization.clone(createRng()).nextInt();
+    SerializableTester.reserialize(createRng()).nextInt();
   }
 
   @Override @Test(timeOut = 15000, expectedExceptions = IllegalArgumentException.class)
