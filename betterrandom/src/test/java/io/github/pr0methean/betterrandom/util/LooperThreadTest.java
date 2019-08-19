@@ -4,6 +4,7 @@ import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertTrue;
 
 import com.google.common.util.concurrent.Uninterruptibles;
+import io.github.pr0methean.betterrandom.FlakyRetryAnalyzer;
 import io.github.pr0methean.betterrandom.MockException;
 import java.lang.Thread.UncaughtExceptionHandler;
 import java.util.concurrent.CountDownLatch;
@@ -61,7 +62,8 @@ import org.testng.annotations.Test;
     }
   }
 
-  @Test public void testAwaitIteration() throws InterruptedException {
+  @Test(retryAnalyzer = FlakyRetryAnalyzer.class)
+  public void testAwaitIteration() {
     final SleepingLooperThread sleepingThread = new SleepingLooperThread();
     sleepingThread.start();
     sleepingThread.startLatch.countDown();
