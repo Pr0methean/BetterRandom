@@ -794,7 +794,7 @@ public abstract class BaseRandom extends Random
 
   /**
    * Sets the seed, and should be overridden to set other state that derives from the seed. Called
-   * by {@link #setSeed(byte[])}, constructors, {@link #readObject(ObjectInputStream)} and {@link
+   * by {@link #setSeed(byte[])}, constructors, {@code readObject(ObjectInputStream)} and {@link
    * #fallbackSetSeed()}. When called after initialization, the {@link #lock} is always held.
    *
    * @param seed The new seed.

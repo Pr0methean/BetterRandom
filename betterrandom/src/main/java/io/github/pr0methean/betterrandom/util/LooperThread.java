@@ -115,13 +115,6 @@ public abstract class LooperThread implements Serializable {
     }
   }
 
-  /**
-   * Only used for testing.
-   */
-  @Deprecated void join() throws InterruptedException {
-    thread.join();
-  }
-
   @Override public String toString() {
     return thread.toString();
   }
