@@ -47,7 +47,9 @@ import org.testng.annotations.Test;
           (thread, throwable) -> defaultHandlerCalled.set(true));
       final FailingLooperThread failingThread = new FailingLooperThread();
       failingThread.start();
-      failingThread.join();
+      while (failingThread.isRunning()) {
+        Thread.sleep(100);
+      }
       Thread.sleep(1000);
       assertTrue(defaultHandlerCalled.get());
     } finally {
