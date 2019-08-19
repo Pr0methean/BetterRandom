@@ -3,8 +3,11 @@ package io.github.pr0methean.betterrandom.util;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertTrue;
 
+import com.google.common.util.concurrent.Uninterruptibles;
 import io.github.pr0methean.betterrandom.MockException;
 import java.lang.Thread.UncaughtExceptionHandler;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicLong;
 import org.testng.annotations.BeforeTest;
@@ -55,7 +58,8 @@ import org.testng.annotations.Test;
   @Test public void testAwaitIteration() throws InterruptedException {
     final SleepingLooperThread sleepingThread = new SleepingLooperThread();
     sleepingThread.start();
-    Thread.sleep(1000);
+    sleepingThread.startLatch.countDown();
+    Uninterruptibles.sleepUninterruptibly(100, TimeUnit.MILLISECONDS);
     assertEquals(sleepingThread.finishedIterations.get(), 1);
   }
 
@@ -98,12 +102,14 @@ import org.testng.annotations.Test;
 
   private static class SleepingLooperThread extends LooperThread {
     protected final AtomicLong finishedIterations = new AtomicLong(0);
+    protected final CountDownLatch startLatch = new CountDownLatch(1);
 
     private SleepingLooperThread() {
       super("SleepingLooperThread");
     }
 
     @Override public boolean iterate() throws InterruptedException {
+      startLatch.await();
       Thread.sleep(10);
       finishedIterations.incrementAndGet();
       return false;
