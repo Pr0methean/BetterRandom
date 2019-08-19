@@ -62,7 +62,7 @@ import org.testng.annotations.Test;
     final SleepingLooperThread sleepingThread = new SleepingLooperThread();
     sleepingThread.start();
     sleepingThread.startLatch.countDown();
-    Uninterruptibles.sleepUninterruptibly(100, TimeUnit.MILLISECONDS);
+    Uninterruptibles.sleepUninterruptibly(200, TimeUnit.MILLISECONDS);
     assertEquals(sleepingThread.finishedIterations.get(), 1);
   }
 
@@ -105,13 +105,14 @@ import org.testng.annotations.Test;
 
   private static class SleepingLooperThread extends LooperThread {
     protected final AtomicLong finishedIterations = new AtomicLong(0);
-    protected final CountDownLatch startLatch = new CountDownLatch(1);
+    protected final CountDownLatch startLatch = new CountDownLatch(2);
 
     private SleepingLooperThread() {
       super("SleepingLooperThread");
     }
 
     @Override public boolean iterate() throws InterruptedException {
+      startLatch.countDown();
       startLatch.await();
       Thread.sleep(10);
       finishedIterations.incrementAndGet();
