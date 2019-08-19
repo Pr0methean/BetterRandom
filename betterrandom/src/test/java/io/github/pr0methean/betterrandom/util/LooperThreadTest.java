@@ -13,6 +13,7 @@ import java.util.concurrent.atomic.AtomicLong;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
+// FIXME: Sleep gets interrupted for no apparent reason, so have to use sleepUninterruptibly
 @SuppressWarnings("ClassLoaderInstantiation") public class LooperThreadTest {
 
   private static class TestLooperThread extends LooperThread {
@@ -51,9 +52,9 @@ import org.testng.annotations.Test;
       final FailingLooperThread failingThread = new FailingLooperThread();
       failingThread.start();
       while (failingThread.isRunning()) {
-        Thread.sleep(100);
+        Uninterruptibles.sleepUninterruptibly(100, TimeUnit.MILLISECONDS);
       }
-      Thread.sleep(1000);
+      Uninterruptibles.sleepUninterruptibly(1000, TimeUnit.MILLISECONDS);
       assertTrue(defaultHandlerCalled.get());
     } finally {
       Thread.setDefaultUncaughtExceptionHandler(oldHandler);
