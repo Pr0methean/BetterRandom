@@ -3,21 +3,29 @@ package io.github.pr0methean.betterrandom.prng.concurrent;
 import static org.testng.Assert.assertSame;
 
 import com.google.common.collect.ImmutableList;
+import com.vmlens.annotation.Interleave;
 import io.github.pr0methean.betterrandom.NamedFunction;
 import io.github.pr0methean.betterrandom.prng.AesCounterRandom;
 import io.github.pr0methean.betterrandom.prng.AesCounterRandomTest;
 import io.github.pr0methean.betterrandom.prng.BaseRandom;
+import io.github.pr0methean.betterrandom.prng.BaseRandomTest;
 import io.github.pr0methean.betterrandom.seed.SeedException;
 import java.util.Random;
+import java.util.function.Function;
 import org.testng.annotations.Test;
 
 @Test(testName = "RandomWrapper:AesCounterRandom") public class RandomWrapperAesCounterRandomTest
     extends AesCounterRandomTest {
 
-  private final NamedFunction<Random, Double> setWrapped = new NamedFunction<>(random -> {
-    ((RandomWrapper) random).setWrapped(new AesCounterRandom(getTestSeedGenerator()));
-    return 0.0;
-  }, "setWrapped");
+  private final NamedFunction<Random, Double> setWrapped = new NamedFunction<>(
+      new Function<Random, Double>() {
+        @Interleave(group = BaseRandomTest.class, threadCount = 4)
+        @Override public Double apply(Random random) {
+          ((RandomWrapper) random).setWrapped(
+              new AesCounterRandom(RandomWrapperAesCounterRandomTest.this.getTestSeedGenerator()));
+          return 0.0;
+        }
+      }, "setWrapped");
 
   public RandomWrapperAesCounterRandomTest() {
     seedSizeBytes = 16;

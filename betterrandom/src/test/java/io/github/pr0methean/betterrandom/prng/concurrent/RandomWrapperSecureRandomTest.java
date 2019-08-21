@@ -3,25 +3,32 @@ package io.github.pr0methean.betterrandom.prng.concurrent;
 import static org.testng.Assert.assertSame;
 
 import com.google.common.collect.ImmutableList;
+import com.vmlens.annotation.Interleave;
 import io.github.pr0methean.betterrandom.NamedFunction;
 import io.github.pr0methean.betterrandom.prng.AbstractLargeSeedRandomTest;
 import io.github.pr0methean.betterrandom.prng.BaseRandom;
+import io.github.pr0methean.betterrandom.prng.BaseRandomTest;
 import io.github.pr0methean.betterrandom.seed.SeedException;
 import java.security.GeneralSecurityException;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import java.util.Map;
 import java.util.Random;
+import java.util.function.Function;
 import org.testng.annotations.Test;
 
 @Test(testName = "RandomWrapper:SecureRandom") public class RandomWrapperSecureRandomTest
     extends AbstractLargeSeedRandomTest {
 
   private static final SecureRandom SEED_GEN = new SecureRandom();
-  private static final NamedFunction<Random, Double> SET_WRAPPED = new NamedFunction<>(random -> {
-    ((RandomWrapper) random).setWrapped(new SecureRandom());
-    return 0.0;
-  }, "setWrapped");
+  private static final NamedFunction<Random, Double> SET_WRAPPED = new NamedFunction<>(
+      new Function<Random, Double>() {
+        @Interleave(group = BaseRandomTest.class, threadCount = 4)
+        @Override public Double apply(Random random) {
+          ((RandomWrapper) random).setWrapped(new SecureRandom());
+          return 0.0;
+        }
+      }, "setWrapped");
 
   private static RandomWrapper createRngInternal() {
     try {

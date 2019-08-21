@@ -16,6 +16,7 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.testing.SerializableTester;
 import com.google.common.util.concurrent.Uninterruptibles;
+import com.vmlens.annotation.Interleave;
 import io.github.pr0methean.betterrandom.FlakyRetryAnalyzer;
 import io.github.pr0methean.betterrandom.NamedFunction;
 import io.github.pr0methean.betterrandom.TestUtils;
@@ -44,6 +45,7 @@ import java.util.concurrent.ForkJoinPool;
 import java.util.concurrent.ForkJoinTask;
 import java.util.concurrent.TimeUnit;
 import java.util.function.DoubleConsumer;
+import java.util.function.Function;
 import java.util.function.Supplier;
 import org.apache.commons.math3.stat.descriptive.SynchronizedDescriptiveStatistics;
 import org.powermock.modules.testng.PowerMockTestCase;
@@ -62,22 +64,46 @@ public abstract class BaseRandomTest extends PowerMockTestCase {
   protected static final double SQRT_12 = 3.4641016151377546;
   protected static final long TEST_SEED = 0x0123456789ABCDEFL;
   protected static final NamedFunction<Random, Double> NEXT_LONG =
-      new NamedFunction<>(random -> (double) random.nextLong(), "Random::nextLong");
+      new NamedFunction<>(new Function<Random, Double>() {
+        @Interleave(group = BaseRandomTest.class, threadCount = 4)
+        @Override public Double apply(Random random) {
+          return (double) random.nextLong();
+        }
+      }, "Random::nextLong");
   protected static final NamedFunction<Random, Double> NEXT_INT =
-      new NamedFunction<>(random -> (double) random.nextInt(), "Random::nextInt");
+      new NamedFunction<>(new Function<Random, Double>() {
+        @Interleave(group = BaseRandomTest.class, threadCount = 4)
+        @Override public Double apply(Random random) {
+          return (double) random.nextInt();
+        }
+      }, "Random::nextInt");
   protected static final NamedFunction<Random, Double> NEXT_DOUBLE =
-      new NamedFunction<>(Random::nextDouble, "Random::nextDouble");
+      new NamedFunction<>(new Function<Random, Double>() {
+        @Interleave(group = BaseRandomTest.class, threadCount = 4)
+        @Override public Double apply(Random random) {
+          return random.nextDouble();
+        }
+      }, "Random::nextDouble");
   protected static final NamedFunction<Random, Double> NEXT_GAUSSIAN =
-      new NamedFunction<>(Random::nextGaussian, "Random::nextGaussian");
-  protected final NamedFunction<Random, Double> setSeed = new NamedFunction<>(random -> {
-    if (random instanceof BaseRandom) {
-      BaseRandom baseRandom = (BaseRandom) random;
-      baseRandom.setSeed(semiFakeSeedGenerator.generateSeed(baseRandom.getNewSeedLength()));
-    } else {
-      random.setSeed(BinaryUtils.convertBytesToLong(semiFakeSeedGenerator.generateSeed(8)));
-    }
-    return 0.0;
-  }, "BaseRandom::setSeed(byte[])");
+      new NamedFunction<>(new Function<Random, Double>() {
+        @Interleave(group = BaseRandomTest.class, threadCount = 4)
+        @Override public Double apply(Random random) {
+          return random.nextGaussian();
+        }
+      }, "Random::nextGaussian");
+  protected final NamedFunction<Random, Double> setSeed = new NamedFunction<>(
+      new Function<Random, Double>() {
+        @Interleave(group = BaseRandomTest.class, threadCount = 4)
+        @Override public Double apply(Random random) {
+          if (random instanceof BaseRandom) {
+            BaseRandom baseRandom = (BaseRandom) random;
+            baseRandom.setSeed(semiFakeSeedGenerator.generateSeed(baseRandom.getNewSeedLength()));
+          } else {
+            random.setSeed(BinaryUtils.convertBytesToLong(semiFakeSeedGenerator.generateSeed(8)));
+          }
+          return 0.0;
+        }
+      }, "BaseRandom::setSeed(byte[])");
 
   @SuppressWarnings("StaticCollection") protected final List<NamedFunction<Random, Double>>
       functionsForThreadSafetyTest =
@@ -140,6 +166,7 @@ public abstract class BaseRandomTest extends PowerMockTestCase {
   /**
    * Test to ensure that two distinct RNGs with the same seed return the same sequence of numbers.
    */
+  @Interleave(group = BaseRandomTest.class, threadCount = 4)
   @Test(timeOut = 15_000) public void testRepeatability() throws SeedException {
     final BaseRandom rng = createRng();
     // Create second RNG using same seed.
@@ -686,11 +713,13 @@ public abstract class BaseRandomTest extends PowerMockTestCase {
         functionsForThreadCrashTest);
   }
 
+  @Interleave(group = BaseRandomTest.class, threadCount = 4)
   protected void testThreadSafetyVsCrashesOnly(final int timeoutSec,
       final List<NamedFunction<Random, Double>> functions) {
     testThreadSafetyVsCrashesOnly(timeoutSec, functions, functions);
   }
 
+  @Interleave(group = BaseRandomTest.class, threadCount = 4)
   protected void testThreadSafetyVsCrashesOnly(final int timeoutSec,
       final List<NamedFunction<Random, Double>> functionsThread1,
       final List<NamedFunction<Random, Double>> functionsThread2) {
@@ -704,6 +733,7 @@ public abstract class BaseRandomTest extends PowerMockTestCase {
     }
   }
 
+  @Interleave(group = BaseRandomTest.class, threadCount = 4)
   @SuppressWarnings({"EqualityOperatorComparesObjects", "ObjectEquality"})
   protected void testThreadSafety(final List<NamedFunction<Random, Double>> functions,
       final List<NamedFunction<Random, Double>> pairwiseFunctions) {
@@ -732,6 +762,7 @@ public abstract class BaseRandomTest extends PowerMockTestCase {
     }
   }
 
+  @Interleave(group = BaseRandomTest.class, threadCount = 4)
   protected SortedSet<Double> runParallel(final NamedFunction<Random, Double> supplier1,
       final NamedFunction<Random, Double> supplier2, final byte[] seed, final int timeoutSec,
       final int iterations) {
@@ -791,6 +822,7 @@ public abstract class BaseRandomTest extends PowerMockTestCase {
       // No-op.
     }
 
+    @Interleave(group = BaseRandomTest.class, threadCount = 4)
     @Override protected boolean exec() {
       latch.countDown();
       Uninterruptibles.awaitUninterruptibly(latch);

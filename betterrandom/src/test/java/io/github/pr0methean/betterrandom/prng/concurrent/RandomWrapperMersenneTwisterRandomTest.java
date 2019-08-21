@@ -3,15 +3,18 @@ package io.github.pr0methean.betterrandom.prng.concurrent;
 import static org.testng.Assert.assertSame;
 
 import com.google.common.collect.ImmutableList;
+import com.vmlens.annotation.Interleave;
 import io.github.pr0methean.betterrandom.FlakyRetryAnalyzer;
 import io.github.pr0methean.betterrandom.NamedFunction;
 import io.github.pr0methean.betterrandom.prng.BaseRandom;
+import io.github.pr0methean.betterrandom.prng.BaseRandomTest;
 import io.github.pr0methean.betterrandom.prng.MersenneTwisterRandom;
 import io.github.pr0methean.betterrandom.prng.MersenneTwisterRandomTest;
 import io.github.pr0methean.betterrandom.seed.SeedException;
 import io.github.pr0methean.betterrandom.seed.SeedGenerator;
 import java.util.Collections;
 import java.util.Random;
+import java.util.function.Function;
 import org.testng.annotations.Test;
 
 @Test(testName = "RandomWrapper:MersenneTwisterRandom")
@@ -21,9 +24,12 @@ public class RandomWrapperMersenneTwisterRandomTest extends MersenneTwisterRando
 
   public RandomWrapperMersenneTwisterRandomTest() {
     final SeedGenerator seedGenerator = getTestSeedGenerator();
-    setWrapped = new NamedFunction<>(random -> {
-      ((RandomWrapper) random).setWrapped(new MersenneTwisterRandom(seedGenerator));
-      return 0.0;
+    setWrapped = new NamedFunction<>(new Function<Random, Double>() {
+      @Interleave(group = BaseRandomTest.class, threadCount = 4)
+      @Override public Double apply(Random random) {
+        ((RandomWrapper) random).setWrapped(new MersenneTwisterRandom(seedGenerator));
+        return 0.0;
+      }
     }, "setWrapped");
   }
 
