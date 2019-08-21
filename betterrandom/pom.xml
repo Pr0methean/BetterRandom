@@ -2,6 +2,12 @@
 <!--suppress XmlHighlighting -->
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
+  <pluginRepositories>
+    <pluginRepository>
+      <id>vmlens</id>
+      <url>http://vmlens.com/download</url>
+    </pluginRepository>
+  </pluginRepositories>
   <profiles>
     <profile>
       <id>windows</id>
@@ -93,6 +99,18 @@
           </plugins>
         </pluginManagement>
         <plugins>
+          <plugin>
+            <groupId>com.vmlens</groupId>
+            <artifactId>interleave</artifactId>
+            <version>1.0.4</version>
+            <executions>
+              <execution>
+                <goals>
+                  <goal>test</goal>
+                </goals>
+              </execution>
+            </executions>
+          </plugin>
           <plugin>
             <groupId>com.github.wvengen</groupId>
             <artifactId>proguard-maven-plugin</artifactId>

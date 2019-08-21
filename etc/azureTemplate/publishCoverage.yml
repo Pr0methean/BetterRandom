@@ -3,3 +3,8 @@ steps:
   displayName: Upload coverage to Codecov
   env:
     CODECOV_TOKEN: $(CODECOV_TOKEN)
+- task: PublishBuildArtifacts@1
+  displayName: Publish VMLens Report
+  inputs:
+    pathtoPublish: betterrandom/target/vmlens-reports
+    artifactName: VMLens Report - $(artifactEnvName)
