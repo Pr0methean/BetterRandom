@@ -12,7 +12,6 @@ import java.util.function.Function;
 import java.util.function.Supplier;
 import org.testng.annotations.Test;
 
-@Test(testName = "ThreadLocalRandomWrapper:MersenneTwisterRandom")
 public class ThreadLocalRandomWrapperMersenneTwisterTest extends ThreadLocalRandomWrapperTest {
 
   private final Supplier<? extends BaseRandom> mtSupplier;
