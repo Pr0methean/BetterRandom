@@ -142,5 +142,15 @@
     <orderEntry type="library" scope="TEST" name="Maven: org.apache.logging.log4j:log4j-api:2.12.1" level="project" />
     <orderEntry type="library" scope="TEST" name="Maven: org.apache.logging.log4j:log4j-core:2.12.1" level="project" />
     <orderEntry type="library" name="Maven: org.slf4j:slf4j-api:1.7.28" level="project" />
+    <orderEntry type="module-library" scope="TEST">
+      <library name="testng">
+        <CLASSES>
+          <root url="jar://$MAVEN_REPOSITORY$/org/testng/testng/7.0.0/testng-7.0.0.jar!/" />
+          <root url="jar://$MAVEN_REPOSITORY$/com/beust/jcommander/1.72/jcommander-1.72.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
   </component>
 </module>
