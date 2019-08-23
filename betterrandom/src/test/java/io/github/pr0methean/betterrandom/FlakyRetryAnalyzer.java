@@ -7,15 +7,7 @@ import org.testng.ITestResult;
  * From https://www.toolsqa.com/selenium-webdriver/retry-failed-tests-testng/
  */
 public class FlakyRetryAnalyzer implements IRetryAnalyzer {
-  int counter = 0;
-  final int retryLimit = 2;
-
   @Override public boolean retry(ITestResult result) {
-
-    if (counter < retryLimit) {
-      counter++;
-      return true;
-    }
     return false;
   }
 }

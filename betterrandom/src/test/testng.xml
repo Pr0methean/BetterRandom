@@ -1,5 +1,5 @@
 <!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd">
-<suite name="Main" parallel="tests">
+<suite name="Main" parallel="false">
     <test name="PRNGs">
         <parameter name="seedSize" value="16"/>
         <classes>
@@ -57,7 +57,7 @@
             <class name="io.github.pr0methean.betterrandom.prng.TwoFishCounterRandomTest"/>
         </classes>
     </test>
-    <test name="Misc" parallel="methods">
+    <test name="Misc" parallel="false">
         <classes>
             <class name="io.github.pr0methean.betterrandom.prng.AesCounterRandomDemoTest"/>
             <class name="io.github.pr0methean.betterrandom.prng.BaseRandomStaticTest"/>
