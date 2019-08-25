@@ -53,6 +53,7 @@ public enum RandomTestUtils {
 
   private static final int INSTANCES_TO_HASH = 25;
   private static final int EXPECTED_UNIQUE_HASHES = (int) (0.8 * INSTANCES_TO_HASH);
+  public static final long RESEEDING_WAIT_INCREMENT_MS = 20L;
 
   @SuppressWarnings("FloatingPointEquality")
   public static void checkRangeAndEntropy(final BaseRandom prng, final long expectedEntropySpent,
@@ -262,17 +263,18 @@ public enum RandomTestUtils {
     // TODO: Set max thread priority
     final byte[] oldSeed = rng.getSeed();
     final byte[] oldSeedClone = oldSeed.clone();
-    while (rng.getEntropyBits() > 0) {
-      rng.nextLong();
-      assertTrue(Arrays.equals(oldSeed, oldSeedClone),
-          "Array modified after being returned by getSeed()");
-    }
+    int maxReseedingWaitIncrements = 1000 + rng.getNewSeedLength() / 4;
     RandomSeederThread seeder = null;
     if (setSeedGenerator) {
       seeder = new RandomSeederThread(testSeedGenerator);
       rng.setRandomSeeder(seeder);
     }
     try {
+      while (rng.getEntropyBits() > 0) {
+        rng.nextLong();
+        assertTrue(Arrays.equals(oldSeed, oldSeedClone),
+            "Array modified after being returned by getSeed()");
+      }
       int waits = 0;
       byte[] secondSeed;
       do {
@@ -281,10 +283,10 @@ public enum RandomTestUtils {
           assertSame(rng.getRandomSeeder(), seeder);
         }
         waits++;
-        if (waits > 2000) {
+        if (waits > maxReseedingWaitIncrements) {
           fail(String.format("Timed out waiting for %s to be reseeded!", rng));
         }
-        Uninterruptibles.sleepUninterruptibly(20L, TimeUnit.MILLISECONDS);
+        Uninterruptibles.sleepUninterruptibly(RESEEDING_WAIT_INCREMENT_MS, TimeUnit.MILLISECONDS);
         secondSeed = rng.getSeed();
       } while (Arrays.equals(secondSeed, oldSeed));
       final byte[] secondSeedClone = secondSeed.clone();
@@ -309,7 +311,7 @@ public enum RandomTestUtils {
             "Array modified after being returned by getSeed()");
         Uninterruptibles.sleepUninterruptibly(100L, TimeUnit.MILLISECONDS);
         waits++;
-        if (waits > 200) {
+        if (waits > maxReseedingWaitIncrements) {
           fail(String.format("Timed out waiting for %s to be reseeded!", rng));
         }
         thirdSeed = rng.getSeed();

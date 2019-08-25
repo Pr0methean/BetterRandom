@@ -31,14 +31,16 @@ public abstract class LooperThread implements Serializable {
   private volatile boolean everStarted; // tracked for getState()
 
   /**
-   * Constructs a LooperThread with all properties as defaults.
+   * Constructs a LooperThread with all properties as defaults. The thread is not started in the
+   * constructor, because subclass fields won't have been initialized.
    */
   protected LooperThread() {
     this(DEFAULT_THREAD_FACTORY);
   }
 
   /**
-   * Constructs a LooperThread with a thread name.
+   * Constructs a LooperThread with a thread name. The thread is not started in the
+   * constructor, because subclass fields won't have been initialized.
    *
    * @param name the name of the thread to create
    */
@@ -52,9 +54,14 @@ public abstract class LooperThread implements Serializable {
     });
   }
 
+  /**
+   * Constructs a LooperThread with a given thread factory. The thread is not started in the
+   * constructor, because subclass fields won't have been initialized.
+   *
+   * @param factory the thread factory that will create this instance's thread
+   */
   protected LooperThread(ThreadFactory factory) {
     this.factory = factory;
-    start();
   }
 
   public boolean isRunning() {

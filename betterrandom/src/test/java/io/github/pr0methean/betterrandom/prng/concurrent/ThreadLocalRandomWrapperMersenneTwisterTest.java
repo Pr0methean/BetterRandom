@@ -12,7 +12,6 @@ import java8.util.function.Function;
 import java8.util.function.Supplier;
 import org.testng.annotations.Test;
 
-@Test(testName = "ThreadLocalRandomWrapper:MersenneTwisterRandom")
 public class ThreadLocalRandomWrapperMersenneTwisterTest extends ThreadLocalRandomWrapperTest {
 
   private final MersenneTwisterRandomColonColonNew mtSupplier
