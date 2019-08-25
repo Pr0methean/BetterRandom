@@ -11,7 +11,9 @@ public class FlakyRetryAnalyzer implements IRetryAnalyzer {
   final int retryLimit = 2;
 
   @Override public boolean retry(ITestResult result) {
-
+    if (result.isSuccess()) {
+      return false;
+    }
     if (counter < retryLimit) {
       counter++;
       return true;
