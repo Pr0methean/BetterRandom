@@ -1,5 +1,5 @@
 # More randomness. Less time. Still an instance of java.util.Random.
-[![Lifted on Tidelift!](https://tidelift.com/badges/package/maven/io.github.pr0methean.betterrandom:BetterRandom)](https://tidelift.com/subscription/pkg/maven-io-github-pr0methean-betterrandom-betterrandom?utm_source=maven-io-github-pr0methean-betterrandom-betterrandom&utm_medium=referral&utm_campaign=readme)
+[![Lifted on Tidelift!](https://tidelift.com/badges/package/maven/io.github.pr0methean.betterrandom:BetterRandom)](https://tidelift.com/subscription/pkg/maven-io-github-pr0methean-betterrandom-betterrandom-java7?utm_source=maven-io-github-pr0methean-betterrandom-betterrandom-java7&utm_medium=referral&utm_campaign=readme)
 [![Build Status](https://dev.azure.com/polymorpheus/BetterRandom/_apis/build/status/BetterRandom-CI?branchName=master)](https://dev.azure.com/polymorpheus/BetterRandom/_build/latest?definitionId=2&branchName=java7)
 [![Maven Central](https://maven-badges.herokuapp.com/maven-central/io.github.pr0methean.betterrandom/BetterRandom/badge.svg)](https://search.maven.org/#search%7Cgav%7C1%7Cg%3A%22io.github.pr0methean.betterrandom%22%20AND%20a%3A%22BetterRandom%22)
 [![Coverage](https://codecov.io/gh/Pr0methean/BetterRandom/branch/master/graph/badge.svg)](https://codecov.io/gh/Pr0methean/BetterRandom)
@@ -38,7 +38,7 @@ your pseudorandom-number generators (PRNGs) and their seed sources. With it, you
 
 # Professional support
 
-[Get supported BetterRandom with the Tidelift Subscription](https://tidelift.com/subscription/pkg/maven-io-github-pr0methean-betterrandom-betterrandom?utm_source=maven-io-github-pr0methean-betterrandom-betterrandom&utm_medium=referral&utm_campaign=readme)
+[Get supported BetterRandom with the Tidelift Subscription](https://tidelift.com/subscription/pkg/maven-io-github-pr0methean-betterrandom-betterrandom-java7?utm_source=maven-io-github-pr0methean-betterrandom-betterrandom-java7&utm_medium=referral&utm_campaign=readme)
 
 # But java.util.Random is already fast enough for me!
 
