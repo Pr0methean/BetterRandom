@@ -179,11 +179,9 @@ suites. However, Android API levels 24 and up (required as both source and targe
 ## Java 7 (java7 branch)
 
 This branch is mainly intended to support Android API levels 19 through 23; support for other
-environments is best-efforts. Active development on this branch is likely to end once 80% of Android
-devices have API level 24 or newer, as
-[measured by Google](https://developer.android.com/about/dashboards/index.html#Platform), *and* Java
-18.09 LTS has been released (which will mean Java 7 will be *two* major long-term-support versions
-out of date).
+environments is best-efforts. Once 80% of Android devices have API level 24 or newer, as
+[measured by Google](https://developer.android.com/about/dashboards/index.html#Platform), the Java 7
+branch will only be maintained while at least one Tidelift subscriber is using it.
 
 Continuous integration takes place in OpenJDK 7 on Linux. Up to and including version 3.1.1, this was
 done on Travis CI; beginning with 3.1.2, Azure Pipelines will be used.
