@@ -7,9 +7,9 @@ variables:
 - name: zuluLinuxLatest
   value: '/usr/lib/jvm/zulu-12-azure-amd64'
 - name: openjnine11linux
-  value: 'https://github.com/AdoptOpenJDK/openjdk11-binaries/releases/download/jdk-11.0.3%2B7_openj9-0.14.3/OpenJDK11U-jdk_x64_linux_openj9_11.0.3_7_openj9-0.14.3.tar.gz'
+  value: 'https://api.adoptopenjdk.net/v2/binary/releases/openjdk11?openjdk_impl=openj9&os=linux&arch=x64&type=jdk&heap_size=normal&release=latest'
 - name: openJNineLatestLinux
-  value: 'https://github.com/AdoptOpenJDK/openjdk12-binaries/releases/download/jdk-12.0.1%2B12_openj9-0.14.1/OpenJDK12U-jdk_x64_linux_openj9_12.0.1_12_openj9-0.14.1.tar.gz'
+  value: 'https://api.adoptopenjdk.net/v2/binary/releases/openjdk12?openjdk_impl=openj9&os=linux&arch=x64&type=jdk&heap_size=normal&release=latest'
 trigger:
   batch: true
   branches:
