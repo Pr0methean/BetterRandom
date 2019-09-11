@@ -15,6 +15,7 @@ cd ../FifoFiller
 mvn -B package
 JAR=$(find target -iname '*-with-dependencies.jar')
 mkfifo prng_out
+mkfifo report_out
 "${JAVA_BIN}" ${JAVA_OPTS} -jar "${JAR}" io.github.pr0methean.betterrandom.prng.${CLASS} prng_out &\
 ((
     dieharder -S 1 -Y 1 -k 2 -d 0 -g 200
@@ -94,4 +95,5 @@ mkfifo prng_out
     dieharder -S 1 -d 207 -g 200
     dieharder -S 1 -d 208 -g 200
     dieharder -S 1 -d 209 -g 200
-) < prng_out | tee ../dieharder.txt | tee /dev/tty | [ ! `grep 'FAILED'` ])
+) < prng_out | tee ../dieharder.txt | tee report_out) &
+grep 'FAILED' report_out && false || true
