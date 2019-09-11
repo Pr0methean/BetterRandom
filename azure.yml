@@ -296,6 +296,8 @@ stages:
             class: Pcg128Random
           Pcg64Random:
             class: Pcg64Random
+          RandomWrapper:
+            class: RandomWrapper
           SingleThreadSplittableRandomAdapter:
             class: 'concurrent.SingleThreadSplittableRandomAdapter'
       pool:
