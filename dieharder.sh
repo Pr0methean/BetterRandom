@@ -94,4 +94,4 @@ mkfifo prng_out
     dieharder -S 1 -d 207 -g 200
     dieharder -S 1 -d 208 -g 200
     dieharder -S 1 -d 209 -g 200
-) < prng_out | tee ../dieharder.txt | tee /dev/tty | [[ ! `grep 'FAILED'` ]])
+) < prng_out | tee ../dieharder.txt | tee /dev/tty | [ ! `grep 'FAILED'` ])
