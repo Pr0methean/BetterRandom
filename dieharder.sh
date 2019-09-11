@@ -2,10 +2,10 @@
 JAVA_OPTS="-Djava.security.egd=file:/dev/./urandom"
 JAVA_BIN="${JAVA_HOME}/bin/java"
 cd betterrandom
-mvn -DskipTests -Darguments=-DskipTests -Dmaven.test.skip=true\
+mvn -B -DskipTests -Darguments=-DskipTests -Dmaven.test.skip=true\
     clean package pre-integration-test install
 cd ../FifoFiller
-mvn package
+mvn -B package
 JAR=$(find target -iname '*-with-dependencies.jar')
 mkfifo prng_out
 "${JAVA_BIN}" ${JAVA_OPTS} -jar "${JAR}" io.github.pr0methean.betterrandom.prng.${CLASS} prng_out &\
