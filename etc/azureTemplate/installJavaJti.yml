@@ -1,5 +1,5 @@
 steps:
-  - script: wget $(javaUrl) -O jdk.tar.gz
+  - script: wget "$(javaUrl)" -O jdk.tar.gz
     displayName: Download Java Installer
   - task: JavaToolInstaller@0
     displayName: Install Java
