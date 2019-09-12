@@ -96,4 +96,4 @@ mkfifo report_out 2>&1
     dieharder -S 1 -d 208 -g 200
     dieharder -S 1 -d 209 -g 200
 ) 2>&1 < prng_out | tee ../dieharder.txt | tee report_out) &
-grep 'FAILED' report_out 1>&2
+grep 'FAILED' report_out 1>&2 || true
