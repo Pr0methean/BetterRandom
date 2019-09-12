@@ -14,8 +14,8 @@ mvn -B -DskipTests -Darguments=-DskipTests -Dmaven.test.skip=true\
 cd ../FifoFiller
 mvn -B package 2>&1
 JAR=$(find target -iname '*-with-dependencies.jar')
-mkfifo prng_out
-mkfifo report_out
+mkfifo prng_out 2>&1
+mkfifo report_out 2>&1
 "${JAVA_BIN}" ${JAVA_OPTS} -jar "${JAR}" io.github.pr0methean.betterrandom.prng.${CLASS} prng_out 2>&1 &\
 ((
     dieharder -S 1 -Y 1 -k 2 -d 0 -g 200
@@ -95,5 +95,5 @@ mkfifo report_out
     dieharder -S 1 -d 207 -g 200
     dieharder -S 1 -d 208 -g 200
     dieharder -S 1 -d 209 -g 200
-) < prng_out | tee ../dieharder.txt | tee report_out) &
+) 2>&1 < prng_out | tee ../dieharder.txt | tee report_out) &
 grep 'FAILED' report_out 1>&2
