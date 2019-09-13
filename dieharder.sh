@@ -19,9 +19,9 @@ mkfifo prng_out 2>&1
 # Checked Dieharder invocation
 
 chkdh() {
-    dieharder -S 1 -g 200 $@ | tee current_test.txt
-    cat current_test.txt >> dieharder.txt
-    if [ "$(grep -q -m 1 'FAILED' current_test.txt)" ]; then
+    dieharder -S 1 -g 200 $@ | tee /tmp/current_test.txt
+    cat /tmp/current_test.txt >> dieharder.txt
+    if [ "$(grep -m 1 'FAILED' dieharder.txt)" ]; then
       kill -9 "${JAVA_PROCESS}"
       exit 1
     fi
