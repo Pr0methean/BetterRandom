@@ -15,95 +15,94 @@ cd ../FifoFiller || exit 1
 mvn -B package 2>&1
 JAR=$(find target -iname '*-with-dependencies.jar')
 mkfifo prng_out 2>&1
-mkfifo report_out 2>&1
-"${JAVA_BIN}" ${JAVA_OPTS} -jar "${JAR}" io.github.pr0methean.betterrandom.prng.${CLASS} prng_out 2>&1 &\
-( (
-    dieharder -S 1 -Y 1 -k 2 -d 0 -g 200
-    dieharder -S 1 -Y 1 -k 2 -d 1 -g 200
-    dieharder -S 1 -Y 1 -k 2 -d 2 -g 200
-    dieharder -S 1 -Y 1 -k 2 -d 3 -g 200
-    dieharder -S 1 -Y 1 -k 2 -d 4 -g 200
-    dieharder -S 1 -Y 1 -k 2 -d 5 -g 200
-    dieharder -S 1 -Y 1 -k 2 -d 6 -g 200
-    dieharder -S 1 -Y 1 -k 2 -d 7 -g 200
-    dieharder -S 1 -Y 1 -k 2 -d 8 -g 200
-    dieharder -S 1 -Y 1 -k 2 -d 9 -g 200
-    dieharder -S 1 -Y 1 -k 2 -d 10 -g 200
-    dieharder -S 1 -Y 1 -k 2 -d 11 -g 200
-    dieharder -S 1 -Y 1 -k 2 -d 12 -g 200
-    dieharder -S 1 -Y 1 -k 2 -d 13 -g 200
-    # Marked "Do Not Use": dieharder -S 1 -Y 1 -k 2 -d 14 -g 200
-    dieharder -S 1 -Y 1 -k 2 -d 15 -g 200
-    dieharder -S 1 -Y 1 -k 2 -d 16 -g 200
-    dieharder -S 1 -Y 1 -k 2 -d 17 -g 200
-    dieharder -S 1 -Y 1 -k 2 -d 100 -g 200
-    dieharder -S 1 -Y 1 -k 2 -d 101 -g 200
-    dieharder -S 1 -d 102 -g 200
-    dieharder -S 1 -Y 1 -k 2 -d 200 -g 200 -n 1
-    dieharder -S 1 -Y 1 -k 2 -d 200 -g 200 -n 2
-    dieharder -S 1 -Y 1 -k 2 -d 200 -g 200 -n 3
-    dieharder -S 1 -Y 1 -k 2 -d 200 -g 200 -n 4
-    dieharder -S 1 -Y 1 -k 2 -d 200 -g 200 -n 5
-    dieharder -S 1 -Y 1 -k 2 -d 200 -g 200 -n 6
-    dieharder -S 1 -Y 1 -k 2 -d 200 -g 200 -n 7
-    dieharder -S 1 -Y 1 -k 2 -d 200 -g 200 -n 8
-    dieharder -S 1 -Y 1 -k 2 -d 200 -g 200 -n 9
-    dieharder -S 1 -Y 1 -k 2 -d 200 -g 200 -n 10
-    dieharder -S 1 -Y 1 -k 2 -d 200 -g 200 -n 11
-    dieharder -S 1 -Y 1 -k 2 -d 200 -g 200 -n 12
-    dieharder -S 1 -Y 1 -k 2 -d 201 -g 200 -n 2
-    dieharder -S 1 -Y 1 -k 2 -d 201 -g 200 -n 3
-    dieharder -S 1 -Y 1 -k 2 -d 201 -g 200 -n 4
-    dieharder -S 1 -Y 1 -k 2 -d 201 -g 200 -n 5
-    dieharder -S 1 -Y 1 -k 2 -d 202 -g 200
-    dieharder -S 1 -d 203 -g 200 -p 30 -n 0
-    dieharder -S 1 -d 203 -g 200 -p 30 -n 1
-    dieharder -S 1 -d 203 -g 200 -p 30 -n 2
-    dieharder -S 1 -d 203 -g 200 -p 30 -n 3
-    dieharder -S 1 -d 203 -g 200 -p 30 -n 4
-    dieharder -S 1 -d 203 -g 200 -p 30 -n 5
-    dieharder -S 1 -d 203 -g 200 -p 30 -n 6
-    dieharder -S 1 -d 203 -g 200 -p 30 -n 7
-    dieharder -S 1 -d 203 -g 200 -p 30 -n 8
-    dieharder -S 1 -d 203 -g 200 -p 30 -n 9
-    dieharder -S 1 -d 203 -g 200 -p 30 -n 10
-    dieharder -S 1 -d 203 -g 200 -p 30 -n 11
-    dieharder -S 1 -d 203 -g 200 -p 30 -n 12
-    dieharder -S 1 -d 203 -g 200 -p 30 -n 13
-    dieharder -S 1 -d 203 -g 200 -p 30 -n 14
-    dieharder -S 1 -d 203 -g 200 -p 30 -n 15
-    dieharder -S 1 -d 203 -g 200 -p 30 -n 16
-    dieharder -S 1 -d 203 -g 200 -p 30 -n 17
-    dieharder -S 1 -d 203 -g 200 -p 30 -n 18
-    dieharder -S 1 -d 203 -g 200 -p 30 -n 19
-    dieharder -S 1 -d 203 -g 200 -p 30 -n 20
-    dieharder -S 1 -d 203 -g 200 -p 30 -n 21
-    dieharder -S 1 -d 203 -g 200 -p 30 -n 22
-    dieharder -S 1 -d 203 -g 200 -p 30 -n 23
-    dieharder -S 1 -d 203 -g 200 -p 30 -n 24
-    dieharder -S 1 -d 203 -g 200 -p 30 -n 25
-    dieharder -S 1 -d 203 -g 200 -p 30 -n 26
-    dieharder -S 1 -d 203 -g 200 -p 30 -n 27
-    dieharder -S 1 -d 203 -g 200 -p 30 -n 28
-    dieharder -S 1 -d 203 -g 200 -p 30 -n 29
-    dieharder -S 1 -d 203 -g 200 -p 30 -n 30
-    dieharder -S 1 -d 203 -g 200 -p 30 -n 31
-    dieharder -S 1 -d 203 -g 200 -p 30 -n 32
-    dieharder -S 1 -Y 1 -k 2 -d 204 -g 200
-    dieharder -S 1 -d 205 -g 200
-    dieharder -S 1 -d 206 -g 200
-    dieharder -S 1 -d 207 -g 200
-    dieharder -S 1 -d 208 -g 200
-    dieharder -S 1 -d 209 -g 200
-) 2>&1 < prng_out | tee ../dieharder.txt report_out) &
-SUBSHELL=$!
-if [ "$(grep -q -m 1 'FAILED' report_out)" ]; then
-  kill -9 "${SUBSHELL}"
-  pkill -9 dieharder
-  pkill -9 java
-  # FIXME: What does all the above miss?
-  # Work around https://github.com/microsoft/azure-pipelines-tasks/issues/11334
-  sudo kill -9 1
-  sudo shutdown now
-  exit 1
-fi
+
+# Checked Dieharder invocation
+
+chkdh() {
+    dieharder -S 1 -g 200 $@ < prng_out | tee current_test.txt
+    cat current_test.txt >> dieharder.txt
+    if [ "$(grep -q -m 1 'FAILED' current_test.txt)" ]; then
+      kill -9 "${JAVA_PROCESS}"
+      exit 1
+    fi
+}
+"${JAVA_BIN}" ${JAVA_OPTS} -jar "${JAR}" io.github.pr0methean.betterrandom.prng.${CLASS} prng_out 2>&1 &
+JAVA_PROCESS=$!
+chkdh -Y 1 -k 2 -d 0
+chkdh -Y 1 -k 2 -d 1
+chkdh -Y 1 -k 2 -d 2
+chkdh -Y 1 -k 2 -d 3
+chkdh -Y 1 -k 2 -d 4
+chkdh -Y 1 -k 2 -d 5
+chkdh -Y 1 -k 2 -d 6
+chkdh -Y 1 -k 2 -d 7
+chkdh -Y 1 -k 2 -d 8
+chkdh -Y 1 -k 2 -d 9
+chkdh -Y 1 -k 2 -d 10
+chkdh -Y 1 -k 2 -d 11
+chkdh -Y 1 -k 2 -d 12
+chkdh -Y 1 -k 2 -d 13
+# Marked "Do Not Use": chkdh -Y 1 -k 2 -d 14
+chkdh -Y 1 -k 2 -d 15
+chkdh -Y 1 -k 2 -d 16
+chkdh -Y 1 -k 2 -d 17
+chkdh -Y 1 -k 2 -d 100
+chkdh -Y 1 -k 2 -d 101
+chkdh -d 102
+chkdh -Y 1 -k 2 -d 200 -n 1
+chkdh -Y 1 -k 2 -d 200 -n 2
+chkdh -Y 1 -k 2 -d 200 -n 3
+chkdh -Y 1 -k 2 -d 200 -n 4
+chkdh -Y 1 -k 2 -d 200 -n 5
+chkdh -Y 1 -k 2 -d 200 -n 6
+chkdh -Y 1 -k 2 -d 200 -n 7
+chkdh -Y 1 -k 2 -d 200 -n 8
+chkdh -Y 1 -k 2 -d 200 -n 9
+chkdh -Y 1 -k 2 -d 200 -n 10
+chkdh -Y 1 -k 2 -d 200 -n 11
+chkdh -Y 1 -k 2 -d 200 -n 12
+chkdh -Y 1 -k 2 -d 201 -n 2
+chkdh -Y 1 -k 2 -d 201 -n 3
+chkdh -Y 1 -k 2 -d 201 -n 4
+chkdh -Y 1 -k 2 -d 201 -n 5
+chkdh -Y 1 -k 2 -d 202
+chkdh -d 203 -p 30 -n 0
+chkdh -d 203 -p 30 -n 1
+chkdh -d 203 -p 30 -n 2
+chkdh -d 203 -p 30 -n 3
+chkdh -d 203 -p 30 -n 4
+chkdh -d 203 -p 30 -n 5
+chkdh -d 203 -p 30 -n 6
+chkdh -d 203 -p 30 -n 7
+chkdh -d 203 -p 30 -n 8
+chkdh -d 203 -p 30 -n 9
+chkdh -d 203 -p 30 -n 10
+chkdh -d 203 -p 30 -n 11
+chkdh -d 203 -p 30 -n 12
+chkdh -d 203 -p 30 -n 13
+chkdh -d 203 -p 30 -n 14
+chkdh -d 203 -p 30 -n 15
+chkdh -d 203 -p 30 -n 16
+chkdh -d 203 -p 30 -n 17
+chkdh -d 203 -p 30 -n 18
+chkdh -d 203 -p 30 -n 19
+chkdh -d 203 -p 30 -n 20
+chkdh -d 203 -p 30 -n 21
+chkdh -d 203 -p 30 -n 22
+chkdh -d 203 -p 30 -n 23
+chkdh -d 203 -p 30 -n 24
+chkdh -d 203 -p 30 -n 25
+chkdh -d 203 -p 30 -n 26
+chkdh -d 203 -p 30 -n 27
+chkdh -d 203 -p 30 -n 28
+chkdh -d 203 -p 30 -n 29
+chkdh -d 203 -p 30 -n 30
+chkdh -d 203 -p 30 -n 31
+chkdh -d 203 -p 30 -n 32
+chkdh -Y 1 -k 2 -d 204
+chkdh -d 205
+chkdh -d 206
+chkdh -d 207
+chkdh -d 208
+chkdh -d 209
+
