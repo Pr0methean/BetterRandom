@@ -101,5 +101,9 @@ if [ "$(grep -q -m 1 'FAILED' report_out)" ]; then
   kill -9 "${SUBSHELL}"
   pkill -9 dieharder
   pkill -9 java
+  # FIXME: What does all the above miss?
+  # Work around https://github.com/microsoft/azure-pipelines-tasks/issues/11334
+  sudo kill -9 1
+  sudo shutdown now
   exit 1
 fi
