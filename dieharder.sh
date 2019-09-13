@@ -8,15 +8,16 @@ else
   echo "[dieharder.sh] Using Java 9+ mode."
   MAYBE_PROGUARD=""
 fi
-cd betterrandom
+cd betterrandom || exit 1
 mvn -B -DskipTests -Darguments=-DskipTests -Dmaven.test.skip=true\
-    clean package ${MAYBE_PROGUARD} install
-cd ../FifoFiller
-mvn -B package
+    clean package ${MAYBE_PROGUARD} install 2>&1
+cd ../FifoFiller || exit 1
+mvn -B package 2>&1
 JAR=$(find target -iname '*-with-dependencies.jar')
-mkfifo prng_out
-"${JAVA_BIN}" ${JAVA_OPTS} -jar "${JAR}" io.github.pr0methean.betterrandom.prng.${CLASS} prng_out &\
-((
+mkfifo prng_out 2>&1
+mkfifo report_out 2>&1
+"${JAVA_BIN}" ${JAVA_OPTS} -jar "${JAR}" io.github.pr0methean.betterrandom.prng.${CLASS} prng_out 2>&1 &\
+( (
     dieharder -S 1 -Y 1 -k 2 -d 0 -g 200
     dieharder -S 1 -Y 1 -k 2 -d 1 -g 200
     dieharder -S 1 -Y 1 -k 2 -d 2 -g 200
@@ -94,4 +95,7 @@ mkfifo prng_out
     dieharder -S 1 -d 207 -g 200
     dieharder -S 1 -d 208 -g 200
     dieharder -S 1 -d 209 -g 200
-) < prng_out | tee ../dieharder.txt)
+) 2>&1 < prng_out | tee ../dieharder.txt report_out) &
+if [ "$(grep -q -m 1 'FAILED' report_out)" ]; then
+  exit 1
+fi
