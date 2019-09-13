@@ -312,5 +312,5 @@ stages:
         - task: PublishBuildArtifacts@1
           displayName: Publish Report
           inputs:
-            pathtoPublish: dieharder.txt
+            pathtoPublish: FifoFiller/dieharder.txt
             artifactName: DieHarder Randomness Tests - $(class)
