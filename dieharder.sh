@@ -97,7 +97,7 @@ mkfifo report_out 2>&1
     dieharder -S 1 -d 209 -g 200
 ) 2>&1 < prng_out | tee ../dieharder.txt report_out) &
 if [ "$(grep -q -m 1 'FAILED' report_out)" ]; then
-  pkill dieharder
-  pkill java
+  pkill -9 dieharder
+  pkill -9 java
   exit 1
 fi
