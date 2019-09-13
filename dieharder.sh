@@ -1,4 +1,5 @@
 #!/bin/sh
+trap 'rm prng_out; rm report_out; pkill -9 dieharder; pkill -9 java' EXIT
 JAVA_OPTS="-Djava.security.egd=file:/dev/./urandom"
 JAVA_BIN="${JAVA_HOME}/bin/java"
 if [ "${JAVA8}" = "true" ]; then
