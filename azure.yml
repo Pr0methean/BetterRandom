@@ -294,6 +294,8 @@ stages:
             class: Pcg128Random
           Pcg64Random:
             class: Pcg64Random
+          RandomWrapper:
+            class: 'concurrent.RandomWrapper'
           SingleThreadSplittableRandomAdapter:
             class: 'concurrent.SingleThreadSplittableRandomAdapter'
       pool:
@@ -310,5 +312,5 @@ stages:
         - task: PublishBuildArtifacts@1
           displayName: Publish Report
           inputs:
-            pathtoPublish: dieharder.txt
+            pathtoPublish: FifoFiller/dieharder.txt
             artifactName: DieHarder Randomness Tests - $(class)
