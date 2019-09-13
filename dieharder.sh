@@ -1,5 +1,4 @@
 #!/bin/sh
-trap 'rm prng_out; rm report_out; pkill -9 dieharder; pkill -9 java' EXIT
 JAVA_OPTS="-Djava.security.egd=file:/dev/./urandom"
 JAVA_BIN="${JAVA_HOME}/bin/java"
 if [ "${JAVA8}" = "true" ]; then
@@ -98,5 +97,7 @@ mkfifo report_out 2>&1
     dieharder -S 1 -d 209 -g 200
 ) 2>&1 < prng_out | tee ../dieharder.txt report_out) &
 if [ "$(grep -q -m 1 'FAILED' report_out)" ]; then
+  pkill dieharder
+  pkill java
   exit 1
 fi
