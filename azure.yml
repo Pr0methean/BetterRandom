@@ -296,6 +296,8 @@ stages:
             class: Pcg128Random
           Pcg64Random:
             class: Pcg64Random
+          RandomWrapper:
+            class: RandomWrapper
           SingleThreadSplittableRandomAdapter:
             class: 'concurrent.SingleThreadSplittableRandomAdapter'
       pool:
@@ -308,6 +310,7 @@ stages:
           displayName: Build BetterRandom & Run DieHarder Tests
           env:
             CLASS: $(class)
+          failOnStderr: true
         - task: PublishBuildArtifacts@1
           displayName: Publish Report
           inputs:
