@@ -27,9 +27,12 @@ import io.github.pr0methean.betterrandom.util.BinaryUtils;
  * Java port of the <a href="http://home.southernct.edu/~pasqualonia1/ca/report.html"
  * target="_top">cellular automaton pseudorandom number generator</a> developed by Tony Pasqualoni.
  *
+ * @deprecated Fails RGB Lagged Sums Test (dieharder -d 203 -n 25) for many seeds, and sometimes
+ *     fails other Dieharder tests as well.
  * @author Tony Pasqualoni (original C version)
  * @author Daniel Dyer (Java port)
  */
+@Deprecated
 public class CellularAutomatonRandom extends BaseRandom {
 
   private static final long serialVersionUID = 5959251752288589909L;
