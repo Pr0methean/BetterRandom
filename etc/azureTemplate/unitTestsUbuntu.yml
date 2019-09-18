@@ -1,6 +1,6 @@
 steps:
 - template: installHaveged.yml
-- script: 'java -version'
+- script: '$(JAVA_HOME)/bin/java -version'
   displayName: Log Java Version
   env:
     JAVA_HOME: $(JAVA_HOME)
