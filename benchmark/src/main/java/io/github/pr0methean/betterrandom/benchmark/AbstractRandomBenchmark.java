@@ -5,6 +5,7 @@ import java.util.Random;
 import org.openjdk.jmh.annotations.Benchmark;
 import org.openjdk.jmh.annotations.Level;
 import org.openjdk.jmh.annotations.Measurement;
+import org.openjdk.jmh.annotations.OperationsPerInvocation;
 import org.openjdk.jmh.annotations.Scope;
 import org.openjdk.jmh.annotations.Setup;
 import org.openjdk.jmh.annotations.State;
@@ -20,8 +21,8 @@ import org.openjdk.jmh.runner.options.OptionsBuilder;
 @State(Scope.Benchmark)
 abstract class AbstractRandomBenchmark {
 
-  private static final int COLUMNS = 2;
-  private static final int ROWS = 50_000;
+  protected static final int COLUMNS = 2;
+  protected static final int ROWS = 50_000;
   @SuppressWarnings("MismatchedReadAndWriteOfArray") private final byte[][] bytes =
       new byte[COLUMNS][ROWS];
   protected Random prng;
@@ -56,6 +57,7 @@ abstract class AbstractRandomBenchmark {
   @Timeout(time = 60) // seconds per iteration
   @Measurement(iterations = 5, time = 4)
   @Warmup(iterations = 5, time = 4)
+  @OperationsPerInvocation(COLUMNS * ROWS)
   @Benchmark public byte testBytesSequential() {
     return innerTestBytesSequential();
   }
