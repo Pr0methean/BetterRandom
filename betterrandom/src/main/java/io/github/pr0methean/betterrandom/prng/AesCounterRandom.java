@@ -67,7 +67,7 @@ public class AesCounterRandom extends CipherCounterRandom {
   }
 
   @Override public int getMaxTotalSeedLengthBytes() {
-    return MAX_TOTAL_SEED_LENGTH_BYTES;
+    return MAX_SEED_LENGTH_BYTES;
   }
 
   @Override protected int getMinSeedLength() {
@@ -90,7 +90,10 @@ public class AesCounterRandom extends CipherCounterRandom {
 
   private static final int BYTES_AT_ONCE = COUNTER_SIZE_BYTES * BLOCKS_AT_ONCE;
   private static final String HASH_ALGORITHM = "SHA-256";
-  private static final int MAX_TOTAL_SEED_LENGTH_BYTES;
+  /**
+   * Maximum total length of the seed, including both key and initial counter value.
+   */
+  public static final int MAX_SEED_LENGTH_BYTES;
   @SuppressWarnings("CanBeFinal") private static int MAX_KEY_LENGTH_BYTES = 0;
 
   static {
@@ -102,7 +105,7 @@ public class AesCounterRandom extends CipherCounterRandom {
     LoggerFactory.getLogger(AesCounterRandom.class)
         .info("Maximum allowed key length for AES is {} bytes", MAX_KEY_LENGTH_BYTES);
     MAX_KEY_LENGTH_BYTES = Math.min(MAX_KEY_LENGTH_BYTES, 32);
-    MAX_TOTAL_SEED_LENGTH_BYTES = MAX_KEY_LENGTH_BYTES + COUNTER_SIZE_BYTES;
+    MAX_SEED_LENGTH_BYTES = MAX_KEY_LENGTH_BYTES + COUNTER_SIZE_BYTES;
   }
 
   /**
