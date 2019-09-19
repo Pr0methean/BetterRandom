@@ -38,6 +38,7 @@ import java.util.UUID;
 import org.openjdk.jmh.annotations.Benchmark;
 import org.openjdk.jmh.annotations.Level;
 import org.openjdk.jmh.annotations.Measurement;
+import org.openjdk.jmh.annotations.OperationsPerInvocation;
 import org.openjdk.jmh.annotations.Scope;
 import org.openjdk.jmh.annotations.Setup;
 import org.openjdk.jmh.annotations.State;
@@ -73,6 +74,7 @@ public abstract class AbstractRandomBenchmarkWithReseeding extends AbstractRando
   @Timeout(time = 60) // seconds per iteration
   @Measurement(iterations = 5, time = 4)
   @Warmup(iterations = 5, time = 4)
+  @OperationsPerInvocation(COLUMNS * ROWS)
   @Benchmark public byte testBytesSequentialReseeding() {
     return innerTestBytesSequential();
   }
