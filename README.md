@@ -74,6 +74,63 @@ Don't take chances on randomness -- get it right with BetterRandom.
 At both links, choose **BetterRandom** if using JDK 8+ and/or Android API 24+ at both compile-time
 and runtime. Otherwise, choose **BetterRandom-Java7**.
 
+# Quick start: picking a PRNG
+
+When you need an instance of `java.util.Random`, the recommended BetterRandom solution depends on how you're using it.
+
+## It's for cryptography or gambling
+
+Only `AesCounterRandom` has cryptographically secure output.
+Continuous reseeding is recommended if you don't need reproducible output.
+
+* If you need reproducible output, use:
+  ```
+  byte[] seed = DEFAULT_SEED_GENERATOR.generateSeed(AesCounterRandom.MAX_SEED_LENGTH_BYTES);
+  // Output the seed
+  random = new AesCounterRandom(seed);
+  ```
+* If you need multi-thread concurrency (incompatible with reproducibility), use:
+  ```
+  new ReseedingThreadLocalRandomWrapper(AesCounterRandom::new, new RandomSeederThread(DEFAULT_SEED_GENERATOR))
+  ```
+* Otherwise, use:
+  ```
+  random = new AesCounterRandom();
+  new RandomSeederThread(DEFAULT_SEED_GENERATOR).add(random);
+  ```
+
+## It's for a scientific simulation, competitive multiplayer game, or professional creative work
+
+For these purposes, the SplittableRandomAdapter family is fastest and passes the Dieharder pseudo-randomness tests.
+Continuous reseeding is recommended if you don't need reproducible output.
+
+* If you need reproducible output, use:
+  ```
+  byte[] seed = DEFAULT_SEED_GENERATOR.generateSeed(Long.BYTES);
+  // Output the seed
+  random = new SingleThreadSplittableRandomAdapter(seed); 
+  ```
+* If you need multi-thread concurrency (incompatible with reproducibility), use:
+  ```
+  new ReseedingSplittableRandomAdapter()
+  ```
+* Otherwise, use:
+  ```
+  random = new SingleThreadSplittableRandomAdapter();
+  new RandomSeederThread(DEFAULT_SEED_GENERATOR).add(random);  
+  ```
+
+## It's for a single-player game, screensaver, playlist shuffle, etc.
+
+* If you need multi-thread concurrency, use:
+  ```
+  new SplittableRandomAdapter()
+  ```
+* Otherwise, use:
+  ```
+  new SingleThreadSplittableRandomAdapter()
+  ```
+
 # Full javadocs
 
 Javadocs for the latest snapshot, including both public and protected members (to support your

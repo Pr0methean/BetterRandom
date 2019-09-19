@@ -5,6 +5,12 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+### Added
+
+- `AesCounterRandom.MAX_SEED_LENGTH_BYTES` is now a public constant.
+
 ## [4.0.2]
 
 ### Changed
@@ -513,6 +519,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - First release on Maven Central.
 
+[Unreleased]: https://github.com/Pr0methean/BetterRandom/compare/BetterRandom-Java7-4.0.2...java7
 [Unreleased]: https://github.com/Pr0methean/BetterRandom/compare/BetterRandom-Java7-4.0.1...java7
 [4.0.1]: https://github.com/Pr0methean/BetterRandom/compare/BetterRandom-Java7-4.0.0...BetterRandom-Java7-4.0.1
 [4.0.0]: https://github.com/Pr0methean/BetterRandom/compare/BetterRandom-Java7-3.1.2...BetterRandom-Java7-4.0.0
