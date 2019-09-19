@@ -201,7 +201,7 @@ public class AesCounterRandom extends CipherCounterRandom {
 
   /** Returns the longest supported seed length. */
   @Override public int getNewSeedLength() {
-    return MAX_TOTAL_SEED_LENGTH_BYTES;
+    return MAX_SEED_LENGTH_BYTES;
   }
 
   @Override public void advance(final long delta) {
