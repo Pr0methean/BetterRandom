@@ -132,7 +132,7 @@ public class AesCounterRandom extends CipherCounterRandom {
    * Seed the RNG using the {@link DefaultSeedGenerator} to create a seed of the specified size.
    *
    * @param seedSizeBytes The number of bytes to use for seed data. Valid values range from 16
-   *     to {@link #getMaxKeyLengthBytes()} + 16.
+   *     to {@link #MAX_SEED_LENGTH_BYTES}.
    * @throws SeedException if the {@link DefaultSeedGenerator} fails to generate a seed.
    */
   public AesCounterRandom(final int seedSizeBytes) throws SeedException {
@@ -143,7 +143,7 @@ public class AesCounterRandom extends CipherCounterRandom {
    * Creates an RNG and seeds it with the specified seed data.
    *
    * @param seed The seed data used to initialize the RNG. Length must be at least 16 and no
-   *     more than {@link #getMaxKeyLengthBytes()} + 16.
+   *     more than {@link #MAX_SEED_LENGTH_BYTES}.
    */
   public AesCounterRandom(final byte[] seed) {
     super(seed);
