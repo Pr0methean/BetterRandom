@@ -46,6 +46,9 @@ Network Trash Folder
 Temporary Items
 .apdisk
 
+# Meld backups
+*.orig
+
 # Misc.
 bin/
 lib/
