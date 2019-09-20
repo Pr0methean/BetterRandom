@@ -20,6 +20,7 @@ import io.github.pr0methean.betterrandom.FlakyRetryAnalyzer;
 import io.github.pr0methean.betterrandom.NamedFunction;
 import io.github.pr0methean.betterrandom.TestUtils;
 import io.github.pr0methean.betterrandom.prng.RandomTestUtils.EntropyCheckMode;
+import io.github.pr0methean.betterrandom.prng.concurrent.SingleThreadSplittableRandomAdapter;
 import io.github.pr0methean.betterrandom.prng.concurrent.SplittableRandomAdapter;
 import io.github.pr0methean.betterrandom.seed.FakeSeedGenerator;
 import io.github.pr0methean.betterrandom.seed.RandomSeederThread;
@@ -60,7 +61,7 @@ public abstract class BaseRandomTest extends PowerMockTestCase {
         }
       };
   protected final SeedGenerator semiFakeSeedGenerator = new SemiFakeSeedGenerator(
-      new SplittableRandomAdapter(SecureRandomSeedGenerator.SECURE_RANDOM_SEED_GENERATOR));
+      new SingleThreadSplittableRandomAdapter(SecureRandomSeedGenerator.SECURE_RANDOM_SEED_GENERATOR));
 
   /**
    * The square root of 12, rounded from an extended-precision calculation that was done by Wolfram
@@ -404,7 +405,7 @@ public abstract class BaseRandomTest extends PowerMockTestCase {
 
   /**
    * This also tests {@link BaseRandom#getRandomSeeder()} and
-   * {@link BaseRandom#setRandomSeeder(SeedGenerator)}.
+   * {@link BaseRandom#setRandomSeeder(RandomSeederThread)}.
    */
   @SuppressWarnings("BusyWait") @Test(timeOut = 60_000, retryAnalyzer = FlakyRetryAnalyzer.class)
   public void testRandomSeederThreadIntegration() {
