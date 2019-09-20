@@ -52,6 +52,7 @@ public class AesCounterRandom extends CipherCounterRandom {
    * Java nor OpenJDK provides any implementation of the part of Rijndael that isn't AES.
    */
   private static final String ALGORITHM = "AES";
+  private static final String HASH_ALGORITHM = "SHA-384";
   @SuppressWarnings("HardcodedFileSeparator") private static final String ALGORITHM_MODE =
       ALGORITHM + "/ECB/NoPadding";
   // WARNING: Don't initialize any instance fields at declaration; they may be initialized too late!
@@ -89,7 +90,6 @@ public class AesCounterRandom extends CipherCounterRandom {
   }
 
   private static final int BYTES_AT_ONCE = COUNTER_SIZE_BYTES * BLOCKS_AT_ONCE;
-  private static final String HASH_ALGORITHM = "SHA-256";
   /**
    * Maximum total length of the seed, including both key and initial counter value.
    */
