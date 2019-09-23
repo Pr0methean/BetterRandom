@@ -44,7 +44,7 @@ public class TwoFishCounterRandom extends CipherCounterRandom {
   }
 
   @Override protected MessageDigest createHash() {
-    return new SHA3.Digest256();
+    return new SHA3.Digest384();
   }
 
   @Override protected void createCipher() {
