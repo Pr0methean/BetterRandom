@@ -12,6 +12,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `AesCounterRandom` now uses SHA-384, and reseeding can now alter both the cipher key and the counter value.
 - Reseeding of `AesCounterRandom` should be faster.
 
+### Removed
+
+- `CellularAutomatonRandom` (deprecated in 4.0.2)
+
 ## [4.0.3]
 
 ### Added
