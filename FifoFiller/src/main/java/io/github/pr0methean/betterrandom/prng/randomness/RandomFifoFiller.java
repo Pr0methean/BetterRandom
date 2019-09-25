@@ -66,7 +66,6 @@ public final class RandomFifoFiller
      *
      * @param rng The random number generator to use to generate the data.
      * @param outputFile The file that the random data is written to.
-     * @throws IOException If there is a problem writing to the file.
      */
     @SuppressWarnings("InfiniteLoopStatement") public static void generateOutputFile(Random rng,
         File outputFile) {

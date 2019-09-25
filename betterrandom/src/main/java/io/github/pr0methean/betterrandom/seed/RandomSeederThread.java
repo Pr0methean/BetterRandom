@@ -252,7 +252,7 @@ public final class RandomSeederThread extends LooperThread {
     try {
       for (final ByteArrayReseedableRandom random : byteArrayPrngs) {
         if (random instanceof BaseRandom) {
-          ((BaseRandom) random).setRandomSeeder((RandomSeederThread) null);
+          ((BaseRandom) random).setRandomSeeder(null);
         }
       }
       byteArrayPrngs.clear();

@@ -287,39 +287,6 @@
         </plugins>
       </build>
     </profile>
-    <profile>
-      <!-- For testing on an Android emulator. Work in progress. -->
-      <id>android</id>
-      <repositories>
-        <repository>
-          <id>google</id>
-          <name>Google Maven repository</name>
-          <url>https://maven.google.com</url>
-        </repository>
-        <repository>
-          <id>lemonade</id>
-          <name>Lemonade Lab</name>
-          <url>https://dl.bintray.com/lemonade/maven/</url>
-        </repository>
-      </repositories>
-      <properties>
-        <packaging>aar</packaging>
-      </properties>
-      <dependencies>
-        <dependency>
-          <groupId>de.lemona.android</groupId>
-          <artifactId>android-testng</artifactId>
-          <version>1.1.27</version>
-          <type>pom</type>
-        </dependency>
-        <dependency>
-          <groupId>com.google.android.gms</groupId>
-          <artifactId>play-services</artifactId>
-          <version>4.4.52</version>
-          <type>aar</type>
-        </dependency>
-      </dependencies>
-    </profile>
   </profiles>
   <packaging>jar</packaging>
   <properties>
