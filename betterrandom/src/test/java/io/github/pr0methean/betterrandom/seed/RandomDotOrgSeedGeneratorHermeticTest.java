@@ -18,6 +18,7 @@ import java.io.IOException;
 import java.net.Proxy;
 import java.net.URL;
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.Base64;
 import java.util.UUID;
@@ -39,7 +40,7 @@ import org.testng.annotations.Test;
 @PrepareForTest(RandomDotOrgSeedGenerator.class) @Test(singleThreaded = true)
 public class RandomDotOrgSeedGeneratorHermeticTest extends PowerMockTestCase {
 
-  private static final Charset UTF8 = Charset.forName("UTF-8");
+  private static final Charset UTF8 = StandardCharsets.UTF_8;
   @SuppressWarnings("HardcodedFileSeparator") public static final byte[] RESPONSE_32_JSON =
       ("{\"jsonrpc\":\"2.0\",\"result\":{\"random\":{\"data\":" +
           "[\"gAlhFSSjLy+u5P/Cz92BH4R3NZ0+j8UHNeIR02CChoQ=\"]," +

@@ -26,8 +26,6 @@ import java.util.stream.DoubleStream;
 import java.util.stream.IntStream;
 import java.util.stream.LongStream;
 import javax.annotation.Nullable;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Abstract {@link Random} with a seed field and an implementation of entropy counting.
@@ -48,7 +46,6 @@ public abstract class BaseRandom extends Random
   protected static final int ENTROPY_OF_DOUBLE = 53;
 
   private static final long NAN_LONG_BITS = Double.doubleToRawLongBits(Double.NaN);
-  private static final Logger LOG = LoggerFactory.getLogger(BaseRandom.class);
   private static final long serialVersionUID = -1556392727255964947L;
   /**
    * If the referent is non-null, it will be invoked to reseed this PRNG whenever random output is
@@ -728,8 +725,8 @@ public abstract class BaseRandom extends Random
 
   /**
    * Sets the seed, and should be overridden to set other state that derives from the seed. Called
-   * by {@link #setSeed(byte[])}, constructors, {@code readObject(ObjectInputStream)} and {@link
-   * #fallbackSetSeed()}. When called after initialization, the {@link #lock} is always held.
+   * by {@link #setSeed(byte[])}, constructors, and {@code readObject(ObjectInputStream)}. When
+   * called after initialization, the {@link #lock} is always held.
    *
    * @param seed The new seed.
    */
@@ -817,28 +814,12 @@ public abstract class BaseRandom extends Random
   }
 
   /**
-   * Used to deserialize a subclass instance that wasn't a subclass instance when it was serialized.
-   * Since that means we can't deserialize our seed, we generate a new one with the {@link
-   * DefaultSeedGenerator}.
-   *
-   * @throws InvalidObjectException if the {@link DefaultSeedGenerator} fails.
+   * Do not attempt to deserialize any subclass that wasn't a subclass when serialized.
    */
   @SuppressWarnings("OverriddenMethodCallDuringObjectConstruction") private void readObjectNoData()
       throws InvalidObjectException {
     throw new InvalidObjectException(
         "This subclass can't be deserialized, because it wasn't a subclass at serialization time");
-  }
-
-  /**
-   * Generates a seed using the default seed generator if there isn't one already. For use in
-   * handling a {@link #setSeed(long)} call from the super constructor {@link Random#Random()} in
-   * subclasses that can't actually use an 8-byte seed. Also used in {@link #readObjectNoData()}.
-   * Does not acquire the lock, because it's normally called from an initializer.
-   */
-  protected void fallbackSetSeed() {
-    if (seed == null) {
-      seed = DefaultSeedGenerator.DEFAULT_SEED_GENERATOR.generateSeed(getNewSeedLength());
-    }
   }
 
   protected void fallbackSetSeedIfInitialized() {

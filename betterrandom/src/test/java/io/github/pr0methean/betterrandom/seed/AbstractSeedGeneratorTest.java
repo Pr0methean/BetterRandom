@@ -14,12 +14,13 @@ public abstract class AbstractSeedGeneratorTest {
   }
 
   @Test public void testToString() {
-    Assert.assertNotNull(seedGenerator.toString());
+    Assert.assertNotNull(seedGenerator.toString(),
+        "toString() returned null for a " + seedGenerator.getClass().getSimpleName());
   }
 
   protected void generateAndCheckFakeSeed(int length) {
     byte[] seed = seedGenerator.generateSeed(length);
-    assertEquals(seed.length, length);
+    assertEquals(seed.length, length, "Wrong seed length");
     for (int i = 0; i < length; i++) {
       assertEquals(seed[i], 1, "BufferedSeedGenerator failed to populate index " + i);
     }
