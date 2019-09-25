@@ -33,9 +33,20 @@ public final class RandomSeederThread extends LooperThread {
   private transient Set<Random> otherPrngsThisIteration;
   private transient Condition waitWhileEmpty;
   private transient Condition waitForEntropyDrain;
-  private static final Logger LOG = LoggerFactory.getLogger(RandomSeederThread.class);
+  private static volatile Logger LOG;
   private static final long POLL_INTERVAL = 60;
   private final long stopIfEmptyForNanos;
+
+  private static Logger getLogger() {
+    if (LOG == null) {
+      synchronized (RandomSeederThread.class) {
+        if (LOG == null) {
+          LOG = LoggerFactory.getLogger(RandomSeederThread.class);
+        }
+      }
+    }
+    return LOG;
+  }
 
   private void initTransientFields() {
     byteArrayPrngs = Collections.newSetFromMap(Collections.synchronizedMap(new WeakHashMap<>(1)));
@@ -227,7 +238,7 @@ public final class RandomSeederThread extends LooperThread {
       }
       return true;
     } catch (final Throwable t) {
-      LOG.error("Disabling the RandomSeederThread for " + seedGenerator, t);
+      getLogger().error("Disabling the RandomSeederThread for " + seedGenerator, t);
       return false;
     }
   }
@@ -285,7 +296,7 @@ public final class RandomSeederThread extends LooperThread {
     lock.lock();
     try {
       if (isEmpty()) {
-        LOG.info("Stopping empty RandomSeederThread for {}", seedGenerator);
+        getLogger().info("Stopping empty RandomSeederThread for {}", seedGenerator);
         shutDown();
       }
     } finally {
