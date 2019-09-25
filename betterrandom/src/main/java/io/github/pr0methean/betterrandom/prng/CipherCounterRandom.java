@@ -228,12 +228,6 @@ public abstract class CipherCounterRandom extends BaseRandom implements Seekable
     } finally {
       lock.unlock();
     }
-
-    lock.lock();
-    try {
-    } finally {
-      lock.unlock();
-    }
   }
 
   private void checkNotTooLong(final byte[] seed) {
