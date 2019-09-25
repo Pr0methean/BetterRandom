@@ -9,6 +9,7 @@ import static io.github.pr0methean.betterrandom.seed.SeedTestUtils.testGenerator
 import static org.mockito.ArgumentMatchers.any;
 import static org.powermock.api.mockito.PowerMockito.spy;
 import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertNotNull;
 import static org.testng.Assert.assertTrue;
 
 import io.github.pr0methean.betterrandom.prng.concurrent.SplittableRandomAdapter;
@@ -171,6 +172,7 @@ public class RandomDotOrgSeedGeneratorHermeticTest extends PowerMockTestCase {
     RandomDotOrgSeedGenerator.setApiKey(null);
     try {
       testGenerator(RandomDotOrgSeedGenerator.RANDOM_DOT_ORG_SEED_GENERATOR, false);
+      assertNotNull(address);
       assertTrue(address.startsWith("https://www.random.org/integers"));
       assertEquals(proxy, RandomDotOrgSeedGenerator.proxy.get());
     } finally {

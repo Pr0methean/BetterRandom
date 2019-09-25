@@ -93,18 +93,19 @@ public class AesCounterRandom extends CipherCounterRandom {
    * Maximum total length of the seed, including both key and initial counter value.
    */
   public static final int MAX_SEED_LENGTH_BYTES;
-  @SuppressWarnings("CanBeFinal") private static int MAX_KEY_LENGTH_BYTES = 0;
+  private static final int MAX_KEY_LENGTH_BYTES;
 
   static {
+    final int allowedKeyLengthBytes;
     try {
-      MAX_KEY_LENGTH_BYTES = Cipher.getMaxAllowedKeyLength(ALGORITHM_MODE) / 8;
+      allowedKeyLengthBytes = Cipher.getMaxAllowedKeyLength(ALGORITHM_MODE) / 8;
+      MAX_KEY_LENGTH_BYTES = Math.min(allowedKeyLengthBytes, 32);
+      LoggerFactory.getLogger(AesCounterRandom.class)
+          .info("Maximum allowed key length for AES is {} bytes", MAX_KEY_LENGTH_BYTES);
+      MAX_SEED_LENGTH_BYTES = MAX_KEY_LENGTH_BYTES + COUNTER_SIZE_BYTES;
     } catch (final GeneralSecurityException e) {
       throw new InternalError(e);
     }
-    LoggerFactory.getLogger(AesCounterRandom.class)
-        .info("Maximum allowed key length for AES is {} bytes", MAX_KEY_LENGTH_BYTES);
-    MAX_KEY_LENGTH_BYTES = Math.min(MAX_KEY_LENGTH_BYTES, 32);
-    MAX_SEED_LENGTH_BYTES = MAX_KEY_LENGTH_BYTES + COUNTER_SIZE_BYTES;
   }
 
   /**
