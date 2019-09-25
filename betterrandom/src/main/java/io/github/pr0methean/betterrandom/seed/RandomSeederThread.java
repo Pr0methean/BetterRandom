@@ -64,7 +64,9 @@ public final class RandomSeederThread extends LooperThread {
     lock.lock();
     try {
       for (Random random : randoms) {
-        byteArrayPrngs.remove(random);
+        if (random instanceof ByteArrayReseedableRandom) {
+          byteArrayPrngs.remove(random);
+        }
         otherPrngs.remove(random);
       }
     } finally {
