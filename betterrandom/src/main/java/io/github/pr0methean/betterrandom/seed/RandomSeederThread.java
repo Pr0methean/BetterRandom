@@ -243,7 +243,10 @@ public final class RandomSeederThread extends LooperThread {
     }
   }
 
-  private void shutDown() {
+  /**
+   * Shut down this thread even if {@link Random} instances are registered with it.
+   */
+  public void shutDown() {
     interrupt();
     clear();
   }
