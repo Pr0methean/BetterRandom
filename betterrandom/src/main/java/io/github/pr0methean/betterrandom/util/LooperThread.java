@@ -45,12 +45,10 @@ public abstract class LooperThread implements Serializable {
    * @param name the name of the thread to create
    */
   protected LooperThread(final String name) {
-    this(new ThreadFactory() {
-      @Override public Thread newThread(Runnable r) {
-        Thread thread = DEFAULT_THREAD_FACTORY.newThread(r);
-        thread.setName(name);
-        return thread;
-      }
+    this(r -> {
+      Thread thread = DEFAULT_THREAD_FACTORY.newThread(r);
+      thread.setName(name);
+      return thread;
     });
   }
 

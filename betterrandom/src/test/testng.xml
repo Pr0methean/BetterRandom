@@ -4,7 +4,6 @@
         <parameter name="seedSize" value="16"/>
         <classes>
             <class name="io.github.pr0methean.betterrandom.prng.AesCounterRandomTest"/>
-            <class name="io.github.pr0methean.betterrandom.prng.CellularAutomatonRandomTest"/>
             <class name="io.github.pr0methean.betterrandom.prng.TwoFishCounterRandomTest"/>
             <class name="io.github.pr0methean.betterrandom.prng.Cmwc4096RandomTest"/>
             <class name="io.github.pr0methean.betterrandom.prng.MersenneTwisterRandomTest"/>

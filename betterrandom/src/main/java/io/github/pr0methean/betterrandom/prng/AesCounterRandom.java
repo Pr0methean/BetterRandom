@@ -55,6 +55,7 @@ public class AesCounterRandom extends CipherCounterRandom {
    * Java nor OpenJDK provides any implementation of the part of Rijndael that isn't AES.
    */
   private static final String ALGORITHM = "AES";
+  private static final String HASH_ALGORITHM = "SHA-384";
   @SuppressWarnings("HardcodedFileSeparator") private static final String ALGORITHM_MODE =
       ALGORITHM + "/ECB/NoPadding";
   // WARNING: Don't initialize any instance fields at declaration; they may be initialized too late!
@@ -93,23 +94,25 @@ public class AesCounterRandom extends CipherCounterRandom {
   }
 
   private static final int BYTES_AT_ONCE = COUNTER_SIZE_BYTES * BLOCKS_AT_ONCE;
-  private static final String HASH_ALGORITHM = "SHA-256";
   /**
    * Maximum total length of the seed, including both key and initial counter value.
    */
   public static final int MAX_SEED_LENGTH_BYTES;
-  @SuppressWarnings("CanBeFinal") private static int MAX_KEY_LENGTH_BYTES = 0;
+  private static final int MAX_KEY_LENGTH_BYTES;
 
   static {
     try {
-      MAX_KEY_LENGTH_BYTES = Cipher.getMaxAllowedKeyLength(ALGORITHM_MODE) / 8;
+      final int allowedKeyLengthBits = Cipher.getMaxAllowedKeyLength(ALGORITHM_MODE);
+      final int allowedKeyLengthBytes = allowedKeyLengthBits / 8;
+      MAX_KEY_LENGTH_BYTES = Math.min(allowedKeyLengthBytes, 32);
+      if (allowedKeyLengthBits < Integer.MAX_VALUE) {
+        LoggerFactory.getLogger(AesCounterRandom.class)
+            .info("Maximum allowed key length for AES is {} bytes", MAX_KEY_LENGTH_BYTES);
+      }
+      MAX_SEED_LENGTH_BYTES = MAX_KEY_LENGTH_BYTES + COUNTER_SIZE_BYTES;
     } catch (final GeneralSecurityException e) {
       throw new InternalError(e.getMessage());
     }
-    LoggerFactory.getLogger(AesCounterRandom.class)
-        .info("Maximum allowed key length for AES is {} bytes", MAX_KEY_LENGTH_BYTES);
-    MAX_KEY_LENGTH_BYTES = Math.min(MAX_KEY_LENGTH_BYTES, 32);
-    MAX_SEED_LENGTH_BYTES = MAX_KEY_LENGTH_BYTES + COUNTER_SIZE_BYTES;
   }
 
   /**
@@ -136,7 +139,7 @@ public class AesCounterRandom extends CipherCounterRandom {
    * Seed the RNG using the {@link DefaultSeedGenerator} to create a seed of the specified size.
    *
    * @param seedSizeBytes The number of bytes to use for seed data. Valid values range from 16
-   *     to {@link #getMaxKeyLengthBytes()} + 16.
+   *     to {@link #MAX_SEED_LENGTH_BYTES}.
    * @throws SeedException if the {@link DefaultSeedGenerator} fails to generate a seed.
    */
   public AesCounterRandom(final int seedSizeBytes) throws SeedException {
@@ -147,7 +150,7 @@ public class AesCounterRandom extends CipherCounterRandom {
    * Creates an RNG and seeds it with the specified seed data.
    *
    * @param seed The seed data used to initialize the RNG. Length must be at least 16 and no
-   *     more than {@link #getMaxKeyLengthBytes()} + 16.
+   *     more than {@link #MAX_SEED_LENGTH_BYTES}.
    */
   public AesCounterRandom(final byte[] seed) {
     super(seed);

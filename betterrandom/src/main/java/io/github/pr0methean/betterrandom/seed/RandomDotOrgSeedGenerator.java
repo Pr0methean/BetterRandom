@@ -26,6 +26,7 @@ import java.net.MalformedURLException;
 import java.net.Proxy;
 import java.net.URL;
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.text.MessageFormat;
 import java.util.Calendar;
 import java.util.Date;
@@ -106,7 +107,7 @@ public enum RandomDotOrgSeedGenerator implements SeedGenerator {
   static final int MAX_REQUEST_SIZE = 10000;
   private static final int RETRY_DELAY_MS = 10000;
   private static final Lock lock = new ReentrantLock();
-  private static final Charset UTF8 = Charset.forName("UTF-8");
+  private static final Charset UTF8 = StandardCharsets.UTF_8;
   private static final TimeZone UTC = TimeZone.getTimeZone("UTC");
   private static volatile Calendar earliestNextAttempt = Calendar.getInstance(UTC);
   private static final URL JSON_REQUEST_URL;

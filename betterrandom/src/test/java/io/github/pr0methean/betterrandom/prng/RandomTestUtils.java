@@ -94,12 +94,12 @@ public enum RandomTestUtils {
       final double bound, final boolean checkEntropyCount) {
     final AtomicLong entropy = new AtomicLong(prng.getEntropyBits());
     final Stream<? extends Number> streamToUse =
-        (expectedCount < 0) ? stream.sequential().limit(20) : stream;
+        (expectedCount < 0) ? stream.sequential().limit(20) : stream.sequential();
     final long count = streamToUse.mapToLong(new ToLongFunction<Number>() {
       @Override public long applyAsLong(Number number) {
         TestUtils.assertGreaterOrEqual(number.doubleValue(), origin);
         TestUtils.assertLess(number.doubleValue(), bound);
-        if (checkEntropyCount && !(streamToUse.isParallel())) {
+        if (checkEntropyCount) {
           long newEntropy = prng.getEntropyBits();
           TestUtils.assertGreaterOrEqual(newEntropy,
               entropy.getAndSet(newEntropy) - maxEntropySpentPerNumber);
@@ -109,10 +109,6 @@ public enum RandomTestUtils {
     }).sum();
     if (expectedCount >= 0) {
       assertEquals(count, expectedCount);
-    }
-    if (checkEntropyCount && streamToUse.isParallel()) {
-      TestUtils.assertGreaterOrEqual(prng.getEntropyBits(),
-          entropy.get() - (maxEntropySpentPerNumber * count));
     }
   }
 

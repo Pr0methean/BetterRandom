@@ -208,34 +208,22 @@ public abstract class CipherCounterRandom extends BaseRandom implements Seekable
   @Override public void setSeed(final byte[] seed) {
     checkNotTooLong(seed);
     final byte[] key;
-    if (seed.length == getMaxKeyLengthBytes()) {
-      key = seed.clone();
-    } else {
-      lock.lock();
-      boolean weAreSeeded;
-      try {
-        weAreSeeded = seeded;
-      } finally {
-        lock.unlock();
-      }
-      if (weAreSeeded) {
-        // Extend the key
-        final byte[] newSeed = new byte[this.seed.length + seed.length];
-        System.arraycopy(this.seed, 0, newSeed, 0, this.seed.length);
-        System.arraycopy(seed, 0, newSeed, this.seed.length, seed.length);
-        final int keyLength = getKeyLength(newSeed.length);
-        if (newSeed.length > keyLength) {
-          final byte[] digest = hash.digest(newSeed);
-          key = digest.length > keyLength ? Arrays.copyOf(digest, keyLength) : digest;
-        } else {
-          key = newSeed;
-        }
-      } else {
-        key = seed.clone();
-      }
-    }
     lock.lock();
     try {
+      boolean weAreSeeded = seeded;
+      if (weAreSeeded) {
+        // Extend the key
+        hash.update(this.seed);
+        hash.update(this.counter);
+        final byte[] newSeed = hash.digest(seed);
+        int keyLength = getKeyLength(newSeed.length);
+        key = Arrays.copyOf(newSeed, keyLength);
+        System.arraycopy(newSeed, keyLength, counter, 0,
+            Math.min(newSeed.length - keyLength, counter.length));
+      } else {
+        int keyLength = getKeyLength(seed.length);
+        key = (keyLength == seed.length) ? seed : Arrays.copyOf(seed, keyLength);
+      }
       setSeedInternal(key);
       entropyBits.addAndGet(8L * (seed.length - key.length));
     } finally {

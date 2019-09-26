@@ -404,7 +404,7 @@ public abstract class BaseRandomTest extends PowerMockTestCase {
   }
 
   /**
-   * This also tests {@link BaseRandom#getRandomSeeder()} and
+   * When not overridden, this also tests {@link BaseRandom#getRandomSeeder()} and
    * {@link BaseRandom#setRandomSeeder(RandomSeederThread)}.
    */
   @SuppressWarnings("BusyWait") @Test(timeOut = 60_000, retryAnalyzer = FlakyRetryAnalyzer.class)

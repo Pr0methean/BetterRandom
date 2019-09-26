@@ -41,7 +41,7 @@ import org.testng.annotations.Test;
     exceptionHandlerRun.set(false);
   }
 
-  @Test public void testDefaultUncaughtExceptionHandler() throws InterruptedException {
+  @Test public void testDefaultUncaughtExceptionHandler() {
     final AtomicBoolean defaultHandlerCalled = new AtomicBoolean(false);
     final UncaughtExceptionHandler oldHandler = Thread.getDefaultUncaughtExceptionHandler();
     try {

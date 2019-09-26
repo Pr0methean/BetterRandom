@@ -9,6 +9,7 @@ import static io.github.pr0methean.betterrandom.seed.SeedTestUtils.testGenerator
 import static org.mockito.ArgumentMatchers.any;
 import static org.powermock.api.mockito.PowerMockito.spy;
 import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertNotNull;
 import static org.testng.Assert.assertTrue;
 
 import io.github.pr0methean.betterrandom.prng.concurrent.SplittableRandomAdapter;
@@ -17,6 +18,7 @@ import java.io.IOException;
 import java.net.Proxy;
 import java.net.URL;
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.UUID;
 import javax.annotation.Nullable;
@@ -43,7 +45,7 @@ import org.testng.annotations.Test;
 @Test(singleThreaded = true)
 public class RandomDotOrgSeedGeneratorHermeticTest extends PowerMockTestCase {
 
-  private static final Charset UTF8 = Charset.forName("UTF-8");
+  private static final Charset UTF8 = StandardCharsets.UTF_8;
   @SuppressWarnings("HardcodedFileSeparator") public static final byte[] RESPONSE_32_JSON =
       ("{\"jsonrpc\":\"2.0\",\"result\":{\"random\":{\"data\":" +
           "[\"gAlhFSSjLy+u5P/Cz92BH4R3NZ0+j8UHNeIR02CChoQ=\"]," +
@@ -179,6 +181,7 @@ public class RandomDotOrgSeedGeneratorHermeticTest extends PowerMockTestCase {
     RandomDotOrgSeedGenerator.setApiKey(null);
     try {
       testGenerator(RandomDotOrgSeedGenerator.RANDOM_DOT_ORG_SEED_GENERATOR, false);
+      assertNotNull(address);
       assertTrue(address.startsWith("https://www.random.org/integers"));
       assertEquals(proxy, RandomDotOrgSeedGenerator.proxy.get());
     } finally {
@@ -192,6 +195,7 @@ public class RandomDotOrgSeedGeneratorHermeticTest extends PowerMockTestCase {
     mockRandomDotOrgResponse(RESPONSE_625_JSON);
     try {
       testGenerator(RandomDotOrgSeedGenerator.RANDOM_DOT_ORG_SEED_GENERATOR, false);
+      assertNotNull(address);
       assertTrue(address.startsWith("https://api.random.org/json-rpc/2/invoke"));
       assertEquals(proxy, RandomDotOrgSeedGenerator.proxy.get());
     } finally {

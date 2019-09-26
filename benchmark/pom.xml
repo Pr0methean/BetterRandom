@@ -218,29 +218,4 @@ THE POSSIBILITY OF SUCH DAMAGE.
       </plugins>
     </pluginManagement>
   </build>
-
-  <profiles>
-    <profile>
-      <id>android</id>
-      <repositories>
-        <repository>
-          <id>google</id>
-          <name>Google Maven repository</name>
-          <url>https://maven.google.com</url>
-        </repository>
-      </repositories>
-      <properties>
-        <packaging>aar</packaging>
-      </properties>
-      <dependencies>
-        <dependency>
-          <groupId>com.google.android.gms</groupId>
-          <artifactId>play-services</artifactId>
-          <version>4.4.52</version>
-          <type>aar</type>
-        </dependency>
-      </dependencies>
-    </profile>
-  </profiles>
-
 </project>
