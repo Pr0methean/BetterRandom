@@ -31,7 +31,6 @@ public abstract class CipherCounterRandom extends BaseRandom implements Seekable
   protected final byte[] currentBlock;
   protected volatile byte[] counter;
   protected volatile int index;
-  protected transient byte[] addendDigits;
   private volatile byte[] counterInput;
   private volatile boolean seeded;
   private transient MessageDigest hash;
@@ -82,7 +81,7 @@ public abstract class CipherCounterRandom extends BaseRandom implements Seekable
         blocksDelta--;
       }
       blocksDelta -= getBlocksAtOnce(); // Compensate for the increment during nextBlock() below
-      Byte16ArrayArithmetic.addInto(counter, blocksDelta, addendDigits);
+      Byte16ArrayArithmetic.addInto(counter, blocksDelta, new byte[getCounterSizeBytes()]);
       nextBlock();
       index = newIndex;
     } finally {
@@ -126,7 +125,6 @@ public abstract class CipherCounterRandom extends BaseRandom implements Seekable
 
   @Override protected void initTransientFields() {
     super.initTransientFields();
-    addendDigits = new byte[getCounterSizeBytes()];
     if (counter == null) {
       counter = new byte[getCounterSizeBytes()];
     }
