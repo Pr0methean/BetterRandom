@@ -26,11 +26,38 @@ public class EntropyBlockingRandomWrapper extends RandomWrapper {
     this.minimumEntropy = minimumEntropy;
   }
 
-  public SeedGenerator getSameThreadSeedGen() {
+  public EntropyBlockingRandomWrapper(byte[] seed, long minimumEntropy,
+      @Nullable SeedGenerator sameThreadSeedGen) {
+    super(seed);
+    this.minimumEntropy = minimumEntropy;
+    this.sameThreadSeedGen = new AtomicReference<>(sameThreadSeedGen);
+  }
+
+  public EntropyBlockingRandomWrapper(long seed, long minimumEntropy,
+      @Nullable SeedGenerator sameThreadSeedGen) {
+    super(seed);
+    this.minimumEntropy = minimumEntropy;
+    this.sameThreadSeedGen = new AtomicReference<>(sameThreadSeedGen);
+  }
+
+  public EntropyBlockingRandomWrapper(Random wrapped, long minimumEntropy,
+      @Nullable SeedGenerator sameThreadSeedGen) {
+    super(wrapped);
+    this.minimumEntropy = minimumEntropy;
+    this.sameThreadSeedGen = new AtomicReference<>(sameThreadSeedGen);
+  }
+
+  public EntropyBlockingRandomWrapper(long minimumEntropy,
+      @Nullable SeedGenerator sameThreadSeedGen) {
+    this.minimumEntropy = minimumEntropy;
+    this.sameThreadSeedGen = new AtomicReference<>(sameThreadSeedGen);
+  }
+
+  @Nullable public SeedGenerator getSameThreadSeedGen() {
     return sameThreadSeedGen.get();
   }
 
-  public void setSameThreadSeedGen(SeedGenerator newSeedGen) {
+  public void setSameThreadSeedGen(@Nullable SeedGenerator newSeedGen) {
     if (sameThreadSeedGen.getAndSet(newSeedGen) != newSeedGen) {
       onSeedingStateChanged();
     }
@@ -39,7 +66,9 @@ public class EntropyBlockingRandomWrapper extends RandomWrapper {
   private void onSeedingStateChanged() {
     lock.lock();
     try {
-      seedingStatusChanged.signalAll();
+      if (seedingStatusChanged != null) {
+        seedingStatusChanged.signalAll();
+      }
     } finally {
       lock.unlock();
     }
@@ -52,7 +81,6 @@ public class EntropyBlockingRandomWrapper extends RandomWrapper {
 
   @Override public void setRandomSeeder(@Nullable RandomSeederThread randomSeeder) {
     super.setRandomSeeder(randomSeeder);
-    sameThreadSeedGen.compareAndSet(null, randomSeeder.getSeedGenerator());
     onSeedingStateChanged();
   }
 
@@ -113,32 +141,5 @@ public class EntropyBlockingRandomWrapper extends RandomWrapper {
         }
       }
     }
-  }
-
-  public EntropyBlockingRandomWrapper(byte[] seed, long minimumEntropy,
-      @Nullable SeedGenerator sameThreadSeedGen) {
-    super(seed);
-    this.minimumEntropy = minimumEntropy;
-    this.sameThreadSeedGen = new AtomicReference<>(sameThreadSeedGen);
-  }
-
-  public EntropyBlockingRandomWrapper(long seed, long minimumEntropy,
-      @Nullable SeedGenerator sameThreadSeedGen) {
-    super(seed);
-    this.minimumEntropy = minimumEntropy;
-    this.sameThreadSeedGen = new AtomicReference<>(sameThreadSeedGen);
-  }
-
-  public EntropyBlockingRandomWrapper(Random wrapped, long minimumEntropy,
-      @Nullable SeedGenerator sameThreadSeedGen) {
-    super(wrapped);
-    this.minimumEntropy = minimumEntropy;
-    this.sameThreadSeedGen = new AtomicReference<>(sameThreadSeedGen);
-  }
-
-  public EntropyBlockingRandomWrapper(long minimumEntropy,
-      @Nullable SeedGenerator sameThreadSeedGen) {
-    this.minimumEntropy = minimumEntropy;
-    this.sameThreadSeedGen = new AtomicReference<>(sameThreadSeedGen);
   }
 }

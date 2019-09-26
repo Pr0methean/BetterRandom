@@ -20,7 +20,6 @@ import java.lang.reflect.Modifier;
 import java.lang.reflect.Parameter;
 import java.util.Arrays;
 import java.util.Map;
-import java.util.function.Consumer;
 import org.mockito.Mockito;
 import org.testng.annotations.Test;
 
@@ -78,7 +77,8 @@ public class EntropyBlockingRandomWrapperTest extends RandomWrapperRandomTest {
   }
 
   @Test public void testManualReseeding() {
-    EntropyBlockingRandomWrapper random = new EntropyBlockingRandomWrapper(null, 0L);
+    EntropyBlockingRandomWrapper random = new EntropyBlockingRandomWrapper(
+        getTestSeedGenerator().generateSeed(8), 0L, null);
     random.nextInt();
     random.setSeed(getTestSeedGenerator().generateSeed(8));
     random.nextInt();
@@ -88,7 +88,7 @@ public class EntropyBlockingRandomWrapperTest extends RandomWrapperRandomTest {
     } catch (IllegalStateException expected) {}
   }
 
-  @Test public void testRandomSeederThreadUsedFirst() {
+  @Test(timeOut = 10_000L) public void testRandomSeederThreadUsedFirst() {
     SeedGenerator seederSeedGen = Mockito.spy(getTestSeedGenerator());
     RandomSeederThread seeder = new RandomSeederThread(seederSeedGen);
     SeedGenerator sameThreadSeedGen
@@ -109,8 +109,8 @@ public class EntropyBlockingRandomWrapperTest extends RandomWrapperRandomTest {
     }
   }
 
-  @Test public void testFallbackFromRandomSeederThread() {
-    SeedGenerator failingSeedGen = Mockito.spy(FailingSeedGenerator.FAILING_SEED_GENERATOR);
+  @Test(timeOut = 10_000L) public void testFallbackFromRandomSeederThread() {
+    SeedGenerator failingSeedGen = Mockito.spy(FailingSeedGenerator.DEFAULT_INSTANCE);
     RandomSeederThread seeder = new RandomSeederThread(failingSeedGen);
     SeedGenerator sameThreadSeedGen
         = Mockito.spy(new SemiFakeSeedGenerator(new SplittableRandomAdapter()));
