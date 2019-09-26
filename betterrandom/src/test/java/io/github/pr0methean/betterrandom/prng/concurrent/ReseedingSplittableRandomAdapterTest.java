@@ -14,6 +14,7 @@ import io.github.pr0methean.betterrandom.seed.FakeSeedGenerator;
 import io.github.pr0methean.betterrandom.seed.RandomSeederThread;
 import io.github.pr0methean.betterrandom.seed.SeedException;
 import io.github.pr0methean.betterrandom.seed.SeedGenerator;
+import io.github.pr0methean.betterrandom.seed.SemiFakeSeedGenerator;
 import io.github.pr0methean.betterrandom.util.BinaryUtils;
 import org.testng.annotations.AfterTest;
 import org.testng.annotations.BeforeTest;
@@ -77,7 +78,7 @@ import org.testng.annotations.Test;
       final BaseSplittableRandomAdapter clone = SerializableTester.reserialize(adapter);
       assertSame(adapter, clone);
     } finally {
-      thread.stopIfEmpty();
+      thread.shutDown();
     }
   }
 
@@ -93,12 +94,17 @@ import org.testng.annotations.Test;
     // No-op.
   }
 
-  @SuppressWarnings("BusyWait") @Override @Test(retryAnalyzer = FlakyRetryAnalyzer.class)
+  @SuppressWarnings("BusyWait") @Override @Test
   public void testReseeding() {
-    SeedGenerator generator = new FakeSeedGenerator("testReseeding");
-    ReseedingSplittableRandomAdapter random = ReseedingSplittableRandomAdapter.getInstance(
-        new RandomSeederThread(generator), generator);
-    RandomTestUtils.testReseeding(generator, random, false);
+    SeedGenerator generator = new SemiFakeSeedGenerator(new SplittableRandomAdapter(), "testReseeding");
+    RandomSeederThread seeder = new RandomSeederThread(generator);
+    try {
+      ReseedingSplittableRandomAdapter random =
+          ReseedingSplittableRandomAdapter.getInstance(seeder, generator);
+      RandomTestUtils.testReseeding(generator, random, false);
+    } finally {
+      seeder.shutDown();
+    }
   }
 
   /**
@@ -168,10 +174,10 @@ import org.testng.annotations.Test;
             ReseedingSplittableRandomAdapter.getInstance(otherThread, getTestSeedGenerator())
                 .dump(), baseInstance.dump());
       } finally {
-        otherThread.stopIfEmpty();
+        otherThread.shutDown();
       }
     } finally {
-      thread.stopIfEmpty();
+      thread.shutDown();
     }
   }
 

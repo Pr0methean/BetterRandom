@@ -7,7 +7,7 @@ import java.util.concurrent.atomic.AtomicLong;
 public class FakeSeedGenerator implements SeedGenerator {
 
   private static final long serialVersionUID = 2310664903337315190L;
-  private final String name;
+  protected final String name;
 
   private final AtomicLong calls = new AtomicLong(0);
   private final AtomicBoolean throwException = new AtomicBoolean(false);
