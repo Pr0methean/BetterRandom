@@ -15,8 +15,6 @@ import javax.annotation.Nullable;
 public class EntropyBlockingRandomWrapper extends RandomWrapper {
   private final long minimumEntropy;
   private final Condition seedingStatusChanged = lock.newCondition();
-  private final long maxOutputAtOnce;
-  private static final double DOUBLE_ULP = 1.0 / ENTROPY_OF_DOUBLE;
 
   /** Used on the calling thread when there isn't a working RandomSeederThread. */
   private final AtomicReference<SeedGenerator> sameThreadSeedGen;
@@ -26,7 +24,14 @@ public class EntropyBlockingRandomWrapper extends RandomWrapper {
     super(seedGenerator);
     sameThreadSeedGen = new AtomicReference<>(seedGenerator);
     this.minimumEntropy = minimumEntropy;
-    maxOutputAtOnce = getNewSeedLength() - minimumEntropy;
+    checkMaxOutputAtOnce();
+  }
+
+  private void checkMaxOutputAtOnce() {
+    long result = getNewSeedLength() - minimumEntropy;
+    if (result < Long.SIZE) {
+      throw new IllegalArgumentException("Need to be able to output 64 bits at once");
+    }
   }
 
   public EntropyBlockingRandomWrapper(byte[] seed, long minimumEntropy,
@@ -34,7 +39,7 @@ public class EntropyBlockingRandomWrapper extends RandomWrapper {
     super(seed);
     this.minimumEntropy = minimumEntropy;
     this.sameThreadSeedGen = new AtomicReference<>(sameThreadSeedGen);
-    maxOutputAtOnce = getNewSeedLength() - minimumEntropy;
+    checkMaxOutputAtOnce();
   }
 
   public EntropyBlockingRandomWrapper(long seed, long minimumEntropy,
@@ -42,7 +47,7 @@ public class EntropyBlockingRandomWrapper extends RandomWrapper {
     super(seed);
     this.minimumEntropy = minimumEntropy;
     this.sameThreadSeedGen = new AtomicReference<>(sameThreadSeedGen);
-    maxOutputAtOnce = getNewSeedLength() - minimumEntropy;
+    checkMaxOutputAtOnce();
   }
 
   public EntropyBlockingRandomWrapper(Random wrapped, long minimumEntropy,
@@ -50,7 +55,7 @@ public class EntropyBlockingRandomWrapper extends RandomWrapper {
     super(wrapped);
     this.minimumEntropy = minimumEntropy;
     this.sameThreadSeedGen = new AtomicReference<>(sameThreadSeedGen);
-    maxOutputAtOnce = getNewSeedLength() - minimumEntropy;
+    checkMaxOutputAtOnce();
   }
 
   @Nullable public SeedGenerator getSameThreadSeedGen() {
@@ -87,16 +92,6 @@ public class EntropyBlockingRandomWrapper extends RandomWrapper {
       lock.unlock();
     }
     onSeedingStateChanged();
-  }
-
-  @Override public long nextLong() {
-    return ((long) getWrapped().nextInt()) << 32L | getWrapped().nextInt();
-  }
-
-  @Override public double nextDoubleNoEntropyDebit() {
-    // Based on Apache Harmony's java.util.Random
-    // https://github.com/apache/harmony/blob/02970cb7227a335edd2c8457ebdde0195a735733/classlib/modules/luni/src/main/java/java/util/Random.java#L140
-    return (((long)(nextInt(1 << 27)) << 26) + nextInt(1 << 26)) * DOUBLE_ULP;
   }
 
   @Override protected void debitEntropy(long bits) {
