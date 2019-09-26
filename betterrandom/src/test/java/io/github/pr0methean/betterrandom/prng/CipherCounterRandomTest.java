@@ -101,8 +101,8 @@ public abstract class CipherCounterRandomTest extends SeekableRandomTest {
   @Override public void testInitialEntropy() {
     int seedSize = getNewSeedLength(createRng());
     byte[] seed = getTestSeedGenerator().generateSeed(seedSize);
-    CipherCounterRandom random = (CipherCounterRandom) createRng(seed);
-    assertEquals(random.getEntropyBits(), random.getMaxKeyLengthBytes(), "Wrong initial entropy");
+    BaseRandom random = createRng(seed);
+    assertEquals(random.getEntropyBits(), seedSizeBytes * 8, "Wrong initial entropy");
   }
 
   @Override protected abstract BaseRandom createRng() throws SeedException;
