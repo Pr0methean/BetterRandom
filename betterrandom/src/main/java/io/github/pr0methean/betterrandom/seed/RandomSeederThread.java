@@ -261,17 +261,24 @@ public final class RandomSeederThread extends LooperThread {
   private void clear() {
     lock.lock();
     try {
-      for (final ByteArrayReseedableRandom random : byteArrayPrngs) {
-        if (random instanceof BaseRandom) {
-          ((BaseRandom) random).setRandomSeeder(null);
-        }
-      }
+      unregisterWithAll(byteArrayPrngs);
       byteArrayPrngs.clear();
       byteArrayPrngsThisIteration.clear();
+      unregisterWithAll(otherPrngs);
       otherPrngs.clear();
       otherPrngsThisIteration.clear();
     } finally {
       lock.unlock();
+    }
+  }
+
+  private void unregisterWithAll(Set<?> randoms) {
+    for (final Object random : randoms) {
+      if (random instanceof BaseRandom) {
+        try {
+          ((BaseRandom) random).setRandomSeeder(null);
+        } catch (UnsupportedOperationException ignored) {}
+      }
     }
   }
 
@@ -297,7 +304,7 @@ public final class RandomSeederThread extends LooperThread {
     try {
       if (isEmpty()) {
         getLogger().info("Stopping empty RandomSeederThread for {}", seedGenerator);
-        shutDown();
+        interrupt();
       }
     } finally {
       lock.unlock();

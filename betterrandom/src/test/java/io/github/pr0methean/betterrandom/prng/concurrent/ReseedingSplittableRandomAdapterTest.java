@@ -57,7 +57,7 @@ import org.testng.annotations.Test;
 
   @Override public void testInitialEntropy() {
     // This test needs a separate instance from all other tests, but createRng() doesn't provide one
-    RandomSeederThread newThread = new RandomSeederThread(getTestSeedGenerator());
+    RandomSeederThread newThread = new RandomSeederThread(new FakeSeedGenerator("testInitialEntropy"));
     ReseedingSplittableRandomAdapter random
         = ReseedingSplittableRandomAdapter.getInstance(newThread, getTestSeedGenerator());
     assertEquals(random.getEntropyBits(), Long.SIZE, "Wrong initial entropy");
@@ -95,7 +95,10 @@ import org.testng.annotations.Test;
 
   @SuppressWarnings("BusyWait") @Override @Test(retryAnalyzer = FlakyRetryAnalyzer.class)
   public void testReseeding() {
-    RandomTestUtils.testReseeding(getTestSeedGenerator(), createRng(), false);
+    SeedGenerator generator = new FakeSeedGenerator("testReseeding");
+    ReseedingSplittableRandomAdapter random = ReseedingSplittableRandomAdapter.getInstance(
+        new RandomSeederThread(generator), generator);
+    RandomTestUtils.testReseeding(generator, random, false);
   }
 
   /**
