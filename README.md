@@ -1,5 +1,4 @@
 # More randomness. Less time. Still an instance of java.util.Random.
-[![Lifted on Tidelift!](https://tidelift.com/badges/package/maven/io.github.pr0methean.betterrandom:BetterRandom)](https://tidelift.com/subscription/pkg/maven-io-github-pr0methean-betterrandom-betterrandom-java7?utm_source=maven-io-github-pr0methean-betterrandom-betterrandom-java7&utm_medium=referral&utm_campaign=readme)
 [![Build Status](https://dev.azure.com/polymorpheus/BetterRandom/_apis/build/status/BetterRandom-CI?branchName=master)](https://dev.azure.com/polymorpheus/BetterRandom/_build/latest?definitionId=2&branchName=java7)
 [![Maven Central](https://maven-badges.herokuapp.com/maven-central/io.github.pr0methean.betterrandom/BetterRandom/badge.svg)](https://search.maven.org/#search%7Cgav%7C1%7Cg%3A%22io.github.pr0methean.betterrandom%22%20AND%20a%3A%22BetterRandom%22)
 [![Coverage](https://codecov.io/gh/Pr0methean/BetterRandom/branch/master/graph/badge.svg)](https://codecov.io/gh/Pr0methean/BetterRandom)
@@ -8,6 +7,8 @@
 [![BCH compliance](https://bettercodehub.com/edge/badge/Pr0methean/BetterRandom?branch=master)](https://bettercodehub.com/)
 [![Dependabot Status](https://api.dependabot.com/badges/status?host=github&repo=Pr0methean/BetterRandom)](https://dependabot.com)
 [![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2FPr0methean%2FBetterRandom.svg?type=shield)](https://app.fossa.io/projects/git%2Bgithub.com%2FPr0methean%2FBetterRandom?ref=badge_shield)
+[![Lifted on Tidelift!](https://tidelift.com/badges/package/maven/io.github.pr0methean.betterrandom:BetterRandom)](https://tidelift.com/subscription/pkg/maven-io-github-pr0methean-betterrandom-betterrandom-java7?utm_source=maven-io-github-pr0methean-betterrandom-betterrandom-java7&utm_medium=referral&utm_campaign=readme)
+[![Buy me a Coffee!](https://bmc-cdn.nyc3.digitaloceanspaces.com/BMC-button-images/custom_images/yellow_img.png)](https://www.buymeacoffee.com/IMypBXw)
 
 BetterRandom is a library that helps you get the best performance and the best pseudorandomness from
 your pseudorandom-number generators (PRNGs) and their seed sources. With it, you can:
