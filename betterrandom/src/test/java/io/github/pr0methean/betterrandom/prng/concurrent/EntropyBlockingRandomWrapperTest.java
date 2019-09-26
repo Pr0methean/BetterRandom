@@ -21,12 +21,12 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Modifier;
 import java.lang.reflect.Parameter;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.Map;
 import java.util.UUID;
 import org.mockito.Mockito;
 import org.testng.annotations.Test;
 
+@Test(testName = "EntropyBlockingRandomWrapper")
 public class EntropyBlockingRandomWrapperTest extends RandomWrapperRandomTest {
   private static final long DEFAULT_MAX_ENTROPY = -1000L;
 
@@ -89,6 +89,11 @@ public class EntropyBlockingRandomWrapperTest extends RandomWrapperRandomTest {
 
   @Override protected RandomWrapper createRng() throws SeedException {
     return new EntropyBlockingRandomWrapper(DEFAULT_MAX_ENTROPY, getTestSeedGenerator());
+  }
+
+  // FIXME: Too slow!
+  @Override @Test(timeOut = 120_000L) public void testRandomSeederThreadIntegration() {
+    super.testRandomSeederThreadIntegration();
   }
 
   @Override protected RandomWrapper createRng(byte[] seed) throws SeedException {
