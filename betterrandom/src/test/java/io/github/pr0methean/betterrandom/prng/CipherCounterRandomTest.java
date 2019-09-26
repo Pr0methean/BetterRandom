@@ -1,5 +1,6 @@
 package io.github.pr0methean.betterrandom.prng;
 
+import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertFalse;
 import static org.testng.Assert.assertTrue;
 
@@ -95,6 +96,13 @@ public abstract class CipherCounterRandomTest extends SeekableRandomTest {
     assert max >= 16 : "Should allow a 16-byte key";
     assert max <= getExpectedMaxSize() :
         "Shouldn't allow a key longer than " + getExpectedMaxSize() + "bytes";
+  }
+
+  @Override public void testInitialEntropy() {
+    int seedSize = getNewSeedLength(createRng());
+    byte[] seed = getTestSeedGenerator().generateSeed(seedSize);
+    CipherCounterRandom random = (CipherCounterRandom) createRng(seed);
+    assertEquals(random.getEntropyBits(), random.getMaxKeyLengthBytes(), "Wrong initial entropy");
   }
 
   @Override protected abstract BaseRandom createRng() throws SeedException;
