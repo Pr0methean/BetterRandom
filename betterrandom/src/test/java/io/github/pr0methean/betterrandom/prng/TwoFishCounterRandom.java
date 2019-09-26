@@ -66,34 +66,6 @@ public class TwoFishCounterRandom extends CipherCounterRandom {
         .add("cipher", cipher).add("index", index);
   }
 
-  // FIXME
-  @Override public void advance(final long delta) {
-    if (delta == 0) {
-      return;
-    }
-    final long intsPerBlock = getCounterSizeBytes() / Integer.BYTES;
-    long blocksDelta = delta / intsPerBlock;
-    final int deltaWithinBlock = (int) (delta % intsPerBlock) * Integer.BYTES;
-    lock.lock();
-    try {
-      int newIndex = index + deltaWithinBlock;
-      if (newIndex >= getCounterSizeBytes()) {
-        newIndex -= getCounterSizeBytes();
-        blocksDelta++;
-      }
-      if (newIndex < 0) {
-        newIndex += getCounterSizeBytes();
-        blocksDelta--;
-      }
-      blocksDelta -= getBlocksAtOnce(); // Compensate for the increment during nextBlock() below
-      Byte16ArrayArithmetic.addInto(counter, blocksDelta, addendDigits);
-      nextBlock();
-      index = newIndex;
-    } finally {
-      lock.unlock();
-    }
-  }
-
   @Override protected void doCipher(byte[] input, byte[] output) {
     cipher.reset();
     cipher.processBlock(input, 0, output, 0);

@@ -66,22 +66,23 @@ public abstract class CipherCounterRandom extends BaseRandom implements Seekable
     if (delta == 0) {
       return;
     }
-    final long intsPerBlock = getCounterSizeBytes() / Integer.BYTES;
+    int counterSizeBytes = getCounterSizeBytes();
+    final long intsPerBlock = counterSizeBytes / Integer.BYTES;
     long blocksDelta = delta / intsPerBlock;
     final int deltaWithinBlock = (int) (delta % intsPerBlock) * Integer.BYTES;
     lock.lock();
     try {
       int newIndex = index + deltaWithinBlock;
-      if (newIndex >= getCounterSizeBytes()) {
-        newIndex -= getCounterSizeBytes();
+      if (newIndex >= counterSizeBytes) {
+        newIndex -= counterSizeBytes;
         blocksDelta++;
       }
       if (newIndex < 0) {
-        newIndex += getCounterSizeBytes();
+        newIndex += counterSizeBytes;
         blocksDelta--;
       }
       blocksDelta -= getBlocksAtOnce(); // Compensate for the increment during nextBlock() below
-      Byte16ArrayArithmetic.addInto(counter, blocksDelta, new byte[getCounterSizeBytes()]);
+      Byte16ArrayArithmetic.addInto(counter, blocksDelta, new byte[counterSizeBytes]);
       nextBlock();
       index = newIndex;
     } finally {
