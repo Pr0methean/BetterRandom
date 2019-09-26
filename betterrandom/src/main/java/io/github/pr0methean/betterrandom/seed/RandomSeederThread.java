@@ -121,6 +121,14 @@ public final class RandomSeederThread extends LooperThread {
     return 31 * seedGenerator.hashCode() + factory.hashCode();
   }
 
+  /**
+   * Returns the seed generator this RandomSeederThread is using.
+   * @return the seed generator
+   */
+  public SeedGenerator getSeedGenerator() {
+    return seedGenerator;
+  }
+
   public static class DefaultThreadFactory implements ThreadFactory, Serializable {
 
     private static final long serialVersionUID = -5806852086706570346L;
