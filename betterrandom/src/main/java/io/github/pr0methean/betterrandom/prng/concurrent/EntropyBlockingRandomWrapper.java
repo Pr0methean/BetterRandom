@@ -99,7 +99,9 @@ public class EntropyBlockingRandomWrapper extends RandomWrapper {
       SeedGenerator seedGenerator;
       lock.lock();
       try {
-        if (randomSeeder.get() != null) {
+        RandomSeederThread seeder = randomSeeder.get();
+        if (seeder != null) {
+          seeder.wakeUp();
           seedingStatusChanged.await();
           continue;
         }
