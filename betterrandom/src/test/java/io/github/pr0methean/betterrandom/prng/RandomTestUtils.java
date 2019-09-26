@@ -258,11 +258,10 @@ public enum RandomTestUtils {
       rng.setRandomSeeder(seeder);
     }
     try {
-      while (rng.getEntropyBits() > 0) {
-        rng.nextLong();
-        assertTrue(Arrays.equals(oldSeed, oldSeedClone),
-            "Array modified after being returned by getSeed()");
-      }
+      int bytesToDrain = (int) ((rng.getEntropyBits() / 8) + 1);
+      rng.nextBytes(new byte[bytesToDrain]);
+      assertTrue(Arrays.equals(oldSeed, oldSeedClone),
+          "Array modified after being returned by getSeed()");
       int waits = 0;
       byte[] secondSeed;
       do {
