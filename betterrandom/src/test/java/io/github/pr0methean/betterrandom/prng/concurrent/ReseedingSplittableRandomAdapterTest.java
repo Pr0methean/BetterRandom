@@ -1,6 +1,7 @@
 package io.github.pr0methean.betterrandom.prng.concurrent;
 
 import static io.github.pr0methean.betterrandom.seed.SecureRandomSeedGenerator.SECURE_RANDOM_SEED_GENERATOR;
+import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotEquals;
 import static org.testng.Assert.assertSame;
 
@@ -43,9 +44,23 @@ import org.testng.annotations.Test;
     return ReseedingSplittableRandomAdapter.getInstance(thread, getTestSeedGenerator());
   }
 
+  @Override protected BaseRandom createRng(byte[] seed) throws SeedException {
+    ReseedingSplittableRandomAdapter out = createRng();
+    out.setSeed(seed);
+    return out;
+  }
+
   // FIXME: Why does this need more time than other PRNGs?!
   @Test(timeOut = 120_000) @Override public void testDistribution() throws SeedException {
     super.testDistribution();
+  }
+
+  @Override public void testInitialEntropy() {
+    // This test needs a separate instance from all other tests, but createRng() doesn't provide one
+    RandomSeederThread newThread = new RandomSeederThread(getTestSeedGenerator());
+    ReseedingSplittableRandomAdapter random
+        = ReseedingSplittableRandomAdapter.getInstance(newThread, getTestSeedGenerator());
+    assertEquals(random.getEntropyBits(), Long.SIZE, "Wrong initial entropy");
   }
 
   // FIXME: Why does this need more time than other PRNGs?!
