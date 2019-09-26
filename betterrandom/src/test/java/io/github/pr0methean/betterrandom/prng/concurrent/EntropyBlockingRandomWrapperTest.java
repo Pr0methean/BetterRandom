@@ -7,6 +7,7 @@ import static org.testng.Assert.assertNull;
 import static org.testng.Assert.assertSame;
 import static org.testng.Assert.fail;
 
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import io.github.pr0methean.betterrandom.prng.BaseRandom;
 import io.github.pr0methean.betterrandom.seed.FailingSeedGenerator;
@@ -19,6 +20,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Modifier;
 import java.lang.reflect.Parameter;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Map;
 import org.mockito.Mockito;
 import org.testng.annotations.Test;
@@ -62,18 +64,31 @@ public class EntropyBlockingRandomWrapperTest extends RandomWrapperRandomTest {
 
   @Test public void testGetSameThreadSeedGen() {
     SeedGenerator seedGen = getTestSeedGenerator();
-    EntropyBlockingRandomWrapper random = new EntropyBlockingRandomWrapper(seedGen, 0L);
+    EntropyBlockingRandomWrapper random = new EntropyBlockingRandomWrapper(0L, seedGen);
     assertSame(random.getSameThreadSeedGen(), seedGen);
   }
 
   @Override @Test public void testReseeding() {
     // TODO
     SeedGenerator seedGen = Mockito.spy(getTestSeedGenerator());
-    EntropyBlockingRandomWrapper random = new EntropyBlockingRandomWrapper(seedGen, 0L);
+    EntropyBlockingRandomWrapper random = new EntropyBlockingRandomWrapper(0L, seedGen);
     assertNull(random.getRandomSeeder());
     random.nextLong();
     Mockito.verify(seedGen, Mockito.atLeastOnce()).generateSeed(any(byte[].class));
     Mockito.verify(seedGen, Mockito.atMost(2)).generateSeed(any(byte[].class));
+  }
+
+  @Override protected RandomWrapper createRng() throws SeedException {
+    return new EntropyBlockingRandomWrapper(DEFAULT_MAX_ENTROPY, getTestSeedGenerator());
+  }
+
+  @Override protected RandomWrapper createRng(byte[] seed) throws SeedException {
+    return new EntropyBlockingRandomWrapper(seed, DEFAULT_MAX_ENTROPY, getTestSeedGenerator());
+  }
+
+  @Override public void testThreadSafety() {
+    testThreadSafetyVsCrashesOnly(30,
+        ImmutableList.of(NEXT_LONG, NEXT_INT, NEXT_DOUBLE, NEXT_GAUSSIAN, SET_WRAPPED));
   }
 
   @Test public void testManualReseeding() {
@@ -93,7 +108,7 @@ public class EntropyBlockingRandomWrapperTest extends RandomWrapperRandomTest {
     RandomSeederThread seeder = new RandomSeederThread(seederSeedGen);
     SeedGenerator sameThreadSeedGen
         = Mockito.spy(new SemiFakeSeedGenerator(new SplittableRandomAdapter()));
-    EntropyBlockingRandomWrapper random = new EntropyBlockingRandomWrapper(sameThreadSeedGen, 0L);
+    EntropyBlockingRandomWrapper random = new EntropyBlockingRandomWrapper(0L, sameThreadSeedGen);
     random.setRandomSeeder(seeder);
     try {
       assertEquals(random.getSameThreadSeedGen(), sameThreadSeedGen,
@@ -114,7 +129,7 @@ public class EntropyBlockingRandomWrapperTest extends RandomWrapperRandomTest {
     RandomSeederThread seeder = new RandomSeederThread(failingSeedGen);
     SeedGenerator sameThreadSeedGen
         = Mockito.spy(new SemiFakeSeedGenerator(new SplittableRandomAdapter()));
-    EntropyBlockingRandomWrapper random = new EntropyBlockingRandomWrapper(sameThreadSeedGen, 0L);
+    EntropyBlockingRandomWrapper random = new EntropyBlockingRandomWrapper(0L, sameThreadSeedGen);
     random.setRandomSeeder(seeder);
     try {
       random.nextLong();
@@ -128,7 +143,7 @@ public class EntropyBlockingRandomWrapperTest extends RandomWrapperRandomTest {
 
   @Test public void testSetSameThreadSeedGen() {
     SeedGenerator seedGen = Mockito.spy(getTestSeedGenerator());
-    EntropyBlockingRandomWrapper random = new EntropyBlockingRandomWrapper(null, 0L);
+    EntropyBlockingRandomWrapper random = new EntropyBlockingRandomWrapper(0L, null);
     random.setSameThreadSeedGen(seedGen);
     assertSame(random.getSameThreadSeedGen(), seedGen);
     random.nextLong();

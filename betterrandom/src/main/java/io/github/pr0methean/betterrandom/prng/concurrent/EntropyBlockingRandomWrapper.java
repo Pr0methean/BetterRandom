@@ -19,7 +19,7 @@ public class EntropyBlockingRandomWrapper extends RandomWrapper {
   /** Used on the calling thread when there isn't a working RandomSeederThread. */
   private final AtomicReference<SeedGenerator> sameThreadSeedGen;
 
-  public EntropyBlockingRandomWrapper(SeedGenerator seedGenerator, long minimumEntropy)
+  public EntropyBlockingRandomWrapper(long minimumEntropy, SeedGenerator seedGenerator)
       throws SeedException {
     super(seedGenerator);
     sameThreadSeedGen = new AtomicReference<>(seedGenerator);
@@ -43,12 +43,6 @@ public class EntropyBlockingRandomWrapper extends RandomWrapper {
   public EntropyBlockingRandomWrapper(Random wrapped, long minimumEntropy,
       @Nullable SeedGenerator sameThreadSeedGen) {
     super(wrapped);
-    this.minimumEntropy = minimumEntropy;
-    this.sameThreadSeedGen = new AtomicReference<>(sameThreadSeedGen);
-  }
-
-  public EntropyBlockingRandomWrapper(long minimumEntropy,
-      @Nullable SeedGenerator sameThreadSeedGen) {
     this.minimumEntropy = minimumEntropy;
     this.sameThreadSeedGen = new AtomicReference<>(sameThreadSeedGen);
   }

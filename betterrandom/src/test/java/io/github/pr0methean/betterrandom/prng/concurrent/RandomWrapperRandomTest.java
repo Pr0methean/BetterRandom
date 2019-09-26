@@ -37,7 +37,7 @@ import org.testng.annotations.Test;
 @Test(testName = "RandomWrapper") public class RandomWrapperRandomTest
     extends AbstractLargeSeedRandomTest {
 
-  private static final NamedFunction<Random, Double> SET_WRAPPED = new NamedFunction<>(random -> {
+  protected static final NamedFunction<Random, Double> SET_WRAPPED = new NamedFunction<>(random -> {
     ((RandomWrapper) random).setWrapped(new Random());
     return 0.0;
   }, "setWrapped");
