@@ -80,12 +80,17 @@ public class EntropyBlockingRandomWrapper extends RandomWrapper {
   }
 
   @Override public void setRandomSeeder(@Nullable RandomSeederThread randomSeeder) {
-    super.setRandomSeeder(randomSeeder);
+    lock.lock();
+    try {
+      super.setRandomSeeder(randomSeeder);
+    } finally {
+      lock.unlock();
+    }
     onSeedingStateChanged();
   }
 
-  @Override protected long nextLongNoEntropyDebit() {
-    return ((long) nextInt()) << 32L | nextInt();
+  @Override public long nextLong() {
+    return ((long) getWrapped().nextInt()) << 32L | getWrapped().nextInt();
   }
 
   @Override public double nextDoubleNoEntropyDebit() {
@@ -96,37 +101,33 @@ public class EntropyBlockingRandomWrapper extends RandomWrapper {
 
   @Override protected void debitEntropy(long bits) {
     while (entropyBits.addAndGet(-bits) < minimumEntropy) {
-      if (randomSeeder.get() == null) {
-        SeedGenerator seedGenerator = sameThreadSeedGen.get();
-        if (seedGenerator == null) {
-          throw new IllegalStateException("Out of entropy and no way to reseed");
-        } else {
-          // Reseed on calling thread
-          lock.lock();
-          try {
-            int newSeedLength = getNewSeedLength();
-            byte[] newSeed;
-            if (seed.length == newSeedLength) {
-              newSeed = seed;
-            } else {
-              newSeed = new byte[newSeedLength];
-            }
-            seedGenerator.generateSeed(newSeed);
-            setSeed(newSeed);
-          } finally {
-            lock.unlock();
-          }
-        }
-      } else {
-        lock.lock();
-        try {
+      SeedGenerator seedGenerator;
+      lock.lock();
+      try {
+        if (randomSeeder.get() != null) {
           seedingStatusChanged.await();
-        } catch (InterruptedException e) {
-          Thread.currentThread().interrupt();
-          throw new RuntimeException(e);
-        } finally {
-          lock.unlock();
+          continue;
         }
+        seedGenerator = sameThreadSeedGen.get();
+      } catch (InterruptedException e) {
+        Thread.currentThread().interrupt();
+        throw new RuntimeException(e);
+      } finally {
+        lock.unlock();
+      }
+      if (seedGenerator == null) {
+        throw new IllegalStateException("Out of entropy and no way to reseed");
+      } else {
+        // Reseed on calling thread
+        int newSeedLength = getNewSeedLength();
+        byte[] newSeed;
+        if (seed.length == newSeedLength) {
+          newSeed = seed;
+        } else {
+          newSeed = new byte[newSeedLength];
+        }
+        seedGenerator.generateSeed(newSeed);
+        setSeed(newSeed);
       }
     }
   }
