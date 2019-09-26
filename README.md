@@ -1,6 +1,5 @@
 # More randomness. Less time. Still an instance of java.util.Random.
-[![Lifted on Tidelift!](https://tidelift.com/badges/package/maven/io.github.pr0methean.betterrandom:BetterRandom)](https://tidelift.com/subscription/pkg/maven-io-github-pr0methean-betterrandom-betterrandom?utm_source=maven-io-github-pr0methean-betterrandom-betterrandom&utm_medium=referral&utm_campaign=readme)
-[![Build Status](https://dev.azure.com/polymorpheus/BetterRandom/_apis/build/status/BetterRandom-CI?branchName=master)](https://dev.azure.com/polymorpheus/BetterRandom/_build/latest?definitionId=2&branchName=master)
+[![Build Status](https://dev.azure.com/polymorpheus/BetterRandom/_apis/build/status/BetterRandom-CI?branchName=master)](https://dev.azure.com/polymorpheus/BetterRandom/_build/latest?definitionId=2&branchName=java7)
 [![Maven Central](https://maven-badges.herokuapp.com/maven-central/io.github.pr0methean.betterrandom/BetterRandom/badge.svg)](https://search.maven.org/#search%7Cgav%7C1%7Cg%3A%22io.github.pr0methean.betterrandom%22%20AND%20a%3A%22BetterRandom%22)
 [![Coverage](https://codecov.io/gh/Pr0methean/BetterRandom/branch/master/graph/badge.svg)](https://codecov.io/gh/Pr0methean/BetterRandom)
 [![Codacy Badge](https://api.codacy.com/project/badge/Grade/98a727e6ce3340598e9ae7757f3997fc)](https://www.codacy.com/app/Pr0methean/BetterRandom?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=Pr0methean/BetterRandom&amp;utm_campaign=Badge_Grade)
@@ -8,6 +7,8 @@
 [![BCH compliance](https://bettercodehub.com/edge/badge/Pr0methean/BetterRandom?branch=master)](https://bettercodehub.com/)
 [![Dependabot Status](https://api.dependabot.com/badges/status?host=github&repo=Pr0methean/BetterRandom)](https://dependabot.com)
 [![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2FPr0methean%2FBetterRandom.svg?type=shield)](https://app.fossa.io/projects/git%2Bgithub.com%2FPr0methean%2FBetterRandom?ref=badge_shield)
+[![Lifted on Tidelift!](https://tidelift.com/badges/package/maven/io.github.pr0methean.betterrandom:BetterRandom)](https://tidelift.com/subscription/pkg/maven-io-github-pr0methean-betterrandom-betterrandom-java7?utm_source=maven-io-github-pr0methean-betterrandom-betterrandom-java7&utm_medium=referral&utm_campaign=readme)
+[![Buy me a Coffee!](https://bmc-cdn.nyc3.digitaloceanspaces.com/BMC-button-images/custom_images/yellow_img.png)](https://www.buymeacoffee.com/IMypBXw)
 
 BetterRandom is a library that helps you get the best performance and the best pseudorandomness from
 your pseudorandom-number generators (PRNGs) and their seed sources. With it, you can:
@@ -38,7 +39,7 @@ your pseudorandom-number generators (PRNGs) and their seed sources. With it, you
 
 # Professional support
 
-[Get supported BetterRandom with the Tidelift Subscription](https://tidelift.com/subscription/pkg/maven-io-github-pr0methean-betterrandom-betterrandom?utm_source=maven-io-github-pr0methean-betterrandom-betterrandom&utm_medium=referral&utm_campaign=readme)
+[Get supported BetterRandom with the Tidelift Subscription](https://tidelift.com/subscription/pkg/maven-io-github-pr0methean-betterrandom-betterrandom-java7?utm_source=maven-io-github-pr0methean-betterrandom-betterrandom-java7&utm_medium=referral&utm_campaign=readme)
 
 # But java.util.Random is already fast enough for me!
 
@@ -303,8 +304,6 @@ adapters are available:
 | XorShiftRandom          |                 20 | ~2<sup>160</sup>   | Medium |                        Medium | Not supported                                 | Yes                  | [George Marsaglia](http://www.jstatsoft.org/v08/i14/paper)
 | SplittableRandomAdapter |     8<sup>**</sup> | 2<sup>64</sup>     |   Fast |              Fast<sup>†</sup> | Replaces existing seed (calling thread only)  | Yes                  | [Guy Steele and Doug Lea](http://hg.openjdk.java.net/jdk8/jdk8/jdk/file/687fd7c7986d/src/share/classes/java/util/SplittableRandom.java)
 | Pcg64Random             |                  8 | 2<sup>62</sup>     |   Fast |                          Fast | Replaces existing seed                        | Yes                  | [M. E. O'Neill](http://www.pcg-random.org/)
-| Pcg128Random            |                 16 | 2<sup>126</sup>    | Medium |                        Medium | Replaces existing seed                        | Yes                  | [M. E. O'Neill](http://www.pcg-random.org/)
-
 
 <sup>*</sup>Seed sizes above 32 for AesCounterRandom require jurisdiction policy files that allow
 192- and 256-bit AES seeds.
@@ -396,7 +395,7 @@ Many of these scripts require the environment variable `JAVA8=true` when using J
 
 The following classes are forked from [Uncommons Maths](https://github.com/dwdyer/uncommons-maths/):
 
-* All of `betterrandom.prng` except `BaseRandom`, `Pcg128Random` and `betterrandom.prng.adapter`
+* All of `betterrandom.prng` except `BaseRandom` and `betterrandom.prng.adapter`
 * All of `betterrandom.seed` except `RandomSeederThread`
 * `BinaryUtils`
 * Test classes corresponding to the above.

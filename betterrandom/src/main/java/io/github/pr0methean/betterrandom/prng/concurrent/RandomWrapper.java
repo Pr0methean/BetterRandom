@@ -53,7 +53,7 @@ public class RandomWrapper extends BaseRandom {
    *
    * @throws SeedException if thrown by {@link DefaultSeedGenerator}
    */
-  public RandomWrapper() throws SeedException {
+  @EntryPoint public RandomWrapper() throws SeedException {
     this(DefaultSeedGenerator.DEFAULT_SEED_GENERATOR.generateSeed(Long.BYTES));
   }
 
@@ -75,6 +75,7 @@ public class RandomWrapper extends BaseRandom {
   public RandomWrapper(final byte[] seed) {
     super(checkLength(seed, Long.BYTES));
     wrapped = new Random(BinaryUtils.convertBytesToLong(seed));
+    entropyBits.set(Long.SIZE);
     unknownSeed = false;
   }
 
@@ -86,6 +87,7 @@ public class RandomWrapper extends BaseRandom {
   @EntryPoint public RandomWrapper(final long seed) {
     super(BinaryUtils.convertLongToBytes(seed));
     wrapped = new Random(seed);
+    entropyBits.set(Long.SIZE);
     unknownSeed = false;
   }
 

@@ -97,6 +97,19 @@ public abstract class CipherCounterRandomTest extends SeekableRandomTest {
         "Shouldn't allow a key longer than " + getExpectedMaxSize() + "bytes";
   }
 
+  @Override public void testInitialEntropy() {
+    int seedSize = getNewSeedLength(createRng());
+    byte[] seed = getTestSeedGenerator().generateSeed(seedSize);
+    BaseRandom random = createRng(seed);
+    long entropy = random.getEntropyBits();
+    assertTrue(entropy > 0, "Initially has zero entropy!");
+    if (random instanceof CipherCounterRandom) {
+      assertTrue(entropy >= 8 * (seedSizeBytes - ((CipherCounterRandom) random).getCounterSizeBytes()),
+          "Initial entropy too low");
+    }
+    assertTrue(entropy <= 8 * seedSizeBytes, "Initial entropy too high");
+  }
+
   @Override protected abstract BaseRandom createRng() throws SeedException;
 
   @Override protected abstract BaseRandom createRng(byte[] seed) throws SeedException;

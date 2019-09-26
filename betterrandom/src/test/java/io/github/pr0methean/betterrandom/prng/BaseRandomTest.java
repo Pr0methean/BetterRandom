@@ -689,7 +689,7 @@ public abstract class BaseRandomTest extends PowerMockTestCase {
   @Test public void testInitialEntropy() {
     int seedSize = getNewSeedLength(createRng());
     byte[] seed = getTestSeedGenerator().generateSeed(seedSize);
-    assertEquals(createRng(seed).getEntropyBits(), 8 * seedSize);
+    assertEquals(createRng(seed).getEntropyBits(), 8 * seedSize, "Wrong initial entropy");
   }
 
   protected void testThreadSafetyVsCrashesOnly(final int timeoutSec,

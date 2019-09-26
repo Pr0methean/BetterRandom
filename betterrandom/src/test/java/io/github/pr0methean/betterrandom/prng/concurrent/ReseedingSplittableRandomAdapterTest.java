@@ -1,6 +1,7 @@
 package io.github.pr0methean.betterrandom.prng.concurrent;
 
 import static io.github.pr0methean.betterrandom.seed.SecureRandomSeedGenerator.SECURE_RANDOM_SEED_GENERATOR;
+import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotEquals;
 import static org.testng.Assert.assertSame;
 
@@ -13,6 +14,7 @@ import io.github.pr0methean.betterrandom.seed.FakeSeedGenerator;
 import io.github.pr0methean.betterrandom.seed.RandomSeederThread;
 import io.github.pr0methean.betterrandom.seed.SeedException;
 import io.github.pr0methean.betterrandom.seed.SeedGenerator;
+import io.github.pr0methean.betterrandom.seed.SemiFakeSeedGenerator;
 import io.github.pr0methean.betterrandom.util.BinaryUtils;
 import org.testng.annotations.AfterTest;
 import org.testng.annotations.BeforeTest;
@@ -43,9 +45,23 @@ import org.testng.annotations.Test;
     return ReseedingSplittableRandomAdapter.getInstance(thread, getTestSeedGenerator());
   }
 
+  @Override protected BaseRandom createRng(byte[] seed) throws SeedException {
+    ReseedingSplittableRandomAdapter out = createRng();
+    out.setSeed(seed);
+    return out;
+  }
+
   // FIXME: Why does this need more time than other PRNGs?!
   @Test(timeOut = 120_000) @Override public void testDistribution() throws SeedException {
     super.testDistribution();
+  }
+
+  @Override public void testInitialEntropy() {
+    // This test needs a separate instance from all other tests, but createRng() doesn't provide one
+    RandomSeederThread newThread = new RandomSeederThread(new FakeSeedGenerator("testInitialEntropy"));
+    ReseedingSplittableRandomAdapter random
+        = ReseedingSplittableRandomAdapter.getInstance(newThread, getTestSeedGenerator());
+    assertEquals(random.getEntropyBits(), Long.SIZE, "Wrong initial entropy");
   }
 
   // FIXME: Why does this need more time than other PRNGs?!
@@ -62,7 +78,7 @@ import org.testng.annotations.Test;
       final BaseSplittableRandomAdapter clone = SerializableTester.reserialize(adapter);
       assertSame(adapter, clone);
     } finally {
-      thread.stopIfEmpty();
+      thread.shutDown();
     }
   }
 
@@ -78,9 +94,17 @@ import org.testng.annotations.Test;
     // No-op.
   }
 
-  @SuppressWarnings("BusyWait") @Override @Test(retryAnalyzer = FlakyRetryAnalyzer.class)
+  @SuppressWarnings("BusyWait") @Override @Test
   public void testReseeding() {
-    RandomTestUtils.testReseeding(getTestSeedGenerator(), createRng(), false);
+    SeedGenerator generator = new SemiFakeSeedGenerator(new SplittableRandomAdapter(), "testReseeding");
+    RandomSeederThread seeder = new RandomSeederThread(generator);
+    try {
+      ReseedingSplittableRandomAdapter random =
+          ReseedingSplittableRandomAdapter.getInstance(seeder, generator);
+      RandomTestUtils.testReseeding(generator, random, false);
+    } finally {
+      seeder.shutDown();
+    }
   }
 
   /**
@@ -150,10 +174,10 @@ import org.testng.annotations.Test;
             ReseedingSplittableRandomAdapter.getInstance(otherThread, getTestSeedGenerator())
                 .dump(), baseInstance.dump());
       } finally {
-        otherThread.stopIfEmpty();
+        otherThread.shutDown();
       }
     } finally {
-      thread.stopIfEmpty();
+      thread.shutDown();
     }
   }
 
