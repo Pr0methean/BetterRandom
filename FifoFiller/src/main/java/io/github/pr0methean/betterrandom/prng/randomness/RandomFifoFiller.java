@@ -15,8 +15,10 @@
 // ============================================================================
 package io.github.pr0methean.betterrandom.prng.randomness;
 
+import io.github.pr0methean.betterrandom.RepeatableRandom;
 import io.github.pr0methean.betterrandom.seed.SecureRandomSeedGenerator;
 import io.github.pr0methean.betterrandom.seed.SeedGenerator;
+import io.github.pr0methean.betterrandom.util.BinaryUtils;
 import java.io.BufferedOutputStream;
 import java.io.DataOutputStream;
 import java.io.File;
@@ -45,18 +47,18 @@ public final class RandomFifoFiller
      */
     public static void main(String[] args) throws Exception
     {
-        if (args.length != 2)
-        {
-            System.out.println("Expected arguments:");
-            System.out.println("\t<Fully-qualified RNG class name> <Output file>");
-            System.exit(1);
-        }
-        generateOutputFile(
-            Class.forName(args[0])
-                .asSubclass(Random.class)
-                .getConstructor(SeedGenerator.class)
-                .newInstance(SecureRandomSeedGenerator.SECURE_RANDOM_SEED_GENERATOR),
-            new File(args[1]));
+      if (args.length != 2)
+      {
+        System.out.println("Expected arguments:");
+        System.out.println("\t<Fully-qualified RNG class name> <Output file>");
+        System.exit(1);
+      }
+      generateOutputFile(
+          Class.forName(args[0])
+              .asSubclass(Random.class)
+              .getConstructor(SeedGenerator.class)
+              .newInstance(SecureRandomSeedGenerator.SECURE_RANDOM_SEED_GENERATOR),
+          new File(args[1]));
     }
 
 
@@ -64,18 +66,22 @@ public final class RandomFifoFiller
      * Populates a file with random numbers as long as it can be written to.
      * Intended for use with a named pipe.
      *
-     * @param rng The random number generator to use to generate the data.
+     * @param random The random number generator to use to generate the data.
      * @param outputFile The file that the random data is written to.
      */
-    @SuppressWarnings("InfiniteLoopStatement") public static void generateOutputFile(Random rng,
+    @SuppressWarnings("InfiniteLoopStatement") public static void generateOutputFile(Random random,
         File outputFile) {
+      if (random instanceof RepeatableRandom) {
+        System.out.format("Seed: %s%n",
+            BinaryUtils.convertBytesToHexString(((RepeatableRandom) random).getSeed()));
+      }
       try (DataOutputStream dataOutput = new DataOutputStream(
           new BufferedOutputStream(new FileOutputStream(outputFile)))) {
-            while (true) {
-                dataOutput.writeLong(rng.nextLong());
-            }
-      } catch (IOException expected) {
-            // Broken pipe when Dieharder is finished
+        while (true) {
+          dataOutput.writeLong(random.nextLong());
         }
+      } catch (IOException expected) {
+        // Broken pipe when Dieharder is finished
+      }
     }
 }
