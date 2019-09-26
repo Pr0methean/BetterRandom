@@ -196,12 +196,11 @@ public final class RandomSeederThread extends LooperThread {
       while (true) {
         otherPrngsThisIteration.addAll(otherPrngs);
         byteArrayPrngsThisIteration.addAll(byteArrayPrngs);
-        if (otherPrngsThisIteration.isEmpty() && byteArrayPrngsThisIteration.isEmpty()) {
-          if (!waitWhileEmpty.await(stopIfEmptyForNanos, TimeUnit.NANOSECONDS)) {
-            return false;
-          }
-        } else {
+        if (!otherPrngsThisIteration.isEmpty() || !byteArrayPrngsThisIteration.isEmpty()) {
           break;
+        }
+        if (!waitWhileEmpty.await(stopIfEmptyForNanos, TimeUnit.NANOSECONDS)) {
+          return false;
         }
       }
       boolean entropyConsumed = false;

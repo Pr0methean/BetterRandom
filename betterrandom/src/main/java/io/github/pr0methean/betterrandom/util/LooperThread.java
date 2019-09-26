@@ -142,21 +142,20 @@ public abstract class LooperThread implements Serializable {
    * Runs {@link #iterate()} until either it returns false or this thread is interrupted.
    */
   private void run() {
-    while (true) {
-      try {
+    try {
+      while (true) {
         lock.lockInterruptibly();
         try {
           if (!iterate()) {
             interrupt();
-            break;
+            return;
           }
         } finally {
           lock.unlock();
         }
-      } catch (final InterruptedException ignored) {
-        interrupt();
-        break;
       }
+    } catch (final InterruptedException ignored) {
+      interrupt();
     }
   }
 
