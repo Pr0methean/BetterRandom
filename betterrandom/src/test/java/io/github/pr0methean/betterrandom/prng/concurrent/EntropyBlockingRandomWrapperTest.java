@@ -12,6 +12,7 @@ import com.google.common.collect.ImmutableMap;
 import io.github.pr0methean.betterrandom.prng.BaseRandom;
 import io.github.pr0methean.betterrandom.seed.FailingSeedGenerator;
 import io.github.pr0methean.betterrandom.seed.RandomSeederThread;
+import io.github.pr0methean.betterrandom.seed.SecureRandomSeedGenerator;
 import io.github.pr0methean.betterrandom.seed.SeedException;
 import io.github.pr0methean.betterrandom.seed.SeedGenerator;
 import io.github.pr0methean.betterrandom.seed.SemiFakeSeedGenerator;
@@ -22,6 +23,7 @@ import java.lang.reflect.Parameter;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Map;
+import java.util.UUID;
 import org.mockito.Mockito;
 import org.testng.annotations.Test;
 
@@ -60,6 +62,13 @@ public class EntropyBlockingRandomWrapperTest extends RandomWrapperRandomTest {
     } finally {
       unmockDefaultSeedGenerator();
     }
+  }
+
+  @Override protected SeedGenerator getTestSeedGenerator() {
+    // Need a separate and non-value-equal instance for each test, for isolation
+    return new SemiFakeSeedGenerator(
+        new SplittableRandomAdapter(SecureRandomSeedGenerator.SECURE_RANDOM_SEED_GENERATOR),
+        UUID.randomUUID().toString());
   }
 
   @Test public void testGetSameThreadSeedGen() {
@@ -143,7 +152,8 @@ public class EntropyBlockingRandomWrapperTest extends RandomWrapperRandomTest {
 
   @Test public void testSetSameThreadSeedGen() {
     SeedGenerator seedGen = Mockito.spy(getTestSeedGenerator());
-    EntropyBlockingRandomWrapper random = new EntropyBlockingRandomWrapper(0L, null);
+    EntropyBlockingRandomWrapper random
+        = new EntropyBlockingRandomWrapper(seedGen.generateSeed(8), 0L, null);
     random.setSameThreadSeedGen(seedGen);
     assertSame(random.getSameThreadSeedGen(), seedGen);
     random.nextLong();
