@@ -1,5 +1,7 @@
 package io.github.pr0methean.betterrandom.prng.concurrent;
 
+import static org.testng.Assert.assertEquals;
+
 import io.github.pr0methean.betterrandom.prng.BaseRandom;
 import io.github.pr0methean.betterrandom.prng.Pcg64Random;
 import io.github.pr0methean.betterrandom.prng.RandomTestUtils.EntropyCheckMode;
@@ -65,6 +67,12 @@ public class ReseedingThreadLocalRandomWrapperFailingSeedGeneratorTest
 
   @Override @Test(enabled = false) public void testGetWrapped() {
     // No-op.
+  }
+
+  @Override public void testInitialEntropy() {
+    int seedSize = getNewSeedLength(createRng());
+    byte[] seed = new byte[seedSize];
+    assertEquals(createRng(seed).getEntropyBits(), 8 * seedSize, "Wrong initial entropy");
   }
 
   @Override protected SeedGenerator getTestSeedGenerator() {

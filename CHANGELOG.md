@@ -13,6 +13,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `AesCounterRandom` now uses SHA-384, and reseeding can now alter both the cipher key and the counter value.
 - `AesCounterRandom` no longer logs anything if the JVM has no restrictions on cryptography.
 - Reseeding of `AesCounterRandom` should be faster, because some array copies have been eliminated.
+- Fixes a bug where `RandomWrapper` wrapping a plain old `java.util.Random` initially believed it had no entropy.
 
 ### Removed
 
