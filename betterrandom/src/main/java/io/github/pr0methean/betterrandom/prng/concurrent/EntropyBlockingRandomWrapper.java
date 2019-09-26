@@ -28,7 +28,7 @@ public class EntropyBlockingRandomWrapper extends RandomWrapper {
   }
 
   private void checkMaxOutputAtOnce() {
-    long maxOutputAtOnce = 8 * getNewSeedLength() - minimumEntropy;
+    long maxOutputAtOnce = 8 * entropyBits.get() - minimumEntropy;
     if (maxOutputAtOnce < Long.SIZE) {
       throw new IllegalArgumentException("Need to be able to output 64 bits at once");
     }
