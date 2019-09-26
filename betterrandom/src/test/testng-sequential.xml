@@ -19,6 +19,7 @@
     <test name="Concurrent PRNGs Sequential" parallel="none">
         <parameter name="seedSize" value="16"/>
         <classes>
+            <class name="io.github.pr0methean.betterrandom.prng.concurrent.EntropyBlockingRandomWrapperTest"/>
             <class name="io.github.pr0methean.betterrandom.prng.concurrent.ReseedingSplittableRandomAdapterTest"/>
             <class name="io.github.pr0methean.betterrandom.prng.concurrent.ReseedingThreadLocalRandomWrapperMersenneTwisterTest"/>
             <class name="io.github.pr0methean.betterrandom.prng.concurrent.ReseedingThreadLocalRandomWrapperTest"/>
