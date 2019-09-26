@@ -85,14 +85,13 @@ public class EntropyBlockingRandomWrapper extends RandomWrapper {
   }
 
   @Override protected long nextLongNoEntropyDebit() {
-    Random wrapped = getWrapped();
-    return ((long) wrapped.nextInt()) << 32L | wrapped.nextInt();
+    return ((long) nextInt()) << 32L | nextInt();
   }
 
   @Override public double nextDoubleNoEntropyDebit() {
     // Based on Apache Harmony's java.util.Random
     // https://github.com/apache/harmony/blob/02970cb7227a335edd2c8457ebdde0195a735733/classlib/modules/luni/src/main/java/java/util/Random.java#L140
-    return (((long)(next(27)) << 26) + next(26)) * DOUBLE_ULP;
+    return (((long)(nextInt(1 << 27)) << 26) + nextInt(1 << 26)) * DOUBLE_ULP;
   }
 
   @Override protected void debitEntropy(long bits) {
