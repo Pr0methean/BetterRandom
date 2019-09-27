@@ -110,7 +110,7 @@ public class EntropyBlockingRandomWrapperTest extends RandomWrapperRandomTest {
         getTestSeedGenerator().generateSeed(8), 0L, null);
     random.nextInt();
     random.setSeed(getTestSeedGenerator().generateSeed(8));
-    random.nextInt();
+    random.nextLong();
     try {
       random.nextInt();
       fail("Expected an IllegalStateException");
@@ -124,6 +124,7 @@ public class EntropyBlockingRandomWrapperTest extends RandomWrapperRandomTest {
         = Mockito.spy(new SemiFakeSeedGenerator(new SplittableRandomAdapter()));
     EntropyBlockingRandomWrapper random = new EntropyBlockingRandomWrapper(0L, sameThreadSeedGen);
     random.setRandomSeeder(seeder);
+    random.nextLong();
     try {
       assertEquals(random.getSameThreadSeedGen(), sameThreadSeedGen,
           "Same-thread seed generator changed after setting RandomSeederThread, when already non-null");
