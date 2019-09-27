@@ -23,6 +23,7 @@ import java.lang.reflect.Parameter;
 import java.util.Arrays;
 import java.util.Map;
 import java.util.UUID;
+import java.util.concurrent.ThreadFactory;
 import org.mockito.Mockito;
 import org.testng.annotations.Test;
 
@@ -117,9 +118,15 @@ public class EntropyBlockingRandomWrapperTest extends RandomWrapperRandomTest {
     } catch (IllegalStateException expected) {}
   }
 
-  @Test(timeOut = 10_000L) public void testRandomSeederThreadUsedFirst() {
+  @Test(timeOut = 20_000L) public void testRandomSeederThreadUsedFirst() {
     SeedGenerator seederSeedGen = Mockito.spy(getTestSeedGenerator());
-    RandomSeederThread seeder = new RandomSeederThread(seederSeedGen);
+    ThreadFactory defaultThreadFactory
+        = new RandomSeederThread.DefaultThreadFactory("testRandomSeederThreadUsedFirst");
+    RandomSeederThread seeder = new RandomSeederThread(seederSeedGen, runnable -> {
+      Thread thread = defaultThreadFactory.newThread(runnable);
+      thread.setPriority(Thread.MAX_PRIORITY);
+      return thread;
+    });
     SeedGenerator sameThreadSeedGen
         = Mockito.spy(new SemiFakeSeedGenerator(new SplittableRandomAdapter()));
     EntropyBlockingRandomWrapper random = new EntropyBlockingRandomWrapper(0L, sameThreadSeedGen);
