@@ -68,6 +68,15 @@ public final class RandomSeederThread extends LooperThread {
     }
   }
 
+  public void reseedAsync(Random random) {
+    if (random instanceof ByteArrayReseedableRandom) {
+      byteArrayPrngsThisIteration.add((ByteArrayReseedableRandom) random);
+    } else {
+      otherPrngsThisIteration.add(random);
+    }
+    wakeUp();
+  }
+
   public void remove(Random... randoms) {
     if (randoms.length == 0) {
       return;
