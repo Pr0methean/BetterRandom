@@ -299,7 +299,7 @@
     <proguard.version>6.1.1</proguard.version>
     <jacoco.version>0.8.4</jacoco.version>
     <powermock.version>2.0.2</powermock.version>
-    <mockito.version>3.0.0</mockito.version>
+    <mockito.version>3.1.0</mockito.version>
     <pitest.version>1.4.10</pitest.version>
     <test.argline>-XX:+UseParallelGC -Djava.security.egd=file:/dev/./urandom</test.argline>
     <test.jdk8.argline>${test.argline}</test.jdk8.argline>
