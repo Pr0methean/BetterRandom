@@ -5,16 +5,26 @@ import io.github.pr0methean.betterrandom.prng.BaseRandom;
 import io.github.pr0methean.betterrandom.prng.MersenneTwisterRandom;
 import io.github.pr0methean.betterrandom.prng.RandomTestUtils;
 import io.github.pr0methean.betterrandom.prng.RandomTestUtils.EntropyCheckMode;
+import io.github.pr0methean.betterrandom.seed.DefaultSeedGenerator;
 import io.github.pr0methean.betterrandom.seed.DevRandomSeedGenerator;
 import io.github.pr0methean.betterrandom.seed.RandomSeederThread;
 import io.github.pr0methean.betterrandom.seed.SecureRandomSeedGenerator;
 import io.github.pr0methean.betterrandom.seed.SeedException;
 import io.github.pr0methean.betterrandom.seed.SeedGenerator;
+import io.github.pr0methean.betterrandom.seed.SemiFakeSeedGenerator;
 import java.io.Serializable;
 import java.util.Random;
 import java.util.function.Supplier;
+import org.powermock.api.mockito.mockpolicies.Slf4jMockPolicy;
+import org.powermock.core.classloader.annotations.MockPolicy;
+import org.powermock.core.classloader.annotations.PowerMockIgnore;
+import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.testng.annotations.Test;
 
+@MockPolicy(Slf4jMockPolicy.class) @PrepareForTest(DefaultSeedGenerator.class) @PowerMockIgnore(
+    {"javax.crypto.*", "javax.management.*", "javax.script.*", "jdk.nashorn.*", "javax.net.ssl.*",
+        "javax.security.*", "javax.xml.*", "org.xml.sax.*", "org.w3c.dom.*",
+        "org.springframework.context.*", "org.apache.log4j.*"})
 @Test(testName = "ReseedingThreadLocalRandomWrapper:MersenneTwisterRandom")
 public class ReseedingThreadLocalRandomWrapperMersenneTwisterTest
     extends ThreadLocalRandomWrapperMersenneTwisterTest {
@@ -47,7 +57,8 @@ public class ReseedingThreadLocalRandomWrapperMersenneTwisterTest
   }
 
   @SuppressWarnings("BusyWait") @Override @Test(groups = "sequential") public void testReseeding() {
-    final SeedGenerator testSeedGenerator = getTestSeedGenerator();
+    final SeedGenerator testSeedGenerator
+        = new SemiFakeSeedGenerator(new SingleThreadSplittableRandomAdapter());
     final BaseRandom rng = new ReseedingThreadLocalRandomWrapper(testSeedGenerator, mtSupplier);
     RandomTestUtils.testReseeding(testSeedGenerator, rng, false);
   }
