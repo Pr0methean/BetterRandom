@@ -22,10 +22,6 @@ import org.powermock.core.classloader.annotations.PowerMockIgnore;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.testng.annotations.Test;
 
-@MockPolicy(Slf4jMockPolicy.class) @PrepareForTest(DefaultSeedGenerator.class) @PowerMockIgnore(
-    {"javax.crypto.*", "javax.management.*", "javax.script.*", "jdk.nashorn.*", "javax.net.ssl.*",
-        "javax.security.*", "javax.xml.*", "org.xml.sax.*", "org.w3c.dom.*",
-        "org.springframework.context.*", "org.apache.log4j.*"})
 @Test(testName = "ReseedingThreadLocalRandomWrapper:MersenneTwisterRandom")
 public class ReseedingThreadLocalRandomWrapperMersenneTwisterTest
     extends ThreadLocalRandomWrapperMersenneTwisterTest {
