@@ -1,5 +1,6 @@
 package io.github.pr0methean.betterrandom.prng.concurrent;
 
+import io.github.pr0methean.betterrandom.FlakyRetryAnalyzer;
 import io.github.pr0methean.betterrandom.TestingDeficiency;
 import io.github.pr0methean.betterrandom.prng.BaseRandom;
 import io.github.pr0methean.betterrandom.prng.MersenneTwisterRandom;
@@ -56,9 +57,11 @@ public class ReseedingThreadLocalRandomWrapperMersenneTwisterTest
     return ReseedingThreadLocalRandomWrapper.class;
   }
 
-  @SuppressWarnings("BusyWait") @Override @Test(groups = "sequential") public void testReseeding() {
+  @Override
+  @Test(groups = "sequential", retryAnalyzer = FlakyRetryAnalyzer.class)
+  public void testReseeding() {
     final SeedGenerator testSeedGenerator
-        = new SemiFakeSeedGenerator(new SingleThreadSplittableRandomAdapter());
+        = new SemiFakeSeedGenerator(new SingleThreadSplittableRandomAdapter(), "testReseeding");
     final BaseRandom rng = new ReseedingThreadLocalRandomWrapper(testSeedGenerator, mtSupplier);
     RandomTestUtils.testReseeding(testSeedGenerator, rng, false);
   }
