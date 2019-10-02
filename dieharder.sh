@@ -19,7 +19,7 @@ chkdh() {
       exit 1
     fi
 }
-"${JAVA_BIN}" ${JAVA_OPTS} -jar "${JAR}" io.github.pr0methean.betterrandom.prng.${CLASS} prng_out 2>&1 &
+"${JAVA_BIN}" ${JAVA_OPTS} -jar "${JAR}" io.github.pr0methean.betterrandom.prng.${CLASS} prng_out ${SEED} 2>&1 &
 JAVA_PROCESS=$!
 (
   chkdh -Y 1 -k 2 -d 0

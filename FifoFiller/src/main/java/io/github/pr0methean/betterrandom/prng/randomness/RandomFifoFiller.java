@@ -24,7 +24,9 @@ import java.io.DataOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.lang.reflect.Constructor;
 import java.util.Random;
+import javax.annotation.Nullable;
 
 /**
  * Utility to populate a fifo with input, so it can be fed into a randomness test suite.
@@ -47,18 +49,26 @@ public final class RandomFifoFiller
      */
     public static void main(String[] args) throws Exception
     {
-      if (args.length != 2)
-      {
-        System.out.println("Expected arguments:");
-        System.out.println("\t<Fully-qualified RNG class name> <Output file>");
-        System.exit(1);
-      }
-      generateOutputFile(
-          Class.forName(args[0])
-              .asSubclass(Random.class)
+      @Nullable byte[] seed;
+      Random random;
+      switch (args.length) {
+        case 0:
+        case 1:
+          System.out.println("Expected arguments:");
+          System.out.println("\t<Fully-qualified RNG class name> <Output file>");
+          System.exit(1);
+          return;
+        case 2:
+          random = Class.forName(args[0]).asSubclass(Random.class)
               .getConstructor(SeedGenerator.class)
-              .newInstance(SecureRandomSeedGenerator.SECURE_RANDOM_SEED_GENERATOR),
-          new File(args[1]));
+              .newInstance(SecureRandomSeedGenerator.SECURE_RANDOM_SEED_GENERATOR);
+          break;
+        default:
+          random = Class.forName(args[0]).asSubclass(Random.class)
+              .getConstructor(byte[].class)
+              .newInstance(BinaryUtils.convertHexStringToBytes(args[2]));
+      }
+      generateOutputFile(random, new File(args[1]));
     }
 
 
