@@ -10,7 +10,10 @@ import javax.annotation.Nullable;
 
 /**
  * A {@link RandomWrapper} with the additional property that it won't return any output that would
- * take its entropy below a minimum amount, and will instead
+ * take its entropy below a minimum amount, and will instead either wait to be reseeded by a {@link
+ * RandomSeederThread} or, if none is installed, reseed itself on the calling thread with a {@link
+ * SeedGenerator}. If neither is present, the caller is responsible for reseeding, and any call that
+ * would reduce entropy below the minimum will throw {@link IllegalStateException}.
  */
 public class EntropyBlockingRandomWrapper extends RandomWrapper {
 
