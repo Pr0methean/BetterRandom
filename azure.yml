@@ -271,7 +271,7 @@ stages:
     dependsOn: UnitTests
     jobs:
     - job: Dieharder
-      timeoutInMinutes: 80
+      timeoutInMinutes: 90
       variables:
         javaUrl: $(OpenJNineLatestLinux)
         JAVA_HOME: jdk
