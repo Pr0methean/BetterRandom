@@ -94,7 +94,7 @@ import org.testng.annotations.Test;
     // No-op.
   }
 
-  @SuppressWarnings("BusyWait") @Override @Test
+  @Override @Test(retryAnalyzer = FlakyRetryAnalyzer.class)
   public void testReseeding() {
     SeedGenerator generator = new SemiFakeSeedGenerator(new SplittableRandomAdapter(), "testReseeding");
     RandomSeederThread seeder = new RandomSeederThread(generator);
