@@ -85,6 +85,7 @@ public class EntropyBlockingRandomWrapper extends RandomWrapper {
   }
 
   @Override protected void setSeedInternal(byte[] seed) {
+    waitingOnReseed = false;
     super.setSeedInternal(seed);
     onSeedingStateChanged();
   }
@@ -109,7 +110,6 @@ public class EntropyBlockingRandomWrapper extends RandomWrapper {
           waitingOnReseed = true;
           seeder.reseedAsync(this);
           seedingStatusChanged.await();
-          waitingOnReseed = false;
           continue;
         }
         seedGenerator = sameThreadSeedGen.get();
@@ -143,6 +143,7 @@ public class EntropyBlockingRandomWrapper extends RandomWrapper {
     }
     lock.lock();
     try {
+      waitingOnReseed = false;
       super.setSeed(seed);
       seedingStatusChanged.signalAll();
     } finally {

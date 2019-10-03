@@ -179,8 +179,7 @@ public class RandomWrapper extends BaseRandom {
       if (unknownSeed) {
         throw new UnsupportedOperationException();
       }
-      return wrapped instanceof RepeatableRandom ? ((RepeatableRandom) wrapped).getSeed() :
-          seed.clone();
+      return wrapped instanceof RepeatableRandom ? ((RepeatableRandom) wrapped).getSeed() : seed.clone();
     } finally {
       lock.unlock();
     }
