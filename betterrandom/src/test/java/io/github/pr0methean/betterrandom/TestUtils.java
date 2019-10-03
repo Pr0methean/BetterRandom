@@ -28,7 +28,8 @@ public enum TestUtils {
   public static <T> void testConstructors(final Class<? extends T> clazz,
       final boolean includeProtected, final Map<Class<?>, Object> params,
       final Consumer<? super T> test) {
-    testConstructors(includeProtected, params, test, clazz.getDeclaredConstructors());
+    testConstructors(includeProtected, params, test,
+        Arrays.asList(clazz.getDeclaredConstructors()));
   }
 
   /**
@@ -43,7 +44,7 @@ public enum TestUtils {
    */
   @SuppressWarnings({"ObjectAllocationInLoop", "unchecked"})
   public static <T> void testConstructors(final boolean includeProtected, final Map<Class<?>, Object> params,
-      final Consumer<? super T> test, final Constructor<?>[] constructorsToTest) {
+      final Consumer<? super T> test, final Iterable<Constructor<?>> constructorsToTest) {
     for (final Constructor<?> constructor : constructorsToTest) {
       final int modifiers = constructor.getModifiers();
       if (Modifier.isPublic(modifiers) || (includeProtected && Modifier.isProtected(modifiers))) {

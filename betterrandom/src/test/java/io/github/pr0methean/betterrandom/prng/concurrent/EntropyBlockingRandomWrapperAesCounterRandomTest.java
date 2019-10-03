@@ -29,7 +29,7 @@ public class EntropyBlockingRandomWrapperAesCounterRandomTest extends RandomWrap
     }
     TestUtils.testConstructors(false, ImmutableMap.copyOf(constructorParams()),
         (Consumer<? super EntropyBlockingRandomWrapper>) BaseRandom::nextInt,
-        relevantConstructors.toArray(new Constructor<?>[0]));
+        relevantConstructors);
   }
 
   @Override public Class<? extends BaseRandom> getClassUnderTest() {
