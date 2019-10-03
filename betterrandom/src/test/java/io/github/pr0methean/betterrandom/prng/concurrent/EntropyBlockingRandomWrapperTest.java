@@ -8,7 +8,6 @@ import static org.testng.Assert.assertSame;
 import static org.testng.Assert.fail;
 
 import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableMap;
 import io.github.pr0methean.betterrandom.prng.BaseRandom;
 import io.github.pr0methean.betterrandom.seed.FailingSeedGenerator;
 import io.github.pr0methean.betterrandom.seed.RandomSeederThread;
@@ -16,11 +15,6 @@ import io.github.pr0methean.betterrandom.seed.SecureRandomSeedGenerator;
 import io.github.pr0methean.betterrandom.seed.SeedException;
 import io.github.pr0methean.betterrandom.seed.SeedGenerator;
 import io.github.pr0methean.betterrandom.seed.SemiFakeSeedGenerator;
-import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Modifier;
-import java.lang.reflect.Parameter;
-import java.util.Arrays;
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ThreadFactory;
@@ -31,38 +25,14 @@ import org.testng.annotations.Test;
 public class EntropyBlockingRandomWrapperTest extends RandomWrapperRandomTest {
   private static final long DEFAULT_MAX_ENTROPY = -1000L;
 
-  @Override public void testAllPublicConstructors()
-      throws SeedException {
-    mockDefaultSeedGenerator();
-    try {
-      for (final Constructor<?> constructor : getClassUnderTest().getDeclaredConstructors()) {
-        final int modifiers = constructor.getModifiers();
-        if (Modifier.isPublic(modifiers)) {
-          constructor.setAccessible(true);
-          final int nParams = constructor.getParameterCount();
-          final Parameter[] parameters = constructor.getParameters();
-          final Object[] constructorParams = new Object[nParams];
-          try {
-            for (int i = 0; i < nParams; i++) {
-              if ("minimumEntropy".equals(parameters[i].getName())) {
-                constructorParams[i] = DEFAULT_MAX_ENTROPY;
-              } else {
-                constructorParams[i] =
-                    ((Map<Class<?>, Object>) ImmutableMap.copyOf(constructorParams()))
-                        .get(parameters[i].getType());
-              }
-            }
-            ((BaseRandom) constructor.newInstance(constructorParams)).nextInt();
-          } catch (final IllegalAccessException | InstantiationException | InvocationTargetException | IllegalArgumentException e) {
-            throw new AssertionError(String
-                .format("Failed to call%n%s%nwith parameters%n%s", constructor.toGenericString(),
-                    Arrays.toString(constructorParams)), e);
-          }
-        }
-      }
-    } finally {
-      unmockDefaultSeedGenerator();
-    }
+  @Override public Class<? extends BaseRandom> getClassUnderTest() {
+    return EntropyBlockingRandomWrapper.class;
+  }
+
+  @Override public Map<Class<?>, Object> constructorParams() {
+    Map<Class<?>, Object> out = super.constructorParams();
+    out.put(long.class, DEFAULT_MAX_ENTROPY);
+    return out;
   }
 
   @Override protected SeedGenerator getTestSeedGenerator() {
@@ -118,26 +88,28 @@ public class EntropyBlockingRandomWrapperTest extends RandomWrapperRandomTest {
     } catch (IllegalStateException expected) {}
   }
 
-  @Test(timeOut = 20_000L) public void testRandomSeederThreadUsedFirst() {
-    SeedGenerator seederSeedGen = Mockito.spy(getTestSeedGenerator());
+  @Test public void testRandomSeederThreadUsedFirst() {
+    SeedGenerator testSeedGenerator = getTestSeedGenerator();
+    SeedGenerator seederSeedGenSpy = Mockito.spy(testSeedGenerator);
     ThreadFactory defaultThreadFactory
         = new RandomSeederThread.DefaultThreadFactory("testRandomSeederThreadUsedFirst");
-    RandomSeederThread seeder = new RandomSeederThread(seederSeedGen, runnable -> {
+    RandomSeederThread seeder = new RandomSeederThread(seederSeedGenSpy, runnable -> {
       Thread thread = defaultThreadFactory.newThread(runnable);
       thread.setPriority(Thread.MAX_PRIORITY);
       return thread;
     });
-    SeedGenerator sameThreadSeedGen
-        = Mockito.spy(new SemiFakeSeedGenerator(new SplittableRandomAdapter()));
-    EntropyBlockingRandomWrapper random = new EntropyBlockingRandomWrapper(0L, sameThreadSeedGen);
+    SemiFakeSeedGenerator sameThreadSeedGen
+        = Mockito.spy(new SemiFakeSeedGenerator(new SplittableRandomAdapter(), "sameThreadSeedGen"));
+    EntropyBlockingRandomWrapper random = new EntropyBlockingRandomWrapper(
+        testSeedGenerator.generateSeed(8), 0L, sameThreadSeedGen);
     random.setRandomSeeder(seeder);
     random.nextLong();
     try {
       assertEquals(random.getSameThreadSeedGen(), sameThreadSeedGen,
           "Same-thread seed generator changed after setting RandomSeederThread, when already non-null");
       random.nextLong();
-      Mockito.verify(seederSeedGen, Mockito.atLeastOnce()).generateSeed(any(byte[].class));
-      Mockito.verify(seederSeedGen, Mockito.atMost(2)).generateSeed(any(byte[].class));
+      Mockito.verify(seederSeedGenSpy, Mockito.atLeastOnce()).generateSeed(any(byte[].class));
+      Mockito.verify(seederSeedGenSpy, Mockito.atMost(2)).generateSeed(any(byte[].class));
       Mockito.verify(sameThreadSeedGen, Mockito.never()).generateSeed(any(byte[].class));
       Mockito.verify(sameThreadSeedGen, Mockito.never()).generateSeed(anyInt());
     } finally {

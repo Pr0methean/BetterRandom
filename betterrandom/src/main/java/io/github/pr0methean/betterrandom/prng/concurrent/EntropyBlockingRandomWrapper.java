@@ -13,11 +13,13 @@ import javax.annotation.Nullable;
  * take its entropy below a minimum amount, and will instead
  */
 public class EntropyBlockingRandomWrapper extends RandomWrapper {
+
   private final long minimumEntropy;
   private final Condition seedingStatusChanged = lock.newCondition();
 
   /** Used on the calling thread when there isn't a working RandomSeederThread. */
   private final AtomicReference<SeedGenerator> sameThreadSeedGen;
+  private transient volatile boolean waitingOnReseed = false;
 
   public EntropyBlockingRandomWrapper(long minimumEntropy, SeedGenerator seedGenerator)
       throws SeedException {
@@ -25,13 +27,6 @@ public class EntropyBlockingRandomWrapper extends RandomWrapper {
     sameThreadSeedGen = new AtomicReference<>(seedGenerator);
     this.minimumEntropy = minimumEntropy;
     checkMaxOutputAtOnce();
-  }
-
-  private void checkMaxOutputAtOnce() {
-    long maxOutputAtOnce = 8 * entropyBits.get() - minimumEntropy;
-    if (maxOutputAtOnce < Long.SIZE) {
-      throw new IllegalArgumentException("Need to be able to output 64 bits at once");
-    }
   }
 
   public EntropyBlockingRandomWrapper(byte[] seed, long minimumEntropy,
@@ -56,6 +51,13 @@ public class EntropyBlockingRandomWrapper extends RandomWrapper {
     this.minimumEntropy = minimumEntropy;
     this.sameThreadSeedGen = new AtomicReference<>(sameThreadSeedGen);
     checkMaxOutputAtOnce();
+  }
+
+  private void checkMaxOutputAtOnce() {
+    long maxOutputAtOnce = 8 * entropyBits.get() - minimumEntropy;
+    if (maxOutputAtOnce < Long.SIZE) {
+      throw new IllegalArgumentException("Need to be able to output 64 bits at once");
+    }
   }
 
   @Nullable public SeedGenerator getSameThreadSeedGen() {
@@ -88,10 +90,10 @@ public class EntropyBlockingRandomWrapper extends RandomWrapper {
     lock.lock();
     try {
       super.setRandomSeeder(randomSeeder);
+      onSeedingStateChanged();
     } finally {
       lock.unlock();
     }
-    onSeedingStateChanged();
   }
 
   @Override protected void debitEntropy(long bits) {
@@ -101,8 +103,10 @@ public class EntropyBlockingRandomWrapper extends RandomWrapper {
       try {
         RandomSeederThread seeder = randomSeeder.get();
         if (seeder != null) {
+          waitingOnReseed = true;
           seeder.reseedAsync(this);
           seedingStatusChanged.await();
+          waitingOnReseed = false;
           continue;
         }
         seedGenerator = sameThreadSeedGen.get();
@@ -127,5 +131,23 @@ public class EntropyBlockingRandomWrapper extends RandomWrapper {
         setSeed(newSeed);
       }
     }
+  }
+
+  @Override public void setSeed(long seed) {
+    if (lock == null) {
+      super.setSeed(seed);
+      return;
+    }
+    lock.lock();
+    try {
+      super.setSeed(seed);
+      seedingStatusChanged.signalAll();
+    } finally {
+      lock.unlock();
+    }
+  }
+
+  @Override public boolean needsReseedingEarly() {
+    return waitingOnReseed;
   }
 }

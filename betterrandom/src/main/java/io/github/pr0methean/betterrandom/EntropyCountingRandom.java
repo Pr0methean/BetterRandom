@@ -18,4 +18,12 @@ public interface EntropyCountingRandom {
    * @return The current estimated amount of entropy.
    */
   long getEntropyBits();
+
+  /**
+   * If true, this PRNG needs reseeding even though its entropy is positive. Added to deal with
+   * {@link io.github.pr0methean.betterrandom.prng.concurrent.EntropyBlockingRandomWrapper}.
+   */
+  default boolean needsReseedingEarly() {
+    return false;
+  }
 }

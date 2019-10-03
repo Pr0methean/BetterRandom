@@ -273,8 +273,12 @@ public final class RandomSeederThread extends LooperThread {
   }
 
   private static boolean stillDefinitelyHasEntropy(final Object random) {
-    return (random instanceof EntropyCountingRandom) &&
-        (((EntropyCountingRandom) random).getEntropyBits() > 0);
+    if (!(random instanceof EntropyCountingRandom)) {
+      return false;
+    }
+    EntropyCountingRandom entropyCountingRandom = (EntropyCountingRandom) random;
+    return !entropyCountingRandom.needsReseedingEarly() &&
+        entropyCountingRandom.getEntropyBits() > 0;
   }
 
   private void clear() {
