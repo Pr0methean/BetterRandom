@@ -10,8 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 - `EntropyBlockingRandomWrapper`: won't return any output when below a minimum entropy (recommended to use 0 or less).
-  Can be configured with a `SeedGenerator` to reseed on the same thread in the absence of a working
-  `RandomSeederThread`.
+  Can be configured with a `SeedGenerator` to reseed on the calling thread, or can use a `RandomSeederThread`.
 
 ### Changed
 
