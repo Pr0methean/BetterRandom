@@ -1,18 +1,25 @@
 package io.github.pr0methean.betterrandom.prng.concurrent;
 
+import io.github.pr0methean.betterrandom.FlakyRetryAnalyzer;
 import io.github.pr0methean.betterrandom.TestingDeficiency;
 import io.github.pr0methean.betterrandom.prng.BaseRandom;
 import io.github.pr0methean.betterrandom.prng.MersenneTwisterRandom;
 import io.github.pr0methean.betterrandom.prng.RandomTestUtils;
 import io.github.pr0methean.betterrandom.prng.RandomTestUtils.EntropyCheckMode;
+import io.github.pr0methean.betterrandom.seed.DefaultSeedGenerator;
 import io.github.pr0methean.betterrandom.seed.DevRandomSeedGenerator;
 import io.github.pr0methean.betterrandom.seed.RandomSeederThread;
 import io.github.pr0methean.betterrandom.seed.SecureRandomSeedGenerator;
 import io.github.pr0methean.betterrandom.seed.SeedException;
 import io.github.pr0methean.betterrandom.seed.SeedGenerator;
+import io.github.pr0methean.betterrandom.seed.SemiFakeSeedGenerator;
 import java.io.Serializable;
 import java.util.Random;
 import java.util.function.Supplier;
+import org.powermock.api.mockito.mockpolicies.Slf4jMockPolicy;
+import org.powermock.core.classloader.annotations.MockPolicy;
+import org.powermock.core.classloader.annotations.PowerMockIgnore;
+import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.testng.annotations.Test;
 
 @Test(testName = "ReseedingThreadLocalRandomWrapper:MersenneTwisterRandom")
@@ -46,8 +53,11 @@ public class ReseedingThreadLocalRandomWrapperMersenneTwisterTest
     return ReseedingThreadLocalRandomWrapper.class;
   }
 
-  @SuppressWarnings("BusyWait") @Override @Test(groups = "sequential") public void testReseeding() {
-    final SeedGenerator testSeedGenerator = getTestSeedGenerator();
+  @Override
+  @Test(groups = "sequential", retryAnalyzer = FlakyRetryAnalyzer.class)
+  public void testReseeding() {
+    final SeedGenerator testSeedGenerator
+        = new SemiFakeSeedGenerator(new SingleThreadSplittableRandomAdapter(), "testReseeding");
     final BaseRandom rng = new ReseedingThreadLocalRandomWrapper(testSeedGenerator, mtSupplier);
     RandomTestUtils.testReseeding(testSeedGenerator, rng, false);
   }
