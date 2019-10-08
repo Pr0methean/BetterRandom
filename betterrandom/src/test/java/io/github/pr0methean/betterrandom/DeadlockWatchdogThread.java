@@ -80,10 +80,6 @@ public class DeadlockWatchdogThread extends LooperThread {
         LOG.info("A running thread:", t);
       }
     }
-    if (deadlockFound) {
-      // Fail fast if current context allows
-      System.exit(DEADLOCK_STATUS);
-    }
     return !deadlockFound; // Terminate when a deadlock is found
   }
 }

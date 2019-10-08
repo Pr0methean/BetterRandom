@@ -8,6 +8,7 @@ import static org.testng.Assert.assertSame;
 import static org.testng.Assert.fail;
 
 import com.google.common.collect.ImmutableList;
+import io.github.pr0methean.betterrandom.DeadlockWatchdogThread;
 import io.github.pr0methean.betterrandom.prng.BaseRandom;
 import io.github.pr0methean.betterrandom.seed.FailingSeedGenerator;
 import io.github.pr0methean.betterrandom.seed.RandomSeederThread;
@@ -89,34 +90,38 @@ public class EntropyBlockingRandomWrapperTest extends RandomWrapperRandomTest {
   }
 
   @Test(timeOut = 60_000L) public void testRandomSeederThreadUsedFirst() {
-    SeedGenerator testSeedGenerator = getTestSeedGenerator();
-    SeedGenerator seederSeedGenSpy = Mockito.spy(testSeedGenerator);
-    final ThreadFactory defaultThreadFactory
-        = new RandomSeederThread.DefaultThreadFactory("testRandomSeederThreadUsedFirst");
-    RandomSeederThread seeder = new RandomSeederThread(seederSeedGenSpy, new ThreadFactory() {
-      @Override public Thread newThread(Runnable runnable) {
-        Thread thread = defaultThreadFactory.newThread(runnable);
-        thread.setPriority(Thread.MAX_PRIORITY);
-        return thread;
-      }
-    });
-    SemiFakeSeedGenerator sameThreadSeedGen
-        = Mockito.spy(new SemiFakeSeedGenerator(new SplittableRandomAdapter(), "sameThreadSeedGen"));
-    EntropyBlockingRandomWrapper random = new EntropyBlockingRandomWrapper(
-        testSeedGenerator.generateSeed(8), 0L, sameThreadSeedGen);
-    random.setRandomSeeder(seeder);
-    random.nextLong();
+    DeadlockWatchdogThread.ensureStarted();
     try {
-      assertEquals(random.getSameThreadSeedGen(), sameThreadSeedGen,
-          "Same-thread seed generator changed after setting RandomSeederThread, when already non-null");
+      SeedGenerator testSeedGenerator = getTestSeedGenerator();
+      SeedGenerator seederSeedGenSpy = Mockito.spy(testSeedGenerator);
+      final ThreadFactory defaultThreadFactory = new RandomSeederThread.DefaultThreadFactory("testRandomSeederThreadUsedFirst");
+      RandomSeederThread seeder = new RandomSeederThread(seederSeedGenSpy, new ThreadFactory() {
+        @Override public Thread newThread(Runnable runnable) {
+          Thread thread = defaultThreadFactory.newThread(runnable);
+          thread.setPriority(Thread.MAX_PRIORITY);
+          return thread;
+        }
+      });
+      SemiFakeSeedGenerator sameThreadSeedGen = Mockito
+          .spy(new SemiFakeSeedGenerator(new SplittableRandomAdapter(), "sameThreadSeedGen"));
+      EntropyBlockingRandomWrapper random =
+          new EntropyBlockingRandomWrapper(testSeedGenerator.generateSeed(8), 0L, sameThreadSeedGen);
+      random.setRandomSeeder(seeder);
       random.nextLong();
-      Mockito.verify(seederSeedGenSpy, Mockito.atLeastOnce()).generateSeed(any(byte[].class));
-      Mockito.verify(seederSeedGenSpy, Mockito.atMost(2)).generateSeed(any(byte[].class));
-      Mockito.verify(sameThreadSeedGen, Mockito.never()).generateSeed(any(byte[].class));
-      Mockito.verify(sameThreadSeedGen, Mockito.never()).generateSeed(anyInt());
+      try {
+        assertEquals(random.getSameThreadSeedGen(), sameThreadSeedGen,
+            "Same-thread seed generator changed after setting RandomSeederThread, when already non-null");
+        random.nextLong();
+        Mockito.verify(seederSeedGenSpy, Mockito.atLeastOnce()).generateSeed(any(byte[].class));
+        Mockito.verify(seederSeedGenSpy, Mockito.atMost(2)).generateSeed(any(byte[].class));
+        Mockito.verify(sameThreadSeedGen, Mockito.never()).generateSeed(any(byte[].class));
+        Mockito.verify(sameThreadSeedGen, Mockito.never()).generateSeed(anyInt());
+      } finally {
+        random.setRandomSeeder(null);
+        seeder.shutDown();
+      }
     } finally {
-      random.setRandomSeeder(null);
-      seeder.shutDown();
+      DeadlockWatchdogThread.stopInstance();
     }
   }
 
