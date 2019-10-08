@@ -42,7 +42,7 @@ public enum TestUtils {
    * @param constructorsToTest the constructors to test
    */
   @SuppressWarnings({"ObjectAllocationInLoop", "unchecked"})
-  public static <T> void testConstructors(final boolean includeProtected, final Map<Class<?>, Object> params,
+  public static <T> void testConstructors(final boolean includeProtected, final Map<Class<?>, ?> params,
       final Consumer<? super T> test, final Iterable<Constructor<?>> constructorsToTest) {
     for (final Constructor<?> constructor : constructorsToTest) {
       final int modifiers = constructor.getModifiers();

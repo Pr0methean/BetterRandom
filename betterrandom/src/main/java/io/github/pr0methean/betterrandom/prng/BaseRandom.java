@@ -916,4 +916,8 @@ public abstract class BaseRandom extends Random
   protected boolean supportsMultipleSeedLengths() {
     return false;
   }
+
+  @Override public boolean needsReseedingEarly() {
+    return false;
+  }
 }

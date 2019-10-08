@@ -207,32 +207,6 @@ public class AesCounterRandom extends CipherCounterRandom {
     return MAX_SEED_LENGTH_BYTES;
   }
 
-  @Override public void advance(final long delta) {
-    if (delta == 0) {
-      return;
-    }
-    long blocksDelta = delta / INTS_PER_BLOCK;
-    final int deltaWithinBlock = (int) (delta % INTS_PER_BLOCK) * INT_BYTES;
-    lock.lock();
-    try {
-      int newIndex = index + deltaWithinBlock;
-      if (newIndex >= COUNTER_SIZE_BYTES) {
-        newIndex -= COUNTER_SIZE_BYTES;
-        blocksDelta++;
-      }
-      if (newIndex < 0) {
-        newIndex += COUNTER_SIZE_BYTES;
-        blocksDelta--;
-      }
-      blocksDelta -= BLOCKS_AT_ONCE; // Compensate for the increment during nextBlock() below
-      Byte16ArrayArithmetic.addInto(counter, blocksDelta, addendDigits);
-      nextBlock();
-      index = newIndex;
-    } finally {
-      lock.unlock();
-    }
-  }
-
   @Override
   public MoreObjects.ToStringHelper addSubclassFields(final MoreObjects.ToStringHelper original) {
     return original.add("counter", BinaryUtils.convertBytesToHexString(counter))

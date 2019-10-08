@@ -91,12 +91,14 @@ public class EntropyBlockingRandomWrapperTest extends RandomWrapperRandomTest {
   @Test public void testRandomSeederThreadUsedFirst() {
     SeedGenerator testSeedGenerator = getTestSeedGenerator();
     SeedGenerator seederSeedGenSpy = Mockito.spy(testSeedGenerator);
-    ThreadFactory defaultThreadFactory
+    final ThreadFactory defaultThreadFactory
         = new RandomSeederThread.DefaultThreadFactory("testRandomSeederThreadUsedFirst");
-    RandomSeederThread seeder = new RandomSeederThread(seederSeedGenSpy, runnable -> {
-      Thread thread = defaultThreadFactory.newThread(runnable);
-      thread.setPriority(Thread.MAX_PRIORITY);
-      return thread;
+    RandomSeederThread seeder = new RandomSeederThread(seederSeedGenSpy, new ThreadFactory() {
+      @Override public Thread newThread(Runnable runnable) {
+        Thread thread = defaultThreadFactory.newThread(runnable);
+        thread.setPriority(Thread.MAX_PRIORITY);
+        return thread;
+      }
     });
     SemiFakeSeedGenerator sameThreadSeedGen
         = Mockito.spy(new SemiFakeSeedGenerator(new SplittableRandomAdapter(), "sameThreadSeedGen"));

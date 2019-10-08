@@ -11,7 +11,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Map;
 import java.util.Random;
-import java.util.function.Consumer;
 import org.testng.annotations.Test;
 
 @Test(testName = "EntropyBlockingRandomWrapper:AesCounterRandom")
@@ -28,7 +27,7 @@ public class EntropyBlockingRandomWrapperAesCounterRandomTest extends RandomWrap
       }
     }
     TestUtils.testConstructors(false, ImmutableMap.copyOf(constructorParams()),
-        (Consumer<? super EntropyBlockingRandomWrapper>) BaseRandom::nextInt,
+        NEXT_INT,
         relevantConstructors);
   }
 
