@@ -8,7 +8,7 @@
 [![Dependabot Status](https://api.dependabot.com/badges/status?host=github&repo=Pr0methean/BetterRandom)](https://dependabot.com)
 [![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2FPr0methean%2FBetterRandom.svg?type=shield)](https://app.fossa.io/projects/git%2Bgithub.com%2FPr0methean%2FBetterRandom?ref=badge_shield)
 [![Lifted on Tidelift!](https://tidelift.com/badges/package/maven/io.github.pr0methean.betterrandom:BetterRandom)](https://tidelift.com/subscription/pkg/maven-io-github-pr0methean-betterrandom-betterrandom-java7?utm_source=maven-io-github-pr0methean-betterrandom-betterrandom-java7&utm_medium=referral&utm_campaign=readme)
-[![Buy me a Coffee!](https://bmc-cdn.nyc3.digitaloceanspaces.com/BMC-button-images/custom_images/yellow_img.png)](https://www.buymeacoffee.com/IMypBXw)
+[![Buy me a Coffee!](https://bmc-cdn.nyc3.digitaloceanspaces.com/BMC-button-images/custom_images/yellow_img.png height=20)](https://www.buymeacoffee.com/IMypBXw)
 
 BetterRandom is a library that helps you get the best performance and the best pseudorandomness from
 your pseudorandom-number generators (PRNGs) and their seed sources. With it, you can:
