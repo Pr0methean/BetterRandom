@@ -88,7 +88,7 @@ public class EntropyBlockingRandomWrapperTest extends RandomWrapperRandomTest {
     } catch (IllegalStateException expected) {}
   }
 
-  @Test public void testRandomSeederThreadUsedFirst() {
+  @Test(timeOut = 60_000L) public void testRandomSeederThreadUsedFirst() {
     SeedGenerator testSeedGenerator = getTestSeedGenerator();
     SeedGenerator seederSeedGenSpy = Mockito.spy(testSeedGenerator);
     final ThreadFactory defaultThreadFactory
