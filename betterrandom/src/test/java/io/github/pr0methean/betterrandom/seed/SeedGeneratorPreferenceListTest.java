@@ -1,6 +1,6 @@
 package io.github.pr0methean.betterrandom.seed;
 
-import static io.github.pr0methean.betterrandom.seed.FailingSeedGenerator.FAILING_SEED_GENERATOR;
+import static io.github.pr0methean.betterrandom.seed.FailingSeedGenerator.DEFAULT_INSTANCE;
 import static java.util.Collections.singletonList;
 import static org.testng.Assert.assertFalse;
 import static org.testng.Assert.assertTrue;
@@ -32,7 +32,7 @@ public class SeedGeneratorPreferenceListTest extends AbstractSeedGeneratorTest {
 
   @Test public void testSecondSucceeds() {
     seedGenerator = new SeedGeneratorPreferenceList(
-        Arrays.asList(FAILING_SEED_GENERATOR, new FakeSeedGenerator()), true);
+        Arrays.asList(DEFAULT_INSTANCE, new FakeSeedGenerator()), true);
     generateAndCheckFakeSeed(32);
   }
 
@@ -47,7 +47,7 @@ public class SeedGeneratorPreferenceListTest extends AbstractSeedGeneratorTest {
   }
 
   @Test public void testNotAlwaysWorthTrying() {
-    seedGenerator = new SeedGeneratorPreferenceList(singletonList(FAILING_SEED_GENERATOR), false);
+    seedGenerator = new SeedGeneratorPreferenceList(singletonList(DEFAULT_INSTANCE), false);
     assertFalse(seedGenerator.isWorthTrying());
   }
 }

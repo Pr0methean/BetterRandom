@@ -18,6 +18,7 @@ public class SemiFakeSeedGenerator extends FakeSeedGenerator {
   }
 
   @Override public void generateSeed(final byte[] output) throws SeedException {
+    statusChecks();
     random.nextBytes(output);
   }
 

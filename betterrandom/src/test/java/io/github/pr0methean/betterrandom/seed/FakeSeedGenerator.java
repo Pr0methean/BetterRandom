@@ -26,11 +26,15 @@ public class FakeSeedGenerator implements SeedGenerator {
   }
 
   @Override public void generateSeed(final byte[] output) throws SeedException {
+    statusChecks();
+    Arrays.fill(output, (byte) 1);
+  }
+
+  protected void statusChecks() {
     calls.incrementAndGet();
     if (throwException.get()) {
       throw new SeedException("FakeSeedGenerator configured to throw exception");
     }
-    Arrays.fill(output, (byte) 1);
   }
 
   @Override public String toString() {

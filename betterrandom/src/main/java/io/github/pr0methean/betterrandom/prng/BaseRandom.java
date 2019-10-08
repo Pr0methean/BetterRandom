@@ -802,7 +802,7 @@ public abstract class BaseRandom extends Random
     }
     if ((this.seed == null) || (this.seed.length != seed.length)) {
       this.seed = seed.clone();
-    } else {
+    } else if (seed != this.seed) {
       System.arraycopy(seed, 0, this.seed, 0, seed.length);
     }
     nextNextGaussian.set(NAN_LONG_BITS); // Invalidate Gaussian that was generated from old seed

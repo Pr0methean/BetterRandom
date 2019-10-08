@@ -68,6 +68,15 @@ public final class RandomSeederThread extends LooperThread {
     }
   }
 
+  public void reseedAsync(Random random) {
+    if (random instanceof ByteArrayReseedableRandom) {
+      byteArrayPrngsThisIteration.add((ByteArrayReseedableRandom) random);
+    } else {
+      otherPrngsThisIteration.add(random);
+    }
+    wakeUp();
+  }
+
   public void remove(Random... randoms) {
     if (randoms.length == 0) {
       return;
@@ -119,6 +128,14 @@ public final class RandomSeederThread extends LooperThread {
 
   @Override public int hashCode() {
     return 31 * seedGenerator.hashCode() + factory.hashCode();
+  }
+
+  /**
+   * Returns the seed generator this RandomSeederThread is using.
+   * @return the seed generator
+   */
+  public SeedGenerator getSeedGenerator() {
+    return seedGenerator;
   }
 
   public static class DefaultThreadFactory implements ThreadFactory, Serializable {
@@ -259,8 +276,12 @@ public final class RandomSeederThread extends LooperThread {
   }
 
   private static boolean stillDefinitelyHasEntropy(final Object random) {
-    return (random instanceof EntropyCountingRandom) &&
-        (((EntropyCountingRandom) random).getEntropyBits() > 0);
+    if (!(random instanceof EntropyCountingRandom)) {
+      return false;
+    }
+    EntropyCountingRandom entropyCountingRandom = (EntropyCountingRandom) random;
+    return !entropyCountingRandom.needsReseedingEarly() &&
+        entropyCountingRandom.getEntropyBits() > 0;
   }
 
   private void clear() {

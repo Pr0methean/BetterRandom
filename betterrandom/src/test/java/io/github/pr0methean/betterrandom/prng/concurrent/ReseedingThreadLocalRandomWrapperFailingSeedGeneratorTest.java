@@ -70,6 +70,6 @@ public class ReseedingThreadLocalRandomWrapperFailingSeedGeneratorTest
   }
 
   @Override protected SeedGenerator getTestSeedGenerator() {
-    return FailingSeedGenerator.FAILING_SEED_GENERATOR;
+    return FailingSeedGenerator.DEFAULT_INSTANCE;
   }
 }
