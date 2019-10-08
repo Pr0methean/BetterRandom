@@ -10,7 +10,6 @@ import java.net.URL;
 import java.security.cert.Certificate;
 import javax.annotation.Nullable;
 import javax.net.ssl.HttpsURLConnection;
-import org.slf4j.LoggerFactory;
 
 /**
  * Used for testing {@link RandomDotOrgSeedGenerator}.
@@ -71,8 +70,6 @@ public class FakeHttpsUrlConnection extends HttpsURLConnection {
         is.close();
       }
       os.close();
-    } catch (final IOException e) {
-      LoggerFactory.getLogger(FakeHttpsUrlConnection.class).error("Failed to close streams", e);
-    }
+    } catch (final IOException ignored) {}
   }
 }

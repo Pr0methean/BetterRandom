@@ -20,7 +20,6 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.concurrent.atomic.AtomicBoolean;
-import org.slf4j.LoggerFactory;
 
 /**
  * RNG seed strategy that gets data from {@code /dev/random} on systems that provide it (e.g.
@@ -72,9 +71,8 @@ public enum DevRandomSeedGenerator implements SeedGenerator {
       }
     } catch (final IOException ex) {
       if (!DEV_RANDOM.exists()) {
-        LoggerFactory.getLogger(DevRandomSeedGenerator.class)
-            .error("{} does not exist", DEV_RANDOM_STRING);
         DEV_RANDOM_DOES_NOT_EXIST.lazySet(true);
+        throw new SeedException(DEV_RANDOM_STRING + " does not exist");
       }
       throw new SeedException("Failed reading from " + DEV_RANDOM_STRING, ex);
     } catch (final SecurityException ex) {

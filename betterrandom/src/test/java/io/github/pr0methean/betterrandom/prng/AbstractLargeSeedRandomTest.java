@@ -11,8 +11,6 @@ import java.lang.reflect.InvocationTargetException;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
 import org.powermock.api.mockito.PowerMockito;
-import org.powermock.api.mockito.mockpolicies.Slf4jMockPolicy;
-import org.powermock.core.classloader.annotations.MockPolicy;
 import org.powermock.core.classloader.annotations.PowerMockIgnore;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.reflect.Whitebox;
@@ -22,7 +20,6 @@ import org.powermock.reflect.Whitebox;
  * {@link io.github.pr0methean.betterrandom.seed.DefaultSeedGenerator}
  * calls is worth the overhead of using PowerMock.
  */
-@MockPolicy(Slf4jMockPolicy.class)
 @PrepareForTest(DefaultSeedGenerator.class)
 @PowerMockIgnore({"javax.crypto.*", "javax.management.*", "javax.script.*", "jdk.nashorn.*", "javax.net.ssl.*",
     "javax.security.*", "javax.xml.*", "org.xml.sax.*", "org.w3c.dom.*", "org.springframework.context.*", "org.apache.log4j.*",

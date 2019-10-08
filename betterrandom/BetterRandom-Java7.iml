@@ -66,42 +66,6 @@
     </orderEntry>
     <orderEntry type="library" name="Maven: net.sourceforge.streamsupport:streamsupport:1.7.1" level="project" />
     <orderEntry type="library" scope="TEST" name="Maven: org.testng:testng:6.14.3" level="project" />
-    <orderEntry type="library" scope="TEST" name="Maven: org.apache-extras.beanshell:bsh:2.0b6" level="project" />
-    <orderEntry type="library" scope="TEST" name="Maven: org.mockito:mockito-core:2.28.2" level="project" />
-    <orderEntry type="library" scope="TEST" name="Maven: org.powermock:powermock-core:2.0.0-beta.5" level="project" />
-    <orderEntry type="library" scope="TEST" name="Maven: org.powermock:powermock-reflect:2.0.0-beta.5" level="project" />
-    <orderEntry type="library" scope="TEST" name="Maven: org.javassist:javassist:3.22.0-CR2" level="project" />
-    <orderEntry type="library" scope="TEST" name="Maven: org.powermock:powermock-module-testng:2.0.0-beta.5" level="project" />
-    <orderEntry type="library" scope="TEST" name="Maven: org.powermock:powermock-module-testng-common:2.0.0-beta.5" level="project" />
-    <orderEntry type="library" scope="TEST" name="Maven: org.powermock:powermock-api-mockito2:2.0.0-beta.5" level="project" />
-    <orderEntry type="library" scope="TEST" name="Maven: org.powermock:powermock-api-support:2.0.0-beta.5" level="project" />
-    <orderEntry type="library" name="Maven: com.google.guava:guava:28.1-android" level="project" />
-    <orderEntry type="library" name="Maven: org.checkerframework:checker-compat-qual:2.5.5" level="project" />
-    <orderEntry type="library" scope="TEST" name="Maven: com.google.guava:guava-testlib:28.1-android" level="project" />
-    <orderEntry type="library" scope="RUNTIME" name="Maven: net.sf.proguard:proguard-base:5.3.3" level="project" />
-    <orderEntry type="library" scope="TEST" name="Maven: org.jacoco:org.jacoco.agent:runtime:0.8.4" level="project" />
-    <orderEntry type="library" name="Maven: net.sourceforge.streamsupport:streamsupport:1.7.1" level="project" />
-    <orderEntry type="library" scope="TEST" name="Maven: org.testng:testng:6.14.3" level="project" />
-    <orderEntry type="library" scope="TEST" name="Maven: org.apache-extras.beanshell:bsh:2.0b6" level="project" />
-    <orderEntry type="library" scope="TEST" name="Maven: org.mockito:mockito-core:2.28.2" level="project" />
-    <orderEntry type="library" scope="TEST" name="Maven: org.powermock:powermock-core:2.0.0-beta.5" level="project" />
-    <orderEntry type="library" scope="TEST" name="Maven: org.powermock:powermock-reflect:2.0.0-beta.5" level="project" />
-    <orderEntry type="library" scope="TEST" name="Maven: org.javassist:javassist:3.22.0-CR2" level="project" />
-    <orderEntry type="library" scope="TEST" name="Maven: org.powermock:powermock-module-testng:2.0.0-beta.5" level="project" />
-    <orderEntry type="library" scope="TEST" name="Maven: org.powermock:powermock-module-testng-common:2.0.0-beta.5" level="project" />
-    <orderEntry type="library" scope="TEST" name="Maven: org.powermock:powermock-api-mockito2:2.0.0-beta.5" level="project" />
-    <orderEntry type="library" scope="TEST" name="Maven: org.powermock:powermock-api-support:2.0.0-beta.5" level="project" />
-    <orderEntry type="library" name="Maven: com.google.guava:guava:28.1-android" level="project" />
-    <orderEntry type="library" name="Maven: org.checkerframework:checker-compat-qual:2.5.5" level="project" />
-    <orderEntry type="library" scope="TEST" name="Maven: com.google.guava:guava-testlib:28.1-android" level="project" />
-    <orderEntry type="library" scope="RUNTIME" name="Maven: net.sf.proguard:proguard-base:5.3.3" level="project" />
-    <orderEntry type="library" scope="TEST" name="Maven: org.jacoco:org.jacoco.agent:runtime:0.8.4" level="project" />
-    <orderEntry type="library" name="Maven: net.sourceforge.streamsupport:streamsupport:1.7.1" level="project" />
-    <orderEntry type="library" name="Maven: org.slf4j:slf4j-api:1.7.28" level="project" />
-    <orderEntry type="library" scope="TEST" name="Maven: org.apache.logging.log4j:log4j-slf4j-impl:2.12.1" level="project" />
-    <orderEntry type="library" scope="TEST" name="Maven: org.apache.logging.log4j:log4j-api:2.12.1" level="project" />
-    <orderEntry type="library" scope="TEST" name="Maven: org.apache.logging.log4j:log4j-core:2.12.1" level="project" />
-    <orderEntry type="library" scope="TEST" name="Maven: org.testng:testng:6.14.3" level="project" />
     <orderEntry type="library" scope="TEST" name="Maven: com.beust:jcommander:1.72" level="project" />
     <orderEntry type="library" scope="TEST" name="Maven: org.apache-extras.beanshell:bsh:2.0b6" level="project" />
     <orderEntry type="library" name="Maven: com.googlecode.json-simple:json-simple:1.1.1" level="project" />
@@ -155,6 +119,7 @@
     <orderEntry type="library" name="Maven: org.apache.maven.shared:maven-common-artifact-filters:3.0.1" level="project" />
     <orderEntry type="library" name="Maven: org.apache.maven.shared:maven-shared-utils:3.1.0" level="project" />
     <orderEntry type="library" name="Maven: commons-codec:commons-codec:1.11" level="project" />
+    <orderEntry type="library" name="Maven: org.slf4j:slf4j-api:1.7.5" level="project" />
     <orderEntry type="library" name="Maven: commons-io:commons-io:2.5" level="project" />
     <orderEntry type="library" name="Maven: org.codehaus.plexus:plexus-utils:3.1.0" level="project" />
     <orderEntry type="library" scope="RUNTIME" name="Maven: net.sf.proguard:proguard-base:5.3.3" level="project" />

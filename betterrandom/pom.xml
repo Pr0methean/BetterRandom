@@ -30,9 +30,6 @@
                 <excludedClass>io.github.pr0methean.betterrandom.prng.AesCounterRandom</excludedClass>
                 <excludedClass>io.github.pr0methean.betterrandom.prng.AesCounterRandomTest</excludedClass>
               </excludedClasses>
-              <avoidCallsTo>
-                <avoidCallsTo>org.slf4j</avoidCallsTo>
-              </avoidCallsTo>
               <timeoutFactor>2</timeoutFactor>
               <timeoutConstant>4000</timeoutConstant>
               <testPlugin>testng</testPlugin>
@@ -179,17 +176,6 @@
       <groupId>net.sourceforge.streamsupport</groupId>
       <artifactId>streamsupport</artifactId>
       <version>1.7.1</version>
-    </dependency>
-    <dependency>
-      <groupId>org.slf4j</groupId>
-      <artifactId>slf4j-api</artifactId>
-      <version>1.7.28</version>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.logging.log4j</groupId>
-      <artifactId>log4j-slf4j-impl</artifactId>
-      <version>2.12.1</version>
-      <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.testng</groupId>
@@ -598,9 +584,6 @@
           <mutationThreshold>75</mutationThreshold>
           <!-- AesCounterRandom excluded due to https://github.com/hcoles/pitest/issues/504 -->
           <excludedClasses>io.github.pr0methean.betterrandom.prng.AesCounterRandom</excludedClasses>
-          <avoidCallsTo>
-            <avoidCallsTo>org.slf4j</avoidCallsTo>
-          </avoidCallsTo>
           <timeoutFactor>1.5</timeoutFactor>
           <timeoutConstant>3000</timeoutConstant>
           <testPlugin>testng</testPlugin>

@@ -14,15 +14,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
-- slf4j loggers are now initialized lazily, since they're often unused. This should speed up startup.
 - `AesCounterRandom` now uses SHA-384, and reseeding can now alter both the cipher key and the counter value.
-- `AesCounterRandom` no longer logs anything if the JVM has no restrictions on cryptography.
 - Reseeding of `AesCounterRandom` should be faster, because some array copies have been eliminated.
 - Fixes a bug where `RandomWrapper` wrapping a plain old `java.util.Random` initially believed it had no entropy.
 
 ### Removed
 
 - `CellularAutomatonRandom` (deprecated in 4.0.2)
+- All logging has been removed from the Java 7 branch due to bugs.
 
 ## [4.0.3]
 

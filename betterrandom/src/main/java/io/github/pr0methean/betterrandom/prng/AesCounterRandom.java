@@ -15,14 +15,11 @@
 // ============================================================================
 package io.github.pr0methean.betterrandom.prng;
 
-import static io.github.pr0methean.betterrandom.util.Java8Constants.INT_BYTES;
-
 import com.google.common.base.MoreObjects;
 import io.github.pr0methean.betterrandom.seed.DefaultSeedGenerator;
 import io.github.pr0methean.betterrandom.seed.SeedException;
 import io.github.pr0methean.betterrandom.seed.SeedGenerator;
 import io.github.pr0methean.betterrandom.util.BinaryUtils;
-import io.github.pr0methean.betterrandom.util.Byte16ArrayArithmetic;
 import java.security.GeneralSecurityException;
 import java.security.InvalidKeyException;
 import java.security.MessageDigest;
@@ -31,7 +28,6 @@ import java.util.Random;
 import javax.crypto.Cipher;
 import javax.crypto.NoSuchPaddingException;
 import javax.crypto.spec.SecretKeySpec;
-import org.slf4j.LoggerFactory;
 
 /**
  * <p>CipherCounterRandom using AES (Rijndael).</p> <p>Keys larger than 128 bits, and thus seeds
@@ -79,7 +75,6 @@ public class AesCounterRandom extends CipherCounterRandom {
   }
 
   private static final int COUNTER_SIZE_BYTES = 16;
-  private static final int INTS_PER_BLOCK = COUNTER_SIZE_BYTES / INT_BYTES;
 
   /**
    * Number of blocks to encrypt at once, to construct/GC fewer arrays. This takes advantage of the
@@ -105,10 +100,6 @@ public class AesCounterRandom extends CipherCounterRandom {
       final int allowedKeyLengthBits = Cipher.getMaxAllowedKeyLength(ALGORITHM_MODE);
       final int allowedKeyLengthBytes = allowedKeyLengthBits / 8;
       MAX_KEY_LENGTH_BYTES = Math.min(allowedKeyLengthBytes, 32);
-      if (allowedKeyLengthBits < Integer.MAX_VALUE) {
-        LoggerFactory.getLogger(AesCounterRandom.class)
-            .info("Maximum allowed key length for AES is {} bytes", MAX_KEY_LENGTH_BYTES);
-      }
       MAX_SEED_LENGTH_BYTES = MAX_KEY_LENGTH_BYTES + COUNTER_SIZE_BYTES;
     } catch (final GeneralSecurityException e) {
       throw new InternalError(e.getMessage());

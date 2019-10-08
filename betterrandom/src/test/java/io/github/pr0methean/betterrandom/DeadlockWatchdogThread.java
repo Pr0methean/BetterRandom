@@ -5,14 +5,11 @@ import java.lang.management.ManagementFactory;
 import java.lang.management.ThreadInfo;
 import java.lang.management.ThreadMXBean;
 import java.util.concurrent.ThreadFactory;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 @SuppressWarnings("unused") // intermittently needed for debugging
 public class DeadlockWatchdogThread extends LooperThread {
 
   private static final ThreadMXBean THREAD_MX_BEAN = ManagementFactory.getThreadMXBean();
-  private static final Logger LOG = LoggerFactory.getLogger(DeadlockWatchdogThread.class);
   private static final int MAX_STACK_DEPTH = 20;
   private static final int DEADLOCK_STATUS = 0xDEAD10CC;
   public static final int POLL_INTERVAL = 5_000;
@@ -61,12 +58,12 @@ public class DeadlockWatchdogThread extends LooperThread {
     boolean deadlockFound = false;
     long[] threadsOfInterest = THREAD_MX_BEAN.findDeadlockedThreads();
     if ((threadsOfInterest != null) && (threadsOfInterest.length > 0)) {
-      LOG.error("DEADLOCKED THREADS FOUND");
+      System.err.println("DEADLOCKED THREADS FOUND");
       deadlockFound = true;
     } else {
       threadsOfInterest = THREAD_MX_BEAN.getAllThreadIds();
       if (threadsOfInterest.length <= 0) {
-        LOG.error("ThreadMxBean didn't return any thread IDs");
+        System.err.println("ThreadMxBean didn't return any thread IDs");
         return false;
       }
     }
@@ -75,9 +72,11 @@ public class DeadlockWatchdogThread extends LooperThread {
       final StackTraceElement[] stackTrace = threadInfo.getStackTrace();
       final Throwable t = new StackTraceHolder(threadInfo.getThreadName(), stackTrace);
       if (deadlockFound) {
-        LOG.error("A deadlocked thread:", t);
+        System.err.println("A deadlocked thread:");
+        t.printStackTrace(System.err);
       } else {
-        LOG.info("A running thread:", t);
+        System.out.println("A running thread:");
+        t.printStackTrace(System.out);
       }
     }
     if (deadlockFound) {

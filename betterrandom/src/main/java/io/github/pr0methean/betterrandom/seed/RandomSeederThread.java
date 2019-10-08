@@ -17,8 +17,6 @@ import java.util.WeakHashMap;
 import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.Condition;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Thread that loops over {@link Random} instances and reseeds them. No {@link
@@ -33,20 +31,8 @@ public final class RandomSeederThread extends LooperThread {
   private transient Set<Random> otherPrngsThisIteration;
   private transient Condition waitWhileEmpty;
   private transient Condition waitForEntropyDrain;
-  private static volatile Logger LOG;
   private static final long POLL_INTERVAL = 60;
   private final long stopIfEmptyForNanos;
-
-  private static Logger getLogger() {
-    if (LOG == null) {
-      synchronized (RandomSeederThread.class) {
-        if (LOG == null) {
-          LOG = LoggerFactory.getLogger(RandomSeederThread.class);
-        }
-      }
-    }
-    return LOG;
-  }
 
   private void initTransientFields() {
     byteArrayPrngs = Collections.newSetFromMap(Collections.synchronizedMap(new WeakHashMap<ByteArrayReseedableRandom, Boolean>(1)));
@@ -257,7 +243,6 @@ public final class RandomSeederThread extends LooperThread {
       }
       return true;
     } catch (final Throwable t) {
-      getLogger().error("Disabling the RandomSeederThread for " + seedGenerator, t);
       return false;
     }
   }
@@ -329,7 +314,6 @@ public final class RandomSeederThread extends LooperThread {
     lock.lock();
     try {
       if (isEmpty()) {
-        getLogger().info("Stopping empty RandomSeederThread for {}", seedGenerator);
         interrupt();
       }
     } finally {
