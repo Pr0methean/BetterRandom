@@ -116,11 +116,11 @@ public class EntropyBlockingRandomWrapperTest extends RandomWrapperRandomTest {
       Mockito.verify(sameThreadSeedGen, Mockito.never()).generateSeed(anyInt());
     } finally {
       random.setRandomSeeder(null);
-      seeder.stopIfEmpty();
+      seeder.shutDown();
     }
   }
 
-  @Test(timeOut = 10_000L) public void testFallbackFromRandomSeederThread() {
+  @Test(timeOut = 20_000L) public void testFallbackFromRandomSeederThread() {
     SeedGenerator failingSeedGen = Mockito.spy(FailingSeedGenerator.DEFAULT_INSTANCE);
     RandomSeederThread seeder = new RandomSeederThread(failingSeedGen);
     SeedGenerator sameThreadSeedGen
@@ -133,7 +133,7 @@ public class EntropyBlockingRandomWrapperTest extends RandomWrapperRandomTest {
       Mockito.verify(sameThreadSeedGen, Mockito.atMost(2)).generateSeed(any(byte[].class));
     } finally {
       random.setRandomSeeder(null);
-      seeder.stopIfEmpty();
+      seeder.shutDown();
     }
   }
 
