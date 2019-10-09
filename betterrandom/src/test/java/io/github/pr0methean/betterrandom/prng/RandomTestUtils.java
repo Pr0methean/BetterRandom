@@ -44,7 +44,7 @@ import org.testng.Reporter;
 /**
  * Provides methods used for testing the operation of RNG implementations.
  *
- * @author Daniel Dyer
+ * @author Chris Hennick, Daniel Dyer
  */
 public enum RandomTestUtils {
   ;
