@@ -140,10 +140,10 @@ public enum RandomTestUtils {
     rng1.nextBytes(out1);
     byte[] out2 = new byte[iterations];
     rng2.nextBytes(out2);
-    final String fullMessage = String
-        .format("%s:%n%s -> %s%nvs.%n%s -> %s%n", message, toString(rng1),
-            convertBytesToHexString(out1), toString(rng2), convertBytesToHexString(out2));
     if (Arrays.equals(out1, out2) != shouldBeEquivalent) {
+      final String fullMessage = String
+          .format("%s:%n%s -> %s%nvs.%n%s -> %s%n", message, toString(rng1),
+              convertBytesToHexString(out1), toString(rng2), convertBytesToHexString(out2));
       throw new AssertionError(fullMessage);
     }
   }
