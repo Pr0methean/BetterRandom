@@ -47,6 +47,7 @@ public final class RandomSeederThread extends LooperThread {
     start();
     if (lock.tryLock()) {
       try {
+        waitWhileEmpty.signalAll();
         waitForEntropyDrain.signalAll();
       } finally {
         lock.unlock();
