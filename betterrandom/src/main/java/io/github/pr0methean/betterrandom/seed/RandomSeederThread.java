@@ -33,19 +33,11 @@ public final class RandomSeederThread extends LooperThread {
   private transient Set<Random> otherPrngsThisIteration;
   private transient Condition waitWhileEmpty;
   private transient Condition waitForEntropyDrain;
-  private static volatile Logger LOG;
   private static final long POLL_INTERVAL = 60;
   private final long stopIfEmptyForNanos;
 
   private static Logger getLogger() {
-    if (LOG == null) {
-      synchronized (RandomSeederThread.class) {
-        if (LOG == null) {
-          LOG = LoggerFactory.getLogger(RandomSeederThread.class);
-        }
-      }
-    }
-    return LOG;
+    return LoggerFactory.getLogger(RandomSeederThread.class);
   }
 
   private void initTransientFields() {
