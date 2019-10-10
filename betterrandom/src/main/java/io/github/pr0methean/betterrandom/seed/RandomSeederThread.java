@@ -100,9 +100,7 @@ public final class RandomSeederThread extends LooperThread {
           otherPrngs.add(random);
         }
       }
-      start();
-      waitForEntropyDrain.signalAll();
-      waitWhileEmpty.signalAll();
+      wakeUp();
     } finally {
       lock.unlock();
     }
