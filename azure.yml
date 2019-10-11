@@ -37,47 +37,53 @@ pr:
       - CHANGELOG.md
       - .submodules
       - docs/
-jobs:
-  - job: UnitTest
-    variables:
-      JAVA_HOME: $(zuluLinux07)
-      artifactEnvName: OpenJdk07Linux
-    pool:
-      vmImage: 'ubuntu-16.04'
-    steps:
-    - template: etc/azureTemplate/installHaveged.yml
-    - script: ./unit-tests.sh
-      displayName: Build & Test
-      env:
+stages:
+  - stage: UnitTest
+    jobs:
+    - job: UnitTest
+      variables:
         JAVA_HOME: $(zuluLinux07)
-        JAVA_HOME_7_X64: $(zuluLinux07)
-        RANDOM_DOT_ORG_KEY: $(RANDOM_DOT_ORG_KEY)
-    - template: etc/azureTemplate/publishCoverage.yml
-  - job: Mutation
-    dependsOn:
-      - UnitTest
-    timeoutInMinutes: 120 # FIXME: Remove once reliably passing in 50
-    pool:
-      vmImage: 'ubuntu-16.04'
-    steps:
+        artifactEnvName: OpenJdk07Linux
+      pool:
+        vmImage: 'ubuntu-16.04'
+      steps:
       - template: etc/azureTemplate/installHaveged.yml
-      - script: ./mutation.sh
-        displayName: Build & Run Mutation Tests
+      - script: ./unit-tests.sh
+        displayName: Build & Test
         env:
+          JAVA_HOME: $(zuluLinux07)
+          JAVA_HOME_7_X64: $(zuluLinux07)
           RANDOM_DOT_ORG_KEY: $(RANDOM_DOT_ORG_KEY)
-          JAVA_HOME: $(zuluLinux08)
-      - task: PublishBuildArtifacts@1
-        displayName: Publish Mutation Report
-        inputs:
-          pathtoPublish: betterrandom/target/pit-reports
-          artifactName: Mutation Coverage
-  - job: Benchmark
+      - template: etc/azureTemplate/publishCoverage.yml
+  - stage: Mutation
     dependsOn:
       - UnitTest
-    variables:
-      JAVA_HOME: $(zuluLinux07)
-      artifactEnvName: 'OpenJDK07Linux'
-    pool:
-      vmImage: 'ubuntu-16.04'
-    steps:
-      - template: etc/azureTemplate/benchmark.yml
+    jobs:
+    - job: Mutation
+      timeoutInMinutes: 90
+      pool:
+        vmImage: 'ubuntu-16.04'
+      steps:
+        - template: etc/azureTemplate/installHaveged.yml
+        - script: ./mutation.sh
+          displayName: Build & Run Mutation Tests
+          env:
+            RANDOM_DOT_ORG_KEY: $(RANDOM_DOT_ORG_KEY)
+            JAVA_HOME: $(zuluLinux08)
+        - task: PublishBuildArtifacts@1
+          displayName: Publish Mutation Report
+          inputs:
+            pathtoPublish: betterrandom/target/pit-reports
+            artifactName: Mutation Coverage
+  - stage: Benchmark
+    dependsOn:
+      - UnitTest
+    jobs:
+    - job: Benchmark
+      variables:
+        JAVA_HOME: $(zuluLinux07)
+        artifactEnvName: 'OpenJDK07Linux'
+      pool:
+        vmImage: 'ubuntu-16.04'
+      steps:
+        - template: etc/azureTemplate/benchmark.yml
