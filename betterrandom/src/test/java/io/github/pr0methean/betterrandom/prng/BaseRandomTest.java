@@ -38,6 +38,7 @@ import java.util.Map;
 import java.util.Random;
 import java.util.SortedSet;
 import java.util.TreeSet;
+import java.util.UUID;
 import java.util.concurrent.ConcurrentSkipListSet;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ForkJoinPool;
@@ -364,7 +365,8 @@ public abstract class BaseRandomTest extends PowerMockTestCase {
    */
   @SuppressWarnings("BusyWait") @Test(timeOut = 60_000, retryAnalyzer = FlakyRetryAnalyzer.class)
   public void testRandomSeederThreadIntegration() {
-    final SeedGenerator seedGenerator = new SemiFakeSeedGenerator(new Random());
+    final SeedGenerator seedGenerator = new SemiFakeSeedGenerator(new Random(),
+        UUID.randomUUID().toString());
     final BaseRandom rng = createRng();
     RandomTestUtils.testReseeding(seedGenerator, rng, true);
   }
