@@ -8,6 +8,7 @@ import static org.testng.Assert.assertSame;
 import static org.testng.Assert.fail;
 
 import com.google.common.collect.ImmutableList;
+import io.github.pr0methean.betterrandom.TestingDeficiency;
 import io.github.pr0methean.betterrandom.prng.BaseRandom;
 import io.github.pr0methean.betterrandom.seed.FailingSeedGenerator;
 import io.github.pr0methean.betterrandom.seed.RandomSeederThread;
@@ -105,7 +106,25 @@ public class EntropyBlockingRandomWrapperTest extends RandomWrapperRandomTest {
     EntropyBlockingRandomWrapper random = new EntropyBlockingRandomWrapper(
         testSeedGenerator.generateSeed(8), 0L, sameThreadSeedGen);
     random.setRandomSeeder(seeder);
-    while (true) { // FIXME: Spurious interrupts
+    nextLongIgnoreSpuriousInterrupts(random);
+    try {
+      assertEquals(random.getSameThreadSeedGen(), sameThreadSeedGen,
+          "Same-thread seed generator changed after setting RandomSeederThread, when already non-null");
+      nextLongIgnoreSpuriousInterrupts(random);
+      Mockito.verify(seederSeedGenSpy, Mockito.atLeastOnce()).generateSeed(any(byte[].class));
+      Mockito.verify(seederSeedGenSpy, Mockito.atMost(2)).generateSeed(any(byte[].class));
+      Mockito.verify(sameThreadSeedGen, Mockito.never()).generateSeed(any(byte[].class));
+      Mockito.verify(sameThreadSeedGen, Mockito.never()).generateSeed(anyInt());
+    } finally {
+      random.setRandomSeeder(null);
+      seeder.shutDown();
+    }
+  }
+
+  @TestingDeficiency
+  private static void nextLongIgnoreSpuriousInterrupts(EntropyBlockingRandomWrapper random) {
+    // FIXME: Spurious interrupts
+    while (true) {
       try {
         random.nextLong();
         break;
@@ -114,18 +133,6 @@ public class EntropyBlockingRandomWrapperTest extends RandomWrapperRandomTest {
           throw e;
         }
       }
-    }
-    try {
-      assertEquals(random.getSameThreadSeedGen(), sameThreadSeedGen,
-          "Same-thread seed generator changed after setting RandomSeederThread, when already non-null");
-      random.nextLong();
-      Mockito.verify(seederSeedGenSpy, Mockito.atLeastOnce()).generateSeed(any(byte[].class));
-      Mockito.verify(seederSeedGenSpy, Mockito.atMost(2)).generateSeed(any(byte[].class));
-      Mockito.verify(sameThreadSeedGen, Mockito.never()).generateSeed(any(byte[].class));
-      Mockito.verify(sameThreadSeedGen, Mockito.never()).generateSeed(anyInt());
-    } finally {
-      random.setRandomSeeder(null);
-      seeder.shutDown();
     }
   }
 
