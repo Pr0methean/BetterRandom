@@ -105,7 +105,16 @@ public class EntropyBlockingRandomWrapperTest extends RandomWrapperRandomTest {
     EntropyBlockingRandomWrapper random = new EntropyBlockingRandomWrapper(
         testSeedGenerator.generateSeed(8), 0L, sameThreadSeedGen);
     random.setRandomSeeder(seeder);
-    random.nextLong();
+    while (true) { // FIXME: Spurious interrupts
+      try {
+        random.nextLong();
+        break;
+      } catch (RuntimeException e) {
+        if (!(e.getCause() instanceof InterruptedException)) {
+          throw e;
+        }
+      }
+    }
     try {
       assertEquals(random.getSameThreadSeedGen(), sameThreadSeedGen,
           "Same-thread seed generator changed after setting RandomSeederThread, when already non-null");
