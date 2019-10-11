@@ -8,7 +8,6 @@ import static org.testng.Assert.assertSame;
 import static org.testng.Assert.fail;
 
 import com.google.common.collect.ImmutableList;
-import io.github.pr0methean.betterrandom.DeadlockWatchdogThread;
 import io.github.pr0methean.betterrandom.prng.BaseRandom;
 import io.github.pr0methean.betterrandom.seed.FailingSeedGenerator;
 import io.github.pr0methean.betterrandom.seed.RandomSeederThread;
@@ -20,21 +19,11 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ThreadFactory;
 import org.mockito.Mockito;
-import org.testng.annotations.AfterClass;
-import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
 @Test(testName = "EntropyBlockingRandomWrapper")
 public class EntropyBlockingRandomWrapperTest extends RandomWrapperRandomTest {
   private static final long DEFAULT_MAX_ENTROPY = -1000L;
-
-  @BeforeClass public void setUpMethod() {
-    DeadlockWatchdogThread.ensureStarted();
-  }
-
-  @AfterClass public void tearDownMethod() {
-    DeadlockWatchdogThread.stopInstance();
-  }
 
   @Override public Class<? extends BaseRandom> getClassUnderTest() {
     return EntropyBlockingRandomWrapper.class;
