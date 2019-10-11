@@ -104,10 +104,13 @@ public class EntropyBlockingRandomWrapper extends RandomWrapper {
         if (seeder != null) {
           waitingOnReseed = true;
           seeder.reseedAsync(this);
-          seedingStatusChanged.awaitUninterruptibly(); // FIXME: Why does await() get interrupted in unit tests?
+          seedingStatusChanged.await();
           continue;
         }
         seedGenerator = sameThreadSeedGen.get();
+      } catch (InterruptedException e) {
+        Thread.currentThread().interrupt();
+        throw new RuntimeException(e);
       } finally {
         lock.unlock();
       }
