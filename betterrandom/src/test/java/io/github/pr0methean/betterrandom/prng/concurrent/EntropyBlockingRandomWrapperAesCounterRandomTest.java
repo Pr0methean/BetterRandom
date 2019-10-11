@@ -1,6 +1,7 @@
 package io.github.pr0methean.betterrandom.prng.concurrent;
 
 import com.google.common.collect.ImmutableMap;
+import io.github.pr0methean.betterrandom.DeadlockWatchdogThread;
 import io.github.pr0methean.betterrandom.TestUtils;
 import io.github.pr0methean.betterrandom.prng.AesCounterRandom;
 import io.github.pr0methean.betterrandom.prng.BaseRandom;
@@ -11,11 +12,21 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Map;
 import java.util.Random;
+import org.testng.annotations.AfterClass;
+import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
 @Test(testName = "EntropyBlockingRandomWrapper:AesCounterRandom")
 public class EntropyBlockingRandomWrapperAesCounterRandomTest extends RandomWrapperAesCounterRandomTest {
   private static final long DEFAULT_MAX_ENTROPY = -1000L;
+
+  @BeforeClass public void setUpMethod() {
+    DeadlockWatchdogThread.ensureStarted();
+  }
+
+  @AfterClass public void tearDownMethod() {
+    DeadlockWatchdogThread.stopInstance();
+  }
 
   @Override @Test public void testAllPublicConstructors() {
     Constructor<?>[] constructors =
