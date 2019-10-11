@@ -38,7 +38,7 @@ pr:
       - .submodules
       - docs/
 stages:
-  - stage: UnitTest
+  - stage: UnitTests
     jobs:
     - job: UnitTest
       variables:
@@ -57,7 +57,7 @@ stages:
       - template: etc/azureTemplate/publishCoverage.yml
   - stage: Mutation
     dependsOn:
-      - UnitTest
+      - UnitTests
     jobs:
     - job: Mutation
       timeoutInMinutes: 90
@@ -77,7 +77,7 @@ stages:
             artifactName: Mutation Coverage
   - stage: Benchmark
     dependsOn:
-      - UnitTest
+      - UnitTests
     jobs:
     - job: Benchmark
       variables:
