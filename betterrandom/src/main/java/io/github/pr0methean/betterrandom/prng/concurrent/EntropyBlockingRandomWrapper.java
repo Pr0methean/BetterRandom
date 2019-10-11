@@ -91,13 +91,8 @@ public class EntropyBlockingRandomWrapper extends RandomWrapper {
   }
 
   @Override public void setRandomSeeder(@Nullable RandomSeederThread randomSeeder) {
-    lock.lock();
-    try {
-      super.setRandomSeeder(randomSeeder);
-      onSeedingStateChanged();
-    } finally {
-      lock.unlock();
-    }
+    super.setRandomSeeder(randomSeeder);
+    onSeedingStateChanged();
   }
 
   @Override protected void debitEntropy(long bits) {
