@@ -57,7 +57,7 @@ stages:
               JAVA_HOME: $(zuluLinuxLatest)
               artifactEnvName: OpenJdkLatestLinux
         pool:
-          vmImage: 'ubuntu-16.04'
+          vmImage: 'ubuntu-latest'
         steps:
         - template: etc/azureTemplate/unitTestsUbuntu.yml
         - template: etc/azureTemplate/publishCoverage.yml
@@ -73,14 +73,14 @@ stages:
               javaUrl: $(OpenJNineLatestLinux)
               artifactEnvName: OpenJNineLatestLinux
         pool:
-          vmImage: 'ubuntu-16.04'
+          vmImage: 'ubuntu-latest'
         steps:
           - template: etc/azureTemplate/installJavaJti.yml
           - template: etc/azureTemplate/unitTestsUbuntu.yml
           - template: etc/azureTemplate/publishCoverage.yml
       - job: UnitOracleLimitedCrypto
         pool:
-          vmImage: 'ubuntu-16.04'
+          vmImage: 'ubuntu-latest'
         variables:
           JAVA8: 'true'
           artifactEnvName: OracleLimitedCrypto
@@ -151,7 +151,7 @@ stages:
         JAVA_HOME: $(zuluLinuxLatest)
       timeoutInMinutes: 120 # FIXME: Remove once reliably passing in 50
       pool:
-        vmImage: 'ubuntu-16.04'
+        vmImage: 'ubuntu-latest'
       steps:
         - template: etc/azureTemplate/installHaveged.yml
         - script: ./mutation.sh
@@ -181,7 +181,7 @@ stages:
             JAVA_HOME: $(zuluLinuxLatest)
             artifactEnvName: 'OpenJDKLatestLinux'
       pool:
-        vmImage: 'ubuntu-16.04'
+        vmImage: 'ubuntu-latest'
       steps:
         - template: etc/azureTemplate/benchmark.yml
     - job: BenchmarkLinux
@@ -196,7 +196,7 @@ stages:
             javaUrl: $(OpenJNineLatestLinux)
             artifactEnvName: 'OpenJNineLatestLinux'
       pool:
-        vmImage: 'ubuntu-16.04'
+        vmImage: 'ubuntu-latest'
       steps:
         - template: etc/azureTemplate/installJavaJti.yml
         - template: etc/azureTemplate/benchmark.yml
@@ -257,7 +257,7 @@ stages:
             JAVA_HOME: $(JAVA_HOME)
     - job: BenchmarkOracleLimitedCrypto
       pool:
-        vmImage: 'ubuntu-16.04'
+        vmImage: 'ubuntu-latest'
       variables:
         JAVA8: 'true'
         artifactEnvName: OracleLimitedCrypto
@@ -292,7 +292,7 @@ stages:
           SingleThreadSplittableRandomAdapter:
             class: 'concurrent.SingleThreadSplittableRandomAdapter'
       pool:
-        vmImage: 'ubuntu-16.04'
+        vmImage: 'ubuntu-latest'
       steps:
         - template: etc/azureTemplate/installJavaJti.yml
         - script: sudo apt install dieharder
