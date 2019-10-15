@@ -76,14 +76,14 @@ public class RandomSeederThreadTest {
       try {
         random.nextLong();
         random.nextLong();
-        Thread.sleep(100);
+        Thread.sleep(200);
         assertFalse(randomSeeder.isRunning());
         assertEquals(seedGenerator.countCalls(), 1);
         seedGenerator.setThrowException(false);
         randomSeeder.remove(random);
         randomSeeder.add(random);
         random.nextBoolean();
-        Thread.sleep(100);
+        Thread.sleep(200);
         assertTrue(randomSeeder.isRunning());
         assertEquals(seedGenerator.countCalls(), 2);
         random.nextBoolean();
