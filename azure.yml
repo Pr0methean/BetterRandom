@@ -5,7 +5,11 @@ variables:
 - name: zuluLinux08
   value: '/usr/lib/jvm/zulu-8-azure-amd64'
 - name: zuluLinuxLatest
-  value: '/usr/lib/jvm/zulu-12-azure-amd64'
+  value: '/usr/lib/jvm/zulu-12-azure-amd64' # JDK 13 isn't preinstalled as of 2019-09-18
+- name: openjnine11linux
+  value: 'https://api.adoptopenjdk.net/v2/binary/releases/openjdk11?openjdk_impl=openj9&os=linux&arch=x64&type=jdk&heap_size=normal&release=latest'
+- name: openJNineLatestLinux
+  value: 'https://api.adoptopenjdk.net/v2/binary/releases/openjdk13?openjdk_impl=openj9&os=linux&arch=x64&type=jdk&heap_size=normal&release=latest'
 trigger:
   batch: true
   branches:
@@ -62,7 +66,7 @@ stages:
     - job: Mutation
       timeoutInMinutes: 90
       pool:
-        vmImage: 'ubuntu-16.04'
+        vmImage: 'ubuntu-latest'
       steps:
         - template: etc/azureTemplate/installHaveged.yml
         - script: ./mutation.sh
@@ -84,6 +88,6 @@ stages:
         JAVA_HOME: $(zuluLinux07)
         artifactEnvName: 'OpenJDK07Linux'
       pool:
-        vmImage: 'ubuntu-16.04'
+        vmImage: 'ubuntu-latest'
       steps:
         - template: etc/azureTemplate/benchmark.yml
