@@ -297,7 +297,7 @@
     <jsr305.version>3.0.2</jsr305.version>
     <guava.version>28.1-jre</guava.version>
     <proguard.version>6.2.0</proguard.version>
-    <jacoco.version>0.8.4</jacoco.version>
+    <jacoco.version>0.8.5</jacoco.version>
     <powermock.version>2.0.2</powermock.version>
     <mockito.version>3.1.0</mockito.version>
     <pitest.version>1.4.10</pitest.version>
