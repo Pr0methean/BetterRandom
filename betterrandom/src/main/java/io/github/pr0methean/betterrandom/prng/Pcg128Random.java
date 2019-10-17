@@ -49,6 +49,7 @@ public class Pcg128Random extends BaseRandom implements SeekableRandom {
 
   public static final double RANDOM_DOUBLE_INCR = 0x1.0p-53;
   private static final int MASK = (1 << WANTED_OP_BITS) - 1;
+  private static final long serialVersionUID = 3246991464669800351L;
 
   private transient byte[] curMult;
   private transient byte[] curPlus;

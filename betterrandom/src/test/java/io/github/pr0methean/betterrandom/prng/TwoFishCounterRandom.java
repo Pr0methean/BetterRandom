@@ -2,7 +2,6 @@ package io.github.pr0methean.betterrandom.prng;
 
 import com.google.common.base.MoreObjects;
 import io.github.pr0methean.betterrandom.util.BinaryUtils;
-import io.github.pr0methean.betterrandom.util.Byte16ArrayArithmetic;
 import java.security.MessageDigest;
 import org.bouncycastle.crypto.engines.TwofishEngine;
 import org.bouncycastle.crypto.params.KeyParameter;
@@ -15,6 +14,7 @@ import org.bouncycastle.jcajce.provider.digest.SHA3;
 public class TwoFishCounterRandom extends CipherCounterRandom {
   private static final int LARGE_KEY_LENGTH = 32;
   private static final int SMALL_KEY_LENGTH = 16;
+  private static final long serialVersionUID = 919295559867023505L;
   @SuppressWarnings("CanBeFinal") private static int MAX_KEY_LENGTH_BYTES = LARGE_KEY_LENGTH;
 
   // WARNING: Don't initialize any instance fields at declaration; they may be initialized too late!

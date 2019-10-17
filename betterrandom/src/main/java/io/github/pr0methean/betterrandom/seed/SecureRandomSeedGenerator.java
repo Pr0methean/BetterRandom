@@ -47,6 +47,7 @@ public class SecureRandomSeedGenerator implements SeedGenerator, Serializable {
    */
   @Deprecated public static final SecureRandomSeedGenerator SECURE_RANDOM_SEED_GENERATOR
       = DEFAULT_INSTANCE;
+  private static final long serialVersionUID = 854226000048040387L;
 
   /**
    * The {@link SecureRandom} that generates the seeds.

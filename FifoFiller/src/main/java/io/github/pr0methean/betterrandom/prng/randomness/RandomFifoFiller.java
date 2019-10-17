@@ -65,7 +65,7 @@ public final class RandomFifoFiller
         default:
           random = Class.forName(args[0]).asSubclass(Random.class)
               .getConstructor(byte[].class)
-              .newInstance(BinaryUtils.convertHexStringToBytes(args[2]));
+              .newInstance((Object) BinaryUtils.convertHexStringToBytes(args[2]));
       }
       generateOutputFile(random, new File(args[1]));
     }

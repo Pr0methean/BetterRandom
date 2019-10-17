@@ -20,6 +20,8 @@ public class SeedGeneratorPreferenceListTest extends AbstractSeedGeneratorTest {
 
   @Test public void testFirstSucceeds() {
     FakeSeedGenerator shouldNotBeUsed = new FakeSeedGenerator() {
+      private static final long serialVersionUID = 1234489141337390747L;
+
       @Override public void generateSeed(byte[] output) throws SeedException {
         throw new AssertionError("Should not have fallen through to this SeedGenerator");
       }
@@ -38,6 +40,8 @@ public class SeedGeneratorPreferenceListTest extends AbstractSeedGeneratorTest {
 
   @Test public void testAlwaysWorthTrying() {
     FakeSeedGenerator doNotCall = new FakeSeedGenerator() {
+      private static final long serialVersionUID = 7594951403926684340L;
+
       @Override public boolean isWorthTrying() {
         throw new AssertionError("isWorthTrying() should not have been called");
       }

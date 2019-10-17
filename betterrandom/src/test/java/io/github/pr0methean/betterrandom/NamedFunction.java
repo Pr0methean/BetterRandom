@@ -5,6 +5,7 @@ import java.util.function.Function;
 
 public final class NamedFunction<T, R> implements Function<T, R>, Serializable {
 
+  private static final long serialVersionUID = 8151994795231615138L;
   private final Function<T, R> function;
   private final String name;
 
