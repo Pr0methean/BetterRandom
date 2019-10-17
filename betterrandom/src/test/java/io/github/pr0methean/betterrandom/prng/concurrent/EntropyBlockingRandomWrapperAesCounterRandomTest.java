@@ -1,6 +1,7 @@
 package io.github.pr0methean.betterrandom.prng.concurrent;
 
 import com.google.common.collect.ImmutableMap;
+import io.github.pr0methean.betterrandom.FlakyRetryAnalyzer;
 import io.github.pr0methean.betterrandom.TestUtils;
 import io.github.pr0methean.betterrandom.prng.AesCounterRandom;
 import io.github.pr0methean.betterrandom.prng.BaseRandom;
@@ -54,7 +55,8 @@ public class EntropyBlockingRandomWrapperAesCounterRandomTest extends RandomWrap
   }
 
   // FIXME: Too slow!
-  @Override @Test(timeOut = 120_000L) public void testRandomSeederThreadIntegration() {
+  @Override @Test(timeOut = 90_000L, retryAnalyzer = FlakyRetryAnalyzer.class)
+  public void testRandomSeederThreadIntegration() {
     super.testRandomSeederThreadIntegration();
   }
 }
