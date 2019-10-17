@@ -1,6 +1,7 @@
 package io.github.pr0methean.betterrandom.seed;
 
 import io.github.pr0methean.betterrandom.util.EntryPoint;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.concurrent.CopyOnWriteArrayList;
 
@@ -24,6 +25,11 @@ public class SeedGeneratorPreferenceList extends CopyOnWriteArrayList<SeedGenera
       boolean isAlwaysWorthTrying) {
     addAll(contents);
     this.isAlwaysWorthTrying = isAlwaysWorthTrying;
+  }
+
+  @EntryPoint public SeedGeneratorPreferenceList(boolean isAlwaysWorthTrying, SeedGenerator...
+      contents) {
+    this(Arrays.asList(contents), isAlwaysWorthTrying);
   }
 
   @Override public void generateSeed(byte[] output) throws SeedException {

@@ -8,6 +8,6 @@ import java.util.Random;
 public class Pcg128RandomBenchmark extends AbstractRandomBenchmarkWithReseeding {
 
   @Override protected Random createPrng() throws SeedException {
-    return new Pcg128Random(SecureRandomSeedGenerator.SECURE_RANDOM_SEED_GENERATOR);
+    return new Pcg128Random(SecureRandomSeedGenerator.DEFAULT_INSTANCE);
   }
 }

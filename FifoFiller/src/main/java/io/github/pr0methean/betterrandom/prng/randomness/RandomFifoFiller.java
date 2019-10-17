@@ -24,7 +24,6 @@ import java.io.DataOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.lang.reflect.Constructor;
 import java.util.Random;
 import javax.annotation.Nullable;
 
@@ -61,7 +60,7 @@ public final class RandomFifoFiller
         case 2:
           random = Class.forName(args[0]).asSubclass(Random.class)
               .getConstructor(SeedGenerator.class)
-              .newInstance(SecureRandomSeedGenerator.SECURE_RANDOM_SEED_GENERATOR);
+              .newInstance(SecureRandomSeedGenerator.DEFAULT_INSTANCE);
           break;
         default:
           random = Class.forName(args[0]).asSubclass(Random.class)

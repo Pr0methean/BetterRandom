@@ -38,7 +38,7 @@ public class EntropyBlockingRandomWrapperTest extends RandomWrapperRandomTest {
   @Override protected SeedGenerator getTestSeedGenerator() {
     // Need a separate and non-value-equal instance for each test, for isolation
     return new SemiFakeSeedGenerator(
-        new SplittableRandomAdapter(SecureRandomSeedGenerator.SECURE_RANDOM_SEED_GENERATOR),
+        new SplittableRandomAdapter(SecureRandomSeedGenerator.DEFAULT_INSTANCE),
         UUID.randomUUID().toString());
   }
 

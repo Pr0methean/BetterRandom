@@ -15,7 +15,9 @@
 // ============================================================================
 package io.github.pr0methean.betterrandom.seed;
 
+import java.io.Serializable;
 import java.security.SecureRandom;
+import java.util.Objects;
 
 /**
  * <p>{@link SeedGenerator} implementation that uses Java's bundled {@link SecureRandom} RNG to
@@ -33,27 +35,55 @@ import java.security.SecureRandom;
  *
  * @author Daniel Dyer
  */
-public enum SecureRandomSeedGenerator implements SeedGenerator {
+public class SecureRandomSeedGenerator implements SeedGenerator, Serializable {
 
-  SECURE_RANDOM_SEED_GENERATOR;
+  public static final SecureRandomSeedGenerator DEFAULT_INSTANCE
+      = new SecureRandomSeedGenerator(new SecureRandom());
+
+  /**
+   * The default instance.
+   *
+   * @deprecated Renamed to {@link #DEFAULT_INSTANCE}. Old name for backward compatibility.
+   */
+  @Deprecated public static final SecureRandomSeedGenerator SECURE_RANDOM_SEED_GENERATOR
+      = DEFAULT_INSTANCE;
 
   /**
    * The {@link SecureRandom} that generates the seeds.
    */
-  private static final SecureRandom SOURCE = new SecureRandom();
+  private final SecureRandom source;
+
+  public SecureRandomSeedGenerator(SecureRandom source) {
+    this.source = source;
+  }
 
   @Override public byte[] generateSeed(final int length) {
     if (length <= 0) {
       return EMPTY_SEED;
     }
-    return SOURCE.generateSeed(length);
+    return source.generateSeed(length);
   }
 
   @Override public void generateSeed(final byte[] output) {
-    System.arraycopy(SOURCE.generateSeed(output.length), 0, output, 0, output.length);
+    System.arraycopy(source.generateSeed(output.length), 0, output, 0, output.length);
   }
 
   @Override public String toString() {
-    return "java.security.SecureRandom";
+    return String.format("SecureRandomSeedGenerator (%s)", source);
+  }
+
+  @Override public boolean equals(Object o) {
+    if (this == o) {
+      return true;
+    }
+    if (o == null || getClass() != o.getClass()) {
+      return false;
+    }
+    SecureRandomSeedGenerator that = (SecureRandomSeedGenerator) o;
+    return Objects.equals(source, that.source);
+  }
+
+  @Override public int hashCode() {
+    return Objects.hash(source);
   }
 }

@@ -54,7 +54,7 @@ import org.testng.annotations.Test;
 public abstract class BaseRandomTest extends PowerMockTestCase {
 
   protected final SeedGenerator semiFakeSeedGenerator = new SemiFakeSeedGenerator(
-      new SplittableRandomAdapter(SecureRandomSeedGenerator.SECURE_RANDOM_SEED_GENERATOR));
+      new SplittableRandomAdapter(SecureRandomSeedGenerator.DEFAULT_INSTANCE));
 
   /**
    * The square root of 12, rounded from an extended-precision calculation that was done by Wolfram
