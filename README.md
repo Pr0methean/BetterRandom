@@ -64,6 +64,15 @@ PRNG. There are two ways to minimize this risk, both of which BetterRandom can h
 
 Don't take chances on randomness -- get it right with BetterRandom.
 
+# Your name or ad here!
+
+GitHub Sponsors can get mentions or ad space in this section of this page, both on
+[GitHub](https://github.com/pr0methean/betterrandom) and
+[GitHub Pages](https://pr0methean.github.io/betterrandom-java8/index.html). You can even get a
+mention in the Javadocs.
+Get publicity from a library that was downloaded 12,985 times from Maven Central in September 2019.
+Visit [https://github.com/sponsors/Pr0methean](https://github.com/sponsors/Pr0methean) for details.
+
 # Get it from MavenCentral
 
 * Get the latest version from
