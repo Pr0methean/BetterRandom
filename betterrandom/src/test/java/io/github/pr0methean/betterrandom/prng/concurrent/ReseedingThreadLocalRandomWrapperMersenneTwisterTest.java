@@ -24,7 +24,7 @@ public class ReseedingThreadLocalRandomWrapperMersenneTwisterTest
 
   @TestingDeficiency @Override protected SeedGenerator getTestSeedGenerator() {
     // FIXME: Statistical tests often fail when using semiFakeSeedGenerator
-    return SecureRandomSeedGenerator.SECURE_RANDOM_SEED_GENERATOR;
+    return SecureRandomSeedGenerator.DEFAULT_INSTANCE;
   }
 
   @Override public void testWrapLegacy() throws SeedException {

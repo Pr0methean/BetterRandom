@@ -8,6 +8,6 @@ import java.util.Random;
 public class RandomWrapperBenchmark extends AbstractRandomBenchmarkWithReseeding {
 
   @Override protected Random createPrng() throws SeedException {
-    return new RandomWrapper(SecureRandomSeedGenerator.SECURE_RANDOM_SEED_GENERATOR);
+    return new RandomWrapper(SecureRandomSeedGenerator.DEFAULT_INSTANCE);
   }
 }

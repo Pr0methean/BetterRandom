@@ -1,6 +1,5 @@
 package io.github.pr0methean.betterrandom.seed;
 
-import io.github.pr0methean.betterrandom.prng.concurrent.SplittableRandomAdapter;
 import java.util.Random;
 
 public class SemiFakeSeedGenerator extends FakeSeedGenerator {

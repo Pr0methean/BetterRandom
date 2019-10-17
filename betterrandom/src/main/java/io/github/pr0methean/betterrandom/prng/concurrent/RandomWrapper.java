@@ -301,14 +301,12 @@ public class RandomWrapper extends BaseRandom {
 
   @Override public int nextInt() {
     debitEntropy(Integer.SIZE);
-    final int result = getWrapped().nextInt();
-    return result;
+    return getWrapped().nextInt();
   }
 
   @Override public int nextInt(final int bound) {
     debitEntropy(entropyOfInt(0, bound));
-    final int result = getWrapped().nextInt(bound);
-    return result;
+    return getWrapped().nextInt(bound);
   }
 
   @Override protected long nextLongNoEntropyDebit() {
@@ -317,14 +315,12 @@ public class RandomWrapper extends BaseRandom {
 
   @Override public boolean nextBoolean() {
     debitEntropy(1);
-    final boolean result = getWrapped().nextBoolean();
-    return result;
+    return getWrapped().nextBoolean();
   }
 
   @Override public float nextFloat() {
     debitEntropy(ENTROPY_OF_FLOAT);
-    final float result = getWrapped().nextFloat();
-    return result;
+    return getWrapped().nextFloat();
   }
 
   @Override public double nextDoubleNoEntropyDebit() {
@@ -335,7 +331,6 @@ public class RandomWrapper extends BaseRandom {
     // Upper bound. 2 Gaussians are generated from 2 nextDouble calls, and at least 1 of the 2 is
     // output.
     debitEntropy(ENTROPY_OF_DOUBLE);
-    final double result = getWrapped().nextGaussian();
-    return result;
+    return getWrapped().nextGaussian();
   }
 }

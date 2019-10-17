@@ -8,6 +8,6 @@ import java.util.Random;
 public class MersenneTwisterRandomBenchmark extends AbstractRandomBenchmarkWithReseeding {
 
   @Override protected Random createPrng() throws SeedException {
-    return new MersenneTwisterRandom(SecureRandomSeedGenerator.SECURE_RANDOM_SEED_GENERATOR);
+    return new MersenneTwisterRandom(SecureRandomSeedGenerator.DEFAULT_INSTANCE);
   }
 }

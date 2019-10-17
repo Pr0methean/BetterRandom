@@ -25,6 +25,7 @@ import java.util.concurrent.locks.Condition;
  * @author Chris Hennick
  */
 public final class RandomSeederThread extends LooperThread {
+  private static final long serialVersionUID = -4339570810679373476L;
   private transient Set<ByteArrayReseedableRandom> byteArrayPrngs;
   private transient Set<Random> otherPrngs;
   private transient Set<ByteArrayReseedableRandom> byteArrayPrngsThisIteration;

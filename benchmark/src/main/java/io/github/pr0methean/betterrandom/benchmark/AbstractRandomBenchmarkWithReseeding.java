@@ -51,7 +51,7 @@ import org.openjdk.jmh.annotations.Warmup;
 public abstract class AbstractRandomBenchmarkWithReseeding extends AbstractRandomBenchmark {
 
   private static final RandomSeederThread RANDOM_SEEDER = new RandomSeederThread(
-      SecureRandomSeedGenerator.SECURE_RANDOM_SEED_GENERATOR);
+      SecureRandomSeedGenerator.DEFAULT_INSTANCE);
 
   @SuppressWarnings("CallToSystemGetenv") @Setup public void setApiKey() {
     final String apiKeyString = System.getenv("RANDOM_DOT_ORG_KEY");

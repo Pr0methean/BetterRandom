@@ -6,6 +6,7 @@ import java8.util.function.Function;
 
 public abstract class NamedFunction<T, R> implements Function<T, R>, Consumer<T>, Serializable {
 
+  private static final long serialVersionUID = 8151994795231615138L;
   private final String name;
 
   public NamedFunction(final String name) {

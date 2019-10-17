@@ -15,8 +15,6 @@
 // ============================================================================
 package io.github.pr0methean.betterrandom.seed;
 
-import java.util.Arrays;
-
 /**
  * <p>
  * Seed generator that is the default for the program where it is running. PRNGs that are serialized
@@ -39,10 +37,10 @@ public enum DefaultSeedGenerator implements SeedGenerator {
    */
   DEFAULT_SEED_GENERATOR;
 
-  private static volatile SeedGenerator delegate = new SeedGeneratorPreferenceList(Arrays
-      .asList(new BufferedSeedGenerator(DevRandomSeedGenerator.DEV_RANDOM_SEED_GENERATOR, 128),
-          new BufferedSeedGenerator(RandomDotOrgSeedGenerator.DELAYED_RETRY, 625),
-          SecureRandomSeedGenerator.SECURE_RANDOM_SEED_GENERATOR), true);
+  private static volatile SeedGenerator delegate = new SeedGeneratorPreferenceList(true,
+      new BufferedSeedGenerator(DevRandomSeedGenerator.DEV_RANDOM_SEED_GENERATOR, 128),
+      new BufferedSeedGenerator(RandomDotOrgSeedGenerator.DELAYED_RETRY, 625),
+      SecureRandomSeedGenerator.DEFAULT_INSTANCE);
 
   public static SeedGenerator get() {
     return delegate;

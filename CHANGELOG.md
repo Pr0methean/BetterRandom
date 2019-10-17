@@ -11,12 +11,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - `EntropyBlockingRandomWrapper`: won't return any output when below a minimum entropy (recommended to use 0 or less).
   Can be configured with a `SeedGenerator` to reseed on the calling thread, or can use a `RandomSeederThread`.
+- `SecureRandomSeedGenerator(SecureRandom)`: new constructor. This class is no longer a singleton.
 
 ### Changed
 
 - `AesCounterRandom` now uses SHA-384, and reseeding can now alter both the cipher key and the counter value.
 - Reseeding of `AesCounterRandom` should be faster, because some array copies have been eliminated.
 - Fixes a bug where `RandomWrapper` wrapping a plain old `java.util.Random` initially believed it had no entropy.
+- `SecureRandomSeedGenerator.SECURE_RANDOM_SEED_GENERATOR` is now called `SecureRandomSeedGenerator.DEFAULT_INSTANCE`.
+- Optimizations to reduce volatile-field accesses in `CipherCounterRandom` and `BufferedSeedGenerator`.
 
 ### Removed
 

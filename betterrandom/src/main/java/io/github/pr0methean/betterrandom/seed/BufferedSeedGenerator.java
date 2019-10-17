@@ -40,16 +40,18 @@ public class BufferedSeedGenerator implements SeedGenerator {
     } else {
       lock.lock();
       try {
-        int available = size - pos;
+        int curPos = pos;
+        int available = size - curPos;
         if (available >= output.length) {
-          System.arraycopy(buffer, pos, output, 0, output.length);
-          pos += output.length;
+          System.arraycopy(buffer, curPos, output, 0, output.length);
+          curPos += output.length;
         } else {
-          System.arraycopy(buffer, pos, output, 0, available);
+          System.arraycopy(buffer, curPos, output, 0, available);
           delegate.generateSeed(buffer);
-          pos = output.length - available;
-          System.arraycopy(buffer, 0, output, available, pos);
+          curPos = output.length - available;
+          System.arraycopy(buffer, 0, output, available, curPos);
         }
+        pos = curPos;
       } finally {
         lock.unlock();
       }

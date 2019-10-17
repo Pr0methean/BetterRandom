@@ -28,7 +28,7 @@ import org.testng.annotations.Test;
 public class SecureRandomSeedGeneratorTest extends AbstractSeedGeneratorTest {
 
   public SecureRandomSeedGeneratorTest() {
-    super(SecureRandomSeedGenerator.SECURE_RANDOM_SEED_GENERATOR);
+    super(SecureRandomSeedGenerator.DEFAULT_INSTANCE);
   }
 
   @Test(timeOut = 15000) public void testGenerator() throws SeedException {

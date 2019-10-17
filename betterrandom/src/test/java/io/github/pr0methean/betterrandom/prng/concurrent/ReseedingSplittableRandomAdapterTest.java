@@ -1,6 +1,6 @@
 package io.github.pr0methean.betterrandom.prng.concurrent;
 
-import static io.github.pr0methean.betterrandom.seed.SecureRandomSeedGenerator.SECURE_RANDOM_SEED_GENERATOR;
+import static io.github.pr0methean.betterrandom.seed.SecureRandomSeedGenerator.DEFAULT_INSTANCE;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotEquals;
 import static org.testng.Assert.assertSame;
@@ -141,7 +141,7 @@ import org.testng.annotations.Test;
    */
   @Override @Test(expectedExceptions = UnsupportedOperationException.class)
   public void testRandomSeederThreadIntegration() {
-    RandomSeederThread thread = new RandomSeederThread(SECURE_RANDOM_SEED_GENERATOR);
+    RandomSeederThread thread = new RandomSeederThread(DEFAULT_INSTANCE);
     try {
       createRng().setRandomSeeder(thread);
     } finally {
@@ -163,7 +163,7 @@ import org.testng.annotations.Test;
   }
 
   @Override @Test public void testDump() throws SeedException {
-    RandomSeederThread thread = new RandomSeederThread(SECURE_RANDOM_SEED_GENERATOR);
+    RandomSeederThread thread = new RandomSeederThread(DEFAULT_INSTANCE);
     try {
       ReseedingSplittableRandomAdapter baseInstance =
           ReseedingSplittableRandomAdapter.getInstance(thread, getTestSeedGenerator());

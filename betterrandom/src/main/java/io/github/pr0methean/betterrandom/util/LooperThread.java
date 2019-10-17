@@ -19,12 +19,14 @@ public abstract class LooperThread implements Serializable {
    * Singleton-ization of {@link Executors#defaultThreadFactory()}.
    */
   protected static final ThreadFactory DEFAULT_THREAD_FACTORY = Executors.defaultThreadFactory();
+  private static final long serialVersionUID = -4790652062170305318L;
 
   /**
    * The thread holds this lock whenever it is running {@link #iterate()}.
    */
   protected final Lock lock = new ReentrantLock(true);
   protected final Lock threadLock = new ReentrantLock();
+  @SuppressWarnings("InstanceVariableMayNotBeInitializedByReadObject")
   protected transient volatile Thread thread;
   protected final ThreadFactory factory;
   private volatile boolean running; // determines whether to start when deserialized

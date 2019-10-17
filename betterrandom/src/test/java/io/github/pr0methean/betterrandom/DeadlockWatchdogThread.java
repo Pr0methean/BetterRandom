@@ -13,9 +13,12 @@ public class DeadlockWatchdogThread extends LooperThread {
   private static final int MAX_STACK_DEPTH = 20;
   private static final int DEADLOCK_STATUS = 0xDEAD10CC;
   public static final int POLL_INTERVAL = 5_000;
+  private static final long serialVersionUID = 1160104387427407739L;
   private static DeadlockWatchdogThread INSTANCE = new DeadlockWatchdogThread();
 
   private static final class StackTraceHolder extends Throwable {
+    private static final long serialVersionUID = -2630425445144895193L;
+
     public StackTraceHolder(final String name, final StackTraceElement[] stackTrace) {
       super(name, null, false, true);
       setStackTrace(stackTrace);

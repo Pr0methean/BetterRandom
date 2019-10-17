@@ -18,6 +18,7 @@ import org.testng.annotations.Test;
 @SuppressWarnings("ClassLoaderInstantiation") public class LooperThreadTest {
 
   private static class TestLooperThread extends LooperThread {
+    private static final long serialVersionUID = 4931153919188474618L;
     final AtomicBoolean shouldThrow = new AtomicBoolean(false);
     final AtomicLong iterations = new AtomicLong(0);
 
@@ -99,6 +100,8 @@ import org.testng.annotations.Test;
 
   private static class FailingLooperThread extends LooperThread {
 
+    private static final long serialVersionUID = 9113510029311710617L;
+
     private FailingLooperThread() {
       super("FailingLooperThread");
     }
@@ -109,6 +112,7 @@ import org.testng.annotations.Test;
   }
 
   private static class SleepingLooperThread extends LooperThread {
+    private static final long serialVersionUID = -3389447813822333325L;
     protected final AtomicLong finishedIterations = new AtomicLong(0);
     protected final CountDownLatch startLatch = new CountDownLatch(2);
 

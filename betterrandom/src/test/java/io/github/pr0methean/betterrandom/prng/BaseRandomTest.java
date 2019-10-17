@@ -62,7 +62,7 @@ public abstract class BaseRandomTest extends PowerMockTestCase {
         }
       };
   protected final SeedGenerator semiFakeSeedGenerator = new SemiFakeSeedGenerator(
-      new SingleThreadSplittableRandomAdapter(SecureRandomSeedGenerator.SECURE_RANDOM_SEED_GENERATOR));
+      new SingleThreadSplittableRandomAdapter(SecureRandomSeedGenerator.DEFAULT_INSTANCE));
 
   /**
    * The square root of 12, rounded from an extended-precision calculation that was done by Wolfram

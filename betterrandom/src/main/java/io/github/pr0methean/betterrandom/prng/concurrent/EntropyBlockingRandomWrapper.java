@@ -17,12 +17,13 @@ import javax.annotation.Nullable;
  */
 public class EntropyBlockingRandomWrapper extends RandomWrapper {
 
+  private static final long serialVersionUID = -853699062122154479L;
   private final long minimumEntropy;
   private final Condition seedingStatusChanged = lock.newCondition();
 
   /** Used on the calling thread when there isn't a working RandomSeederThread. */
   private final AtomicReference<SeedGenerator> sameThreadSeedGen;
-  private transient volatile boolean waitingOnReseed = false;
+  @SuppressWarnings("TransientFieldNotInitialized") private transient volatile boolean waitingOnReseed = false;
 
   public EntropyBlockingRandomWrapper(long minimumEntropy, SeedGenerator seedGenerator)
       throws SeedException {

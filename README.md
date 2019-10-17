@@ -86,8 +86,12 @@ Continuous reseeding is recommended if you don't need reproducible output.
 
 * If you need reproducible output, use:
   ```
-  byte[] seed = DEFAULT_SEED_GENERATOR.generateSeed(AesCounterRandom.MAX_SEED_LENGTH_BYTES);
-  // Output the seed
+  byte[] seed;
+  // Use an input seed if provided, or else:
+  if (seed == null) {
+    seed = DEFAULT_SEED_GENERATOR.generateSeed(AesCounterRandom.MAX_SEED_LENGTH_BYTES);
+    // Then output the seed
+  }
   random = new AesCounterRandom(seed);
   ```
 * If you need multi-thread concurrency (incompatible with reproducibility), use:
@@ -107,8 +111,12 @@ Continuous reseeding is recommended if you don't need reproducible output.
 
 * If you need reproducible output, use:
   ```
-  byte[] seed = DEFAULT_SEED_GENERATOR.generateSeed(Long.BYTES);
-  // Output the seed
+  byte[] seed;
+  // Use an input seed if provided, then:
+  if (seed == null) {
+    seed = DEFAULT_SEED_GENERATOR.generateSeed(Long.BYTES);
+    // Then output the seed
+  }
   random = new SingleThreadSplittableRandomAdapter(seed); 
   ```
 * If you need multi-thread concurrency (incompatible with reproducibility), use:
@@ -132,15 +140,36 @@ Continuous reseeding is recommended if you don't need reproducible output.
   new SingleThreadSplittableRandomAdapter()
   ```
 
-# Full javadocs
+# Simple tricks
 
-Javadocs for the latest snapshot, including both public and protected members (to support your
-subclassing), are at [pr0methean.github.io](https://pr0methean.github.io/).
+## Don't use random.org unless explicitly specified
+```
+DefaultSeedGenerator.set(new SeedGeneratorPreferenceList(
+      new BufferedSeedGenerator(DevRandomSeedGenerator.DEV_RANDOM_SEED_GENERATOR, 128),
+      SecureRandomSeedGenerator.DEFAULT_INSTANCE));
+```
 
-# Usage examples
+## Specify the SecureRandom algorithm for seed generation
+```
+SecureRandom secureRandom = new SecureRandom("SHA1PRNG");
+DefaultSeedGenerator.set(new SecureRandomSeedGenerator(secureRandom));
+```
+
+## Use a different seed generator for one specific PRNG
+```
+random = new SingleThreadSplittableRandomAdapter(SecureRandomSeedGenerator.DEFAULT_INSTANCE);
+```
+
+## Ridiculously long period
+```
+random = new Cmwc4096Random();
+```
+
+
+# Full examples
 
 ## Cryptographic PRNG that uses Random.org for frequent reseeding
-```
+```java
 import static io.github.pr0methean.betterrandom.seed.RandomDotOrgSeedGenerator.RANDOM_DOT_ORG_SEED_GENERATOR;
 
 import io.github.pr0methean.betterrandom.seed.RandomSeederThread;
@@ -161,9 +190,8 @@ public class AesCounterRandomDemo {
 ```
 
 ## ReseedingSplittableRandomAdapter for fast, high-quality, parallel duplicate-bridge dealing
-```
-import static io.github.pr0methean.betterrandom.seed.SecureRandomSeedGenerator.SECURE_RANDOM_SEED_GENERATOR;
-
+```java
+import io.github.pr0methean.betterrandom.seed.SecureRandomSeedGenerator;
 import io.github.pr0methean.betterrandom.seed.SeedException;
 import java.util.Arrays;
 import java.util.Collections;
@@ -186,7 +214,7 @@ public class SplittableRandomAdapterDemo {
     ThreadLocal<List<String>> deckCopies = ThreadLocal.withInitial(() -> Arrays.asList(cards.clone()));
     ScheduledThreadPoolExecutor executor = new ScheduledThreadPoolExecutor(4);
     ReseedingSplittableRandomAdapter random = ReseedingSplittableRandomAdapter.getInstance(
-        DEFAULT_SEED_GENERATOR);
+        SecureRandomSeedGenerator.DEFAULT_INSTANCE);
     for (i=0; i<1000; i++) {
       executor.submit(() -> {
         List<String> deck = deckCopies.get();
@@ -204,6 +232,11 @@ public class SplittableRandomAdapterDemo {
 }
 
 ```
+# Full javadocs
+
+Javadocs for the latest snapshot, including both public and protected members (to support your
+subclassing), are at [pr0methean.github.io](https://pr0methean.github.io/).
+
 # Tested environments
 
 BetterRandom has 2 versions, one for Java 7 -- including Android API levels below 24 -- and one for
@@ -294,7 +327,7 @@ adapters are available:
   registers each thread's `SplittableRandom` instance with a `RandomSeederThread` (see below). This
   is probably the best PRNG implementation that allows concurrent access from multiple threads.
 
-## Other algorithms
+## Table of algorithms
 
 | Class                   | Seed size (bytes)  | Period (bits)      |  Speed | Speed with RandomSeederThread | Effect of `setSeed(long)`                     | `getSeed()` rewinds? | Algorithm author
 |-------------------------|--------------------|--------------------|--------|-------------------------------|-----------------------------------------------|----------------------|--------------------
@@ -304,6 +337,8 @@ adapters are available:
 | XorShiftRandom          |                 20 | ~2<sup>160</sup>   | Medium |                        Medium | Not supported                                 | Yes                  | [George Marsaglia](http://www.jstatsoft.org/v08/i14/paper)
 | SplittableRandomAdapter |     8<sup>**</sup> | 2<sup>64</sup>     |   Fast |              Fast<sup>†</sup> | Replaces existing seed (calling thread only)  | Yes                  | [Guy Steele and Doug Lea](http://hg.openjdk.java.net/jdk8/jdk8/jdk/file/687fd7c7986d/src/share/classes/java/util/SplittableRandom.java)
 | Pcg64Random             |                  8 | 2<sup>62</sup>     |   Fast |                          Fast | Replaces existing seed                        | Yes                  | [M. E. O'Neill](http://www.pcg-random.org/)
+
+Period assumes exactly 32 or 64 bits are consumed at a time, using `nextInt()`, `nextLong()`, `ints()` or `longs()`.
 
 <sup>*</sup>Seed sizes above 32 for AesCounterRandom require jurisdiction policy files that allow
 192- and 256-bit AES seeds.

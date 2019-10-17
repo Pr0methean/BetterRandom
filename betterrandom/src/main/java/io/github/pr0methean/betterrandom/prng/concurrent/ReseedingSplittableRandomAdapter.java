@@ -26,9 +26,8 @@ public class ReseedingSplittableRandomAdapter extends BaseSplittableRandomAdapte
   private final SeedGenerator seedGenerator;
   // Making a transient field final only works because we use readResolve, so outside that method
   // we're always in an instance from our own constructor even when deserialized.
-  @SuppressWarnings(
-      {"ThreadLocalNotStaticFinal"}) private final transient ThreadLocal<SingleThreadSplittableRandomAdapter>
-      threadLocal;
+  @SuppressWarnings({"ThreadLocalNotStaticFinal", "TransientFieldNotInitialized"})
+  private final transient ThreadLocal<SingleThreadSplittableRandomAdapter> threadLocal;
 
   /**
    * Single instance per SeedGenerator.
@@ -99,7 +98,7 @@ public class ReseedingSplittableRandomAdapter extends BaseSplittableRandomAdapte
     return original.add("randomSeeder", randomSeeder.get()).add("seedGenerator", seedGenerator);
   }
 
-  private Object readResolve() {
+  protected Object readResolve() {
     return getInstance(randomSeeder.get(), seedGenerator);
   }
 

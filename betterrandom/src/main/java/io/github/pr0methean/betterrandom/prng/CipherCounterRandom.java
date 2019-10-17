@@ -188,12 +188,14 @@ public abstract class CipherCounterRandom extends BaseRandom implements Seekable
     lock.lock();
     int result;
     try {
-      if ((getBytesAtOnce() - index) < 4) {
+      int curIndex = index;
+      if ((getBytesAtOnce() - curIndex) < 4) {
         nextBlock();
-        index = 0;
+        curIndex = 0;
       }
-      result = BinaryUtils.convertBytesToInt(currentBlock, index);
-      index += 4;
+      result = BinaryUtils.convertBytesToInt(currentBlock, curIndex);
+      curIndex += 4;
+      index = curIndex;
     } finally {
       lock.unlock();
     }

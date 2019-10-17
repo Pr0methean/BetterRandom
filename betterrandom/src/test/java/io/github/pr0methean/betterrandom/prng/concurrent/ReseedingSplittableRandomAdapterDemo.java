@@ -1,6 +1,6 @@
 package io.github.pr0methean.betterrandom.prng.concurrent;
 
-import static io.github.pr0methean.betterrandom.seed.SecureRandomSeedGenerator.SECURE_RANDOM_SEED_GENERATOR;
+import static io.github.pr0methean.betterrandom.seed.SecureRandomSeedGenerator.DEFAULT_INSTANCE;
 
 import com.google.common.base.Joiner;
 import io.github.pr0methean.betterrandom.seed.RandomSeederThread;
@@ -35,9 +35,9 @@ public enum ReseedingSplittableRandomAdapterDemo {
     };
     final ScheduledThreadPoolExecutor executor = new ScheduledThreadPoolExecutor(4);
     final RandomSeederThread randomSeederThread =
-        new RandomSeederThread(SECURE_RANDOM_SEED_GENERATOR);
+        new RandomSeederThread(DEFAULT_INSTANCE);
     final ReseedingSplittableRandomAdapter random = ReseedingSplittableRandomAdapter
-        .getInstance(randomSeederThread, SECURE_RANDOM_SEED_GENERATOR);
+        .getInstance(randomSeederThread, DEFAULT_INSTANCE);
     for (i = 0; i < 20; i++) {
       executor.submit(new Runnable() {
         @Override public void run() {
