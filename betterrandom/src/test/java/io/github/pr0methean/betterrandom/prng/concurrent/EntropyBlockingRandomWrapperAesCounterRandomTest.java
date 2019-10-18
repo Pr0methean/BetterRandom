@@ -43,6 +43,12 @@ public class EntropyBlockingRandomWrapperAesCounterRandomTest extends RandomWrap
         testSeedGenerator);
   }
 
+  @Override protected RandomWrapper createRng(byte[] seed) throws SeedException {
+    SeedGenerator testSeedGenerator = getTestSeedGenerator();
+    return new EntropyBlockingRandomWrapper(new AesCounterRandom(seed), DEFAULT_MAX_ENTROPY,
+        testSeedGenerator);
+  }
+
   @Override public Map<Class<?>, Object> constructorParams() {
     Map<Class<?>, Object> out = super.constructorParams();
     out.put(long.class, DEFAULT_MAX_ENTROPY);
