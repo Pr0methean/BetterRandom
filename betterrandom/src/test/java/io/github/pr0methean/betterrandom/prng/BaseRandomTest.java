@@ -45,6 +45,7 @@ import java.util.concurrent.ForkJoinPool;
 import java.util.concurrent.ForkJoinTask;
 import java.util.concurrent.TimeUnit;
 import java.util.function.DoubleConsumer;
+import java.util.function.Function;
 import java.util.function.Supplier;
 import org.apache.commons.math3.stat.descriptive.SynchronizedDescriptiveStatistics;
 import org.powermock.modules.testng.PowerMockTestCase;
@@ -53,6 +54,7 @@ import org.testng.annotations.Test;
 
 public abstract class BaseRandomTest extends PowerMockTestCase {
 
+  protected static final int TEST_BYTES_LENGTH = 100;
   protected final SeedGenerator semiFakeSeedGenerator = new SemiFakeSeedGenerator(
       new SplittableRandomAdapter(SecureRandomSeedGenerator.DEFAULT_INSTANCE));
 
@@ -145,7 +147,7 @@ public abstract class BaseRandomTest extends PowerMockTestCase {
     final BaseRandom rng = createRng();
     // Create second RNG using same seed.
     final BaseRandom duplicateRNG = createRng(rng.getSeed());
-    RandomTestUtils.assertEquivalent(rng, duplicateRNG, 100, "Output mismatch");
+    RandomTestUtils.assertEquivalent(rng, duplicateRNG, TEST_BYTES_LENGTH, "Output mismatch");
   }
 
   /**
@@ -715,14 +717,23 @@ public abstract class BaseRandomTest extends PowerMockTestCase {
   @SuppressWarnings({"EqualityOperatorComparesObjects", "ObjectEquality"})
   protected void testThreadSafety(final List<NamedFunction<Random, Double>> functions,
       final List<NamedFunction<Random, Double>> pairwiseFunctions) {
+    testThreadSafety(functions, pairwiseFunctions, this::createRng);
+  }
+
+  @SuppressWarnings({"EqualityOperatorComparesObjects", "ObjectEquality"})
+  protected void testThreadSafety(final List<NamedFunction<Random, Double>> functions,
+      final List<NamedFunction<Random, Double>> pairwiseFunctions,
+      final Function<byte[], BaseRandom> randomCreator) {
     final int seedLength = createRng().getNewSeedLength();
     final byte[] seed = getTestSeedGenerator().generateSeed(seedLength);
     for (final NamedFunction<Random, Double> supplier : functions) {
       for (int i = 0; i < 5; i++) {
         // This loop is necessary to control the false pass rate, especially during mutation
         // testing.
-        final SortedSet<Double> sequentialOutput = runSequential(supplier, supplier, seed);
-        final SortedSet<Double> parallelOutput = runParallel(supplier, supplier, seed, 25, 1000);
+        final SortedSet<Double> sequentialOutput =
+            runSequential(supplier, supplier, randomCreator.apply(seed));
+        final SortedSet<Double> parallelOutput =
+            runParallel(supplier, supplier, 25, 1000, createRng(seed));
         assertEquals(sequentialOutput, parallelOutput,
             "output differs between sequential & parallel calls to " + supplier);
       }
@@ -743,10 +754,15 @@ public abstract class BaseRandomTest extends PowerMockTestCase {
   protected SortedSet<Double> runParallel(final NamedFunction<Random, Double> supplier1,
       final NamedFunction<Random, Double> supplier2, final byte[] seed, final int timeoutSec,
       final int iterations) {
+    return runParallel(supplier1, supplier2, timeoutSec, iterations, createRng(seed));
+  }
+
+  protected SortedSet<Double> runParallel(final NamedFunction<Random, Double> supplier1, final NamedFunction<Random, Double> supplier2,
+      final int timeoutSec, final int iterations, final BaseRandom random) {
     // See https://www.yegor256.com/2018/03/27/how-to-test-thread-safety.html for why a
     // CountDownLatch is used.
     CountDownLatch latch = new CountDownLatch(2);
-    final Random parallelPrng = createRng(seed);
+    final Random parallelPrng = random;
     final SortedSet<Double> output = new ConcurrentSkipListSet<>();
     pool.execute(new GeneratorForkJoinTask<>(parallelPrng, output, supplier1, latch, iterations));
     pool.execute(new GeneratorForkJoinTask<>(parallelPrng, output, supplier2, latch, iterations));
@@ -757,7 +773,12 @@ public abstract class BaseRandomTest extends PowerMockTestCase {
 
   protected SortedSet<Double> runSequential(final NamedFunction<Random, Double> supplier1,
       final NamedFunction<Random, Double> supplier2, final byte[] seed) {
-    final Random sequentialPrng = createRng(seed);
+    return runSequential(supplier1, supplier2, createRng(seed));
+  }
+
+  protected SortedSet<Double> runSequential(final NamedFunction<Random, Double> supplier1,
+      final NamedFunction<Random, Double> supplier2, final BaseRandom random) {
+    final Random sequentialPrng = random;
     final SortedSet<Double> output = new TreeSet<>();
     new GeneratorForkJoinTask<>(sequentialPrng, output, supplier1, new CountDownLatch(1), 1000)
         .exec();

@@ -5,6 +5,7 @@ import io.github.pr0methean.betterrandom.FlakyRetryAnalyzer;
 import io.github.pr0methean.betterrandom.TestUtils;
 import io.github.pr0methean.betterrandom.prng.AesCounterRandom;
 import io.github.pr0methean.betterrandom.prng.BaseRandom;
+import io.github.pr0methean.betterrandom.prng.RandomTestUtils;
 import io.github.pr0methean.betterrandom.seed.SeedException;
 import io.github.pr0methean.betterrandom.seed.SeedGenerator;
 import java.lang.reflect.Constructor;
@@ -56,8 +57,20 @@ public class EntropyBlockingRandomWrapperAesCounterRandomTest extends RandomWrap
     return out;
   }
 
+  @Override public void testThreadSafety() {
+    SeedGenerator testSeedGenerator = getTestSeedGenerator();
+    testThreadSafety(functionsForThreadSafetyTest, functionsForThreadSafetyTest,
+        seed -> new EntropyBlockingRandomWrapper(new AesCounterRandom(seed), Long.MIN_VALUE,
+            testSeedGenerator));
+  }
+
   @Override public void testRepeatability() throws SeedException {
-    super.testRepeatability();
+    SeedGenerator testSeedGenerator = getTestSeedGenerator();
+    final BaseRandom rng = new EntropyBlockingRandomWrapper(new AesCounterRandom(testSeedGenerator),
+        -8 * TEST_BYTES_LENGTH, testSeedGenerator);
+    // Create second RNG using same seed.
+    final BaseRandom duplicateRNG = createRng(rng.getSeed());
+    RandomTestUtils.assertEquivalent(rng, duplicateRNG, TEST_BYTES_LENGTH, "Output mismatch");
   }
 
   // FIXME: Too slow!
