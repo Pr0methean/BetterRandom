@@ -22,12 +22,10 @@ import javax.annotation.Nullable;
 public class ThreadLocalRandomWrapper extends RandomWrapper {
 
   private static final long serialVersionUID = 1199235201518562359L;
-  @SuppressWarnings(
-      "NonSerializableFieldInSerializableClass") protected final Supplier<? extends BaseRandom>
+  protected final Supplier<? extends BaseRandom>
       initializer;
   @Nullable private final Integer explicitSeedSize;
-  @SuppressWarnings({"FieldAccessedSynchronizedAndUnsynchronized",
-      "ThreadLocalNotStaticFinal"}) protected transient ThreadLocal<BaseRandom> threadLocal;
+  @SuppressWarnings({"ThreadLocalNotStaticFinal"}) protected transient ThreadLocal<BaseRandom> threadLocal;
 
   /**
    * Wraps the given {@link Supplier}. This ThreadLocalRandomWrapper will be serializable if the

@@ -19,8 +19,7 @@ import java.util.WeakHashMap;
 public class ReseedingSplittableRandomAdapter extends BaseSplittableRandomAdapter {
 
   private static final long serialVersionUID = 6301096404034224037L;
-  @SuppressWarnings(
-      "StaticCollection") private static final Map<RandomSeederThread,
+  private static final Map<RandomSeederThread,
       ReseedingSplittableRandomAdapter>
       INSTANCES = Collections.synchronizedMap(new WeakHashMap<>(1));
   private final SeedGenerator seedGenerator;

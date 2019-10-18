@@ -112,7 +112,7 @@ public enum RandomTestUtils {
    * Test that the given parameterless constructor, called twice, doesn't produce RNGs that compare
    * as equal. Also checks for compliance with basic parts of the Object.equals() contract.
    */
-  @SuppressWarnings({"EqualsWithItself", "ObjectEqualsNull"})
+  @SuppressWarnings({"ObjectEqualsNull"})
   public static void doEqualsSanityChecks(final Supplier<? extends Random> ctor) {
     final Random rng = ctor.get();
     final Random rng2 = ctor.get();
@@ -230,7 +230,6 @@ public enum RandomTestUtils {
     return stats;
   }
 
-  @SuppressWarnings("unchecked")
   public static <T extends Random> void assertEquivalentWhenSerializedAndDeserialized(final T rng) {
     final T rng2 = SerializableTester.reserialize(rng);
     assertNotSame(rng, rng2, "Deserialised RNG should be distinct object.");

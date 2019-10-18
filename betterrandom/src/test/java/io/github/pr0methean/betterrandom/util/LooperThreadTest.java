@@ -15,7 +15,7 @@ import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
 // FIXME: Sleep gets interrupted for no apparent reason, so have to use sleepUninterruptibly
-@SuppressWarnings("ClassLoaderInstantiation") public class LooperThreadTest {
+public class LooperThreadTest {
 
   private static class TestLooperThread extends LooperThread {
     private static final long serialVersionUID = 4931153919188474618L;

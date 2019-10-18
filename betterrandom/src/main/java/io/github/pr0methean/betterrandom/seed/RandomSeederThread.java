@@ -199,7 +199,7 @@ public final class RandomSeederThread extends LooperThread {
     this(seedGenerator, new DefaultThreadFactory("RandomSeederThread for " + seedGenerator));
   }
 
-  @SuppressWarnings({"InfiniteLoopStatement", "ObjectAllocationInLoop", "AwaitNotInLoop"}) @Override
+  @Override
   protected boolean iterate() {
     try {
       while (true) {

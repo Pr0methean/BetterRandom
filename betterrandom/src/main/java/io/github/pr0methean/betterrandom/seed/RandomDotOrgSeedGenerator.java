@@ -202,7 +202,7 @@ public enum RandomDotOrgSeedGenerator implements SeedGenerator {
    * @throws IOException If a connection error occurs.
    * @throws SeedException If random.org sends a malformed response body.
    */
-  @SuppressWarnings("NumericCastThatLosesPrecision") private static void downloadBytes(byte[] seed,
+  private static void downloadBytes(byte[] seed,
       int offset, final int length) throws IOException {
     HttpURLConnection connection = null;
     lock.lock();

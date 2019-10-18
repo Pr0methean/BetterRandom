@@ -73,7 +73,7 @@ public class Pcg64Random extends BaseRandom implements SeekableRandom {
     return BinaryUtils.convertLongToBytes(internal.get()).clone();
   }
 
-  @SuppressWarnings("NonSynchronizedMethodOverridesSynchronizedMethod") @Override
+  @Override
   public void setSeed(final long seed) {
     if (internal != null) {
       lock.lock();

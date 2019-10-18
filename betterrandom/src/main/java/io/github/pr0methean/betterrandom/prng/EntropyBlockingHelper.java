@@ -10,6 +10,7 @@ import java.util.concurrent.locks.Lock;
 import javax.annotation.Nullable;
 
 public class EntropyBlockingHelper implements Serializable {
+  private static final long serialVersionUID = 8061321755747974708L;
   private final long minimumEntropy;
   private final Lock lock;
   private final Condition seedingStatusChanged;

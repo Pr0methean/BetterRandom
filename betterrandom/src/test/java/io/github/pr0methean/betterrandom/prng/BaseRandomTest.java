@@ -82,10 +82,10 @@ public abstract class BaseRandomTest extends PowerMockTestCase {
     return 0.0;
   }, "BaseRandom::setSeed(byte[])");
 
-  @SuppressWarnings("StaticCollection") protected final List<NamedFunction<Random, Double>>
+  protected final List<NamedFunction<Random, Double>>
       functionsForThreadSafetyTest =
       ImmutableList.of(NEXT_LONG, NEXT_INT, NEXT_DOUBLE, NEXT_GAUSSIAN);
-  @SuppressWarnings("StaticCollection") protected final List<NamedFunction<Random, Double>>
+  protected final List<NamedFunction<Random, Double>>
       functionsForThreadCrashTest =
       ImmutableList.of(NEXT_LONG, NEXT_INT, NEXT_DOUBLE, NEXT_GAUSSIAN, setSeed);
   protected static final int TEST_BYTE_ARRAY_LENGTH = 20;
@@ -93,7 +93,7 @@ public abstract class BaseRandomTest extends PowerMockTestCase {
   private static final String HOW_ARE_YOU = "How are you?";
   private static final String GOODBYE = "Goodbye";
   private static final String[] STRING_ARRAY = {HELLO, HOW_ARE_YOU, GOODBYE};
-  @SuppressWarnings("StaticCollection") private static final List<String> STRING_LIST =
+  private static final List<String> STRING_LIST =
       Collections.unmodifiableList(Arrays.asList(STRING_ARRAY));
   private static final int ELEMENTS = 100;
   private static final double UPPER_BOUND_FOR_ROUNDING_TEST =
@@ -367,7 +367,7 @@ public abstract class BaseRandomTest extends PowerMockTestCase {
    * When not overridden, this also tests {@link BaseRandom#getRandomSeeder()} and
    * {@link BaseRandom#setRandomSeeder(RandomSeederThread)}.
    */
-  @SuppressWarnings("BusyWait") @Test(timeOut = 60_000, retryAnalyzer = FlakyRetryAnalyzer.class)
+  @Test(timeOut = 60_000, retryAnalyzer = FlakyRetryAnalyzer.class)
   public void testRandomSeederThreadIntegration() {
     final SeedGenerator seedGenerator = new SemiFakeSeedGenerator(new Random(),
         UUID.randomUUID().toString());
@@ -716,13 +716,11 @@ public abstract class BaseRandomTest extends PowerMockTestCase {
     }
   }
 
-  @SuppressWarnings({"EqualityOperatorComparesObjects", "ObjectEquality"})
   protected void testThreadSafety(final List<NamedFunction<Random, Double>> functions,
       final List<NamedFunction<Random, Double>> pairwiseFunctions) {
     testThreadSafety(functions, pairwiseFunctions, this::createRng);
   }
 
-  @SuppressWarnings({"EqualityOperatorComparesObjects", "ObjectEquality"})
   protected void testThreadSafety(final List<NamedFunction<Random, Double>> functions,
       final List<NamedFunction<Random, Double>> pairwiseFunctions,
       final Function<byte[], BaseRandom> randomCreator) {

@@ -20,7 +20,7 @@ import org.testng.annotations.AfterTest;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
-@SuppressWarnings("BusyWait") public class ReseedingSplittableRandomAdapterTest
+public class ReseedingSplittableRandomAdapterTest
     extends SingleThreadSplittableRandomAdapterTest {
 
   private RandomSeederThread thread;

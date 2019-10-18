@@ -6,7 +6,7 @@ import static io.github.pr0methean.betterrandom.util.BinaryUtils.convertLongToBy
 /**
  * Collection of arithmetic methods that treat {@code byte[16]} arrays as 128-bit unsigned integers.
  */
-@SuppressWarnings({"AccessStaticViaInstance"}) public enum Byte16ArrayArithmetic {
+public enum Byte16ArrayArithmetic {
   ;
 
   private static final int SIZE_BYTES = 16;
@@ -54,7 +54,7 @@ import static io.github.pr0methean.betterrandom.util.BinaryUtils.convertLongToBy
    * @param counter the first input and the result
    * @param mult the second input
    */
-  @SuppressWarnings("NumericCastThatLosesPrecision") public static void multiplyInto(
+  public static void multiplyInto(
       final byte[] counter, final byte[] mult) {
     multiplyIntoAndAddInto(counter, mult, 0, 0);
   }
@@ -80,7 +80,7 @@ import static io.github.pr0methean.betterrandom.util.BinaryUtils.convertLongToBy
    * @param addLow low 64 bits to add
    * @param addHigh high 64 bits to add
    */
-  @SuppressWarnings("NumericCastThatLosesPrecision") private static void multiplyIntoAndAddInto(
+  private static void multiplyIntoAndAddInto(
       final byte[] counter, final byte[] mult, long addLow, long addHigh) {
     final long x = convertBytesToLong(counter, Long.BYTES);
     final long y = convertBytesToLong(mult, Long.BYTES);
