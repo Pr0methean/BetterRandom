@@ -88,10 +88,14 @@ public class EntropyBlockingHelper implements Serializable {
         } else {
           newSeed = new byte[newSeedLength];
         }
-        seedGenerator.generateSeed(newSeed);
-        random.setSeed(newSeed);
+        reseedSameThread(seedGenerator, newSeed);
       }
     }
+  }
+
+  public void reseedSameThread(SeedGenerator seedGenerator, byte[] newSeed) {
+    seedGenerator.generateSeed(newSeed);
+    random.setSeed(newSeed);
   }
 
   public void awaitReseedingBy(RandomSeederThread seeder) {
