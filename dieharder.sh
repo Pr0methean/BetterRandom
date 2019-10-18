@@ -1,4 +1,5 @@
 #!/bin/sh
+ROOT_SHELL=$$
 JAVA_OPTS="-Djava.security.egd=file:/dev/./urandom"
 JAVA_BIN="${JAVA_HOME}/bin/java"
 if [ "${JAVA8}" = "true" ]; then
@@ -68,7 +69,7 @@ JAVA_PROCESS=$!
   chkdh -d 207
   chkdh -d 208
   chkdh -d 209
-) 2>&1 < prng_out | tee ../dieharder.txt | (grep -m 1 'FAILED' &&\
+) 2>&1 < prng_out | tee ../dieharder.txt /proc/${ROOT_SHELL}/fd/1 | (grep -m 1 'FAILED' &&\
 (
   pkill dieharder
   pkill java
