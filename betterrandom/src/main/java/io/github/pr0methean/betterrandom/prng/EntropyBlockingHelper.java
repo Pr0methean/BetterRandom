@@ -50,11 +50,11 @@ public class EntropyBlockingHelper implements Serializable {
   }
 
   public void onSeedingStateChanged(boolean reseeded) {
+    if (reseeded) {
+      waitingOnReseed = false;
+    }
     lock.lock();
     try {
-      if (reseeded) {
-        waitingOnReseed = false;
-      }
       if (seedingStatusChanged != null) {
         seedingStatusChanged.signalAll();
       }
@@ -70,15 +70,10 @@ public class EntropyBlockingHelper implements Serializable {
       try {
         RandomSeederThread seeder = random.getRandomSeeder();
         if (seeder != null) {
-          waitingOnReseed = true;
-          seeder.reseedAsync(random);
-          seedingStatusChanged.await();
+          awaitReseedingBy(seeder);
           continue;
         }
         seedGenerator = sameThreadSeedGen.get();
-      } catch (InterruptedException e) {
-        Thread.currentThread().interrupt();
-        throw new RuntimeException(e);
       } finally {
         lock.unlock();
       }
@@ -96,6 +91,17 @@ public class EntropyBlockingHelper implements Serializable {
         seedGenerator.generateSeed(newSeed);
         random.setSeed(newSeed);
       }
+    }
+  }
+
+  public void awaitReseedingBy(RandomSeederThread seeder) {
+    waitingOnReseed = true;
+    seeder.reseedAsync(random);
+    try {
+      seedingStatusChanged.await();
+    } catch (InterruptedException e) {
+      Thread.currentThread().interrupt();
+      throw new RuntimeException(e);
     }
   }
 
