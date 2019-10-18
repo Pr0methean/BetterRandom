@@ -86,7 +86,7 @@ public abstract class BaseRandomTest extends PowerMockTestCase {
   @SuppressWarnings("StaticCollection") protected final List<NamedFunction<Random, Double>>
       functionsForThreadCrashTest =
       ImmutableList.of(NEXT_LONG, NEXT_INT, NEXT_DOUBLE, NEXT_GAUSSIAN, setSeed);
-  private static final int TEST_BYTE_ARRAY_LENGTH = 20;
+  protected static final int TEST_BYTE_ARRAY_LENGTH = 20;
   private static final String HELLO = "Hello";
   private static final String HOW_ARE_YOU = "How are you?";
   private static final String GOODBYE = "Goodbye";

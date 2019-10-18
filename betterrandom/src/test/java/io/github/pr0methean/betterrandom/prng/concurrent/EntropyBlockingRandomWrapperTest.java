@@ -3,6 +3,7 @@ package io.github.pr0methean.betterrandom.prng.concurrent;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertFalse;
 import static org.testng.Assert.assertNull;
 import static org.testng.Assert.assertSame;
 import static org.testng.Assert.fail;
@@ -15,6 +16,7 @@ import io.github.pr0methean.betterrandom.seed.SecureRandomSeedGenerator;
 import io.github.pr0methean.betterrandom.seed.SeedException;
 import io.github.pr0methean.betterrandom.seed.SeedGenerator;
 import io.github.pr0methean.betterrandom.seed.SemiFakeSeedGenerator;
+import java.util.Arrays;
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ThreadFactory;
@@ -23,7 +25,7 @@ import org.testng.annotations.Test;
 
 @Test(testName = "EntropyBlockingRandomWrapper")
 public class EntropyBlockingRandomWrapperTest extends RandomWrapperRandomTest {
-  private static final long DEFAULT_MAX_ENTROPY = -32L;
+  private static final long DEFAULT_MAX_ENTROPY = -1000L;
 
   @Override public Class<? extends BaseRandom> getClassUnderTest() {
     return EntropyBlockingRandomWrapper.class;
@@ -133,6 +135,14 @@ public class EntropyBlockingRandomWrapperTest extends RandomWrapperRandomTest {
       random.setRandomSeeder(null);
       seeder.stopIfEmpty();
     }
+  }
+
+  @Override public void testNextBytes() {
+    final byte[] testBytes = new byte[TEST_BYTE_ARRAY_LENGTH];
+    final BaseRandom prng = new EntropyBlockingRandomWrapper(0L, getTestSeedGenerator());
+    final long oldEntropy = prng.getEntropyBits();
+    prng.nextBytes(testBytes);
+    assertFalse(Arrays.equals(testBytes, new byte[TEST_BYTE_ARRAY_LENGTH]));
   }
 
   @Test public void testSetSameThreadSeedGen() {
