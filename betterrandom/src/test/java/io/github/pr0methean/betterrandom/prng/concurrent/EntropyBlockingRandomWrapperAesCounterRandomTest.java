@@ -1,11 +1,16 @@
 package io.github.pr0methean.betterrandom.prng.concurrent;
 
+import static org.testng.Assert.assertEquals;
+
 import com.google.common.collect.ImmutableMap;
+import com.google.common.testing.SerializableTester;
 import io.github.pr0methean.betterrandom.FlakyRetryAnalyzer;
 import io.github.pr0methean.betterrandom.TestUtils;
 import io.github.pr0methean.betterrandom.prng.AesCounterRandom;
 import io.github.pr0methean.betterrandom.prng.BaseRandom;
 import io.github.pr0methean.betterrandom.prng.RandomTestUtils;
+import io.github.pr0methean.betterrandom.seed.FakeSeedGenerator;
+import io.github.pr0methean.betterrandom.seed.RandomSeederThread;
 import io.github.pr0methean.betterrandom.seed.SeedException;
 import io.github.pr0methean.betterrandom.seed.SeedGenerator;
 import java.lang.reflect.Constructor;
@@ -18,7 +23,8 @@ import org.testng.annotations.Test;
 
 @Test(testName = "EntropyBlockingRandomWrapper:AesCounterRandom")
 public class EntropyBlockingRandomWrapperAesCounterRandomTest extends RandomWrapperAesCounterRandomTest {
-  private static final long DEFAULT_MAX_ENTROPY = -1000L;
+  private static final long DEFAULT_MAX_ENTROPY = -64L;
+  protected static final long VERY_LOW_MINIMUM_ENTROPY = Long.MIN_VALUE / 2;
 
   @Override @Test public void testAllPublicConstructors() {
     Constructor<?>[] constructors =
@@ -60,17 +66,42 @@ public class EntropyBlockingRandomWrapperAesCounterRandomTest extends RandomWrap
   @Override public void testThreadSafety() {
     SeedGenerator testSeedGenerator = getTestSeedGenerator();
     testThreadSafety(functionsForThreadSafetyTest, functionsForThreadSafetyTest,
-        seed -> new EntropyBlockingRandomWrapper(new AesCounterRandom(seed), Long.MIN_VALUE,
+        seed -> new EntropyBlockingRandomWrapper(new AesCounterRandom(seed),
+            VERY_LOW_MINIMUM_ENTROPY,
             testSeedGenerator));
   }
 
   @Override public void testRepeatability() throws SeedException {
     SeedGenerator testSeedGenerator = getTestSeedGenerator();
     final BaseRandom rng = new EntropyBlockingRandomWrapper(new AesCounterRandom(testSeedGenerator),
-        -8 * TEST_BYTES_LENGTH, testSeedGenerator);
+        VERY_LOW_MINIMUM_ENTROPY, testSeedGenerator);
     // Create second RNG using same seed.
     final BaseRandom duplicateRNG = createRng(rng.getSeed());
     RandomTestUtils.assertEquivalent(rng, duplicateRNG, TEST_BYTES_LENGTH, "Output mismatch");
+  }
+
+  @Override protected RandomTestUtils.EntropyCheckMode getEntropyCheckMode() {
+    return RandomTestUtils.EntropyCheckMode.LOWER_BOUND;
+  }
+
+  @Override public void testSerializable() throws SeedException {
+    // Can't use a SemiFakeSeedGenerator, because Random.equals() breaks equality check
+    final SeedGenerator seedGenerator =
+        new FakeSeedGenerator(getClass().getSimpleName() + "::testSerializable #" + new Random().nextInt());
+    // Serialise an RNG.
+    final BaseRandom rng = new EntropyBlockingRandomWrapper(new AesCounterRandom(seedGenerator),
+        VERY_LOW_MINIMUM_ENTROPY,
+        seedGenerator);
+    RandomTestUtils.assertEquivalentWhenSerializedAndDeserialized(rng);
+    RandomSeederThread randomSeeder = new RandomSeederThread(seedGenerator);
+    rng.setRandomSeeder(randomSeeder);
+    try {
+      final BaseRandom rng2 = SerializableTester.reserialize(rng);
+      assertEquals(randomSeeder, rng2.getRandomSeeder());
+      rng2.setRandomSeeder(null);
+    } finally {
+      RandomTestUtils.removeAndAssertEmpty(randomSeeder, rng);
+    }
   }
 
   // FIXME: Too slow!

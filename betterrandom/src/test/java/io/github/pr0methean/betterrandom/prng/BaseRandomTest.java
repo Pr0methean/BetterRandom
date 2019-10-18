@@ -262,8 +262,10 @@ public abstract class BaseRandomTest extends PowerMockTestCase {
   }
 
   @Test(timeOut = 45_000) public void testSerializable() throws SeedException {
-    // Serialise an RNG.
-    final BaseRandom rng = createRng();
+    testSerializable(createRng());
+  }
+
+  public void testSerializable(BaseRandom rng) {
     RandomTestUtils.assertEquivalentWhenSerializedAndDeserialized(rng);
     // Can't use a SemiFakeSeedGenerator, because Random.equals() breaks equality check
     final SeedGenerator seedGenerator =

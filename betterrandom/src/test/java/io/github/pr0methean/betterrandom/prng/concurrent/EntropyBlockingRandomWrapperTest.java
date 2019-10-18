@@ -10,6 +10,7 @@ import static org.testng.Assert.fail;
 
 import com.google.common.collect.ImmutableList;
 import io.github.pr0methean.betterrandom.prng.BaseRandom;
+import io.github.pr0methean.betterrandom.prng.RandomTestUtils;
 import io.github.pr0methean.betterrandom.seed.FailingSeedGenerator;
 import io.github.pr0methean.betterrandom.seed.RandomSeederThread;
 import io.github.pr0methean.betterrandom.seed.SecureRandomSeedGenerator;
@@ -25,7 +26,8 @@ import org.testng.annotations.Test;
 
 @Test(testName = "EntropyBlockingRandomWrapper")
 public class EntropyBlockingRandomWrapperTest extends RandomWrapperRandomTest {
-  private static final long DEFAULT_MAX_ENTROPY = -1000L;
+  private static final long DEFAULT_MAX_ENTROPY = -64L;
+  protected static final long VERY_LOW_MINIMUM_ENTROPY = Long.MIN_VALUE / 2;
 
   @Override public Class<? extends BaseRandom> getClassUnderTest() {
     return EntropyBlockingRandomWrapper.class;
@@ -90,6 +92,10 @@ public class EntropyBlockingRandomWrapperTest extends RandomWrapperRandomTest {
     } catch (IllegalStateException expected) {}
   }
 
+  @Override protected RandomTestUtils.EntropyCheckMode getEntropyCheckMode() {
+    return RandomTestUtils.EntropyCheckMode.LOWER_BOUND;
+  }
+
   @Test public void testRandomSeederThreadUsedFirst() {
     SeedGenerator testSeedGenerator = getTestSeedGenerator();
     SeedGenerator seederSeedGenSpy = Mockito.spy(testSeedGenerator);
@@ -135,6 +141,10 @@ public class EntropyBlockingRandomWrapperTest extends RandomWrapperRandomTest {
       random.setRandomSeeder(null);
       seeder.stopIfEmpty();
     }
+  }
+
+  @Override public void testSerializable() throws SeedException {
+    testSerializable(new EntropyBlockingRandomWrapper(VERY_LOW_MINIMUM_ENTROPY, getTestSeedGenerator()));
   }
 
   @Override public void testNextBytes() {
