@@ -12,6 +12,7 @@ import java.util.SplittableRandom;
 public abstract class BaseSplittableRandomAdapter extends BaseRandom {
 
   private static final long serialVersionUID = 4273652147052638879L;
+  private static final float FLOAT_MULTIPLIER = 1.0f / (1 << ENTROPY_OF_FLOAT);
 
   /**
    * Constructs an instance with the given seed.
@@ -44,9 +45,8 @@ public abstract class BaseSplittableRandomAdapter extends BaseRandom {
    * Delegates to {@link SplittableRandom#nextDouble(double) SplittableRandom.nextDouble(bound)}.
    */
   @Override public double nextDouble(final double bound) {
-    final double out = getSplittableRandom().nextDouble(bound);
     debitEntropy(ENTROPY_OF_DOUBLE);
-    return out;
+    return getSplittableRandom().nextDouble(bound);
   }
 
   /**
@@ -55,9 +55,8 @@ public abstract class BaseSplittableRandomAdapter extends BaseRandom {
    * bound)}.
    */
   @Override public double nextDouble(final double origin, final double bound) {
-    final double out = getSplittableRandom().nextDouble(origin, bound);
     debitEntropy(ENTROPY_OF_DOUBLE);
-    return out;
+    return getSplittableRandom().nextDouble(origin, bound);
   }
 
   /**
@@ -75,10 +74,9 @@ public abstract class BaseSplittableRandomAdapter extends BaseRandom {
    */
   @SuppressWarnings("NumericCastThatLosesPrecision") @Override public void nextBytes(
       final byte[] bytes) {
-    final SplittableRandom local = getSplittableRandom();
     for (int i = 0; i < bytes.length; i++) {
-      bytes[i] = (byte) (local.nextInt(256));
-      debitEntropy(Byte.SIZE);
+      debitEntropy(Byte.SIZE); // May cause replacement before the next getSplittableRandom()
+      bytes[i] = (byte) (getSplittableRandom().nextInt(1 << Byte.SIZE));
     }
   }
 
@@ -86,18 +84,16 @@ public abstract class BaseSplittableRandomAdapter extends BaseRandom {
    * Delegates to {@link SplittableRandom#nextInt()}.
    */
   @Override public int nextInt() {
-    final int out = getSplittableRandom().nextInt();
     debitEntropy(Integer.SIZE);
-    return out;
+    return getSplittableRandom().nextInt();
   }
 
   /**
    * Delegates to {@link SplittableRandom#nextInt(int) SplittableRandom.nextInt(bound)}.
    */
   @Override public int nextInt(final int bound) {
-    final int out = getSplittableRandom().nextInt(bound);
     debitEntropy(entropyOfInt(0, bound));
-    return out;
+    return getSplittableRandom().nextInt(bound);
   }
 
   /**
@@ -105,19 +101,17 @@ public abstract class BaseSplittableRandomAdapter extends BaseRandom {
    * bound)}.
    */
   @Override public int nextInt(final int origin, final int bound) {
-    final int out = getSplittableRandom().nextInt(origin, bound);
     debitEntropy(entropyOfInt(origin, bound));
-    return out;
+    return getSplittableRandom().nextInt(origin, bound);
   }
 
   /**
    * <p>Delegates to {@link SplittableRandom#nextDouble()}.</p> {@inheritDoc}
    */
   @Override protected boolean withProbabilityInternal(final double probability) {
-    final boolean result = getSplittableRandom().nextDouble() < probability;
     // We're only outputting one bit
     debitEntropy(1);
-    return result;
+    return getSplittableRandom().nextDouble() < probability;
   }
 
   @Override public boolean preferSeedWithLong() {
@@ -135,9 +129,8 @@ public abstract class BaseSplittableRandomAdapter extends BaseRandom {
    * Delegates to {@link SplittableRandom#nextLong(long) SplittableRandom.nextLong(bound)}.
    */
   @Override public long nextLong(final long bound) {
-    final long out = getSplittableRandom().nextLong(bound);
     debitEntropy(entropyOfLong(0, bound));
-    return out;
+    return getSplittableRandom().nextLong(bound);
   }
 
   /**
@@ -145,9 +138,8 @@ public abstract class BaseSplittableRandomAdapter extends BaseRandom {
    * bound)}.
    */
   @Override public long nextLong(final long origin, final long bound) {
-    final long out = getSplittableRandom().nextLong(origin, bound);
     debitEntropy(entropyOfLong(origin, bound));
-    return out;
+    return getSplittableRandom().nextLong(origin, bound);
   }
 
   /**
@@ -165,7 +157,6 @@ public abstract class BaseSplittableRandomAdapter extends BaseRandom {
     // Upper bound. 2 Gaussians are generated from 2 nextDouble calls, which once made are either
     // used or rerolled.
     debitEntropy(ENTROPY_OF_DOUBLE);
-
     return internalNextGaussian(() -> getSplittableRandom().nextDouble());
   }
 
@@ -181,19 +172,17 @@ public abstract class BaseSplittableRandomAdapter extends BaseRandom {
    * Delegates to {@link SplittableRandom#nextBoolean()}.
    */
   @Override public boolean nextBoolean() {
-    final boolean out = getSplittableRandom().nextBoolean();
     debitEntropy(1);
-    return out;
+    return getSplittableRandom().nextBoolean();
   }
 
   /**
    * Delegates to {@link SplittableRandom#nextInt(int)}.
    */
   @Override public float nextFloat() {
-    final float out =
-        getSplittableRandom().nextInt(1 << ENTROPY_OF_FLOAT) / ((float) (1 << ENTROPY_OF_FLOAT));
     debitEntropy(ENTROPY_OF_FLOAT);
-    return out;
+    return getSplittableRandom().nextInt(1 << ENTROPY_OF_FLOAT)
+        * FLOAT_MULTIPLIER;
   }
 
   /**

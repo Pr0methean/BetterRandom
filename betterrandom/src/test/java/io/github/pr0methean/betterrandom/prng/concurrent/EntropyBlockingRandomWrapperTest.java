@@ -23,7 +23,7 @@ import org.testng.annotations.Test;
 
 @Test(testName = "EntropyBlockingRandomWrapper")
 public class EntropyBlockingRandomWrapperTest extends RandomWrapperRandomTest {
-  private static final long DEFAULT_MAX_ENTROPY = -1000L;
+  private static final long DEFAULT_MAX_ENTROPY = -32L;
 
   @Override public Class<? extends BaseRandom> getClassUnderTest() {
     return EntropyBlockingRandomWrapper.class;
