@@ -70,7 +70,9 @@ public class EntropyBlockingRandomWrapper extends RandomWrapper {
 
   @Override protected void setSeedInternal(byte[] seed) {
     super.setSeedInternal(seed);
-    helper.onSeedingStateChanged(false);
+    if (helper != null) {
+      helper.onSeedingStateChanged(false);
+    }
   }
 
   @Override public void setRandomSeeder(@Nullable RandomSeederThread randomSeeder) {
@@ -83,7 +85,7 @@ public class EntropyBlockingRandomWrapper extends RandomWrapper {
   }
 
   @Override public void setSeed(long seed) {
-    if (lock == null) {
+    if (helper == null) {
       super.setSeed(seed);
       return;
     }
