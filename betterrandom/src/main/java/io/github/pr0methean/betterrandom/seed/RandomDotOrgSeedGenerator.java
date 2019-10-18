@@ -15,6 +15,7 @@
 // ============================================================================
 package io.github.pr0methean.betterrandom.seed;
 
+import com.google.common.primitives.UnsignedBytes;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -218,8 +219,7 @@ public enum RandomDotOrgSeedGenerator implements SeedGenerator {
                   .format("Insufficient data received: expected %d bytes, got %d.", length, index));
             }
             try {
-              seed[offset + index] = (byte) Integer.parseInt(line, 16);
-              // Can't use Byte.parseByte, since it expects signed
+              seed[offset + index] = UnsignedBytes.parseUnsignedByte(line, 16);
             } catch (final NumberFormatException e) {
               throw new SeedException("random.org sent non-numeric data", e);
             }
