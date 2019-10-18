@@ -11,13 +11,15 @@
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
-    <orderEntry type="library" scope="TEST" name="Maven: org.powermock:powermock-core:2.0.2" level="project" />
-    <orderEntry type="library" scope="TEST" name="Maven: org.powermock:powermock-reflect:2.0.2" level="project" />
-    <orderEntry type="library" scope="TEST" name="Maven: org.javassist:javassist:3.24.0-GA" level="project" />
-    <orderEntry type="library" scope="TEST" name="Maven: org.powermock:powermock-module-testng:2.0.2" level="project" />
-    <orderEntry type="library" scope="TEST" name="Maven: org.powermock:powermock-module-testng-common:2.0.2" level="project" />
-    <orderEntry type="library" scope="TEST" name="Maven: org.powermock:powermock-api-mockito2:2.0.2" level="project" />
-    <orderEntry type="library" scope="TEST" name="Maven: org.powermock:powermock-api-support:2.0.2" level="project" />
+    <orderEntry type="library" scope="TEST" name="Maven: org.mockito:mockito-core:3.1.0" level="project" />
+    <orderEntry type="library" scope="TEST" name="Maven: org.powermock:powermock-core:2.0.4" level="project" />
+    <orderEntry type="library" scope="TEST" name="Maven: org.powermock:powermock-reflect:2.0.4" level="project" />
+    <orderEntry type="library" scope="TEST" name="Maven: org.javassist:javassist:3.25.0-GA" level="project" />
+    <orderEntry type="library" scope="TEST" name="Maven: org.powermock:powermock-module-testng:2.0.4" level="project" />
+    <orderEntry type="library" scope="TEST" name="Maven: org.powermock:powermock-module-testng-common:2.0.4" level="project" />
+    <orderEntry type="library" scope="TEST" name="Maven: org.powermock:powermock-api-mockito2:2.0.4" level="project" />
+    <orderEntry type="library" scope="TEST" name="Maven: org.powermock:powermock-api-support:2.0.4" level="project" />
+    <orderEntry type="library" scope="TEST" name="Maven: org.bouncycastle:bcprov-jdk15on:1.64" level="project" />
     <orderEntry type="library" name="Maven: com.googlecode.json-simple:json-simple:1.1.1" level="project" />
     <orderEntry type="library" name="Maven: junit:junit:4.10" level="project" />
     <orderEntry type="library" name="Maven: org.hamcrest:hamcrest-core:1.1" level="project" />

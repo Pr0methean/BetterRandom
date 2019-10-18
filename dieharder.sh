@@ -19,12 +19,7 @@ mkfifo prng_out 2>&1
 # Checked Dieharder invocation
 
 chkdh() {
-    dieharder -S 1 -g 200 $@ | tee /tmp/current_test.txt
-    cat /tmp/current_test.txt >> dieharder.txt
-    if [ "$(grep -m 1 'FAILED' dieharder.txt)" ]; then
-      kill -9 "${JAVA_PROCESS}"
-      exit 1
-    fi
+    dieharder -S 1 -g 200 $@
 }
 "${JAVA_BIN}" ${JAVA_OPTS} -jar "${JAR}" io.github.pr0methean.betterrandom.prng.${CLASS} prng_out ${SEED} 2>&1 &
 JAVA_PROCESS=$!
@@ -74,5 +69,9 @@ JAVA_PROCESS=$!
   chkdh -d 207
   chkdh -d 208
   chkdh -d 209
-) < prng_out
-exit $?
+) 2>&1 < prng_out | tee ../dieharder.txt | $(grep -q -m 1 'FAILED' report_out) ||\
+(
+  pkill dieharder
+  pkill java
+  exit 1
+)
