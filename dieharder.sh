@@ -14,7 +14,6 @@ mvn -B -DskipTests -Darguments=-DskipTests -Dmaven.test.skip=true\
 cd ../FifoFiller || exit 1
 mvn -B package 2>&1
 JAR=$(find target -iname '*-with-dependencies.jar')
-mkfifo prng_out 2>&1
 
 # Checked Dieharder invocation
 
@@ -69,7 +68,7 @@ JAVA_PROCESS=$!
   chkdh -d 207
   chkdh -d 208
   chkdh -d 209
-) 2>&1 < prng_out | tee ../dieharder.txt | $(grep -q -m 1 'FAILED' report_out) ||\
+) 2>&1 < prng_out | tee ../dieharder.txt | $(grep -m 1 'FAILED' report_out) ||\
 (
   pkill dieharder
   pkill java
