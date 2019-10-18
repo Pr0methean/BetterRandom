@@ -68,9 +68,9 @@ JAVA_PROCESS=$!
   chkdh -d 207
   chkdh -d 208
   chkdh -d 209
-) 2>&1 < prng_out | tee ../dieharder.txt | $(grep -m 1 'FAILED') ||\
+) 2>&1 < prng_out | tee ../dieharder.txt | (grep -m 1 'FAILED' &&\
 (
   pkill dieharder
   pkill java
   exit 1
-)
+))
