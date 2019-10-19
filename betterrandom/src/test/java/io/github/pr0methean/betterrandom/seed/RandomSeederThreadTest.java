@@ -27,7 +27,7 @@ public class RandomSeederThreadTest {
     TestUtils.testConstructors(RandomSeederThread.class, false, ImmutableMap
         .of(SeedGenerator.class, new FakeSeedGenerator("testConstructors"), ThreadFactory.class,
             new SimpleRandomSeederThread.DefaultThreadFactory("testConstructors"), long.class,
-            100_000_000L), RandomSeederThread::stopIfEmpty);
+            100_000_000L), SimpleRandomSeederThread::stopIfEmpty);
   }
 
   @Test public void testDefaultThreadFactoryConstructors() {
