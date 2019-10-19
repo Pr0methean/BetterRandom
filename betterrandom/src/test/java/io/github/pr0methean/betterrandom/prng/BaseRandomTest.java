@@ -27,6 +27,7 @@ import io.github.pr0methean.betterrandom.seed.SecureRandomSeedGenerator;
 import io.github.pr0methean.betterrandom.seed.SeedException;
 import io.github.pr0methean.betterrandom.seed.SeedGenerator;
 import io.github.pr0methean.betterrandom.seed.SemiFakeSeedGenerator;
+import io.github.pr0methean.betterrandom.seed.SimpleRandomSeederThread;
 import io.github.pr0methean.betterrandom.util.BinaryUtils;
 import java.lang.reflect.InvocationTargetException;
 import java.security.GeneralSecurityException;
@@ -361,7 +362,7 @@ public abstract class BaseRandomTest extends PowerMockTestCase {
 
   /**
    * When not overridden, this also tests {@link BaseRandom#getRandomSeeder()} and
-   * {@link BaseRandom#setRandomSeeder(RandomSeederThread)}.
+   * {@link BaseRandom#setRandomSeeder(SimpleRandomSeederThread)}.
    */
   @SuppressWarnings("BusyWait") @Test(timeOut = 60_000, retryAnalyzer = FlakyRetryAnalyzer.class)
   public void testRandomSeederThreadIntegration() {

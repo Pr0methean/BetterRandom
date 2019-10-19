@@ -88,6 +88,21 @@ public class SimpleRandomSeederThread extends LooperThread {
     return LoggerFactory.getLogger(RandomSeederThread.class);
   }
 
+  @Override public boolean equals(Object o) {
+    if (this == o) {
+      return true;
+    }
+    if (o == null || getClass() != o.getClass()) {
+      return false;
+    }
+    SimpleRandomSeederThread that = (SimpleRandomSeederThread) o;
+    return seedGenerator.equals(that.seedGenerator) && factory.equals(that.factory);
+  }
+
+  @Override public int hashCode() {
+    return 31 * seedGenerator.hashCode() + factory.hashCode();
+  }
+
   @SuppressWarnings({"InfiniteLoopStatement", "ObjectAllocationInLoop", "AwaitNotInLoop"}) @Override
   protected boolean iterate() {
     try {
@@ -107,7 +122,7 @@ public class SimpleRandomSeederThread extends LooperThread {
           if (random.preferSeedWithLong()) {
             reseedWithLong((Random) random);
           } else {
-            final byte[] seedArray = RandomSeederThread.SEED_ARRAYS
+            final byte[] seedArray = SimpleRandomSeederThread.SEED_ARRAYS
                 .computeIfAbsent(random, random_ -> new byte[random_.getNewSeedLength()]);
             seedGenerator.generateSeed(seedArray);
             random.setSeed(seedArray);
@@ -129,6 +144,40 @@ public class SimpleRandomSeederThread extends LooperThread {
   protected void reseedWithLong(final Random random) {
     seedGenerator.generateSeed(longSeedArray);
     random.setSeed(BinaryUtils.convertBytesToLong(longSeedArray));
+  }
+
+  /**
+   * Returns true if no {@link Random} instances are registered with this RandomSeederThread.
+   *
+   * @return true if no {@link Random} instances are registered with this RandomSeederThread.
+   */
+  public boolean isEmpty() {
+    lock.lock();
+    try {
+      return byteArrayPrngs.isEmpty();
+    } finally {
+      lock.unlock();
+    }
+  }
+
+  /**
+   * Shut down this thread if no {@link Random} instances are registered with it.
+   */
+  public void stopIfEmpty() {
+    lock.lock();
+    try {
+      if (isEmpty()) {
+        getLogger().info("Stopping empty RandomSeederThread for {}", seedGenerator);
+        interrupt();
+      }
+    } finally {
+      lock.unlock();
+    }
+  }
+
+  public void reseedAsync(ByteArrayReseedableRandom random) {
+    byteArrayPrngsThisIteration.add(random);
+    wakeUp();
   }
 
   public static class DefaultThreadFactory implements ThreadFactory, Serializable {

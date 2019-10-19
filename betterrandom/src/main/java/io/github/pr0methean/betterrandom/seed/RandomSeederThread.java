@@ -42,21 +42,6 @@ public final class RandomSeederThread extends SimpleRandomSeederThread {
     wakeUp();
   }
 
-  @Override public boolean equals(Object o) {
-    if (this == o) {
-      return true;
-    }
-    if (o == null || getClass() != o.getClass()) {
-      return false;
-    }
-    RandomSeederThread that = (RandomSeederThread) o;
-    return seedGenerator.equals(that.seedGenerator) && factory.equals(that.factory);
-  }
-
-  @Override public int hashCode() {
-    return 31 * seedGenerator.hashCode() + factory.hashCode();
-  }
-
   /**
    * Returns the seed generator this RandomSeederThread is using.
    * @return the seed generator
@@ -189,30 +174,10 @@ public final class RandomSeederThread extends SimpleRandomSeederThread {
     }
   }
 
-  /**
-   * Returns true if no {@link Random} instances are registered with this RandomSeederThread.
-   *
-   * @return true if no {@link Random} instances are registered with this RandomSeederThread.
-   */
-  public boolean isEmpty() {
+  @Override public boolean isEmpty() {
     lock.lock();
     try {
-      return byteArrayPrngs.isEmpty() && otherPrngs.isEmpty();
-    } finally {
-      lock.unlock();
-    }
-  }
-
-  /**
-   * Shut down this thread if no {@link Random} instances are registered with it.
-   */
-  public void stopIfEmpty() {
-    lock.lock();
-    try {
-      if (isEmpty()) {
-        getLogger().info("Stopping empty RandomSeederThread for {}", seedGenerator);
-        interrupt();
-      }
+      return super.isEmpty() && otherPrngs.isEmpty();
     } finally {
       lock.unlock();
     }

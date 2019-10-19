@@ -26,12 +26,12 @@ public class RandomSeederThreadTest {
   @Test public void testConstructors() {
     TestUtils.testConstructors(RandomSeederThread.class, false, ImmutableMap
         .of(SeedGenerator.class, new FakeSeedGenerator("testConstructors"), ThreadFactory.class,
-            new RandomSeederThread.DefaultThreadFactory("testConstructors"), long.class,
+            new SimpleRandomSeederThread.DefaultThreadFactory("testConstructors"), long.class,
             100_000_000L), RandomSeederThread::stopIfEmpty);
   }
 
   @Test public void testDefaultThreadFactoryConstructors() {
-    TestUtils.testConstructors(RandomSeederThread.DefaultThreadFactory.class, false, ImmutableMap
+    TestUtils.testConstructors(SimpleRandomSeederThread.DefaultThreadFactory.class, false, ImmutableMap
             .of(String.class, "testDefaultThreadFactoryConstructors", int.class,
                 Thread.MAX_PRIORITY),
         x -> x.newThread(() -> {}));
