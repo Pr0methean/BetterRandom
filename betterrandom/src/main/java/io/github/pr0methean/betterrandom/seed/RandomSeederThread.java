@@ -28,6 +28,16 @@ public final class RandomSeederThread extends SimpleRandomSeederThread {
     otherPrngsThisIteration = Collections.newSetFromMap(new WeakHashMap<>(1));
   }
 
+  @Override public void remove(Random... randoms) {
+    for (Random random : randoms) {
+      if (random instanceof ByteArrayReseedableRandom) {
+        super.remove(random);
+      } else {
+        otherPrngs.remove(random);
+      }
+    }
+  }
+
   public void reseedAsync(Random random) {
     if (random instanceof ByteArrayReseedableRandom) {
       byteArrayPrngsThisIteration.add((ByteArrayReseedableRandom) random);
