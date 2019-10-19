@@ -44,6 +44,7 @@ import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ForkJoinPool;
 import java.util.concurrent.ForkJoinTask;
 import java.util.concurrent.TimeUnit;
+import java.util.function.Consumer;
 import java.util.function.DoubleConsumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
@@ -289,25 +290,20 @@ public abstract class BaseRandomTest extends PowerMockTestCase {
   }
 
   @Test(timeOut = 15_000) public void testSetSeedAfterNextLong() throws SeedException {
-    final byte[] seed = getTestSeedGenerator().generateSeed(getNewSeedLength());
-    final BaseRandom rng = createRng();
-    final BaseRandom rng2 = createRng();
-    final BaseRandom rng3 = createRng(seed);
-    rng.nextLong(); // ensure rng & rng2 won't both be in initial state before reseeding
-    rng.setSeed(seed);
-    rng2.setSeed(seed);
-    RandomTestUtils
-        .assertEquivalent(rng, rng2, 64, "Output mismatch after reseeding with same seed");
-    rng.setSeed(seed);
-    RandomTestUtils.assertEquivalent(rng, rng3, 64, "Output mismatch vs a new PRNG with same seed");
+    checkSetSeedAfter(this::createRng, BaseRandom::nextLong);
   }
 
   @Test(timeOut = 15_000) public void testSetSeedAfterNextInt() throws SeedException {
+    checkSetSeedAfter(this::createRng, BaseRandom::nextInt);
+  }
+
+  protected void checkSetSeedAfter(final Supplier<BaseRandom> supplier,
+      Consumer<? super BaseRandom> stateChange) throws SeedException {
     final byte[] seed = getTestSeedGenerator().generateSeed(getNewSeedLength());
-    final BaseRandom rng = createRng();
-    final BaseRandom rng2 = createRng();
+    final BaseRandom rng = supplier.get();
+    final BaseRandom rng2 = supplier.get();
     final BaseRandom rng3 = createRng(seed);
-    rng.nextInt(); // ensure rng & rng2 won't both be in initial state before reseeding
+    stateChange.accept(rng);
     rng.setSeed(seed);
     rng2.setSeed(seed);
     RandomTestUtils

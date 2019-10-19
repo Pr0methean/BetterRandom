@@ -12,6 +12,8 @@ import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import java.util.Map;
 import java.util.Random;
+import java.util.function.Consumer;
+import java.util.function.Supplier;
 import org.testng.annotations.Test;
 
 @Test(testName = "RandomWrapper:SecureRandom") public class RandomWrapperSecureRandomTest
@@ -75,8 +77,11 @@ import org.testng.annotations.Test;
   /**
    * Only test for crashes, since {@link SecureRandom#setSeed(long)} doesn't completely replace the
    * existing seed.
+   * @param supplier
+   * @param stateChange
    */
-  @Override public void testSetSeedAfterNextInt() throws SeedException {
+  @Override public void checkSetSeedAfter(final Supplier<BaseRandom> supplier,
+      Consumer<? super BaseRandom> stateChange) throws SeedException {
     final BaseRandom prng = createRng();
     prng.nextInt();
     prng.setSeed(getTestSeedGenerator().generateSeed(8));

@@ -5,6 +5,8 @@ import static org.testng.Assert.assertTrue;
 
 import io.github.pr0methean.betterrandom.seed.SeedException;
 import java.util.Random;
+import java.util.function.Consumer;
+import java.util.function.Supplier;
 import org.testng.SkipException;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Optional;
@@ -79,7 +81,8 @@ public abstract class CipherCounterRandomTest extends SeekableRandomTest {
     assert rngs[0].nextLong() != rngs[1].nextLong() : "RNGs converged after 4 setSeed calls";
   }
 
-  @Override @Test(enabled = false) public void testSetSeedAfterNextInt() {
+  @Override @Test(enabled = false) public void checkSetSeedAfter(
+      final Supplier<BaseRandom> supplier, Consumer<? super BaseRandom> stateChange) {
     // No-op.
   }
 

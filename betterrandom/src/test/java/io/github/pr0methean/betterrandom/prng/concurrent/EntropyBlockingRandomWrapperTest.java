@@ -66,6 +66,10 @@ public class EntropyBlockingRandomWrapperTest extends RandomWrapperRandomTest {
     return new EntropyBlockingRandomWrapper(DEFAULT_MAX_ENTROPY, getTestSeedGenerator());
   }
 
+  private EntropyBlockingRandomWrapper createRngLargeEntropyLimit() {
+    return new EntropyBlockingRandomWrapper(VERY_LOW_MINIMUM_ENTROPY, getTestSeedGenerator());
+  }
+
   // FIXME: Too slow!
   @Override @Test(timeOut = 120_000L) public void testRandomSeederThreadIntegration() {
     super.testRandomSeederThreadIntegration();
@@ -144,7 +148,7 @@ public class EntropyBlockingRandomWrapperTest extends RandomWrapperRandomTest {
   }
 
   @Override public void testSerializable() throws SeedException {
-    testSerializable(new EntropyBlockingRandomWrapper(VERY_LOW_MINIMUM_ENTROPY, getTestSeedGenerator()));
+    testSerializable(createRngLargeEntropyLimit());
   }
 
   @Override public void testNextBytes() {
@@ -153,6 +157,14 @@ public class EntropyBlockingRandomWrapperTest extends RandomWrapperRandomTest {
     final long oldEntropy = prng.getEntropyBits();
     prng.nextBytes(testBytes);
     assertFalse(Arrays.equals(testBytes, new byte[TEST_BYTE_ARRAY_LENGTH]));
+  }
+
+  @Override public void testSetSeedAfterNextLong() throws SeedException {
+    checkSetSeedAfter(this::createRngLargeEntropyLimit, BaseRandom::nextLong);
+  }
+
+  @Override public void testSetSeedAfterNextInt() throws SeedException {
+    checkSetSeedAfter(this::createRngLargeEntropyLimit, BaseRandom::nextInt);
   }
 
   @Test public void testSetSameThreadSeedGen() {

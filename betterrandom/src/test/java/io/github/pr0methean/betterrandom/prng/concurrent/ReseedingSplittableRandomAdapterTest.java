@@ -16,6 +16,8 @@ import io.github.pr0methean.betterrandom.seed.SeedException;
 import io.github.pr0methean.betterrandom.seed.SeedGenerator;
 import io.github.pr0methean.betterrandom.seed.SemiFakeSeedGenerator;
 import io.github.pr0methean.betterrandom.util.BinaryUtils;
+import java.util.function.Consumer;
+import java.util.function.Supplier;
 import org.testng.annotations.AfterTest;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
@@ -120,8 +122,11 @@ public class ReseedingSplittableRandomAdapterTest
 
   /**
    * Test for crashes only, since setSeed is a no-op.
+   * @param supplier
+   * @param stateChange
    */
-  @Override @Test public void testSetSeedAfterNextInt() throws SeedException {
+  @Override @Test public void checkSetSeedAfter(final Supplier<BaseRandom> supplier,
+      Consumer<? super BaseRandom> stateChange) throws SeedException {
     final BaseRandom prng = createRng();
     prng.nextInt();
     prng.setSeed(getTestSeedGenerator().generateSeed(8));
