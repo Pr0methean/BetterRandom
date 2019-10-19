@@ -125,7 +125,7 @@ public abstract class BaseRandomTest extends PowerMockTestCase {
   }
 
   protected Map<Class<?>, Object> constructorParams() {
-    final int seedLength = getNewSeedLength(createRng());
+    final int seedLength = getNewSeedLength();
     final HashMap<Class<?>, Object> params = new HashMap<>(4);
     params.put(int.class, seedLength);
     params.put(long.class, TEST_SEED);
@@ -134,8 +134,8 @@ public abstract class BaseRandomTest extends PowerMockTestCase {
     return params;
   }
 
-  protected int getNewSeedLength(final BaseRandom basePrng) {
-    return basePrng.getNewSeedLength();
+  protected int getNewSeedLength() {
+    return createRng().getNewSeedLength();
   }
 
   protected abstract Class<? extends BaseRandom> getClassUnderTest();
@@ -155,7 +155,7 @@ public abstract class BaseRandomTest extends PowerMockTestCase {
    */
   @Test(timeOut = 15_000) public void testRepeatabilityNextGaussian() throws SeedException {
     final BaseRandom rng = createRng();
-    final byte[] seed = getTestSeedGenerator().generateSeed(getNewSeedLength(rng));
+    final byte[] seed = getTestSeedGenerator().generateSeed(getNewSeedLength());
     rng.nextGaussian();
     rng.setSeed(seed);
     // Create second RNG using same seed.
@@ -169,7 +169,7 @@ public abstract class BaseRandomTest extends PowerMockTestCase {
   @Test(timeOut = 15_000, expectedExceptions = IllegalArgumentException.class)
   public void testSeedTooLong() throws GeneralSecurityException, SeedException {
     createRng(getTestSeedGenerator()
-        .generateSeed(getNewSeedLength(createRng()) + 1)); // Should throw an exception.
+        .generateSeed(getNewSeedLength() + 1)); // Should throw an exception.
   }
 
   protected abstract BaseRandom createRng();
@@ -289,7 +289,7 @@ public abstract class BaseRandomTest extends PowerMockTestCase {
   }
 
   @Test(timeOut = 15_000) public void testSetSeedAfterNextLong() throws SeedException {
-    final byte[] seed = getTestSeedGenerator().generateSeed(getNewSeedLength(createRng()));
+    final byte[] seed = getTestSeedGenerator().generateSeed(getNewSeedLength());
     final BaseRandom rng = createRng();
     final BaseRandom rng2 = createRng();
     final BaseRandom rng3 = createRng(seed);
@@ -303,7 +303,7 @@ public abstract class BaseRandomTest extends PowerMockTestCase {
   }
 
   @Test(timeOut = 15_000) public void testSetSeedAfterNextInt() throws SeedException {
-    final byte[] seed = getTestSeedGenerator().generateSeed(getNewSeedLength(createRng()));
+    final byte[] seed = getTestSeedGenerator().generateSeed(getNewSeedLength());
     final BaseRandom rng = createRng();
     final BaseRandom rng2 = createRng();
     final BaseRandom rng3 = createRng(seed);
@@ -317,7 +317,7 @@ public abstract class BaseRandomTest extends PowerMockTestCase {
   }
 
   @Test(timeOut = 15_000) public void testSetSeedZero() throws SeedException {
-    final int length = getNewSeedLength(createRng());
+    final int length = getNewSeedLength();
     final byte[] zeroSeed = new byte[length];
     final byte[] realSeed = new byte[length];
     do {
@@ -693,7 +693,7 @@ public abstract class BaseRandomTest extends PowerMockTestCase {
   }
 
   @Test public void testInitialEntropy() {
-    int seedSize = getNewSeedLength(createRng());
+    int seedSize = getNewSeedLength();
     byte[] seed = getTestSeedGenerator().generateSeed(seedSize);
     assertEquals(createRng(seed).getEntropyBits(), 8 * seedSize, "Wrong initial entropy");
   }

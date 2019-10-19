@@ -78,7 +78,7 @@ import org.testng.annotations.Test;
    * Assertion-free because ThreadLocalRandomWrapper isn't repeatable.
    */
   @Override @Test public void testSetSeedAfterNextLong() throws SeedException {
-    final byte[] seed = getTestSeedGenerator().generateSeed(getNewSeedLength(createRng()));
+    final byte[] seed = getTestSeedGenerator().generateSeed(getNewSeedLength());
     final BaseRandom rng = createRng();
     rng.nextLong();
     rng.setSeed(seed);
@@ -88,7 +88,7 @@ import org.testng.annotations.Test;
    * Assertion-free because ThreadLocalRandomWrapper isn't repeatable.
    */
   @Override @Test public void testSetSeedAfterNextInt() throws SeedException {
-    final byte[] seed = getTestSeedGenerator().generateSeed(getNewSeedLength(createRng()));
+    final byte[] seed = getTestSeedGenerator().generateSeed(getNewSeedLength());
     final BaseRandom rng = createRng();
     rng.nextInt();
     rng.setSeed(seed);
