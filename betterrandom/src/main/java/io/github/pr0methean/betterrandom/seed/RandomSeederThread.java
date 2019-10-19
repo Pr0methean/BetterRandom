@@ -3,8 +3,6 @@ package io.github.pr0methean.betterrandom.seed;
 import io.github.pr0methean.betterrandom.ByteArrayReseedableRandom;
 import io.github.pr0methean.betterrandom.EntropyCountingRandom;
 import io.github.pr0methean.betterrandom.prng.BaseRandom;
-import java.io.IOException;
-import java.io.ObjectInputStream;
 import java.util.Collections;
 import java.util.Objects;
 import java.util.Random;
@@ -24,13 +22,10 @@ public final class RandomSeederThread extends SimpleRandomSeederThread {
   private transient Set<Random> otherPrngsThisIteration;
   private final long stopIfEmptyForNanos;
 
-  private void initTransientFields() {
-    byteArrayPrngs = Collections.newSetFromMap(Collections.synchronizedMap(new WeakHashMap<>(1)));
+  @Override protected void initTransientFields() {
+    super.initTransientFields();
     otherPrngs = Collections.newSetFromMap(Collections.synchronizedMap(new WeakHashMap<>(1)));
-    byteArrayPrngsThisIteration = Collections.newSetFromMap(new WeakHashMap<>(1));
     otherPrngsThisIteration = Collections.newSetFromMap(new WeakHashMap<>(1));
-    waitWhileEmpty = lock.newCondition();
-    waitForEntropyDrain = lock.newCondition();
   }
 
   public void reseedAsync(Random random) {
@@ -185,11 +180,6 @@ public final class RandomSeederThread extends SimpleRandomSeederThread {
 
   @Override public String toString() {
     return String.format("RandomSeederThread (%s, %s)", seedGenerator, factory);
-  }
-
-  private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
-    in.defaultReadObject();
-    initTransientFields();
   }
 
 }

@@ -4,6 +4,8 @@ import io.github.pr0methean.betterrandom.ByteArrayReseedableRandom;
 import io.github.pr0methean.betterrandom.EntropyCountingRandom;
 import io.github.pr0methean.betterrandom.util.BinaryUtils;
 import io.github.pr0methean.betterrandom.util.LooperThread;
+import java.io.IOException;
+import java.io.ObjectInputStream;
 import java.io.Serializable;
 import java.util.Arrays;
 import java.util.Collections;
@@ -32,6 +34,7 @@ public class SimpleRandomSeederThread extends LooperThread {
   public SimpleRandomSeederThread(ThreadFactory factory, final SeedGenerator seedGenerator) {
     super(factory);
     this.seedGenerator = seedGenerator;
+    initTransientFields();
   }
 
   public SimpleRandomSeederThread(SeedGenerator seedGenerator) {
@@ -101,6 +104,13 @@ public class SimpleRandomSeederThread extends LooperThread {
 
   @Override public int hashCode() {
     return 31 * seedGenerator.hashCode() + factory.hashCode();
+  }
+
+  protected void initTransientFields() {
+    byteArrayPrngs = Collections.newSetFromMap(Collections.synchronizedMap(new WeakHashMap<>(1)));
+    byteArrayPrngsThisIteration = Collections.newSetFromMap(new WeakHashMap<>(1));
+    waitWhileEmpty = lock.newCondition();
+    waitForEntropyDrain = lock.newCondition();
   }
 
   @SuppressWarnings({"InfiniteLoopStatement", "ObjectAllocationInLoop", "AwaitNotInLoop"}) @Override
@@ -178,6 +188,11 @@ public class SimpleRandomSeederThread extends LooperThread {
   public void reseedAsync(ByteArrayReseedableRandom random) {
     byteArrayPrngsThisIteration.add(random);
     wakeUp();
+  }
+
+  private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
+    in.defaultReadObject();
+    initTransientFields();
   }
 
   public static class DefaultThreadFactory implements ThreadFactory, Serializable {
