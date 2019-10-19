@@ -4,6 +4,7 @@ import io.github.pr0methean.betterrandom.ByteArrayReseedableRandom;
 import io.github.pr0methean.betterrandom.EntropyCountingRandom;
 import io.github.pr0methean.betterrandom.util.BinaryUtils;
 import io.github.pr0methean.betterrandom.util.LooperThread;
+import java.io.Serializable;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Map;
@@ -16,7 +17,7 @@ import java.util.concurrent.locks.Condition;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public abstract class SimpleRandomSeederThread extends LooperThread {
+public class SimpleRandomSeederThread extends LooperThread {
   protected static final Map<ByteArrayReseedableRandom, byte[]> SEED_ARRAYS =
       Collections.synchronizedMap(new WeakHashMap<>(1));
   protected static final long POLL_INTERVAL = 60;
@@ -31,6 +32,10 @@ public abstract class SimpleRandomSeederThread extends LooperThread {
   public SimpleRandomSeederThread(ThreadFactory factory, final SeedGenerator seedGenerator) {
     super(factory);
     this.seedGenerator = seedGenerator;
+  }
+
+  public SimpleRandomSeederThread(SeedGenerator seedGenerator) {
+    this(new SimpleRandomSeederThread.DefaultThreadFactory(seedGenerator.toString()), seedGenerator);
   }
 
   static boolean stillDefinitelyHasEntropy(final Object random) {
@@ -124,5 +129,48 @@ public abstract class SimpleRandomSeederThread extends LooperThread {
   protected void reseedWithLong(final Random random) {
     seedGenerator.generateSeed(longSeedArray);
     random.setSeed(BinaryUtils.convertBytesToLong(longSeedArray));
+  }
+
+  public static class DefaultThreadFactory implements ThreadFactory, Serializable {
+
+    private static final long serialVersionUID = -5806852086706570346L;
+    private final String name;
+    private final int priority;
+
+    public DefaultThreadFactory(String name) {
+      this(name, Thread.NORM_PRIORITY + 1);
+    }
+
+    public DefaultThreadFactory(String name, int priority) {
+      this.name = name;
+      this.priority = priority;
+    }
+
+    public DefaultThreadFactory() {
+      this("TODO"); // TODO
+    }
+
+    @Override public Thread newThread(Runnable runnable) {
+      Thread thread = DEFAULT_THREAD_FACTORY.newThread(runnable);
+      thread.setName(name);
+      thread.setDaemon(true);
+      thread.setPriority(priority);
+      return thread;
+    }
+
+    @Override public boolean equals(Object o) {
+      if (this == o) {
+        return true;
+      }
+      if (o == null || getClass() != o.getClass()) {
+        return false;
+      }
+      DefaultThreadFactory that = (DefaultThreadFactory) o;
+      return priority == that.priority && name.equals(that.name);
+    }
+
+    @Override public int hashCode() {
+      return 31 * priority + name.hashCode();
+    }
   }
 }

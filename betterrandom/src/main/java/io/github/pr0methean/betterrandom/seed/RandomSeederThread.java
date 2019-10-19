@@ -5,7 +5,6 @@ import io.github.pr0methean.betterrandom.EntropyCountingRandom;
 import io.github.pr0methean.betterrandom.prng.BaseRandom;
 import java.io.IOException;
 import java.io.ObjectInputStream;
-import java.io.Serializable;
 import java.util.Collections;
 import java.util.Objects;
 import java.util.Random;
@@ -66,42 +65,22 @@ public final class RandomSeederThread extends SimpleRandomSeederThread {
     return seedGenerator;
   }
 
-  public static class DefaultThreadFactory implements ThreadFactory, Serializable {
-
-    private static final long serialVersionUID = -5806852086706570346L;
-    private final String name;
-    private final int priority;
-
-    public DefaultThreadFactory(String name) {
-      this(name, Thread.NORM_PRIORITY + 1);
+  public void add(Random... randoms) {
+    if (randoms.length == 0) {
+      return;
     }
-
-    public DefaultThreadFactory(String name, int priority) {
-      this.name = name;
-      this.priority = priority;
-    }
-
-    @Override public Thread newThread(Runnable runnable) {
-      Thread thread = DEFAULT_THREAD_FACTORY.newThread(runnable);
-      thread.setName(name);
-      thread.setDaemon(true);
-      thread.setPriority(priority);
-      return thread;
-    }
-
-    @Override public boolean equals(Object o) {
-      if (this == o) {
-        return true;
+    lock.lock();
+    try {
+      for (final Random random : randoms) {
+        if (random instanceof ByteArrayReseedableRandom) {
+          byteArrayPrngs.add((ByteArrayReseedableRandom) random);
+        } else {
+          otherPrngs.add(random);
+        }
       }
-      if (o == null || getClass() != o.getClass()) {
-        return false;
-      }
-      DefaultThreadFactory that = (DefaultThreadFactory) o;
-      return priority == that.priority && name.equals(that.name);
-    }
-
-    @Override public int hashCode() {
-      return 31 * priority + name.hashCode();
+      wakeUp();
+    } finally {
+      lock.unlock();
     }
   }
 

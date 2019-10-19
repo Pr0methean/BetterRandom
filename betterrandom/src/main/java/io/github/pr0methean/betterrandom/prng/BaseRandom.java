@@ -705,7 +705,7 @@ public abstract class BaseRandom extends Random
         old.remove(this);
       }
       if (randomSeeder != null) {
-        randomSeeder.add(this);
+        randomSeeder.add((ByteArrayReseedableRandom) this);
       }
     }
   }
@@ -786,7 +786,7 @@ public abstract class BaseRandom extends Random
     setSeedInternal(seed);
     final RandomSeederThread currentSeeder = getRandomSeeder();
     if (currentSeeder != null) {
-      currentSeeder.add(this);
+      currentSeeder.add((ByteArrayReseedableRandom) this);
     }
   }
 
