@@ -245,8 +245,13 @@ public enum RandomTestUtils {
         "Monte Carlo value for Pi is outside acceptable range:" + pi);
   }
 
-  public static void testReseeding(final SeedGenerator testSeedGenerator, final BaseRandom rng,
+  public static void checkReseeding(final SeedGenerator testSeedGenerator, final BaseRandom rng,
       final boolean setSeedGenerator) {
+    checkReseeding(testSeedGenerator, rng, setSeedGenerator, 0);
+  }
+
+  public static void checkReseeding(final SeedGenerator testSeedGenerator, final BaseRandom rng,
+      final boolean setSeedGenerator, long entropyAdjustment) {
     // TODO: Set max thread priority
     final byte[] oldSeed = rng.getSeed();
     final byte[] oldSeedClone = oldSeed.clone();
@@ -277,7 +282,7 @@ public enum RandomTestUtils {
       } while (Arrays.equals(secondSeed, oldSeed));
       final byte[] secondSeedClone = secondSeed.clone();
       waits = 0;
-      while (rng.getEntropyBits() < (secondSeed.length * 8L) - 1) {
+      while (rng.getEntropyBits() < (secondSeed.length * 8L) - entropyAdjustment - 1) {
         assertEquals(secondSeedClone, secondSeed,
             "Array modified after being returned by getSeed()");
         waits++;

@@ -19,6 +19,7 @@ import io.github.pr0methean.betterrandom.seed.SeedGenerator;
 import io.github.pr0methean.betterrandom.seed.SemiFakeSeedGenerator;
 import java.util.Arrays;
 import java.util.Map;
+import java.util.Random;
 import java.util.UUID;
 import java.util.concurrent.ThreadFactory;
 import org.mockito.Mockito;
@@ -52,6 +53,12 @@ public class EntropyBlockingRandomWrapperTest extends RandomWrapperRandomTest {
     assertSame(random.getSameThreadSeedGen(), seedGen);
   }
 
+  @Override public void testSetSeedLong() throws SeedException {
+    final BaseRandom rng = createRngLargeEntropyLimit();
+    final BaseRandom rng2 = createRngLargeEntropyLimit();
+    checkSetSeedLong(rng, rng2);
+  }
+
   @Override @Test public void testReseeding() {
     // TODO
     SeedGenerator seedGen = Mockito.spy(getTestSeedGenerator());
@@ -70,9 +77,16 @@ public class EntropyBlockingRandomWrapperTest extends RandomWrapperRandomTest {
     return new EntropyBlockingRandomWrapper(VERY_LOW_MINIMUM_ENTROPY, getTestSeedGenerator());
   }
 
+  private EntropyBlockingRandomWrapper createRngLargeEntropyLimit(byte[] seed) {
+    return new EntropyBlockingRandomWrapper(seed, VERY_LOW_MINIMUM_ENTROPY, getTestSeedGenerator());
+  }
+
   // FIXME: Too slow!
   @Override @Test(timeOut = 120_000L) public void testRandomSeederThreadIntegration() {
-    super.testRandomSeederThreadIntegration();
+    final SeedGenerator seedGenerator = new SemiFakeSeedGenerator(new Random(),
+        UUID.randomUUID().toString());
+    final BaseRandom rng = createRng();
+    RandomTestUtils.checkReseeding(seedGenerator, rng, true, 64);
   }
 
   @Override protected RandomWrapper createRng(byte[] seed) throws SeedException {
@@ -160,11 +174,13 @@ public class EntropyBlockingRandomWrapperTest extends RandomWrapperRandomTest {
   }
 
   @Override public void testSetSeedAfterNextLong() throws SeedException {
-    checkSetSeedAfter(this::createRngLargeEntropyLimit, BaseRandom::nextLong);
+    checkSetSeedAfter(this::createRngLargeEntropyLimit, this::createRngLargeEntropyLimit,
+        BaseRandom::nextLong);
   }
 
   @Override public void testSetSeedAfterNextInt() throws SeedException {
-    checkSetSeedAfter(this::createRngLargeEntropyLimit, BaseRandom::nextInt);
+    checkSetSeedAfter(this::createRngLargeEntropyLimit, this::createRngLargeEntropyLimit,
+        BaseRandom::nextInt);
   }
 
   @Test public void testSetSameThreadSeedGen() {

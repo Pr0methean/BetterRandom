@@ -110,6 +110,14 @@ public abstract class BaseRandomTest extends PowerMockTestCase {
     assertTrue(Arrays.asList(selected).containsAll(Arrays.asList(expected)));
   }
 
+  protected static void checkSetSeedLong(BaseRandom rng, BaseRandom rng2) {
+    rng.nextLong(); // ensure they won't both be in initial state before reseeding
+    rng.setSeed(0x0123456789ABCDEFL);
+    rng2.setSeed(0x0123456789ABCDEFL);
+    RandomTestUtils
+        .assertEquivalent(rng, rng2, 20, "Output mismatch after reseeding with same seed");
+  }
+
   protected SeedGenerator getTestSeedGenerator() {
     return semiFakeSeedGenerator;
   }
@@ -299,10 +307,15 @@ public abstract class BaseRandomTest extends PowerMockTestCase {
 
   protected void checkSetSeedAfter(final Supplier<BaseRandom> supplier,
       Consumer<? super BaseRandom> stateChange) throws SeedException {
+    checkSetSeedAfter(supplier, this::createRng, stateChange);
+  }
+
+  protected void checkSetSeedAfter(final Supplier<BaseRandom> creator,
+      final Function<byte[], BaseRandom> creatorForSeed, Consumer<? super BaseRandom> stateChange) throws SeedException {
     final byte[] seed = getTestSeedGenerator().generateSeed(getNewSeedLength());
-    final BaseRandom rng = supplier.get();
-    final BaseRandom rng2 = supplier.get();
-    final BaseRandom rng3 = createRng(seed);
+    final BaseRandom rng = creator.get();
+    final BaseRandom rng2 = creator.get();
+    final BaseRandom rng3 = creatorForSeed.apply(seed);
     stateChange.accept(rng);
     rng.setSeed(seed);
     rng2.setSeed(seed);
@@ -368,7 +381,7 @@ public abstract class BaseRandomTest extends PowerMockTestCase {
     final SeedGenerator seedGenerator = new SemiFakeSeedGenerator(new Random(),
         UUID.randomUUID().toString());
     final BaseRandom rng = createRng();
-    RandomTestUtils.testReseeding(seedGenerator, rng, true);
+    RandomTestUtils.checkReseeding(seedGenerator, rng, true);
   }
 
   @Test(timeOut = 10_000) public void testWithProbability() {

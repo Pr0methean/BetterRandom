@@ -87,11 +87,12 @@ import org.testng.annotations.Test;
 
   /**
    * Assertion-free because ThreadLocalRandomWrapper isn't repeatable.
-   * @param supplier
+   * @param creator
+   * @param creatorForSeed
    * @param stateChange
    */
-  @Override @Test public void checkSetSeedAfter(final Supplier<BaseRandom> supplier,
-      Consumer<? super BaseRandom> stateChange) throws SeedException {
+  @Override @Test public void checkSetSeedAfter(final Supplier<BaseRandom> creator,
+      final Function<byte[], BaseRandom> creatorForSeed, Consumer<? super BaseRandom> stateChange) throws SeedException {
     final byte[] seed = getTestSeedGenerator().generateSeed(getNewSeedLength());
     final BaseRandom rng = createRng();
     rng.nextInt();

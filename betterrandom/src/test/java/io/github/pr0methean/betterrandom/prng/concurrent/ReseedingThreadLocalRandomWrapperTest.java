@@ -12,6 +12,7 @@ import io.github.pr0methean.betterrandom.seed.SeedGenerator;
 import java.io.Serializable;
 import java.util.Random;
 import java.util.function.Consumer;
+import java.util.function.Function;
 import java.util.function.Supplier;
 import org.testng.annotations.Test;
 
@@ -59,7 +60,7 @@ public class ReseedingThreadLocalRandomWrapperTest extends ThreadLocalRandomWrap
   public void testReseeding() {
     final SeedGenerator testSeedGenerator = getTestSeedGenerator();
     final BaseRandom rng = new ReseedingThreadLocalRandomWrapper(testSeedGenerator, pcgSupplier);
-    RandomTestUtils.testReseeding(testSeedGenerator, rng, false);
+    RandomTestUtils.checkReseeding(testSeedGenerator, rng, false);
   }
 
   /**
@@ -81,11 +82,12 @@ public class ReseedingThreadLocalRandomWrapperTest extends ThreadLocalRandomWrap
 
   /**
    * Test for crashes only, since setSeed is a no-op.
-   * @param supplier
+   * @param creator
+   * @param creatorForSeed
    * @param stateChange
    */
-  @Override @Test public void checkSetSeedAfter(final Supplier<BaseRandom> supplier,
-      Consumer<? super BaseRandom> stateChange) throws SeedException {
+  @Override @Test public void checkSetSeedAfter(final Supplier<BaseRandom> creator,
+      final Function<byte[], BaseRandom> creatorForSeed, Consumer<? super BaseRandom> stateChange) throws SeedException {
     final BaseRandom prng = createRng();
     prng.nextInt();
     prng.setSeed(getTestSeedGenerator().generateSeed(8));
