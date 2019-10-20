@@ -1,6 +1,7 @@
 package io.github.pr0methean.betterrandom.prng.concurrent;
 
 import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertFalse;
 
 import com.google.common.collect.ImmutableMap;
 import com.google.common.testing.SerializableTester;
@@ -64,11 +65,19 @@ public class EntropyBlockingRandomWrapperAesCounterRandomTest extends RandomWrap
   }
 
   @Override public void testThreadSafety() {
-    SeedGenerator testSeedGenerator = getTestSeedGenerator();
     testThreadSafety(functionsForThreadSafetyTest, functionsForThreadSafetyTest,
-        seed -> new EntropyBlockingRandomWrapper(new AesCounterRandom(seed),
-            VERY_LOW_MINIMUM_ENTROPY,
-            testSeedGenerator));
+        this::createRngLargeEntropyLimit);
+  }
+
+  private EntropyBlockingRandomWrapper createRngLargeEntropyLimit() {
+    final SeedGenerator testSeedGenerator = getTestSeedGenerator();
+    return new EntropyBlockingRandomWrapper(new AesCounterRandom(testSeedGenerator),
+        VERY_LOW_MINIMUM_ENTROPY, testSeedGenerator);
+  }
+
+  private BaseRandom createRngLargeEntropyLimit(byte[] seed) {
+    return new EntropyBlockingRandomWrapper(new AesCounterRandom(seed),
+        VERY_LOW_MINIMUM_ENTROPY, getTestSeedGenerator());
   }
 
   @Override public void testRepeatability() throws SeedException {
@@ -76,7 +85,7 @@ public class EntropyBlockingRandomWrapperAesCounterRandomTest extends RandomWrap
     final BaseRandom rng = new EntropyBlockingRandomWrapper(new AesCounterRandom(testSeedGenerator),
         VERY_LOW_MINIMUM_ENTROPY, testSeedGenerator);
     // Create second RNG using same seed.
-    final BaseRandom duplicateRNG = createRng(rng.getSeed());
+    final BaseRandom duplicateRNG = createRngLargeEntropyLimit(rng.getSeed());
     RandomTestUtils.assertEquivalent(rng, duplicateRNG, TEST_BYTES_LENGTH, "Output mismatch");
   }
 
@@ -102,6 +111,14 @@ public class EntropyBlockingRandomWrapperAesCounterRandomTest extends RandomWrap
     } finally {
       RandomTestUtils.removeAndAssertEmpty(randomSeeder, rng);
     }
+  }
+
+  @Override public void testNextBytes() {
+    final byte[] testBytes = new byte[TEST_BYTE_ARRAY_LENGTH];
+    final BaseRandom prng = new EntropyBlockingRandomWrapper(0L, getTestSeedGenerator());
+    final long oldEntropy = prng.getEntropyBits();
+    prng.nextBytes(testBytes);
+    assertFalse(Arrays.equals(testBytes, new byte[TEST_BYTE_ARRAY_LENGTH]));
   }
 
   // FIXME: Too slow!
