@@ -21,8 +21,10 @@ JAR=$(find target -iname '*-with-dependencies.jar')
 chkdh() {
     dieharder -S 1 -g 200 $@
 }
+mkfifo log # Work around https://github.com/microsoft/azure-pipelines-agent/issues/2532
 "${JAVA_BIN}" ${JAVA_OPTS} -jar "${JAR}" io.github.pr0methean.betterrandom.prng.${CLASS} prng_out ${SEED} 2>&1 &
 JAVA_PROCESS=$!
+cat log &\
 (
   chkdh -Y 1 -k 2 -d 0
   chkdh -Y 1 -k 2 -d 1
@@ -69,9 +71,11 @@ JAVA_PROCESS=$!
   chkdh -d 207
   chkdh -d 208
   chkdh -d 209
-) 2>&1 < prng_out | tee ../dieharder.txt /proc/${ROOT_SHELL}/fd/1 | (grep -m 1 'FAILED' &&\
+) 2>&1 < prng_out | tee ../dieharder.txt log | (grep -m 1 'FAILED' &&\
 (
   pkill dieharder
   pkill java
+  rm log
   exit 1
 ))
+rm log
