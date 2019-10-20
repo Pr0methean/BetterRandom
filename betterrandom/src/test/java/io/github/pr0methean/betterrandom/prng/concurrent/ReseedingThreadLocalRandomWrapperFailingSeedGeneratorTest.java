@@ -9,8 +9,6 @@ import io.github.pr0methean.betterrandom.seed.FailingSeedGenerator;
 import io.github.pr0methean.betterrandom.seed.SeedException;
 import io.github.pr0methean.betterrandom.seed.SeedGenerator;
 import java.io.Serializable;
-import java.util.function.Consumer;
-import java.util.function.Function;
 import java.util.function.Supplier;
 import org.testng.annotations.Test;
 
@@ -27,12 +25,11 @@ public class ReseedingThreadLocalRandomWrapperFailingSeedGeneratorTest
     // No-op.
   }
 
-  @Override @Test(enabled = false) public void testSetSeedAfterNextLong() throws SeedException {
+  @Override @Test(enabled = false) public void testSetSeedAfterNextLong() {
     // No-op.
   }
 
-  @Override @Test(enabled = false) public void checkSetSeedAfter(final Supplier<BaseRandom> creator,
-      final Function<byte[], BaseRandom> creatorForSeed, Consumer<? super BaseRandom> stateChange) throws SeedException {
+  @Override @Test(enabled = false) public void testSetSeedAfterNextInt() {
     // No-op.
   }
 

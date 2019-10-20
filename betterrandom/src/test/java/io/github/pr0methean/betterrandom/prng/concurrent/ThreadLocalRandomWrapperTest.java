@@ -14,7 +14,6 @@ import io.github.pr0methean.betterrandom.seed.SeedGenerator;
 import java.io.Serializable;
 import java.util.Map;
 import java.util.Random;
-import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
 import org.testng.annotations.Test;
@@ -87,12 +86,8 @@ import org.testng.annotations.Test;
 
   /**
    * Assertion-free because ThreadLocalRandomWrapper isn't repeatable.
-   * @param creator
-   * @param creatorForSeed
-   * @param stateChange
    */
-  @Override @Test public void checkSetSeedAfter(final Supplier<BaseRandom> creator,
-      final Function<byte[], BaseRandom> creatorForSeed, Consumer<? super BaseRandom> stateChange) throws SeedException {
+  @Override @Test public void testSetSeedAfterNextInt() throws SeedException {
     final byte[] seed = getTestSeedGenerator().generateSeed(getNewSeedLength());
     final BaseRandom rng = createRng();
     rng.nextInt();

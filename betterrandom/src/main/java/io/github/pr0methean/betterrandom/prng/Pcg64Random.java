@@ -135,7 +135,7 @@ public class Pcg64Random extends BaseRandom implements SeekableRandom {
     do {
       oldInternal = internal.get();
       newInternal = (oldInternal * MULTIPLIER) + INCREMENT;
-    } while (!internal.weakCompareAndSet(oldInternal, newInternal));
+    } while (!internal.compareAndSet(oldInternal, newInternal));
     // Calculate output function (XSH RR), uses old state for max ILP
     final int xorshifted = (int) (((oldInternal >>> ROTATION1) ^ oldInternal) >>> ROTATION2);
     final int rot = (int) (oldInternal >>> ROTATION3);
