@@ -65,7 +65,7 @@ public class EntropyBlockingRandomWrapperAesCounterRandomTest extends RandomWrap
   }
 
   @Override public void testThreadSafety() {
-    testThreadSafety(functionsForThreadSafetyTest, functionsForThreadSafetyTest,
+    checkThreadSafety(functionsForThreadSafetyTest, functionsForThreadSafetyTest,
         this::createRngLargeEntropyLimit);
   }
 

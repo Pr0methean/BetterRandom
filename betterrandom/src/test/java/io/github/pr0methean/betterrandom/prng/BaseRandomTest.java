@@ -693,7 +693,7 @@ public abstract class BaseRandomTest extends PowerMockTestCase {
   }
 
   @Test(timeOut = 90_000) public void testThreadSafety() {
-    testThreadSafety(functionsForThreadSafetyTest, functionsForThreadSafetyTest);
+    checkThreadSafety(functionsForThreadSafetyTest, functionsForThreadSafetyTest);
   }
 
   @Test(timeOut = 90_000) public void testThreadSafetySetSeed() {
@@ -725,12 +725,12 @@ public abstract class BaseRandomTest extends PowerMockTestCase {
     }
   }
 
-  protected void testThreadSafety(final List<NamedFunction<Random, Double>> functions,
+  protected void checkThreadSafety(final List<NamedFunction<Random, Double>> functions,
       final List<NamedFunction<Random, Double>> pairwiseFunctions) {
-    testThreadSafety(functions, pairwiseFunctions, this::createRng);
+    checkThreadSafety(functions, pairwiseFunctions, this::createRng);
   }
 
-  protected void testThreadSafety(final List<NamedFunction<Random, Double>> functions,
+  protected void checkThreadSafety(final List<NamedFunction<Random, Double>> functions,
       final List<NamedFunction<Random, Double>> pairwiseFunctions,
       final Function<byte[], BaseRandom> randomCreator) {
     final int seedLength = createRng().getNewSeedLength();
@@ -742,7 +742,7 @@ public abstract class BaseRandomTest extends PowerMockTestCase {
         final SortedSet<Double> sequentialOutput =
             runSequential(supplier, supplier, randomCreator.apply(seed));
         final SortedSet<Double> parallelOutput =
-            runParallel(supplier, supplier, 25, 1000, createRng(seed));
+            runParallel(supplier, supplier, 25, 1000, randomCreator.apply(seed));
         assertEquals(sequentialOutput, parallelOutput,
             "output differs between sequential & parallel calls to " + supplier);
       }

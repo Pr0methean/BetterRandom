@@ -58,7 +58,7 @@ import org.testng.annotations.Test;
    * calls that can interleave with calls from other threads.
    */
   @Override public void testThreadSafety() {
-    testThreadSafety(ImmutableList.of(NEXT_INT), Collections.emptyList());
+    checkThreadSafety(ImmutableList.of(NEXT_INT), Collections.emptyList());
     testThreadSafetyVsCrashesOnly(30,
         ImmutableList.of(NEXT_LONG, NEXT_INT, NEXT_DOUBLE, NEXT_GAUSSIAN, SET_WRAPPED));
   }
