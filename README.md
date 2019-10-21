@@ -37,10 +37,6 @@ your pseudorandom-number generators (PRNGs) and their seed sources. With it, you
   * Automatically choose the best of the above three with `DefaultSeedGenerator`.
   * Or roll your own by implementing just one method from the `SeedGenerator` interface.
 
-# Professional support
-
-[Get supported BetterRandom with the Tidelift Subscription](https://tidelift.com/subscription/pkg/maven-io-github-pr0methean-betterrandom-betterrandom-java7?utm_source=maven-io-github-pr0methean-betterrandom-betterrandom-java7&utm_medium=referral&utm_campaign=readme)
-
 # But java.util.Random is already fast enough for me!
 
 Yeah, but it's not *random* enough for you. Monte Carlo simulations have been known to
@@ -63,6 +59,14 @@ PRNG. There are two ways to minimize this risk, both of which BetterRandom can h
   in parallel with your simulation.
 
 Don't take chances on randomness -- get it right with BetterRandom.
+
+# Professional support
+
+## io.github.pr0methean.betterrandom:BetterRandom for enterprise
+
+Available as part of the Tidelift Subscription
+
+The maintainers of io.github.pr0methean.betterrandom:BetterRandom and thousands of other packages are working with Tidelift to deliver commercial support and maintenance for the open source dependencies you use to build your applications. Save time, reduce risk, and improve code health, while paying the maintainers of the exact dependencies you use. [Learn more.](https://tidelift.com/subscription/pkg/maven-io-github-pr0methean-betterrandom-betterrandom?utm_source=maven-io-github-pr0methean-betterrandom-betterrandom&utm_medium=referral&utm_campaign=enterprise&utm_term=repo)
 
 # Your name or ad here!
 

@@ -1,4 +1,5 @@
 #!/bin/sh
+ROOT_SHELL=$$
 JAVA_OPTS="-Djava.security.egd=file:/dev/./urandom"
 JAVA_BIN="${JAVA_HOME}/bin/java"
 cd betterrandom || exit 1
@@ -7,21 +8,15 @@ mvn -B -DskipTests -Darguments=-DskipTests -Dmaven.test.skip=true\
 cd ../FifoFiller || exit 1
 mvn -B package 2>&1
 JAR=$(find target -iname '*-with-dependencies.jar')
-mkfifo prng_out 2>&1
 
 # Checked Dieharder invocation
 
 chkdh() {
-    dieharder -S 1 -g 200 $@ | tee /tmp/current_test.txt
-    cat /tmp/current_test.txt >> dieharder.txt
-    if [ "$(grep -m 1 'FAILED' dieharder.txt)" ]; then
-      kill -9 "${JAVA_PROCESS}"
-      exit 1
-    fi
+    dieharder -S 1 -g 200 $@
 }
-"${JAVA_BIN}" ${JAVA_OPTS} -jar "${JAR}" io.github.pr0methean.betterrandom.prng.${CLASS} prng_out ${SEED} 2>&1 &
-JAVA_PROCESS=$!
-(
+mkfifo log # Work around https://github.com/microsoft/azure-pipelines-agent/issues/2532
+cat log &\
+"${JAVA_BIN}" ${JAVA_OPTS} -jar "${JAR}" io.github.pr0methean.betterrandom.prng.${CLASS} /dev/stdout ${SEED} 2>&1 | (
   chkdh -Y 1 -k 2 -d 0
   chkdh -Y 1 -k 2 -d 1
   chkdh -Y 1 -k 2 -d 2
@@ -67,5 +62,11 @@ JAVA_PROCESS=$!
   chkdh -d 207
   chkdh -d 208
   chkdh -d 209
-) < prng_out
-exit $?
+) 2>&1 | tee ../dieharder.txt log | (grep -m 1 'FAILED' &&\
+(
+  pkill dieharder
+  pkill java
+  rm log
+  exit 1
+))
+rm log

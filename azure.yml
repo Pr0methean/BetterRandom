@@ -49,7 +49,7 @@ stages:
         JAVA_HOME: $(zuluLinux07)
         artifactEnvName: OpenJdk07Linux
       pool:
-        vmImage: 'ubuntu-16.04'
+        vmImage: 'ubuntu-latest'
       steps:
       - template: etc/azureTemplate/installHaveged.yml
       - script: ./unit-tests.sh
