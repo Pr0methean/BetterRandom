@@ -118,10 +118,6 @@ public abstract class LooperThread implements Serializable {
     }
   }
 
-  @Override public String toString() {
-    return thread.toString();
-  }
-
   protected Thread.State getState() {
     threadLock.lock();
     try {

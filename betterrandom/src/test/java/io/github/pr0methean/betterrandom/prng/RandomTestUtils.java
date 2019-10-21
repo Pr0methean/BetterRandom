@@ -17,6 +17,7 @@ package io.github.pr0methean.betterrandom.prng;
 
 import static io.github.pr0methean.betterrandom.util.BinaryUtils.convertBytesToHexString;
 import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertFalse;
 import static org.testng.Assert.assertNotEquals;
 import static org.testng.Assert.assertNotSame;
 import static org.testng.Assert.assertNull;
@@ -314,7 +315,7 @@ public enum RandomTestUtils {
 
   public static void removeAndAssertEmpty(final SimpleRandomSeederThread seederThread,
       final BaseRandom prng) {
-    seederThread.remove(prng);
+    prng.setRandomSeeder(null);
     seederThread.stopIfEmpty();
     assertTrue(seederThread.isEmpty());
   }
@@ -324,7 +325,7 @@ public enum RandomTestUtils {
     seederThread.remove(prng);
     seederThread.stopIfEmpty();
     assertTrue(seederThread.isEmpty());
-    // TODO: Assert stopped
+    assertFalse(seederThread.isRunning());
   }
 
   public enum EntropyCheckMode {
