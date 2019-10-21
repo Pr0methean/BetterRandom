@@ -27,6 +27,7 @@ import io.github.pr0methean.betterrandom.seed.SecureRandomSeedGenerator;
 import io.github.pr0methean.betterrandom.seed.SeedException;
 import io.github.pr0methean.betterrandom.seed.SeedGenerator;
 import io.github.pr0methean.betterrandom.seed.SemiFakeSeedGenerator;
+import io.github.pr0methean.betterrandom.seed.SimpleRandomSeederThread;
 import io.github.pr0methean.betterrandom.util.BinaryUtils;
 import java.lang.reflect.InvocationTargetException;
 import java.security.GeneralSecurityException;
@@ -266,7 +267,7 @@ public abstract class BaseRandomTest extends PowerMockTestCase {
     // Can't use a SemiFakeSeedGenerator, because Random.equals() breaks equality check
     final SeedGenerator seedGenerator =
         new FakeSeedGenerator(getClass().getSimpleName() + "::testSerializable #" + rng.nextInt());
-    RandomSeederThread randomSeeder = new RandomSeederThread(seedGenerator);
+    SimpleRandomSeederThread randomSeeder = new RandomSeederThread(seedGenerator);
     rng.setRandomSeeder(randomSeeder);
     try {
       final BaseRandom rng2 = SerializableTester.reserialize(rng);
@@ -361,7 +362,7 @@ public abstract class BaseRandomTest extends PowerMockTestCase {
 
   /**
    * When not overridden, this also tests {@link BaseRandom#getRandomSeeder()} and
-   * {@link BaseRandom#setRandomSeeder(RandomSeederThread)}.
+   * {@link BaseRandom#setRandomSeeder(SimpleRandomSeederThread)}.
    */
   @SuppressWarnings("BusyWait") @Test(timeOut = 60_000, retryAnalyzer = FlakyRetryAnalyzer.class)
   public void testRandomSeederThreadIntegration() {

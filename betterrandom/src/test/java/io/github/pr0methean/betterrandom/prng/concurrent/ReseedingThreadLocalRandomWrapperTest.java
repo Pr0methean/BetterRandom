@@ -9,6 +9,7 @@ import io.github.pr0methean.betterrandom.seed.RandomSeederThread;
 import io.github.pr0methean.betterrandom.seed.SecureRandomSeedGenerator;
 import io.github.pr0methean.betterrandom.seed.SeedException;
 import io.github.pr0methean.betterrandom.seed.SeedGenerator;
+import io.github.pr0methean.betterrandom.seed.SimpleRandomSeederThread;
 import java.io.Serializable;
 import java.util.Random;
 import java.util.function.Supplier;
@@ -48,7 +49,7 @@ public class ReseedingThreadLocalRandomWrapperTest extends ThreadLocalRandomWrap
   }
 
   @Test public void testSetSeedGeneratorNoOp() {
-    RandomSeederThread randomSeeder = new RandomSeederThread(getTestSeedGenerator());
+    SimpleRandomSeederThread randomSeeder = new RandomSeederThread(getTestSeedGenerator());
     ReseedingThreadLocalRandomWrapper prng =
         new ReseedingThreadLocalRandomWrapper(pcgSupplier, randomSeeder);
     prng.setRandomSeeder(randomSeeder);

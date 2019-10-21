@@ -3,22 +3,13 @@ package io.github.pr0methean.betterrandom.seed;
 import io.github.pr0methean.betterrandom.ByteArrayReseedableRandom;
 import io.github.pr0methean.betterrandom.EntropyCountingRandom;
 import io.github.pr0methean.betterrandom.prng.BaseRandom;
-import io.github.pr0methean.betterrandom.util.BinaryUtils;
-import io.github.pr0methean.betterrandom.util.LooperThread;
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.Serializable;
 import java.util.Collections;
-import java.util.Map;
 import java.util.Objects;
 import java.util.Random;
 import java.util.Set;
 import java.util.WeakHashMap;
 import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.locks.Condition;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Thread that loops over {@link Random} instances and reseeds them. No {@link
@@ -26,38 +17,23 @@ import org.slf4j.LoggerFactory;
  *
  * @author Chris Hennick
  */
-public final class RandomSeederThread extends LooperThread {
-  private static final long serialVersionUID = -4339570810679373476L;
-  private transient Set<ByteArrayReseedableRandom> byteArrayPrngs;
+public final class RandomSeederThread extends SimpleRandomSeederThread {
   private transient Set<Random> otherPrngs;
-  private transient Set<ByteArrayReseedableRandom> byteArrayPrngsThisIteration;
   private transient Set<Random> otherPrngsThisIteration;
-  private transient Condition waitWhileEmpty;
-  private transient Condition waitForEntropyDrain;
-  private static final long POLL_INTERVAL = 60;
   private final long stopIfEmptyForNanos;
 
-  private static Logger getLogger() {
-    return LoggerFactory.getLogger(RandomSeederThread.class);
-  }
-
-  private void initTransientFields() {
-    byteArrayPrngs = Collections.newSetFromMap(Collections.synchronizedMap(new WeakHashMap<>(1)));
+  @Override protected void initTransientFields() {
+    super.initTransientFields();
     otherPrngs = Collections.newSetFromMap(Collections.synchronizedMap(new WeakHashMap<>(1)));
-    byteArrayPrngsThisIteration = Collections.newSetFromMap(new WeakHashMap<>(1));
     otherPrngsThisIteration = Collections.newSetFromMap(new WeakHashMap<>(1));
-    waitWhileEmpty = lock.newCondition();
-    waitForEntropyDrain = lock.newCondition();
   }
 
-  public void wakeUp() {
-    start();
-    if (lock.tryLock()) {
-      try {
-        waitWhileEmpty.signalAll();
-        waitForEntropyDrain.signalAll();
-      } finally {
-        lock.unlock();
+  @Override public void remove(Random... randoms) {
+    for (Random random : randoms) {
+      if (random instanceof ByteArrayReseedableRandom) {
+        super.remove(random);
+      } else {
+        otherPrngs.remove(random);
       }
     }
   }
@@ -71,21 +47,12 @@ public final class RandomSeederThread extends LooperThread {
     wakeUp();
   }
 
-  public void remove(Random... randoms) {
-    if (randoms.length == 0) {
-      return;
-    }
-    lock.lock();
-    try {
-      for (Random random : randoms) {
-        if (random instanceof ByteArrayReseedableRandom) {
-          byteArrayPrngs.remove(random);
-        }
-        otherPrngs.remove(random);
-      }
-    } finally {
-      lock.unlock();
-    }
+  /**
+   * Returns the seed generator this RandomSeederThread is using.
+   * @return the seed generator
+   */
+  public SeedGenerator getSeedGenerator() {
+    return seedGenerator;
   }
 
   public void add(Random... randoms) {
@@ -107,85 +74,15 @@ public final class RandomSeederThread extends LooperThread {
     }
   }
 
-  @Override public boolean equals(Object o) {
-    if (this == o) {
-      return true;
-    }
-    if (o == null || getClass() != o.getClass()) {
-      return false;
-    }
-    RandomSeederThread that = (RandomSeederThread) o;
-    return seedGenerator.equals(that.seedGenerator) && factory.equals(that.factory);
-  }
-
-  @Override public int hashCode() {
-    return 31 * seedGenerator.hashCode() + factory.hashCode();
-  }
-
-  /**
-   * Returns the seed generator this RandomSeederThread is using.
-   * @return the seed generator
-   */
-  public SeedGenerator getSeedGenerator() {
-    return seedGenerator;
-  }
-
-  public static class DefaultThreadFactory implements ThreadFactory, Serializable {
-
-    private static final long serialVersionUID = -5806852086706570346L;
-    private final String name;
-    private final int priority;
-
-    public DefaultThreadFactory(String name) {
-      this(name, Thread.NORM_PRIORITY + 1);
-    }
-
-    public DefaultThreadFactory(String name, int priority) {
-      this.name = name;
-      this.priority = priority;
-    }
-
-    @Override public Thread newThread(Runnable runnable) {
-      Thread thread = DEFAULT_THREAD_FACTORY.newThread(runnable);
-      thread.setName(name);
-      thread.setDaemon(true);
-      thread.setPriority(priority);
-      return thread;
-    }
-
-    @Override public boolean equals(Object o) {
-      if (this == o) {
-        return true;
-      }
-      if (o == null || getClass() != o.getClass()) {
-        return false;
-      }
-      DefaultThreadFactory that = (DefaultThreadFactory) o;
-      return priority == that.priority && name.equals(that.name);
-    }
-
-    @Override public int hashCode() {
-      return 31 * priority + name.hashCode();
-    }
-  }
-
-  private final SeedGenerator seedGenerator;
-
-  private final byte[] longSeedArray = new byte[8];
-
-  private static final Map<ByteArrayReseedableRandom, byte[]> SEED_ARRAYS =
-      Collections.synchronizedMap(new WeakHashMap<>(1));
-
   public RandomSeederThread(final SeedGenerator seedGenerator, ThreadFactory threadFactory) {
     this(seedGenerator, threadFactory, 5_000_000_000L);
   }
 
   public RandomSeederThread(final SeedGenerator seedGenerator, ThreadFactory threadFactory,
       long stopIfEmptyForNanos) {
-    super(threadFactory);
+    super(threadFactory, seedGenerator);
     Objects.requireNonNull(seedGenerator, "randomSeeder must not be null");
     this.stopIfEmptyForNanos = stopIfEmptyForNanos;
-    this.seedGenerator = seedGenerator;
     initTransientFields();
     start();
   }
@@ -199,8 +96,7 @@ public final class RandomSeederThread extends LooperThread {
     this(seedGenerator, new DefaultThreadFactory("RandomSeederThread for " + seedGenerator));
   }
 
-  @SuppressWarnings({"InfiniteLoopStatement", "ObjectAllocationInLoop", "AwaitNotInLoop"}) @Override
-  protected boolean iterate() {
+  @Override protected boolean iterate() {
     try {
       while (true) {
         otherPrngsThisIteration.addAll(otherPrngs);
@@ -259,20 +155,6 @@ public final class RandomSeederThread extends LooperThread {
     clear();
   }
 
-  private void reseedWithLong(final Random random) {
-    seedGenerator.generateSeed(longSeedArray);
-    random.setSeed(BinaryUtils.convertBytesToLong(longSeedArray));
-  }
-
-  private static boolean stillDefinitelyHasEntropy(final Object random) {
-    if (!(random instanceof EntropyCountingRandom)) {
-      return false;
-    }
-    EntropyCountingRandom entropyCountingRandom = (EntropyCountingRandom) random;
-    return !entropyCountingRandom.needsReseedingEarly() &&
-        entropyCountingRandom.getEntropyBits() > 0;
-  }
-
   private void clear() {
     lock.lock();
     try {
@@ -297,30 +179,10 @@ public final class RandomSeederThread extends LooperThread {
     }
   }
 
-  /**
-   * Returns true if no {@link Random} instances are registered with this RandomSeederThread.
-   *
-   * @return true if no {@link Random} instances are registered with this RandomSeederThread.
-   */
-  public boolean isEmpty() {
+  @Override public boolean isEmpty() {
     lock.lock();
     try {
-      return byteArrayPrngs.isEmpty() && otherPrngs.isEmpty();
-    } finally {
-      lock.unlock();
-    }
-  }
-
-  /**
-   * Shut down this thread if no {@link Random} instances are registered with it.
-   */
-  public void stopIfEmpty() {
-    lock.lock();
-    try {
-      if (isEmpty()) {
-        getLogger().info("Stopping empty RandomSeederThread for {}", seedGenerator);
-        interrupt();
-      }
+      return super.isEmpty() && otherPrngs.isEmpty();
     } finally {
       lock.unlock();
     }
@@ -328,11 +190,6 @@ public final class RandomSeederThread extends LooperThread {
 
   @Override public String toString() {
     return String.format("RandomSeederThread (%s, %s)", seedGenerator, factory);
-  }
-
-  private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
-    in.defaultReadObject();
-    initTransientFields();
   }
 
 }

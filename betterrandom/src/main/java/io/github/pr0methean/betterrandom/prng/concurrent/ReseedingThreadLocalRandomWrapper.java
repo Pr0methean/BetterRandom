@@ -4,6 +4,7 @@ import io.github.pr0methean.betterrandom.prng.BaseRandom;
 import io.github.pr0methean.betterrandom.seed.RandomSeederThread;
 import io.github.pr0methean.betterrandom.seed.SeedException;
 import io.github.pr0methean.betterrandom.seed.SeedGenerator;
+import io.github.pr0methean.betterrandom.seed.SimpleRandomSeederThread;
 import io.github.pr0methean.betterrandom.util.BinaryUtils;
 import java.io.Serializable;
 import java.util.Random;
@@ -45,7 +46,7 @@ public class ReseedingThreadLocalRandomWrapper extends ThreadLocalRandomWrapper 
    *     necessary
    */
   public ReseedingThreadLocalRandomWrapper(final Supplier<? extends BaseRandom> initializer,
-      final RandomSeederThread randomSeederThread) throws SeedException {
+      final SimpleRandomSeederThread randomSeederThread) throws SeedException {
     super((Serializable & Supplier<? extends BaseRandom>) () -> {
       final BaseRandom out = initializer.get();
       out.setRandomSeeder(randomSeederThread);
@@ -83,7 +84,7 @@ public class ReseedingThreadLocalRandomWrapper extends ThreadLocalRandomWrapper 
    * @param seedGenerator the seed generator for initialization.
    */
   public ReseedingThreadLocalRandomWrapper(final int seedSize,
-      final RandomSeederThread randomSeederThread,
+      final SimpleRandomSeederThread randomSeederThread,
       final Function<byte[], ? extends BaseRandom> creator, SeedGenerator seedGenerator)
       throws SeedException {
     super(seedSize, seedGenerator,
@@ -110,14 +111,14 @@ public class ReseedingThreadLocalRandomWrapper extends ThreadLocalRandomWrapper 
         bytes -> new RandomWrapper(legacyCreator.apply(BinaryUtils.convertBytesToLong(bytes))));
   }
 
-  @Override public void setRandomSeeder(final RandomSeederThread randomSeeder) {
+  @Override public void setRandomSeeder(final SimpleRandomSeederThread randomSeeder) {
     if (this.randomSeeder.get() != randomSeeder) {
       throw new UnsupportedOperationException(
           "ReseedingThreadLocalRandomWrapper's binding to RandomSeederThread is immutable");
     }
   }
 
-  @Override public RandomSeederThread getRandomSeeder() {
+  @Override public SimpleRandomSeederThread getRandomSeeder() {
     return randomSeeder.get();
   }
 }
