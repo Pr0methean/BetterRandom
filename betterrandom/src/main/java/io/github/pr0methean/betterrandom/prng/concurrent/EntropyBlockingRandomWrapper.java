@@ -4,6 +4,7 @@ import io.github.pr0methean.betterrandom.prng.EntropyBlockingHelper;
 import io.github.pr0methean.betterrandom.seed.RandomSeederThread;
 import io.github.pr0methean.betterrandom.seed.SeedException;
 import io.github.pr0methean.betterrandom.seed.SeedGenerator;
+import io.github.pr0methean.betterrandom.seed.SimpleRandomSeederThread;
 import java.util.Random;
 import java.util.concurrent.atomic.AtomicReference;
 import javax.annotation.Nullable;
@@ -78,7 +79,7 @@ public class EntropyBlockingRandomWrapper extends RandomWrapper {
     }
   }
 
-  @Override public void setRandomSeeder(@Nullable RandomSeederThread randomSeeder) {
+  @Override public void setRandomSeeder(@Nullable SimpleRandomSeederThread randomSeeder) {
     super.setRandomSeeder(randomSeeder);
     helper.onSeedingStateChanged(false);
   }
