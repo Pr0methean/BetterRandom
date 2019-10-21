@@ -9,6 +9,7 @@ import io.github.pr0methean.betterrandom.seed.DefaultSeedGenerator;
 import io.github.pr0methean.betterrandom.seed.RandomSeederThread;
 import io.github.pr0methean.betterrandom.seed.SeedException;
 import io.github.pr0methean.betterrandom.seed.SeedGenerator;
+import io.github.pr0methean.betterrandom.seed.SimpleRandomSeederThread;
 import io.github.pr0methean.betterrandom.util.BinaryUtils;
 import io.github.pr0methean.betterrandom.util.Dumpable;
 import io.github.pr0methean.betterrandom.util.EntryPoint;
@@ -62,7 +63,7 @@ public abstract class BaseRandom extends Random
    * taken and {@link #getEntropyBits()} called immediately afterward would return zero or
    * negative.
    */
-  protected final AtomicReference<RandomSeederThread> randomSeeder = new AtomicReference<>(null);
+  protected final AtomicReference<SimpleRandomSeederThread> randomSeeder = new AtomicReference<>(null);
   /**
    * Lock to prevent concurrent modification of the RNG's internal state.
    */
@@ -764,14 +765,14 @@ public abstract class BaseRandom extends Random
    * @param randomSeeder a {@link SeedGenerator} whose {@link RandomSeederThread} will be used
    *     to reseed this PRNG, or null to stop using one.
    */
-  public void setRandomSeeder(@Nullable final RandomSeederThread randomSeeder) {
-    RandomSeederThread old = this.randomSeeder.getAndSet(randomSeeder);
+  public void setRandomSeeder(@Nullable final SimpleRandomSeederThread randomSeeder) {
+    SimpleRandomSeederThread old = this.randomSeeder.getAndSet(randomSeeder);
     if (old != randomSeeder) {
       if (old != null) {
         old.remove(this);
       }
       if (randomSeeder != null) {
-        randomSeeder.add(this);
+        randomSeeder.add((ByteArrayReseedableRandom) this);
       }
     }
   }
@@ -781,7 +782,7 @@ public abstract class BaseRandom extends Random
    *
    * @return the current seed generator, or null if there is none
    */
-  @Nullable public RandomSeederThread getRandomSeeder() {
+  @Nullable public SimpleRandomSeederThread getRandomSeeder() {
     return randomSeeder.get();
   }
 
@@ -853,9 +854,9 @@ public abstract class BaseRandom extends Random
     in.defaultReadObject();
     initTransientFields();
     setSeedInternal(seed);
-    final RandomSeederThread currentSeeder = getRandomSeeder();
+    final SimpleRandomSeederThread currentSeeder = getRandomSeeder();
     if (currentSeeder != null) {
-      currentSeeder.add(this);
+      currentSeeder.add((ByteArrayReseedableRandom) this);
     }
   }
 
@@ -876,7 +877,7 @@ public abstract class BaseRandom extends Random
   }
 
   private void asyncReseedIfPossible() {
-    final RandomSeederThread currentSeeder = getRandomSeeder();
+    final SimpleRandomSeederThread currentSeeder = getRandomSeeder();
     if (currentSeeder != null) {
       currentSeeder.wakeUp();
     }

@@ -4,6 +4,7 @@ import com.google.common.base.MoreObjects.ToStringHelper;
 import io.github.pr0methean.betterrandom.seed.RandomSeederThread;
 import io.github.pr0methean.betterrandom.seed.SeedException;
 import io.github.pr0methean.betterrandom.seed.SeedGenerator;
+import io.github.pr0methean.betterrandom.seed.SimpleRandomSeederThread;
 import io.github.pr0methean.betterrandom.util.Java8Constants;
 import java.util.Collections;
 import java.util.Map;
@@ -21,7 +22,7 @@ public class ReseedingSplittableRandomAdapter extends BaseSplittableRandomAdapte
 
   private static final long serialVersionUID = 6301096404034224037L;
   @SuppressWarnings("StaticCollection")
-  private static final Map<RandomSeederThread, ReseedingSplittableRandomAdapter> INSTANCES = Collections
+  private static final Map<SimpleRandomSeederThread, ReseedingSplittableRandomAdapter> INSTANCES = Collections
       .synchronizedMap(new WeakHashMap<RandomSeederThread, ReseedingSplittableRandomAdapter>(1));
   private final SeedGenerator seedGenerator;
   // Making a transient field final only works because we use readResolve, so outside that method
@@ -35,7 +36,7 @@ public class ReseedingSplittableRandomAdapter extends BaseSplittableRandomAdapte
    * @param seedGenerator The seed generator this adapter will use.
    */
   private ReseedingSplittableRandomAdapter(final SeedGenerator seedGenerator,
-      RandomSeederThread randomSeeder) throws SeedException {
+      SimpleRandomSeederThread randomSeeder) throws SeedException {
     super(seedGenerator.generateSeed(Java8Constants.LONG_BYTES));
     this.seedGenerator = seedGenerator;
     this.randomSeeder.set(randomSeeder);
@@ -60,7 +61,7 @@ public class ReseedingSplittableRandomAdapter extends BaseSplittableRandomAdapte
    *     seed.
    */
   @SuppressWarnings("SynchronizationOnStaticField")
-  public static ReseedingSplittableRandomAdapter getInstance(final RandomSeederThread randomSeeder,
+  public static ReseedingSplittableRandomAdapter getInstance(final SimpleRandomSeederThread randomSeeder,
       final SeedGenerator seedGenerator) throws SeedException {
     ReseedingSplittableRandomAdapter instance = INSTANCES.get(randomSeeder);
     if (instance == null) {
@@ -83,7 +84,7 @@ public class ReseedingSplittableRandomAdapter extends BaseSplittableRandomAdapte
     return threadLocal.get().getSeed();
   }
 
-  @Override public void setRandomSeeder(final RandomSeederThread randomSeeder) {
+  @Override public void setRandomSeeder(final SimpleRandomSeederThread randomSeeder) {
     if (!this.randomSeeder.get().equals(randomSeeder)) {
       throw new UnsupportedOperationException(
           "ReseedingSplittableRandomAdapter's binding to RandomSeederThread is immutable");

@@ -7,6 +7,7 @@ import io.github.pr0methean.betterrandom.seed.DefaultSeedGenerator;
 import io.github.pr0methean.betterrandom.seed.RandomSeederThread;
 import io.github.pr0methean.betterrandom.seed.SeedException;
 import io.github.pr0methean.betterrandom.seed.SeedGenerator;
+import io.github.pr0methean.betterrandom.seed.SimpleRandomSeederThread;
 import io.github.pr0methean.betterrandom.util.BinaryUtils;
 import io.github.pr0methean.betterrandom.util.Java8Constants;
 import java.io.IOException;
@@ -148,7 +149,7 @@ import javax.annotation.Nullable;
    * @param randomSeeder ignored.
    * @throws UnsupportedOperationException always.
    */
-  @Override public void setRandomSeeder(@Nullable final RandomSeederThread randomSeeder) {
+  @Override public void setRandomSeeder(@Nullable final SimpleRandomSeederThread randomSeeder) {
     if (randomSeeder != null) {
       throw new UnsupportedOperationException("Use ReseedingSplittableRandomAdapter instead");
     }

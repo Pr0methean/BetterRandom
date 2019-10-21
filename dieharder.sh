@@ -1,5 +1,4 @@
 #!/bin/sh
-ROOT_SHELL=$$
 JAVA_OPTS="-Djava.security.egd=file:/dev/./urandom"
 JAVA_BIN="${JAVA_HOME}/bin/java"
 cd betterrandom || exit 1
