@@ -5,6 +5,7 @@ import io.github.pr0methean.betterrandom.seed.SeedGenerator;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.util.concurrent.atomic.AtomicReference;
+import java.util.concurrent.locks.ReentrantLock;
 import javax.annotation.Nullable;
 
 public class EntropyBlockingSplittableRandomAdapter extends SplittableRandomAdapter {
@@ -42,7 +43,7 @@ public class EntropyBlockingSplittableRandomAdapter extends SplittableRandomAdap
     helpers = ThreadLocal.withInitial(() -> {
       ThreadLocalFields threadLocalFields = this.threadLocalFields.get();
       return new EntropyBlockingHelper(minimumEntropy, this.sameThreadSeedGen, this,
-          threadLocalFields.entropyBits);
+          threadLocalFields.entropyBits, new ReentrantLock());
     });
   }
 

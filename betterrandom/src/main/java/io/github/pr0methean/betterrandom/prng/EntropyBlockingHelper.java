@@ -24,11 +24,11 @@ public class EntropyBlockingHelper implements Serializable {
   @SuppressWarnings("TransientFieldNotInitialized") private transient volatile boolean waitingOnReseed = false;
 
   public EntropyBlockingHelper(long minimumEntropy, AtomicReference<SeedGenerator> sameThreadSeedGen,
-      BaseRandom random, final AtomicLong entropyBits) {
+      BaseRandom random, final AtomicLong entropyBits, Lock lock) {
     this.minimumEntropy = minimumEntropy;
     this.random = random;
-    lock = random.lock;
-    this.seedingStatusChanged = lock.newCondition();
+    this.lock = lock;
+    this.seedingStatusChanged = this.lock.newCondition();
     this.sameThreadSeedGen = sameThreadSeedGen;
     this.entropyBits = entropyBits;
   }
@@ -80,13 +80,12 @@ public class EntropyBlockingHelper implements Serializable {
       }
       if (seedGenerator == null) {
         throw new IllegalStateException("Out of entropy and no way to reseed");
-      } else {
-        // Reseed on calling thread
-        int newSeedLength = random.getNewSeedLength();
-        byte[] newSeed =
-            random.seed.length == newSeedLength ? random.seed : new byte[newSeedLength];
-        reseedSameThread(seedGenerator, newSeed);
       }
+      // Reseed on calling thread
+      int newSeedLength = random.getNewSeedLength();
+      byte[] newSeed =
+          random.seed.length == newSeedLength ? random.seed : new byte[newSeedLength];
+      reseedSameThread(seedGenerator, newSeed);
     }
   }
 
