@@ -187,7 +187,8 @@ public class SimpleRandomSeederThread extends LooperThread {
         if (random.preferSeedWithLong()) {
           reseedWithLong((Random) random);
         } else {
-          byte[] seedArray = getSeedArray(random);
+          byte[] seedArray = SimpleRandomSeederThread.SEED_ARRAYS
+              .computeIfAbsent(random, random_ -> new byte[random_.getNewSeedLength()]);
           seedGenerator.generateSeed(seedArray);
           random.setSeed(seedArray);
         }
@@ -196,11 +197,6 @@ public class SimpleRandomSeederThread extends LooperThread {
       byteArrayPrngsThisIteration.clear();
     }
     return entropyConsumed;
-  }
-
-  protected byte[] getSeedArray(ByteArrayReseedableRandom random) {
-    return SimpleRandomSeederThread.SEED_ARRAYS
-                .computeIfAbsent(random, random_ -> new byte[random_.getNewSeedLength()]);
   }
 
   protected void reseedWithLong(final Random random) {
