@@ -39,7 +39,15 @@ public class SimpleRandomSeederThreadTest {
     TestUtils.testConstructors(SimpleRandomSeederThread.DefaultThreadFactory.class, false, ImmutableMap
             .of(String.class, "testDefaultThreadFactoryConstructors", int.class,
                 Thread.MAX_PRIORITY),
-        x -> x.newThread(() -> {}));
+        new Consumer<SimpleRandomSeederThread.DefaultThreadFactory>() {
+          @Override
+          public void accept(SimpleRandomSeederThread.DefaultThreadFactory x) {
+            x.newThread(new Runnable() {
+              @Override public void run() {
+              }
+            });
+          }
+        });
   }
 
   @Test(timeOut = 25_000) public void testAddRemoveAndIsEmpty() {
