@@ -267,7 +267,7 @@ public abstract class BaseRandomTest extends PowerMockTestCase {
     // Can't use a SemiFakeSeedGenerator, because Random.equals() breaks equality check
     final SeedGenerator seedGenerator =
         new FakeSeedGenerator(getClass().getSimpleName() + "::testSerializable #" + rng.nextInt());
-    RandomSeederThread randomSeeder = new RandomSeederThread(seedGenerator);
+    SimpleRandomSeederThread randomSeeder = new RandomSeederThread(seedGenerator);
     rng.setRandomSeeder(randomSeeder);
     try {
       final BaseRandom rng2 = SerializableTester.reserialize(rng);

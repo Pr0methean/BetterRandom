@@ -29,6 +29,7 @@ import com.google.common.util.concurrent.Uninterruptibles;
 import io.github.pr0methean.betterrandom.TestUtils;
 import io.github.pr0methean.betterrandom.seed.RandomSeederThread;
 import io.github.pr0methean.betterrandom.seed.SeedGenerator;
+import io.github.pr0methean.betterrandom.seed.SimpleRandomSeederThread;
 import io.github.pr0methean.betterrandom.util.Dumpable;
 import java.util.Arrays;
 import java.util.HashSet;
@@ -252,9 +253,9 @@ public enum RandomTestUtils {
     final byte[] oldSeed = rng.getSeed();
     final byte[] oldSeedClone = oldSeed.clone();
     int maxReseedingWaitIncrements = 1000 + rng.getNewSeedLength() / 4;
-    RandomSeederThread seeder = null;
+    SimpleRandomSeederThread seeder = null;
     if (setSeedGenerator) {
-      seeder = new RandomSeederThread(testSeedGenerator);
+      seeder = new SimpleRandomSeederThread(testSeedGenerator);
       rng.setRandomSeeder(seeder);
     }
     try {
@@ -311,9 +312,9 @@ public enum RandomTestUtils {
     }
   }
 
-  public static void removeAndAssertEmpty(final RandomSeederThread seederThread,
+  public static void removeAndAssertEmpty(final SimpleRandomSeederThread seederThread,
       final BaseRandom prng) {
-    prng.setRandomSeeder(null);
+    seederThread.remove(prng);
     seederThread.stopIfEmpty();
     assertTrue(seederThread.isEmpty());
   }
