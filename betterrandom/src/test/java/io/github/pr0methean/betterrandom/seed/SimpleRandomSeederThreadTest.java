@@ -26,7 +26,8 @@ public class SimpleRandomSeederThreadTest {
 
   @Test public void testConstructors() {
     TestUtils.testConstructors(SimpleRandomSeederThread.class, false, ImmutableMap
-        .of(SeedGenerator.class, new FakeSeedGenerator("testConstructors"), ThreadFactory.class,
+        .<Class<?>, Object>of(
+            SeedGenerator.class, new FakeSeedGenerator("testConstructors"), ThreadFactory.class,
             new SimpleRandomSeederThread.DefaultThreadFactory("testConstructors"), long.class,
             100_000_000L), new Consumer<SimpleRandomSeederThread>() {
       @Override public void accept(SimpleRandomSeederThread simpleRandomSeederThread) {
@@ -37,7 +38,8 @@ public class SimpleRandomSeederThreadTest {
 
   @Test public void testDefaultThreadFactoryConstructors() {
     TestUtils.testConstructors(SimpleRandomSeederThread.DefaultThreadFactory.class, false, ImmutableMap
-            .of(String.class, "testDefaultThreadFactoryConstructors", int.class,
+            .<Class<?>, Object>of(
+                String.class, "testDefaultThreadFactoryConstructors", int.class,
                 Thread.MAX_PRIORITY),
         new Consumer<SimpleRandomSeederThread.DefaultThreadFactory>() {
           @Override
