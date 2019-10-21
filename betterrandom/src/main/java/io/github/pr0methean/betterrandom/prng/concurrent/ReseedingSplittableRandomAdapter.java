@@ -23,7 +23,7 @@ public class ReseedingSplittableRandomAdapter extends BaseSplittableRandomAdapte
   private static final long serialVersionUID = 6301096404034224037L;
   @SuppressWarnings("StaticCollection")
   private static final Map<SimpleRandomSeederThread, ReseedingSplittableRandomAdapter> INSTANCES = Collections
-      .synchronizedMap(new WeakHashMap<RandomSeederThread, ReseedingSplittableRandomAdapter>(1));
+      .synchronizedMap(new WeakHashMap<SimpleRandomSeederThread, ReseedingSplittableRandomAdapter>(1));
   private final SeedGenerator seedGenerator;
   // Making a transient field final only works because we use readResolve, so outside that method
   // we're always in an instance from our own constructor even when deserialized.
