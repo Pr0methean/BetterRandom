@@ -135,11 +135,7 @@ public final class RandomSeederThread extends SimpleRandomSeederThread {
           if (random.preferSeedWithLong()) {
             reseedWithLong((Random) random);
           } else {
-            byte[] seedArray = SEED_ARRAYS.get(random);
-            if (seedArray == null) {
-              seedArray = new byte[random.getNewSeedLength()];
-              SEED_ARRAYS.put(random, seedArray);
-            }
+            byte[] seedArray = getSeedArray(random);
             seedGenerator.generateSeed(seedArray);
             random.setSeed(seedArray);
           }
