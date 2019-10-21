@@ -45,7 +45,8 @@ public class SimpleRandomSeederThreadTest {
     prng.nextBytes(firstBytesWithOldSeed);
     prng.nextBytes(secondBytesWithOldSeed);
     prng.setSeed(TEST_SEED); // Rewind
-    final SeedGenerator seedGenerator = new FakeSeedGenerator("testAddRemoveAndIsEmpty");
+    final SeedGenerator seedGenerator = new SemiFakeSeedGenerator(
+        new SingleThreadSplittableRandomAdapter(), "testAddRemoveAndIsEmpty");
     final SimpleRandomSeederThread randomSeeder = createRandomSeeder(seedGenerator);
     try {
       assertTrue(randomSeeder.isEmpty());
