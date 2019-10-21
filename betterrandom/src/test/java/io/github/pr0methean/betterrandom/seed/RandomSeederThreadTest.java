@@ -27,7 +27,8 @@ public class RandomSeederThreadTest extends SimpleRandomSeederThreadTest {
   }
 
   @Override protected RandomSeederThread createRandomSeeder(SeedGenerator seedGenerator) {
-    return new RandomSeederThread(seedGenerator);
+    return new RandomSeederThread(seedGenerator,
+        new SimpleRandomSeederThread.DefaultThreadFactory("SimpleRandomSeederThreadTest", Thread.MAX_PRIORITY));
   }
 
   @Test(timeOut = 25_000) public void testAddRemoveAndIsEmpty_Random() {

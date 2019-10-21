@@ -5,7 +5,6 @@ import io.github.pr0methean.betterrandom.prng.BaseRandom;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Objects;
 import java.util.Random;
 import java.util.Set;
 import java.util.WeakHashMap;
@@ -20,7 +19,6 @@ import java.util.concurrent.TimeUnit;
 public final class RandomSeederThread extends SimpleRandomSeederThread {
   private transient Set<Random> otherPrngs;
   private transient Set<Random> otherPrngsThisIteration;
-  private final long stopIfEmptyForNanos;
 
   @Override protected void initTransientFields() {
     super.initTransientFields();
@@ -97,9 +95,7 @@ public final class RandomSeederThread extends SimpleRandomSeederThread {
 
   public RandomSeederThread(final SeedGenerator seedGenerator, ThreadFactory threadFactory,
       long stopIfEmptyForNanos) {
-    super(threadFactory, seedGenerator);
-    Objects.requireNonNull(seedGenerator, "randomSeeder must not be null");
-    this.stopIfEmptyForNanos = stopIfEmptyForNanos;
+    super(seedGenerator, threadFactory, stopIfEmptyForNanos);
     initTransientFields();
     start();
   }
