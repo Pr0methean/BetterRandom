@@ -76,4 +76,5 @@ cat log &\
   rm log
   exit 1
 ))
+find ../.. -iname dieharder.txt || ls -R ../..
 rm log
