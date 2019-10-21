@@ -133,7 +133,7 @@ public class SimpleRandomSeederThreadTest {
   /**
    * Making this a subroutine ensures that {@code prng} can be GCed on exit.
    */
-  private WeakReference<ByteArrayReseedableRandom>
+  private WeakReference<? extends ByteArrayReseedableRandom>
       addSomethingDeadTo(SimpleRandomSeederThread randomSeeder) {
     SingleThreadSplittableRandomAdapter prng = new SingleThreadSplittableRandomAdapter();
     // new PhantomReference<Object>(prng, queue);
