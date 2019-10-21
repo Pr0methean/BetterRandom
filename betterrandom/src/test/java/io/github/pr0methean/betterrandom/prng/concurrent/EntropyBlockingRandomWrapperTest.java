@@ -27,8 +27,6 @@ import org.testng.annotations.Test;
 
 @Test(testName = "EntropyBlockingRandomWrapper")
 public class EntropyBlockingRandomWrapperTest extends RandomWrapperRandomTest {
-  private static final long DEFAULT_MAX_ENTROPY = -64L;
-  protected static final long VERY_LOW_MINIMUM_ENTROPY = Long.MIN_VALUE / 2;
 
   @Override public Class<? extends BaseRandom> getClassUnderTest() {
     return EntropyBlockingRandomWrapper.class;
@@ -36,7 +34,7 @@ public class EntropyBlockingRandomWrapperTest extends RandomWrapperRandomTest {
 
   @Override public Map<Class<?>, Object> constructorParams() {
     Map<Class<?>, Object> out = super.constructorParams();
-    out.put(long.class, DEFAULT_MAX_ENTROPY);
+    out.put(long.class, EntropyBlockingTestUtils.DEFAULT_MAX_ENTROPY);
     return out;
   }
 
@@ -70,15 +68,15 @@ public class EntropyBlockingRandomWrapperTest extends RandomWrapperRandomTest {
   }
 
   @Override protected RandomWrapper createRng() throws SeedException {
-    return new EntropyBlockingRandomWrapper(DEFAULT_MAX_ENTROPY, getTestSeedGenerator());
+    return new EntropyBlockingRandomWrapper(EntropyBlockingTestUtils.DEFAULT_MAX_ENTROPY, getTestSeedGenerator());
   }
 
   private EntropyBlockingRandomWrapper createRngLargeEntropyLimit() {
-    return new EntropyBlockingRandomWrapper(VERY_LOW_MINIMUM_ENTROPY, getTestSeedGenerator());
+    return new EntropyBlockingRandomWrapper(EntropyBlockingTestUtils.VERY_LOW_MINIMUM_ENTROPY, getTestSeedGenerator());
   }
 
   private EntropyBlockingRandomWrapper createRngLargeEntropyLimit(byte[] seed) {
-    return new EntropyBlockingRandomWrapper(seed, VERY_LOW_MINIMUM_ENTROPY, getTestSeedGenerator());
+    return new EntropyBlockingRandomWrapper(seed, EntropyBlockingTestUtils.VERY_LOW_MINIMUM_ENTROPY, getTestSeedGenerator());
   }
 
   // FIXME: Too slow!
@@ -90,7 +88,7 @@ public class EntropyBlockingRandomWrapperTest extends RandomWrapperRandomTest {
   }
 
   @Override protected RandomWrapper createRng(byte[] seed) throws SeedException {
-    return new EntropyBlockingRandomWrapper(seed, DEFAULT_MAX_ENTROPY, getTestSeedGenerator());
+    return new EntropyBlockingRandomWrapper(seed, EntropyBlockingTestUtils.DEFAULT_MAX_ENTROPY, getTestSeedGenerator());
   }
 
   @Override public void testThreadSafety() {

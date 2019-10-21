@@ -24,13 +24,13 @@ public class EntropyBlockingHelper implements Serializable {
   @SuppressWarnings("TransientFieldNotInitialized") private transient volatile boolean waitingOnReseed = false;
 
   public EntropyBlockingHelper(long minimumEntropy, AtomicReference<SeedGenerator> sameThreadSeedGen,
-      BaseRandom random) {
+      BaseRandom random, final AtomicLong entropyBits) {
     this.minimumEntropy = minimumEntropy;
     this.random = random;
     lock = random.lock;
     this.seedingStatusChanged = lock.newCondition();
     this.sameThreadSeedGen = sameThreadSeedGen;
-    this.entropyBits = random.entropyBits;
+    this.entropyBits = entropyBits;
   }
 
   public SeedGenerator getSameThreadSeedGenerator() {

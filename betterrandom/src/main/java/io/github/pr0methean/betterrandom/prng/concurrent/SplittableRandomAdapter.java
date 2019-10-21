@@ -2,7 +2,6 @@ package io.github.pr0methean.betterrandom.prng.concurrent;
 
 import static io.github.pr0methean.betterrandom.util.BinaryUtils.convertBytesToLong;
 
-import com.google.common.base.MoreObjects.ToStringHelper;
 import io.github.pr0methean.betterrandom.seed.DefaultSeedGenerator;
 import io.github.pr0methean.betterrandom.seed.RandomSeederThread;
 import io.github.pr0methean.betterrandom.seed.SeedException;
@@ -26,9 +25,20 @@ import javax.annotation.Nullable;
 
   private static final int SEED_LENGTH_BITS = Long.BYTES * 8;
   private static final long serialVersionUID = 2190439512972880590L;
-  private transient ThreadLocal<SplittableRandom> splittableRandoms;
-  private transient ThreadLocal<AtomicLong> entropyBits;
-  private transient ThreadLocal<byte[]> seeds;
+
+  protected static class ThreadLocalFields {
+    public SplittableRandom splittableRandom;
+    final public AtomicLong entropyBits;
+    final public byte[] seed;
+
+    public ThreadLocalFields(SplittableRandom splittableRandom, long entropyBits, byte[] seed) {
+      this.splittableRandom = splittableRandom;
+      this.entropyBits = new AtomicLong(entropyBits);
+      this.seed = seed;
+    }
+  }
+
+  protected transient ThreadLocal<ThreadLocalFields> threadLocalFields;
 
   /**
    * Use the provided seed generation strategy to create the seed for the master {@link
@@ -87,45 +97,38 @@ import javax.annotation.Nullable;
    * Returns the entropy count for the calling thread (it is separate for each thread).
    */
   @Override public long getEntropyBits() {
-    return entropyBits.get().get();
+    return threadLocalFields.get().entropyBits.get();
   }
 
   @Override protected void debitEntropy(final long bits) {
-    entropyBits.get().addAndGet(-bits);
+    threadLocalFields.get().entropyBits.addAndGet(-bits);
   }
 
   @Override protected void creditEntropyForNewSeed(final int seedLength) {
-    if (entropyBits != null) {
-      entropyBits.get().updateAndGet(oldCount -> Math.max(oldCount, Long.SIZE));
+    if (threadLocalFields != null) {
+      threadLocalFields.get().entropyBits.updateAndGet(oldCount -> Math.max(oldCount, Long.SIZE));
     }
   }
 
   private void initSubclassTransientFields() {
     lock.lock();
     try {
-      splittableRandoms = ThreadLocal.withInitial(() -> {
+      threadLocalFields = ThreadLocal.withInitial(() -> {
         // Necessary because SplittableRandom.split() isn't itself thread-safe.
         lock.lock();
         try {
-          return delegate.split();
+          return new ThreadLocalFields(delegate.split(), SEED_LENGTH_BITS, seed);
         } finally {
           lock.unlock();
         }
       });
-      entropyBits = ThreadLocal.withInitial(() -> new AtomicLong(SEED_LENGTH_BITS));
-      // getSeed() will return the master seed on each thread where setSeed() hasn't yet been called
-      seeds = ThreadLocal.withInitial(() -> seed.clone());
     } finally {
       lock.unlock();
     }
   }
 
   @Override protected SplittableRandom getSplittableRandom() {
-    return splittableRandoms.get();
-  }
-
-  @Override protected ToStringHelper addSubclassFields(final ToStringHelper original) {
-    return original.add("splittableRandoms", splittableRandoms);
+    return threadLocalFields.get().splittableRandom;
   }
 
   /**
@@ -141,7 +144,7 @@ import javax.annotation.Nullable;
   }
 
   @Override public byte[] getSeed() {
-    return seeds.get().clone();
+    return threadLocalFields.get().seed.clone();
   }
 
   /**
@@ -155,19 +158,17 @@ import javax.annotation.Nullable;
   /**
    * {@inheritDoc} Applies only to the calling thread.
    */
-  @SuppressWarnings("contracts.postcondition.not.satisfied") @Override public void setSeed(
+  @Override public void setSeed(
       final long seed) {
     if (this.seed == null) {
       super.setSeed(seed);
     }
-    if (splittableRandoms != null) {
-      splittableRandoms.set(new SplittableRandom(seed));
-      if (entropyBits != null) {
-        creditEntropyForNewSeed(8);
-      }
-      if (seeds != null) {
-        BinaryUtils.convertLongToBytes(seed, seeds.get(), 0);
-      }
+    if (threadLocalFields == null) {
+      return;
     }
+    ThreadLocalFields threadLocalFields = this.threadLocalFields.get();
+    threadLocalFields.splittableRandom = new SplittableRandom(seed);
+    creditEntropyForNewSeed(8);
+    BinaryUtils.convertLongToBytes(seed, threadLocalFields.seed, 0);
   }
 }

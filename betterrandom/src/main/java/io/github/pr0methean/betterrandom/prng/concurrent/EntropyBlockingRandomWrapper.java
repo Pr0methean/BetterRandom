@@ -25,7 +25,7 @@ public class EntropyBlockingRandomWrapper extends RandomWrapper {
       throws SeedException {
     super(seedGenerator);
     sameThreadSeedGen = new AtomicReference<>(seedGenerator);
-    helper = new EntropyBlockingHelper(minimumEntropy, sameThreadSeedGen, this);
+    helper = new EntropyBlockingHelper(minimumEntropy, sameThreadSeedGen, this, this.entropyBits);
     helper.checkMaxOutputAtOnce();
   }
 
@@ -33,7 +33,8 @@ public class EntropyBlockingRandomWrapper extends RandomWrapper {
       @Nullable SeedGenerator sameThreadSeedGen) {
     super(seed);
     this.sameThreadSeedGen = new AtomicReference<>(sameThreadSeedGen);
-    helper = new EntropyBlockingHelper(minimumEntropy, this.sameThreadSeedGen, this);
+    helper = new EntropyBlockingHelper(minimumEntropy, this.sameThreadSeedGen, this,
+        this.entropyBits);
     helper.checkMaxOutputAtOnce();
   }
 
@@ -41,7 +42,8 @@ public class EntropyBlockingRandomWrapper extends RandomWrapper {
       @Nullable SeedGenerator sameThreadSeedGen) {
     super(seed);
     this.sameThreadSeedGen = new AtomicReference<>(sameThreadSeedGen);
-    helper = new EntropyBlockingHelper(minimumEntropy, this.sameThreadSeedGen, this);
+    helper = new EntropyBlockingHelper(minimumEntropy, this.sameThreadSeedGen, this,
+        this.entropyBits);
     helper.checkMaxOutputAtOnce();
   }
 
@@ -49,7 +51,8 @@ public class EntropyBlockingRandomWrapper extends RandomWrapper {
       @Nullable SeedGenerator sameThreadSeedGen) {
     super(wrapped);
     this.sameThreadSeedGen = new AtomicReference<>(sameThreadSeedGen);
-    helper = new EntropyBlockingHelper(minimumEntropy, this.sameThreadSeedGen, this);
+    helper = new EntropyBlockingHelper(minimumEntropy, this.sameThreadSeedGen, this,
+        this.entropyBits);
     helper.checkMaxOutputAtOnce();
   }
 

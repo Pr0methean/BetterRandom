@@ -634,39 +634,39 @@ public abstract class BaseRandomTest extends PowerMockTestCase {
     checkStream(prng, 31, prng.longs(20, 1L << 40, bound).boxed(), 20, 1L << 40, bound, true);
   }
 
-  @Test public void testDoubles() {
+  @Test(timeOut = 60_000L) public void testDoubles() {
     final BaseRandom prng = createRng();
     checkStream(prng, ENTROPY_OF_DOUBLE, prng.doubles().boxed(), -1, 0.0, 1.0, true);
   }
 
-  @Test public void testDoubles1() {
+  @Test(timeOut = 60_000L) public void testDoubles1() {
     final BaseRandom prng = createRng();
     checkStream(prng, ENTROPY_OF_DOUBLE, prng.doubles(20).boxed(), 20, 0.0, 1.0, true);
   }
 
-  @Test public void testDoubles2() {
+  @Test(timeOut = 60_000L) public void testDoubles2() {
     final BaseRandom prng = createRng();
     checkStream(prng, ENTROPY_OF_DOUBLE, prng.doubles(-5.0, 8.0).boxed(), -1, -5.0, 8.0, true);
   }
 
-  @Test public void testDoubles3() {
+  @Test(timeOut = 60_000L) public void testDoubles3() {
     final BaseRandom prng = createRng();
     checkStream(prng, ENTROPY_OF_DOUBLE, prng.doubles(20, -5.0, 8.0).boxed(), 20, -5.0, 8.0, true);
   }
 
-  @Test public void testDoubles3RoundingCorrection() {
+  @Test(timeOut = 60_000L) public void testDoubles3RoundingCorrection() {
     final BaseRandom prng = createRng();
     checkStream(prng, ENTROPY_OF_DOUBLE,
         prng.doubles(20, 1.0, UPPER_BOUND_FOR_ROUNDING_TEST).boxed(), 20, -5.0, 8.0, true);
   }
 
-  @Test public void testGaussians() {
+  @Test(timeOut = 60_000L) public void testGaussians() {
     final BaseRandom prng = createRng();
     checkStream(prng, ENTROPY_OF_DOUBLE, prng.gaussians().boxed(), -1, -Double.MAX_VALUE,
         Double.MAX_VALUE, true);
   }
 
-  @Test public void testGaussians1() {
+  @Test(timeOut = 60_000L) public void testGaussians1() {
     final BaseRandom prng = createRng();
     checkStream(prng, ENTROPY_OF_DOUBLE, prng.gaussians(100).boxed(), 100, -Double.MAX_VALUE,
         Double.MAX_VALUE, true);
