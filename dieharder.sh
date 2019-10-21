@@ -22,10 +22,8 @@ chkdh() {
     dieharder -S 1 -g 200 $@
 }
 mkfifo log # Work around https://github.com/microsoft/azure-pipelines-agent/issues/2532
-"${JAVA_BIN}" ${JAVA_OPTS} -jar "${JAR}" io.github.pr0methean.betterrandom.prng.${CLASS} prng_out ${SEED} 2>&1 &
-JAVA_PROCESS=$!
 cat log &\
-(
+"${JAVA_BIN}" ${JAVA_OPTS} -jar "${JAR}" io.github.pr0methean.betterrandom.prng.${CLASS} /dev/stdout ${SEED} 2>&1 | (
   chkdh -Y 1 -k 2 -d 0
   chkdh -Y 1 -k 2 -d 1
   chkdh -Y 1 -k 2 -d 2
@@ -71,7 +69,7 @@ cat log &\
   chkdh -d 207
   chkdh -d 208
   chkdh -d 209
-) 2>&1 < prng_out | tee ../dieharder.txt log | (grep -m 1 'FAILED' &&\
+) 2>&1 | tee ../dieharder.txt log | (grep -m 1 'FAILED' &&\
 (
   pkill dieharder
   pkill java
