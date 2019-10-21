@@ -8,6 +8,7 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.Serializable;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Map;
 import java.util.Random;
@@ -19,6 +20,12 @@ import java.util.concurrent.locks.Condition;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * Thread that loops over {@link ByteArrayReseedableRandom} instances and reseeds them. No {@link
+ * EntropyCountingRandom} will be reseeded when it's already had more input than output.
+ *
+ * @author Chris Hennick
+ */
 public class SimpleRandomSeederThread extends LooperThread {
   protected static final Map<ByteArrayReseedableRandom, byte[]> SEED_ARRAYS =
       Collections.synchronizedMap(new WeakHashMap<>(1));
@@ -50,25 +57,49 @@ public class SimpleRandomSeederThread extends LooperThread {
         entropyCountingRandom.getEntropyBits() > 0;
   }
 
+  /**
+   * Removes PRNGs so that they will no longer be reseeded.
+   * @param randoms the PRNGs to remove
+   */
   public void remove(Random... randoms) {
-    if (randoms.length == 0) {
+    remove(Arrays.asList(randoms));
+  }
+
+  /**
+   * Removes PRNGs so that they will no longer be reseeded.
+   * @param randoms the PRNGs to remove
+   */
+  public void remove(Collection<? extends Random> randoms) {
+    if (randoms.size() == 0) {
       return;
     }
     lock.lock();
     try {
-      byteArrayPrngs.removeAll(Arrays.asList(randoms));
+      byteArrayPrngs.removeAll(randoms);
     } finally {
       lock.unlock();
     }
   }
 
+  /**
+   * Adds {@link ByteArrayReseedableRandom} instances.
+   * @param randoms the PRNGs to start reseeding
+   */
   public void add(ByteArrayReseedableRandom... randoms) {
-    if (randoms.length == 0) {
+    add(Arrays.asList(randoms));
+  }
+
+  /**
+   * Adds {@link ByteArrayReseedableRandom} instances.
+   * @param randoms the PRNGs to start reseeding
+   */
+  public void add(Collection<? extends ByteArrayReseedableRandom> randoms) {
+    if (randoms.size() == 0) {
       return;
     }
     lock.lock();
     try {
-      byteArrayPrngs.addAll(Arrays.asList(randoms));
+      byteArrayPrngs.addAll(randoms);
       wakeUp();
     } finally {
       lock.unlock();

@@ -1,8 +1,9 @@
 package io.github.pr0methean.betterrandom.seed;
 
 import io.github.pr0methean.betterrandom.ByteArrayReseedableRandom;
-import io.github.pr0methean.betterrandom.EntropyCountingRandom;
 import io.github.pr0methean.betterrandom.prng.BaseRandom;
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Objects;
 import java.util.Random;
@@ -12,8 +13,7 @@ import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.TimeUnit;
 
 /**
- * Thread that loops over {@link Random} instances and reseeds them. No {@link
- * EntropyCountingRandom} will be reseeded when it's already had more input than output.
+ * A {@link SimpleRandomSeederThread} that can reseed any instance of {@link Random}.
  *
  * @author Chris Hennick
  */
@@ -28,7 +28,7 @@ public final class RandomSeederThread extends SimpleRandomSeederThread {
     otherPrngsThisIteration = Collections.newSetFromMap(new WeakHashMap<>(1));
   }
 
-  @Override public void remove(Random... randoms) {
+  @Override public void remove(Collection<? extends Random> randoms) {
     for (Random random : randoms) {
       if (random instanceof ByteArrayReseedableRandom) {
         super.remove(random);
@@ -55,8 +55,20 @@ public final class RandomSeederThread extends SimpleRandomSeederThread {
     return seedGenerator;
   }
 
+  /**
+   * Adds {@link Random} instances.
+   * @param randoms the PRNGs to start reseeding
+   */
   public void add(Random... randoms) {
-    if (randoms.length == 0) {
+    addLegacyRandoms(Arrays.asList(randoms));
+  }
+
+  /**
+   * Adds {@link Random} instances.
+   * @param randoms the PRNGs to start reseeding
+   */
+  public void addLegacyRandoms(Collection<? extends Random> randoms) {
+    if (randoms.size() == 0) {
       return;
     }
     lock.lock();
