@@ -11,7 +11,6 @@ import java.util.Set;
 import java.util.WeakHashMap;
 import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.locks.Condition;
 
 /**
  * A {@link SimpleRandomSeederThread} that can reseed any instance of {@link Random}.
@@ -30,12 +29,17 @@ public final class RandomSeederThread extends SimpleRandomSeederThread {
   }
 
   @Override public void remove(Collection<? extends Random> randoms) {
-    for (Random random : randoms) {
-      if (random instanceof ByteArrayReseedableRandom) {
-        super.remove(random);
-      } else {
-        otherPrngs.remove(random);
+    lock.lock();
+    try {
+      for (Random random : randoms) {
+        if (random instanceof ByteArrayReseedableRandom) {
+          byteArrayPrngs.remove(random);
+        } else {
+          otherPrngs.remove(random);
+        }
       }
+    } finally {
+      lock.unlock();
     }
   }
 
