@@ -153,25 +153,7 @@ public class SimpleRandomSeederThread extends LooperThread {
           break;
         }
       }
-      boolean entropyConsumed = false;
-      try {
-        for (ByteArrayReseedableRandom random : byteArrayPrngsThisIteration) {
-          if (stillDefinitelyHasEntropy(random)) {
-            continue;
-          }
-          entropyConsumed = true;
-          if (random.preferSeedWithLong()) {
-            reseedWithLong((Random) random);
-          } else {
-            final byte[] seedArray = SimpleRandomSeederThread.SEED_ARRAYS
-                .computeIfAbsent(random, random_ -> new byte[random_.getNewSeedLength()]);
-            seedGenerator.generateSeed(seedArray);
-            random.setSeed(seedArray);
-          }
-        }
-      } finally {
-        byteArrayPrngsThisIteration.clear();
-      }
+      boolean entropyConsumed = reseedByteArrayReseedableRandoms();
       if (!entropyConsumed) {
         waitForEntropyDrain.await(POLL_INTERVAL, TimeUnit.SECONDS);
       }
@@ -180,6 +162,33 @@ public class SimpleRandomSeederThread extends LooperThread {
       getLogger().error("Disabling the RandomSeederThread for " + seedGenerator, t);
       return false;
     }
+  }
+
+  protected boolean reseedByteArrayReseedableRandoms() {
+    boolean entropyConsumed = false;
+    try {
+      for (ByteArrayReseedableRandom random : byteArrayPrngsThisIteration) {
+        if (stillDefinitelyHasEntropy(random)) {
+          continue;
+        }
+        entropyConsumed = true;
+        if (random.preferSeedWithLong()) {
+          reseedWithLong((Random) random);
+        } else {
+          byte[] seedArray = getSeedArray(random);
+          seedGenerator.generateSeed(seedArray);
+          random.setSeed(seedArray);
+        }
+      }
+    } finally {
+      byteArrayPrngsThisIteration.clear();
+    }
+    return entropyConsumed;
+  }
+
+  protected byte[] getSeedArray(ByteArrayReseedableRandom random) {
+    return SimpleRandomSeederThread.SEED_ARRAYS
+                .computeIfAbsent(random, random_ -> new byte[random_.getNewSeedLength()]);
   }
 
   protected void reseedWithLong(final Random random) {

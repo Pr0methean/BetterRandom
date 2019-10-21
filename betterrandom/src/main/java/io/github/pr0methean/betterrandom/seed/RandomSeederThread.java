@@ -24,8 +24,8 @@ public final class RandomSeederThread extends SimpleRandomSeederThread {
 
   @Override protected void initTransientFields() {
     super.initTransientFields();
-    otherPrngs = Collections.newSetFromMap(Collections.synchronizedMap(new WeakHashMap<>(1)));
-    otherPrngsThisIteration = Collections.newSetFromMap(new WeakHashMap<>(1));
+    otherPrngs = Collections.newSetFromMap(Collections.synchronizedMap(new WeakHashMap<Random, Boolean>(1)));
+    otherPrngsThisIteration = Collections.newSetFromMap(new WeakHashMap<Random, Boolean>(1));
   }
 
   @Override public void remove(Collection<? extends Random> randoms) {
@@ -125,25 +125,7 @@ public final class RandomSeederThread extends SimpleRandomSeederThread {
           return false;
         }
       }
-      boolean entropyConsumed = false;
-      try {
-        for (ByteArrayReseedableRandom random : byteArrayPrngsThisIteration) {
-          if (stillDefinitelyHasEntropy(random)) {
-            continue;
-          }
-          entropyConsumed = true;
-          if (random.preferSeedWithLong()) {
-            reseedWithLong((Random) random);
-          } else {
-            final byte[] seedArray = SEED_ARRAYS
-                .computeIfAbsent(random, random_ -> new byte[random_.getNewSeedLength()]);
-            seedGenerator.generateSeed(seedArray);
-            random.setSeed(seedArray);
-          }
-        }
-      } finally {
-        byteArrayPrngsThisIteration.clear();
-      }
+      boolean entropyConsumed = reseedByteArrayReseedableRandoms();
       try {
         for (Random random : otherPrngsThisIteration) {
           if (!stillDefinitelyHasEntropy(random)) {
