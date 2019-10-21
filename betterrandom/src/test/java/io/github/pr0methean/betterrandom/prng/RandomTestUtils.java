@@ -316,6 +316,7 @@ public enum RandomTestUtils {
   public static void removeAndAssertEmpty(final SimpleRandomSeederThread seederThread,
       final BaseRandom prng) {
     prng.setRandomSeeder(null);
+    seederThread.remove(prng);
     seederThread.stopIfEmpty();
     assertTrue(seederThread.isEmpty());
   }

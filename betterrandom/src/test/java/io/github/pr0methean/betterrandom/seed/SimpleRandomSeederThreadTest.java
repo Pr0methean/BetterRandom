@@ -53,7 +53,7 @@ public class SimpleRandomSeederThreadTest {
       assertFalse(randomSeeder.isEmpty());
       prng.nextBytes(new byte[TEST_OUTPUT_SIZE]); // Drain the entropy
       // FIXME: Why does this sleep get interrupted?!
-      Uninterruptibles.sleepUninterruptibly(1000L, TimeUnit.MILLISECONDS);
+      Uninterruptibles.sleepUninterruptibly(2000L, TimeUnit.MILLISECONDS);
       assertFalse(randomSeeder.isEmpty());
     } finally {
       RandomTestUtils.removeAndAssertEmpty(randomSeeder, prng);
