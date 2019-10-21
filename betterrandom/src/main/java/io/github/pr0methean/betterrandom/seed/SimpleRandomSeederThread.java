@@ -11,6 +11,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Random;
 import java.util.Set;
 import java.util.WeakHashMap;
@@ -37,15 +38,23 @@ public class SimpleRandomSeederThread extends LooperThread {
   protected transient Set<ByteArrayReseedableRandom> byteArrayPrngsThisIteration;
   protected transient Condition waitWhileEmpty;
   protected transient Condition waitForEntropyDrain;
-
-  public SimpleRandomSeederThread(ThreadFactory factory, final SeedGenerator seedGenerator) {
-    super(factory);
-    this.seedGenerator = seedGenerator;
-    initTransientFields();
+  protected final long stopIfEmptyForNanos;
+  public SimpleRandomSeederThread(final SeedGenerator seedGenerator, ThreadFactory factory) {
+    this(seedGenerator, factory, 5_000_000_000L);
   }
 
   public SimpleRandomSeederThread(SeedGenerator seedGenerator) {
-    this(new SimpleRandomSeederThread.DefaultThreadFactory(seedGenerator.toString()), seedGenerator);
+    this(seedGenerator, new SimpleRandomSeederThread.DefaultThreadFactory(seedGenerator.toString()));
+  }
+
+  public SimpleRandomSeederThread(SeedGenerator seedGenerator, ThreadFactory factory,
+      long stopIfEmptyForNanos) {
+    super(factory);
+    this.seedGenerator = seedGenerator;
+    Objects.requireNonNull(seedGenerator, "randomSeeder must not be null");
+
+    this.stopIfEmptyForNanos = stopIfEmptyForNanos;
+    initTransientFields();
   }
 
   static boolean stillDefinitelyHasEntropy(final Object random) {
@@ -151,6 +160,9 @@ public class SimpleRandomSeederThread extends LooperThread {
         byteArrayPrngsThisIteration.addAll(byteArrayPrngs);
         if (!byteArrayPrngsThisIteration.isEmpty()) {
           break;
+        }
+        if (!waitWhileEmpty.await(stopIfEmptyForNanos, TimeUnit.NANOSECONDS)) {
+          return false;
         }
       }
       boolean entropyConsumed = reseedByteArrayReseedableRandoms();

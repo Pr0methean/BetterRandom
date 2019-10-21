@@ -111,7 +111,8 @@ public class SimpleRandomSeederThreadTest {
   }
 
   protected SimpleRandomSeederThread createRandomSeeder(SeedGenerator seedGenerator) {
-    return new SimpleRandomSeederThread(seedGenerator);
+    return new SimpleRandomSeederThread(seedGenerator,
+        new SimpleRandomSeederThread.DefaultThreadFactory("SimpleRandomSeederThreadTest", Thread.MAX_PRIORITY));
   }
 
   /**
