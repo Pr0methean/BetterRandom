@@ -17,6 +17,7 @@ import java.lang.ref.WeakReference;
 import java.util.Arrays;
 import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.TimeUnit;
+import java8.util.function.Consumer;
 import org.testng.annotations.Test;
 
 public class SimpleRandomSeederThreadTest {
@@ -27,7 +28,11 @@ public class SimpleRandomSeederThreadTest {
     TestUtils.testConstructors(SimpleRandomSeederThread.class, false, ImmutableMap
         .of(SeedGenerator.class, new FakeSeedGenerator("testConstructors"), ThreadFactory.class,
             new SimpleRandomSeederThread.DefaultThreadFactory("testConstructors"), long.class,
-            100_000_000L), SimpleRandomSeederThread::stopIfEmpty);
+            100_000_000L), new Consumer<SimpleRandomSeederThread>() {
+      @Override public void accept(SimpleRandomSeederThread simpleRandomSeederThread) {
+        simpleRandomSeederThread.stopIfEmpty();
+      }
+    });
   }
 
   @Test public void testDefaultThreadFactoryConstructors() {
