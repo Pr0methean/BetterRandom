@@ -55,7 +55,10 @@ public class EntropyBlockingSplittableRandomAdapterTest extends SplittableRandom
   }
 
   private EntropyBlockingSplittableRandomAdapter createRngLargeEntropyLimit(byte[] seed) {
-    return new EntropyBlockingSplittableRandomAdapter(seed, EntropyBlockingTestUtils.VERY_LOW_MINIMUM_ENTROPY, getTestSeedGenerator());
+    EntropyBlockingSplittableRandomAdapter out
+        = new EntropyBlockingSplittableRandomAdapter(EntropyBlockingTestUtils.VERY_LOW_MINIMUM_ENTROPY, getTestSeedGenerator());
+    out.setSeed(seed); // ensure seed is set for the current thread, not the master!
+    return out;
   }
 
   @Override public void testSetSeedAfterNextLong() throws SeedException {

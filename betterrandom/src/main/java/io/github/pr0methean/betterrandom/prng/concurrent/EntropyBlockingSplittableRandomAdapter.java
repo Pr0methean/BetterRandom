@@ -1,7 +1,6 @@
 package io.github.pr0methean.betterrandom.prng.concurrent;
 
 import io.github.pr0methean.betterrandom.prng.EntropyBlockingHelper;
-import io.github.pr0methean.betterrandom.seed.RandomSeederThread;
 import io.github.pr0methean.betterrandom.seed.SeedGenerator;
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -57,11 +56,6 @@ public class EntropyBlockingSplittableRandomAdapter extends SplittableRandomAdap
     if (helpers != null) {
       helpers.get().onSeedingStateChanged(false);
     }
-  }
-
-  @Override public void setRandomSeeder(@Nullable RandomSeederThread randomSeeder) {
-    super.setRandomSeeder(randomSeeder);
-    helpers.get().onSeedingStateChanged(false);
   }
 
   @Override protected void debitEntropy(long bits) {

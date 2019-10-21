@@ -1,7 +1,7 @@
 package io.github.pr0methean.betterrandom.prng;
 
-import io.github.pr0methean.betterrandom.seed.RandomSeederThread;
 import io.github.pr0methean.betterrandom.seed.SeedGenerator;
+import io.github.pr0methean.betterrandom.seed.SimpleRandomSeederThread;
 import java.io.Serializable;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.atomic.AtomicReference;
@@ -69,7 +69,7 @@ public class EntropyBlockingHelper implements Serializable {
       SeedGenerator seedGenerator;
       lock.lock();
       try {
-        RandomSeederThread seeder = random.getRandomSeeder();
+        SimpleRandomSeederThread seeder = random.getRandomSeeder();
         if (seeder != null) {
           awaitReseedingBy(seeder);
           continue;
@@ -99,7 +99,7 @@ public class EntropyBlockingHelper implements Serializable {
     random.setSeed(newSeed);
   }
 
-  public void awaitReseedingBy(RandomSeederThread seeder) {
+  public void awaitReseedingBy(SimpleRandomSeederThread seeder) {
     waitingOnReseed = true;
     seeder.reseedAsync(random);
     try {
