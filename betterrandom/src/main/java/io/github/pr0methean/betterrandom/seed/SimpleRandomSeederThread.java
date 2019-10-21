@@ -28,7 +28,7 @@ import org.slf4j.LoggerFactory;
  */
 public class SimpleRandomSeederThread extends LooperThread {
   protected static final Map<ByteArrayReseedableRandom, byte[]> SEED_ARRAYS =
-      Collections.synchronizedMap(new WeakHashMap<>(1));
+      Collections.synchronizedMap(new WeakHashMap<ByteArrayReseedableRandom, byte[]>(1));
   protected static final long POLL_INTERVAL = 60;
   private static final long serialVersionUID = -4339570810679373476L;
   protected final SeedGenerator seedGenerator;
@@ -138,8 +138,8 @@ public class SimpleRandomSeederThread extends LooperThread {
   }
 
   protected void initTransientFields() {
-    byteArrayPrngs = Collections.newSetFromMap(Collections.synchronizedMap(new WeakHashMap<>(1)));
-    byteArrayPrngsThisIteration = Collections.newSetFromMap(new WeakHashMap<>(1));
+    byteArrayPrngs = Collections.newSetFromMap(Collections.synchronizedMap(new WeakHashMap<ByteArrayReseedableRandom, Boolean>(1)));
+    byteArrayPrngsThisIteration = Collections.newSetFromMap(new WeakHashMap<ByteArrayReseedableRandom, Boolean>(1));
     waitWhileEmpty = lock.newCondition();
     waitForEntropyDrain = lock.newCondition();
   }
@@ -153,24 +153,7 @@ public class SimpleRandomSeederThread extends LooperThread {
           break;
         }
       }
-      boolean entropyConsumed = false;
-      try {
-        for (ByteArrayReseedableRandom random : byteArrayPrngsThisIteration) {
-          if (stillDefinitelyHasEntropy(random)) {
-            continue;
-          }
-          entropyConsumed = true;
-          if (random.preferSeedWithLong()) {
-            reseedWithLong((Random) random);
-          } else {
-            byte[] seedArray = getSeedArray(random);
-            seedGenerator.generateSeed(seedArray);
-            random.setSeed(seedArray);
-          }
-        }
-      } finally {
-        byteArrayPrngsThisIteration.clear();
-      }
+      boolean entropyConsumed = reseedByteArrayReseedableRandoms();
       if (!entropyConsumed) {
         waitForEntropyDrain.await(POLL_INTERVAL, TimeUnit.SECONDS);
       }
@@ -179,6 +162,28 @@ public class SimpleRandomSeederThread extends LooperThread {
       getLogger().error("Disabling the RandomSeederThread for " + seedGenerator, t);
       return false;
     }
+  }
+
+  protected boolean reseedByteArrayReseedableRandoms() {
+    boolean entropyConsumed = false;
+    try {
+      for (ByteArrayReseedableRandom random : byteArrayPrngsThisIteration) {
+        if (stillDefinitelyHasEntropy(random)) {
+          continue;
+        }
+        entropyConsumed = true;
+        if (random.preferSeedWithLong()) {
+          reseedWithLong((Random) random);
+        } else {
+          byte[] seedArray = getSeedArray(random);
+          seedGenerator.generateSeed(seedArray);
+          random.setSeed(seedArray);
+        }
+      }
+    } finally {
+      byteArrayPrngsThisIteration.clear();
+    }
+    return entropyConsumed;
   }
 
   protected byte[] getSeedArray(ByteArrayReseedableRandom random) {
