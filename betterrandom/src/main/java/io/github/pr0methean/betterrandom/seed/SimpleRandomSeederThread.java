@@ -150,10 +150,15 @@ public class SimpleRandomSeederThread extends LooperThread {
   }
 
   protected void initTransientFields() {
-    byteArrayPrngs = Collections.newSetFromMap(Collections.synchronizedMap(new WeakHashMap<>(1)));
-    byteArrayPrngsThisIteration = Collections.newSetFromMap(Collections.synchronizedMap(new WeakHashMap<>(1)));
+    byteArrayPrngs = createSynchronizedHashSet();
+    byteArrayPrngsThisIteration = createSynchronizedHashSet();
     waitWhileEmpty = lock.newCondition();
     waitForEntropyDrain = lock.newCondition();
+  }
+
+  protected <T> Set<T> createSynchronizedHashSet() {
+    return Collections.synchronizedSet(Collections.newSetFromMap(
+        new WeakHashMap<T, Boolean>(1)));
   }
 
   @SuppressWarnings({"InfiniteLoopStatement", "ObjectAllocationInLoop", "AwaitNotInLoop"}) @Override

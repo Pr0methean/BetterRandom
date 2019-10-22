@@ -3,10 +3,8 @@ package io.github.pr0methean.betterrandom.seed;
 import io.github.pr0methean.betterrandom.ByteArrayReseedableRandom;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.Random;
 import java.util.Set;
-import java.util.WeakHashMap;
 import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.TimeUnit;
 
@@ -21,8 +19,8 @@ public final class RandomSeederThread extends SimpleRandomSeederThread {
 
   @Override protected void initTransientFields() {
     super.initTransientFields();
-    otherPrngs = Collections.newSetFromMap(Collections.synchronizedMap(new WeakHashMap<Random, Boolean>(1)));
-    otherPrngsThisIteration = Collections.newSetFromMap(Collections.synchronizedMap(new WeakHashMap<Random, Boolean>(1)));
+    otherPrngs = createSynchronizedHashSet();
+    otherPrngsThisIteration = createSynchronizedHashSet();
   }
 
   @Override public void remove(Collection<? extends Random> randoms) {
