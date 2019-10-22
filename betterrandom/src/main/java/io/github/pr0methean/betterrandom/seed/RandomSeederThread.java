@@ -38,20 +38,6 @@ public final class RandomSeederThread extends SimpleRandomSeederThread {
     }
   }
 
-  public void reseedAsync(Random random) {
-    lock.lock();
-    try {
-      if (random instanceof ByteArrayReseedableRandom) {
-        byteArrayPrngsThisIteration.add((ByteArrayReseedableRandom) random);
-      } else {
-        otherPrngsThisIteration.add(random);
-      }
-      wakeUp();
-    } finally {
-      lock.unlock();
-    }
-  }
-
   /**
    * Returns the seed generator this RandomSeederThread is using.
    * @return the seed generator

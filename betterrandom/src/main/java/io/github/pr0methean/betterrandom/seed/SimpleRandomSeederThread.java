@@ -269,16 +269,6 @@ public class SimpleRandomSeederThread extends LooperThread {
     }
   }
 
-  public void reseedAsync(ByteArrayReseedableRandom random) {
-    lock.lock();
-    try {
-      byteArrayPrngsThisIteration.add(random);
-      wakeUp();
-    } finally {
-      lock.unlock();
-    }
-  }
-
   private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
     in.defaultReadObject();
     initTransientFields();

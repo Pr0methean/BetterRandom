@@ -96,7 +96,7 @@ public class EntropyBlockingHelper implements Serializable {
 
   public void awaitReseedingBy(SimpleRandomSeederThread seeder) {
     waitingOnReseed = true;
-    seeder.reseedAsync(random);
+    seeder.wakeUp();
     try {
       seedingStatusChanged.await();
     } catch (InterruptedException e) {
