@@ -288,7 +288,7 @@ public enum RandomTestUtils {
         assertEquals(secondSeedClone, secondSeed,
             "Array modified after being returned by getSeed()");
         waits++;
-        if (waits > 10) {
+        if (waits > 10) { // FIXME: Takes too long for some classes
           fail(String.format("Timed out waiting for entropy count to increase on %s", rng));
         }
         // FIXME: Flaky if we only sleep for 10 ms at a time
