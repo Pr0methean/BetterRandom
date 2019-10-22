@@ -13,12 +13,14 @@ import io.github.pr0methean.betterrandom.prng.RandomTestUtils;
 import io.github.pr0methean.betterrandom.seed.FakeSeedGenerator;
 import io.github.pr0methean.betterrandom.seed.SeedException;
 import io.github.pr0methean.betterrandom.seed.SeedGenerator;
+import io.github.pr0methean.betterrandom.seed.SemiFakeSeedGenerator;
 import io.github.pr0methean.betterrandom.seed.SimpleRandomSeederThread;
 import java.lang.reflect.Constructor;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Map;
 import java.util.Random;
+import java.util.UUID;
 import java.util.function.Consumer;
 import org.testng.annotations.Test;
 
@@ -121,9 +123,12 @@ public class EntropyBlockingRandomWrapperAesCounterRandomTest extends RandomWrap
     assertFalse(Arrays.equals(testBytes, new byte[TEST_BYTE_ARRAY_LENGTH]));
   }
 
-  // FIXME: Too slow!
+  // FIXME: Too slow, and why is such a huge entropy adjustment needed?!
   @Override @Test(timeOut = 240_000L, retryAnalyzer = FlakyRetryAnalyzer.class)
   public void testRandomSeederThreadIntegration() {
-    super.testRandomSeederThreadIntegration();
+    final SeedGenerator seedGenerator = new SemiFakeSeedGenerator(new Random(),
+        UUID.randomUUID().toString());
+    final BaseRandom rng = createRng();
+    RandomTestUtils.checkReseeding(seedGenerator, rng, true, 1 << 30);
   }
 }
