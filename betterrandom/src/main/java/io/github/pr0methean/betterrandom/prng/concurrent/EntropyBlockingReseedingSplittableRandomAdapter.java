@@ -61,10 +61,6 @@ public class EntropyBlockingReseedingSplittableRandomAdapter extends ReseedingSp
     getDelegateWrapper().setSeed(seed);
   }
 
-  @Override protected void creditEntropyForNewSeed(int seedLength) {
-    ((EntropyBlockingRandomWrapper) getDelegateWrapper()).creditEntropyForNewSeed(seedLength);
-  }
-
   @Override protected SplittableRandom getSplittableRandom() {
     return ((SingleThreadSplittableRandomAdapter)
         getDelegateWrapper().getWrapped()).getSplittableRandom();
