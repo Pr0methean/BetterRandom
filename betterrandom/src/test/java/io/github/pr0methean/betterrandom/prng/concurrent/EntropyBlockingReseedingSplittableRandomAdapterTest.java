@@ -8,6 +8,7 @@ import static org.testng.Assert.assertNotEquals;
 import static org.testng.Assert.assertSame;
 
 import com.google.common.testing.SerializableTester;
+import com.google.common.util.concurrent.Uninterruptibles;
 import io.github.pr0methean.betterrandom.FlakyRetryAnalyzer;
 import io.github.pr0methean.betterrandom.prng.BaseRandom;
 import io.github.pr0methean.betterrandom.prng.RandomTestUtils;
@@ -236,7 +237,7 @@ public class EntropyBlockingReseedingSplittableRandomAdapterTest
     }
   }
 
-  @Test(timeOut = 10_000L, invocationCount = 100) public void testGetSeed() throws InterruptedException {
+  @Test(timeOut = 10_000L) public void testGetSeed() {
     EntropyBlockingReseedingSplittableRandomAdapter random = createRng();
     byte[] seed = ((BaseRandom) random).getSeed();
     byte[] seed2 = new byte[Long.BYTES];
@@ -245,14 +246,9 @@ public class EntropyBlockingReseedingSplittableRandomAdapterTest
       @Override public void run() {
         System.arraycopy(((BaseRandom) random).getSeed(), 0, seed2, 0, Long.BYTES);
       }
-
-      @Override public void interrupt() {
-        new Throwable("Interruption happened here").printStackTrace(System.err);
-        super.interrupt();
-      }
     };
     newThread.start();
-    newThread.join();
+    Uninterruptibles.joinUninterruptibly(newThread); // FIXME: Spurious interrupts
     assertFalse(Arrays.equals(seed, seed2), "Same seed returned on different threads");
     assertFalse(Arrays.equals(zero, seed2), "Failed to copy to seed2");
   }
