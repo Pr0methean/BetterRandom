@@ -3,6 +3,7 @@ package io.github.pr0methean.betterrandom.prng.concurrent;
 import static io.github.pr0methean.betterrandom.seed.SecureRandomSeedGenerator.DEFAULT_INSTANCE;
 import static org.mockito.ArgumentMatchers.any;
 import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertFalse;
 import static org.testng.Assert.assertNotEquals;
 import static org.testng.Assert.assertSame;
 
@@ -20,6 +21,7 @@ import io.github.pr0methean.betterrandom.seed.SemiFakeSeedGenerator;
 import io.github.pr0methean.betterrandom.seed.SimpleRandomSeederThread;
 import io.github.pr0methean.betterrandom.seed.SimpleRandomSeederThread.DefaultThreadFactory;
 import io.github.pr0methean.betterrandom.util.BinaryUtils;
+import java.util.Arrays;
 import java.util.Map;
 import java.util.concurrent.ThreadFactory;
 import org.mockito.Mockito;
@@ -236,14 +238,19 @@ public class EntropyBlockingReseedingSplittableRandomAdapterTest
     }
   }
 
-  private EntropyBlockingSplittableRandomAdapter createRngLargeEntropyLimit() {
-    return new EntropyBlockingSplittableRandomAdapter(EntropyBlockingTestUtils.VERY_LOW_MINIMUM_ENTROPY, getTestSeedGenerator());
-  }
-
-  private EntropyBlockingSplittableRandomAdapter createRngLargeEntropyLimit(byte[] seed) {
-    EntropyBlockingSplittableRandomAdapter out = new EntropyBlockingSplittableRandomAdapter(
-        EntropyBlockingTestUtils.VERY_LOW_MINIMUM_ENTROPY, getTestSeedGenerator());
-    out.setSeed(seed); // ensure seed is set for the current thread, not the master!
-    return out;
+  @Test(timeOut = 5_000L) public void testGetSeed() throws InterruptedException {
+    EntropyBlockingReseedingSplittableRandomAdapter random = createRng();
+    byte[] seed = random.getSeed();
+    byte[] seed2 = new byte[Long.BYTES];
+    byte[] zero = new byte[Long.BYTES];
+    Thread newThread = new Thread() {
+      @Override public void run() {
+        System.arraycopy(random.getSeed(), 0, seed2, 0, Long.BYTES);
+      }
+    };
+    newThread.start();
+    newThread.join();
+    assertFalse(Arrays.equals(seed, seed2), "Same seed returned on different threads");
+    assertFalse(Arrays.equals(zero, seed2), "Failed to copy to seed2");
   }
 }
