@@ -43,7 +43,7 @@ public class SimpleRandomSeederThread extends LooperThread {
   protected transient Condition waitForEntropyDrain;
   protected final long stopIfEmptyForNanos;
   public SimpleRandomSeederThread(final SeedGenerator seedGenerator, ThreadFactory factory) {
-    this(seedGenerator, factory, 30_000_000_000L);
+    this(seedGenerator, factory, 5_000_000_000L);
   }
 
   public SimpleRandomSeederThread(SeedGenerator seedGenerator) {
