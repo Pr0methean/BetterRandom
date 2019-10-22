@@ -9,7 +9,8 @@ variables:
 - name: openjnine11linux
   value: 'https://api.adoptopenjdk.net/v2/binary/releases/openjdk11?openjdk_impl=openj9&os=linux&arch=x64&type=jdk&heap_size=normal&release=latest'
 - name: openJNineLatestLinux
-  value: 'https://api.adoptopenjdk.net/v2/binary/releases/openjdk13?openjdk_impl=openj9&os=linux&arch=x64&type=jdk&heap_size=normal&release=latest'
+  value: 'https://github-production-release-asset-2e65be.s3.amazonaws.com/194880173/7be18000-f4d8-11e9-9d91-19a63ced109c?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIAIWNJYAX4CSVEH53A%2F20191022%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20191022T221959Z&X-Amz-Expires=300&X-Amz-Signature=f804444bff81b350e69d36542ce01c59b272386f7dcaa3154f50bcbef5353e84&X-Amz-SignedHeaders=host&actor_id=0&response-content-disposition=attachment%3B%20filename%3DOpenJDK13U-jdk_x64_linux_openj9_13.0.1_9_openj9-0.17.0.tar.gz&response-content-type=application%2Foctet-stream'
+  # Bypass API to work around https://github.com/AdoptOpenJDK/openjdk-api/issues/185
 trigger:
   batch: true
   branches:
