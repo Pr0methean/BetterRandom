@@ -76,13 +76,19 @@ public class EntropyBlockingRandomWrapper extends RandomWrapper {
   @Override protected void setSeedInternal(byte[] seed) {
     super.setSeedInternal(seed);
     if (helper != null) {
-      helper.onSeedingStateChanged(false);
+      helper.onSeedingStateChanged(true);
     }
   }
 
   @Override public void setRandomSeeder(@Nullable SimpleRandomSeederThread randomSeeder) {
     super.setRandomSeeder(randomSeeder);
     helper.onSeedingStateChanged(false);
+  }
+
+  @Override protected void creditEntropyForNewSeed(int seedLength) {
+    if (helper != null) {
+      helper.creditEntropyForNewSeed(seedLength);
+    }
   }
 
   @Override protected void debitEntropy(long bits) {

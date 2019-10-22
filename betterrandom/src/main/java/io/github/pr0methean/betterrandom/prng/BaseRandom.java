@@ -809,7 +809,7 @@ public abstract class BaseRandom extends Random
   private void asyncReseedIfPossible() {
     final SimpleRandomSeederThread currentSeeder = getRandomSeeder();
     if (currentSeeder != null) {
-      currentSeeder.wakeUp();
+      currentSeeder.reseedAsync(this);
     }
   }
 

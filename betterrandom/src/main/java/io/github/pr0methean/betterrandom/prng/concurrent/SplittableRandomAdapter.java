@@ -144,6 +144,9 @@ import javax.annotation.Nullable;
     }
   }
 
+  /**
+   * {@inheritDoc} Applies only to the calling thread.
+   */
   @Override public byte[] getSeed() {
     return threadLocalFields.get().seed.clone();
   }

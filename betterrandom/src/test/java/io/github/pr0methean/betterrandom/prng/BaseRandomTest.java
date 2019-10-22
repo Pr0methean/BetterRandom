@@ -431,7 +431,7 @@ public abstract class BaseRandomTest extends PowerMockTestCase {
     assertLessOrEqual(trues, 1625);
   }
 
-  @Test public void testNextBytes() {
+  @Test(timeOut = 30_000L) public void testNextBytes() {
     final byte[] testBytes = new byte[TEST_BYTE_ARRAY_LENGTH];
     final BaseRandom prng = createRng();
     final long oldEntropy = prng.getEntropyBits();
@@ -573,7 +573,7 @@ public abstract class BaseRandomTest extends PowerMockTestCase {
     createRng().nextDouble(3.5, 3.5);
   }
 
-  @Test public void testNextGaussian() {
+  @Test(timeOut = 10_000) public void testNextGaussian() {
     final BaseRandom prng = createRng();
     // TODO: Find out the actual Shannon entropy of nextGaussian() and adjust the entropy count to
     // it in a wrapper function.
@@ -582,49 +582,49 @@ public abstract class BaseRandomTest extends PowerMockTestCase {
         getEntropyCheckMode());
   }
 
-  @Test public void testNextBoolean() {
+  @Test(timeOut = 10_000) public void testNextBoolean() {
     final BaseRandom prng = createRng();
     final Supplier<? extends Number> numberSupplier = () -> prng.nextBoolean() ? 0 : 1;
     checkRangeAndEntropy(prng, 1L, numberSupplier, 0, 2, getEntropyCheckMode());
   }
 
-  @Test public void testInts() {
+  @Test(timeOut = 10_000) public void testInts() {
     final BaseRandom prng = createRng();
     checkStream(prng, 32, prng.ints().boxed(), -1, Integer.MIN_VALUE, Integer.MAX_VALUE + 1L, true);
   }
 
-  @Test public void testInts1() {
+  @Test(timeOut = 10_000) public void testInts1() {
     final BaseRandom prng = createRng();
     checkStream(prng, 32, prng.ints(20).boxed(), 20, Integer.MIN_VALUE, Integer.MAX_VALUE + 1L,
         true);
   }
 
-  @Test public void testInts2() {
+  @Test(timeOut = 10_000) public void testInts2() {
     final BaseRandom prng = createRng();
     checkStream(prng, 29, prng.ints(1 << 27, 1 << 29).boxed(), -1, 1 << 27, 1 << 29, true);
   }
 
-  @Test public void testInts3() {
+  @Test(timeOut = 10_000) public void testInts3() {
     final BaseRandom prng = createRng();
     checkStream(prng, 29, prng.ints(3, 1 << 27, 1 << 29).boxed(), 3, 1 << 27, 1 << 29, true);
   }
 
-  @Test public void testLongs() {
+  @Test(timeOut = 10_000) public void testLongs() {
     final BaseRandom prng = createRng();
     checkStream(prng, 64, prng.longs().boxed(), -1, Long.MIN_VALUE, Long.MAX_VALUE + 1.0, true);
   }
 
-  @Test public void testLongs1() {
+  @Test(timeOut = 10_000) public void testLongs1() {
     final BaseRandom prng = createRng();
     checkStream(prng, 64, prng.longs(20).boxed(), 20, Long.MIN_VALUE, Long.MAX_VALUE + 1.0, true);
   }
 
-  @Test public void testLongs2() {
+  @Test(timeOut = 10_000) public void testLongs2() {
     final BaseRandom prng = createRng();
     checkStream(prng, 42, prng.longs(1L << 40, 1L << 42).boxed(), -1, 1L << 40, 1L << 42, true);
   }
 
-  @Test public void testLongs3() {
+  @Test(timeOut = 10_000) public void testLongs3() {
     final BaseRandom prng = createRng();
     checkStream(prng, 42, prng.longs(20, 1L << 40, 1L << 42).boxed(), 20, 1L << 40, 1L << 42, true);
   }
@@ -635,39 +635,39 @@ public abstract class BaseRandomTest extends PowerMockTestCase {
     checkStream(prng, 31, prng.longs(20, 1L << 40, bound).boxed(), 20, 1L << 40, bound, true);
   }
 
-  @Test(timeOut = 60_000L) public void testDoubles() {
+  @Test(timeOut = 20_000L) public void testDoubles() {
     final BaseRandom prng = createRng();
     checkStream(prng, ENTROPY_OF_DOUBLE, prng.doubles().boxed(), -1, 0.0, 1.0, true);
   }
 
-  @Test(timeOut = 60_000L) public void testDoubles1() {
+  @Test(timeOut = 20_000L) public void testDoubles1() {
     final BaseRandom prng = createRng();
     checkStream(prng, ENTROPY_OF_DOUBLE, prng.doubles(20).boxed(), 20, 0.0, 1.0, true);
   }
 
-  @Test(timeOut = 60_000L) public void testDoubles2() {
+  @Test(timeOut = 20_000L) public void testDoubles2() {
     final BaseRandom prng = createRng();
     checkStream(prng, ENTROPY_OF_DOUBLE, prng.doubles(-5.0, 8.0).boxed(), -1, -5.0, 8.0, true);
   }
 
-  @Test(timeOut = 60_000L) public void testDoubles3() {
+  @Test(timeOut = 20_000L) public void testDoubles3() {
     final BaseRandom prng = createRng();
     checkStream(prng, ENTROPY_OF_DOUBLE, prng.doubles(20, -5.0, 8.0).boxed(), 20, -5.0, 8.0, true);
   }
 
-  @Test(timeOut = 60_000L) public void testDoubles3RoundingCorrection() {
+  @Test(timeOut = 20_000L) public void testDoubles3RoundingCorrection() {
     final BaseRandom prng = createRng();
     checkStream(prng, ENTROPY_OF_DOUBLE,
         prng.doubles(20, 1.0, UPPER_BOUND_FOR_ROUNDING_TEST).boxed(), 20, -5.0, 8.0, true);
   }
 
-  @Test(timeOut = 60_000L) public void testGaussians() {
+  @Test(timeOut = 30_000L) public void testGaussians() {
     final BaseRandom prng = createRng();
     checkStream(prng, ENTROPY_OF_DOUBLE, prng.gaussians().boxed(), -1, -Double.MAX_VALUE,
         Double.MAX_VALUE, true);
   }
 
-  @Test(timeOut = 60_000L) public void testGaussians1() {
+  @Test(timeOut = 30_000L) public void testGaussians1() {
     final BaseRandom prng = createRng();
     checkStream(prng, ENTROPY_OF_DOUBLE, prng.gaussians(100).boxed(), 100, -Double.MAX_VALUE,
         Double.MAX_VALUE, true);

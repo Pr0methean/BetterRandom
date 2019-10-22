@@ -2,6 +2,7 @@ package io.github.pr0methean.betterrandom.seed;
 
 import io.github.pr0methean.betterrandom.ByteArrayReseedableRandom;
 import io.github.pr0methean.betterrandom.EntropyCountingRandom;
+import io.github.pr0methean.betterrandom.prng.BaseRandom;
 import io.github.pr0methean.betterrandom.util.BinaryUtils;
 import io.github.pr0methean.betterrandom.util.LooperThread;
 import java.io.IOException;
@@ -30,7 +31,9 @@ import org.slf4j.LoggerFactory;
 public class SimpleRandomSeederThread extends LooperThread {
   protected static final Map<ByteArrayReseedableRandom, byte[]> SEED_ARRAYS =
       Collections.synchronizedMap(new WeakHashMap<>(1));
-  protected static final long POLL_INTERVAL = 60;
+  // FIXME: Setting a longer POLL_INTERVAL slows many tests, and causes some to time out
+  // (Why doesn't BaseRandom's call to reseedAsync() prevent this?!)
+  protected static final long POLL_INTERVAL = 1;
   private static final long serialVersionUID = -4339570810679373476L;
   protected final SeedGenerator seedGenerator;
   private final byte[] longSeedArray = new byte[8];
@@ -119,8 +122,8 @@ public class SimpleRandomSeederThread extends LooperThread {
     start();
     if (lock.tryLock()) {
       try {
-        waitWhileEmpty.signalAll();
         waitForEntropyDrain.signalAll();
+        waitWhileEmpty.signalAll();
       } finally {
         lock.unlock();
       }
@@ -148,7 +151,7 @@ public class SimpleRandomSeederThread extends LooperThread {
 
   protected void initTransientFields() {
     byteArrayPrngs = Collections.newSetFromMap(Collections.synchronizedMap(new WeakHashMap<>(1)));
-    byteArrayPrngsThisIteration = Collections.newSetFromMap(new WeakHashMap<>(1));
+    byteArrayPrngsThisIteration = Collections.newSetFromMap(Collections.synchronizedMap(new WeakHashMap<>(1)));
     waitWhileEmpty = lock.newCondition();
     waitForEntropyDrain = lock.newCondition();
   }
@@ -205,6 +208,35 @@ public class SimpleRandomSeederThread extends LooperThread {
   }
 
   /**
+   * Shut down this thread even if {@link Random} instances are registered with it.
+   */
+  public void shutDown() {
+    interrupt();
+    clear();
+  }
+
+  protected void clear() {
+    lock.lock();
+    try {
+      unregisterWithAll(byteArrayPrngs);
+      byteArrayPrngs.clear();
+      byteArrayPrngsThisIteration.clear();
+    } finally {
+      lock.unlock();
+    }
+  }
+
+  protected void unregisterWithAll(Set<?> randoms) {
+    for (final Object random : randoms) {
+      if (random instanceof BaseRandom) {
+        try {
+          ((BaseRandom) random).setRandomSeeder(null);
+        } catch (UnsupportedOperationException ignored) {}
+      }
+    }
+  }
+
+  /**
    * Returns true if no {@link Random} instances are registered with this RandomSeederThread.
    *
    * @return true if no {@link Random} instances are registered with this RandomSeederThread.
@@ -241,6 +273,10 @@ public class SimpleRandomSeederThread extends LooperThread {
   private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
     in.defaultReadObject();
     initTransientFields();
+  }
+
+  public SeedGenerator getSeedGenerator() {
+    return seedGenerator;
   }
 
   public static class DefaultThreadFactory implements ThreadFactory, Serializable {

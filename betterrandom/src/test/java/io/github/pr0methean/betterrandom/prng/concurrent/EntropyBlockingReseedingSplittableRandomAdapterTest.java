@@ -6,6 +6,7 @@ import static org.testng.Assert.assertNotEquals;
 import static org.testng.Assert.assertSame;
 
 import com.google.common.testing.SerializableTester;
+import io.github.pr0methean.betterrandom.DeadlockWatchdogThread;
 import io.github.pr0methean.betterrandom.FlakyRetryAnalyzer;
 import io.github.pr0methean.betterrandom.prng.BaseRandom;
 import io.github.pr0methean.betterrandom.prng.RandomTestUtils;
@@ -16,13 +17,15 @@ import io.github.pr0methean.betterrandom.seed.SeedException;
 import io.github.pr0methean.betterrandom.seed.SeedGenerator;
 import io.github.pr0methean.betterrandom.seed.SemiFakeSeedGenerator;
 import io.github.pr0methean.betterrandom.seed.SimpleRandomSeederThread;
+import io.github.pr0methean.betterrandom.seed.SimpleRandomSeederThread.DefaultThreadFactory;
 import io.github.pr0methean.betterrandom.util.BinaryUtils;
+import java.util.Map;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
-public class ReseedingSplittableRandomAdapterTest
-    extends SingleThreadSplittableRandomAdapterTest {
+public class EntropyBlockingReseedingSplittableRandomAdapterTest
+    extends ReseedingSplittableRandomAdapterTest {
 
   private SimpleRandomSeederThread thread;
 
@@ -30,11 +33,20 @@ public class ReseedingSplittableRandomAdapterTest
     return semiFakeSeedGenerator;
   }
 
-  @BeforeClass public void setUp() {
-    thread = new SimpleRandomSeederThread(getTestSeedGenerator());
+  // FIXME: Why does this need more time than other PRNGs?!
+  @Override @Test(timeOut = 80_000) public void testNextGaussianStatistically() throws SeedException {
+    super.testNextGaussianStatistically();
   }
 
-  @AfterClass public void tearDown() {
+  @BeforeClass public void setUpClass() {
+    DeadlockWatchdogThread.ensureStarted();
+    thread = new SimpleRandomSeederThread(getTestSeedGenerator(),
+        new DefaultThreadFactory("EntropyBlockingReseedingSplittableRandomAdapterTest",
+            Thread.MAX_PRIORITY));
+  }
+
+  @AfterClass public void tearDownClass() {
+    DeadlockWatchdogThread.stopInstance();
     thread.stopIfEmpty();
   }
 
@@ -42,31 +54,42 @@ public class ReseedingSplittableRandomAdapterTest
     return EntropyCheckMode.LOWER_BOUND;
   }
 
-  @Override protected ReseedingSplittableRandomAdapter createRng() throws SeedException {
-    return ReseedingSplittableRandomAdapter.getInstance(thread, getTestSeedGenerator());
+  @Override protected EntropyBlockingReseedingSplittableRandomAdapter createRng()
+      throws SeedException {
+    return new EntropyBlockingReseedingSplittableRandomAdapter(getTestSeedGenerator(), thread,
+        EntropyBlockingTestUtils.DEFAULT_MAX_ENTROPY);
   }
 
   @Override protected BaseRandom createRng(byte[] seed) throws SeedException {
-    ReseedingSplittableRandomAdapter out = createRng();
+    EntropyBlockingReseedingSplittableRandomAdapter out = createRng();
     out.setSeed(seed);
     return out;
   }
 
-  // FIXME: Why does this need more time than other PRNGs?!
-  @Test(timeOut = 120_000) @Override public void testDistribution() throws SeedException {
+  @Override public Map<Class<?>, Object> constructorParams() {
+    Map<Class<?>, Object> out = super.constructorParams();
+    out.put(long.class, EntropyBlockingTestUtils.DEFAULT_MAX_ENTROPY);
+    out.put(SimpleRandomSeederThread.class, thread);
+    return out;
+  }
+
+  // FIXME: Why does this need so much more time than other PRNGs?!
+  @Test(timeOut = 240_000, retryAnalyzer = FlakyRetryAnalyzer.class)
+  @Override public void testDistribution() throws SeedException {
     super.testDistribution();
   }
 
   @Override public void testInitialEntropy() {
     // This test needs a separate instance from all other tests, but createRng() doesn't provide one
     SimpleRandomSeederThread newThread = new RandomSeederThread(new FakeSeedGenerator("testInitialEntropy"));
-    ReseedingSplittableRandomAdapter random
-        = ReseedingSplittableRandomAdapter.getInstance(newThread, getTestSeedGenerator());
+    ReseedingSplittableRandomAdapter random =
+        ReseedingSplittableRandomAdapter.getInstance(newThread, getTestSeedGenerator());
     assertEquals(random.getEntropyBits(), Long.SIZE, "Wrong initial entropy");
   }
 
-  // FIXME: Why does this need more time than other PRNGs?!
-  @Test(timeOut = 120_000) @Override public void testIntegerSummaryStats() throws SeedException {
+  // FIXME: Why does this need so much more time than other PRNGs?!
+  @Test(timeOut = 120_000, retryAnalyzer = FlakyRetryAnalyzer.class)
+  @Override public void testIntegerSummaryStats() throws SeedException {
     super.testIntegerSummaryStats();
   }
 
@@ -84,7 +107,7 @@ public class ReseedingSplittableRandomAdapterTest
   }
 
   @Override protected Class<? extends BaseRandom> getClassUnderTest() {
-    return ReseedingSplittableRandomAdapter.class;
+    return EntropyBlockingReseedingSplittableRandomAdapter.class;
   }
 
   @Override @Test(enabled = false) public void testRepeatability() {
@@ -95,9 +118,9 @@ public class ReseedingSplittableRandomAdapterTest
     // No-op.
   }
 
-  @Override @Test(retryAnalyzer = FlakyRetryAnalyzer.class)
-  public void testReseeding() {
-    SeedGenerator generator = new SemiFakeSeedGenerator(new SplittableRandomAdapter(), "testReseeding");
+  @Override @Test(retryAnalyzer = FlakyRetryAnalyzer.class) public void testReseeding() {
+    SeedGenerator generator =
+        new SemiFakeSeedGenerator(new SplittableRandomAdapter(), "testReseeding");
     RandomSeederThread seeder = new RandomSeederThread(generator);
     try {
       ReseedingSplittableRandomAdapter random =
@@ -151,8 +174,7 @@ public class ReseedingSplittableRandomAdapterTest
   }
 
   @Test public void testSetSeedGeneratorNoOp() {
-    ReseedingSplittableRandomAdapter.getInstance(thread, getTestSeedGenerator())
-        .setRandomSeeder(thread);
+    createRng().setRandomSeeder(thread);
   }
 
   @Override @Test(enabled = false) public void testSeedTooShort() {
@@ -187,5 +209,16 @@ public class ReseedingSplittableRandomAdapterTest
    */
   @Override @Test public void testThreadSafety() {
     testThreadSafetyVsCrashesOnly(30, functionsForThreadSafetyTest);
+  }
+
+  private EntropyBlockingSplittableRandomAdapter createRngLargeEntropyLimit() {
+    return new EntropyBlockingSplittableRandomAdapter(EntropyBlockingTestUtils.VERY_LOW_MINIMUM_ENTROPY, getTestSeedGenerator());
+  }
+
+  private EntropyBlockingSplittableRandomAdapter createRngLargeEntropyLimit(byte[] seed) {
+    EntropyBlockingSplittableRandomAdapter out = new EntropyBlockingSplittableRandomAdapter(
+        EntropyBlockingTestUtils.VERY_LOW_MINIMUM_ENTROPY, getTestSeedGenerator());
+    out.setSeed(seed); // ensure seed is set for the current thread, not the master!
+    return out;
   }
 }

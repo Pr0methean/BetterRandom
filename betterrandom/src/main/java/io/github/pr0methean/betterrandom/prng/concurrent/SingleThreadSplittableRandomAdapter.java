@@ -78,4 +78,5 @@ public class SingleThreadSplittableRandomAdapter extends DirectSplittableRandomA
     in.defaultReadObject();
     setSeed(seed);
   }
+
 }

@@ -52,13 +52,6 @@ public class EntropyBlockingSplittableRandomAdapter extends SplittableRandomAdap
     initSubclassTransientFields();
   }
 
-  @Override protected void setSeedInternal(byte[] seed) {
-    super.setSeedInternal(seed);
-    if (helpers != null) {
-      helpers.get().onSeedingStateChanged(false);
-    }
-  }
-
   @Override protected void debitEntropy(long bits) {
     helpers.get().debitEntropy(bits);
   }
