@@ -24,8 +24,8 @@ import java.util.Arrays;
 import java.util.Map;
 import java.util.concurrent.ThreadFactory;
 import org.mockito.Mockito;
-import org.testng.annotations.AfterClass;
-import org.testng.annotations.BeforeClass;
+import org.testng.annotations.AfterMethod;
+import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 public class EntropyBlockingReseedingSplittableRandomAdapterTest
@@ -42,13 +42,13 @@ public class EntropyBlockingReseedingSplittableRandomAdapterTest
     super.testNextGaussianStatistically();
   }
 
-  @BeforeClass public void setUpClass() {
+  @Override @BeforeMethod public void setUp() {
     thread = new SimpleRandomSeederThread(getTestSeedGenerator(),
         new DefaultThreadFactory("EntropyBlockingReseedingSplittableRandomAdapterTest",
             Thread.MAX_PRIORITY));
   }
 
-  @AfterClass public void tearDownClass() {
+  @Override @AfterMethod public void tearDown() {
     thread.shutDown();
   }
 

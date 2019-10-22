@@ -17,8 +17,8 @@ import io.github.pr0methean.betterrandom.seed.SeedGenerator;
 import io.github.pr0methean.betterrandom.seed.SemiFakeSeedGenerator;
 import io.github.pr0methean.betterrandom.seed.SimpleRandomSeederThread;
 import io.github.pr0methean.betterrandom.util.BinaryUtils;
-import org.testng.annotations.AfterClass;
-import org.testng.annotations.BeforeClass;
+import org.testng.annotations.AfterMethod;
+import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 public class ReseedingSplittableRandomAdapterTest
@@ -30,11 +30,11 @@ public class ReseedingSplittableRandomAdapterTest
     return semiFakeSeedGenerator;
   }
 
-  @BeforeClass public void setUp() {
+  @BeforeMethod public void setUp() {
     thread = new SimpleRandomSeederThread(getTestSeedGenerator());
   }
 
-  @AfterClass public void tearDown() {
+  @AfterMethod public void tearDown() {
     thread.stopIfEmpty();
   }
 
