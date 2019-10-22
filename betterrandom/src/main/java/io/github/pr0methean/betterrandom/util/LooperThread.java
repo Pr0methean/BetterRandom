@@ -18,13 +18,7 @@ public abstract class LooperThread implements Serializable {
   /**
    * Singleton-ization of {@link Executors#defaultThreadFactory()}.
    */
-  protected static final ThreadFactory DEFAULT_THREAD_FACTORY
-      = runnable -> new Thread(runnable) {
-    @Override public void interrupt() {
-      new Throwable("Interruption happened here").printStackTrace(System.err);
-      super.interrupt();
-    }
-  };
+  protected static final ThreadFactory DEFAULT_THREAD_FACTORY = Executors.defaultThreadFactory();
   private static final long serialVersionUID = -4790652062170305318L;
 
   /**
