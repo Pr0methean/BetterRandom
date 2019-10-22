@@ -1,6 +1,7 @@
 package io.github.pr0methean.betterrandom.prng.concurrent;
 
 import static io.github.pr0methean.betterrandom.seed.SecureRandomSeedGenerator.DEFAULT_INSTANCE;
+import static org.mockito.ArgumentMatchers.any;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotEquals;
 import static org.testng.Assert.assertSame;
@@ -20,6 +21,8 @@ import io.github.pr0methean.betterrandom.seed.SimpleRandomSeederThread;
 import io.github.pr0methean.betterrandom.seed.SimpleRandomSeederThread.DefaultThreadFactory;
 import io.github.pr0methean.betterrandom.util.BinaryUtils;
 import java.util.Map;
+import java.util.concurrent.ThreadFactory;
+import org.mockito.Mockito;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
@@ -209,6 +212,28 @@ public class EntropyBlockingReseedingSplittableRandomAdapterTest
    */
   @Override @Test public void testThreadSafety() {
     testThreadSafetyVsCrashesOnly(30, functionsForThreadSafetyTest);
+  }
+
+  @Test public void testRandomSeederThreadUsedFirst() {
+    SeedGenerator testSeedGenerator = getTestSeedGenerator();
+    SeedGenerator seederSeedGenSpy = Mockito.spy(testSeedGenerator);
+    ThreadFactory defaultThreadFactory
+        = new DefaultThreadFactory("testRandomSeederThreadUsedFirst", Thread.MAX_PRIORITY);
+    SimpleRandomSeederThread seeder = new SimpleRandomSeederThread(seederSeedGenSpy,
+        defaultThreadFactory);
+    SemiFakeSeedGenerator sameThreadSeedGen
+        = new SemiFakeSeedGenerator(new SplittableRandomAdapter(), "sameThreadSeedGen");
+    EntropyBlockingReseedingSplittableRandomAdapter random = new EntropyBlockingReseedingSplittableRandomAdapter(
+        sameThreadSeedGen, seeder, 0L);
+    random.nextLong();
+    sameThreadSeedGen.setThrowException(true);
+    try {
+      random.nextLong();
+      Mockito.verify(seederSeedGenSpy, Mockito.atLeastOnce()).generateSeed(any(byte[].class));
+      Mockito.verify(seederSeedGenSpy, Mockito.atMost(2)).generateSeed(any(byte[].class));
+    } finally {
+      seeder.shutDown();
+    }
   }
 
   private EntropyBlockingSplittableRandomAdapter createRngLargeEntropyLimit() {

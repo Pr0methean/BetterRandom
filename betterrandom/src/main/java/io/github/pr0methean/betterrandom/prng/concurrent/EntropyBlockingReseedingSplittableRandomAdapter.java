@@ -23,8 +23,7 @@ public class EntropyBlockingReseedingSplittableRandomAdapter extends ReseedingSp
     this.minimumEntropy = minimumEntropy;
     this.sameThreadSeedGen = new AtomicReference<>(seedGenerator);
     initSubclassTransientFields();
-    long maxOutputAtOnce = 8 * entropyBits.get() - minimumEntropy;
-    if (maxOutputAtOnce < Long.SIZE) {
+    if (minimumEntropy > 0) {
       throw new IllegalArgumentException("Need to be able to output 64 bits at once");
     }
   }
