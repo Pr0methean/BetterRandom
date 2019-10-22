@@ -36,6 +36,7 @@ public class ReseedingSplittableRandomAdapterTest
 
   @AfterMethod public void tearDown() {
     thread.stopIfEmpty();
+    thread = null;
   }
 
   @Override protected EntropyCheckMode getEntropyCheckMode() {

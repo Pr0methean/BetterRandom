@@ -49,7 +49,8 @@ public class EntropyBlockingReseedingSplittableRandomAdapterTest
   }
 
   @Override @AfterMethod public void tearDown() {
-    thread.shutDown();
+    thread.stopIfEmpty();
+    thread = null;
   }
 
   @Override protected EntropyCheckMode getEntropyCheckMode() {
