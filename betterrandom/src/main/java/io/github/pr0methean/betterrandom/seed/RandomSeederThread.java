@@ -39,12 +39,17 @@ public final class RandomSeederThread extends SimpleRandomSeederThread {
   }
 
   public void reseedAsync(Random random) {
-    if (random instanceof ByteArrayReseedableRandom) {
-      byteArrayPrngsThisIteration.add((ByteArrayReseedableRandom) random);
-    } else {
-      otherPrngsThisIteration.add(random);
+    lock.lock();
+    try {
+      if (random instanceof ByteArrayReseedableRandom) {
+        byteArrayPrngsThisIteration.add((ByteArrayReseedableRandom) random);
+      } else {
+        otherPrngsThisIteration.add(random);
+      }
+      wakeUp();
+    } finally {
+      lock.unlock();
     }
-    wakeUp();
   }
 
   /**

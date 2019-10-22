@@ -157,8 +157,7 @@ public class SimpleRandomSeederThread extends LooperThread {
   }
 
   protected <T> Set<T> createSynchronizedHashSet() {
-    return Collections.synchronizedSet(Collections.newSetFromMap(
-        new WeakHashMap<T, Boolean>(1)));
+    return Collections.synchronizedSet(Collections.newSetFromMap(new WeakHashMap<T, Boolean>(1)));
   }
 
   @SuppressWarnings({"InfiniteLoopStatement", "ObjectAllocationInLoop", "AwaitNotInLoop"}) @Override
@@ -271,8 +270,13 @@ public class SimpleRandomSeederThread extends LooperThread {
   }
 
   public void reseedAsync(ByteArrayReseedableRandom random) {
-    byteArrayPrngsThisIteration.add(random);
-    wakeUp();
+    lock.lock();
+    try {
+      byteArrayPrngsThisIteration.add(random);
+      wakeUp();
+    } finally {
+      lock.unlock();
+    }
   }
 
   private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
