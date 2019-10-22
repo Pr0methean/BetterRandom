@@ -245,6 +245,11 @@ public class EntropyBlockingReseedingSplittableRandomAdapterTest
       @Override public void run() {
         System.arraycopy(((BaseRandom) random).getSeed(), 0, seed2, 0, Long.BYTES);
       }
+
+      @Override public void interrupt() {
+        new Throwable("Interruption happened here").printStackTrace(System.err);
+        super.interrupt();
+      }
     };
     newThread.start();
     newThread.join();
