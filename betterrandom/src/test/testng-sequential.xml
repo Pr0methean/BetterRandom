@@ -31,6 +31,7 @@
             <class name="io.github.pr0methean.betterrandom.prng.concurrent.RandomWrapperRandomTest"/>
             <class name="io.github.pr0methean.betterrandom.prng.concurrent.RandomWrapperSecureRandomTest"/>
             <class name="io.github.pr0methean.betterrandom.prng.concurrent.ReseedingThreadLocalRandomWrapperFailingSeedGeneratorTest"/>
+            <class name="io.github.pr0methean.betterrandom.prng.concurrent.SplittableRandomAdapterTest"/>
             <class name="io.github.pr0methean.betterrandom.prng.concurrent.ThreadLocalRandomWrapperMersenneTwisterTest"/>
             <class name="io.github.pr0methean.betterrandom.prng.concurrent.ThreadLocalRandomWrapperTest"/>
         </classes>

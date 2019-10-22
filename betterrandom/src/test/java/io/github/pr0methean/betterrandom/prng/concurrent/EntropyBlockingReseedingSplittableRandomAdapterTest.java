@@ -8,7 +8,6 @@ import static org.testng.Assert.assertNotEquals;
 import static org.testng.Assert.assertSame;
 
 import com.google.common.testing.SerializableTester;
-import io.github.pr0methean.betterrandom.DeadlockWatchdogThread;
 import io.github.pr0methean.betterrandom.FlakyRetryAnalyzer;
 import io.github.pr0methean.betterrandom.prng.BaseRandom;
 import io.github.pr0methean.betterrandom.prng.RandomTestUtils;
@@ -44,15 +43,13 @@ public class EntropyBlockingReseedingSplittableRandomAdapterTest
   }
 
   @BeforeClass public void setUpClass() {
-    DeadlockWatchdogThread.ensureStarted();
     thread = new SimpleRandomSeederThread(getTestSeedGenerator(),
         new DefaultThreadFactory("EntropyBlockingReseedingSplittableRandomAdapterTest",
             Thread.MAX_PRIORITY));
   }
 
   @AfterClass public void tearDownClass() {
-    DeadlockWatchdogThread.stopInstance();
-    thread.stopIfEmpty();
+    thread.shutDown();
   }
 
   @Override protected EntropyCheckMode getEntropyCheckMode() {

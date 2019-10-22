@@ -12,7 +12,6 @@
             <class name="io.github.pr0methean.betterrandom.prng.XorShiftRandomTest"/>
             <class
                     name="io.github.pr0methean.betterrandom.prng.concurrent.SingleThreadSplittableRandomAdapterTest"/>
-            <class name="io.github.pr0methean.betterrandom.prng.concurrent.SplittableRandomAdapterTest"/>
         </classes>
     </test>
     <test name="Crypto PRNGs 17-byte">
