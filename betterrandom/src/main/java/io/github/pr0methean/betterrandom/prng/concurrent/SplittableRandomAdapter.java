@@ -7,7 +7,6 @@ import io.github.pr0methean.betterrandom.seed.RandomSeederThread;
 import io.github.pr0methean.betterrandom.seed.SeedException;
 import io.github.pr0methean.betterrandom.seed.SeedGenerator;
 import io.github.pr0methean.betterrandom.seed.SimpleRandomSeederThread;
-import io.github.pr0methean.betterrandom.util.BinaryUtils;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.util.SplittableRandom;
@@ -30,12 +29,10 @@ import javax.annotation.Nullable;
   protected static class ThreadLocalFields {
     public SplittableRandom splittableRandom;
     final public AtomicLong entropyBits;
-    final public byte[] seed;
 
-    public ThreadLocalFields(SplittableRandom splittableRandom, long entropyBits, byte[] seed) {
+    public ThreadLocalFields(SplittableRandom splittableRandom, long entropyBits) {
       this.splittableRandom = splittableRandom;
       this.entropyBits = new AtomicLong(entropyBits);
-      this.seed = seed;
     }
   }
 
@@ -118,7 +115,7 @@ import javax.annotation.Nullable;
         // Necessary because SplittableRandom.split() isn't itself thread-safe.
         lock.lock();
         try {
-          return new ThreadLocalFields(delegate.split(), SEED_LENGTH_BITS, seed);
+          return new ThreadLocalFields(delegate.split(), SEED_LENGTH_BITS);
         } finally {
           lock.unlock();
         }
@@ -145,10 +142,10 @@ import javax.annotation.Nullable;
   }
 
   /**
-   * {@inheritDoc} Applies only to the calling thread.
+   * {@inheritDoc} Returns the root seed, not the calling thread's seed.
    */
   @Override public byte[] getSeed() {
-    return threadLocalFields.get().seed.clone();
+    return super.getSeed();
   }
 
   /**
@@ -173,6 +170,5 @@ import javax.annotation.Nullable;
     ThreadLocalFields threadLocalFields = this.threadLocalFields.get();
     threadLocalFields.splittableRandom = new SplittableRandom(seed);
     creditEntropyForNewSeed(8);
-    BinaryUtils.convertLongToBytes(seed, threadLocalFields.seed, 0);
   }
 }

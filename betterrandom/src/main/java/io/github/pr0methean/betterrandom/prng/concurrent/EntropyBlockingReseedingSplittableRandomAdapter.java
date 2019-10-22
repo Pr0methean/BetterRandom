@@ -67,7 +67,8 @@ public class EntropyBlockingReseedingSplittableRandomAdapter extends ReseedingSp
   }
 
   /**
-   * {@inheritDoc} Applies only to the calling thread.
+   * Returns the calling thread's seed, not the master seed.
+   * @return the seed for the calling thread
    */
   @Override public byte[] getSeed() {
     return getDelegateWrapper().getSeed();

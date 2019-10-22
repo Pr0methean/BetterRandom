@@ -240,12 +240,12 @@ public class EntropyBlockingReseedingSplittableRandomAdapterTest
 
   @Test(timeOut = 5_000L) public void testGetSeed() throws InterruptedException {
     EntropyBlockingReseedingSplittableRandomAdapter random = createRng();
-    byte[] seed = random.getSeed();
+    byte[] seed = ((BaseRandom) random).getSeed();
     byte[] seed2 = new byte[Long.BYTES];
     byte[] zero = new byte[Long.BYTES];
     Thread newThread = new Thread() {
       @Override public void run() {
-        System.arraycopy(random.getSeed(), 0, seed2, 0, Long.BYTES);
+        System.arraycopy(((BaseRandom) random).getSeed(), 0, seed2, 0, Long.BYTES);
       }
     };
     newThread.start();

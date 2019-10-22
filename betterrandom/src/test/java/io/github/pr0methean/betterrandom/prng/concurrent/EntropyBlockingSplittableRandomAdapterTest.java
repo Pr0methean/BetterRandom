@@ -27,7 +27,7 @@ public class EntropyBlockingSplittableRandomAdapterTest extends SplittableRandom
     return out;
   }
 
-  @Override protected SplittableRandomAdapter createRng() throws SeedException {
+  @Override protected EntropyBlockingSplittableRandomAdapter createRng() throws SeedException {
     return new EntropyBlockingSplittableRandomAdapter(EntropyBlockingTestUtils.DEFAULT_MAX_ENTROPY,
         getTestSeedGenerator());
   }
