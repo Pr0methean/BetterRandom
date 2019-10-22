@@ -122,7 +122,7 @@ public class EntropyBlockingRandomWrapperAesCounterRandomTest extends RandomWrap
   }
 
   // FIXME: Too slow!
-  @Override @Test(timeOut = 90_000L, retryAnalyzer = FlakyRetryAnalyzer.class)
+  @Override @Test(timeOut = 240_000L, retryAnalyzer = FlakyRetryAnalyzer.class)
   public void testRandomSeederThreadIntegration() {
     super.testRandomSeederThreadIntegration();
   }
