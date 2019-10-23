@@ -14,11 +14,11 @@ import java.util.concurrent.TimeUnit;
 import java8.util.function.Consumer;
 import org.testng.annotations.Test;
 
-public class RandomSeederThreadTest extends SimpleRandomSeederThreadTest {
+public class RandomSeederThreadTest extends SimpleRandomSeederTest {
   @Override @Test public void testConstructors() {
     TestUtils.testConstructors(RandomSeederThread.class, false, ImmutableMap
         .of(SeedGenerator.class, new FakeSeedGenerator("testConstructors"), ThreadFactory.class,
-            new SimpleRandomSeederThread.DefaultThreadFactory("testConstructors"), long.class,
+            new SimpleRandomSeeder.DefaultThreadFactory("testConstructors"), long.class,
             100_000_000L), new Consumer<RandomSeederThread>() {
       @Override public void accept(RandomSeederThread randomSeederThread) {
         randomSeederThread.stopIfEmpty();
@@ -28,7 +28,7 @@ public class RandomSeederThreadTest extends SimpleRandomSeederThreadTest {
 
   @Override protected RandomSeederThread createRandomSeeder(SeedGenerator seedGenerator) {
     return new RandomSeederThread(seedGenerator,
-        new SimpleRandomSeederThread.DefaultThreadFactory("SimpleRandomSeederThreadTest", Thread.MAX_PRIORITY));
+        new SimpleRandomSeeder.DefaultThreadFactory("SimpleRandomSeederThreadTest", Thread.MAX_PRIORITY));
   }
 
   @Test(timeOut = 25_000) public void testAddRemoveAndIsEmpty_Random() {

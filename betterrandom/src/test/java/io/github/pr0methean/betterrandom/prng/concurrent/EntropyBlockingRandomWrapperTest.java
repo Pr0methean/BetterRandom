@@ -18,8 +18,8 @@ import io.github.pr0methean.betterrandom.seed.SecureRandomSeedGenerator;
 import io.github.pr0methean.betterrandom.seed.SeedException;
 import io.github.pr0methean.betterrandom.seed.SeedGenerator;
 import io.github.pr0methean.betterrandom.seed.SemiFakeSeedGenerator;
-import io.github.pr0methean.betterrandom.seed.SimpleRandomSeederThread;
-import io.github.pr0methean.betterrandom.seed.SimpleRandomSeederThread.DefaultThreadFactory;
+import io.github.pr0methean.betterrandom.seed.SimpleRandomSeeder;
+import io.github.pr0methean.betterrandom.seed.SimpleRandomSeeder.DefaultThreadFactory;
 import java.util.Arrays;
 import java.util.Map;
 import java.util.Random;
@@ -136,7 +136,7 @@ public class EntropyBlockingRandomWrapperTest extends RandomWrapperRandomTest {
     SeedGenerator seederSeedGenSpy = Mockito.spy(testSeedGenerator);
     final ThreadFactory defaultThreadFactory
         = new DefaultThreadFactory("testRandomSeederThreadUsedFirst", Thread.MAX_PRIORITY);
-    SimpleRandomSeederThread seeder = new SimpleRandomSeederThread(seederSeedGenSpy,
+    SimpleRandomSeeder seeder = new SimpleRandomSeeder(seederSeedGenSpy,
         defaultThreadFactory);
     SemiFakeSeedGenerator sameThreadSeedGen
         = Mockito.spy(new SemiFakeSeedGenerator(new SplittableRandomAdapter(), "sameThreadSeedGen"));
@@ -175,7 +175,7 @@ public class EntropyBlockingRandomWrapperTest extends RandomWrapperRandomTest {
 
   @Test(timeOut = 20_000L) public void testFallbackFromRandomSeederThread() {
     SeedGenerator failingSeedGen = Mockito.spy(new FailingSeedGenerator());
-    SimpleRandomSeederThread seeder = new SimpleRandomSeederThread(failingSeedGen);
+    SimpleRandomSeeder seeder = new SimpleRandomSeeder(failingSeedGen);
     SeedGenerator sameThreadSeedGen
         = Mockito.spy(new SemiFakeSeedGenerator(new SplittableRandomAdapter()));
     EntropyBlockingRandomWrapper random = new EntropyBlockingRandomWrapper(0L, sameThreadSeedGen);

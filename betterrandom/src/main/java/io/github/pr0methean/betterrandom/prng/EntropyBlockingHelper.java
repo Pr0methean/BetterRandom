@@ -1,7 +1,7 @@
 package io.github.pr0methean.betterrandom.prng;
 
 import io.github.pr0methean.betterrandom.seed.SeedGenerator;
-import io.github.pr0methean.betterrandom.seed.SimpleRandomSeederThread;
+import io.github.pr0methean.betterrandom.seed.SimpleRandomSeeder;
 import java.io.Serializable;
 import java.util.Random;
 import java.util.concurrent.atomic.AtomicLong;
@@ -36,7 +36,7 @@ public class EntropyBlockingHelper implements Serializable {
    * @param minimumEntropy the minimum entropy that must be present at the end of an operation that
    *     consumes entropy. Should generally be zero or negative.
    * @param sameThreadSeedGen a reference that will hold a seed generator that can be used on the
-   *     calling thread when there is no {@link SimpleRandomSeederThread}
+   *     calling thread when there is no {@link SimpleRandomSeeder}
    * @param random the PRNG
    * @param entropyBits the PRNG's entropy counter
    * @param lock the lock to hold while reseeding the PRNG
@@ -52,7 +52,7 @@ public class EntropyBlockingHelper implements Serializable {
   }
 
   /**
-   * Sets a {@link SeedGenerator} to use on the calling thread when no {@link SimpleRandomSeederThread}
+   * Sets a {@link SeedGenerator} to use on the calling thread when no {@link SimpleRandomSeeder}
    * is attached.
    *
    * @param newSeedGen the new {@link SeedGenerator}
@@ -78,7 +78,7 @@ public class EntropyBlockingHelper implements Serializable {
   }
 
   /**
-   * Called when a new seed generator or {@link SimpleRandomSeederThread} is attached or a
+   * Called when a new seed generator or {@link SimpleRandomSeeder} is attached or a
    * new seed is generated, so that operations can unblock.
    *
    * @param reseeded true if the seed has changed; false otherwise
@@ -108,7 +108,7 @@ public class EntropyBlockingHelper implements Serializable {
       SeedGenerator seedGenerator;
       lock.lock();
       try {
-        SimpleRandomSeederThread seeder = random.getRandomSeeder();
+        SimpleRandomSeeder seeder = random.getRandomSeeder();
         if (seeder != null) {
           waitingOnReseed = true;
           seeder.wakeUp();

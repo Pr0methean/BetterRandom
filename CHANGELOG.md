@@ -17,7 +17,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   `ReseedingSplittableRandomAdapter` and `SplittableRandomAdapter` respectively. Entropy count is thread-local, so
   consuming entropy on one thread won't directly cause these to block on another thread.
 - `SecureRandomSeedGenerator(SecureRandom)`: new constructor. This class is no longer a singleton.
-- `SimpleRandomSeederThread`: a more lightweight superclass of `RandomSeederThread` that only deals with instances of
+- `SimpleRandomSeeder`: a more lightweight superclass of `RandomSeederThread` that only deals with instances of
   `ByteArrayReseedableRandom`.
 
 ### Changed

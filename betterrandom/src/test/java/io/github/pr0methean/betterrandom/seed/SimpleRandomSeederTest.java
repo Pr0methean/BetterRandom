@@ -20,30 +20,30 @@ import java.util.concurrent.TimeUnit;
 import java8.util.function.Consumer;
 import org.testng.annotations.Test;
 
-public class SimpleRandomSeederThreadTest {
+public class SimpleRandomSeederTest {
   protected static final long TEST_SEED = 0x0123456789ABCDEFL;
   protected static final int TEST_OUTPUT_SIZE = 20;
 
   @Test public void testConstructors() {
-    TestUtils.testConstructors(SimpleRandomSeederThread.class, false, ImmutableMap
+    TestUtils.testConstructors(SimpleRandomSeeder.class, false, ImmutableMap
         .<Class<?>, Object>of(
             SeedGenerator.class, new FakeSeedGenerator("testConstructors"), ThreadFactory.class,
-            new SimpleRandomSeederThread.DefaultThreadFactory("testConstructors"), long.class,
-            100_000_000L), new Consumer<SimpleRandomSeederThread>() {
-      @Override public void accept(SimpleRandomSeederThread simpleRandomSeederThread) {
-        simpleRandomSeederThread.stopIfEmpty();
+            new SimpleRandomSeeder.DefaultThreadFactory("testConstructors"), long.class,
+            100_000_000L), new Consumer<SimpleRandomSeeder>() {
+      @Override public void accept(SimpleRandomSeeder simpleRandomSeeder) {
+        simpleRandomSeeder.stopIfEmpty();
       }
     });
   }
 
   @Test public void testDefaultThreadFactoryConstructors() {
-    TestUtils.testConstructors(SimpleRandomSeederThread.DefaultThreadFactory.class, false, ImmutableMap
+    TestUtils.testConstructors(SimpleRandomSeeder.DefaultThreadFactory.class, false, ImmutableMap
             .<Class<?>, Object>of(
                 String.class, "testDefaultThreadFactoryConstructors", int.class,
                 Thread.MAX_PRIORITY),
-        new Consumer<SimpleRandomSeederThread.DefaultThreadFactory>() {
+        new Consumer<SimpleRandomSeeder.DefaultThreadFactory>() {
           @Override
-          public void accept(SimpleRandomSeederThread.DefaultThreadFactory x) {
+          public void accept(SimpleRandomSeeder.DefaultThreadFactory x) {
             x.newThread(new Runnable() {
               @Override public void run() {
               }
@@ -62,7 +62,7 @@ public class SimpleRandomSeederThreadTest {
     prng.setSeed(TEST_SEED); // Rewind
     final SeedGenerator seedGenerator = new SemiFakeSeedGenerator(
         new SingleThreadSplittableRandomAdapter(), "testAddRemoveAndIsEmpty");
-    final SimpleRandomSeederThread randomSeeder = createRandomSeeder(seedGenerator);
+    final SimpleRandomSeeder randomSeeder = createRandomSeeder(seedGenerator);
     try {
       assertTrue(randomSeeder.isEmpty());
       randomSeeder.add(prng);
@@ -86,7 +86,7 @@ public class SimpleRandomSeederThreadTest {
       throws InterruptedException {
     final FakeSeedGenerator seedGenerator = new FakeSeedGenerator("testResurrection");
     seedGenerator.setThrowException(true);
-    final SimpleRandomSeederThread randomSeeder = createRandomSeeder(seedGenerator);
+    final SimpleRandomSeeder randomSeeder = createRandomSeeder(seedGenerator);
     try {
       Pcg64Random random = new Pcg64Random();
       randomSeeder.add(random);
@@ -116,7 +116,7 @@ public class SimpleRandomSeederThreadTest {
   public void testStopIfEmpty() throws InterruptedException {
     // FIXME: When the commented lines are uncommented, the ref never gets queued!
     final SeedGenerator seedGenerator = new FakeSeedGenerator("testStopIfEmpty");
-    final SimpleRandomSeederThread randomSeeder = createRandomSeeder(seedGenerator);
+    final SimpleRandomSeeder randomSeeder = createRandomSeeder(seedGenerator);
     // ReferenceQueue<Object> queue = new ReferenceQueue<>();
     GcFinalization.awaitClear(addSomethingDeadTo(randomSeeder));
     Thread.sleep(1000); // FIXME: Why is this needed?
@@ -125,16 +125,16 @@ public class SimpleRandomSeederThreadTest {
     assertFalse(randomSeeder.isRunning(), "randomSeeder did not stop");
   }
 
-  protected SimpleRandomSeederThread createRandomSeeder(SeedGenerator seedGenerator) {
-    return new SimpleRandomSeederThread(seedGenerator,
-        new SimpleRandomSeederThread.DefaultThreadFactory("SimpleRandomSeederThreadTest", Thread.MAX_PRIORITY));
+  protected SimpleRandomSeeder createRandomSeeder(SeedGenerator seedGenerator) {
+    return new SimpleRandomSeeder(seedGenerator,
+        new SimpleRandomSeeder.DefaultThreadFactory("SimpleRandomSeederThreadTest", Thread.MAX_PRIORITY));
   }
 
   /**
    * Making this a subroutine ensures that {@code prng} can be GCed on exit.
    */
   private WeakReference<? extends ByteArrayReseedableRandom>
-      addSomethingDeadTo(SimpleRandomSeederThread randomSeeder) {
+      addSomethingDeadTo(SimpleRandomSeeder randomSeeder) {
     SingleThreadSplittableRandomAdapter prng = new SingleThreadSplittableRandomAdapter();
     // new PhantomReference<Object>(prng, queue);
     randomSeeder.add(prng);

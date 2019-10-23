@@ -6,7 +6,7 @@ import static io.github.pr0methean.betterrandom.util.Java8Constants.LONG_BYTES;
 import com.google.common.base.MoreObjects.ToStringHelper;
 import io.github.pr0methean.betterrandom.prng.BaseRandom;
 import io.github.pr0methean.betterrandom.seed.SeedGenerator;
-import io.github.pr0methean.betterrandom.seed.SimpleRandomSeederThread;
+import io.github.pr0methean.betterrandom.seed.SimpleRandomSeeder;
 import io.github.pr0methean.betterrandom.util.SerializableSupplier;
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -91,7 +91,7 @@ public class ThreadLocalRandomWrapper extends RandomWrapper {
     };
   }
 
-  @Nullable @Override public SimpleRandomSeederThread getRandomSeeder() {
+  @Nullable @Override public SimpleRandomSeeder getRandomSeeder() {
     return null;
   }
 
@@ -101,7 +101,7 @@ public class ThreadLocalRandomWrapper extends RandomWrapper {
    * @param randomSeeder ignored.
    * @throws UnsupportedOperationException always.
    */
-  @Override public void setRandomSeeder(@Nullable final SimpleRandomSeederThread randomSeeder) {
+  @Override public void setRandomSeeder(@Nullable final SimpleRandomSeeder randomSeeder) {
     if (randomSeeder != null) {
       throw new UnsupportedOperationException("This can't be reseeded by a RandomSeederThread");
     }

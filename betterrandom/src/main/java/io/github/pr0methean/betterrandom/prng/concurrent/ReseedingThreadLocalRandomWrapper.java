@@ -4,7 +4,7 @@ import io.github.pr0methean.betterrandom.prng.BaseRandom;
 import io.github.pr0methean.betterrandom.seed.RandomSeederThread;
 import io.github.pr0methean.betterrandom.seed.SeedException;
 import io.github.pr0methean.betterrandom.seed.SeedGenerator;
-import io.github.pr0methean.betterrandom.seed.SimpleRandomSeederThread;
+import io.github.pr0methean.betterrandom.seed.SimpleRandomSeeder;
 import io.github.pr0methean.betterrandom.util.Java8Constants;
 import io.github.pr0methean.betterrandom.util.SerializableFunction;
 import io.github.pr0methean.betterrandom.util.SerializableSupplier;
@@ -47,7 +47,7 @@ public class ReseedingThreadLocalRandomWrapper extends ThreadLocalRandomWrapper 
    *     necessary
    */
   public ReseedingThreadLocalRandomWrapper(final Supplier<? extends BaseRandom> initializer,
-      final SimpleRandomSeederThread randomSeederThread) {
+      final SimpleRandomSeeder randomSeederThread) {
     super(new SerializableSupplier<BaseRandom>() {
       @Override public BaseRandom get() {
         final BaseRandom out = initializer.get();
@@ -91,7 +91,7 @@ public class ReseedingThreadLocalRandomWrapper extends ThreadLocalRandomWrapper 
    * @throws SeedException if {@code seedGenerator} fails to generate an initial seed
    */
   public ReseedingThreadLocalRandomWrapper(final int seedSize,
-      final SimpleRandomSeederThread randomSeederThread,
+      final SimpleRandomSeeder randomSeederThread,
       final Function<byte[], ? extends BaseRandom> creator, SeedGenerator seedGenerator)
       throws SeedException {
     super(seedSize, seedGenerator, new SerializableFunction<byte[], BaseRandom>() {
@@ -119,14 +119,14 @@ public class ReseedingThreadLocalRandomWrapper extends ThreadLocalRandomWrapper 
         wrapLongCreatorAsByteArrayCreator(legacyCreator));
   }
 
-  @Override public void setRandomSeeder(final SimpleRandomSeederThread randomSeeder) {
+  @Override public void setRandomSeeder(final SimpleRandomSeeder randomSeeder) {
     if (this.randomSeeder.get() != randomSeeder) {
       throw new UnsupportedOperationException(
           "ReseedingThreadLocalRandomWrapper's binding to RandomSeederThread is immutable");
     }
   }
 
-  @Override public SimpleRandomSeederThread getRandomSeeder() {
+  @Override public SimpleRandomSeeder getRandomSeeder() {
     return randomSeeder.get();
   }
 }

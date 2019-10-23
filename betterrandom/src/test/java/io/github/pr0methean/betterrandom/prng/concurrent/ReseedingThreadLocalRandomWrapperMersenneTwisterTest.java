@@ -11,8 +11,7 @@ import io.github.pr0methean.betterrandom.seed.SecureRandomSeedGenerator;
 import io.github.pr0methean.betterrandom.seed.SeedException;
 import io.github.pr0methean.betterrandom.seed.SeedGenerator;
 import io.github.pr0methean.betterrandom.seed.SemiFakeSeedGenerator;
-import io.github.pr0methean.betterrandom.seed.SimpleRandomSeederThread;
-import java.io.Serializable;
+import io.github.pr0methean.betterrandom.seed.SimpleRandomSeeder;
 import java.util.Random;
 import java8.util.function.LongFunction;
 import org.testng.annotations.Test;
@@ -91,7 +90,7 @@ public class ReseedingThreadLocalRandomWrapperMersenneTwisterTest
   }
 
   @Override @Test public void testSetSeedGeneratorNoOp() {
-    SimpleRandomSeederThread randomSeeder = new RandomSeederThread(getTestSeedGenerator());
+    SimpleRandomSeeder randomSeeder = new RandomSeederThread(getTestSeedGenerator());
     ReseedingThreadLocalRandomWrapper prng =
         new ReseedingThreadLocalRandomWrapper(mtSupplier, randomSeeder);
     prng.setRandomSeeder(randomSeeder);
