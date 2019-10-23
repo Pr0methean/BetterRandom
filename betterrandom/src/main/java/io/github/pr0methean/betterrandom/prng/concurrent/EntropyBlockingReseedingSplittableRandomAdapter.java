@@ -2,6 +2,7 @@ package io.github.pr0methean.betterrandom.prng.concurrent;
 
 import static io.github.pr0methean.betterrandom.util.BinaryUtils.convertBytesToLong;
 
+import io.github.pr0methean.betterrandom.prng.BaseRandom;
 import io.github.pr0methean.betterrandom.seed.SeedGenerator;
 import io.github.pr0methean.betterrandom.seed.SimpleRandomSeederThread;
 import java.util.SplittableRandom;
@@ -47,21 +48,18 @@ public class EntropyBlockingReseedingSplittableRandomAdapter extends ReseedingSp
     super(seedGenerator, randomSeeder);
     this.minimumEntropy = minimumEntropy;
     this.sameThreadSeedGen = new AtomicReference<>(seedGenerator);
-    initSubclassTransientFields();
     if (minimumEntropy > 0) {
       throw new IllegalArgumentException("Need to be able to output 64 bits at once");
     }
   }
 
-  private void initSubclassTransientFields() {
-    threadLocal = ThreadLocal.withInitial(() -> {
-      EntropyBlockingRandomWrapper threadAdapter =
-          new EntropyBlockingRandomWrapper(
-              new SingleThreadSplittableRandomAdapter(sameThreadSeedGen.get()),
-              minimumEntropy, sameThreadSeedGen.get());
-      threadAdapter.setRandomSeeder(this.randomSeeder.get());
-      return threadAdapter;
-    });
+  @Override protected BaseRandom createDelegate() {
+    EntropyBlockingRandomWrapper threadAdapter =
+        new EntropyBlockingRandomWrapper(
+            new SingleThreadSplittableRandomAdapter(sameThreadSeedGen.get()),
+            minimumEntropy, sameThreadSeedGen.get());
+    threadAdapter.setRandomSeeder(this.randomSeeder.get());
+    return threadAdapter;
   }
 
   /**
