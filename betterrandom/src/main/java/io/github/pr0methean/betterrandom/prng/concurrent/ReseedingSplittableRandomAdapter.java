@@ -38,11 +38,7 @@ public class ReseedingSplittableRandomAdapter extends BaseSplittableRandomAdapte
     super(seedGenerator.generateSeed(Long.BYTES));
     this.seedGenerator = seedGenerator;
     this.randomSeeder.set(randomSeeder);
-    threadLocal = createThreadLocal();
-  }
-
-  protected ThreadLocal<BaseRandom> createThreadLocal() {
-    return ThreadLocal.withInitial(this::createDelegate);
+    threadLocal = ThreadLocal.withInitial(this::createDelegate);
   }
 
   /**
