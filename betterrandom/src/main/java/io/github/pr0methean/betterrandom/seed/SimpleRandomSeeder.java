@@ -19,6 +19,8 @@ import java.util.WeakHashMap;
 import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.Condition;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Thread that loops over {@link ByteArrayReseedableRandom} instances and reseeds them. No {@link
@@ -194,7 +196,7 @@ public class SimpleRandomSeeder extends LooperThread {
    * @return the logger for this class
    */
   private static Logger getLogger() {
-    return LoggerFactory.getLogger(SimpleRandomSeederThread.class);
+    return LoggerFactory.getLogger(SimpleRandomSeeder.class);
   }
 
   @Override public boolean equals(Object o) {
@@ -273,7 +275,7 @@ public class SimpleRandomSeeder extends LooperThread {
         if (random.preferSeedWithLong()) {
           reseedWithLong((Random) random);
         } else {
-          byte[] seedArray = SimpleRandomSeederThread.SEED_ARRAYS
+          byte[] seedArray = SimpleRandomSeeder.SEED_ARRAYS
               .computeIfAbsent(random, random_ -> new byte[random_.getNewSeedLength()]);
           seedGenerator.generateSeed(seedArray);
           random.setSeed(seedArray);

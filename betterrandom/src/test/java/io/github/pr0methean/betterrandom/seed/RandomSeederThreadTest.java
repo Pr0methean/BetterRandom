@@ -18,7 +18,7 @@ public class RandomSeederThreadTest extends SimpleRandomSeederTest {
     TestUtils.testConstructors(RandomSeederThread.class, false, ImmutableMap
         .of(SeedGenerator.class, new FakeSeedGenerator("testConstructors"), ThreadFactory.class,
             new SimpleRandomSeeder.DefaultThreadFactory("testConstructors"), long.class,
-            100_000_000L), SimpleRandomSeederThread::stopIfEmpty);
+            100_000_000L), SimpleRandomSeeder::stopIfEmpty);
   }
 
   @Override protected RandomSeederThread createRandomSeeder(SeedGenerator seedGenerator) {

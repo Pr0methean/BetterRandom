@@ -7,6 +7,7 @@ import java.util.Random;
 import java.util.Set;
 import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.TimeUnit;
+import org.slf4j.LoggerFactory;
 
 /**
  * A {@link SimpleRandomSeeder} that can reseed any instance of {@link Random}.
