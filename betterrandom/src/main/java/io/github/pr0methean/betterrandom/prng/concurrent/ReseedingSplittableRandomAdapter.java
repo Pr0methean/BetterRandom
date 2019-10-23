@@ -27,7 +27,7 @@ public class ReseedingSplittableRandomAdapter extends BaseSplittableRandomAdapte
       .synchronizedMap(new WeakHashMap<SimpleRandomSeederThread, ReseedingSplittableRandomAdapter>(1));
   private final SeedGenerator seedGenerator;
   @SuppressWarnings({"ThreadLocalNotStaticFinal", "TransientFieldNotInitialized"})
-  protected transient ThreadLocal<BaseRandom> threadLocal;
+  protected transient ThreadLocal<? extends BaseRandom> threadLocal;
 
   /**
    * Single instance per SeedGenerator.
@@ -42,7 +42,7 @@ public class ReseedingSplittableRandomAdapter extends BaseSplittableRandomAdapte
     threadLocal = createThreadLocal();
   }
 
-  protected ThreadLocal<BaseRandom> createThreadLocal() {
+  protected ThreadLocal<? extends BaseRandom> createThreadLocal() {
     return new ThreadLocal<SingleThreadSplittableRandomAdapter>() {
       @Override protected SingleThreadSplittableRandomAdapter initialValue() {
         SingleThreadSplittableRandomAdapter threadAdapter =

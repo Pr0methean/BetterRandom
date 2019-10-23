@@ -1,8 +1,8 @@
 package io.github.pr0methean.betterrandom.prng.concurrent;
 
 import static io.github.pr0methean.betterrandom.util.BinaryUtils.convertBytesToLong;
+import static io.github.pr0methean.betterrandom.util.Java8Constants.LONG_BYTES;
 
-import io.github.pr0methean.betterrandom.prng.BaseRandom;
 import io.github.pr0methean.betterrandom.seed.SeedGenerator;
 import io.github.pr0methean.betterrandom.seed.SimpleRandomSeederThread;
 import java.util.concurrent.atomic.AtomicReference;
@@ -30,8 +30,8 @@ public class EntropyBlockingReseedingSplittableRandomAdapter extends ReseedingSp
   }
 
   private void initSubclassTransientFields() {
-    threadLocal = new ThreadLocal<>() {
-      @Override protected BaseRandom initialValue() {
+    threadLocal = new ThreadLocal<EntropyBlockingRandomWrapper>() {
+      @Override protected EntropyBlockingRandomWrapper initialValue() {
         EntropyBlockingRandomWrapper threadAdapter =
             new EntropyBlockingRandomWrapper(
                 new SingleThreadSplittableRandomAdapter(sameThreadSeedGen.get()),
@@ -47,7 +47,7 @@ public class EntropyBlockingReseedingSplittableRandomAdapter extends ReseedingSp
    * {@inheritDoc} Applies only to the calling thread.
    */
   @Override public void setSeed(final byte[] seed) {
-    checkLength(seed, Long.BYTES);
+    checkLength(seed, LONG_BYTES);
     setSeed(convertBytesToLong(seed));
   }
 

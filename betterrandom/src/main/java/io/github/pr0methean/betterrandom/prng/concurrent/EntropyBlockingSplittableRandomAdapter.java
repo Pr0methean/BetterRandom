@@ -40,7 +40,7 @@ public class EntropyBlockingSplittableRandomAdapter extends SplittableRandomAdap
   }
 
   private void initSubclassTransientFields() {
-    helpers = new ThreadLocal<>() {
+    helpers = new ThreadLocal<EntropyBlockingHelper>() {
       @Override public EntropyBlockingHelper initialValue() {
         ThreadLocalFields threadLocalFields =
             EntropyBlockingSplittableRandomAdapter.this.threadLocalFields.get();
