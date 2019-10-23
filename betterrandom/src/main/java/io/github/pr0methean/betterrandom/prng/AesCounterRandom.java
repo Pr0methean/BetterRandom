@@ -55,7 +55,7 @@ public class AesCounterRandom extends CipherCounterRandom {
   @SuppressWarnings("HardcodedFileSeparator") private static final String ALGORITHM_MODE =
       ALGORITHM + "/ECB/NoPadding";
   // WARNING: Don't initialize any instance fields at declaration; they may be initialized too late!
-  @SuppressWarnings("InstanceVariableMayNotBeInitializedByReadObject") protected transient Cipher
+  protected transient Cipher
       cipher;
 
   @Override public int getBlocksAtOnce() {

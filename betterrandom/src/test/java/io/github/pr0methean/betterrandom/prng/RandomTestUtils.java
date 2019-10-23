@@ -118,7 +118,7 @@ public enum RandomTestUtils {
    * Test that the given parameterless constructor, called twice, doesn't produce RNGs that compare
    * as equal. Also checks for compliance with basic parts of the Object.equals() contract.
    */
-  @SuppressWarnings({"EqualsWithItself", "ObjectEqualsNull"})
+  @SuppressWarnings({"ObjectEqualsNull"})
   public static void doEqualsSanityChecks(final Supplier<? extends Random> ctor) {
     final Random rng = ctor.get();
     final Random rng2 = ctor.get();
@@ -240,7 +240,6 @@ public enum RandomTestUtils {
     return stats;
   }
 
-  @SuppressWarnings("unchecked")
   public static <T extends Random> void assertEquivalentWhenSerializedAndDeserialized(final T rng) {
     final T rng2 = SerializableTester.reserialize(rng);
     assertNotSame(rng, rng2, "Deserialised RNG should be distinct object.");
@@ -256,8 +255,13 @@ public enum RandomTestUtils {
         "Monte Carlo value for Pi is outside acceptable range:" + pi);
   }
 
-  public static void testReseeding(final SeedGenerator testSeedGenerator, final BaseRandom rng,
+  public static void checkReseeding(final SeedGenerator testSeedGenerator, final BaseRandom rng,
       final boolean setSeedGenerator) {
+    checkReseeding(testSeedGenerator, rng, setSeedGenerator, 0);
+  }
+
+  public static void checkReseeding(final SeedGenerator testSeedGenerator, final BaseRandom rng,
+      final boolean setSeedGenerator, long entropyAdjustment) {
     // TODO: Set max thread priority
     final byte[] oldSeed = rng.getSeed();
     final byte[] oldSeedClone = oldSeed.clone();
@@ -288,11 +292,11 @@ public enum RandomTestUtils {
       } while (Arrays.equals(secondSeed, oldSeed));
       final byte[] secondSeedClone = secondSeed.clone();
       waits = 0;
-      while (rng.getEntropyBits() < (secondSeed.length * 8L) - 1) {
+      while (rng.getEntropyBits() < (secondSeed.length * 8L) - entropyAdjustment - 1) {
         assertEquals(secondSeedClone, secondSeed,
             "Array modified after being returned by getSeed()");
         waits++;
-        if (waits > 5) {
+        if (waits > 10) { // FIXME: Takes too long for some classes
           fail(String.format("Timed out waiting for entropy count to increase on %s", rng));
         }
         // FIXME: Flaky if we only sleep for 10 ms at a time

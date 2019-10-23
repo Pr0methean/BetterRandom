@@ -64,7 +64,7 @@ public class ReseedingThreadLocalRandomWrapperFailingSeedGeneratorTest
   }
 
   @Override public void testInitialEntropy() {
-    int seedSize = getNewSeedLength(createRng());
+    int seedSize = getNewSeedLength();
     byte[] seed = new byte[seedSize];
     assertEquals(createRng(seed).getEntropyBits(), 8 * seedSize, "Wrong initial entropy");
   }

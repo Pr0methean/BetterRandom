@@ -61,7 +61,7 @@ import org.testng.annotations.Test;
    * calls that can interleave with calls from other threads.
    */
   @Override public void testThreadSafety() {
-    testThreadSafety(ImmutableList.of(NEXT_INT),
+    checkThreadSafety(ImmutableList.of(NEXT_INT),
         Collections.<NamedFunction<Random, Double>>emptyList());
     testThreadSafetyVsCrashesOnly(30,
         ImmutableList.of(NEXT_LONG, NEXT_INT, NEXT_DOUBLE, NEXT_GAUSSIAN, SET_WRAPPED));
@@ -70,11 +70,7 @@ import org.testng.annotations.Test;
   @Override public void testSetSeedLong() throws SeedException {
     final BaseRandom rng = createRng();
     final BaseRandom rng2 = createRng();
-    rng.nextLong(); // ensure they won't both be in initial state before reseeding
-    rng.setSeed(0x0123456789ABCDEFL);
-    rng2.setSeed(0x0123456789ABCDEFL);
-    RandomTestUtils
-        .assertEquivalent(rng, rng2, 20, "Output mismatch after reseeding with same seed");
+    checkSetSeedLong(rng, rng2);
   }
 
   /**

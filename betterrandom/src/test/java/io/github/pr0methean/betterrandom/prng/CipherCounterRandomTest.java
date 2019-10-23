@@ -32,7 +32,7 @@ public abstract class CipherCounterRandomTest extends SeekableRandomTest {
     seedSizeBytes = seedSize;
   }
 
-  @Override protected int getNewSeedLength(final BaseRandom basePrng) {
+  @Override protected int getNewSeedLength() {
     return seedSizeBytes;
   }
 
@@ -98,7 +98,7 @@ public abstract class CipherCounterRandomTest extends SeekableRandomTest {
   }
 
   @Override public void testInitialEntropy() {
-    int seedSize = getNewSeedLength(createRng());
+    int seedSize = getNewSeedLength();
     byte[] seed = getTestSeedGenerator().generateSeed(seedSize);
     BaseRandom random = createRng(seed);
     long entropy = random.getEntropyBits();

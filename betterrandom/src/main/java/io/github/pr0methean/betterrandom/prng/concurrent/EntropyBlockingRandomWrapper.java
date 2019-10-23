@@ -1,12 +1,12 @@
 package io.github.pr0methean.betterrandom.prng.concurrent;
 
+import io.github.pr0methean.betterrandom.prng.EntropyBlockingHelper;
 import io.github.pr0methean.betterrandom.seed.RandomSeederThread;
 import io.github.pr0methean.betterrandom.seed.SeedException;
 import io.github.pr0methean.betterrandom.seed.SeedGenerator;
 import io.github.pr0methean.betterrandom.seed.SimpleRandomSeederThread;
 import java.util.Random;
 import java.util.concurrent.atomic.AtomicReference;
-import java.util.concurrent.locks.Condition;
 import javax.annotation.Nullable;
 
 /**
@@ -19,49 +19,49 @@ import javax.annotation.Nullable;
 public class EntropyBlockingRandomWrapper extends RandomWrapper {
 
   private static final long serialVersionUID = -853699062122154479L;
-  private final long minimumEntropy;
-  private final Condition seedingStatusChanged = lock.newCondition();
-
-  /** Used on the calling thread when there isn't a working RandomSeederThread. */
+  private final EntropyBlockingHelper helper;
   private final AtomicReference<SeedGenerator> sameThreadSeedGen;
-  @SuppressWarnings("TransientFieldNotInitialized") private transient volatile boolean waitingOnReseed = false;
 
   public EntropyBlockingRandomWrapper(long minimumEntropy, SeedGenerator seedGenerator)
       throws SeedException {
     super(seedGenerator);
     sameThreadSeedGen = new AtomicReference<>(seedGenerator);
-    this.minimumEntropy = minimumEntropy;
-    checkMaxOutputAtOnce();
+    helper = new EntropyBlockingHelper(minimumEntropy, sameThreadSeedGen, this, this.entropyBits,
+        lock);
+    helper.checkMaxOutputAtOnce();
   }
 
   public EntropyBlockingRandomWrapper(byte[] seed, long minimumEntropy,
       @Nullable SeedGenerator sameThreadSeedGen) {
     super(seed);
-    this.minimumEntropy = minimumEntropy;
     this.sameThreadSeedGen = new AtomicReference<>(sameThreadSeedGen);
-    checkMaxOutputAtOnce();
+    helper = new EntropyBlockingHelper(minimumEntropy, this.sameThreadSeedGen, this,
+        this.entropyBits, lock);
+    helper.checkMaxOutputAtOnce();
   }
 
   public EntropyBlockingRandomWrapper(long seed, long minimumEntropy,
       @Nullable SeedGenerator sameThreadSeedGen) {
     super(seed);
-    this.minimumEntropy = minimumEntropy;
     this.sameThreadSeedGen = new AtomicReference<>(sameThreadSeedGen);
-    checkMaxOutputAtOnce();
+    helper = new EntropyBlockingHelper(minimumEntropy, this.sameThreadSeedGen, this,
+        this.entropyBits, lock);
+    helper.checkMaxOutputAtOnce();
   }
 
   public EntropyBlockingRandomWrapper(Random wrapped, long minimumEntropy,
       @Nullable SeedGenerator sameThreadSeedGen) {
     super(wrapped);
-    this.minimumEntropy = minimumEntropy;
     this.sameThreadSeedGen = new AtomicReference<>(sameThreadSeedGen);
-    checkMaxOutputAtOnce();
+    helper = new EntropyBlockingHelper(minimumEntropy, this.sameThreadSeedGen, this,
+        this.entropyBits, lock);
+    helper.checkMaxOutputAtOnce();
   }
 
-  private void checkMaxOutputAtOnce() {
-    long maxOutputAtOnce = 8 * entropyBits.get() - minimumEntropy;
-    if (maxOutputAtOnce < Long.SIZE) {
-      throw new IllegalArgumentException("Need to be able to output 64 bits at once");
+  @Override public void nextBytes(byte[] bytes) {
+    for (int i = 0; i < bytes.length; i++) {
+      debitEntropy(Byte.SIZE);
+      bytes[i] = (byte) (nextInt(1 << Byte.SIZE));
     }
   }
 
@@ -70,85 +70,46 @@ public class EntropyBlockingRandomWrapper extends RandomWrapper {
   }
 
   public void setSameThreadSeedGen(@Nullable SeedGenerator newSeedGen) {
-    if (sameThreadSeedGen.getAndSet(newSeedGen) != newSeedGen) {
-      onSeedingStateChanged();
-    }
-  }
-
-  private void onSeedingStateChanged() {
-    lock.lock();
-    try {
-      if (seedingStatusChanged != null) {
-        seedingStatusChanged.signalAll();
-      }
-    } finally {
-      lock.unlock();
-    }
+    helper.setSameThreadSeedGen(newSeedGen);
   }
 
   @Override protected void setSeedInternal(byte[] seed) {
-    waitingOnReseed = false;
     super.setSeedInternal(seed);
-    onSeedingStateChanged();
+    if (helper != null) {
+      helper.onSeedingStateChanged(true);
+    }
   }
 
   @Override public void setRandomSeeder(@Nullable SimpleRandomSeederThread randomSeeder) {
     super.setRandomSeeder(randomSeeder);
-    onSeedingStateChanged();
+    helper.onSeedingStateChanged(false);
   }
 
-  @Override protected void debitEntropy(long bits) {
-    while (entropyBits.addAndGet(-bits) < minimumEntropy) {
-      SeedGenerator seedGenerator;
-      lock.lock();
-      try {
-        SimpleRandomSeederThread seeder = randomSeeder.get();
-        if (seeder != null) {
-          waitingOnReseed = true;
-          seeder.reseedAsync(this);
-          seedingStatusChanged.await();
-          continue;
-        }
-        seedGenerator = sameThreadSeedGen.get();
-      } catch (InterruptedException e) {
-        Thread.currentThread().interrupt();
-        throw new RuntimeException(e);
-      } finally {
-        lock.unlock();
-      }
-      if (seedGenerator == null) {
-        throw new IllegalStateException("Out of entropy and no way to reseed");
-      } else {
-        // Reseed on calling thread
-        int newSeedLength = getNewSeedLength();
-        byte[] newSeed;
-        if (seed.length == newSeedLength) {
-          newSeed = seed;
-        } else {
-          newSeed = new byte[newSeedLength];
-        }
-        seedGenerator.generateSeed(newSeed);
-        setSeed(newSeed);
-      }
+  @Override protected void creditEntropyForNewSeed(int seedLength) {
+    if (helper != null) {
+      helper.creditEntropyForNewSeed(seedLength);
     }
   }
 
+  @Override protected void debitEntropy(long bits) {
+    helper.debitEntropy(bits);
+  }
+
   @Override public void setSeed(long seed) {
-    if (lock == null) {
+    if (helper == null) {
       super.setSeed(seed);
       return;
     }
     lock.lock();
     try {
-      waitingOnReseed = false;
       super.setSeed(seed);
-      seedingStatusChanged.signalAll();
+      helper.onSeedingStateChanged(true);
     } finally {
       lock.unlock();
     }
   }
 
   @Override public boolean needsReseedingEarly() {
-    return waitingOnReseed;
+    return helper.isWaitingOnReseed();
   }
 }

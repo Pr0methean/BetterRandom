@@ -1,13 +1,10 @@
 package io.github.pr0methean.betterrandom.seed;
 
 import io.github.pr0methean.betterrandom.ByteArrayReseedableRandom;
-import io.github.pr0methean.betterrandom.prng.BaseRandom;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.Random;
 import java.util.Set;
-import java.util.WeakHashMap;
 import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.TimeUnit;
 
@@ -22,8 +19,8 @@ public final class RandomSeederThread extends SimpleRandomSeederThread {
 
   @Override protected void initTransientFields() {
     super.initTransientFields();
-    otherPrngs = Collections.newSetFromMap(Collections.synchronizedMap(new WeakHashMap<Random, Boolean>(1)));
-    otherPrngsThisIteration = Collections.newSetFromMap(new WeakHashMap<Random, Boolean>(1));
+    otherPrngs = createSynchronizedHashSet();
+    otherPrngsThisIteration = createSynchronizedHashSet();
   }
 
   @Override public void remove(Collection<? extends Random> randoms) {
@@ -39,15 +36,6 @@ public final class RandomSeederThread extends SimpleRandomSeederThread {
     } finally {
       lock.unlock();
     }
-  }
-
-  public void reseedAsync(Random random) {
-    if (random instanceof ByteArrayReseedableRandom) {
-      byteArrayPrngsThisIteration.add((ByteArrayReseedableRandom) random);
-    } else {
-      otherPrngsThisIteration.add(random);
-    }
-    wakeUp();
   }
 
   /**
@@ -141,42 +129,22 @@ public final class RandomSeederThread extends SimpleRandomSeederThread {
     }
   }
 
-  /**
-   * Shut down this thread even if {@link Random} instances are registered with it.
-   */
-  public void shutDown() {
-    interrupt();
-    clear();
-  }
-
-  private void clear() {
+  @Override public boolean isEmpty() {
     lock.lock();
     try {
-      unregisterWithAll(byteArrayPrngs);
-      byteArrayPrngs.clear();
-      byteArrayPrngsThisIteration.clear();
-      unregisterWithAll(otherPrngs);
-      otherPrngs.clear();
-      otherPrngsThisIteration.clear();
+      return super.isEmpty() && otherPrngs.isEmpty();
     } finally {
       lock.unlock();
     }
   }
 
-  private void unregisterWithAll(Set<?> randoms) {
-    for (final Object random : randoms) {
-      if (random instanceof BaseRandom) {
-        try {
-          ((BaseRandom) random).setRandomSeeder(null);
-        } catch (UnsupportedOperationException ignored) {}
-      }
-    }
-  }
-
-  @Override public boolean isEmpty() {
+  @Override protected void clear() {
     lock.lock();
     try {
-      return super.isEmpty() && otherPrngs.isEmpty();
+      super.clear();
+      unregisterWithAll(otherPrngs);
+      otherPrngs.clear();
+      otherPrngsThisIteration.clear();
     } finally {
       lock.unlock();
     }

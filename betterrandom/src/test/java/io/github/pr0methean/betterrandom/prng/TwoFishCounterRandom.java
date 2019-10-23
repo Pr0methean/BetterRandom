@@ -20,8 +20,7 @@ public class TwoFishCounterRandom extends CipherCounterRandom {
   @SuppressWarnings("CanBeFinal") private static int MAX_KEY_LENGTH_BYTES = LARGE_KEY_LENGTH;
 
   // WARNING: Don't initialize any instance fields at declaration; they may be initialized too late!
-  @SuppressWarnings(
-      "InstanceVariableMayNotBeInitializedByReadObject") private transient TwofishEngine cipher;
+  private transient TwofishEngine cipher;
 
   public TwoFishCounterRandom(byte[] seed) {
     super(seed);

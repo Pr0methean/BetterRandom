@@ -86,8 +86,7 @@ public abstract class BaseRandom extends Random
    * false if the subclass does not support 8-byte seeds, or it overriddes setSeed(long) to use
    * subclass fields.
    */
-  @SuppressWarnings({"InstanceVariableMayNotBeInitializedByReadObject",
-      "FieldAccessedSynchronizedAndUnsynchronized"}) protected transient boolean
+  @SuppressWarnings({"InstanceVariableMayNotBeInitializedByReadObject"}) protected transient boolean
       superConstructorFinished = false;
 
   /**
@@ -329,7 +328,7 @@ public abstract class BaseRandom extends Random
     return out;
   }
 
-  @SuppressWarnings("unchecked") private <T extends BaseStream<?, T>> T maybeParallel(final T in) {
+  private <T extends BaseStream<?, T>> T maybeParallel(final T in) {
     return usesParallelStreams() ? in.parallel() : in;
   }
 
@@ -471,7 +470,7 @@ public abstract class BaseRandom extends Random
    *     but shall not debit the entropy count.
    * @return a random number that is normally distributed with mean 0 and standard deviation 1.
    */
-  @SuppressWarnings("LocalVariableHidesMemberVariable") protected double internalNextGaussian(
+  protected double internalNextGaussian(
       final DoubleSupplier nextDouble) {
     // See Knuth, ACP, Section 3.4.1 Algorithm C.
     final double firstTryOut = Double.longBitsToDouble(nextNextGaussian.getAndSet(NAN_LONG_BITS));
@@ -886,7 +885,7 @@ public abstract class BaseRandom extends Random
   /**
    * Do not attempt to deserialize any subclass that wasn't a subclass when serialized.
    */
-  @SuppressWarnings("OverriddenMethodCallDuringObjectConstruction") private void readObjectNoData()
+  private void readObjectNoData()
       throws InvalidObjectException {
     throw new InvalidObjectException(
         "This subclass can't be deserialized, because it wasn't a subclass at serialization time");

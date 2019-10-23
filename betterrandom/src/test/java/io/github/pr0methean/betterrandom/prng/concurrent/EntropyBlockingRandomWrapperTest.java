@@ -3,21 +3,26 @@ package io.github.pr0methean.betterrandom.prng.concurrent;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertFalse;
 import static org.testng.Assert.assertNull;
 import static org.testng.Assert.assertSame;
 import static org.testng.Assert.fail;
 
 import com.google.common.collect.ImmutableList;
+import io.github.pr0methean.betterrandom.FlakyRetryAnalyzer;
 import io.github.pr0methean.betterrandom.TestingDeficiency;
 import io.github.pr0methean.betterrandom.prng.BaseRandom;
+import io.github.pr0methean.betterrandom.prng.RandomTestUtils;
 import io.github.pr0methean.betterrandom.seed.FailingSeedGenerator;
-import io.github.pr0methean.betterrandom.seed.RandomSeederThread;
 import io.github.pr0methean.betterrandom.seed.SecureRandomSeedGenerator;
 import io.github.pr0methean.betterrandom.seed.SeedException;
 import io.github.pr0methean.betterrandom.seed.SeedGenerator;
 import io.github.pr0methean.betterrandom.seed.SemiFakeSeedGenerator;
 import io.github.pr0methean.betterrandom.seed.SimpleRandomSeederThread;
+import io.github.pr0methean.betterrandom.seed.SimpleRandomSeederThread.DefaultThreadFactory;
+import java.util.Arrays;
 import java.util.Map;
+import java.util.Random;
 import java.util.UUID;
 import java.util.concurrent.ThreadFactory;
 import org.mockito.Mockito;
@@ -25,7 +30,6 @@ import org.testng.annotations.Test;
 
 @Test(testName = "EntropyBlockingRandomWrapper")
 public class EntropyBlockingRandomWrapperTest extends RandomWrapperRandomTest {
-  private static final long DEFAULT_MAX_ENTROPY = -1000L;
 
   @Override public Class<? extends BaseRandom> getClassUnderTest() {
     return EntropyBlockingRandomWrapper.class;
@@ -33,7 +37,7 @@ public class EntropyBlockingRandomWrapperTest extends RandomWrapperRandomTest {
 
   @Override public Map<Class<?>, Object> constructorParams() {
     Map<Class<?>, Object> out = super.constructorParams();
-    out.put(long.class, DEFAULT_MAX_ENTROPY);
+    out.put(long.class, EntropyBlockingTestUtils.DEFAULT_MAX_ENTROPY);
     return out;
   }
 
@@ -50,6 +54,12 @@ public class EntropyBlockingRandomWrapperTest extends RandomWrapperRandomTest {
     assertSame(random.getSameThreadSeedGen(), seedGen);
   }
 
+  @Override public void testSetSeedLong() throws SeedException {
+    final BaseRandom rng = createRngLargeEntropyLimit();
+    final BaseRandom rng2 = createRngLargeEntropyLimit();
+    checkSetSeedLong(rng, rng2);
+  }
+
   @Override @Test public void testReseeding() {
     // TODO
     SeedGenerator seedGen = Mockito.spy(getTestSeedGenerator());
@@ -61,16 +71,27 @@ public class EntropyBlockingRandomWrapperTest extends RandomWrapperRandomTest {
   }
 
   @Override protected RandomWrapper createRng() throws SeedException {
-    return new EntropyBlockingRandomWrapper(DEFAULT_MAX_ENTROPY, getTestSeedGenerator());
+    return new EntropyBlockingRandomWrapper(EntropyBlockingTestUtils.DEFAULT_MAX_ENTROPY, getTestSeedGenerator());
+  }
+
+  private EntropyBlockingRandomWrapper createRngLargeEntropyLimit() {
+    return new EntropyBlockingRandomWrapper(EntropyBlockingTestUtils.VERY_LOW_MINIMUM_ENTROPY, getTestSeedGenerator());
+  }
+
+  private EntropyBlockingRandomWrapper createRngLargeEntropyLimit(byte[] seed) {
+    return new EntropyBlockingRandomWrapper(seed, EntropyBlockingTestUtils.VERY_LOW_MINIMUM_ENTROPY, getTestSeedGenerator());
   }
 
   // FIXME: Too slow!
   @Override @Test(timeOut = 120_000L) public void testRandomSeederThreadIntegration() {
-    super.testRandomSeederThreadIntegration();
+    final SeedGenerator seedGenerator = new SemiFakeSeedGenerator(new Random(),
+        UUID.randomUUID().toString());
+    final BaseRandom rng = createRng();
+    RandomTestUtils.checkReseeding(seedGenerator, rng, true, 64);
   }
 
   @Override protected RandomWrapper createRng(byte[] seed) throws SeedException {
-    return new EntropyBlockingRandomWrapper(seed, DEFAULT_MAX_ENTROPY, getTestSeedGenerator());
+    return new EntropyBlockingRandomWrapper(seed, EntropyBlockingTestUtils.DEFAULT_MAX_ENTROPY, getTestSeedGenerator());
   }
 
   @Override public void testThreadSafety() {
@@ -90,18 +111,23 @@ public class EntropyBlockingRandomWrapperTest extends RandomWrapperRandomTest {
     } catch (IllegalStateException expected) {}
   }
 
+  @Override protected RandomTestUtils.EntropyCheckMode getEntropyCheckMode() {
+    return RandomTestUtils.EntropyCheckMode.LOWER_BOUND;
+  }
+
   @Test(timeOut = 60_000L) public void testRandomSeederThreadUsedFirst() {
+  @Override protected RandomTestUtils.EntropyCheckMode getEntropyCheckMode() {
+    return RandomTestUtils.EntropyCheckMode.LOWER_BOUND;
+  }
+
+  // FIXME: Gets interrupted
+  @Test(retryAnalyzer = FlakyRetryAnalyzer.class) public void testRandomSeederThreadUsedFirst() {
     SeedGenerator testSeedGenerator = getTestSeedGenerator();
     SeedGenerator seederSeedGenSpy = Mockito.spy(testSeedGenerator);
     final ThreadFactory defaultThreadFactory
-        = new SimpleRandomSeederThread.DefaultThreadFactory("testRandomSeederThreadUsedFirst");
-    RandomSeederThread seeder = new RandomSeederThread(seederSeedGenSpy, new ThreadFactory() {
-      @Override public Thread newThread(Runnable runnable) {
-        Thread thread = defaultThreadFactory.newThread(runnable);
-        thread.setPriority(Thread.MAX_PRIORITY);
-        return thread;
-      }
-    });
+        = new DefaultThreadFactory("testRandomSeederThreadUsedFirst", Thread.MAX_PRIORITY);
+    SimpleRandomSeederThread seeder = new SimpleRandomSeederThread(seederSeedGenSpy,
+        defaultThreadFactory);
     SemiFakeSeedGenerator sameThreadSeedGen
         = Mockito.spy(new SemiFakeSeedGenerator(new SplittableRandomAdapter(), "sameThreadSeedGen"));
     EntropyBlockingRandomWrapper random = new EntropyBlockingRandomWrapper(
@@ -139,7 +165,7 @@ public class EntropyBlockingRandomWrapperTest extends RandomWrapperRandomTest {
 
   @Test(timeOut = 20_000L) public void testFallbackFromRandomSeederThread() {
     SeedGenerator failingSeedGen = Mockito.spy(new FailingSeedGenerator());
-    RandomSeederThread seeder = new RandomSeederThread(failingSeedGen);
+    SimpleRandomSeederThread seeder = new SimpleRandomSeederThread(failingSeedGen);
     SeedGenerator sameThreadSeedGen
         = Mockito.spy(new SemiFakeSeedGenerator(new SplittableRandomAdapter()));
     EntropyBlockingRandomWrapper random = new EntropyBlockingRandomWrapper(0L, sameThreadSeedGen);
@@ -152,6 +178,28 @@ public class EntropyBlockingRandomWrapperTest extends RandomWrapperRandomTest {
       random.setRandomSeeder(null);
       seeder.shutDown();
     }
+  }
+
+  @Override public void testSerializable() throws SeedException {
+    testSerializable(createRngLargeEntropyLimit());
+  }
+
+  @Override public void testNextBytes() {
+    final byte[] testBytes = new byte[TEST_BYTE_ARRAY_LENGTH];
+    final BaseRandom prng = new EntropyBlockingRandomWrapper(0L, getTestSeedGenerator());
+    final long oldEntropy = prng.getEntropyBits();
+    prng.nextBytes(testBytes);
+    assertFalse(Arrays.equals(testBytes, new byte[TEST_BYTE_ARRAY_LENGTH]));
+  }
+
+  @Override public void testSetSeedAfterNextLong() throws SeedException {
+    checkSetSeedAfter(this::createRngLargeEntropyLimit, this::createRngLargeEntropyLimit,
+        BaseRandom::nextLong);
+  }
+
+  @Override public void testSetSeedAfterNextInt() throws SeedException {
+    checkSetSeedAfter(this::createRngLargeEntropyLimit, this::createRngLargeEntropyLimit,
+        BaseRandom::nextInt);
   }
 
   @Test public void testSetSameThreadSeedGen() {

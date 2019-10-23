@@ -73,14 +73,14 @@ public class DefaultSeedGeneratorTest extends AbstractSeedGeneratorTest {
       this.affectedThread = affectedThread;
     }
 
-    @SuppressWarnings({"ObjectEquality", "HardcodedFileSeparator"}) @Override
+    @SuppressWarnings({"HardcodedFileSeparator"}) @Override
     public void checkRead(final String file) {
       if ((Thread.currentThread() == affectedThread) && "/dev/random".equals(file)) {
         throw new SecurityException("Test not permitted to access /dev/random");
       }
     }
 
-    @SuppressWarnings("ObjectEquality") @Override
+    @Override
     public void checkConnect(final String host, final int port) {
       if (Thread.currentThread() == affectedThread) {
         throw new SecurityException("Test not permitted to connect to " + host + ':' + port);

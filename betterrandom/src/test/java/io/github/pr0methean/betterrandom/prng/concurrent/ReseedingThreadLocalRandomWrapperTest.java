@@ -46,11 +46,11 @@ public class ReseedingThreadLocalRandomWrapperTest extends ThreadLocalRandomWrap
     prng.setRandomSeeder(randomSeeder);
   }
 
-  @SuppressWarnings("BusyWait") @Override @Test(retryAnalyzer = FlakyRetryAnalyzer.class)
+  @Override @Test(retryAnalyzer = FlakyRetryAnalyzer.class)
   public void testReseeding() {
     final SeedGenerator testSeedGenerator = getTestSeedGenerator();
     final BaseRandom rng = new ReseedingThreadLocalRandomWrapper(testSeedGenerator, pcgSupplier);
-    RandomTestUtils.testReseeding(testSeedGenerator, rng, false);
+    RandomTestUtils.checkReseeding(testSeedGenerator, rng, false);
   }
 
   /**

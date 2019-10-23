@@ -51,7 +51,7 @@ public class ReseedingThreadLocalRandomWrapperMersenneTwisterTest
     final SeedGenerator testSeedGenerator
         = new SemiFakeSeedGenerator(new SingleThreadSplittableRandomAdapter(), "testReseeding");
     final BaseRandom rng = new ReseedingThreadLocalRandomWrapper(testSeedGenerator, mtSupplier);
-    RandomTestUtils.testReseeding(testSeedGenerator, rng, false);
+    RandomTestUtils.checkReseeding(testSeedGenerator, rng, false);
   }
 
   /**

@@ -17,6 +17,7 @@ package io.github.pr0methean.betterrandom.seed;
 
 import static java.util.Calendar.YEAR;
 
+import com.google.common.primitives.UnsignedBytes;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -194,7 +195,7 @@ public enum RandomDotOrgSeedGenerator implements SeedGenerator {
    * @throws IOException If a connection error occurs.
    * @throws SeedException If random.org sends a malformed response body.
    */
-  @SuppressWarnings("NumericCastThatLosesPrecision") private static void downloadBytes(byte[] seed,
+  private static void downloadBytes(byte[] seed,
       int offset, final int length) throws IOException {
     HttpURLConnection connection = null;
     lock.lock();
@@ -211,8 +212,7 @@ public enum RandomDotOrgSeedGenerator implements SeedGenerator {
                   .format("Insufficient data received: expected %d bytes, got %d.", length, index));
             }
             try {
-              seed[offset + index] = (byte) Integer.parseInt(line, 16);
-              // Can't use Byte.parseByte, since it expects signed
+              seed[offset + index] = UnsignedBytes.parseUnsignedByte(line, 16);
             } catch (final NumberFormatException e) {
               throw new SeedException("random.org sent non-numeric data", e);
             }

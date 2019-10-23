@@ -1,6 +1,7 @@
 package io.github.pr0methean.betterrandom.prng.concurrent;
 
 import com.google.common.base.MoreObjects.ToStringHelper;
+import io.github.pr0methean.betterrandom.prng.BaseRandom;
 import io.github.pr0methean.betterrandom.seed.RandomSeederThread;
 import io.github.pr0methean.betterrandom.seed.SeedException;
 import io.github.pr0methean.betterrandom.seed.SeedGenerator;
@@ -21,26 +22,28 @@ import java8.util.SplittableRandom;
 public class ReseedingSplittableRandomAdapter extends BaseSplittableRandomAdapter {
 
   private static final long serialVersionUID = 6301096404034224037L;
-  @SuppressWarnings("StaticCollection")
+
   private static final Map<SimpleRandomSeederThread, ReseedingSplittableRandomAdapter> INSTANCES = Collections
       .synchronizedMap(new WeakHashMap<SimpleRandomSeederThread, ReseedingSplittableRandomAdapter>(1));
   private final SeedGenerator seedGenerator;
-  // Making a transient field final only works because we use readResolve, so outside that method
-  // we're always in an instance from our own constructor even when deserialized.
   @SuppressWarnings({"ThreadLocalNotStaticFinal", "TransientFieldNotInitialized"})
-  private final transient ThreadLocal<SingleThreadSplittableRandomAdapter> threadLocal;
+  protected transient ThreadLocal<BaseRandom> threadLocal;
 
   /**
    * Single instance per SeedGenerator.
    *
    * @param seedGenerator The seed generator this adapter will use.
    */
-  private ReseedingSplittableRandomAdapter(final SeedGenerator seedGenerator,
+  protected ReseedingSplittableRandomAdapter(final SeedGenerator seedGenerator,
       SimpleRandomSeederThread randomSeeder) throws SeedException {
     super(seedGenerator.generateSeed(Java8Constants.LONG_BYTES));
     this.seedGenerator = seedGenerator;
     this.randomSeeder.set(randomSeeder);
-    threadLocal = new ThreadLocal<SingleThreadSplittableRandomAdapter>() {
+    threadLocal = createThreadLocal();
+  }
+
+  protected ThreadLocal<BaseRandom> createThreadLocal() {
+    return new ThreadLocal<SingleThreadSplittableRandomAdapter>() {
       @Override protected SingleThreadSplittableRandomAdapter initialValue() {
         SingleThreadSplittableRandomAdapter threadAdapter =
             new SingleThreadSplittableRandomAdapter(ReseedingSplittableRandomAdapter.this.seedGenerator);
@@ -104,13 +107,18 @@ public class ReseedingSplittableRandomAdapter extends BaseSplittableRandomAdapte
   }
 
   @Override protected SplittableRandom getSplittableRandom() {
-    final SingleThreadSplittableRandomAdapter adapterForThread = threadLocal.get();
+    final SingleThreadSplittableRandomAdapter adapterForThread
+        = (SingleThreadSplittableRandomAdapter) threadLocal.get();
     return adapterForThread.getSplittableRandom();
+  }
+
+  @Override public double nextGaussian() {
+    return threadLocal.get().nextGaussian();
   }
 
   @Override protected void debitEntropy(final long bits) {
     // Necessary because our inherited next* methods read straight through to the SplittableRandom.
-    threadLocal.get().debitEntropy(bits);
+    ((SingleThreadSplittableRandomAdapter) threadLocal.get()).debitEntropy(bits);
   }
 
   @Override protected void setSeedInternal(final byte[] seed) {
