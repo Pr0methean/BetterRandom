@@ -177,7 +177,7 @@ stages:
             artifactEnvName: 'OpenJDK08Linux'
           OpenJdk11:
             JAVA_HOME: $(zuluLinux11)
-            artifactEnvName: OpenJdk11Linux
+            artifactEnvName: 'OpenJdk11Linux'
           OpenJdkLatest:
             JAVA_HOME: $(zuluLinuxLatest)
             artifactEnvName: 'OpenJDKLatestLinux'
@@ -209,11 +209,14 @@ stages:
       strategy:
         matrix:
           OpenJdk08:
+            artifactEnvName: 'OpenJdk08Mac'
             JAVA8: 'true'
             javaVersion: 8
           OpenJdk11:
+            artifactEnvName: 'OpenJdk11Mac'
             javaVersion: 11
           OpenJdkLatest:
+            artifactEnvName: 'OpenJdkLatestMac'
             javaVersion: 12
       pool:
         vmImage: 'macOs-10.13'
@@ -232,13 +235,13 @@ stages:
           OpenJdk08:
             JAVA8: 'true'
             JAVA_HOME_SOURCE: JAVA_HOME_8_X64
-            artifactEnvName: OpenJdk08Linux
+            artifactEnvName: OpenJdk08Windows
           OpenJdk11:
             JAVA_HOME_SOURCE: JAVA_HOME_11_X64
-            artifactEnvName: OpenJdk11Linux
+            artifactEnvName: OpenJdk11Windows
           OpenJdkLatest:
             JAVA_HOME_SOURCE: JAVA_HOME_12_X64
-            artifactEnvName: OpenJdkLatestLinux
+            artifactEnvName: OpenJdkLatestWindows
       steps:
         - powershell: 'echo "##vso[task.setvariable variable=JAVA_HOME]$JAVA_HOME_SOURCE"'
           displayName: Set Java Home
