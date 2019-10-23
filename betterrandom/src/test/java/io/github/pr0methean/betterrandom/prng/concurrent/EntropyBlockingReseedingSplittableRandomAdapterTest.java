@@ -1,6 +1,7 @@
 package io.github.pr0methean.betterrandom.prng.concurrent;
 
 import static io.github.pr0methean.betterrandom.seed.SecureRandomSeedGenerator.DEFAULT_INSTANCE;
+import static io.github.pr0methean.betterrandom.util.Java8Constants.LONG_BYTES;
 import static org.mockito.ArgumentMatchers.any;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertFalse;
@@ -238,13 +239,13 @@ public class EntropyBlockingReseedingSplittableRandomAdapterTest
   }
 
   @Test(timeOut = 10_000L) public void testGetSeed() {
-    EntropyBlockingReseedingSplittableRandomAdapter random = createRng();
-    byte[] seed = ((BaseRandom) random).getSeed();
-    byte[] seed2 = new byte[Long.BYTES];
-    byte[] zero = new byte[Long.BYTES];
+    final EntropyBlockingReseedingSplittableRandomAdapter random = createRng();
+    final byte[] seed = ((BaseRandom) random).getSeed();
+    final byte[] seed2 = new byte[LONG_BYTES];
+    final byte[] zero = new byte[LONG_BYTES];
     Thread newThread = new Thread() {
       @Override public void run() {
-        System.arraycopy(((BaseRandom) random).getSeed(), 0, seed2, 0, Long.BYTES);
+        System.arraycopy(((BaseRandom) random).getSeed(), 0, seed2, 0, LONG_BYTES);
       }
     };
     newThread.start();

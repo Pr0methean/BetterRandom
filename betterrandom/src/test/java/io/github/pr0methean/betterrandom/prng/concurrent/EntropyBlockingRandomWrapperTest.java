@@ -33,12 +33,14 @@ import org.testng.annotations.Test;
 @Test(testName = "EntropyBlockingRandomWrapper")
 public class EntropyBlockingRandomWrapperTest extends RandomWrapperRandomTest {
 
-  private final Supplier<BaseRandom> createRngLargeEntropyLimit = new Supplier<>() {
-                      @Override public BaseRandom get() {
-                        return EntropyBlockingRandomWrapperTest.this.createRngLargeEntropyLimit();
-                      }
-                    };
-  private final Function<byte[], BaseRandom> createRngLargeEntropyLimitFromSeed = new Function<>() {
+  private final Supplier<BaseRandom> createRngLargeEntropyLimit
+      = new Supplier<BaseRandom>() {
+        @Override public BaseRandom get() {
+          return EntropyBlockingRandomWrapperTest.this.createRngLargeEntropyLimit();
+        }
+      };
+  private final Function<byte[], BaseRandom> createRngLargeEntropyLimitFromSeed
+      = new Function<byte[], BaseRandom>() {
         @Override public BaseRandom apply(byte[] seed) {
           return EntropyBlockingRandomWrapperTest.this.createRngLargeEntropyLimit(seed);
         }
@@ -122,10 +124,6 @@ public class EntropyBlockingRandomWrapperTest extends RandomWrapperRandomTest {
       random.nextInt();
       fail("Expected an IllegalStateException");
     } catch (IllegalStateException expected) {}
-  }
-
-  @Override protected RandomTestUtils.EntropyCheckMode getEntropyCheckMode() {
-    return RandomTestUtils.EntropyCheckMode.LOWER_BOUND;
   }
 
   @Override protected RandomTestUtils.EntropyCheckMode getEntropyCheckMode() {

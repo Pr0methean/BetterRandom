@@ -128,22 +128,22 @@ public abstract class BaseRandomTest extends PowerMockTestCase {
   private static final double UPPER_BOUND_FOR_ROUNDING_TEST =
       Double.longBitsToDouble(Double.doubleToLongBits(1.0) + 3);
   protected final ForkJoinPool pool = new ForkJoinPool(2);
-  protected final Function<byte[], BaseRandom> createRngFromSeed = new Function<>() {
+  protected final Function<byte[], BaseRandom> createRngFromSeed = new Function<byte[], BaseRandom>() {
     @Override public BaseRandom apply(byte[] seed) {
       return BaseRandomTest.this.createRng(seed);
     }
   };
-  protected final Supplier<BaseRandom> createRng = new Supplier<>() {
+  protected final Supplier<BaseRandom> createRng = new Supplier<BaseRandom>() {
     @Override public BaseRandom get() {
       return BaseRandomTest.this.createRng();
     }
   };
-  protected final Consumer<BaseRandom> nextInt = new Consumer<>() {
+  protected final Consumer<BaseRandom> nextInt = new Consumer<BaseRandom>() {
     @Override public void accept(BaseRandom baseRandom) {
       baseRandom.nextInt();
     }
   };
-  protected final Consumer<BaseRandom> nextLong = new Consumer<>() {
+  protected final Consumer<BaseRandom> nextLong = new Consumer<BaseRandom>() {
     @Override public void accept(BaseRandom baseRandom) {
       baseRandom.nextLong();
     }

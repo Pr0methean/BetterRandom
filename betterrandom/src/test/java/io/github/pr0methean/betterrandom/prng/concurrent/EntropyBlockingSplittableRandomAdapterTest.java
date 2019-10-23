@@ -11,12 +11,13 @@ import java8.util.function.Supplier;
 
 public class EntropyBlockingSplittableRandomAdapterTest extends SplittableRandomAdapterTest {
 
-  private final Function<byte[], BaseRandom> createRngLargeEntropyLimitForSeed = new Function<>() {
+  private final Function<byte[], BaseRandom> createRngLargeEntropyLimitForSeed
+      = new Function<byte[], BaseRandom>() {
     @Override public BaseRandom apply(byte[] seed) {
       return EntropyBlockingSplittableRandomAdapterTest.this.createRngLargeEntropyLimit(seed);
     }
   };
-  private final Supplier<BaseRandom> createRngLargeEntropyLimit = new Supplier<>() {
+  private final Supplier<BaseRandom> createRngLargeEntropyLimit = new Supplier<BaseRandom>() {
                       @Override public BaseRandom get() {
                         return EntropyBlockingSplittableRandomAdapterTest.this.createRngLargeEntropyLimit();
                       }
