@@ -78,7 +78,7 @@ public class SimpleRandomSeederThreadTest {
       try {
         random.nextLong();
         random.nextLong();
-        Thread.sleep(200);
+        Thread.sleep(500);
         assertFalse(randomSeeder.isRunning());
         assertEquals(seedGenerator.countCalls(), 1);
         seedGenerator.setThrowException(false);
