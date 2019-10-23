@@ -5,8 +5,8 @@ import static io.github.pr0methean.betterrandom.util.BinaryUtils.convertBytesToL
 import io.github.pr0methean.betterrandom.prng.BaseRandom;
 import io.github.pr0methean.betterrandom.seed.SeedGenerator;
 import io.github.pr0methean.betterrandom.seed.SimpleRandomSeederThread;
-import java.util.SplittableRandom;
 import java.util.concurrent.atomic.AtomicReference;
+import java8.util.SplittableRandom;
 
 public class EntropyBlockingReseedingSplittableRandomAdapter extends ReseedingSplittableRandomAdapter {
 
