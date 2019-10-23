@@ -242,7 +242,6 @@ public class SimpleRandomSeeder extends LooperThread {
       }
       return true;
     } catch (final Throwable t) {
-      getLogger().error("Disabling the RandomSeederThread for " + seedGenerator, t);
       return false;
     }
   }
@@ -351,7 +350,6 @@ public class SimpleRandomSeeder extends LooperThread {
     lock.lock();
     try {
       if (isEmpty()) {
-        getLogger().info("Stopping empty RandomSeederThread for {}", seedGenerator);
         interrupt();
       }
     } finally {
