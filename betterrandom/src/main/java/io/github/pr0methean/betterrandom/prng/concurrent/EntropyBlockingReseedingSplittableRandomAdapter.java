@@ -11,7 +11,8 @@ import java.util.concurrent.atomic.AtomicReference;
 /**
  * A {@link ReseedingSplittableRandomAdapter} that blocks waiting to be reseeded if its entropy
  * drops too low. Unlike with {@link EntropyBlockingSplittableRandomAdapter}, reseeding is done on a
- * {@link SimpleRandomSeederThread} rather than on the calling thread.
+ * {@link SimpleRandomSeederThread} rather than on the calling thread. Entropy count is thread-local,
+ * so consuming entropy on one thread won't directly cause blocking on another thread.
  */
 public class EntropyBlockingReseedingSplittableRandomAdapter extends ReseedingSplittableRandomAdapter {
 
