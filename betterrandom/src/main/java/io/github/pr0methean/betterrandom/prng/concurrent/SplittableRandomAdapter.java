@@ -23,19 +23,37 @@ import javax.annotation.Nullable;
 @SuppressWarnings("ThreadLocalNotStaticFinal") public class SplittableRandomAdapter
     extends DirectSplittableRandomAdapter {
 
-  private static final int SEED_LENGTH_BITS = Long.BYTES * 8;
   private static final long serialVersionUID = 2190439512972880590L;
 
+  /**
+   * Holds the {@link SplittableRandom} and the entropy counter for a thread. Extracted into an
+   * object so that only one {@link ThreadLocal} has to be accessed (a slow operation) when both of
+   * these are needed.
+   */
   protected static class ThreadLocalFields {
+    /**
+     * The {@link SplittableRandom} that generates random numbers when called on this thread.
+     */
     public SplittableRandom splittableRandom;
+    /**
+     * Stores the entropy count for {@code splittableRandom}.
+     */
     final public AtomicLong entropyBits;
 
-    public ThreadLocalFields(SplittableRandom splittableRandom, long entropyBits) {
+    /**
+     * Creates an instance for a given {@link SplittableRandom} that has not been used before.
+     *
+     * @param splittableRandom the {@link SplittableRandom}
+     */
+    public ThreadLocalFields(SplittableRandom splittableRandom) {
       this.splittableRandom = splittableRandom;
-      this.entropyBits = new AtomicLong(entropyBits);
+      this.entropyBits = new AtomicLong(Long.SIZE);
     }
   }
 
+  /**
+   * Holds the {@link SplittableRandom} and the entropy counter for each thread.
+   */
   protected transient ThreadLocal<ThreadLocalFields> threadLocalFields;
 
   /**
@@ -115,7 +133,7 @@ import javax.annotation.Nullable;
         // Necessary because SplittableRandom.split() isn't itself thread-safe.
         lock.lock();
         try {
-          return new ThreadLocalFields(delegate.split(), SEED_LENGTH_BITS);
+          return new ThreadLocalFields(delegate.split());
         } finally {
           lock.unlock();
         }

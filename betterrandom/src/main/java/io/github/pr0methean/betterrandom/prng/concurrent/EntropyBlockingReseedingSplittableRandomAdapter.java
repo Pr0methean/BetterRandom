@@ -15,6 +15,7 @@ import java.util.concurrent.atomic.AtomicReference;
  */
 public class EntropyBlockingReseedingSplittableRandomAdapter extends ReseedingSplittableRandomAdapter {
 
+  private static final long serialVersionUID = -779886405514766937L;
   private final AtomicReference<SeedGenerator> sameThreadSeedGen;
   private final long minimumEntropy;
 

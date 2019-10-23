@@ -25,13 +25,19 @@ public class ReseedingSplittableRandomAdapter extends BaseSplittableRandomAdapte
       ReseedingSplittableRandomAdapter>
       INSTANCES = Collections.synchronizedMap(new WeakHashMap<>(1));
   private final SeedGenerator seedGenerator;
+  /**
+   * A thread-local delegate.
+   */
   @SuppressWarnings({"ThreadLocalNotStaticFinal", "TransientFieldNotInitialized"})
   protected transient ThreadLocal<BaseRandom> threadLocal;
 
   /**
-   * Single instance per SeedGenerator except via subclasses.
+   * Single instance per {@link SimpleRandomSeederThread} except via subclasses.
    *
-   * @param seedGenerator The seed generator this adapter will use.
+   * @param seedGenerator the seed generator that will generate an initial seed for each thread
+   * @param randomSeeder the {@link SimpleRandomSeederThread} that will generate a seed for a new
+   *     {@link SplittableRandom} instance whenever each thread's instance needs reseeding
+   * @throws SeedException if {@code seedGenerator} fails to generate an initial seed
    */
   protected ReseedingSplittableRandomAdapter(final SeedGenerator seedGenerator,
       SimpleRandomSeederThread randomSeeder) throws SeedException {
@@ -97,6 +103,9 @@ public class ReseedingSplittableRandomAdapter extends BaseSplittableRandomAdapte
 
   /**
    * Returns the identical instance managed by this class, so that duplicates are eliminated.
+   * Subclasses must override this method if the delegate held in {@link #threadLocal} is not always
+   * a {@link SingleThreadSplittableRandomAdapter}.
+   *
    * @return the instance returned by {@link #getInstance(SimpleRandomSeederThread, SeedGenerator)}
    *     with this instance's parameters
    */

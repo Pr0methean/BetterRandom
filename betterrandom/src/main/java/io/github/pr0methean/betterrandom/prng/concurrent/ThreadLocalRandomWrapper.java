@@ -2,7 +2,6 @@ package io.github.pr0methean.betterrandom.prng.concurrent;
 
 import com.google.common.base.MoreObjects.ToStringHelper;
 import io.github.pr0methean.betterrandom.prng.BaseRandom;
-import io.github.pr0methean.betterrandom.seed.SeedException;
 import io.github.pr0methean.betterrandom.seed.SeedGenerator;
 import io.github.pr0methean.betterrandom.seed.SimpleRandomSeederThread;
 import io.github.pr0methean.betterrandom.util.BinaryUtils;
@@ -22,9 +21,12 @@ import javax.annotation.Nullable;
 public class ThreadLocalRandomWrapper extends RandomWrapper {
 
   private static final long serialVersionUID = 1199235201518562359L;
-  protected final Supplier<? extends BaseRandom>
+  private final Supplier<? extends BaseRandom>
       initializer;
   @Nullable private final Integer explicitSeedSize;
+  /**
+   * Holds the delegate for each thread.
+   */
   @SuppressWarnings({"ThreadLocalNotStaticFinal"}) protected transient ThreadLocal<BaseRandom> threadLocal;
 
   /**
@@ -34,8 +36,7 @@ public class ThreadLocalRandomWrapper extends RandomWrapper {
    * @param initializer a supplier that will be called to provide the initial {@link BaseRandom}
    *     for each thread.
    */
-  public ThreadLocalRandomWrapper(final Supplier<? extends BaseRandom> initializer)
-      throws SeedException {
+  public ThreadLocalRandomWrapper(final Supplier<? extends BaseRandom> initializer) {
     super(0);
     this.initializer = initializer;
     threadLocal = ThreadLocal.withInitial(initializer);
@@ -53,7 +54,7 @@ public class ThreadLocalRandomWrapper extends RandomWrapper {
    *     Probably a constructor reference.
    */
   public ThreadLocalRandomWrapper(final int seedSize, final SeedGenerator seedGenerator,
-      final Function<byte[], ? extends BaseRandom> creator) throws SeedException {
+      final Function<byte[], ? extends BaseRandom> creator) {
     super(0);
     explicitSeedSize = seedSize;
     initializer = (Serializable & Supplier<BaseRandom>) (() -> creator

@@ -29,30 +29,88 @@ import org.slf4j.LoggerFactory;
  * @author Chris Hennick
  */
 public class SimpleRandomSeederThread extends LooperThread {
-  protected static final Map<ByteArrayReseedableRandom, byte[]> SEED_ARRAYS =
+  private static final Map<ByteArrayReseedableRandom, byte[]> SEED_ARRAYS =
       Collections.synchronizedMap(new WeakHashMap<>(1));
+
   // FIXME: Setting a longer POLL_INTERVAL slows many tests, and causes some to time out
-  // (Why doesn't BaseRandom's call to reseedAsync() prevent this?!)
+  // (Why doesn't BaseRandom's call to wakeUp() prevent this?!)
+  /**
+   * Time in seconds to wait before checking again whether any PRNGs need more entropy.
+   */
   protected static final long POLL_INTERVAL = 1;
   private static final long serialVersionUID = -4339570810679373476L;
+
+  /**
+   * Default waiting time before an empty instance terminates if still empty.
+   */
+  protected static final long DEFAULT_STOP_IF_EMPTY_FOR_NANOS = 5_000_000_000L;
+
+  /**
+   * The seed generator this seeder uses.
+   */
   protected final SeedGenerator seedGenerator;
+
   private final byte[] longSeedArray = new byte[8];
+
+  /**
+   * Holds {@link ByteArrayReseedableRandom} instances that should be reseeded when their entropy is
+   * low, or as often as possible if they don't implement {@link EntropyCountingRandom}.
+   */
   protected transient Set<ByteArrayReseedableRandom> byteArrayPrngs;
+
+  /**
+   * Holds instances that are being reseeded during the current iteration, so that PRNGs can be
+   * added and removed in the middle of an iteration without the
+   * {@link java.util.ConcurrentModificationException} that would otherwise arise.
+   */
   protected transient Set<ByteArrayReseedableRandom> byteArrayPrngsThisIteration;
+
+  /**
+   * Signaled when a PRNG is added.
+   */
   protected transient Condition waitWhileEmpty;
+
+  /**
+   * Signaled by an associated {@link BaseRandom} when it runs out of entropy.
+   */
   protected transient Condition waitForEntropyDrain;
+
+  /**
+   * Time in nanoseconds after which this thread will terminate if no PRNGs are attached.
+   */
   protected final long stopIfEmptyForNanos;
-  public SimpleRandomSeederThread(final SeedGenerator seedGenerator, ThreadFactory factory) {
-    this(seedGenerator, factory, 5_000_000_000L);
+
+  /**
+   * Creates an instance whose thread will terminate if no PRNGs have been associated with it for 5
+   * seconds.
+   *
+   * @param seedGenerator the seed generator
+   * @param threadFactory the {@link ThreadFactory} that will create this seeder's thread
+   */
+  public SimpleRandomSeederThread(final SeedGenerator seedGenerator, ThreadFactory threadFactory) {
+    this(seedGenerator, threadFactory, DEFAULT_STOP_IF_EMPTY_FOR_NANOS);
   }
 
+  /**
+   * Creates an instance using a {@link DefaultThreadFactory}.
+   *
+   * @param seedGenerator the seed generator
+   */
   public SimpleRandomSeederThread(SeedGenerator seedGenerator) {
     this(seedGenerator, new SimpleRandomSeederThread.DefaultThreadFactory(seedGenerator.toString()));
   }
 
-  public SimpleRandomSeederThread(SeedGenerator seedGenerator, ThreadFactory factory,
+  /**
+   * Creates an instance.
+   *
+   * @param seedGenerator the seed generator
+   * @param threadFactory the {@link ThreadFactory} that will create this seeder's thread
+   * @param stopIfEmptyForNanos time in nanoseconds after which this thread will terminate if no
+   *     PRNGs are attached
+   */
+  public SimpleRandomSeederThread(SeedGenerator seedGenerator, ThreadFactory threadFactory,
       long stopIfEmptyForNanos) {
-    super(factory);
+    super(threadFactory);
     this.seedGenerator = seedGenerator;
     Objects.requireNonNull(seedGenerator, "randomSeeder must not be null");
 
@@ -118,6 +176,9 @@ public class SimpleRandomSeederThread extends LooperThread {
     }
   }
 
+  /**
+   * Ensures this seeder's thread is started, and signals conditions it may be waiting on.
+   */
   public void wakeUp() {
     start();
     if (lock.tryLock()) {
@@ -130,8 +191,12 @@ public class SimpleRandomSeederThread extends LooperThread {
     }
   }
 
-  protected static Logger getLogger() {
-    return LoggerFactory.getLogger(RandomSeederThread.class);
+  /**
+   * Returns the {@link Logger} for this class.
+   * @return the logger for this class
+   */
+  private static Logger getLogger() {
+    return LoggerFactory.getLogger(SimpleRandomSeederThread.class);
   }
 
   @Override public boolean equals(Object o) {
@@ -149,14 +214,24 @@ public class SimpleRandomSeederThread extends LooperThread {
     return 31 * seedGenerator.hashCode() + factory.hashCode();
   }
 
+  /**
+   * Initializes the transient instance fields for this class. Called by constructors and during
+   * deserialization.
+   */
   protected void initTransientFields() {
-    byteArrayPrngs = createSynchronizedHashSet();
-    byteArrayPrngsThisIteration = createSynchronizedHashSet();
+    byteArrayPrngs = createSynchronizedWeakHashSet();
+    byteArrayPrngsThisIteration = createSynchronizedWeakHashSet();
     waitWhileEmpty = lock.newCondition();
     waitForEntropyDrain = lock.newCondition();
   }
 
-  protected <T> Set<T> createSynchronizedHashSet() {
+  /**
+   * Creates and returns a thread-safe {@link Set} backed by a {@link WeakHashMap}.
+   *
+   * @param <T> the set element type
+   * @return an empty mutable thread-safe {@link Set} that holds only weak references to its members
+   */
+  protected <T> Set<T> createSynchronizedWeakHashSet() {
     return Collections.synchronizedSet(Collections.newSetFromMap(new WeakHashMap<T, Boolean>(1)));
   }
 
