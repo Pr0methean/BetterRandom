@@ -12,6 +12,7 @@ import io.github.pr0methean.betterrandom.seed.SeedException;
 import io.github.pr0methean.betterrandom.seed.SeedGenerator;
 import io.github.pr0methean.betterrandom.seed.SemiFakeSeedGenerator;
 import io.github.pr0methean.betterrandom.seed.SimpleRandomSeeder;
+import java.io.Serializable;
 import java.util.Random;
 import java8.util.function.LongFunction;
 import org.testng.annotations.Test;

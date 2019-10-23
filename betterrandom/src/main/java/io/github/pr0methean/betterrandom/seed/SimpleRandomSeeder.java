@@ -19,6 +19,8 @@ import java.util.WeakHashMap;
 import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.Condition;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Thread that loops over {@link ByteArrayReseedableRandom} instances and reseeds them. No {@link
