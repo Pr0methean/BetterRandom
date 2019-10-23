@@ -37,6 +37,9 @@ import java.util.Objects;
  */
 public class SecureRandomSeedGenerator implements SeedGenerator, Serializable {
 
+  /**
+   * The default instance. (This class was formerly a singleton.)
+   */
   public static final SecureRandomSeedGenerator DEFAULT_INSTANCE
       = new SecureRandomSeedGenerator(new SecureRandom());
 
@@ -54,6 +57,12 @@ public class SecureRandomSeedGenerator implements SeedGenerator, Serializable {
    */
   private final SecureRandom source;
 
+  /**
+   * Creates an instance.
+   *
+   * @param source the {@link SecureRandom} whose {@link SecureRandom#generateSeed(int)} method will
+   *     provide seeds
+   */
   public SecureRandomSeedGenerator(SecureRandom source) {
     this.source = source;
   }

@@ -8,12 +8,26 @@ import java.util.concurrent.atomic.AtomicReference;
 import java.util.concurrent.locks.ReentrantLock;
 import javax.annotation.Nullable;
 
+/**
+ * A {@link SplittableRandomAdapter} that reseeds itself when its entropy drops too low. Unlike with
+ * an {@link EntropyBlockingReseedingSplittableRandomAdapter}, reseeding is done on the thread that
+ * consumes pseudorandomness.
+ */
 public class EntropyBlockingSplittableRandomAdapter extends SplittableRandomAdapter {
   private static final long serialVersionUID = 4992825526245524633L;
   private transient ThreadLocal<EntropyBlockingHelper> helpers;
   private final AtomicReference<SeedGenerator> sameThreadSeedGen;
   private final long minimumEntropy;
 
+  /**
+   * Creates an instance.
+   *
+   * @param minimumEntropy the minimum entropy; when an operation would otherwise drop the entropy
+   *     below this amount, the PRNG for the calling thread will be reseeded first. Should generally
+   *     be zero or negative.
+   * @param seedGenerator the seed generator; used both to initialize the master
+   *     {@link java.util.SplittableRandom} and for reseeding
+   */
   public EntropyBlockingSplittableRandomAdapter(long minimumEntropy, SeedGenerator seedGenerator) {
     super(seedGenerator);
     this.minimumEntropy = minimumEntropy;
@@ -21,6 +35,16 @@ public class EntropyBlockingSplittableRandomAdapter extends SplittableRandomAdap
     initSubclassTransientFields();
   }
 
+  /**
+   * Creates an instance.
+   *
+   * @param seed the seed for the master {@link java.util.SplittableRandom}, which will be split to
+   *     generate an instance for each thread; must be 8 bytes
+   * @param minimumEntropy the minimum entropy; when an operation would otherwise drop the entropy
+   *     below this amount, the PRNG for the calling thread will be reseeded first. Should generally
+   *     be zero or negative.
+   * @param sameThreadSeedGen the seed generator
+   */
   public EntropyBlockingSplittableRandomAdapter(byte[] seed, long minimumEntropy,
       @Nullable SeedGenerator sameThreadSeedGen) {
     super(seed);
@@ -30,6 +54,16 @@ public class EntropyBlockingSplittableRandomAdapter extends SplittableRandomAdap
     helpers.get().checkMaxOutputAtOnce();
   }
 
+  /**
+   * Creates an instance.
+   *
+   * @param seed the seed for the master {@link java.util.SplittableRandom}, which will be split to
+   *     generate an instance for each thread
+   * @param minimumEntropy the minimum entropy; when an operation would otherwise drop the entropy
+   *     below this amount, the PRNG for the calling thread will be reseeded first. Should generally
+   *     be zero or negative.
+   * @param sameThreadSeedGen the seed generator
+   */
   public EntropyBlockingSplittableRandomAdapter(long seed, long minimumEntropy,
       @Nullable SeedGenerator sameThreadSeedGen) {
     super(seed);

@@ -39,14 +39,28 @@ public class Pcg64Random extends BaseRandom implements SeekableRandom {
 
   private final AtomicLong internal;
 
+  /**
+   * Creates a new PRNG with a seed from the {@link DefaultSeedGenerator}.
+   */
   public Pcg64Random() {
     this(DefaultSeedGenerator.DEFAULT_SEED_GENERATOR);
   }
 
+  /**
+   * Creates a new PRNG with a seed from the provided {@link SeedGenerator}.
+   *
+   * @param seedGenerator the seed generator that will generate the initial seed
+   * @throws SeedException if {@code seedGenerator} fails to generate a seed
+   */
   @EntryPoint public Pcg64Random(final SeedGenerator seedGenerator) throws SeedException {
     this(seedGenerator.generateSeed(Long.BYTES));
   }
 
+  /**
+   * Creates a new PRNG with the provided seed.
+   *
+   * @param seed the seed; must be exactly 8 bytes
+   */
   @EntryPoint public Pcg64Random(final byte[] seed) {
     super(seed);
     if (seed.length != Long.BYTES) {
@@ -55,6 +69,11 @@ public class Pcg64Random extends BaseRandom implements SeekableRandom {
     internal = new AtomicLong(BinaryUtils.convertBytesToLong(seed));
   }
 
+  /**
+   * Creates a new PRNG with the provided seed.
+   *
+   * @param seed the seed
+   */
   @EntryPoint public Pcg64Random(final long seed) {
     super(seed);
     internal = new AtomicLong(seed);

@@ -27,6 +27,9 @@ import java.io.Serializable;
  */
 @FunctionalInterface public interface SeedGenerator extends Serializable {
 
+  /**
+   * An empty byte array.
+   */
   byte[] EMPTY_SEED = {};
 
   /**
