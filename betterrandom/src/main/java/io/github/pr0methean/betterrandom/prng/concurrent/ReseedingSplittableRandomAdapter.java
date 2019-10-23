@@ -102,6 +102,11 @@ public class ReseedingSplittableRandomAdapter extends BaseSplittableRandomAdapte
     return original.add("randomSeeder", randomSeeder.get()).add("seedGenerator", seedGenerator);
   }
 
+  /**
+   * Returns the identical instance managed by this class, so that duplicates are eliminated.
+   * @return the instance returned by {@link #getInstance(SimpleRandomSeederThread, SeedGenerator)}
+   *     with this instance's parameters
+   */
   protected Object readResolve() {
     return getInstance(randomSeeder.get(), seedGenerator);
   }

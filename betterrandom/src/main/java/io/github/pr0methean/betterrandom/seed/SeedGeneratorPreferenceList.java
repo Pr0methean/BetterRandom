@@ -17,9 +17,10 @@ public class SeedGeneratorPreferenceList extends CopyOnWriteArrayList<SeedGenera
   /**
    * Creates an instance.
    *
-   * @param contents the initial list of delegates.
-   * @param isAlwaysWorthTrying true if {@link #isWorthTrying()} should return true without
-   *     consulting the delegate seed generators.
+   * @param contents the initial list of delegates, in the order they will be tried until one
+   *     succeeds
+   * @param isAlwaysWorthTrying true if {@link #isWorthTrying()} should always return true rather
+   *     than delegating
    */
   @EntryPoint public SeedGeneratorPreferenceList(Collection<? extends SeedGenerator> contents,
       boolean isAlwaysWorthTrying) {
@@ -27,6 +28,13 @@ public class SeedGeneratorPreferenceList extends CopyOnWriteArrayList<SeedGenera
     this.isAlwaysWorthTrying = isAlwaysWorthTrying;
   }
 
+  /**
+   * Creates an instance.
+   *
+   * @param contents the initial delegates, in the order they will be tried until one succeeds
+   * @param isAlwaysWorthTrying true if {@link #isWorthTrying()} should always return true rather
+   *     than delegating
+   */
   @EntryPoint public SeedGeneratorPreferenceList(boolean isAlwaysWorthTrying, SeedGenerator...
       contents) {
     this(Arrays.asList(contents), isAlwaysWorthTrying);

@@ -10,7 +10,8 @@ import java8.util.SplittableRandom;
 
 /**
  * A {@link ReseedingSplittableRandomAdapter} that blocks waiting to be reseeded if its entropy
- * drops too low.
+ * drops too low. Unlike with {@link EntropyBlockingSplittableRandomAdapter}, reseeding is done on a
+ * {@link SimpleRandomSeederThread} rather than on the calling thread.
  */
 public class EntropyBlockingReseedingSplittableRandomAdapter extends ReseedingSplittableRandomAdapter {
 

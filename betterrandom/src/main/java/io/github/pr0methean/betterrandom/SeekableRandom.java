@@ -1,5 +1,8 @@
 package io.github.pr0methean.betterrandom;
 
+/**
+ * A {@link RepeatableRandom} that can skip backward or forward within its sequence of output.
+ */
 public interface SeekableRandom extends RepeatableRandom {
 
   /**

@@ -45,10 +45,10 @@ public class Pcg128Random extends BaseRandom implements SeekableRandom {
           0x0000002d, 0x00000014, 0x00000005, 0x0000007b, 0x0000007e, 0xfffffff7, 0x00000067,
           0xffffff81, 0x0000004f};
   private static final int WANTED_OP_BITS = 6;
-  public static final int ROTATION1 = (WANTED_OP_BITS + Long.SIZE) / 2;
+  private static final int ROTATION1 = (WANTED_OP_BITS + Long.SIZE) / 2;
   private static final int ROTATION2 = Long.SIZE - WANTED_OP_BITS;
 
-  public static final double RANDOM_DOUBLE_INCR = 0x1.0p-53;
+  private static final double RANDOM_DOUBLE_INCR = 0x1.0p-53;
   private static final int MASK = (1 << WANTED_OP_BITS) - 1;
   private static final long serialVersionUID = 3246991464669800351L;
 
@@ -68,14 +68,28 @@ public class Pcg128Random extends BaseRandom implements SeekableRandom {
     adjMult = new byte[SEED_SIZE_BYTES];
   }
 
+  /**
+   * Creates a new PRNG with a seed from the {@link DefaultSeedGenerator}.
+   */
   public Pcg128Random() {
     this(DefaultSeedGenerator.DEFAULT_SEED_GENERATOR);
   }
 
+  /**
+   * Creates a new PRNG with a seed from the provided {@link SeedGenerator}.
+   *
+   * @param seedGenerator the seed generator that will generate the initial seed
+   * @throws SeedException if {@code seedGenerator} fails to generate a seed
+   */
   @EntryPoint public Pcg128Random(final SeedGenerator seedGenerator) throws SeedException {
     this(seedGenerator.generateSeed(SEED_SIZE_BYTES));
   }
 
+  /**
+   * Creates a new PRNG with the provided seed.
+   *
+   * @param seed the seed; must be exactly 16 bytes
+   */
   @EntryPoint public Pcg128Random(final byte[] seed) {
     super(seed);
     if (seed.length != SEED_SIZE_BYTES) {
