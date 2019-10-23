@@ -43,7 +43,11 @@ public class ReseedingSplittableRandomAdapter extends BaseSplittableRandomAdapte
   }
 
   protected ThreadLocal<BaseRandom> createThreadLocal() {
-    return ThreadLocal.withInitial(this::createDelegate);
+    return new ThreadLocal<BaseRandom>() {
+      @Override protected BaseRandom initialValue() {
+        return createDelegate();
+      }
+    }
   }
 
   /**
