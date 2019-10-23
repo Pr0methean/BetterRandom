@@ -113,8 +113,8 @@ import javax.annotation.Nullable;
   private void initSubclassTransientFields() {
     lock.lock();
     try {
-      threadLocalFields = new ThreadLocal<SplittableRandom>() {
-        @Override public SplittableRandom initialValue() {
+      threadLocalFields = new ThreadLocal<ThreadLocalFields>() {
+        @Override public ThreadLocalFields initialValue() {
           // Necessary because SplittableRandom.split() isn't itself thread-safe.
           lock.lock();
           try {
