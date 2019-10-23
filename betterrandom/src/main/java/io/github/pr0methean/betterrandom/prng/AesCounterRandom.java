@@ -55,6 +55,9 @@ public class AesCounterRandom extends CipherCounterRandom {
   @SuppressWarnings("HardcodedFileSeparator") private static final String ALGORITHM_MODE =
       ALGORITHM + "/ECB/NoPadding";
   // WARNING: Don't initialize any instance fields at declaration; they may be initialized too late!
+  /**
+   * The AES cipher that will generate the pseudorandom numbers.
+   */
   protected transient Cipher
       cipher;
 

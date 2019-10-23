@@ -42,12 +42,7 @@ public class DeadlockWatchdogThread extends LooperThread {
   }
 
   public static synchronized void ensureStarted() {
-    if (INSTANCE.getState() == Thread.State.TERMINATED) {
-      INSTANCE = new DeadlockWatchdogThread();
-    }
-    if (INSTANCE.getState() == Thread.State.NEW) {
-      INSTANCE.start();
-    }
+    INSTANCE.start();
   }
 
   public static synchronized void stopInstance() {

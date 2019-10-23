@@ -11,8 +11,16 @@ public enum Byte16ArrayArithmetic {
   ;
 
   private static final int SIZE_BYTES = 16;
-  public static final int SIZE_BYTES_MINUS_LONG = SIZE_BYTES - LONG_BYTES;
+  private static final int SIZE_BYTES_MINUS_LONG = SIZE_BYTES - LONG_BYTES;
+
+  /**
+   * The 128-bit value 0.
+   */
   public static final byte[] ZERO = new byte[SIZE_BYTES];
+
+  /**
+   * The 128-bit value 1.
+   */
   public static final byte[] ONE = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1};
   private static final long UNSIGNED_INT_TO_LONG_MASK = (1L << Integer.SIZE) - 1;
 

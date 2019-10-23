@@ -29,6 +29,10 @@ AbstractLargeSeedRandomTest extends BaseRandomTest {
 
   private DefaultSeedGenerator oldDefaultSeedGenerator;
 
+  /**
+   * Replaces the default seed generator with a faster mock. Must be undone after the test using
+   * {@link #unmockDefaultSeedGenerator()}.
+   */
   protected void mockDefaultSeedGenerator() {
     oldDefaultSeedGenerator = DefaultSeedGenerator.DEFAULT_SEED_GENERATOR;
     final DefaultSeedGenerator mockDefaultSeedGenerator = PowerMockito.mock(DefaultSeedGenerator.class);
@@ -47,6 +51,9 @@ AbstractLargeSeedRandomTest extends BaseRandomTest {
         mockDefaultSeedGenerator);
   }
 
+  /**
+   * Undoes {@link #mockDefaultSeedGenerator()}, restoring the factory default.
+   */
   protected void unmockDefaultSeedGenerator() {
     Whitebox.setInternalState(DefaultSeedGenerator.class, "DEFAULT_SEED_GENERATOR",
         oldDefaultSeedGenerator);

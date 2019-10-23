@@ -238,6 +238,7 @@ public class EntropyBlockingReseedingSplittableRandomAdapterTest
     }
   }
 
+  @SuppressWarnings("MismatchedReadAndWriteOfArray")
   @Test(timeOut = 10_000L) public void testGetSeed() {
     final EntropyBlockingReseedingSplittableRandomAdapter random = createRng();
     final byte[] seed = ((BaseRandom) random).getSeed();

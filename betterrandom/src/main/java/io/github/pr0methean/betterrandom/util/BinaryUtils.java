@@ -154,6 +154,13 @@ public enum BinaryUtils {
     return output;
   }
 
+  /**
+   * Unpacks a long into an existing byte array in big-endian order.
+   *
+   * @param input a long.
+   * @param output the array
+   * @param offset the index to write the first (most significant) byte.
+   */
   public static void convertLongToBytes(final long input, final byte[] output, final int offset) {
     output[offset] = (byte) (input >> 56L);
     output[offset + 1] = (byte) (input >> 48L);
