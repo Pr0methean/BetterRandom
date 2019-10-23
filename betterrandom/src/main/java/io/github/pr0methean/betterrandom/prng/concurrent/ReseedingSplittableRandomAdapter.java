@@ -5,7 +5,7 @@ import io.github.pr0methean.betterrandom.prng.BaseRandom;
 import io.github.pr0methean.betterrandom.seed.RandomSeederThread;
 import io.github.pr0methean.betterrandom.seed.SeedException;
 import io.github.pr0methean.betterrandom.seed.SeedGenerator;
-import io.github.pr0methean.betterrandom.seed.SimpleRandomSeederThread;
+import io.github.pr0methean.betterrandom.seed.SimpleRandomSeeder;
 import java.util.Collections;
 import java.util.Map;
 import java.util.SplittableRandom;
@@ -21,7 +21,7 @@ import java.util.WeakHashMap;
 public class ReseedingSplittableRandomAdapter extends BaseSplittableRandomAdapter {
 
   private static final long serialVersionUID = 6301096404034224037L;
-  private static final Map<SimpleRandomSeederThread,
+  private static final Map<SimpleRandomSeeder,
       ReseedingSplittableRandomAdapter>
       INSTANCES = Collections.synchronizedMap(new WeakHashMap<>(1));
   private final SeedGenerator seedGenerator;
@@ -32,15 +32,15 @@ public class ReseedingSplittableRandomAdapter extends BaseSplittableRandomAdapte
   protected transient ThreadLocal<BaseRandom> threadLocal;
 
   /**
-   * Single instance per {@link SimpleRandomSeederThread} except via subclasses.
+   * Single instance per {@link SimpleRandomSeeder} except via subclasses.
    *
    * @param seedGenerator the seed generator that will generate an initial seed for each thread
-   * @param randomSeeder the {@link SimpleRandomSeederThread} that will generate a seed for a new
+   * @param randomSeeder the {@link SimpleRandomSeeder} that will generate a seed for a new
    *     {@link SplittableRandom} instance whenever each thread's instance needs reseeding
    * @throws SeedException if {@code seedGenerator} fails to generate an initial seed
    */
   protected ReseedingSplittableRandomAdapter(final SeedGenerator seedGenerator,
-      SimpleRandomSeederThread randomSeeder) throws SeedException {
+      SimpleRandomSeeder randomSeeder) throws SeedException {
     super(seedGenerator.generateSeed(Long.BYTES));
     this.seedGenerator = seedGenerator;
     this.randomSeeder.set(randomSeeder);
@@ -70,7 +70,7 @@ public class ReseedingSplittableRandomAdapter extends BaseSplittableRandomAdapte
    *     seed.
    */
   @SuppressWarnings("SynchronizationOnStaticField")
-  public static ReseedingSplittableRandomAdapter getInstance(final SimpleRandomSeederThread randomSeeder,
+  public static ReseedingSplittableRandomAdapter getInstance(final SimpleRandomSeeder randomSeeder,
       final SeedGenerator seedGenerator) throws SeedException {
     synchronized (INSTANCES) {
       return INSTANCES.computeIfAbsent(randomSeeder,
@@ -86,7 +86,7 @@ public class ReseedingSplittableRandomAdapter extends BaseSplittableRandomAdapte
     return threadLocal.get().getSeed();
   }
 
-  @Override public void setRandomSeeder(final SimpleRandomSeederThread randomSeeder) {
+  @Override public void setRandomSeeder(final SimpleRandomSeeder randomSeeder) {
     if (!this.randomSeeder.get().equals(randomSeeder)) {
       throw new UnsupportedOperationException(
           "ReseedingSplittableRandomAdapter's binding to RandomSeederThread is immutable");
@@ -106,7 +106,7 @@ public class ReseedingSplittableRandomAdapter extends BaseSplittableRandomAdapte
    * Subclasses must override this method if the delegate held in {@link #threadLocal} is not always
    * a {@link SingleThreadSplittableRandomAdapter}.
    *
-   * @return the instance returned by {@link #getInstance(SimpleRandomSeederThread, SeedGenerator)}
+   * @return the instance returned by {@link #getInstance(SimpleRandomSeeder, SeedGenerator)}
    *     with this instance's parameters
    */
   protected Object readResolve() {

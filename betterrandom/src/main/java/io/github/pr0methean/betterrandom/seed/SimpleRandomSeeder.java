@@ -19,8 +19,6 @@ import java.util.WeakHashMap;
 import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.Condition;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Thread that loops over {@link ByteArrayReseedableRandom} instances and reseeds them. No {@link
@@ -28,7 +26,7 @@ import org.slf4j.LoggerFactory;
  *
  * @author Chris Hennick
  */
-public class SimpleRandomSeederThread extends LooperThread {
+public class SimpleRandomSeeder extends LooperThread {
   private static final Map<ByteArrayReseedableRandom, byte[]> SEED_ARRAYS =
       Collections.synchronizedMap(new WeakHashMap<>(1));
 
@@ -87,7 +85,7 @@ public class SimpleRandomSeederThread extends LooperThread {
    * @param seedGenerator the seed generator
    * @param threadFactory the {@link ThreadFactory} that will create this seeder's thread
    */
-  public SimpleRandomSeederThread(final SeedGenerator seedGenerator, ThreadFactory threadFactory) {
+  public SimpleRandomSeeder(final SeedGenerator seedGenerator, ThreadFactory threadFactory) {
     this(seedGenerator, threadFactory, DEFAULT_STOP_IF_EMPTY_FOR_NANOS);
   }
 
@@ -96,8 +94,8 @@ public class SimpleRandomSeederThread extends LooperThread {
    *
    * @param seedGenerator the seed generator
    */
-  public SimpleRandomSeederThread(SeedGenerator seedGenerator) {
-    this(seedGenerator, new SimpleRandomSeederThread.DefaultThreadFactory(seedGenerator.toString()));
+  public SimpleRandomSeeder(SeedGenerator seedGenerator) {
+    this(seedGenerator, new SimpleRandomSeeder.DefaultThreadFactory(seedGenerator.toString()));
   }
 
   /**
@@ -108,7 +106,7 @@ public class SimpleRandomSeederThread extends LooperThread {
    * @param stopIfEmptyForNanos time in nanoseconds after which this thread will terminate if no
    *     PRNGs are attached
    */
-  public SimpleRandomSeederThread(SeedGenerator seedGenerator, ThreadFactory threadFactory,
+  public SimpleRandomSeeder(SeedGenerator seedGenerator, ThreadFactory threadFactory,
       long stopIfEmptyForNanos) {
     super(threadFactory);
     this.seedGenerator = seedGenerator;
@@ -206,7 +204,7 @@ public class SimpleRandomSeederThread extends LooperThread {
     if (o == null || getClass() != o.getClass()) {
       return false;
     }
-    SimpleRandomSeederThread that = (SimpleRandomSeederThread) o;
+    SimpleRandomSeeder that = (SimpleRandomSeeder) o;
     return seedGenerator.equals(that.seedGenerator) && factory.equals(that.factory);
   }
 
@@ -320,7 +318,7 @@ public class SimpleRandomSeederThread extends LooperThread {
 
   /**
    * Informs the given PRNGs that they no longer have a seed generator. Only affects those that
-   * support {@link BaseRandom#setRandomSeeder(SimpleRandomSeederThread)}.
+   * support {@link BaseRandom#setRandomSeeder(SimpleRandomSeeder)}.
    *
    * @param randoms the PRNGs to unregister with
    */

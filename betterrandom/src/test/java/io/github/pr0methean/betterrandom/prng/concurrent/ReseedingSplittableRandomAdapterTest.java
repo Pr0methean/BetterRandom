@@ -15,7 +15,7 @@ import io.github.pr0methean.betterrandom.seed.RandomSeederThread;
 import io.github.pr0methean.betterrandom.seed.SeedException;
 import io.github.pr0methean.betterrandom.seed.SeedGenerator;
 import io.github.pr0methean.betterrandom.seed.SemiFakeSeedGenerator;
-import io.github.pr0methean.betterrandom.seed.SimpleRandomSeederThread;
+import io.github.pr0methean.betterrandom.seed.SimpleRandomSeeder;
 import io.github.pr0methean.betterrandom.util.BinaryUtils;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
@@ -24,14 +24,14 @@ import org.testng.annotations.Test;
 public class ReseedingSplittableRandomAdapterTest
     extends SingleThreadSplittableRandomAdapterTest {
 
-  private SimpleRandomSeederThread thread;
+  private SimpleRandomSeeder thread;
 
   @Override protected SeedGenerator getTestSeedGenerator() {
     return semiFakeSeedGenerator;
   }
 
   @BeforeMethod public void setUp() {
-    thread = new SimpleRandomSeederThread(getTestSeedGenerator());
+    thread = new SimpleRandomSeeder(getTestSeedGenerator());
   }
 
   @AfterMethod public void tearDown() {
@@ -60,7 +60,7 @@ public class ReseedingSplittableRandomAdapterTest
 
   @Override public void testInitialEntropy() {
     // This test needs a separate instance from all other tests, but createRng() doesn't provide one
-    SimpleRandomSeederThread newThread = new RandomSeederThread(new FakeSeedGenerator("testInitialEntropy"));
+    SimpleRandomSeeder newThread = new RandomSeederThread(new FakeSeedGenerator("testInitialEntropy"));
     ReseedingSplittableRandomAdapter random
         = ReseedingSplittableRandomAdapter.getInstance(newThread, getTestSeedGenerator());
     assertEquals(random.getEntropyBits(), Long.SIZE, "Wrong initial entropy");

@@ -18,8 +18,8 @@ import io.github.pr0methean.betterrandom.seed.RandomSeederThread;
 import io.github.pr0methean.betterrandom.seed.SeedException;
 import io.github.pr0methean.betterrandom.seed.SeedGenerator;
 import io.github.pr0methean.betterrandom.seed.SemiFakeSeedGenerator;
-import io.github.pr0methean.betterrandom.seed.SimpleRandomSeederThread;
-import io.github.pr0methean.betterrandom.seed.SimpleRandomSeederThread.DefaultThreadFactory;
+import io.github.pr0methean.betterrandom.seed.SimpleRandomSeeder;
+import io.github.pr0methean.betterrandom.seed.SimpleRandomSeeder.DefaultThreadFactory;
 import io.github.pr0methean.betterrandom.util.BinaryUtils;
 import java.util.Arrays;
 import java.util.Map;
@@ -32,7 +32,7 @@ import org.testng.annotations.Test;
 public class EntropyBlockingReseedingSplittableRandomAdapterTest
     extends ReseedingSplittableRandomAdapterTest {
 
-  private SimpleRandomSeederThread thread;
+  private SimpleRandomSeeder thread;
 
   @Override protected SeedGenerator getTestSeedGenerator() {
     return semiFakeSeedGenerator;
@@ -44,7 +44,7 @@ public class EntropyBlockingReseedingSplittableRandomAdapterTest
   }
 
   @Override @BeforeMethod public void setUp() {
-    thread = new SimpleRandomSeederThread(getTestSeedGenerator(),
+    thread = new SimpleRandomSeeder(getTestSeedGenerator(),
         new DefaultThreadFactory("EntropyBlockingReseedingSplittableRandomAdapterTest",
             Thread.MAX_PRIORITY));
   }
@@ -73,7 +73,7 @@ public class EntropyBlockingReseedingSplittableRandomAdapterTest
   @Override public Map<Class<?>, Object> constructorParams() {
     Map<Class<?>, Object> out = super.constructorParams();
     out.put(long.class, EntropyBlockingTestUtils.DEFAULT_MAX_ENTROPY);
-    out.put(SimpleRandomSeederThread.class, thread);
+    out.put(SimpleRandomSeeder.class, thread);
     return out;
   }
 
@@ -85,7 +85,7 @@ public class EntropyBlockingReseedingSplittableRandomAdapterTest
 
   @Override public void testInitialEntropy() {
     // This test needs a separate instance from all other tests, but createRng() doesn't provide one
-    SimpleRandomSeederThread newThread = new RandomSeederThread(new FakeSeedGenerator("testInitialEntropy"));
+    SimpleRandomSeeder newThread = new RandomSeederThread(new FakeSeedGenerator("testInitialEntropy"));
     ReseedingSplittableRandomAdapter random =
         ReseedingSplittableRandomAdapter.getInstance(newThread, getTestSeedGenerator());
     assertEquals(random.getEntropyBits(), Long.SIZE, "Wrong initial entropy");
@@ -220,7 +220,7 @@ public class EntropyBlockingReseedingSplittableRandomAdapterTest
     SeedGenerator seederSeedGenSpy = Mockito.spy(testSeedGenerator);
     ThreadFactory defaultThreadFactory
         = new DefaultThreadFactory("testRandomSeederThreadUsedFirst", Thread.MAX_PRIORITY);
-    SimpleRandomSeederThread seeder = new SimpleRandomSeederThread(seederSeedGenSpy,
+    SimpleRandomSeeder seeder = new SimpleRandomSeeder(seederSeedGenSpy,
         defaultThreadFactory);
     SemiFakeSeedGenerator sameThreadSeedGen
         = new SemiFakeSeedGenerator(new SplittableRandomAdapter(), "sameThreadSeedGen");
