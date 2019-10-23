@@ -7,10 +7,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [4.1.0]
+
 ### Added
 
 - `EntropyBlockingRandomWrapper`: won't return any output when below a minimum entropy (recommended to use 0 or less).
   Can be configured with a `SeedGenerator` to reseed on the calling thread, or can use a `RandomSeederThread`.
+- `EntropyBlockingReseedingSplittableRandomAdapter` and `EntropyBlockingSplittableRandomAdapter`: same, but based on
+  `ReseedingSplittableRandomAdapter` and `SplittableRandomAdapter` respectively. Entropy count is thread-local, so
+  consuming entropy on one thread won't directly cause these to block on another thread.
 - `SecureRandomSeedGenerator(SecureRandom)`: new constructor. This class is no longer a singleton.
 - `SimpleRandomSeederThread`: a more lightweight superclass of `RandomSeederThread` that only deals with instances of
   `ByteArrayReseedableRandom`.
@@ -543,7 +548,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - First release on Maven Central.
 
-[Unreleased]: https://github.com/Pr0methean/BetterRandom/compare/BetterRandom-Java7-4.0.3...java7
+[Unreleased]: https://github.com/Pr0methean/BetterRandom/compare/BetterRandom-Java7-4.1.0...master
+[4.1.0]: https://github.com/Pr0methean/BetterRandom/compare/BetterRandom-Java7-4.0.3...BetterRandom-Java7-4.1.0
 [4.0.3]: https://github.com/Pr0methean/BetterRandom/compare/BetterRandom-Java7-4.0.2...BetterRandom-Java7-4.0.3
 [4.0.2]: https://github.com/Pr0methean/BetterRandom/compare/BetterRandom-Java7-4.0.1...BetterRandom-Java7-4.0.2
 [4.0.1]: https://github.com/Pr0methean/BetterRandom/compare/BetterRandom-Java7-4.0.0...BetterRandom-Java7-4.0.1

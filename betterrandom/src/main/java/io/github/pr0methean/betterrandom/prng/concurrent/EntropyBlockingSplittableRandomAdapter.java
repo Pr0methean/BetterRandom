@@ -11,7 +11,8 @@ import javax.annotation.Nullable;
 /**
  * A {@link SplittableRandomAdapter} that reseeds itself when its entropy drops too low. Unlike with
  * an {@link EntropyBlockingReseedingSplittableRandomAdapter}, reseeding is done on the thread that
- * consumes pseudorandomness.
+ * consumes pseudorandomness. Entropy count is thread-local, so consuming entropy on one thread
+ * won't directly cause blocking on another thread.
  */
 public class EntropyBlockingSplittableRandomAdapter extends SplittableRandomAdapter {
   private static final long serialVersionUID = 4992825526245524633L;

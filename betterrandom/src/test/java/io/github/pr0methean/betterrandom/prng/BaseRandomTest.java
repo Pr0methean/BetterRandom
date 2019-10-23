@@ -891,27 +891,20 @@ public abstract class BaseRandomTest extends PowerMockTestCase {
     // See https://www.yegor256.com/2018/03/27/how-to-test-thread-safety.html for why a
     // CountDownLatch is used.
     CountDownLatch latch = new CountDownLatch(2);
-    final Random parallelPrng = random;
     final SortedSet<Double> output = new ConcurrentSkipListSet<>();
-    pool.execute(new GeneratorForkJoinTask<>(parallelPrng, output, supplier1, latch, iterations));
-    pool.execute(new GeneratorForkJoinTask<>(parallelPrng, output, supplier2, latch, iterations));
+    pool.execute(new GeneratorForkJoinTask<>(random, output, supplier1, latch, iterations));
+    pool.execute(new GeneratorForkJoinTask<>(random, output, supplier2, latch, iterations));
     assertTrue(pool.awaitQuiescence(timeoutSec, TimeUnit.SECONDS),
         String.format("Timed out waiting for %s and %s to finish", supplier1, supplier2));
     return output;
   }
 
   protected SortedSet<Double> runSequential(final NamedFunction<Random, Double> supplier1,
-      final NamedFunction<Random, Double> supplier2, final byte[] seed) {
-    return runSequential(supplier1, supplier2, createRng(seed));
-  }
-
-  protected SortedSet<Double> runSequential(final NamedFunction<Random, Double> supplier1,
       final NamedFunction<Random, Double> supplier2, final BaseRandom random) {
-    final Random sequentialPrng = random;
     final SortedSet<Double> output = new TreeSet<>();
-    new GeneratorForkJoinTask<>(sequentialPrng, output, supplier1, new CountDownLatch(1), 1000)
+    new GeneratorForkJoinTask<>(random, output, supplier1, new CountDownLatch(1), 1000)
         .exec();
-    new GeneratorForkJoinTask<>(sequentialPrng, output, supplier2, new CountDownLatch(1), 1000)
+    new GeneratorForkJoinTask<>(random, output, supplier2, new CountDownLatch(1), 1000)
         .exec();
     return output;
   }
