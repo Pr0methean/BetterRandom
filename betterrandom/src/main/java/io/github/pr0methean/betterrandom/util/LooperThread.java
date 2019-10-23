@@ -25,10 +25,24 @@ public abstract class LooperThread implements Serializable {
    * The thread holds this lock whenever it is running {@link #iterate()}.
    */
   protected final Lock lock = new ReentrantLock(true);
+
+  /**
+   * The looper holds this lock whenever it is reading or writing the state of the underlying thread
+   * (including replacing that thread).
+   */
   protected final Lock threadLock = new ReentrantLock();
+
+  /**
+   * The thread where this looper's loop is running.
+   */
   @SuppressWarnings("InstanceVariableMayNotBeInitializedByReadObject")
   protected transient volatile Thread thread;
+
+  /**
+   * The {@link ThreadFactory} used to create (and, if necessary, replace) the thread.
+   */
   protected final ThreadFactory factory;
+
   private volatile boolean running; // determines whether to start when deserialized
   private volatile boolean everStarted; // tracked for getState()
 
@@ -64,6 +78,10 @@ public abstract class LooperThread implements Serializable {
     this.factory = factory;
   }
 
+  /**
+   * Returns whether there is a running thread executing this {@link LooperThread}'s loop.
+   * @return true if this has a running thread; false otherwise
+   */
   public boolean isRunning() {
     threadLock.lock();
     try {
@@ -91,6 +109,10 @@ public abstract class LooperThread implements Serializable {
   @SuppressWarnings("BooleanMethodIsAlwaysInverted") protected abstract boolean iterate()
       throws InterruptedException;
 
+  /**
+   * Starts the thread if it's not already running, creating it if it doesn't exist, has died or has
+   * been {@link #interrupt()}ed.
+   */
   protected void start() {
     threadLock.lock();
     try {
@@ -105,6 +127,10 @@ public abstract class LooperThread implements Serializable {
     }
   }
 
+  /**
+   * Interrupts the thread if it's running. The thread will be replaced by a new one the next time
+   * {@link #start()} is called.
+   */
   public void interrupt() {
     threadLock.lock();
     try {
@@ -113,18 +139,6 @@ public abstract class LooperThread implements Serializable {
         thread.interrupt();
         thread = null;
       }
-    } finally {
-      threadLock.unlock();
-    }
-  }
-
-  protected Thread.State getState() {
-    threadLock.lock();
-    try {
-      if (thread == null) {
-        return everStarted ? Thread.State.TERMINATED : Thread.State.NEW;
-      }
-      return thread.getState();
     } finally {
       threadLock.unlock();
     }

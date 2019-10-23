@@ -1,6 +1,7 @@
 package io.github.pr0methean.betterrandom.util;
 
 import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertFalse;
 import static org.testng.Assert.assertTrue;
 
 import com.google.common.util.concurrent.Uninterruptibles;
@@ -80,7 +81,7 @@ public class LooperThreadTest {
         assertTrue(waits >= 0, "Timed out waiting for test looper thread to die");
         Thread.sleep(10);
       }
-      assertEquals(testLooperThread.getState(), Thread.State.TERMINATED);
+      assertFalse(testLooperThread.isRunning());
       testLooperThread.shouldThrow.set(false);
       testLooperThread.start();
       assertTrue(testLooperThread.isRunning());
