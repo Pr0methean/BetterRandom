@@ -42,15 +42,20 @@ public class ReseedingSplittableRandomAdapter extends BaseSplittableRandomAdapte
     threadLocal = createThreadLocal();
   }
 
-  protected ThreadLocal<? extends BaseRandom> createThreadLocal() {
-    return new ThreadLocal<SingleThreadSplittableRandomAdapter>() {
-      @Override protected SingleThreadSplittableRandomAdapter initialValue() {
-        SingleThreadSplittableRandomAdapter threadAdapter =
-            new SingleThreadSplittableRandomAdapter(ReseedingSplittableRandomAdapter.this.seedGenerator);
-        threadAdapter.setRandomSeeder(ReseedingSplittableRandomAdapter.this.randomSeeder.get());
-        return threadAdapter;
-      }
-    };
+  protected ThreadLocal<BaseRandom> createThreadLocal() {
+    return ThreadLocal.withInitial(this::createDelegate);
+  }
+
+  /**
+   * Creates the delegate for the calling thread.
+   *
+   * @return the thread-local delegate
+   */
+  protected BaseRandom createDelegate() {
+      SingleThreadSplittableRandomAdapter threadAdapter =
+          new SingleThreadSplittableRandomAdapter(this.seedGenerator);
+      threadAdapter.setRandomSeeder(this.randomSeeder.get());
+      return threadAdapter;
   }
 
   /**
