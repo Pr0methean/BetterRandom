@@ -244,11 +244,8 @@ public class EntropyBlockingReseedingSplittableRandomAdapterTest
     final byte[] seed = ((BaseRandom) random).getSeed();
     final byte[] seed2 = new byte[LONG_BYTES];
     final byte[] zero = new byte[LONG_BYTES];
-    Thread newThread = new Thread() {
-      @Override public void run() {
-        System.arraycopy(((BaseRandom) random).getSeed(), 0, seed2, 0, LONG_BYTES);
-      }
-    };
+    Thread newThread = new Thread(
+        () -> System.arraycopy(((BaseRandom) random).getSeed(), 0, seed2, 0, LONG_BYTES));
     newThread.start();
     Uninterruptibles.joinUninterruptibly(newThread); // FIXME: Spurious interrupts
     assertFalse(Arrays.equals(seed, seed2), "Same seed returned on different threads");

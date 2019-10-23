@@ -32,7 +32,7 @@ public class ReseedingThreadLocalRandomWrapper extends ThreadLocalRandomWrapper 
    *     used to reseed each thread's PRNG.
    */
   public ReseedingThreadLocalRandomWrapper(final SeedGenerator seedGenerator,
-      final Supplier<? extends BaseRandom> initializer) throws SeedException {
+      final Supplier<? extends BaseRandom> initializer) {
     this(initializer, new RandomSeederThread(seedGenerator));
   }
 
@@ -47,7 +47,7 @@ public class ReseedingThreadLocalRandomWrapper extends ThreadLocalRandomWrapper 
    *     necessary
    */
   public ReseedingThreadLocalRandomWrapper(final Supplier<? extends BaseRandom> initializer,
-      final SimpleRandomSeederThread randomSeederThread) throws SeedException {
+      final SimpleRandomSeederThread randomSeederThread) {
     super(new SerializableSupplier<BaseRandom>() {
       @Override public BaseRandom get() {
         final BaseRandom out = initializer.get();
@@ -70,6 +70,8 @@ public class ReseedingThreadLocalRandomWrapper extends ThreadLocalRandomWrapper 
    *     RandomSeederThread}.
    * @param creator a {@link Function} that creates a {@link BaseRandom} from each seed.
    *     Probably a constructor reference.
+   *
+   * @throws SeedException if {@code seedGenerator} fails to generate an initial seed
    */
   public ReseedingThreadLocalRandomWrapper(final int seedSize, final SeedGenerator seedGenerator,
       final Function<byte[], ? extends BaseRandom> creator) throws SeedException {
@@ -85,6 +87,8 @@ public class ReseedingThreadLocalRandomWrapper extends ThreadLocalRandomWrapper 
    * @param randomSeederThread The random seeder to use for reseeding.
    * @param creator a {@link Function} that creates a {@link BaseRandom} from each seed.
    * @param seedGenerator the seed generator for initialization.
+   *
+   * @throws SeedException if {@code seedGenerator} fails to generate an initial seed
    */
   public ReseedingThreadLocalRandomWrapper(final int seedSize,
       final SimpleRandomSeederThread randomSeederThread,

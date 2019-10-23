@@ -7,6 +7,7 @@ import java.util.Random;
 import java.util.Set;
 import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.TimeUnit;
+import org.slf4j.LoggerFactory;
 
 /**
  * A {@link SimpleRandomSeederThread} that can reseed any instance of {@link Random}.
@@ -19,8 +20,8 @@ public final class RandomSeederThread extends SimpleRandomSeederThread {
 
   @Override protected void initTransientFields() {
     super.initTransientFields();
-    otherPrngs = createSynchronizedHashSet();
-    otherPrngsThisIteration = createSynchronizedHashSet();
+    otherPrngs = createSynchronizedWeakHashSet();
+    otherPrngsThisIteration = createSynchronizedWeakHashSet();
   }
 
   @Override public void remove(Collection<? extends Random> randoms) {
@@ -77,10 +78,25 @@ public final class RandomSeederThread extends SimpleRandomSeederThread {
     }
   }
 
+  /**
+   * Creates an instance whose thread will terminate if no PRNGs have been associated with it for 5
+   * seconds.
+   *
+   * @param seedGenerator the seed generator
+   * @param threadFactory the {@link ThreadFactory} that will create this seeder's thread
+   */
   public RandomSeederThread(final SeedGenerator seedGenerator, ThreadFactory threadFactory) {
-    this(seedGenerator, threadFactory, 5_000_000_000L);
+    this(seedGenerator, threadFactory, DEFAULT_STOP_IF_EMPTY_FOR_NANOS);
   }
 
+  /**
+   * Creates an instance.
+   *
+   * @param seedGenerator the seed generator
+   * @param threadFactory the {@link ThreadFactory} that will create this seeder's thread
+   * @param stopIfEmptyForNanos time in nanoseconds after which this thread will terminate if no
+   *     PRNGs are attached
+   */
   public RandomSeederThread(final SeedGenerator seedGenerator, ThreadFactory threadFactory,
       long stopIfEmptyForNanos) {
     super(seedGenerator, threadFactory, stopIfEmptyForNanos);
