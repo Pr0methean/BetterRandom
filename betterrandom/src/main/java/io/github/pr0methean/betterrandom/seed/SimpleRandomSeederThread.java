@@ -281,23 +281,33 @@ public class SimpleRandomSeederThread extends LooperThread {
     return seedGenerator;
   }
 
+  /**
+   * A {@link ThreadFactory} that sets the name and priority of the threads it creates.
+   */
   public static class DefaultThreadFactory implements ThreadFactory, Serializable {
 
     private static final long serialVersionUID = -5806852086706570346L;
     private final String name;
     private final int priority;
 
+    /**
+     * Creates an instance with a reasonable default priority for most applications.
+     *
+     * @param name the name of the created thread; see {@link Thread#setName(String)}
+     */
     public DefaultThreadFactory(String name) {
       this(name, Thread.NORM_PRIORITY + 1);
     }
 
+    /**
+     * Creates an instance.
+     *
+     * @param name the name of the created thread; see {@link Thread#setName(String)}
+     * @param priority the priority of the created thread; see {@link Thread#setPriority(int)}
+     */
     public DefaultThreadFactory(String name, int priority) {
       this.name = name;
       this.priority = priority;
-    }
-
-    public DefaultThreadFactory() {
-      this("TODO"); // TODO
     }
 
     @Override public Thread newThread(Runnable runnable) {
