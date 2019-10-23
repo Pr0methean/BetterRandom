@@ -236,14 +236,14 @@ public class SimpleRandomSeederThread extends LooperThread {
 
   protected void unregisterWithAll(Set<?> randoms) {
     synchronized (randoms) {
-      randoms.forEach(random -> {
+      for (Object random : randoms) {
         if (random instanceof BaseRandom) {
           try {
             ((BaseRandom) random).setRandomSeeder(null);
           } catch (UnsupportedOperationException ignored) {
           }
         }
-      });
+      }
     }
   }
 

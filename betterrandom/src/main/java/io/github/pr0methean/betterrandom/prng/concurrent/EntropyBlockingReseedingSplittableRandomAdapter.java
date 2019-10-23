@@ -2,6 +2,7 @@ package io.github.pr0methean.betterrandom.prng.concurrent;
 
 import static io.github.pr0methean.betterrandom.util.BinaryUtils.convertBytesToLong;
 
+import io.github.pr0methean.betterrandom.prng.BaseRandom;
 import io.github.pr0methean.betterrandom.seed.SeedGenerator;
 import io.github.pr0methean.betterrandom.seed.SimpleRandomSeederThread;
 import java.util.SplittableRandom;
@@ -29,14 +30,17 @@ public class EntropyBlockingReseedingSplittableRandomAdapter extends ReseedingSp
   }
 
   private void initSubclassTransientFields() {
-    threadLocal = ThreadLocal.withInitial(() -> {
-      EntropyBlockingRandomWrapper threadAdapter =
-          new EntropyBlockingRandomWrapper(
-              new SingleThreadSplittableRandomAdapter(sameThreadSeedGen.get()),
-              minimumEntropy, sameThreadSeedGen.get());
-      threadAdapter.setRandomSeeder(this.randomSeeder.get());
-      return threadAdapter;
-    });
+    threadLocal = new ThreadLocal<>() {
+      @Override protected BaseRandom initialValue() {
+        EntropyBlockingRandomWrapper threadAdapter =
+            new EntropyBlockingRandomWrapper(
+                new SingleThreadSplittableRandomAdapter(sameThreadSeedGen.get()),
+                minimumEntropy, sameThreadSeedGen.get());
+        threadAdapter.setRandomSeeder(
+            EntropyBlockingReseedingSplittableRandomAdapter.this.randomSeeder.get());
+        return threadAdapter;
+      }
+    };
   }
 
   /**

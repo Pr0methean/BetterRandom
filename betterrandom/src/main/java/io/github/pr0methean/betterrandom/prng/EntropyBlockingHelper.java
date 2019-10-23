@@ -107,6 +107,9 @@ public class EntropyBlockingHelper implements Serializable {
 
   public void creditEntropyForNewSeed(int seedLength) {
     final long effectiveBits = Math.min(seedLength, random.getNewSeedLength()) * 8L;
-    entropyBits.updateAndGet(oldCount -> Math.max(oldCount, effectiveBits));
+    long oldCount;
+    do {
+      oldCount = entropyBits.get();
+    } while (!entropyBits.compareAndSet(oldCount, Math.max(oldCount, effectiveBits)));
   }
 }

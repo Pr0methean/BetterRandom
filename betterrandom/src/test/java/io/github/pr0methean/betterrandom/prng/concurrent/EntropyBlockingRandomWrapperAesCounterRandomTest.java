@@ -21,7 +21,7 @@ import java.util.Arrays;
 import java.util.Map;
 import java.util.Random;
 import java.util.UUID;
-import java8.util.function.Consumer;
+import java8.util.function.Function;
 import org.testng.annotations.Test;
 
 @Test(testName = "EntropyBlockingRandomWrapper:AesCounterRandom")
@@ -68,7 +68,12 @@ public class EntropyBlockingRandomWrapperAesCounterRandomTest extends RandomWrap
 
   @Override public void testThreadSafety() {
     checkThreadSafety(functionsForThreadSafetyTest, functionsForThreadSafetyTest,
-        this::createRngLargeEntropyLimit);
+        new Function<byte[], BaseRandom>() {
+          @Override public BaseRandom apply(byte[] seed) {
+            return EntropyBlockingRandomWrapperAesCounterRandomTest.this
+                .createRngLargeEntropyLimit(seed);
+          }
+        });
   }
 
   private EntropyBlockingRandomWrapper createRngLargeEntropyLimit() {

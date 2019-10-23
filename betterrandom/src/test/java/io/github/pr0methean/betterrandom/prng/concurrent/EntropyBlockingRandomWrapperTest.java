@@ -25,11 +25,24 @@ import java.util.Map;
 import java.util.Random;
 import java.util.UUID;
 import java.util.concurrent.ThreadFactory;
+import java8.util.function.Function;
+import java8.util.function.Supplier;
 import org.mockito.Mockito;
 import org.testng.annotations.Test;
 
 @Test(testName = "EntropyBlockingRandomWrapper")
 public class EntropyBlockingRandomWrapperTest extends RandomWrapperRandomTest {
+
+  private final Supplier<BaseRandom> createRngLargeEntropyLimit = new Supplier<>() {
+                      @Override public BaseRandom get() {
+                        return EntropyBlockingRandomWrapperTest.this.createRngLargeEntropyLimit();
+                      }
+                    };
+  private final Function<byte[], BaseRandom> createRngLargeEntropyLimitFromSeed = new Function<>() {
+        @Override public BaseRandom apply(byte[] seed) {
+          return EntropyBlockingRandomWrapperTest.this.createRngLargeEntropyLimit(seed);
+        }
+      };
 
   @Override public Class<? extends BaseRandom> getClassUnderTest() {
     return EntropyBlockingRandomWrapper.class;
@@ -115,7 +128,6 @@ public class EntropyBlockingRandomWrapperTest extends RandomWrapperRandomTest {
     return RandomTestUtils.EntropyCheckMode.LOWER_BOUND;
   }
 
-  @Test(timeOut = 60_000L) public void testRandomSeederThreadUsedFirst() {
   @Override protected RandomTestUtils.EntropyCheckMode getEntropyCheckMode() {
     return RandomTestUtils.EntropyCheckMode.LOWER_BOUND;
   }
@@ -193,13 +205,13 @@ public class EntropyBlockingRandomWrapperTest extends RandomWrapperRandomTest {
   }
 
   @Override public void testSetSeedAfterNextLong() throws SeedException {
-    checkSetSeedAfter(this::createRngLargeEntropyLimit, this::createRngLargeEntropyLimit,
-        BaseRandom::nextLong);
+    checkSetSeedAfter(this.createRngLargeEntropyLimit, createRngLargeEntropyLimitFromSeed,
+        nextLong);
   }
 
   @Override public void testSetSeedAfterNextInt() throws SeedException {
-    checkSetSeedAfter(this::createRngLargeEntropyLimit, this::createRngLargeEntropyLimit,
-        BaseRandom::nextInt);
+    checkSetSeedAfter(createRngLargeEntropyLimit, createRngLargeEntropyLimitFromSeed,
+        nextInt);
   }
 
   @Test public void testSetSameThreadSeedGen() {

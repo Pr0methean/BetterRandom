@@ -6,8 +6,22 @@ import io.github.pr0methean.betterrandom.prng.BaseRandom;
 import io.github.pr0methean.betterrandom.prng.RandomTestUtils;
 import io.github.pr0methean.betterrandom.seed.SeedException;
 import java.util.Map;
+import java8.util.function.Function;
+import java8.util.function.Supplier;
 
 public class EntropyBlockingSplittableRandomAdapterTest extends SplittableRandomAdapterTest {
+
+  private final Function<byte[], BaseRandom> createRngLargeEntropyLimitForSeed = new Function<>() {
+    @Override public BaseRandom apply(byte[] seed) {
+      return EntropyBlockingSplittableRandomAdapterTest.this.createRngLargeEntropyLimit(seed);
+    }
+  };
+  private final Supplier<BaseRandom> createRngLargeEntropyLimit = new Supplier<>() {
+                      @Override public BaseRandom get() {
+                        return EntropyBlockingSplittableRandomAdapterTest.this.createRngLargeEntropyLimit();
+                      }
+                    };
+
   @Override protected Class<? extends BaseRandom> getClassUnderTest() {
     return EntropyBlockingSplittableRandomAdapter.class;
   }
@@ -62,12 +76,12 @@ public class EntropyBlockingSplittableRandomAdapterTest extends SplittableRandom
   }
 
   @Override public void testSetSeedAfterNextLong() throws SeedException {
-    checkSetSeedAfter(this::createRngLargeEntropyLimit, this::createRngLargeEntropyLimit,
-        BaseRandom::nextLong);
+    checkSetSeedAfter(createRngLargeEntropyLimit, createRngLargeEntropyLimitForSeed,
+        nextLong);
   }
 
   @Override public void testSetSeedAfterNextInt() throws SeedException {
-    checkSetSeedAfter(this::createRngLargeEntropyLimit, this::createRngLargeEntropyLimit,
-        BaseRandom::nextInt);
+    checkSetSeedAfter(createRngLargeEntropyLimit, createRngLargeEntropyLimitForSeed,
+        nextInt);
   }
 }

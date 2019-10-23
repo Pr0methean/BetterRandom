@@ -40,11 +40,16 @@ public class EntropyBlockingSplittableRandomAdapter extends SplittableRandomAdap
   }
 
   private void initSubclassTransientFields() {
-    helpers = ThreadLocal.withInitial(() -> {
-      ThreadLocalFields threadLocalFields = this.threadLocalFields.get();
-      return new EntropyBlockingHelper(minimumEntropy, this.sameThreadSeedGen, this,
-          threadLocalFields.entropyBits, new ReentrantLock());
-    });
+    helpers = new ThreadLocal<>() {
+      @Override public EntropyBlockingHelper initialValue() {
+        ThreadLocalFields threadLocalFields =
+            EntropyBlockingSplittableRandomAdapter.this.threadLocalFields.get();
+        return new EntropyBlockingHelper(minimumEntropy,
+            EntropyBlockingSplittableRandomAdapter.this.sameThreadSeedGen,
+            EntropyBlockingSplittableRandomAdapter.this, threadLocalFields.entropyBits,
+            new ReentrantLock());
+      }
+    };
   }
 
   private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {

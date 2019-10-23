@@ -21,7 +21,6 @@ import io.github.pr0methean.betterrandom.NamedFunction;
 import io.github.pr0methean.betterrandom.TestUtils;
 import io.github.pr0methean.betterrandom.prng.RandomTestUtils.EntropyCheckMode;
 import io.github.pr0methean.betterrandom.prng.concurrent.SingleThreadSplittableRandomAdapter;
-import io.github.pr0methean.betterrandom.prng.concurrent.SplittableRandomAdapter;
 import io.github.pr0methean.betterrandom.seed.FakeSeedGenerator;
 import io.github.pr0methean.betterrandom.seed.RandomSeederThread;
 import io.github.pr0methean.betterrandom.seed.SecureRandomSeedGenerator;
@@ -44,12 +43,11 @@ import java.util.UUID;
 import java.util.concurrent.ConcurrentSkipListSet;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
-import java.util.function.Consumer;
 import java8.util.concurrent.ForkJoinPool;
 import java8.util.concurrent.ForkJoinTask;
 import java8.util.function.Consumer;
 import java8.util.function.DoubleConsumer;
-import java.util.function.Function;
+import java8.util.function.Function;
 import java8.util.function.Supplier;
 import org.apache.commons.math3.stat.descriptive.SynchronizedDescriptiveStatistics;
 import org.powermock.modules.testng.PowerMockTestCase;
@@ -130,6 +128,26 @@ public abstract class BaseRandomTest extends PowerMockTestCase {
   private static final double UPPER_BOUND_FOR_ROUNDING_TEST =
       Double.longBitsToDouble(Double.doubleToLongBits(1.0) + 3);
   protected final ForkJoinPool pool = new ForkJoinPool(2);
+  protected final Function<byte[], BaseRandom> createRngFromSeed = new Function<>() {
+    @Override public BaseRandom apply(byte[] seed) {
+      return BaseRandomTest.this.createRng(seed);
+    }
+  };
+  protected final Supplier<BaseRandom> createRng = new Supplier<>() {
+    @Override public BaseRandom get() {
+      return BaseRandomTest.this.createRng();
+    }
+  };
+  protected final Consumer<BaseRandom> nextInt = new Consumer<>() {
+    @Override public void accept(BaseRandom baseRandom) {
+      baseRandom.nextInt();
+    }
+  };
+  protected final Consumer<BaseRandom> nextLong = new Consumer<>() {
+    @Override public void accept(BaseRandom baseRandom) {
+      baseRandom.nextLong();
+    }
+  };
 
   @SafeVarargs
   private static <E> void testGeneratesAll(final Supplier<E> generator, final E... expected) {
@@ -161,11 +179,7 @@ public abstract class BaseRandomTest extends PowerMockTestCase {
       InvocationTargetException {
     TestUtils
         .testConstructors(getClassUnderTest(), false, ImmutableMap.copyOf(constructorParams()),
-            new Consumer<BaseRandom>() {
-              @Override public void accept(BaseRandom baseRandom) {
-                baseRandom.nextInt();
-              }
-            });
+            nextInt);
   }
 
   protected Map<Class<?>, Object> constructorParams() {
@@ -337,16 +351,20 @@ public abstract class BaseRandomTest extends PowerMockTestCase {
   }
 
   @Test(timeOut = 15_000) public void testSetSeedAfterNextLong() throws SeedException {
-    checkSetSeedAfter(this::createRng, BaseRandom::nextLong);
+    checkSetSeedAfter(new Supplier<BaseRandom>() {
+      @Override public BaseRandom get() {
+        return BaseRandomTest.this.createRng();
+      }
+    }, nextLong);
   }
 
   @Test(timeOut = 15_000) public void testSetSeedAfterNextInt() throws SeedException {
-    checkSetSeedAfter(this::createRng, BaseRandom::nextInt);
+    checkSetSeedAfter(createRng, nextInt);
   }
 
   protected void checkSetSeedAfter(final Supplier<BaseRandom> supplier,
       Consumer<? super BaseRandom> stateChange) throws SeedException {
-    checkSetSeedAfter(supplier, this::createRng, stateChange);
+    checkSetSeedAfter(supplier, createRngFromSeed, stateChange);
   }
 
   protected void checkSetSeedAfter(final Supplier<BaseRandom> creator,
@@ -829,7 +847,7 @@ public abstract class BaseRandomTest extends PowerMockTestCase {
 
   protected void checkThreadSafety(final List<NamedFunction<Random, Double>> functions,
       final List<NamedFunction<Random, Double>> pairwiseFunctions) {
-    checkThreadSafety(functions, pairwiseFunctions, this::createRng);
+    checkThreadSafety(functions, pairwiseFunctions, createRngFromSeed);
   }
 
   protected void checkThreadSafety(final List<NamedFunction<Random, Double>> functions,
