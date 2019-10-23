@@ -30,7 +30,7 @@ public class ReseedingSplittableRandomAdapter extends BaseSplittableRandomAdapte
   protected transient ThreadLocal<? extends BaseRandom> threadLocal;
 
   /**
-   * Single instance per SeedGenerator.
+   * Single instance per SeedGenerator except via subclasses.
    *
    * @param seedGenerator The seed generator this adapter will use.
    */
@@ -39,15 +39,11 @@ public class ReseedingSplittableRandomAdapter extends BaseSplittableRandomAdapte
     super(seedGenerator.generateSeed(Java8Constants.LONG_BYTES));
     this.seedGenerator = seedGenerator;
     this.randomSeeder.set(randomSeeder);
-    threadLocal = createThreadLocal();
-  }
-
-  protected ThreadLocal<BaseRandom> createThreadLocal() {
-    return new ThreadLocal<BaseRandom>() {
+    threadLocal = new ThreadLocal<BaseRandom>() {
       @Override protected BaseRandom initialValue() {
         return createDelegate();
       }
-    }
+    };
   }
 
   /**

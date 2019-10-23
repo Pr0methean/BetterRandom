@@ -183,6 +183,12 @@ public class SimpleRandomSeederThread extends LooperThread {
     }
   }
 
+  /**
+   * Reseeds all the PRNGs that need reseeding in {@link #byteArrayPrngsThisIteration}, then clears
+   * that set.
+   *
+   * @return true if at least one PRNG was reseeded; false otherwise
+   */
   protected boolean reseedByteArrayReseedableRandoms() {
     boolean entropyConsumed = false;
     try {
@@ -210,6 +216,10 @@ public class SimpleRandomSeederThread extends LooperThread {
     return entropyConsumed;
   }
 
+  /**
+   * Generates an 8-byte seed, converts it to a long and calls {@link Random#setSeed(long)}.
+   * @param random the PRNG to reseed
+   */
   protected void reseedWithLong(final Random random) {
     seedGenerator.generateSeed(longSeedArray);
     random.setSeed(BinaryUtils.convertBytesToLong(longSeedArray));
@@ -223,6 +233,9 @@ public class SimpleRandomSeederThread extends LooperThread {
     clear();
   }
 
+  /**
+   * Removes all PRNGs from this seeder.
+   */
   protected void clear() {
     lock.lock();
     try {
@@ -234,6 +247,12 @@ public class SimpleRandomSeederThread extends LooperThread {
     }
   }
 
+  /**
+   * Informs the given PRNGs that they no longer have a seed generator. Only affects those that
+   * support {@link BaseRandom#setRandomSeeder(SimpleRandomSeederThread)}.
+   *
+   * @param randoms the PRNGs to unregister with
+   */
   protected void unregisterWithAll(Set<?> randoms) {
     synchronized (randoms) {
       for (Object random : randoms) {
@@ -281,6 +300,10 @@ public class SimpleRandomSeederThread extends LooperThread {
     initTransientFields();
   }
 
+  /**
+   * Returns the {@link SeedGenerator} this seeder uses.
+   * @return this seeder's {@link SeedGenerator}
+   */
   public SeedGenerator getSeedGenerator() {
     return seedGenerator;
   }
