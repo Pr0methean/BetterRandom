@@ -192,10 +192,9 @@ stages:
           OpenJNine11:
             javaUrl: $(OpenJNine11Linux)
             artifactEnvName: 'OpenJNine11Linux'
-          #Disabled due to https://github.com/AdoptOpenJDK/openjdk-api/issues/185:
-          #OpenJNineLatest:
-          #  javaUrl: $(OpenJNineLatestLinux)
-          #  artifactEnvName: 'OpenJNineLatestLinux'
+          OpenJNineLatest:
+            javaUrl: $(OpenJNineLatestLinux)
+            artifactEnvName: 'OpenJNineLatestLinux'
       pool:
         vmImage: 'ubuntu-latest'
       steps:
