@@ -29,7 +29,7 @@ public class ReseedingSplittableRandomAdapter extends BaseSplittableRandomAdapte
   protected transient ThreadLocal<BaseRandom> threadLocal;
 
   /**
-   * Single instance per SeedGenerator.
+   * Single instance per SeedGenerator except via subclasses.
    *
    * @param seedGenerator The seed generator this adapter will use.
    */
