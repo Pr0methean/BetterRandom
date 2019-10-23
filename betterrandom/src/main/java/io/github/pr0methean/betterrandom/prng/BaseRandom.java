@@ -437,15 +437,13 @@ public abstract class BaseRandom extends Random
   protected double internalNextGaussian(
       final DoubleSupplier nextDouble) {
     // See Knuth, ACP, Section 3.4.1 Algorithm C.
-    final double firstTryOut = Double.longBitsToDouble(nextNextGaussian.getAndSet(NAN_LONG_BITS));
-    if (!Double.isNaN(firstTryOut)) {
+    final double firstTryOut = takeNextNextGaussian();
+    if (Double.isNaN(firstTryOut))
       return firstTryOut;
-    }
     lockForNextGaussian();
     try {
       // Another output may have become available while we waited for the lock
-      final double secondTryOut =
-          Double.longBitsToDouble(nextNextGaussian.getAndSet(NAN_LONG_BITS));
+      final double secondTryOut = takeNextNextGaussian();
       if (!Double.isNaN(secondTryOut)) {
         return secondTryOut;
       }
@@ -463,6 +461,10 @@ public abstract class BaseRandom extends Random
     } finally {
       unlockForNextGaussian();
     }
+  }
+
+  private double takeNextNextGaussian() {
+    return Double.longBitsToDouble(nextNextGaussian.getAndSet(NAN_LONG_BITS));
   }
 
   /**
@@ -654,7 +656,8 @@ public abstract class BaseRandom extends Random
    * #getNewSeedLength()} <= {@link Long#BYTES}}), then this method shall replace the entire seed as
    * {@link Random#setSeed(long)} does; otherwise, it shall either combine the input with the
    * existing seed as {@link java.security.SecureRandom#setSeed(long)} does, or it shall generate a
-   * new seed using the {@link DefaultSeedGenerator}.
+   * new seed using the {@link DefaultSeedGenerator}. The latter is a backward-compatibility measure
+   * and can be very slow.
    *
    * @deprecated Some implementations are very slow.
    */
@@ -822,6 +825,10 @@ public abstract class BaseRandom extends Random
         "This subclass can't be deserialized, because it wasn't a subclass at serialization time");
   }
 
+  /**
+   * Generates and sets a seed using the {@link DefaultSeedGenerator}. Used by {@link #setSeed(long)}
+   * in implementations where it can't otherwise fulfill its contract.
+   */
   protected void fallbackSetSeedIfInitialized() {
     if (!superConstructorFinished) {
       return;

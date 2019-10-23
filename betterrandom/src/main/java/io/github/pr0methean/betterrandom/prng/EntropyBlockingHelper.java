@@ -3,12 +3,19 @@ package io.github.pr0methean.betterrandom.prng;
 import io.github.pr0methean.betterrandom.seed.SeedGenerator;
 import io.github.pr0methean.betterrandom.seed.SimpleRandomSeederThread;
 import java.io.Serializable;
+import java.util.Random;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.Lock;
 import javax.annotation.Nullable;
 
+/**
+ * Provides common functionality used by {@link io.github.pr0methean.betterrandom.prng.concurrent.EntropyBlockingRandomWrapper}
+ * and thread-locally by {@link io.github.pr0methean.betterrandom.prng.concurrent.EntropyBlockingSplittableRandomAdapter}.
+ * Internally coupled with {@link BaseRandom} because the use of this class is a substitute for
+ * mixin inheritance.
+ */
 public class EntropyBlockingHelper implements Serializable {
   private static final long serialVersionUID = 8061321755747974708L;
   private final long minimumEntropy;
@@ -23,6 +30,17 @@ public class EntropyBlockingHelper implements Serializable {
 
   @SuppressWarnings("TransientFieldNotInitialized") private transient volatile boolean waitingOnReseed = false;
 
+  /**
+   * Creates an instance.
+   *
+   * @param minimumEntropy the minimum entropy that must be present at the end of an operation that
+   *     consumes entropy. Should generally be zero or negative.
+   * @param sameThreadSeedGen a reference that will hold a seed generator that can be used on the
+   *     calling thread when there is no {@link SimpleRandomSeederThread}
+   * @param random the PRNG
+   * @param entropyBits the PRNG's entropy counter
+   * @param lock the lock to hold while reseeding the PRNG
+   */
   public EntropyBlockingHelper(long minimumEntropy, AtomicReference<SeedGenerator> sameThreadSeedGen,
       BaseRandom random, final AtomicLong entropyBits, Lock lock) {
     this.minimumEntropy = minimumEntropy;
@@ -33,16 +51,25 @@ public class EntropyBlockingHelper implements Serializable {
     this.entropyBits = entropyBits;
   }
 
-  public SeedGenerator getSameThreadSeedGenerator() {
-    return sameThreadSeedGen.get();
-  }
-
+  /**
+   * Sets a {@link SeedGenerator} to use on the calling thread when no {@link SimpleRandomSeederThread}
+   * is attached.
+   *
+   * @param newSeedGen the new {@link SeedGenerator}
+   */
   public void setSameThreadSeedGen(@Nullable SeedGenerator newSeedGen) {
     if (sameThreadSeedGen.getAndSet(newSeedGen) != newSeedGen) {
       onSeedingStateChanged(false);
     }
   }
 
+  /**
+   * Ensures that the attached PRNG can output 64 bits between reseedings, given that its current
+   * entropy is the maximum possible. Methods such as {@link Random#nextLong()} and
+   * {@link Random#nextDouble()} would become much slower and more complex if we didn't require this.
+   *
+   * @throws IllegalArgumentException if the PRNG cannot output 64 bits between reseedings
+   */
   public void checkMaxOutputAtOnce() {
     long maxOutputAtOnce = 8 * entropyBits.get() - minimumEntropy;
     if (maxOutputAtOnce < Long.SIZE) {
@@ -50,6 +77,12 @@ public class EntropyBlockingHelper implements Serializable {
     }
   }
 
+  /**
+   * Called when a new seed generator or {@link SimpleRandomSeederThread} is attached or a
+   * new seed is generated, so that operations can unblock.
+   *
+   * @param reseeded true if the seed has changed; false otherwise
+   */
   public void onSeedingStateChanged(boolean reseeded) {
     if (reseeded) {
       waitingOnReseed = false;
@@ -64,6 +97,12 @@ public class EntropyBlockingHelper implements Serializable {
     }
   }
 
+  /**
+   * Record that entropy has been spent, and reseed if that takes the entropy count below the
+   * minimum.
+   *
+   * @param bits The number of bits of entropy spent.
+   */
   public void debitEntropy(long bits) {
     while (entropyBits.addAndGet(-bits) < minimumEntropy) {
       SeedGenerator seedGenerator;
@@ -101,10 +140,19 @@ public class EntropyBlockingHelper implements Serializable {
     random.setSeed(newSeed);
   }
 
+  /**
+   * @return true if a caller is blocked on the reseeding of this PRNG; false otherwise
+   */
   public boolean isWaitingOnReseed() {
     return waitingOnReseed;
   }
 
+  /**
+   * Updates the entropy count to reflect a reseeding. Sets it to the seed length or the internal
+   * state size, whichever is shorter, but never less than the existing entropy count.
+   *
+   * @param seedLength the length of the new seed in bytes
+   */
   public void creditEntropyForNewSeed(int seedLength) {
     final long effectiveBits = Math.min(seedLength, random.getNewSeedLength()) * 8L;
     entropyBits.updateAndGet(oldCount -> Math.max(oldCount, effectiveBits));

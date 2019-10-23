@@ -6,8 +6,9 @@ import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
 /**
- * A seed generator that wraps another, maintaining a buffer of previously-downloaded bytes to
- * reduce the number of I/O calls.
+ * A seed generator that wraps another, maintaining a buffer of previously-fetched bytes to
+ * reduce the number of I/O calls. The buffer is only used when the requested seed is strictly
+ * smaller than the buffer.
  */
 public class BufferedSeedGenerator implements SeedGenerator {
   private static final long serialVersionUID = -2100305696539110970L;
@@ -18,6 +19,12 @@ public class BufferedSeedGenerator implements SeedGenerator {
   private transient byte[] buffer;
   private transient volatile int pos;
 
+  /**
+   * Creates an instance.
+   *
+   * @param delegate the SeedGenerator to wrap
+   * @param size the buffer size in bytes
+   */
   public BufferedSeedGenerator(SeedGenerator delegate, int size) {
     this.delegate = delegate;
     this.size = size;

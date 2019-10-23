@@ -22,6 +22,8 @@ public interface EntropyCountingRandom {
   /**
    * If true, this PRNG needs reseeding even though its entropy is positive. Added to deal with
    * {@link io.github.pr0methean.betterrandom.prng.concurrent.EntropyBlockingRandomWrapper}.
+   *
+   * @return true if this PRNG needs reseeding regardless of entropy count; false otherwise
    */
   default boolean needsReseedingEarly() {
     return false;

@@ -7,16 +7,40 @@ import io.github.pr0methean.betterrandom.seed.SimpleRandomSeederThread;
 import java.util.SplittableRandom;
 import java.util.concurrent.atomic.AtomicReference;
 
+/**
+ * A {@link ReseedingSplittableRandomAdapter} that blocks waiting to be reseeded if its entropy
+ * drops too low.
+ */
 public class EntropyBlockingReseedingSplittableRandomAdapter extends ReseedingSplittableRandomAdapter {
 
   private final AtomicReference<SeedGenerator> sameThreadSeedGen;
   private final long minimumEntropy;
 
+  /**
+   * Creates an instance.
+   *
+   * @param randomSeeder the {@link SimpleRandomSeederThread} that will reseed this. Its seed
+   *     generator is also used on the calling thread to generate an initial seed when this
+   *     {@link EntropyBlockingReseedingSplittableRandomAdapter} is used the first time on each
+   *     thread.
+   * @param minimumEntropy the minimum entropy; operations that would drop the entropy below this
+   *     amount will instead block until the calling thread's PRNG is reseeded. Should generally
+   *     be zero or negative.
+   */
   public EntropyBlockingReseedingSplittableRandomAdapter(
       SimpleRandomSeederThread randomSeeder, long minimumEntropy) {
     this(randomSeeder.getSeedGenerator(), randomSeeder, minimumEntropy);
   }
 
+  /**
+   * Creates an instance.
+   *
+   * @param seedGenerator the seed generator that will generate an initial PRNG seed for each thread
+   * @param randomSeeder the {@link SimpleRandomSeederThread} that will reseed this
+   * @param minimumEntropy the minimum entropy; operations that would drop the entropy below this
+   *     amount will instead block until the calling thread's PRNG is reseeded. Should generally
+   *     be zero or negative.
+   */
   public EntropyBlockingReseedingSplittableRandomAdapter(
       SeedGenerator seedGenerator, SimpleRandomSeederThread randomSeeder, long minimumEntropy) {
     super(seedGenerator, randomSeeder);

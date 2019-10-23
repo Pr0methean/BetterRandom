@@ -28,13 +28,27 @@ public abstract class CipherCounterRandom extends BaseRandom implements Seekable
 
   static final int DEFAULT_COUNTER_SIZE_BYTES = 16;
   private static final long serialVersionUID = -7872636191973295031L;
+  /**
+   * An array holding generated, encrypted bytes.
+   */
   protected final byte[] currentBlock;
+  /**
+   * The counter. Successive values are encrypted to generate pseudorandom numbers.
+   */
   protected volatile byte[] counter;
+  /**
+   * The offset in {@link #currentBlock} to draw output from.
+   */
   protected volatile int index;
   private volatile byte[] counterInput;
   private volatile boolean seeded;
   private transient MessageDigest hash;
 
+  /**
+   * Creates an instance.
+   *
+   * @param seed the initial seed
+   */
   public CipherCounterRandom(byte[] seed) {
     super(seed);
     currentBlock = new byte[getBytesAtOnce()];
@@ -120,6 +134,11 @@ public abstract class CipherCounterRandom extends BaseRandom implements Seekable
     return getCounterSizeBytes() * getBlocksAtOnce();
   }
 
+  /**
+   * Returns the maximum seed length, including both the cipher key and a new counter value.
+   *
+   * @return the maximum seed length
+   */
   public int getMaxTotalSeedLengthBytes() {
     return getMaxKeyLengthBytes() + getCounterSizeBytes();
   }
@@ -145,6 +164,12 @@ public abstract class CipherCounterRandom extends BaseRandom implements Seekable
     return true;
   }
 
+  /**
+   * Returns the hash that will be used to combine seeds. Only called on construction and
+   * deserialization.
+   *
+   * @return a resettable {@link MessageDigest}
+   */
   protected abstract MessageDigest createHash();
 
   /**

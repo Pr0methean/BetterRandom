@@ -19,7 +19,8 @@ package io.github.pr0methean.betterrandom.seed;
  * <p>
  * Seed generator that is the default for the program where it is running. PRNGs that are serialized
  * using one program's default and deserialized in another program will use the latter's default
- * seed generator.
+ * seed generator, which is part of the static state. This means a PRNG's serial form won't specify
+ * a particular seed generator if it was constructed without specifying one.
  * </p><p>
  * The default implementation maintains multiple strategies for seed generation and will delegate to
  * the best one available at any moment. It uses, in order of preference:</p><ol>
@@ -42,10 +43,20 @@ public enum DefaultSeedGenerator implements SeedGenerator {
       new BufferedSeedGenerator(RandomDotOrgSeedGenerator.DELAYED_RETRY, 625),
       SecureRandomSeedGenerator.DEFAULT_INSTANCE);
 
+  /**
+   * Returns the current delegate used by this class's singleton instance.
+   *
+   * @return the current delegate
+   */
   public static SeedGenerator get() {
     return delegate;
   }
 
+  /**
+   * Sets the default seed generator (a delegate used by this class's singleton instance).
+   *
+   * @param delegate the new delegate
+   */
   public static void set(SeedGenerator delegate) {
     if (delegate == null) {
       throw new IllegalArgumentException("Can't set the default seed generator to null");
