@@ -43,13 +43,6 @@ public class SecureRandomSeedGenerator implements SeedGenerator, Serializable {
   public static final SecureRandomSeedGenerator DEFAULT_INSTANCE
       = new SecureRandomSeedGenerator(new SecureRandom());
 
-  /**
-   * The default instance.
-   *
-   * @deprecated Renamed to {@link #DEFAULT_INSTANCE}. Old name for backward compatibility.
-   */
-  @Deprecated public static final SecureRandomSeedGenerator SECURE_RANDOM_SEED_GENERATOR
-      = DEFAULT_INSTANCE;
   private static final long serialVersionUID = 854226000048040387L;
 
   /**
