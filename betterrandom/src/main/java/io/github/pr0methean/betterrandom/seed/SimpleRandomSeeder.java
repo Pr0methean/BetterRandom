@@ -4,7 +4,7 @@ import io.github.pr0methean.betterrandom.ByteArrayReseedableRandom;
 import io.github.pr0methean.betterrandom.EntropyCountingRandom;
 import io.github.pr0methean.betterrandom.prng.BaseRandom;
 import io.github.pr0methean.betterrandom.util.BinaryUtils;
-import io.github.pr0methean.betterrandom.util.LooperThread;
+import io.github.pr0methean.betterrandom.util.Looper;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.Serializable;
@@ -19,8 +19,6 @@ import java.util.WeakHashMap;
 import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.Condition;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Thread that loops over {@link ByteArrayReseedableRandom} instances and reseeds them. No {@link
@@ -28,7 +26,7 @@ import org.slf4j.LoggerFactory;
  *
  * @author Chris Hennick
  */
-public class SimpleRandomSeeder extends LooperThread {
+public class SimpleRandomSeeder extends Looper {
   private static final Map<ByteArrayReseedableRandom, byte[]> SEED_ARRAYS =
       Collections.synchronizedMap(new WeakHashMap<ByteArrayReseedableRandom, byte[]>(1));
   // FIXME: Setting a longer POLL_INTERVAL slows many tests, and causes some to time out
@@ -332,9 +330,9 @@ public class SimpleRandomSeeder extends LooperThread {
   }
 
   /**
-   * Returns true if no {@link Random} instances are registered with this RandomSeederThread.
+   * Returns true if no {@link Random} instances are registered with this LegacyRandomSeeder.
    *
-   * @return true if no {@link Random} instances are registered with this RandomSeederThread.
+   * @return true if no {@link Random} instances are registered with this LegacyRandomSeeder.
    */
   public boolean isEmpty() {
     lock.lock();

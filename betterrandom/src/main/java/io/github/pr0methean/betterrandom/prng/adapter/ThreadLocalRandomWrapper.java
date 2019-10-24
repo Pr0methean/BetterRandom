@@ -103,7 +103,7 @@ public class ThreadLocalRandomWrapper extends RandomWrapper {
    */
   @Override public void setRandomSeeder(@Nullable final SimpleRandomSeeder randomSeeder) {
     if (randomSeeder != null) {
-      throw new UnsupportedOperationException("This can't be reseeded by a RandomSeederThread");
+      throw new UnsupportedOperationException("This can't be reseeded by a LegacyRandomSeeder");
     }
   }
 

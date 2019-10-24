@@ -7,14 +7,13 @@ import java.util.Random;
 import java.util.Set;
 import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.TimeUnit;
-import org.slf4j.LoggerFactory;
 
 /**
  * A {@link SimpleRandomSeeder} that can reseed any instance of {@link Random}.
  *
  * @author Chris Hennick
  */
-public final class RandomSeederThread extends SimpleRandomSeeder {
+public final class LegacyRandomSeeder extends SimpleRandomSeeder {
   private transient Set<Random> otherPrngs;
   private transient Set<Random> otherPrngsThisIteration;
 
@@ -40,7 +39,7 @@ public final class RandomSeederThread extends SimpleRandomSeeder {
   }
 
   /**
-   * Returns the seed generator this RandomSeederThread is using.
+   * Returns the seed generator this LegacyRandomSeeder is using.
    * @return the seed generator
    */
   public SeedGenerator getSeedGenerator() {
@@ -85,7 +84,7 @@ public final class RandomSeederThread extends SimpleRandomSeeder {
    * @param seedGenerator the seed generator
    * @param threadFactory the {@link ThreadFactory} that will create this seeder's thread
    */
-  public RandomSeederThread(final SeedGenerator seedGenerator, ThreadFactory threadFactory) {
+  public LegacyRandomSeeder(final SeedGenerator seedGenerator, ThreadFactory threadFactory) {
     this(seedGenerator, threadFactory, DEFAULT_STOP_IF_EMPTY_FOR_NANOS);
   }
 
@@ -97,7 +96,7 @@ public final class RandomSeederThread extends SimpleRandomSeeder {
    * @param stopIfEmptyForNanos time in nanoseconds after which this thread will terminate if no
    *     PRNGs are attached
    */
-  public RandomSeederThread(final SeedGenerator seedGenerator, ThreadFactory threadFactory,
+  public LegacyRandomSeeder(final SeedGenerator seedGenerator, ThreadFactory threadFactory,
       long stopIfEmptyForNanos) {
     super(seedGenerator, threadFactory, stopIfEmptyForNanos);
     initTransientFields();
@@ -109,8 +108,8 @@ public final class RandomSeederThread extends SimpleRandomSeeder {
    *
    * @param seedGenerator the seed generator
    */
-  public RandomSeederThread(final SeedGenerator seedGenerator) {
-    this(seedGenerator, new DefaultThreadFactory("RandomSeederThread for " + seedGenerator));
+  public LegacyRandomSeeder(final SeedGenerator seedGenerator) {
+    this(seedGenerator, new DefaultThreadFactory("LegacyRandomSeeder for " + seedGenerator));
   }
 
   @Override protected boolean iterate() {
@@ -167,7 +166,7 @@ public final class RandomSeederThread extends SimpleRandomSeeder {
   }
 
   @Override public String toString() {
-    return String.format("RandomSeederThread (%s, %s)", seedGenerator, factory);
+    return String.format("LegacyRandomSeeder (%s, %s)", seedGenerator, factory);
   }
 
 }

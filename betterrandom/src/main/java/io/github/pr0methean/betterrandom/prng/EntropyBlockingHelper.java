@@ -21,7 +21,7 @@ public class EntropyBlockingHelper implements Serializable {
   private final long minimumEntropy;
   private final Lock lock;
   private final Condition seedingStatusChanged;
-  /** Used on the calling thread when there isn't a working RandomSeederThread. */
+  /** Used on the calling thread when there isn't a working LegacyRandomSeeder. */
   private final AtomicReference<SeedGenerator> sameThreadSeedGen;
   private final AtomicLong entropyBits;
   private final BaseRandom random;

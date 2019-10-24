@@ -16,9 +16,9 @@ import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
 // FIXME: Sleep gets interrupted for no apparent reason, so have to use sleepUninterruptibly
-public class LooperThreadTest {
+public class LooperTest {
 
-  private static class TestLooperThread extends LooperThread {
+  private static class TestLooper extends Looper {
     private static final long serialVersionUID = 4931153919188474618L;
     final AtomicBoolean shouldThrow = new AtomicBoolean(false);
     final AtomicLong iterations = new AtomicLong(0);
@@ -52,7 +52,7 @@ public class LooperThreadTest {
           defaultHandlerCalled.set(true);
         }
       });
-      final FailingLooperThread failingThread = new FailingLooperThread();
+      final FailingLooper failingThread = new FailingLooper();
       failingThread.start();
       while (failingThread.isRunning()) {
         Uninterruptibles.sleepUninterruptibly(100, TimeUnit.MILLISECONDS);
@@ -66,7 +66,7 @@ public class LooperThreadTest {
 
   @Test(retryAnalyzer = FlakyRetryAnalyzer.class)
   public void testAwaitIteration() {
-    final SleepingLooperThread sleepingThread = new SleepingLooperThread();
+    final SleepingLooper sleepingThread = new SleepingLooper();
     sleepingThread.start();
     sleepingThread.startLatch.countDown();
     Uninterruptibles.sleepUninterruptibly(200, TimeUnit.MILLISECONDS);
@@ -74,7 +74,7 @@ public class LooperThreadTest {
   }
 
   @Test public void testResurrect() throws InterruptedException {
-    final TestLooperThread testLooperThread = new TestLooperThread();
+    final TestLooper testLooperThread = new TestLooper();
     try {
       testLooperThread.shouldThrow.set(true);
       testLooperThread.start();
@@ -99,12 +99,12 @@ public class LooperThreadTest {
     }
   }
 
-  private static class FailingLooperThread extends LooperThread {
+  private static class FailingLooper extends Looper {
 
     private static final long serialVersionUID = 9113510029311710617L;
 
-    private FailingLooperThread() {
-      super("FailingLooperThread");
+    private FailingLooper() {
+      super("FailingLooper");
     }
 
     @Override public boolean iterate() {
@@ -112,13 +112,13 @@ public class LooperThreadTest {
     }
   }
 
-  private static class SleepingLooperThread extends LooperThread {
+  private static class SleepingLooper extends Looper {
     private static final long serialVersionUID = -3389447813822333325L;
     protected final AtomicLong finishedIterations = new AtomicLong(0);
     protected final CountDownLatch startLatch = new CountDownLatch(2);
 
-    private SleepingLooperThread() {
-      super("SleepingLooperThread");
+    private SleepingLooper() {
+      super("SleepingLooper");
     }
 
     @Override public boolean iterate() throws InterruptedException {

@@ -20,7 +20,7 @@ import java.io.Serializable;
 /**
  * Strategy interface for seeding random number generators. Implementations that can have multiple
  * equivalent instances should implement {@link Object#equals(Object)} and {@link Object#hashCode()}
- * to support {@link RandomSeederThread}.
+ * to support {@link LegacyRandomSeeder}.
  *
  * @author Daniel Dyer
  * @author Chris Hennick
