@@ -31,9 +31,11 @@
 
 package io.github.pr0methean.betterrandom.benchmark;
 
+import io.github.pr0methean.betterrandom.ByteArrayReseedableRandom;
 import io.github.pr0methean.betterrandom.seed.LegacyRandomSeeder;
 import io.github.pr0methean.betterrandom.seed.RandomDotOrgSeedGenerator;
 import io.github.pr0methean.betterrandom.seed.SecureRandomSeedGenerator;
+import io.github.pr0methean.betterrandom.seed.SimpleRandomSeeder;
 import java.util.UUID;
 import org.openjdk.jmh.annotations.Level;
 import org.openjdk.jmh.annotations.Param;
@@ -50,7 +52,7 @@ import org.openjdk.jmh.annotations.TearDown;
 @State(Scope.Benchmark)
 public abstract class AbstractRandomBenchmarkWithReseeding extends AbstractRandomBenchmark {
 
-  private static final LegacyRandomSeeder RANDOM_SEEDER = new LegacyRandomSeeder(
+  private static final SimpleRandomSeeder RANDOM_SEEDER = new SimpleRandomSeeder(
       SecureRandomSeedGenerator.DEFAULT_INSTANCE);
 
   @Param({"false","true"}) public boolean reseeding;
@@ -73,7 +75,7 @@ public abstract class AbstractRandomBenchmarkWithReseeding extends AbstractRando
   public void setUp() throws Exception {
     super.setUp();
     if (reseeding) {
-      RANDOM_SEEDER.add(prng);
+      RANDOM_SEEDER.add((ByteArrayReseedableRandom) prng);
     }
   }
 
