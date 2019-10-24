@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [4.2.0]
+
 ### Changed
 - The package `io.github.pr0methean.betterrandom.prng.concurrent` has been renamed to `adapter`, because not all classes
   in it are concurrent, but all are adapters.
@@ -562,6 +564,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - First release on Maven Central.
 
 [Unreleased]: https://github.com/Pr0methean/BetterRandom/compare/BetterRandom-4.1.0...master
+[4.2.0]: https://github.com/Pr0methean/BetterRandom/compare/BetterRandom-4.1.0...BetterRandom-4.2.0
 [4.1.0]: https://github.com/Pr0methean/BetterRandom/compare/BetterRandom-4.0.3...BetterRandom-4.1.0
 [4.0.3]: https://github.com/Pr0methean/BetterRandom/compare/BetterRandom-4.0.2...BetterRandom-4.0.3
 [4.0.2]: https://github.com/Pr0methean/BetterRandom/compare/BetterRandom-4.0.1...BetterRandom-4.0.2
