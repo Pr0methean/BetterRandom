@@ -1,10 +1,10 @@
 package io.github.pr0methean.betterrandom.benchmark;
 
-import io.github.pr0methean.betterrandom.prng.AesCounterRandom;
-import io.github.pr0methean.betterrandom.prng.concurrent.ReseedingThreadLocalRandomWrapper;
-import java.util.Random;
-
 import static io.github.pr0methean.betterrandom.seed.SecureRandomSeedGenerator.DEFAULT_INSTANCE;
+
+import io.github.pr0methean.betterrandom.prng.AesCounterRandom;
+import io.github.pr0methean.betterrandom.prng.adapter.ReseedingThreadLocalRandomWrapper;
+import java.util.Random;
 
 public class ReseedingThreadLocalRandomWrapperAesCounterRandom128Benchmark
     extends AbstractRandomBenchmark {

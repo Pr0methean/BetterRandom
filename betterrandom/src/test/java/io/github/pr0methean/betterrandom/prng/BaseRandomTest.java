@@ -20,7 +20,7 @@ import io.github.pr0methean.betterrandom.FlakyRetryAnalyzer;
 import io.github.pr0methean.betterrandom.NamedFunction;
 import io.github.pr0methean.betterrandom.TestUtils;
 import io.github.pr0methean.betterrandom.prng.RandomTestUtils.EntropyCheckMode;
-import io.github.pr0methean.betterrandom.prng.concurrent.SplittableRandomAdapter;
+import io.github.pr0methean.betterrandom.prng.adapter.SplittableRandomAdapter;
 import io.github.pr0methean.betterrandom.seed.FakeSeedGenerator;
 import io.github.pr0methean.betterrandom.seed.RandomSeederThread;
 import io.github.pr0methean.betterrandom.seed.SecureRandomSeedGenerator;

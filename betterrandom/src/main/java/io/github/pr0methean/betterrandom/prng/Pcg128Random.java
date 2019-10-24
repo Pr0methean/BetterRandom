@@ -26,7 +26,7 @@ import java.util.concurrent.locks.ReentrantLock;
  * </p><p>
  * Sharing a single instance across threads that are frequently using it concurrently isn't
  * recommended, unless memory is too constrained to use with a
- * {@link io.github.pr0methean.betterrandom.prng.concurrent.ThreadLocalRandomWrapper}.
+ * {@link io.github.pr0methean.betterrandom.prng.adapter.ThreadLocalRandomWrapper}.
  * </p>
  *
  * @author M.E. O'Neill (algorithm and C++ implementation)

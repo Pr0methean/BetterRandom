@@ -11,8 +11,8 @@
             <class name="io.github.pr0methean.betterrandom.prng.Pcg128RandomTest"/>
             <class name="io.github.pr0methean.betterrandom.prng.XorShiftRandomTest"/>
             <class
-                    name="io.github.pr0methean.betterrandom.prng.concurrent.SingleThreadSplittableRandomAdapterTest"/>
-            <class name="io.github.pr0methean.betterrandom.prng.concurrent.SplittableRandomAdapterTest"/>
+                    name="io.github.pr0methean.betterrandom.prng.adapter.SingleThreadSplittableRandomAdapterTest"/>
+            <class name="io.github.pr0methean.betterrandom.prng.adapter.SplittableRandomAdapterTest"/>
         </classes>
     </test>
     <test name="Crypto PRNGs 17-byte">
@@ -60,7 +60,7 @@
         <classes>
             <class name="io.github.pr0methean.betterrandom.prng.AesCounterRandomDemoTest"/>
             <class name="io.github.pr0methean.betterrandom.prng.BaseRandomStaticTest"/>
-            <class name="io.github.pr0methean.betterrandom.prng.concurrent.ReseedingSplittableRandomAdapterDemoTest"/>
+            <class name="io.github.pr0methean.betterrandom.prng.adapter.ReseedingSplittableRandomAdapterDemoTest"/>
             <class name="io.github.pr0methean.betterrandom.util.BinaryUtilsTest"/>
             <class name="io.github.pr0methean.betterrandom.util.LooperThreadTest"/>
             <class name="io.github.pr0methean.betterrandom.util.Byte16ArrayArithmeticTest"/>

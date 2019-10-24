@@ -12,7 +12,7 @@ import io.github.pr0methean.betterrandom.FlakyRetryAnalyzer;
 import io.github.pr0methean.betterrandom.TestUtils;
 import io.github.pr0methean.betterrandom.prng.Pcg64Random;
 import io.github.pr0methean.betterrandom.prng.RandomTestUtils;
-import io.github.pr0methean.betterrandom.prng.concurrent.SingleThreadSplittableRandomAdapter;
+import io.github.pr0methean.betterrandom.prng.adapter.SingleThreadSplittableRandomAdapter;
 import java.lang.ref.WeakReference;
 import java.util.Arrays;
 import java.util.concurrent.ThreadFactory;
