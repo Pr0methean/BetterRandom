@@ -1,13 +1,13 @@
 package io.github.pr0methean.betterrandom.benchmark;
 
+import static io.github.pr0methean.betterrandom.seed.SecureRandomSeedGenerator.DEFAULT_INSTANCE;
+
 import io.github.pr0methean.betterrandom.prng.AesCounterRandom;
 import io.github.pr0methean.betterrandom.prng.BaseRandom;
-import io.github.pr0methean.betterrandom.prng.concurrent.ThreadLocalRandomWrapper;
+import io.github.pr0methean.betterrandom.prng.adapter.ThreadLocalRandomWrapper;
 import io.github.pr0methean.betterrandom.seed.SeedException;
 import java.util.Random;
 import java8.util.function.Function;
-
-import static io.github.pr0methean.betterrandom.seed.SecureRandomSeedGenerator.DEFAULT_INSTANCE;
 
 public class ThreadLocalRandomWrapperAesCounterRandom128Benchmark extends AbstractRandomBenchmark {
 

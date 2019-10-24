@@ -2,7 +2,7 @@ package io.github.pr0methean.betterrandom.benchmark;
 
 import static io.github.pr0methean.betterrandom.seed.SecureRandomSeedGenerator.DEFAULT_INSTANCE;
 
-import io.github.pr0methean.betterrandom.prng.concurrent.ReseedingSplittableRandomAdapter;
+import io.github.pr0methean.betterrandom.prng.adapter.ReseedingSplittableRandomAdapter;
 import io.github.pr0methean.betterrandom.seed.RandomSeederThread;
 import io.github.pr0methean.betterrandom.seed.SeedException;
 import io.github.pr0methean.betterrandom.seed.SimpleRandomSeeder;
