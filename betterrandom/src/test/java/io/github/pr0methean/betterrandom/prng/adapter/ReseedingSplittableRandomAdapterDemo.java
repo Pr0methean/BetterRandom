@@ -35,8 +35,7 @@ public enum ReseedingSplittableRandomAdapterDemo {
       }
     };
     final ScheduledThreadPoolExecutor executor = new ScheduledThreadPoolExecutor(4);
-    final SimpleRandomSeeder randomSeederThread =
-        new LegacyRandomSeeder(DEFAULT_INSTANCE);
+    final SimpleRandomSeeder randomSeederThread = new SimpleRandomSeeder(DEFAULT_INSTANCE);
     final ReseedingSplittableRandomAdapter random = ReseedingSplittableRandomAdapter
         .getInstance(randomSeederThread, DEFAULT_INSTANCE);
     for (i = 0; i < 20; i++) {

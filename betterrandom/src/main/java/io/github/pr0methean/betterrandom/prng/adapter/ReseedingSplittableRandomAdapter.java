@@ -2,7 +2,6 @@ package io.github.pr0methean.betterrandom.prng.adapter;
 
 import com.google.common.base.MoreObjects.ToStringHelper;
 import io.github.pr0methean.betterrandom.prng.BaseRandom;
-import io.github.pr0methean.betterrandom.seed.LegacyRandomSeeder;
 import io.github.pr0methean.betterrandom.seed.SeedException;
 import io.github.pr0methean.betterrandom.seed.SeedGenerator;
 import io.github.pr0methean.betterrandom.seed.SimpleRandomSeeder;
@@ -13,7 +12,7 @@ import java.util.WeakHashMap;
 import java8.util.SplittableRandom;
 
 /**
- * Like {@link SplittableRandomAdapter}, but uses a {@link LegacyRandomSeeder} to replace each
+ * Like {@link SplittableRandomAdapter}, but uses a {@link SimpleRandomSeeder} to replace each
  * thread's {@link SplittableRandom} with a reseeded one as frequently as possible, but not more
  * frequently than it is being used.
  *

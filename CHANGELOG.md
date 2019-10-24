@@ -12,6 +12,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   in it are concurrent, but all are adapters.
 - `RandomSeederThread` and `LooperThread` have been renamed `LegacyRandomSeeder` and `Looper` to reflect that they no
   longer extend `Thread`.
+- Constructors that previously created a `LegacyRandomSeeder` instance now create a `SimpleRandomSeeder` instance
+  instead wherever possible.
+- Comments making out-of-date references to `LegacyRandomSeeder` have been updated.
 
 ### Removed
 - `SecureRandomSeedGenerator.SECURE_RANDOM_SEED_GENERATOR`: alias of `SecureRandomSeedGenerator.DEFAULT_INSTANCE` that
