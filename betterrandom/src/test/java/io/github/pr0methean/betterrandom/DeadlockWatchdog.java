@@ -1,6 +1,6 @@
 package io.github.pr0methean.betterrandom;
 
-import io.github.pr0methean.betterrandom.util.LooperThread;
+import io.github.pr0methean.betterrandom.util.Looper;
 import java.lang.management.ManagementFactory;
 import java.lang.management.ThreadInfo;
 import java.lang.management.ThreadMXBean;
@@ -8,15 +8,15 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 @SuppressWarnings("unused") // intermittently needed for debugging
-public class DeadlockWatchdogThread extends LooperThread {
+public class DeadlockWatchdog extends Looper {
 
   private static final ThreadMXBean THREAD_MX_BEAN = ManagementFactory.getThreadMXBean();
-  private static final Logger LOG = LoggerFactory.getLogger(DeadlockWatchdogThread.class);
+  private static final Logger LOG = LoggerFactory.getLogger(DeadlockWatchdog.class);
   private static final int MAX_STACK_DEPTH = 20;
   private static final int DEADLOCK_STATUS = 0xDEAD10CC;
   public static final int POLL_INTERVAL = 5_000;
   private static final long serialVersionUID = 1160104387427407739L;
-  private static DeadlockWatchdogThread INSTANCE = new DeadlockWatchdogThread();
+  private static DeadlockWatchdog INSTANCE = new DeadlockWatchdog();
 
   private static final class StackTraceHolder extends Throwable {
     private static final long serialVersionUID = -2630425445144895193L;
@@ -32,7 +32,7 @@ public class DeadlockWatchdogThread extends LooperThread {
     }
   }
 
-  private DeadlockWatchdogThread() {
+  private DeadlockWatchdog() {
     super(runnable -> {
       Thread thread = new Thread(runnable);
       thread.setDaemon(true);
@@ -47,7 +47,7 @@ public class DeadlockWatchdogThread extends LooperThread {
 
   public static synchronized void stopInstance() {
     INSTANCE.interrupt();
-    INSTANCE = new DeadlockWatchdogThread();
+    INSTANCE = new DeadlockWatchdog();
   }
 
   @SuppressWarnings({"CallToSystemExit", "ConstantConditions", "ObjectAllocationInLoop"}) @Override

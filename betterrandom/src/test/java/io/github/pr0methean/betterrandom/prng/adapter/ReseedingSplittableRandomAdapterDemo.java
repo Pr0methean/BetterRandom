@@ -2,7 +2,7 @@ package io.github.pr0methean.betterrandom.prng.adapter;
 
 import static io.github.pr0methean.betterrandom.seed.SecureRandomSeedGenerator.DEFAULT_INSTANCE;
 
-import io.github.pr0methean.betterrandom.seed.RandomSeederThread;
+import io.github.pr0methean.betterrandom.seed.LegacyRandomSeeder;
 import io.github.pr0methean.betterrandom.seed.SeedException;
 import io.github.pr0methean.betterrandom.seed.SimpleRandomSeeder;
 import java.util.Arrays;
@@ -31,7 +31,7 @@ public enum ReseedingSplittableRandomAdapterDemo {
         ThreadLocal.withInitial(() -> Arrays.asList(cards.clone()));
     final ScheduledThreadPoolExecutor executor = new ScheduledThreadPoolExecutor(4);
     final SimpleRandomSeeder randomSeederThread =
-        new RandomSeederThread(DEFAULT_INSTANCE);
+        new LegacyRandomSeeder(DEFAULT_INSTANCE);
     final ReseedingSplittableRandomAdapter random = ReseedingSplittableRandomAdapter
         .getInstance(randomSeederThread, DEFAULT_INSTANCE);
     for (i = 0; i < 20; i++) {

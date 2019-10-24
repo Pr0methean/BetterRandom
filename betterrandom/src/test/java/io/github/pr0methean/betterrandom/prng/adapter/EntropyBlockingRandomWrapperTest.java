@@ -130,7 +130,7 @@ public class EntropyBlockingRandomWrapperTest extends RandomWrapperRandomTest {
     random.nextLong();
     try {
       assertEquals(random.getSameThreadSeedGen(), sameThreadSeedGen,
-          "Same-thread seed generator changed after setting RandomSeederThread, when already non-null");
+          "Same-thread seed generator changed after setting LegacyRandomSeeder, when already non-null");
       random.nextLong();
       Mockito.verify(seederSeedGenSpy, Mockito.atLeastOnce()).generateSeed(any(byte[].class));
       Mockito.verify(seederSeedGenSpy, Mockito.atMost(2)).generateSeed(any(byte[].class));

@@ -13,7 +13,7 @@ import java.util.concurrent.locks.ReentrantLock;
  * Wraps a thread that loops a given task until interrupted, with the iterations being
  * transactional.
  */
-public abstract class LooperThread implements Serializable {
+public abstract class Looper implements Serializable {
 
   /**
    * Singleton-ization of {@link Executors#defaultThreadFactory()}.
@@ -47,20 +47,20 @@ public abstract class LooperThread implements Serializable {
   private volatile boolean everStarted; // tracked for getState()
 
   /**
-   * Constructs a LooperThread with all properties as defaults. The thread is not started in the
+   * Constructs a Looper with all properties as defaults. The thread is not started in the
    * constructor, because subclass fields won't have been initialized.
    */
-  protected LooperThread() {
+  protected Looper() {
     this(DEFAULT_THREAD_FACTORY);
   }
 
   /**
-   * Constructs a LooperThread with a thread name. The thread is not started in the
+   * Constructs a Looper with a thread name. The thread is not started in the
    * constructor, because subclass fields won't have been initialized.
    *
    * @param name the name of the thread to create
    */
-  protected LooperThread(final String name) {
+  protected Looper(final String name) {
     this(r -> {
       Thread thread = DEFAULT_THREAD_FACTORY.newThread(r);
       thread.setName(name);
@@ -69,17 +69,17 @@ public abstract class LooperThread implements Serializable {
   }
 
   /**
-   * Constructs a LooperThread with a given thread factory. The thread is not started in the
+   * Constructs a Looper with a given thread factory. The thread is not started in the
    * constructor, because subclass fields won't have been initialized.
    *
    * @param factory the thread factory that will create this instance's thread
    */
-  protected LooperThread(ThreadFactory factory) {
+  protected Looper(ThreadFactory factory) {
     this.factory = factory;
   }
 
   /**
-   * Returns whether there is a running thread executing this {@link LooperThread}'s loop.
+   * Returns whether there is a running thread executing this {@link Looper}'s loop.
    * @return true if this has a running thread; false otherwise
    */
   public boolean isRunning() {

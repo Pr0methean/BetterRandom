@@ -13,17 +13,17 @@ import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.TimeUnit;
 import org.testng.annotations.Test;
 
-public class RandomSeederThreadTest extends SimpleRandomSeederTest {
+public class LegacyRandomSeederTest extends SimpleRandomSeederTest {
   @Override @Test public void testConstructors() {
-    TestUtils.testConstructors(RandomSeederThread.class, false, ImmutableMap
+    TestUtils.testConstructors(LegacyRandomSeeder.class, false, ImmutableMap
         .of(SeedGenerator.class, new FakeSeedGenerator("testConstructors"), ThreadFactory.class,
             new SimpleRandomSeeder.DefaultThreadFactory("testConstructors"), long.class,
             100_000_000L), SimpleRandomSeeder::stopIfEmpty);
   }
 
-  @Override protected RandomSeederThread createRandomSeeder(SeedGenerator seedGenerator) {
-    return new RandomSeederThread(seedGenerator,
-        new SimpleRandomSeeder.DefaultThreadFactory("RandomSeederThreadTest", Thread.MAX_PRIORITY));
+  @Override protected LegacyRandomSeeder createRandomSeeder(SeedGenerator seedGenerator) {
+    return new LegacyRandomSeeder(seedGenerator,
+        new SimpleRandomSeeder.DefaultThreadFactory("LegacyRandomSeederTest", Thread.MAX_PRIORITY));
   }
 
   @Test(timeOut = 25_000) public void testAddRemoveAndIsEmpty_Random() {
@@ -34,7 +34,7 @@ public class RandomSeederThreadTest extends SimpleRandomSeederTest {
     prng.nextBytes(secondBytesWithOldSeed);
     prng.setSeed(TEST_SEED); // Rewind
     final SeedGenerator seedGenerator = new FakeSeedGenerator("testAddRemoveAndIsEmpty");
-    final RandomSeederThread randomSeeder = createRandomSeeder(seedGenerator);
+    final LegacyRandomSeeder randomSeeder = createRandomSeeder(seedGenerator);
     try {
       assertTrue(randomSeeder.isEmpty());
       randomSeeder.add(prng);

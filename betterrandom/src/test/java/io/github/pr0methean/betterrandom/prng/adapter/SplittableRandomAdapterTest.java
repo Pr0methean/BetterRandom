@@ -5,7 +5,7 @@ import static org.testng.Assert.assertEquals;
 import io.github.pr0methean.betterrandom.TestingDeficiency;
 import io.github.pr0methean.betterrandom.prng.BaseRandom;
 import io.github.pr0methean.betterrandom.prng.RandomTestUtils;
-import io.github.pr0methean.betterrandom.seed.RandomSeederThread;
+import io.github.pr0methean.betterrandom.seed.LegacyRandomSeeder;
 import io.github.pr0methean.betterrandom.seed.SeedException;
 import org.testng.annotations.Test;
 
@@ -52,7 +52,7 @@ public class SplittableRandomAdapterTest extends SingleThreadSplittableRandomAda
    */
   @Override @Test(expectedExceptions = UnsupportedOperationException.class)
   public void testRandomSeederThreadIntegration() {
-    createRng().setRandomSeeder(new RandomSeederThread(getTestSeedGenerator()));
+    createRng().setRandomSeeder(new LegacyRandomSeeder(getTestSeedGenerator()));
   }
 
   @Test public void testSetSeedGeneratorNoOp() {

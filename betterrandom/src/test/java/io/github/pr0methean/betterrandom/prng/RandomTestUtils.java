@@ -28,7 +28,7 @@ import static org.testng.Assert.fail;
 import com.google.common.testing.SerializableTester;
 import com.google.common.util.concurrent.Uninterruptibles;
 import io.github.pr0methean.betterrandom.TestUtils;
-import io.github.pr0methean.betterrandom.seed.RandomSeederThread;
+import io.github.pr0methean.betterrandom.seed.LegacyRandomSeeder;
 import io.github.pr0methean.betterrandom.seed.SeedGenerator;
 import io.github.pr0methean.betterrandom.seed.SimpleRandomSeeder;
 import io.github.pr0methean.betterrandom.util.Dumpable;
@@ -325,7 +325,7 @@ public enum RandomTestUtils {
     assertTrue(seederThread.isEmpty());
   }
 
-  public static void removeAndAssertEmpty(final RandomSeederThread seederThread,
+  public static void removeAndAssertEmpty(final LegacyRandomSeeder seederThread,
       final Random prng) {
     seederThread.remove(prng);
     seederThread.stopIfEmpty();

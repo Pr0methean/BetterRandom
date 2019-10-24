@@ -6,7 +6,7 @@
             <class name="io.github.pr0methean.betterrandom.seed.DefaultSeedGeneratorTest"/>
             <class name="io.github.pr0methean.betterrandom.seed.DevRandomSeedGeneratorTest"/>
             <class name="io.github.pr0methean.betterrandom.seed.RandomDotOrgSeedGeneratorLiveTest"/>
-            <class name="io.github.pr0methean.betterrandom.seed.RandomSeederThreadTest"/>
+            <class name="io.github.pr0methean.betterrandom.seed.LegacyRandomSeederTest"/>
             <class name="io.github.pr0methean.betterrandom.seed.SecureRandomSeedGeneratorTest"/>
             <class name="io.github.pr0methean.betterrandom.seed.SeedGeneratorPreferenceListTest"/>
         </classes>

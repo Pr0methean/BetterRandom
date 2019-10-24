@@ -3,7 +3,7 @@ package io.github.pr0methean.betterrandom.prng.adapter;
 import static io.github.pr0methean.betterrandom.util.BinaryUtils.convertBytesToLong;
 
 import io.github.pr0methean.betterrandom.seed.DefaultSeedGenerator;
-import io.github.pr0methean.betterrandom.seed.RandomSeederThread;
+import io.github.pr0methean.betterrandom.seed.LegacyRandomSeeder;
 import io.github.pr0methean.betterrandom.seed.SeedException;
 import io.github.pr0methean.betterrandom.seed.SeedGenerator;
 import io.github.pr0methean.betterrandom.seed.SimpleRandomSeeder;
@@ -15,7 +15,7 @@ import javax.annotation.Nullable;
 
 /**
  * Thread-safe PRNG that wraps a {@link ThreadLocal}&lt;{@link SplittableRandom}&gt;. Reseeding this
- * will only affect the calling thread, so this can't be used with a {@link RandomSeederThread}.
+ * will only affect the calling thread, so this can't be used with a {@link LegacyRandomSeeder}.
  * Instead, use a {@link ReseedingSplittableRandomAdapter}.
  *
  * @author Chris Hennick

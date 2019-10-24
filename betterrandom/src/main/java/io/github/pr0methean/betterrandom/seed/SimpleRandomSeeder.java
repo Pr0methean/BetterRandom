@@ -4,7 +4,7 @@ import io.github.pr0methean.betterrandom.ByteArrayReseedableRandom;
 import io.github.pr0methean.betterrandom.EntropyCountingRandom;
 import io.github.pr0methean.betterrandom.prng.BaseRandom;
 import io.github.pr0methean.betterrandom.util.BinaryUtils;
-import io.github.pr0methean.betterrandom.util.LooperThread;
+import io.github.pr0methean.betterrandom.util.Looper;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.Serializable;
@@ -28,7 +28,7 @@ import org.slf4j.LoggerFactory;
  *
  * @author Chris Hennick
  */
-public class SimpleRandomSeeder extends LooperThread {
+public class SimpleRandomSeeder extends Looper {
   private static final Map<ByteArrayReseedableRandom, byte[]> SEED_ARRAYS =
       Collections.synchronizedMap(new WeakHashMap<>(1));
 
@@ -253,7 +253,7 @@ public class SimpleRandomSeeder extends LooperThread {
       }
       return true;
     } catch (final Throwable t) {
-      getLogger().error("Disabling the RandomSeederThread for " + seedGenerator, t);
+      getLogger().error("Disabling the LegacyRandomSeeder for " + seedGenerator, t);
       return false;
     }
   }
@@ -338,9 +338,9 @@ public class SimpleRandomSeeder extends LooperThread {
   }
 
   /**
-   * Returns true if no {@link Random} instances are registered with this RandomSeederThread.
+   * Returns true if no {@link Random} instances are registered with this LegacyRandomSeeder.
    *
-   * @return true if no {@link Random} instances are registered with this RandomSeederThread.
+   * @return true if no {@link Random} instances are registered with this LegacyRandomSeeder.
    */
   public boolean isEmpty() {
     lock.lock();
@@ -358,7 +358,7 @@ public class SimpleRandomSeeder extends LooperThread {
     lock.lock();
     try {
       if (isEmpty()) {
-        getLogger().info("Stopping empty RandomSeederThread for {}", seedGenerator);
+        getLogger().info("Stopping empty LegacyRandomSeeder for {}", seedGenerator);
         interrupt();
       }
     } finally {

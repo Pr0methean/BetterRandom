@@ -2,7 +2,7 @@ package io.github.pr0methean.betterrandom.prng.adapter;
 
 import com.google.common.base.MoreObjects.ToStringHelper;
 import io.github.pr0methean.betterrandom.prng.BaseRandom;
-import io.github.pr0methean.betterrandom.seed.RandomSeederThread;
+import io.github.pr0methean.betterrandom.seed.LegacyRandomSeeder;
 import io.github.pr0methean.betterrandom.seed.SeedException;
 import io.github.pr0methean.betterrandom.seed.SeedGenerator;
 import io.github.pr0methean.betterrandom.seed.SimpleRandomSeeder;
@@ -12,7 +12,7 @@ import java.util.SplittableRandom;
 import java.util.WeakHashMap;
 
 /**
- * Like {@link SplittableRandomAdapter}, but uses a {@link RandomSeederThread} to replace each
+ * Like {@link SplittableRandomAdapter}, but uses a {@link LegacyRandomSeeder} to replace each
  * thread's {@link SplittableRandom} with a reseeded one as frequently as possible, but not more
  * frequently than it is being used.
  *
@@ -89,7 +89,7 @@ public class ReseedingSplittableRandomAdapter extends BaseSplittableRandomAdapte
   @Override public void setRandomSeeder(final SimpleRandomSeeder randomSeeder) {
     if (!this.randomSeeder.get().equals(randomSeeder)) {
       throw new UnsupportedOperationException(
-          "ReseedingSplittableRandomAdapter's binding to RandomSeederThread is immutable");
+          "ReseedingSplittableRandomAdapter's binding to LegacyRandomSeeder is immutable");
     }
   }
 
