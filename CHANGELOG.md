@@ -10,6 +10,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 - The package `io.github.pr0methean.betterrandom.prng.concurrent` has been renamed to `adapter`, because not all classes
   in it are concurrent, but all are adapters.
+- `RandomSeederThread` and `LooperThread` have been renamed `LegacyRandomSeeder` and `Looper` to reflect that they no
+  longer extend `Thread`.
 
 ### Removed
 - `SecureRandomSeedGenerator.SECURE_RANDOM_SEED_GENERATOR`: alias of `SecureRandomSeedGenerator.DEFAULT_INSTANCE` that
