@@ -22,7 +22,6 @@ import io.github.pr0methean.betterrandom.TestUtils;
 import io.github.pr0methean.betterrandom.prng.RandomTestUtils.EntropyCheckMode;
 import io.github.pr0methean.betterrandom.prng.adapter.SplittableRandomAdapter;
 import io.github.pr0methean.betterrandom.seed.FakeSeedGenerator;
-import io.github.pr0methean.betterrandom.seed.LegacyRandomSeeder;
 import io.github.pr0methean.betterrandom.seed.SecureRandomSeedGenerator;
 import io.github.pr0methean.betterrandom.seed.SeedException;
 import io.github.pr0methean.betterrandom.seed.SeedGenerator;
@@ -280,7 +279,7 @@ public abstract class BaseRandomTest extends PowerMockTestCase {
     // Can't use a SemiFakeSeedGenerator, because Random.equals() breaks equality check
     final SeedGenerator seedGenerator =
         new FakeSeedGenerator(getClass().getSimpleName() + "::testSerializable #" + rng.nextInt());
-    SimpleRandomSeeder randomSeeder = new LegacyRandomSeeder(seedGenerator);
+    SimpleRandomSeeder randomSeeder = new SimpleRandomSeeder(seedGenerator);
     rng.setRandomSeeder(randomSeeder);
     try {
       final BaseRandom rng2 = SerializableTester.reserialize(rng);

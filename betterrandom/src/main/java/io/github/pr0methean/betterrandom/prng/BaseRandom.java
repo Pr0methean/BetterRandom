@@ -6,7 +6,6 @@ import io.github.pr0methean.betterrandom.ByteArrayReseedableRandom;
 import io.github.pr0methean.betterrandom.EntropyCountingRandom;
 import io.github.pr0methean.betterrandom.RepeatableRandom;
 import io.github.pr0methean.betterrandom.seed.DefaultSeedGenerator;
-import io.github.pr0methean.betterrandom.seed.LegacyRandomSeeder;
 import io.github.pr0methean.betterrandom.seed.SeedException;
 import io.github.pr0methean.betterrandom.seed.SeedGenerator;
 import io.github.pr0methean.betterrandom.seed.SimpleRandomSeeder;
@@ -694,11 +693,11 @@ public abstract class BaseRandom extends Random
   protected abstract ToStringHelper addSubclassFields(ToStringHelper original);
 
   /**
-   * Registers this PRNG with the {@link LegacyRandomSeeder} for the corresponding {@link
+   * Registers this PRNG with the {@link SimpleRandomSeeder} for the corresponding {@link
    * SeedGenerator}, to schedule reseeding when we run out of entropy. Unregisters this PRNG with
-   * the previous {@link LegacyRandomSeeder} if it had a different one.
+   * the previous {@link SimpleRandomSeeder} if it had a different one.
    *
-   * @param randomSeeder a {@link SeedGenerator} whose {@link LegacyRandomSeeder} will be used
+   * @param randomSeeder a {@link SeedGenerator} whose {@link SimpleRandomSeeder} will be used
    *     to reseed this PRNG, or null to stop using one.
    */
   public void setRandomSeeder(@Nullable final SimpleRandomSeeder randomSeeder) {

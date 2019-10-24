@@ -19,8 +19,9 @@ import java.io.Serializable;
 
 /**
  * Strategy interface for seeding random number generators. Implementations that can have multiple
- * equivalent instances should implement {@link Object#equals(Object)} and {@link Object#hashCode()}
- * to support {@link LegacyRandomSeeder}.
+ * equivalent instances that contend for a resource should implement {@link Object#equals(Object)}
+ * and {@link Object#hashCode()} to help with de-duplication of {@link SimpleRandomSeeder}
+ * instances.
  *
  * @author Daniel Dyer
  * @author Chris Hennick

@@ -1,7 +1,6 @@
 package io.github.pr0methean.betterrandom.prng.adapter;
 
 import io.github.pr0methean.betterrandom.prng.BaseRandom;
-import io.github.pr0methean.betterrandom.seed.LegacyRandomSeeder;
 import io.github.pr0methean.betterrandom.seed.SeedException;
 import io.github.pr0methean.betterrandom.seed.SeedGenerator;
 import io.github.pr0methean.betterrandom.seed.SimpleRandomSeeder;
@@ -13,30 +12,30 @@ import java.util.function.LongFunction;
 import java.util.function.Supplier;
 
 /**
- * A {@link ThreadLocalRandomWrapper} that reseeds all its instances using the
- * {@link LegacyRandomSeeder} for its {@link SeedGenerator}.
+ * A {@link ThreadLocalRandomWrapper} that reseeds all its instances using a
+ * {@link SimpleRandomSeeder}.
  */
 public class ReseedingThreadLocalRandomWrapper extends ThreadLocalRandomWrapper {
 
   private static final long serialVersionUID = -3235519018032714059L;
 
   /**
-   * Wraps the given {@link Supplier}. Uses the given {@link LegacyRandomSeeder} to reseed PRNGs,
+   * Wraps the given {@link Supplier}. Uses the given {@link SimpleRandomSeeder} to reseed PRNGs,
    * but not to initialize them unless the {@link Supplier} does so. This ThreadLocalRandomWrapper
    * will be serializable if the {@link Supplier} is serializable.
    *
    * @param initializer a supplier that will be called to provide the initial {@link BaseRandom}
    *     for each thread.
-   * @param seedGenerator The seed generation strategy whose {@link LegacyRandomSeeder} will be
+   * @param seedGenerator The seed generation strategy whose {@link SimpleRandomSeeder} will be
    *     used to reseed each thread's PRNG.
    */
   public ReseedingThreadLocalRandomWrapper(final SeedGenerator seedGenerator,
       final Supplier<? extends BaseRandom> initializer) {
-    this(initializer, new LegacyRandomSeeder(seedGenerator));
+    this(initializer, new SimpleRandomSeeder(seedGenerator));
   }
 
   /**
-   * Wraps the given {@link Supplier}. Uses the given {@link LegacyRandomSeeder} to reseed PRNGs,
+   * Wraps the given {@link Supplier}. Uses the given {@link SimpleRandomSeeder} to reseed PRNGs,
    * but not to initialize them unless the {@link Supplier} does so. This ThreadLocalRandomWrapper
    * will be serializable if the {@link Supplier} is serializable.
    *
@@ -63,8 +62,7 @@ public class ReseedingThreadLocalRandomWrapper extends ThreadLocalRandomWrapper 
    * @param seedSize the size of seed arrays to generate.
    * @param seedGenerator The seed generation strategy that will provide the seed value for each
    *     thread's {@link BaseRandom}, both at initialization and through the
-   *     corresponding {@link
-   *     LegacyRandomSeeder}.
+   *     corresponding {@link SimpleRandomSeeder}.
    * @param creator a {@link Function} that creates a {@link BaseRandom} from each seed.
    *     Probably a constructor reference.
    *
@@ -72,7 +70,7 @@ public class ReseedingThreadLocalRandomWrapper extends ThreadLocalRandomWrapper 
    */
   public ReseedingThreadLocalRandomWrapper(final int seedSize, final SeedGenerator seedGenerator,
       final Function<byte[], ? extends BaseRandom> creator) throws SeedException {
-    this(seedSize, new LegacyRandomSeeder(seedGenerator), creator, seedGenerator);
+    this(seedSize, new SimpleRandomSeeder(seedGenerator), creator, seedGenerator);
   }
 
   /**
