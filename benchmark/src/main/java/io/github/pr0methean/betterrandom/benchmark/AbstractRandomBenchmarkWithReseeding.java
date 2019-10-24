@@ -53,7 +53,7 @@ public abstract class AbstractRandomBenchmarkWithReseeding extends AbstractRando
   private static final RandomSeederThread RANDOM_SEEDER = new RandomSeederThread(
       SecureRandomSeedGenerator.DEFAULT_INSTANCE);
 
-  @Param({"false","true"}) boolean reseeding;
+  @Param({"false","true"}) public boolean reseeding;
 
   /**
    * Sets the random.org API key from the environment variable RANDOM_DOT_ORG_KEY, which must be a
