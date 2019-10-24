@@ -23,8 +23,8 @@
     </dependency>
     <dependency>
       <groupId>io.github.pr0methean.betterrandom</groupId>
-      <artifactId>BetterRandom-Java7</artifactId>
-      <version>4.1.0<!--updateme--></version>
+      <artifactId>BetterRandom</artifactId>
+      <version>4.1.1-SNAPSHOT<!--updateme--></version>
     </dependency>
   </dependencies>
   <build>
