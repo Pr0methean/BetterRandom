@@ -31,8 +31,8 @@
 
 package io.github.pr0methean.betterrandom.benchmark;
 
+import io.github.pr0methean.betterrandom.seed.LegacyRandomSeeder;
 import io.github.pr0methean.betterrandom.seed.RandomDotOrgSeedGenerator;
-import io.github.pr0methean.betterrandom.seed.RandomSeederThread;
 import io.github.pr0methean.betterrandom.seed.SecureRandomSeedGenerator;
 import java.util.UUID;
 import org.openjdk.jmh.annotations.Level;
@@ -43,14 +43,14 @@ import org.openjdk.jmh.annotations.State;
 import org.openjdk.jmh.annotations.TearDown;
 
 /**
- * Benchmarks a given PRNG while it is continuously reseeded by a {@link RandomSeederThread} using
+ * Benchmarks a given PRNG while it is continuously reseeded by a {@link LegacyRandomSeeder} using
  * {@link SecureRandomSeedGenerator#DEFAULT_INSTANCE}.
  */
 @SuppressWarnings("MethodMayBeStatic")
 @State(Scope.Benchmark)
 public abstract class AbstractRandomBenchmarkWithReseeding extends AbstractRandomBenchmark {
 
-  private static final RandomSeederThread RANDOM_SEEDER = new RandomSeederThread(
+  private static final LegacyRandomSeeder RANDOM_SEEDER = new LegacyRandomSeeder(
       SecureRandomSeedGenerator.DEFAULT_INSTANCE);
 
   @Param({"false","true"}) public boolean reseeding;
