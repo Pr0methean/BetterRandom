@@ -81,7 +81,7 @@ public final class RandomFifoFiller
     @SuppressWarnings("InfiniteLoopStatement") public static void generateOutputFile(Random random,
         File outputFile) {
       if (random instanceof RepeatableRandom) {
-        System.out.format("Seed: %s%n",
+        System.err.format("Seed: %s%n",
             BinaryUtils.convertBytesToHexString(((RepeatableRandom) random).getSeed()));
       }
       try (DataOutputStream dataOutput = new DataOutputStream(
