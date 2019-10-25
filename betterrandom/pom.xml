@@ -137,7 +137,7 @@
   </properties>
   <groupId>io.github.pr0methean.betterrandom</groupId>
   <artifactId>BetterRandom-Java7</artifactId>
-  <version>4.1.1-SNAPSHOT</version>
+  <version>4.2.0</version>
   <name>BetterRandom</name>
   <description>Better, faster random-number generation in Java.
   </description>
