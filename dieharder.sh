@@ -22,7 +22,7 @@ chkdh() {
 }
 mkfifo log # Work around https://github.com/microsoft/azure-pipelines-agent/issues/2532
 cat log &\
-"${JAVA_BIN}" ${JAVA_OPTS} -jar "${JAR}" io.github.pr0methean.betterrandom.prng.${CLASS} /dev/stdout ${SEED} 2>&1 | (
+"${JAVA_BIN}" ${JAVA_OPTS} -jar "${JAR}" io.github.pr0methean.betterrandom.prng.${CLASS} /dev/stdout ${SEED} | (
   chkdh -Y 1 -k 2 -d 0
   chkdh -Y 1 -k 2 -d 1
   chkdh -Y 1 -k 2 -d 2

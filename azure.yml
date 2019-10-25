@@ -306,7 +306,7 @@ stages:
           displayName: Build BetterRandom & Run DieHarder Tests
           env:
             CLASS: $(class)
-          failOnStderr: true
+          failOnStderr: false
         - task: PublishBuildArtifacts@1
           displayName: Publish Report
           inputs:
