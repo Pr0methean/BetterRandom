@@ -14,9 +14,6 @@ git checkout master
 git pull
 cd betterrandom-java8 || exit 1
 
-# Disable frames, step 1
-mv overview-summary.html index.html
-
 # Create sitemap
 find . -iname "*.html" | sed 's/^\./https:\/\/pr0methean.github.io/' > sitemap.txt
 
@@ -30,8 +27,6 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=\
 <script>(adsbygoogle = window.adsbygoogle || []).push({google_ad_client: 'ca-pub-9922551172827508', \
 enable_page_level_ads: true});</script>" -- index.html
 
-# Disable frames, step 2
-find . -iname "*.html" -exec sed -i 's/<li><a href="[^\"]*" target="_top">Frames<\/a><\/li>//; s/<li><a href="[^\"]*" target="_top">No&nbsp;Frames<\/a><\/li>//; s/overview-summary.html/index.html/g' {} \;
 git add .
 cd ..
 find . -iname '*.html' | replace './' 'https://pr0methean.github.io/' > sitemap.txt
