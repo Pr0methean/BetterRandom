@@ -295,7 +295,7 @@ stages:
           Pcg64Random:
             class: Pcg64Random
           SingleThreadSplittableRandomAdapter:
-            class: 'concurrent.SingleThreadSplittableRandomAdapter'
+            class: 'adapter.SingleThreadSplittableRandomAdapter'
       pool:
         vmImage: 'ubuntu-latest'
       steps:
