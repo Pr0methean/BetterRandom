@@ -125,13 +125,14 @@ Continuous reseeding is recommended if you don't need reproducible output.
 * If you need reproducible output, use:
   ```
   byte[] seed;
-  // Use an input seed if provided, then:
+  // Get an input seed if provided, then:
   if (seed == null) {
     seed = DEFAULT_SEED_GENERATOR.generateSeed(Long.BYTES);
     // Then output the seed
   }
   random = new SingleThreadSplittableRandomAdapter(seed); 
   ```
+  See `FifoFiller` for an example that reads the seed from an environment variable.
 * If you need multi-thread concurrency (incompatible with reproducibility), use:
   ```
   new ReseedingSplittableRandomAdapter()
@@ -250,10 +251,11 @@ public class SplittableRandomAdapterDemo {
 Javadocs for the latest snapshot, including both public and protected members (to support your
 subclassing), are at [pr0methean.github.io](https://pr0methean.github.io/).
 
-# Tested environments
+# Tested environments and supported versions
 
-BetterRandom has 2 versions, one for Java 7 -- including Android API levels below 24 -- and one for
-Java 8 and newer.
+BetterRandom has 2 branches from which releases are cut: one for Java 7 -- including Android API
+levels below 24 -- and one for Java 8 and newer. These produce the Maven artifacts named
+`BetterRandom-Java7` and `BetterRandom` respectively.
 
 ## Java 8 (master branch)
 
@@ -283,12 +285,16 @@ suites. However, Android API levels 24 and up (required as both source and targe
 ## Java 7 (java7 branch)
 
 This branch is mainly intended to support Android API levels 19 through 23; support for other
-environments is best-efforts. Once 80% of Android devices have API level 24 or newer, as
-[measured by Google](https://developer.android.com/about/dashboards/index.html#Platform), the Java 7
-branch will only be maintained while at least one Tidelift subscriber is using it.
+environments is best-efforts.
 
 Continuous integration takes place in OpenJDK 7 on Linux. Up to and including version 3.1.1, this was
 done on Travis CI; beginning with 3.1.2, Azure Pipelines will be used.
+
+Once 80% of Android devices have API level 24 or newer, as
+[measured by Google](https://developer.android.com/about/dashboards/index.html#Platform) (or
+[by StatCounter](https://gs.statcounter.com/android-version-market-share/mobile-tablet/worldwide) if
+Google has not resumed monthly updates), the Java 7 branch will only be maintained while at least one
+Tidelift subscriber, or Gold or higher GitHub sponsor, is using it.
 
 # Alternative random number generators
 
