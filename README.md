@@ -74,7 +74,7 @@ GitHub Sponsors can get mentions or ad space in this section of this page, both 
 [GitHub](https://github.com/pr0methean/betterrandom) and
 [GitHub Pages](https://pr0methean.github.io/betterrandom-java7/index.html). You can even get a
 mention in the Javadocs.
-Get publicity from a library that was downloaded 12,985 times from Maven Central in September 2019.
+Get publicity from a library that was downloaded 13,854 times from Maven Central in October 2019.
 Visit [https://github.com/sponsors/Pr0methean](https://github.com/sponsors/Pr0methean) for details.
 
 # Get it from MavenCentral
