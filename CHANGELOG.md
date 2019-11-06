@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+- SplittableRandomAdapter is now deprecated in the Java 8 branch; it can generally be replaced by `ThreadLocalRandom` if
+  using OpenJDK 8 or higher or Android API 24 or higher.
+
 ## [4.2.0]
 
 ### Changed
