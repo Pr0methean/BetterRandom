@@ -72,7 +72,7 @@ The maintainers of io.github.pr0methean.betterrandom:BetterRandom and thousands 
 
 GitHub Sponsors can get mentions or ad space in this section of this page, both on
 [GitHub](https://github.com/pr0methean/betterrandom) and
-[GitHub Pages](https://pr0methean.github.io/betterrandom-java8/index.html). You can even get a
+[GitHub Pages](https://pr0methean.github.io/betterrandom-java7/index.html). You can even get a
 mention in the Javadocs.
 Get publicity from a library that was downloaded 13,854 times from Maven Central in October 2019.
 Visit [https://github.com/sponsors/Pr0methean](https://github.com/sponsors/Pr0methean) for details.
@@ -145,11 +145,15 @@ Continuous reseeding is recommended if you don't need reproducible output.
 
 ## It's for a single-player game, screensaver, playlist shuffle, etc.
 
-* On OpenJDK 8 and Android API 24+, you can just use:
+* If you need multi-thread concurrency, or the ability to reseed, use:
+  ```
+  new SplittableRandomAdapter()
+  ```
+* Otherwise, use:
   ```
   ThreadLocalRandom.current()
   ```
-  (It's as good as a SplittableRandom in these Java versions.)
+  (On OpenJDK 8 and Android API 24+, this is as good as a SplittableRandom.)
 
 # Simple tricks
 
