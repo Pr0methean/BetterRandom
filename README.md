@@ -149,12 +149,16 @@ Continuous reseeding is recommended if you don't need reproducible output.
   ```
   new SplittableRandomAdapter()
   ```
-* Otherwise, use:
+* If not, and this is for Android only, use:
   ```
-  ThreadLocalRandom.current()
+  Build.SDK_INT >= 24 ? ThreadLocalRandom.current() : new SingleThreadSplittableRandomAdapter()
   ```
-  (On OpenJDK 8 and Android API 24+, this is as good as a SplittableRandom.)
-
+  (On Android API 24+, a ThreadLocalRandom is as good as a SplittableRandom. On API 21-23 (Lollipop),
+  ThreadLocalRandom exists, but its pseudorandomness is as poor as java.util.Random.)
+* In all other cases, use:
+  ```
+  new SingleThreadSplittableRandomAdapter()
+  ```
 # Simple tricks
 
 ## Don't use random.org unless explicitly specified
