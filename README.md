@@ -145,14 +145,15 @@ Continuous reseeding is recommended if you don't need reproducible output.
 
 ## It's for a single-player game, screensaver, playlist shuffle, etc.
 
-* If you need multi-thread concurrency, use:
+* If you need multi-thread concurrency, or the ability to reseed, use:
   ```
   new SplittableRandomAdapter()
   ```
 * Otherwise, use:
   ```
-  new SingleThreadSplittableRandomAdapter()
+  ThreadLocalRandom.current()
   ```
+  (On OpenJDK 8 and Android API 24+, this is as good as a SplittableRandom.)
 
 # Simple tricks
 
