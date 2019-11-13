@@ -22,7 +22,11 @@ trigger:
       - README.md
       - CHANGELOG.md
       - .submodules
+      - .github/
       - docs/
+      - 'benchmark/*.iml'
+      - 'betterrandom/*.iml'
+      - 'FifoFiller/*.iml'
 schedules:
   - cron: "17 0 * * *"
     displayName: Nightly
