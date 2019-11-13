@@ -5,13 +5,13 @@ import java.util.Random;
 import org.openjdk.jmh.annotations.Benchmark;
 import org.openjdk.jmh.annotations.Level;
 import org.openjdk.jmh.annotations.Measurement;
-import org.openjdk.jmh.annotations.OperationsPerInvocation;
 import org.openjdk.jmh.annotations.Scope;
 import org.openjdk.jmh.annotations.Setup;
 import org.openjdk.jmh.annotations.State;
 import org.openjdk.jmh.annotations.TearDown;
 import org.openjdk.jmh.annotations.Timeout;
 import org.openjdk.jmh.annotations.Warmup;
+import org.openjdk.jmh.infra.Blackhole;
 import org.openjdk.jmh.results.format.ResultFormatType;
 import org.openjdk.jmh.runner.Runner;
 import org.openjdk.jmh.runner.RunnerException;
@@ -22,13 +22,9 @@ import org.openjdk.jmh.runner.options.OptionsBuilder;
 @State(Scope.Benchmark)
 abstract class AbstractRandomBenchmark {
 
-  protected static final int COLUMNS = 2;
-  protected static final int ROWS = 50_000;
-  @SuppressWarnings("MismatchedReadAndWriteOfArray") private final byte[][] bytes =
-      new byte[COLUMNS][ROWS];
   protected Random prng;
 
-  protected AbstractRandomBenchmark() {
+  AbstractRandomBenchmark() {
   }
 
   @SuppressWarnings("ObjectAllocationInLoop") public static void main(final String[] args)
@@ -49,18 +45,18 @@ abstract class AbstractRandomBenchmark {
 
   @EntryPoint protected abstract Random createPrng() throws Exception;
 
-  protected byte innerTestBytesSequential() {
-    for (final byte[] column : bytes) {
-      prng.nextBytes(column);
-    }
-    return bytes[prng.nextInt(COLUMNS)][prng.nextInt(ROWS)];
-  }
   @Timeout(time = 60) // seconds per iteration
   @Measurement(iterations = 5, time = 4)
   @Warmup(iterations = 5, time = 4)
-  @OperationsPerInvocation(COLUMNS * ROWS)
-  @Benchmark public byte testBytesSequential() {
-    return innerTestBytesSequential();
+  @Benchmark public void testNextInt(Blackhole blackhole) {
+    blackhole.consume(prng.nextInt());
+  }
+
+  @Timeout(time = 60) // seconds per iteration
+  @Measurement(iterations = 5, time = 4)
+  @Warmup(iterations = 5, time = 4)
+  @Benchmark public void testNextLong(Blackhole blackhole) {
+    blackhole.consume(prng.nextLong());
   }
 
   @TearDown(Level.Trial)

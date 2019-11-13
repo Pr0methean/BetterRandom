@@ -22,7 +22,11 @@ trigger:
       - README.md
       - CHANGELOG.md
       - .submodules
+      - .github/
       - docs/
+      - 'benchmark/*.iml'
+      - 'betterrandom/*.iml'
+      - 'FifoFiller/*.iml'
 schedules:
   - cron: "17 0 * * *"
     displayName: Nightly
@@ -84,6 +88,7 @@ stages:
       - UnitTests
     jobs:
     - job: Benchmark
+      timeoutInMinutes: 80
       variables:
         JAVA_HOME: $(zuluLinux07)
         artifactEnvName: 'OpenJDK07Linux'
