@@ -145,11 +145,11 @@ Continuous reseeding is recommended if you don't need reproducible output.
 
 ## It's for a single-player game, screensaver, playlist shuffle, etc.
 
-* If you need multi-thread concurrency, or the ability to reseed, use:
+* If you need multi-thread concurrency *and* to be able to use a specific seed on each thread, use:
   ```
   new SplittableRandomAdapter()
   ```
-* If not, and this is for Android only, use:
+* If not, and this is for Android only, and you don't need to specify the seed, use:
   ```
   Build.SDK_INT >= 24 ? ThreadLocalRandom.current() : new SingleThreadSplittableRandomAdapter()
   ```
