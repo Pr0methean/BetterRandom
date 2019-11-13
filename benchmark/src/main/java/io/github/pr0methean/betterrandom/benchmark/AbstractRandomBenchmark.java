@@ -24,7 +24,7 @@ abstract class AbstractRandomBenchmark {
 
   protected Random prng;
 
-  protected AbstractRandomBenchmark() {
+  AbstractRandomBenchmark() {
   }
 
   @SuppressWarnings("ObjectAllocationInLoop") public static void main(final String[] args)
@@ -45,13 +45,17 @@ abstract class AbstractRandomBenchmark {
 
   @EntryPoint protected abstract Random createPrng() throws Exception;
 
-  protected void innerTestBytesSequential(Blackhole blackhole) {
-    blackhole.consume(prng.nextLong());
-  }
   @Timeout(time = 60) // seconds per iteration
   @Measurement(iterations = 5, time = 4)
   @Warmup(iterations = 5, time = 4)
-  @Benchmark public void testBytesSequential(Blackhole blackhole) {
+  @Benchmark public void testNextInt(Blackhole blackhole) {
+    blackhole.consume(prng.nextInt());
+  }
+
+  @Timeout(time = 60) // seconds per iteration
+  @Measurement(iterations = 5, time = 4)
+  @Warmup(iterations = 5, time = 4)
+  @Benchmark public void testNextLong(Blackhole blackhole) {
     blackhole.consume(prng.nextLong());
   }
 
