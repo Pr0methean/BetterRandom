@@ -11,7 +11,6 @@ import io.github.pr0methean.betterrandom.prng.BaseRandom;
 import io.github.pr0methean.betterrandom.prng.RandomTestUtils;
 import io.github.pr0methean.betterrandom.prng.RandomTestUtils.EntropyCheckMode;
 import io.github.pr0methean.betterrandom.seed.FakeSeedGenerator;
-import io.github.pr0methean.betterrandom.seed.LegacyRandomSeeder;
 import io.github.pr0methean.betterrandom.seed.SeedException;
 import io.github.pr0methean.betterrandom.seed.SeedGenerator;
 import io.github.pr0methean.betterrandom.seed.SemiFakeSeedGenerator;
@@ -60,7 +59,7 @@ public class ReseedingSplittableRandomAdapterTest
 
   @Override public void testInitialEntropy() {
     // This test needs a separate instance from all other tests, but createRng() doesn't provide one
-    SimpleRandomSeeder newThread = new LegacyRandomSeeder(new FakeSeedGenerator("testInitialEntropy"));
+    SimpleRandomSeeder newThread = new SimpleRandomSeeder(new FakeSeedGenerator("testInitialEntropy"));
     ReseedingSplittableRandomAdapter random
         = ReseedingSplittableRandomAdapter.getInstance(newThread, getTestSeedGenerator());
     assertEquals(random.getEntropyBits(), Long.SIZE, "Wrong initial entropy");
@@ -73,7 +72,7 @@ public class ReseedingSplittableRandomAdapterTest
 
   @Override @Test public void testSerializable() throws SeedException {
     SeedGenerator generator = new FakeSeedGenerator("testSerializable");
-    LegacyRandomSeeder thread = new LegacyRandomSeeder(generator);
+    SimpleRandomSeeder thread = new SimpleRandomSeeder(generator);
     try {
       final BaseSplittableRandomAdapter adapter =
           ReseedingSplittableRandomAdapter.getInstance(thread, generator);
@@ -99,7 +98,7 @@ public class ReseedingSplittableRandomAdapterTest
   @Override @Test(retryAnalyzer = FlakyRetryAnalyzer.class)
   public void testReseeding() {
     SeedGenerator generator = new SemiFakeSeedGenerator(new SplittableRandomAdapter(), "testReseeding");
-    LegacyRandomSeeder seeder = new LegacyRandomSeeder(generator);
+    SimpleRandomSeeder seeder = new SimpleRandomSeeder(generator);
     try {
       ReseedingSplittableRandomAdapter random =
           ReseedingSplittableRandomAdapter.getInstance(seeder, generator);
@@ -143,7 +142,7 @@ public class ReseedingSplittableRandomAdapterTest
    */
   @Override @Test(expectedExceptions = UnsupportedOperationException.class)
   public void testRandomSeederThreadIntegration() {
-    LegacyRandomSeeder thread = new LegacyRandomSeeder(DEFAULT_INSTANCE);
+    SimpleRandomSeeder thread = new SimpleRandomSeeder(DEFAULT_INSTANCE);
     try {
       createRng().setRandomSeeder(thread);
     } finally {
@@ -165,12 +164,12 @@ public class ReseedingSplittableRandomAdapterTest
   }
 
   @Override @Test public void testDump() throws SeedException {
-    LegacyRandomSeeder thread = new LegacyRandomSeeder(DEFAULT_INSTANCE);
+    SimpleRandomSeeder thread = new SimpleRandomSeeder(DEFAULT_INSTANCE);
     try {
       ReseedingSplittableRandomAdapter baseInstance =
           ReseedingSplittableRandomAdapter.getInstance(thread, getTestSeedGenerator());
-      LegacyRandomSeeder otherThread =
-          new LegacyRandomSeeder(new FakeSeedGenerator("Different reseeder"));
+      SimpleRandomSeeder otherThread =
+          new SimpleRandomSeeder(new FakeSeedGenerator("Different reseeder"));
       try {
         assertNotEquals(
             ReseedingSplittableRandomAdapter.getInstance(otherThread, getTestSeedGenerator())

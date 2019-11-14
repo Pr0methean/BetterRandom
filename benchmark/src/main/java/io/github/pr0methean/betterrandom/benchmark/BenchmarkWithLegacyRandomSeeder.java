@@ -18,7 +18,6 @@ public abstract class BenchmarkWithLegacyRandomSeeder extends AbstractRandomBenc
     if (reseeding) {
       RANDOM_SEEDER.remove(prng);
     }
-    super.tearDown();
   }
 
   @Override
