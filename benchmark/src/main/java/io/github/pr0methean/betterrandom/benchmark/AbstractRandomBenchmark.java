@@ -46,15 +46,15 @@ abstract class AbstractRandomBenchmark {
   @EntryPoint protected abstract Random createPrng() throws Exception;
 
   @Timeout(time = 60) // seconds per iteration
-  @Measurement(iterations = 5, time = 4)
-  @Warmup(iterations = 5, time = 4)
+  @Measurement(iterations = 5, time = 10)
+  @Warmup(iterations = 5, time = 10)
   @Benchmark public void testNextInt(Blackhole blackhole) {
     blackhole.consume(prng.nextInt());
   }
 
   @Timeout(time = 60) // seconds per iteration
-  @Measurement(iterations = 5, time = 4)
-  @Warmup(iterations = 5, time = 4)
+  @Measurement(iterations = 5, time = 10)
+  @Warmup(iterations = 5, time = 10)
   @Benchmark public void testNextLong(Blackhole blackhole) {
     blackhole.consume(prng.nextLong());
   }
