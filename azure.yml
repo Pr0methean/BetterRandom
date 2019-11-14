@@ -172,7 +172,7 @@ stages:
     dependsOn: UnitTests
     jobs:
     - job: BenchmarkLinuxPreinstalledZulu
-      timeoutInMinutes: 240
+      timeoutInMinutes: 360
       strategy:
         matrix:
           OpenJdk08:
@@ -190,7 +190,7 @@ stages:
       steps:
         - template: etc/azureTemplate/benchmark.yml
     - job: BenchmarkLinux
-      timeoutInMinutes: 240
+      timeoutInMinutes: 360
       variables:
         JAVA_HOME: jdk
       strategy:
@@ -207,7 +207,7 @@ stages:
         - template: etc/azureTemplate/installJavaJti.yml
         - template: etc/azureTemplate/benchmark.yml
     - job: BenchmarkMac
-      timeoutInMinutes: 240
+      timeoutInMinutes: 360
       variables:
         artifactEnvName: OpenJdkMac
         JAVA_HOME: jdk
@@ -231,7 +231,7 @@ stages:
             javaVersion: $(javaVersion)
         - template: etc/azureTemplate/benchmark.yml
     - job: BenchmarkWindows
-      timeoutInMinutes: 240
+      timeoutInMinutes: 360
       pool:
         vmImage: 'windows-2019'
       strategy:
