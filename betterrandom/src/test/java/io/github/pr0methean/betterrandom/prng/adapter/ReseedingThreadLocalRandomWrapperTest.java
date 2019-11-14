@@ -4,7 +4,6 @@ import io.github.pr0methean.betterrandom.FlakyRetryAnalyzer;
 import io.github.pr0methean.betterrandom.prng.BaseRandom;
 import io.github.pr0methean.betterrandom.prng.RandomTestUtils;
 import io.github.pr0methean.betterrandom.prng.RandomTestUtils.EntropyCheckMode;
-import io.github.pr0methean.betterrandom.seed.LegacyRandomSeeder;
 import io.github.pr0methean.betterrandom.seed.SecureRandomSeedGenerator;
 import io.github.pr0methean.betterrandom.seed.SeedException;
 import io.github.pr0methean.betterrandom.seed.SeedGenerator;
@@ -35,11 +34,11 @@ public class ReseedingThreadLocalRandomWrapperTest extends ThreadLocalRandomWrap
   @Override @Test(expectedExceptions = UnsupportedOperationException.class)
   public void testRandomSeederThreadIntegration() {
     createRng().setRandomSeeder(
-        new LegacyRandomSeeder(SecureRandomSeedGenerator.DEFAULT_INSTANCE));
+        new SimpleRandomSeeder(SecureRandomSeedGenerator.DEFAULT_INSTANCE));
   }
 
   @Test public void testSetSeedGeneratorNoOp() {
-    SimpleRandomSeeder randomSeeder = new LegacyRandomSeeder(getTestSeedGenerator());
+    SimpleRandomSeeder randomSeeder = new SimpleRandomSeeder(getTestSeedGenerator());
     ReseedingThreadLocalRandomWrapper prng =
         new ReseedingThreadLocalRandomWrapper(pcgSupplier, randomSeeder);
     prng.setRandomSeeder(randomSeeder);

@@ -8,9 +8,9 @@ import io.github.pr0methean.betterrandom.prng.AbstractLargeSeedRandomTest;
 import io.github.pr0methean.betterrandom.prng.AesCounterRandom;
 import io.github.pr0methean.betterrandom.prng.BaseRandom;
 import io.github.pr0methean.betterrandom.prng.Pcg64Random;
-import io.github.pr0methean.betterrandom.seed.LegacyRandomSeeder;
 import io.github.pr0methean.betterrandom.seed.SeedException;
 import io.github.pr0methean.betterrandom.seed.SeedGenerator;
+import io.github.pr0methean.betterrandom.seed.SimpleRandomSeeder;
 import io.github.pr0methean.betterrandom.util.SerializableSupplier;
 import java.util.Map;
 import java.util.Random;
@@ -62,7 +62,7 @@ import org.testng.annotations.Test;
    */
   @Override @Test(expectedExceptions = UnsupportedOperationException.class)
   public void testRandomSeederThreadIntegration() {
-    createRng().setRandomSeeder(new LegacyRandomSeeder(getTestSeedGenerator()));
+    createRng().setRandomSeeder(new SimpleRandomSeeder(getTestSeedGenerator()));
   }
 
   @Test public void testSetSeedGeneratorNoOp() {
@@ -124,7 +124,7 @@ import org.testng.annotations.Test;
       }
     }, getTestSeedGenerator()).nextInt();
   }
-  
+
   @Test public void testGetWrapped() {
     assertSame(createRng().getWrapped().getClass(), Pcg64Random.class);
   }
