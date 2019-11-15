@@ -40,7 +40,7 @@ import java.util.concurrent.locks.ReentrantLock;
 import javax.annotation.Nullable;
 import javax.net.ssl.HttpsURLConnection;
 import javax.net.ssl.SSLSocketFactory;
-import javax.xml.bind.DatatypeConverter;
+import org.apache.commons.codec.binary.Base64;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
@@ -72,6 +72,7 @@ import org.json.simple.parser.ParseException;
  * @author Chris Hennick (new API; refactoring)
  */
 public enum RandomDotOrgSeedGenerator implements SeedGenerator {
+
   /**
    * This version of the client may make HTTP requests as fast as your computer is capable of
    * sending them. Since it is inherently spammy, it is recommended only when you know your usage is
@@ -85,6 +86,7 @@ public enum RandomDotOrgSeedGenerator implements SeedGenerator {
    * DefaultSeedGenerator} uses this version.
    */
   DELAYED_RETRY(true);
+  private static final Base64 BASE_64 = new Base64();
   private static final String JSON_REQUEST_FORMAT = "{\"jsonrpc\":\"2.0\"," +
       "\"method\":\"generateBlobs\",\"params\":{\"apiKey\":\"%s\",\"n\":1,\"size\":%d},\"id\":%d}";
 
@@ -245,7 +247,7 @@ public enum RandomDotOrgSeedGenerator implements SeedGenerator {
         }
         final String base64seed =
             ((data instanceof JSONArray) ? ((JSONArray) data).get(0) : data).toString();
-        final byte[] decodedSeed = DatatypeConverter.parseBase64Binary(base64seed);
+        final byte[] decodedSeed = BASE_64.decode(base64seed);
         if (decodedSeed.length < length) {
           throw new SeedException(String
               .format("Too few bytes returned: expected %d bytes, got '%s'", length, base64seed));

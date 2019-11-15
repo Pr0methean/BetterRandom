@@ -175,6 +175,11 @@
 
   <dependencies>
     <dependency>
+      <groupId>commons-codec</groupId>
+      <artifactId>commons-codec</artifactId>
+      <version>1.12</version>
+    </dependency>
+    <dependency>
       <groupId>net.sourceforge.streamsupport</groupId>
       <artifactId>streamsupport</artifactId>
       <version>1.7.1</version>
@@ -321,9 +326,11 @@
             <notimestamp>true</notimestamp>
             <subpackages>io.github.pr0methean</subpackages>
             <show>protected</show>
+            <excludePackageNames>javax.xml.bind</excludePackageNames>
             <links>
               <link>http://checkstyle-addons.github.io/jsr305-javadoc/3.0.1</link>
               <link>https://checkerframework.org/api</link>
+              <link>https://javadoc.io/doc/javax.xml.bind/jaxb-api/2.2.11</link>
               <link>https://docs.oracle.com/javase/11/docs/api</link>
               <link>https://google.github.io/guava/releases/snapshot-jre/api/docs</link>
             </links>
