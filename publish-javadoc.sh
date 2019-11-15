@@ -27,6 +27,9 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=\
 <script>(adsbygoogle = window.adsbygoogle || []).push({google_ad_client: 'ca-pub-9922551172827508', \
 enable_page_level_ads: true});</script>" -- index.html
 
+# Add Tidelift link
+find . -iname "*.html" -print0 | xargs -r0 replace 'Help</a></li>' 'Help</a></li><li><a href="/betterrandom-enterprise.html">For Enterprise</a></li>' --
+
 git add .
 cd ..
 find . -iname '*.html' | replace './' 'https://pr0methean.github.io/' > sitemap.txt
