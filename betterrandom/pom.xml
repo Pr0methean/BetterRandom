@@ -89,6 +89,7 @@
                 </goals>
               </execution>
             </executions>
+            
           </plugin>
           <plugin>
             <groupId>org.sonatype.plugins</groupId>
@@ -134,6 +135,7 @@
     <testng.perCoreThreadCount>false</testng.perCoreThreadCount>
     <testng.verbose>2</testng.verbose>
     <testng.timeout>1200</testng.timeout>
+    <doclint>none</doclint>
   </properties>
   <groupId>io.github.pr0methean.betterrandom</groupId>
   <artifactId>BetterRandom-Java7</artifactId>
@@ -322,7 +324,7 @@
             <links>
               <link>http://checkstyle-addons.github.io/jsr305-javadoc/3.0.1</link>
               <link>https://checkerframework.org/api</link>
-              <link>https://docs.oracle.com/javase/8/docs/api</link>
+              <link>https://docs.oracle.com/javase/11/docs/api</link>
               <link>https://google.github.io/guava/releases/snapshot-jre/api/docs</link>
             </links>
           </configuration>
