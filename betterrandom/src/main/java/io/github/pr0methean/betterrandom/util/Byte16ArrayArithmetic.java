@@ -25,12 +25,11 @@ public enum Byte16ArrayArithmetic {
 
   /**
    * {@code counter += delta}
-   *
-   * @param counter the variable-sized input and the result
+   *  @param counter the variable-sized input and the result
    * @param delta the long-sized input
-   * @param addendDigits working register
    */
-  public static void addInto(final byte[] counter, final long delta, final byte[] addendDigits) {
+  public static void addInto(final byte[] counter, final long delta) {
+    byte[] addendDigits = new byte[16];
     convertLongToBytes(delta, addendDigits, SIZE_BYTES_MINUS_LONG);
     final byte signExtend = (byte) (delta < 0 ? -1 : 0);
     for (int i = 0; i < SIZE_BYTES_MINUS_LONG; i++) {
