@@ -43,7 +43,11 @@ pr:
       - README.md
       - CHANGELOG.md
       - .submodules
+      - .github/
       - docs/
+      - 'benchmark/*.iml'
+      - 'betterrandom/*.iml'
+      - 'FifoFiller/*.iml'
 stages:
   - stage: UnitTests
     jobs:
