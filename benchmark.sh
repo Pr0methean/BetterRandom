@@ -1,6 +1,7 @@
-#!/bin/sh
-if [ (echo "$1" | grep '[A-Za-z]') ]; then
-  JAVA_HOME=${!1} # first arg names the variable that JAVA_HOME is copied from
+#!/bin/bash
+if [ "$( echo "$1" | grep -q '[A-Za-z]' )" ]; then
+  # first arg names the variable that JAVA_HOME is copied from
+  export JAVA_HOME=${!1} # Bashism (https://github.com/koalaman/shellcheck/wiki/SC2039)
 fi
 JAVA_BIN=${JAVA_HOME}/bin/java
 if [ "${ANDROID}" = "true" ]; then
