@@ -7,9 +7,9 @@ variables:
 - name: zuluLinuxLatest
   value: '/usr/lib/jvm/zulu-12-azure-amd64' # JDK 13 isn't preinstalled as of 2019-09-18
 - name: openjnine11linux
-  value: 'https://api.adoptopenjdk.net/v2/binary/releases/openjdk11?openjdk_impl=openj9&os=linux&arch=x64&type=jdk&heap_size=normal&release=latest'
+  value: 'https://api.adoptopenjdk.net/v3/binary/latest/11/ga/linux/x64/jdk/openj9/normal/adoptopenjdk'
 - name: openJNineLatestLinux
-  value: 'https://api.adoptopenjdk.net/v2/binary/releases/openjdk13?openjdk_impl=openj9&os=linux&arch=x64&type=jdk&heap_size=normal&release=latest'
+  value: 'https://api.adoptopenjdk.net/v3/binary/latest/13/ga/linux/x64/jdk/openj9/normal/adoptopenjdk'
 trigger:
   batch: true
   branches:
@@ -44,7 +44,11 @@ pr:
       - README.md
       - CHANGELOG.md
       - .submodules
+      - .github/
       - docs/
+      - 'benchmark/*.iml'
+      - 'betterrandom/*.iml'
+      - 'FifoFiller/*.iml'
 stages:
   - stage: UnitTests
     jobs:

@@ -30,6 +30,9 @@
                 <excludedClass>io.github.pr0methean.betterrandom.prng.AesCounterRandom</excludedClass>
                 <excludedClass>io.github.pr0methean.betterrandom.prng.AesCounterRandomTest</excludedClass>
               </excludedClasses>
+              <avoidCallsTo>
+                <avoidCallsTo>org.slf4j</avoidCallsTo>
+              </avoidCallsTo>
               <timeoutFactor>2</timeoutFactor>
               <timeoutConstant>4000</timeoutConstant>
               <testPlugin>testng</testPlugin>
