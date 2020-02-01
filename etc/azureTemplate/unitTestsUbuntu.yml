@@ -1,10 +1,12 @@
+parameters:
+  whichJavaHome: 'JAVA_HOME'
 steps:
 - template: installHaveged.yml
 - script: '$(JAVA_HOME)/bin/java -version'
   displayName: Log Java Version
   env:
     JAVA_HOME: $(JAVA_HOME)
-- script: ./unit-tests.sh
+- script: ./unit-tests.sh ${{ parameters.whichJavaHome }}
   displayName: Build & Test
   env:
     RANDOM_DOT_ORG_KEY: $(RANDOM_DOT_ORG_KEY)

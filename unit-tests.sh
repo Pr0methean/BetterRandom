@@ -1,4 +1,7 @@
 #!/bin/sh
+if [ "$1" ]; then
+  JAVA_HOME=${!1} # first arg names the variable that JAVA_HOME is copied from
+fi
 if [ "${ANDROID}" = "true" ]; then
   MAYBE_ANDROID_FLAG="-Pandroid"
 else
