@@ -1,5 +1,5 @@
 parameters:
-  whichJavaHome: '' # don't change JAVA_HOME by default
+  whichJavaHome: '-' # don't change JAVA_HOME by default
   whichTest: '' # run all by default
 steps:
 - script: ./benchmark.sh ${{ parameters.whichJavaHome }} ${{ parameters.whichTest }}
