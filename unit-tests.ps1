@@ -1,5 +1,4 @@
 $JAVA_HOME=[Environment]::GetEnvironmentVariable($1) # first arg names the variable that JAVA_HOME is copied from
-$JAVA_BIN=$JAVA_HOME/bin/java
 if ( $env:ANDROID )
 {
     $MAYBE_ANDROID_FLAG = "-Pandroid"
