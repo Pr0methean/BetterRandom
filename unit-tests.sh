@@ -4,9 +4,9 @@ if [ "$( echo "$1" | grep -q '[A-Za-z]' )" ]; then
   export JAVA_HOME=${!1} # Bashism (https://github.com/koalaman/shellcheck/wiki/SC2039)
 fi
 if [ "${ANDROID}" = "true" ]; then
-  MAYBE_ANDROID_FLAG="-Pandroid"
+  MAYBE_ANDROID_FLAG=-Pandroid
 else
-  MAYBE_ANDROID_FLAG=""
+  MAYBE_ANDROID_FLAG=
 fi
 if [ "${JAVA8}" = "true" ]; then
   echo "[unit-tests.sh] Using Java 8 mode. JaCoCo will run."
@@ -24,13 +24,14 @@ if [ "${APPVEYOR}" != "" ]; then
 fi
 cd betterrandom || exit
 # Coverage test
-PATH="${NO_GIT_PATH}" mvn "${MAYBE_ANDROID_FLAG}" clean compile jacoco:instrument jacoco:prepare-agent \
+# DO NOT quote ${MAYBE_ANDROID_FLAG}, because Maven gives 'Unknown lifecycle phase ""'
+PATH="${NO_GIT_PATH}" mvn ${MAYBE_ANDROID_FLAG} clean compile jacoco:instrument jacoco:prepare-agent \
     test jacoco:restore-instrumented-classes jacoco:report -e -B || exit 1
 if [ "${JAVA8}" = "true" ]; then
   echo "[unit-tests.sh] Running Proguard."
-  PATH="${NO_GIT_PATH}" mvn -DskipTests -Dmaven.test.skip=true "${MAYBE_ANDROID_FLAG}" \
+  PATH="${NO_GIT_PATH}" mvn -DskipTests -Dmaven.test.skip=true ${MAYBE_ANDROID_FLAG} \
       pre-integration-test -B && \
       echo "[unit-tests.sh] Testing against Proguarded jar." && \
-      PATH="${NO_GIT_PATH}" mvn -Dmaven.main.skip=true "${MAYBE_ANDROID_FLAG}" integration-test -e -B
+      PATH="${NO_GIT_PATH}" mvn -Dmaven.main.skip=true ${MAYBE_ANDROID_FLAG} integration-test -e -B
 fi
 cd ..
