@@ -1,4 +1,8 @@
-$JAVA_HOME=[Environment]::GetEnvironmentVariable($1) # first arg names the variable that JAVA_HOME is copied from
+$PARAM1=[Environment]::GetEnvironmentVariable($1)
+if ( $PARAM1 )
+{
+  $JAVA_HOME=$PARAM1 # first arg names the variable that JAVA_HOME is copied from
+}
 if ( $env:ANDROID )
 {
     $MAYBE_ANDROID_FLAG = "-Pandroid"

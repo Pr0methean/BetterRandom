@@ -1,11 +1,10 @@
 parameters:
-  whichJavaHome: 'POINTER_TO_JAVA_HOME' # to pass JAVA_HOME through by default
+  whichJavaHome: '' # don't change JAVA_HOME by default
   whichTest: '' # run all by default
 steps:
 - script: ./benchmark.sh ${{ parameters.whichJavaHome }} ${{ parameters.whichTest }}
   displayName: Build & Run Benchmarks
   env:
-    POINTER_TO_JAVA_HOME: JAVA_HOME
     JAVA_HOME: $(JAVA_HOME)
     RANDOM_DOT_ORG_KEY: $(RANDOM_DOT_ORG_KEY)
 - task: PublishBuildArtifacts@1

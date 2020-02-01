@@ -1,11 +1,10 @@
 parameters:
-  whichJavaHome: 'POINTER_TO_JAVA_HOME' # to pass JAVA_HOME through by default
+  whichJavaHome: '' # don't change JAVA_HOME by default
 steps:
 - template: installHaveged.yml
 - script: '$(JAVA_HOME)/bin/java -version'
   displayName: Log Java Version
   env:
-    POINTER_TO_JAVA_HOME: JAVA_HOME
     JAVA_HOME: $(JAVA_HOME)
 - script: ./unit-tests.sh ${{ parameters.whichJavaHome }}
   displayName: Build & Test
