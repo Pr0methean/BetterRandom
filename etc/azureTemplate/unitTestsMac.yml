@@ -1,7 +1,7 @@
 # Tinyproxy is used only on the Mac, because it takes over 30 seconds to install and start on Azure
 # (as of 2019-03-31) and is only needed for one unit test.
 parameters:
-  whichJavaHome: 'PREVIOUS_JAVA_HOME'
+  whichJavaHome: 'POINTER_TO_JAVA_HOME' # to pass JAVA_HOME through by default
   javaVersion: ''
 steps:
 - script: brew install tinyproxy
@@ -11,7 +11,7 @@ steps:
 - script: 'java -version'
   displayName: Log Java Version
   env:
-    PREVIOUS_JAVA_HOME: $(JAVA_HOME)
+    POINTER_TO_JAVA_HOME: JAVA_HOME
     JAVA_HOME: $(JAVA_HOME)
 - script: ./unit-tests.sh ${{ parameters.whichJavaHome }}
   displayName: Build & Test
