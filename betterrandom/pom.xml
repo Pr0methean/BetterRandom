@@ -299,9 +299,9 @@
     <guava.version>28.2-jre</guava.version>
     <proguard.version>6.2.2</proguard.version>
     <jacoco.version>0.8.5</jacoco.version>
-    <powermock.version>2.0.4</powermock.version>
+    <powermock.version>2.0.5</powermock.version>
     <mockito.version>3.2.4</mockito.version>
-    <pitest.version>1.4.10</pitest.version>
+    <pitest.version>1.4.11</pitest.version>
     <test.argline>-XX:+UseParallelGC -Djava.security.egd=file:/dev/./urandom</test.argline>
     <test.jdk8.argline>${test.argline}</test.jdk8.argline>
     <test.jdk9.argline>${test.argline} --add-opens java.base/jdk.internal.loader=ALL-UNNAMED --add-opens java.xml/jdk.xml.internal=ALL-UNNAMED</test.jdk9.argline>
