@@ -129,24 +129,21 @@ stages:
             OpenJdk08:
               JAVA8: 'true'
               JAVA_HOME_SOURCE: JAVA_HOME_8_X64
-              artifactEnvName: OpenJdk08Linux
+              artifactEnvName: OpenJdk08Windows
             OpenJdk11:
               JAVA_HOME_SOURCE: JAVA_HOME_11_X64
-              artifactEnvName: OpenJdk11Linux
+              artifactEnvName: OpenJdk11Windows
             OpenJdkLatest:
               JAVA_HOME_SOURCE: JAVA_HOME_13_X64
-              artifactEnvName: OpenJdkLatestLinux
+              artifactEnvName: OpenJdkLatestWindows
         pool:
           vmImage: 'windows-2019'
         steps:
-          - powershell: 'echo "##vso[task.setvariable variable=JAVA_HOME]$JAVA_HOME_SOURCE"'
-            displayName: Set JAVA_HOME
-            env:
-              JAVA_HOME_SOURCE: $(JAVA_HOME_SOURCE)
           - task: PowerShell@2
             displayName: Build & Test
             inputs:
               filePath: unit-tests.ps1
+              arguments: $(JAVA_HOME_SOURCE)
             env:
               RANDOM_DOT_ORG_KEY: $(RANDOM_DOT_ORG_KEY)
               JAVA_HOME: $(JAVA_HOME)
@@ -234,6 +231,8 @@ stages:
           parameters:
             javaVersion: $(javaVersion)
         - template: etc/azureTemplate/benchmark.yml
+          parameters:
+            whichJavaHome: JAVA_HOME_$(javaVersion)_X64
     - job: BenchmarkWindows
       timeoutInMinutes: 80
       pool:
@@ -251,17 +250,13 @@ stages:
             JAVA_HOME_SOURCE: JAVA_HOME_12_X64
             artifactEnvName: 'OpenJdkLatestWindows'
       steps:
-        - powershell: 'echo "##vso[task.setvariable variable=JAVA_HOME]$JAVA_HOME_SOURCE"'
-          displayName: Set Java Home
-          env:
-            JAVA_HOME_SOURCE: $(JAVA_HOME_SOURCE)
         - task: PowerShell@2
           displayName: Build & Benchmark
           inputs:
             filePath: benchmark.ps1
+            arguments: $(JAVA_HOME_SOURCE)
           env:
             RANDOM_DOT_ORG_KEY: $(RANDOM_DOT_ORG_KEY)
-            JAVA_HOME: $(JAVA_HOME)
         - task: PublishBuildArtifacts@1
           displayName: Publish Results (1 Thread)
           inputs:
