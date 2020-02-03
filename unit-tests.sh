@@ -25,7 +25,7 @@ fi
 cd betterrandom || exit
 # Coverage test
 # DO NOT quote ${MAYBE_ANDROID_FLAG} due to https://issues.apache.org/jira/browse/MNG-6858
-PATH="${NO_GIT_PATH}" mvn ${MAYBE_ANDROID_FLAG} clean compile jacoco:instrument jacoco:prepare-agent \
+PATH="${NO_GIT_PATH}" mvn ${MAYBE_ANDROID_FLAG} clean jacoco:instrument jacoco:prepare-agent \
     test jacoco:restore-instrumented-classes jacoco:report -e -B || exit 1
 if [ "${JAVA8}" = "true" ]; then
   echo "[unit-tests.sh] Running Proguard."
