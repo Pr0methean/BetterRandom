@@ -140,6 +140,23 @@
         </dependency>
       </dependencies>
       <build>
+        <pluginManagement>
+          <plugins>
+            <plugin>
+              <groupId>com.github.wvengen</groupId>
+              <artifactId>proguard-maven-plugin</artifactId>
+              <version>2.2.0</version>
+              <configuration>
+                <proguardJar>${user.home}/.m2/repository/net/sf/proguard/proguard-base/${proguard.version}/proguard-base-${proguard.version}.jar
+                </proguardJar>
+                <proguardInclude>${basedir}/proguard.conf</proguardInclude>
+                <libs>
+                  <lib>${java.home}/jmods/java.base.jmod(!**.jar;!module-info.class)</lib>
+                </libs>
+              </configuration>
+            </plugin>
+          </plugins>
+        </pluginManagement>
         <plugins>
           <plugin>
             <groupId>org.apache.maven.plugins</groupId>
