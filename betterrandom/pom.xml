@@ -89,23 +89,6 @@
             </plugin>
           </plugins>
         </pluginManagement>
-        <plugins>
-          <plugin>
-            <groupId>com.github.wvengen</groupId>
-            <artifactId>proguard-maven-plugin</artifactId>
-            <version>2.2.0</version>
-            <executions>
-              <execution>
-                <id>proguard</id>
-                <!-- Work around lack of a post-package phase (proguard requires existing jar -->
-                <phase>pre-integration-test</phase>
-                <goals>
-                  <goal>proguard</goal>
-                </goals>
-              </execution>
-            </executions>
-          </plugin>
-        </plugins>
       </build>
     </profile>
     <profile>
@@ -711,6 +694,21 @@
       </plugins>
     </pluginManagement>
     <plugins>
+      <plugin>
+        <groupId>com.github.wvengen</groupId>
+        <artifactId>proguard-maven-plugin</artifactId>
+        <version>2.2.0</version>
+        <executions>
+          <execution>
+            <id>proguard</id>
+            <!-- Work around lack of a post-package phase (proguard requires existing jar -->
+            <phase>pre-integration-test</phase>
+            <goals>
+              <goal>proguard</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-enforcer-plugin</artifactId>
