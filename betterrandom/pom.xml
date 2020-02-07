@@ -434,7 +434,7 @@
           <artifactId>maven-javadoc-plugin</artifactId>
           <version>3.1.1</version>
           <configuration>
-            <javadocVersion>1.8.0</javadocVersion>
+            <javadocVersion>11.0.6</javadocVersion>
             <notimestamp>true</notimestamp>
             <show>protected</show>
             <bottom>

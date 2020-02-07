@@ -20,7 +20,7 @@ if [[ -n "${VERSION}" ]]; then
   git commit -m "🤖 Update version numbers"
 fi
 mvn -B -DskipTests -Darguments=-DskipTests -Dmaven.test.skip=true -P!jdk9 -Pjdk8 -P release-sign-artifacts \
-    clean pre-integration-test deploy ${MAYBE_P} ${MAYBE_RELEASE}
+    clean pre-integration-test deploy
 STATUS=$?
 if [[ -n "${VERSION}" ]]; then
   if [ ${STATUS} -eq 0 ]; then
