@@ -39,13 +39,6 @@
           <version>2.13.0</version>
           <scope>test</scope>
         </dependency>
-        <dependency>
-          <!-- Overrides transitive dep on 5.2.1 -->
-          <groupId>net.sf.proguard</groupId>
-          <artifactId>proguard-base</artifactId>
-          <version>${proguard.version}</version>
-          <scope>runtime</scope>
-        </dependency>
       </dependencies>
       <build>
         <pluginManagement>
@@ -329,6 +322,12 @@
   </distributionManagement>
 
   <dependencies>
+    <dependency>
+      <!-- Overrides transitive dep on 5.2.1 -->
+      <groupId>net.sf.proguard</groupId>
+      <artifactId>proguard-base</artifactId>
+      <version>${proguard.version}</version>
+    </dependency>
     <dependency>
       <groupId>com.googlecode.json-simple</groupId>
       <artifactId>json-simple</artifactId>
