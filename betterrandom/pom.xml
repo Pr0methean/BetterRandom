@@ -327,6 +327,7 @@
       <groupId>net.sf.proguard</groupId>
       <artifactId>proguard-base</artifactId>
       <version>${proguard.version}</version>
+      <scope>runtime</scope>
     </dependency>
     <dependency>
       <groupId>com.googlecode.json-simple</groupId>
