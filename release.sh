@@ -19,8 +19,7 @@ if [[ -n "${VERSION}" ]]; then
   git add ../FifoFiller/pom.xml
   git commit -m "🤖 Update version numbers"
 fi
-mvn -B -DskipTests -Darguments=-DskipTests -P release-sign-artifacts \
-    clean pre-integration-test deploy
+mvn -B -DskipTests -Darguments=-DskipTests -P release-sign-artifacts clean deploy
 STATUS=$?
 if [[ -n "${VERSION}" ]]; then
   if [ ${STATUS} -eq 0 ]; then
