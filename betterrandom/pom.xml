@@ -178,6 +178,12 @@
 
   <dependencies>
     <dependency>
+      <!-- Overrides transitive dep on 5.2.1 -->
+      <groupId>net.sf.proguard</groupId>
+      <artifactId>proguard-base</artifactId>
+      <version>${proguard.version}</version>
+    </dependency>
+    <dependency>
       <groupId>commons-codec</groupId>
       <artifactId>commons-codec</artifactId>
       <version>1.14</version>
@@ -303,14 +309,13 @@
             </execution>
           </executions>
           <configuration>
-            <proguardJar>
-              ${user.home}/.m2/repository/net/sf/proguard/proguard-base/${proguard.version}/proguard-base-${proguard.version}.jar
-            </proguardJar>
-            <proguardInclude>${basedir}/proguard.conf</proguardInclude>
-            <libs>
-              <lib>${java.home}/lib/rt.jar</lib>
-              <lib>${java.home}/lib/jce.jar</lib>
-            </libs>
+	          <proguardJar>${user.home}/.m2/repository/net/sf/proguard/proguard-base/${proguard.version}/proguard-base-${proguard.version}.jar
+	          </proguardJar>
+	          <proguardInclude>${basedir}/proguard.conf</proguardInclude>
+	          <libs>
+              <lib>${java.home}/lib/jrt-fs.jar</lib>
+              <lib>${java.home}/jmods/java.base.jmod</lib>
+	          </libs>
           </configuration>
         </plugin>
         <plugin>
@@ -318,7 +323,7 @@
           <artifactId>maven-javadoc-plugin</artifactId>
           <version>3.1.1</version>
           <configuration>
-            <javadocVersion>1.8.0</javadocVersion>
+            <javadocVersion>11.0.6</javadocVersion>
             <notimestamp>true</notimestamp>
             <show>protected</show>
             <bottom>
@@ -586,6 +591,21 @@
       </plugins>
     </pluginManagement>
     <plugins>
+      <plugin>
+        <groupId>com.github.wvengen</groupId>
+        <artifactId>proguard-maven-plugin</artifactId>
+        <version>2.2.0</version>
+        <executions>
+          <execution>
+            <id>proguard</id>
+            <!-- Work around lack of a post-package phase (proguard requires existing jar -->
+            <phase>pre-integration-test</phase>
+            <goals>
+              <goal>proguard</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
       <plugin>
         <groupId>org.pitest</groupId>
         <artifactId>pitest-maven</artifactId>
