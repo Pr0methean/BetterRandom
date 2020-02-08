@@ -313,8 +313,8 @@
 	          </proguardJar>
 	          <proguardInclude>${basedir}/proguard.conf</proguardInclude>
 	          <libs>
-              <lib>${java.home}/lib/jrt-fs.jar</lib>
-              <lib>${java.home}/jmods/java.base.jmod</lib>
+              <lib>${java.home}/lib/rt.jar</lib>
+              <lib>${java.home}/lib/jce.jar</lib>
 	          </libs>
           </configuration>
         </plugin>
