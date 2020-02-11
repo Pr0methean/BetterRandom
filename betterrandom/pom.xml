@@ -182,6 +182,7 @@
       <groupId>net.sf.proguard</groupId>
       <artifactId>proguard-base</artifactId>
       <version>${proguard.version}</version>
+      <scope>runtime</scope>
     </dependency>
     <dependency>
       <groupId>commons-codec</groupId>
