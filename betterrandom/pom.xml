@@ -89,10 +89,6 @@
       <activation>
         <jdk>[9.0,)</jdk>
       </activation>
-      <properties>
-        <maven.compiler.source>1.9</maven.compiler.source>
-        <maven.compiler.target>1.9</maven.compiler.target>
-      </properties>
       <dependencies>
         <dependency>
           <groupId>org.testng</groupId>
