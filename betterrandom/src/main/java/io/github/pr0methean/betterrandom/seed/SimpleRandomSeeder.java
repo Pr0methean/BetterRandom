@@ -270,9 +270,7 @@ public class SimpleRandomSeeder extends Looper {
         if (random.preferSeedWithLong()) {
           reseedWithLong((Random) random);
         } else {
-          byte[] seedArray = new byte[random.getNewSeedLength()];
-          seedGenerator.generateSeed(seedArray);
-          random.setSeed(seedArray);
+          random.setSeed(seedGenerator.generateSeed(random.getNewSeedLength()));
         }
       }
     } finally {
@@ -286,9 +284,7 @@ public class SimpleRandomSeeder extends Looper {
    * @param random the PRNG to reseed
    */
   protected void reseedWithLong(final Random random) {
-    byte[] longSeedArray = new byte[Long.BYTES];
-    seedGenerator.generateSeed(longSeedArray);
-    random.setSeed(BinaryUtils.convertBytesToLong(longSeedArray));
+    random.setSeed(BinaryUtils.convertBytesToLong(seedGenerator.generateSeed(Long.BYTES)));
   }
 
   /**
