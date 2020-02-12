@@ -7,8 +7,10 @@ import io.github.pr0methean.betterrandom.seed.SeedGenerator;
 import io.github.pr0methean.betterrandom.seed.SimpleRandomSeeder;
 import java.util.Collections;
 import java.util.Map;
+import java.util.Objects;
 import java.util.SplittableRandom;
 import java.util.WeakHashMap;
+import javax.annotation.Nullable;
 
 /**
  * Like {@link SplittableRandomAdapter}, but uses a {@link SimpleRandomSeeder} to replace each
@@ -39,7 +41,7 @@ public class ReseedingSplittableRandomAdapter extends BaseSplittableRandomAdapte
    * @throws SeedException if {@code seedGenerator} fails to generate an initial seed
    */
   protected ReseedingSplittableRandomAdapter(final SeedGenerator seedGenerator,
-      SimpleRandomSeeder randomSeeder) throws SeedException {
+      @Nullable SimpleRandomSeeder randomSeeder) throws SeedException {
     super(seedGenerator.generateSeed(Long.BYTES));
     this.seedGenerator = seedGenerator;
     this.randomSeeder.set(randomSeeder);
@@ -69,7 +71,8 @@ public class ReseedingSplittableRandomAdapter extends BaseSplittableRandomAdapte
    *     seed.
    */
   @SuppressWarnings("SynchronizationOnStaticField")
-  public static ReseedingSplittableRandomAdapter getInstance(final SimpleRandomSeeder randomSeeder,
+  public static ReseedingSplittableRandomAdapter getInstance(
+      @Nullable final SimpleRandomSeeder randomSeeder,
       final SeedGenerator seedGenerator) throws SeedException {
     synchronized (INSTANCES) {
       return INSTANCES.computeIfAbsent(randomSeeder,
@@ -85,8 +88,8 @@ public class ReseedingSplittableRandomAdapter extends BaseSplittableRandomAdapte
     return threadLocal.get().getSeed();
   }
 
-  @Override public void setRandomSeeder(final SimpleRandomSeeder randomSeeder) {
-    if (!this.randomSeeder.get().equals(randomSeeder)) {
+  @Override public void setRandomSeeder(@Nullable final SimpleRandomSeeder randomSeeder) {
+    if (!Objects.equals(this.randomSeeder.get(), randomSeeder)) {
       throw new UnsupportedOperationException(
           "ReseedingSplittableRandomAdapter's binding to LegacyRandomSeeder is immutable");
     }
@@ -143,10 +146,10 @@ public class ReseedingSplittableRandomAdapter extends BaseSplittableRandomAdapte
       return false;
     }
     ReseedingSplittableRandomAdapter that = (ReseedingSplittableRandomAdapter) o;
-    return randomSeeder.get().equals(that.randomSeeder.get());
+    return Objects.equals(randomSeeder.get(), that.randomSeeder.get());
   }
 
   @Override public int hashCode() {
-    return randomSeeder.hashCode() + 1;
+    return Objects.hash(randomSeeder.get());
   }
 }

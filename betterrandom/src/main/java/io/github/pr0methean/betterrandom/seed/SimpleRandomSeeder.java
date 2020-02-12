@@ -11,7 +11,6 @@ import java.io.Serializable;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Map;
 import java.util.Objects;
 import java.util.Random;
 import java.util.Set;
@@ -29,8 +28,6 @@ import org.slf4j.LoggerFactory;
  * @author Chris Hennick
  */
 public class SimpleRandomSeeder extends Looper {
-  private static final Map<ByteArrayReseedableRandom, byte[]> SEED_ARRAYS =
-      Collections.synchronizedMap(new WeakHashMap<>(1));
 
   // FIXME: Setting a longer POLL_INTERVAL slows many tests, and causes some to time out
   // (Why doesn't BaseRandom's call to wakeUp() prevent this?!)
@@ -49,8 +46,6 @@ public class SimpleRandomSeeder extends Looper {
    * The seed generator this seeder uses.
    */
   protected final SeedGenerator seedGenerator;
-
-  private final byte[] longSeedArray = new byte[8];
 
   /**
    * Holds {@link ByteArrayReseedableRandom} instances that should be reseeded when their entropy is
@@ -275,8 +270,7 @@ public class SimpleRandomSeeder extends Looper {
         if (random.preferSeedWithLong()) {
           reseedWithLong((Random) random);
         } else {
-          byte[] seedArray = SimpleRandomSeeder.SEED_ARRAYS
-              .computeIfAbsent(random, random_ -> new byte[random_.getNewSeedLength()]);
+          byte[] seedArray = new byte[random.getNewSeedLength()];
           seedGenerator.generateSeed(seedArray);
           random.setSeed(seedArray);
         }
@@ -292,6 +286,7 @@ public class SimpleRandomSeeder extends Looper {
    * @param random the PRNG to reseed
    */
   protected void reseedWithLong(final Random random) {
+    byte[] longSeedArray = new byte[Long.BYTES];
     seedGenerator.generateSeed(longSeedArray);
     random.setSeed(BinaryUtils.convertBytesToLong(longSeedArray));
   }
