@@ -17,10 +17,6 @@
       <activation>
         <jdk>(,1.8]</jdk>
       </activation>
-      <properties>
-        <maven.compiler.source>1.8</maven.compiler.source>
-        <maven.compiler.target>1.8</maven.compiler.target>
-      </properties>
       <dependencies>
         <dependency>
           <groupId>org.testng</groupId>
@@ -260,6 +256,8 @@
   </profiles>
   <packaging>jar</packaging>
   <properties>
+    <maven.compiler.source>1.8</maven.compiler.source>
+    <maven.compiler.target>1.8</maven.compiler.target>
     <argLine />
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <prefix />
