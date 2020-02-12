@@ -93,7 +93,7 @@ stages:
           JAVA8: 'true'
           artifactEnvName: OracleLimitedCrypto
         steps:
-          - script: sudo ./installOracleJdk8.sh
+          - script: sudo ./etc/scripts/installOracleJdk8.sh
             displayName: Download & Install Java
           - template: etc/azureTemplate/unitTestsUbuntu.yml
           - template: etc/azureTemplate/publishCoverage.yml
@@ -142,7 +142,7 @@ stages:
           - task: PowerShell@2
             displayName: Build & Test
             inputs:
-              filePath: unit-tests.ps1
+              filePath: etc/scripts/unit-tests.ps1
               arguments: $(JAVA_HOME_SOURCE)
             env:
               RANDOM_DOT_ORG_KEY: $(RANDOM_DOT_ORG_KEY)
@@ -159,7 +159,7 @@ stages:
         vmImage: 'ubuntu-latest'
       steps:
         - template: etc/azureTemplate/installHaveged.yml
-        - script: ./mutation.sh
+        - script: ./etc/scripts/mutation.sh
           displayName: Build & Run Mutation Tests
           env:
             RANDOM_DOT_ORG_KEY: $(RANDOM_DOT_ORG_KEY)
@@ -253,7 +253,7 @@ stages:
         - task: PowerShell@2
           displayName: Build & Benchmark
           inputs:
-            filePath: benchmark.ps1
+            filePath: etc/scripts/benchmark.ps1
             arguments: $(JAVA_HOME_SOURCE)
           env:
             RANDOM_DOT_ORG_KEY: $(RANDOM_DOT_ORG_KEY)
@@ -275,7 +275,7 @@ stages:
         JAVA8: 'true'
         artifactEnvName: OracleLimitedCrypto
       steps:
-        - script: sudo ./installOracleJdk8.sh
+        - script: sudo ./etc/scripts/installOracleJdk8.sh
           displayName: Download & Install Java
         - template: etc/azureTemplate/benchmark.yml
           parameters:
@@ -310,7 +310,7 @@ stages:
         - template: etc/azureTemplate/installJavaJti.yml
         - script: sudo apt install dieharder
           displayName: Install DieHarder
-        - script: ./dieharder.sh
+        - script: ./etc/scripts/dieharder.sh
           displayName: Build BetterRandom & Run DieHarder Tests
           env:
             CLASS: $(class)
