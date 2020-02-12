@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 - `RandomDotOrgSeedGenerator` now uses Commons-Codec to decode Base 64, which should fix a possible crash on Android.
+- Arrays are no longer aggressively reused, since escape analysis can move them to the stack.
 
 ## [4.2.0]
 

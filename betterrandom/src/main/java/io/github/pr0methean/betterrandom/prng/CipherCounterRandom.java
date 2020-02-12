@@ -97,7 +97,7 @@ public abstract class CipherCounterRandom extends BaseRandom implements Seekable
         blocksDelta--;
       }
       blocksDelta -= getBlocksAtOnce(); // Compensate for the increment during nextBlock() below
-      Byte16ArrayArithmetic.addInto(counter, blocksDelta, new byte[counterSizeBytes]);
+      Byte16ArrayArithmetic.addInto(counter, blocksDelta);
       nextBlock();
       index = newIndex;
     } finally {

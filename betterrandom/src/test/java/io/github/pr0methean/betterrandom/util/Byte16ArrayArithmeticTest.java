@@ -39,10 +39,9 @@ import org.testng.annotations.Test;
 
   @Test public void testAddIntoLongSigned() {
     final byte[] result = OPERAND1.clone();
-    final byte[] addendDigits = OPERAND2.clone(); // Check that initial values don't matter
-    Byte16ArrayArithmetic.addInto(result, 0x631bc1882d24d6e9L, addendDigits);
+    Byte16ArrayArithmetic.addInto(result, 0x631bc1882d24d6e9L);
     assertByteArrayEqualsLongs(result, 0x79EC_964A_738B_2EBAL, 0x9C18_C970_032C_8DD6L);
-    Byte16ArrayArithmetic.addInto(result, -0x631bc1882d24d6e9L, addendDigits);
+    Byte16ArrayArithmetic.addInto(result, -0x631bc1882d24d6e9L);
     assertByteArrayEqualsLongs(result, 0x79EC_964A_738B_2EBAL, 0x38FD_07E7_D607_B6EDL);
   }
 
