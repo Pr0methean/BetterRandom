@@ -4,6 +4,7 @@ import io.github.pr0methean.betterrandom.ByteArrayReseedableRandom;
 import io.github.pr0methean.betterrandom.EntropyCountingRandom;
 import io.github.pr0methean.betterrandom.prng.BaseRandom;
 import io.github.pr0methean.betterrandom.util.BinaryUtils;
+import io.github.pr0methean.betterrandom.util.Java8Constants;
 import io.github.pr0methean.betterrandom.util.Looper;
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -273,7 +274,7 @@ public class SimpleRandomSeeder extends Looper {
    * @param random the PRNG to reseed
    */
   protected void reseedWithLong(final Random random) {
-    random.setSeed(BinaryUtils.convertBytesToLong(seedGenerator.generateSeed(Long.BYTES)));
+    random.setSeed(BinaryUtils.convertBytesToLong(seedGenerator.generateSeed(Java8Constants.LONG_BYTES)));
   }
 
   /**
