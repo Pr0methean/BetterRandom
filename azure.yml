@@ -28,7 +28,7 @@ trigger:
       - 'betterrandom/*.iml'
       - 'FifoFiller/*.iml'
 schedules:
-  - cron: "17 0 * * *"
+  - cron: "23 0 * * *"
     displayName: Nightly
     branches:
       include:
