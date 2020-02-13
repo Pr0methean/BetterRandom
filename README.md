@@ -410,11 +410,11 @@ the seed sources cannot be parallelized. They include:
 * `DefaultSeedGenerator.DEFAULT_SEED_GENERATOR`: Uses the best of the above three that is currently
   available.
 
-## RandomSeederThread
+## SimpleRandomSeeder
 
-This is a daemon thread that loops over all the `Random` instances registered with it and reseeds
-them. Those that implement `EntropyCountingRandom` are skipped when they still have entropy left
-from a previous seeding. Example usage:
+This is a daemon thread that loops over all the `ByteArrayReseedableRandom` instances registered
+with it and reseeds them. Those that implement `EntropyCountingRandom` are skipped when they still\
+have entropy left from a previous seeding. Example usage:
 
 ```
 // Obtain the seeder thread for this seed generator; launch it if it's not already running.
@@ -434,19 +434,20 @@ if (myRandom instanceof EntropyCountingRandom) {
 seederThread.add(myRandom);
 ```
 
-# Build scripts
+## LegacyRandomSeeder
 
-Many of these scripts require the environment variable `JAVA8=true` when using JDK 8.
+This class is similar to `SimpleRandomSeeder`, but can handle any instance of `java.util.Random`.
 
-* `benchmark.sh`: Compile and run benchmarks. Output will be in `benchmark/target`.
-* `unit-tests.sh`: Compile and run unit tests and generate coverage reports. Upload them to Coveralls
-  if running in Travis-CI. If tests pass, run Proguard and then test again.
-* `mutation.sh`: Run mutation tests.
-* `release.sh`: Used to perform new releases.
-* `unrelease.sh`: Used to roll back pom.xml etc. if a release fails.
-* `publish-javadoc.sh`: Used to release updated Javadocs to github.io.
-* `prepare-workspace.sh`: Install necessary packages on a fresh Ubuntu Trusty Tahr workspace, such
-  as what c9.io provides.
+# Folders
+
+* `betterrandom/` contains BetterRandom's source code.
+* `benchmark/` defines the JMH benchmarks as a separate Maven project.
+* `FifoFiller/` is a simple utility used for Dieharder randomness tests, and is also a separate
+  Maven project.
+* `etc/` contains scripts, templates used in `azure.yml`, and miscellaneous files used for
+  building and testing.
+* `docs/` is a Git submodule used for publishing updates to this project's
+  [Javadoc on github.io](https://pr0methean.github.io/betterrandom-java8/index.html).
 
 # Credits
 
