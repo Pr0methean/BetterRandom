@@ -1,7 +1,7 @@
 parameters:
   whichTest: '' # run all by default
 steps:
-- script: ./benchmark.sh ${{ parameters.whichTest }}
+- script: ./etc/scripts/benchmark.sh ${{ parameters.whichTest }}
   displayName: Build & Run Benchmarks
   env:
     JAVA_HOME: $(JAVA_HOME)

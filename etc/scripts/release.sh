@@ -24,7 +24,7 @@ STATUS=$?
 if [[ -n "${VERSION}" ]]; then
   if [ ${STATUS} -eq 0 ]; then
     cd ..
-    ./publish-javadoc.sh
+    ./etc/scripts/publish-javadoc.sh
     git tag "BetterRandom-Java7-${VERSION}"
     git push origin "BetterRandom-Java7-${VERSION}"
     git checkout "${BRANCH}"

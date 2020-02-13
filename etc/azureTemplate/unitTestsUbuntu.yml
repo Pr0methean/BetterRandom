@@ -4,7 +4,7 @@ steps:
   displayName: Log Java Version
   env:
     JAVA_HOME: $(JAVA_HOME)
-- script: ./unit-tests.sh
+- script: ./etc/scripts/unit-tests.sh
   displayName: Build & Test
   env:
     RANDOM_DOT_ORG_KEY: $(RANDOM_DOT_ORG_KEY)

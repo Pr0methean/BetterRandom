@@ -3,15 +3,15 @@
 parameters:
   javaVersion: ''
 steps:
-- script: |
-    brew install tinyproxy
-    brew services start tinyproxy
-  displayName: Install & Start Proxy
+- script: brew install tinyproxy
+  displayName: Install Proxy
+- script: sudo brew services start tinyproxy
+  displayName: Start Proxy
 - script: 'java -version'
   displayName: Log Java Version
   env:
     JAVA_HOME: $(JAVA_HOME)
-- script: ./unit-tests.sh
+- script: ./etc/scripts/unit-tests.sh
   displayName: Build & Test
   env:
     RANDOM_DOT_ORG_KEY: $(RANDOM_DOT_ORG_KEY)

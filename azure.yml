@@ -28,7 +28,7 @@ trigger:
       - 'betterrandom/*.iml'
       - 'FifoFiller/*.iml'
 schedules:
-  - cron: "17 0 * * *"
+  - cron: "23 0 * * *"
     displayName: Nightly
     branches:
       include:
@@ -60,7 +60,7 @@ stages:
         vmImage: 'ubuntu-latest'
       steps:
       - template: etc/azureTemplate/installHaveged.yml
-      - script: ./unit-tests.sh
+      - script: ./etc/scripts/unit-tests.sh
         displayName: Build & Test
         env:
           JAVA_HOME: $(zuluLinux07)
@@ -77,7 +77,7 @@ stages:
         vmImage: 'ubuntu-latest'
       steps:
         - template: etc/azureTemplate/installHaveged.yml
-        - script: ./mutation.sh
+        - script: ./etc/scripts/mutation.sh
           displayName: Build & Run Mutation Tests
           env:
             RANDOM_DOT_ORG_KEY: $(RANDOM_DOT_ORG_KEY)
