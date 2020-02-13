@@ -161,8 +161,9 @@ Continuous reseeding is recommended if you don't need reproducible output.
 
 # Simple tricks
 
-## Don't use random.org unless explicitly specified
+## Disable random.org unless explicitly specified
 ```
+// Run this before creating any PRNG instances.
 DefaultSeedGenerator.set(new SeedGeneratorPreferenceList(
       new BufferedSeedGenerator(DevRandomSeedGenerator.DEV_RANDOM_SEED_GENERATOR, 128),
       SecureRandomSeedGenerator.DEFAULT_INSTANCE));
@@ -295,10 +296,7 @@ environments is best-efforts.
 Continuous integration takes place in OpenJDK 7 on Linux. Up to and including version 3.1.1, this was
 done on Travis CI; beginning with 3.1.2, Azure Pipelines will be used.
 
-Once 80% of Android devices have API level 24 or newer, as
-[measured by Google](https://developer.android.com/about/dashboards/index.html#Platform) (or
-[by StatCounter](https://gs.statcounter.com/android-version-market-share/mobile-tablet/worldwide) if
-Google has not resumed monthly updates), the Java 7 branch will only be maintained while at least one
+After version 4.3.0, the Java 7 branch will only be maintained while at least one
 Tidelift subscriber, or Gold or higher GitHub sponsor, is using it.
 
 # Alternative random number generators
