@@ -12,7 +12,7 @@ steps:
   displayName: Log Java Version
   env:
     JAVA_HOME: $(JAVA_HOME)
-- script: ./unit-tests.sh ${{ parameters.whichJavaHome }}
+- script: ./etc/scripts/unit-tests.sh ${{ parameters.whichJavaHome }}
   displayName: Build & Test
   env:
     RANDOM_DOT_ORG_KEY: $(RANDOM_DOT_ORG_KEY)
