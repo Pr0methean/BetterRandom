@@ -122,7 +122,6 @@ public class SimpleRandomSeederTest {
   private WeakReference<ByteArrayReseedableRandom>
       addSomethingDeadTo(SimpleRandomSeeder randomSeeder) {
     SingleThreadSplittableRandomAdapter prng = new SingleThreadSplittableRandomAdapter(TEST_SEED);
-    // new PhantomReference<Object>(prng, queue);
     randomSeeder.add(prng);
     randomSeeder.stopIfEmpty();
     assertTrue(randomSeeder.isRunning());
