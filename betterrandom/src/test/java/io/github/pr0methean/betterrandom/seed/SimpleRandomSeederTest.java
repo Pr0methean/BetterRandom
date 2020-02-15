@@ -17,6 +17,7 @@ import java.lang.ref.WeakReference;
 import java.util.Arrays;
 import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.TimeUnit;
+import java8.util.function.Consumer;
 import org.testng.annotations.Test;
 
 public class SimpleRandomSeederTest {
