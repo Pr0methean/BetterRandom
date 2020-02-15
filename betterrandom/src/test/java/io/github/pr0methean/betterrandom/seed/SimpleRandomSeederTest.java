@@ -17,7 +17,6 @@ import java.lang.ref.WeakReference;
 import java.util.Arrays;
 import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.TimeUnit;
-import java8.util.function.Consumer;
 import org.testng.annotations.Test;
 
 public class SimpleRandomSeederTest {
@@ -27,9 +26,10 @@ public class SimpleRandomSeederTest {
   @Test public void testConstructors() {
     TestUtils.testConstructors(SimpleRandomSeeder.class, false, ImmutableMap
         .<Class<?>, Object>of(
-            SeedGenerator.class, new FakeSeedGenerator("testConstructors"), ThreadFactory.class,
-            new SimpleRandomSeeder.DefaultThreadFactory("testConstructors"), long.class,
-            100_000_000L), new Consumer<SimpleRandomSeeder>() {
+            SeedGenerator.class, new FakeSeedGenerator("testConstructors"),
+	    ThreadFactory.class, new SimpleRandomSeeder.DefaultThreadFactory("testConstructors"),
+            long.class, 100_000_000L),
+        new Consumer<SimpleRandomSeeder>() {
       @Override public void accept(SimpleRandomSeeder simpleRandomSeeder) {
         simpleRandomSeeder.stopIfEmpty();
       }
@@ -39,8 +39,8 @@ public class SimpleRandomSeederTest {
   @Test public void testDefaultThreadFactoryConstructors() {
     TestUtils.testConstructors(SimpleRandomSeeder.DefaultThreadFactory.class, false, ImmutableMap
             .<Class<?>, Object>of(
-                String.class, "testDefaultThreadFactoryConstructors", int.class,
-                Thread.MAX_PRIORITY),
+                String.class, "testDefaultThreadFactoryConstructors",
+                int.class, Thread.MAX_PRIORITY),
         new Consumer<SimpleRandomSeeder.DefaultThreadFactory>() {
           @Override
           public void accept(SimpleRandomSeeder.DefaultThreadFactory x) {
@@ -136,7 +136,6 @@ public class SimpleRandomSeederTest {
   private WeakReference<? extends ByteArrayReseedableRandom>
       addSomethingDeadTo(SimpleRandomSeeder randomSeeder) {
     SingleThreadSplittableRandomAdapter prng = new SingleThreadSplittableRandomAdapter(TEST_SEED);
-    // new PhantomReference<Object>(prng, queue);
     randomSeeder.add(prng);
     randomSeeder.stopIfEmpty();
     assertTrue(randomSeeder.isRunning());

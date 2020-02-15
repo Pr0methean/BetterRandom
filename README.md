@@ -161,8 +161,9 @@ Continuous reseeding is recommended if you don't need reproducible output.
   ```
 # Simple tricks
 
-## Don't use random.org unless explicitly specified
+## Disable random.org unless explicitly specified
 ```
+// Run this before creating any PRNG instances.
 DefaultSeedGenerator.set(new SeedGeneratorPreferenceList(
       new BufferedSeedGenerator(DevRandomSeedGenerator.DEV_RANDOM_SEED_GENERATOR, 128),
       SecureRandomSeedGenerator.DEFAULT_INSTANCE));
@@ -295,10 +296,7 @@ environments is best-efforts.
 Continuous integration takes place in OpenJDK 7 on Linux. Up to and including version 3.1.1, this was
 done on Travis CI; beginning with 3.1.2, Azure Pipelines will be used.
 
-Once 80% of Android devices have API level 24 or newer, as
-[measured by Google](https://developer.android.com/about/dashboards/index.html#Platform) (or
-[by StatCounter](https://gs.statcounter.com/android-version-market-share/mobile-tablet/worldwide) if
-Google has not resumed monthly updates), the Java 7 branch will only be maintained while at least one
+After version 4.3.0, the Java 7 branch will only be maintained while at least one
 Tidelift subscriber, or Gold or higher GitHub sponsor, is using it.
 
 # Alternative random number generators
@@ -412,11 +410,11 @@ the seed sources cannot be parallelized. They include:
 * `DefaultSeedGenerator.DEFAULT_SEED_GENERATOR`: Uses the best of the above three that is currently
   available.
 
-## RandomSeederThread
+## SimpleRandomSeeder
 
-This is a daemon thread that loops over all the `Random` instances registered with it and reseeds
-them. Those that implement `EntropyCountingRandom` are skipped when they still have entropy left
-from a previous seeding. Example usage:
+This is a daemon thread that loops over all the `ByteArrayReseedableRandom` instances registered
+with it and reseeds them. Those that implement `EntropyCountingRandom` are skipped when they still\
+have entropy left from a previous seeding. Example usage:
 
 ```
 // Obtain the seeder thread for this seed generator; launch it if it's not already running.
@@ -436,19 +434,20 @@ if (myRandom instanceof EntropyCountingRandom) {
 seederThread.add(myRandom);
 ```
 
-# Build scripts
+## LegacyRandomSeeder
 
-Many of these scripts require the environment variable `JAVA8=true` when using JDK 8.
+This class is similar to `SimpleRandomSeeder`, but can handle any instance of `java.util.Random`.
 
-* `benchmark.sh`: Compile and run benchmarks. Output will be in `benchmark/target`.
-* `unit-tests.sh`: Compile and run unit tests and generate coverage reports. Upload them to Coveralls
-  if running in Travis-CI. If tests pass, run Proguard and then test again.
-* `mutation.sh`: Run mutation tests.
-* `release.sh`: Used to perform new releases.
-* `unrelease.sh`: Used to roll back pom.xml etc. if a release fails.
-* `publish-javadoc.sh`: Used to release updated Javadocs to github.io.
-* `prepare-workspace.sh`: Install necessary packages on a fresh Ubuntu Trusty Tahr workspace, such
-  as what c9.io provides.
+# Folders
+
+* `betterrandom/` contains BetterRandom's source code.
+* `benchmark/` defines the JMH benchmarks as a separate Maven project.
+* `FifoFiller/` is a simple utility used for Dieharder randomness tests, and is also a separate
+  Maven project.
+* `etc/` contains scripts, templates used in `azure.yml`, and miscellaneous files used for
+  building and testing.
+* `docs/` is a Git submodule used for publishing updates to this project's
+  [Javadoc on github.io](https://pr0methean.github.io/betterrandom-java8/index.html).
 
 # Credits
 
