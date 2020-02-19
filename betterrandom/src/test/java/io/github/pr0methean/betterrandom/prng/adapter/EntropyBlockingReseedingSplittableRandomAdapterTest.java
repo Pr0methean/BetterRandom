@@ -33,10 +33,6 @@ public class EntropyBlockingReseedingSplittableRandomAdapterTest
 
   private SimpleRandomSeeder thread;
 
-  @Override protected SeedGenerator getTestSeedGenerator() {
-    return semiFakeSeedGenerator;
-  }
-
   // FIXME: Why does this need more time than other PRNGs?!
   @Override @Test(timeOut = 80_000) public void testNextGaussianStatistically() throws SeedException {
     super.testNextGaussianStatistically();

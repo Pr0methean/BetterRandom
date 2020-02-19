@@ -26,10 +26,6 @@ public class ReseedingSplittableRandomAdapterTest
 
   private SimpleRandomSeeder thread;
 
-  @Override protected SeedGenerator getTestSeedGenerator() {
-    return semiFakeSeedGenerator;
-  }
-
   @BeforeMethod public void setUp() {
     thread = new SimpleRandomSeeder(getTestSeedGenerator());
   }

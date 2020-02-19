@@ -118,6 +118,7 @@ public abstract class BaseRandomTest extends PowerMockTestCase {
   }
 
   protected SeedGenerator getTestSeedGenerator() {
+    ThreadLocalRandom.current(); // ensure initialized for calling thread
     return semiFakeSeedGenerator;
   }
 
