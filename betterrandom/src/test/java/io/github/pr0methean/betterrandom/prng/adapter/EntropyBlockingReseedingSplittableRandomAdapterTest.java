@@ -5,7 +5,6 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertFalse;
 import static org.testng.Assert.assertNotEquals;
-import static org.testng.Assert.assertSame;
 
 import com.google.common.testing.SerializableTester;
 import com.google.common.util.concurrent.Uninterruptibles;
@@ -101,9 +100,10 @@ public class EntropyBlockingReseedingSplittableRandomAdapterTest
     SimpleRandomSeeder thread = new SimpleRandomSeeder(generator);
     try {
       final BaseSplittableRandomAdapter adapter =
-          ReseedingSplittableRandomAdapter.getInstance(thread, generator);
+          new EntropyBlockingReseedingSplittableRandomAdapter(
+              generator, thread, EntropyBlockingTestUtils.DEFAULT_MAX_ENTROPY);
       final BaseSplittableRandomAdapter clone = SerializableTester.reserialize(adapter);
-      assertSame(adapter, clone);
+      assertEquals(adapter, clone);
     } finally {
       thread.shutDown();
     }
