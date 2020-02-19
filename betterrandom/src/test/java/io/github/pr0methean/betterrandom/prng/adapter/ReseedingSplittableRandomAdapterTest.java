@@ -1,5 +1,6 @@
 package io.github.pr0methean.betterrandom.prng.adapter;
 
+import static io.github.pr0methean.betterrandom.seed.DefaultSeedGenerator.DEFAULT_SEED_GENERATOR;
 import static io.github.pr0methean.betterrandom.seed.SecureRandomSeedGenerator.DEFAULT_INSTANCE;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotEquals;
@@ -43,7 +44,7 @@ public class ReseedingSplittableRandomAdapterTest
   }
 
   @Override protected ReseedingSplittableRandomAdapter createRng() throws SeedException {
-    return ReseedingSplittableRandomAdapter.getInstance(thread, getTestSeedGenerator());
+    return new ReseedingSplittableRandomAdapter(getTestSeedGenerator(), thread);
   }
 
   @Override protected BaseRandom createRng(byte[] seed) throws SeedException {
@@ -71,13 +72,12 @@ public class ReseedingSplittableRandomAdapterTest
   }
 
   @Override @Test public void testSerializable() throws SeedException {
-    SeedGenerator generator = new FakeSeedGenerator("testSerializable");
-    SimpleRandomSeeder thread = new SimpleRandomSeeder(generator);
     try {
+      SimpleRandomSeeder thread = new SimpleRandomSeeder(DEFAULT_SEED_GENERATOR);
       final BaseSplittableRandomAdapter adapter =
-          ReseedingSplittableRandomAdapter.getInstance(thread, generator);
+          new ReseedingSplittableRandomAdapter(DEFAULT_INSTANCE, thread);
       final BaseSplittableRandomAdapter clone = SerializableTester.reserialize(adapter);
-      assertSame(adapter, clone);
+      assertEquals(adapter, clone, "Unequal after serialization round-trip");
     } finally {
       thread.shutDown();
     }
@@ -100,8 +100,8 @@ public class ReseedingSplittableRandomAdapterTest
     SeedGenerator generator = new SemiFakeSeedGenerator(new SplittableRandomAdapter(), "testReseeding");
     SimpleRandomSeeder seeder = new SimpleRandomSeeder(generator);
     try {
-      ReseedingSplittableRandomAdapter random =
-          ReseedingSplittableRandomAdapter.getInstance(seeder, generator);
+      ReseedingSplittableRandomAdapter random = new
+          ReseedingSplittableRandomAdapter(generator, seeder);
       RandomTestUtils.checkReseeding(generator, random, false);
     } finally {
       seeder.shutDown();
@@ -151,8 +151,19 @@ public class ReseedingSplittableRandomAdapterTest
   }
 
   @Test public void testSetSeedGeneratorNoOp() {
-    ReseedingSplittableRandomAdapter.getInstance(thread, getTestSeedGenerator())
-        .setRandomSeeder(thread);
+    createRng().setRandomSeeder(thread);
+  }
+
+  @Test public void testGetInstance() {
+    SeedGenerator seedGenerator = getTestSeedGenerator();
+    ReseedingSplittableRandomAdapter instance = ReseedingSplittableRandomAdapter.getInstance(
+        thread, seedGenerator);
+    ReseedingSplittableRandomAdapter sameInstance = ReseedingSplittableRandomAdapter.getInstance(
+        thread, new FakeSeedGenerator("different SeedGenerator"));
+    assertSame(instance, sameInstance, "calls with same SimpleRandomSeeder should return same instance");
+    ReseedingSplittableRandomAdapter otherInstance = ReseedingSplittableRandomAdapter.getInstance(
+        new SimpleRandomSeeder(DEFAULT_SEED_GENERATOR), seedGenerator);
+    assertNotEquals(instance, otherInstance, "calls with different SimpleRandomSeeder should return different instances");
   }
 
   @Override @Test(enabled = false) public void testSeedTooShort() {

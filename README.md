@@ -233,8 +233,8 @@ public class SplittableRandomAdapterDemo {
     }
     ThreadLocal<List<String>> deckCopies = ThreadLocal.withInitial(() -> Arrays.asList(cards.clone()));
     ScheduledThreadPoolExecutor executor = new ScheduledThreadPoolExecutor(4);
-    ReseedingSplittableRandomAdapter random = ReseedingSplittableRandomAdapter.getInstance(
-        SecureRandomSeedGenerator.DEFAULT_INSTANCE);
+    ReseedingSplittableRandomAdapter random =
+        new ReseedingSplittableRandomAdapter(SecureRandomSeedGenerator.DEFAULT_INSTANCE);
     for (i=0; i<1000; i++) {
       executor.submit(() -> {
         List<String> deck = deckCopies.get();
@@ -296,7 +296,7 @@ environments is best-efforts.
 Continuous integration takes place in OpenJDK 7 on Linux. Up to and including version 3.1.1, this was
 done on Travis CI; beginning with 3.1.2, Azure Pipelines will be used.
 
-After version 4.3.0, the Java 7 branch will only be maintained while at least one
+After version 4.4.0, the Java 7 branch will only be maintained while at least one
 Tidelift subscriber, or Gold or higher GitHub sponsor, is using it.
 
 # Alternative random number generators

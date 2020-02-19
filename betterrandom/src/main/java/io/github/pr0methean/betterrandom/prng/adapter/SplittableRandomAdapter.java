@@ -19,12 +19,12 @@ import javax.annotation.Nullable;
  *
  * @deprecated In OpenJDK 8 and Android API 24 and later,
  * {@link java.util.concurrent.ThreadLocalRandom} uses
- * the same PRNG algorithm as {@link SplittableRandom}, and the former is faster because of its
- * internal coupling with {@link Thread}. As well, it is a singleton, so although it uses fields of
- * {@link Thread} that are initialized when each thread first calls
- * {@link java.util.concurrent.ThreadLocalRandom#current()}, the instance returned by that method
- * can be safely passed between all threads that have ever called {@code current()}. Finally,
- * streams it creates will call {@code current()}, so they can be safely parallelized.
+ * the same PRNG algorithm as {@link SplittableRandom}, and is faster because of internal coupling
+ * with {@link Thread}. As well, the instance returned by
+ * {@link java.util.concurrent.ThreadLocalRandom#current()} can be safely passed to any thread that
+ * has ever called {@code current()}, and streams created by a ThreadLocalRandom are safely
+ * parallel. For situations where reseeding or a specified seed is needed, use {@link
+ * ReseedingSplittableRandomAdapter} (whose {@link SimpleRandomSeeder} parameter is now nullable).
  *
  * @author Chris Hennick
  */
