@@ -244,15 +244,18 @@ public enum RandomDotOrgSeedGenerator implements SeedGenerator {
         if (error != null) {
           throw new SeedException(error.toString());
         }
-        final JSONObject result = checkedGetObject(response, "result");
-        final JSONObject random = checkedGetObject(result, "random");
-        final Object data = random.get("data");
-        if (data == null) {
-          throw new SeedException("'data' missing from 'random': " + random);
-        }
+        final JSONObject result = checkedGetObject(response, "result", JSONObject.class);
+        final JSONObject random = checkedGetObject(result, "random", JSONObject.class);
+        final Object data = checkedGetObject(random, "data", Object.class);
         final String base64seed =
             ((data instanceof JSONArray) ? ((JSONArray) data).get(0) : data).toString();
-        final byte[] decodedSeed = BASE64.decode(base64seed);
+        final byte[] decodedSeed;
+        try {
+          decodedSeed = BASE64.decode(base64seed);
+        } catch (IllegalArgumentException e) {
+          throw new SeedException(String.format("random.org sent invalid base64 '%s'", base64seed),
+              e);
+        }
         if (decodedSeed.length < length) {
           throw new SeedException(String
               .format("Too few bytes returned: expected %d bytes, got '%s'", length, base64seed));
@@ -278,12 +281,14 @@ public enum RandomDotOrgSeedGenerator implements SeedGenerator {
     return new BufferedReader(new InputStreamReader(connection.getInputStream()));
   }
 
-  private static JSONObject checkedGetObject(final JSONObject parent, final String key) {
-    final JSONObject child = (JSONObject) parent.get(key);
-    if (child == null) {
-      throw new SeedException("No '" + key + "' in: " + parent);
+  private static <T> T checkedGetObject(final JSONObject parent, final String key,
+      Class<T> outputClass) {
+    Object child = parent.get(key);
+    if (!outputClass.isInstance(child)) {
+      throw new SeedException(String.format("Expected %s to have child key %s of type %s",
+          parent, key, outputClass));
     }
-    return child;
+    return outputClass.cast(child);
   }
 
   @Override @SuppressWarnings("AssignmentToStaticFieldFromInstanceMethod")
