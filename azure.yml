@@ -134,7 +134,7 @@ stages:
               JAVA_HOME_SOURCE: JAVA_HOME_11_X64
               artifactEnvName: OpenJdk11Windows
             OpenJdkLatest:
-              JAVA_HOME_SOURCE: JAVA_HOME_13_X64
+              JAVA_HOME_SOURCE: JAVA_HOME_12_X64
               artifactEnvName: OpenJdkLatestWindows
         pool:
           vmImage: 'windows-latest'
