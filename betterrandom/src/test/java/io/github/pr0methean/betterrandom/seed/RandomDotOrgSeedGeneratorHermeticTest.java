@@ -12,7 +12,6 @@ import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotNull;
 import static org.testng.Assert.assertTrue;
 
-import io.github.pr0methean.betterrandom.prng.adapter.SplittableRandomAdapter;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.net.Proxy;
@@ -21,6 +20,7 @@ import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.UUID;
+import java.util.concurrent.ThreadLocalRandom;
 import javax.annotation.Nullable;
 import javax.net.ssl.HttpsURLConnection;
 import javax.xml.bind.DatatypeConverter;
@@ -115,7 +115,7 @@ public class RandomDotOrgSeedGeneratorHermeticTest extends PowerMockTestCase {
   private static final byte[] EXPECTED_SEED = new byte[MAX_REQUEST_SIZE + 1];
 
   static {
-    new SplittableRandomAdapter().nextBytes(MAX_SIZE_SEED_CHUNK);
+    ThreadLocalRandom.current().nextBytes(MAX_SIZE_SEED_CHUNK);
     System.arraycopy(MAX_SIZE_SEED_CHUNK, 0, EXPECTED_SEED, 0, MAX_REQUEST_SIZE);
     EXPECTED_SEED[MAX_REQUEST_SIZE] = MAX_SIZE_SEED_CHUNK[0];
     try {

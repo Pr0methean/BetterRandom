@@ -1,11 +1,9 @@
 package io.github.pr0methean.betterrandom.prng.adapter;
 
-import static io.github.pr0methean.betterrandom.seed.SecureRandomSeedGenerator.DEFAULT_INSTANCE;
-
+import io.github.pr0methean.betterrandom.seed.SecureRandomSeedGenerator;
 import com.google.common.base.Joiner;
 import io.github.pr0methean.betterrandom.seed.LegacyRandomSeeder;
 import io.github.pr0methean.betterrandom.seed.SeedException;
-import io.github.pr0methean.betterrandom.seed.SimpleRandomSeeder;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -35,9 +33,8 @@ public enum ReseedingSplittableRandomAdapterDemo {
       }
     };
     final ScheduledThreadPoolExecutor executor = new ScheduledThreadPoolExecutor(4);
-    final SimpleRandomSeeder randomSeederThread = new SimpleRandomSeeder(DEFAULT_INSTANCE);
-    final ReseedingSplittableRandomAdapter random = ReseedingSplittableRandomAdapter
-        .getInstance(randomSeederThread, DEFAULT_INSTANCE);
+    final ReseedingSplittableRandomAdapter random =
+        new ReseedingSplittableRandomAdapter(SecureRandomSeedGenerator.DEFAULT_INSTANCE);
     for (i = 0; i < 20; i++) {
       executor.submit(new Runnable() {
         @Override public void run() {

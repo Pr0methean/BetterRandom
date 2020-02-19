@@ -22,7 +22,7 @@ public abstract class DirectSplittableRandomAdapter extends BaseSplittableRandom
   /**
    * The master {@link SplittableRandom} that will either be delegated to directly (see {@link
    * SingleThreadSplittableRandomAdapter} or be split using {@link SplittableRandom#split()} (see
-   * {@link SplittableRandomAdapter}) and have the splits delegated to.
+   * {@link ReseedingSplittableRandomAdapter}) and have the splits delegated to.
    */
   @SuppressWarnings(
       "InstanceVariableMayNotBeInitializedByReadObject") protected transient volatile SplittableRandom

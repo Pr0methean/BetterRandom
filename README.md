@@ -233,7 +233,7 @@ public class SplittableRandomAdapterDemo {
     }
     ThreadLocal<List<String>> deckCopies = ThreadLocal.withInitial(() -> Arrays.asList(cards.clone()));
     ScheduledThreadPoolExecutor executor = new ScheduledThreadPoolExecutor(4);
-    ReseedingSplittableRandomAdapter random =
+    final ReseedingSplittableRandomAdapter random =
         new ReseedingSplittableRandomAdapter(SecureRandomSeedGenerator.DEFAULT_INSTANCE);
     for (i=0; i<1000; i++) {
       executor.submit(() -> {
