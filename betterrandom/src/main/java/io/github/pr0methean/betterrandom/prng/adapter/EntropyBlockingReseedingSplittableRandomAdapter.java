@@ -7,11 +7,12 @@ import io.github.pr0methean.betterrandom.seed.SeedGenerator;
 import io.github.pr0methean.betterrandom.seed.SimpleRandomSeeder;
 import java.util.SplittableRandom;
 import java.util.concurrent.atomic.AtomicReference;
+import javax.annotation.Nullable;
 
 /**
  * A {@link ReseedingSplittableRandomAdapter} that blocks waiting to be reseeded if its entropy
- * drops too low. Unlike with {@link EntropyBlockingSplittableRandomAdapter}, reseeding is done on a
- * {@link SimpleRandomSeeder} rather than on the calling thread. Entropy count is thread-local,
+ * drops too low. Reseeding is done on a {@link SimpleRandomSeeder} if provided, and on the calling
+ * thread otherwise. Entropy count is thread-local,
  * so consuming entropy on one thread won't directly cause blocking on another thread.
  */
 public class EntropyBlockingReseedingSplittableRandomAdapter extends ReseedingSplittableRandomAdapter {
@@ -46,7 +47,7 @@ public class EntropyBlockingReseedingSplittableRandomAdapter extends ReseedingSp
    *     be zero or negative.
    */
   public EntropyBlockingReseedingSplittableRandomAdapter(
-      SeedGenerator seedGenerator, SimpleRandomSeeder randomSeeder, long minimumEntropy) {
+      @Nullable SeedGenerator seedGenerator, SimpleRandomSeeder randomSeeder, long minimumEntropy) {
     super(seedGenerator, randomSeeder);
     this.minimumEntropy = minimumEntropy;
     this.sameThreadSeedGen = new AtomicReference<>(seedGenerator);
