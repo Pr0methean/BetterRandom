@@ -114,7 +114,7 @@ stages:
               javaVersion: 13
               artifactEnvName: OpenJdkLatestMac
         pool:
-          vmImage: 'macOs-10.13'
+          vmImage: 'macOs-latest'
         steps:
           - template: etc/azureTemplate/installJavaMacLocal.yml
             parameters:
@@ -137,7 +137,7 @@ stages:
               JAVA_HOME_SOURCE: JAVA_HOME_13_X64
               artifactEnvName: OpenJdkLatestWindows
         pool:
-          vmImage: 'windows-2019'
+          vmImage: 'windows-latest'
         steps:
           - task: PowerShell@2
             displayName: Build & Test
@@ -225,7 +225,7 @@ stages:
             artifactEnvName: 'OpenJdkLatestMac'
             javaVersion: 12
       pool:
-        vmImage: 'macOs-10.13'
+        vmImage: 'macOs-latest'
       steps:
         - template: etc/azureTemplate/installJavaMacLocal.yml
           parameters:
@@ -236,7 +236,7 @@ stages:
     - job: BenchmarkWindows
       timeoutInMinutes: 80
       pool:
-        vmImage: 'windows-2019'
+        vmImage: 'windows-latest'
       strategy:
         matrix:
           OpenJdk08:
