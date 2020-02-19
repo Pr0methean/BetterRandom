@@ -13,7 +13,14 @@ import javax.annotation.Nullable;
  * Thread-safe PRNG that wraps a {@link ThreadLocal}&lt;{@link SplittableRandom}&gt;. Registers each
  * thread's instance with a {@link SimpleRandomSeeder} to replace its {@link SplittableRandom} with
  * a reseeded one as frequently as possible, but not more frequently than it is being used.
- *
+ * <p>
+ * In OpenJDK 8 and Android API 24 and later, {@link java.util.concurrent.ThreadLocalRandom} uses
+ * the same PRNG algorithm as {@link SplittableRandom}, and is faster because of internal coupling
+ * with {@link Thread}. As well, the instance returned by
+ * {@link java.util.concurrent.ThreadLocalRandom#current()} can be safely passed to any thread that
+ * has ever called {@code current()}, and streams created by a ThreadLocalRandom are safely
+ * parallel. Thus, this class should only be used when reseeding or the ability to specify a seed is
+ * required, or for compatibility with JDK 7 or an older Android version.
  * @author Chris Hennick
  */
 public class ReseedingSplittableRandomAdapter extends BaseSplittableRandomAdapter {
