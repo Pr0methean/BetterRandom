@@ -9,11 +9,14 @@ import java.util.concurrent.locks.ReentrantLock;
 import javax.annotation.Nullable;
 
 /**
- * A {@link SplittableRandomAdapter} that reseeds itself when its entropy drops too low. Unlike with
- * an {@link EntropyBlockingReseedingSplittableRandomAdapter}, reseeding is done on the thread that
- * consumes pseudorandomness. Entropy count is thread-local, so consuming entropy on one thread
- * won't directly cause blocking on another thread.
+ * A {@link SplittableRandomAdapter} that reseeds itself when its entropy drops too low. If created
+ * with no {@link io.github.pr0methean.betterrandom.seed.SimpleRandomSeeder}, reseeding is done on
+ * the thread that consumes pseudorandomness. Entropy count is thread-local, so consuming entropy on
+ * one thread won't directly cause blocking on another thread.
+ *
+ * @deprecated Use {@link EntropyBlockingReseedingSplittableRandomAdapter}.
  */
+@Deprecated
 public class EntropyBlockingSplittableRandomAdapter extends SplittableRandomAdapter {
   private static final long serialVersionUID = 4992825526245524633L;
   private transient ThreadLocal<EntropyBlockingHelper> helpers;

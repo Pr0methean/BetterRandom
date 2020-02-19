@@ -5,11 +5,17 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [4.2.1]
+## [Unreleased]
 
 ### Changed
 - `RandomDotOrgSeedGenerator` now uses Commons-Codec to decode Base 64, which should fix a possible crash on Android.
+- `SplittableRandomAdapter` is now deprecated in the Java 8 branch. It can generally be replaced by `ThreadLocalRandom`
+  if using OpenJDK 8 or higher or Android API 24 or higher.
+- `ReseedingSplittableRandomAdapter` can now be created with null `SimpleRandomSeeder` if reseeding is not desired,
+  replacing `SplittableRandomAdapter`.
 - Arrays are no longer aggressively reused, since escape analysis can move them to the stack.
+- `ReseedingSplittableRandomAdapter`'s constructor is now public, and `getInstance()` is deprecated.
+- The default instance of `SecureRandomSeedGenerator` now has its identity preserved when deserialized.
 
 ## [4.2.0]
 

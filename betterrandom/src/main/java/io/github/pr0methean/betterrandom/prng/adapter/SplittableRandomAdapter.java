@@ -18,6 +18,15 @@ import javax.annotation.Nullable;
  * will only affect the calling thread, so this can't be used with a {@link SimpleRandomSeeder}.
  * Instead, use a {@link ReseedingSplittableRandomAdapter}.
  *
+ * @deprecated In OpenJDK 8 and Android API 24 and later,
+ * {@link java.util.concurrent.ThreadLocalRandom} uses
+ * the same PRNG algorithm as {@link SplittableRandom}, and is faster because of internal coupling
+ * with {@link Thread}. As well, the instance returned by
+ * {@link java.util.concurrent.ThreadLocalRandom#current()} can be safely passed to any thread that
+ * has ever called {@code current()}, and streams created by a ThreadLocalRandom are safely
+ * parallel. For situations where reseeding or a specified seed is needed, use {@link
+ * ReseedingSplittableRandomAdapter} (whose {@link SimpleRandomSeeder} parameter is now nullable).
+ *
  * @author Chris Hennick
  */
 @SuppressWarnings("ThreadLocalNotStaticFinal") public class SplittableRandomAdapter

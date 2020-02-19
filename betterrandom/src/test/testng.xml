@@ -13,6 +13,8 @@
             <class
                     name="io.github.pr0methean.betterrandom.prng.adapter.SingleThreadSplittableRandomAdapterTest"/>
             <class name="io.github.pr0methean.betterrandom.prng.adapter.SplittableRandomAdapterTest"/>
+            <class name="io.github.pr0methean.betterrandom.prng.adapter.ReseedingSplittableRandomAdapterNullTest"/>
+            <class name="io.github.pr0methean.betterrandom.prng.adapter.EntropyBlockingReseedingSplittableRandomAdapterNullTest"/>
         </classes>
     </test>
     <test name="Crypto PRNGs 17-byte">

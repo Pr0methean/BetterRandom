@@ -41,7 +41,7 @@ public class SecureRandomSeedGenerator implements SeedGenerator, Serializable {
    * The default instance. (This class was formerly a singleton.)
    */
   public static final SecureRandomSeedGenerator DEFAULT_INSTANCE
-      = new SecureRandomSeedGenerator(new SecureRandom());
+      = new SecureRandomSeedGenerator(new SecureRandom(), true);
 
   private static final long serialVersionUID = 854226000048040387L;
 
@@ -51,13 +51,34 @@ public class SecureRandomSeedGenerator implements SeedGenerator, Serializable {
   private final SecureRandom source;
 
   /**
+   * Used to preserve the identity of the default instance across serialization.
+   */
+  private final boolean isDefaultInstance;
+
+  /**
    * Creates an instance.
    *
    * @param source the {@link SecureRandom} whose {@link SecureRandom#generateSeed(int)} method will
    *     provide seeds
    */
   public SecureRandomSeedGenerator(SecureRandom source) {
+    this(source, false);
+  }
+
+  protected Object readResolve() {
+    return isDefaultInstance ? DEFAULT_INSTANCE : this;
+  }
+
+  /**
+   * Creates an instance.
+   *
+   * @param source the {@link SecureRandom} whose {@link SecureRandom#generateSeed(int)} method will
+   *     provide seeds
+   * @param isDefaultInstance true if this is {@link #DEFAULT_INSTANCE}.
+   */
+  private SecureRandomSeedGenerator(SecureRandom source, boolean isDefaultInstance) {
     this.source = source;
+    this.isDefaultInstance = isDefaultInstance;
   }
 
   /**

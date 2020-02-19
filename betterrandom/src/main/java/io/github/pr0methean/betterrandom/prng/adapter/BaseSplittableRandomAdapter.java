@@ -76,7 +76,8 @@ public abstract class BaseSplittableRandomAdapter extends BaseRandom {
    */
   @SuppressWarnings("NumericCastThatLosesPrecision") @Override public void nextBytes(
       final byte[] bytes) {
-    for (int i = 0; i < bytes.length; i++) {
+    final int length = bytes.length;
+    for (int i = 0; i < length; i++) {
       debitEntropy(Byte.SIZE); // May cause replacement before the next getSplittableRandom()
       bytes[i] = (byte) (getSplittableRandom().nextInt(1 << Byte.SIZE));
     }

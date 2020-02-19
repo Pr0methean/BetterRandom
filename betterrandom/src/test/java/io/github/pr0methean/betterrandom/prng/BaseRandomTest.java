@@ -195,7 +195,9 @@ public abstract class BaseRandomTest extends PowerMockTestCase {
     return createRng().getNewSeedLength();
   }
 
-  protected abstract Class<? extends BaseRandom> getClassUnderTest();
+  protected Class<? extends BaseRandom> getClassUnderTest() {
+    return createRng().getClass();
+  }
 
   /**
    * Test to ensure that two distinct RNGs with the same seed return the same sequence of numbers.
