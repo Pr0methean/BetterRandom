@@ -60,6 +60,10 @@ stages:
         vmImage: 'ubuntu-latest'
       steps:
       - template: etc/azureTemplate/installHaveged.yml
+      - script: sudo apt install tinyproxy
+        displayName: Install TinyProxy
+      - script: sudo service tinyproxy start
+        displayName: Start TinyProxy
       - script: ./etc/scripts/unit-tests.sh
         displayName: Build & Test
         env:
