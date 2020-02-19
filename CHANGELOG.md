@@ -8,8 +8,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Changed
-- `SplittableRandomAdapter` is now deprecated in the Java 8 branch. It can generally be replaced by `ThreadLocalRandom`
-  if using OpenJDK 8 or higher or Android API 24 or higher.
+- `SplittableRandomAdapter` is now deprecated. It can be replaced by either `ThreadLocalRandom` or
+  `ReseedingSplittableRandomAdapter`.
 - `ReseedingSplittableRandomAdapter` can now be created with null `SimpleRandomSeeder` if reseeding is not desired,
   replacing `SplittableRandomAdapter`.
 - Arrays are no longer aggressively reused, since escape analysis can move them to the stack.
