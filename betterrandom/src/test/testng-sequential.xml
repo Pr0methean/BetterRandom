@@ -21,7 +21,6 @@
         <classes>
             <class name="io.github.pr0methean.betterrandom.prng.adapter.EntropyBlockingRandomWrapperAesCounterRandomTest"/>
             <class name="io.github.pr0methean.betterrandom.prng.adapter.EntropyBlockingRandomWrapperTest"/>
-            <class name="io.github.pr0methean.betterrandom.prng.adapter.EntropyBlockingSplittableRandomAdapterTest"/>
             <class name="io.github.pr0methean.betterrandom.prng.adapter.EntropyBlockingReseedingSplittableRandomAdapterTest"/>
             <class name="io.github.pr0methean.betterrandom.prng.adapter.ReseedingSplittableRandomAdapterTest"/>
             <class name="io.github.pr0methean.betterrandom.prng.adapter.ReseedingThreadLocalRandomWrapperMersenneTwisterTest"/>

@@ -4,7 +4,6 @@ import static io.github.pr0methean.betterrandom.seed.DefaultSeedGenerator.DEFAUL
 import static io.github.pr0methean.betterrandom.seed.SecureRandomSeedGenerator.DEFAULT_INSTANCE;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotEquals;
-import static org.testng.Assert.assertSame;
 
 import com.google.common.testing.SerializableTester;
 import io.github.pr0methean.betterrandom.FlakyRetryAnalyzer;
@@ -17,6 +16,7 @@ import io.github.pr0methean.betterrandom.seed.SeedGenerator;
 import io.github.pr0methean.betterrandom.seed.SemiFakeSeedGenerator;
 import io.github.pr0methean.betterrandom.seed.SimpleRandomSeeder;
 import io.github.pr0methean.betterrandom.util.BinaryUtils;
+import java.util.concurrent.ThreadLocalRandom;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
@@ -25,10 +25,6 @@ public class ReseedingSplittableRandomAdapterTest
     extends SingleThreadSplittableRandomAdapterTest {
 
   private SimpleRandomSeeder thread;
-
-  @Override protected SeedGenerator getTestSeedGenerator() {
-    return semiFakeSeedGenerator;
-  }
 
   @BeforeMethod public void setUp() {
     thread = new SimpleRandomSeeder(getTestSeedGenerator());
@@ -60,9 +56,7 @@ public class ReseedingSplittableRandomAdapterTest
 
   @Override public void testInitialEntropy() {
     // This test needs a separate instance from all other tests, but createRng() doesn't provide one
-    SimpleRandomSeeder newThread = new SimpleRandomSeeder(new FakeSeedGenerator("testInitialEntropy"));
-    ReseedingSplittableRandomAdapter random
-        = ReseedingSplittableRandomAdapter.getInstance(newThread, getTestSeedGenerator());
+    ReseedingSplittableRandomAdapter random = createRng();
     assertEquals(random.getEntropyBits(), Long.SIZE, "Wrong initial entropy");
   }
 
@@ -97,7 +91,7 @@ public class ReseedingSplittableRandomAdapterTest
 
   @Override @Test(retryAnalyzer = FlakyRetryAnalyzer.class)
   public void testReseeding() {
-    SeedGenerator generator = new SemiFakeSeedGenerator(new SplittableRandomAdapter(), "testReseeding");
+    SeedGenerator generator = new SemiFakeSeedGenerator(ThreadLocalRandom.current(), "testReseeding");
     SimpleRandomSeeder seeder = new SimpleRandomSeeder(generator);
     try {
       ReseedingSplittableRandomAdapter random = new
@@ -154,18 +148,6 @@ public class ReseedingSplittableRandomAdapterTest
     createRng().setRandomSeeder(thread);
   }
 
-  @Test public void testGetInstance() {
-    SeedGenerator seedGenerator = getTestSeedGenerator();
-    ReseedingSplittableRandomAdapter instance = ReseedingSplittableRandomAdapter.getInstance(
-        thread, seedGenerator);
-    ReseedingSplittableRandomAdapter sameInstance = ReseedingSplittableRandomAdapter.getInstance(
-        thread, new FakeSeedGenerator("different SeedGenerator"));
-    assertSame(instance, sameInstance, "calls with same SimpleRandomSeeder should return same instance");
-    ReseedingSplittableRandomAdapter otherInstance = ReseedingSplittableRandomAdapter.getInstance(
-        new SimpleRandomSeeder(DEFAULT_SEED_GENERATOR), seedGenerator);
-    assertNotEquals(instance, otherInstance, "calls with different SimpleRandomSeeder should return different instances");
-  }
-
   @Override @Test(enabled = false) public void testSeedTooShort() {
     // No-op.
   }
@@ -177,14 +159,14 @@ public class ReseedingSplittableRandomAdapterTest
   @Override @Test public void testDump() throws SeedException {
     SimpleRandomSeeder thread = new SimpleRandomSeeder(DEFAULT_INSTANCE);
     try {
-      ReseedingSplittableRandomAdapter baseInstance =
-          ReseedingSplittableRandomAdapter.getInstance(thread, getTestSeedGenerator());
+      ReseedingSplittableRandomAdapter firstInstance
+          = new ReseedingSplittableRandomAdapter(getTestSeedGenerator(), thread);
       SimpleRandomSeeder otherThread =
           new SimpleRandomSeeder(new FakeSeedGenerator("Different reseeder"));
       try {
-        assertNotEquals(
-            ReseedingSplittableRandomAdapter.getInstance(otherThread, getTestSeedGenerator())
-                .dump(), baseInstance.dump());
+        ReseedingSplittableRandomAdapter secondInstance =
+            new ReseedingSplittableRandomAdapter(getTestSeedGenerator(), otherThread);
+        assertNotEquals(secondInstance.dump(), firstInstance.dump());
       } finally {
         otherThread.shutDown();
       }

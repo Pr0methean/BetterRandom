@@ -7,11 +7,11 @@ import io.github.pr0methean.betterrandom.seed.SeedException;
 import io.github.pr0methean.betterrandom.seed.SimpleRandomSeeder;
 import java.util.Random;
 
-public class ReseedingSplittableRandomAdapterBenchmark extends AbstractRandomBenchmark {
+public class ReseedingSplittableRandomAdapterBenchmark extends AbstractRandomBenchmarkWithReseeding {
 
   private final SimpleRandomSeeder thread = new SimpleRandomSeeder(DEFAULT_INSTANCE);
 
   @Override protected Random createPrng() throws SeedException {
-    return ReseedingSplittableRandomAdapter.getInstance(thread, DEFAULT_INSTANCE);
+    return new ReseedingSplittableRandomAdapter(DEFAULT_INSTANCE, reseeding ? thread : null);
   }
 }

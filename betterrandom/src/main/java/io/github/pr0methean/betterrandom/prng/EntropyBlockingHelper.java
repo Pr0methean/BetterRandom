@@ -12,7 +12,7 @@ import javax.annotation.Nullable;
 
 /**
  * Provides common functionality used by {@link io.github.pr0methean.betterrandom.prng.adapter.EntropyBlockingRandomWrapper}
- * and thread-locally by {@link io.github.pr0methean.betterrandom.prng.adapter.EntropyBlockingSplittableRandomAdapter}.
+ * and thread-locally by {@link io.github.pr0methean.betterrandom.prng.adapter.EntropyBlockingReseedingSplittableRandomAdapter}.
  * Internally coupled with {@link BaseRandom} because the use of this class is a substitute for
  * mixin inheritance.
  */

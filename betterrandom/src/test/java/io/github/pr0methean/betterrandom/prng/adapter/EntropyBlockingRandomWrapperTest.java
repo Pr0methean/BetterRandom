@@ -13,7 +13,6 @@ import io.github.pr0methean.betterrandom.FlakyRetryAnalyzer;
 import io.github.pr0methean.betterrandom.prng.BaseRandom;
 import io.github.pr0methean.betterrandom.prng.RandomTestUtils;
 import io.github.pr0methean.betterrandom.seed.FailingSeedGenerator;
-import io.github.pr0methean.betterrandom.seed.SecureRandomSeedGenerator;
 import io.github.pr0methean.betterrandom.seed.SeedException;
 import io.github.pr0methean.betterrandom.seed.SeedGenerator;
 import io.github.pr0methean.betterrandom.seed.SemiFakeSeedGenerator;
@@ -24,6 +23,7 @@ import java.util.Map;
 import java.util.Random;
 import java.util.UUID;
 import java.util.concurrent.ThreadFactory;
+import java.util.concurrent.ThreadLocalRandom;
 import org.mockito.Mockito;
 import org.testng.annotations.Test;
 
@@ -42,8 +42,7 @@ public class EntropyBlockingRandomWrapperTest extends RandomWrapperRandomTest {
 
   @Override protected SeedGenerator getTestSeedGenerator() {
     // Need a separate and non-value-equal instance for each test, for isolation
-    return new SemiFakeSeedGenerator(
-        new SplittableRandomAdapter(SecureRandomSeedGenerator.DEFAULT_INSTANCE),
+    return new SemiFakeSeedGenerator(ThreadLocalRandom.current(),
         UUID.randomUUID().toString());
   }
 
@@ -123,7 +122,7 @@ public class EntropyBlockingRandomWrapperTest extends RandomWrapperRandomTest {
     SimpleRandomSeeder seeder = new SimpleRandomSeeder(seederSeedGenSpy,
         defaultThreadFactory);
     SemiFakeSeedGenerator sameThreadSeedGen
-        = Mockito.spy(new SemiFakeSeedGenerator(new SplittableRandomAdapter(), "sameThreadSeedGen"));
+        = Mockito.spy(new SemiFakeSeedGenerator(ThreadLocalRandom.current(), "sameThreadSeedGen"));
     EntropyBlockingRandomWrapper random = new EntropyBlockingRandomWrapper(
         testSeedGenerator.generateSeed(8), 0L, sameThreadSeedGen);
     random.setRandomSeeder(seeder);
@@ -146,7 +145,7 @@ public class EntropyBlockingRandomWrapperTest extends RandomWrapperRandomTest {
     SeedGenerator failingSeedGen = Mockito.spy(FailingSeedGenerator.DEFAULT_INSTANCE);
     SimpleRandomSeeder seeder = new SimpleRandomSeeder(failingSeedGen);
     SeedGenerator sameThreadSeedGen
-        = Mockito.spy(new SemiFakeSeedGenerator(new SplittableRandomAdapter()));
+        = Mockito.spy(new SemiFakeSeedGenerator(ThreadLocalRandom.current()));
     EntropyBlockingRandomWrapper random = new EntropyBlockingRandomWrapper(0L, sameThreadSeedGen);
     random.setRandomSeeder(seeder);
     try {

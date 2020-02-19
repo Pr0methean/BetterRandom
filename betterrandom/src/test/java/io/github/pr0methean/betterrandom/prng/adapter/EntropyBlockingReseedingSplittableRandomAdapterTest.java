@@ -22,6 +22,7 @@ import io.github.pr0methean.betterrandom.util.BinaryUtils;
 import java.util.Arrays;
 import java.util.Map;
 import java.util.concurrent.ThreadFactory;
+import java.util.concurrent.ThreadLocalRandom;
 import org.mockito.Mockito;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
@@ -31,10 +32,6 @@ public class EntropyBlockingReseedingSplittableRandomAdapterTest
     extends ReseedingSplittableRandomAdapterTest {
 
   private SimpleRandomSeeder thread;
-
-  @Override protected SeedGenerator getTestSeedGenerator() {
-    return semiFakeSeedGenerator;
-  }
 
   // FIXME: Why does this need more time than other PRNGs?!
   @Override @Test(timeOut = 80_000) public void testNextGaussianStatistically() throws SeedException {
@@ -83,9 +80,7 @@ public class EntropyBlockingReseedingSplittableRandomAdapterTest
 
   @Override public void testInitialEntropy() {
     // This test needs a separate instance from all other tests, but createRng() doesn't provide one
-    SimpleRandomSeeder newThread = new SimpleRandomSeeder(new FakeSeedGenerator("testInitialEntropy"));
-    ReseedingSplittableRandomAdapter random =
-        ReseedingSplittableRandomAdapter.getInstance(newThread, getTestSeedGenerator());
+    ReseedingSplittableRandomAdapter random = createRng();
     assertEquals(random.getEntropyBits(), Long.SIZE, "Wrong initial entropy");
   }
 
@@ -123,11 +118,12 @@ public class EntropyBlockingReseedingSplittableRandomAdapterTest
 
   @Override @Test(retryAnalyzer = FlakyRetryAnalyzer.class) public void testReseeding() {
     SeedGenerator generator =
-        new SemiFakeSeedGenerator(new SplittableRandomAdapter(), "testReseeding");
+        new SemiFakeSeedGenerator(ThreadLocalRandom.current(), "testReseeding");
     SimpleRandomSeeder seeder = new SimpleRandomSeeder(generator);
     try {
-      ReseedingSplittableRandomAdapter random =
-          ReseedingSplittableRandomAdapter.getInstance(seeder, generator);
+      EntropyBlockingReseedingSplittableRandomAdapter random =
+          new EntropyBlockingReseedingSplittableRandomAdapter(generator, seeder,
+              EntropyBlockingTestUtils.DEFAULT_MAX_ENTROPY);
       RandomTestUtils.checkReseeding(generator, random, false);
     } finally {
       seeder.shutDown();
@@ -191,14 +187,16 @@ public class EntropyBlockingReseedingSplittableRandomAdapterTest
   @Override @Test public void testDump() throws SeedException {
     SimpleRandomSeeder thread = new SimpleRandomSeeder(DEFAULT_INSTANCE);
     try {
-      ReseedingSplittableRandomAdapter baseInstance =
-          ReseedingSplittableRandomAdapter.getInstance(thread, getTestSeedGenerator());
+      EntropyBlockingReseedingSplittableRandomAdapter firstInstance =
+          new EntropyBlockingReseedingSplittableRandomAdapter(getTestSeedGenerator(), thread,
+                        EntropyBlockingTestUtils.DEFAULT_MAX_ENTROPY);
       SimpleRandomSeeder otherThread =
           new SimpleRandomSeeder(new FakeSeedGenerator("Different reseeder"));
       try {
-        assertNotEquals(
-            ReseedingSplittableRandomAdapter.getInstance(otherThread, getTestSeedGenerator())
-                .dump(), baseInstance.dump());
+        EntropyBlockingReseedingSplittableRandomAdapter secondInstance =
+            new EntropyBlockingReseedingSplittableRandomAdapter(getTestSeedGenerator(), otherThread,
+                EntropyBlockingTestUtils.DEFAULT_MAX_ENTROPY);
+        assertNotEquals(secondInstance.dump(), firstInstance.dump());
       } finally {
         otherThread.shutDown();
       }
@@ -222,7 +220,7 @@ public class EntropyBlockingReseedingSplittableRandomAdapterTest
     SimpleRandomSeeder seeder = new SimpleRandomSeeder(seederSeedGenSpy,
         defaultThreadFactory);
     SemiFakeSeedGenerator sameThreadSeedGen
-        = new SemiFakeSeedGenerator(new SplittableRandomAdapter(), "sameThreadSeedGen");
+        = new SemiFakeSeedGenerator(ThreadLocalRandom.current(), "sameThreadSeedGen");
     EntropyBlockingReseedingSplittableRandomAdapter random = new EntropyBlockingReseedingSplittableRandomAdapter(
         sameThreadSeedGen, seeder, 0L);
     random.nextLong();

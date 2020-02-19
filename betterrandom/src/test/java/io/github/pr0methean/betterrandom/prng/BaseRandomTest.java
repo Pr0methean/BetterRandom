@@ -20,9 +20,7 @@ import io.github.pr0methean.betterrandom.FlakyRetryAnalyzer;
 import io.github.pr0methean.betterrandom.NamedFunction;
 import io.github.pr0methean.betterrandom.TestUtils;
 import io.github.pr0methean.betterrandom.prng.RandomTestUtils.EntropyCheckMode;
-import io.github.pr0methean.betterrandom.prng.adapter.SplittableRandomAdapter;
 import io.github.pr0methean.betterrandom.seed.FakeSeedGenerator;
-import io.github.pr0methean.betterrandom.seed.SecureRandomSeedGenerator;
 import io.github.pr0methean.betterrandom.seed.SeedException;
 import io.github.pr0methean.betterrandom.seed.SeedGenerator;
 import io.github.pr0methean.betterrandom.seed.SemiFakeSeedGenerator;
@@ -43,6 +41,7 @@ import java.util.concurrent.ConcurrentSkipListSet;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ForkJoinPool;
 import java.util.concurrent.ForkJoinTask;
+import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
 import java.util.function.DoubleConsumer;
@@ -56,8 +55,8 @@ import org.testng.annotations.Test;
 public abstract class BaseRandomTest extends PowerMockTestCase {
 
   protected static final int TEST_BYTES_LENGTH = 100;
-  protected final SeedGenerator semiFakeSeedGenerator = new SemiFakeSeedGenerator(
-      new SplittableRandomAdapter(SecureRandomSeedGenerator.DEFAULT_INSTANCE));
+  protected final SeedGenerator semiFakeSeedGenerator
+      = new SemiFakeSeedGenerator(ThreadLocalRandom.current());
 
   /**
    * The square root of 12, rounded from an extended-precision calculation that was done by Wolfram
@@ -119,6 +118,7 @@ public abstract class BaseRandomTest extends PowerMockTestCase {
   }
 
   protected SeedGenerator getTestSeedGenerator() {
+    ThreadLocalRandom.current(); // ensure initialized for calling thread
     return semiFakeSeedGenerator;
   }
 
