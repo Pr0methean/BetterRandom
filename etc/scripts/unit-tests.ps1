@@ -1,5 +1,6 @@
 $JAVA_HOME = [Environment]::GetEnvironmentVariable($args[0]) # first arg names the variable that JAVA_HOME is copied from
 echo "JAVA_HOME: $JAVA_HOME"
+$Env:JAVA_HOME = $JAVA_HOME
 $JAVA_BIN = $JAVA_HOME + '/bin/java'
 if ( $env:ANDROID )
 {
