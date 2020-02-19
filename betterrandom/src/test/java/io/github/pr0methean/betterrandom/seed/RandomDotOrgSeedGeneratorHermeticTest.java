@@ -318,4 +318,22 @@ public class RandomDotOrgSeedGeneratorHermeticTest extends PowerMockTestCase {
       setSslSocketFactory(null);
     }
   }
+
+  @Test public void testRandomFuzzJsonApi() throws Exception {
+    RandomDotOrgSeedGenerator.setApiKey(UUID.randomUUID());
+    fuzzResponse();
+    expectAndGetException(32);
+  }
+
+  @Test public void testRandomFuzzOldApi() throws Exception {
+    RandomDotOrgSeedGenerator.setApiKey(null);
+    fuzzResponse();
+    expectAndGetException(32);
+  }
+
+  private void fuzzResponse() throws Exception {
+    byte[] fuzz = new byte[RESPONSE_32_JSON.length];
+    ThreadLocalRandom.current().nextBytes(fuzz);
+    mockRandomDotOrgResponse(fuzz);
+  }
 }
