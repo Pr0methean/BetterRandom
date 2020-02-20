@@ -7,6 +7,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+- Renamed `ReseedingSplittableRandomAdapter` to `SplittableRandomAdapter`
+- Renamed `EntropyBlockingReseedingSplittableRandomAdapter` to `EntropyBlockingSplittableRandomAdapter`
+
+### Removed
+- `EntropyBlockingHelper`: functionality integrated into the only class where it was still being used.
+- The class formerly called `SplittableRandomAdapter` (deprecated in 4.3.0)
+- The class formerly called `EntropyBlockingSplittableRandomAdapter` (deprecated in 4.3.0)
+
 ## [4.3.0]
 
 ### Changed

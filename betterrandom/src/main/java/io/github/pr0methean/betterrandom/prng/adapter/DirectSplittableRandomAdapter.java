@@ -10,7 +10,7 @@ import java8.util.SplittableRandom;
 /**
  * Abstract subclass of {@link BaseSplittableRandomAdapter} where {@link #setSeed(long)} and {@link
  * #setSeed(byte[])} replace the {@link SplittableRandom} that's used in the context in which they
- * are called. See {@link ReseedingSplittableRandomAdapter} for an example of when it does
+ * are called. See {@link SplittableRandomAdapter} for an example of when it does
  * <i>not</i> make sense to extend this class.
  *
  * @author Chris Hennick
@@ -22,7 +22,7 @@ public abstract class DirectSplittableRandomAdapter extends BaseSplittableRandom
   /**
    * The master {@link SplittableRandom} that will either be delegated to directly (see {@link
    * SingleThreadSplittableRandomAdapter} or be split using {@link SplittableRandom#split()} (see
-   * {@link ReseedingSplittableRandomAdapter}) and have the splits delegated to.
+   * {@link SplittableRandomAdapter}) and have the splits delegated to.
    */
   @SuppressWarnings(
       "InstanceVariableMayNotBeInitializedByReadObject") protected transient volatile SplittableRandom

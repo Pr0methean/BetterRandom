@@ -10,7 +10,7 @@ import java.util.List;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
-public enum ReseedingSplittableRandomAdapterDemo {
+public enum SplittableRandomAdapterDemo {
   ;
 
   private static final String[] VALUE_LABELS =
@@ -33,8 +33,8 @@ public enum ReseedingSplittableRandomAdapterDemo {
       }
     };
     final ScheduledThreadPoolExecutor executor = new ScheduledThreadPoolExecutor(4);
-    final ReseedingSplittableRandomAdapter random =
-        new ReseedingSplittableRandomAdapter(SecureRandomSeedGenerator.DEFAULT_INSTANCE);
+    final SplittableRandomAdapter random =
+        new SplittableRandomAdapter(SecureRandomSeedGenerator.DEFAULT_INSTANCE);
     for (i = 0; i < 20; i++) {
       executor.submit(new Runnable() {
         @Override public void run() {
