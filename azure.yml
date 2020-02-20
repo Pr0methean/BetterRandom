@@ -33,7 +33,6 @@ schedules:
     branches:
       include:
         - master
-        - java7
 pr:
   branches:
     include:
