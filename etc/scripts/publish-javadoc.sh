@@ -2,7 +2,7 @@
 rm -r betterrandom/target/site/apidocs
 rm -r docs/betterrandom-java7/io
 echo '<!DOCTYPE html><html><head /><body style="font-family: sans-serif;">' > betterrandom/src/main/javadoc/overview.html
-ruby ./render-readme-for-javadoc.rb >> betterrandom/src/main/javadoc/overview.html
+ruby ./etc/scripts/render-readme-for-javadoc.rb >> betterrandom/src/main/javadoc/overview.html
 echo '</body></html>' >> betterrandom/src/main/javadoc/overview.html
 cd betterrandom || exit 1
 mvn javadoc:javadoc
