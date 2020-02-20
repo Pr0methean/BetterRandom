@@ -39,14 +39,6 @@ public final class LegacyRandomSeeder extends SimpleRandomSeeder {
   }
 
   /**
-   * Returns the seed generator this LegacyRandomSeeder is using.
-   * @return the seed generator
-   */
-  public SeedGenerator getSeedGenerator() {
-    return seedGenerator;
-  }
-
-  /**
    * Adds {@link Random} instances.
    * @param randoms the PRNGs to start reseeding
    */
