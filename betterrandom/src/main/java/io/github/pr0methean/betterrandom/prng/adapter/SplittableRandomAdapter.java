@@ -23,7 +23,7 @@ import javax.annotation.Nullable;
  * required, or for compatibility with JDK 7 or an older Android version.
  * @author Chris Hennick
  */
-public class ReseedingSplittableRandomAdapter extends BaseSplittableRandomAdapter {
+public class SplittableRandomAdapter extends BaseSplittableRandomAdapter {
 
   private static final long serialVersionUID = 6301096404034224037L;
   private final SeedGenerator seedGenerator;
@@ -41,7 +41,7 @@ public class ReseedingSplittableRandomAdapter extends BaseSplittableRandomAdapte
    *     {@link SplittableRandom} instance whenever each thread's instance needs reseeding
    * @throws SeedException if {@code seedGenerator} fails to generate an initial seed
    */
-  public ReseedingSplittableRandomAdapter(final SeedGenerator seedGenerator,
+  public SplittableRandomAdapter(final SeedGenerator seedGenerator,
       @Nullable SimpleRandomSeeder randomSeeder) throws SeedException {
     super(new byte[Long.BYTES]);
     this.seedGenerator = seedGenerator;
@@ -57,7 +57,7 @@ public class ReseedingSplittableRandomAdapter extends BaseSplittableRandomAdapte
    * @param seedGenerator the seed generator that will generate an initial seed for each thread
    * @throws SeedException if {@code seedGenerator} fails to generate an initial seed
    */
-  public ReseedingSplittableRandomAdapter(final SeedGenerator seedGenerator) {
+  public SplittableRandomAdapter(final SeedGenerator seedGenerator) {
     this(seedGenerator, new SimpleRandomSeeder(seedGenerator));
   }
 
@@ -126,7 +126,7 @@ public class ReseedingSplittableRandomAdapter extends BaseSplittableRandomAdapte
     if (o == null || getClass() != o.getClass()) {
       return false;
     }
-    ReseedingSplittableRandomAdapter that = (ReseedingSplittableRandomAdapter) o;
+    SplittableRandomAdapter that = (SplittableRandomAdapter) o;
     return Objects.equals(randomSeeder.get(), that.randomSeeder.get())
         && Objects.equals(seedGenerator, that.seedGenerator);
   }

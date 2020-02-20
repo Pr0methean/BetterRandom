@@ -58,7 +58,7 @@ public class SingleThreadSplittableRandomAdapter extends DirectSplittableRandomA
   }
 
   /**
-   * Must be redeclared in this package so that {@link ReseedingSplittableRandomAdapter} can access
+   * Must be redeclared in this package so that {@link SplittableRandomAdapter} can access
    * it.
    */
   @Override protected void debitEntropy(final long bits) {

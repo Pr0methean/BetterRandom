@@ -27,8 +27,8 @@ import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
-public class EntropyBlockingReseedingSplittableRandomAdapterTest
-    extends ReseedingSplittableRandomAdapterTest {
+public class EntropyBlockingSplittableRandomAdapterTest
+    extends SplittableRandomAdapterTest {
 
   private SimpleRandomSeeder thread;
 
@@ -48,14 +48,14 @@ public class EntropyBlockingReseedingSplittableRandomAdapterTest
     thread = null;
   }
 
-  @Override protected EntropyBlockingReseedingSplittableRandomAdapter createRng()
+  @Override protected EntropyBlockingSplittableRandomAdapter createRng()
       throws SeedException {
-    return new EntropyBlockingReseedingSplittableRandomAdapter(getTestSeedGenerator(), thread,
+    return new EntropyBlockingSplittableRandomAdapter(getTestSeedGenerator(), thread,
         EntropyBlockingTestUtils.DEFAULT_MAX_ENTROPY);
   }
 
   @Override protected BaseRandom createRng(byte[] seed) throws SeedException {
-    EntropyBlockingReseedingSplittableRandomAdapter out = createRng();
+    EntropyBlockingSplittableRandomAdapter out = createRng();
     out.setSeed(seed);
     return out;
   }
@@ -75,7 +75,7 @@ public class EntropyBlockingReseedingSplittableRandomAdapterTest
 
   @Override public void testInitialEntropy() {
     // This test needs a separate instance from all other tests, but createRng() doesn't provide one
-    ReseedingSplittableRandomAdapter random = createRng();
+    SplittableRandomAdapter random = createRng();
     assertEquals(random.getEntropyBits(), Long.SIZE, "Wrong initial entropy");
   }
 
@@ -90,7 +90,7 @@ public class EntropyBlockingReseedingSplittableRandomAdapterTest
     SimpleRandomSeeder thread = new SimpleRandomSeeder(generator);
     try {
       final BaseSplittableRandomAdapter adapter =
-          new EntropyBlockingReseedingSplittableRandomAdapter(
+          new EntropyBlockingSplittableRandomAdapter(
               generator, thread, EntropyBlockingTestUtils.DEFAULT_MAX_ENTROPY);
       final BaseSplittableRandomAdapter clone = SerializableTester.reserialize(adapter);
       assertEquals(adapter, clone);
@@ -100,7 +100,7 @@ public class EntropyBlockingReseedingSplittableRandomAdapterTest
   }
 
   @Override protected Class<? extends BaseRandom> getClassUnderTest() {
-    return EntropyBlockingReseedingSplittableRandomAdapter.class;
+    return EntropyBlockingSplittableRandomAdapter.class;
   }
 
   @Override @Test(retryAnalyzer = FlakyRetryAnalyzer.class) public void testReseeding() {
@@ -108,8 +108,8 @@ public class EntropyBlockingReseedingSplittableRandomAdapterTest
         new SemiFakeSeedGenerator(ThreadLocalRandom.current(), "testReseeding");
     SimpleRandomSeeder seeder = new SimpleRandomSeeder(generator);
     try {
-      EntropyBlockingReseedingSplittableRandomAdapter random =
-          new EntropyBlockingReseedingSplittableRandomAdapter(generator, seeder,
+      EntropyBlockingSplittableRandomAdapter random =
+          new EntropyBlockingSplittableRandomAdapter(generator, seeder,
               EntropyBlockingTestUtils.DEFAULT_MAX_ENTROPY);
       RandomTestUtils.checkReseeding(generator, random, false);
     } finally {
@@ -166,14 +166,14 @@ public class EntropyBlockingReseedingSplittableRandomAdapterTest
   @Override @Test public void testDump() throws SeedException {
     SimpleRandomSeeder thread = new SimpleRandomSeeder(DEFAULT_INSTANCE);
     try {
-      EntropyBlockingReseedingSplittableRandomAdapter firstInstance =
-          new EntropyBlockingReseedingSplittableRandomAdapter(getTestSeedGenerator(), thread,
+      EntropyBlockingSplittableRandomAdapter firstInstance =
+          new EntropyBlockingSplittableRandomAdapter(getTestSeedGenerator(), thread,
                         EntropyBlockingTestUtils.DEFAULT_MAX_ENTROPY);
       SimpleRandomSeeder otherThread =
           new SimpleRandomSeeder(new FakeSeedGenerator("Different reseeder"));
       try {
-        EntropyBlockingReseedingSplittableRandomAdapter secondInstance =
-            new EntropyBlockingReseedingSplittableRandomAdapter(getTestSeedGenerator(), otherThread,
+        EntropyBlockingSplittableRandomAdapter secondInstance =
+            new EntropyBlockingSplittableRandomAdapter(getTestSeedGenerator(), otherThread,
                 EntropyBlockingTestUtils.DEFAULT_MAX_ENTROPY);
         assertNotEquals(secondInstance.dump(), firstInstance.dump());
       } finally {
@@ -193,7 +193,7 @@ public class EntropyBlockingReseedingSplittableRandomAdapterTest
         defaultThreadFactory);
     SemiFakeSeedGenerator sameThreadSeedGen
         = new SemiFakeSeedGenerator(ThreadLocalRandom.current(), "sameThreadSeedGen");
-    EntropyBlockingReseedingSplittableRandomAdapter random = new EntropyBlockingReseedingSplittableRandomAdapter(
+    EntropyBlockingSplittableRandomAdapter random = new EntropyBlockingSplittableRandomAdapter(
         sameThreadSeedGen, seeder, 0L);
     random.nextLong();
     sameThreadSeedGen.setThrowException(true);
@@ -208,7 +208,7 @@ public class EntropyBlockingReseedingSplittableRandomAdapterTest
 
   @SuppressWarnings("MismatchedReadAndWriteOfArray")
   @Test(timeOut = 10_000L) public void testGetSeed() {
-    EntropyBlockingReseedingSplittableRandomAdapter random = createRng();
+    EntropyBlockingSplittableRandomAdapter random = createRng();
     byte[] seed = ((BaseRandom) random).getSeed();
     byte[] seed2 = new byte[Long.BYTES];
     byte[] zero = new byte[Long.BYTES];

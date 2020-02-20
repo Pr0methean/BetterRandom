@@ -10,12 +10,12 @@ import java.util.concurrent.atomic.AtomicReference;
 import javax.annotation.Nullable;
 
 /**
- * A {@link ReseedingSplittableRandomAdapter} that blocks waiting to be reseeded if its entropy
+ * A {@link SplittableRandomAdapter} that blocks waiting to be reseeded if its entropy
  * drops too low. Reseeding is done on a {@link SimpleRandomSeeder} if provided, and on the calling
  * thread otherwise. Entropy count is thread-local,
  * so consuming entropy on one thread won't directly cause blocking on another thread.
  */
-public class EntropyBlockingReseedingSplittableRandomAdapter extends ReseedingSplittableRandomAdapter {
+public class EntropyBlockingSplittableRandomAdapter extends SplittableRandomAdapter {
 
   private static final long serialVersionUID = -779886405514766937L;
   private final AtomicReference<SeedGenerator> sameThreadSeedGen;
@@ -26,13 +26,13 @@ public class EntropyBlockingReseedingSplittableRandomAdapter extends ReseedingSp
    *
    * @param randomSeeder the {@link SimpleRandomSeeder} that will reseed this. Its seed
    *     generator is also used on the calling thread to generate an initial seed when this
-   *     {@link EntropyBlockingReseedingSplittableRandomAdapter} is used the first time on each
+   *     {@link EntropyBlockingSplittableRandomAdapter} is used the first time on each
    *     thread.
    * @param minimumEntropy the minimum entropy; operations that would drop the entropy below this
    *     amount will instead block until the calling thread's PRNG is reseeded. Should generally
    *     be zero or negative.
    */
-  public EntropyBlockingReseedingSplittableRandomAdapter(
+  public EntropyBlockingSplittableRandomAdapter(
       SimpleRandomSeeder randomSeeder, long minimumEntropy) {
     this(randomSeeder.getSeedGenerator(), randomSeeder, minimumEntropy);
   }
@@ -46,7 +46,7 @@ public class EntropyBlockingReseedingSplittableRandomAdapter extends ReseedingSp
    *     amount will instead block until the calling thread's PRNG is reseeded. Should generally
    *     be zero or negative.
    */
-  public EntropyBlockingReseedingSplittableRandomAdapter(
+  public EntropyBlockingSplittableRandomAdapter(
       @Nullable SeedGenerator seedGenerator, SimpleRandomSeeder randomSeeder, long minimumEntropy) {
     super(seedGenerator, randomSeeder);
     this.minimumEntropy = minimumEntropy;

@@ -21,7 +21,7 @@ import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
-public class ReseedingSplittableRandomAdapterTest
+public class SplittableRandomAdapterTest
     extends SingleThreadSplittableRandomAdapterTest {
 
   private SimpleRandomSeeder thread;
@@ -39,12 +39,12 @@ public class ReseedingSplittableRandomAdapterTest
     return EntropyCheckMode.LOWER_BOUND;
   }
 
-  @Override protected ReseedingSplittableRandomAdapter createRng() throws SeedException {
-    return new ReseedingSplittableRandomAdapter(getTestSeedGenerator(), thread);
+  @Override protected SplittableRandomAdapter createRng() throws SeedException {
+    return new SplittableRandomAdapter(getTestSeedGenerator(), thread);
   }
 
   @Override protected BaseRandom createRng(byte[] seed) throws SeedException {
-    ReseedingSplittableRandomAdapter out = createRng();
+    SplittableRandomAdapter out = createRng();
     out.setSeed(seed);
     return out;
   }
@@ -56,7 +56,7 @@ public class ReseedingSplittableRandomAdapterTest
 
   @Override public void testInitialEntropy() {
     // This test needs a separate instance from all other tests, but createRng() doesn't provide one
-    ReseedingSplittableRandomAdapter random = createRng();
+    SplittableRandomAdapter random = createRng();
     assertEquals(random.getEntropyBits(), Long.SIZE, "Wrong initial entropy");
   }
 
@@ -69,7 +69,7 @@ public class ReseedingSplittableRandomAdapterTest
     try {
       SimpleRandomSeeder thread = new SimpleRandomSeeder(DEFAULT_SEED_GENERATOR);
       final BaseSplittableRandomAdapter adapter =
-          new ReseedingSplittableRandomAdapter(DEFAULT_INSTANCE, thread);
+          new SplittableRandomAdapter(DEFAULT_INSTANCE, thread);
       final BaseSplittableRandomAdapter clone = SerializableTester.reserialize(adapter);
       assertEquals(adapter, clone, "Unequal after serialization round-trip");
     } finally {
@@ -78,7 +78,7 @@ public class ReseedingSplittableRandomAdapterTest
   }
 
   @Override protected Class<? extends BaseRandom> getClassUnderTest() {
-    return ReseedingSplittableRandomAdapter.class;
+    return SplittableRandomAdapter.class;
   }
 
   @Override @Test(enabled = false) public void testRepeatability() {
@@ -94,8 +94,7 @@ public class ReseedingSplittableRandomAdapterTest
     SeedGenerator generator = new SemiFakeSeedGenerator(ThreadLocalRandom.current(), "testReseeding");
     SimpleRandomSeeder seeder = new SimpleRandomSeeder(generator);
     try {
-      ReseedingSplittableRandomAdapter random = new
-          ReseedingSplittableRandomAdapter(generator, seeder);
+      SplittableRandomAdapter random = new SplittableRandomAdapter(generator, seeder);
       RandomTestUtils.checkReseeding(generator, random, false);
     } finally {
       seeder.shutDown();
@@ -159,13 +158,13 @@ public class ReseedingSplittableRandomAdapterTest
   @Override @Test public void testDump() throws SeedException {
     SimpleRandomSeeder thread = new SimpleRandomSeeder(DEFAULT_INSTANCE);
     try {
-      ReseedingSplittableRandomAdapter firstInstance
-          = new ReseedingSplittableRandomAdapter(getTestSeedGenerator(), thread);
+      SplittableRandomAdapter firstInstance
+          = new SplittableRandomAdapter(getTestSeedGenerator(), thread);
       SimpleRandomSeeder otherThread =
           new SimpleRandomSeeder(new FakeSeedGenerator("Different reseeder"));
       try {
-        ReseedingSplittableRandomAdapter secondInstance =
-            new ReseedingSplittableRandomAdapter(getTestSeedGenerator(), otherThread);
+        SplittableRandomAdapter secondInstance =
+            new SplittableRandomAdapter(getTestSeedGenerator(), otherThread);
         assertNotEquals(secondInstance.dump(), firstInstance.dump());
       } finally {
         otherThread.shutDown();

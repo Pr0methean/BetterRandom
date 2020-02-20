@@ -9,16 +9,16 @@ import io.github.pr0methean.betterrandom.prng.BaseRandom;
 import io.github.pr0methean.betterrandom.seed.SeedException;
 import io.github.pr0methean.betterrandom.seed.SimpleRandomSeeder;
 
-public class EntropyBlockingReseedingSplittableRandomAdapterNullTest
-    extends EntropyBlockingReseedingSplittableRandomAdapterTest {
-  @Override protected EntropyBlockingReseedingSplittableRandomAdapter createRng()
+public class EntropyBlockingSplittableRandomAdapterNullTest
+    extends EntropyBlockingSplittableRandomAdapterTest {
+  @Override protected EntropyBlockingSplittableRandomAdapter createRng()
       throws SeedException {
-    return new EntropyBlockingReseedingSplittableRandomAdapter(getTestSeedGenerator(), null,
+    return new EntropyBlockingSplittableRandomAdapter(getTestSeedGenerator(), null,
         EntropyBlockingTestUtils.DEFAULT_MAX_ENTROPY);
   }
 
-  private EntropyBlockingReseedingSplittableRandomAdapter createRngLargeEntropyLimit() {
-    return new EntropyBlockingReseedingSplittableRandomAdapter(getTestSeedGenerator(), null,
+  private EntropyBlockingSplittableRandomAdapter createRngLargeEntropyLimit() {
+    return new EntropyBlockingSplittableRandomAdapter(getTestSeedGenerator(), null,
         EntropyBlockingTestUtils.VERY_LOW_MINIMUM_ENTROPY);
   }
 
@@ -33,7 +33,7 @@ public class EntropyBlockingReseedingSplittableRandomAdapterNullTest
 
   @Override public void testSerializable() throws SeedException {
     final BaseSplittableRandomAdapter adapter =
-        new EntropyBlockingReseedingSplittableRandomAdapter(new SimpleRandomSeeder(DEFAULT_INSTANCE),
+        new EntropyBlockingSplittableRandomAdapter(new SimpleRandomSeeder(DEFAULT_INSTANCE),
             EntropyBlockingTestUtils.DEFAULT_MAX_ENTROPY);
     final BaseSplittableRandomAdapter clone = SerializableTester.reserialize(adapter);
     assertEquals(adapter, clone, "Unequal after serialization round-trip");

@@ -14,22 +14,21 @@ import io.github.pr0methean.betterrandom.seed.SeedGenerator;
 import org.mockito.Mockito;
 import org.testng.annotations.Test;
 
-public class ReseedingSplittableRandomAdapterNullTest extends ReseedingSplittableRandomAdapterTest {
-  @Override protected ReseedingSplittableRandomAdapter createRng() throws SeedException {
-    return new ReseedingSplittableRandomAdapter(getTestSeedGenerator(), null);
+public class SplittableRandomAdapterNullTest extends SplittableRandomAdapterTest {
+  @Override protected SplittableRandomAdapter createRng() throws SeedException {
+    return new SplittableRandomAdapter(getTestSeedGenerator(), null);
   }
 
   @Override public void testSerializable() throws SeedException {
     final BaseSplittableRandomAdapter adapter =
-        new ReseedingSplittableRandomAdapter(DEFAULT_INSTANCE, null);
+        new SplittableRandomAdapter(DEFAULT_INSTANCE, null);
     final BaseSplittableRandomAdapter clone = SerializableTester.reserialize(adapter);
     assertEquals(adapter, clone, "Unequal after serialization round-trip");
   }
 
   @Override public void testReseeding() {
     SeedGenerator generator = Mockito.spy(SecureRandomSeedGenerator.DEFAULT_INSTANCE);
-    ReseedingSplittableRandomAdapter random = new
-        ReseedingSplittableRandomAdapter(generator, null);
+    SplittableRandomAdapter random = new SplittableRandomAdapter(generator, null);
     random.nextBytes(new byte[128]);
     Mockito.verify(generator, Mockito.times(1)).generateSeed(anyInt());
     Mockito.verify(generator, Mockito.never()).generateSeed(any(byte[].class));
