@@ -48,6 +48,11 @@ public class RandomDotOrgSeedGeneratorHermeticTest extends PowerMockTestCase {
           "[\"gAlhFSSjLy+u5P/Cz92BH4R3NZ0+j8UHNeIR02CChoQ=\"]," +
           "\"completionTime\":\"2018-05-06 19:54:31Z\"},\"bitsUsed\":256,\"bitsLeft\":996831," +
           "\"requestsLeft\":199912,\"advisoryDelay\":290},\"id\":27341}").getBytes(UTF8);
+  @SuppressWarnings("HardcodedFileSeparator") public static final byte[] RESPONSE_32_BAD_BASE64 =
+      ("{\"jsonrpc\":\"2.0\",\"result\":{\"random\":{\"data\":" +
+          "[\"\uD83D\uDCA9\"]," +
+          "\"completionTime\":\"2018-05-06 19:54:31Z\"},\"bitsUsed\":256,\"bitsLeft\":996831," +
+          "\"requestsLeft\":199912,\"advisoryDelay\":290},\"id\":27341}").getBytes(UTF8);
   @SuppressWarnings("HardcodedLineSeparator") public static final byte[] RESPONSE_32_OLD_API =
       ("19\ne0\ne9\n6b\n85\nbf\na5\n07\na7\ne9\n65\n2e\n90\n42\naa\n02\n2d\nc4\n67\n2a\na3\n32\n" +
           "9d\nbc\nd1\n9b\n2f\n7c\nf3\n60\n30\ne5").getBytes(UTF8);
@@ -227,6 +232,13 @@ public class RandomDotOrgSeedGeneratorHermeticTest extends PowerMockTestCase {
     expectAndGetException(625);
   }
 
+  @SuppressWarnings("ThrowableNotThrown") @Test public void testInvalidBase64ResponseJsonApi()
+      throws Exception {
+    RandomDotOrgSeedGenerator.setApiKey(UUID.randomUUID());
+    mockRandomDotOrgResponse(RESPONSE_32_BAD_BASE64);
+    expectAndGetException(32);
+  }
+
   @Test public void testInvalidResponseJsonApi() throws Exception {
     RandomDotOrgSeedGenerator.setApiKey(UUID.randomUUID());
     try {
@@ -310,5 +322,23 @@ public class RandomDotOrgSeedGeneratorHermeticTest extends PowerMockTestCase {
     } finally {
       setSslSocketFactory(null);
     }
+  }
+
+  @Test public void testRandomFuzzJsonApi() throws Exception {
+    RandomDotOrgSeedGenerator.setApiKey(UUID.randomUUID());
+    fuzzResponse();
+    expectAndGetException(32);
+  }
+
+  @Test public void testRandomFuzzOldApi() throws Exception {
+    RandomDotOrgSeedGenerator.setApiKey(null);
+    fuzzResponse();
+    expectAndGetException(32);
+  }
+
+  private void fuzzResponse() throws Exception {
+    byte[] fuzz = new byte[RESPONSE_32_JSON.length];
+    ThreadLocalRandom.current().nextBytes(fuzz);
+    mockRandomDotOrgResponse(fuzz);
   }
 }

@@ -1,11 +1,11 @@
 package io.github.pr0methean.betterrandom.prng.adapter;
 
-import io.github.pr0methean.betterrandom.prng.EntropyBlockingHelper;
 import io.github.pr0methean.betterrandom.seed.SeedException;
 import io.github.pr0methean.betterrandom.seed.SeedGenerator;
 import io.github.pr0methean.betterrandom.seed.SimpleRandomSeeder;
 import java.util.Random;
 import java.util.concurrent.atomic.AtomicReference;
+import java.util.concurrent.locks.Condition;
 import javax.annotation.Nullable;
 
 /**
@@ -18,43 +18,45 @@ import javax.annotation.Nullable;
 public class EntropyBlockingRandomWrapper extends RandomWrapper {
 
   private static final long serialVersionUID = -853699062122154479L;
-  private final EntropyBlockingHelper helper;
+  private final long minimumEntropy;
   private final AtomicReference<SeedGenerator> sameThreadSeedGen;
+  private final Condition seedingStatusChanged;
+  private volatile transient boolean waitingOnReseed;
 
   public EntropyBlockingRandomWrapper(long minimumEntropy, SeedGenerator seedGenerator)
       throws SeedException {
     super(seedGenerator);
+    this.minimumEntropy = minimumEntropy;
     sameThreadSeedGen = new AtomicReference<>(seedGenerator);
-    helper = new EntropyBlockingHelper(minimumEntropy, sameThreadSeedGen, this, this.entropyBits,
-        lock);
-    helper.checkMaxOutputAtOnce();
+    this.seedingStatusChanged = this.lock.newCondition();
+    checkMaxOutputAtOnce();
   }
 
   public EntropyBlockingRandomWrapper(byte[] seed, long minimumEntropy,
       @Nullable SeedGenerator sameThreadSeedGen) {
     super(seed);
+    this.minimumEntropy = minimumEntropy;
     this.sameThreadSeedGen = new AtomicReference<>(sameThreadSeedGen);
-    helper = new EntropyBlockingHelper(minimumEntropy, this.sameThreadSeedGen, this,
-        this.entropyBits, lock);
-    helper.checkMaxOutputAtOnce();
+    this.seedingStatusChanged = this.lock.newCondition();
+    checkMaxOutputAtOnce();
   }
 
   public EntropyBlockingRandomWrapper(long seed, long minimumEntropy,
       @Nullable SeedGenerator sameThreadSeedGen) {
     super(seed);
+    this.minimumEntropy = minimumEntropy;
     this.sameThreadSeedGen = new AtomicReference<>(sameThreadSeedGen);
-    helper = new EntropyBlockingHelper(minimumEntropy, this.sameThreadSeedGen, this,
-        this.entropyBits, lock);
-    helper.checkMaxOutputAtOnce();
+    this.seedingStatusChanged = this.lock.newCondition();
+    checkMaxOutputAtOnce();
   }
 
   public EntropyBlockingRandomWrapper(Random wrapped, long minimumEntropy,
       @Nullable SeedGenerator sameThreadSeedGen) {
     super(wrapped);
+    this.minimumEntropy = minimumEntropy;
     this.sameThreadSeedGen = new AtomicReference<>(sameThreadSeedGen);
-    helper = new EntropyBlockingHelper(minimumEntropy, this.sameThreadSeedGen, this,
-        this.entropyBits, lock);
-    helper.checkMaxOutputAtOnce();
+    this.seedingStatusChanged = this.lock.newCondition();
+    checkMaxOutputAtOnce();
   }
 
   @Override public void nextBytes(byte[] bytes) {
@@ -69,46 +71,107 @@ public class EntropyBlockingRandomWrapper extends RandomWrapper {
   }
 
   public void setSameThreadSeedGen(@Nullable SeedGenerator newSeedGen) {
-    helper.setSameThreadSeedGen(newSeedGen);
+    if (sameThreadSeedGen.getAndSet(newSeedGen) != newSeedGen) {
+      onSeedingStateChanged(false);
+    }
   }
 
   @Override protected void setSeedInternal(byte[] seed) {
     super.setSeedInternal(seed);
-    if (helper != null) {
-      helper.onSeedingStateChanged(true);
-    }
-  }
+    onSeedingStateChanged(true);
+ }
 
   @Override public void setRandomSeeder(@Nullable SimpleRandomSeeder randomSeeder) {
     super.setRandomSeeder(randomSeeder);
-    helper.onSeedingStateChanged(false);
+    onSeedingStateChanged(false);
   }
 
   @Override protected void creditEntropyForNewSeed(int seedLength) {
-    if (helper != null) {
-      helper.creditEntropyForNewSeed(seedLength);
-    }
+    final long effectiveBits = Math.min(seedLength, getNewSeedLength()) * 8L;
+    entropyBits.updateAndGet(oldCount -> Math.max(oldCount, effectiveBits));
   }
 
   @Override protected void debitEntropy(long bits) {
-    helper.debitEntropy(bits);
+    while (entropyBits.addAndGet(-bits) < minimumEntropy) {
+      SeedGenerator seedGenerator;
+      lock.lock();
+      try {
+        SimpleRandomSeeder seeder = getRandomSeeder();
+        if (seeder != null) {
+          waitingOnReseed = true;
+          seeder.wakeUp();
+          try {
+            seedingStatusChanged.await();
+          } catch (InterruptedException ignored) {
+            // Retry
+          }
+          continue;
+        }
+        seedGenerator = sameThreadSeedGen.get();
+      } finally {
+        lock.unlock();
+      }
+      if (seedGenerator == null) {
+        throw new IllegalStateException("Out of entropy and no way to reseed");
+      }
+      waitingOnReseed = false;
+      // Reseed on calling thread
+      int newSeedLength = getNewSeedLength();
+      byte[] newSeed = seed.length == newSeedLength ? seed : new byte[newSeedLength];
+      seedGenerator.generateSeed(newSeed);
+      setSeed(newSeed);
+    }
   }
 
   @Override public void setSeed(long seed) {
-    if (helper == null) {
+    if (seedingStatusChanged == null) {
       super.setSeed(seed);
       return;
     }
     lock.lock();
     try {
       super.setSeed(seed);
-      helper.onSeedingStateChanged(true);
+      onSeedingStateChanged(true);
     } finally {
       lock.unlock();
     }
   }
 
   @Override public boolean needsReseedingEarly() {
-    return helper.isWaitingOnReseed();
+    return waitingOnReseed;
+  }
+
+  /**
+   * Ensures that the attached PRNG can output 64 bits between reseedings, given that its current
+   * entropy is the maximum possible. Methods such as {@link Random#nextLong()} and
+   * {@link Random#nextDouble()} would become much slower and more complex if we didn't require this.
+   *
+   * @throws IllegalArgumentException if the PRNG cannot output 64 bits between reseedings
+   */
+  protected void checkMaxOutputAtOnce() {
+    long maxOutputAtOnce = 8 * entropyBits.get() - minimumEntropy;
+    if (maxOutputAtOnce < Long.SIZE) {
+      throw new IllegalArgumentException("Need to be able to output 64 bits at once");
+    }
+  }
+
+  /**
+   * Called when a new seed generator or {@link SimpleRandomSeeder} is attached or a
+   * new seed is generated, so that operations can unblock.
+   *
+   * @param reseeded true if the seed has changed; false otherwise
+   */
+  protected void onSeedingStateChanged(boolean reseeded) {
+    if (reseeded) {
+      waitingOnReseed = false;
+    }
+    lock.lock();
+    try {
+      if (seedingStatusChanged != null) {
+        seedingStatusChanged.signalAll();
+      }
+    } finally {
+      lock.unlock();
+    }
   }
 }
