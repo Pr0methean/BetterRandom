@@ -35,6 +35,9 @@
     <orderEntry type="library" name="Maven: commons-codec:commons-codec:1.14" level="project" />
     <orderEntry type="library" name="Maven: com.google.guava:guava:28.2-android" level="project" />
     <orderEntry type="library" name="Maven: net.sourceforge.streamsupport:streamsupport:1.7.1" level="project" />
+    <orderEntry type="library" scope="RUNTIME" name="Maven: net.sf.proguard:proguard-base:6.2.2" level="project" />
+    <orderEntry type="library" name="Maven: com.google.guava:guava:28.2-jre" level="project" />
+    <orderEntry type="library" name="Maven: org.checkerframework:checker-qual:2.10.0" level="project" />
     <orderEntry type="library" name="Maven: org.apache.logging.log4j:log4j-slf4j-impl:2.13.0" level="project" />
     <orderEntry type="library" name="Maven: org.slf4j:slf4j-api:1.7.25" level="project" />
     <orderEntry type="library" name="Maven: org.apache.logging.log4j:log4j-api:2.13.0" level="project" />
