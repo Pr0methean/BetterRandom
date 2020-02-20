@@ -7,7 +7,7 @@ sudo mkdir /var/lib/apt/lists
 sudo rm /var/cache/apt/*.bin
 sudo apt-get update
 echo '[prepare-azure-release.sh] Installing Apt packages...'
-sudo apt-get -y install ruby2.5-dev markdown recode
+sudo apt-get -y install ruby-dev markdown recode
 echo '[prepare-azure-release.sh] Installing Gems...'
 sudo gem install github-markup commonmarker
 echo '[prepare-azure-release.sh] Configuring Git...'
