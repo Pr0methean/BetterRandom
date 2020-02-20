@@ -86,11 +86,6 @@ public class EntropyBlockingRandomWrapper extends RandomWrapper {
     onSeedingStateChanged(false);
   }
 
-  @Override protected void creditEntropyForNewSeed(int seedLength) {
-    final long effectiveBits = Math.min(seedLength, getNewSeedLength()) * 8L;
-    entropyBits.updateAndGet(oldCount -> Math.max(oldCount, effectiveBits));
-  }
-
   @Override protected void debitEntropy(long bits) {
     while (entropyBits.addAndGet(-bits) < minimumEntropy) {
       SeedGenerator seedGenerator;
