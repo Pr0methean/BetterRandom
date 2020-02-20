@@ -30,11 +30,6 @@ public class SemiFakeSeedGenerator extends FakeSeedGenerator {
     return output;
   }
 
-  @Override
-  public boolean isWorthTrying() {
-    return true;
-  }
-
   @Override public boolean equals(final Object o) {
     if (this == o) {
       return true;
