@@ -158,10 +158,6 @@ public class ThreadLocalRandomWrapper extends RandomWrapper {
     return getWrapped().nextGaussian();
   }
 
-  @Override public boolean usesParallelStreams() {
-    return true;
-  }
-
   @Override public double nextDouble() {
     return getWrapped().nextDouble();
   }

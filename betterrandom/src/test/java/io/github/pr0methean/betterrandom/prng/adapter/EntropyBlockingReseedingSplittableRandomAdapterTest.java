@@ -11,7 +11,6 @@ import com.google.common.util.concurrent.Uninterruptibles;
 import io.github.pr0methean.betterrandom.FlakyRetryAnalyzer;
 import io.github.pr0methean.betterrandom.prng.BaseRandom;
 import io.github.pr0methean.betterrandom.prng.RandomTestUtils;
-import io.github.pr0methean.betterrandom.prng.RandomTestUtils.EntropyCheckMode;
 import io.github.pr0methean.betterrandom.seed.FakeSeedGenerator;
 import io.github.pr0methean.betterrandom.seed.SeedException;
 import io.github.pr0methean.betterrandom.seed.SeedGenerator;
@@ -47,10 +46,6 @@ public class EntropyBlockingReseedingSplittableRandomAdapterTest
   @Override @AfterMethod public void tearDown() {
     thread.stopIfEmpty();
     thread = null;
-  }
-
-  @Override protected EntropyCheckMode getEntropyCheckMode() {
-    return EntropyCheckMode.LOWER_BOUND;
   }
 
   @Override protected EntropyBlockingReseedingSplittableRandomAdapter createRng()
@@ -106,14 +101,6 @@ public class EntropyBlockingReseedingSplittableRandomAdapterTest
 
   @Override protected Class<? extends BaseRandom> getClassUnderTest() {
     return EntropyBlockingReseedingSplittableRandomAdapter.class;
-  }
-
-  @Override @Test(enabled = false) public void testRepeatability() {
-    // No-op.
-  }
-
-  @Override @Test(enabled = false) public void testRepeatabilityNextGaussian() {
-    // No-op.
   }
 
   @Override @Test(retryAnalyzer = FlakyRetryAnalyzer.class) public void testReseeding() {
@@ -176,14 +163,6 @@ public class EntropyBlockingReseedingSplittableRandomAdapterTest
     createRng().setRandomSeeder(thread);
   }
 
-  @Override @Test(enabled = false) public void testSeedTooShort() {
-    // No-op.
-  }
-
-  @Override @Test(enabled = false) public void testSeedTooLong() {
-    // No-op.
-  }
-
   @Override @Test public void testDump() throws SeedException {
     SimpleRandomSeeder thread = new SimpleRandomSeeder(DEFAULT_INSTANCE);
     try {
@@ -203,13 +182,6 @@ public class EntropyBlockingReseedingSplittableRandomAdapterTest
     } finally {
       thread.shutDown();
     }
-  }
-
-  /**
-   * Assertion-free because thread-local.
-   */
-  @Override @Test public void testThreadSafety() {
-    testThreadSafetyVsCrashesOnly(30, functionsForThreadSafetyTest);
   }
 
   @Test public void testRandomSeederThreadUsedFirst() {
