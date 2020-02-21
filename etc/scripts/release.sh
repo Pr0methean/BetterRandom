@@ -12,6 +12,7 @@ rm -f release.properties &&\
 rm -rf ../../.m2/repository/io/github/pr0methean/betterrandom
 if [[ -n "${VERSION}" ]]; then
   mvn versions:set "-DnewVersion=${VERSION}"
+  sed -i "s/${OLDVERSION}<\!--updateme-->/${VERSION}<\!--updateme-->/" pom.xml
   sed -i "s/${OLDVERSION}<\!--updateme-->/${VERSION}<\!--updateme-->/" ../benchmark/pom.xml
   sed -i "s/${OLDVERSION}<\!--updateme-->/${VERSION}<\!--updateme-->/" ../FifoFiller/pom.xml
   git add pom.xml
@@ -34,9 +35,11 @@ if [[ -n "${VERSION}" ]]; then
     NEWVERSION="$p$((n+1))-SNAPSHOT"
     mvn versions:set "-DnewVersion=${NEWVERSION}"
     rm pom.xml.versionsBackup
-    # For some reason we end up with -SNAPSHOT-SNAPSHOT without next 2 lines:
+    # For some reason we end up with -SNAPSHOT-SNAPSHOT without next 3 lines:
+    sed -i "s/${VERSION}-SNAPSHOT<\!--updateme-->/${NEWVERSION}<\!--updateme-->/" pom.xml
     sed -i "s/${VERSION}-SNAPSHOT<\!--updateme-->/${NEWVERSION}<\!--updateme-->/" ../benchmark/pom.xml
     sed -i "s/${VERSION}-SNAPSHOT<\!--updateme-->/${NEWVERSION}<\!--updateme-->/" ../FifoFiller/pom.xml
+    sed -i "s/${VERSION}<\!--updateme-->/${NEWVERSION}<\!--updateme-->/" pom.xml
     sed -i "s/${VERSION}<\!--updateme-->/${NEWVERSION}<\!--updateme-->/" ../benchmark/pom.xml
     sed -i "s/${VERSION}<\!--updateme-->/${NEWVERSION}<\!--updateme-->/" ../FifoFiller/pom.xml
     git add pom.xml

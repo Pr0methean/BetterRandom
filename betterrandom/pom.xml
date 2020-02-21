@@ -281,7 +281,7 @@
   </properties>
   <groupId>io.github.pr0methean.betterrandom</groupId>
   <artifactId>BetterRandom</artifactId>
-  <version>5.0.1-SNAPSHOT</version>
+  <version>5.0.1-SNAPSHOT<!--updateme--></version>
   <name>BetterRandom</name>
   <description>Better, faster random-number generation in Java.
   </description>
@@ -299,7 +299,7 @@
     <url>https://github.com/Pr0methean/BetterRandom</url>
     <connection>scm:git:git://github.com/Pr0methean/BetterRandom.git</connection>
     <developerConnection>scm:git:git@github.com:Pr0methean/BetterRandom.git</developerConnection>
-    <tag>BetterRandom-2.3.14-SNAPSHOT</tag>
+    <tag>BetterRandom-5.0.1-SNAPSHOT</tag>
   </scm>
 
   <distributionManagement>
