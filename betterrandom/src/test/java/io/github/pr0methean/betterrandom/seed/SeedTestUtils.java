@@ -12,11 +12,16 @@ enum SeedTestUtils {
       new byte[SEED_SIZE];
 
   public static void testGenerator(final SeedGenerator seedGenerator, boolean expectNonIdempotent) {
-    final byte[] seed = seedGenerator.generateSeed(SEED_SIZE);
-    assert seed.length == SEED_SIZE : "Failed to generate seed of correct length";
+    testGenerator(seedGenerator, expectNonIdempotent, SEED_SIZE);
+  }
+
+  public static void testGenerator(final SeedGenerator seedGenerator, boolean expectNonIdempotent,
+      int seedSize) {
+    final byte[] seed = seedGenerator.generateSeed(seedSize);
+    assert seed.length == seedSize : "Failed to generate seed of correct length";
     assertFalse(Arrays.equals(seed, ALL_ZEROES), "Generated an all-zeroes seed");
     if (expectNonIdempotent) {
-      final byte[] secondSeed = new byte[SEED_SIZE];
+      final byte[] secondSeed = new byte[seedSize];
       seedGenerator.generateSeed(secondSeed); // Check that other syntax also works
       assertFalse(Arrays.equals(secondSeed, ALL_ZEROES));
       assertFalse(Arrays.equals(seed, secondSeed));

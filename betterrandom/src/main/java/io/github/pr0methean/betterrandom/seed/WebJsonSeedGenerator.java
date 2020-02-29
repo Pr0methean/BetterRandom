@@ -1,6 +1,8 @@
 package io.github.pr0methean.betterrandom.seed;
 
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.Proxy;
 import java.net.URL;
@@ -14,6 +16,8 @@ import javax.annotation.Nullable;
 import javax.net.ssl.HttpsURLConnection;
 import javax.net.ssl.SSLSocketFactory;
 import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
 
 public abstract class WebJsonSeedGenerator implements SeedGenerator {
   /**
@@ -24,6 +28,7 @@ public abstract class WebJsonSeedGenerator implements SeedGenerator {
    * considerations involved in this choice of clock.
    */
   protected static final Clock CLOCK = Clock.systemUTC();
+  protected static final JSONParser JSON_PARSER = new JSONParser();
   private static final int RETRY_DELAY_MS = 10000;
   private static final Duration RETRY_DELAY = Duration.ofMillis(RETRY_DELAY_MS);
   protected static final Lock lock = new ReentrantLock();
@@ -54,6 +59,21 @@ public abstract class WebJsonSeedGenerator implements SeedGenerator {
           parent, key, outputClass));
     }
     return outputClass.cast(child);
+  }
+
+  protected static BufferedReader getResponseReader(final HttpURLConnection connection)
+      throws IOException {
+    return new BufferedReader(new InputStreamReader(connection.getInputStream()));
+  }
+
+  protected static JSONObject parseJsonResponse(HttpURLConnection connection) throws IOException {
+    final JSONObject response;
+    try (final BufferedReader reader = getResponseReader(connection)) {
+      response = (JSONObject) JSON_PARSER.parse(reader);
+    } catch (final ParseException e) {
+      throw new SeedException("Unparseable JSON response from random.org", e);
+    }
+    return response;
   }
 
   public Duration getRetryDelay() {

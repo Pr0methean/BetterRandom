@@ -18,7 +18,6 @@ package io.github.pr0methean.betterrandom.seed;
 import com.google.common.primitives.UnsignedBytes;
 import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
@@ -33,8 +32,6 @@ import java.util.concurrent.atomic.AtomicReference;
 import javax.annotation.Nullable;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
-import org.json.simple.parser.JSONParser;
-import org.json.simple.parser.ParseException;
 
 /**
  * <p>Connects to <a href="https://www.random.org/clients/http/" target="_top">random.org's old
@@ -107,7 +104,6 @@ public final class RandomDotOrgSeedGenerator extends WebJsonSeedGenerator {
 
   private static final AtomicLong REQUEST_ID = new AtomicLong(0);
   private static final AtomicReference<UUID> API_KEY = new AtomicReference<>(null);
-  private static final JSONParser JSON_PARSER = new JSONParser();
   private static final Decoder BASE64 = Base64.getDecoder();
   private static final String BASE_URL = "https://www.random.org";
   /**
@@ -181,12 +177,7 @@ public final class RandomDotOrgSeedGenerator extends WebJsonSeedGenerator {
           out.write(String.format(JSON_REQUEST_FORMAT, currentApiKey, length * Byte.SIZE,
               REQUEST_ID.incrementAndGet()).getBytes(StandardCharsets.UTF_8));
         }
-        final JSONObject response;
-        try (final BufferedReader reader = getResponseReader(connection)) {
-          response = (JSONObject) JSON_PARSER.parse(reader);
-        } catch (final ParseException e) {
-          throw new SeedException("Unparseable JSON response from random.org", e);
-        }
+        final JSONObject response = parseJsonResponse(connection);
         final Object error = response.get("error");
         if (error != null) {
           throw new SeedException(error.toString());
@@ -221,11 +212,6 @@ public final class RandomDotOrgSeedGenerator extends WebJsonSeedGenerator {
         connection.disconnect();
       }
     }
-  }
-
-  private static BufferedReader getResponseReader(final HttpURLConnection connection)
-      throws IOException {
-    return new BufferedReader(new InputStreamReader(connection.getInputStream()));
   }
 
   /**
