@@ -17,8 +17,6 @@ package io.github.pr0methean.betterrandom.seed;
 
 import static io.github.pr0methean.betterrandom.seed.RandomDotOrgSeedGenerator.RANDOM_DOT_ORG_SEED_GENERATOR;
 import static io.github.pr0methean.betterrandom.seed.RandomDotOrgSeedGenerator.setApiKey;
-import static io.github.pr0methean.betterrandom.seed.RandomDotOrgSeedGenerator.setProxy;
-import static io.github.pr0methean.betterrandom.seed.RandomDotOrgSeedGenerator.setSslSocketFactory;
 import static io.github.pr0methean.betterrandom.seed.RandomDotOrgUtils.createSocketFactory;
 import static io.github.pr0methean.betterrandom.seed.RandomDotOrgUtils.haveApiKey;
 import static io.github.pr0methean.betterrandom.seed.RandomDotOrgUtils.setApiKey;
@@ -72,11 +70,11 @@ import org.testng.annotations.Test;
   }
 
   @Test public void testSetProxyOff() {
-    setProxy(Proxy.NO_PROXY);
+    RANDOM_DOT_ORG_SEED_GENERATOR.setProxy(Proxy.NO_PROXY);
     try {
       SeedTestUtils.testGenerator(RANDOM_DOT_ORG_SEED_GENERATOR, true);
     } finally {
-      setProxy(null);
+      RANDOM_DOT_ORG_SEED_GENERATOR.setProxy(null);
     }
   }
 
@@ -86,14 +84,14 @@ import org.testng.annotations.Test;
     } catch (IOException e) {
       throw new SkipException("This test requires an HTTP proxy on localhost:8888");
     }
-    setProxy(proxy);
+    RANDOM_DOT_ORG_SEED_GENERATOR.setProxy(proxy);
     try {
       if (haveApiKey()) {
         setApiKey();
       }
       SeedTestUtils.testGenerator(RANDOM_DOT_ORG_SEED_GENERATOR, true);
     } finally {
-      setProxy(null);
+      RANDOM_DOT_ORG_SEED_GENERATOR.setProxy(null);
       setApiKey(null);
     }
   }
@@ -120,10 +118,10 @@ import org.testng.annotations.Test;
   }
 
   @BeforeSuite public void setUpSuite() {
-    setSslSocketFactory(createSocketFactory()); // run all tests with POODLE protection
+    RANDOM_DOT_ORG_SEED_GENERATOR.setSslSocketFactory(createSocketFactory()); // run all tests with POODLE protection
   }
 
   @AfterSuite public void tearDownSuite() {
-    setSslSocketFactory(null);
+    RANDOM_DOT_ORG_SEED_GENERATOR.setSslSocketFactory(null);
   }
 }
