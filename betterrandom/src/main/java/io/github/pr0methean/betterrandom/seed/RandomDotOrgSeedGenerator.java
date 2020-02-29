@@ -70,22 +70,49 @@ import org.json.simple.parser.ParseException;
  * @author Daniel Dyer (old API)
  * @author Chris Hennick (new API; refactoring)
  */
-public enum RandomDotOrgSeedGenerator implements SeedGenerator {
+public final class RandomDotOrgSeedGenerator implements SeedGenerator {
   /**
    * This version of the client may make HTTP requests as fast as your computer is capable of
    * sending them. Since it is inherently spammy, it is recommended only when you know your usage is
    * light and/or no other source of randomness will do.
    */
-  RANDOM_DOT_ORG_SEED_GENERATOR(false),
+  public static final RandomDotOrgSeedGenerator RANDOM_DOT_ORG_SEED_GENERATOR
+      = new RandomDotOrgSeedGenerator(false);
 
   /**
    * Upon a failed request, this version of the client waits 10 seconds before trying again. If
    * called again during that waiting period, throws {@link SeedException}. The {@link
    * DefaultSeedGenerator} uses this version.
    */
-  DELAYED_RETRY(true);
+  public static final RandomDotOrgSeedGenerator DELAYED_RETRY
+      = new RandomDotOrgSeedGenerator(true);
+
   private static final String JSON_REQUEST_FORMAT = "{\"jsonrpc\":\"2.0\"," +
       "\"method\":\"generateBlobs\",\"params\":{\"apiKey\":\"%s\",\"n\":1,\"size\":%d},\"id\":%d}";
+  private static final long serialVersionUID = 8901705097958111045L;
+
+  /**
+   * The value for the HTTP User-Agent request header for this seed generator's HTTP requests.
+   *
+   * @return the value for User-Agent
+   */
+  protected String getUserAgent() {
+    return USER_AGENT;
+  }
+
+  /**
+   * The maximum number of bytes the site will provide in response to one request. Seeds larger than
+   * this will be generated using multiple requests.
+   *
+   * @return the maximum request size in bytes
+   */
+  protected int getMaxRequestSize() {
+    return MAX_REQUEST_SIZE;
+  }
+
+  private Object readResolve() {
+    return useRetryDelay ? DELAYED_RETRY : RANDOM_DOT_ORG_SEED_GENERATOR;
+  }
 
   private static final AtomicLong REQUEST_ID = new AtomicLong(0);
   private static final AtomicReference<UUID> API_KEY = new AtomicReference<>(null);
@@ -105,15 +132,8 @@ public enum RandomDotOrgSeedGenerator implements SeedGenerator {
    */
   @SuppressWarnings("HardcodedFileSeparator") private static final String RANDOM_URL =
       BASE_URL + "/integers/?num={0,number,0}&min=0&max=255&col=1&base=16&format=plain&rnd=new";
-  /**
-   * Used to identify the client to the random.org service.
-   */
   private static final String USER_AGENT = RandomDotOrgSeedGenerator.class.getName();
-  /**
-   * Random.org does not allow requests for more than 10k integers at once. This field is
-   * package-visible for testing.
-   */
-  static final int MAX_REQUEST_SIZE = 10000;
+  private static final int MAX_REQUEST_SIZE = 10000;
   private static final int RETRY_DELAY_MS = 10000;
   private static final Duration RETRY_DELAY = Duration.ofMillis(RETRY_DELAY_MS);
   private static final Lock lock = new ReentrantLock();
@@ -179,7 +199,7 @@ public enum RandomDotOrgSeedGenerator implements SeedGenerator {
   }
 
   /* Package-visible for testing. */
-  static HttpURLConnection openConnection(final URL url) throws IOException {
+  HttpURLConnection openConnection(final URL url) throws IOException {
     final Proxy currentProxy = proxy.get();
     final HttpsURLConnection connection =
         (HttpsURLConnection) ((currentProxy == null) ? url.openConnection() :
@@ -189,7 +209,7 @@ public enum RandomDotOrgSeedGenerator implements SeedGenerator {
       connection.setSSLSocketFactory(currentSocketFactory);
     }
     connection.setRequestProperty("Content-Type", "application/json");
-    connection.setRequestProperty("User-Agent", USER_AGENT);
+    connection.setRequestProperty("User-Agent", getUserAgent());
     return connection;
   }
 
@@ -202,7 +222,7 @@ public enum RandomDotOrgSeedGenerator implements SeedGenerator {
    * @throws IOException If a connection error occurs.
    * @throws SeedException If random.org sends a malformed response body.
    */
-  private static void downloadBytes(byte[] seed,
+  private void downloadBytes(byte[] seed,
       int offset, final int length) throws IOException {
     HttpURLConnection connection = null;
     lock.lock();
@@ -301,7 +321,7 @@ public enum RandomDotOrgSeedGenerator implements SeedGenerator {
     try {
       int count = 0;
       while (count < length) {
-        int batchSize = Math.min(length - count, MAX_REQUEST_SIZE);
+        int batchSize = Math.min(length - count, getMaxRequestSize());
         downloadBytes(seed, count, batchSize);
         count += batchSize;
       }
