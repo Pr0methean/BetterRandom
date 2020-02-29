@@ -1,31 +1,24 @@
 package io.github.pr0methean.betterrandom.seed;
 
-import static io.github.pr0methean.betterrandom.seed.RandomDotOrgUtils.createProxy;
 import static io.github.pr0methean.betterrandom.seed.RandomDotOrgUtils.createSocketFactory;
 import static io.github.pr0methean.betterrandom.seed.SeedTestUtils.testGenerator;
-import static org.mockito.ArgumentMatchers.any;
+import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotNull;
 import static org.testng.Assert.assertTrue;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.net.Proxy;
-import java.net.URL;
-import java.nio.charset.Charset;
-import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.Base64;
 import java.util.UUID;
 import java.util.concurrent.ThreadLocalRandom;
-import javax.annotation.Nullable;
 import org.json.simple.parser.ParseException;
 import org.powermock.api.mockito.PowerMockito;
 import org.powermock.api.mockito.mockpolicies.Slf4jMockPolicy;
 import org.powermock.core.classloader.annotations.MockPolicy;
 import org.powermock.core.classloader.annotations.PowerMockIgnore;
 import org.powermock.core.classloader.annotations.PrepareForTest;
-import org.powermock.modules.testng.PowerMockTestCase;
 import org.testng.Assert;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
@@ -34,22 +27,22 @@ import org.testng.annotations.Test;
 @PowerMockIgnore({"javax.management.*", "javax.script.*", "jdk.nashorn.*", "javax.net.ssl.*",
     "javax.security.*"}) @MockPolicy(Slf4jMockPolicy.class)
 @PrepareForTest(RandomDotOrgSeedGenerator.class) @Test(singleThreaded = true)
-public class RandomDotOrgSeedGeneratorHermeticTest extends PowerMockTestCase {
+public class RandomDotOrgSeedGeneratorHermeticTest
+    extends AbstractWebJsonSeedGeneratorHermeticTest<RandomDotOrgSeedGenerator> {
 
-  private static final Charset UTF8 = StandardCharsets.UTF_8;
   @SuppressWarnings("HardcodedFileSeparator") public static final byte[] RESPONSE_32_JSON =
       ("{\"jsonrpc\":\"2.0\",\"result\":{\"random\":{\"data\":" +
           "[\"gAlhFSSjLy+u5P/Cz92BH4R3NZ0+j8UHNeIR02CChoQ=\"]," +
           "\"completionTime\":\"2018-05-06 19:54:31Z\"},\"bitsUsed\":256,\"bitsLeft\":996831," +
-          "\"requestsLeft\":199912,\"advisoryDelay\":290},\"id\":27341}").getBytes(UTF8);
+          "\"requestsLeft\":199912,\"advisoryDelay\":290},\"id\":27341}").getBytes(UTF_8);
   @SuppressWarnings("HardcodedFileSeparator") public static final byte[] RESPONSE_32_BAD_BASE64 =
       ("{\"jsonrpc\":\"2.0\",\"result\":{\"random\":{\"data\":" +
           "[\"\uD83D\uDCA9\"]," +
           "\"completionTime\":\"2018-05-06 19:54:31Z\"},\"bitsUsed\":256,\"bitsLeft\":996831," +
-          "\"requestsLeft\":199912,\"advisoryDelay\":290},\"id\":27341}").getBytes(UTF8);
+          "\"requestsLeft\":199912,\"advisoryDelay\":290},\"id\":27341}").getBytes(UTF_8);
   @SuppressWarnings("HardcodedLineSeparator") public static final byte[] RESPONSE_32_OLD_API =
       ("19\ne0\ne9\n6b\n85\nbf\na5\n07\na7\ne9\n65\n2e\n90\n42\naa\n02\n2d\nc4\n67\n2a\na3\n32\n" +
-          "9d\nbc\nd1\n9b\n2f\n7c\nf3\n60\n30\ne5").getBytes(UTF8);
+          "9d\nbc\nd1\n9b\n2f\n7c\nf3\n60\n30\ne5").getBytes(UTF_8);
   @SuppressWarnings(
       {"HardcodedFileSeparator", "SpellCheckingInspection"}) public static final byte[]
       RESPONSE_625_JSON = ("{\"jsonrpc\":\"2.0\",\"result\":{\"random\":{\"data\":" +
@@ -65,7 +58,7 @@ public class RandomDotOrgSeedGeneratorHermeticTest extends PowerMockTestCase {
       "XcH3ShjCQVsVOmTzw6AharEQYcz8sML+pu12LusAJc61sKZ9TamddrpKljmH2liB6GFs8DD7DyFB" +
       "V/7ORy6SWbejQd2wQ2fz2UAJ1aZME/ODGgYCWXPQOTMNcl+eaF2ubUf7BI2G0w+xP7tbum7GRQ==\"]," +
       "\"completionTime\":\"2018-05-06 19:54:31Z\"},\"bitsUsed\":256,\"bitsLeft\":996831," +
-      "\"requestsLeft\":199912,\"advisoryDelay\":290},\"id\":27341}").getBytes(UTF8);
+      "\"requestsLeft\":199912,\"advisoryDelay\":290},\"id\":27341}").getBytes(UTF_8);
   @SuppressWarnings("HardcodedLineSeparator") public static final byte[] RESPONSE_625_OLD_API =
       ("de\ne9\n61\n91\n1c\nab\n89\n29\n3b\n87\n93\n3b\n79\n01\naa\n95\n56\n6a\nf0\n2f\n73\n32" +
           "\n71\n32\n1f\n45\n29\nf7\n0d\n48\n" +
@@ -108,14 +101,12 @@ public class RandomDotOrgSeedGeneratorHermeticTest extends PowerMockTestCase {
           "85\n05\n86\n4d\nea\n40\n17\nd1\n9e\ncc\n42\nf5\ndb\n9c\na6\n98\nb9\n93\n4e\n36\nf6\nb5" +
           "\n94\nb3\n1e\n73\nf6\n2c\n12\nad\n" +
           "71\n93\n1e\n6c\n7c\n23\nd8\nfa\n4c\n24\nc5\nb4\n3a\nd4\ne0\nf8\n9c\n4a\ne6\n15\n97\n5d" +
-          "\n48\na0\n0d").getBytes(UTF8);
+          "\n48\na0\n0d").getBytes(UTF_8);
   private static final int MAX_REQUEST_SIZE
       = RandomDotOrgSeedGenerator.RANDOM_DOT_ORG_SEED_GENERATOR.getMaxRequestSize();
   private static final byte[] MAX_SIZE_SEED_CHUNK = new byte[MAX_REQUEST_SIZE];
   private static final byte[] MAX_SIZE_RESPONSE_NEW_API, MAX_SIZE_RESPONSE_OLD_API;
   private static final byte[] EXPECTED_SEED = new byte[MAX_REQUEST_SIZE + 1];
-
-  private RandomDotOrgSeedGenerator seedGenerator;
 
   static {
     ThreadLocalRandom.current().nextBytes(MAX_SIZE_SEED_CHUNK);
@@ -124,43 +115,21 @@ public class RandomDotOrgSeedGeneratorHermeticTest extends PowerMockTestCase {
     try {
       ByteArrayOutputStream responseBuilder = new ByteArrayOutputStream();
       responseBuilder
-          .write("{\"jsonrpc\":\"2.0\",\"result\":{\"random\":{\"data\":[\"".getBytes(UTF8));
+          .write("{\"jsonrpc\":\"2.0\",\"result\":{\"random\":{\"data\":[\"".getBytes(UTF_8));
       responseBuilder.write(Base64.getEncoder().encode(MAX_SIZE_SEED_CHUNK));
       responseBuilder.write(("\"]," +
           "\"completionTime\":\"2018-05-06 19:54:31Z\"},\"bitsUsed\":256,\"bitsLeft\":996831," +
-          "\"requestsLeft\":199912,\"advisoryDelay\":290},\"id\":27341}").getBytes(UTF8));
+          "\"requestsLeft\":199912,\"advisoryDelay\":290},\"id\":27341}").getBytes(UTF_8));
       MAX_SIZE_RESPONSE_NEW_API = responseBuilder.toByteArray();
       responseBuilder = new ByteArrayOutputStream();
       for (int i = 0; i < MAX_REQUEST_SIZE; i++) {
-        responseBuilder.write(String.format("%02x\n", MAX_SIZE_SEED_CHUNK[i]).getBytes(UTF8));
+        responseBuilder.write(String.format("%02x\n", MAX_SIZE_SEED_CHUNK[i]).getBytes(
+            UTF_8));
       }
       MAX_SIZE_RESPONSE_OLD_API = responseBuilder.toByteArray();
     } catch (IOException e) {
       throw new AssertionError(e);
     }
-  }
-
-  @Nullable private String address = null;
-  private final Proxy proxy = createProxy();
-
-  private void mockRandomDotOrgResponse(final byte[] response) throws Exception {
-    seedGenerator = PowerMockito.spy(RandomDotOrgSeedGenerator.RANDOM_DOT_ORG_SEED_GENERATOR);
-    PowerMockito.doAnswer(invocationOnMock -> {
-      final URL url = invocationOnMock.getArgument(0);
-      address = url.toString();
-      return new FakeHttpsUrlConnection(url, null, response);
-    }).when(seedGenerator, "openConnection", any(URL.class));
-  }
-
-  private SeedException expectAndGetException(int seedSize) {
-    SeedException exception = null;
-    try {
-      seedGenerator.generateSeed(seedSize);
-      Assert.fail("Should have thrown SeedException");
-    } catch (final SeedException expected) {
-      exception = expected;
-    }
-    return exception;
   }
 
   @BeforeMethod public void setUpMethod() {
@@ -173,7 +142,7 @@ public class RandomDotOrgSeedGeneratorHermeticTest extends PowerMockTestCase {
 
   @Test public void testSetProxyOldApi() throws Exception {
     seedGenerator.setProxy(proxy);
-    mockRandomDotOrgResponse(RESPONSE_625_OLD_API);
+    mockResponse(RESPONSE_625_OLD_API);
     seedGenerator.setApiKey(null);
     try {
       testGenerator(seedGenerator, false);
@@ -188,7 +157,7 @@ public class RandomDotOrgSeedGeneratorHermeticTest extends PowerMockTestCase {
   @Test public void testSetProxyJsonApi() throws Exception {
     seedGenerator.setApiKey(UUID.randomUUID());
     seedGenerator.setProxy(proxy);
-    mockRandomDotOrgResponse(RESPONSE_625_JSON);
+    mockResponse(RESPONSE_625_JSON);
     try {
       testGenerator(seedGenerator, false);
       assertNotNull(address);
@@ -202,41 +171,41 @@ public class RandomDotOrgSeedGeneratorHermeticTest extends PowerMockTestCase {
 
   @Test public void testOverLongResponseOldApi() throws Exception {
     seedGenerator.setApiKey(null);
-    mockRandomDotOrgResponse(RESPONSE_625_OLD_API);
+    mockResponse(RESPONSE_625_OLD_API);
     testGenerator(seedGenerator, false);
   }
 
   @Test public void testOverLongResponseJson() throws Exception {
     seedGenerator.setApiKey(UUID.randomUUID());
-    mockRandomDotOrgResponse(RESPONSE_625_JSON);
+    mockResponse(RESPONSE_625_JSON);
     testGenerator(seedGenerator, false);
   }
 
   @SuppressWarnings("ThrowableNotThrown") @Test public void testOverShortResponseOldApi()
       throws Exception {
     seedGenerator.setApiKey(null);
-    mockRandomDotOrgResponse(RESPONSE_32_OLD_API);
+    mockResponse(RESPONSE_32_OLD_API);
     expectAndGetException(625);
   }
 
   @SuppressWarnings("ThrowableNotThrown") @Test public void testOverShortResponseJsonApi()
       throws Exception {
     seedGenerator.setApiKey(UUID.randomUUID());
-    mockRandomDotOrgResponse(RESPONSE_32_JSON);
+    mockResponse(RESPONSE_32_JSON);
     expectAndGetException(625);
   }
 
   @SuppressWarnings("ThrowableNotThrown") @Test public void testInvalidBase64ResponseJsonApi()
       throws Exception {
     seedGenerator.setApiKey(UUID.randomUUID());
-    mockRandomDotOrgResponse(RESPONSE_32_BAD_BASE64);
+    mockResponse(RESPONSE_32_BAD_BASE64);
     expectAndGetException(32);
   }
 
   @Test public void testInvalidResponseJsonApi() throws Exception {
     seedGenerator.setApiKey(UUID.randomUUID());
     try {
-      mockRandomDotOrgResponse("Not JSON".getBytes(UTF8));
+      mockResponse("Not JSON".getBytes(UTF_8));
       assertTrue(
           expectAndGetException(SeedTestUtils.SEED_SIZE).getCause() instanceof ParseException);
     } finally {
@@ -246,7 +215,7 @@ public class RandomDotOrgSeedGeneratorHermeticTest extends PowerMockTestCase {
 
   @Test public void testInvalidResponseOldApi() throws Exception {
     seedGenerator.setApiKey(null);
-    mockRandomDotOrgResponse("Not numbers".getBytes(UTF8));
+    mockResponse("Not numbers".getBytes(UTF_8));
     assertTrue(
         expectAndGetException(SeedTestUtils.SEED_SIZE).getCause() instanceof NumberFormatException);
   }
@@ -254,11 +223,12 @@ public class RandomDotOrgSeedGeneratorHermeticTest extends PowerMockTestCase {
   @Test public void testResponseError() throws Exception {
     seedGenerator.setApiKey(UUID.randomUUID());
     try {
-      mockRandomDotOrgResponse(("{\"jsonrpc\":\"2.0\",\"error\":\"Oh noes, an error\"," +
+      mockResponse(("{\"jsonrpc\":\"2.0\",\"error\":\"Oh noes, an error\"," +
           "\"result\":{\"random\":{\"data\":" +
           "[\"gAlhFSSjLy+u5P/Cz92BH4R3NZ0+j8UHNeIR02CChoQ=\"]," +
           "\"completionTime\":\"2018-05-06 19:54:31Z\"},\"bitsUsed\":256,\"bitsLeft\":996831," +
-          "\"requestsLeft\":199912,\"advisoryDelay\":290},\"id\":27341}").getBytes(UTF8));
+          "\"requestsLeft\":199912,\"advisoryDelay\":290},\"id\":27341}").getBytes(
+          UTF_8));
       assertEquals(expectAndGetException(SeedTestUtils.SEED_SIZE).getMessage(), "Oh noes, an error",
           "Wrong exception message");
     } finally {
@@ -268,15 +238,16 @@ public class RandomDotOrgSeedGeneratorHermeticTest extends PowerMockTestCase {
 
   @SuppressWarnings("ThrowableNotThrown") @Test public void testResponseNoResult()
       throws Exception {
-    mockRandomDotOrgResponse("{\"jsonrpc\":\"2.0\"}".getBytes(UTF8));
+    mockResponse("{\"jsonrpc\":\"2.0\"}".getBytes(UTF_8));
     expectAndGetException(SeedTestUtils.SEED_SIZE);
   }
 
   @SuppressWarnings("ThrowableNotThrown") @Test public void testResponseNoRandom()
       throws Exception {
-    mockRandomDotOrgResponse(("{\"jsonrpc\":\"2.0\",\"result\":{" +
+    mockResponse(("{\"jsonrpc\":\"2.0\",\"result\":{" +
         "\"completionTime\":\"2018-05-06 19:54:31Z\"},\"bitsUsed\":256,\"bitsLeft\":996831," +
-        "\"requestsLeft\":199912,\"advisoryDelay\":290},\"id\":27341}").getBytes(UTF8));
+        "\"requestsLeft\":199912,\"advisoryDelay\":290},\"id\":27341}").getBytes(
+        UTF_8));
     expectAndGetException(SeedTestUtils.SEED_SIZE);
   }
 
@@ -294,7 +265,7 @@ public class RandomDotOrgSeedGeneratorHermeticTest extends PowerMockTestCase {
   @Test(timeOut = 120000) public void testLargeRequestOldApi() throws Exception {
     seedGenerator.setApiKey(null);
     // Request more bytes than can be gotten in one Web request.
-    mockRandomDotOrgResponse(MAX_SIZE_RESPONSE_OLD_API);
+    mockResponse(MAX_SIZE_RESPONSE_OLD_API);
     testLargeRequest();
   }
 
@@ -305,7 +276,7 @@ public class RandomDotOrgSeedGeneratorHermeticTest extends PowerMockTestCase {
   @Test(timeOut = 120000) public void testLargeRequestNewApi() throws Exception {
     seedGenerator.setApiKey(UUID.randomUUID());
     // Request more bytes than can be gotten in one Web request.
-    mockRandomDotOrgResponse(MAX_SIZE_RESPONSE_NEW_API);
+    mockResponse(MAX_SIZE_RESPONSE_NEW_API);
     testLargeRequest();
   }
 
@@ -333,6 +304,10 @@ public class RandomDotOrgSeedGeneratorHermeticTest extends PowerMockTestCase {
   private void fuzzResponse() throws Exception {
     byte[] fuzz = new byte[RESPONSE_32_JSON.length];
     ThreadLocalRandom.current().nextBytes(fuzz);
-    mockRandomDotOrgResponse(fuzz);
+    mockResponse(fuzz);
+  }
+
+  @Override protected RandomDotOrgSeedGenerator getSeedGeneratorUnderTest() {
+    return RandomDotOrgSeedGenerator.RANDOM_DOT_ORG_SEED_GENERATOR;
   }
 }

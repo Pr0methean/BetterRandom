@@ -7,6 +7,12 @@ import java.net.URL;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
+/**
+ * API client for the Australian National University's <a href="https://qrng.anu.edu.au/">quantum
+ * RNG</a>, which extracts randomness from quantum-vacuum fluctuations. Unlike random.org, this API
+ * has no usage quotas; the generator produces 5.7 Gbps, so the output rate is limited only by
+ * network bandwidth.
+ */
 public class AnuQuantumSeedGenerator extends WebJsonSeedGenerator {
 
   /** Singleton instance. */
@@ -51,14 +57,17 @@ public class AnuQuantumSeedGenerator extends WebJsonSeedGenerator {
           new URL(String.format(REQUEST_URL_FORMAT, stringCount, stringLength)));
       final JSONObject response = parseJsonResponse(connection);
       final JSONArray byteStrings = checkedGetObject(response, "data", JSONArray.class);
-      for (int stringIndex = 0; stringIndex < stringCount - 1; stringIndex++) {
-        BinaryUtils.convertHexStringToBytes(byteStrings.get(stringIndex).toString(), seed,
-            offset + stringIndex * stringLength);
+      try {
+        for (int stringIndex = 0; stringIndex < stringCount - 1; stringIndex++) {
+          BinaryUtils.convertHexStringToBytes(byteStrings.get(stringIndex).toString(), seed,
+              offset + stringIndex * stringLength);
+        }
+        BinaryUtils.convertHexStringToBytes(
+            byteStrings.get(stringCount - 1).toString().substring(0, usedLengthOfLastString * 2),
+            seed, offset + stringLength * (stringCount - 1));
+      } catch (IllegalArgumentException e) {
+        throw new SeedException("qrng.anu.edu.au returned malformed JSON", e);
       }
-      BinaryUtils.convertHexStringToBytes(
-          byteStrings.get(stringCount - 1).toString().substring(0, usedLengthOfLastString * 2),
-          seed,
-          offset + stringLength * (stringCount - 1));
     } finally {
       lock.unlock();
     }
