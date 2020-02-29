@@ -22,24 +22,15 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
-import java.net.Proxy;
 import java.net.URL;
-import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.text.MessageFormat;
-import java.time.Clock;
-import java.time.Duration;
-import java.time.Instant;
 import java.util.Base64;
 import java.util.Base64.Decoder;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.atomic.AtomicReference;
-import java.util.concurrent.locks.Lock;
-import java.util.concurrent.locks.ReentrantLock;
 import javax.annotation.Nullable;
-import javax.net.ssl.HttpsURLConnection;
-import javax.net.ssl.SSLSocketFactory;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
@@ -70,7 +61,7 @@ import org.json.simple.parser.ParseException;
  * @author Daniel Dyer (old API)
  * @author Chris Hennick (new API; refactoring)
  */
-public final class RandomDotOrgSeedGenerator implements SeedGenerator {
+public final class RandomDotOrgSeedGenerator extends WebJsonSeedGenerator {
   /**
    * This version of the client may make HTTP requests as fast as your computer is capable of
    * sending them. Since it is inherently spammy, it is recommended only when you know your usage is
@@ -91,20 +82,12 @@ public final class RandomDotOrgSeedGenerator implements SeedGenerator {
       "\"method\":\"generateBlobs\",\"params\":{\"apiKey\":\"%s\",\"n\":1,\"size\":%d},\"id\":%d}";
   private static final long serialVersionUID = 8901705097958111045L;
 
-  public Duration getRetryDelay() {
-    return RETRY_DELAY;
-  }
-
-  public int getRetryDelayMs() {
-    return RETRY_DELAY_MS;
-  }
-
   /**
    * The value for the HTTP User-Agent request header for this seed generator's HTTP requests.
    *
    * @return the value for User-Agent
    */
-  protected String getUserAgent() {
+  @Override protected String getUserAgent() {
     return USER_AGENT;
   }
 
@@ -114,7 +97,7 @@ public final class RandomDotOrgSeedGenerator implements SeedGenerator {
    *
    * @return the maximum request size in bytes
    */
-  protected int getMaxRequestSize() {
+  @Override protected int getMaxRequestSize() {
     return MAX_REQUEST_SIZE;
   }
 
@@ -126,14 +109,6 @@ public final class RandomDotOrgSeedGenerator implements SeedGenerator {
   private static final AtomicReference<UUID> API_KEY = new AtomicReference<>(null);
   private static final JSONParser JSON_PARSER = new JSONParser();
   private static final Decoder BASE64 = Base64.getDecoder();
-  /**
-   * Measures the retry delay. A ten-second delay might become either nothing or an hour if we used
-   * local time during the start or end of Daylight Saving Time, but it's fine if we occasionally
-   * wait 9 or 11 seconds instead of 10 because of a leap-second adjustment. See <a
-   * href="https://www.youtube.com/watch?v=-5wpm-gesOY">Tom Scott's video</a> about the various
-   * considerations involved in this choice of clock.
-   */
-  private static final Clock CLOCK = Clock.systemUTC();
   private static final String BASE_URL = "https://www.random.org";
   /**
    * The URL from which the random bytes are retrieved (old API).
@@ -142,21 +117,7 @@ public final class RandomDotOrgSeedGenerator implements SeedGenerator {
       BASE_URL + "/integers/?num={0,number,0}&min=0&max=255&col=1&base=16&format=plain&rnd=new";
   private static final String USER_AGENT = RandomDotOrgSeedGenerator.class.getName();
   private static final int MAX_REQUEST_SIZE = 10000;
-  private static final int RETRY_DELAY_MS = 10000;
-  private static final Duration RETRY_DELAY = Duration.ofMillis(RETRY_DELAY_MS);
-  private static final Lock lock = new ReentrantLock();
-  private static final Charset UTF8 = StandardCharsets.UTF_8;
-  private static volatile Instant earliestNextAttempt = Instant.MIN;
   private static final URL JSON_REQUEST_URL;
-  /**
-   * The proxy to use with random.org, or null to use the JVM default.
-   */
-  protected final AtomicReference<Proxy> proxy = new AtomicReference<>(null);
-  /**
-   * The SSLSocketFactory to use with random.org.
-   */
-  protected final AtomicReference<SSLSocketFactory> socketFactory =
-      new AtomicReference<>(null);
 
   static {
     try {
@@ -167,13 +128,8 @@ public final class RandomDotOrgSeedGenerator implements SeedGenerator {
     }
   }
 
-  /**
-   * If true, don't attempt to contact random.org again for RETRY_DELAY after an IOException
-   */
-  private final boolean useRetryDelay;
-
   RandomDotOrgSeedGenerator(final boolean useRetryDelay) {
-    this.useRetryDelay = useRetryDelay;
+    super(useRetryDelay);
   }
 
   /**
@@ -186,41 +142,6 @@ public final class RandomDotOrgSeedGenerator implements SeedGenerator {
   }
 
   /**
-   * Sets the proxy to use to connect to random.org. If null, the JVM default is used.
-   *
-   * @param proxy a proxy, or null for the JVM default
-   */
-  public void setProxy(@Nullable final Proxy proxy) {
-    this.proxy.set(proxy);
-  }
-
-  /**
-   * Sets the socket factory to use to connect to random.org. If null, the JVM default is used. This
-   * method provides flexibility in how the user protects against downgrade attacks such as POODLE
-   * and weak cipher suites, even if the random.org connection needs separate handling from
-   * connections to other services by the same application.
-   *
-   * @param socketFactory a socket factory, or null for the JVM default
-   */
-  public void setSslSocketFactory(@Nullable final SSLSocketFactory socketFactory) {
-    this.socketFactory.set(socketFactory);
-  }
-
-  protected HttpURLConnection openConnection(final URL url) throws IOException {
-    final Proxy currentProxy = proxy.get();
-    final HttpsURLConnection connection =
-        (HttpsURLConnection) ((currentProxy == null) ? url.openConnection() :
-            url.openConnection(currentProxy));
-    final SSLSocketFactory currentSocketFactory = socketFactory.get();
-    if (currentSocketFactory != null) {
-      connection.setSSLSocketFactory(currentSocketFactory);
-    }
-    connection.setRequestProperty("Content-Type", "application/json");
-    connection.setRequestProperty("User-Agent", getUserAgent());
-    return connection;
-  }
-
-  /**
    * Performs a single request for random bytes.
    *
    * @param seed the array to save them to
@@ -229,8 +150,7 @@ public final class RandomDotOrgSeedGenerator implements SeedGenerator {
    * @throws IOException If a connection error occurs.
    * @throws SeedException If random.org sends a malformed response body.
    */
-  private void downloadBytes(byte[] seed,
-      int offset, final int length) throws IOException {
+  @Override protected void downloadBytes(byte[] seed, int offset, final int length) throws IOException {
     HttpURLConnection connection = null;
     lock.lock();
     try {
@@ -259,7 +179,7 @@ public final class RandomDotOrgSeedGenerator implements SeedGenerator {
         connection.setRequestMethod("POST");
         try (final OutputStream out = connection.getOutputStream()) {
           out.write(String.format(JSON_REQUEST_FORMAT, currentApiKey, length * Byte.SIZE,
-              REQUEST_ID.incrementAndGet()).getBytes(UTF8));
+              REQUEST_ID.incrementAndGet()).getBytes(StandardCharsets.UTF_8));
         }
         final JSONObject response;
         try (final BufferedReader reader = getResponseReader(connection)) {
@@ -306,45 +226,6 @@ public final class RandomDotOrgSeedGenerator implements SeedGenerator {
   private static BufferedReader getResponseReader(final HttpURLConnection connection)
       throws IOException {
     return new BufferedReader(new InputStreamReader(connection.getInputStream()));
-  }
-
-  private static <T> T checkedGetObject(final JSONObject parent, final String key,
-      Class<T> outputClass) {
-    Object child = parent.get(key);
-    if (!outputClass.isInstance(child)) {
-      throw new SeedException(String.format("Expected %s to have child key %s of type %s",
-          parent, key, outputClass));
-    }
-    return outputClass.cast(child);
-  }
-
-  @Override @SuppressWarnings("AssignmentToStaticFieldFromInstanceMethod")
-  public void generateSeed(final byte[] seed) throws SeedException {
-    if (!isWorthTrying()) {
-      throw new SeedException("Not retrying so soon after an IOException");
-    }
-    final int length = seed.length;
-    lock.lock();
-    try {
-      int count = 0;
-      while (count < length) {
-        int batchSize = Math.min(length - count, getMaxRequestSize());
-        downloadBytes(seed, count, batchSize);
-        count += batchSize;
-      }
-    } catch (final IOException ex) {
-      earliestNextAttempt = CLOCK.instant().plus(getRetryDelay());
-      throw new SeedException("Failed downloading bytes from " + BASE_URL, ex);
-    } catch (final SecurityException ex) {
-      // Might be thrown if resource access is restricted (such as in an applet sandbox).
-      throw new SeedException("SecurityManager prevented access to " + BASE_URL, ex);
-    } finally {
-      lock.unlock();
-    }
-  }
-
-  @Override public boolean isWorthTrying() {
-    return !useRetryDelay || !earliestNextAttempt.isAfter(CLOCK.instant());
   }
 
   /**
