@@ -91,6 +91,14 @@ public final class RandomDotOrgSeedGenerator implements SeedGenerator {
       "\"method\":\"generateBlobs\",\"params\":{\"apiKey\":\"%s\",\"n\":1,\"size\":%d},\"id\":%d}";
   private static final long serialVersionUID = 8901705097958111045L;
 
+  public Duration getRetryDelay() {
+    return RETRY_DELAY;
+  }
+
+  public int getRetryDelayMs() {
+    return RETRY_DELAY_MS;
+  }
+
   /**
    * The value for the HTTP User-Agent request header for this seed generator's HTTP requests.
    *
@@ -141,13 +149,13 @@ public final class RandomDotOrgSeedGenerator implements SeedGenerator {
   private static volatile Instant earliestNextAttempt = Instant.MIN;
   private static final URL JSON_REQUEST_URL;
   /**
-   * The proxy to use with random.org, or null to use the JVM default. Package-visible for testing.
+   * The proxy to use with random.org, or null to use the JVM default.
    */
-  static final AtomicReference<Proxy> proxy = new AtomicReference<>(null);
+  protected final AtomicReference<Proxy> proxy = new AtomicReference<>(null);
   /**
    * The SSLSocketFactory to use with random.org.
    */
-  private static final AtomicReference<SSLSocketFactory> socketFactory =
+  protected final AtomicReference<SSLSocketFactory> socketFactory =
       new AtomicReference<>(null);
 
   static {
@@ -182,8 +190,8 @@ public final class RandomDotOrgSeedGenerator implements SeedGenerator {
    *
    * @param proxy a proxy, or null for the JVM default
    */
-  public static void setProxy(@Nullable final Proxy proxy) {
-    RandomDotOrgSeedGenerator.proxy.set(proxy);
+  public void setProxy(@Nullable final Proxy proxy) {
+    this.proxy.set(proxy);
   }
 
   /**
@@ -194,8 +202,8 @@ public final class RandomDotOrgSeedGenerator implements SeedGenerator {
    *
    * @param socketFactory a socket factory, or null for the JVM default
    */
-  public static void setSslSocketFactory(@Nullable final SSLSocketFactory socketFactory) {
-    RandomDotOrgSeedGenerator.socketFactory.set(socketFactory);
+  public void setSslSocketFactory(@Nullable final SSLSocketFactory socketFactory) {
+    this.socketFactory.set(socketFactory);
   }
 
   /* Package-visible for testing. */
@@ -284,7 +292,7 @@ public final class RandomDotOrgSeedGenerator implements SeedGenerator {
         final Object advisoryDelayMs = result.get("advisoryDelay");
         if (advisoryDelayMs instanceof Number) {
           // Wait RETRY_DELAY or the advisory delay, whichever is shorter
-          final int delayMs = Math.min(RETRY_DELAY_MS, ((Number) advisoryDelayMs).intValue());
+          final int delayMs = Math.min(getRetryDelayMs(), ((Number) advisoryDelayMs).intValue());
           earliestNextAttempt = CLOCK.instant().plusMillis(delayMs);
         }
       }
@@ -326,7 +334,7 @@ public final class RandomDotOrgSeedGenerator implements SeedGenerator {
         count += batchSize;
       }
     } catch (final IOException ex) {
-      earliestNextAttempt = CLOCK.instant().plus(RETRY_DELAY);
+      earliestNextAttempt = CLOCK.instant().plus(getRetryDelay());
       throw new SeedException("Failed downloading bytes from " + BASE_URL, ex);
     } catch (final SecurityException ex) {
       // Might be thrown if resource access is restricted (such as in an applet sandbox).

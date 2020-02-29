@@ -1,8 +1,6 @@
 package io.github.pr0methean.betterrandom.seed;
 
-import static io.github.pr0methean.betterrandom.seed.RandomDotOrgSeedGenerator.MAX_REQUEST_SIZE;
-import static io.github.pr0methean.betterrandom.seed.RandomDotOrgSeedGenerator.setProxy;
-import static io.github.pr0methean.betterrandom.seed.RandomDotOrgSeedGenerator.setSslSocketFactory;
+import static io.github.pr0methean.betterrandom.seed.RandomDotOrgSeedGenerator.RANDOM_DOT_ORG_SEED_GENERATOR;
 import static io.github.pr0methean.betterrandom.seed.RandomDotOrgUtils.createProxy;
 import static io.github.pr0methean.betterrandom.seed.RandomDotOrgUtils.createSocketFactory;
 import static io.github.pr0methean.betterrandom.seed.SeedTestUtils.testGenerator;
@@ -113,6 +111,7 @@ public class RandomDotOrgSeedGeneratorHermeticTest extends PowerMockTestCase {
           "\n94\nb3\n1e\n73\nf6\n2c\n12\nad\n" +
           "71\n93\n1e\n6c\n7c\n23\nd8\nfa\n4c\n24\nc5\nb4\n3a\nd4\ne0\nf8\n9c\n4a\ne6\n15\n97\n5d" +
           "\n48\na0\n0d").getBytes(UTF8);
+  private static final int MAX_REQUEST_SIZE = RANDOM_DOT_ORG_SEED_GENERATOR.getMaxRequestSize();
   private static final byte[] MAX_SIZE_SEED_CHUNK = new byte[MAX_REQUEST_SIZE];
   private static final byte[] MAX_SIZE_RESPONSE_NEW_API, MAX_SIZE_RESPONSE_OLD_API;
   private static final byte[] EXPECTED_SEED = new byte[MAX_REQUEST_SIZE + 1];
@@ -154,7 +153,7 @@ public class RandomDotOrgSeedGeneratorHermeticTest extends PowerMockTestCase {
   private static SeedException expectAndGetException(int seedSize) {
     SeedException exception = null;
     try {
-      RandomDotOrgSeedGenerator.RANDOM_DOT_ORG_SEED_GENERATOR.generateSeed(seedSize);
+      RANDOM_DOT_ORG_SEED_GENERATOR.generateSeed(seedSize);
       Assert.fail("Should have thrown SeedException");
     } catch (final SeedException expected) {
       exception = expected;
@@ -173,87 +172,87 @@ public class RandomDotOrgSeedGeneratorHermeticTest extends PowerMockTestCase {
   }
 
   @Test public void testSetProxyOldApi() throws Exception {
-    setProxy(proxy);
+    RANDOM_DOT_ORG_SEED_GENERATOR.setProxy(proxy);
     mockRandomDotOrgResponse(RESPONSE_625_OLD_API);
-    RandomDotOrgSeedGenerator.setApiKey(null);
+    RANDOM_DOT_ORG_SEED_GENERATOR.setApiKey(null);
     try {
-      testGenerator(RandomDotOrgSeedGenerator.RANDOM_DOT_ORG_SEED_GENERATOR, false);
+      testGenerator(RANDOM_DOT_ORG_SEED_GENERATOR, false);
       assertNotNull(address);
       assertTrue(address.startsWith("https://www.random.org/integers"));
-      assertEquals(proxy, RandomDotOrgSeedGenerator.proxy.get());
+      assertEquals(proxy, RANDOM_DOT_ORG_SEED_GENERATOR.proxy.get());
     } finally {
-      setProxy(null);
+      RANDOM_DOT_ORG_SEED_GENERATOR.setProxy(null);
     }
   }
 
   @Test public void testSetProxyJsonApi() throws Exception {
-    RandomDotOrgSeedGenerator.setApiKey(UUID.randomUUID());
-    setProxy(proxy);
+    RANDOM_DOT_ORG_SEED_GENERATOR.setApiKey(UUID.randomUUID());
+    RANDOM_DOT_ORG_SEED_GENERATOR.setProxy(proxy);
     mockRandomDotOrgResponse(RESPONSE_625_JSON);
     try {
-      testGenerator(RandomDotOrgSeedGenerator.RANDOM_DOT_ORG_SEED_GENERATOR, false);
+      testGenerator(RANDOM_DOT_ORG_SEED_GENERATOR, false);
       assertNotNull(address);
       assertTrue(address.startsWith("https://api.random.org/json-rpc/2/invoke"));
-      assertEquals(proxy, RandomDotOrgSeedGenerator.proxy.get());
+      assertEquals(proxy, RANDOM_DOT_ORG_SEED_GENERATOR.proxy.get());
     } finally {
-      setProxy(null);
-      RandomDotOrgSeedGenerator.setApiKey(null);
+      RANDOM_DOT_ORG_SEED_GENERATOR.setProxy(null);
+      RANDOM_DOT_ORG_SEED_GENERATOR.setApiKey(null);
     }
   }
 
   @Test public void testOverLongResponseOldApi() throws Exception {
-    RandomDotOrgSeedGenerator.setApiKey(null);
+    RANDOM_DOT_ORG_SEED_GENERATOR.setApiKey(null);
     mockRandomDotOrgResponse(RESPONSE_625_OLD_API);
-    testGenerator(RandomDotOrgSeedGenerator.RANDOM_DOT_ORG_SEED_GENERATOR, false);
+    testGenerator(RANDOM_DOT_ORG_SEED_GENERATOR, false);
   }
 
   @Test public void testOverLongResponseJson() throws Exception {
-    RandomDotOrgSeedGenerator.setApiKey(UUID.randomUUID());
+    RANDOM_DOT_ORG_SEED_GENERATOR.setApiKey(UUID.randomUUID());
     mockRandomDotOrgResponse(RESPONSE_625_JSON);
-    testGenerator(RandomDotOrgSeedGenerator.RANDOM_DOT_ORG_SEED_GENERATOR, false);
+    testGenerator(RANDOM_DOT_ORG_SEED_GENERATOR, false);
   }
 
   @SuppressWarnings("ThrowableNotThrown") @Test public void testOverShortResponseOldApi()
       throws Exception {
-    RandomDotOrgSeedGenerator.setApiKey(null);
+    RANDOM_DOT_ORG_SEED_GENERATOR.setApiKey(null);
     mockRandomDotOrgResponse(RESPONSE_32_OLD_API);
     expectAndGetException(625);
   }
 
   @SuppressWarnings("ThrowableNotThrown") @Test public void testOverShortResponseJsonApi()
       throws Exception {
-    RandomDotOrgSeedGenerator.setApiKey(UUID.randomUUID());
+    RANDOM_DOT_ORG_SEED_GENERATOR.setApiKey(UUID.randomUUID());
     mockRandomDotOrgResponse(RESPONSE_32_JSON);
     expectAndGetException(625);
   }
 
   @SuppressWarnings("ThrowableNotThrown") @Test public void testInvalidBase64ResponseJsonApi()
       throws Exception {
-    RandomDotOrgSeedGenerator.setApiKey(UUID.randomUUID());
+    RANDOM_DOT_ORG_SEED_GENERATOR.setApiKey(UUID.randomUUID());
     mockRandomDotOrgResponse(RESPONSE_32_BAD_BASE64);
     expectAndGetException(32);
   }
 
   @Test public void testInvalidResponseJsonApi() throws Exception {
-    RandomDotOrgSeedGenerator.setApiKey(UUID.randomUUID());
+    RANDOM_DOT_ORG_SEED_GENERATOR.setApiKey(UUID.randomUUID());
     try {
       mockRandomDotOrgResponse("Not JSON".getBytes(UTF8));
       assertTrue(
           expectAndGetException(SeedTestUtils.SEED_SIZE).getCause() instanceof ParseException);
     } finally {
-      RandomDotOrgSeedGenerator.setApiKey(null);
+      RANDOM_DOT_ORG_SEED_GENERATOR.setApiKey(null);
     }
   }
 
   @Test public void testInvalidResponseOldApi() throws Exception {
-    RandomDotOrgSeedGenerator.setApiKey(null);
+    RANDOM_DOT_ORG_SEED_GENERATOR.setApiKey(null);
     mockRandomDotOrgResponse("Not numbers".getBytes(UTF8));
     assertTrue(
         expectAndGetException(SeedTestUtils.SEED_SIZE).getCause() instanceof NumberFormatException);
   }
 
   @Test public void testResponseError() throws Exception {
-    RandomDotOrgSeedGenerator.setApiKey(UUID.randomUUID());
+    RANDOM_DOT_ORG_SEED_GENERATOR.setApiKey(UUID.randomUUID());
     try {
       mockRandomDotOrgResponse(("{\"jsonrpc\":\"2.0\",\"error\":\"Oh noes, an error\"," +
           "\"result\":{\"random\":{\"data\":" +
@@ -263,7 +262,7 @@ public class RandomDotOrgSeedGeneratorHermeticTest extends PowerMockTestCase {
       assertEquals(expectAndGetException(SeedTestUtils.SEED_SIZE).getMessage(), "Oh noes, an error",
           "Wrong exception message");
     } finally {
-      RandomDotOrgSeedGenerator.setApiKey(null);
+      RANDOM_DOT_ORG_SEED_GENERATOR.setApiKey(null);
     }
   }
 
@@ -282,8 +281,8 @@ public class RandomDotOrgSeedGeneratorHermeticTest extends PowerMockTestCase {
   }
 
   private void testLargeRequest() {
-    final int seedLength = MAX_REQUEST_SIZE + 1;
-    byte[] seed = RandomDotOrgSeedGenerator.RANDOM_DOT_ORG_SEED_GENERATOR.generateSeed(seedLength);
+    final int seedLength = RANDOM_DOT_ORG_SEED_GENERATOR.getMaxRequestSize() + 1;
+    byte[] seed = RANDOM_DOT_ORG_SEED_GENERATOR.generateSeed(seedLength);
     Assert.assertEquals(seed.length, seedLength, "Failed to generate seed of length " + seedLength);
     assertTrue(Arrays.equals(seed, EXPECTED_SEED), "Seed output not as expected");
   }
@@ -293,7 +292,7 @@ public class RandomDotOrgSeedGeneratorHermeticTest extends PowerMockTestCase {
    * implementation.
    */
   @Test(timeOut = 120000) public void testLargeRequestOldApi() throws Exception {
-    RandomDotOrgSeedGenerator.setApiKey(null);
+    RANDOM_DOT_ORG_SEED_GENERATOR.setApiKey(null);
     // Request more bytes than can be gotten in one Web request.
     mockRandomDotOrgResponse(MAX_SIZE_RESPONSE_OLD_API);
     testLargeRequest();
@@ -304,29 +303,29 @@ public class RandomDotOrgSeedGeneratorHermeticTest extends PowerMockTestCase {
    * implementation.
    */
   @Test(timeOut = 120000) public void testLargeRequestNewApi() throws Exception {
-    RandomDotOrgSeedGenerator.setApiKey(UUID.randomUUID());
+    RANDOM_DOT_ORG_SEED_GENERATOR.setApiKey(UUID.randomUUID());
     // Request more bytes than can be gotten in one Web request.
     mockRandomDotOrgResponse(MAX_SIZE_RESPONSE_NEW_API);
     testLargeRequest();
   }
 
   @Test public void testSetSslSocketFactory() {
-    setSslSocketFactory(createSocketFactory());
+    RANDOM_DOT_ORG_SEED_GENERATOR.setSslSocketFactory(createSocketFactory());
     try {
-      testGenerator(RandomDotOrgSeedGenerator.RANDOM_DOT_ORG_SEED_GENERATOR, false);
+      testGenerator(RANDOM_DOT_ORG_SEED_GENERATOR, false);
     } finally {
-      setSslSocketFactory(null);
+      RANDOM_DOT_ORG_SEED_GENERATOR.setSslSocketFactory(null);
     }
   }
 
   @Test public void testRandomFuzzJsonApi() throws Exception {
-    RandomDotOrgSeedGenerator.setApiKey(UUID.randomUUID());
+    RANDOM_DOT_ORG_SEED_GENERATOR.setApiKey(UUID.randomUUID());
     fuzzResponse();
     expectAndGetException(32);
   }
 
   @Test public void testRandomFuzzOldApi() throws Exception {
-    RandomDotOrgSeedGenerator.setApiKey(null);
+    RANDOM_DOT_ORG_SEED_GENERATOR.setApiKey(null);
     fuzzResponse();
     expectAndGetException(32);
   }
