@@ -206,8 +206,7 @@ public final class RandomDotOrgSeedGenerator implements SeedGenerator {
     this.socketFactory.set(socketFactory);
   }
 
-  /* Package-visible for testing. */
-  HttpURLConnection openConnection(final URL url) throws IOException {
+  protected HttpURLConnection openConnection(final URL url) throws IOException {
     final Proxy currentProxy = proxy.get();
     final HttpsURLConnection connection =
         (HttpsURLConnection) ((currentProxy == null) ? url.openConnection() :
