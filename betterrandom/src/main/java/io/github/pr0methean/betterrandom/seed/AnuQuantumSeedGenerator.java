@@ -59,11 +59,11 @@ public class AnuQuantumSeedGenerator extends WebJsonSeedGenerator {
       final JSONArray byteStrings = checkedGetObject(response, "data", JSONArray.class);
       try {
         for (int stringIndex = 0; stringIndex < stringCount - 1; stringIndex++) {
-          BinaryUtils.convertHexStringToBytes(getStringAndCheckLength(byteStrings, stringIndex, stringLength), seed,
+          BinaryUtils.convertHexStringToBytes(getStringAndCheckLength(byteStrings, stringIndex, 2 * stringLength), seed,
               offset + stringIndex * stringLength);
         }
         BinaryUtils.convertHexStringToBytes(
-            getStringAndCheckLength(byteStrings, stringCount - 1, stringLength)
+            getStringAndCheckLength(byteStrings, stringCount - 1, 2 * stringLength)
                 .substring(0, usedLengthOfLastString * 2),
             seed, offset + stringLength * (stringCount - 1));
       } catch (IllegalArgumentException e) {
