@@ -53,10 +53,15 @@ public class AnuQuantumSeedGenerator extends WebJsonSeedGenerator {
     int stringLength = (stringCount > 1) ? MAX_BYTES_PER_STRING : length;
     lock.lock();
     try {
-      HttpURLConnection connection = openConnection(
+      final HttpURLConnection connection = openConnection(
           new URL(String.format(REQUEST_URL_FORMAT, stringCount, stringLength)));
       final JSONObject response = parseJsonResponse(connection);
       final JSONArray byteStrings = checkedGetObject(response, "data", JSONArray.class);
+      if (byteStrings.size() != stringCount) {
+        throw new SeedException(String.format(
+            "qrng.anu.edu.au returned wrong size array (was %d, expected %d)",
+            byteStrings.size(), stringCount));
+      }
       try {
         for (int stringIndex = 0; stringIndex < stringCount - 1; stringIndex++) {
           BinaryUtils.convertHexStringToBytes(getStringAndCheckLength(byteStrings, stringIndex, 2 * stringLength), seed,
@@ -66,6 +71,7 @@ public class AnuQuantumSeedGenerator extends WebJsonSeedGenerator {
             getStringAndCheckLength(byteStrings, stringCount - 1, 2 * stringLength)
                 .substring(0, usedLengthOfLastString * 2),
             seed, offset + stringLength * (stringCount - 1));
+        connection.disconnect();
       } catch (IllegalArgumentException e) {
         throw new SeedException("qrng.anu.edu.au returned malformed JSON", e);
       }
