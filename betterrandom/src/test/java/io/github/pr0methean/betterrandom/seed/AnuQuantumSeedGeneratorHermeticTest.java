@@ -2,6 +2,8 @@ package io.github.pr0methean.betterrandom.seed;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
 
+import org.testng.annotations.Test;
+
 public class AnuQuantumSeedGeneratorHermeticTest
     extends AbstractWebJsonSeedGeneratorHermeticTest<AnuQuantumSeedGenerator> {
 
@@ -13,5 +15,18 @@ public class AnuQuantumSeedGeneratorHermeticTest
     return AnuQuantumSeedGenerator.ANU_QUANTUM_SEED_GENERATOR;
   }
 
+  @Test public void testBasicUsage() {
+    mockResponse(RESPONSE_32);
+    seedGenerator.generateSeed(32);
+  }
 
+  @Test public void testOverShortResponse() {
+    mockResponse(RESPONSE_32);
+    expectAndGetException(1024);
+  }
+
+  @Test public void testOverLongResponse() {
+    mockResponse(RESPONSE_32);
+    expectAndGetException(16);
+  }
 }

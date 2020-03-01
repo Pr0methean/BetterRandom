@@ -16,13 +16,17 @@ public abstract class AbstractWebJsonSeedGeneratorHermeticTest<T extends SeedGen
   protected T seedGenerator;
   @Nullable protected String address = null;
 
-  protected void mockResponse(final byte[] response) throws Exception {
+  protected void mockResponse(final byte[] response) {
     seedGenerator = PowerMockito.spy(getSeedGeneratorUnderTest());
-    PowerMockito.doAnswer(invocationOnMock -> {
-      final URL url = invocationOnMock.getArgument(0);
-      address = url.toString();
-      return new FakeHttpsUrlConnection(url, null, response);
-    }).when(seedGenerator, "openConnection", any(URL.class));
+    try {
+      PowerMockito.doAnswer(invocationOnMock -> {
+        final URL url = invocationOnMock.getArgument(0);
+        address = url.toString();
+        return new FakeHttpsUrlConnection(url, null, response);
+      }).when(seedGenerator, "openConnection", any(URL.class));
+    } catch (Exception e) {
+      throw new RuntimeException(e);
+    }
   }
 
   protected SeedException expectAndGetException(int seedSize) {
