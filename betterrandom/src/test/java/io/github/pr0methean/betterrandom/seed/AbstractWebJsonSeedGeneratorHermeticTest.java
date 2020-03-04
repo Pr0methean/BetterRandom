@@ -5,7 +5,6 @@ import static io.github.pr0methean.betterrandom.seed.RandomDotOrgUtils.createSoc
 import static io.github.pr0methean.betterrandom.seed.SeedTestUtils.testGenerator;
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.mockito.ArgumentMatchers.any;
-import static org.testng.Assert.assertNotNull;
 import static org.testng.Assert.assertTrue;
 
 import java.net.Proxy;
@@ -53,8 +52,9 @@ public abstract class AbstractWebJsonSeedGeneratorHermeticTest<T extends WebJson
     } catch (final SeedException expected) {
       exception = expected;
     }
-    if (expectCause) {
-      assertNotNull(exception.getCause(), "SeedException should have a cause");
+    if (expectCause && exception.getCause() == null) {
+      // Can't use an assert method because we'd lose the original stack trace
+      throw new AssertionError("SeedException should have a cause", exception);
     }
     return exception;
   }

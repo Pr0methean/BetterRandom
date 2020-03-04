@@ -111,7 +111,7 @@ public class AnuQuantumSeedGeneratorHermeticTest
 
   @Test public void testInvalidHex() {
     mockResponse("{\"type\":\"string\",\"length\":1," +
-        "\"size\":32,\"data\":[\"08446c6d2723c335e3adcf1186c062c1e15c86fb6f396f78ab162b7e28ad33" +
+        "\"size\":32,\"data\":[\"0808446c6d2723c335e3adcf1186c062c1e15c86fb6f396f78ab162b7e28ad" +
         "\uD83D\uDCA9\"],\"success\":true}");
     expectAndGetException(32);
   }
