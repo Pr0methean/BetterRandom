@@ -1,5 +1,7 @@
 package io.github.pr0methean.betterrandom.seed;
 
+import static java.nio.charset.StandardCharsets.UTF_8;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -63,7 +65,7 @@ public abstract class WebJsonSeedGenerator implements SeedGenerator {
 
   protected static BufferedReader getResponseReader(final HttpURLConnection connection)
       throws IOException {
-    return new BufferedReader(new InputStreamReader(connection.getInputStream()));
+    return new BufferedReader(new InputStreamReader(connection.getInputStream(), UTF_8));
   }
 
   protected static JSONObject parseJsonResponse(HttpURLConnection connection) throws IOException {
