@@ -140,9 +140,9 @@ public class RandomDotOrgSeedGeneratorHermeticTest
     seedGenerator.setApiKey(null);
     try {
       testGenerator(seedGenerator, false);
-      assertNotNull(address);
-      assertTrue(address.startsWith("https://www.random.org/integers"));
+      assertNotNull(address, "address should not be null");
       assertEquals(proxy, seedGenerator.proxy.get());
+      assertTrue(address.startsWith("https://www.random.org/integers"), "Wrong domain when proxy used");
     } finally {
       seedGenerator.setProxy(null);
     }

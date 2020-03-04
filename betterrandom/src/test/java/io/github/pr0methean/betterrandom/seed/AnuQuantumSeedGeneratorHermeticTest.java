@@ -1,6 +1,9 @@
 package io.github.pr0methean.betterrandom.seed;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertNotNull;
+import static org.testng.Assert.assertTrue;
 
 import org.testng.annotations.Test;
 
@@ -111,15 +114,19 @@ public class AnuQuantumSeedGeneratorHermeticTest
 
   @Test public void testInvalidHex() {
     mockResponse("{\"type\":\"string\",\"length\":1," +
-        "\"size\":32,\"data\":[\"0808446c6d2723c335e3adcf1186c062c1e15c86fb6f396f78ab162b7e28ad" +
-        "\uD83D\uDCA9\"],\"success\":true}");
+        "\"size\":32,\"data\":[\"0808446c6d2723c335e3adcf1186c062c1e15c86fb6f396f78ab162b7e28adxx\"" +
+        "],\"success\":true}");
     expectAndGetException(32);
   }
 
   @Test public void testSetProxy() {
+    mockResponse(RESPONSE_32);
     seedGenerator.setProxy(proxy);
     try {
-
+      SeedTestUtils.testGenerator(seedGenerator, false, 32);
+      assertNotNull(address);
+      assertEquals(proxy, seedGenerator.proxy.get());
+      assertTrue(address.startsWith("https://qrng.anu.edu.au"), "Wrong domain when proxy used");
     } finally {
       seedGenerator.setProxy(null);
     }
