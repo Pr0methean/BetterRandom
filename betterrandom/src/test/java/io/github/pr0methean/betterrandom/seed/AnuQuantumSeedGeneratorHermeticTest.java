@@ -4,6 +4,7 @@ import static java.nio.charset.StandardCharsets.UTF_8;
 
 import org.testng.annotations.Test;
 
+@SuppressWarnings("ThrowableNotThrown")
 public class AnuQuantumSeedGeneratorHermeticTest
     extends AbstractWebJsonSeedGeneratorHermeticTest<AnuQuantumSeedGenerator> {
 
@@ -67,26 +68,60 @@ public class AnuQuantumSeedGeneratorHermeticTest
 
   @Test public void testBasicUsage() {
     mockResponse(RESPONSE_32);
-    seedGenerator.generateSeed(32);
+    SeedTestUtils.testGenerator(seedGenerator, false, 32);
   }
 
   @Test public void testOverShortResponse32() {
     mockResponse(RESPONSE_32);
-    expectAndGetException(1024);
+    expectAndGetException(1024, false);
   }
 
   @Test public void testOverLongResponse32() {
     mockResponse(RESPONSE_32);
-    expectAndGetException(16);
+    expectAndGetException(16, false);
   }
 
   @Test public void testOverShortResponse2048() {
     mockResponse(RESPONSE_2048);
-    expectAndGetException(3072);
+    expectAndGetException(3072, false);
   }
 
   @Test public void testOverLongResponse2048() {
     mockResponse(RESPONSE_2048);
-    expectAndGetException(1024);
+    expectAndGetException(1024, false);
+  }
+
+  @Test public void testRandomFuzz() {
+    fuzzResponse(RESPONSE_32.length);
+    expectAndGetException(32);
+  }
+
+  @Test public void testResponseNoData() {
+    mockResponse("{\"type\":\"string\",\"length\":1," +
+        "\"size\":32,\"success\":true}");
+    expectAndGetException(32, false);
+  }
+
+  @Test public void testResponseWrongTypeData() {
+    mockResponse("{\"type\":\"string\",\"length\":1," +
+        "\"size\":32,\"data\":\"0808446c6d2723c335e3adcf1186c062c1e15c86fb6f396f78ab162b7e28ad33\"" +
+        ",\"success\":true}");
+    expectAndGetException(32, false);
+  }
+
+  @Test public void testInvalidHex() {
+    mockResponse("{\"type\":\"string\",\"length\":1," +
+        "\"size\":32,\"data\":[\"08446c6d2723c335e3adcf1186c062c1e15c86fb6f396f78ab162b7e28ad33" +
+        "\uD83D\uDCA9\"],\"success\":true}");
+    expectAndGetException(32);
+  }
+
+  @Test public void testSetProxy() {
+    seedGenerator.setProxy(proxy);
+    try {
+
+    } finally {
+      seedGenerator.setProxy(null);
+    }
   }
 }

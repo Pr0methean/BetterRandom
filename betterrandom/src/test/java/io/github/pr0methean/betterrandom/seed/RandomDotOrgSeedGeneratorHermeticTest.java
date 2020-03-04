@@ -1,6 +1,5 @@
 package io.github.pr0methean.betterrandom.seed;
 
-import static io.github.pr0methean.betterrandom.seed.RandomDotOrgUtils.createSocketFactory;
 import static io.github.pr0methean.betterrandom.seed.SeedTestUtils.testGenerator;
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.testng.Assert.assertEquals;
@@ -13,7 +12,6 @@ import java.util.Arrays;
 import java.util.Base64;
 import java.util.UUID;
 import java.util.concurrent.ThreadLocalRandom;
-import org.json.simple.parser.ParseException;
 import org.powermock.api.mockito.PowerMockito;
 import org.powermock.api.mockito.mockpolicies.Slf4jMockPolicy;
 import org.powermock.core.classloader.annotations.MockPolicy;
@@ -27,17 +25,13 @@ import org.testng.annotations.Test;
 @PowerMockIgnore({"javax.management.*", "javax.script.*", "jdk.nashorn.*", "javax.net.ssl.*",
     "javax.security.*"}) @MockPolicy(Slf4jMockPolicy.class)
 @PrepareForTest(RandomDotOrgSeedGenerator.class) @Test(singleThreaded = true)
+@SuppressWarnings("ThrowableNotThrown")
 public class RandomDotOrgSeedGeneratorHermeticTest
     extends AbstractWebJsonSeedGeneratorHermeticTest<RandomDotOrgSeedGenerator> {
 
   @SuppressWarnings("HardcodedFileSeparator") public static final byte[] RESPONSE_32_JSON =
       ("{\"jsonrpc\":\"2.0\",\"result\":{\"random\":{\"data\":" +
           "[\"gAlhFSSjLy+u5P/Cz92BH4R3NZ0+j8UHNeIR02CChoQ=\"]," +
-          "\"completionTime\":\"2018-05-06 19:54:31Z\"},\"bitsUsed\":256,\"bitsLeft\":996831," +
-          "\"requestsLeft\":199912,\"advisoryDelay\":290},\"id\":27341}").getBytes(UTF_8);
-  @SuppressWarnings("HardcodedFileSeparator") public static final byte[] RESPONSE_32_BAD_BASE64 =
-      ("{\"jsonrpc\":\"2.0\",\"result\":{\"random\":{\"data\":" +
-          "[\"\uD83D\uDCA9\"]," +
           "\"completionTime\":\"2018-05-06 19:54:31Z\"},\"bitsUsed\":256,\"bitsLeft\":996831," +
           "\"requestsLeft\":199912,\"advisoryDelay\":290},\"id\":27341}").getBytes(UTF_8);
   @SuppressWarnings("HardcodedLineSeparator") public static final byte[] RESPONSE_32_OLD_API =
@@ -181,33 +175,34 @@ public class RandomDotOrgSeedGeneratorHermeticTest
     testGenerator(seedGenerator, false);
   }
 
-  @SuppressWarnings("ThrowableNotThrown") @Test public void testOverShortResponseOldApi()
+  @Test public void testOverShortResponseOldApi()
       throws Exception {
     seedGenerator.setApiKey(null);
     mockResponse(RESPONSE_32_OLD_API);
-    expectAndGetException(625);
+    expectAndGetException(625, false);
   }
 
-  @SuppressWarnings("ThrowableNotThrown") @Test public void testOverShortResponseJsonApi()
+  @Test public void testOverShortResponseJsonApi()
       throws Exception {
     seedGenerator.setApiKey(UUID.randomUUID());
     mockResponse(RESPONSE_32_JSON);
-    expectAndGetException(625);
+    expectAndGetException(625, false);
   }
 
-  @SuppressWarnings("ThrowableNotThrown") @Test public void testInvalidBase64ResponseJsonApi()
+  @Test public void testInvalidBase64ResponseJsonApi()
       throws Exception {
     seedGenerator.setApiKey(UUID.randomUUID());
-    mockResponse(RESPONSE_32_BAD_BASE64);
+    mockResponse("{\"jsonrpc\":\"2.0\",\"result\":{\"random\":{\"data\":" +
+        "[\"\uD83D\uDCA9lhFSSjLy+u5P/Cz92BH4R3NZ0+j8UHNeIR02CChoQ=\"]," +
+        "\"completionTime\":\"2018-05-06 19:54:31Z\"},\"bitsUsed\":256,\"bitsLeft\":996831," +
+        "\"requestsLeft\":199912,\"advisoryDelay\":290},\"id\":27341}");
     expectAndGetException(32);
   }
 
-  @Test public void testInvalidResponseJsonApi() throws Exception {
+  @Override @Test public void testNonJsonResponse() {
     seedGenerator.setApiKey(UUID.randomUUID());
     try {
-      mockResponse("Not JSON".getBytes(UTF_8));
-      assertTrue(
-          expectAndGetException(SeedTestUtils.SEED_SIZE).getCause() instanceof ParseException);
+      super.testNonJsonResponse();
     } finally {
       seedGenerator.setApiKey(null);
     }
@@ -215,7 +210,7 @@ public class RandomDotOrgSeedGeneratorHermeticTest
 
   @Test public void testInvalidResponseOldApi() throws Exception {
     seedGenerator.setApiKey(null);
-    mockResponse("Not numbers".getBytes(UTF_8));
+    mockResponse("Not numbers");
     assertTrue(
         expectAndGetException(SeedTestUtils.SEED_SIZE).getCause() instanceof NumberFormatException);
   }
@@ -223,31 +218,29 @@ public class RandomDotOrgSeedGeneratorHermeticTest
   @Test public void testResponseError() throws Exception {
     seedGenerator.setApiKey(UUID.randomUUID());
     try {
-      mockResponse(("{\"jsonrpc\":\"2.0\",\"error\":\"Oh noes, an error\"," +
+      mockResponse("{\"jsonrpc\":\"2.0\",\"error\":\"Oh noes, an error\"," +
           "\"result\":{\"random\":{\"data\":" +
           "[\"gAlhFSSjLy+u5P/Cz92BH4R3NZ0+j8UHNeIR02CChoQ=\"]," +
           "\"completionTime\":\"2018-05-06 19:54:31Z\"},\"bitsUsed\":256,\"bitsLeft\":996831," +
-          "\"requestsLeft\":199912,\"advisoryDelay\":290},\"id\":27341}").getBytes(
-          UTF_8));
-      assertEquals(expectAndGetException(SeedTestUtils.SEED_SIZE).getMessage(), "Oh noes, an error",
-          "Wrong exception message");
+          "\"requestsLeft\":199912,\"advisoryDelay\":290},\"id\":27341}");
+      assertEquals(expectAndGetException(SeedTestUtils.SEED_SIZE, false).getMessage(),
+          "Oh noes, an error", "Wrong exception message");
     } finally {
       seedGenerator.setApiKey(null);
     }
   }
 
-  @SuppressWarnings("ThrowableNotThrown") @Test public void testResponseNoResult()
+  @Test public void testResponseNoResult()
       throws Exception {
-    mockResponse("{\"jsonrpc\":\"2.0\"}".getBytes(UTF_8));
+    mockResponse("{\"jsonrpc\":\"2.0\"}");
     expectAndGetException(SeedTestUtils.SEED_SIZE);
   }
 
-  @SuppressWarnings("ThrowableNotThrown") @Test public void testResponseNoRandom()
+  @Test public void testResponseNoRandom()
       throws Exception {
-    mockResponse(("{\"jsonrpc\":\"2.0\",\"result\":{" +
+    mockResponse("{\"jsonrpc\":\"2.0\",\"result\":{" +
         "\"completionTime\":\"2018-05-06 19:54:31Z\"},\"bitsUsed\":256,\"bitsLeft\":996831," +
-        "\"requestsLeft\":199912,\"advisoryDelay\":290},\"id\":27341}").getBytes(
-        UTF_8));
+        "\"requestsLeft\":199912,\"advisoryDelay\":290},\"id\":27341}");
     expectAndGetException(SeedTestUtils.SEED_SIZE);
   }
 
@@ -269,6 +262,20 @@ public class RandomDotOrgSeedGeneratorHermeticTest
     testLargeRequest();
   }
 
+  @Override public void testEmptyResponse() {
+    seedGenerator.setApiKey(UUID.randomUUID());
+    try {
+      super.testEmptyResponse();
+    } finally {
+      seedGenerator.setApiKey(null);
+    }
+  }
+
+  @Test public void testEmptyResponseOldApi() {
+    seedGenerator.setApiKey(null);
+    super.testEmptyResponse();
+  }
+
   /**
    * Try to acquire a large number of bytes, more than are cached internally by the seed generator
    * implementation.
@@ -280,31 +287,16 @@ public class RandomDotOrgSeedGeneratorHermeticTest
     testLargeRequest();
   }
 
-  @Test public void testSetSslSocketFactory() {
-    seedGenerator.setSslSocketFactory(createSocketFactory());
-    try {
-      testGenerator(seedGenerator, false);
-    } finally {
-      seedGenerator.setSslSocketFactory(null);
-    }
-  }
-
   @Test public void testRandomFuzzJsonApi() throws Exception {
     seedGenerator.setApiKey(UUID.randomUUID());
-    fuzzResponse();
+    fuzzResponse(RESPONSE_32_JSON.length);
     expectAndGetException(32);
   }
 
   @Test public void testRandomFuzzOldApi() throws Exception {
     seedGenerator.setApiKey(null);
-    fuzzResponse();
+    fuzzResponse(RESPONSE_32_JSON.length);
     expectAndGetException(32);
-  }
-
-  private void fuzzResponse() throws Exception {
-    byte[] fuzz = new byte[RESPONSE_32_JSON.length];
-    ThreadLocalRandom.current().nextBytes(fuzz);
-    mockResponse(fuzz);
   }
 
   @Override protected RandomDotOrgSeedGenerator getSeedGeneratorUnderTest() {

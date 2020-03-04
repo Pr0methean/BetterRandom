@@ -202,7 +202,7 @@ public final class RandomDotOrgSeedGenerator extends WebJsonSeedGenerator {
         final Object advisoryDelayMs = result.get("advisoryDelay");
         if (advisoryDelayMs instanceof Number) {
           // Wait RETRY_DELAY or the advisory delay, whichever is shorter
-          final int delayMs = Math.min(getRetryDelayMs(), ((Number) advisoryDelayMs).intValue());
+          final long delayMs = Math.min(getRetryDelayMs(), ((Number) advisoryDelayMs).longValue());
           earliestNextAttempt = CLOCK.instant().plusMillis(delayMs);
         }
       }

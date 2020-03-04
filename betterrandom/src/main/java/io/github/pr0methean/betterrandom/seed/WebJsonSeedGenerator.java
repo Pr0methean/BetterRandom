@@ -71,7 +71,7 @@ public abstract class WebJsonSeedGenerator implements SeedGenerator {
     try (final BufferedReader reader = getResponseReader(connection)) {
       response = (JSONObject) JSON_PARSER.parse(reader);
     } catch (final ParseException e) {
-      throw new SeedException("Unparseable JSON response from random.org", e);
+      throw new SeedException("Unparseable JSON response", e);
     }
     return response;
   }
