@@ -5,6 +5,9 @@ import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotNull;
 import static org.testng.Assert.assertTrue;
 
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
 import org.testng.annotations.Test;
 
 @SuppressWarnings("ThrowableNotThrown")
@@ -117,6 +120,11 @@ public class AnuQuantumSeedGeneratorHermeticTest
         "\"size\":32,\"data\":[\"0808446c6d2723c335e3adcf1186c062c1e15c86fb6f396f78ab162b7e28adxx\"" +
         "],\"success\":true}");
     expectAndGetException(32);
+  }
+
+  @Test public void testJsonSimple() throws ParseException {
+    JSONObject json = (JSONObject) new JSONParser().parse("{\"poop\":\"\uD83D\uDCA9\"}");
+    assertEquals(json.get("poop"), "\uD83D\uDCA9");
   }
 
   @Test public void testSetProxy() {
