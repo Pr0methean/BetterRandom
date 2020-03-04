@@ -5,6 +5,9 @@ import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotNull;
 import static org.testng.Assert.assertTrue;
 
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
@@ -122,8 +125,10 @@ public class AnuQuantumSeedGeneratorHermeticTest
     expectAndGetException(32);
   }
 
-  @Test public void testJsonSimple() throws ParseException {
-    JSONObject json = (JSONObject) new JSONParser().parse("{\"poop\":\"\uD83D\uDCA9\"}");
+  @Test public void testJsonSimple() throws ParseException, IOException {
+    InputStreamReader reader = new InputStreamReader(new ByteArrayInputStream(
+        "{\"poop\":\"\uD83D\uDCA9\"}".getBytes(UTF_8)));
+    JSONObject json = (JSONObject) new JSONParser().parse(reader);
     assertEquals(json.get("poop"), "\uD83D\uDCA9");
   }
 
