@@ -23,10 +23,10 @@ public final class LegacyRandomSeeder extends RandomSeeder {
     otherPrngs = createSynchronizedWeakHashSet();
   }
 
-  @Override public void remove(Collection<? extends Random> randoms) {
+  @Override public void remove(Collection<?> randoms) {
     lock.lock();
     try {
-      for (Random random : randoms) {
+      for (Object random : randoms) {
         if (random instanceof ByteArrayReseedableRandom) {
           byteArrayPrngs.remove(random);
         } else {

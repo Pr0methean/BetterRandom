@@ -118,7 +118,7 @@ public class RandomSeeder extends Looper {
    * Removes PRNGs so that they will no longer be reseeded.
    * @param randoms the PRNGs to remove
    */
-  public void remove(Random... randoms) {
+  public void remove(Object... randoms) {
     remove(Arrays.asList(randoms));
   }
 
@@ -126,7 +126,7 @@ public class RandomSeeder extends Looper {
    * Removes PRNGs so that they will no longer be reseeded.
    * @param randoms the PRNGs to remove
    */
-  public void remove(Collection<? extends Random> randoms) {
+  public void remove(Collection<?> randoms) {
     if (randoms.isEmpty()) {
       return;
     }

@@ -9,14 +9,17 @@ import com.google.common.testing.GcFinalization;
 import com.google.common.util.concurrent.Uninterruptibles;
 import io.github.pr0methean.betterrandom.FlakyRetryAnalyzer;
 import io.github.pr0methean.betterrandom.TestUtils;
+import io.github.pr0methean.betterrandom.prng.BaseRandom;
 import io.github.pr0methean.betterrandom.prng.Pcg64Random;
 import io.github.pr0methean.betterrandom.prng.RandomTestUtils;
 import io.github.pr0methean.betterrandom.prng.adapter.SingleThreadSplittableRandomAdapter;
 import io.github.pr0methean.betterrandom.util.BinaryUtils;
 import java.util.Arrays;
+import java.util.Random;
 import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.TimeUnit;
+import java.util.function.Consumer;
 import org.testng.annotations.Test;
 
 public class RandomSeederTest {
@@ -38,26 +41,35 @@ public class RandomSeederTest {
         x -> x.newThread(() -> {}));
   }
 
-  @Test(timeOut = 25_000) public void testAddRemoveAndIsEmpty() {
+  @Test(timeOut = 25_000, invocationCount = 1000) public void testAddRemoveAndIsEmpty() {
     final SingleThreadSplittableRandomAdapter prng
         = new SingleThreadSplittableRandomAdapter(TEST_SEED);
+    final SeedGenerator seedGenerator = new SemiFakeSeedGenerator(
+        ThreadLocalRandom.current(), "testAddRemoveAndIsEmpty");
+    final RandomSeeder randomSeeder = createRandomSeeder(seedGenerator);
+    checkAddRemoveAndIsEmpty(prng, randomSeeder, randomSeeder::add);
+  }
+
+  protected <T extends Random> void checkAddRemoveAndIsEmpty(T prng, RandomSeeder randomSeeder,
+      Consumer<? super T> addPrng) {
     final byte[] firstBytesWithOldSeed = new byte[TEST_OUTPUT_SIZE];
     final byte[] secondBytesWithOldSeed = new byte[TEST_OUTPUT_SIZE];
     final byte[] testSeedBytes = BinaryUtils.convertLongToBytes(TEST_SEED);
     prng.nextBytes(firstBytesWithOldSeed);
     prng.nextBytes(secondBytesWithOldSeed);
     prng.setSeed(TEST_SEED); // Rewind
-    final SeedGenerator seedGenerator = new SemiFakeSeedGenerator(
-        ThreadLocalRandom.current(), "testAddRemoveAndIsEmpty");
-    final RandomSeeder randomSeeder = createRandomSeeder(seedGenerator);
     try {
       assertTrue(randomSeeder.isEmpty());
-      randomSeeder.add(prng);
+      addPrng.accept(prng);
       assertFalse(randomSeeder.isEmpty());
       prng.nextBytes(new byte[TEST_OUTPUT_SIZE]); // Drain the entropy
-      // FIXME: Why does this sleep get interrupted?!
-      while (Arrays.equals(testSeedBytes, prng.getSeed())) {
-        Uninterruptibles.sleepUninterruptibly(1000L, TimeUnit.MILLISECONDS);
+      // FIXME: Why does sleep get interrupted?
+      if (prng instanceof BaseRandom) {
+        while (Arrays.equals(testSeedBytes, ((BaseRandom) prng).getSeed())) {
+          Uninterruptibles.sleepUninterruptibly(1000L, TimeUnit.MILLISECONDS);
+        }
+      } else {
+        Uninterruptibles.sleepUninterruptibly(5000L, TimeUnit.MILLISECONDS);
       }
       assertFalse(randomSeeder.isEmpty());
     } finally {

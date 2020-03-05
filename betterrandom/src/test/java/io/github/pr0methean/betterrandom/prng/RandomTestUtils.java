@@ -318,8 +318,10 @@ public enum RandomTestUtils {
   }
 
   public static void removeAndAssertEmpty(final RandomSeeder seederThread,
-      final BaseRandom prng) {
-    prng.setRandomSeeder(null);
+      final Random prng) {
+    if (prng instanceof BaseRandom) {
+      ((BaseRandom) prng).setRandomSeeder(null);
+    }
     seederThread.remove(prng);
     seederThread.stopIfEmpty();
     assertTrue(seederThread.isEmpty());
