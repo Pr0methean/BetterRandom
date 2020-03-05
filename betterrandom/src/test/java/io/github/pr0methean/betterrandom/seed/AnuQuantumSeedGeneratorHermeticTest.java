@@ -124,8 +124,8 @@ public class AnuQuantumSeedGeneratorHermeticTest
     seedGenerator.setProxy(proxy);
     try {
       SeedTestUtils.testGenerator(seedGenerator, false, 32);
-      assertNotNull(address);
-      assertEquals(proxy, seedGenerator.proxy.get());
+      assertNotNull(address, "No connection made when using proxy");
+      assertEquals(seedGenerator.proxy.get(), proxy, "Proxy not used");
       assertTrue(address.startsWith("https://qrng.anu.edu.au"), "Wrong domain when proxy used");
     } finally {
       seedGenerator.setProxy(null);

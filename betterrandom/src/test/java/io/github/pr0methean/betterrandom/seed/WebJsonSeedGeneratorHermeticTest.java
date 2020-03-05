@@ -15,13 +15,18 @@ import org.json.simple.parser.ParseException;
 import org.powermock.api.mockito.PowerMockito;
 import org.powermock.modules.testng.PowerMockTestCase;
 import org.testng.Assert;
+import org.testng.annotations.AfterMethod;
 import org.testng.annotations.Test;
 
 public abstract class WebJsonSeedGeneratorHermeticTest<T extends WebJsonSeedGenerator>
     extends PowerMockTestCase {
   protected final Proxy proxy = createProxy();
   protected T seedGenerator;
-  @Nullable protected String address = null;
+  @Nullable protected volatile String address = null;
+
+  @AfterMethod public void tearDown() {
+    address = null;
+  }
 
   protected void mockResponse(String response) {
     mockResponse(response.getBytes(UTF_8));
@@ -33,7 +38,7 @@ public abstract class WebJsonSeedGeneratorHermeticTest<T extends WebJsonSeedGene
       PowerMockito.doAnswer(invocationOnMock -> {
         final URL url = invocationOnMock.getArgument(0);
         address = url.toString();
-        return new FakeHttpsUrlConnection(url, null, response);
+        return new FakeHttpsUrlConnection(url, seedGenerator.proxy.get(), response);
       }).when(seedGenerator, "openConnection", any(URL.class));
     } catch (Exception e) {
       throw new RuntimeException(e);
