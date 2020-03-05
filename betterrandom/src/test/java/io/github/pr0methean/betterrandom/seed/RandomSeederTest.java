@@ -113,9 +113,8 @@ public class RandomSeederTest {
     }
   }
 
-  @Test(singleThreaded = true, timeOut = 90_000L)
+  @Test(singleThreaded = true, timeOut = 90_000L, retryAnalyzer = FlakyRetryAnalyzer.class)
   public void testStopIfEmpty() throws InterruptedException {
-    // FIXME: When the commented lines are uncommented, the ref never gets queued!
     final SeedGenerator seedGenerator = new FakeSeedGenerator("testStopIfEmpty");
     final RandomSeeder randomSeeder = createRandomSeeder(seedGenerator);
     addSomethingDeadTo(randomSeeder);
