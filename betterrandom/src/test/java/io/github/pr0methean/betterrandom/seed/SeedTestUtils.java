@@ -1,5 +1,6 @@
 package io.github.pr0methean.betterrandom.seed;
 
+import static io.github.pr0methean.betterrandom.TestUtils.fail;
 import static org.testng.Assert.assertFalse;
 
 import java.net.InetSocketAddress;
@@ -51,7 +52,7 @@ enum SeedTestUtils {
       context.init(null, null, null);
       return context.getSocketFactory();
     } catch (NoSuchAlgorithmException | KeyManagementException e) {
-      throw new AssertionError(e);
+      throw fail("Unable to set up SSLSocketFactory", e);
     }
   }
 }

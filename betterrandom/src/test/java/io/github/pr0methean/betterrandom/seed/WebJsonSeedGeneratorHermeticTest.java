@@ -6,6 +6,7 @@ import static io.github.pr0methean.betterrandom.seed.SeedTestUtils.testGenerator
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.mockito.ArgumentMatchers.any;
 import static org.testng.Assert.assertTrue;
+import static org.testng.Assert.fail;
 
 import java.net.Proxy;
 import java.net.URL;
@@ -14,7 +15,6 @@ import javax.annotation.Nullable;
 import org.json.simple.parser.ParseException;
 import org.powermock.api.mockito.PowerMockito;
 import org.powermock.modules.testng.PowerMockTestCase;
-import org.testng.Assert;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.Test;
 
@@ -53,13 +53,12 @@ public abstract class WebJsonSeedGeneratorHermeticTest<T extends WebJsonSeedGene
     SeedException exception = null;
     try {
       seedGenerator.generateSeed(seedSize);
-      Assert.fail("Should have thrown SeedException");
+      fail("Should have thrown SeedException");
     } catch (final SeedException expected) {
       exception = expected;
     }
     if (expectCause && exception.getCause() == null) {
-      // Can't use an assert method because we'd lose the original stack trace
-      throw new AssertionError("SeedException should have a cause", exception);
+      fail("SeedException should have a cause", exception);
     }
     return exception;
   }

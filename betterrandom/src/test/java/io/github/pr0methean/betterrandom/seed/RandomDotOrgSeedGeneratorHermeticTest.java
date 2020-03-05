@@ -5,6 +5,7 @@ import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotNull;
 import static org.testng.Assert.assertTrue;
+import static org.testng.Assert.fail;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -122,7 +123,7 @@ public class RandomDotOrgSeedGeneratorHermeticTest
       }
       MAX_SIZE_RESPONSE_OLD_API = responseBuilder.toByteArray();
     } catch (IOException e) {
-      throw new AssertionError(e);
+      fail("Error setting up test class", e);
     }
   }
 

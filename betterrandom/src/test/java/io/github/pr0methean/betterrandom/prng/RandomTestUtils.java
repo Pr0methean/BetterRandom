@@ -80,7 +80,7 @@ public enum RandomTestUtils {
       case OFF:
         break;
       default:
-        throw new AssertionError("Unhandled EntropyCheckMode " + entropyCheckMode);
+        fail("Unhandled EntropyCheckMode " + entropyCheckMode);
     }
   }
 
@@ -146,7 +146,7 @@ public enum RandomTestUtils {
       final String fullMessage = String
           .format("%s:%n%s -> %s%nvs.%n%s -> %s%n", message, toString(rng1),
               convertBytesToHexString(out1), toString(rng2), convertBytesToHexString(out2));
-      throw new AssertionError(fullMessage);
+      fail(fullMessage);
     }
   }
 

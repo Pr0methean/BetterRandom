@@ -3,6 +3,7 @@ package io.github.pr0methean.betterrandom.util;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertFalse;
 import static org.testng.Assert.assertTrue;
+import static org.testng.Assert.fail;
 
 import com.google.common.util.concurrent.Uninterruptibles;
 import io.github.pr0methean.betterrandom.FlakyRetryAnalyzer;
@@ -30,7 +31,7 @@ public class LooperTest {
       try {
         Thread.sleep(1);
       } catch (InterruptedException e) {
-        throw new AssertionError(e);
+        fail("Should not have been interrupted", e);
       }
       iterations.incrementAndGet();
       return true;

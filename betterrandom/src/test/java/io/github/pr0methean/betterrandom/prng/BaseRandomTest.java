@@ -11,6 +11,7 @@ import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertFalse;
 import static org.testng.Assert.assertNotEquals;
 import static org.testng.Assert.assertTrue;
+import static org.testng.Assert.fail;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
@@ -451,7 +452,7 @@ public abstract class BaseRandomTest extends PowerMockTestCase {
       case OFF:
         break;
       default:
-        throw new AssertionError("Unhandled entropy check mode " + entropyCheckMode);
+        fail("Unhandled entropy check mode " + entropyCheckMode);
     }
   }
 
