@@ -61,7 +61,7 @@ import org.testng.annotations.Test;
     setApiKey(null);
   }
 
-  @Override public void testSetProxyReal() {
+  @Override @Test public void testSetProxyReal() {
     if (haveApiKey()) {
       setApiKey();
     }
