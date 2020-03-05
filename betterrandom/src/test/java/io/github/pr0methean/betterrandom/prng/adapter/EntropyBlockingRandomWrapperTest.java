@@ -13,11 +13,11 @@ import io.github.pr0methean.betterrandom.FlakyRetryAnalyzer;
 import io.github.pr0methean.betterrandom.prng.BaseRandom;
 import io.github.pr0methean.betterrandom.prng.RandomTestUtils;
 import io.github.pr0methean.betterrandom.seed.FailingSeedGenerator;
+import io.github.pr0methean.betterrandom.seed.RandomSeeder;
+import io.github.pr0methean.betterrandom.seed.RandomSeeder.DefaultThreadFactory;
 import io.github.pr0methean.betterrandom.seed.SeedException;
 import io.github.pr0methean.betterrandom.seed.SeedGenerator;
 import io.github.pr0methean.betterrandom.seed.SemiFakeSeedGenerator;
-import io.github.pr0methean.betterrandom.seed.RandomSeeder;
-import io.github.pr0methean.betterrandom.seed.RandomSeeder.DefaultThreadFactory;
 import java.util.Arrays;
 import java.util.Map;
 import java.util.Random;
@@ -141,7 +141,7 @@ public class EntropyBlockingRandomWrapperTest extends RandomWrapperRandomTest {
     }
   }
 
-  @Test(timeOut = 10_000L) public void testFallbackFromRandomSeederThread() {
+  @Test(timeOut = 20_000L) public void testFallbackFromRandomSeederThread() {
     SeedGenerator failingSeedGen = Mockito.spy(FailingSeedGenerator.DEFAULT_INSTANCE);
     RandomSeeder seeder = new RandomSeeder(failingSeedGen);
     SeedGenerator sameThreadSeedGen

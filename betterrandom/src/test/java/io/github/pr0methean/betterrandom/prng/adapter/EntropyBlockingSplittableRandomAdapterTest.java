@@ -13,10 +13,10 @@ import io.github.pr0methean.betterrandom.prng.BaseRandom;
 import io.github.pr0methean.betterrandom.prng.RandomTestUtils;
 import io.github.pr0methean.betterrandom.seed.FakeSeedGenerator;
 import io.github.pr0methean.betterrandom.seed.RandomSeeder;
+import io.github.pr0methean.betterrandom.seed.RandomSeeder.DefaultThreadFactory;
 import io.github.pr0methean.betterrandom.seed.SeedException;
 import io.github.pr0methean.betterrandom.seed.SeedGenerator;
 import io.github.pr0methean.betterrandom.seed.SemiFakeSeedGenerator;
-import io.github.pr0methean.betterrandom.seed.RandomSeeder.DefaultThreadFactory;
 import io.github.pr0methean.betterrandom.util.BinaryUtils;
 import java.util.Arrays;
 import java.util.Map;
@@ -67,8 +67,7 @@ public class EntropyBlockingSplittableRandomAdapterTest
     return out;
   }
 
-  // FIXME: Why does this need so much more time than other PRNGs?!
-  @Test(timeOut = 240_000, retryAnalyzer = FlakyRetryAnalyzer.class)
+  @Test(timeOut = 60_000)
   @Override public void testDistribution() throws SeedException {
     super.testDistribution();
   }
