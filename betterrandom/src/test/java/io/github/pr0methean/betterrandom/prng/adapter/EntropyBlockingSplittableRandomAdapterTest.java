@@ -67,9 +67,15 @@ public class EntropyBlockingSplittableRandomAdapterTest
     return out;
   }
 
-  @Test(timeOut = 60_000)
+  // FIXME: Why does this need so much more time than other PRNGs?!
+  @Test(timeOut = 240_000, retryAnalyzer = FlakyRetryAnalyzer.class)
   @Override public void testDistribution() throws SeedException {
     super.testDistribution();
+  }
+
+  private EntropyBlockingSplittableRandomAdapter createRngLargeEntropyLimit() {
+      return new EntropyBlockingSplittableRandomAdapter(getTestSeedGenerator(), thread,
+          EntropyBlockingTestUtils.VERY_LOW_MINIMUM_ENTROPY);
   }
 
   @Override public void testInitialEntropy() {
