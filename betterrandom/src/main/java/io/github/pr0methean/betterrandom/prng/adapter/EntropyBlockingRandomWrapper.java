@@ -1,8 +1,8 @@
 package io.github.pr0methean.betterrandom.prng.adapter;
 
+import io.github.pr0methean.betterrandom.seed.RandomSeeder;
 import io.github.pr0methean.betterrandom.seed.SeedException;
 import io.github.pr0methean.betterrandom.seed.SeedGenerator;
-import io.github.pr0methean.betterrandom.seed.RandomSeeder;
 import java.util.Random;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.concurrent.locks.Condition;
@@ -94,7 +94,7 @@ public class EntropyBlockingRandomWrapper extends RandomWrapper {
         RandomSeeder seeder = getRandomSeeder();
         if (seeder != null) {
           waitingOnReseed = true;
-          seeder.wakeUp();
+          seeder.add(this); // ensure that we're still registered, and wake up seeder
           try {
             seedingStatusChanged.await();
           } catch (InterruptedException ignored) {
