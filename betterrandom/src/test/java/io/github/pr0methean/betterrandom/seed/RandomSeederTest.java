@@ -12,6 +12,7 @@ import io.github.pr0methean.betterrandom.TestUtils;
 import io.github.pr0methean.betterrandom.prng.Pcg64Random;
 import io.github.pr0methean.betterrandom.prng.RandomTestUtils;
 import io.github.pr0methean.betterrandom.prng.adapter.SingleThreadSplittableRandomAdapter;
+import io.github.pr0methean.betterrandom.util.BinaryUtils;
 import java.util.Arrays;
 import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.ThreadLocalRandom;
@@ -20,7 +21,7 @@ import org.testng.annotations.Test;
 
 public class RandomSeederTest {
   protected static final long TEST_SEED = 0x0123456789ABCDEFL;
-  protected static final int TEST_OUTPUT_SIZE = 20;
+  protected static final int TEST_OUTPUT_SIZE = 8;
 
   @Test public void testConstructors() {
     TestUtils.testConstructors(RandomSeeder.class, false, ImmutableMap
@@ -42,6 +43,7 @@ public class RandomSeederTest {
         = new SingleThreadSplittableRandomAdapter(TEST_SEED);
     final byte[] firstBytesWithOldSeed = new byte[TEST_OUTPUT_SIZE];
     final byte[] secondBytesWithOldSeed = new byte[TEST_OUTPUT_SIZE];
+    final byte[] testSeedBytes = BinaryUtils.convertLongToBytes(TEST_SEED);
     prng.nextBytes(firstBytesWithOldSeed);
     prng.nextBytes(secondBytesWithOldSeed);
     prng.setSeed(TEST_SEED); // Rewind
@@ -54,7 +56,9 @@ public class RandomSeederTest {
       assertFalse(randomSeeder.isEmpty());
       prng.nextBytes(new byte[TEST_OUTPUT_SIZE]); // Drain the entropy
       // FIXME: Why does this sleep get interrupted?!
-      Uninterruptibles.sleepUninterruptibly(2000L, TimeUnit.MILLISECONDS);
+      while (Arrays.equals(testSeedBytes, prng.getSeed())) {
+        Uninterruptibles.sleepUninterruptibly(1000L, TimeUnit.MILLISECONDS);
+      }
       assertFalse(randomSeeder.isEmpty());
     } finally {
       RandomTestUtils.removeAndAssertEmpty(randomSeeder, prng);
