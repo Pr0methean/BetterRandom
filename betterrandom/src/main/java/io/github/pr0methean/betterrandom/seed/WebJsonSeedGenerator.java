@@ -49,10 +49,23 @@ public abstract class WebJsonSeedGenerator implements SeedGenerator {
    */
   protected final boolean useRetryDelay;
 
+  /**
+   * @param useRetryDelay whether to wait 10 seconds before trying again after an IOException
+   *     (attempting to use it again before then will automatically fail)
+   */
   public WebJsonSeedGenerator(final boolean useRetryDelay) {
     this.useRetryDelay = useRetryDelay;
   }
 
+  /**
+   * Reads a field value from a JSON object and checks that it is the correct type.
+   * @param parent the JSON object to retrieve a field from
+   * @param key the field name
+   * @param outputClass the object class that we expect the value to be
+   * @param <T> the type of {@code outputClass}
+   * @return the field value
+   * @throws SeedException if the field is missing or the wrong type
+   */
   protected static <T> T checkedGetObject(final JSONObject parent, final String key,
       Class<T> outputClass) {
     Object child = parent.get(key);
@@ -63,11 +76,27 @@ public abstract class WebJsonSeedGenerator implements SeedGenerator {
     return outputClass.cast(child);
   }
 
+  /**
+   * Creates a {@link BufferedReader} reading the response from the given {@link HttpURLConnection}
+   * as UTF-8. The connection must be open and all request properties must be set before this reader
+   * is used.
+   *
+   * @param connection the connection to read the response from
+   * @return a BufferedReader reading the response
+   * @throws IOException if thrown by {@link HttpURLConnection#getInputStream()}
+   */
   protected static BufferedReader getResponseReader(final HttpURLConnection connection)
       throws IOException {
     return new BufferedReader(new InputStreamReader(connection.getInputStream(), UTF_8));
   }
 
+  /**
+   * Parses the response from the given {@link HttpURLConnection} as UTF-8 encoded JSON.
+   *
+   * @param connection the connection to parse the response from
+   * @return the response as a {@link JSONObject}
+   * @throws IOException if thrown by {@link HttpURLConnection#getInputStream()}
+   */
   protected static JSONObject parseJsonResponse(HttpURLConnection connection) throws IOException {
     final JSONObject response;
     try (final BufferedReader reader = getResponseReader(connection)) {
@@ -78,16 +107,38 @@ public abstract class WebJsonSeedGenerator implements SeedGenerator {
     return response;
   }
 
+  /**
+   * Only has an effect if {@link #useRetryDelay} is true. The delay after an {@link IOException}
+   * during which any further attempt to generate a seed will automatically fail without opening
+   * another connection.
+   *
+   * @return the retry delay
+   */
   public Duration getRetryDelay() {
     return RETRY_DELAY;
   }
 
+  /**
+   * Same as {@link #getRetryDelay()} but expressed as a number of milliseconds.
+   *
+   * @return the retry delay in milliseconds
+   */
   public int getRetryDelayMs() {
     return RETRY_DELAY_MS;
   }
 
+  /**
+   * Returns the value to use for the User-Agent HTTP request header.
+   * @return the user agent string
+   */
   protected abstract String getUserAgent();
 
+  /**
+   * Returns the maximum number of bytes that can be obtained with one request to the service.
+   * When a seed larger than this is needed, it is obtained using multiple requests.
+   *
+   * @return the maximum number of bytes per request
+   */
   protected abstract int getMaxRequestSize();
 
   /**
@@ -111,6 +162,15 @@ public abstract class WebJsonSeedGenerator implements SeedGenerator {
     this.socketFactory.set(socketFactory);
   }
 
+  /**
+   * Opens an {@link HttpURLConnection} that will make a GET request to the given URL using this
+   * seed generator's current {@link Proxy}, {@link SeedGenerator} and User-Agent string, with the
+   * header {@code Content-Type: application/json}.
+   *
+   * @param url the URL to connect to
+   * @return a connection to the URL
+   * @throws IOException if thrown by {@link URL#openConnection()} or {@link URL#openConnection(Proxy)}
+   */
   protected HttpURLConnection openConnection(final URL url) throws IOException {
     final Proxy currentProxy = proxy.get();
     final HttpsURLConnection connection =
@@ -125,6 +185,14 @@ public abstract class WebJsonSeedGenerator implements SeedGenerator {
     return connection;
   }
 
+  /**
+   * Downloads random bytes into the given range of a byte array, using one request.
+   *
+   * @param seed the array to populate
+   * @param offset the first index to populate
+   * @param length the number of bytes to download
+   * @throws IOException if unable to connect to the Web service
+   */
   protected abstract void downloadBytes(byte[] seed, int offset, int length) throws IOException;
 
   @Override @SuppressWarnings("AssignmentToStaticFieldFromInstanceMethod")
