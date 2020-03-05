@@ -41,7 +41,7 @@ public class RandomSeederTest {
         x -> x.newThread(() -> {}));
   }
 
-  @Test(timeOut = 25_000) public void testAddRemoveAndIsEmpty() {
+  @Test(timeOut = 60_000) public void testAddRemoveAndIsEmpty() {
     final SingleThreadSplittableRandomAdapter prng
         = new SingleThreadSplittableRandomAdapter(TEST_SEED);
     final SeedGenerator seedGenerator = new SemiFakeSeedGenerator(
@@ -113,7 +113,7 @@ public class RandomSeederTest {
     }
   }
 
-  @Test(singleThreaded = true, timeOut = 90_000L)
+  @Test(timeOut = 90_000L, retryAnalyzer = FlakyRetryAnalyzer.class)
   public void testStopIfEmpty() throws InterruptedException {
     // FIXME: When the commented lines are uncommented, the ref never gets queued!
     final SeedGenerator seedGenerator = new FakeSeedGenerator("testStopIfEmpty");
