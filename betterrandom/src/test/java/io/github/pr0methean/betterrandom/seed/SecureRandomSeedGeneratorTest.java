@@ -25,7 +25,7 @@ import org.testng.annotations.Test;
  *
  * @author Daniel Dyer
  */
-public class SecureRandomSeedGeneratorTest extends AbstractSeedGeneratorTest {
+public class SecureRandomSeedGeneratorTest extends AbstractSeedGeneratorTest<SeedGenerator> {
 
   public SecureRandomSeedGeneratorTest() {
     super(SecureRandomSeedGenerator.DEFAULT_INSTANCE);

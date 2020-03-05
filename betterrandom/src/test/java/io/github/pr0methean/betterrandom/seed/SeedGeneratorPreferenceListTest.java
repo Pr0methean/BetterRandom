@@ -8,7 +8,7 @@ import static org.testng.Assert.assertTrue;
 import java.util.Arrays;
 import org.testng.annotations.Test;
 
-public class SeedGeneratorPreferenceListTest extends AbstractSeedGeneratorTest {
+public class SeedGeneratorPreferenceListTest extends AbstractSeedGeneratorTest<SeedGenerator> {
   public SeedGeneratorPreferenceListTest() {
     super(null);
   }

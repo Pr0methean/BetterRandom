@@ -9,7 +9,7 @@ import org.testng.annotations.Test;
 
 @SuppressWarnings("ThrowableNotThrown")
 public class AnuQuantumSeedGeneratorHermeticTest
-    extends AbstractWebJsonSeedGeneratorHermeticTest<AnuQuantumSeedGenerator> {
+    extends WebJsonSeedGeneratorHermeticTest<AnuQuantumSeedGenerator> {
 
   private static final byte[] RESPONSE_2048
       = ("{\"type\":\"string\",\"length\":2,\"size\":1024," +

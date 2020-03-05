@@ -28,7 +28,7 @@ import org.testng.annotations.Test;
  * @author Daniel Dyer
  */
 @SuppressWarnings("HardcodedFileSeparator") public class DevRandomSeedGeneratorTest
-    extends AbstractSeedGeneratorTest {
+    extends AbstractSeedGeneratorTest<SeedGenerator> {
 
   public DevRandomSeedGeneratorTest() {
     super(DevRandomSeedGenerator.DEV_RANDOM_SEED_GENERATOR);

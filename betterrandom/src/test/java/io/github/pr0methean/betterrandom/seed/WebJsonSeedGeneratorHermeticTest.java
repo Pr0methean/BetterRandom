@@ -17,7 +17,7 @@ import org.powermock.modules.testng.PowerMockTestCase;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
-public abstract class AbstractWebJsonSeedGeneratorHermeticTest<T extends WebJsonSeedGenerator>
+public abstract class WebJsonSeedGeneratorHermeticTest<T extends WebJsonSeedGenerator>
     extends PowerMockTestCase {
   protected final Proxy proxy = createProxy();
   protected T seedGenerator;

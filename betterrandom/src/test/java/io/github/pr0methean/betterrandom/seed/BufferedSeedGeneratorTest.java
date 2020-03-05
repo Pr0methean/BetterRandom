@@ -6,7 +6,7 @@ import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 @Test(singleThreaded = true) public class BufferedSeedGeneratorTest
-    extends AbstractSeedGeneratorTest {
+    extends AbstractSeedGeneratorTest<SeedGenerator> {
 
   private static final FakeSeedGenerator FAKE_SEED_GENERATOR = new FakeSeedGenerator();
   private static final int BUFFER_SIZE = 256;

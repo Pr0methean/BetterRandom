@@ -27,7 +27,7 @@ import org.testng.annotations.Test;
 @PrepareForTest(RandomDotOrgSeedGenerator.class) @Test(singleThreaded = true)
 @SuppressWarnings("ThrowableNotThrown")
 public class RandomDotOrgSeedGeneratorHermeticTest
-    extends AbstractWebJsonSeedGeneratorHermeticTest<RandomDotOrgSeedGenerator> {
+    extends WebJsonSeedGeneratorHermeticTest<RandomDotOrgSeedGenerator> {
 
   @SuppressWarnings("HardcodedFileSeparator") public static final byte[] RESPONSE_32_JSON =
       ("{\"jsonrpc\":\"2.0\",\"result\":{\"random\":{\"data\":" +
