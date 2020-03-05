@@ -11,6 +11,7 @@ import java.io.Serializable;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.Objects;
 import java.util.Random;
 import java.util.Set;
@@ -52,13 +53,6 @@ public class RandomSeeder extends Looper {
    * low, or as often as possible if they don't implement {@link EntropyCountingRandom}.
    */
   protected transient Set<ByteArrayReseedableRandom> byteArrayPrngs;
-
-  /**
-   * Holds instances that are being reseeded during the current iteration, so that PRNGs can be
-   * added and removed in the middle of an iteration without the
-   * {@link java.util.ConcurrentModificationException} that would otherwise arise.
-   */
-  protected transient Set<ByteArrayReseedableRandom> byteArrayPrngsThisIteration;
 
   /**
    * Signaled when a PRNG is added.
@@ -135,7 +129,7 @@ public class RandomSeeder extends Looper {
    * @param randoms the PRNGs to remove
    */
   public void remove(Collection<? extends Random> randoms) {
-    if (randoms.size() == 0) {
+    if (randoms.isEmpty()) {
       return;
     }
     lock.lock();
@@ -159,7 +153,7 @@ public class RandomSeeder extends Looper {
    * @param randoms the PRNGs to start reseeding
    */
   public void add(Collection<? extends ByteArrayReseedableRandom> randoms) {
-    if (randoms.size() == 0) {
+    if (randoms.isEmpty()) {
       return;
     }
     lock.lock();
@@ -215,7 +209,6 @@ public class RandomSeeder extends Looper {
    */
   protected void initTransientFields() {
     byteArrayPrngs = createSynchronizedWeakHashSet();
-    byteArrayPrngsThisIteration = createSynchronizedWeakHashSet();
     waitWhileEmpty = lock.newCondition();
     waitForEntropyDrain = lock.newCondition();
   }
@@ -232,6 +225,7 @@ public class RandomSeeder extends Looper {
 
   @SuppressWarnings({"InfiniteLoopStatement", "ObjectAllocationInLoop", "AwaitNotInLoop"}) @Override
   protected boolean iterate() {
+    Set<ByteArrayReseedableRandom> byteArrayPrngsThisIteration = new HashSet<>();
     try {
       while (true) {
         byteArrayPrngsThisIteration.addAll(byteArrayPrngs);
@@ -242,7 +236,7 @@ public class RandomSeeder extends Looper {
           return false;
         }
       }
-      boolean entropyConsumed = reseedByteArrayReseedableRandoms();
+      boolean entropyConsumed = reseedByteArrayReseedableRandoms(byteArrayPrngsThisIteration);
       if (!entropyConsumed) {
         waitForEntropyDrain.await(POLL_INTERVAL, TimeUnit.SECONDS);
       }
@@ -254,27 +248,24 @@ public class RandomSeeder extends Looper {
   }
 
   /**
-   * Reseeds all the PRNGs that need reseeding in {@link #byteArrayPrngsThisIteration}, then clears
-   * that set.
+   * Reseeds all the PRNGs that need reseeding in {@link #randoms}.
    *
    * @return true if at least one PRNG was reseeded; false otherwise
    */
-  protected boolean reseedByteArrayReseedableRandoms() {
+  protected boolean reseedByteArrayReseedableRandoms(Iterable<? extends ByteArrayReseedableRandom> randoms) {
     boolean entropyConsumed = false;
-    try {
-      for (ByteArrayReseedableRandom random : byteArrayPrngsThisIteration) {
-        if (stillDefinitelyHasEntropy(random)) {
-          continue;
-        }
-        entropyConsumed = true;
-        if (random.preferSeedWithLong()) {
-          reseedWithLong((Random) random);
-        } else {
-          random.setSeed(seedGenerator.generateSeed(random.getNewSeedLength()));
-        }
+    for (ByteArrayReseedableRandom random : randoms) {
+      if (stillDefinitelyHasEntropy(random)) {
+        continue;
       }
-    } finally {
-      byteArrayPrngsThisIteration.clear();
+      entropyConsumed = true;
+      if (random.preferSeedWithLong()) {
+        reseedWithLong((Random) random);
+      } else {
+        byte[] seed = seedGenerator.generateSeed(random.getNewSeedLength());
+        System.out.format("Using seed %s%n", BinaryUtils.convertBytesToHexString(seed));
+        random.setSeed(seed);
+      }
     }
     return entropyConsumed;
   }
@@ -303,7 +294,6 @@ public class RandomSeeder extends Looper {
     try {
       unregisterWithAll(byteArrayPrngs);
       byteArrayPrngs.clear();
-      byteArrayPrngsThisIteration.clear();
     } finally {
       lock.unlock();
     }

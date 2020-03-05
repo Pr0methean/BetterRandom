@@ -3,6 +3,7 @@ package io.github.pr0methean.betterrandom.seed;
 import io.github.pr0methean.betterrandom.ByteArrayReseedableRandom;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.Random;
 import java.util.Set;
 import java.util.concurrent.ThreadFactory;
@@ -16,12 +17,10 @@ import org.slf4j.LoggerFactory;
  */
 public final class LegacyRandomSeeder extends RandomSeeder {
   private transient Set<Random> otherPrngs;
-  private transient Set<Random> otherPrngsThisIteration;
 
   @Override protected void initTransientFields() {
     super.initTransientFields();
     otherPrngs = createSynchronizedWeakHashSet();
-    otherPrngsThisIteration = createSynchronizedWeakHashSet();
   }
 
   @Override public void remove(Collection<? extends Random> randoms) {
@@ -52,7 +51,7 @@ public final class LegacyRandomSeeder extends RandomSeeder {
    * @param randoms the PRNGs to start reseeding
    */
   public void addLegacyRandoms(Collection<? extends Random> randoms) {
-    if (randoms.size() == 0) {
+    if (randoms.isEmpty()) {
       return;
     }
     lock.lock();
@@ -107,6 +106,8 @@ public final class LegacyRandomSeeder extends RandomSeeder {
 
   @Override protected boolean iterate() {
     try {
+      Set<ByteArrayReseedableRandom> byteArrayPrngsThisIteration = new HashSet<>();
+      Set<Random> otherPrngsThisIteration = new HashSet<>();
       while (true) {
         otherPrngsThisIteration.addAll(otherPrngs);
         byteArrayPrngsThisIteration.addAll(byteArrayPrngs);
@@ -117,16 +118,12 @@ public final class LegacyRandomSeeder extends RandomSeeder {
           return false;
         }
       }
-      boolean entropyConsumed = reseedByteArrayReseedableRandoms();
-      try {
-        for (Random random : otherPrngsThisIteration) {
-          if (!stillDefinitelyHasEntropy(random)) {
-            entropyConsumed = true;
-            reseedWithLong(random);
-          }
+      boolean entropyConsumed = reseedByteArrayReseedableRandoms(byteArrayPrngsThisIteration);
+      for (Random random : otherPrngsThisIteration) {
+        if (!stillDefinitelyHasEntropy(random)) {
+          entropyConsumed = true;
+          reseedWithLong(random);
         }
-      } finally {
-        otherPrngsThisIteration.clear();
       }
       if (!entropyConsumed) {
         waitForEntropyDrain.await(POLL_INTERVAL, TimeUnit.SECONDS);
@@ -154,7 +151,6 @@ public final class LegacyRandomSeeder extends RandomSeeder {
       super.clear();
       unregisterWithAll(otherPrngs);
       otherPrngs.clear();
-      otherPrngsThisIteration.clear();
     } finally {
       lock.unlock();
     }

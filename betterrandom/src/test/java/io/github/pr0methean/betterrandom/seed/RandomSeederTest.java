@@ -16,6 +16,7 @@ import io.github.pr0methean.betterrandom.prng.adapter.SingleThreadSplittableRand
 import java.lang.ref.WeakReference;
 import java.util.Arrays;
 import java.util.concurrent.ThreadFactory;
+import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.TimeUnit;
 import org.testng.annotations.Test;
 
@@ -47,7 +48,7 @@ public class RandomSeederTest {
     prng.nextBytes(secondBytesWithOldSeed);
     prng.setSeed(TEST_SEED); // Rewind
     final SeedGenerator seedGenerator = new SemiFakeSeedGenerator(
-        new SingleThreadSplittableRandomAdapter(), "testAddRemoveAndIsEmpty");
+        ThreadLocalRandom.current(), "testAddRemoveAndIsEmpty");
     final RandomSeeder randomSeeder = createRandomSeeder(seedGenerator);
     try {
       assertTrue(randomSeeder.isEmpty());

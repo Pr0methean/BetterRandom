@@ -21,6 +21,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Renamed `SimpleRandomSeeder` to `RandomSeeder`.
 - Fixes a bug where `RandomDotOrgSeedGenerator` could fail to parse JSON if the system encoding was not an 8-bit
   encoding compatible with ASCII.
+- Fixes a bug where `RandomSeeder` and `LegacyRandomSeeder` would sometimes skip over a PRNG.
 
 ## [5.0.0]
 
