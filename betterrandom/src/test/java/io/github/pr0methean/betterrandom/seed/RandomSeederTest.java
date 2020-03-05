@@ -41,7 +41,7 @@ public class RandomSeederTest {
         x -> x.newThread(() -> {}));
   }
 
-  @Test(timeOut = 25_000, invocationCount = 1000) public void testAddRemoveAndIsEmpty() {
+  @Test(timeOut = 25_000) public void testAddRemoveAndIsEmpty() {
     final SingleThreadSplittableRandomAdapter prng
         = new SingleThreadSplittableRandomAdapter(TEST_SEED);
     final SeedGenerator seedGenerator = new SemiFakeSeedGenerator(

@@ -19,7 +19,7 @@ public class LegacyRandomSeederTest extends RandomSeederTest {
         new RandomSeeder.DefaultThreadFactory("LegacyRandomSeederTest", Thread.MAX_PRIORITY));
   }
 
-  @Test(timeOut = 25_000, invocationCount = 1000) public void testAddRemoveAndIsEmpty_Random() {
+  @Test(timeOut = 25_000) public void testAddRemoveAndIsEmpty_Random() {
     final Random prng = new Random(TEST_SEED);
     final SeedGenerator seedGenerator = new FakeSeedGenerator("testAddRemoveAndIsEmpty");
     final LegacyRandomSeeder randomSeeder = createRandomSeeder(seedGenerator);
