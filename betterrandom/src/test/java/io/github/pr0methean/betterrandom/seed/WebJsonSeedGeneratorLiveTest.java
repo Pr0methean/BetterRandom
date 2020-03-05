@@ -1,6 +1,6 @@
 package io.github.pr0methean.betterrandom.seed;
 
-import static io.github.pr0methean.betterrandom.seed.RandomDotOrgUtils.createSocketFactory;
+import static io.github.pr0methean.betterrandom.seed.SeedTestUtils.createSocketFactory;
 
 import java.io.IOException;
 import java.net.Proxy;
@@ -12,7 +12,7 @@ import org.testng.annotations.Test;
 
 public abstract class WebJsonSeedGeneratorLiveTest<T extends WebJsonSeedGenerator>
     extends AbstractSeedGeneratorTest<T> {
-  protected final Proxy proxy = RandomDotOrgUtils.createProxy();
+  protected final Proxy proxy = SeedTestUtils.createProxy();
 
   public WebJsonSeedGeneratorLiveTest(T seedGenerator) {
     super(seedGenerator);

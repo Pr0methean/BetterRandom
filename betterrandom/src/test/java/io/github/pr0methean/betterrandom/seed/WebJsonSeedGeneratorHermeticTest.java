@@ -1,7 +1,7 @@
 package io.github.pr0methean.betterrandom.seed;
 
-import static io.github.pr0methean.betterrandom.seed.RandomDotOrgUtils.createProxy;
-import static io.github.pr0methean.betterrandom.seed.RandomDotOrgUtils.createSocketFactory;
+import static io.github.pr0methean.betterrandom.seed.SeedTestUtils.createProxy;
+import static io.github.pr0methean.betterrandom.seed.SeedTestUtils.createSocketFactory;
 import static io.github.pr0methean.betterrandom.seed.SeedTestUtils.testGenerator;
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.mockito.ArgumentMatchers.any;
