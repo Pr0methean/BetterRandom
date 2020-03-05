@@ -40,6 +40,7 @@ public enum DefaultSeedGenerator implements SeedGenerator {
 
   private static volatile SeedGenerator delegate = new SeedGeneratorPreferenceList(true,
       new BufferedSeedGenerator(DevRandomSeedGenerator.DEV_RANDOM_SEED_GENERATOR, 128),
+      new BufferedSeedGenerator(AnuQuantumSeedGenerator.ANU_QUANTUM_SEED_GENERATOR, 1024),
       new BufferedSeedGenerator(RandomDotOrgSeedGenerator.DELAYED_RETRY, 625),
       SecureRandomSeedGenerator.DEFAULT_INSTANCE);
 

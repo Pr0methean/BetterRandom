@@ -2,7 +2,7 @@ package io.github.pr0methean.betterrandom.prng.adapter;
 
 import io.github.pr0methean.betterrandom.seed.SeedException;
 import io.github.pr0methean.betterrandom.seed.SeedGenerator;
-import io.github.pr0methean.betterrandom.seed.SimpleRandomSeeder;
+import io.github.pr0methean.betterrandom.seed.RandomSeeder;
 import java.util.Random;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.concurrent.locks.Condition;
@@ -11,7 +11,7 @@ import javax.annotation.Nullable;
 /**
  * A {@link RandomWrapper} with the additional property that it won't return any output that would
  * take its entropy below a minimum amount, and will instead either wait to be reseeded by a {@link
- * SimpleRandomSeeder} or, if none is installed, reseed itself on the calling thread with a {@link
+ * RandomSeeder} or, if none is installed, reseed itself on the calling thread with a {@link
  * SeedGenerator}. If neither is present, the caller is responsible for reseeding, and any call that
  * would reduce entropy below the minimum will throw {@link IllegalStateException}.
  */
@@ -81,7 +81,7 @@ public class EntropyBlockingRandomWrapper extends RandomWrapper {
     onSeedingStateChanged(true);
  }
 
-  @Override public void setRandomSeeder(@Nullable SimpleRandomSeeder randomSeeder) {
+  @Override public void setRandomSeeder(@Nullable RandomSeeder randomSeeder) {
     super.setRandomSeeder(randomSeeder);
     onSeedingStateChanged(false);
   }
@@ -91,7 +91,7 @@ public class EntropyBlockingRandomWrapper extends RandomWrapper {
       SeedGenerator seedGenerator;
       lock.lock();
       try {
-        SimpleRandomSeeder seeder = getRandomSeeder();
+        RandomSeeder seeder = getRandomSeeder();
         if (seeder != null) {
           waitingOnReseed = true;
           seeder.wakeUp();
@@ -151,7 +151,7 @@ public class EntropyBlockingRandomWrapper extends RandomWrapper {
   }
 
   /**
-   * Called when a new seed generator or {@link SimpleRandomSeeder} is attached or a
+   * Called when a new seed generator or {@link RandomSeeder} is attached or a
    * new seed is generated, so that operations can unblock.
    *
    * @param reseeded true if the seed has changed; false otherwise

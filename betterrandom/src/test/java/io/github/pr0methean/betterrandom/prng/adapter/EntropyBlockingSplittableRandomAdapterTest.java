@@ -12,11 +12,11 @@ import io.github.pr0methean.betterrandom.FlakyRetryAnalyzer;
 import io.github.pr0methean.betterrandom.prng.BaseRandom;
 import io.github.pr0methean.betterrandom.prng.RandomTestUtils;
 import io.github.pr0methean.betterrandom.seed.FakeSeedGenerator;
+import io.github.pr0methean.betterrandom.seed.RandomSeeder;
 import io.github.pr0methean.betterrandom.seed.SeedException;
 import io.github.pr0methean.betterrandom.seed.SeedGenerator;
 import io.github.pr0methean.betterrandom.seed.SemiFakeSeedGenerator;
-import io.github.pr0methean.betterrandom.seed.SimpleRandomSeeder;
-import io.github.pr0methean.betterrandom.seed.SimpleRandomSeeder.DefaultThreadFactory;
+import io.github.pr0methean.betterrandom.seed.RandomSeeder.DefaultThreadFactory;
 import io.github.pr0methean.betterrandom.util.BinaryUtils;
 import java.util.Arrays;
 import java.util.Map;
@@ -30,7 +30,7 @@ import org.testng.annotations.Test;
 public class EntropyBlockingSplittableRandomAdapterTest
     extends SplittableRandomAdapterTest {
 
-  private SimpleRandomSeeder thread;
+  private RandomSeeder thread;
 
   // FIXME: Why does this need more time than other PRNGs?!
   @Override @Test(timeOut = 80_000) public void testNextGaussianStatistically() throws SeedException {
@@ -38,7 +38,7 @@ public class EntropyBlockingSplittableRandomAdapterTest
   }
 
   @Override @BeforeMethod public void setUp() {
-    thread = new SimpleRandomSeeder(getTestSeedGenerator(),
+    thread = new RandomSeeder(getTestSeedGenerator(),
         new DefaultThreadFactory("EntropyBlockingReseedingSplittableRandomAdapterTest",
             Thread.MAX_PRIORITY));
   }
@@ -63,7 +63,7 @@ public class EntropyBlockingSplittableRandomAdapterTest
   @Override public Map<Class<?>, Object> constructorParams() {
     Map<Class<?>, Object> out = super.constructorParams();
     out.put(long.class, EntropyBlockingTestUtils.DEFAULT_MAX_ENTROPY);
-    out.put(SimpleRandomSeeder.class, thread);
+    out.put(RandomSeeder.class, thread);
     return out;
   }
 
@@ -87,7 +87,7 @@ public class EntropyBlockingSplittableRandomAdapterTest
 
   @Override @Test public void testSerializable() throws SeedException {
     SeedGenerator generator = new FakeSeedGenerator("testSerializable");
-    SimpleRandomSeeder thread = new SimpleRandomSeeder(generator);
+    RandomSeeder thread = new RandomSeeder(generator);
     try {
       final BaseSplittableRandomAdapter adapter =
           new EntropyBlockingSplittableRandomAdapter(
@@ -106,7 +106,7 @@ public class EntropyBlockingSplittableRandomAdapterTest
   @Override @Test(retryAnalyzer = FlakyRetryAnalyzer.class) public void testReseeding() {
     SeedGenerator generator =
         new SemiFakeSeedGenerator(ThreadLocalRandom.current(), "testReseeding");
-    SimpleRandomSeeder seeder = new SimpleRandomSeeder(generator);
+    RandomSeeder seeder = new RandomSeeder(generator);
     try {
       EntropyBlockingSplittableRandomAdapter random =
           new EntropyBlockingSplittableRandomAdapter(generator, seeder,
@@ -151,7 +151,7 @@ public class EntropyBlockingSplittableRandomAdapterTest
    */
   @Override @Test(expectedExceptions = UnsupportedOperationException.class)
   public void testRandomSeederThreadIntegration() {
-    SimpleRandomSeeder thread = new SimpleRandomSeeder(DEFAULT_INSTANCE);
+    RandomSeeder thread = new RandomSeeder(DEFAULT_INSTANCE);
     try {
       createRng().setRandomSeeder(thread);
     } finally {
@@ -164,13 +164,13 @@ public class EntropyBlockingSplittableRandomAdapterTest
   }
 
   @Override @Test public void testDump() throws SeedException {
-    SimpleRandomSeeder thread = new SimpleRandomSeeder(DEFAULT_INSTANCE);
+    RandomSeeder thread = new RandomSeeder(DEFAULT_INSTANCE);
     try {
       EntropyBlockingSplittableRandomAdapter firstInstance =
           new EntropyBlockingSplittableRandomAdapter(getTestSeedGenerator(), thread,
                         EntropyBlockingTestUtils.DEFAULT_MAX_ENTROPY);
-      SimpleRandomSeeder otherThread =
-          new SimpleRandomSeeder(new FakeSeedGenerator("Different reseeder"));
+      RandomSeeder otherThread =
+          new RandomSeeder(new FakeSeedGenerator("Different reseeder"));
       try {
         EntropyBlockingSplittableRandomAdapter secondInstance =
             new EntropyBlockingSplittableRandomAdapter(getTestSeedGenerator(), otherThread,
@@ -189,7 +189,7 @@ public class EntropyBlockingSplittableRandomAdapterTest
     SeedGenerator seederSeedGenSpy = Mockito.spy(testSeedGenerator);
     ThreadFactory defaultThreadFactory
         = new DefaultThreadFactory("testRandomSeederThreadUsedFirst", Thread.MAX_PRIORITY);
-    SimpleRandomSeeder seeder = new SimpleRandomSeeder(seederSeedGenSpy,
+    RandomSeeder seeder = new RandomSeeder(seederSeedGenSpy,
         defaultThreadFactory);
     SemiFakeSeedGenerator sameThreadSeedGen
         = new SemiFakeSeedGenerator(ThreadLocalRandom.current(), "sameThreadSeedGen");

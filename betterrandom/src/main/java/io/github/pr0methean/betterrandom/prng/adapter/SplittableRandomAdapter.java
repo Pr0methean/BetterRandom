@@ -2,16 +2,16 @@ package io.github.pr0methean.betterrandom.prng.adapter;
 
 import com.google.common.base.MoreObjects.ToStringHelper;
 import io.github.pr0methean.betterrandom.prng.BaseRandom;
+import io.github.pr0methean.betterrandom.seed.RandomSeeder;
 import io.github.pr0methean.betterrandom.seed.SeedException;
 import io.github.pr0methean.betterrandom.seed.SeedGenerator;
-import io.github.pr0methean.betterrandom.seed.SimpleRandomSeeder;
 import java.util.Objects;
 import java.util.SplittableRandom;
 import javax.annotation.Nullable;
 
 /**
  * Thread-safe PRNG that wraps a {@link ThreadLocal}&lt;{@link SplittableRandom}&gt;. Registers each
- * thread's instance with a {@link SimpleRandomSeeder} to replace its {@link SplittableRandom} with
+ * thread's instance with a {@link RandomSeeder} to replace its {@link SplittableRandom} with
  * a reseeded one as frequently as possible, but not more frequently than it is being used.
  * <p>
  * In OpenJDK 8 and Android API 24 and later, {@link java.util.concurrent.ThreadLocalRandom} uses
@@ -37,12 +37,12 @@ public class SplittableRandomAdapter extends BaseSplittableRandomAdapter {
    * Creates an instance.
    *
    * @param seedGenerator the seed generator that will generate an initial seed for each thread
-   * @param randomSeeder the {@link SimpleRandomSeeder} that will generate a seed for a new
+   * @param randomSeeder the {@link RandomSeeder} that will generate a seed for a new
    *     {@link SplittableRandom} instance whenever each thread's instance needs reseeding
    * @throws SeedException if {@code seedGenerator} fails to generate an initial seed
    */
   public SplittableRandomAdapter(final SeedGenerator seedGenerator,
-      @Nullable SimpleRandomSeeder randomSeeder) throws SeedException {
+      @Nullable RandomSeeder randomSeeder) throws SeedException {
     super(new byte[Long.BYTES]);
     this.seedGenerator = seedGenerator;
     this.randomSeeder.set(randomSeeder);
@@ -51,14 +51,14 @@ public class SplittableRandomAdapter extends BaseSplittableRandomAdapter {
 
   /**
    * Creates an instance that uses the same {@link SeedGenerator} for reseeding and for initial
-   * seeding, and whose {@link SimpleRandomSeeder} uses a
-   * {@link SimpleRandomSeeder.DefaultThreadFactory}.
+   * seeding, and whose {@link RandomSeeder} uses a
+   * {@link RandomSeeder.DefaultThreadFactory}.
    *
    * @param seedGenerator the seed generator that will generate an initial seed for each thread
    * @throws SeedException if {@code seedGenerator} fails to generate an initial seed
    */
   public SplittableRandomAdapter(final SeedGenerator seedGenerator) {
-    this(seedGenerator, new SimpleRandomSeeder(seedGenerator));
+    this(seedGenerator, new RandomSeeder(seedGenerator));
   }
 
   /**
@@ -81,10 +81,10 @@ public class SplittableRandomAdapter extends BaseSplittableRandomAdapter {
     return threadLocal.get().getSeed();
   }
 
-  @Override public void setRandomSeeder(@Nullable final SimpleRandomSeeder randomSeeder) {
+  @Override public void setRandomSeeder(@Nullable final RandomSeeder randomSeeder) {
     if (!Objects.equals(this.randomSeeder.get(), randomSeeder)) {
       throw new UnsupportedOperationException(
-          "ReseedingSplittableRandomAdapter's binding to SimpleRandomSeeder is immutable");
+          "ReseedingSplittableRandomAdapter's binding to RandomSeeder is immutable");
     }
   }
 

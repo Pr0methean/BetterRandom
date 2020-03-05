@@ -27,7 +27,7 @@ import org.slf4j.LoggerFactory;
  *
  * @author Chris Hennick
  */
-public class SimpleRandomSeeder extends Looper {
+public class RandomSeeder extends Looper {
 
   // FIXME: Setting a longer POLL_INTERVAL slows many tests, and causes some to time out
   // (Why doesn't BaseRandom's call to wakeUp() prevent this?!)
@@ -82,7 +82,7 @@ public class SimpleRandomSeeder extends Looper {
    * @param seedGenerator the seed generator
    * @param threadFactory the {@link ThreadFactory} that will create this seeder's thread
    */
-  public SimpleRandomSeeder(final SeedGenerator seedGenerator, ThreadFactory threadFactory) {
+  public RandomSeeder(final SeedGenerator seedGenerator, ThreadFactory threadFactory) {
     this(seedGenerator, threadFactory, DEFAULT_STOP_IF_EMPTY_FOR_NANOS);
   }
 
@@ -91,8 +91,8 @@ public class SimpleRandomSeeder extends Looper {
    *
    * @param seedGenerator the seed generator
    */
-  public SimpleRandomSeeder(SeedGenerator seedGenerator) {
-    this(seedGenerator, new SimpleRandomSeeder.DefaultThreadFactory(seedGenerator.toString()));
+  public RandomSeeder(SeedGenerator seedGenerator) {
+    this(seedGenerator, new RandomSeeder.DefaultThreadFactory(seedGenerator.toString()));
   }
 
   /**
@@ -103,7 +103,7 @@ public class SimpleRandomSeeder extends Looper {
    * @param stopIfEmptyForNanos time in nanoseconds after which this thread will terminate if no
    *     PRNGs are attached
    */
-  public SimpleRandomSeeder(SeedGenerator seedGenerator, ThreadFactory threadFactory,
+  public RandomSeeder(SeedGenerator seedGenerator, ThreadFactory threadFactory,
       long stopIfEmptyForNanos) {
     super(threadFactory);
     this.seedGenerator = seedGenerator;
@@ -191,7 +191,7 @@ public class SimpleRandomSeeder extends Looper {
    * @return the logger for this class
    */
   private static Logger getLogger() {
-    return LoggerFactory.getLogger(SimpleRandomSeeder.class);
+    return LoggerFactory.getLogger(RandomSeeder.class);
   }
 
   @Override public boolean equals(Object o) {
@@ -201,7 +201,7 @@ public class SimpleRandomSeeder extends Looper {
     if (o == null || getClass() != o.getClass()) {
       return false;
     }
-    SimpleRandomSeeder that = (SimpleRandomSeeder) o;
+    RandomSeeder that = (RandomSeeder) o;
     return seedGenerator.equals(that.seedGenerator) && factory.equals(that.factory);
   }
 
@@ -311,7 +311,7 @@ public class SimpleRandomSeeder extends Looper {
 
   /**
    * Informs the given PRNGs that they no longer have a seed generator. Only affects those that
-   * support {@link BaseRandom#setRandomSeeder(SimpleRandomSeeder)}.
+   * support {@link BaseRandom#setRandomSeeder(RandomSeeder)}.
    *
    * @param randoms the PRNGs to unregister with
    */

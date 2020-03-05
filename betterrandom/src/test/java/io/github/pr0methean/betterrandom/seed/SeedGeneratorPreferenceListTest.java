@@ -4,11 +4,12 @@ import static io.github.pr0methean.betterrandom.seed.FailingSeedGenerator.DEFAUL
 import static java.util.Collections.singletonList;
 import static org.testng.Assert.assertFalse;
 import static org.testng.Assert.assertTrue;
+import static org.testng.Assert.fail;
 
 import java.util.Arrays;
 import org.testng.annotations.Test;
 
-public class SeedGeneratorPreferenceListTest extends AbstractSeedGeneratorTest {
+public class SeedGeneratorPreferenceListTest extends SeedGeneratorTest<SeedGeneratorPreferenceList> {
   public SeedGeneratorPreferenceListTest() {
     super(null);
   }
@@ -19,13 +20,8 @@ public class SeedGeneratorPreferenceListTest extends AbstractSeedGeneratorTest {
   }
 
   @Test public void testFirstSucceeds() {
-    FakeSeedGenerator shouldNotBeUsed = new FakeSeedGenerator() {
-      private static final long serialVersionUID = 1234489141337390747L;
-
-      @Override public void generateSeed(byte[] output) throws SeedException {
-        throw new AssertionError("Should not have fallen through to this SeedGenerator");
-      }
-    };
+    FailingSeedGenerator shouldNotBeUsed
+        = new FailingSeedGenerator("Should not have fallen through to this SeedGenerator");
     seedGenerator =
         new SeedGeneratorPreferenceList(Arrays.asList(new FakeSeedGenerator(), shouldNotBeUsed),
             true);
@@ -43,7 +39,8 @@ public class SeedGeneratorPreferenceListTest extends AbstractSeedGeneratorTest {
       private static final long serialVersionUID = 7594951403926684340L;
 
       @Override public boolean isWorthTrying() {
-        throw new AssertionError("isWorthTrying() should not have been called");
+        fail("isWorthTrying() should not have been called");
+        throw new AssertionError("This line should be unreachable");
       }
     };
     seedGenerator = new SeedGeneratorPreferenceList(singletonList(doNotCall), true);

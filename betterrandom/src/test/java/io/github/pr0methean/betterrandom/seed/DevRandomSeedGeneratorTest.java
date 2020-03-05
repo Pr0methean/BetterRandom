@@ -28,7 +28,7 @@ import org.testng.annotations.Test;
  * @author Daniel Dyer
  */
 @SuppressWarnings("HardcodedFileSeparator") public class DevRandomSeedGeneratorTest
-    extends AbstractSeedGeneratorTest {
+    extends SeedGeneratorTest<DevRandomSeedGenerator> {
 
   public DevRandomSeedGeneratorTest() {
     super(DevRandomSeedGenerator.DEV_RANDOM_SEED_GENERATOR);
@@ -40,7 +40,7 @@ import org.testng.annotations.Test;
       assertTrue(seedGenerator.isWorthTrying());
     } else {
       try {
-        DevRandomSeedGenerator.DEV_RANDOM_SEED_GENERATOR.generateSeed(new byte[1]);
+        seedGenerator.generateSeed(new byte[1]);
         fail("Should have thrown a SeedException");
       } catch (SeedException expected) {
       }

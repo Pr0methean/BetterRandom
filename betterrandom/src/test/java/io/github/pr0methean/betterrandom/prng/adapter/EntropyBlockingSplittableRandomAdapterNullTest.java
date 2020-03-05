@@ -7,7 +7,7 @@ import static org.testng.Assert.assertEquals;
 import com.google.common.testing.SerializableTester;
 import io.github.pr0methean.betterrandom.prng.BaseRandom;
 import io.github.pr0methean.betterrandom.seed.SeedException;
-import io.github.pr0methean.betterrandom.seed.SimpleRandomSeeder;
+import io.github.pr0methean.betterrandom.seed.RandomSeeder;
 
 public class EntropyBlockingSplittableRandomAdapterNullTest
     extends EntropyBlockingSplittableRandomAdapterTest {
@@ -33,7 +33,7 @@ public class EntropyBlockingSplittableRandomAdapterNullTest
 
   @Override public void testSerializable() throws SeedException {
     final BaseSplittableRandomAdapter adapter =
-        new EntropyBlockingSplittableRandomAdapter(new SimpleRandomSeeder(DEFAULT_INSTANCE),
+        new EntropyBlockingSplittableRandomAdapter(new RandomSeeder(DEFAULT_INSTANCE),
             EntropyBlockingTestUtils.DEFAULT_MAX_ENTROPY);
     final BaseSplittableRandomAdapter clone = SerializableTester.reserialize(adapter);
     assertEquals(adapter, clone, "Unequal after serialization round-trip");

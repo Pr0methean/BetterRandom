@@ -25,7 +25,7 @@ import org.testng.annotations.Test;
  *
  * @author Daniel Dyer
  */
-public class DefaultSeedGeneratorTest extends AbstractSeedGeneratorTest {
+public class DefaultSeedGeneratorTest extends SeedGeneratorTest<DefaultSeedGenerator> {
 
   public DefaultSeedGeneratorTest() {
     super(DefaultSeedGenerator.DEFAULT_SEED_GENERATOR);
