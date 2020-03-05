@@ -5,11 +5,11 @@ import static org.testng.Assert.assertEquals;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
-public abstract class AbstractSeedGeneratorTest<T extends SeedGenerator> {
+public abstract class SeedGeneratorTest<T extends SeedGenerator> {
 
   protected T seedGenerator;
 
-  protected AbstractSeedGeneratorTest(final T seedGenerator) {
+  protected SeedGeneratorTest(final T seedGenerator) {
     this.seedGenerator = seedGenerator;
   }
 

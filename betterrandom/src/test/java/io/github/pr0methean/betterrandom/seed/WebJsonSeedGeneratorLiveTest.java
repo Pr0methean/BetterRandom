@@ -11,7 +11,7 @@ import org.testng.annotations.BeforeSuite;
 import org.testng.annotations.Test;
 
 public abstract class WebJsonSeedGeneratorLiveTest<T extends WebJsonSeedGenerator>
-    extends AbstractSeedGeneratorTest<T> {
+    extends SeedGeneratorTest<T> {
   protected final Proxy proxy = SeedTestUtils.createProxy();
 
   public WebJsonSeedGeneratorLiveTest(T seedGenerator) {
