@@ -34,7 +34,7 @@ public abstract class WebJsonSeedGenerator implements SeedGenerator {
   private static final int RETRY_DELAY_MS = 10000;
   private static final Duration RETRY_DELAY = Duration.ofMillis(RETRY_DELAY_MS);
   protected final Lock lock = new ReentrantLock();
-  protected volatile Instant earliestNextAttempt = Instant.MIN;
+  protected Instant earliestNextAttempt = Instant.MIN;
   /**
    * The proxy to use with this server, or null to use the JVM default.
    */
