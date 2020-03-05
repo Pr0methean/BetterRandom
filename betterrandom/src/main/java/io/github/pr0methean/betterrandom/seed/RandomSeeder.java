@@ -31,10 +31,17 @@ import org.slf4j.LoggerFactory;
 public class RandomSeeder extends Looper {
 
   /**
-   * Time in seconds to wait before checking again whether any PRNGs need more entropy.
+   * Time in seconds to wait before checking again whether any PRNGs need more entropy, after one
+   * iteration when they didn't.
    */
-  protected static final long POLL_INTERVAL = 10;
+  protected static final long FIRST_POLL_INTERVAL = 1;
+  /**
+   * Time in seconds to wait before checking again whether any PRNGs need more entropy, after more
+   * than one iteration when they didn't.
+   */
+  protected static final long REPEAT_POLL_INTERVAL = 15;
   private static final long serialVersionUID = -4339570810679373476L;
+  private transient boolean alreadyPolled;
 
   /**
    * Default waiting time before an empty instance terminates if still empty.
@@ -242,13 +249,21 @@ public class RandomSeeder extends Looper {
         byteArrayPrngsThisIteration.addAll(byteArrayPrngs);
       }
       boolean entropyConsumed = reseedByteArrayReseedableRandoms(byteArrayPrngsThisIteration);
-      if (!entropyConsumed) {
-        waitForEntropyDrain.await(POLL_INTERVAL, TimeUnit.SECONDS);
-      }
+      waitForEntropyDrainOrUpdateFlag(entropyConsumed);
       return true;
     } catch (final Throwable t) {
       getLogger().error("Disabling the LegacyRandomSeeder for " + seedGenerator, t);
       return false;
+    }
+  }
+
+  protected void waitForEntropyDrainOrUpdateFlag(boolean entropyConsumed) throws InterruptedException {
+    if (entropyConsumed) {
+      alreadyPolled = false;
+    } else {
+      waitForEntropyDrain.await(alreadyPolled ? REPEAT_POLL_INTERVAL : FIRST_POLL_INTERVAL,
+          TimeUnit.SECONDS);
+      alreadyPolled = true;
     }
   }
 

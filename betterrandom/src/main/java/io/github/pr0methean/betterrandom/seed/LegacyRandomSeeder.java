@@ -127,9 +127,7 @@ public final class LegacyRandomSeeder extends RandomSeeder {
           reseedWithLong(random);
         }
       }
-      if (!entropyConsumed) {
-        waitForEntropyDrain.await(POLL_INTERVAL, TimeUnit.SECONDS);
-      }
+      waitForEntropyDrainOrUpdateFlag(entropyConsumed);
       return true;
     } catch (final Throwable t) {
       LoggerFactory.getLogger(LegacyRandomSeeder.class)
