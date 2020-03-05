@@ -212,7 +212,7 @@ public class RandomSeeder extends Looper {
   }
 
   /**
-   * Creates and returns a thread-safe {@link Set} backed by a {@link WeakHashMap}.
+   * Creates and returns a thread-safe {@link Set} with only weak references to its members.
    *
    * @param <T> the set element type
    * @return an empty mutable thread-safe {@link Set} that holds only weak references to its members
@@ -261,7 +261,6 @@ public class RandomSeeder extends Looper {
         reseedWithLong((Random) random);
       } else {
         byte[] seed = seedGenerator.generateSeed(random.getNewSeedLength());
-        System.out.format("Using seed %s%n", BinaryUtils.convertBytesToHexString(seed));
         random.setSeed(seed);
       }
     }
@@ -334,6 +333,7 @@ public class RandomSeeder extends Looper {
    * Shut down this thread if no {@link Random} instances are registered with it.
    */
   public void stopIfEmpty() {
+    wakeUp();
     lock.lock();
     try {
       if (isEmpty()) {

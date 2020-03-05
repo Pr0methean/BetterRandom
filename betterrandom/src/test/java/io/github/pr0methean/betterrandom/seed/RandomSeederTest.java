@@ -7,13 +7,11 @@ import static org.testng.Assert.assertTrue;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.testing.GcFinalization;
 import com.google.common.util.concurrent.Uninterruptibles;
-import io.github.pr0methean.betterrandom.ByteArrayReseedableRandom;
 import io.github.pr0methean.betterrandom.FlakyRetryAnalyzer;
 import io.github.pr0methean.betterrandom.TestUtils;
 import io.github.pr0methean.betterrandom.prng.Pcg64Random;
 import io.github.pr0methean.betterrandom.prng.RandomTestUtils;
 import io.github.pr0methean.betterrandom.prng.adapter.SingleThreadSplittableRandomAdapter;
-import java.lang.ref.WeakReference;
 import java.util.Arrays;
 import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.ThreadLocalRandom;
@@ -99,17 +97,17 @@ public class RandomSeederTest {
     }
   }
 
-  @Test(singleThreaded = true, retryAnalyzer = FlakyRetryAnalyzer.class)
+  @Test(singleThreaded = true, timeOut = 90_000L)
   public void testStopIfEmpty() throws InterruptedException {
     // FIXME: When the commented lines are uncommented, the ref never gets queued!
     final SeedGenerator seedGenerator = new FakeSeedGenerator("testStopIfEmpty");
     final RandomSeeder randomSeeder = createRandomSeeder(seedGenerator);
-    // ReferenceQueue<Object> queue = new ReferenceQueue<>();
-    GcFinalization.awaitClear(addSomethingDeadTo(randomSeeder));
-    Thread.sleep(1000); // FIXME: Why is this needed?
-    // assertNotNull(queue.remove(10_000));
-    randomSeeder.stopIfEmpty();
-    assertFalse(randomSeeder.isRunning(), "randomSeeder did not stop");
+    addSomethingDeadTo(randomSeeder);
+    while (!randomSeeder.isEmpty()) {
+      GcFinalization.awaitFullGc();
+      randomSeeder.stopIfEmpty();
+    }
+    assertFalse(randomSeeder.isRunning(), "RandomSeeder didn't stop");
   }
 
   protected RandomSeeder createRandomSeeder(SeedGenerator seedGenerator) {
@@ -120,14 +118,12 @@ public class RandomSeederTest {
   /**
    * Making this a subroutine ensures that {@code prng} can be GCed on exit.
    */
-  private WeakReference<ByteArrayReseedableRandom>
-      addSomethingDeadTo(RandomSeeder randomSeeder) {
+  private void addSomethingDeadTo(RandomSeeder randomSeeder) {
     SingleThreadSplittableRandomAdapter prng = new SingleThreadSplittableRandomAdapter(TEST_SEED);
     randomSeeder.add(prng);
     randomSeeder.stopIfEmpty();
     assertTrue(randomSeeder.isRunning());
     prng.nextBoolean(); // could replace with Reference.reachabilityFence if JDK8 support wasn't
     // needed
-    return new WeakReference<>(prng);
   }
 }
