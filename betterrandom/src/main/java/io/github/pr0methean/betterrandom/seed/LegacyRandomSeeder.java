@@ -105,6 +105,10 @@ public final class LegacyRandomSeeder extends RandomSeeder {
     this(seedGenerator, new DefaultThreadFactory("LegacyRandomSeeder for " + seedGenerator));
   }
 
+  @Override public boolean contains(Object random) {
+    return super.contains(random) || otherPrngs.contains(random);
+  }
+
   @Override protected boolean iterate() {
     try {
       Collection<ByteArrayReseedableRandom> byteArrayPrngsThisIteration = new ArrayList<>(byteArrayPrngs);

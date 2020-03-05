@@ -33,7 +33,7 @@ public class RandomSeeder extends Looper {
   /**
    * Time in seconds to wait before checking again whether any PRNGs need more entropy.
    */
-  protected static final long POLL_INTERVAL = 30;
+  protected static final long POLL_INTERVAL = 15;
   private static final long serialVersionUID = -4339570810679373476L;
 
   /**
@@ -136,6 +136,16 @@ public class RandomSeeder extends Looper {
     } finally {
       lock.unlock();
     }
+  }
+
+  /**
+   * Checks whether the given PRNG is currently registered with this RandomSeeder.
+   *
+   * @param random the PRNG to check the status of
+   * @return true if registered; false if not
+   */
+  public boolean contains(Object random) {
+    return byteArrayPrngs.contains(random);
   }
 
   /**
