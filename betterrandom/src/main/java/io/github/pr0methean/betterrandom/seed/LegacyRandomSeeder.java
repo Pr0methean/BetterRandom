@@ -10,11 +10,11 @@ import java.util.concurrent.TimeUnit;
 import org.slf4j.LoggerFactory;
 
 /**
- * A {@link SimpleRandomSeeder} that can reseed any instance of {@link Random}.
+ * A {@link RandomSeeder} that can reseed any instance of {@link Random}.
  *
  * @author Chris Hennick
  */
-public final class LegacyRandomSeeder extends SimpleRandomSeeder {
+public final class LegacyRandomSeeder extends RandomSeeder {
   private transient Set<Random> otherPrngs;
   private transient Set<Random> otherPrngsThisIteration;
 

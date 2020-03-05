@@ -35,7 +35,7 @@ import io.github.pr0methean.betterrandom.ByteArrayReseedableRandom;
 import io.github.pr0methean.betterrandom.seed.LegacyRandomSeeder;
 import io.github.pr0methean.betterrandom.seed.RandomDotOrgSeedGenerator;
 import io.github.pr0methean.betterrandom.seed.SecureRandomSeedGenerator;
-import io.github.pr0methean.betterrandom.seed.SimpleRandomSeeder;
+import io.github.pr0methean.betterrandom.seed.RandomSeeder;
 import java.util.UUID;
 import org.openjdk.jmh.annotations.Level;
 import org.openjdk.jmh.annotations.Param;
@@ -52,7 +52,7 @@ import org.openjdk.jmh.annotations.TearDown;
 @State(Scope.Benchmark)
 public abstract class AbstractRandomBenchmarkWithReseeding extends AbstractRandomBenchmark {
 
-  private static final SimpleRandomSeeder RANDOM_SEEDER = new SimpleRandomSeeder(
+  private static final RandomSeeder RANDOM_SEEDER = new RandomSeeder(
       SecureRandomSeedGenerator.DEFAULT_INSTANCE);
 
   @Param({"false","true"}) public boolean reseeding;

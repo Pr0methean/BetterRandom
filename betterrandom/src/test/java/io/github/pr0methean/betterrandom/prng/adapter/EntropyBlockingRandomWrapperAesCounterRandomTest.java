@@ -11,10 +11,10 @@ import io.github.pr0methean.betterrandom.prng.AesCounterRandom;
 import io.github.pr0methean.betterrandom.prng.BaseRandom;
 import io.github.pr0methean.betterrandom.prng.RandomTestUtils;
 import io.github.pr0methean.betterrandom.seed.FakeSeedGenerator;
+import io.github.pr0methean.betterrandom.seed.RandomSeeder;
 import io.github.pr0methean.betterrandom.seed.SeedException;
 import io.github.pr0methean.betterrandom.seed.SeedGenerator;
 import io.github.pr0methean.betterrandom.seed.SemiFakeSeedGenerator;
-import io.github.pr0methean.betterrandom.seed.SimpleRandomSeeder;
 import java.lang.reflect.Constructor;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -104,7 +104,7 @@ public class EntropyBlockingRandomWrapperAesCounterRandomTest extends RandomWrap
         VERY_LOW_MINIMUM_ENTROPY,
         seedGenerator);
     RandomTestUtils.assertEquivalentWhenSerializedAndDeserialized(rng);
-    SimpleRandomSeeder randomSeeder = new SimpleRandomSeeder(seedGenerator);
+    RandomSeeder randomSeeder = new RandomSeeder(seedGenerator);
     rng.setRandomSeeder(randomSeeder);
     try {
       final BaseRandom rng2 = SerializableTester.reserialize(rng);

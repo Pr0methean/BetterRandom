@@ -7,11 +7,11 @@ import io.github.pr0methean.betterrandom.prng.MersenneTwisterRandom;
 import io.github.pr0methean.betterrandom.prng.RandomTestUtils;
 import io.github.pr0methean.betterrandom.prng.RandomTestUtils.EntropyCheckMode;
 import io.github.pr0methean.betterrandom.seed.DevRandomSeedGenerator;
+import io.github.pr0methean.betterrandom.seed.RandomSeeder;
 import io.github.pr0methean.betterrandom.seed.SecureRandomSeedGenerator;
 import io.github.pr0methean.betterrandom.seed.SeedException;
 import io.github.pr0methean.betterrandom.seed.SeedGenerator;
 import io.github.pr0methean.betterrandom.seed.SemiFakeSeedGenerator;
-import io.github.pr0methean.betterrandom.seed.SimpleRandomSeeder;
 import java.io.Serializable;
 import java.util.Random;
 import java.util.function.Supplier;
@@ -90,11 +90,11 @@ public class ReseedingThreadLocalRandomWrapperMersenneTwisterTest
   @Override @Test(expectedExceptions = UnsupportedOperationException.class)
   public void testRandomSeederThreadIntegration() {
     createRng()
-        .setRandomSeeder(new SimpleRandomSeeder(DevRandomSeedGenerator.DEV_RANDOM_SEED_GENERATOR));
+        .setRandomSeeder(new RandomSeeder(DevRandomSeedGenerator.DEV_RANDOM_SEED_GENERATOR));
   }
 
   @Override @Test public void testSetSeedGeneratorNoOp() {
-    SimpleRandomSeeder randomSeeder = new SimpleRandomSeeder(getTestSeedGenerator());
+    RandomSeeder randomSeeder = new RandomSeeder(getTestSeedGenerator());
     ReseedingThreadLocalRandomWrapper prng =
         new ReseedingThreadLocalRandomWrapper(mtSupplier, randomSeeder);
     prng.setRandomSeeder(randomSeeder);

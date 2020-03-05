@@ -2,8 +2,8 @@ package io.github.pr0methean.betterrandom.prng.adapter;
 
 import com.google.common.base.MoreObjects.ToStringHelper;
 import io.github.pr0methean.betterrandom.prng.BaseRandom;
+import io.github.pr0methean.betterrandom.seed.RandomSeeder;
 import io.github.pr0methean.betterrandom.seed.SeedGenerator;
-import io.github.pr0methean.betterrandom.seed.SimpleRandomSeeder;
 import io.github.pr0methean.betterrandom.util.BinaryUtils;
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -77,7 +77,7 @@ public class ThreadLocalRandomWrapper extends RandomWrapper {
         bytes -> new RandomWrapper(legacyCreator.apply(BinaryUtils.convertBytesToLong(bytes))));
   }
 
-  @Nullable @Override public SimpleRandomSeeder getRandomSeeder() {
+  @Nullable @Override public RandomSeeder getRandomSeeder() {
     return null;
   }
 
@@ -87,7 +87,7 @@ public class ThreadLocalRandomWrapper extends RandomWrapper {
    * @param randomSeeder ignored.
    * @throws UnsupportedOperationException always.
    */
-  @Override public void setRandomSeeder(@Nullable final SimpleRandomSeeder randomSeeder) {
+  @Override public void setRandomSeeder(@Nullable final RandomSeeder randomSeeder) {
     if (randomSeeder != null) {
       throw new UnsupportedOperationException("This can't be reseeded by a LegacyRandomSeeder");
     }
