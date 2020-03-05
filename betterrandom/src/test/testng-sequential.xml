@@ -10,10 +10,6 @@
             <class name="io.github.pr0methean.betterrandom.seed.LegacyRandomSeederTest"/>
             <class name="io.github.pr0methean.betterrandom.seed.SecureRandomSeedGeneratorTest"/>
             <class name="io.github.pr0methean.betterrandom.seed.SeedGeneratorPreferenceListTest"/>
-        </classes>
-    </test>
-    <test name="Seeding Hermetic" parallel="classes">
-        <classes>
             <class name="io.github.pr0methean.betterrandom.seed.AnuQuantumSeedGeneratorHermeticTest"/>
             <class name="io.github.pr0methean.betterrandom.seed.RandomDotOrgSeedGeneratorHermeticTest"/>
         </classes>
