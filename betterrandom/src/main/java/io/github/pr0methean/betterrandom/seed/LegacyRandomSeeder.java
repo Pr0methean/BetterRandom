@@ -1,6 +1,7 @@
 package io.github.pr0methean.betterrandom.seed;
 
 import io.github.pr0methean.betterrandom.ByteArrayReseedableRandom;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashSet;
@@ -106,17 +107,14 @@ public final class LegacyRandomSeeder extends RandomSeeder {
 
   @Override protected boolean iterate() {
     try {
-      Set<ByteArrayReseedableRandom> byteArrayPrngsThisIteration = new HashSet<>();
-      Set<Random> otherPrngsThisIteration = new HashSet<>();
-      while (true) {
-        otherPrngsThisIteration.addAll(otherPrngs);
-        byteArrayPrngsThisIteration.addAll(byteArrayPrngs);
-        if (!otherPrngsThisIteration.isEmpty() || !byteArrayPrngsThisIteration.isEmpty()) {
-          break;
-        }
+      Collection<ByteArrayReseedableRandom> byteArrayPrngsThisIteration = new ArrayList<>(byteArrayPrngs);
+      Set<Random> otherPrngsThisIteration = new HashSet<>(otherPrngs);
+      while (otherPrngsThisIteration.isEmpty() && byteArrayPrngsThisIteration.isEmpty()) {
         if (!waitWhileEmpty.await(stopIfEmptyForNanos, TimeUnit.NANOSECONDS)) {
           return false;
         }
+        otherPrngsThisIteration.addAll(otherPrngs);
+        byteArrayPrngsThisIteration.addAll(byteArrayPrngs);
       }
       boolean entropyConsumed = reseedByteArrayReseedableRandoms(byteArrayPrngsThisIteration);
       for (Random random : otherPrngsThisIteration) {

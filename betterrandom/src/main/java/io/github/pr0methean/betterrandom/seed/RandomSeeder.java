@@ -8,10 +8,10 @@ import io.github.pr0methean.betterrandom.util.Looper;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.Objects;
 import java.util.Random;
 import java.util.Set;
@@ -154,10 +154,6 @@ public class RandomSeeder extends Looper {
     if (randoms.isEmpty()) {
       return;
     }
-    if (byteArrayPrngs.containsAll(randoms)) {
-      wakeUp();
-      return;
-    }
     lock.lock();
     try {
       byteArrayPrngs.addAll(randoms);
@@ -227,16 +223,13 @@ public class RandomSeeder extends Looper {
 
   @SuppressWarnings({"InfiniteLoopStatement", "ObjectAllocationInLoop", "AwaitNotInLoop"}) @Override
   protected boolean iterate() {
-    Set<ByteArrayReseedableRandom> byteArrayPrngsThisIteration = new HashSet<>();
+    Collection<ByteArrayReseedableRandom> byteArrayPrngsThisIteration = new ArrayList<>(byteArrayPrngs);
     try {
-      while (true) {
-        byteArrayPrngsThisIteration.addAll(byteArrayPrngs);
-        if (!byteArrayPrngsThisIteration.isEmpty()) {
-          break;
-        }
+      while (byteArrayPrngsThisIteration.isEmpty()) {
         if (!waitWhileEmpty.await(stopIfEmptyForNanos, TimeUnit.NANOSECONDS)) {
           return false;
         }
+        byteArrayPrngsThisIteration.addAll(byteArrayPrngs);
       }
       boolean entropyConsumed = reseedByteArrayReseedableRandoms(byteArrayPrngsThisIteration);
       if (!entropyConsumed) {
