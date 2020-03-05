@@ -13,11 +13,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `AnuQuantumSeedGenerator`, a `SeedGenerator` that is a client for the Australian National University's quantum random
   number generator. Unlike random.org, this RNG does not use quotas or API keys, because it generates random numbers
   as fast as it can send them over the Internet.
+- `WebJsonSeedGenerator`, a new abstract superclass of `RandomDotOrgSeedGenerator` and `AnuQuantumSeedGenerator`.
 
 ### Changed
 - `DefaultSeedGenerator`'s default delegate now uses `AnuQuantumSeedGenerator` in preference over
   `RandomDotOrgSeedGenerator`.
-- Renamed `SimpleRandomSeeder` to `RandomSeeder`
+- Renamed `SimpleRandomSeeder` to `RandomSeeder`.
+- Fixes a bug where `RandomDotOrgSeedGenerator` could fail to parse JSON if the system encoding was not an 8-bit
+  encoding compatible with ASCII.
 
 ## [5.0.0]
 
