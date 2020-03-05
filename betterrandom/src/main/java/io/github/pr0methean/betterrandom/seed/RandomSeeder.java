@@ -154,6 +154,10 @@ public class RandomSeeder extends Looper {
     if (randoms.isEmpty()) {
       return;
     }
+    if (byteArrayPrngs.containsAll(randoms)) {
+      wakeUp();
+      return;
+    }
     lock.lock();
     try {
       byteArrayPrngs.addAll(randoms);
