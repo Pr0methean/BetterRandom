@@ -30,8 +30,6 @@ import org.slf4j.LoggerFactory;
  */
 public class RandomSeeder extends Looper {
 
-  // FIXME: Setting a longer POLL_INTERVAL slows many tests, and causes some to time out
-  // (Why doesn't BaseRandom's call to wakeUp() prevent this?!)
   /**
    * Time in seconds to wait before checking again whether any PRNGs need more entropy.
    */
