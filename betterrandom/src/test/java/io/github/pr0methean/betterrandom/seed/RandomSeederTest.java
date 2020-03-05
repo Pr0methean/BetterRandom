@@ -113,7 +113,8 @@ public class RandomSeederTest {
     }
   }
 
-  @Test(singleThreaded = true, timeOut = 90_000L, retryAnalyzer = FlakyRetryAnalyzer.class)
+  // FIXME: Sometimes takes too long
+  @Test(singleThreaded = true, timeOut = 180_000L, retryAnalyzer = FlakyRetryAnalyzer.class)
   public void testStopIfEmpty() throws InterruptedException {
     final SeedGenerator seedGenerator = new FakeSeedGenerator("testStopIfEmpty");
     final RandomSeeder randomSeeder = createRandomSeeder(seedGenerator);

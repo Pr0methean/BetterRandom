@@ -33,7 +33,7 @@ public class RandomSeeder extends Looper {
   /**
    * Time in seconds to wait before checking again whether any PRNGs need more entropy.
    */
-  protected static final long POLL_INTERVAL = 15;
+  protected static final long POLL_INTERVAL = 10;
   private static final long serialVersionUID = -4339570810679373476L;
 
   /**
