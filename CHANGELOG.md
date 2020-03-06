@@ -5,14 +5,13 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased]
+## [5.1.1]
 
 ### Changed
 - When registered with a `RandomSeeder`, an `EntropyBlockingRandomWrapper` with negative minimum entropy is less likely
   to block, since it will trigger reseeding in the background as soon as its entropy reaches zero.
-- Fixes a bug where either `WebJsonSeedGenerator` could throw a 
-- When registered with a `RandomSeeder`, an `EntropyBlockingRandomWrapper` with negative minimum entropy is less likely
-  to block, since it will trigger reseeding in the background as soon as its entropy reaches zero.
+- Fixes a bug where either `WebJsonSeedGenerator` could throw a `ClassCastException` rather than the expected
+  `SeedException`.
 
 ## [5.1.0]
 
@@ -610,7 +609,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - First release on Maven Central.
 
-[Unreleased]: https://github.com/Pr0methean/BetterRandom/compare/BetterRandom-5.1.0...master
+[Unreleased]: https://github.com/Pr0methean/BetterRandom/compare/BetterRandom-5.1.1...master
+[5.1.1]: https://github.com/Pr0methean/BetterRandom/compare/BetterRandom-5.1.0...BetterRandom-5.1.1
 [5.1.0]: https://github.com/Pr0methean/BetterRandom/compare/BetterRandom-5.0.0...BetterRandom-5.1.0
 [5.0.0]: https://github.com/Pr0methean/BetterRandom/compare/BetterRandom-4.3.0...BetterRandom-5.0.0
 [4.3.0]: https://github.com/Pr0methean/BetterRandom/compare/BetterRandom-4.2.0...BetterRandom-4.3.0
