@@ -93,4 +93,11 @@ public abstract class WebJsonSeedGeneratorHermeticTest<T extends WebJsonSeedGene
         expectAndGetException(SeedTestUtils.SEED_SIZE).getCause() instanceof ParseException,
         "Wrong type of exception cause");
   }
+
+  @Test public void testNumericResponse() {
+    mockResponse("123456789");
+    assertTrue(
+        expectAndGetException(SeedTestUtils.SEED_SIZE).getCause() instanceof ParseException,
+        "Wrong type of exception cause");
+  }
 }
