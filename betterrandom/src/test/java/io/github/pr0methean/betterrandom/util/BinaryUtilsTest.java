@@ -39,11 +39,11 @@ public class BinaryUtilsTest {
   }
 
   @Test public void testConvertLongToBytes() {
-    assertEquals(LONG_BYTES, BinaryUtils.convertLongToBytes(LONG), "Conversion gives wrong output");
+    assertEquals(BinaryUtils.convertLongToBytes(LONG), LONG_BYTES, "Conversion gives wrong output");
   }
 
   @Test public void testConvertIntToBytes() {
-    assertEquals(INT_BYTES, BinaryUtils.convertIntToBytes(INT), "Conversion gives wrong output");
+    assertEquals(BinaryUtils.convertIntToBytes(INT), INT_BYTES, "Conversion gives wrong output");
   }
 
   @Test(timeOut = 1000) public void testConvertBytesToHexString() {
