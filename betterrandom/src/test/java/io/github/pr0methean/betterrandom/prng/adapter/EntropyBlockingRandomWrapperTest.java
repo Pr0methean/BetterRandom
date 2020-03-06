@@ -119,14 +119,18 @@ public class EntropyBlockingRandomWrapperTest extends RandomWrapperRandomTest {
   @Test public void testReseedTriggeredAtZero() {
     SeedGenerator seedGenerator = getTestSeedGenerator();
     RandomSeeder seeder = Mockito.spy(new RandomSeeder(seedGenerator));
-    AesCounterRandom wrapped = new AesCounterRandom(seedGenerator);
-    int bytesToDrainToZero = (int)((wrapped.getEntropyBits() + 7) / 8);
-    EntropyBlockingRandomWrapper random
-        = new EntropyBlockingRandomWrapper(wrapped, VERY_LOW_MINIMUM_ENTROPY, null);
-    random.setRandomSeeder(seeder);
-    Mockito.clearInvocations(seeder);
-    random.nextBytes(new byte[bytesToDrainToZero]);
-    Mockito.verify(seeder, Mockito.atLeastOnce()).wakeUp();
+    try {
+      AesCounterRandom wrapped = new AesCounterRandom(seedGenerator);
+      int bytesToDrainToZero = (int) ((wrapped.getEntropyBits() + 7) / 8);
+      EntropyBlockingRandomWrapper random =
+          new EntropyBlockingRandomWrapper(wrapped, VERY_LOW_MINIMUM_ENTROPY, null);
+      random.setRandomSeeder(seeder);
+      Mockito.clearInvocations(seeder);
+      random.nextBytes(new byte[bytesToDrainToZero]);
+      Mockito.verify(seeder, Mockito.atLeastOnce()).wakeUp();
+    } finally {
+      seeder.shutDown();
+    }
   }
 
   // FIXME: Gets interrupted
