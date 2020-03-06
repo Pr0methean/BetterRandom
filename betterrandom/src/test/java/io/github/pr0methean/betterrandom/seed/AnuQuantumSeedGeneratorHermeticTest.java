@@ -5,6 +5,7 @@ import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotNull;
 import static org.testng.Assert.assertTrue;
 
+import io.github.pr0methean.betterrandom.util.BinaryUtils;
 import org.testng.annotations.Test;
 
 @SuppressWarnings("ThrowableNotThrown")
@@ -94,9 +95,9 @@ public class AnuQuantumSeedGeneratorHermeticTest
     expectAndGetException(1024, false);
   }
 
-  @Test(invocationCount = 100) public void testRandomFuzz() {
-    fuzzResponse(RESPONSE_32.length);
-    expectAndGetException(32);
+  @Test(invocationCount = 10_000) public void testRandomFuzz() {
+    String fuzzOutput = BinaryUtils.convertBytesToHexString(fuzzResponse(RESPONSE_32.length));
+    expectAndGetException(32, false, fuzzOutput);
   }
 
   @Test public void testResponseNoData() {

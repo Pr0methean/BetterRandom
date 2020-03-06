@@ -69,10 +69,11 @@ public abstract class WebJsonSeedGeneratorHermeticTest<T extends WebJsonSeedGene
     return exception;
   }
 
-  protected void fuzzResponse(int length) {
+  protected byte[] fuzzResponse(int length) {
     byte[] fuzz = new byte[length];
     ThreadLocalRandom.current().nextBytes(fuzz);
     mockResponse(fuzz);
+    return fuzz;
   }
 
   @Test public void testSetSslSocketFactory() {

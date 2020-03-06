@@ -6,6 +6,7 @@ import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotNull;
 import static org.testng.Assert.assertTrue;
 
+import io.github.pr0methean.betterrandom.util.BinaryUtils;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.Arrays;
@@ -280,15 +281,15 @@ public class RandomDotOrgSeedGeneratorHermeticTest
     withApiKey(this::testLargeRequest);
   }
 
-  @Test(invocationCount = 100) public void testRandomFuzzJsonApi() throws Exception {
-    fuzzResponse(RESPONSE_32_JSON.length);
-    withApiKey(() -> expectAndGetException(32));
+  @Test(invocationCount = 10_000) public void testRandomFuzzJsonApi() throws Exception {
+    String fuzzOut = BinaryUtils.convertBytesToHexString(fuzzResponse(RESPONSE_32_JSON.length));
+    withApiKey(() -> expectAndGetException(32, false, fuzzOut));
   }
 
-  @Test(invocationCount = 100) public void testRandomFuzzOldApi() throws Exception {
+  @Test(invocationCount = 10_000) public void testRandomFuzzOldApi() throws Exception {
+    String fuzzOut = BinaryUtils.convertBytesToHexString(fuzzResponse(RESPONSE_32_JSON.length));
     seedGenerator.setApiKey(null);
-    fuzzResponse(RESPONSE_32_JSON.length);
-    expectAndGetException(32);
+    expectAndGetException(32, false, fuzzOut);
   }
 
   @Override protected RandomDotOrgSeedGenerator getSeedGeneratorUnderTest() {
