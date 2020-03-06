@@ -263,13 +263,13 @@ subclassing), are at [pr0methean.github.io](https://pr0methean.github.io/).
 
 # Tested environments and supported versions
 
-BetterRandom has 2 branches from which releases are cut: one for Java 7 -- including Android API
-levels below 24 -- and one for Java 8 and newer. These produce the Maven artifacts named
+BetterRandom has 2 branches from which releases have been cut: one for Java 8 and newer, and one for Java 7 -- including 
+Android API levels below 24. These produce the Maven artifacts named
 `BetterRandom-Java7` and `BetterRandom` respectively.
 
 ## Java 8 (master branch)
 
-Beginning with version 3.1.2, continuous integration has been moved to Azure Pipelines and includes
+Beginning with version 3.1.2, continuous integration takes place on Azure Pipelines and includes
 the following environments:
 
 * Ubuntu: OpenJDK 8,11,12; OpenJ9 8 and 12; Oracle HotSpot 8 and 11
@@ -294,14 +294,17 @@ suites. However, Android API levels 24 and up (required as both source and targe
 
 ## Java 7 (java7 branch)
 
-This branch is mainly intended to support Android API levels 19 through 23; support for other
+Since version 5.0.0, the Java 7 branch is no longer being maintained with backported improvements from the Java 8
+branch. Exceptions will be made at the request of a Tidelift subscriber or a Gold or higher GitHub sponsor, or possibly
+on other forms of paying demand. However, pull requests against this branch will still be considered and, if accepted,
+released.
+
+This branch was mainly intended to support Android API levels 19 through 23; support for other
 environments is best-efforts.
 
 Continuous integration takes place in OpenJDK 7 on Linux. Up to and including version 3.1.1, this was
-done on Travis CI; beginning with 3.1.2, Azure Pipelines will be used.
-
-After version 5.0.0, the Java 7 branch will only be maintained while at least one
-Tidelift subscriber, or Gold or higher GitHub sponsor, is using it.
+done on Travis CI; beginning with 3.1.2, Azure Pipelines is used. Until the release of version 5.0.0, the Java 7 branch
+was re-tested nightly.
 
 # Alternative random number generators
 
