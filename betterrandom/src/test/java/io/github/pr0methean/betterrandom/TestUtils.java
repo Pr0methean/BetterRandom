@@ -66,24 +66,41 @@ public enum TestUtils {
   }
 
   public static void assertLessOrEqual(final long actual, final long expected) {
+    assertLessOrEqual(actual, expected, "Value too high");
+  }
+
+  public static void assertLessOrEqual(final long actual, final long expected, String message) {
     if (actual > expected) {
       fail(String.format("Expected no more than %d but found %d", expected, actual));
     }
   }
 
   public static void assertLessOrEqual(final double actual, final double expected) {
+    assertLessOrEqual(actual, expected, "Value too high");
+  }
+
+  public static void assertLessOrEqual(final double actual, final double expected, String message) {
     if (actual > expected) {
       fail(String.format("Expected no more than %f but found %f", expected, actual));
     }
   }
 
   public static void assertGreaterOrEqual(final long actual, final long expected) {
+    assertGreaterOrEqual(actual, expected, "Value too low");
+  }
+
+  public static void assertGreaterOrEqual(final long actual, final long expected, String message) {
     if (actual < expected) {
-      fail(String.format("Expected at least %d but found %d", expected, actual));
+      fail(String.format("%s: Expected at least %d but found %d", expected, actual));
     }
   }
 
   public static void assertGreaterOrEqual(final double actual, final double expected) {
+    assertGreaterOrEqual(actual, expected, "Value too low");
+  }
+
+  public static void assertGreaterOrEqual(final double actual, final double expected,
+      String message) {
     if (actual < expected) {
       fail(String.format("Expected at least %f but found %f", expected, actual));
     }

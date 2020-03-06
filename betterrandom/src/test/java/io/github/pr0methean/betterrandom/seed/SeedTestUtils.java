@@ -1,6 +1,7 @@
 package io.github.pr0methean.betterrandom.seed;
 
 import static io.github.pr0methean.betterrandom.TestUtils.fail;
+import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertFalse;
 
 import java.net.InetSocketAddress;
@@ -26,7 +27,7 @@ enum SeedTestUtils {
   public static void testGenerator(final SeedGenerator seedGenerator, boolean expectNonIdempotent,
       int seedSize) {
     final byte[] seed = seedGenerator.generateSeed(seedSize);
-    assert seed.length == seedSize : "Failed to generate seed of correct length";
+    assertEquals(seed.length, seedSize, "Failed to generate seed of correct length");
     assertFalse(Arrays.equals(seed, ALL_ZEROES), "Generated an all-zeroes seed");
     if (expectNonIdempotent) {
       final byte[] secondSeed = new byte[seedSize];

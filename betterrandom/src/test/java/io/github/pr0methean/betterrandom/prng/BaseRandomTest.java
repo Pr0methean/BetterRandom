@@ -32,6 +32,7 @@ import java.security.GeneralSecurityException;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
@@ -55,6 +56,8 @@ import org.testng.annotations.Test;
 
 public abstract class BaseRandomTest extends PowerMockTestCase {
 
+  protected static final int INSTANCES_TO_HASH = 25;
+  protected static final int EXPECTED_UNIQUE_HASHES = (int) (0.8 * INSTANCES_TO_HASH);
   protected static final int TEST_BYTES_LENGTH = 100;
   protected final SeedGenerator semiFakeSeedGenerator
       = new SemiFakeSeedGenerator(ThreadLocalRandom.current());
@@ -346,8 +349,12 @@ public abstract class BaseRandomTest extends PowerMockTestCase {
   }
 
   @Test(timeOut = 60_000) public void testHashCode() {
-    assert RandomTestUtils.testHashCodeDistribution(this::createRng) :
-        "Too many hashCode collisions";
+    final HashSet<Integer> uniqueHashCodes = new HashSet<>(INSTANCES_TO_HASH);
+    for (int i = 0; i < INSTANCES_TO_HASH; i++) {
+      uniqueHashCodes.add(((Supplier<? extends Random>) this::createRng).get().hashCode());
+    }
+    assertGreaterOrEqual(uniqueHashCodes.size(), EXPECTED_UNIQUE_HASHES,
+        "Too many hashCode collisions");
   }
 
   /**

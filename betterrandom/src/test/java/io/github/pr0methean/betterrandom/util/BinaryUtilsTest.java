@@ -18,7 +18,6 @@ package io.github.pr0methean.betterrandom.util;
 import static io.github.pr0methean.betterrandom.util.BinaryUtils.convertBytesToLong;
 import static org.testng.Assert.assertEquals;
 
-import java.util.Arrays;
 import org.testng.annotations.Test;
 
 /**
@@ -40,22 +39,21 @@ public class BinaryUtilsTest {
   }
 
   @Test public void testConvertLongToBytes() {
-    assert Arrays.equals(LONG_BYTES.clone(), BinaryUtils.convertLongToBytes(LONG));
+    assertEquals(LONG_BYTES, BinaryUtils.convertLongToBytes(LONG), "Conversion gives wrong output");
   }
 
   @Test public void testConvertIntToBytes() {
-    assert Arrays.equals(INT_BYTES.clone(), BinaryUtils.convertIntToBytes(INT));
+    assertEquals(INT_BYTES, BinaryUtils.convertIntToBytes(INT), "Conversion gives wrong output");
   }
 
   @Test(timeOut = 1000) public void testConvertBytesToHexString() {
     final String generatedHex = BinaryUtils.convertBytesToHexString(TEST_HEX_BYTES);
-    assert generatedHex.equals(TEST_HEX_STRING) : "Wrong hex string: " + generatedHex;
+    assertEquals(generatedHex, TEST_HEX_STRING, "Conversion gives wrong output");
   }
 
   @Test(timeOut = 1000) public void testConvertHexStringToBytes() {
     final byte[] generatedData = BinaryUtils.convertHexStringToBytes(TEST_HEX_STRING);
-    assert Arrays.equals(generatedData, TEST_HEX_BYTES) :
-        "Wrong byte array: " + Arrays.toString(generatedData);
+    assertEquals(generatedData, TEST_HEX_BYTES, "Conversion gives wrong output");
   }
 
   @Test(timeOut = 1000, expectedExceptions = IllegalArgumentException.class)
@@ -71,7 +69,7 @@ public class BinaryUtilsTest {
    */
   @Test(timeOut = 1000) public void testConvertBytesToInt() {
     final int result = BinaryUtils.convertBytesToInt(INT_BYTES, 0);
-    assert INT == result : "Expected " + INT + ", was " + result;
+    assertEquals(result, INT, "Conversion gives wrong output");
   }
 
   /**
@@ -81,9 +79,9 @@ public class BinaryUtilsTest {
   @Test(timeOut = 1000) public void testConvertBytesToInts() {
     final int expected1 = 16;
     final int[] result = BinaryUtils.convertBytesToInts(LONG_BYTES);
-    assert expected1 == result[0] : "Expected first int to be " + expected1 + ", was " + result[0];
+    assertEquals(result[0], expected1, "First integer is wrong");
     final int expected2 = 134480385;
-    assert expected2 == result[1] : "Expected second int to be " + expected2 + ", was " + result[1];
+    assertEquals(result[1], expected2, "Second integer is wrong");
   }
 
   /**

@@ -15,6 +15,9 @@
 // ============================================================================
 package io.github.pr0methean.betterrandom.prng.randomness;
 
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertTrue;
+
 import java.io.File;
 import org.testng.annotations.Test;
 
@@ -35,9 +38,9 @@ public class RandomFifoFillerTest
     {
         final String tempPipeName = System.getProperty("java.io.tmpdir") + "/diehard-input";
         File tempPipe = new File(tempPipeName);
-        assert !tempPipe.exists() || tempPipe.delete() :
+        assertTrue(!tempPipe.exists() || tempPipe.delete(),
             "Temporary pipe already exists and can't be deleted! "
-                + "(This test cannot run multiple times in parallel.)";
+                + "(This test cannot run multiple times in parallel.)");
         try {
             Process mkfifo =
                 Runtime.getRuntime().exec(new String[]{"/usr/bin/mkfifo", tempPipeName});
@@ -47,7 +50,7 @@ public class RandomFifoFillerTest
             RandomFifoFiller.main(new String[]{
                 "io.github.pr0methean.betterrandom.prng.Pcg64Random", tempPipeName});
             consumer.waitFor();
-            assert consumer.exitValue() == 0 : "Error consuming the random number stream";
+            assertEquals(consumer.exitValue(), 0, "Error consuming the random number stream");
         } finally {
             if (!tempPipe.delete()) {
                 tempPipe.deleteOnExit();

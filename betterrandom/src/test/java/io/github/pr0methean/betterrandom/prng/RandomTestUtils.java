@@ -33,7 +33,6 @@ import io.github.pr0methean.betterrandom.seed.RandomSeeder;
 import io.github.pr0methean.betterrandom.seed.SeedGenerator;
 import io.github.pr0methean.betterrandom.util.Dumpable;
 import java.util.Arrays;
-import java.util.HashSet;
 import java.util.Random;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicLong;
@@ -51,8 +50,6 @@ import org.testng.Reporter;
 public enum RandomTestUtils {
   ;
 
-  private static final int INSTANCES_TO_HASH = 25;
-  private static final int EXPECTED_UNIQUE_HASHES = (int) (0.8 * INSTANCES_TO_HASH);
   public static final long RESEEDING_WAIT_INCREMENT_MS = 20L;
 
   @SuppressWarnings("FloatingPointEquality")
@@ -122,18 +119,6 @@ public enum RandomTestUtils {
     assertEquals(rng, rng, "RNG doesn't compare equal to itself");
     assertNotEquals(rng, null, "RNG compares equal to null");
     assertNotEquals(rng, new Random(), "RNG compares equal to new Random()");
-  }
-
-  /**
-   * Test that in a sample of 100 RNGs from the given parameterless constructor, there are at least
-   * 90 unique hash codes.
-   */
-  public static boolean testHashCodeDistribution(final Supplier<? extends Random> ctor) {
-    final HashSet<Integer> uniqueHashCodes = new HashSet<>(INSTANCES_TO_HASH);
-    for (int i = 0; i < INSTANCES_TO_HASH; i++) {
-      uniqueHashCodes.add(ctor.get().hashCode());
-    }
-    return uniqueHashCodes.size() >= EXPECTED_UNIQUE_HASHES;
   }
 
   private static void assertEquivalentOrDistinct(final Random rng1, final Random rng2,
