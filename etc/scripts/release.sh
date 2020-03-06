@@ -12,6 +12,9 @@ rm -f release.properties &&\
 rm -rf ../../.m2/repository/io/github/pr0methean/betterrandom
 if [[ -n "${VERSION}" ]]; then
   mvn versions:set "-DnewVersion=${VERSION}"
+  sed -i "s/${OLDVERSION}-SNAPSHOT<\!--updateme-->/${VERSION}<\!--updateme-->/" pom.xml
+  sed -i "s/${OLDVERSION}-SNAPSHOT<\!--updateme-->/${VERSION}<\!--updateme-->/" ../benchmark/pom.xml
+  sed -i "s/${OLDVERSION}-SNAPSHOT<\!--updateme-->/${VERSION}<\!--updateme-->/" ../FifoFiller/pom.xml
   sed -i "s/${OLDVERSION}<\!--updateme-->/${VERSION}<\!--updateme-->/" pom.xml
   sed -i "s/${OLDVERSION}<\!--updateme-->/${VERSION}<\!--updateme-->/" ../benchmark/pom.xml
   sed -i "s/${OLDVERSION}<\!--updateme-->/${VERSION}<\!--updateme-->/" ../FifoFiller/pom.xml
