@@ -11,6 +11,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - When registered with a `RandomSeeder`, an `EntropyBlockingRandomWrapper` with negative minimum entropy is less likely
   to block, since it will trigger reseeding in the background as soon as its entropy reaches zero.
 - Fixes a bug where either `WebJsonSeedGenerator` could throw a 
+- When registered with a `RandomSeeder`, an `EntropyBlockingRandomWrapper` with negative minimum entropy is less likely
+  to block, since it will trigger reseeding in the background as soon as its entropy reaches zero.
 
 ## [5.1.0]
 
