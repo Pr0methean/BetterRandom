@@ -1,5 +1,7 @@
 package io.github.pr0methean.betterrandom.prng.adapter;
 
+import static io.github.pr0methean.betterrandom.prng.adapter.EntropyBlockingTestUtils.DEFAULT_MAX_ENTROPY;
+import static io.github.pr0methean.betterrandom.prng.adapter.EntropyBlockingTestUtils.VERY_LOW_MINIMUM_ENTROPY;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.testng.Assert.assertEquals;
@@ -10,14 +12,15 @@ import static org.testng.Assert.fail;
 
 import com.google.common.collect.ImmutableList;
 import io.github.pr0methean.betterrandom.FlakyRetryAnalyzer;
+import io.github.pr0methean.betterrandom.prng.AesCounterRandom;
 import io.github.pr0methean.betterrandom.prng.BaseRandom;
 import io.github.pr0methean.betterrandom.prng.RandomTestUtils;
 import io.github.pr0methean.betterrandom.seed.FailingSeedGenerator;
+import io.github.pr0methean.betterrandom.seed.RandomSeeder;
+import io.github.pr0methean.betterrandom.seed.RandomSeeder.DefaultThreadFactory;
 import io.github.pr0methean.betterrandom.seed.SeedException;
 import io.github.pr0methean.betterrandom.seed.SeedGenerator;
 import io.github.pr0methean.betterrandom.seed.SemiFakeSeedGenerator;
-import io.github.pr0methean.betterrandom.seed.RandomSeeder;
-import io.github.pr0methean.betterrandom.seed.RandomSeeder.DefaultThreadFactory;
 import java.util.Arrays;
 import java.util.Map;
 import java.util.Random;
@@ -36,7 +39,7 @@ public class EntropyBlockingRandomWrapperTest extends RandomWrapperRandomTest {
 
   @Override public Map<Class<?>, Object> constructorParams() {
     Map<Class<?>, Object> out = super.constructorParams();
-    out.put(long.class, EntropyBlockingTestUtils.DEFAULT_MAX_ENTROPY);
+    out.put(long.class, DEFAULT_MAX_ENTROPY);
     return out;
   }
 
@@ -69,15 +72,15 @@ public class EntropyBlockingRandomWrapperTest extends RandomWrapperRandomTest {
   }
 
   @Override protected RandomWrapper createRng() throws SeedException {
-    return new EntropyBlockingRandomWrapper(EntropyBlockingTestUtils.DEFAULT_MAX_ENTROPY, getTestSeedGenerator());
+    return new EntropyBlockingRandomWrapper(DEFAULT_MAX_ENTROPY, getTestSeedGenerator());
   }
 
   private EntropyBlockingRandomWrapper createRngLargeEntropyLimit() {
-    return new EntropyBlockingRandomWrapper(EntropyBlockingTestUtils.VERY_LOW_MINIMUM_ENTROPY, getTestSeedGenerator());
+    return new EntropyBlockingRandomWrapper(VERY_LOW_MINIMUM_ENTROPY, getTestSeedGenerator());
   }
 
   private EntropyBlockingRandomWrapper createRngLargeEntropyLimit(byte[] seed) {
-    return new EntropyBlockingRandomWrapper(seed, EntropyBlockingTestUtils.VERY_LOW_MINIMUM_ENTROPY, getTestSeedGenerator());
+    return new EntropyBlockingRandomWrapper(seed, VERY_LOW_MINIMUM_ENTROPY, getTestSeedGenerator());
   }
 
   // FIXME: Too slow!
@@ -89,7 +92,7 @@ public class EntropyBlockingRandomWrapperTest extends RandomWrapperRandomTest {
   }
 
   @Override protected RandomWrapper createRng(byte[] seed) throws SeedException {
-    return new EntropyBlockingRandomWrapper(seed, EntropyBlockingTestUtils.DEFAULT_MAX_ENTROPY, getTestSeedGenerator());
+    return new EntropyBlockingRandomWrapper(seed, DEFAULT_MAX_ENTROPY, getTestSeedGenerator());
   }
 
   @Override public void testThreadSafety() {
@@ -111,6 +114,23 @@ public class EntropyBlockingRandomWrapperTest extends RandomWrapperRandomTest {
 
   @Override protected RandomTestUtils.EntropyCheckMode getEntropyCheckMode() {
     return RandomTestUtils.EntropyCheckMode.LOWER_BOUND;
+  }
+
+  @Test public void testReseedTriggeredAtZero() {
+    SeedGenerator seedGenerator = getTestSeedGenerator();
+    RandomSeeder seeder = Mockito.spy(new RandomSeeder(seedGenerator));
+    try {
+      AesCounterRandom wrapped = new AesCounterRandom(seedGenerator);
+      int bytesToDrainToZero = (int) ((wrapped.getEntropyBits() + 7) / 8);
+      EntropyBlockingRandomWrapper random =
+          new EntropyBlockingRandomWrapper(wrapped, VERY_LOW_MINIMUM_ENTROPY, null);
+      random.setRandomSeeder(seeder);
+      Mockito.clearInvocations(seeder);
+      random.nextBytes(new byte[bytesToDrainToZero]);
+      Mockito.verify(seeder, Mockito.atLeastOnce()).wakeUp();
+    } finally {
+      seeder.shutDown();
+    }
   }
 
   // FIXME: Gets interrupted

@@ -98,13 +98,16 @@ public abstract class WebJsonSeedGenerator implements SeedGenerator {
    * @throws IOException if thrown by {@link HttpURLConnection#getInputStream()}
    */
   protected static JSONObject parseJsonResponse(HttpURLConnection connection) throws IOException {
-    final JSONObject response;
+    final Object response;
     try (final BufferedReader reader = getResponseReader(connection)) {
-      response = (JSONObject) JSON_PARSER.parse(reader);
+      response = JSON_PARSER.parse(reader);
     } catch (final ParseException e) {
       throw new SeedException("Unparseable JSON response", e);
     }
-    return response;
+    if (!(response instanceof JSONObject)) {
+      throw new SeedException(String.format("Response %s is not a JSON object", response));
+    }
+    return (JSONObject) response;
   }
 
   /**

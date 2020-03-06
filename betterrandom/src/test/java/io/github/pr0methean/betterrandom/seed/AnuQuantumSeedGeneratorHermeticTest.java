@@ -94,7 +94,7 @@ public class AnuQuantumSeedGeneratorHermeticTest
     expectAndGetException(1024, false);
   }
 
-  @Test public void testRandomFuzz() {
+  @Test(invocationCount = 100) public void testRandomFuzz() {
     fuzzResponse(RESPONSE_32.length);
     expectAndGetException(32);
   }

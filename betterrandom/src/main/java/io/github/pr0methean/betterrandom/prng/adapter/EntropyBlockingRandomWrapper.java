@@ -1,8 +1,8 @@
 package io.github.pr0methean.betterrandom.prng.adapter;
 
+import io.github.pr0methean.betterrandom.seed.RandomSeeder;
 import io.github.pr0methean.betterrandom.seed.SeedException;
 import io.github.pr0methean.betterrandom.seed.SeedGenerator;
-import io.github.pr0methean.betterrandom.seed.RandomSeeder;
 import java.util.Random;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.concurrent.locks.Condition;
@@ -87,7 +87,19 @@ public class EntropyBlockingRandomWrapper extends RandomWrapper {
   }
 
   @Override protected void debitEntropy(long bits) {
-    while (entropyBits.addAndGet(-bits) < minimumEntropy) {
+    long remaining;
+    while (true) {
+      remaining = entropyBits.addAndGet(-bits);
+      if (remaining >= minimumEntropy) {
+        if (remaining <= 0) {
+          // We need reseeding, but don't need to block waiting for it
+          RandomSeeder seeder = getRandomSeeder();
+          if (seeder != null) {
+            seeder.wakeUp();
+          }
+        }
+        return;
+      }
       SeedGenerator seedGenerator;
       lock.lock();
       try {

@@ -50,16 +50,21 @@ public abstract class WebJsonSeedGeneratorHermeticTest<T extends WebJsonSeedGene
   }
 
   protected SeedException expectAndGetException(int seedSize, boolean expectCause) {
+    return expectAndGetException(seedSize, expectCause, null);
+  }
+
+  protected SeedException expectAndGetException(int seedSize, boolean expectCause,
+      @Nullable String message) {
     SeedException exception = null;
     try {
       seedGenerator.generateSeed(seedSize);
-      Assert.fail("Should have thrown SeedException");
+      Assert.fail(message == null ? "Should have thrown SeedException" : message);
     } catch (final SeedException expected) {
       exception = expected;
     }
     if (expectCause && exception.getCause() == null) {
       // Can't use an assert method because we'd lose the original stack trace
-      throw new AssertionError("SeedException should have a cause", exception);
+      Assert.fail(message == null ? "SeedException should have a cause" : message, exception);
     }
     return exception;
   }
@@ -96,8 +101,6 @@ public abstract class WebJsonSeedGeneratorHermeticTest<T extends WebJsonSeedGene
 
   @Test public void testNumericResponse() {
     mockResponse("123456789");
-    assertTrue(
-        expectAndGetException(SeedTestUtils.SEED_SIZE).getCause() instanceof ParseException,
-        "Wrong type of exception cause");
+    expectAndGetException(SeedTestUtils.SEED_SIZE, false);
   }
 }
