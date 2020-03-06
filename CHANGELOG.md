@@ -21,6 +21,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Renamed `SimpleRandomSeeder` to `RandomSeeder`.
 - Fixes a bug where `RandomDotOrgSeedGenerator` could fail to parse JSON if the system encoding was not an 8-bit
   encoding compatible with ASCII.
+- Fixes bugs where `RandomSeeder` wouldn't always seed all PRNGs in all iterations.
+- `RandomSeeder` now backs off to polling every 60 seconds, after 2 consecutive iterations where no seeds are consumed.
+  This should reduce CPU overhead and electricity usage.
 
 ## [5.0.0]
 
