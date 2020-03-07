@@ -160,8 +160,10 @@ public class RandomWrapper extends BaseRandom {
   }
 
   @Override protected ToStringHelper addSubclassFields(final ToStringHelper original) {
+    Random currentWrapped = wrapped;
     return original
-        .add("wrapped", wrapped instanceof Dumpable ? ((Dumpable) wrapped).dump() : wrapped);
+        .add("wrapped", currentWrapped instanceof Dumpable ? ((Dumpable) currentWrapped).dump()
+            : currentWrapped.toString());
   }
 
   /**
