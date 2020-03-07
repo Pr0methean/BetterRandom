@@ -11,6 +11,7 @@ import static org.testng.Assert.assertSame;
 import static org.testng.Assert.fail;
 
 import com.google.common.collect.ImmutableList;
+import com.google.common.util.concurrent.Uninterruptibles;
 import io.github.pr0methean.betterrandom.prng.AesCounterRandom;
 import io.github.pr0methean.betterrandom.prng.BaseRandom;
 import io.github.pr0methean.betterrandom.prng.RandomTestUtils;
@@ -26,6 +27,7 @@ import java.util.Random;
 import java.util.UUID;
 import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.ThreadLocalRandom;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
 import org.mockito.Mockito;
 import org.testng.annotations.Test;
@@ -206,7 +208,7 @@ public class EntropyBlockingRandomWrapperTest extends RandomWrapperRandomTest {
     Mockito.verify(seedGen, Mockito.atLeastOnce()).generateSeed(any(byte[].class));
   }
 
-  @Test(timeOut = 10_000) public void testSetWrappedUnblocks() throws InterruptedException {
+  @Test(timeOut = 25_000) public void testSetWrappedUnblocks() throws InterruptedException {
     RandomSeeder seeder = Mockito.mock(RandomSeeder.class);
     EntropyBlockingRandomWrapper random
         = new EntropyBlockingRandomWrapper(getTestSeedGenerator().generateSeed(8), 0L, null);
@@ -219,7 +221,7 @@ public class EntropyBlockingRandomWrapperTest extends RandomWrapperRandomTest {
       Thread.sleep(100);
     }
     random.setWrapped(new Random());
-    consumer.join(1000);
+    Uninterruptibles.joinUninterruptibly(consumer, 1, TimeUnit.SECONDS);
     if (exception.get() != null) {
       fail("Consumer got exception", exception.get());
     }
