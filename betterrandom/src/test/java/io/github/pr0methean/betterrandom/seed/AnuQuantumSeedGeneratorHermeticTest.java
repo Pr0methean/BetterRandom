@@ -1,10 +1,13 @@
 package io.github.pr0methean.betterrandom.seed;
 
+import static io.github.pr0methean.betterrandom.seed.AnuQuantumSeedGenerator.ANU_QUANTUM_SEED_GENERATOR;
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotNull;
+import static org.testng.Assert.assertSame;
 import static org.testng.Assert.assertTrue;
 
+import com.google.common.testing.SerializableTester;
 import io.github.pr0methean.betterrandom.util.BinaryUtils;
 import org.testng.annotations.Test;
 
@@ -67,7 +70,7 @@ public class AnuQuantumSeedGeneratorHermeticTest
       "\"],\"success\":true}").getBytes(UTF_8);
 
   @Override protected AnuQuantumSeedGenerator getSeedGeneratorUnderTest() {
-    return AnuQuantumSeedGenerator.ANU_QUANTUM_SEED_GENERATOR;
+    return ANU_QUANTUM_SEED_GENERATOR;
   }
 
   @Test public void testBasicUsage() {
@@ -131,5 +134,10 @@ public class AnuQuantumSeedGeneratorHermeticTest
     } finally {
       seedGenerator.setProxy(null);
     }
+  }
+
+  @Test public void testSerializable() {
+    assertSame(SerializableTester.reserialize(ANU_QUANTUM_SEED_GENERATOR),
+        ANU_QUANTUM_SEED_GENERATOR);
   }
 }

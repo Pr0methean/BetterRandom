@@ -1,12 +1,16 @@
 package io.github.pr0methean.betterrandom.seed;
 
 import static io.github.pr0methean.betterrandom.TestUtils.fail;
+import static io.github.pr0methean.betterrandom.seed.RandomDotOrgSeedGenerator.DELAYED_RETRY;
+import static io.github.pr0methean.betterrandom.seed.RandomDotOrgSeedGenerator.RANDOM_DOT_ORG_SEED_GENERATOR;
 import static io.github.pr0methean.betterrandom.seed.SeedTestUtils.testGenerator;
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotNull;
+import static org.testng.Assert.assertSame;
 import static org.testng.Assert.assertTrue;
 
+import com.google.common.testing.SerializableTester;
 import io.github.pr0methean.betterrandom.util.BinaryUtils;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -99,7 +103,7 @@ public class RandomDotOrgSeedGeneratorHermeticTest
           "71\n93\n1e\n6c\n7c\n23\nd8\nfa\n4c\n24\nc5\nb4\n3a\nd4\ne0\nf8\n9c\n4a\ne6\n15\n97\n5d" +
           "\n48\na0\n0d").getBytes(UTF_8);
   private static final int MAX_REQUEST_SIZE
-      = RandomDotOrgSeedGenerator.RANDOM_DOT_ORG_SEED_GENERATOR.getMaxRequestSize();
+      = RANDOM_DOT_ORG_SEED_GENERATOR.getMaxRequestSize();
   private static final byte[] MAX_SIZE_SEED_CHUNK = new byte[MAX_REQUEST_SIZE];
   private static final byte[] MAX_SIZE_RESPONSE_NEW_API, MAX_SIZE_RESPONSE_OLD_API;
   private static final byte[] EXPECTED_SEED = new byte[MAX_REQUEST_SIZE + 1];
@@ -129,7 +133,7 @@ public class RandomDotOrgSeedGeneratorHermeticTest
   }
 
   @BeforeMethod public void setUpMethod() {
-    seedGenerator = PowerMockito.spy(RandomDotOrgSeedGenerator.RANDOM_DOT_ORG_SEED_GENERATOR);
+    seedGenerator = PowerMockito.spy(RANDOM_DOT_ORG_SEED_GENERATOR);
   }
 
   @AfterMethod public void tearDownMethod() throws Exception {
@@ -293,7 +297,13 @@ public class RandomDotOrgSeedGeneratorHermeticTest
     expectAndGetException(32, false, fuzzOut);
   }
 
+  @Test public void testSerializable() {
+    assertSame(SerializableTester.reserialize(RANDOM_DOT_ORG_SEED_GENERATOR),
+        RANDOM_DOT_ORG_SEED_GENERATOR);
+    assertSame(SerializableTester.reserialize(DELAYED_RETRY), DELAYED_RETRY);
+  }
+
   @Override protected RandomDotOrgSeedGenerator getSeedGeneratorUnderTest() {
-    return RandomDotOrgSeedGenerator.RANDOM_DOT_ORG_SEED_GENERATOR;
+    return RANDOM_DOT_ORG_SEED_GENERATOR;
   }
 }
