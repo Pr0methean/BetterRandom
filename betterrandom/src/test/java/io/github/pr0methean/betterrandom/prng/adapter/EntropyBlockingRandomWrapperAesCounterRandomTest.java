@@ -5,6 +5,7 @@ import static org.testng.Assert.assertFalse;
 
 import com.google.common.collect.ImmutableMap;
 import com.google.common.testing.SerializableTester;
+import io.github.pr0methean.betterrandom.FlakyRetryAnalyzer;
 import io.github.pr0methean.betterrandom.TestUtils;
 import io.github.pr0methean.betterrandom.prng.AesCounterRandom;
 import io.github.pr0methean.betterrandom.prng.BaseRandom;
@@ -133,8 +134,13 @@ public class EntropyBlockingRandomWrapperAesCounterRandomTest extends RandomWrap
     assertFalse(Arrays.equals(testBytes, new byte[TEST_BYTE_ARRAY_LENGTH]));
   }
 
+  // FIXME: Too slow
+  @Override @Test(timeOut = 60_000L) public void testDoubles() {
+    super.testDoubles();
+  }
+
   // FIXME: Too slow, and why is such a huge entropy adjustment needed?!
-  @Override @Test(timeOut = 90_000L)
+  @Override @Test(timeOut = 90_000L, retryAnalyzer = FlakyRetryAnalyzer.class)
   public void testRandomSeederIntegration() {
     final SeedGenerator seedGenerator = new SemiFakeSeedGenerator(new Random(),
         UUID.randomUUID().toString());
