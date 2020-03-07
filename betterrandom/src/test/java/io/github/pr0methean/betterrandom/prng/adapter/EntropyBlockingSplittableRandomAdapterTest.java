@@ -8,6 +8,7 @@ import static org.testng.Assert.assertNotEquals;
 
 import com.google.common.testing.SerializableTester;
 import com.google.common.util.concurrent.Uninterruptibles;
+import io.github.pr0methean.betterrandom.FlakyRetryAnalyzer;
 import io.github.pr0methean.betterrandom.prng.BaseRandom;
 import io.github.pr0methean.betterrandom.prng.RandomTestUtils;
 import io.github.pr0methean.betterrandom.seed.FakeSeedGenerator;
@@ -107,7 +108,7 @@ public class EntropyBlockingSplittableRandomAdapterTest
     return EntropyBlockingSplittableRandomAdapter.class;
   }
 
-  @Override @Test public void testReseeding() {
+  @Override @Test(retryAnalyzer = FlakyRetryAnalyzer.class) public void testReseeding() {
     SeedGenerator generator =
         new SemiFakeSeedGenerator(ThreadLocalRandom.current(), "testReseeding");
     RandomSeeder seeder = new RandomSeeder(generator);

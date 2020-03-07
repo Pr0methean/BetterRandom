@@ -1,5 +1,6 @@
 package io.github.pr0methean.betterrandom.prng.adapter;
 
+import io.github.pr0methean.betterrandom.FlakyRetryAnalyzer;
 import io.github.pr0methean.betterrandom.TestingDeficiency;
 import io.github.pr0methean.betterrandom.prng.BaseRandom;
 import io.github.pr0methean.betterrandom.prng.MersenneTwisterRandom;
@@ -48,7 +49,7 @@ public class ReseedingThreadLocalRandomWrapperMersenneTwisterTest
   }
 
   @Override
-  @Test(groups = "sequential")
+  @Test(retryAnalyzer = FlakyRetryAnalyzer.class)
   public void testReseeding() {
     final SeedGenerator testSeedGenerator
         = new SemiFakeSeedGenerator(new SingleThreadSplittableRandomAdapter(), "testReseeding");
