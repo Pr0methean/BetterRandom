@@ -58,8 +58,7 @@ public class AesCounterRandom extends CipherCounterRandom {
   /**
    * The AES cipher that will generate the pseudorandom numbers.
    */
-  protected transient Cipher
-      cipher;
+  protected transient Cipher cipher;
 
   @Override public int getBlocksAtOnce() {
     return BLOCKS_AT_ONCE;
