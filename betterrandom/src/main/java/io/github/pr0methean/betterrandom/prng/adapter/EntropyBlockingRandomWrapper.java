@@ -100,7 +100,6 @@ public class EntropyBlockingRandomWrapper extends RandomWrapper {
         }
         return;
       }
-      SeedGenerator seedGenerator;
       lock.lock();
       try {
         RandomSeeder seeder = getRandomSeeder();
@@ -114,19 +113,19 @@ public class EntropyBlockingRandomWrapper extends RandomWrapper {
           }
           continue;
         }
-        seedGenerator = sameThreadSeedGen.get();
+        SeedGenerator seedGenerator = sameThreadSeedGen.get();
+        if (seedGenerator == null) {
+          throw new IllegalStateException("Out of entropy and no way to reseed");
+        }
+        // Reseed on calling thread
+        int newSeedLength = getNewSeedLength();
+        byte[] newSeed = seed.length == newSeedLength ? seed : new byte[newSeedLength];
+        seedGenerator.generateSeed(newSeed);
+        setSeed(newSeed);
+        waitingOnReseed = false;
       } finally {
         lock.unlock();
       }
-      if (seedGenerator == null) {
-        throw new IllegalStateException("Out of entropy and no way to reseed");
-      }
-      waitingOnReseed = false;
-      // Reseed on calling thread
-      int newSeedLength = getNewSeedLength();
-      byte[] newSeed = seed.length == newSeedLength ? seed : new byte[newSeedLength];
-      seedGenerator.generateSeed(newSeed);
-      setSeed(newSeed);
     }
   }
 
