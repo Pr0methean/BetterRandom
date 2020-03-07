@@ -59,9 +59,14 @@ public class EntropyBlockingRandomWrapper extends RandomWrapper {
     checkMaxOutputAtOnce();
   }
 
+  @Override public void setWrapped(Random wrapped) {
+    super.setWrapped(wrapped);
+    waitingOnReseed = false;
+    onSeedingStateChanged(true);
+  }
+
   @Override public void nextBytes(byte[] bytes) {
     for (int i = 0; i < bytes.length; i++) {
-      debitEntropy(Byte.SIZE);
       bytes[i] = (byte) (nextInt(1 << Byte.SIZE));
     }
   }

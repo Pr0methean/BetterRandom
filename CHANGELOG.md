@@ -12,6 +12,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   to block, since it will trigger reseeding in the background as soon as its entropy reaches zero.
 - Fixes a bug where either `WebJsonSeedGenerator` could throw a `ClassCastException` rather than the expected
   `SeedException` if it received corrupted output from the server.
+- Fixes a bug where `EntropyBlockingRandomWrapper` would remain blocked after calling `setWrapped` replenished the
+  entropy.
+- Fixes a bug where `EntropyBlockingRandomWrapper.nextBytes()` debited twice the entropy it actually consumed.
 
 ## [5.1.0]
 

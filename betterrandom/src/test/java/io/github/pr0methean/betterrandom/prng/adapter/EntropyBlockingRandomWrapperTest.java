@@ -26,6 +26,7 @@ import java.util.Random;
 import java.util.UUID;
 import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.ThreadLocalRandom;
+import java.util.concurrent.atomic.AtomicReference;
 import org.mockito.Mockito;
 import org.testng.annotations.Test;
 
@@ -203,5 +204,30 @@ public class EntropyBlockingRandomWrapperTest extends RandomWrapperRandomTest {
     assertSame(random.getSameThreadSeedGen(), seedGen);
     random.nextLong();
     Mockito.verify(seedGen, Mockito.atLeastOnce()).generateSeed(any(byte[].class));
+  }
+
+  @Test(timeOut = 10_000) public void testSetWrappedUnblocks() throws InterruptedException {
+    RandomSeeder seeder = Mockito.mock(RandomSeeder.class);
+    EntropyBlockingRandomWrapper random
+        = new EntropyBlockingRandomWrapper(getTestSeedGenerator().generateSeed(8), 0L, null);
+    random.setRandomSeeder(seeder);
+    Thread consumer = new Thread(() -> random.nextBytes(new byte[9]));
+    AtomicReference<Throwable> exception = new AtomicReference<>(null);
+    consumer.setUncaughtExceptionHandler((thread, throwable) -> exception.set(throwable));
+    consumer.start();
+    while (random.getEntropyBits() > 0) {
+      Thread.sleep(100);
+    }
+    random.setWrapped(new Random());
+    consumer.join(1000);
+    if (exception.get() != null) {
+      fail("Consumer got exception", exception.get());
+    }
+    if (consumer.isAlive()) {
+      Throwable stackTrace = new Throwable("Consumer stack trace");
+      stackTrace.setStackTrace(consumer.getStackTrace());
+      fail("Consumer is still running", stackTrace);
+    }
+    assertEquals(consumer.getState(), Thread.State.TERMINATED, "setWrapped didn't unblock");
   }
 }
