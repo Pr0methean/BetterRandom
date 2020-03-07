@@ -44,24 +44,24 @@ public class BufferedSeedGenerator implements SeedGenerator {
   @Override public void generateSeed(byte[] output) throws SeedException {
     if (output.length >= size) {
       delegate.generateSeed(output);
-    } else {
-      lock.lock();
-      try {
-        int curPos = pos;
-        int available = size - curPos;
-        if (available >= output.length) {
-          System.arraycopy(buffer, curPos, output, 0, output.length);
-          curPos += output.length;
-        } else {
-          System.arraycopy(buffer, curPos, output, 0, available);
-          delegate.generateSeed(buffer);
-          curPos = output.length - available;
-          System.arraycopy(buffer, 0, output, available, curPos);
-        }
-        pos = curPos;
-      } finally {
-        lock.unlock();
+      return;
+    }
+    lock.lock();
+    try {
+      int curPos = pos;
+      int available = size - curPos;
+      if (available >= output.length) {
+        System.arraycopy(buffer, curPos, output, 0, output.length);
+        curPos += output.length;
+      } else {
+        System.arraycopy(buffer, curPos, output, 0, available);
+        delegate.generateSeed(buffer);
+        curPos = output.length - available;
+        System.arraycopy(buffer, 0, output, available, curPos);
       }
+      pos = curPos;
+    } finally {
+      lock.unlock();
     }
   }
 
