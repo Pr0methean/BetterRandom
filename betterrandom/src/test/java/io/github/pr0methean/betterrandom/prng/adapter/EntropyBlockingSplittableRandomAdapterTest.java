@@ -13,10 +13,10 @@ import io.github.pr0methean.betterrandom.prng.BaseRandom;
 import io.github.pr0methean.betterrandom.prng.RandomTestUtils;
 import io.github.pr0methean.betterrandom.seed.FakeSeedGenerator;
 import io.github.pr0methean.betterrandom.seed.RandomSeeder;
+import io.github.pr0methean.betterrandom.seed.RandomSeeder.DefaultThreadFactory;
 import io.github.pr0methean.betterrandom.seed.SeedException;
 import io.github.pr0methean.betterrandom.seed.SeedGenerator;
 import io.github.pr0methean.betterrandom.seed.SemiFakeSeedGenerator;
-import io.github.pr0methean.betterrandom.seed.RandomSeeder.DefaultThreadFactory;
 import io.github.pr0methean.betterrandom.util.BinaryUtils;
 import java.util.Arrays;
 import java.util.Map;
@@ -71,6 +71,11 @@ public class EntropyBlockingSplittableRandomAdapterTest
   @Test(timeOut = 240_000, retryAnalyzer = FlakyRetryAnalyzer.class)
   @Override public void testDistribution() throws SeedException {
     super.testDistribution();
+  }
+
+  private EntropyBlockingSplittableRandomAdapter createRngLargeEntropyLimit() {
+      return new EntropyBlockingSplittableRandomAdapter(getTestSeedGenerator(), thread,
+          EntropyBlockingTestUtils.VERY_LOW_MINIMUM_ENTROPY);
   }
 
   @Override public void testInitialEntropy() {
@@ -142,7 +147,7 @@ public class EntropyBlockingSplittableRandomAdapterTest
   /**
    * Assertion-free since reseeding may cause divergent output.
    */
-  @Override @Test(timeOut = 10000) public void testSetSeedLong() {
+  @Override @Test(timeOut = 10_000) public void testSetSeedLong() {
     createRng().setSeed(0x0123456789ABCDEFL);
   }
 

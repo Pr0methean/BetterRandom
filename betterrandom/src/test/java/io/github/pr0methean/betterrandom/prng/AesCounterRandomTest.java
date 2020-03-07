@@ -15,6 +15,9 @@
 // ============================================================================
 package io.github.pr0methean.betterrandom.prng;
 
+
+import static io.github.pr0methean.betterrandom.TestUtils.fail;
+
 import io.github.pr0methean.betterrandom.seed.SeedException;
 import java.security.NoSuchAlgorithmException;
 import javax.crypto.Cipher;
@@ -36,7 +39,7 @@ import org.testng.annotations.Test;
       int maxKeySize = Math.min(Cipher.getMaxAllowedKeyLength("AES") / 8, 32);
       MAX_SIZE = maxKeySize + CipherCounterRandom.DEFAULT_COUNTER_SIZE_BYTES;
     } catch (final NoSuchAlgorithmException e) {
-      throw new AssertionError(e);
+      throw fail("NoSuchAlgorithmException should not occur for AES", e);
     }
   }
 

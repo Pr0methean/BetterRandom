@@ -57,7 +57,7 @@ public enum TestUtils {
           }
           test.accept((T) constructor.newInstance(constructorParams));
         } catch (final IllegalAccessException | InstantiationException | InvocationTargetException | IllegalArgumentException e) {
-          throw new AssertionError(String
+          fail(String
               .format("Failed to call%n%s%nwith parameters%n%s", constructor.toGenericString(),
                   Arrays.toString(constructorParams)), e);
         }
@@ -66,37 +66,74 @@ public enum TestUtils {
   }
 
   public static void assertLessOrEqual(final long actual, final long expected) {
+    assertLessOrEqual(actual, expected, "Value too high");
+  }
+
+  public static void assertLessOrEqual(final long actual, final long expected, String message) {
     if (actual > expected) {
-      throw new AssertionError(
-          String.format("Expected no more than %d but found %d", expected, actual));
+      fail(String.format("Expected no more than %d but found %d", expected, actual));
     }
   }
 
   public static void assertLessOrEqual(final double actual, final double expected) {
+    assertLessOrEqual(actual, expected, "Value too high");
+  }
+
+  public static void assertLessOrEqual(final double actual, final double expected, String message) {
     if (actual > expected) {
-      throw new AssertionError(
-          String.format("Expected no more than %f but found %f", expected, actual));
+      fail(String.format("Expected no more than %f but found %f", expected, actual));
     }
   }
 
   public static void assertGreaterOrEqual(final long actual, final long expected) {
+    assertGreaterOrEqual(actual, expected, "Value too low");
+  }
+
+  public static void assertGreaterOrEqual(final long actual, final long expected, String message) {
     if (actual < expected) {
-      throw new AssertionError(
-          String.format("Expected at least %d but found %d", expected, actual));
+      fail(String.format("%s: Expected at least %d but found %d", expected, actual));
     }
   }
 
   public static void assertGreaterOrEqual(final double actual, final double expected) {
+    assertGreaterOrEqual(actual, expected, "Value too low");
+  }
+
+  public static void assertGreaterOrEqual(final double actual, final double expected,
+      String message) {
     if (actual < expected) {
-      throw new AssertionError(
-          String.format("Expected at least %f but found %f", expected, actual));
+      fail(String.format("Expected at least %f but found %f", expected, actual));
     }
   }
 
   public static void assertLess(final double actual, final double expected) {
     if (actual >= expected) {
-      throw new AssertionError(
-          String.format("Expected less than %f but found %f", expected, actual));
+      fail(String.format("Expected less than %f but found %f", expected, actual));
     }
+  }
+
+  /**
+   * Like {@link org.testng.Assert#fail(String)}, but the return type means it can be
+   * prefixed with "throw" rather than creating an unreachable return statement after it.
+   *
+   * @param message error message
+   * @return never
+   * @throws AssertionError always
+   */
+  public static AssertionError fail(String message) {
+    throw new AssertionError(message);
+  }
+
+  /**
+   * Like {@link org.testng.Assert#fail(String, Throwable)}, but the return type means it can be
+   * prefixed with "throw" rather than creating an unreachable return statement after it.
+   *
+   * @param message error message
+   * @param cause a Throwable that caused the failure
+   * @return never
+   * @throws AssertionError always
+   */
+  public static AssertionError fail(String message, Throwable cause) {
+    throw new AssertionError(message, cause);
   }
 }

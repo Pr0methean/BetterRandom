@@ -178,6 +178,6 @@ public class SplittableRandomAdapterTest
    * Assertion-free because thread-local.
    */
   @Override @Test public void testThreadSafety() {
-    testThreadSafetyVsCrashesOnly(30, functionsForThreadSafetyTest);
+    testThreadSafetyVsCrashesOnly(45, functionsForThreadSafetyTest);
   }
 }

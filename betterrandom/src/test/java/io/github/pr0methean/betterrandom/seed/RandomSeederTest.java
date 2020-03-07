@@ -7,21 +7,24 @@ import static org.testng.Assert.assertTrue;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.testing.GcFinalization;
 import com.google.common.util.concurrent.Uninterruptibles;
-import io.github.pr0methean.betterrandom.ByteArrayReseedableRandom;
 import io.github.pr0methean.betterrandom.FlakyRetryAnalyzer;
 import io.github.pr0methean.betterrandom.TestUtils;
+import io.github.pr0methean.betterrandom.prng.BaseRandom;
 import io.github.pr0methean.betterrandom.prng.Pcg64Random;
 import io.github.pr0methean.betterrandom.prng.RandomTestUtils;
 import io.github.pr0methean.betterrandom.prng.adapter.SingleThreadSplittableRandomAdapter;
-import java.lang.ref.WeakReference;
+import io.github.pr0methean.betterrandom.util.BinaryUtils;
 import java.util.Arrays;
+import java.util.Random;
 import java.util.concurrent.ThreadFactory;
+import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.TimeUnit;
+import java.util.function.Consumer;
 import org.testng.annotations.Test;
 
 public class RandomSeederTest {
   protected static final long TEST_SEED = 0x0123456789ABCDEFL;
-  protected static final int TEST_OUTPUT_SIZE = 20;
+  protected static final int TEST_OUTPUT_SIZE = 8;
 
   @Test public void testConstructors() {
     TestUtils.testConstructors(RandomSeeder.class, false, ImmutableMap
@@ -41,21 +44,33 @@ public class RandomSeederTest {
   @Test(timeOut = 25_000) public void testAddRemoveAndIsEmpty() {
     final SingleThreadSplittableRandomAdapter prng
         = new SingleThreadSplittableRandomAdapter(TEST_SEED);
+    final SeedGenerator seedGenerator = new SemiFakeSeedGenerator(
+        ThreadLocalRandom.current(), "testAddRemoveAndIsEmpty");
+    final RandomSeeder randomSeeder = createRandomSeeder(seedGenerator);
+    checkAddRemoveAndIsEmpty(prng, randomSeeder, randomSeeder::add);
+  }
+
+  protected <T extends Random> void checkAddRemoveAndIsEmpty(T prng, RandomSeeder randomSeeder,
+      Consumer<? super T> addPrng) {
     final byte[] firstBytesWithOldSeed = new byte[TEST_OUTPUT_SIZE];
     final byte[] secondBytesWithOldSeed = new byte[TEST_OUTPUT_SIZE];
+    final byte[] testSeedBytes = BinaryUtils.convertLongToBytes(TEST_SEED);
     prng.nextBytes(firstBytesWithOldSeed);
     prng.nextBytes(secondBytesWithOldSeed);
     prng.setSeed(TEST_SEED); // Rewind
-    final SeedGenerator seedGenerator = new SemiFakeSeedGenerator(
-        new SingleThreadSplittableRandomAdapter(), "testAddRemoveAndIsEmpty");
-    final RandomSeeder randomSeeder = createRandomSeeder(seedGenerator);
     try {
       assertTrue(randomSeeder.isEmpty());
-      randomSeeder.add(prng);
+      addPrng.accept(prng);
       assertFalse(randomSeeder.isEmpty());
       prng.nextBytes(new byte[TEST_OUTPUT_SIZE]); // Drain the entropy
-      // FIXME: Why does this sleep get interrupted?!
-      Uninterruptibles.sleepUninterruptibly(2000L, TimeUnit.MILLISECONDS);
+      // FIXME: Why does sleep get interrupted?
+      if (prng instanceof BaseRandom) {
+        while (Arrays.equals(testSeedBytes, ((BaseRandom) prng).getSeed())) {
+          Uninterruptibles.sleepUninterruptibly(1000L, TimeUnit.MILLISECONDS);
+        }
+      } else {
+        Uninterruptibles.sleepUninterruptibly(5000L, TimeUnit.MILLISECONDS);
+      }
       assertFalse(randomSeeder.isEmpty());
     } finally {
       RandomTestUtils.removeAndAssertEmpty(randomSeeder, prng);
@@ -98,17 +113,17 @@ public class RandomSeederTest {
     }
   }
 
-  @Test(singleThreaded = true, retryAnalyzer = FlakyRetryAnalyzer.class)
+  // FIXME: Sometimes takes too long
+  @Test(singleThreaded = true, timeOut = 180_000L, retryAnalyzer = FlakyRetryAnalyzer.class)
   public void testStopIfEmpty() throws InterruptedException {
-    // FIXME: When the commented lines are uncommented, the ref never gets queued!
     final SeedGenerator seedGenerator = new FakeSeedGenerator("testStopIfEmpty");
     final RandomSeeder randomSeeder = createRandomSeeder(seedGenerator);
-    // ReferenceQueue<Object> queue = new ReferenceQueue<>();
-    GcFinalization.awaitClear(addSomethingDeadTo(randomSeeder));
-    Thread.sleep(1000); // FIXME: Why is this needed?
-    // assertNotNull(queue.remove(10_000));
-    randomSeeder.stopIfEmpty();
-    assertFalse(randomSeeder.isRunning(), "randomSeeder did not stop");
+    addSomethingDeadTo(randomSeeder);
+    while (!randomSeeder.isEmpty()) {
+      GcFinalization.awaitFullGc();
+      randomSeeder.stopIfEmpty();
+    }
+    assertFalse(randomSeeder.isRunning(), "RandomSeeder didn't stop");
   }
 
   protected RandomSeeder createRandomSeeder(SeedGenerator seedGenerator) {
@@ -119,14 +134,12 @@ public class RandomSeederTest {
   /**
    * Making this a subroutine ensures that {@code prng} can be GCed on exit.
    */
-  private WeakReference<ByteArrayReseedableRandom>
-      addSomethingDeadTo(RandomSeeder randomSeeder) {
+  private void addSomethingDeadTo(RandomSeeder randomSeeder) {
     SingleThreadSplittableRandomAdapter prng = new SingleThreadSplittableRandomAdapter(TEST_SEED);
     randomSeeder.add(prng);
     randomSeeder.stopIfEmpty();
     assertTrue(randomSeeder.isRunning());
     prng.nextBoolean(); // could replace with Reference.reachabilityFence if JDK8 support wasn't
     // needed
-    return new WeakReference<>(prng);
   }
 }

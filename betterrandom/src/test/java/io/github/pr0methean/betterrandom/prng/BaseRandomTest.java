@@ -11,6 +11,7 @@ import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertFalse;
 import static org.testng.Assert.assertNotEquals;
 import static org.testng.Assert.assertTrue;
+import static org.testng.Assert.fail;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
@@ -31,6 +32,7 @@ import java.security.GeneralSecurityException;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
@@ -54,6 +56,8 @@ import org.testng.annotations.Test;
 
 public abstract class BaseRandomTest extends PowerMockTestCase {
 
+  protected static final int INSTANCES_TO_HASH = 25;
+  protected static final int EXPECTED_UNIQUE_HASHES = (int) (0.8 * INSTANCES_TO_HASH);
   protected static final int TEST_BYTES_LENGTH = 100;
   protected final SeedGenerator semiFakeSeedGenerator
       = new SemiFakeSeedGenerator(ThreadLocalRandom.current());
@@ -345,8 +349,12 @@ public abstract class BaseRandomTest extends PowerMockTestCase {
   }
 
   @Test(timeOut = 60_000) public void testHashCode() {
-    assert RandomTestUtils.testHashCodeDistribution(this::createRng) :
-        "Too many hashCode collisions";
+    final HashSet<Integer> uniqueHashCodes = new HashSet<>(INSTANCES_TO_HASH);
+    for (int i = 0; i < INSTANCES_TO_HASH; i++) {
+      uniqueHashCodes.add(((Supplier<? extends Random>) this::createRng).get().hashCode());
+    }
+    assertGreaterOrEqual(uniqueHashCodes.size(), EXPECTED_UNIQUE_HASHES,
+        "Too many hashCode collisions");
   }
 
   /**
@@ -451,7 +459,7 @@ public abstract class BaseRandomTest extends PowerMockTestCase {
       case OFF:
         break;
       default:
-        throw new AssertionError("Unhandled entropy check mode " + entropyCheckMode);
+        fail("Unhandled entropy check mode " + entropyCheckMode);
     }
   }
 
@@ -636,27 +644,27 @@ public abstract class BaseRandomTest extends PowerMockTestCase {
     checkStream(prng, 31, prng.longs(20, 1L << 40, bound).boxed(), 20, 1L << 40, bound, true);
   }
 
-  @Test(timeOut = 20_000L) public void testDoubles() {
+  @Test(timeOut = 40_000L) public void testDoubles() {
     final BaseRandom prng = createRng();
     checkStream(prng, ENTROPY_OF_DOUBLE, prng.doubles().boxed(), -1, 0.0, 1.0, true);
   }
 
-  @Test(timeOut = 20_000L) public void testDoubles1() {
+  @Test(timeOut = 40_000L) public void testDoubles1() {
     final BaseRandom prng = createRng();
     checkStream(prng, ENTROPY_OF_DOUBLE, prng.doubles(20).boxed(), 20, 0.0, 1.0, true);
   }
 
-  @Test(timeOut = 20_000L) public void testDoubles2() {
+  @Test(timeOut = 40_000L) public void testDoubles2() {
     final BaseRandom prng = createRng();
     checkStream(prng, ENTROPY_OF_DOUBLE, prng.doubles(-5.0, 8.0).boxed(), -1, -5.0, 8.0, true);
   }
 
-  @Test(timeOut = 20_000L) public void testDoubles3() {
+  @Test(timeOut = 40_000L) public void testDoubles3() {
     final BaseRandom prng = createRng();
     checkStream(prng, ENTROPY_OF_DOUBLE, prng.doubles(20, -5.0, 8.0).boxed(), 20, -5.0, 8.0, true);
   }
 
-  @Test(timeOut = 20_000L) public void testDoubles3RoundingCorrection() {
+  @Test(timeOut = 40_000L) public void testDoubles3RoundingCorrection() {
     final BaseRandom prng = createRng();
     checkStream(prng, ENTROPY_OF_DOUBLE,
         prng.doubles(20, 1.0, UPPER_BOUND_FOR_ROUNDING_TEST).boxed(), 20, -5.0, 8.0, true);
@@ -694,11 +702,11 @@ public abstract class BaseRandomTest extends PowerMockTestCase {
     assertTrue(createRng().getNewSeedLength() > 0);
   }
 
-  @Test(timeOut = 90_000) public void testThreadSafety() {
+  @Test(timeOut = 90_000, retryAnalyzer = FlakyRetryAnalyzer.class) public void testThreadSafety() {
     checkThreadSafety(functionsForThreadSafetyTest, functionsForThreadSafetyTest);
   }
 
-  @Test(timeOut = 90_000) public void testThreadSafetySetSeed() {
+  @Test public void testThreadSafetySetSeed() {
     testThreadSafetyVsCrashesOnly(30, Collections.singletonList(setSeed),
         functionsForThreadCrashTest);
   }

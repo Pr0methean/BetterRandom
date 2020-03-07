@@ -29,6 +29,17 @@ public class EntropyBlockingRandomWrapperAesCounterRandomTest extends RandomWrap
   private static final long DEFAULT_MAX_ENTROPY = -64L;
   protected static final long VERY_LOW_MINIMUM_ENTROPY = Long.MIN_VALUE / 2;
 
+  @Override @Test(timeOut = 60_000) public void testDistribution() throws SeedException {
+    super.testDistribution();
+  }
+
+  /**
+   * Assertion-free since reseeding may cause divergent output.
+   */
+  @Override @Test(timeOut = 10_000) public void testSetSeedLong() {
+    createRng().setSeed(0x0123456789ABCDEFL);
+  }
+
   @Override @Test public void testAllPublicConstructors() {
     Constructor<?>[] constructors =
         EntropyBlockingRandomWrapper.class.getDeclaredConstructors();

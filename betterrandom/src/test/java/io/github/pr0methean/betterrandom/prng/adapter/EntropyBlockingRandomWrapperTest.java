@@ -158,7 +158,7 @@ public class EntropyBlockingRandomWrapperTest extends RandomWrapperRandomTest {
     }
   }
 
-  @Test(timeOut = 10_000L) public void testFallbackFromRandomSeederThread() {
+  @Test(timeOut = 20_000L) public void testFallbackFromRandomSeederThread() {
     SeedGenerator failingSeedGen = Mockito.spy(FailingSeedGenerator.DEFAULT_INSTANCE);
     RandomSeeder seeder = new RandomSeeder(failingSeedGen);
     SeedGenerator sameThreadSeedGen

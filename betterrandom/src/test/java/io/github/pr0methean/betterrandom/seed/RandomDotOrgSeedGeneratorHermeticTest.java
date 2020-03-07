@@ -1,5 +1,6 @@
 package io.github.pr0methean.betterrandom.seed;
 
+import static io.github.pr0methean.betterrandom.TestUtils.fail;
 import static io.github.pr0methean.betterrandom.seed.SeedTestUtils.testGenerator;
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.testng.Assert.assertEquals;
@@ -123,7 +124,7 @@ public class RandomDotOrgSeedGeneratorHermeticTest
       }
       MAX_SIZE_RESPONSE_OLD_API = responseBuilder.toByteArray();
     } catch (IOException e) {
-      throw new AssertionError(e);
+      throw fail("Error setting up test class", e);
     }
   }
 

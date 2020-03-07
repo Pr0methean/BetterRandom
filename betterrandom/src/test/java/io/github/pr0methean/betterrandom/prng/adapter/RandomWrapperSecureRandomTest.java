@@ -4,6 +4,7 @@ import static org.testng.Assert.assertSame;
 
 import com.google.common.collect.ImmutableList;
 import io.github.pr0methean.betterrandom.NamedFunction;
+import io.github.pr0methean.betterrandom.TestUtils;
 import io.github.pr0methean.betterrandom.prng.AbstractLargeSeedRandomTest;
 import io.github.pr0methean.betterrandom.prng.BaseRandom;
 import io.github.pr0methean.betterrandom.seed.SeedException;
@@ -27,7 +28,7 @@ import org.testng.annotations.Test;
     try {
       return new RandomWrapper(SecureRandom.getInstance("SHA1PRNG"));
     } catch (final NoSuchAlgorithmException e) {
-      throw new AssertionError(e);
+      throw TestUtils.fail("NoSuchAlgorithmException should not occur for SHA1PRNG", e);
     }
   }
 

@@ -1,6 +1,9 @@
 package io.github.pr0methean.betterrandom.prng;
 
+import static io.github.pr0methean.betterrandom.TestUtils.assertGreaterOrEqual;
+import static io.github.pr0methean.betterrandom.TestUtils.assertLessOrEqual;
 import static org.testng.Assert.assertFalse;
+import static org.testng.Assert.assertNotEquals;
 import static org.testng.Assert.assertTrue;
 
 import io.github.pr0methean.betterrandom.seed.SeedException;
@@ -70,13 +73,13 @@ public abstract class CipherCounterRandomTest extends SeekableRandomTest {
         final AesCounterRandom rngReseededOther = new AesCounterRandom(originalSeed);
         rngReseeded.setSeed(seed);
         rngReseededOther.setSeed(otherSeed);
-        assert !(rngs[i].equals(rngReseeded));
-        assert !(rngReseededOther.equals(rngReseeded));
-        assert rngs[i].nextLong() != rngReseeded.nextLong() : "setSeed had no effect";
+        assertNotEquals(rngs[i], rngReseeded, "PRNG equals() one with a different seed");
+        assertNotEquals(rngReseededOther, rngReseeded, "PRNG equals() one with a different seed");
+        assertNotEquals(rngs[i].nextLong(), rngReseeded.nextLong(), "setSeed had no effect");
         rngs[i] = rngReseeded;
       }
     }
-    assert rngs[0].nextLong() != rngs[1].nextLong() : "RNGs converged after 4 setSeed calls";
+    assertNotEquals(rngs[0].nextLong(), rngs[1].nextLong(), "RNGs converged after 4 setSeed calls");
   }
 
   @Override @Test(enabled = false) public void testSetSeedAfterNextInt() {
@@ -92,9 +95,9 @@ public abstract class CipherCounterRandomTest extends SeekableRandomTest {
       throw new SkipException("Skipping an inapplicable test");
     }
     int max = ((CipherCounterRandom) createRng()).getMaxKeyLengthBytes();
-    assert max >= 16 : "Should allow a 16-byte key";
-    assert max <= getExpectedMaxSize() :
-        "Shouldn't allow a key longer than " + getExpectedMaxSize() + "bytes";
+    assertGreaterOrEqual(max, 16, "Should allow a 16-byte key");
+    assertLessOrEqual(max, getExpectedMaxSize(),
+        "Shouldn't allow a key longer than " + getExpectedMaxSize() + "bytes");
   }
 
   @Override public void testInitialEntropy() {

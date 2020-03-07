@@ -8,6 +8,7 @@ import io.github.pr0methean.betterrandom.util.Looper;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
@@ -29,13 +30,18 @@ import org.slf4j.LoggerFactory;
  */
 public class RandomSeeder extends Looper {
 
-  // FIXME: Setting a longer POLL_INTERVAL slows many tests, and causes some to time out
-  // (Why doesn't BaseRandom's call to wakeUp() prevent this?!)
   /**
-   * Time in seconds to wait before checking again whether any PRNGs need more entropy.
+   * Time in seconds to wait before checking again whether any PRNGs need more entropy, after one
+   * iteration when they didn't.
    */
-  protected static final long POLL_INTERVAL = 1;
+  protected static final long FIRST_POLL_INTERVAL = 1;
+  /**
+   * Time in seconds to wait before checking again whether any PRNGs need more entropy, after more
+   * than one iteration when they didn't.
+   */
+  protected static final long REPEAT_POLL_INTERVAL = 60;
   private static final long serialVersionUID = -4339570810679373476L;
+  private transient boolean alreadyPolled;
 
   /**
    * Default waiting time before an empty instance terminates if still empty.
@@ -52,13 +58,6 @@ public class RandomSeeder extends Looper {
    * low, or as often as possible if they don't implement {@link EntropyCountingRandom}.
    */
   protected transient Set<ByteArrayReseedableRandom> byteArrayPrngs;
-
-  /**
-   * Holds instances that are being reseeded during the current iteration, so that PRNGs can be
-   * added and removed in the middle of an iteration without the
-   * {@link java.util.ConcurrentModificationException} that would otherwise arise.
-   */
-  protected transient Set<ByteArrayReseedableRandom> byteArrayPrngsThisIteration;
 
   /**
    * Signaled when a PRNG is added.
@@ -126,7 +125,7 @@ public class RandomSeeder extends Looper {
    * Removes PRNGs so that they will no longer be reseeded.
    * @param randoms the PRNGs to remove
    */
-  public void remove(Random... randoms) {
+  public void remove(Object... randoms) {
     remove(Arrays.asList(randoms));
   }
 
@@ -134,8 +133,8 @@ public class RandomSeeder extends Looper {
    * Removes PRNGs so that they will no longer be reseeded.
    * @param randoms the PRNGs to remove
    */
-  public void remove(Collection<? extends Random> randoms) {
-    if (randoms.size() == 0) {
+  public void remove(Collection<?> randoms) {
+    if (randoms.isEmpty()) {
       return;
     }
     lock.lock();
@@ -144,6 +143,16 @@ public class RandomSeeder extends Looper {
     } finally {
       lock.unlock();
     }
+  }
+
+  /**
+   * Checks whether the given PRNG is currently registered with this RandomSeeder.
+   *
+   * @param random the PRNG to check the status of
+   * @return true if registered; false if not
+   */
+  public boolean contains(Object random) {
+    return byteArrayPrngs.contains(random);
   }
 
   /**
@@ -159,7 +168,7 @@ public class RandomSeeder extends Looper {
    * @param randoms the PRNGs to start reseeding
    */
   public void add(Collection<? extends ByteArrayReseedableRandom> randoms) {
-    if (randoms.size() == 0) {
+    if (randoms.isEmpty()) {
       return;
     }
     lock.lock();
@@ -215,13 +224,12 @@ public class RandomSeeder extends Looper {
    */
   protected void initTransientFields() {
     byteArrayPrngs = createSynchronizedWeakHashSet();
-    byteArrayPrngsThisIteration = createSynchronizedWeakHashSet();
     waitWhileEmpty = lock.newCondition();
     waitForEntropyDrain = lock.newCondition();
   }
 
   /**
-   * Creates and returns a thread-safe {@link Set} backed by a {@link WeakHashMap}.
+   * Creates and returns a thread-safe {@link Set} with only weak references to its members.
    *
    * @param <T> the set element type
    * @return an empty mutable thread-safe {@link Set} that holds only weak references to its members
@@ -232,20 +240,16 @@ public class RandomSeeder extends Looper {
 
   @SuppressWarnings({"InfiniteLoopStatement", "ObjectAllocationInLoop", "AwaitNotInLoop"}) @Override
   protected boolean iterate() {
+    Collection<ByteArrayReseedableRandom> byteArrayPrngsThisIteration = new ArrayList<>(byteArrayPrngs);
     try {
-      while (true) {
-        byteArrayPrngsThisIteration.addAll(byteArrayPrngs);
-        if (!byteArrayPrngsThisIteration.isEmpty()) {
-          break;
-        }
+      while (byteArrayPrngsThisIteration.isEmpty()) {
         if (!waitWhileEmpty.await(stopIfEmptyForNanos, TimeUnit.NANOSECONDS)) {
           return false;
         }
+        byteArrayPrngsThisIteration.addAll(byteArrayPrngs);
       }
-      boolean entropyConsumed = reseedByteArrayReseedableRandoms();
-      if (!entropyConsumed) {
-        waitForEntropyDrain.await(POLL_INTERVAL, TimeUnit.SECONDS);
-      }
+      boolean entropyConsumed = reseedByteArrayReseedableRandoms(byteArrayPrngsThisIteration);
+      waitForEntropyDrainOrUpdateFlag(entropyConsumed);
       return true;
     } catch (final Throwable t) {
       getLogger().error("Disabling the LegacyRandomSeeder for " + seedGenerator, t);
@@ -253,28 +257,34 @@ public class RandomSeeder extends Looper {
     }
   }
 
+  protected void waitForEntropyDrainOrUpdateFlag(boolean entropyConsumed) throws InterruptedException {
+    if (entropyConsumed) {
+      alreadyPolled = false;
+    } else {
+      waitForEntropyDrain.await(alreadyPolled ? REPEAT_POLL_INTERVAL : FIRST_POLL_INTERVAL,
+          TimeUnit.SECONDS);
+      alreadyPolled = true;
+    }
+  }
+
   /**
-   * Reseeds all the PRNGs that need reseeding in {@link #byteArrayPrngsThisIteration}, then clears
-   * that set.
+   * Reseeds all the PRNGs that need reseeding in {@link #randoms}.
    *
    * @return true if at least one PRNG was reseeded; false otherwise
    */
-  protected boolean reseedByteArrayReseedableRandoms() {
+  protected boolean reseedByteArrayReseedableRandoms(Iterable<? extends ByteArrayReseedableRandom> randoms) {
     boolean entropyConsumed = false;
-    try {
-      for (ByteArrayReseedableRandom random : byteArrayPrngsThisIteration) {
-        if (stillDefinitelyHasEntropy(random)) {
-          continue;
-        }
-        entropyConsumed = true;
-        if (random.preferSeedWithLong()) {
-          reseedWithLong((Random) random);
-        } else {
-          random.setSeed(seedGenerator.generateSeed(random.getNewSeedLength()));
-        }
+    for (ByteArrayReseedableRandom random : randoms) {
+      if (stillDefinitelyHasEntropy(random)) {
+        continue;
       }
-    } finally {
-      byteArrayPrngsThisIteration.clear();
+      entropyConsumed = true;
+      if (random.preferSeedWithLong()) {
+        reseedWithLong((Random) random);
+      } else {
+        byte[] seed = seedGenerator.generateSeed(random.getNewSeedLength());
+        random.setSeed(seed);
+      }
     }
     return entropyConsumed;
   }
@@ -303,7 +313,6 @@ public class RandomSeeder extends Looper {
     try {
       unregisterWithAll(byteArrayPrngs);
       byteArrayPrngs.clear();
-      byteArrayPrngsThisIteration.clear();
     } finally {
       lock.unlock();
     }
@@ -346,6 +355,7 @@ public class RandomSeeder extends Looper {
    * Shut down this thread if no {@link Random} instances are registered with it.
    */
   public void stopIfEmpty() {
+    wakeUp();
     lock.lock();
     try {
       if (isEmpty()) {
