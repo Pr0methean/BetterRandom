@@ -1,6 +1,5 @@
 package io.github.pr0methean.betterrandom.prng.adapter;
 
-import io.github.pr0methean.betterrandom.FlakyRetryAnalyzer;
 import io.github.pr0methean.betterrandom.prng.BaseRandom;
 import io.github.pr0methean.betterrandom.prng.Pcg64Random;
 import io.github.pr0methean.betterrandom.prng.RandomTestUtils;
@@ -54,7 +53,7 @@ public class ReseedingThreadLocalRandomWrapperTest extends ThreadLocalRandomWrap
     prng.setRandomSeeder(randomSeeder);
   }
 
-  @Override @Test(retryAnalyzer = FlakyRetryAnalyzer.class)
+  @Override @Test
   public void testReseeding() {
     final SeedGenerator testSeedGenerator = getTestSeedGenerator();
     final BaseRandom rng = new ReseedingThreadLocalRandomWrapper(testSeedGenerator, pcgSupplier);

@@ -11,7 +11,6 @@ import static org.testng.Assert.assertSame;
 import static org.testng.Assert.fail;
 
 import com.google.common.collect.ImmutableList;
-import io.github.pr0methean.betterrandom.FlakyRetryAnalyzer;
 import io.github.pr0methean.betterrandom.prng.AesCounterRandom;
 import io.github.pr0methean.betterrandom.prng.BaseRandom;
 import io.github.pr0methean.betterrandom.prng.RandomTestUtils;
@@ -130,8 +129,7 @@ public class EntropyBlockingRandomWrapperTest extends RandomWrapperRandomTest {
     Mockito.verify(seeder, Mockito.atLeastOnce()).wakeUp();
   }
 
-  // FIXME: Gets interrupted
-  @Test(retryAnalyzer = FlakyRetryAnalyzer.class) public void testRandomSeederThreadUsedFirst() {
+  @Test public void testRandomSeederThreadUsedFirst() {
     SeedGenerator testSeedGenerator = getTestSeedGenerator();
     SeedGenerator seederSeedGenSpy = Mockito.spy(testSeedGenerator);
     ThreadFactory defaultThreadFactory

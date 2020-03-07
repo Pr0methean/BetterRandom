@@ -83,7 +83,7 @@ public class RandomSeederTest {
         "Repeated output after reseeding");
   }
 
-  @Test(retryAnalyzer = FlakyRetryAnalyzer.class) public void testResurrection()
+  @Test public void testResurrection()
       throws InterruptedException {
     final FakeSeedGenerator seedGenerator = new FakeSeedGenerator("testResurrection");
     seedGenerator.setThrowException(true);

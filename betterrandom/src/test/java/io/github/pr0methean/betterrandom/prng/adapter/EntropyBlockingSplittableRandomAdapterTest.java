@@ -8,7 +8,6 @@ import static org.testng.Assert.assertNotEquals;
 
 import com.google.common.testing.SerializableTester;
 import com.google.common.util.concurrent.Uninterruptibles;
-import io.github.pr0methean.betterrandom.FlakyRetryAnalyzer;
 import io.github.pr0methean.betterrandom.prng.BaseRandom;
 import io.github.pr0methean.betterrandom.prng.RandomTestUtils;
 import io.github.pr0methean.betterrandom.seed.FakeSeedGenerator;
@@ -68,7 +67,7 @@ public class EntropyBlockingSplittableRandomAdapterTest
   }
 
   // FIXME: Why does this need so much more time than other PRNGs?!
-  @Test(timeOut = 240_000, retryAnalyzer = FlakyRetryAnalyzer.class)
+  @Test(timeOut = 240_000)
   @Override public void testDistribution() throws SeedException {
     super.testDistribution();
   }
@@ -85,7 +84,7 @@ public class EntropyBlockingSplittableRandomAdapterTest
   }
 
   // FIXME: Why does this need so much more time than other PRNGs?!
-  @Test(timeOut = 120_000, retryAnalyzer = FlakyRetryAnalyzer.class)
+  @Test(timeOut = 120_000)
   @Override public void testIntegerSummaryStats() throws SeedException {
     super.testIntegerSummaryStats();
   }
@@ -108,7 +107,7 @@ public class EntropyBlockingSplittableRandomAdapterTest
     return EntropyBlockingSplittableRandomAdapter.class;
   }
 
-  @Override @Test(retryAnalyzer = FlakyRetryAnalyzer.class) public void testReseeding() {
+  @Override @Test public void testReseeding() {
     SeedGenerator generator =
         new SemiFakeSeedGenerator(ThreadLocalRandom.current(), "testReseeding");
     RandomSeeder seeder = new RandomSeeder(generator);

@@ -6,7 +6,6 @@ import static org.testng.Assert.assertTrue;
 import static org.testng.Assert.fail;
 
 import com.google.common.util.concurrent.Uninterruptibles;
-import io.github.pr0methean.betterrandom.FlakyRetryAnalyzer;
 import io.github.pr0methean.betterrandom.MockException;
 import java.lang.Thread.UncaughtExceptionHandler;
 import java.util.concurrent.CountDownLatch;
@@ -62,8 +61,7 @@ public class LooperTest {
     }
   }
 
-  @Test(retryAnalyzer = FlakyRetryAnalyzer.class)
-  public void testAwaitIteration() {
+  @Test public void testAwaitIteration() {
     final SleepingLooper sleepingThread = new SleepingLooper();
     sleepingThread.start();
     sleepingThread.startLatch.countDown();

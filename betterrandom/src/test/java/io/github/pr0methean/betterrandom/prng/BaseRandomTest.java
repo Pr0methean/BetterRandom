@@ -702,7 +702,7 @@ public abstract class BaseRandomTest extends PowerMockTestCase {
     assertTrue(createRng().getNewSeedLength() > 0);
   }
 
-  @Test(timeOut = 90_000, retryAnalyzer = FlakyRetryAnalyzer.class) public void testThreadSafety() {
+  @Test(timeOut = 90_000) public void testThreadSafety() {
     checkThreadSafety(functionsForThreadSafetyTest, functionsForThreadSafetyTest);
   }
 

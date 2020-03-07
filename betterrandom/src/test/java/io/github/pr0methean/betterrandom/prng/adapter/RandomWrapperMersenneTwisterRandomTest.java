@@ -3,7 +3,6 @@ package io.github.pr0methean.betterrandom.prng.adapter;
 import static org.testng.Assert.assertSame;
 
 import com.google.common.collect.ImmutableList;
-import io.github.pr0methean.betterrandom.FlakyRetryAnalyzer;
 import io.github.pr0methean.betterrandom.NamedFunction;
 import io.github.pr0methean.betterrandom.prng.BaseRandom;
 import io.github.pr0methean.betterrandom.prng.MersenneTwisterRandom;
@@ -59,7 +58,7 @@ public class RandomWrapperMersenneTwisterRandomTest extends MersenneTwisterRando
     super.testSerializable();
   }
 
-  @Override @Test(retryAnalyzer = FlakyRetryAnalyzer.class) public void testReseeding()
+  @Override @Test public void testReseeding()
       throws SeedException {
     super.testReseeding();
   }
