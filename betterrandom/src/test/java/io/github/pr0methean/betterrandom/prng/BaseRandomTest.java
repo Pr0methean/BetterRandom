@@ -647,27 +647,27 @@ public abstract class BaseRandomTest extends PowerMockTestCase {
     checkStream(prng, 31, prng.longs(STREAM_SIZE, 1L << 40, bound).boxed(), STREAM_SIZE, 1L << 40, bound, true);
   }
 
-  @Test(timeOut = 40_000L) public void testDoubles() {
+  @Test(timeOut = 20_000L) public void testDoubles() {
     final BaseRandom prng = createRng();
     checkStream(prng, ENTROPY_OF_DOUBLE, prng.doubles().boxed(), -1, 0.0, 1.0, true);
   }
 
-  @Test(timeOut = 40_000L) public void testDoubles1() {
+  @Test(timeOut = 20_000L) public void testDoubles1() {
     final BaseRandom prng = createRng();
     checkStream(prng, ENTROPY_OF_DOUBLE, prng.doubles(STREAM_SIZE).boxed(), STREAM_SIZE, 0.0, 1.0, true);
   }
 
-  @Test(timeOut = 40_000L) public void testDoubles2() {
+  @Test(timeOut = 20_000L) public void testDoubles2() {
     final BaseRandom prng = createRng();
     checkStream(prng, ENTROPY_OF_DOUBLE, prng.doubles(-5.0, 8.0).boxed(), -1, -5.0, 8.0, true);
   }
 
-  @Test(timeOut = 40_000L) public void testDoubles3() {
+  @Test(timeOut = 20_000L) public void testDoubles3() {
     final BaseRandom prng = createRng();
     checkStream(prng, ENTROPY_OF_DOUBLE, prng.doubles(STREAM_SIZE, -5.0, 8.0).boxed(), STREAM_SIZE, -5.0, 8.0, true);
   }
 
-  @Test(timeOut = 40_000L) public void testDoubles3RoundingCorrection() {
+  @Test(timeOut = 20_000L) public void testDoubles3RoundingCorrection() {
     final BaseRandom prng = createRng();
     checkStream(prng, ENTROPY_OF_DOUBLE,
         prng.doubles(STREAM_SIZE, 1.0, UPPER_BOUND_FOR_ROUNDING_TEST).boxed(), STREAM_SIZE, -5.0, 8.0, true);
