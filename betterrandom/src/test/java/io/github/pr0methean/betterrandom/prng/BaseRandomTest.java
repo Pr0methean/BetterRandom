@@ -365,7 +365,7 @@ public abstract class BaseRandomTest extends PowerMockTestCase {
   @Test(timeOut = 15_000) public void testDump() throws SeedException {
     final BaseRandom rng = createRng();
     assertNotEquals(rng.dump(), createRng().dump());
-    rng.nextLong(); // Kill a mutant where dump doesn't unlock the lock
+    rng.nextBoolean(); // Kill a mutant where dump doesn't unlock the lock
   }
 
   @Test public void testReseeding() throws SeedException {

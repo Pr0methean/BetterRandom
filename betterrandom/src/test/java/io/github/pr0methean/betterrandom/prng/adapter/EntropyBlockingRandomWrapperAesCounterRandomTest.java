@@ -5,7 +5,6 @@ import static org.testng.Assert.assertFalse;
 
 import com.google.common.collect.ImmutableMap;
 import com.google.common.testing.SerializableTester;
-import io.github.pr0methean.betterrandom.DeadlockWatchdog;
 import io.github.pr0methean.betterrandom.FlakyRetryAnalyzer;
 import io.github.pr0methean.betterrandom.TestUtils;
 import io.github.pr0methean.betterrandom.prng.AesCounterRandom;
@@ -49,15 +48,6 @@ public class EntropyBlockingRandomWrapperAesCounterRandomTest extends RandomWrap
 
   @Override @Test(timeOut = 60_000) public void testDoubles3RoundingCorrection() {
     super.testDoubles3RoundingCorrection();
-  }
-
-  @Override @Test(timeOut = 60_000) public void testDump() throws SeedException {
-    DeadlockWatchdog.ensureStarted();
-    try {
-      super.testDump();
-    } finally {
-      DeadlockWatchdog.stopInstance();
-    }
   }
 
   /**

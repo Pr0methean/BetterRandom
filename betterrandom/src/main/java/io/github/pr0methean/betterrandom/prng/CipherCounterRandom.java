@@ -242,19 +242,24 @@ public abstract class CipherCounterRandom extends BaseRandom implements Seekable
         hash.update(this.seed);
         hash.update(this.counter);
         final byte[] newSeed = hash.digest(seed);
-        int keyLength = getKeyLength(newSeed.length);
-        key = Arrays.copyOf(newSeed, keyLength);
-        System.arraycopy(newSeed, keyLength, counter, 0,
-            Math.min(newSeed.length - keyLength, counter.length));
+        key = setKeyAndCounter(newSeed);
       } else {
-        int keyLength = getKeyLength(seed.length);
-        key = (keyLength == seed.length) ? seed : Arrays.copyOf(seed, keyLength);
+        key = setKeyAndCounter(seed);
       }
       setSeedInternal(key);
       entropyBits.addAndGet(8L * (seed.length - key.length));
     } finally {
       lock.unlock();
     }
+  }
+
+  private byte[] setKeyAndCounter(byte[] newSeed) {
+    byte[] key;
+    int keyLength = getKeyLength(newSeed.length);
+    key = Arrays.copyOf(newSeed, keyLength);
+    System.arraycopy(newSeed, keyLength, counter, 0,
+        Math.min(newSeed.length - keyLength, counter.length));
+    return key;
   }
 
   @Override
