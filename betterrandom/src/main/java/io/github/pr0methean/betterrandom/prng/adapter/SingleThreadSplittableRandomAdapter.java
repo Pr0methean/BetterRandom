@@ -1,8 +1,10 @@
 package io.github.pr0methean.betterrandom.prng.adapter;
 
+import com.google.common.base.MoreObjects;
 import io.github.pr0methean.betterrandom.seed.DefaultSeedGenerator;
 import io.github.pr0methean.betterrandom.seed.SeedException;
 import io.github.pr0methean.betterrandom.seed.SeedGenerator;
+import io.github.pr0methean.betterrandom.util.BinaryUtils;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.util.SplittableRandom;
@@ -14,9 +16,18 @@ import java.util.SplittableRandom;
  *
  * @author Chris Hennick
  */
-public class SingleThreadSplittableRandomAdapter extends DirectSplittableRandomAdapter {
+public class SingleThreadSplittableRandomAdapter extends BaseSplittableRandomAdapter {
 
   private static final long serialVersionUID = -1125374167384636394L;
+
+  /**
+   * The master {@link SplittableRandom} that will either be delegated to directly (see {@link
+   * SingleThreadSplittableRandomAdapter} or be split using {@link SplittableRandom#split()} (see
+   * {@link SplittableRandomAdapter}) and have the splits delegated to.
+   */
+  @SuppressWarnings(
+      "InstanceVariableMayNotBeInitializedByReadObject") protected transient volatile SplittableRandom
+      delegate; // SplittableRandom isn't Serializable
 
   /**
    * Use the provided seed generation strategy to create the seed for the {@link SplittableRandom}.
@@ -55,6 +66,7 @@ public class SingleThreadSplittableRandomAdapter extends DirectSplittableRandomA
    */
   public SingleThreadSplittableRandomAdapter(final long seed) {
     super(seed);
+    setSeed(seed);
   }
 
   /**
@@ -79,4 +91,29 @@ public class SingleThreadSplittableRandomAdapter extends DirectSplittableRandomA
     setSeed(seed);
   }
 
+  /**
+   * Replaces the delegate with a new {@link SplittableRandom} that uses the given seed.
+   *
+   * @param seed the new seed
+   */
+  @Override public void setSeed(final long seed) {
+    if (superConstructorFinished) {
+      super.setSeedInternal(BinaryUtils.convertLongToBytes(seed));
+    }
+    delegate = new SplittableRandom(seed);
+  }
+
+  /**
+   * Replaces the delegate with a new {@link SplittableRandom} that uses the given seed.
+   *
+   * @param seed the new seed; must be 8 bytes
+   */
+  @Override protected void setSeedInternal(final byte[] seed) {
+    super.setSeedInternal(seed);
+    delegate = new SplittableRandom(BinaryUtils.convertBytesToLong(seed));
+  }
+
+  @Override protected MoreObjects.ToStringHelper addSubclassFields(final MoreObjects.ToStringHelper original) {
+    return original.add("delegate", delegate);
+  }
 }
