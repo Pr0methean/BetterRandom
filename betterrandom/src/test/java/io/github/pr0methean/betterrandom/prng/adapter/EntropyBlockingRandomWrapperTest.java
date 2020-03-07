@@ -12,6 +12,7 @@ import static org.testng.Assert.fail;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.util.concurrent.Uninterruptibles;
+import io.github.pr0methean.betterrandom.StackTraceHolder;
 import io.github.pr0methean.betterrandom.prng.AesCounterRandom;
 import io.github.pr0methean.betterrandom.prng.BaseRandom;
 import io.github.pr0methean.betterrandom.prng.RandomTestUtils;
@@ -227,7 +228,7 @@ public class EntropyBlockingRandomWrapperTest extends RandomWrapperRandomTest {
       fail("Consumer got exception", exception.get());
     }
     if (consumer.isAlive()) {
-      Throwable stackTrace = new Throwable("Consumer stack trace");
+      Throwable stackTrace = new StackTraceHolder("Consumer stack trace");
       stackTrace.setStackTrace(consumer.getStackTrace());
       fail("Consumer is still running", stackTrace);
     }
