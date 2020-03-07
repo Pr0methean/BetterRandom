@@ -103,11 +103,6 @@ public class Pcg128Random extends BaseRandom implements SeekableRandom {
    * @param lowDelta low quadword of the distance to advance
    */
   public void advance(long highDelta, long lowDelta) {
-    byte[] curMult = new byte[SEED_SIZE_BYTES];
-    byte[] curPlus = new byte[SEED_SIZE_BYTES];
-    byte[] accMult = new byte[SEED_SIZE_BYTES];
-    byte[] accPlus = new byte[SEED_SIZE_BYTES];
-    byte[] adjMult = new byte[SEED_SIZE_BYTES];
     advancementLock.lock();
     try {
       if (highDelta == 0 && lowDelta == 0) {
@@ -117,10 +112,11 @@ public class Pcg128Random extends BaseRandom implements SeekableRandom {
       // with Arbitrary Stride,", Transactions of the American Nuclear
       // Society (Nov. 1994).  The algorithm is very similar to fast
       // exponentiation.
-      System.arraycopy(MULTIPLIER, 0, curMult, 0, SEED_SIZE_BYTES);
-      System.arraycopy(INCREMENT, 0, curPlus, 0, SEED_SIZE_BYTES);
-      System.arraycopy(Byte16ArrayArithmetic.ONE, 0, accMult, 0, SEED_SIZE_BYTES);
-      System.arraycopy(Byte16ArrayArithmetic.ZERO, 0, accPlus, 0, SEED_SIZE_BYTES);
+      byte[] curMult = MULTIPLIER.clone();
+      byte[] accMult = Byte16ArrayArithmetic.ONE.clone();
+      byte[] curPlus = INCREMENT.clone();
+      byte[] accPlus = new byte[SEED_SIZE_BYTES];
+      byte[] adjMult = new byte[SEED_SIZE_BYTES];
       while (lowDelta != 0 || highDelta != 0) {
         if ((lowDelta & 1) == 1) {
           multiplyInto(accMult, curMult);
