@@ -228,8 +228,7 @@ public class EntropyBlockingRandomWrapperTest extends RandomWrapperRandomTest {
       fail("Consumer got exception", exception.get());
     }
     if (consumer.isAlive()) {
-      Throwable stackTrace = new StackTraceHolder("Consumer stack trace");
-      stackTrace.setStackTrace(consumer.getStackTrace());
+      Throwable stackTrace = new StackTraceHolder("Consumer stack trace", consumer.getStackTrace());
       fail("Consumer is still running", stackTrace);
     }
     assertEquals(consumer.getState(), Thread.State.TERMINATED, "setWrapped didn't unblock");
