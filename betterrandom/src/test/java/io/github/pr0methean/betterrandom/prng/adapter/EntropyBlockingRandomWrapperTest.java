@@ -208,6 +208,7 @@ public class EntropyBlockingRandomWrapperTest extends RandomWrapperRandomTest {
     Mockito.verify(seedGen, Mockito.atLeastOnce()).generateSeed(any(byte[].class));
   }
 
+  // FIXME: Spurious interrupts if Uninterruptibles not used
   @Test(timeOut = 25_000) public void testSetWrappedUnblocks() throws InterruptedException {
     RandomSeeder seeder = Mockito.mock(RandomSeeder.class);
     EntropyBlockingRandomWrapper random
@@ -218,7 +219,7 @@ public class EntropyBlockingRandomWrapperTest extends RandomWrapperRandomTest {
     consumer.setUncaughtExceptionHandler((thread, throwable) -> exception.set(throwable));
     consumer.start();
     while (random.getEntropyBits() > 0) {
-      Thread.sleep(100);
+      Uninterruptibles.sleepUninterruptibly(100, TimeUnit.MILLISECONDS);
     }
     random.setWrapped(new Random());
     Uninterruptibles.joinUninterruptibly(consumer, 1, TimeUnit.SECONDS);
