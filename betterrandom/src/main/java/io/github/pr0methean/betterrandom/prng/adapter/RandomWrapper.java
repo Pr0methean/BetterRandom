@@ -246,11 +246,10 @@ public class RandomWrapper extends BaseRandom {
       }
       if (asByteArrayReseedable != null) {
         asByteArrayReseedable.setSeed(seed);
-        unknownSeed = false;
       } else {
         wrapped.setSeed(BinaryUtils.convertBytesToLong(seed));
-        unknownSeed = false;
       }
+      unknownSeed = false;
     } finally {
       if (locked) {
         lock.unlock();
