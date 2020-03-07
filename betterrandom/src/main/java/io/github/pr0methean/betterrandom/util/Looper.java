@@ -43,8 +43,8 @@ public abstract class Looper implements Serializable {
    */
   protected final ThreadFactory factory;
 
-  private volatile boolean running; // determines whether to start when deserialized
-  private volatile boolean everStarted; // tracked for getState()
+  /** Determines whether to start when deserialized. */
+  private volatile boolean running;
 
   /**
    * Constructs a Looper with all properties as defaults. The thread is not started in the
