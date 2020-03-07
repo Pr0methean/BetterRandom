@@ -2,6 +2,7 @@ package io.github.pr0methean.betterrandom.seed;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
 
+import io.github.pr0methean.betterrandom.util.TransientAtomicReference;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -11,7 +12,6 @@ import java.net.URL;
 import java.time.Clock;
 import java.time.Duration;
 import java.time.Instant;
-import java.util.concurrent.atomic.AtomicReference;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 import javax.annotation.Nullable;
@@ -38,12 +38,12 @@ public abstract class WebJsonSeedGenerator implements SeedGenerator {
   /**
    * The proxy to use with this server, or null to use the JVM default.
    */
-  protected final AtomicReference<Proxy> proxy = new AtomicReference<>(null);
+  protected final TransientAtomicReference<Proxy> proxy = new TransientAtomicReference<>(null);
   /**
    * The SSLSocketFactory to use with this server.
    */
-  protected final AtomicReference<SSLSocketFactory> socketFactory =
-      new AtomicReference<>(null);
+  protected final TransientAtomicReference<SSLSocketFactory> socketFactory =
+      new TransientAtomicReference<>(null);
   /**
    * If true, don't attempt to contact the server again for RETRY_DELAY after an IOException
    */
