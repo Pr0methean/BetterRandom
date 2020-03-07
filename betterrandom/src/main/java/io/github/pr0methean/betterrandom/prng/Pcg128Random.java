@@ -51,21 +51,7 @@ public class Pcg128Random extends BaseRandom implements SeekableRandom {
   private static final int MASK = (1 << WANTED_OP_BITS) - 1;
   private static final long serialVersionUID = 3246991464669800351L;
 
-  private transient byte[] curMult;
-  private transient byte[] curPlus;
-  private transient byte[] accMult;
-  private transient byte[] accPlus;
-  private transient byte[] adjMult;
   private final Lock advancementLock = new ReentrantLock(); // guards *Mult and *Plus
-
-  @Override protected void initTransientFields() {
-    super.initTransientFields();
-    curMult = new byte[SEED_SIZE_BYTES];
-    curPlus = new byte[SEED_SIZE_BYTES];
-    accMult = new byte[SEED_SIZE_BYTES];
-    accPlus = new byte[SEED_SIZE_BYTES];
-    adjMult = new byte[SEED_SIZE_BYTES];
-  }
 
   /**
    * Creates a new PRNG with a seed from the {@link DefaultSeedGenerator}.
@@ -117,6 +103,11 @@ public class Pcg128Random extends BaseRandom implements SeekableRandom {
    * @param lowDelta low quadword of the distance to advance
    */
   public void advance(long highDelta, long lowDelta) {
+    byte[] curMult = new byte[SEED_SIZE_BYTES];
+    byte[] curPlus = new byte[SEED_SIZE_BYTES];
+    byte[] accMult = new byte[SEED_SIZE_BYTES];
+    byte[] accPlus = new byte[SEED_SIZE_BYTES];
+    byte[] adjMult = new byte[SEED_SIZE_BYTES];
     advancementLock.lock();
     try {
       if (highDelta == 0 && lowDelta == 0) {
