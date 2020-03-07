@@ -4,6 +4,7 @@ import static io.github.pr0methean.betterrandom.TestUtils.assertGreaterOrEqual;
 import static io.github.pr0methean.betterrandom.TestUtils.assertLessOrEqual;
 import static io.github.pr0methean.betterrandom.prng.BaseRandom.ENTROPY_OF_DOUBLE;
 import static io.github.pr0methean.betterrandom.prng.BaseRandom.ENTROPY_OF_FLOAT;
+import static io.github.pr0methean.betterrandom.prng.RandomTestUtils.STREAM_SIZE;
 import static io.github.pr0methean.betterrandom.prng.RandomTestUtils.assertMonteCarloPiEstimateSane;
 import static io.github.pr0methean.betterrandom.prng.RandomTestUtils.checkRangeAndEntropy;
 import static io.github.pr0methean.betterrandom.prng.RandomTestUtils.checkStream;
@@ -92,7 +93,7 @@ public abstract class BaseRandomTest extends PowerMockTestCase {
   protected final List<NamedFunction<Random, Double>>
       functionsForThreadCrashTest =
       ImmutableList.of(NEXT_LONG, NEXT_INT, NEXT_DOUBLE, NEXT_GAUSSIAN, setSeed);
-  protected static final int TEST_BYTE_ARRAY_LENGTH = 20;
+  protected static final int TEST_BYTE_ARRAY_LENGTH = STREAM_SIZE;
   private static final String HELLO = "Hello";
   private static final String HOW_ARE_YOU = "How are you?";
   private static final String GOODBYE = "Goodbye";
@@ -118,7 +119,7 @@ public abstract class BaseRandomTest extends PowerMockTestCase {
     rng.setSeed(0x0123456789ABCDEFL);
     rng2.setSeed(0x0123456789ABCDEFL);
     RandomTestUtils
-        .assertEquivalent(rng, rng2, 20, "Output mismatch after reseeding with same seed");
+        .assertEquivalent(rng, rng2, STREAM_SIZE, "Output mismatch after reseeding with same seed");
   }
 
   protected SeedGenerator getTestSeedGenerator() {
@@ -341,7 +342,7 @@ public abstract class BaseRandomTest extends PowerMockTestCase {
     final BaseRandom rng = createRng(realSeed);
     final BaseRandom rng2 = createRng(zeroSeed);
     RandomTestUtils
-        .assertDistinct(rng, rng2, 20, "Output with real seed matches output with all-zeroes seed");
+        .assertDistinct(rng, rng2, STREAM_SIZE, "Output with real seed matches output with all-zeroes seed");
   }
 
   @Test(timeOut = 15_000) public void testEquals() throws SeedException {
@@ -368,11 +369,11 @@ public abstract class BaseRandomTest extends PowerMockTestCase {
   }
 
   @Test public void testReseeding() throws SeedException {
-    final byte[] output1 = new byte[20];
+    final byte[] output1 = new byte[STREAM_SIZE];
     final BaseRandom rng1 = createRng();
     final BaseRandom rng2 = createRng();
     rng1.nextBytes(output1);
-    final byte[] output2 = new byte[20];
+    final byte[] output2 = new byte[STREAM_SIZE];
     rng2.nextBytes(output2);
     final int seedLength = rng1.getNewSeedLength();
     rng1.setSeed(getTestSeedGenerator().generateSeed(seedLength));
@@ -507,7 +508,7 @@ public abstract class BaseRandomTest extends PowerMockTestCase {
 
   @Test public void testNextLong1() {
     final BaseRandom prng = createRng();
-    for (int i = 0; i < 20; i++) {
+    for (int i = 0; i < STREAM_SIZE; i++) {
       // check that the bound is exclusive, to kill an off-by-one mutant
       final Supplier<? extends Number> numberSupplier = () -> prng.nextLong(2);
       checkRangeAndEntropy(prng, 1, numberSupplier, 0, 2, getEntropyCheckMode());
@@ -604,7 +605,8 @@ public abstract class BaseRandomTest extends PowerMockTestCase {
 
   @Test(timeOut = 10_000) public void testInts1() {
     final BaseRandom prng = createRng();
-    checkStream(prng, 32, prng.ints(20).boxed(), 20, Integer.MIN_VALUE, Integer.MAX_VALUE + 1L,
+    checkStream(prng, 32, prng.ints(STREAM_SIZE).boxed(),
+        STREAM_SIZE, Integer.MIN_VALUE, Integer.MAX_VALUE + 1L,
         true);
   }
 
@@ -625,7 +627,8 @@ public abstract class BaseRandomTest extends PowerMockTestCase {
 
   @Test(timeOut = 10_000) public void testLongs1() {
     final BaseRandom prng = createRng();
-    checkStream(prng, 64, prng.longs(20).boxed(), 20, Long.MIN_VALUE, Long.MAX_VALUE + 1.0, true);
+    checkStream(prng, 64, prng.longs(STREAM_SIZE).boxed(),
+        STREAM_SIZE, Long.MIN_VALUE, Long.MAX_VALUE + 1.0, true);
   }
 
   @Test(timeOut = 10_000) public void testLongs2() {
@@ -635,13 +638,13 @@ public abstract class BaseRandomTest extends PowerMockTestCase {
 
   @Test(timeOut = 10_000) public void testLongs3() {
     final BaseRandom prng = createRng();
-    checkStream(prng, 42, prng.longs(20, 1L << 40, 1L << 42).boxed(), 20, 1L << 40, 1L << 42, true);
+    checkStream(prng, 42, prng.longs(STREAM_SIZE, 1L << 40, 1L << 42).boxed(), STREAM_SIZE, 1L << 40, 1L << 42, true);
   }
 
   @Test(timeOut = 10_000) public void testLongs3SmallRange() {
     final long bound = (1L << 40) + 2;
     final BaseRandom prng = createRng();
-    checkStream(prng, 31, prng.longs(20, 1L << 40, bound).boxed(), 20, 1L << 40, bound, true);
+    checkStream(prng, 31, prng.longs(STREAM_SIZE, 1L << 40, bound).boxed(), STREAM_SIZE, 1L << 40, bound, true);
   }
 
   @Test(timeOut = 40_000L) public void testDoubles() {
@@ -651,7 +654,7 @@ public abstract class BaseRandomTest extends PowerMockTestCase {
 
   @Test(timeOut = 40_000L) public void testDoubles1() {
     final BaseRandom prng = createRng();
-    checkStream(prng, ENTROPY_OF_DOUBLE, prng.doubles(20).boxed(), 20, 0.0, 1.0, true);
+    checkStream(prng, ENTROPY_OF_DOUBLE, prng.doubles(STREAM_SIZE).boxed(), STREAM_SIZE, 0.0, 1.0, true);
   }
 
   @Test(timeOut = 40_000L) public void testDoubles2() {
@@ -661,13 +664,13 @@ public abstract class BaseRandomTest extends PowerMockTestCase {
 
   @Test(timeOut = 40_000L) public void testDoubles3() {
     final BaseRandom prng = createRng();
-    checkStream(prng, ENTROPY_OF_DOUBLE, prng.doubles(20, -5.0, 8.0).boxed(), 20, -5.0, 8.0, true);
+    checkStream(prng, ENTROPY_OF_DOUBLE, prng.doubles(STREAM_SIZE, -5.0, 8.0).boxed(), STREAM_SIZE, -5.0, 8.0, true);
   }
 
   @Test(timeOut = 40_000L) public void testDoubles3RoundingCorrection() {
     final BaseRandom prng = createRng();
     checkStream(prng, ENTROPY_OF_DOUBLE,
-        prng.doubles(20, 1.0, UPPER_BOUND_FOR_ROUNDING_TEST).boxed(), 20, -5.0, 8.0, true);
+        prng.doubles(STREAM_SIZE, 1.0, UPPER_BOUND_FOR_ROUNDING_TEST).boxed(), STREAM_SIZE, -5.0, 8.0, true);
   }
 
   @Test(timeOut = 30_000L) public void testGaussians() {

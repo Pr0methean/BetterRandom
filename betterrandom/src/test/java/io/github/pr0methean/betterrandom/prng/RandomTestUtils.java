@@ -51,6 +51,7 @@ public enum RandomTestUtils {
   ;
 
   public static final long RESEEDING_WAIT_INCREMENT_MS = 20L;
+  public static final int STREAM_SIZE = 20;
 
   @SuppressWarnings("FloatingPointEquality")
   public static void checkRangeAndEntropy(final BaseRandom prng, final long expectedEntropySpent,
@@ -91,7 +92,7 @@ public enum RandomTestUtils {
       final double bound, final boolean checkEntropyCount) {
     final AtomicLong entropy = new AtomicLong(prng.getEntropyBits());
     final Stream<? extends Number> streamToUse =
-        (expectedCount < 0) ? stream.sequential().limit(20) : stream.sequential();
+        (expectedCount < 0) ? stream.sequential().limit(STREAM_SIZE) : stream.sequential();
     final long count = streamToUse.mapToLong((number) -> {
       TestUtils.assertGreaterOrEqual(number.doubleValue(), origin);
       TestUtils.assertLess(number.doubleValue(), bound);
