@@ -33,6 +33,11 @@ public class SplittableRandomAdapter extends BaseSplittableRandomAdapter {
   @SuppressWarnings({"ThreadLocalNotStaticFinal", "TransientFieldNotInitialized"})
   protected transient ThreadLocal<BaseRandom> threadLocal;
 
+  @Override protected void initTransientFields() {
+    super.initTransientFields();
+    threadLocal = ThreadLocal.withInitial(this::createDelegate);
+  }
+
   /**
    * Creates an instance.
    *
@@ -46,7 +51,6 @@ public class SplittableRandomAdapter extends BaseSplittableRandomAdapter {
     super(new byte[Long.BYTES]);
     this.seedGenerator = seedGenerator;
     this.randomSeeder.set(randomSeeder);
-    threadLocal = ThreadLocal.withInitial(this::createDelegate);
   }
 
   /**

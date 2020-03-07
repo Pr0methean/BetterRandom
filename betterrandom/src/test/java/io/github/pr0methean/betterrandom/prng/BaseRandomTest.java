@@ -352,7 +352,7 @@ public abstract class BaseRandomTest extends PowerMockTestCase {
   @Test(timeOut = 60_000) public void testHashCode() {
     final HashSet<Integer> uniqueHashCodes = new HashSet<>(INSTANCES_TO_HASH);
     for (int i = 0; i < INSTANCES_TO_HASH; i++) {
-      uniqueHashCodes.add(((Supplier<? extends Random>) this::createRng).get().hashCode());
+      uniqueHashCodes.add(createRng().hashCode());
     }
     assertGreaterOrEqual(uniqueHashCodes.size(), EXPECTED_UNIQUE_HASHES,
         "Too many hashCode collisions");
