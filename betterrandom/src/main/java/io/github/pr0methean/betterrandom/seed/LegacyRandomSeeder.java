@@ -4,7 +4,6 @@ import io.github.pr0methean.betterrandom.ByteArrayReseedableRandom;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.HashSet;
 import java.util.Random;
 import java.util.Set;
 import java.util.concurrent.ThreadFactory;
@@ -112,7 +111,7 @@ public final class LegacyRandomSeeder extends RandomSeeder {
   @Override protected boolean iterate() {
     try {
       Collection<ByteArrayReseedableRandom> byteArrayPrngsThisIteration = new ArrayList<>(byteArrayPrngs);
-      Set<Random> otherPrngsThisIteration = new HashSet<>(otherPrngs);
+      Collection<Random> otherPrngsThisIteration = new ArrayList<>(otherPrngs);
       while (otherPrngsThisIteration.isEmpty() && byteArrayPrngsThisIteration.isEmpty()) {
         if (!waitWhileEmpty.await(stopIfEmptyForNanos, TimeUnit.NANOSECONDS)) {
           return false;
