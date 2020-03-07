@@ -119,7 +119,6 @@ public abstract class Looper implements Serializable {
       if (thread == null || !thread.isAlive()) {
         thread = factory.newThread(this::run);
         thread.start();
-        everStarted = true;
         running = true;
       }
     } finally {
