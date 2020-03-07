@@ -16,6 +16,7 @@ import org.slf4j.LoggerFactory;
  * @author Chris Hennick
  */
 public final class LegacyRandomSeeder extends RandomSeeder {
+  private static final long serialVersionUID = 816480836156219842L;
   private transient Set<Random> otherPrngs;
 
   @Override protected void initTransientFields() {

@@ -33,6 +33,7 @@ public abstract class WebJsonSeedGenerator implements SeedGenerator {
   protected static final JSONParser JSON_PARSER = new JSONParser();
   private static final int RETRY_DELAY_MS = 10000;
   private static final Duration RETRY_DELAY = Duration.ofMillis(RETRY_DELAY_MS);
+  private static final long serialVersionUID = -33117511873489173L;
   protected final Lock lock = new ReentrantLock();
   protected Instant earliestNextAttempt = Instant.MIN;
   /**
