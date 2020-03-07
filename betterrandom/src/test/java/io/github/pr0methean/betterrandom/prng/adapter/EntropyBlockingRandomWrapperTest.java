@@ -83,7 +83,7 @@ public class EntropyBlockingRandomWrapperTest extends RandomWrapperRandomTest {
   }
 
   // FIXME: Too slow!
-  @Override @Test(timeOut = 120_000L) public void testRandomSeederThreadIntegration() {
+  @Override @Test(timeOut = 120_000L) public void testRandomSeederIntegration() {
     final SeedGenerator seedGenerator = new SemiFakeSeedGenerator(new Random(),
         UUID.randomUUID().toString());
     final BaseRandom rng = createRng();

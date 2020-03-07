@@ -41,7 +41,7 @@ public class ReseedingThreadLocalRandomWrapperTest extends ThreadLocalRandomWrap
    * setRandomSeeder doesn't work on this class and shouldn't pretend to.
    */
   @Override @Test(expectedExceptions = UnsupportedOperationException.class)
-  public void testRandomSeederThreadIntegration() {
+  public void testRandomSeederIntegration() {
     createRng().setRandomSeeder(
         new RandomSeeder(SecureRandomSeedGenerator.DEFAULT_INSTANCE));
   }

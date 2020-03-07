@@ -387,7 +387,7 @@ public abstract class BaseRandomTest extends PowerMockTestCase {
    * {@link BaseRandom#setRandomSeeder(RandomSeeder)}.
    */
   @Test(timeOut = 60_000, retryAnalyzer = FlakyRetryAnalyzer.class)
-  public void testRandomSeederThreadIntegration() {
+  public void testRandomSeederIntegration() {
     final SeedGenerator seedGenerator = new SemiFakeSeedGenerator(new Random(),
         UUID.randomUUID().toString());
     final BaseRandom rng = createRng();

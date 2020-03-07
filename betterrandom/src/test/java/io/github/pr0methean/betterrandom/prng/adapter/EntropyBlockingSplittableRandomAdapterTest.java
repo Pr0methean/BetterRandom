@@ -154,7 +154,7 @@ public class EntropyBlockingSplittableRandomAdapterTest
    * setRandomSeeder doesn't work on this class and shouldn't pretend to.
    */
   @Override @Test(expectedExceptions = UnsupportedOperationException.class)
-  public void testRandomSeederThreadIntegration() {
+  public void testRandomSeederIntegration() {
     RandomSeeder thread = new RandomSeeder(DEFAULT_INSTANCE);
     try {
       createRng().setRandomSeeder(thread);

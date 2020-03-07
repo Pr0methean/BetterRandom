@@ -136,7 +136,7 @@ public class EntropyBlockingRandomWrapperAesCounterRandomTest extends RandomWrap
 
   // FIXME: Too slow, and why is such a huge entropy adjustment needed?!
   @Override @Test(timeOut = 90_000L, retryAnalyzer = FlakyRetryAnalyzer.class)
-  public void testRandomSeederThreadIntegration() {
+  public void testRandomSeederIntegration() {
     final SeedGenerator seedGenerator = new SemiFakeSeedGenerator(new Random(),
         UUID.randomUUID().toString());
     final BaseRandom rng = createRng();
