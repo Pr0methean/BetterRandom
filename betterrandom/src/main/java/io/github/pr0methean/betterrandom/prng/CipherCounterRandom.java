@@ -1,5 +1,6 @@
 package io.github.pr0methean.betterrandom.prng;
 
+import com.google.common.base.MoreObjects;
 import io.github.pr0methean.betterrandom.SeekableRandom;
 import io.github.pr0methean.betterrandom.util.BinaryUtils;
 import io.github.pr0methean.betterrandom.util.Byte16ArrayArithmetic;
@@ -254,6 +255,11 @@ public abstract class CipherCounterRandom extends BaseRandom implements Seekable
     } finally {
       lock.unlock();
     }
+  }
+
+  @Override
+  protected MoreObjects.ToStringHelper addSubclassFields(MoreObjects.ToStringHelper original) {
+    return original.add("index", index).add("counter", BinaryUtils.convertBytesToHexString(counter));
   }
 
   private void checkNotTooLong(final byte[] seed) {

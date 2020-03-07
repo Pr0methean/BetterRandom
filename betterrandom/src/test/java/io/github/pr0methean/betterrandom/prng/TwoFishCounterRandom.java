@@ -1,7 +1,6 @@
 package io.github.pr0methean.betterrandom.prng;
 
 import com.google.common.base.MoreObjects;
-import io.github.pr0methean.betterrandom.util.BinaryUtils;
 import java.security.MessageDigest;
 import org.bouncycastle.crypto.engines.TwofishEngine;
 import org.bouncycastle.crypto.params.KeyParameter;
@@ -61,8 +60,7 @@ public class TwoFishCounterRandom extends CipherCounterRandom {
 
   @Override
   public MoreObjects.ToStringHelper addSubclassFields(final MoreObjects.ToStringHelper original) {
-    return original.add("counter", BinaryUtils.convertBytesToHexString(counter))
-        .add("cipher", cipher).add("index", index);
+    return super.addSubclassFields(original).add("cipher", cipher);
   }
 
   @Override protected void doCipher(byte[] input, byte[] output) {

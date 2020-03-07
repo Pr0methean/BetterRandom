@@ -19,7 +19,6 @@ import com.google.common.base.MoreObjects;
 import io.github.pr0methean.betterrandom.seed.DefaultSeedGenerator;
 import io.github.pr0methean.betterrandom.seed.SeedException;
 import io.github.pr0methean.betterrandom.seed.SeedGenerator;
-import io.github.pr0methean.betterrandom.util.BinaryUtils;
 import java.security.GeneralSecurityException;
 import java.security.InvalidKeyException;
 import java.security.MessageDigest;
@@ -186,10 +185,10 @@ public class AesCounterRandom extends CipherCounterRandom {
 
   @Override
   public MoreObjects.ToStringHelper addSubclassFields(final MoreObjects.ToStringHelper original) {
-    return original.add("counter", BinaryUtils.convertBytesToHexString(counter))
-        .add("cipher.iv", cipher.getIV()).add("cipher.algorithm", cipher.getAlgorithm())
+    return super.addSubclassFields(original)
+        .add("cipher.iv", cipher.getIV())
         .add("cipher.provider", cipher.getProvider())
-        .add("cipher.parameters", cipher.getParameters()).add("index", index);
+        .add("cipher.parameters", cipher.getParameters());
   }
 
   @Override protected void doCipher(byte[] input, byte[] output) throws GeneralSecurityException {
