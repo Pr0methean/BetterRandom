@@ -24,6 +24,7 @@ import java.util.UUID;
 import java.util.function.Consumer;
 import org.testng.annotations.Test;
 
+// FIXME: Some tests are sometimes too slow.
 @Test(testName = "EntropyBlockingRandomWrapper:AesCounterRandom")
 public class EntropyBlockingRandomWrapperAesCounterRandomTest extends RandomWrapperAesCounterRandomTest {
   private static final long DEFAULT_MAX_ENTROPY = -64L;
@@ -31,6 +32,22 @@ public class EntropyBlockingRandomWrapperAesCounterRandomTest extends RandomWrap
 
   @Override @Test(timeOut = 60_000) public void testDistribution() throws SeedException {
     super.testDistribution();
+  }
+
+  @Override @Test(timeOut = 60_000) public void testDoubles1() {
+    super.testDoubles1();
+  }
+
+  @Override @Test(timeOut = 60_000) public void testDoubles2() {
+    super.testDoubles2();
+  }
+
+  @Override @Test(timeOut = 60_000) public void testDoubles3() {
+    super.testDoubles3();
+  }
+
+  @Override @Test(timeOut = 60_000) public void testDoubles3RoundingCorrection() {
+    super.testDoubles3RoundingCorrection();
   }
 
   /**
