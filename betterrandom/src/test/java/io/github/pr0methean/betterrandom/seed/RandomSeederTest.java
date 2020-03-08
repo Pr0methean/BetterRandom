@@ -88,8 +88,8 @@ public class RandomSeederTest {
         "Repeated output after reseeding");
   }
 
-  @Test public void testResurrection()
-      throws InterruptedException {
+  // FIXME: Gets spuriously interrupted
+  @Test public void testResurrection() {
     final FakeSeedGenerator seedGenerator = new FakeSeedGenerator("testResurrection");
     seedGenerator.setThrowException(true);
     final RandomSeeder randomSeeder = createRandomSeeder(seedGenerator);
@@ -99,14 +99,14 @@ public class RandomSeederTest {
       try {
         random.nextLong();
         random.nextLong();
-        Thread.sleep(500);
+        Uninterruptibles.sleepUninterruptibly(500, TimeUnit.MILLISECONDS);
         assertFalse(randomSeeder.isRunning());
         assertEquals(seedGenerator.countCalls(), 1);
         seedGenerator.setThrowException(false);
         randomSeeder.remove(random);
         randomSeeder.add(random);
         random.nextBoolean();
-        Thread.sleep(200);
+        Uninterruptibles.sleepUninterruptibly(200, TimeUnit.MILLISECONDS);
         assertTrue(randomSeeder.isRunning());
         assertEquals(seedGenerator.countCalls(), 2);
         random.nextBoolean();
