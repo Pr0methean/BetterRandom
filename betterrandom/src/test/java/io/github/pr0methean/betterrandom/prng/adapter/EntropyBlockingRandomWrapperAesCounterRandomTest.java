@@ -75,15 +75,15 @@ public class EntropyBlockingRandomWrapperAesCounterRandomTest extends RandomWrap
     return EntropyBlockingRandomWrapper.class;
   }
 
-  @Override protected RandomWrapper<Random> createRng() throws SeedException {
+  @Override protected RandomWrapper<AesCounterRandom> createRng() throws SeedException {
     SeedGenerator testSeedGenerator = getTestSeedGenerator();
-    return new EntropyBlockingRandomWrapper<Random>(new AesCounterRandom(testSeedGenerator), DEFAULT_MAX_ENTROPY,
+    return new EntropyBlockingRandomWrapper<>(new AesCounterRandom(testSeedGenerator), DEFAULT_MAX_ENTROPY,
         testSeedGenerator);
   }
 
-  @Override protected RandomWrapper<Random> createRng(byte[] seed) throws SeedException {
+  @Override protected RandomWrapper<AesCounterRandom> createRng(byte[] seed) throws SeedException {
     SeedGenerator testSeedGenerator = getTestSeedGenerator();
-    return new EntropyBlockingRandomWrapper<Random>(new AesCounterRandom(seed), DEFAULT_MAX_ENTROPY,
+    return new EntropyBlockingRandomWrapper<>(new AesCounterRandom(seed), DEFAULT_MAX_ENTROPY,
         testSeedGenerator);
   }
 

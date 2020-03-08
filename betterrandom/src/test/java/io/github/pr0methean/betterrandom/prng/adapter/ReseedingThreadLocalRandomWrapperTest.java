@@ -49,15 +49,15 @@ public class ReseedingThreadLocalRandomWrapperTest extends ThreadLocalRandomWrap
 
   @Test public void testSetSeedGeneratorNoOp() {
     RandomSeeder randomSeeder = new RandomSeeder(getTestSeedGenerator());
-    ReseedingThreadLocalRandomWrapper prng =
-        new ReseedingThreadLocalRandomWrapper(pcgSupplier, randomSeeder);
+    ReseedingThreadLocalRandomWrapper<BaseRandom> prng =
+        new ReseedingThreadLocalRandomWrapper<BaseRandom>(pcgSupplier, randomSeeder);
     prng.setRandomSeeder(randomSeeder);
   }
 
   @Override @Test(retryAnalyzer = FlakyRetryAnalyzer.class)
   public void testReseeding() {
     final SeedGenerator testSeedGenerator = getTestSeedGenerator();
-    final BaseRandom rng = new ReseedingThreadLocalRandomWrapper(testSeedGenerator, pcgSupplier);
+    final BaseRandom rng = new ReseedingThreadLocalRandomWrapper<BaseRandom>(testSeedGenerator, pcgSupplier);
     RandomTestUtils.checkReseeding(testSeedGenerator, rng, false);
   }
 
@@ -88,7 +88,7 @@ public class ReseedingThreadLocalRandomWrapperTest extends ThreadLocalRandomWrap
     prng.nextInt();
   }
 
-  @Override protected ReseedingThreadLocalRandomWrapper createRng() throws SeedException {
-    return new ReseedingThreadLocalRandomWrapper(getTestSeedGenerator(), pcgSupplier);
+  @Override protected ReseedingThreadLocalRandomWrapper<BaseRandom> createRng() throws SeedException {
+    return new ReseedingThreadLocalRandomWrapper<BaseRandom>(getTestSeedGenerator(), pcgSupplier);
   }
 }
