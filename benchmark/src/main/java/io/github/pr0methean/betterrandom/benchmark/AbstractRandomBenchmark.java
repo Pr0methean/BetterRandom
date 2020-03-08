@@ -20,9 +20,9 @@ import org.openjdk.jmh.runner.options.OptionsBuilder;
 
 @EntryPoint
 @State(Scope.Benchmark)
-abstract class AbstractRandomBenchmark {
+abstract class AbstractRandomBenchmark<T extends Random> {
 
-  protected Random prng;
+  protected T prng;
 
   AbstractRandomBenchmark() {
   }
@@ -43,7 +43,7 @@ abstract class AbstractRandomBenchmark {
     prng = createPrng();
   }
 
-  @EntryPoint protected abstract Random createPrng() throws Exception;
+  @EntryPoint protected abstract T createPrng() throws Exception;
 
   @Timeout(time = 60) // seconds per iteration
   @Measurement(iterations = 5, time = 4)

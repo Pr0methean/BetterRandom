@@ -4,11 +4,10 @@ import static io.github.pr0methean.betterrandom.seed.SecureRandomSeedGenerator.D
 
 import io.github.pr0methean.betterrandom.prng.XorShiftRandom;
 import io.github.pr0methean.betterrandom.seed.SeedException;
-import java.util.Random;
 
-public class XorShiftRandomBenchmark extends AbstractRandomBenchmarkWithReseeding {
+public class XorShiftRandomBenchmark extends AbstractRandomBenchmarkWithReseeding<XorShiftRandom> {
 
-  @Override protected Random createPrng() throws SeedException {
+  @Override protected XorShiftRandom createPrng() throws SeedException {
     return new XorShiftRandom(DEFAULT_INSTANCE);
   }
 }

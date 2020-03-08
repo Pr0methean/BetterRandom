@@ -2,11 +2,10 @@ package io.github.pr0methean.betterrandom.benchmark;
 
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
-import java.util.Random;
 
-public class ZVanillaJavaSecureRandomBenchmark extends BenchmarkWithLegacyRandomSeeder {
+public class ZVanillaJavaSecureRandomBenchmark extends BenchmarkWithLegacyRandomSeeder<SecureRandom> {
 
-  @Override protected Random createPrng() {
+  @Override protected SecureRandom createPrng() {
     try {
       return SecureRandom.getInstance("SHA1PRNG");
     } catch (NoSuchAlgorithmException e) {

@@ -5,9 +5,9 @@ import io.github.pr0methean.betterrandom.seed.SecureRandomSeedGenerator;
 import io.github.pr0methean.betterrandom.seed.SeedException;
 import java.util.Random;
 
-public class RandomWrapperBenchmark extends AbstractRandomBenchmarkWithReseeding {
+public class RandomWrapperBenchmark extends AbstractRandomBenchmarkWithReseeding<RandomWrapper<Random>> {
 
-  @Override protected Random createPrng() throws SeedException {
+  @Override protected RandomWrapper<Random> createPrng() throws SeedException {
     return RandomWrapper.wrapJavaUtilRandom(SecureRandomSeedGenerator.DEFAULT_INSTANCE);
   }
 }

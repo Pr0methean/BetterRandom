@@ -4,14 +4,13 @@ import static io.github.pr0methean.betterrandom.seed.SecureRandomSeedGenerator.D
 
 import io.github.pr0methean.betterrandom.prng.Cmwc4096Random;
 import io.github.pr0methean.betterrandom.seed.SeedException;
-import java.util.Random;
 
 /**
  * The benchmark for {@link Cmwc4096Random}.
  */
-public class Cmwc4096RandomBenchmark extends AbstractRandomBenchmarkWithReseeding {
+public class Cmwc4096RandomBenchmark extends AbstractRandomBenchmarkWithReseeding<Cmwc4096Random> {
 
-  @Override protected Random createPrng() throws SeedException {
+  @Override protected Cmwc4096Random createPrng() throws SeedException {
     return new Cmwc4096Random(DEFAULT_INSTANCE);
   }
 }
