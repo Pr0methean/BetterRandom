@@ -67,7 +67,7 @@ public class EntropyBlockingRandomWrapperAesCounterRandomTest extends RandomWrap
       }
     }
     TestUtils.testConstructors(false, ImmutableMap.copyOf(constructorParams()),
-        (Consumer<? super EntropyBlockingRandomWrapper>) BaseRandom::nextInt,
+        (Consumer<? super EntropyBlockingRandomWrapper<Random>>) BaseRandom::nextInt,
         relevantConstructors);
   }
 
@@ -75,15 +75,15 @@ public class EntropyBlockingRandomWrapperAesCounterRandomTest extends RandomWrap
     return EntropyBlockingRandomWrapper.class;
   }
 
-  @Override protected RandomWrapper createRng() throws SeedException {
+  @Override protected RandomWrapper<Random> createRng() throws SeedException {
     SeedGenerator testSeedGenerator = getTestSeedGenerator();
-    return new EntropyBlockingRandomWrapper(new AesCounterRandom(testSeedGenerator), DEFAULT_MAX_ENTROPY,
+    return new EntropyBlockingRandomWrapper<Random>(new AesCounterRandom(testSeedGenerator), DEFAULT_MAX_ENTROPY,
         testSeedGenerator);
   }
 
-  @Override protected RandomWrapper createRng(byte[] seed) throws SeedException {
+  @Override protected RandomWrapper<Random> createRng(byte[] seed) throws SeedException {
     SeedGenerator testSeedGenerator = getTestSeedGenerator();
-    return new EntropyBlockingRandomWrapper(new AesCounterRandom(seed), DEFAULT_MAX_ENTROPY,
+    return new EntropyBlockingRandomWrapper<Random>(new AesCounterRandom(seed), DEFAULT_MAX_ENTROPY,
         testSeedGenerator);
   }
 
@@ -99,20 +99,20 @@ public class EntropyBlockingRandomWrapperAesCounterRandomTest extends RandomWrap
         this::createRngLargeEntropyLimit);
   }
 
-  private EntropyBlockingRandomWrapper createRngLargeEntropyLimit() {
+  private EntropyBlockingRandomWrapper<Random> createRngLargeEntropyLimit() {
     final SeedGenerator testSeedGenerator = getTestSeedGenerator();
-    return new EntropyBlockingRandomWrapper(new AesCounterRandom(testSeedGenerator),
+    return new EntropyBlockingRandomWrapper<Random>(new AesCounterRandom(testSeedGenerator),
         VERY_LOW_MINIMUM_ENTROPY, testSeedGenerator);
   }
 
   private BaseRandom createRngLargeEntropyLimit(byte[] seed) {
-    return new EntropyBlockingRandomWrapper(new AesCounterRandom(seed),
+    return new EntropyBlockingRandomWrapper<Random>(new AesCounterRandom(seed),
         VERY_LOW_MINIMUM_ENTROPY, getTestSeedGenerator());
   }
 
   @Override public void testRepeatability() throws SeedException {
     SeedGenerator testSeedGenerator = getTestSeedGenerator();
-    final BaseRandom rng = new EntropyBlockingRandomWrapper(new AesCounterRandom(testSeedGenerator),
+    final BaseRandom rng = new EntropyBlockingRandomWrapper<Random>(new AesCounterRandom(testSeedGenerator),
         VERY_LOW_MINIMUM_ENTROPY, testSeedGenerator);
     // Create second RNG using same seed.
     final BaseRandom duplicateRNG = createRngLargeEntropyLimit(rng.getSeed());
@@ -128,7 +128,7 @@ public class EntropyBlockingRandomWrapperAesCounterRandomTest extends RandomWrap
     final SeedGenerator seedGenerator =
         new FakeSeedGenerator(getClass().getSimpleName() + "::testSerializable #" + new Random().nextInt());
     // Serialise an RNG.
-    final BaseRandom rng = new EntropyBlockingRandomWrapper(new AesCounterRandom(seedGenerator),
+    final BaseRandom rng = new EntropyBlockingRandomWrapper<Random>(new AesCounterRandom(seedGenerator),
         VERY_LOW_MINIMUM_ENTROPY,
         seedGenerator);
     RandomTestUtils.assertEquivalentWhenSerializedAndDeserialized(rng);
@@ -145,7 +145,8 @@ public class EntropyBlockingRandomWrapperAesCounterRandomTest extends RandomWrap
 
   @Override public void testNextBytes() {
     final byte[] testBytes = new byte[TEST_BYTE_ARRAY_LENGTH];
-    final BaseRandom prng = new EntropyBlockingRandomWrapper(0L, getTestSeedGenerator());
+    final BaseRandom prng =
+        EntropyBlockingRandomWrapper.wrapJavaUtilRandom(0L, getTestSeedGenerator());
     final long oldEntropy = prng.getEntropyBits();
     prng.nextBytes(testBytes);
     assertFalse(Arrays.equals(testBytes, new byte[TEST_BYTE_ARRAY_LENGTH]));

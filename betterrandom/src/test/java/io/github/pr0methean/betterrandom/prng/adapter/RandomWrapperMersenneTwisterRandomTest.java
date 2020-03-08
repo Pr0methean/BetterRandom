@@ -21,7 +21,7 @@ public class RandomWrapperMersenneTwisterRandomTest extends MersenneTwisterRando
   public RandomWrapperMersenneTwisterRandomTest() {
     final SeedGenerator seedGenerator = getTestSeedGenerator();
     setWrapped = new NamedFunction<>(random -> {
-      ((RandomWrapper) random).setWrapped(new MersenneTwisterRandom(seedGenerator));
+      ((RandomWrapper<Random>) random).setWrapped(new MersenneTwisterRandom(seedGenerator));
       return 0.0;
     }, "setWrapped");
   }
@@ -45,12 +45,12 @@ public class RandomWrapperMersenneTwisterRandomTest extends MersenneTwisterRando
     // No-op: redundant to super insofar as it works.
   }
 
-  @Override protected RandomWrapper createRng() throws SeedException {
-    return new RandomWrapper(new MersenneTwisterRandom(getTestSeedGenerator()));
+  @Override protected RandomWrapper<MersenneTwisterRandom> createRng() throws SeedException {
+    return new RandomWrapper<>(new MersenneTwisterRandom(getTestSeedGenerator()));
   }
 
-  @Override protected RandomWrapper createRng(final byte[] seed) throws SeedException {
-    return new RandomWrapper(new MersenneTwisterRandom(seed));
+  @Override protected RandomWrapper<MersenneTwisterRandom> createRng(final byte[] seed) throws SeedException {
+    return new RandomWrapper<>(new MersenneTwisterRandom(seed));
   }
 
   // FIXME: This test takes too long!

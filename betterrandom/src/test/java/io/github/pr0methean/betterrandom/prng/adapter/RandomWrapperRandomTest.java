@@ -38,7 +38,7 @@ import org.testng.annotations.Test;
     extends BaseRandomTest {
 
   protected static final NamedFunction<Random, Double> SET_WRAPPED = new NamedFunction<>(random -> {
-    ((RandomWrapper) random).setWrapped(new Random());
+    ((RandomWrapper<Random>) random).setWrapped(new Random());
     return 0.0;
   }, "setWrapped");
 
@@ -74,18 +74,18 @@ import org.testng.annotations.Test;
    */
   @Override @Test(timeOut = 30_000) public void testRepeatability() throws SeedException {
     // Create an RNG using the default seeding strategy.
-    final RandomWrapper rng = new RandomWrapper(getTestSeedGenerator());
+    final RandomWrapper<Random> rng = RandomWrapper.wrapJavaUtilRandom(getTestSeedGenerator());
     // Create second RNG using same seed.
-    final RandomWrapper duplicateRNG = new RandomWrapper(rng.getSeed());
+    final RandomWrapper<Random> duplicateRNG = RandomWrapper.wrapJavaUtilRandom(rng.getSeed());
     RandomTestUtils.assertEquivalent(rng, duplicateRNG, 200, "Generated sequences do not match.");
   }
 
-  @Override protected RandomWrapper createRng() throws SeedException {
-    return new RandomWrapper(getTestSeedGenerator());
+  @Override protected RandomWrapper<Random> createRng() throws SeedException {
+    return RandomWrapper.wrapJavaUtilRandom(getTestSeedGenerator());
   }
 
-  @Override protected RandomWrapper createRng(final byte[] seed) throws SeedException {
-    return new RandomWrapper(seed);
+  @Override protected RandomWrapper<Random> createRng(final byte[] seed) throws SeedException {
+    return RandomWrapper.wrapJavaUtilRandom(seed);
   }
 
   @Test public void testGetWrapped() {

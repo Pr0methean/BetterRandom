@@ -20,7 +20,6 @@ import io.github.pr0methean.betterrandom.ByteArrayReseedableRandom;
 import io.github.pr0methean.betterrandom.EntropyCountingRandom;
 import io.github.pr0methean.betterrandom.RepeatableRandom;
 import io.github.pr0methean.betterrandom.prng.BaseRandom;
-import io.github.pr0methean.betterrandom.seed.DefaultSeedGenerator;
 import io.github.pr0methean.betterrandom.seed.SeedException;
 import io.github.pr0methean.betterrandom.seed.SeedGenerator;
 import io.github.pr0methean.betterrandom.util.BinaryUtils;
@@ -41,62 +40,19 @@ import javax.annotation.Nullable;
  *
  * @author Chris Hennick
  */
-public class RandomWrapper extends BaseRandom {
+public class RandomWrapper<T extends Random> extends BaseRandom {
 
   private static final byte[] DUMMY_SEED = new byte[8];
   private static final long serialVersionUID = -6526304552538799385L;
-  private volatile Random wrapped;
+  private volatile T wrapped;
   private volatile boolean unknownSeed;
-
-  /**
-   * Wraps a {@link Random} that is seeded using the default seeding strategy.
-   *
-   * @throws SeedException if thrown by {@link DefaultSeedGenerator}
-   */
-  @EntryPoint public RandomWrapper() throws SeedException {
-    this(DefaultSeedGenerator.DEFAULT_SEED_GENERATOR.generateSeed(Long.BYTES));
-  }
-
-  /**
-   * Wraps a {@link Random} that is seeded using the provided seed generation strategy.
-   *
-   * @param seedGenerator The seed generation strategy that will provide the seed for this PRNG
-   * @throws SeedException if thrown by {@code randomSeeder}
-   */
-  @EntryPoint public RandomWrapper(final SeedGenerator seedGenerator) throws SeedException {
-    this(BinaryUtils.convertBytesToLong(seedGenerator.generateSeed(Long.BYTES)));
-  }
-
-  /**
-   * Wraps a {@link Random} that is seeded with the specified seed.
-   *
-   * @param seed seed used to initialize the {@link Random}; must be 8 bytes
-   */
-  public RandomWrapper(final byte[] seed) {
-    super(checkLength(seed, Long.BYTES));
-    wrapped = new Random(BinaryUtils.convertBytesToLong(seed));
-    entropyBits.set(Long.SIZE);
-    unknownSeed = false;
-  }
-
-  /**
-   * Wraps a {@link Random} that is seeded with the specified seed.
-   *
-   * @param seed seed used to initialize the {@link Random}
-   */
-  @EntryPoint public RandomWrapper(final long seed) {
-    super(BinaryUtils.convertLongToBytes(seed));
-    wrapped = new Random(seed);
-    entropyBits.set(Long.SIZE);
-    unknownSeed = false;
-  }
 
   /**
    * Creates an instance wrapping the given {@link Random}.
    *
    * @param wrapped The {@link Random} to wrap.
    */
-  @EntryPoint public RandomWrapper(final Random wrapped) {
+  @EntryPoint public RandomWrapper(final T wrapped) {
     super(getSeedOrDummy(wrapped)); // We won't know the wrapped PRNG's seed
     unknownSeed = !(wrapped instanceof RepeatableRandom);
     readEntropyOfWrapped(wrapped);
@@ -106,6 +62,41 @@ public class RandomWrapper extends BaseRandom {
   private static byte[] getSeedOrDummy(final Random wrapped) {
     return (wrapped instanceof RepeatableRandom) ? ((RepeatableRandom) wrapped).getSeed() :
         DUMMY_SEED;
+  }
+
+  /**
+   * Creates an instance wrapping a basic {@link Random}.
+   *
+   * @param seed the seed
+   * @return an instance
+   */
+  public static RandomWrapper<Random> wrapJavaUtilRandom(final long seed) {
+    RandomWrapper<Random> wrapper = new RandomWrapper<>(new Random(seed));
+    wrapper.setInitiallyKnownSeed(BinaryUtils.convertLongToBytes(seed));
+    return wrapper;
+  }
+
+  /**
+   * Creates an instance wrapping a basic {@link Random}.
+   *
+   * @param seed the seed; must be 8 bytes
+   * @return an instance
+   */
+  public static RandomWrapper<Random> wrapJavaUtilRandom(final byte[] seed) {
+    RandomWrapper<Random> wrapper = new RandomWrapper<>(new Random(BinaryUtils.convertBytesToLong(checkLength(seed, Long.BYTES))));
+    wrapper.setInitiallyKnownSeed(seed);
+    return wrapper;
+  }
+
+  public static RandomWrapper<Random> wrapJavaUtilRandom(
+      final SeedGenerator seedGenerator) throws SeedException {
+    return wrapJavaUtilRandom(seedGenerator.generateSeed(Long.BYTES));
+  }
+
+  protected void setInitiallyKnownSeed(byte[] bytes) {
+    System.arraycopy(bytes, 0, seed, 0, Long.BYTES);
+    entropyBits.set(bytes.length);
+    unknownSeed = false;
   }
 
   @Override public String toString() {
@@ -140,7 +131,7 @@ public class RandomWrapper extends BaseRandom {
    *
    * @param wrapped an {@link Random} instance to wrap
    */
-  @EntryPoint public void setWrapped(final Random wrapped) {
+  @EntryPoint public void setWrapped(final T wrapped) {
     lock.lock();
     try {
       this.wrapped = wrapped;

@@ -20,13 +20,13 @@ import org.testng.annotations.Test;
 
   private static final SecureRandom SEED_GEN = new SecureRandom();
   private static final NamedFunction<Random, Double> SET_WRAPPED = new NamedFunction<>(random -> {
-    ((RandomWrapper) random).setWrapped(new SecureRandom());
+    ((RandomWrapper<Random>) random).setWrapped(new SecureRandom());
     return 0.0;
   }, "setWrapped");
 
-  private static RandomWrapper createRngInternal() {
+  private static RandomWrapper<SecureRandom> createRngInternal() {
     try {
-      return new RandomWrapper(SecureRandom.getInstance("SHA1PRNG"));
+      return new RandomWrapper<>(SecureRandom.getInstance("SHA1PRNG"));
     } catch (final NoSuchAlgorithmException e) {
       throw TestUtils.fail("NoSuchAlgorithmException should not occur for SHA1PRNG", e);
     }
@@ -93,14 +93,14 @@ import org.testng.annotations.Test;
     // No-op.
   }
 
-  @Override protected RandomWrapper createRng() throws SeedException {
-    final RandomWrapper wrapper = createRngInternal();
+  @Override protected RandomWrapper<SecureRandom> createRng() throws SeedException {
+    final RandomWrapper<SecureRandom> wrapper = createRngInternal();
     wrapper.setSeed(SEED_GEN.nextLong());
     return wrapper;
   }
 
-  @Override protected RandomWrapper createRng(final byte[] seed) throws SeedException {
-    final RandomWrapper wrapper = createRngInternal();
+  @Override protected RandomWrapper<SecureRandom> createRng(final byte[] seed) throws SeedException {
+    final RandomWrapper<SecureRandom> wrapper = createRngInternal();
     wrapper.setSeed(seed);
     return wrapper;
   }

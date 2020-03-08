@@ -54,7 +54,8 @@ public class EntropyBlockingRandomWrapperTest extends RandomWrapperRandomTest {
 
   @Test public void testGetSameThreadSeedGen() {
     SeedGenerator seedGen = getTestSeedGenerator();
-    EntropyBlockingRandomWrapper random = new EntropyBlockingRandomWrapper(0L, seedGen);
+    EntropyBlockingRandomWrapper<Random> random =
+        EntropyBlockingRandomWrapper.wrapJavaUtilRandom(0L, seedGen);
     assertSame(random.getSameThreadSeedGen(), seedGen);
   }
 
@@ -67,23 +68,27 @@ public class EntropyBlockingRandomWrapperTest extends RandomWrapperRandomTest {
   @Override @Test public void testReseeding() {
     // TODO
     SeedGenerator seedGen = Mockito.spy(getTestSeedGenerator());
-    EntropyBlockingRandomWrapper random = new EntropyBlockingRandomWrapper(0L, seedGen);
+    EntropyBlockingRandomWrapper<Random> random =
+        EntropyBlockingRandomWrapper.wrapJavaUtilRandom(0L, seedGen);
     assertNull(random.getRandomSeeder());
     random.nextLong();
     Mockito.verify(seedGen, Mockito.atLeastOnce()).generateSeed(any(byte[].class));
     Mockito.verify(seedGen, Mockito.atMost(2)).generateSeed(any(byte[].class));
   }
 
-  @Override protected RandomWrapper createRng() throws SeedException {
-    return new EntropyBlockingRandomWrapper(DEFAULT_MAX_ENTROPY, getTestSeedGenerator());
+  @Override protected RandomWrapper<Random> createRng() throws SeedException {
+    return EntropyBlockingRandomWrapper
+        .wrapJavaUtilRandom(DEFAULT_MAX_ENTROPY, getTestSeedGenerator());
   }
 
-  private EntropyBlockingRandomWrapper createRngLargeEntropyLimit() {
-    return new EntropyBlockingRandomWrapper(VERY_LOW_MINIMUM_ENTROPY, getTestSeedGenerator());
+  private EntropyBlockingRandomWrapper<Random> createRngLargeEntropyLimit() {
+    return EntropyBlockingRandomWrapper
+        .wrapJavaUtilRandom(VERY_LOW_MINIMUM_ENTROPY, getTestSeedGenerator());
   }
 
-  private EntropyBlockingRandomWrapper createRngLargeEntropyLimit(byte[] seed) {
-    return new EntropyBlockingRandomWrapper(seed, VERY_LOW_MINIMUM_ENTROPY, getTestSeedGenerator());
+  private EntropyBlockingRandomWrapper<Random> createRngLargeEntropyLimit(byte[] seed) {
+    return EntropyBlockingRandomWrapper
+        .wrapJavaUtilRandom(VERY_LOW_MINIMUM_ENTROPY, seed, getTestSeedGenerator());
   }
 
   // FIXME: Too slow!
@@ -94,8 +99,9 @@ public class EntropyBlockingRandomWrapperTest extends RandomWrapperRandomTest {
     RandomTestUtils.checkReseeding(seedGenerator, rng, true, 64);
   }
 
-  @Override protected RandomWrapper createRng(byte[] seed) throws SeedException {
-    return new EntropyBlockingRandomWrapper(seed, DEFAULT_MAX_ENTROPY, getTestSeedGenerator());
+  @Override protected RandomWrapper<Random> createRng(byte[] seed) throws SeedException {
+    return EntropyBlockingRandomWrapper
+        .wrapJavaUtilRandom(DEFAULT_MAX_ENTROPY, seed, getTestSeedGenerator());
   }
 
   @Override public void testThreadSafety() {
@@ -104,8 +110,8 @@ public class EntropyBlockingRandomWrapperTest extends RandomWrapperRandomTest {
   }
 
   @Test public void testManualReseeding() {
-    EntropyBlockingRandomWrapper random = new EntropyBlockingRandomWrapper(
-        getTestSeedGenerator().generateSeed(8), 0L, null);
+    EntropyBlockingRandomWrapper<Random> random = EntropyBlockingRandomWrapper
+        .wrapJavaUtilRandom(0L, getTestSeedGenerator().generateSeed(8), null);
     random.nextInt();
     random.setSeed(getTestSeedGenerator().generateSeed(8));
     random.nextLong();
@@ -124,8 +130,8 @@ public class EntropyBlockingRandomWrapperTest extends RandomWrapperRandomTest {
     RandomSeeder seeder = Mockito.mock(RandomSeeder.class);
     AesCounterRandom wrapped = new AesCounterRandom(seedGenerator);
     int bytesToDrainToZero = (int) ((wrapped.getEntropyBits() + 7) / 8);
-    EntropyBlockingRandomWrapper random =
-        new EntropyBlockingRandomWrapper(wrapped, VERY_LOW_MINIMUM_ENTROPY, null);
+    EntropyBlockingRandomWrapper<Random> random =
+        new EntropyBlockingRandomWrapper<Random>(wrapped, VERY_LOW_MINIMUM_ENTROPY, null);
     random.setRandomSeeder(seeder);
     Mockito.verify(seeder).add(random);
     Mockito.clearInvocations(seeder);
@@ -142,8 +148,8 @@ public class EntropyBlockingRandomWrapperTest extends RandomWrapperRandomTest {
         defaultThreadFactory);
     SemiFakeSeedGenerator sameThreadSeedGen
         = Mockito.spy(new SemiFakeSeedGenerator(ThreadLocalRandom.current(), "sameThreadSeedGen"));
-    EntropyBlockingRandomWrapper random = new EntropyBlockingRandomWrapper(
-        testSeedGenerator.generateSeed(8), 0L, sameThreadSeedGen);
+    EntropyBlockingRandomWrapper<Random> random = EntropyBlockingRandomWrapper
+        .wrapJavaUtilRandom(0L, testSeedGenerator.generateSeed(8), sameThreadSeedGen);
     random.setRandomSeeder(seeder);
     random.nextLong();
     try {
@@ -165,7 +171,8 @@ public class EntropyBlockingRandomWrapperTest extends RandomWrapperRandomTest {
     RandomSeeder seeder = new RandomSeeder(failingSeedGen);
     SeedGenerator sameThreadSeedGen
         = Mockito.spy(new SemiFakeSeedGenerator(ThreadLocalRandom.current()));
-    EntropyBlockingRandomWrapper random = new EntropyBlockingRandomWrapper(0L, sameThreadSeedGen);
+    EntropyBlockingRandomWrapper<Random> random =
+        EntropyBlockingRandomWrapper.wrapJavaUtilRandom(0L, sameThreadSeedGen);
     random.setRandomSeeder(seeder);
     try {
       random.nextLong();
@@ -183,7 +190,8 @@ public class EntropyBlockingRandomWrapperTest extends RandomWrapperRandomTest {
 
   @Override public void testNextBytes() {
     final byte[] testBytes = new byte[TEST_BYTE_ARRAY_LENGTH];
-    final BaseRandom prng = new EntropyBlockingRandomWrapper(0L, getTestSeedGenerator());
+    final BaseRandom prng =
+        EntropyBlockingRandomWrapper.wrapJavaUtilRandom(0L, getTestSeedGenerator());
     final long oldEntropy = prng.getEntropyBits();
     prng.nextBytes(testBytes);
     assertFalse(Arrays.equals(testBytes, new byte[TEST_BYTE_ARRAY_LENGTH]));
@@ -201,8 +209,8 @@ public class EntropyBlockingRandomWrapperTest extends RandomWrapperRandomTest {
 
   @Test public void testSetSameThreadSeedGen() {
     SeedGenerator seedGen = Mockito.spy(getTestSeedGenerator());
-    EntropyBlockingRandomWrapper random
-        = new EntropyBlockingRandomWrapper(seedGen.generateSeed(8), 0L, null);
+    EntropyBlockingRandomWrapper<Random> random
+        = EntropyBlockingRandomWrapper.wrapJavaUtilRandom(0L, seedGen.generateSeed(8), null);
     random.setSameThreadSeedGen(seedGen);
     assertSame(random.getSameThreadSeedGen(), seedGen);
     random.nextLong();
@@ -212,8 +220,9 @@ public class EntropyBlockingRandomWrapperTest extends RandomWrapperRandomTest {
   // FIXME: Spurious interrupts if Uninterruptibles not used
   @Test(timeOut = 25_000) public void testSetWrappedUnblocks() throws InterruptedException {
     RandomSeeder seeder = Mockito.mock(RandomSeeder.class);
-    EntropyBlockingRandomWrapper random
-        = new EntropyBlockingRandomWrapper(getTestSeedGenerator().generateSeed(8), 0L, null);
+    EntropyBlockingRandomWrapper<Random> random
+        = EntropyBlockingRandomWrapper
+        .wrapJavaUtilRandom(0L, getTestSeedGenerator().generateSeed(8), null);
     random.setRandomSeeder(seeder);
     Thread consumer = new Thread(() -> random.nextBytes(new byte[9]));
     AtomicReference<Throwable> exception = new AtomicReference<>(null);

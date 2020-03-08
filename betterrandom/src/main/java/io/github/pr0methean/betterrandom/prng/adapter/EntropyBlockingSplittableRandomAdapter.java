@@ -2,7 +2,6 @@ package io.github.pr0methean.betterrandom.prng.adapter;
 
 import static io.github.pr0methean.betterrandom.util.BinaryUtils.convertBytesToLong;
 
-import io.github.pr0methean.betterrandom.prng.BaseRandom;
 import io.github.pr0methean.betterrandom.seed.RandomSeeder;
 import io.github.pr0methean.betterrandom.seed.SeedGenerator;
 import java.util.SplittableRandom;
@@ -56,9 +55,9 @@ public class EntropyBlockingSplittableRandomAdapter extends SplittableRandomAdap
     }
   }
 
-  @Override protected BaseRandom createDelegate() {
-    EntropyBlockingRandomWrapper threadAdapter =
-        new EntropyBlockingRandomWrapper(
+  @Override protected EntropyBlockingRandomWrapper<SingleThreadSplittableRandomAdapter> createDelegate() {
+    EntropyBlockingRandomWrapper<SingleThreadSplittableRandomAdapter> threadAdapter =
+        new EntropyBlockingRandomWrapper<>(
             new SingleThreadSplittableRandomAdapter(sameThreadSeedGen.get()),
             minimumEntropy, sameThreadSeedGen.get());
     threadAdapter.setRandomSeeder(this.randomSeeder.get());
@@ -104,7 +103,8 @@ public class EntropyBlockingSplittableRandomAdapter extends SplittableRandomAdap
     getDelegateWrapper().debitEntropy(bits);
   }
 
-  private EntropyBlockingRandomWrapper getDelegateWrapper() {
-    return (EntropyBlockingRandomWrapper) threadLocal.get();
+  @SuppressWarnings("unchecked")
+  private EntropyBlockingRandomWrapper<SingleThreadSplittableRandomAdapter> getDelegateWrapper() {
+    return (EntropyBlockingRandomWrapper<SingleThreadSplittableRandomAdapter>) threadLocal.get();
   }
 }

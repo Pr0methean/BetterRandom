@@ -12,6 +12,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 - `AesCounterRandom`'s static initializer no longer logs a message if affected by cryptographic policy, since this can
   be unacceptably slow in some environments.
+- `RandomWrapper`, `ThreadLocalRandomWrapper` and `EntropyBlockingRandomWrapper` are now type-generic.
 
 ### Removed
 - `DirectSplittableRandomAdapter` (abstract class with only one subclass)
@@ -625,7 +626,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - First release on Maven Central.
 
 [Unreleased]: https://github.com/Pr0methean/BetterRandom/compare/BetterRandom-5.2.0...master
-[5.1.1]: https://github.com/Pr0methean/BetterRandom/compare/BetterRandom-5.1.1...BetterRandom-5.2.0
+[5.2.0]: https://github.com/Pr0methean/BetterRandom/compare/BetterRandom-5.1.1...BetterRandom-5.2.0
 [5.1.1]: https://github.com/Pr0methean/BetterRandom/compare/BetterRandom-5.1.0...BetterRandom-5.1.1
 [5.1.0]: https://github.com/Pr0methean/BetterRandom/compare/BetterRandom-5.0.0...BetterRandom-5.1.0
 [5.0.0]: https://github.com/Pr0methean/BetterRandom/compare/BetterRandom-4.3.0...BetterRandom-5.0.0

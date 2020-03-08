@@ -18,11 +18,10 @@ import javax.annotation.Nullable;
  * Wraps a {@link ThreadLocal}&lt;{@link BaseRandom}&gt; in order to provide concurrency that most
  * implementations of {@link BaseRandom} can't implement naturally.
  */
-public class ThreadLocalRandomWrapper extends RandomWrapper {
+public class ThreadLocalRandomWrapper<T extends BaseRandom> extends RandomWrapper<T> {
 
   private static final long serialVersionUID = 1199235201518562359L;
-  private final Supplier<? extends BaseRandom>
-      initializer;
+  private final Supplier<? extends T> initializer;
   @Nullable private final Integer explicitSeedSize;
   /**
    * Holds the delegate for each thread.
@@ -36,8 +35,8 @@ public class ThreadLocalRandomWrapper extends RandomWrapper {
    * @param initializer a supplier that will be called to provide the initial {@link BaseRandom}
    *     for each thread.
    */
-  public ThreadLocalRandomWrapper(final Supplier<? extends BaseRandom> initializer) {
-    super(0);
+  public ThreadLocalRandomWrapper(final Supplier<? extends T> initializer) {
+    super(null);
     this.initializer = initializer;
     threadLocal = ThreadLocal.withInitial(initializer);
     explicitSeedSize = null;
@@ -54,10 +53,10 @@ public class ThreadLocalRandomWrapper extends RandomWrapper {
    *     Probably a constructor reference.
    */
   public ThreadLocalRandomWrapper(final int seedSize, final SeedGenerator seedGenerator,
-      final Function<byte[], ? extends BaseRandom> creator) {
-    super(0);
+      final Function<byte[], ? extends T> creator) {
+    super(null);
     explicitSeedSize = seedSize;
-    initializer = (Serializable & Supplier<BaseRandom>) (() -> creator
+    initializer = (Serializable & Supplier<T>) (() -> creator
         .apply(seedGenerator.generateSeed(seedSize)));
     threadLocal = ThreadLocal.withInitial(initializer);
   }
@@ -71,10 +70,10 @@ public class ThreadLocalRandomWrapper extends RandomWrapper {
    * @param seedGenerator the seed generator whose output will be fed to {@code legacyCreator}.
    * @return a ThreadLocalRandomWrapper decorating instances created by {@code legacyCreator}.
    */
-  public static ThreadLocalRandomWrapper wrapLegacy(final LongFunction<Random> legacyCreator,
+  public static ThreadLocalRandomWrapper<BaseRandom> wrapLegacy(final LongFunction<Random> legacyCreator,
       final SeedGenerator seedGenerator) {
-    return new ThreadLocalRandomWrapper(Long.BYTES, seedGenerator,
-        bytes -> new RandomWrapper(legacyCreator.apply(BinaryUtils.convertBytesToLong(bytes))));
+    return new ThreadLocalRandomWrapper<>(Long.BYTES, seedGenerator,
+        bytes -> new RandomWrapper<>(legacyCreator.apply(BinaryUtils.convertBytesToLong(bytes))));
   }
 
   @Nullable @Override public RandomSeeder getRandomSeeder() {

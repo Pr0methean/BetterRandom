@@ -14,14 +14,14 @@ import org.testng.annotations.Test;
 
 public class ThreadLocalRandomWrapperMersenneTwisterTest extends ThreadLocalRandomWrapperTest {
 
-  private final Supplier<? extends BaseRandom> mtSupplier;
+  private final Supplier<MersenneTwisterRandom> mtSupplier;
 
   public ThreadLocalRandomWrapperMersenneTwisterTest() {
     // Must be done first, or else lambda won't be serializable.
     final SeedGenerator seedGenerator = getTestSeedGenerator();
 
     mtSupplier =
-        (Serializable & Supplier<BaseRandom>) () -> new MersenneTwisterRandom(seedGenerator);
+        (Serializable & Supplier<MersenneTwisterRandom>) () -> new MersenneTwisterRandom(seedGenerator);
   }
 
   @Override protected Map<Class<?>, Object> constructorParams() {
@@ -31,8 +31,8 @@ public class ThreadLocalRandomWrapperMersenneTwisterTest extends ThreadLocalRand
     return params;
   }
 
-  @Override protected ThreadLocalRandomWrapper createRng() throws SeedException {
-    return new ThreadLocalRandomWrapper(mtSupplier);
+  @Override protected ThreadLocalRandomWrapper<MersenneTwisterRandom> createRng() throws SeedException {
+    return new ThreadLocalRandomWrapper<>(mtSupplier);
   }
 
   @Override @Test public void testGetWrapped() {

@@ -7,6 +7,6 @@ import java.util.Random;
 public class ZRandomWrapperSecureRandomBenchmark extends AbstractRandomBenchmark {
 
   @Override protected Random createPrng() throws Exception {
-    return new RandomWrapper(SecureRandom.getInstance("SHA1PRNG"));
+    return new RandomWrapper<Random>(SecureRandom.getInstance("SHA1PRNG"));
   }
 }

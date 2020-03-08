@@ -10,7 +10,7 @@ import java.util.Random;
 public class ThreadLocalRandomWrapperAesCounterRandom128Benchmark extends AbstractRandomBenchmark {
 
   @Override protected Random createPrng() throws SeedException {
-    return new ThreadLocalRandomWrapper(16, DEFAULT_INSTANCE,
+    return new ThreadLocalRandomWrapper<Random>(16, DEFAULT_INSTANCE,
         AesCounterRandom::new);
   }
 }

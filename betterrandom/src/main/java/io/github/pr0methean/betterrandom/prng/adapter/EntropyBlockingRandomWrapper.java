@@ -3,6 +3,7 @@ package io.github.pr0methean.betterrandom.prng.adapter;
 import io.github.pr0methean.betterrandom.seed.RandomSeeder;
 import io.github.pr0methean.betterrandom.seed.SeedException;
 import io.github.pr0methean.betterrandom.seed.SeedGenerator;
+import io.github.pr0methean.betterrandom.util.BinaryUtils;
 import java.util.Random;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.concurrent.locks.Condition;
@@ -15,7 +16,7 @@ import javax.annotation.Nullable;
  * SeedGenerator}. If neither is present, the caller is responsible for reseeding, and any call that
  * would reduce entropy below the minimum will throw {@link IllegalStateException}.
  */
-public class EntropyBlockingRandomWrapper extends RandomWrapper {
+public class EntropyBlockingRandomWrapper<T extends Random> extends RandomWrapper<T> {
 
   private static final long serialVersionUID = -853699062122154479L;
   private final long minimumEntropy;
@@ -23,34 +24,7 @@ public class EntropyBlockingRandomWrapper extends RandomWrapper {
   private final Condition seedingStatusChanged;
   private volatile transient boolean waitingOnReseed;
 
-  public EntropyBlockingRandomWrapper(long minimumEntropy, SeedGenerator seedGenerator)
-      throws SeedException {
-    super(seedGenerator);
-    this.minimumEntropy = minimumEntropy;
-    sameThreadSeedGen = new AtomicReference<>(seedGenerator);
-    this.seedingStatusChanged = this.lock.newCondition();
-    checkMaxOutputAtOnce();
-  }
-
-  public EntropyBlockingRandomWrapper(byte[] seed, long minimumEntropy,
-      @Nullable SeedGenerator sameThreadSeedGen) {
-    super(seed);
-    this.minimumEntropy = minimumEntropy;
-    this.sameThreadSeedGen = new AtomicReference<>(sameThreadSeedGen);
-    this.seedingStatusChanged = this.lock.newCondition();
-    checkMaxOutputAtOnce();
-  }
-
-  public EntropyBlockingRandomWrapper(long seed, long minimumEntropy,
-      @Nullable SeedGenerator sameThreadSeedGen) {
-    super(seed);
-    this.minimumEntropy = minimumEntropy;
-    this.sameThreadSeedGen = new AtomicReference<>(sameThreadSeedGen);
-    this.seedingStatusChanged = this.lock.newCondition();
-    checkMaxOutputAtOnce();
-  }
-
-  public EntropyBlockingRandomWrapper(Random wrapped, long minimumEntropy,
+  public EntropyBlockingRandomWrapper(T wrapped, long minimumEntropy,
       @Nullable SeedGenerator sameThreadSeedGen) {
     super(wrapped);
     this.minimumEntropy = minimumEntropy;
@@ -59,7 +33,22 @@ public class EntropyBlockingRandomWrapper extends RandomWrapper {
     checkMaxOutputAtOnce();
   }
 
-  @Override public void setWrapped(Random wrapped) {
+  public static EntropyBlockingRandomWrapper<Random> wrapJavaUtilRandom(long minimumEntropy,
+      SeedGenerator seedGenerator) throws SeedException {
+    return wrapJavaUtilRandom(minimumEntropy, seedGenerator.generateSeed(Long.BYTES), seedGenerator);
+  }
+
+  public static EntropyBlockingRandomWrapper<Random> wrapJavaUtilRandom(long minimumEntropy, byte[] seed,
+      SeedGenerator sameThreadSeedGen) {
+    EntropyBlockingRandomWrapper<Random> wrapper = new EntropyBlockingRandomWrapper<Random>(
+        new Random(BinaryUtils.convertBytesToLong(checkLength(seed, Long.BYTES))),
+        minimumEntropy,
+        sameThreadSeedGen);
+    wrapper.setInitiallyKnownSeed(seed);
+    return wrapper;
+  }
+
+  @Override public void setWrapped(T wrapped) {
     super.setWrapped(wrapped);
     waitingOnReseed = false;
     onSeedingStateChanged(true);
@@ -71,10 +60,20 @@ public class EntropyBlockingRandomWrapper extends RandomWrapper {
     }
   }
 
+  /**
+   * Returns the seed generator that is used on the calling thread if not registered with a running
+   * {@link RandomSeeder}.
+   * @return the seed generator
+   */
   @Nullable public SeedGenerator getSameThreadSeedGen() {
     return sameThreadSeedGen.get();
   }
 
+  /**
+   * Sets the seed generator that is used on the calling thread if not registered with a running
+   * {@link RandomSeeder}.
+   * @param newSeedGen the new seed generator
+   */
   public void setSameThreadSeedGen(@Nullable SeedGenerator newSeedGen) {
     if (sameThreadSeedGen.getAndSet(newSeedGen) != newSeedGen) {
       onSeedingStateChanged(false);

@@ -110,7 +110,7 @@ import org.testng.annotations.Test;
   }
 
   @Test public void testExplicitSeedSize() throws SeedException {
-    assertEquals(new ThreadLocalRandomWrapper(200, getTestSeedGenerator(), AesCounterRandom::new)
+    assertEquals(new ThreadLocalRandomWrapper<>(200, getTestSeedGenerator(), AesCounterRandom::new)
         .getNewSeedLength(), 200);
   }
 
@@ -118,12 +118,12 @@ import org.testng.annotations.Test;
     ThreadLocalRandomWrapper.wrapLegacy(Random::new, getTestSeedGenerator()).nextInt();
   }
 
-  @Override protected ThreadLocalRandomWrapper createRng() throws SeedException {
-    return new ThreadLocalRandomWrapper(pcgSupplier);
+  @Override protected ThreadLocalRandomWrapper<?> createRng() throws SeedException {
+    return new ThreadLocalRandomWrapper<>(pcgSupplier);
   }
 
-  @Override protected ThreadLocalRandomWrapper createRng(final byte[] seed) throws SeedException {
-    final ThreadLocalRandomWrapper rng = createRng();
+  @Override protected ThreadLocalRandomWrapper<?> createRng(final byte[] seed) throws SeedException {
+    final ThreadLocalRandomWrapper<?> rng = createRng();
     rng.setSeed(seed);
     return rng;
   }

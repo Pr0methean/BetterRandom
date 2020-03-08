@@ -15,7 +15,7 @@ import org.testng.annotations.Test;
     extends AesCounterRandomTest {
 
   private final NamedFunction<Random, Double> setWrapped = new NamedFunction<>(random -> {
-    ((RandomWrapper) random).setWrapped(new AesCounterRandom(getTestSeedGenerator()));
+    ((RandomWrapper<Random>) random).setWrapped(new AesCounterRandom(getTestSeedGenerator()));
     return 0.0;
   }, "setWrapped");
 
@@ -48,12 +48,12 @@ import org.testng.annotations.Test;
     // No-op: redundant to super insofar as it works.
   }
 
-  @Override protected RandomWrapper createRng() throws SeedException {
-    return new RandomWrapper(new AesCounterRandom(getTestSeedGenerator()));
+  @Override protected RandomWrapper<AesCounterRandom> createRng() throws SeedException {
+    return new RandomWrapper<>(new AesCounterRandom(getTestSeedGenerator()));
   }
 
-  @Override protected RandomWrapper createRng(final byte[] seed) throws SeedException {
-    return new RandomWrapper(new AesCounterRandom(seed));
+  @Override protected RandomWrapper<AesCounterRandom> createRng(final byte[] seed) throws SeedException {
+    return new RandomWrapper<>(new AesCounterRandom(seed));
   }
 
   @Test public void testGetWrapped() {
