@@ -26,7 +26,7 @@ public class ThreadLocalRandomWrapper<T extends BaseRandom> extends RandomWrappe
   /**
    * Holds the delegate for each thread.
    */
-  @SuppressWarnings({"ThreadLocalNotStaticFinal"}) protected transient ThreadLocal<BaseRandom> threadLocal;
+  @SuppressWarnings({"ThreadLocalNotStaticFinal"}) protected transient ThreadLocal<T> threadLocal;
 
   /**
    * Wraps the given {@link Supplier}. This ThreadLocalRandomWrapper will be serializable if the
