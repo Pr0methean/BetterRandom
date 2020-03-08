@@ -56,11 +56,19 @@ import java.util.function.Function;
 import java.util.function.Supplier;
 import org.apache.commons.math3.stat.descriptive.SynchronizedDescriptiveStatistics;
 import org.powermock.api.mockito.PowerMockito;
+import org.powermock.api.mockito.mockpolicies.Slf4jMockPolicy;
+import org.powermock.core.classloader.annotations.MockPolicy;
+import org.powermock.core.classloader.annotations.PowerMockIgnore;
+import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.testng.PowerMockTestCase;
 import org.powermock.reflect.Whitebox;
 import org.testng.Reporter;
 import org.testng.annotations.Test;
 
+@MockPolicy(Slf4jMockPolicy.class) @PrepareForTest(DefaultSeedGenerator.class) @PowerMockIgnore(
+    {"javax.crypto.*", "javax.management.*", "javax.script.*", "jdk.nashorn.*", "javax.net.ssl.*",
+        "javax.security.*", "javax.xml.*", "org.xml.sax.*", "org.w3c.dom.*",
+        "org.springframework.context.*", "org.apache.log4j.*"})
 public abstract class BaseRandomTest extends PowerMockTestCase {
 
   protected static final int INSTANCES_TO_HASH = 25;
