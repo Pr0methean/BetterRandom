@@ -13,6 +13,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `AesCounterRandom`'s static initializer no longer logs a message if affected by cryptographic policy, since this can
   be unacceptably slow in some environments.
 - `RandomWrapper`, `ThreadLocalRandomWrapper` and `EntropyBlockingRandomWrapper` are now type-generic.
+- Fixes bugs that could arise in `RandomSeeder` if two PRNGs that compared as equal were added.
 
 ### Removed
 - `DirectSplittableRandomAdapter` (abstract class with only one subclass)

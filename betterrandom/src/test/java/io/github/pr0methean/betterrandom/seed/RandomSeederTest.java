@@ -7,6 +7,8 @@ import static org.testng.Assert.assertTrue;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.testing.GcFinalization;
 import com.google.common.util.concurrent.Uninterruptibles;
+import io.github.pr0methean.betterrandom.ByteArrayReseedableRandom;
+import io.github.pr0methean.betterrandom.EntropyCountingRandom;
 import io.github.pr0methean.betterrandom.FlakyRetryAnalyzer;
 import io.github.pr0methean.betterrandom.TestUtils;
 import io.github.pr0methean.betterrandom.prng.BaseRandom;
@@ -19,6 +21,9 @@ import java.util.Random;
 import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.locks.Condition;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 import java.util.function.Consumer;
 import org.testng.annotations.Test;
 
@@ -124,6 +129,74 @@ public class RandomSeederTest {
       randomSeeder.stopIfEmpty();
     }
     assertFalse(randomSeeder.isRunning(), "RandomSeeder didn't stop");
+  }
+
+  /**
+   * Can't use a Mockito mock, because {@link #equals(Object)} can't be mocked.
+   */
+  private static class FakeRandomForTestEqual implements ByteArrayReseedableRandom,
+      EntropyCountingRandom {
+    public volatile boolean setSeedCalled = false;
+    public final Lock lock = new ReentrantLock();
+    public final Condition reseeded = lock.newCondition();
+
+    FakeRandomForTestEqual() {}
+
+    @Override public void setSeed(byte[] seed) {
+      setSeedCalled = true;
+      lock.lock();
+      try {
+        reseeded.signalAll();
+      } finally {
+        lock.unlock();
+      }
+    }
+
+    @Override public int getNewSeedLength() {
+      return 16;
+    }
+
+    @Override public boolean preferSeedWithLong() {
+      return false;
+    }
+
+    @Override public long getEntropyBits() {
+      return 0;
+    }
+
+    @Override public int hashCode() {
+      return 0x1337c0de;
+    }
+
+    @Override public boolean equals(Object obj) {
+      return obj instanceof FakeRandomForTestEqual;
+    }
+
+    public void waitUntilReseeded() throws InterruptedException {
+      while (!setSeedCalled) {
+        lock.lock();
+        try {
+          reseeded.await(1, TimeUnit.SECONDS); // Untimed await would encounter a race condition
+        } finally {
+          lock.unlock();
+        }
+      }
+    }
+  }
+
+  @Test(timeOut = 30_000L)
+  public void testAddTwoEqual() throws InterruptedException {
+    FakeRandomForTestEqual random1 = new FakeRandomForTestEqual();
+    FakeRandomForTestEqual random2 = new FakeRandomForTestEqual();
+    final RandomSeeder seeder = createRandomSeeder(new FakeSeedGenerator("testAddTwoEqual"));
+    try {
+      seeder.add(random1, random2);
+      seeder.wakeUp();
+      random1.waitUntilReseeded();
+      random2.waitUntilReseeded();
+    } finally {
+      seeder.shutDown();
+    }
   }
 
   protected RandomSeeder createRandomSeeder(SeedGenerator seedGenerator) {
