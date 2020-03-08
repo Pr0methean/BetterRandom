@@ -116,7 +116,7 @@ public class ThreadLocalRandomWrapper<T extends BaseRandom> extends RandomWrappe
     return getWrapped().nextLong(origin, bound);
   }
 
-  @Override public BaseRandom getWrapped() {
+  @Override public T getWrapped() {
     return threadLocal.get();
   }
 
@@ -176,7 +176,7 @@ public class ThreadLocalRandomWrapper<T extends BaseRandom> extends RandomWrappe
 
   @SuppressWarnings("VariableNotUsedInsideIf") @Override public void setSeed(final long seed) {
     if (threadLocal != null) {
-      final BaseRandom wrapped = getWrapped();
+      final T wrapped = getWrapped();
       wrapped.setSeed(seed);
     }
   }
@@ -187,7 +187,7 @@ public class ThreadLocalRandomWrapper<T extends BaseRandom> extends RandomWrappe
       throw new IllegalArgumentException("Seed must not be null");
     }
     if (threadLocal != null) {
-      final BaseRandom wrapped = getWrapped();
+      final T wrapped = getWrapped();
       wrapped.setSeed(seed);
     }
     if (this.seed == null) {

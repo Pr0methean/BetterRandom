@@ -117,7 +117,7 @@ public class RandomWrapper<T extends Random> extends BaseRandom {
    *
    * @return the wrapped {@link Random} instance
    */
-  @EntryPoint public Random getWrapped() {
+  @EntryPoint public T getWrapped() {
     lock.lock();
     try {
       return wrapped;
