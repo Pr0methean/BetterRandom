@@ -76,6 +76,7 @@ public abstract class Looper implements Serializable {
    */
   protected Looper(ThreadFactory factory) {
     this.factory = factory;
+    initTransientFields();
   }
 
   /**
@@ -93,10 +94,16 @@ public abstract class Looper implements Serializable {
 
   private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
     in.defaultReadObject();
+    initTransientFields();
     if (running) {
       start();
     }
   }
+
+  /**
+   * Subclasses should override this if they have transient fields to set up before starting.
+   */
+  protected void initTransientFields() {}
 
   /**
    * The task that will be iterated until it returns false. Cannot be abstract for serialization

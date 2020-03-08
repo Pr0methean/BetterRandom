@@ -1,17 +1,14 @@
 package io.github.pr0methean.betterrandom.prng.adapter;
 
 import io.github.pr0methean.betterrandom.FlakyRetryAnalyzer;
-import io.github.pr0methean.betterrandom.TestingDeficiency;
 import io.github.pr0methean.betterrandom.prng.BaseRandom;
 import io.github.pr0methean.betterrandom.prng.MersenneTwisterRandom;
 import io.github.pr0methean.betterrandom.prng.RandomTestUtils;
 import io.github.pr0methean.betterrandom.prng.RandomTestUtils.EntropyCheckMode;
 import io.github.pr0methean.betterrandom.seed.DevRandomSeedGenerator;
 import io.github.pr0methean.betterrandom.seed.RandomSeeder;
-import io.github.pr0methean.betterrandom.seed.SecureRandomSeedGenerator;
 import io.github.pr0methean.betterrandom.seed.SeedException;
 import io.github.pr0methean.betterrandom.seed.SeedGenerator;
-import io.github.pr0methean.betterrandom.seed.SemiFakeSeedGenerator;
 import java.io.Serializable;
 import java.util.Random;
 import java.util.function.Supplier;
@@ -31,11 +28,6 @@ public class ReseedingThreadLocalRandomWrapperMersenneTwisterTest
         (Serializable & Supplier<MersenneTwisterRandom>) () -> new MersenneTwisterRandom(seedGenerator);
   }
 
-  @TestingDeficiency @Override protected SeedGenerator getTestSeedGenerator() {
-    // FIXME: Statistical tests often fail when using semiFakeSeedGenerator
-    return SecureRandomSeedGenerator.DEFAULT_INSTANCE;
-  }
-
   @Override public void testWrapLegacy() throws SeedException {
     ReseedingThreadLocalRandomWrapper.wrapLegacy(Random::new, getTestSeedGenerator()).nextInt();
   }
@@ -51,8 +43,7 @@ public class ReseedingThreadLocalRandomWrapperMersenneTwisterTest
   @Override
   @Test(retryAnalyzer = FlakyRetryAnalyzer.class)
   public void testReseeding() {
-    final SeedGenerator testSeedGenerator
-        = new SemiFakeSeedGenerator(new SingleThreadSplittableRandomAdapter(), "testReseeding");
+    final SeedGenerator testSeedGenerator = getTestSeedGenerator();
     final BaseRandom rng = new ReseedingThreadLocalRandomWrapper<BaseRandom>(testSeedGenerator, mtSupplier);
     RandomTestUtils.checkReseeding(testSeedGenerator, rng, false);
   }

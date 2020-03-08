@@ -95,7 +95,7 @@ public class RandomWrapper<T extends Random> extends BaseRandom {
 
   protected void setInitiallyKnownSeed(byte[] bytes) {
     System.arraycopy(bytes, 0, seed, 0, Long.BYTES);
-    entropyBits.set(bytes.length);
+    entropyBits.set(bytes.length * 8L);
     unknownSeed = false;
   }
 

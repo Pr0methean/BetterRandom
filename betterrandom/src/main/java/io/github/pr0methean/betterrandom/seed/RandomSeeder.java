@@ -5,8 +5,6 @@ import io.github.pr0methean.betterrandom.EntropyCountingRandom;
 import io.github.pr0methean.betterrandom.prng.BaseRandom;
 import io.github.pr0methean.betterrandom.util.BinaryUtils;
 import io.github.pr0methean.betterrandom.util.Looper;
-import java.io.IOException;
-import java.io.ObjectInputStream;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -107,9 +105,7 @@ public class RandomSeeder extends Looper {
     super(threadFactory);
     this.seedGenerator = seedGenerator;
     Objects.requireNonNull(seedGenerator, "randomSeeder must not be null");
-
     this.stopIfEmptyForNanos = stopIfEmptyForNanos;
-    initTransientFields();
   }
 
   static boolean stillDefinitelyHasEntropy(final Object random) {
@@ -222,7 +218,7 @@ public class RandomSeeder extends Looper {
    * Initializes the transient instance fields for this class. Called by constructors and during
    * deserialization.
    */
-  protected void initTransientFields() {
+  @Override protected void initTransientFields() {
     byteArrayPrngs = createSynchronizedWeakHashSet();
     waitWhileEmpty = lock.newCondition();
     waitForEntropyDrain = lock.newCondition();
@@ -365,11 +361,6 @@ public class RandomSeeder extends Looper {
     } finally {
       lock.unlock();
     }
-  }
-
-  private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
-    in.defaultReadObject();
-    initTransientFields();
   }
 
   /**

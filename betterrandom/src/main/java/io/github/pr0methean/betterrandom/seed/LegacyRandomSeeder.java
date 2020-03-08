@@ -92,8 +92,6 @@ public final class LegacyRandomSeeder extends RandomSeeder {
   public LegacyRandomSeeder(final SeedGenerator seedGenerator, ThreadFactory threadFactory,
       long stopIfEmptyForNanos) {
     super(seedGenerator, threadFactory, stopIfEmptyForNanos);
-    initTransientFields();
-    start();
   }
 
   /**
