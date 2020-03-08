@@ -511,10 +511,7 @@ public abstract class BaseRandom extends Random
    *     bound}
    */
   public int nextInt(final int origin, final int bound) {
-    if (bound <= origin) {
-      throw new IllegalArgumentException(
-          String.format("Bound %d must be greater than origin %d", bound, origin));
-    }
+    checkValidRange(origin, bound);
     final int range = bound - origin;
     if (range >= 0) {
       // range is no more than Integer.MAX_VALUE
@@ -526,6 +523,19 @@ public abstract class BaseRandom extends Random
       } while ((output < origin) || (output >= bound));
       debitEntropy(entropyOfInt(origin, bound));
       return output;
+    }
+  }
+
+  /**
+   * Ensures that {@code bound > origin}.
+   * @param origin the minimum, inclusive
+   * @param bound the maximum, exclusive
+   * @throws IllegalArgumentException if {@code bound <= origin}
+   */
+  protected static void checkValidRange(long origin, long bound) {
+    if (bound <= origin) {
+      throw new IllegalArgumentException(
+          String.format("Bound %d must be greater than origin %d", bound, origin));
     }
   }
 
@@ -575,10 +585,7 @@ public abstract class BaseRandom extends Random
    */
   @SuppressWarnings({"StatementWithEmptyBody", "NestedAssignment"}) public long nextLong(
       final long origin, final long bound) {
-    if (bound <= origin) {
-      throw new IllegalArgumentException(
-          String.format("Bound %d must be greater than origin %d", bound, origin));
-    }
+    checkValidRange(origin, bound);
     lock.lock();
     try {
       long r = nextLongNoEntropyDebit();
@@ -707,7 +714,7 @@ public abstract class BaseRandom extends Random
         old.remove(this);
       }
       if (randomSeeder != null) {
-        randomSeeder.add((ByteArrayReseedableRandom) this);
+        randomSeeder.add(this);
       }
     }
   }
@@ -788,7 +795,7 @@ public abstract class BaseRandom extends Random
     setSeedInternal(seed);
     final RandomSeeder currentSeeder = getRandomSeeder();
     if (currentSeeder != null) {
-      currentSeeder.add((ByteArrayReseedableRandom) this);
+      currentSeeder.add(this);
     }
   }
 

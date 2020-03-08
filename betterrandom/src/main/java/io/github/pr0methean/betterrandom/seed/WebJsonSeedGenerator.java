@@ -21,6 +21,10 @@ import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
+/**
+ * A {@link SeedGenerator} that is a client for a Web random-number service. Contains many methods
+ * for parsing JSON responses.
+ */
 public abstract class WebJsonSeedGenerator implements SeedGenerator {
   /**
    * Measures the retry delay. A ten-second delay might become either nothing or an hour if we used
@@ -30,11 +34,21 @@ public abstract class WebJsonSeedGenerator implements SeedGenerator {
    * considerations involved in this choice of clock.
    */
   protected static final Clock CLOCK = Clock.systemUTC();
+  /**
+   * Made available to parse JSON responses.
+   */
   protected static final JSONParser JSON_PARSER = new JSONParser();
   private static final int RETRY_DELAY_MS = 10000;
   private static final Duration RETRY_DELAY = Duration.ofMillis(RETRY_DELAY_MS);
   private static final long serialVersionUID = -33117511873489173L;
+  /**
+   * Held while downloading, so that two requests to the same server won't be pending at the same
+   * time.
+   */
   protected final Lock lock = new ReentrantLock();
+  /**
+   * The earliest time we'll try again if {@link #useRetryDelay}.
+   */
   protected Instant earliestNextAttempt = Instant.MIN;
   /**
    * The proxy to use with this server, or null to use the JVM default.
@@ -167,7 +181,7 @@ public abstract class WebJsonSeedGenerator implements SeedGenerator {
   }
 
   /**
-   * Opens an {@link HttpURLConnection} that will make a GET request to the given URL using this
+   * Opens an {@link HttpsURLConnection} that will make a GET request to the given URL using this
    * seed generator's current {@link Proxy}, {@link SeedGenerator} and User-Agent string, with the
    * header {@code Content-Type: application/json}.
    *
@@ -175,7 +189,7 @@ public abstract class WebJsonSeedGenerator implements SeedGenerator {
    * @return a connection to the URL
    * @throws IOException if thrown by {@link URL#openConnection()} or {@link URL#openConnection(Proxy)}
    */
-  protected HttpURLConnection openConnection(final URL url) throws IOException {
+  protected HttpsURLConnection openConnection(final URL url) throws IOException {
     final Proxy currentProxy = proxy.get();
     final HttpsURLConnection connection =
         (HttpsURLConnection) ((currentProxy == null) ? url.openConnection() :

@@ -15,7 +15,7 @@ import org.testng.annotations.Test;
     extends AesCounterRandomTest {
 
   private final NamedFunction<Random, Double> setWrapped = new NamedFunction<>(random -> {
-    ((RandomWrapper<Random>) random).setWrapped(new AesCounterRandom(getTestSeedGenerator()));
+    ((RandomWrapper<AesCounterRandom>) random).setWrapped(new AesCounterRandom(getTestSeedGenerator()));
     return 0.0;
   }, "setWrapped");
 

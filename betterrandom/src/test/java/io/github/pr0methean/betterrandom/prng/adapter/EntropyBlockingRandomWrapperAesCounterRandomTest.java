@@ -101,7 +101,7 @@ public class EntropyBlockingRandomWrapperAesCounterRandomTest extends RandomWrap
 
   private EntropyBlockingRandomWrapper<Random> createRngLargeEntropyLimit() {
     final SeedGenerator testSeedGenerator = getTestSeedGenerator();
-    return new EntropyBlockingRandomWrapper<Random>(new AesCounterRandom(testSeedGenerator),
+    return new EntropyBlockingRandomWrapper<>(new AesCounterRandom(testSeedGenerator),
         VERY_LOW_MINIMUM_ENTROPY, testSeedGenerator);
   }
 

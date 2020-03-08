@@ -5,6 +5,9 @@ import static io.github.pr0methean.betterrandom.seed.SecureRandomSeedGenerator.D
 import io.github.pr0methean.betterrandom.prng.XorShiftRandom;
 import io.github.pr0methean.betterrandom.seed.SeedException;
 
+/**
+ * Benchmark for {@link XorShiftRandom}.
+ */
 public class XorShiftRandomBenchmark extends AbstractRandomBenchmarkWithReseeding<XorShiftRandom> {
 
   @Override protected XorShiftRandom createPrng() throws SeedException {

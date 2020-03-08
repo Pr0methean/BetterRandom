@@ -87,8 +87,7 @@ public class EntropyBlockingSplittableRandomAdapter extends SplittableRandomAdap
   }
 
   @Override protected SplittableRandom getSplittableRandom() {
-    return ((SingleThreadSplittableRandomAdapter)
-        getDelegateWrapper().getWrapped()).getSplittableRandom();
+    return getDelegateWrapper().getWrapped().getSplittableRandom();
   }
 
   /**

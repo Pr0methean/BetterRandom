@@ -50,7 +50,7 @@ public class RandomWrapper<T extends Random> extends BaseRandom {
   /**
    * Creates an instance wrapping the given {@link Random}.
    *
-   * @param wrapped The {@link Random} to wrap.
+   * @param wrapped the {@link Random} to wrap
    */
   @EntryPoint public RandomWrapper(final T wrapped) {
     super(getSeedOrDummy(wrapped)); // We won't know the wrapped PRNG's seed
@@ -88,14 +88,28 @@ public class RandomWrapper<T extends Random> extends BaseRandom {
     return wrapper;
   }
 
+  /**
+   * Creates an instance wrapping a basic {@link Random}.
+   *
+   * @param seedGenerator the generator used to generate the seed
+   * @return an instance
+   * @throws SeedException if {@code seedGenerator} failed to generate the initial seed
+   */
   public static RandomWrapper<Random> wrapJavaUtilRandom(
       final SeedGenerator seedGenerator) throws SeedException {
     return wrapJavaUtilRandom(seedGenerator.generateSeed(Long.BYTES));
   }
 
-  protected void setInitiallyKnownSeed(byte[] bytes) {
-    System.arraycopy(bytes, 0, seed, 0, Long.BYTES);
-    entropyBits.set(bytes.length * 8L);
+  /**
+   * Updates {@link #seed} and {@link #entropyBits} without reseeding the wrapped PRNG. Called by
+   * the {@code wrapJavaUtilRandom} overloads that take the seed as a parameter, since the seed
+   * isn't available from the PRNG once it's been passed to the constructor.
+   *
+   * @param seed the seed
+   */
+  protected void setInitiallyKnownSeed(byte[] seed) {
+    System.arraycopy(seed, 0, this.seed, 0, Long.BYTES);
+    entropyBits.set(seed.length * 8L);
     unknownSeed = false;
   }
 

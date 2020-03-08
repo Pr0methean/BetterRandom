@@ -76,7 +76,6 @@ public enum BinaryUtils {
    * @param hex The hexadecimal String to be converted into an array of bytes.
    * @param destination the array to write to
    * @param offset the index to start writing
-   * @return An array of bytes that.
    */
   @SuppressWarnings("NumericCastThatLosesPrecision") public static void convertHexStringToBytes(
       final String hex, byte[] destination, int offset) {

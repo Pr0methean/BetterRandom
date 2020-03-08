@@ -50,7 +50,7 @@ public class ReseedingThreadLocalRandomWrapperTest extends ThreadLocalRandomWrap
   @Test public void testSetSeedGeneratorNoOp() {
     RandomSeeder randomSeeder = new RandomSeeder(getTestSeedGenerator());
     ReseedingThreadLocalRandomWrapper<BaseRandom> prng =
-        new ReseedingThreadLocalRandomWrapper<BaseRandom>(pcgSupplier, randomSeeder);
+        new ReseedingThreadLocalRandomWrapper<>(pcgSupplier, randomSeeder);
     prng.setRandomSeeder(randomSeeder);
   }
 
@@ -89,6 +89,6 @@ public class ReseedingThreadLocalRandomWrapperTest extends ThreadLocalRandomWrap
   }
 
   @Override protected ReseedingThreadLocalRandomWrapper<BaseRandom> createRng() throws SeedException {
-    return new ReseedingThreadLocalRandomWrapper<BaseRandom>(getTestSeedGenerator(), pcgSupplier);
+    return new ReseedingThreadLocalRandomWrapper<>(getTestSeedGenerator(), pcgSupplier);
   }
 }

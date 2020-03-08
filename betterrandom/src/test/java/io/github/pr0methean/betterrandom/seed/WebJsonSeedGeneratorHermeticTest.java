@@ -18,6 +18,7 @@ import org.powermock.modules.testng.PowerMockTestCase;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.Test;
 
+@SuppressWarnings("ThrowableNotThrown")
 public abstract class WebJsonSeedGeneratorHermeticTest<T extends WebJsonSeedGenerator>
     extends PowerMockTestCase {
   protected final Proxy proxy = createProxy();
@@ -87,7 +88,7 @@ public abstract class WebJsonSeedGeneratorHermeticTest<T extends WebJsonSeedGene
 
   protected abstract T getSeedGeneratorUnderTest();
 
-  @SuppressWarnings("ThrowableNotThrown") @Test public void testEmptyResponse() {
+  @Test public void testEmptyResponse() {
     mockResponse("");
     expectAndGetException(SeedTestUtils.SEED_SIZE, false);
   }

@@ -1,5 +1,6 @@
 package io.github.pr0methean.betterrandom.seed;
 
+import com.google.common.collect.MapMaker;
 import io.github.pr0methean.betterrandom.ByteArrayReseedableRandom;
 import io.github.pr0methean.betterrandom.EntropyCountingRandom;
 import io.github.pr0methean.betterrandom.prng.BaseRandom;
@@ -13,7 +14,6 @@ import java.util.Collections;
 import java.util.Objects;
 import java.util.Random;
 import java.util.Set;
-import java.util.WeakHashMap;
 import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.Condition;
@@ -231,7 +231,8 @@ public class RandomSeeder extends Looper {
    * @return an empty mutable thread-safe {@link Set} that holds only weak references to its members
    */
   protected <T> Set<T> createSynchronizedWeakHashSet() {
-    return Collections.synchronizedSet(Collections.newSetFromMap(new WeakHashMap<T, Boolean>(1)));
+    return Collections.newSetFromMap(new MapMaker().weakKeys().concurrencyLevel(1)
+        .initialCapacity(1).makeMap());
   }
 
   @SuppressWarnings({"InfiniteLoopStatement", "ObjectAllocationInLoop", "AwaitNotInLoop"}) @Override
@@ -239,7 +240,7 @@ public class RandomSeeder extends Looper {
     Collection<ByteArrayReseedableRandom> byteArrayPrngsThisIteration = new ArrayList<>(byteArrayPrngs);
     try {
       while (byteArrayPrngsThisIteration.isEmpty()) {
-        if (!waitWhileEmpty.await(stopIfEmptyForNanos, TimeUnit.NANOSECONDS)) {
+        if (stillEmptyAfterWaiting()) {
           return false;
         }
         byteArrayPrngsThisIteration.addAll(byteArrayPrngs);
@@ -253,6 +254,22 @@ public class RandomSeeder extends Looper {
     }
   }
 
+  /**
+   * Waits {@link #stopIfEmptyForNanos} for {@link #waitWhileEmpty} to be signaled
+   * @return true if not signaled; false if signaled
+   * @throws InterruptedException if interrupted
+   */
+  protected boolean stillEmptyAfterWaiting() throws InterruptedException {
+    return !waitWhileEmpty.await(stopIfEmptyForNanos, TimeUnit.NANOSECONDS);
+  }
+
+  /**
+   * If entropy was consumed this iteration, waits until {@link #wakeUp()} is called or the polling
+   * interval expires. Updates whether the next polling wait will be short or long.
+   *
+   * @param entropyConsumed whether entropy was consumed this iteration
+   * @throws InterruptedException if interrupted
+   */
   protected void waitForEntropyDrainOrUpdateFlag(boolean entropyConsumed) throws InterruptedException {
     if (entropyConsumed) {
       alreadyPolled = false;
@@ -264,8 +281,9 @@ public class RandomSeeder extends Looper {
   }
 
   /**
-   * Reseeds all the PRNGs that need reseeding in {@link #randoms}.
+   * Reseeds all the PRNGs that need reseeding in {@code randoms}.
    *
+   * @param randoms the PRNGs to reseed
    * @return true if at least one PRNG was reseeded; false otherwise
    */
   protected boolean reseedByteArrayReseedableRandoms(Iterable<? extends ByteArrayReseedableRandom> randoms) {
@@ -321,16 +339,14 @@ public class RandomSeeder extends Looper {
    * @param randoms the PRNGs to unregister with
    */
   protected void unregisterWithAll(Set<?> randoms) {
-    synchronized (randoms) {
-      randoms.forEach(random -> {
-        if (random instanceof BaseRandom) {
-          try {
-            ((BaseRandom) random).setRandomSeeder(null);
-          } catch (UnsupportedOperationException ignored) {
-          }
+    randoms.forEach(random -> {
+      if (random instanceof BaseRandom) {
+        try {
+          ((BaseRandom) random).setRandomSeeder(null);
+        } catch (UnsupportedOperationException ignored) {
         }
-      });
-    }
+      }
+    });
   }
 
   /**

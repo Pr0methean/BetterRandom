@@ -134,7 +134,7 @@ public class MersenneTwisterRandom extends BaseRandom {
     int i = 1;
     int j = 0;
     for (int k = Math.max(N, seedInts.length); k > 0; k--) {
-      mt[i] = (mt[i] ^ ((mt[i - 1] ^ (mt[i - 1] >>> 30)) * SEED_FACTOR1)) + seedInts[j] + j;
+      mt[i] = mix(mt[i], mt[i - 1], SEED_FACTOR1) + seedInts[j] + j;
       i++;
       j++;
       if (i >= N) {
@@ -146,7 +146,7 @@ public class MersenneTwisterRandom extends BaseRandom {
       }
     }
     for (int k = N - 1; k > 0; k--) {
-      mt[i] = (mt[i] ^ ((mt[i - 1] ^ (mt[i - 1] >>> 30)) * SEED_FACTOR2)) - i;
+      mt[i] = (mix(mt[i], mt[i - 1], SEED_FACTOR2)) - i;
       i++;
       if (i >= N) {
         mt[0] = mt[N - 1];
@@ -154,6 +154,10 @@ public class MersenneTwisterRandom extends BaseRandom {
       }
     }
     mt[0] = UPPER_MASK; // Most significant bit is 1 - guarantees non-zero initial array.
+  }
+
+  private int mix(final int current, final int previous, int seedFactor) {
+    return current ^ ((previous ^ (previous >>> 30)) * seedFactor);
   }
 
   @Override protected final int next(final int bits) {

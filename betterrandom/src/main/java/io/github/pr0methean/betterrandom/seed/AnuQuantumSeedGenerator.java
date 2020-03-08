@@ -27,6 +27,11 @@ public class AnuQuantumSeedGenerator extends WebJsonSeedGenerator {
       = "https://qrng.anu.edu.au/API/jsonI.php?length=%d&type=hex16&size=%d";
   private static final long serialVersionUID = -7067446291370465008L;
 
+  /**
+   * Ensures that this class remains a singleton (unless subclassed) when deserialized.
+   *
+   * @return the singleton instance
+   */
   protected Object readResolve() {
     return ANU_QUANTUM_SEED_GENERATOR;
   }

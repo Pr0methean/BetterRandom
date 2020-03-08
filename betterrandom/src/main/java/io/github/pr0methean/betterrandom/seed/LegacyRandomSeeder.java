@@ -7,7 +7,6 @@ import java.util.Collection;
 import java.util.Random;
 import java.util.Set;
 import java.util.concurrent.ThreadFactory;
-import java.util.concurrent.TimeUnit;
 import org.slf4j.LoggerFactory;
 
 /**
@@ -112,7 +111,7 @@ public final class LegacyRandomSeeder extends RandomSeeder {
       Collection<ByteArrayReseedableRandom> byteArrayPrngsThisIteration = new ArrayList<>(byteArrayPrngs);
       Collection<Random> otherPrngsThisIteration = new ArrayList<>(otherPrngs);
       while (otherPrngsThisIteration.isEmpty() && byteArrayPrngsThisIteration.isEmpty()) {
-        if (!waitWhileEmpty.await(stopIfEmptyForNanos, TimeUnit.NANOSECONDS)) {
+        if (stillEmptyAfterWaiting()) {
           return false;
         }
         otherPrngsThisIteration.addAll(otherPrngs);

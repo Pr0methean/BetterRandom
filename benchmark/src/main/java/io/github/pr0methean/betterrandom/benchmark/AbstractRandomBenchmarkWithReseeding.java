@@ -57,6 +57,10 @@ public abstract class AbstractRandomBenchmarkWithReseeding<T extends Random>
   private static final RandomSeeder RANDOM_SEEDER = new RandomSeeder(
       SecureRandomSeedGenerator.DEFAULT_INSTANCE);
 
+  /**
+   * True if a {@link RandomSeeder} is to be used to reseed the PRNG while this benchmark is
+   * running.
+   */
   @Param({"false","true"}) public boolean reseeding;
 
   /**

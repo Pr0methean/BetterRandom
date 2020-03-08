@@ -24,6 +24,13 @@ public class EntropyBlockingRandomWrapper<T extends Random> extends RandomWrappe
   private final Condition seedingStatusChanged;
   private volatile transient boolean waitingOnReseed;
 
+  /**
+   * @param wrapped the {@link Random} to wrap
+   * @param minimumEntropy the minimum entropy, below which requests for pseudorandom numbers will
+   *     block until the PRNG is reseeded
+   * @param sameThreadSeedGen a {@link SeedGenerator}, if any, to use on the calling thread if this
+   *     PRNG does not have a running {@link RandomSeeder}
+   */
   public EntropyBlockingRandomWrapper(T wrapped, long minimumEntropy,
       @Nullable SeedGenerator sameThreadSeedGen) {
     super(wrapped);
@@ -33,16 +40,35 @@ public class EntropyBlockingRandomWrapper<T extends Random> extends RandomWrappe
     checkMaxOutputAtOnce();
   }
 
+  /**
+   * Creates an instance wrapping a basic {@link Random}.
+   *
+   * @param minimumEntropy the minimum entropy, below which requests for pseudorandom numbers will
+   *     block until the PRNG is reseeded
+   * @param seedGenerator a {@link SeedGenerator} to generate the initial seed; also used for
+   *     reseeding if this PRNG does not have a running {@link RandomSeeder}
+   * @return an instance
+   * @throws SeedException if the {@link SeedGenerator} fails to generate an initial seed
+   */
   public static EntropyBlockingRandomWrapper<Random> wrapJavaUtilRandom(long minimumEntropy,
       SeedGenerator seedGenerator) throws SeedException {
     return wrapJavaUtilRandom(minimumEntropy, seedGenerator.generateSeed(Long.BYTES), seedGenerator);
   }
 
+  /**
+   * Creates an instance wrapping a basic {@link Random}.
+   *
+   * @param seed the seed
+   * @param minimumEntropy the minimum entropy, below which requests for pseudorandom numbers will
+   *     block until the PRNG is reseeded
+   * @param sameThreadSeedGen a {@link SeedGenerator}, if any, to use on the calling thread if this
+   *     PRNG does not have a running {@link RandomSeeder}
+   * @return an instance
+   */
   public static EntropyBlockingRandomWrapper<Random> wrapJavaUtilRandom(long minimumEntropy, byte[] seed,
-      SeedGenerator sameThreadSeedGen) {
-    EntropyBlockingRandomWrapper<Random> wrapper = new EntropyBlockingRandomWrapper<Random>(
-        new Random(BinaryUtils.convertBytesToLong(checkLength(seed, Long.BYTES))),
-        minimumEntropy,
+      @Nullable SeedGenerator sameThreadSeedGen) {
+    EntropyBlockingRandomWrapper<Random> wrapper = new EntropyBlockingRandomWrapper<>(
+        new Random(BinaryUtils.convertBytesToLong(checkLength(seed, Long.BYTES))), minimumEntropy,
         sameThreadSeedGen);
     wrapper.setInitiallyKnownSeed(seed);
     return wrapper;

@@ -131,7 +131,7 @@ public class EntropyBlockingRandomWrapperTest extends RandomWrapperRandomTest {
     AesCounterRandom wrapped = new AesCounterRandom(seedGenerator);
     int bytesToDrainToZero = (int) ((wrapped.getEntropyBits() + 7) / 8);
     EntropyBlockingRandomWrapper<Random> random =
-        new EntropyBlockingRandomWrapper<Random>(wrapped, VERY_LOW_MINIMUM_ENTROPY, null);
+        new EntropyBlockingRandomWrapper<>(wrapped, VERY_LOW_MINIMUM_ENTROPY, null);
     random.setRandomSeeder(seeder);
     Mockito.verify(seeder).add(random);
     Mockito.clearInvocations(seeder);
@@ -218,7 +218,7 @@ public class EntropyBlockingRandomWrapperTest extends RandomWrapperRandomTest {
   }
 
   // FIXME: Spurious interrupts if Uninterruptibles not used
-  @Test(timeOut = 25_000) public void testSetWrappedUnblocks() throws InterruptedException {
+  @Test(timeOut = 25_000) public void testSetWrappedUnblocks() {
     RandomSeeder seeder = Mockito.mock(RandomSeeder.class);
     EntropyBlockingRandomWrapper<Random> random
         = EntropyBlockingRandomWrapper

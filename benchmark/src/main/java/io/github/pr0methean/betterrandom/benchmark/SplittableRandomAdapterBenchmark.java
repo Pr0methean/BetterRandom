@@ -6,6 +6,9 @@ import io.github.pr0methean.betterrandom.prng.adapter.SplittableRandomAdapter;
 import io.github.pr0methean.betterrandom.seed.RandomSeeder;
 import io.github.pr0methean.betterrandom.seed.SeedException;
 
+/**
+ * Benchmark for {@link SplittableRandomAdapter}.
+ */
 public class SplittableRandomAdapterBenchmark extends AbstractRandomBenchmarkWithReseeding<SplittableRandomAdapter> {
 
   private final RandomSeeder thread = new RandomSeeder(DEFAULT_INSTANCE);

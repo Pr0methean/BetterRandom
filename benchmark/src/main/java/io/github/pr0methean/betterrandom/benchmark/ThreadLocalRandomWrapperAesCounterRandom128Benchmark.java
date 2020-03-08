@@ -6,6 +6,9 @@ import io.github.pr0methean.betterrandom.prng.AesCounterRandom;
 import io.github.pr0methean.betterrandom.prng.adapter.ThreadLocalRandomWrapper;
 import io.github.pr0methean.betterrandom.seed.SeedException;
 
+/**
+ * Benchmark for {@link ThreadLocalRandomWrapper} wrapping {@link AesCounterRandom}.
+ */
 public class ThreadLocalRandomWrapperAesCounterRandom128Benchmark
     extends AbstractRandomBenchmark<ThreadLocalRandomWrapper<AesCounterRandom>> {
 

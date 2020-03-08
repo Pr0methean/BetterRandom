@@ -4,6 +4,9 @@ import io.github.pr0methean.betterrandom.prng.Pcg128Random;
 import io.github.pr0methean.betterrandom.seed.SecureRandomSeedGenerator;
 import io.github.pr0methean.betterrandom.seed.SeedException;
 
+/**
+ * Benchmark for {@link Pcg128Random}.
+ */
 public class Pcg128RandomBenchmark extends AbstractRandomBenchmarkWithReseeding<Pcg128Random> {
 
   @Override protected Pcg128Random createPrng() throws SeedException {

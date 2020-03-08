@@ -65,6 +65,12 @@ public class SecureRandomSeedGenerator implements SeedGenerator, Serializable {
     this(source, false);
   }
 
+  /**
+   * Ensures that all serialized copies of {@link #DEFAULT_INSTANCE} deserialize as the same object.
+   *
+   * @return {@link #DEFAULT_INSTANCE} if this object was {@link #DEFAULT_INSTANCE} when it was
+   *     serialized; this object unchanged otherwise
+   */
   protected Object readResolve() {
     return isDefaultInstance ? DEFAULT_INSTANCE : this;
   }

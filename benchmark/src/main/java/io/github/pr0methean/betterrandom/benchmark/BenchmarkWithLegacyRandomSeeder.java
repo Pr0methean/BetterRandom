@@ -7,6 +7,12 @@ import org.openjdk.jmh.annotations.Level;
 import org.openjdk.jmh.annotations.Setup;
 import org.openjdk.jmh.annotations.TearDown;
 
+/**
+ * An {@link AbstractRandomBenchmarkWithReseeding} that uses a {@link LegacyRandomSeeder} rather
+ * than a {@link io.github.pr0methean.betterrandom.seed.RandomSeeder}.
+ *
+ * @param <T> the PRNG class
+ */
 public abstract class BenchmarkWithLegacyRandomSeeder<T extends Random>
     extends AbstractRandomBenchmarkWithReseeding<T> {
   private static final LegacyRandomSeeder RANDOM_SEEDER = new LegacyRandomSeeder(

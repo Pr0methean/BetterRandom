@@ -136,7 +136,7 @@ public class RandomDotOrgSeedGeneratorHermeticTest
     seedGenerator = PowerMockito.spy(RANDOM_DOT_ORG_SEED_GENERATOR);
   }
 
-  @AfterMethod public void tearDownMethod() throws Exception {
+  @AfterMethod public void tearDownMethod() {
     address = null;
   }
 
@@ -149,7 +149,7 @@ public class RandomDotOrgSeedGeneratorHermeticTest
     }
   }
 
-  @Test public void testSetProxyOldApi() throws Exception {
+  @Test public void testSetProxyOldApi() {
     seedGenerator.setProxy(proxy);
     mockResponse(RESPONSE_625_OLD_API);
     seedGenerator.setApiKey(null);
@@ -163,7 +163,7 @@ public class RandomDotOrgSeedGeneratorHermeticTest
     }
   }
 
-  @Test public void testSetProxyJsonApi() throws Exception {
+  @Test public void testSetProxyJsonApi() {
     mockResponse(RESPONSE_625_JSON);
     seedGenerator.setProxy(proxy);
     try {
@@ -176,32 +176,29 @@ public class RandomDotOrgSeedGeneratorHermeticTest
     }
   }
 
-  @Test public void testOverLongResponseOldApi() throws Exception {
+  @Test public void testOverLongResponseOldApi() {
     seedGenerator.setApiKey(null);
     mockResponse(RESPONSE_625_OLD_API);
     testGenerator(seedGenerator, false);
   }
 
-  @Test public void testOverLongResponseJson() throws Exception {
+  @Test public void testOverLongResponseJson() {
     mockResponse(RESPONSE_625_JSON);
     withApiKey(() -> testGenerator(seedGenerator, false));
   }
 
-  @Test public void testOverShortResponseOldApi()
-      throws Exception {
+  @Test public void testOverShortResponseOldApi() {
     seedGenerator.setApiKey(null);
     mockResponse(RESPONSE_32_OLD_API);
     expectAndGetException(625, false);
   }
 
-  @Test public void testOverShortResponseJsonApi()
-      throws Exception {
+  @Test public void testOverShortResponseJsonApi() {
     mockResponse(RESPONSE_32_JSON);
     withApiKey(() -> expectAndGetException(625, false));
   }
 
-  @Test public void testInvalidBase64ResponseJsonApi()
-      throws Exception {
+  @Test public void testInvalidBase64ResponseJsonApi() {
     mockResponse("{\"jsonrpc\":\"2.0\",\"result\":{\"random\":{\"data\":" +
         "[\"\uD83D\uDCA9lhFSSjLy+u5P/Cz92BH4R3NZ0+j8UHNeIR02CChoQ=\"]," +
         "\"completionTime\":\"2018-05-06 19:54:31Z\"},\"bitsUsed\":256,\"bitsLeft\":996831," +
@@ -217,14 +214,14 @@ public class RandomDotOrgSeedGeneratorHermeticTest
     withApiKey(super::testNumericResponse);
   }
 
-  @Test public void testInvalidResponseOldApi() throws Exception {
+  @Test public void testInvalidResponseOldApi() {
     seedGenerator.setApiKey(null);
     mockResponse("Not numbers");
     assertTrue(
         expectAndGetException(SeedTestUtils.SEED_SIZE).getCause() instanceof NumberFormatException);
   }
 
-  @Test public void testResponseError() throws Exception {
+  @Test public void testResponseError() {
     mockResponse("{\"jsonrpc\":\"2.0\",\"error\":\"Oh noes, an error\"," +
           "\"result\":{\"random\":{\"data\":" +
           "[\"gAlhFSSjLy+u5P/Cz92BH4R3NZ0+j8UHNeIR02CChoQ=\"]," +
@@ -235,14 +232,12 @@ public class RandomDotOrgSeedGeneratorHermeticTest
         "Oh noes, an error", "Wrong exception message"));
   }
 
-  @Test public void testResponseNoResult()
-      throws Exception {
+  @Test public void testResponseNoResult() {
     mockResponse("{\"jsonrpc\":\"2.0\"}");
     withApiKey(() -> expectAndGetException(SeedTestUtils.SEED_SIZE, false));
   }
 
-  @Test public void testResponseNoRandom()
-      throws Exception {
+  @Test public void testResponseNoRandom() {
     mockResponse("{\"jsonrpc\":\"2.0\",\"result\":{" +
         "\"completionTime\":\"2018-05-06 19:54:31Z\"},\"bitsUsed\":256,\"bitsLeft\":996831," +
         "\"requestsLeft\":199912,\"advisoryDelay\":290},\"id\":27341}");
@@ -260,7 +255,7 @@ public class RandomDotOrgSeedGeneratorHermeticTest
    * Try to acquire a large number of bytes, more than are cached internally by the seed generator
    * implementation.
    */
-  @Test(timeOut = 120000) public void testLargeRequestOldApi() throws Exception {
+  @Test(timeOut = 120000) public void testLargeRequestOldApi() {
     seedGenerator.setApiKey(null);
     // Request more bytes than can be gotten in one Web request.
     mockResponse(MAX_SIZE_RESPONSE_OLD_API);
@@ -280,18 +275,18 @@ public class RandomDotOrgSeedGeneratorHermeticTest
    * Try to acquire a large number of bytes, more than are cached internally by the seed generator
    * implementation.
    */
-  @Test(timeOut = 120000) public void testLargeRequestNewApi() throws Exception {
+  @Test(timeOut = 120000) public void testLargeRequestNewApi() {
     // Request more bytes than can be gotten in one Web request.
     mockResponse(MAX_SIZE_RESPONSE_NEW_API);
     withApiKey(this::testLargeRequest);
   }
 
-  @Test(invocationCount = 10_000) public void testRandomFuzzJsonApi() throws Exception {
+  @Test(invocationCount = 10_000) public void testRandomFuzzJsonApi() {
     String fuzzOut = BinaryUtils.convertBytesToHexString(fuzzResponse(RESPONSE_32_JSON.length));
     withApiKey(() -> expectAndGetException(32, false, fuzzOut));
   }
 
-  @Test(invocationCount = 10_000) public void testRandomFuzzOldApi() throws Exception {
+  @Test(invocationCount = 10_000) public void testRandomFuzzOldApi() {
     String fuzzOut = BinaryUtils.convertBytesToHexString(fuzzResponse(RESPONSE_32_JSON.length));
     seedGenerator.setApiKey(null);
     expectAndGetException(32, false, fuzzOut);
