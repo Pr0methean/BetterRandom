@@ -4,9 +4,9 @@ import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertSame;
 
 import com.google.common.testing.SerializableTester;
-import io.github.pr0methean.betterrandom.prng.AbstractLargeSeedRandomTest;
 import io.github.pr0methean.betterrandom.prng.AesCounterRandom;
 import io.github.pr0methean.betterrandom.prng.BaseRandom;
+import io.github.pr0methean.betterrandom.prng.BaseRandomTest;
 import io.github.pr0methean.betterrandom.prng.Pcg64Random;
 import io.github.pr0methean.betterrandom.seed.RandomSeeder;
 import io.github.pr0methean.betterrandom.seed.SeedException;
@@ -19,7 +19,7 @@ import java.util.function.Supplier;
 import org.testng.annotations.Test;
 
 @Test(testName = "ThreadLocalRandomWrapper") public class ThreadLocalRandomWrapperTest
-    extends AbstractLargeSeedRandomTest {
+    extends BaseRandomTest {
 
   private final Supplier<BaseRandom> pcgSupplier;
 

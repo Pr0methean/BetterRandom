@@ -8,6 +8,10 @@ import static io.github.pr0methean.betterrandom.prng.RandomTestUtils.STREAM_SIZE
 import static io.github.pr0methean.betterrandom.prng.RandomTestUtils.assertMonteCarloPiEstimateSane;
 import static io.github.pr0methean.betterrandom.prng.RandomTestUtils.checkRangeAndEntropy;
 import static io.github.pr0methean.betterrandom.prng.RandomTestUtils.checkStream;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyInt;
+import static org.powermock.api.mockito.PowerMockito.doAnswer;
+import static org.powermock.api.mockito.PowerMockito.when;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertFalse;
 import static org.testng.Assert.assertNotEquals;
@@ -22,13 +26,13 @@ import io.github.pr0methean.betterrandom.FlakyRetryAnalyzer;
 import io.github.pr0methean.betterrandom.NamedFunction;
 import io.github.pr0methean.betterrandom.TestUtils;
 import io.github.pr0methean.betterrandom.prng.RandomTestUtils.EntropyCheckMode;
+import io.github.pr0methean.betterrandom.seed.DefaultSeedGenerator;
 import io.github.pr0methean.betterrandom.seed.FakeSeedGenerator;
 import io.github.pr0methean.betterrandom.seed.RandomSeeder;
 import io.github.pr0methean.betterrandom.seed.SeedException;
 import io.github.pr0methean.betterrandom.seed.SeedGenerator;
 import io.github.pr0methean.betterrandom.seed.SemiFakeSeedGenerator;
 import io.github.pr0methean.betterrandom.util.BinaryUtils;
-import java.lang.reflect.InvocationTargetException;
 import java.security.GeneralSecurityException;
 import java.util.Arrays;
 import java.util.Collections;
@@ -51,7 +55,9 @@ import java.util.function.DoubleConsumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
 import org.apache.commons.math3.stat.descriptive.SynchronizedDescriptiveStatistics;
+import org.powermock.api.mockito.PowerMockito;
 import org.powermock.modules.testng.PowerMockTestCase;
+import org.powermock.reflect.Whitebox;
 import org.testng.Reporter;
 import org.testng.annotations.Test;
 
@@ -104,6 +110,7 @@ public abstract class BaseRandomTest extends PowerMockTestCase {
   private static final double UPPER_BOUND_FOR_ROUNDING_TEST =
       Double.longBitsToDouble(Double.doubleToLongBits(1.0) + 3);
   protected final ForkJoinPool pool = new ForkJoinPool(2);
+  private DefaultSeedGenerator oldDefaultSeedGenerator;
 
   @SafeVarargs
   private static <E> void testGeneratesAll(final Supplier<E> generator, final E... expected) {
@@ -131,11 +138,30 @@ public abstract class BaseRandomTest extends PowerMockTestCase {
     return EntropyCheckMode.EXACT;
   }
 
-  @Test(timeOut = 120_000) public void testAllPublicConstructors()
-      throws SeedException, IllegalAccessException, InstantiationException,
-      InvocationTargetException {
-    TestUtils.testConstructors(getClassUnderTest(), false, ImmutableMap.copyOf(constructorParams()),
-        BaseRandom::nextInt);
+  /**
+   * Replaces the default seed generator with a faster mock. Must be undone after the test using
+   * {@link #unmockDefaultSeedGenerator()}.
+   */
+  protected void mockDefaultSeedGenerator() {
+    oldDefaultSeedGenerator = DefaultSeedGenerator.DEFAULT_SEED_GENERATOR;
+    final DefaultSeedGenerator mockDefaultSeedGenerator =
+        PowerMockito.mock(DefaultSeedGenerator.class);
+    when(mockDefaultSeedGenerator.generateSeed(anyInt())).thenAnswer(
+        invocation -> semiFakeSeedGenerator.generateSeed((Integer) (invocation.getArgument(0))));
+    doAnswer(invocation -> {
+      semiFakeSeedGenerator.generateSeed(invocation.getArgument(0));
+      return null;
+    }).when(mockDefaultSeedGenerator).generateSeed(any(byte[].class));
+    Whitebox.setInternalState(DefaultSeedGenerator.class, "DEFAULT_SEED_GENERATOR",
+        mockDefaultSeedGenerator);
+  }
+
+  /**
+   * Undoes {@link #mockDefaultSeedGenerator()}, restoring the factory default.
+   */
+  protected void unmockDefaultSeedGenerator() {
+    Whitebox.setInternalState(DefaultSeedGenerator.class, "DEFAULT_SEED_GENERATOR",
+        oldDefaultSeedGenerator);
   }
 
   protected Map<Class<?>, Object> constructorParams() {
@@ -297,11 +323,27 @@ public abstract class BaseRandomTest extends PowerMockTestCase {
     }
   }
 
+  @Test(timeOut = 120_000)
+  public void testAllPublicConstructors() throws SeedException {
+    mockDefaultSeedGenerator();
+    try {
+      TestUtils.testConstructors(getClassUnderTest(), false, ImmutableMap.copyOf(constructorParams()),
+          BaseRandom::nextInt);
+    } finally {
+      unmockDefaultSeedGenerator();
+    }
+  }
+
   /**
    * Assertion-free since many implementations have a fallback behavior.
    */
   @Test(timeOut = 60_000) public void testSetSeedLong() {
-    createRng().setSeed(0x0123456789ABCDEFL);
+    mockDefaultSeedGenerator();
+    try {
+      createRng().setSeed(0x0123456789ABCDEFL);
+    } finally {
+      unmockDefaultSeedGenerator();
+    }
   }
 
   @Test(timeOut = 15_000) public void testSetSeedAfterNextLong() throws SeedException {

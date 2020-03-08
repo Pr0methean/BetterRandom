@@ -19,8 +19,8 @@ import static org.testng.Assert.assertSame;
 
 import com.google.common.collect.ImmutableList;
 import io.github.pr0methean.betterrandom.NamedFunction;
-import io.github.pr0methean.betterrandom.prng.AbstractLargeSeedRandomTest;
 import io.github.pr0methean.betterrandom.prng.BaseRandom;
+import io.github.pr0methean.betterrandom.prng.BaseRandomTest;
 import io.github.pr0methean.betterrandom.prng.RandomTestUtils;
 import io.github.pr0methean.betterrandom.seed.SeedException;
 import java.util.Collections;
@@ -35,7 +35,7 @@ import org.testng.annotations.Test;
  * @author Chris Hennick
  */
 @Test(testName = "RandomWrapper") public class RandomWrapperRandomTest
-    extends AbstractLargeSeedRandomTest {
+    extends BaseRandomTest {
 
   protected static final NamedFunction<Random, Double> SET_WRAPPED = new NamedFunction<>(random -> {
     ((RandomWrapper) random).setWrapped(new Random());

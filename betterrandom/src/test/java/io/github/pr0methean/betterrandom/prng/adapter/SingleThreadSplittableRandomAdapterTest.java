@@ -4,12 +4,12 @@ import static io.github.pr0methean.betterrandom.prng.RandomTestUtils.assertEquiv
 
 import com.google.common.testing.SerializableTester;
 import io.github.pr0methean.betterrandom.TestingDeficiency;
-import io.github.pr0methean.betterrandom.prng.AbstractLargeSeedRandomTest;
 import io.github.pr0methean.betterrandom.prng.BaseRandom;
+import io.github.pr0methean.betterrandom.prng.BaseRandomTest;
 import io.github.pr0methean.betterrandom.seed.SeedException;
 import org.testng.annotations.Test;
 
-public class SingleThreadSplittableRandomAdapterTest extends AbstractLargeSeedRandomTest {
+public class SingleThreadSplittableRandomAdapterTest extends BaseRandomTest {
 
   @Override protected Class<? extends BaseRandom> getClassUnderTest() {
     return SingleThreadSplittableRandomAdapter.class;

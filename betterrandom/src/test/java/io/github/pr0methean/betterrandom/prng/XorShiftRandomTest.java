@@ -24,7 +24,7 @@ import org.testng.annotations.Test;
  * @author Daniel Dyer
  */
 @Test(testName = "XorShiftRandom") public class XorShiftRandomTest
-    extends AbstractLargeSeedRandomTest {
+    extends BaseRandomTest {
 
   @Override protected Class<? extends BaseRandom> getClassUnderTest() {
     return XorShiftRandom.class;

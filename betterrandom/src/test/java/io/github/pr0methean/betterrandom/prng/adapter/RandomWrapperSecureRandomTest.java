@@ -5,8 +5,8 @@ import static org.testng.Assert.assertSame;
 import com.google.common.collect.ImmutableList;
 import io.github.pr0methean.betterrandom.NamedFunction;
 import io.github.pr0methean.betterrandom.TestUtils;
-import io.github.pr0methean.betterrandom.prng.AbstractLargeSeedRandomTest;
 import io.github.pr0methean.betterrandom.prng.BaseRandom;
+import io.github.pr0methean.betterrandom.prng.BaseRandomTest;
 import io.github.pr0methean.betterrandom.seed.SeedException;
 import java.security.GeneralSecurityException;
 import java.security.NoSuchAlgorithmException;
@@ -16,7 +16,7 @@ import java.util.Random;
 import org.testng.annotations.Test;
 
 @Test(testName = "RandomWrapper:SecureRandom") public class RandomWrapperSecureRandomTest
-    extends AbstractLargeSeedRandomTest {
+    extends BaseRandomTest {
 
   private static final SecureRandom SEED_GEN = new SecureRandom();
   private static final NamedFunction<Random, Double> SET_WRAPPED = new NamedFunction<>(random -> {
