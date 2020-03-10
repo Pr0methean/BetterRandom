@@ -7,6 +7,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [5.3.0]
+
+### Changed
+
+- Some methods in `LegacyRandomSeeder` have been renamed so that they no longer override or overload methods in
+  `RandomSeeder`. This allows the add/remove methods in `RandomSeeder` to use strong typing.
+
 ## [5.2.0]
 
 ### Changed
@@ -626,7 +633,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - First release on Maven Central.
 
-[Unreleased]: https://github.com/Pr0methean/BetterRandom/compare/BetterRandom-5.2.0...master
+[Unreleased]: https://github.com/Pr0methean/BetterRandom/compare/BetterRandom-5.3.0...master
+[5.2.0]: https://github.com/Pr0methean/BetterRandom/compare/BetterRandom-5.2.0...BetterRandom-5.3.0
 [5.2.0]: https://github.com/Pr0methean/BetterRandom/compare/BetterRandom-5.1.1...BetterRandom-5.2.0
 [5.1.1]: https://github.com/Pr0methean/BetterRandom/compare/BetterRandom-5.1.0...BetterRandom-5.1.1
 [5.1.0]: https://github.com/Pr0methean/BetterRandom/compare/BetterRandom-5.0.0...BetterRandom-5.1.0
