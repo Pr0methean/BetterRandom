@@ -99,7 +99,8 @@ public abstract class AbstractRandomBenchmarkWithReseeding<T extends Random>
       if (prng instanceof ByteArrayReseedableRandom) {
         RANDOM_SEEDER.remove((ByteArrayReseedableRandom) prng);
       } else {
-        throw new AssertionError("This method needs to override tearDown");
+        throw new AssertionError(String.format("prng is %s, not ByteArrayReseedableRandom",
+            prng.getClass().getName()));
       }
     }
     super.tearDown();
