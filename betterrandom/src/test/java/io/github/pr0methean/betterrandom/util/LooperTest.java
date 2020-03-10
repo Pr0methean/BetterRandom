@@ -69,7 +69,8 @@ public class LooperTest {
     assertEquals(sleepingThread.finishedIterations.get(), 1);
   }
 
-  @Test public void testResurrect() throws InterruptedException {
+  // FIXME: Spurious interrupts
+  @Test public void testResurrect() {
     final TestLooper testLooperThread = new TestLooper();
     try {
       testLooperThread.shouldThrow.set(true);
@@ -78,7 +79,7 @@ public class LooperTest {
       while (testLooperThread.isRunning()) {
         waits--;
         assertTrue(waits >= 0, "Timed out waiting for test looper thread to die");
-        Thread.sleep(10);
+        Uninterruptibles.sleepUninterruptibly(10, TimeUnit.MILLISECONDS);
       }
       assertFalse(testLooperThread.isRunning());
       testLooperThread.shouldThrow.set(false);
@@ -88,7 +89,7 @@ public class LooperTest {
       while (testLooperThread.iterations.get() == 0) {
         waits--;
         assertTrue(waits >= 0, "Timed out waiting for test looper thread to resume running");
-        Thread.sleep(10);
+        Uninterruptibles.sleepUninterruptibly(10, TimeUnit.MILLISECONDS);
       }
     } finally {
       testLooperThread.interrupt();
