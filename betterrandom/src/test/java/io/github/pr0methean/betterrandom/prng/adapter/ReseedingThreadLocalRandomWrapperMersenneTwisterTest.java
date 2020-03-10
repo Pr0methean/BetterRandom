@@ -36,6 +36,7 @@ public class ReseedingThreadLocalRandomWrapperMersenneTwisterTest
     return EntropyCheckMode.LOWER_BOUND;
   }
 
+  @SuppressWarnings("rawtypes")
   @Override protected Class<ReseedingThreadLocalRandomWrapper> getClassUnderTest() {
     return ReseedingThreadLocalRandomWrapper.class;
   }

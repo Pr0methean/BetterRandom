@@ -849,9 +849,9 @@ public abstract class BaseRandomTest<T extends BaseRandom> extends PowerMockTest
   protected SortedSet<Double> runSequential(final NamedFunction<? super T, Double> supplier1,
       final NamedFunction<? super T, Double> supplier2, final T random) {
     final SortedSet<Double> output = new TreeSet<>();
-    new GeneratorForkJoinTask<T, Double>(random, output, supplier1, new CountDownLatch(1), 1000)
+    new GeneratorForkJoinTask<>(random, output, supplier1, new CountDownLatch(1), 1000)
         .exec();
-    new GeneratorForkJoinTask<T, Double>(random, output, supplier2, new CountDownLatch(1), 1000)
+    new GeneratorForkJoinTask<>(random, output, supplier2, new CountDownLatch(1), 1000)
         .exec();
     return output;
   }

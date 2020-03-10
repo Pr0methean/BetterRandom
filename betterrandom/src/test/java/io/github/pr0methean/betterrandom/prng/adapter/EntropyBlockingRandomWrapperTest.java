@@ -36,7 +36,7 @@ import org.testng.annotations.Test;
 @Test(testName = "EntropyBlockingRandomWrapper")
 public class EntropyBlockingRandomWrapperTest extends RandomWrapperRandomTest {
 
-  @SuppressWarnings("unchecked")
+  @SuppressWarnings("rawtypes")
   @Override public Class<EntropyBlockingRandomWrapper> getClassUnderTest() {
     return EntropyBlockingRandomWrapper.class;
   }
