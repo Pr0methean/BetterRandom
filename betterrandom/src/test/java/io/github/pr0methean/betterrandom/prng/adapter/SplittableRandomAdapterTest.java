@@ -43,7 +43,7 @@ public class SplittableRandomAdapterTest
     return new SplittableRandomAdapter(getTestSeedGenerator(), thread);
   }
 
-  @Override protected BaseRandom createRng(byte[] seed) throws SeedException {
+  @Override protected SplittableRandomAdapter createRng(byte[] seed) throws SeedException {
     SplittableRandomAdapter out = createRng();
     out.setSeed(seed);
     return out;
@@ -77,7 +77,7 @@ public class SplittableRandomAdapterTest
     }
   }
 
-  @Override protected Class<? extends BaseRandom> getClassUnderTest() {
+  @Override protected Class<? extends SplittableRandomAdapter> getClassUnderTest() {
     return SplittableRandomAdapter.class;
   }
 
@@ -178,6 +178,6 @@ public class SplittableRandomAdapterTest
    * Assertion-free because thread-local.
    */
   @Override @Test public void testThreadSafety() {
-    testThreadSafetyVsCrashesOnly(45, functionsForThreadSafetyTest);
+    checkThreadSafetyVsCrashesOnly(45, functionsForThreadSafetyTest);
   }
 }

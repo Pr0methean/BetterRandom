@@ -69,7 +69,7 @@ import org.testng.annotations.Test;
     {"javax.crypto.*", "javax.management.*", "javax.script.*", "jdk.nashorn.*", "javax.net.ssl.*",
         "javax.security.*", "javax.xml.*", "org.xml.sax.*", "org.w3c.dom.*",
         "org.springframework.context.*", "org.apache.log4j.*"})
-public abstract class BaseRandomTest extends PowerMockTestCase {
+public abstract class BaseRandomTest<T extends BaseRandom> extends PowerMockTestCase {
 
   protected static final int INSTANCES_TO_HASH = 25;
   protected static final int EXPECTED_UNIQUE_HASHES = (int) (0.8 * INSTANCES_TO_HASH);
@@ -101,10 +101,10 @@ public abstract class BaseRandomTest extends PowerMockTestCase {
     return 0.0;
   }, "BaseRandom::setSeed(byte[])");
 
-  protected final List<NamedFunction<Random, Double>>
+  protected final List<NamedFunction<? super BaseRandom, Double>>
       functionsForThreadSafetyTest =
       ImmutableList.of(NEXT_LONG, NEXT_INT, NEXT_DOUBLE, NEXT_GAUSSIAN);
-  protected final List<NamedFunction<Random, Double>>
+  protected final List<NamedFunction<? super BaseRandom, Double>>
       functionsForThreadCrashTest =
       ImmutableList.of(NEXT_LONG, NEXT_INT, NEXT_DOUBLE, NEXT_GAUSSIAN, setSeed);
   protected static final int TEST_BYTE_ARRAY_LENGTH = STREAM_SIZE;
@@ -186,6 +186,10 @@ public abstract class BaseRandomTest extends PowerMockTestCase {
     return createRng().getNewSeedLength();
   }
 
+  /**
+   * Must have a looser type bound than T in case T is a generic type.
+   * @return the class under test
+   */
   protected Class<? extends BaseRandom> getClassUnderTest() {
     return createRng().getClass();
   }
@@ -222,9 +226,9 @@ public abstract class BaseRandomTest extends PowerMockTestCase {
         .generateSeed(getNewSeedLength() + 1)); // Should throw an exception.
   }
 
-  protected abstract BaseRandom createRng();
+  protected abstract T createRng();
 
-  protected abstract BaseRandom createRng(byte[] seed);
+  protected abstract T createRng(byte[] seed);
 
   /**
    * Test to ensure that the output from the RNG is broadly as expected.  This will not detect the
@@ -760,7 +764,7 @@ public abstract class BaseRandomTest extends PowerMockTestCase {
   }
 
   @Test public void testThreadSafetySetSeed() {
-    testThreadSafetyVsCrashesOnly(30, Collections.singletonList(setSeed),
+    checkThreadSafetyVsCrashesOnly(30, Collections.singletonList(setSeed),
         functionsForThreadCrashTest);
   }
 
@@ -770,35 +774,35 @@ public abstract class BaseRandomTest extends PowerMockTestCase {
     assertEquals(createRng(seed).getEntropyBits(), 8 * seedSize, "Wrong initial entropy");
   }
 
-  protected void testThreadSafetyVsCrashesOnly(final int timeoutSec,
-      final List<NamedFunction<Random, Double>> functions) {
-    testThreadSafetyVsCrashesOnly(timeoutSec, functions, functions);
+  protected void checkThreadSafetyVsCrashesOnly(final int timeoutSec,
+      final List<? extends NamedFunction<? super T, Double>> functions) {
+    checkThreadSafetyVsCrashesOnly(timeoutSec, functions, functions);
   }
 
-  protected void testThreadSafetyVsCrashesOnly(final int timeoutSec,
-      final List<NamedFunction<Random, Double>> functionsThread1,
-      final List<NamedFunction<Random, Double>> functionsThread2) {
+  protected void checkThreadSafetyVsCrashesOnly(final int timeoutSec,
+      final List<? extends NamedFunction<? super T, Double>> functionsThread1,
+      final List<? extends NamedFunction<? super T, Double>> functionsThread2) {
     final int seedLength = createRng().getNewSeedLength();
     final byte[] seed = getTestSeedGenerator().generateSeed(seedLength);
-    for (final NamedFunction<Random, Double> supplier1 : functionsThread1) {
-      for (final NamedFunction<Random, Double> supplier2 : functionsThread2) {
+    for (final NamedFunction<? super T, Double> supplier1 : functionsThread1) {
+      for (final NamedFunction<? super T, Double> supplier2 : functionsThread2) {
         runParallel(supplier1, supplier2, seed, timeoutSec,
             (supplier1 == setSeed || supplier2 == setSeed) ? 200 : 1000);
       }
     }
   }
 
-  protected void checkThreadSafety(final List<NamedFunction<Random, Double>> functions,
-      final List<NamedFunction<Random, Double>> pairwiseFunctions) {
+  protected void checkThreadSafety(final List<? extends NamedFunction<? super T, Double>> functions,
+      final List<? extends NamedFunction<? super T, Double>> pairwiseFunctions) {
     checkThreadSafety(functions, pairwiseFunctions, this::createRng);
   }
 
-  protected void checkThreadSafety(final List<NamedFunction<Random, Double>> functions,
-      final List<NamedFunction<Random, Double>> pairwiseFunctions,
-      final Function<byte[], BaseRandom> randomCreator) {
+  protected void checkThreadSafety(final List<? extends NamedFunction<? super T, Double>> functions,
+      final List<? extends NamedFunction<? super T, Double>> pairwiseFunctions,
+      final Function<byte[], ? extends T> randomCreator) {
     final int seedLength = createRng().getNewSeedLength();
     final byte[] seed = getTestSeedGenerator().generateSeed(seedLength);
-    for (final NamedFunction<Random, Double> supplier : functions) {
+    for (final NamedFunction<? super T, Double> supplier : functions) {
       for (int i = 0; i < 5; i++) {
         // This loop is necessary to control the false pass rate, especially during mutation
         // testing.
@@ -814,8 +818,8 @@ public abstract class BaseRandomTest extends PowerMockTestCase {
     // Check that each pair won't crash no matter which order they start in
     // (this part is assertion-free because we can't tell whether A-bits-as-long and
     // B-bits-as-double come from the same bit stream as vice-versa).
-    for (final NamedFunction<Random, Double> supplier1 : pairwiseFunctions) {
-      for (final NamedFunction<Random, Double> supplier2 : pairwiseFunctions) {
+    for (final NamedFunction<? super T, Double> supplier1 : pairwiseFunctions) {
+      for (final NamedFunction<? super T, Double> supplier2 : pairwiseFunctions) {
         if (supplier1 != supplier2) {
           runParallel(supplier1, supplier2, seed, 25, 1000);
         }
@@ -823,14 +827,14 @@ public abstract class BaseRandomTest extends PowerMockTestCase {
     }
   }
 
-  protected SortedSet<Double> runParallel(final NamedFunction<Random, Double> supplier1,
-      final NamedFunction<Random, Double> supplier2, final byte[] seed, final int timeoutSec,
+  protected SortedSet<Double> runParallel(final NamedFunction<? super T, Double> supplier1,
+      final NamedFunction<? super T, Double> supplier2, final byte[] seed, final int timeoutSec,
       final int iterations) {
     return runParallel(supplier1, supplier2, timeoutSec, iterations, createRng(seed));
   }
 
-  protected SortedSet<Double> runParallel(final NamedFunction<Random, Double> supplier1, final NamedFunction<Random, Double> supplier2,
-      final int timeoutSec, final int iterations, final BaseRandom random) {
+  protected SortedSet<Double> runParallel(final NamedFunction<? super T, Double> supplier1, final NamedFunction<? super T, Double> supplier2,
+      final int timeoutSec, final int iterations, final T random) {
     // See https://www.yegor256.com/2018/03/27/how-to-test-thread-safety.html for why a
     // CountDownLatch is used.
     CountDownLatch latch = new CountDownLatch(2);
@@ -842,8 +846,8 @@ public abstract class BaseRandomTest extends PowerMockTestCase {
     return output;
   }
 
-  protected SortedSet<Double> runSequential(final NamedFunction<Random, Double> supplier1,
-      final NamedFunction<Random, Double> supplier2, final BaseRandom random) {
+  protected SortedSet<Double> runSequential(final NamedFunction<? super T, Double> supplier1,
+      final NamedFunction<? super T, Double> supplier2, final T random) {
     final SortedSet<Double> output = new TreeSet<>();
     new GeneratorForkJoinTask<>(random, output, supplier1, new CountDownLatch(1), 1000)
         .exec();
@@ -859,17 +863,19 @@ public abstract class BaseRandomTest extends PowerMockTestCase {
   /**
    * ForkJoinTask that reads random longs and adds them to the set.
    */
-  protected static final class GeneratorForkJoinTask<T> extends ForkJoinTask<Void> {
+  protected static final class GeneratorForkJoinTask<TRandom extends Random, TOut>
+      extends ForkJoinTask<Void> {
 
     private static final long serialVersionUID = 9155874155769888368L;
-    private final Random prng;
-    private final SortedSet<T> set;
-    private final NamedFunction<Random, T> function;
+    private final TRandom prng;
+    private final SortedSet<TOut> set;
+    private final NamedFunction<? super TRandom, ? extends TOut> function;
     private final CountDownLatch latch;
     private final int iterations;
 
-    public GeneratorForkJoinTask(final Random prng, final SortedSet<T> set,
-        final NamedFunction<Random, T> function, final CountDownLatch latch, final int iterations) {
+    public GeneratorForkJoinTask(final TRandom prng, final SortedSet<TOut> set,
+        final NamedFunction<? super TRandom, ? extends TOut> function,
+        final CountDownLatch latch, final int iterations) {
       this.prng = prng;
       this.set = set;
       this.function = function;

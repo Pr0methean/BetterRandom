@@ -2,37 +2,25 @@ package io.github.pr0methean.betterrandom.prng.adapter;
 
 import static org.testng.Assert.assertSame;
 
-import com.google.common.collect.ImmutableList;
-import io.github.pr0methean.betterrandom.NamedFunction;
-import io.github.pr0methean.betterrandom.TestUtils;
+import com.google.common.testing.SerializableTester;
 import io.github.pr0methean.betterrandom.prng.BaseRandom;
-import io.github.pr0methean.betterrandom.prng.BaseRandomTest;
+import io.github.pr0methean.betterrandom.prng.RandomTestUtils;
 import io.github.pr0methean.betterrandom.seed.SeedException;
+import io.github.pr0methean.betterrandom.seed.SeedGenerator;
+import io.github.pr0methean.betterrandom.seed.SemiFakeSeedGenerator;
 import java.security.GeneralSecurityException;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import java.util.Map;
 import java.util.Random;
+import java.util.UUID;
 import org.testng.annotations.Test;
 
 @Test(testName = "RandomWrapper:SecureRandom") public class RandomWrapperSecureRandomTest
-    extends BaseRandomTest {
+    extends RandomWrapperAbstractTest<RandomWrapper<SecureRandom>, SecureRandom> {
 
-  private static final SecureRandom SEED_GEN = new SecureRandom();
-  private static final NamedFunction<Random, Double> SET_WRAPPED = new NamedFunction<>(random -> {
-    ((RandomWrapper<Random>) random).setWrapped(new SecureRandom());
-    return 0.0;
-  }, "setWrapped");
-
-  private static RandomWrapper<SecureRandom> createRngInternal() {
-    try {
-      return new RandomWrapper<>(SecureRandom.getInstance("SHA1PRNG"));
-    } catch (final NoSuchAlgorithmException e) {
-      throw TestUtils.fail("NoSuchAlgorithmException should not occur for SHA1PRNG", e);
-    }
-  }
-
-  @Override protected Class<? extends BaseRandom> getClassUnderTest() {
+  @SuppressWarnings("rawtypes")
+  @Override protected Class<RandomWrapper> getClassUnderTest() {
     return RandomWrapper.class;
   }
 
@@ -40,6 +28,13 @@ import org.testng.annotations.Test;
     final Map<Class<?>, Object> params = super.constructorParams();
     params.put(Random.class, new SecureRandom());
     return params;
+  }
+
+  @Override public void testRandomSeederIntegration() {
+    final SeedGenerator seedGenerator = new SemiFakeSeedGenerator(new Random(),
+        UUID.randomUUID().toString());
+    final BaseRandom rng = createRng();
+    RandomTestUtils.checkReseeding(seedGenerator, rng, true);
   }
 
   /**
@@ -56,6 +51,10 @@ import org.testng.annotations.Test;
    */
   @Override @Test public void testSeedTooShort() throws SeedException {
     super.testSeedTooShort();
+  }
+
+  @Override public void testThreadSafety() {
+    checkThreadSafetyVsCrashesOnly(30, functionsForThreadSafetyTest, functionsForThreadSafetyTest);
   }
 
   @Override @Test(enabled = false) public void testNullSeed() throws SeedException {
@@ -93,24 +92,35 @@ import org.testng.annotations.Test;
     // No-op.
   }
 
+  /**
+   * Assertion-free because SecureRandom itself isn't reproducible after a serialization round trip.
+   * @throws SeedException
+   */
+  @Override public void testSerializable() throws SeedException {
+    assertSame(SerializableTester.reserialize(createRng()).getWrapped().getClass(), SecureRandom.class,
+        "Not the same type after serialization");
+  }
+
   @Override protected RandomWrapper<SecureRandom> createRng() throws SeedException {
-    final RandomWrapper<SecureRandom> wrapper = createRngInternal();
-    wrapper.setSeed(SEED_GEN.nextLong());
-    return wrapper;
+    return createRng(getTestSeedGenerator().generateSeed(32));
   }
 
   @Override protected RandomWrapper<SecureRandom> createRng(final byte[] seed) throws SeedException {
-    final RandomWrapper<SecureRandom> wrapper = createRngInternal();
-    wrapper.setSeed(seed);
-    return wrapper;
+    return RandomWrapper.wrapSecureRandom(seed);
   }
 
-  /**
-   * Assertion-free because SecureRandom isn't necessarily reproducible.
-   */
-  @Override @Test public void testThreadSafety() {
-    testThreadSafetyVsCrashesOnly(30,
-        ImmutableList.of(NEXT_LONG, NEXT_INT, NEXT_DOUBLE, NEXT_GAUSSIAN, SET_WRAPPED));
+  @Override protected SecureRandom createWrappedPrng() {
+    try {
+      return SecureRandom.getInstance("SHA1PRNG");
+    } catch (NoSuchAlgorithmException e) {
+      throw new AssertionError(e);
+    }
+  }
+
+  @Override protected SecureRandom createWrappedPrng(byte[] seed) {
+    SecureRandom out = createWrappedPrng();
+    out.setSeed(seed);
+    return out;
   }
 
   @Test public void testGetWrapped() {

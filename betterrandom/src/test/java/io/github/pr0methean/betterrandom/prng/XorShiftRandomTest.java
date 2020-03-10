@@ -24,17 +24,17 @@ import org.testng.annotations.Test;
  * @author Daniel Dyer
  */
 @Test(testName = "XorShiftRandom") public class XorShiftRandomTest
-    extends BaseRandomTest {
+    extends BaseRandomTest<XorShiftRandom> {
 
-  @Override protected Class<? extends BaseRandom> getClassUnderTest() {
+  @Override protected Class<? extends XorShiftRandom> getClassUnderTest() {
     return XorShiftRandom.class;
   }
 
-  @Override protected BaseRandom createRng() throws SeedException {
+  @Override protected XorShiftRandom createRng() throws SeedException {
     return new XorShiftRandom(getTestSeedGenerator());
   }
 
-  @Override protected BaseRandom createRng(final byte[] seed) throws SeedException {
+  @Override protected XorShiftRandom createRng(final byte[] seed) throws SeedException {
     return new XorShiftRandom(seed);
   }
 }

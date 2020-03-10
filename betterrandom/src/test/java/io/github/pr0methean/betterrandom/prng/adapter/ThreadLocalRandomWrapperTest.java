@@ -19,7 +19,7 @@ import java.util.function.Supplier;
 import org.testng.annotations.Test;
 
 @Test(testName = "ThreadLocalRandomWrapper") public class ThreadLocalRandomWrapperTest
-    extends BaseRandomTest {
+    extends BaseRandomTest<ThreadLocalRandomWrapper<?>> {
 
   private final Supplier<BaseRandom> pcgSupplier;
 
@@ -50,7 +50,8 @@ import org.testng.annotations.Test;
     createRng().setSeed(null);
   }
 
-  @Override protected Class<? extends BaseRandom> getClassUnderTest() {
+  @SuppressWarnings("rawtypes")
+  @Override protected Class<? extends ThreadLocalRandomWrapper> getClassUnderTest() {
     return ThreadLocalRandomWrapper.class;
   }
 
@@ -99,7 +100,7 @@ import org.testng.annotations.Test;
    * Assertion-free because thread-local.
    */
   @Override @Test public void testThreadSafety() {
-    testThreadSafetyVsCrashesOnly(30, functionsForThreadSafetyTest);
+    checkThreadSafetyVsCrashesOnly(30, functionsForThreadSafetyTest);
   }
 
   @Override protected Map<Class<?>, Object> constructorParams() {

@@ -23,6 +23,6 @@ public class LegacyRandomSeederTest extends RandomSeederTest {
     final Random prng = new Random(TEST_SEED);
     final SeedGenerator seedGenerator = new FakeSeedGenerator("testAddRemoveAndIsEmpty");
     final LegacyRandomSeeder randomSeeder = createRandomSeeder(seedGenerator);
-    checkAddRemoveAndIsEmpty(prng, randomSeeder, randomSeeder::add);
+    checkAddRemoveAndIsEmpty(prng, randomSeeder, randomSeeder::addLegacyRandoms);
   }
 }

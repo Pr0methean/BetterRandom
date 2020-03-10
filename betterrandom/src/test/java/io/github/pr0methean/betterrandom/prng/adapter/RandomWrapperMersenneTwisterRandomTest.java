@@ -3,10 +3,7 @@ package io.github.pr0methean.betterrandom.prng.adapter;
 import static org.testng.Assert.assertSame;
 
 import com.google.common.collect.ImmutableList;
-import io.github.pr0methean.betterrandom.NamedFunction;
-import io.github.pr0methean.betterrandom.prng.BaseRandom;
 import io.github.pr0methean.betterrandom.prng.MersenneTwisterRandom;
-import io.github.pr0methean.betterrandom.prng.MersenneTwisterRandomTest;
 import io.github.pr0methean.betterrandom.seed.SeedException;
 import io.github.pr0methean.betterrandom.seed.SeedGenerator;
 import java.util.Collections;
@@ -14,16 +11,11 @@ import java.util.Random;
 import org.testng.annotations.Test;
 
 @Test(testName = "RandomWrapper:MersenneTwisterRandom")
-public class RandomWrapperMersenneTwisterRandomTest extends MersenneTwisterRandomTest {
-
-  private final NamedFunction<Random, Double> setWrapped;
+public class RandomWrapperMersenneTwisterRandomTest
+    extends RandomWrapperAbstractTest<RandomWrapper<MersenneTwisterRandom>, MersenneTwisterRandom> {
 
   public RandomWrapperMersenneTwisterRandomTest() {
     final SeedGenerator seedGenerator = getTestSeedGenerator();
-    setWrapped = new NamedFunction<>(random -> {
-      ((RandomWrapper<Random>) random).setWrapped(new MersenneTwisterRandom(seedGenerator));
-      return 0.0;
-    }, "setWrapped");
   }
 
   /**
@@ -33,11 +25,12 @@ public class RandomWrapperMersenneTwisterRandomTest extends MersenneTwisterRando
    */
   @Override public void testThreadSafety() {
     checkThreadSafety(ImmutableList.of(NEXT_INT), Collections.emptyList());
-    testThreadSafetyVsCrashesOnly(30,
+    checkThreadSafetyVsCrashesOnly(30,
         ImmutableList.of(NEXT_LONG, NEXT_INT, NEXT_DOUBLE, NEXT_GAUSSIAN, setWrapped));
   }
 
-  @Override protected Class<? extends BaseRandom> getClassUnderTest() {
+  @SuppressWarnings("rawtypes")
+  @Override protected Class<RandomWrapper> getClassUnderTest() {
     return RandomWrapper.class;
   }
 
@@ -46,11 +39,19 @@ public class RandomWrapperMersenneTwisterRandomTest extends MersenneTwisterRando
   }
 
   @Override protected RandomWrapper<MersenneTwisterRandom> createRng() throws SeedException {
-    return new RandomWrapper<>(new MersenneTwisterRandom(getTestSeedGenerator()));
+    return new RandomWrapper<>(createWrappedPrng());
+  }
+
+  @Override protected MersenneTwisterRandom createWrappedPrng() {
+    return new MersenneTwisterRandom(getTestSeedGenerator());
   }
 
   @Override protected RandomWrapper<MersenneTwisterRandom> createRng(final byte[] seed) throws SeedException {
-    return new RandomWrapper<>(new MersenneTwisterRandom(seed));
+    return new RandomWrapper<>(createWrappedPrng(seed));
+  }
+
+  @Override protected MersenneTwisterRandom createWrappedPrng(byte[] seed) {
+    return new MersenneTwisterRandom(seed);
   }
 
   // FIXME: This test takes too long!

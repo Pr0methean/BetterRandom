@@ -9,7 +9,6 @@ import com.google.common.testing.GcFinalization;
 import com.google.common.util.concurrent.Uninterruptibles;
 import io.github.pr0methean.betterrandom.ByteArrayReseedableRandom;
 import io.github.pr0methean.betterrandom.EntropyCountingRandom;
-import io.github.pr0methean.betterrandom.FlakyRetryAnalyzer;
 import io.github.pr0methean.betterrandom.TestUtils;
 import io.github.pr0methean.betterrandom.prng.BaseRandom;
 import io.github.pr0methean.betterrandom.prng.Pcg64Random;
@@ -78,7 +77,13 @@ public class RandomSeederTest {
       }
       assertFalse(randomSeeder.isEmpty());
     } finally {
-      RandomTestUtils.removeAndAssertEmpty(randomSeeder, prng);
+      if (randomSeeder instanceof LegacyRandomSeeder) {
+        RandomTestUtils.removeAndAssertEmpty((LegacyRandomSeeder) randomSeeder, prng);
+      } else {
+        assertTrue(prng instanceof BaseRandom,
+            "Need a LegacyRandomSeeder with a " + prng.getClass().getSimpleName());
+        RandomTestUtils.removeAndAssertEmpty(randomSeeder, (BaseRandom) prng);
+      }
     }
     final byte[] bytesWithNewSeed = new byte[TEST_OUTPUT_SIZE];
     prng.nextBytes(bytesWithNewSeed);
@@ -118,8 +123,11 @@ public class RandomSeederTest {
     }
   }
 
-  // FIXME: Sometimes takes too long
-  @Test(singleThreaded = true, timeOut = 180_000L, retryAnalyzer = FlakyRetryAnalyzer.class)
+  /**
+   * This test may always be unacceptably flaky, because it depends on the clearing of a weak
+   * reference in GC.
+   */
+  @Test(enabled = false)
   public void testStopIfEmpty() {
     final SeedGenerator seedGenerator = new FakeSeedGenerator("testStopIfEmpty");
     final RandomSeeder randomSeeder = createRandomSeeder(seedGenerator);

@@ -1,8 +1,11 @@
 package io.github.pr0methean.betterrandom.prng.adapter;
 
+import static io.github.pr0methean.betterrandom.prng.CipherCounterRandomTest.checkInitialEntropyForCipher;
+import static io.github.pr0methean.betterrandom.prng.CipherCounterRandomTest.checkSetSeedForCipher;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertFalse;
 
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.testing.SerializableTester;
 import io.github.pr0methean.betterrandom.FlakyRetryAnalyzer;
@@ -26,9 +29,15 @@ import org.testng.annotations.Test;
 
 // FIXME: Some tests are sometimes too slow.
 @Test(testName = "EntropyBlockingRandomWrapper:AesCounterRandom")
-public class EntropyBlockingRandomWrapperAesCounterRandomTest extends RandomWrapperAesCounterRandomTest {
+public class EntropyBlockingRandomWrapperAesCounterRandomTest
+    extends RandomWrapperAbstractTest<EntropyBlockingRandomWrapper<AesCounterRandom>, AesCounterRandom> {
   private static final long DEFAULT_MAX_ENTROPY = -64L;
   protected static final long VERY_LOW_MINIMUM_ENTROPY = Long.MIN_VALUE / 2;
+
+  @Override @Test public void testThreadSafetySetSeed() {
+    checkThreadSafetyVsCrashesOnly(30,
+        ImmutableList.of(NEXT_LONG, NEXT_INT, NEXT_DOUBLE, NEXT_GAUSSIAN, setSeed, setWrapped));
+  }
 
   @Override @Test(timeOut = 60_000) public void testDistribution() throws SeedException {
     super.testDistribution();
@@ -71,26 +80,35 @@ public class EntropyBlockingRandomWrapperAesCounterRandomTest extends RandomWrap
         relevantConstructors);
   }
 
-  @Override public Class<? extends BaseRandom> getClassUnderTest() {
+  @SuppressWarnings("rawtypes")
+  @Override public Class<EntropyBlockingRandomWrapper> getClassUnderTest() {
     return EntropyBlockingRandomWrapper.class;
   }
 
-  @Override protected RandomWrapper<AesCounterRandom> createRng() throws SeedException {
+  @Override protected EntropyBlockingRandomWrapper<AesCounterRandom> createRng() throws SeedException {
     SeedGenerator testSeedGenerator = getTestSeedGenerator();
-    return new EntropyBlockingRandomWrapper<>(new AesCounterRandom(testSeedGenerator), DEFAULT_MAX_ENTROPY,
+    return new EntropyBlockingRandomWrapper<>(createWrappedPrng(), DEFAULT_MAX_ENTROPY,
         testSeedGenerator);
   }
 
-  @Override protected RandomWrapper<AesCounterRandom> createRng(byte[] seed) throws SeedException {
+  @Override protected AesCounterRandom createWrappedPrng() {
+    return new AesCounterRandom(getTestSeedGenerator());
+  }
+
+  @Override protected EntropyBlockingRandomWrapper<AesCounterRandom> createRng(byte[] seed) throws SeedException {
     SeedGenerator testSeedGenerator = getTestSeedGenerator();
-    return new EntropyBlockingRandomWrapper<>(new AesCounterRandom(seed), DEFAULT_MAX_ENTROPY,
+    return new EntropyBlockingRandomWrapper<>(createWrappedPrng(seed), DEFAULT_MAX_ENTROPY,
         testSeedGenerator);
+  }
+
+  @Override protected AesCounterRandom createWrappedPrng(byte[] seed) {
+    return new AesCounterRandom(seed);
   }
 
   @Override public Map<Class<?>, Object> constructorParams() {
     Map<Class<?>, Object> out = super.constructorParams();
     out.put(long.class, DEFAULT_MAX_ENTROPY);
-    out.put(Random.class, new AesCounterRandom(getTestSeedGenerator()));
+    out.put(Random.class, createWrappedPrng());
     return out;
   }
 
@@ -99,20 +117,20 @@ public class EntropyBlockingRandomWrapperAesCounterRandomTest extends RandomWrap
         this::createRngLargeEntropyLimit);
   }
 
-  private EntropyBlockingRandomWrapper<Random> createRngLargeEntropyLimit() {
+  private EntropyBlockingRandomWrapper<AesCounterRandom> createRngLargeEntropyLimit() {
     final SeedGenerator testSeedGenerator = getTestSeedGenerator();
-    return new EntropyBlockingRandomWrapper<>(new AesCounterRandom(testSeedGenerator),
+    return new EntropyBlockingRandomWrapper<>(createWrappedPrng(),
         VERY_LOW_MINIMUM_ENTROPY, testSeedGenerator);
   }
 
-  private BaseRandom createRngLargeEntropyLimit(byte[] seed) {
-    return new EntropyBlockingRandomWrapper<Random>(new AesCounterRandom(seed),
+  private EntropyBlockingRandomWrapper<AesCounterRandom> createRngLargeEntropyLimit(byte[] seed) {
+    return new EntropyBlockingRandomWrapper<>(createWrappedPrng(seed),
         VERY_LOW_MINIMUM_ENTROPY, getTestSeedGenerator());
   }
 
   @Override public void testRepeatability() throws SeedException {
     SeedGenerator testSeedGenerator = getTestSeedGenerator();
-    final BaseRandom rng = new EntropyBlockingRandomWrapper<Random>(new AesCounterRandom(testSeedGenerator),
+    final BaseRandom rng = new EntropyBlockingRandomWrapper<Random>(createWrappedPrng(),
         VERY_LOW_MINIMUM_ENTROPY, testSeedGenerator);
     // Create second RNG using same seed.
     final BaseRandom duplicateRNG = createRngLargeEntropyLimit(rng.getSeed());
@@ -128,7 +146,7 @@ public class EntropyBlockingRandomWrapperAesCounterRandomTest extends RandomWrap
     final SeedGenerator seedGenerator =
         new FakeSeedGenerator(getClass().getSimpleName() + "::testSerializable #" + new Random().nextInt());
     // Serialise an RNG.
-    final BaseRandom rng = new EntropyBlockingRandomWrapper<Random>(new AesCounterRandom(seedGenerator),
+    final BaseRandom rng = new EntropyBlockingRandomWrapper<Random>(createWrappedPrng(),
         VERY_LOW_MINIMUM_ENTROPY,
         seedGenerator);
     RandomTestUtils.assertEquivalentWhenSerializedAndDeserialized(rng);
@@ -164,5 +182,22 @@ public class EntropyBlockingRandomWrapperAesCounterRandomTest extends RandomWrap
         UUID.randomUUID().toString());
     final BaseRandom rng = createRng();
     RandomTestUtils.checkReseeding(seedGenerator, rng, true, 1 << 30);
+  }
+
+  @Override public void testInitialEntropy() {
+    checkInitialEntropyForCipher(this, new AesCounterRandom().getCounterSizeBytes());
+  }
+
+  @Override protected int getNewSeedLength() {
+    return AesCounterRandom.MAX_SEED_LENGTH_BYTES;
+  }
+
+  @Override @Test(timeOut = 40_000)
+  public void testSetSeedAfterNextLong() throws SeedException {
+    checkSetSeedForCipher(this);
+  }
+
+  @Override @Test(enabled = false) public void testSetSeedAfterNextInt() {
+    // No-op.
   }
 }

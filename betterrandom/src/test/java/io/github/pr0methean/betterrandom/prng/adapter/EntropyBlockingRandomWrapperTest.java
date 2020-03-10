@@ -22,6 +22,7 @@ import io.github.pr0methean.betterrandom.seed.RandomSeeder.DefaultThreadFactory;
 import io.github.pr0methean.betterrandom.seed.SeedException;
 import io.github.pr0methean.betterrandom.seed.SeedGenerator;
 import io.github.pr0methean.betterrandom.seed.SemiFakeSeedGenerator;
+import io.github.pr0methean.betterrandom.util.BinaryUtils;
 import java.util.Arrays;
 import java.util.Map;
 import java.util.Random;
@@ -36,7 +37,8 @@ import org.testng.annotations.Test;
 @Test(testName = "EntropyBlockingRandomWrapper")
 public class EntropyBlockingRandomWrapperTest extends RandomWrapperRandomTest {
 
-  @Override public Class<? extends BaseRandom> getClassUnderTest() {
+  @SuppressWarnings("rawtypes")
+  @Override public Class<EntropyBlockingRandomWrapper> getClassUnderTest() {
     return EntropyBlockingRandomWrapper.class;
   }
 
@@ -105,7 +107,7 @@ public class EntropyBlockingRandomWrapperTest extends RandomWrapperRandomTest {
   }
 
   @Override public void testThreadSafety() {
-    testThreadSafetyVsCrashesOnly(30,
+    checkThreadSafetyVsCrashesOnly(30,
         ImmutableList.of(NEXT_LONG, NEXT_INT, NEXT_DOUBLE, NEXT_GAUSSIAN, SET_WRAPPED));
   }
 
@@ -232,7 +234,7 @@ public class EntropyBlockingRandomWrapperTest extends RandomWrapperRandomTest {
       Uninterruptibles.sleepUninterruptibly(100, TimeUnit.MILLISECONDS);
     }
     random.setWrapped(new Random());
-    Uninterruptibles.joinUninterruptibly(consumer, 1, TimeUnit.SECONDS);
+    Uninterruptibles.joinUninterruptibly(consumer, 5, TimeUnit.SECONDS);
     if (exception.get() != null) {
       fail("Consumer got exception", exception.get());
     }
@@ -241,5 +243,36 @@ public class EntropyBlockingRandomWrapperTest extends RandomWrapperRandomTest {
       fail("Consumer is still running", stackTrace);
     }
     assertEquals(consumer.getState(), Thread.State.TERMINATED, "setWrapped didn't unblock");
+  }
+
+  /**
+   * Test to ensure that two distinct RNGs with the same seed return the same sequence of numbers.
+   */
+  @Override @Test(timeOut = 30_000) public void testRepeatability() throws SeedException {
+    // Create an RNG using the default seeding strategy.
+    byte[] seed = getTestSeedGenerator().generateSeed(8);
+    final EntropyBlockingRandomWrapper<Random> rng = EntropyBlockingRandomWrapper.wrapJavaUtilRandom(
+        VERY_LOW_MINIMUM_ENTROPY, seed, null);
+    // Create second RNG using same seed.
+    final EntropyBlockingRandomWrapper<Random> duplicateRNG = EntropyBlockingRandomWrapper.wrapJavaUtilRandom(
+        VERY_LOW_MINIMUM_ENTROPY, rng.getSeed(), null);
+    RandomTestUtils.assertEquivalent(rng, duplicateRNG, 200, "Generated sequences do not match.");
+  }
+
+  /**
+   * Doesn't use nextBytes, which is implemented non-equivalently in EBRW because it may need to
+   * reseed partway through.
+   */
+  @Test public void testWrapJavaUtilRandom() {
+    final Random rng1 = new Random(0x0123456789abcdefL);
+    final Random rng2 = (Random) EntropyBlockingRandomWrapper.wrapJavaUtilRandom(VERY_LOW_MINIMUM_ENTROPY,
+        BinaryUtils.convertLongToBytes(0x0123456789abcdefL), null);
+    int[] out1 = rng1.ints(200).sequential().toArray();
+    int[] out2 = rng2.ints(200).sequential().toArray();
+    if (!Arrays.equals(out1, out2)) {
+      final String fullMessage = String.format("Output differs from copy of wrapped:%n%s -> %s%nvs.%n%s -> %s%n",
+          RandomTestUtils.toString(rng1), Arrays.toString(out1), RandomTestUtils.toString(rng2), Arrays.toString(out2));
+      fail(fullMessage);
+    }
   }
 }

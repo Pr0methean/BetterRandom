@@ -81,19 +81,26 @@ public abstract class AbstractRandomBenchmarkWithReseeding<T extends Random>
   public void setUp() throws Exception {
     super.setUp();
     if (reseeding) {
-      RANDOM_SEEDER.add((ByteArrayReseedableRandom) prng);
+      if (prng instanceof ByteArrayReseedableRandom) {
+        RANDOM_SEEDER.add((ByteArrayReseedableRandom) prng);
+      } else {
+        throw new AssertionError("This method needs to override setUp");
+      }
     }
   }
 
   /**
    * Detaches the PRNG from the random seeder.
    */
-  @Override
   @TearDown(Level.Trial)
   public void tearDown() {
     if (reseeding) {
-      RANDOM_SEEDER.remove(prng);
+      if (prng instanceof ByteArrayReseedableRandom) {
+        RANDOM_SEEDER.remove((ByteArrayReseedableRandom) prng);
+      } else {
+        throw new AssertionError(String.format("prng is %s, not ByteArrayReseedableRandom",
+            prng.getClass().getName()));
+      }
     }
-    super.tearDown();
   }
 }

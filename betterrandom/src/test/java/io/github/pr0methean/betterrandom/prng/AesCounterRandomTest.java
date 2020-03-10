@@ -30,7 +30,7 @@ import org.testng.annotations.Test;
  * @author Chris Hennick
  */
 @Test(testName = "AesCounterRandom") public class AesCounterRandomTest
-    extends CipherCounterRandomTest {
+    extends CipherCounterRandomTest<AesCounterRandom> {
 
   private static final int MAX_SIZE;
 
@@ -47,15 +47,15 @@ import org.testng.annotations.Test;
     return MAX_SIZE;
   }
 
-  @Override protected Class<? extends BaseRandom> getClassUnderTest() {
+  @Override protected Class<? extends AesCounterRandom> getClassUnderTest() {
     return AesCounterRandom.class;
   }
 
-  @Override protected BaseRandom createRng() throws SeedException {
+  @Override protected AesCounterRandom createRng() throws SeedException {
     return new AesCounterRandom(getTestSeedGenerator().generateSeed(seedSizeBytes));
   }
 
-  @Override protected BaseRandom createRng(final byte[] seed) throws SeedException {
+  @Override protected AesCounterRandom createRng(final byte[] seed) throws SeedException {
     return new AesCounterRandom(seed);
   }
 }

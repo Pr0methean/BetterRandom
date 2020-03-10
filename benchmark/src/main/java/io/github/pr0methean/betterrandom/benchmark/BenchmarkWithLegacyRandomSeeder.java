@@ -22,7 +22,7 @@ public abstract class BenchmarkWithLegacyRandomSeeder<T extends Random>
   @TearDown(Level.Trial)
   public void tearDown() {
     if (reseeding) {
-      RANDOM_SEEDER.remove(prng);
+      RANDOM_SEEDER.removeLegacyRandoms(prng);
     }
   }
 
@@ -31,7 +31,7 @@ public abstract class BenchmarkWithLegacyRandomSeeder<T extends Random>
   public void setUp() throws Exception {
     prng = createPrng();
     if (reseeding) {
-      RANDOM_SEEDER.add(prng);
+      RANDOM_SEEDER.addLegacyRandoms(prng);
     }
   }
 }

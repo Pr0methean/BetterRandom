@@ -25,17 +25,17 @@ import org.testng.annotations.Test;
  * @author Chris Hennick
  */
 @Test(testName = "Cmwc4096Random") public class Cmwc4096RandomTest
-    extends BaseRandomTest {
+    extends BaseRandomTest<Cmwc4096Random> {
 
-  @Override protected Class<? extends BaseRandom> getClassUnderTest() {
+  @Override protected Class<? extends Cmwc4096Random> getClassUnderTest() {
     return Cmwc4096Random.class;
   }
 
-  @Override protected BaseRandom createRng() throws SeedException {
+  @Override protected Cmwc4096Random createRng() throws SeedException {
     return new Cmwc4096Random(getTestSeedGenerator());
   }
 
-  @Override protected BaseRandom createRng(final byte[] seed) throws SeedException {
+  @Override protected Cmwc4096Random createRng(final byte[] seed) throws SeedException {
     return new Cmwc4096Random(seed);
   }
 

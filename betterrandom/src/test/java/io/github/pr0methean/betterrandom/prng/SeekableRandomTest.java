@@ -8,7 +8,8 @@ import org.testng.annotations.Test;
 /**
  * Abstract test class for a class that implements {@link SeekableRandom}.
  */
-public abstract class SeekableRandomTest extends BaseRandomTest {
+public abstract class SeekableRandomTest<T extends BaseRandom & SeekableRandom>
+    extends BaseRandomTest<T> {
 
   private static final int ITERATIONS = 10; // because bugs may depend on the initial seed value
   private static final int DELTA = 37;

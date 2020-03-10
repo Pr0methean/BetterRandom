@@ -8,7 +8,6 @@ import org.openjdk.jmh.annotations.Measurement;
 import org.openjdk.jmh.annotations.Scope;
 import org.openjdk.jmh.annotations.Setup;
 import org.openjdk.jmh.annotations.State;
-import org.openjdk.jmh.annotations.TearDown;
 import org.openjdk.jmh.annotations.Timeout;
 import org.openjdk.jmh.annotations.Warmup;
 import org.openjdk.jmh.infra.Blackhole;
@@ -57,10 +56,5 @@ abstract class AbstractRandomBenchmark<T extends Random> {
   @Warmup(iterations = 5, time = 4)
   @Benchmark public void testNextLong(Blackhole blackhole) {
     blackhole.consume(prng.nextLong());
-  }
-
-  @TearDown(Level.Trial)
-  public void tearDown() {
-    prng = null;
   }
 }
