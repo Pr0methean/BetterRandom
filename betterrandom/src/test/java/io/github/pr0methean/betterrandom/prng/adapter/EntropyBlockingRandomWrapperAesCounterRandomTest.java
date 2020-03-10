@@ -35,7 +35,7 @@ public class EntropyBlockingRandomWrapperAesCounterRandomTest
   protected static final long VERY_LOW_MINIMUM_ENTROPY = Long.MIN_VALUE / 2;
 
   @Override @Test public void testThreadSafetySetSeed() {
-    testThreadSafetyVsCrashesOnly(30,
+    checkThreadSafetyVsCrashesOnly(30,
         ImmutableList.of(NEXT_LONG, NEXT_INT, NEXT_DOUBLE, NEXT_GAUSSIAN, setSeed, setWrapped));
   }
 

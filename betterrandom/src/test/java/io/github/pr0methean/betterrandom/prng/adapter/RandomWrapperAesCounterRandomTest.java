@@ -13,7 +13,7 @@ import org.testng.annotations.Test;
     extends RandomWrapperAbstractTest<RandomWrapper<AesCounterRandom>, AesCounterRandom> {
 
   @Override @Test public void testThreadSafetySetSeed() {
-    testThreadSafetyVsCrashesOnly(30,
+    checkThreadSafetyVsCrashesOnly(30,
         ImmutableList.of(NEXT_LONG, NEXT_INT, NEXT_DOUBLE, NEXT_GAUSSIAN, setSeed, setWrapped));
   }
 

@@ -62,7 +62,7 @@ import org.testng.annotations.Test;
    */
   @Override public void testThreadSafety() {
     checkThreadSafety(ImmutableList.of(NEXT_INT), Collections.emptyList());
-    testThreadSafetyVsCrashesOnly(30,
+    checkThreadSafetyVsCrashesOnly(30,
         ImmutableList.of(NEXT_LONG, NEXT_INT, NEXT_DOUBLE, NEXT_GAUSSIAN, SET_WRAPPED));
   }
 

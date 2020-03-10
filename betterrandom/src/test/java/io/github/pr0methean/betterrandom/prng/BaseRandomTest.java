@@ -764,7 +764,7 @@ public abstract class BaseRandomTest<T extends BaseRandom> extends PowerMockTest
   }
 
   @Test public void testThreadSafetySetSeed() {
-    testThreadSafetyVsCrashesOnly(30, Collections.singletonList(setSeed),
+    checkThreadSafetyVsCrashesOnly(30, Collections.singletonList(setSeed),
         functionsForThreadCrashTest);
   }
 
@@ -774,12 +774,12 @@ public abstract class BaseRandomTest<T extends BaseRandom> extends PowerMockTest
     assertEquals(createRng(seed).getEntropyBits(), 8 * seedSize, "Wrong initial entropy");
   }
 
-  protected void testThreadSafetyVsCrashesOnly(final int timeoutSec,
+  protected void checkThreadSafetyVsCrashesOnly(final int timeoutSec,
       final List<? extends NamedFunction<? super T, Double>> functions) {
-    testThreadSafetyVsCrashesOnly(timeoutSec, functions, functions);
+    checkThreadSafetyVsCrashesOnly(timeoutSec, functions, functions);
   }
 
-  protected void testThreadSafetyVsCrashesOnly(final int timeoutSec,
+  protected void checkThreadSafetyVsCrashesOnly(final int timeoutSec,
       final List<? extends NamedFunction<? super T, Double>> functionsThread1,
       final List<? extends NamedFunction<? super T, Double>> functionsThread2) {
     final int seedLength = createRng().getNewSeedLength();

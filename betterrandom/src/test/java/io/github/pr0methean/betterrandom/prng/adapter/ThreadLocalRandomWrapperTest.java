@@ -100,7 +100,7 @@ import org.testng.annotations.Test;
    * Assertion-free because thread-local.
    */
   @Override @Test public void testThreadSafety() {
-    testThreadSafetyVsCrashesOnly(30, functionsForThreadSafetyTest);
+    checkThreadSafetyVsCrashesOnly(30, functionsForThreadSafetyTest);
   }
 
   @Override protected Map<Class<?>, Object> constructorParams() {

@@ -89,6 +89,18 @@ public class RandomWrapper<T extends Random> extends BaseRandom {
   }
 
   /**
+   * Creates an instance wrapping a basic {@link SecureRandom} with a given seed.
+   *
+   * @param seed the seed
+   * @return an instance
+   */
+  public static RandomWrapper<SecureRandom> wrapSecureRandom(final byte[] seed) {
+    RandomWrapper<SecureRandom> wrapper = new RandomWrapper<>(new SecureRandom(seed));
+    wrapper.setInitiallyKnownSeed(seed);
+    return wrapper;
+  }
+
+  /**
    * Creates an instance wrapping a basic {@link Random}.
    *
    * @param seedGenerator the generator used to generate the seed
@@ -108,7 +120,11 @@ public class RandomWrapper<T extends Random> extends BaseRandom {
    * @param seed the seed
    */
   protected void setInitiallyKnownSeed(byte[] seed) {
-    System.arraycopy(seed, 0, this.seed, 0, Long.BYTES);
+    if (this.seed.length == seed.length) {
+      System.arraycopy(seed, 0, this.seed, 0, seed.length);
+    } else {
+      this.seed = seed.clone();
+    }
     entropyBits.set(seed.length * 8L);
     unknownSeed = false;
   }
