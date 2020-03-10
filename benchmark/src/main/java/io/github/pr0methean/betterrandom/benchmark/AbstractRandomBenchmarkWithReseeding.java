@@ -92,7 +92,6 @@ public abstract class AbstractRandomBenchmarkWithReseeding<T extends Random>
   /**
    * Detaches the PRNG from the random seeder.
    */
-  @Override
   @TearDown(Level.Trial)
   public void tearDown() {
     if (reseeding) {
@@ -103,6 +102,5 @@ public abstract class AbstractRandomBenchmarkWithReseeding<T extends Random>
             prng.getClass().getName()));
       }
     }
-    super.tearDown();
   }
 }
