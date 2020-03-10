@@ -30,7 +30,7 @@ import org.testng.annotations.Test;
 // FIXME: Some tests are sometimes too slow.
 @Test(testName = "EntropyBlockingRandomWrapper:AesCounterRandom")
 public class EntropyBlockingRandomWrapperAesCounterRandomTest
-    extends RandomWrapperAbstractTest<EntropyBlockingRandomWrapper<AesCounterRandom>> {
+    extends RandomWrapperAbstractTest<EntropyBlockingRandomWrapper<AesCounterRandom>, AesCounterRandom> {
   private static final long DEFAULT_MAX_ENTROPY = -64L;
   protected static final long VERY_LOW_MINIMUM_ENTROPY = Long.MIN_VALUE / 2;
 
@@ -87,20 +87,28 @@ public class EntropyBlockingRandomWrapperAesCounterRandomTest
 
   @Override protected EntropyBlockingRandomWrapper<AesCounterRandom> createRng() throws SeedException {
     SeedGenerator testSeedGenerator = getTestSeedGenerator();
-    return new EntropyBlockingRandomWrapper<>(new AesCounterRandom(testSeedGenerator), DEFAULT_MAX_ENTROPY,
+    return new EntropyBlockingRandomWrapper<>(createWrappedPrng(), DEFAULT_MAX_ENTROPY,
         testSeedGenerator);
+  }
+
+  @Override protected AesCounterRandom createWrappedPrng() {
+    return new AesCounterRandom(getTestSeedGenerator());
   }
 
   @Override protected EntropyBlockingRandomWrapper<AesCounterRandom> createRng(byte[] seed) throws SeedException {
     SeedGenerator testSeedGenerator = getTestSeedGenerator();
-    return new EntropyBlockingRandomWrapper<>(new AesCounterRandom(seed), DEFAULT_MAX_ENTROPY,
+    return new EntropyBlockingRandomWrapper<>(createWrappedPrng(seed), DEFAULT_MAX_ENTROPY,
         testSeedGenerator);
+  }
+
+  @Override protected AesCounterRandom createWrappedPrng(byte[] seed) {
+    return new AesCounterRandom(seed);
   }
 
   @Override public Map<Class<?>, Object> constructorParams() {
     Map<Class<?>, Object> out = super.constructorParams();
     out.put(long.class, DEFAULT_MAX_ENTROPY);
-    out.put(Random.class, new AesCounterRandom(getTestSeedGenerator()));
+    out.put(Random.class, createWrappedPrng());
     return out;
   }
 
@@ -111,18 +119,18 @@ public class EntropyBlockingRandomWrapperAesCounterRandomTest
 
   private EntropyBlockingRandomWrapper<AesCounterRandom> createRngLargeEntropyLimit() {
     final SeedGenerator testSeedGenerator = getTestSeedGenerator();
-    return new EntropyBlockingRandomWrapper<>(new AesCounterRandom(testSeedGenerator),
+    return new EntropyBlockingRandomWrapper<>(createWrappedPrng(),
         VERY_LOW_MINIMUM_ENTROPY, testSeedGenerator);
   }
 
   private EntropyBlockingRandomWrapper<AesCounterRandom> createRngLargeEntropyLimit(byte[] seed) {
-    return new EntropyBlockingRandomWrapper<>(new AesCounterRandom(seed),
+    return new EntropyBlockingRandomWrapper<>(createWrappedPrng(seed),
         VERY_LOW_MINIMUM_ENTROPY, getTestSeedGenerator());
   }
 
   @Override public void testRepeatability() throws SeedException {
     SeedGenerator testSeedGenerator = getTestSeedGenerator();
-    final BaseRandom rng = new EntropyBlockingRandomWrapper<Random>(new AesCounterRandom(testSeedGenerator),
+    final BaseRandom rng = new EntropyBlockingRandomWrapper<Random>(createWrappedPrng(),
         VERY_LOW_MINIMUM_ENTROPY, testSeedGenerator);
     // Create second RNG using same seed.
     final BaseRandom duplicateRNG = createRngLargeEntropyLimit(rng.getSeed());
@@ -138,7 +146,7 @@ public class EntropyBlockingRandomWrapperAesCounterRandomTest
     final SeedGenerator seedGenerator =
         new FakeSeedGenerator(getClass().getSimpleName() + "::testSerializable #" + new Random().nextInt());
     // Serialise an RNG.
-    final BaseRandom rng = new EntropyBlockingRandomWrapper<Random>(new AesCounterRandom(seedGenerator),
+    final BaseRandom rng = new EntropyBlockingRandomWrapper<Random>(createWrappedPrng(),
         VERY_LOW_MINIMUM_ENTROPY,
         seedGenerator);
     RandomTestUtils.assertEquivalentWhenSerializedAndDeserialized(rng);

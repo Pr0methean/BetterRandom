@@ -15,6 +15,7 @@
 // ============================================================================
 package io.github.pr0methean.betterrandom.prng.adapter;
 
+import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertSame;
 
 import com.google.common.collect.ImmutableList;
@@ -22,6 +23,7 @@ import io.github.pr0methean.betterrandom.NamedFunction;
 import io.github.pr0methean.betterrandom.prng.BaseRandom;
 import io.github.pr0methean.betterrandom.prng.RandomTestUtils;
 import io.github.pr0methean.betterrandom.seed.SeedException;
+import io.github.pr0methean.betterrandom.util.BinaryUtils;
 import java.util.Collections;
 import java.util.Map;
 import java.util.Random;
@@ -34,7 +36,7 @@ import org.testng.annotations.Test;
  * @author Chris Hennick
  */
 @Test(testName = "RandomWrapper") public class RandomWrapperRandomTest
-    extends RandomWrapperAbstractTest<RandomWrapper<Random>> {
+    extends RandomWrapperAbstractTest<RandomWrapper<Random>, Random> {
 
   protected static final NamedFunction<RandomWrapper<? super Random>,
       Double> SET_WRAPPED = new NamedFunction<>(random -> {
@@ -79,6 +81,15 @@ import org.testng.annotations.Test;
     // Create second RNG using same seed.
     final RandomWrapper<Random> duplicateRNG = RandomWrapper.wrapJavaUtilRandom(rng.getSeed());
     RandomTestUtils.assertEquivalent(rng, duplicateRNG, 200, "Generated sequences do not match.");
+  }
+
+  @Override protected Random createWrappedPrng() {
+    return new Random();
+  }
+
+  @Override protected Random createWrappedPrng(byte[] seed) {
+    assertEquals(seed.length, Long.BYTES, "Wrong seed length");
+    return new Random(BinaryUtils.convertBytesToLong(seed));
   }
 
   @Override protected RandomWrapper<Random> createRng() throws SeedException {

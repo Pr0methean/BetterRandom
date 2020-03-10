@@ -3,7 +3,6 @@ package io.github.pr0methean.betterrandom.prng.adapter;
 import static org.testng.Assert.assertSame;
 
 import com.google.common.collect.ImmutableList;
-import io.github.pr0methean.betterrandom.NamedFunction;
 import io.github.pr0methean.betterrandom.prng.MersenneTwisterRandom;
 import io.github.pr0methean.betterrandom.seed.SeedException;
 import io.github.pr0methean.betterrandom.seed.SeedGenerator;
@@ -13,16 +12,10 @@ import org.testng.annotations.Test;
 
 @Test(testName = "RandomWrapper:MersenneTwisterRandom")
 public class RandomWrapperMersenneTwisterRandomTest
-    extends RandomWrapperAbstractTest<RandomWrapper<MersenneTwisterRandom>> {
-
-  private final NamedFunction<Random, Double> setWrapped;
+    extends RandomWrapperAbstractTest<RandomWrapper<MersenneTwisterRandom>, MersenneTwisterRandom> {
 
   public RandomWrapperMersenneTwisterRandomTest() {
     final SeedGenerator seedGenerator = getTestSeedGenerator();
-    setWrapped = new NamedFunction<>(random -> {
-      ((RandomWrapper<Random>) random).setWrapped(new MersenneTwisterRandom(seedGenerator));
-      return 0.0;
-    }, "setWrapped");
   }
 
   /**
@@ -46,11 +39,19 @@ public class RandomWrapperMersenneTwisterRandomTest
   }
 
   @Override protected RandomWrapper<MersenneTwisterRandom> createRng() throws SeedException {
-    return new RandomWrapper<>(new MersenneTwisterRandom(getTestSeedGenerator()));
+    return new RandomWrapper<>(createWrappedPrng());
+  }
+
+  @Override protected MersenneTwisterRandom createWrappedPrng() {
+    return new MersenneTwisterRandom(getTestSeedGenerator());
   }
 
   @Override protected RandomWrapper<MersenneTwisterRandom> createRng(final byte[] seed) throws SeedException {
-    return new RandomWrapper<>(new MersenneTwisterRandom(seed));
+    return new RandomWrapper<>(createWrappedPrng(seed));
+  }
+
+  @Override protected MersenneTwisterRandom createWrappedPrng(byte[] seed) {
+    return new MersenneTwisterRandom(seed);
   }
 
   // FIXME: This test takes too long!

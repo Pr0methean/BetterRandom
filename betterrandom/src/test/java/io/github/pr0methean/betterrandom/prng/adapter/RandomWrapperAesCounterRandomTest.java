@@ -10,7 +10,7 @@ import io.github.pr0methean.betterrandom.seed.SeedException;
 import org.testng.annotations.Test;
 
 @Test(testName = "RandomWrapper:AesCounterRandom") public class RandomWrapperAesCounterRandomTest
-    extends RandomWrapperAbstractTest<RandomWrapper<AesCounterRandom>> {
+    extends RandomWrapperAbstractTest<RandomWrapper<AesCounterRandom>, AesCounterRandom> {
 
   @Override @Test public void testThreadSafetySetSeed() {
     testThreadSafetyVsCrashesOnly(30,
@@ -26,7 +26,11 @@ import org.testng.annotations.Test;
   }
 
   @Override protected RandomWrapper<AesCounterRandom> createRng() throws SeedException {
-    return new RandomWrapper<>(new AesCounterRandom(getTestSeedGenerator()));
+    return new RandomWrapper<>(createWrappedPrng());
+  }
+
+  @Override protected AesCounterRandom createWrappedPrng() {
+    return new AesCounterRandom(getTestSeedGenerator());
   }
 
   @Override public void testInitialEntropy() {
@@ -38,7 +42,11 @@ import org.testng.annotations.Test;
   }
 
   @Override protected RandomWrapper<AesCounterRandom> createRng(final byte[] seed) throws SeedException {
-    return new RandomWrapper<>(new AesCounterRandom(seed));
+    return new RandomWrapper<>(createWrappedPrng(seed));
+  }
+
+  @Override protected AesCounterRandom createWrappedPrng(byte[] seed) {
+    return new AesCounterRandom(seed);
   }
 
   @Test public void testGetWrapped() {
