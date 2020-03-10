@@ -22,6 +22,7 @@ import io.github.pr0methean.betterrandom.seed.RandomSeeder.DefaultThreadFactory;
 import io.github.pr0methean.betterrandom.seed.SeedException;
 import io.github.pr0methean.betterrandom.seed.SeedGenerator;
 import io.github.pr0methean.betterrandom.seed.SemiFakeSeedGenerator;
+import io.github.pr0methean.betterrandom.util.BinaryUtils;
 import java.util.Arrays;
 import java.util.Map;
 import java.util.Random;
@@ -256,5 +257,22 @@ public class EntropyBlockingRandomWrapperTest extends RandomWrapperRandomTest {
     final EntropyBlockingRandomWrapper<Random> duplicateRNG = EntropyBlockingRandomWrapper.wrapJavaUtilRandom(
         VERY_LOW_MINIMUM_ENTROPY, rng.getSeed(), null);
     RandomTestUtils.assertEquivalent(rng, duplicateRNG, 200, "Generated sequences do not match.");
+  }
+
+  /**
+   * Doesn't use nextBytes, which is implemented non-equivalently in EBRW because it may need to
+   * reseed partway through.
+   */
+  @Test public void testWrapJavaUtilRandom() {
+    final Random rng1 = new Random(0x0123456789abcdefL);
+    final Random rng2 = (Random) EntropyBlockingRandomWrapper.wrapJavaUtilRandom(VERY_LOW_MINIMUM_ENTROPY,
+        BinaryUtils.convertLongToBytes(0x0123456789abcdefL), null);
+    int[] out1 = rng1.ints(200).sequential().toArray();
+    int[] out2 = rng2.ints(200).sequential().toArray();
+    if (!Arrays.equals(out1, out2)) {
+      final String fullMessage = String.format("Output differs from copy of wrapped:%n%s -> %s%nvs.%n%s -> %s%n",
+          RandomTestUtils.toString(rng1), Arrays.toString(out1), RandomTestUtils.toString(rng2), Arrays.toString(out2));
+      fail(fullMessage);
+    }
   }
 }

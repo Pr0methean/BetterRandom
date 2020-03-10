@@ -15,13 +15,13 @@
 // ============================================================================
 package io.github.pr0methean.betterrandom.prng.adapter;
 
+import static io.github.pr0methean.betterrandom.prng.RandomTestUtils.assertEquivalent;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertSame;
 
 import com.google.common.collect.ImmutableList;
 import io.github.pr0methean.betterrandom.NamedFunction;
 import io.github.pr0methean.betterrandom.prng.BaseRandom;
-import io.github.pr0methean.betterrandom.prng.RandomTestUtils;
 import io.github.pr0methean.betterrandom.seed.SeedException;
 import io.github.pr0methean.betterrandom.util.BinaryUtils;
 import java.util.Collections;
@@ -80,7 +80,7 @@ import org.testng.annotations.Test;
     final RandomWrapper<Random> rng = RandomWrapper.wrapJavaUtilRandom(getTestSeedGenerator());
     // Create second RNG using same seed.
     final RandomWrapper<Random> duplicateRNG = RandomWrapper.wrapJavaUtilRandom(rng.getSeed());
-    RandomTestUtils.assertEquivalent(rng, duplicateRNG, 200, "Generated sequences do not match.");
+    assertEquivalent(rng, duplicateRNG, 200, "Generated sequences do not match.");
   }
 
   @Override protected Random createWrappedPrng() {
@@ -102,5 +102,16 @@ import org.testng.annotations.Test;
 
   @Test public void testGetWrapped() {
     assertSame(createRng().getWrapped().getClass(), Random.class);
+  }
+
+  @Test public void testWrapJavaUtilRandom() {
+    assertEquivalent(new Random(0x0123456789abcdefL), RandomWrapper.wrapJavaUtilRandom(0x0123456789abcdefL),
+        200, "Output differs from copy of wrapped");
+  }
+
+  @Test public void testWrapJavaUtilRandomBytes() {
+    assertEquivalent(new Random(0x0123456789abcdefL), RandomWrapper.wrapJavaUtilRandom(
+        BinaryUtils.convertLongToBytes(0x0123456789abcdefL)),
+        200, "Output differs from copy of wrapped");
   }
 }
