@@ -9,9 +9,9 @@ import io.github.pr0methean.betterrandom.prng.BaseRandomTest;
 import io.github.pr0methean.betterrandom.seed.SeedException;
 import org.testng.annotations.Test;
 
-public class SingleThreadSplittableRandomAdapterTest extends BaseRandomTest {
+public class SingleThreadSplittableRandomAdapterTest extends BaseRandomTest<BaseSplittableRandomAdapter> {
 
-  @Override protected Class<? extends BaseRandom> getClassUnderTest() {
+  @Override protected Class<? extends BaseSplittableRandomAdapter> getClassUnderTest() {
     return SingleThreadSplittableRandomAdapter.class;
   }
 
@@ -26,7 +26,7 @@ public class SingleThreadSplittableRandomAdapterTest extends BaseRandomTest {
     return new SingleThreadSplittableRandomAdapter(getTestSeedGenerator());
   }
 
-  @Override protected BaseRandom createRng(final byte[] seed) throws SeedException {
+  @Override protected BaseSplittableRandomAdapter createRng(final byte[] seed) throws SeedException {
     final BaseSplittableRandomAdapter adapter = createRng();
     adapter.setSeed(seed);
     return adapter;

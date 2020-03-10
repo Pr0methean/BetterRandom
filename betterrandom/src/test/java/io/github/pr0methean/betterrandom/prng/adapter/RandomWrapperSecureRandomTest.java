@@ -16,7 +16,7 @@ import java.util.Random;
 import org.testng.annotations.Test;
 
 @Test(testName = "RandomWrapper:SecureRandom") public class RandomWrapperSecureRandomTest
-    extends BaseRandomTest {
+    extends BaseRandomTest<RandomWrapper<SecureRandom>> {
 
   private static final SecureRandom SEED_GEN = new SecureRandom();
   private static final NamedFunction<Random, Double> SET_WRAPPED = new NamedFunction<>(random -> {
@@ -32,7 +32,8 @@ import org.testng.annotations.Test;
     }
   }
 
-  @Override protected Class<? extends BaseRandom> getClassUnderTest() {
+  @SuppressWarnings("rawtypes")
+  @Override protected Class<RandomWrapper> getClassUnderTest() {
     return RandomWrapper.class;
   }
 

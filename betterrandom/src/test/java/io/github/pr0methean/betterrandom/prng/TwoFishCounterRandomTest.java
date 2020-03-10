@@ -5,8 +5,8 @@ import static org.testng.Assert.assertTrue;
 /**
  * Serves to test the suitability of {@link CipherCounterRandom} for non-AES-based subclassing.
  */
-public class TwoFishCounterRandomTest extends CipherCounterRandomTest {
-  @Override protected Class<? extends BaseRandom> getClassUnderTest() {
+public class TwoFishCounterRandomTest extends CipherCounterRandomTest<TwoFishCounterRandom> {
+  @Override protected Class<? extends TwoFishCounterRandom> getClassUnderTest() {
     return TwoFishCounterRandom.class;
   }
 
@@ -14,12 +14,12 @@ public class TwoFishCounterRandomTest extends CipherCounterRandomTest {
     return 96;
   }
 
-  @Override protected BaseRandom createRng() {
+  @Override protected TwoFishCounterRandom createRng() {
     assertTrue(seedSizeBytes > 0, "seedSizeBytes not set");
     return new TwoFishCounterRandom(getTestSeedGenerator().generateSeed(seedSizeBytes));
   }
 
-  @Override protected BaseRandom createRng(byte[] seed) {
+  @Override protected TwoFishCounterRandom createRng(byte[] seed) {
     return new TwoFishCounterRandom(seed);
   }
 }

@@ -36,7 +36,8 @@ import org.testng.annotations.Test;
 @Test(testName = "EntropyBlockingRandomWrapper")
 public class EntropyBlockingRandomWrapperTest extends RandomWrapperRandomTest {
 
-  @Override public Class<? extends BaseRandom> getClassUnderTest() {
+  @SuppressWarnings("unchecked")
+  @Override public Class<EntropyBlockingRandomWrapper> getClassUnderTest() {
     return EntropyBlockingRandomWrapper.class;
   }
 
@@ -241,5 +242,19 @@ public class EntropyBlockingRandomWrapperTest extends RandomWrapperRandomTest {
       fail("Consumer is still running", stackTrace);
     }
     assertEquals(consumer.getState(), Thread.State.TERMINATED, "setWrapped didn't unblock");
+  }
+
+  /**
+   * Test to ensure that two distinct RNGs with the same seed return the same sequence of numbers.
+   */
+  @Override @Test(timeOut = 30_000) public void testRepeatability() throws SeedException {
+    // Create an RNG using the default seeding strategy.
+    byte[] seed = getTestSeedGenerator().generateSeed(8);
+    final EntropyBlockingRandomWrapper<Random> rng = EntropyBlockingRandomWrapper.wrapJavaUtilRandom(
+        VERY_LOW_MINIMUM_ENTROPY, seed, null);
+    // Create second RNG using same seed.
+    final EntropyBlockingRandomWrapper<Random> duplicateRNG = EntropyBlockingRandomWrapper.wrapJavaUtilRandom(
+        VERY_LOW_MINIMUM_ENTROPY, rng.getSeed(), null);
+    RandomTestUtils.assertEquivalent(rng, duplicateRNG, 200, "Generated sequences do not match.");
   }
 }

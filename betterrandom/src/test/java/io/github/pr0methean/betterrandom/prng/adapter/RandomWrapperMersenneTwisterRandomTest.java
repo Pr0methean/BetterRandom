@@ -4,9 +4,7 @@ import static org.testng.Assert.assertSame;
 
 import com.google.common.collect.ImmutableList;
 import io.github.pr0methean.betterrandom.NamedFunction;
-import io.github.pr0methean.betterrandom.prng.BaseRandom;
 import io.github.pr0methean.betterrandom.prng.MersenneTwisterRandom;
-import io.github.pr0methean.betterrandom.prng.MersenneTwisterRandomTest;
 import io.github.pr0methean.betterrandom.seed.SeedException;
 import io.github.pr0methean.betterrandom.seed.SeedGenerator;
 import java.util.Collections;
@@ -14,7 +12,8 @@ import java.util.Random;
 import org.testng.annotations.Test;
 
 @Test(testName = "RandomWrapper:MersenneTwisterRandom")
-public class RandomWrapperMersenneTwisterRandomTest extends MersenneTwisterRandomTest {
+public class RandomWrapperMersenneTwisterRandomTest
+    extends RandomWrapperAbstractTest<RandomWrapper<MersenneTwisterRandom>> {
 
   private final NamedFunction<Random, Double> setWrapped;
 
@@ -37,7 +36,8 @@ public class RandomWrapperMersenneTwisterRandomTest extends MersenneTwisterRando
         ImmutableList.of(NEXT_LONG, NEXT_INT, NEXT_DOUBLE, NEXT_GAUSSIAN, setWrapped));
   }
 
-  @Override protected Class<? extends BaseRandom> getClassUnderTest() {
+  @SuppressWarnings("rawtypes")
+  @Override protected Class<RandomWrapper> getClassUnderTest() {
     return RandomWrapper.class;
   }
 

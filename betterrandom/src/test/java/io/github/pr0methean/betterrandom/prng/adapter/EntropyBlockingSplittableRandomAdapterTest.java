@@ -54,7 +54,7 @@ public class EntropyBlockingSplittableRandomAdapterTest
         EntropyBlockingTestUtils.DEFAULT_MAX_ENTROPY);
   }
 
-  @Override protected BaseRandom createRng(byte[] seed) throws SeedException {
+  @Override protected EntropyBlockingSplittableRandomAdapter createRng(byte[] seed) throws SeedException {
     EntropyBlockingSplittableRandomAdapter out = createRng();
     out.setSeed(seed);
     return out;
@@ -104,7 +104,7 @@ public class EntropyBlockingSplittableRandomAdapterTest
     }
   }
 
-  @Override protected Class<? extends BaseRandom> getClassUnderTest() {
+  @Override protected Class<EntropyBlockingSplittableRandomAdapter> getClassUnderTest() {
     return EntropyBlockingSplittableRandomAdapter.class;
   }
 

@@ -25,17 +25,17 @@ import org.testng.annotations.Test;
  * @author Chris Hennick
  */
 @Test(testName = "MersenneTwisterRandom") public class MersenneTwisterRandomTest
-    extends BaseRandomTest {
+    extends BaseRandomTest<MersenneTwisterRandom> {
 
-  @Override protected Class<? extends BaseRandom> getClassUnderTest() {
+  @Override protected Class<? extends MersenneTwisterRandom> getClassUnderTest() {
     return MersenneTwisterRandom.class;
   }
 
-  @Override protected BaseRandom createRng() throws SeedException {
+  @Override protected MersenneTwisterRandom createRng() throws SeedException {
     return new MersenneTwisterRandom(getTestSeedGenerator());
   }
 
-  @Override protected BaseRandom createRng(final byte[] seed) throws SeedException {
+  @Override protected MersenneTwisterRandom createRng(final byte[] seed) throws SeedException {
     return new MersenneTwisterRandom(seed);
   }
 }

@@ -14,7 +14,8 @@ import org.testng.annotations.Optional;
 import org.testng.annotations.Parameters;
 import org.testng.annotations.Test;
 
-public abstract class CipherCounterRandomTest extends SeekableRandomTest {
+public abstract class CipherCounterRandomTest<T extends CipherCounterRandom>
+    extends SeekableRandomTest<T> {
   protected abstract int getExpectedMaxSize();
 
   protected int seedSizeBytes;
@@ -91,10 +92,7 @@ public abstract class CipherCounterRandomTest extends SeekableRandomTest {
     if (seedSizeBytes > 16) {
       throw new SkipException("Skipping a redundant test");
     }
-    if (!(rng instanceof CipherCounterRandom)) {
-      throw new SkipException("Skipping an inapplicable test");
-    }
-    int max = ((CipherCounterRandom) createRng()).getMaxKeyLengthBytes();
+    int max = createRng().getMaxKeyLengthBytes();
     assertGreaterOrEqual(max, 16, "Should allow a 16-byte key");
     assertLessOrEqual(max, getExpectedMaxSize(),
         "Shouldn't allow a key longer than " + getExpectedMaxSize() + "bytes");
@@ -103,17 +101,15 @@ public abstract class CipherCounterRandomTest extends SeekableRandomTest {
   @Override public void testInitialEntropy() {
     int seedSize = getNewSeedLength();
     byte[] seed = getTestSeedGenerator().generateSeed(seedSize);
-    BaseRandom random = createRng(seed);
+    T random = createRng(seed);
     long entropy = random.getEntropyBits();
     assertTrue(entropy > 0, "Initially has zero entropy!");
-    if (random instanceof CipherCounterRandom) {
-      assertTrue(entropy >= 8 * (seedSizeBytes - ((CipherCounterRandom) random).getCounterSizeBytes()),
-          "Initial entropy too low");
-    }
+    assertTrue(entropy >= 8 * (seedSizeBytes - random.getCounterSizeBytes()),
+        "Initial entropy too low");
     assertTrue(entropy <= 8 * seedSizeBytes, "Initial entropy too high");
   }
 
-  @Override protected abstract BaseRandom createRng() throws SeedException;
+  @Override protected abstract T createRng() throws SeedException;
 
-  @Override protected abstract BaseRandom createRng(byte[] seed) throws SeedException;
+  @Override protected abstract T createRng(byte[] seed) throws SeedException;
 }

@@ -36,7 +36,7 @@ public class ReseedingThreadLocalRandomWrapperMersenneTwisterTest
     return EntropyCheckMode.LOWER_BOUND;
   }
 
-  @Override protected Class<? extends BaseRandom> getClassUnderTest() {
+  @Override protected Class<ReseedingThreadLocalRandomWrapper> getClassUnderTest() {
     return ReseedingThreadLocalRandomWrapper.class;
   }
 
