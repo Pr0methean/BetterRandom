@@ -23,13 +23,27 @@ public final class LegacyRandomSeeder extends RandomSeeder {
     otherPrngs = createSynchronizedWeakHashSet();
   }
 
-  @Override public void remove(Collection<?> randoms) {
+  /**
+   * Removes {@link Random} instances.
+   *
+   * @param randoms the instances to remove
+   */
+  public void removeLegacyRandoms(Random... randoms) {
+    removeLegacyRandoms(Arrays.asList(randoms));
+  }
+
+  /**
+   * Removes instances of {@link Random} and/or {@link ByteArrayReseedableRandom}.
+   *
+   * @param randoms the instances to remove
+   */
+  public void removeLegacyRandoms(Collection<?> randoms) {
     lock.lock();
     try {
       for (Object random : randoms) {
         if (random instanceof ByteArrayReseedableRandom) {
           byteArrayPrngs.remove(random);
-        } else {
+        } else if (random instanceof Random) {
           otherPrngs.remove(random);
         }
       }
@@ -42,7 +56,7 @@ public final class LegacyRandomSeeder extends RandomSeeder {
    * Adds {@link Random} instances.
    * @param randoms the PRNGs to start reseeding
    */
-  public void add(Random... randoms) {
+  public void addLegacyRandoms(Random... randoms) {
     addLegacyRandoms(Arrays.asList(randoms));
   }
 

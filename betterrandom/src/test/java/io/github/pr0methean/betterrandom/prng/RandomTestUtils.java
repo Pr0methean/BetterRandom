@@ -304,18 +304,17 @@ public enum RandomTestUtils {
   }
 
   public static void removeAndAssertEmpty(final RandomSeeder seederThread,
-      final Random prng) {
-    if (prng instanceof BaseRandom) {
-      ((BaseRandom) prng).setRandomSeeder(null);
-    }
+      final BaseRandom prng) {
+    prng.setRandomSeeder(null);
     seederThread.remove(prng);
     seederThread.stopIfEmpty();
     assertTrue(seederThread.isEmpty());
+    assertFalse(seederThread.isRunning());
   }
 
   public static void removeAndAssertEmpty(final LegacyRandomSeeder seederThread,
       final Random prng) {
-    seederThread.remove(prng);
+    seederThread.removeLegacyRandoms(prng);
     seederThread.stopIfEmpty();
     assertTrue(seederThread.isEmpty());
     assertFalse(seederThread.isRunning());

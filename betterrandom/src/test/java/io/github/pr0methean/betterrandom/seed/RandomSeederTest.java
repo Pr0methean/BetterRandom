@@ -77,7 +77,13 @@ public class RandomSeederTest {
       }
       assertFalse(randomSeeder.isEmpty());
     } finally {
-      RandomTestUtils.removeAndAssertEmpty(randomSeeder, prng);
+      if (randomSeeder instanceof LegacyRandomSeeder) {
+        RandomTestUtils.removeAndAssertEmpty((LegacyRandomSeeder) randomSeeder, prng);
+      } else {
+        assertTrue(prng instanceof BaseRandom,
+            "Need a LegacyRandomSeeder with a " + prng.getClass().getSimpleName());
+        RandomTestUtils.removeAndAssertEmpty(randomSeeder, (BaseRandom) prng);
+      }
     }
     final byte[] bytesWithNewSeed = new byte[TEST_OUTPUT_SIZE];
     prng.nextBytes(bytesWithNewSeed);
