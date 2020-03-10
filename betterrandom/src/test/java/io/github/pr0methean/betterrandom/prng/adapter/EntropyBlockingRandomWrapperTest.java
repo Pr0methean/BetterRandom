@@ -233,7 +233,7 @@ public class EntropyBlockingRandomWrapperTest extends RandomWrapperRandomTest {
       Uninterruptibles.sleepUninterruptibly(100, TimeUnit.MILLISECONDS);
     }
     random.setWrapped(new Random());
-    Uninterruptibles.joinUninterruptibly(consumer, 1, TimeUnit.SECONDS);
+    Uninterruptibles.joinUninterruptibly(consumer, 5, TimeUnit.SECONDS);
     if (exception.get() != null) {
       fail("Consumer got exception", exception.get());
     }
