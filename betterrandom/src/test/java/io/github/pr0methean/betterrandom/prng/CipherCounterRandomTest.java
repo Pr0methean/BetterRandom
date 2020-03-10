@@ -54,24 +54,31 @@ public abstract class CipherCounterRandomTest<T extends CipherCounterRandom>
     // No-op: can't be tested because setSeed merges with the existing seed
   }
 
-  @SuppressWarnings("ObjectAllocationInLoop") @Override @Test(timeOut = 40_000)
+  @Override @Test(timeOut = 40_000)
   public void testSetSeedAfterNextLong() throws SeedException {
     if (seedSizeBytes > 16) {
       throw new SkipException("Skipping a redundant test");
     }
+    checkSetSeedForCipher(this);
+  }
+
+  @SuppressWarnings("ObjectAllocationInLoop")
+  public static void checkSetSeedForCipher(
+      BaseRandomTest<?> test) {
     // can't use a real SeedGenerator since we need longs, so use a Random
     final Random masterRNG = new Random();
     final long[] seeds =
         {masterRNG.nextLong(), masterRNG.nextLong(), masterRNG.nextLong(), masterRNG.nextLong()};
     final long otherSeed = masterRNG.nextLong();
-    final AesCounterRandom[] rngs = {new AesCounterRandom(getTestSeedGenerator().generateSeed(16)),
-        new AesCounterRandom(getTestSeedGenerator().generateSeed(16))};
+    final BaseRandom[] rngs = {
+        test.createRng(test.getTestSeedGenerator().generateSeed(16)),
+        test.createRng(test.getTestSeedGenerator().generateSeed(16))};
     for (int i = 0; i < 2; i++) {
       for (final long seed : seeds) {
         final byte[] originalSeed = rngs[i].getSeed();
         assertTrue(originalSeed.length >= 16, "getSeed() returned seed that was too short");
-        final AesCounterRandom rngReseeded = new AesCounterRandom(originalSeed);
-        final AesCounterRandom rngReseededOther = new AesCounterRandom(originalSeed);
+        final BaseRandom rngReseeded = test.createRng(originalSeed);
+        final BaseRandom rngReseededOther = test.createRng(originalSeed);
         rngReseeded.setSeed(seed);
         rngReseededOther.setSeed(otherSeed);
         assertNotEquals(rngs[i], rngReseeded, "PRNG equals() one with a different seed");
@@ -99,14 +106,19 @@ public abstract class CipherCounterRandomTest<T extends CipherCounterRandom>
   }
 
   @Override public void testInitialEntropy() {
-    int seedSize = getNewSeedLength();
-    byte[] seed = getTestSeedGenerator().generateSeed(seedSize);
-    T random = createRng(seed);
+    checkInitialEntropyForCipher(this, createRng().getCounterSizeBytes());
+  }
+
+  public static <T extends BaseRandom> void checkInitialEntropyForCipher(
+      BaseRandomTest<T> test, final int counterSizeBytes) {
+    int seedSize = test.getNewSeedLength();
+    byte[] seed = test.getTestSeedGenerator().generateSeed(seedSize);
+    T random = test.createRng(seed);
     long entropy = random.getEntropyBits();
     assertTrue(entropy > 0, "Initially has zero entropy!");
-    assertTrue(entropy >= 8 * (seedSizeBytes - random.getCounterSizeBytes()),
+    assertTrue(entropy >= 8 * (seedSize - counterSizeBytes),
         "Initial entropy too low");
-    assertTrue(entropy <= 8 * seedSizeBytes, "Initial entropy too high");
+    assertTrue(entropy <= 8 * seedSize, "Initial entropy too high");
   }
 
   @Override protected abstract T createRng() throws SeedException;

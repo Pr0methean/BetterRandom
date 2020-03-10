@@ -1,5 +1,7 @@
 package io.github.pr0methean.betterrandom.prng.adapter;
 
+import static io.github.pr0methean.betterrandom.prng.CipherCounterRandomTest.checkInitialEntropyForCipher;
+import static io.github.pr0methean.betterrandom.prng.CipherCounterRandomTest.checkSetSeedForCipher;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertFalse;
 
@@ -172,5 +174,22 @@ public class EntropyBlockingRandomWrapperAesCounterRandomTest
         UUID.randomUUID().toString());
     final BaseRandom rng = createRng();
     RandomTestUtils.checkReseeding(seedGenerator, rng, true, 1 << 30);
+  }
+
+  @Override public void testInitialEntropy() {
+    checkInitialEntropyForCipher(this, new AesCounterRandom().getCounterSizeBytes());
+  }
+
+  @Override protected int getNewSeedLength() {
+    return AesCounterRandom.MAX_SEED_LENGTH_BYTES;
+  }
+
+  @Override @Test(timeOut = 40_000)
+  public void testSetSeedAfterNextLong() throws SeedException {
+    checkSetSeedForCipher(this);
+  }
+
+  @Override @Test(enabled = false) public void testSetSeedAfterNextInt() {
+    // No-op.
   }
 }
