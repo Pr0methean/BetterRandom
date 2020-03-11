@@ -7,10 +7,10 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Marks a method or constructor, or the implicit constructor of the marked class, as an entry
- * point, so that IntelliJ's code inspections won't decide it's unused. Once test coverage for
- * BetterRandom is complete, this will only be used in benchmarks and debugging tools, and for
- * constructors that are tested reflectively.
+ * Marks a method or constructor as an entry point, so that IntelliJ's code inspections won't decide
+ * it's unused. Needed for benchmarks, debugging tools, and constructor overloads that are tested
+ * only reflectively. When applied to a class, the implicit constructor is an entry point. Should
+ * not be applied to a type with no implicit constructor, and has no effect if that happens.
  */
 @Inherited @Retention(RetentionPolicy.SOURCE)
 @Target({ElementType.METHOD, ElementType.CONSTRUCTOR, ElementType.TYPE})
