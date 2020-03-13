@@ -14,6 +14,12 @@ public class BufferedSeedGenerator implements SeedGenerator {
   private static final long serialVersionUID = -2100305696539110970L;
 
   private final SeedGenerator delegate;
+  /**
+   * This could be replaced with a ReentrantReadWriteLock, with buffer consumption using the read
+   * lock and refilling using the write lock. However, pos would then have to become an
+   * AtomicInteger, so it would be worth the overhead only in rare corner cases with a large number
+   * of threads.
+   */
   private final Lock lock = new ReentrantLock(true);
   private final int size;
   private transient byte[] buffer;
