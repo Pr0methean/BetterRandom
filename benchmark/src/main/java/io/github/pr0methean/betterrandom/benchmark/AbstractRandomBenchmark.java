@@ -1,7 +1,9 @@
 package io.github.pr0methean.betterrandom.benchmark;
 
+import com.google.common.collect.ImmutableList;
 import io.github.pr0methean.betterrandom.util.EntryPoint;
 import java.util.Collection;
+import java.util.List;
 import java.util.Random;
 import org.openjdk.jmh.annotations.Benchmark;
 import org.openjdk.jmh.annotations.Level;
@@ -27,6 +29,10 @@ abstract class AbstractRandomBenchmark<T extends Random> {
    * TODO: Find a way to specify this separately for each test
    */
   private static final double MINIMUM_OPS_PER_SEC = 1_000_000_000;
+  private static final List<String> NO_MIN_SCORE = ImmutableList.of(
+      "VanillaJavaRandomBenchmark",
+      "ZRandomWrapperSecureRandomBenchmark",
+      "ZVanillaJavaSecureRandomBenchmark");
   protected T prng;
 
   AbstractRandomBenchmark() {
@@ -42,16 +48,25 @@ abstract class AbstractRandomBenchmark<T extends Random> {
           options.threads(nThreads).output(String.format("%d-thread_bench_results.csv", nThreads))
               .build());
       Collection<RunResult> results = runner.run();
+      if (results.isEmpty()) {
+        throw new AssertionError("Empty result set");
+      }
       for (RunResult runResult : results) {
-        if (runResult.getAggregatedResult().getPrimaryResult().getScore() < MINIMUM_OPS_PER_SEC) {
-          throw new AssertionError(String.format("%s is too slow", runResult));
+        boolean minimumScoreApplies = true;
+        for (String exempt : NO_MIN_SCORE) {
+          if (runResult.getPrimaryResult().getLabel().contains(exempt)) {
+            minimumScoreApplies = false;
+            break;
+          }
+        }
+        if (minimumScoreApplies) {
+          double score = runResult.getAggregatedResult().getPrimaryResult().getScore();
+          if (runResult.getAggregatedResult().getPrimaryResult().getScore() < MINIMUM_OPS_PER_SEC) {
+            throw new AssertionError(String.format("Score %f is too slow", score));
+          }
         }
       }
     }
-  }
-
-  protected double getMinimumScore() {
-    return 0;
   }
 
   @Setup(Level.Trial) public void setUp() throws Exception {
