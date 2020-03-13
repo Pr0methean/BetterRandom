@@ -70,7 +70,9 @@ public class AnuQuantumSeedGenerator extends WebJsonSeedGenerator {
       }
       try {
         for (int stringIndex = 0; stringIndex < stringCount - 1; stringIndex++) {
-          BinaryUtils.convertHexStringToBytes(getStringAndCheckLength(byteStrings, stringIndex, 2 * stringLength), seed,
+          BinaryUtils.convertHexStringToBytes(
+              getStringAndCheckLength(byteStrings, stringIndex, 2 * stringLength),
+              seed,
               offset + stringIndex * stringLength);
         }
         BinaryUtils.convertHexStringToBytes(
