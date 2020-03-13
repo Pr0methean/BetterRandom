@@ -45,7 +45,7 @@ public abstract class WebJsonSeedGenerator implements SeedGenerator {
    * Held while downloading, so that two requests to the same server won't be pending at the same
    * time.
    */
-  protected final Lock lock = new ReentrantLock();
+  protected final Lock lock = new ReentrantLock(true);
   /**
    * The earliest time we'll try again if {@link #useRetryDelay}.
    */

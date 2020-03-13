@@ -14,7 +14,7 @@ public class BufferedSeedGenerator implements SeedGenerator {
   private static final long serialVersionUID = -2100305696539110970L;
 
   private final SeedGenerator delegate;
-  private final Lock lock = new ReentrantLock();
+  private final Lock lock = new ReentrantLock(true);
   private final int size;
   private transient byte[] buffer;
   private transient volatile int pos;

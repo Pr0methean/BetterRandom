@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- `SeedGenerator` implementations now use fair locks, to prevent threads from being starved if the same seed
+  generator is used on more than one thread (although it's still recommended to use one `RandomSeeder` instance per
+  `SeedGenerator` and avoid calling `SeedGenerator` directly in hot loops, to avoid the overhead of a contended lock).
+
 ## [5.3.0]
 
 ### Changed
