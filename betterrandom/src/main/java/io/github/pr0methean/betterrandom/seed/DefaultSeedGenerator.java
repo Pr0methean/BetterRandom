@@ -25,11 +25,20 @@ package io.github.pr0methean.betterrandom.seed;
  * The default implementation maintains multiple strategies for seed generation and will delegate to
  * the best one available at any moment. It uses, in order of preference:</p><ol>
  * <li>{@link DevRandomSeedGenerator} with 128-byte buffer</li>
+ * <li>{@link AnuQuantumSeedGenerator} with 1024-byte buffer</li>
  * <li>{@link RandomDotOrgSeedGenerator#DELAYED_RETRY} with 625-byte buffer</li>
  * <li>{@link SecureRandomSeedGenerator} with no buffer</li>
- * </ol>
+ * </ol><p>
+ * The reasons to use DefaultSeedGenerator rather than its delegate directly are twofold:
+ * </p><ul>
+ * <li>{@link RandomSeeder} instances that are serialized and deserialized will respect any change
+ * of delegate that has been made in the destination program with {@link #set(SeedGenerator)}.</li>
+ * <li>You avoid having to pass a SeedGenerator as an explicit constructor parameter to descendants
+ * of {@link io.github.pr0methean.betterrandom.prng.BaseRandom}.</li>
+ * </ul>
  *
  * @author Daniel Dyer
+ * @author Chris Hennick
  */
 public enum DefaultSeedGenerator implements SeedGenerator {
 
