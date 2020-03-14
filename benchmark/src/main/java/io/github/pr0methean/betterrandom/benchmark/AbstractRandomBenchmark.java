@@ -45,12 +45,13 @@ abstract class AbstractRandomBenchmark<T extends Random> {
             .forks(1).resultFormat(ResultFormatType.CSV).detectJvmArgs();
     for (int nThreads = 1; nThreads <= 2; nThreads++) {
       final Runner runner = new Runner(
-          options.threads(nThreads).output(String.format("%d-thread_bench_results.csv", nThreads))
+          options.threads(nThreads).result(String.format("%d-thread_bench_results.csv", nThreads))
               .build());
       Collection<RunResult> results = runner.run();
       if (results.isEmpty()) {
         throw new AssertionError("Empty result set");
       }
+      runner.list(); // Produce default
       for (RunResult runResult : results) {
         boolean minimumScoreApplies = true;
         for (String exempt : NO_MIN_SCORE) {
