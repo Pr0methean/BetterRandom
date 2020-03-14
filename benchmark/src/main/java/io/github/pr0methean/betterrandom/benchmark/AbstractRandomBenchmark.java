@@ -28,7 +28,7 @@ abstract class AbstractRandomBenchmark<T extends Random> {
   /**
    * TODO: Find a way to specify this separately for each test
    */
-  private static final double MINIMUM_OPS_PER_SEC = 1_000_000_000;
+  private static final double MINIMUM_OPS_PER_SEC = 2_000_000;
   private static final List<String> NO_MIN_SCORE = ImmutableList.of(
       "VanillaJavaRandomBenchmark",
       "ZRandomWrapperSecureRandomBenchmark",
@@ -63,7 +63,8 @@ abstract class AbstractRandomBenchmark<T extends Random> {
         if (minimumScoreApplies) {
           double score = runResult.getAggregatedResult().getPrimaryResult().getScore();
           if (runResult.getAggregatedResult().getPrimaryResult().getScore() < MINIMUM_OPS_PER_SEC) {
-            throw new AssertionError(String.format("Score %f is too slow", score));
+            throw new AssertionError(String.format("Score %f for %s is too slow", score,
+                runResult.getPrimaryResult().getLabel()));
           }
         }
       }
