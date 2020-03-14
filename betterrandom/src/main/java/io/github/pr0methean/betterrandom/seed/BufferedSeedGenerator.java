@@ -18,7 +18,12 @@ public class BufferedSeedGenerator implements SeedGenerator {
    * This could be replaced with a ReentrantReadWriteLock, with buffer consumption using the read
    * lock and refilling using the write lock. However, pos would then have to become an
    * AtomicInteger, so it would be worth the overhead only in rare corner cases with a large number
-   * of threads.
+   * of threads. Furthermore, there would exist a slow path in which the consumption took place
+   * under the write lock (when another thread had refilled the buffer while we'd been waiting for
+   * the write lock, after initially finding the buffer empty under the read lock); and this slow
+   * path would become more frequent as the number of concurrent threads increased, unless the
+   * buffer size increased proportionately. Most of these corner cases are best handled by a
+   * {@link RandomSeeder}.
    */
   private final Lock lock = new ReentrantLock(true);
   private final int size;
