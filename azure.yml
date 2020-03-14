@@ -33,6 +33,7 @@ schedules:
     branches:
       include:
         - master
+    always: true
 pr:
   branches:
     include:
