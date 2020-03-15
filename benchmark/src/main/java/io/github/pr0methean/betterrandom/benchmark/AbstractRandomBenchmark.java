@@ -40,6 +40,8 @@ abstract class AbstractRandomBenchmark<T extends Random> {
           VanillaJavaRandomBenchmark.class,
           ZRandomWrapperSecureRandomBenchmark.class,
           ZVanillaJavaSecureRandomBenchmark.class)
+      .put(AesCounterRandomBenchmark.class.getName() + ".testNextInt", 9_000_000.0)
+      .put(AesCounterRandomBenchmark.class.getName() + ".testNextLong", 9_000_000.0)
       .put(ReseedingThreadLocalRandomWrapperAesCounterRandom128Benchmark.class.getName() + ".testNextInt",
           1_800_000.0)
       .put(ReseedingThreadLocalRandomWrapperAesCounterRandom128Benchmark.class.getName() + ".testNextLong",
@@ -50,6 +52,7 @@ abstract class AbstractRandomBenchmark<T extends Random> {
           6_000_000.0)
       .put(ThreadLocalRandomWrapperAesCounterRandom128Benchmark.class.getName() + ".testNextLong",
           9_000_000.0)
+      .put(XorShiftRandomBenchmark.class.getName() + ".testNextLong", 9_000_000.0)
       .build();
   protected T prng;
 
