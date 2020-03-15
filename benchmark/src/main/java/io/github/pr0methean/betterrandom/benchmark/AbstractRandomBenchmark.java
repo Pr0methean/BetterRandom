@@ -28,7 +28,7 @@ abstract class AbstractRandomBenchmark<T extends Random> {
   /**
    * TODO: Find a way to specify this separately for each test
    */
-  private static final double MINIMUM_OPS_PER_SEC_INT = 2_000_000;
+  private static final double MINIMUM_OPS_PER_SEC_INT = 1_800_000;
   private static final double MINIMUM_OPS_PER_SEC_LONG = 1_500_000;
   private static final List<String> NO_MIN_SCORE = ImmutableList.of(
       "VanillaJavaRandomBenchmark",
