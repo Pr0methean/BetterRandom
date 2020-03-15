@@ -12,7 +12,8 @@ import java.util.function.Function;
 import java.util.function.Supplier;
 import org.testng.annotations.Test;
 
-public class ThreadLocalRandomWrapperMersenneTwisterTest extends ThreadLocalRandomWrapperTest {
+public class ThreadLocalRandomWrapperMersenneTwisterTest extends
+    ThreadLocalRandomWrapperPcg64RandomTest {
 
   private final Supplier<MersenneTwisterRandom> mtSupplier;
 
