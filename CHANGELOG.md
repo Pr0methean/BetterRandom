@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- In `ThreadLocalRandomWrapper` and `ReseedingThreadLocalRandomWrapper`, `getEntropyBits` and `getNewSeedLength` no
+  longer initializes a delegate for the calling thread if there isn't one already. This should improve their worst-case
+  performance.
+
 ## [5.3.0]
 
 ### Changed

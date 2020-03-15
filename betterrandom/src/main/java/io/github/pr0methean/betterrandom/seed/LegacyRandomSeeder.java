@@ -1,6 +1,7 @@
 package io.github.pr0methean.betterrandom.seed;
 
 import io.github.pr0methean.betterrandom.ByteArrayReseedableRandom;
+import io.github.pr0methean.betterrandom.util.MoreCollections;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -20,7 +21,7 @@ public final class LegacyRandomSeeder extends RandomSeeder {
 
   @Override protected void initTransientFields() {
     super.initTransientFields();
-    otherPrngs = createSynchronizedWeakHashSet();
+    otherPrngs = MoreCollections.createSynchronizedWeakHashSet();
   }
 
   /**
