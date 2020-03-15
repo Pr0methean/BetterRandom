@@ -42,7 +42,7 @@ abstract class AbstractRandomBenchmark<T extends Random> {
   @SuppressWarnings("ObjectAllocationInLoop") public static void main(final String[] args)
       throws RunnerException {
     final ChainedOptionsBuilder options =
-        new OptionsBuilder().syncIterations(false).shouldFailOnError(true)
+        new OptionsBuilder().syncIterations(true).shouldFailOnError(true)
             .forks(1).resultFormat(ResultFormatType.CSV).detectJvmArgs();
     for (int nThreads = 1; nThreads <= 2; nThreads++) {
       final Runner runner = new Runner(
