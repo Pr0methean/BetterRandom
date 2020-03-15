@@ -1,6 +1,7 @@
 package io.github.pr0methean.betterrandom.benchmark;
 
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableMap;
 import io.github.pr0methean.betterrandom.util.EntryPoint;
 import java.util.Collection;
 import java.util.List;
@@ -28,13 +29,39 @@ abstract class AbstractRandomBenchmark<T extends Random> {
   /**
    * TODO: Find a way to specify this separately for each test
    */
-  private static final double MINIMUM_OPS_PER_SEC_INT = 1_800_000;
-  private static final double MINIMUM_OPS_PER_SEC_LONG = 1_500_000;
+  private static final double DEFAULT_MIN_OPS_PER_SEC_NEXT_INT = 15_000_000;
+  private static final double DEFAULT_MINIMUM_OPS_PER_SEC_LONG = 15_000_000;
   private static final List<String> NO_MIN_SCORE = ImmutableList.of(
       "VanillaJavaRandomBenchmark",
       "ZRandomWrapperSecureRandomBenchmark",
       "ZVanillaJavaSecureRandomBenchmark");
+  private static final ImmutableMap<String, Double> MINIMUM_OPS
+      = zeroMinimumsFor(
+          VanillaJavaRandomBenchmark.class,
+          ZRandomWrapperSecureRandomBenchmark.class,
+          ZVanillaJavaSecureRandomBenchmark.class)
+      .put(ReseedingThreadLocalRandomWrapperAesCounterRandom128Benchmark.class.getName() + ".testNextInt",
+          1_800_000.0)
+      .put(ReseedingThreadLocalRandomWrapperAesCounterRandom128Benchmark.class.getName() + ".testNextLong",
+          1_500_000.0)
+      .put(SplittableRandomAdapterBenchmark.class.getName() + ".testNextInt",
+          6_000_000.0)
+      .put(SplittableRandomAdapterBenchmark.class.getName() + ".testNextLong",
+          6_000_000.0)
+      .put(ThreadLocalRandomWrapperAesCounterRandom128Benchmark.class.getName() + ".testNextLong",
+          9_000_000.0)
+      .build();
   protected T prng;
+
+  private static ImmutableMap.Builder<String, Double> zeroMinimumsFor(
+      Class<? extends AbstractRandomBenchmark<?>>... benchmarkClasses) {
+    ImmutableMap.Builder<String, Double> builder = ImmutableMap.builder();
+    for (Class<? extends AbstractRandomBenchmark<?>> clazz : benchmarkClasses) {
+      builder.put(clazz.getName() + ".testNextInt", 0.0)
+          .put(clazz.getName() + ".testNextLong", 0.0);
+    }
+    return builder;
+  }
 
   AbstractRandomBenchmark() {
   }
@@ -55,24 +82,22 @@ abstract class AbstractRandomBenchmark<T extends Random> {
       runner.list(); // Produce default
       for (RunResult runResult : results) {
         final String name = runResult.getParams().getBenchmark();
-        if (NO_MIN_SCORE.stream().noneMatch(name::contains)) {
-          double minimum;
-          switch (runResult.getPrimaryResult().getLabel()) {
-            case "testNextInt":
-              minimum = MINIMUM_OPS_PER_SEC_INT;
-              break;
-            case "testNextLong":
-              minimum = MINIMUM_OPS_PER_SEC_LONG;
-              break;
-            default:
-              throw new AssertionError(
-                  "No minimum throughput specified for " + runResult.getPrimaryResult().getLabel());
-          }
-          double score = runResult.getAggregatedResult().getPrimaryResult().getScore();
-          if (score < minimum) {
-            throw new AssertionError(String.format("Score %f for %s is too slow", score,
-                runResult.getPrimaryResult().extendedInfo()));
-          }
+        double defaultMinimum;
+        switch (runResult.getPrimaryResult().getLabel()) {
+          case "testNextInt":
+            defaultMinimum = DEFAULT_MIN_OPS_PER_SEC_NEXT_INT;
+            break;
+          case "testNextLong":
+            defaultMinimum = DEFAULT_MINIMUM_OPS_PER_SEC_LONG;
+            break;
+          default:
+            throw new AssertionError(
+                "No minimum throughput specified for " + name);
+        }
+        double minimum = MINIMUM_OPS.getOrDefault(name, defaultMinimum);
+        double score = runResult.getAggregatedResult().getPrimaryResult().getScore();
+        if (score < minimum) {
+          throw new AssertionError(String.format("Score %f for %s is too slow", score, name));
         }
       }
     }
