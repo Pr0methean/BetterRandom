@@ -10,17 +10,17 @@ import io.github.pr0methean.betterrandom.prng.BaseRandomTest;
 import io.github.pr0methean.betterrandom.prng.Pcg64Random;
 import io.github.pr0methean.betterrandom.seed.RandomSeeder;
 import io.github.pr0methean.betterrandom.seed.SeedException;
+import io.github.pr0methean.betterrandom.util.SerializableFunction;
+import io.github.pr0methean.betterrandom.util.SerializableSupplier;
 import java.util.Map;
 import java.util.Random;
-import java.util.function.Function;
-import java.util.function.Supplier;
 import org.testng.annotations.Test;
 
 public class ThreadLocalRandomWrapperTest<T extends BaseRandom>
     extends BaseRandomTest<ThreadLocalRandomWrapper<T>> {
-  protected final Supplier<T> supplier;
+  protected final SerializableSupplier<T> supplier;
 
-  public ThreadLocalRandomWrapperTest(Supplier<T> supplier) {
+  public ThreadLocalRandomWrapperTest(SerializableSupplier<T> supplier) {
     this.supplier = supplier;
   }
 
@@ -98,8 +98,12 @@ public class ThreadLocalRandomWrapperTest<T extends BaseRandom>
 
   @Override protected Map<Class<?>, Object> constructorParams() {
     final Map<Class<?>, Object> params = super.constructorParams();
-    params.put(Supplier.class, supplier);
-    params.put(Function.class, (Function<byte[], BaseRandom>) Pcg64Random::new);
+    params.put(SerializableSupplier.class, supplier);
+    params.put(SerializableFunction.class, (SerializableFunction<byte[], T>) seed -> {
+      final T out = supplier.get();
+      out.setSeed(seed);
+      return out;
+    });
     return params;
   }
 
@@ -112,12 +116,12 @@ public class ThreadLocalRandomWrapperTest<T extends BaseRandom>
     ThreadLocalRandomWrapper.wrapLegacy(Random::new, getTestSeedGenerator()).nextInt();
   }
 
-  @Override protected ThreadLocalRandomWrapper<?> createRng() throws SeedException {
+  @Override protected ThreadLocalRandomWrapper<T> createRng() throws SeedException {
     return new ThreadLocalRandomWrapper(supplier);
   }
 
-  @Override protected ThreadLocalRandomWrapper<?> createRng(final byte[] seed) throws SeedException {
-    final ThreadLocalRandomWrapper<?> rng = createRng();
+  @Override protected ThreadLocalRandomWrapper<T> createRng(final byte[] seed) throws SeedException {
+    final ThreadLocalRandomWrapper<T> rng = createRng();
     rng.setSeed(seed);
     return rng;
   }

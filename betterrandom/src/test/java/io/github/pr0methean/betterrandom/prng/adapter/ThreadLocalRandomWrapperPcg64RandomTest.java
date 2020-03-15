@@ -1,9 +1,9 @@
 package io.github.pr0methean.betterrandom.prng.adapter;
 
 import io.github.pr0methean.betterrandom.prng.Pcg64Random;
+import io.github.pr0methean.betterrandom.seed.PseudorandomSeedGenerator;
 import io.github.pr0methean.betterrandom.seed.SeedGenerator;
-import java.io.Serializable;
-import java.util.function.Supplier;
+import io.github.pr0methean.betterrandom.util.SerializableSupplier;
 import org.testng.annotations.Test;
 
 @Test(testName = "ThreadLocalRandomWrapper") public class ThreadLocalRandomWrapperPcg64RandomTest
@@ -13,9 +13,9 @@ import org.testng.annotations.Test;
     super(createSupplier());
   }
 
-  private static Supplier<Pcg64Random> createSupplier() {
-    final SeedGenerator seedGenerator = getTestSeedGenerator();
-    return (Supplier<Pcg64Random> & Serializable) (() -> new Pcg64Random(seedGenerator));
+  private static SerializableSupplier<Pcg64Random> createSupplier() {
+    final SeedGenerator seedGenerator = new PseudorandomSeedGenerator();
+    return () -> new Pcg64Random(seedGenerator);
   }
 
 

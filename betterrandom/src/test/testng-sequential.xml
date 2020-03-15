@@ -30,7 +30,7 @@
             <class name="io.github.pr0methean.betterrandom.prng.adapter.RandomWrapperSecureRandomTest"/>
             <class name="io.github.pr0methean.betterrandom.prng.adapter.ReseedingThreadLocalRandomWrapperFailingSeedGeneratorTest"/>
             <class name="io.github.pr0methean.betterrandom.prng.adapter.ThreadLocalRandomWrapperMersenneTwisterTest"/>
-            <class name="io.github.pr0methean.betterrandom.prng.adapter.ThreadLocalRandomWrapperTest"/>
+            <class name="io.github.pr0methean.betterrandom.prng.adapter.ThreadLocalRandomWrapperPcg64RandomTest"/>
         </classes>
     </test>
 </suite>

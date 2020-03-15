@@ -2,24 +2,15 @@ package io.github.pr0methean.betterrandom.prng.adapter;
 
 import static org.testng.Assert.assertEquals;
 
-import io.github.pr0methean.betterrandom.prng.BaseRandom;
-import io.github.pr0methean.betterrandom.prng.Pcg64Random;
 import io.github.pr0methean.betterrandom.prng.RandomTestUtils.EntropyCheckMode;
 import io.github.pr0methean.betterrandom.seed.FailingSeedGenerator;
 import io.github.pr0methean.betterrandom.seed.SeedException;
 import io.github.pr0methean.betterrandom.seed.SeedGenerator;
-import java.io.Serializable;
-import java.util.function.Supplier;
 import org.testng.annotations.Test;
 
 @Test(testName = "ReseedingThreadLocalRandomWrapper:FailingSeedGenerator")
 public class ReseedingThreadLocalRandomWrapperFailingSeedGeneratorTest
     extends ReseedingThreadLocalRandomWrapperTest {
-
-  public ReseedingThreadLocalRandomWrapperFailingSeedGeneratorTest() {
-    pcgSupplier =
-        (Serializable & Supplier<BaseRandom>) () -> new Pcg64Random(semiFakeSeedGenerator);
-  }
 
   @Override @Test(enabled = false) public void testWrapLegacy() throws SeedException {
     // No-op.

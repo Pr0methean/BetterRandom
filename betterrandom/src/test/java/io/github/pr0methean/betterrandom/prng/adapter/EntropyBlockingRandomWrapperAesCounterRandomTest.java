@@ -14,10 +14,10 @@ import io.github.pr0methean.betterrandom.prng.AesCounterRandom;
 import io.github.pr0methean.betterrandom.prng.BaseRandom;
 import io.github.pr0methean.betterrandom.prng.RandomTestUtils;
 import io.github.pr0methean.betterrandom.seed.FakeSeedGenerator;
+import io.github.pr0methean.betterrandom.seed.PseudorandomSeedGenerator;
 import io.github.pr0methean.betterrandom.seed.RandomSeeder;
 import io.github.pr0methean.betterrandom.seed.SeedException;
 import io.github.pr0methean.betterrandom.seed.SeedGenerator;
-import io.github.pr0methean.betterrandom.seed.SemiFakeSeedGenerator;
 import java.lang.reflect.Constructor;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -142,7 +142,7 @@ public class EntropyBlockingRandomWrapperAesCounterRandomTest
   }
 
   @Override public void testSerializable() throws SeedException {
-    // Can't use a SemiFakeSeedGenerator, because Random.equals() breaks equality check
+    // Can't use a PseudorandomSeedGenerator, because Random.equals() breaks equality check
     final SeedGenerator seedGenerator =
         new FakeSeedGenerator(getClass().getSimpleName() + "::testSerializable #" + new Random().nextInt());
     // Serialise an RNG.
@@ -178,7 +178,7 @@ public class EntropyBlockingRandomWrapperAesCounterRandomTest
   // FIXME: Too slow, and why is such a huge entropy adjustment needed?!
   @Override @Test(timeOut = 90_000L, retryAnalyzer = FlakyRetryAnalyzer.class)
   public void testRandomSeederIntegration() {
-    final SeedGenerator seedGenerator = new SemiFakeSeedGenerator(new Random(),
+    final SeedGenerator seedGenerator = new PseudorandomSeedGenerator(new Random(),
         UUID.randomUUID().toString());
     final BaseRandom rng = createRng();
     RandomTestUtils.checkReseeding(seedGenerator, rng, true, 1 << 30);
