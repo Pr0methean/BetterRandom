@@ -10,24 +10,18 @@ import io.github.pr0methean.betterrandom.prng.BaseRandomTest;
 import io.github.pr0methean.betterrandom.prng.Pcg64Random;
 import io.github.pr0methean.betterrandom.seed.RandomSeeder;
 import io.github.pr0methean.betterrandom.seed.SeedException;
-import io.github.pr0methean.betterrandom.seed.SeedGenerator;
-import java.io.Serializable;
 import java.util.Map;
 import java.util.Random;
 import java.util.function.Function;
 import java.util.function.Supplier;
 import org.testng.annotations.Test;
 
-@Test(testName = "ThreadLocalRandomWrapper") public class ThreadLocalRandomWrapperTest
-    extends BaseRandomTest<ThreadLocalRandomWrapper<?>> {
+public class ThreadLocalRandomWrapperTest<T extends BaseRandom>
+    extends BaseRandomTest<ThreadLocalRandomWrapper<T>> {
+  protected final Supplier<T> supplier;
 
-  private final Supplier<BaseRandom> pcgSupplier;
-
-  public ThreadLocalRandomWrapperTest() {
-    // Must be done first, or else lambda won't be serializable.
-    final SeedGenerator seedGenerator = getTestSeedGenerator();
-
-    pcgSupplier = (Supplier<BaseRandom> & Serializable) (() -> new Pcg64Random(seedGenerator));
+  public ThreadLocalRandomWrapperTest(Supplier<T> supplier) {
+    this.supplier = supplier;
   }
 
   @Override public void testSerializable() throws SeedException {
@@ -95,7 +89,6 @@ import org.testng.annotations.Test;
     rng.setSeed(seed);
   }
 
-
   /**
    * Assertion-free because thread-local.
    */
@@ -105,7 +98,7 @@ import org.testng.annotations.Test;
 
   @Override protected Map<Class<?>, Object> constructorParams() {
     final Map<Class<?>, Object> params = super.constructorParams();
-    params.put(Supplier.class, pcgSupplier);
+    params.put(Supplier.class, supplier);
     params.put(Function.class, (Function<byte[], BaseRandom>) Pcg64Random::new);
     return params;
   }
@@ -120,7 +113,7 @@ import org.testng.annotations.Test;
   }
 
   @Override protected ThreadLocalRandomWrapper<?> createRng() throws SeedException {
-    return new ThreadLocalRandomWrapper<>(pcgSupplier);
+    return new ThreadLocalRandomWrapper(supplier);
   }
 
   @Override protected ThreadLocalRandomWrapper<?> createRng(final byte[] seed) throws SeedException {

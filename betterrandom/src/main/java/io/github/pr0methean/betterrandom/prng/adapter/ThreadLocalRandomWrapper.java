@@ -24,6 +24,7 @@ public class ThreadLocalRandomWrapper<T extends BaseRandom> extends RandomWrappe
 
   private static final long serialVersionUID = 1199235201518562359L;
   private final Supplier<? extends T> initializer;
+  private final Function<byte[], ? extends T> initializerForSeed;
   private final int seedSize;
   private transient Set<Thread> threadsInitializedFor;
   /**
@@ -36,13 +37,16 @@ public class ThreadLocalRandomWrapper<T extends BaseRandom> extends RandomWrappe
     threadsInitializedFor = MoreCollections.createSynchronizedWeakHashSet();
   }
 
-  private ThreadLocalRandomWrapper(int seedSize, Supplier<? extends T> undecoratedInitializer) {
+  private ThreadLocalRandomWrapper(int seedSize, Supplier<? extends T> undecoratedInitializer,
+      Function<byte[], ? extends T> initializerForSeed) {
     super(null);
     this.seedSize = seedSize;
     initializer = (Supplier<? extends T> & Serializable) () -> {
       threadsInitializedFor.add(Thread.currentThread());
       return undecoratedInitializer.get();
     };
+    this.initializerForSeed = (Function<byte[], ? extends T> & Serializable)
+        initializerForSeed::apply;
     threadLocal = ThreadLocal.withInitial(initializer);
   }
 
@@ -54,7 +58,11 @@ public class ThreadLocalRandomWrapper<T extends BaseRandom> extends RandomWrappe
    *     for each thread.
    */
   public ThreadLocalRandomWrapper(final Supplier<? extends T> initializer) {
-    this(initializer.get().getNewSeedLength(), initializer);
+    this(initializer.get().getNewSeedLength(), initializer, seed -> {
+      T out = initializer.get();
+      out.setSeed(seed);
+      return out;
+    });
   }
 
   /**
@@ -70,7 +78,8 @@ public class ThreadLocalRandomWrapper<T extends BaseRandom> extends RandomWrappe
   public ThreadLocalRandomWrapper(final int seedSize, final SeedGenerator seedGenerator,
       final Function<byte[], ? extends T> creator) {
     this(seedSize, (Serializable & Supplier<T>)
-        () -> creator.apply(seedGenerator.generateSeed(seedSize)));
+        () -> creator.apply(seedGenerator.generateSeed(seedSize)),
+        (Serializable & Function<byte[], ? extends T>) creator);
   }
 
   /**
@@ -198,7 +207,12 @@ public class ThreadLocalRandomWrapper<T extends BaseRandom> extends RandomWrappe
       throw new IllegalArgumentException("Seed must not be null");
     }
     if (threadLocal != null) {
-      getWrapped().setSeed(seed);
+      if (isInitializedForCurrentThread()) {
+        getWrapped().setSeed(seed);
+      } else {
+        threadLocal.set(initializerForSeed.apply(seed));
+        threadsInitializedFor.add(Thread.currentThread());
+      }
     }
     if (this.seed == null) {
       this.seed = seed.clone(); // Needed for serialization
