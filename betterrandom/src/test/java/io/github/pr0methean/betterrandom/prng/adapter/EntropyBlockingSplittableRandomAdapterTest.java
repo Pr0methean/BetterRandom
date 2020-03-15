@@ -12,11 +12,11 @@ import io.github.pr0methean.betterrandom.FlakyRetryAnalyzer;
 import io.github.pr0methean.betterrandom.prng.BaseRandom;
 import io.github.pr0methean.betterrandom.prng.RandomTestUtils;
 import io.github.pr0methean.betterrandom.seed.FakeSeedGenerator;
+import io.github.pr0methean.betterrandom.seed.PseudorandomSeedGenerator;
 import io.github.pr0methean.betterrandom.seed.RandomSeeder;
 import io.github.pr0methean.betterrandom.seed.RandomSeeder.DefaultThreadFactory;
 import io.github.pr0methean.betterrandom.seed.SeedException;
 import io.github.pr0methean.betterrandom.seed.SeedGenerator;
-import io.github.pr0methean.betterrandom.seed.SemiFakeSeedGenerator;
 import io.github.pr0methean.betterrandom.util.BinaryUtils;
 import java.util.Arrays;
 import java.util.Map;
@@ -110,7 +110,7 @@ public class EntropyBlockingSplittableRandomAdapterTest
 
   @Override @Test(retryAnalyzer = FlakyRetryAnalyzer.class) public void testReseeding() {
     SeedGenerator generator =
-        new SemiFakeSeedGenerator(ThreadLocalRandom.current(), "testReseeding");
+        new PseudorandomSeedGenerator(ThreadLocalRandom.current(), "testReseeding");
     RandomSeeder seeder = new RandomSeeder(generator);
     try {
       EntropyBlockingSplittableRandomAdapter random =
@@ -183,8 +183,8 @@ public class EntropyBlockingSplittableRandomAdapterTest
         = new DefaultThreadFactory("testRandomSeederThreadUsedFirst", Thread.MAX_PRIORITY);
     RandomSeeder seeder = new RandomSeeder(seederSeedGenSpy,
         defaultThreadFactory);
-    SemiFakeSeedGenerator sameThreadSeedGen
-        = new SemiFakeSeedGenerator(ThreadLocalRandom.current(), "sameThreadSeedGen");
+    PseudorandomSeedGenerator sameThreadSeedGen
+        = new PseudorandomSeedGenerator(ThreadLocalRandom.current(), "sameThreadSeedGen");
     EntropyBlockingSplittableRandomAdapter random = new EntropyBlockingSplittableRandomAdapter(
         sameThreadSeedGen, seeder, 0L);
     random.nextLong();

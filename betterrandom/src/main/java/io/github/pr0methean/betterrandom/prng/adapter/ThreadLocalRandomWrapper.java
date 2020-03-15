@@ -6,13 +6,14 @@ import io.github.pr0methean.betterrandom.seed.RandomSeeder;
 import io.github.pr0methean.betterrandom.seed.SeedGenerator;
 import io.github.pr0methean.betterrandom.util.BinaryUtils;
 import io.github.pr0methean.betterrandom.util.MoreCollections;
+import io.github.pr0methean.betterrandom.util.SerializableFunction;
+import io.github.pr0methean.betterrandom.util.SerializableLongFunction;
+import io.github.pr0methean.betterrandom.util.SerializableSupplier;
 import java.io.IOException;
 import java.io.ObjectInputStream;
-import java.io.Serializable;
 import java.util.Random;
 import java.util.Set;
 import java.util.function.Function;
-import java.util.function.LongFunction;
 import java.util.function.Supplier;
 import javax.annotation.Nullable;
 
@@ -23,8 +24,8 @@ import javax.annotation.Nullable;
 public class ThreadLocalRandomWrapper<T extends BaseRandom> extends RandomWrapper<T> {
 
   private static final long serialVersionUID = 1199235201518562359L;
-  private final Supplier<? extends T> initializer;
-  private final Function<byte[], ? extends T> initializerForSeed;
+  private final SerializableSupplier<? extends T> initializer;
+  private final SerializableFunction<byte[], ? extends T> initializerForSeed;
   private final int seedSize;
   private transient Set<Thread> threadsInitializedFor;
   /**
@@ -37,16 +38,15 @@ public class ThreadLocalRandomWrapper<T extends BaseRandom> extends RandomWrappe
     threadsInitializedFor = MoreCollections.createSynchronizedWeakHashSet();
   }
 
-  private ThreadLocalRandomWrapper(int seedSize, Supplier<? extends T> undecoratedInitializer,
-      Function<byte[], ? extends T> initializerForSeed) {
+  private ThreadLocalRandomWrapper(int seedSize, SerializableSupplier<? extends T> undecoratedInitializer,
+      SerializableFunction<byte[], ? extends T> initializerForSeed) {
     super(null);
     this.seedSize = seedSize;
-    initializer = (Supplier<? extends T> & Serializable) () -> {
+    initializer = () -> {
       threadsInitializedFor.add(Thread.currentThread());
       return undecoratedInitializer.get();
     };
-    this.initializerForSeed = (Function<byte[], ? extends T> & Serializable)
-        initializerForSeed::apply;
+    this.initializerForSeed = initializerForSeed;
     threadLocal = ThreadLocal.withInitial(initializer);
   }
 
@@ -57,7 +57,7 @@ public class ThreadLocalRandomWrapper<T extends BaseRandom> extends RandomWrappe
    * @param initializer a supplier that will be called to provide the initial {@link BaseRandom}
    *     for each thread.
    */
-  public ThreadLocalRandomWrapper(final Supplier<? extends T> initializer) {
+  public ThreadLocalRandomWrapper(final SerializableSupplier<? extends T> initializer) {
     this(initializer.get().getNewSeedLength(), initializer, seed -> {
       T out = initializer.get();
       out.setSeed(seed);
@@ -76,10 +76,8 @@ public class ThreadLocalRandomWrapper<T extends BaseRandom> extends RandomWrappe
    *     Probably a constructor reference.
    */
   public ThreadLocalRandomWrapper(final int seedSize, final SeedGenerator seedGenerator,
-      final Function<byte[], ? extends T> creator) {
-    this(seedSize, (Serializable & Supplier<T>)
-        () -> creator.apply(seedGenerator.generateSeed(seedSize)),
-        (Serializable & Function<byte[], ? extends T>) creator);
+      final SerializableFunction<byte[], ? extends T> creator) {
+    this(seedSize, () -> creator.apply(seedGenerator.generateSeed(seedSize)), creator);
   }
 
   /**
@@ -91,7 +89,8 @@ public class ThreadLocalRandomWrapper<T extends BaseRandom> extends RandomWrappe
    * @param seedGenerator the seed generator whose output will be fed to {@code legacyCreator}.
    * @return a ThreadLocalRandomWrapper decorating instances created by {@code legacyCreator}.
    */
-  public static ThreadLocalRandomWrapper<BaseRandom> wrapLegacy(final LongFunction<Random> legacyCreator,
+  public static ThreadLocalRandomWrapper<BaseRandom> wrapLegacy(
+      final SerializableLongFunction<Random> legacyCreator,
       final SeedGenerator seedGenerator) {
     return new ThreadLocalRandomWrapper<>(Long.BYTES, seedGenerator,
         bytes -> new RandomWrapper<>(legacyCreator.apply(BinaryUtils.convertBytesToLong(bytes))));

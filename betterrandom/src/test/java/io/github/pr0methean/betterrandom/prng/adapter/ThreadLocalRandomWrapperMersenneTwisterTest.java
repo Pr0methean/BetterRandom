@@ -4,36 +4,35 @@ import static org.testng.Assert.assertSame;
 
 import io.github.pr0methean.betterrandom.prng.BaseRandom;
 import io.github.pr0methean.betterrandom.prng.MersenneTwisterRandom;
+import io.github.pr0methean.betterrandom.seed.PseudorandomSeedGenerator;
 import io.github.pr0methean.betterrandom.seed.SeedException;
 import io.github.pr0methean.betterrandom.seed.SeedGenerator;
-import java.io.Serializable;
+import io.github.pr0methean.betterrandom.util.SerializableFunction;
+import io.github.pr0methean.betterrandom.util.SerializableSupplier;
 import java.util.Map;
-import java.util.function.Function;
-import java.util.function.Supplier;
 import org.testng.annotations.Test;
 
 public class ThreadLocalRandomWrapperMersenneTwisterTest extends
-    ThreadLocalRandomWrapperPcg64RandomTest {
-
-  private final Supplier<MersenneTwisterRandom> mtSupplier;
+    ThreadLocalRandomWrapperTest<MersenneTwisterRandom> {
 
   public ThreadLocalRandomWrapperMersenneTwisterTest() {
     // Must be done first, or else lambda won't be serializable.
-    final SeedGenerator seedGenerator = getTestSeedGenerator();
+    super(createSupplier());
+  }
 
-    mtSupplier =
-        (Serializable & Supplier<MersenneTwisterRandom>) () -> new MersenneTwisterRandom(seedGenerator);
+  private static SerializableSupplier<MersenneTwisterRandom> createSupplier() {
+    final SeedGenerator seedGenerator = new PseudorandomSeedGenerator();
+    return () -> new MersenneTwisterRandom(seedGenerator);
   }
 
   @Override protected Map<Class<?>, Object> constructorParams() {
     final Map<Class<?>, Object> params = super.constructorParams();
-    params.put(Supplier.class, mtSupplier);
-    params.put(Function.class, (Function<byte[], BaseRandom>) MersenneTwisterRandom::new);
+    params.put(SerializableFunction.class, (SerializableFunction<byte[], BaseRandom>) MersenneTwisterRandom::new);
     return params;
   }
 
   @Override protected ThreadLocalRandomWrapper<MersenneTwisterRandom> createRng() throws SeedException {
-    return new ThreadLocalRandomWrapper<>(mtSupplier);
+    return new ThreadLocalRandomWrapper<>(supplier);
   }
 
   @Override @Test public void testGetWrapped() {

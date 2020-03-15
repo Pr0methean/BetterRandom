@@ -5,9 +5,9 @@ import static org.testng.Assert.assertSame;
 import com.google.common.testing.SerializableTester;
 import io.github.pr0methean.betterrandom.prng.BaseRandom;
 import io.github.pr0methean.betterrandom.prng.RandomTestUtils;
+import io.github.pr0methean.betterrandom.seed.PseudorandomSeedGenerator;
 import io.github.pr0methean.betterrandom.seed.SeedException;
 import io.github.pr0methean.betterrandom.seed.SeedGenerator;
-import io.github.pr0methean.betterrandom.seed.SemiFakeSeedGenerator;
 import java.security.GeneralSecurityException;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
@@ -31,7 +31,7 @@ import org.testng.annotations.Test;
   }
 
   @Override public void testRandomSeederIntegration() {
-    final SeedGenerator seedGenerator = new SemiFakeSeedGenerator(new Random(),
+    final SeedGenerator seedGenerator = new PseudorandomSeedGenerator(new Random(),
         UUID.randomUUID().toString());
     final BaseRandom rng = createRng();
     RandomTestUtils.checkReseeding(seedGenerator, rng, true);

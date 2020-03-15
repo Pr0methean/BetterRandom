@@ -1,17 +1,22 @@
 package io.github.pr0methean.betterrandom.seed;
 
 import java.util.Random;
+import java.util.concurrent.ThreadLocalRandom;
 
-public class SemiFakeSeedGenerator extends FakeSeedGenerator {
+public class PseudorandomSeedGenerator extends FakeSeedGenerator {
 
   private static final long serialVersionUID = 3490669976564244209L;
   private final Random random;
 
-  public SemiFakeSeedGenerator(final Random random) {
+  public PseudorandomSeedGenerator() {
+    this(ThreadLocalRandom.current());
+  }
+
+  public PseudorandomSeedGenerator(final Random random) {
     this.random = random;
   }
 
-  public SemiFakeSeedGenerator(Random random, String name) {
+  public PseudorandomSeedGenerator(Random random, String name) {
     super(name);
     this.random = random;
   }
@@ -25,10 +30,10 @@ public class SemiFakeSeedGenerator extends FakeSeedGenerator {
     if (this == o) {
       return true;
     }
-    if (!(o instanceof SemiFakeSeedGenerator)) {
+    if (!(o instanceof PseudorandomSeedGenerator)) {
       return false;
     } else {
-      SemiFakeSeedGenerator other = (SemiFakeSeedGenerator) o;
+      PseudorandomSeedGenerator other = (PseudorandomSeedGenerator) o;
       return random.equals(other.random) && name.equals(other.name);
     }
   }

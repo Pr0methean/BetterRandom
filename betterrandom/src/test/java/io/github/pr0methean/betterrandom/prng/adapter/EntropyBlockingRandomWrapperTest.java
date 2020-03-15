@@ -17,11 +17,11 @@ import io.github.pr0methean.betterrandom.prng.AesCounterRandom;
 import io.github.pr0methean.betterrandom.prng.BaseRandom;
 import io.github.pr0methean.betterrandom.prng.RandomTestUtils;
 import io.github.pr0methean.betterrandom.seed.FailingSeedGenerator;
+import io.github.pr0methean.betterrandom.seed.PseudorandomSeedGenerator;
 import io.github.pr0methean.betterrandom.seed.RandomSeeder;
 import io.github.pr0methean.betterrandom.seed.RandomSeeder.DefaultThreadFactory;
 import io.github.pr0methean.betterrandom.seed.SeedException;
 import io.github.pr0methean.betterrandom.seed.SeedGenerator;
-import io.github.pr0methean.betterrandom.seed.SemiFakeSeedGenerator;
 import io.github.pr0methean.betterrandom.util.BinaryUtils;
 import java.util.Arrays;
 import java.util.Map;
@@ -50,7 +50,7 @@ public class EntropyBlockingRandomWrapperTest extends RandomWrapperRandomTest {
 
   @Override protected SeedGenerator getTestSeedGenerator() {
     // Need a separate and non-value-equal instance for each test, for isolation
-    return new SemiFakeSeedGenerator(ThreadLocalRandom.current(),
+    return new PseudorandomSeedGenerator(ThreadLocalRandom.current(),
         UUID.randomUUID().toString());
   }
 
@@ -95,7 +95,7 @@ public class EntropyBlockingRandomWrapperTest extends RandomWrapperRandomTest {
 
   // FIXME: Too slow!
   @Override @Test(timeOut = 120_000L) public void testRandomSeederIntegration() {
-    final SeedGenerator seedGenerator = new SemiFakeSeedGenerator(new Random(),
+    final SeedGenerator seedGenerator = new PseudorandomSeedGenerator(new Random(),
         UUID.randomUUID().toString());
     final BaseRandom rng = createRng();
     RandomTestUtils.checkReseeding(seedGenerator, rng, true, 64);
@@ -148,8 +148,8 @@ public class EntropyBlockingRandomWrapperTest extends RandomWrapperRandomTest {
         = new DefaultThreadFactory("testRandomSeederThreadUsedFirst", Thread.MAX_PRIORITY);
     RandomSeeder seeder = new RandomSeeder(seederSeedGenSpy,
         defaultThreadFactory);
-    SemiFakeSeedGenerator sameThreadSeedGen
-        = Mockito.spy(new SemiFakeSeedGenerator(ThreadLocalRandom.current(), "sameThreadSeedGen"));
+    PseudorandomSeedGenerator sameThreadSeedGen
+        = Mockito.spy(new PseudorandomSeedGenerator(ThreadLocalRandom.current(), "sameThreadSeedGen"));
     EntropyBlockingRandomWrapper<Random> random = EntropyBlockingRandomWrapper
         .wrapJavaUtilRandom(0L, testSeedGenerator.generateSeed(8), sameThreadSeedGen);
     random.setRandomSeeder(seeder);
@@ -171,8 +171,7 @@ public class EntropyBlockingRandomWrapperTest extends RandomWrapperRandomTest {
   @Test(timeOut = 20_000L) public void testFallbackFromRandomSeederThread() {
     SeedGenerator failingSeedGen = Mockito.spy(FailingSeedGenerator.DEFAULT_INSTANCE);
     RandomSeeder seeder = new RandomSeeder(failingSeedGen);
-    SeedGenerator sameThreadSeedGen
-        = Mockito.spy(new SemiFakeSeedGenerator(ThreadLocalRandom.current()));
+    SeedGenerator sameThreadSeedGen = Mockito.spy(new PseudorandomSeedGenerator());
     EntropyBlockingRandomWrapper<Random> random =
         EntropyBlockingRandomWrapper.wrapJavaUtilRandom(0L, sameThreadSeedGen);
     random.setRandomSeeder(seeder);

@@ -9,24 +9,12 @@ import io.github.pr0methean.betterrandom.seed.DevRandomSeedGenerator;
 import io.github.pr0methean.betterrandom.seed.RandomSeeder;
 import io.github.pr0methean.betterrandom.seed.SeedException;
 import io.github.pr0methean.betterrandom.seed.SeedGenerator;
-import java.io.Serializable;
 import java.util.Random;
-import java.util.function.Supplier;
 import org.testng.annotations.Test;
 
 @Test(testName = "ReseedingThreadLocalRandomWrapper:MersenneTwisterRandom")
 public class ReseedingThreadLocalRandomWrapperMersenneTwisterTest
     extends ThreadLocalRandomWrapperMersenneTwisterTest {
-
-  private final Supplier<MersenneTwisterRandom> mtSupplier;
-
-  public ReseedingThreadLocalRandomWrapperMersenneTwisterTest() {
-    // Must be done first, or else lambda won't be serializable.
-    final SeedGenerator seedGenerator = getTestSeedGenerator();
-
-    mtSupplier =
-        (Serializable & Supplier<MersenneTwisterRandom>) () -> new MersenneTwisterRandom(seedGenerator);
-  }
 
   @Override public void testWrapLegacy() throws SeedException {
     ReseedingThreadLocalRandomWrapper.wrapLegacy(Random::new, getTestSeedGenerator()).nextInt();
@@ -45,7 +33,7 @@ public class ReseedingThreadLocalRandomWrapperMersenneTwisterTest
   @Test(retryAnalyzer = FlakyRetryAnalyzer.class)
   public void testReseeding() {
     final SeedGenerator testSeedGenerator = getTestSeedGenerator();
-    final BaseRandom rng = new ReseedingThreadLocalRandomWrapper<BaseRandom>(testSeedGenerator, mtSupplier);
+    final BaseRandom rng = new ReseedingThreadLocalRandomWrapper<BaseRandom>(testSeedGenerator, supplier);
     RandomTestUtils.checkReseeding(testSeedGenerator, rng, false);
   }
 
@@ -88,11 +76,11 @@ public class ReseedingThreadLocalRandomWrapperMersenneTwisterTest
   @Override @Test public void testSetSeedGeneratorNoOp() {
     RandomSeeder randomSeeder = new RandomSeeder(getTestSeedGenerator());
     ReseedingThreadLocalRandomWrapper<BaseRandom> prng =
-        new ReseedingThreadLocalRandomWrapper<>(mtSupplier, randomSeeder);
+        new ReseedingThreadLocalRandomWrapper<>(supplier, randomSeeder);
     prng.setRandomSeeder(randomSeeder);
   }
 
   @Override protected ReseedingThreadLocalRandomWrapper<MersenneTwisterRandom> createRng() throws SeedException {
-    return new ReseedingThreadLocalRandomWrapper<>(getTestSeedGenerator(), mtSupplier);
+    return new ReseedingThreadLocalRandomWrapper<>(getTestSeedGenerator(), supplier);
   }
 }

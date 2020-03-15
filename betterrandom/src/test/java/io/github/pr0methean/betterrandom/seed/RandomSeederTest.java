@@ -48,7 +48,7 @@ public class RandomSeederTest {
   @Test(timeOut = 25_000) public void testAddRemoveAndIsEmpty() {
     final SingleThreadSplittableRandomAdapter prng
         = new SingleThreadSplittableRandomAdapter(TEST_SEED);
-    final SeedGenerator seedGenerator = new SemiFakeSeedGenerator(
+    final SeedGenerator seedGenerator = new PseudorandomSeedGenerator(
         ThreadLocalRandom.current(), "testAddRemoveAndIsEmpty");
     final RandomSeeder randomSeeder = createRandomSeeder(seedGenerator);
     checkAddRemoveAndIsEmpty(prng, randomSeeder, randomSeeder::add);
