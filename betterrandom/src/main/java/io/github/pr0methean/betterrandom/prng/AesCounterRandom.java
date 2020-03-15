@@ -75,7 +75,7 @@ public class AesCounterRandom extends CipherCounterRandom {
     return 16;
   }
 
-  private static final int COUNTER_SIZE_BYTES = 16;
+  public static final int COUNTER_SIZE_BYTES = 16;
   /**
    * Number of blocks to encrypt at once, to construct/GC fewer arrays. This takes advantage of the
    * fact that in ECB mode, concatenating and then encrypting gives the same output as encrypting

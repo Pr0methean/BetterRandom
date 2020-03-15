@@ -1,16 +1,15 @@
 package io.github.pr0methean.betterrandom.seed;
 
-import com.google.common.collect.MapMaker;
 import io.github.pr0methean.betterrandom.ByteArrayReseedableRandom;
 import io.github.pr0methean.betterrandom.EntropyCountingRandom;
 import io.github.pr0methean.betterrandom.prng.BaseRandom;
 import io.github.pr0methean.betterrandom.util.BinaryUtils;
 import io.github.pr0methean.betterrandom.util.Looper;
+import io.github.pr0methean.betterrandom.util.MoreCollections;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.Objects;
 import java.util.Random;
 import java.util.Set;
@@ -219,20 +218,9 @@ public class RandomSeeder extends Looper {
    * deserialization.
    */
   @Override protected void initTransientFields() {
-    byteArrayPrngs = createSynchronizedWeakHashSet();
+    byteArrayPrngs = MoreCollections.createSynchronizedWeakHashSet();
     waitWhileEmpty = lock.newCondition();
     waitForEntropyDrain = lock.newCondition();
-  }
-
-  /**
-   * Creates and returns a thread-safe {@link Set} with only weak references to its members.
-   *
-   * @param <T> the set element type
-   * @return an empty mutable thread-safe {@link Set} that holds only weak references to its members
-   */
-  protected <T> Set<T> createSynchronizedWeakHashSet() {
-    return Collections.newSetFromMap(new MapMaker().weakKeys().concurrencyLevel(1)
-        .initialCapacity(1).makeMap());
   }
 
   @SuppressWarnings({"InfiniteLoopStatement", "ObjectAllocationInLoop", "AwaitNotInLoop"}) @Override

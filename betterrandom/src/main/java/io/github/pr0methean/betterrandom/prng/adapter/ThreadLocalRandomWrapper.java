@@ -5,10 +5,12 @@ import io.github.pr0methean.betterrandom.prng.BaseRandom;
 import io.github.pr0methean.betterrandom.seed.RandomSeeder;
 import io.github.pr0methean.betterrandom.seed.SeedGenerator;
 import io.github.pr0methean.betterrandom.util.BinaryUtils;
+import io.github.pr0methean.betterrandom.util.MoreCollections;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.Serializable;
 import java.util.Random;
+import java.util.Set;
 import java.util.function.Function;
 import java.util.function.LongFunction;
 import java.util.function.Supplier;
@@ -22,11 +24,27 @@ public class ThreadLocalRandomWrapper<T extends BaseRandom> extends RandomWrappe
 
   private static final long serialVersionUID = 1199235201518562359L;
   private final Supplier<? extends T> initializer;
-  @Nullable private final Integer explicitSeedSize;
+  private final int seedSize;
+  private transient Set<Thread> threadsInitializedFor;
   /**
    * Holds the delegate for each thread.
    */
   @SuppressWarnings({"ThreadLocalNotStaticFinal"}) protected transient ThreadLocal<T> threadLocal;
+
+  @Override protected void initTransientFields() {
+    super.initTransientFields();
+    threadsInitializedFor = MoreCollections.createSynchronizedWeakHashSet();
+  }
+
+  private ThreadLocalRandomWrapper(int seedSize, Supplier<? extends T> undecoratedInitializer) {
+    super(null);
+    this.seedSize = seedSize;
+    initializer = (Supplier<? extends T> & Serializable) () -> {
+      threadsInitializedFor.add(Thread.currentThread());
+      return undecoratedInitializer.get();
+    };
+    threadLocal = ThreadLocal.withInitial(initializer);
+  }
 
   /**
    * Wraps the given {@link Supplier}. This ThreadLocalRandomWrapper will be serializable if the
@@ -36,10 +54,7 @@ public class ThreadLocalRandomWrapper<T extends BaseRandom> extends RandomWrappe
    *     for each thread.
    */
   public ThreadLocalRandomWrapper(final Supplier<? extends T> initializer) {
-    super(null);
-    this.initializer = initializer;
-    threadLocal = ThreadLocal.withInitial(initializer);
-    explicitSeedSize = null;
+    this(initializer.get().getNewSeedLength(), initializer);
   }
 
   /**
@@ -54,11 +69,8 @@ public class ThreadLocalRandomWrapper<T extends BaseRandom> extends RandomWrappe
    */
   public ThreadLocalRandomWrapper(final int seedSize, final SeedGenerator seedGenerator,
       final Function<byte[], ? extends T> creator) {
-    super(null);
-    explicitSeedSize = seedSize;
-    initializer = (Serializable & Supplier<T>) (() -> creator
-        .apply(seedGenerator.generateSeed(seedSize)));
-    threadLocal = ThreadLocal.withInitial(initializer);
+    this(seedSize, (Serializable & Supplier<T>)
+        () -> creator.apply(seedGenerator.generateSeed(seedSize)));
   }
 
   /**
@@ -88,7 +100,7 @@ public class ThreadLocalRandomWrapper<T extends BaseRandom> extends RandomWrappe
    */
   @Override public void setRandomSeeder(@Nullable final RandomSeeder randomSeeder) {
     if (randomSeeder != null) {
-      throw new UnsupportedOperationException("This can't be reseeded by a LegacyRandomSeeder");
+      throw new UnsupportedOperationException("This can't be reseeded by a RandomSeeder");
     }
   }
 
@@ -176,8 +188,7 @@ public class ThreadLocalRandomWrapper<T extends BaseRandom> extends RandomWrappe
 
   @SuppressWarnings("VariableNotUsedInsideIf") @Override public void setSeed(final long seed) {
     if (threadLocal != null) {
-      final T wrapped = getWrapped();
-      wrapped.setSeed(seed);
+      getWrapped().setSeed(seed);
     }
   }
 
@@ -187,8 +198,7 @@ public class ThreadLocalRandomWrapper<T extends BaseRandom> extends RandomWrappe
       throw new IllegalArgumentException("Seed must not be null");
     }
     if (threadLocal != null) {
-      final T wrapped = getWrapped();
-      wrapped.setSeed(seed);
+      getWrapped().setSeed(seed);
     }
     if (this.seed == null) {
       this.seed = seed.clone(); // Needed for serialization
@@ -200,11 +210,14 @@ public class ThreadLocalRandomWrapper<T extends BaseRandom> extends RandomWrappe
   }
 
   @Override public long getEntropyBits() {
-    return getWrapped().getEntropyBits();
+    return isInitializedForCurrentThread() ? getWrapped().getEntropyBits() : seedSize * 8L;
   }
 
-  @SuppressWarnings("VariableNotUsedInsideIf") @Override public int getNewSeedLength() {
-    return (threadLocal == null) ? 0 :
-        ((explicitSeedSize == null) ? getWrapped().getNewSeedLength() : explicitSeedSize);
+  @Override public int getNewSeedLength() {
+    return isInitializedForCurrentThread() ? getWrapped().getNewSeedLength() : seedSize;
+  }
+
+  private boolean isInitializedForCurrentThread() {
+    return threadLocal != null && threadsInitializedFor.contains(Thread.currentThread());
   }
 }

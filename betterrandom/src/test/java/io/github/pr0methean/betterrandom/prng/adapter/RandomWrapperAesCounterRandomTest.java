@@ -34,7 +34,7 @@ import org.testng.annotations.Test;
   }
 
   @Override public void testInitialEntropy() {
-    checkInitialEntropyForCipher(this, new AesCounterRandom().getCounterSizeBytes());
+    checkInitialEntropyForCipher(this, AesCounterRandom.COUNTER_SIZE_BYTES);
   }
 
   @Override protected int getNewSeedLength() {
