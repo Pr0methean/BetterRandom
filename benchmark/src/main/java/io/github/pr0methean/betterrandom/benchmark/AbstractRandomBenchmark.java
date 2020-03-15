@@ -29,39 +29,54 @@ abstract class AbstractRandomBenchmark<T extends Random> {
   /**
    * TODO: Find a way to specify this separately for each test
    */
-  private static final double DEFAULT_MIN_OPS_PER_SEC_NEXT_INT = 15_000_000;
-  private static final double DEFAULT_MINIMUM_OPS_PER_SEC_LONG = 15_000_000;
+  private static final double DEFAULT_MIN_OPS_PER_SEC_NEXT_INT = 1.5e7;
+  private static final double DEFAULT_MINIMUM_OPS_PER_SEC_LONG = 1.5e7;
   private static final List<String> NO_MIN_SCORE = ImmutableList.of(
       "VanillaJavaRandomBenchmark",
       "ZRandomWrapperSecureRandomBenchmark",
       "ZVanillaJavaSecureRandomBenchmark");
-  private static final ImmutableMap<String, Double> MINIMUM_OPS
-      = zeroMinimumsFor(
-          VanillaJavaRandomBenchmark.class,
-          ZRandomWrapperSecureRandomBenchmark.class,
-          ZVanillaJavaSecureRandomBenchmark.class)
-      .put(AesCounterRandomBenchmark.class.getName() + ".testNextInt", 9_000_000.0)
-      .put(AesCounterRandomBenchmark.class.getName() + ".testNextLong", 9_000_000.0)
-      .put(ReseedingThreadLocalRandomWrapperAesCounterRandom128Benchmark.class.getName() + ".testNextInt",
-          1_800_000.0)
-      .put(ReseedingThreadLocalRandomWrapperAesCounterRandom128Benchmark.class.getName() + ".testNextLong",
-          1_500_000.0)
-      .put(SplittableRandomAdapterBenchmark.class.getName() + ".testNextInt",
-          6_000_000.0)
-      .put(SplittableRandomAdapterBenchmark.class.getName() + ".testNextLong",
-          6_000_000.0)
-      .put(ThreadLocalRandomWrapperAesCounterRandom128Benchmark.class.getName() + ".testNextLong",
-          9_000_000.0)
-      .put(XorShiftRandomBenchmark.class.getName() + ".testNextLong", 9_000_000.0)
-      .build();
+  private static final ImmutableMap<String, Double> MINIMUM_OPS;
+
+  static {
+    ImmutableMap.Builder<String, Double> builder =
+        zeroMinimumsFor(VanillaJavaRandomBenchmark.class, ZRandomWrapperSecureRandomBenchmark.class,
+            ZVanillaJavaSecureRandomBenchmark.class);
+    setMinimumNextInt(builder, AesCounterRandomBenchmark.class, 9e6);
+    setMinimumNextLong(builder, AesCounterRandomBenchmark.class, 9e6);
+    setMinimumNextInt(builder, ReseedingThreadLocalRandomWrapperAesCounterRandom128Benchmark.class, 1.8e6);
+    setMinimumNextLong(builder, ReseedingThreadLocalRandomWrapperAesCounterRandom128Benchmark.class, 1.5e6);
+    setMinimumNextInt(builder, SplittableRandomAdapterBenchmark.class, 6e6);
+    setMinimumNextLong(builder, SplittableRandomAdapterBenchmark.class, 6e6);
+    setMinimumNextLong(builder, ThreadLocalRandomWrapperAesCounterRandom128Benchmark.class, 9e6);
+    setMinimumNextLong(builder, XorShiftRandomBenchmark.class, 9e6);
+    MINIMUM_OPS = builder.build();
+  }
+
+  private static void setMinimumNextInt(ImmutableMap.Builder<String, Double> builder,
+      final Class<? extends AbstractRandomBenchmark<?>> clazz, final double minimum) {
+    setMinimum(builder, clazz, ".testNextInt", minimum);
+  }
+
+  private static void setMinimumNextLong(ImmutableMap.Builder<String, Double> builder,
+      final Class<? extends AbstractRandomBenchmark<?>> clazz, final double minimum) {
+    setMinimum(builder, clazz, ".testNextLong", minimum);
+  }
+
+  private static void setMinimum(ImmutableMap.Builder<String, Double> builder,
+      Class<? extends AbstractRandomBenchmark<?>> aesCounterRandomBenchmarkClass, String suffix,
+      double minimum) {
+    builder.put(aesCounterRandomBenchmarkClass.getName() + suffix, minimum);
+  }
+
   protected T prng;
 
   private static ImmutableMap.Builder<String, Double> zeroMinimumsFor(
       Class<? extends AbstractRandomBenchmark<?>>... benchmarkClasses) {
     ImmutableMap.Builder<String, Double> builder = ImmutableMap.builder();
     for (Class<? extends AbstractRandomBenchmark<?>> clazz : benchmarkClasses) {
-      builder.put(clazz.getName() + ".testNextInt", 0.0)
-          .put(clazz.getName() + ".testNextLong", 0.0);
+      builder.put(clazz.getName() + ".testNextInt", 0.0);
+      setMinimum(builder, clazz, ".testNextLong",
+          0.0);
     }
     return builder;
   }
