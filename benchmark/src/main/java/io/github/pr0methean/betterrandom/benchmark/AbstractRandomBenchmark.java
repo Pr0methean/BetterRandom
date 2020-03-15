@@ -28,7 +28,8 @@ abstract class AbstractRandomBenchmark<T extends Random> {
   /**
    * TODO: Find a way to specify this separately for each test
    */
-  private static final double MINIMUM_OPS_PER_SEC = 2_000_000;
+  private static final double MINIMUM_OPS_PER_SEC_INT = 2_000_000;
+  private static final double MINIMUM_OPS_PER_SEC_LONG = 1_500_000;
   private static final List<String> NO_MIN_SCORE = ImmutableList.of(
       "VanillaJavaRandomBenchmark",
       "ZRandomWrapperSecureRandomBenchmark",
@@ -55,16 +56,28 @@ abstract class AbstractRandomBenchmark<T extends Random> {
       for (RunResult runResult : results) {
         boolean minimumScoreApplies = true;
         for (String exempt : NO_MIN_SCORE) {
-          if (runResult.getPrimaryResult().getLabel().contains(exempt)) {
+          if (runResult.getPrimaryResult().extendedInfo().contains(exempt)) {
             minimumScoreApplies = false;
             break;
           }
         }
         if (minimumScoreApplies) {
+          double minimum;
+          switch (runResult.getPrimaryResult().getLabel()) {
+            case "testNextInt":
+              minimum = MINIMUM_OPS_PER_SEC_INT;
+              break;
+            case "testNextLong":
+              minimum = MINIMUM_OPS_PER_SEC_LONG;
+              break;
+            default:
+              throw new AssertionError(
+                  "No minimum throughput specified for " + runResult.getPrimaryResult().getLabel());
+          }
           double score = runResult.getAggregatedResult().getPrimaryResult().getScore();
-          if (runResult.getAggregatedResult().getPrimaryResult().getScore() < MINIMUM_OPS_PER_SEC) {
+          if (score < minimum) {
             throw new AssertionError(String.format("Score %f for %s is too slow", score,
-                runResult.getPrimaryResult().getLabel()));
+                runResult.getPrimaryResult().extendedInfo()));
           }
         }
       }
