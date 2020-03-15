@@ -54,14 +54,8 @@ abstract class AbstractRandomBenchmark<T extends Random> {
       }
       runner.list(); // Produce default
       for (RunResult runResult : results) {
-        boolean minimumScoreApplies = true;
-        for (String exempt : NO_MIN_SCORE) {
-          if (runResult.getPrimaryResult().extendedInfo().contains(exempt)) {
-            minimumScoreApplies = false;
-            break;
-          }
-        }
-        if (minimumScoreApplies) {
+        final String name = runResult.getParams().getBenchmark();
+        if (NO_MIN_SCORE.stream().noneMatch(name::contains)) {
           double minimum;
           switch (runResult.getPrimaryResult().getLabel()) {
             case "testNextInt":
