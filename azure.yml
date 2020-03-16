@@ -86,17 +86,6 @@ stages:
           - template: etc/azureTemplate/installJavaJti.yml
           - template: etc/azureTemplate/unitTestsUbuntu.yml
           - template: etc/azureTemplate/publishCoverage.yml
-      - job: UnitOracleLimitedCrypto
-        pool:
-          vmImage: 'ubuntu-latest'
-        variables:
-          JAVA8: 'true'
-          artifactEnvName: OracleLimitedCrypto
-        steps:
-          - script: sudo ./etc/scripts/installOracleJdk8.sh
-            displayName: Download & Install Java
-          - template: etc/azureTemplate/unitTestsUbuntu.yml
-          - template: etc/azureTemplate/publishCoverage.yml
       - job: UnitMac
         variables:
           JAVA_HOME: jdk
@@ -267,19 +256,6 @@ stages:
           inputs:
             pathtoPublish: benchmark/target/benchmark_results_two_threads.txt
             artifactName: Benchmark - $(artifactEnvName) - 2 Threads
-    - job: BenchmarkOracleLimitedCrypto
-      timeoutInMinutes: 15
-      pool:
-        vmImage: 'ubuntu-latest'
-      variables:
-        JAVA8: 'true'
-        artifactEnvName: OracleLimitedCrypto
-      steps:
-        - script: sudo ./etc/scripts/installOracleJdk8.sh
-          displayName: Download & Install Java
-        - template: etc/azureTemplate/benchmark.yml
-          parameters:
-            whichTest: 'io.github.pr0methean.betterrandom.benchmark.AesCounterRandomBenchmark'
   - stage: Dieharder
     dependsOn: UnitTests
     jobs:
