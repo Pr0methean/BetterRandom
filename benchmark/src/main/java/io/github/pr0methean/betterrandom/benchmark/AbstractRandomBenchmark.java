@@ -1,5 +1,6 @@
 package io.github.pr0methean.betterrandom.benchmark;
 
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import io.github.pr0methean.betterrandom.util.EntryPoint;
 import java.util.Collection;
@@ -24,14 +25,14 @@ import org.openjdk.jmh.runner.options.OptionsBuilder;
 @State(Scope.Benchmark)
 abstract class AbstractRandomBenchmark<T extends Random> {
 
-  /**
-   * TODO: Find a way to specify this separately for each test
-   */
-  private static final double DEFAULT_MIN_OPS_PER_SEC_NEXT_INT = 1.5e7;
-  private static final double DEFAULT_MINIMUM_OPS_PER_SEC_LONG = 8e6;
-  private static final ImmutableMap<String, Double> MINIMUM_OPS;
+  private static final double DEFAULT_MIN_OPS_PER_SEC_NEXT_INT_1_THREAD = 1.4e7;
+  private static final double DEFAULT_MINIMUM_OPS_PER_SEC_LONG_1_THREAD = 8e6;
+  private static final double DEFAULT_MIN_OPS_PER_SEC_NEXT_INT_2_THREADS = 7e6;
+  private static final double DEFAULT_MINIMUM_OPS_PER_SEC_LONG_2_THREADS = 3e6;
+  private static final ImmutableList<ImmutableMap<String, Double>> MINIMUM_OPS;
 
   static {
+    ImmutableList.Builder<ImmutableMap<String, Double>> listBuilder = ImmutableList.builder();
     ImmutableMap.Builder<String, Double> builder =
         zeroMinimumsFor(VanillaJavaRandomBenchmark.class, ZRandomWrapperSecureRandomBenchmark.class,
             ZVanillaJavaSecureRandomBenchmark.class);
@@ -41,14 +42,31 @@ abstract class AbstractRandomBenchmark<T extends Random> {
     setMinimumNextInt(builder, Pcg64RandomBenchmark.class, 3.6e7);
     setMinimumNextInt(builder, Pcg128RandomBenchmark.class, 8e6);
     setMinimumNextLong(builder, Pcg128RandomBenchmark.class, 8e6);
-    setMinimumNextInt(builder, ReseedingThreadLocalRandomWrapperAesCounterRandom128Benchmark.class, 1.8e6);
+    setMinimumNextInt(builder, ReseedingThreadLocalRandomWrapperAesCounterRandom128Benchmark.class, 1.7e6);
     setMinimumNextLong(builder, ReseedingThreadLocalRandomWrapperAesCounterRandom128Benchmark.class, 1.2e6);
     setMinimumNextInt(builder, SplittableRandomAdapterBenchmark.class, 5e6);
     setMinimumNextLong(builder, SplittableRandomAdapterBenchmark.class, 5e6);
     setMinimumNextInt(builder, ThreadLocalRandomWrapperAesCounterRandom128Benchmark.class, 1e7);
     setMinimumNextLong(builder, ThreadLocalRandomWrapperAesCounterRandom128Benchmark.class, 6e6);
-    setMinimumNextLong(builder, XorShiftRandomBenchmark.class, 9e6);
-    MINIMUM_OPS = builder.build();
+    setMinimumNextLong(builder, XorShiftRandomBenchmark.class, 8e6);
+    listBuilder.add(builder.build());
+
+    builder = zeroMinimumsFor(VanillaJavaRandomBenchmark.class, ZRandomWrapperSecureRandomBenchmark.class,
+        ZVanillaJavaSecureRandomBenchmark.class);
+    setMinimumNextInt(builder, Cmwc4096RandomBenchmark.class, 4.5e6);
+    setMinimumNextLong(builder, Cmwc4096RandomBenchmark.class, 5e6);
+    setMinimumNextInt(builder, Pcg128RandomBenchmark.class, 3.5e6);
+    setMinimumNextInt(builder, RandomWrapperBenchmark.class, 4e6);
+    setMinimumNextInt(builder, ReseedingThreadLocalRandomWrapperAesCounterRandom128Benchmark.class, 2e6);
+    setMinimumNextLong(builder, ReseedingThreadLocalRandomWrapperAesCounterRandom128Benchmark.class, 1.5e6);
+    setMinimumNextInt(builder, SplittableRandomAdapterBenchmark.class, 4e6);
+    setMinimumNextLong(builder, SplittableRandomAdapterBenchmark.class, 4e6);
+    setMinimumNextInt(builder, ThreadLocalRandomWrapperAesCounterRandom128Benchmark.class, 3e7);
+    setMinimumNextLong(builder, ThreadLocalRandomWrapperAesCounterRandom128Benchmark.class, 1e7);
+    setMinimumNextInt(builder, XorShiftRandomBenchmark.class, 4e6);
+    setMinimumNextLong(builder, XorShiftRandomBenchmark.class, 4e6);
+    listBuilder.add(builder.build());
+    MINIMUM_OPS = listBuilder.build();
   }
 
   private static void setMinimumNextInt(ImmutableMap.Builder<String, Double> builder,
@@ -101,16 +119,20 @@ abstract class AbstractRandomBenchmark<T extends Random> {
         double defaultMinimum;
         switch (runResult.getPrimaryResult().getLabel()) {
           case "testNextInt":
-            defaultMinimum = DEFAULT_MIN_OPS_PER_SEC_NEXT_INT;
+            defaultMinimum = (nThreads == 2)
+                ? DEFAULT_MIN_OPS_PER_SEC_NEXT_INT_2_THREADS
+                : DEFAULT_MIN_OPS_PER_SEC_NEXT_INT_1_THREAD;
             break;
           case "testNextLong":
-            defaultMinimum = DEFAULT_MINIMUM_OPS_PER_SEC_LONG;
+            defaultMinimum = (nThreads == 2)
+                ? DEFAULT_MINIMUM_OPS_PER_SEC_LONG_2_THREADS
+                : DEFAULT_MINIMUM_OPS_PER_SEC_LONG_1_THREAD;
             break;
           default:
             throw new AssertionError(
                 "No minimum throughput specified for " + name);
         }
-        double minimum = MINIMUM_OPS.getOrDefault(name, defaultMinimum);
+        double minimum = MINIMUM_OPS.get(nThreads - 1).getOrDefault(name, defaultMinimum);
         double score = runResult.getAggregatedResult().getPrimaryResult().getScore();
         if (score < minimum) {
           throw new AssertionError(String.format("Score %f for %s is too slow", score, name));
