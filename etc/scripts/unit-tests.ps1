@@ -1,20 +1,9 @@
-$PARAM1=[Environment]::GetEnvironmentVariable($1)
-if ( $PARAM1 )
-{
-  $JAVA_HOME=$PARAM1 # first arg names the variable that JAVA_HOME is copied from
+$JAVA_HOME = [Environment]::GetEnvironmentVariable($env:JAVA_HOME_SOURCE) # names the variable that JAVA_HOME is copied from
+if (!$JAVA_HOME) {
+  echo "JAVA_HOME not set from" $JAVA_HOME_SOURCE
+  exit 1
 }
-if ( $env:ANDROID )
-{
-    $MAYBE_ANDROID_FLAG = "-Pandroid"
-}
-else
-{
-    $MAYBE_ANDROID_FLAG = ""
-}
-if ( $env:APPVEYOR )
-{
-    $RANDOM_DOT_ORG_KEY = $env:random_dot_org_key
-}
+$RANDOM_DOT_ORG_KEY = $env:RANDOM_DOT_ORG_KEY
 cd betterrandom
 mvn "$MAYBE_ANDROID_FLAG" "clean" "compile" "jacoco:instrument" "jacoco:prepare-agent" `
     "test" "jacoco:restore-instrumented-classes" "jacoco:report" -e
