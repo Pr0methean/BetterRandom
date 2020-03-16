@@ -47,7 +47,7 @@ abstract class AbstractRandomBenchmark<T extends Random> {
     setMinimumNextInt(builder, SplittableRandomAdapterBenchmark.class, 5e6);
     setMinimumNextLong(builder, SplittableRandomAdapterBenchmark.class, 5e6);
     setMinimumNextInt(builder, ThreadLocalRandomWrapperAesCounterRandom128Benchmark.class, 1e7);
-    setMinimumNextLong(builder, ThreadLocalRandomWrapperAesCounterRandom128Benchmark.class, 6e6);
+    setMinimumNextLong(builder, ThreadLocalRandomWrapperAesCounterRandom128Benchmark.class, 5e6);
     setMinimumNextLong(builder, XorShiftRandomBenchmark.class, 8e6);
     listBuilder.add(builder.build());
 
@@ -55,9 +55,9 @@ abstract class AbstractRandomBenchmark<T extends Random> {
         ZVanillaJavaSecureRandomBenchmark.class);
     setMinimumNextInt(builder, Cmwc4096RandomBenchmark.class, 4e6);
     setMinimumNextLong(builder, Cmwc4096RandomBenchmark.class, 3.5e6);
-    setMinimumNextInt(builder, MersenneTwisterRandomBenchmark.class, 6e6);
-    setMinimumNextInt(builder, Pcg128RandomBenchmark.class, 3.5e6);
-    setMinimumNextInt(builder, RandomWrapperBenchmark.class, 4e6);
+    setMinimumNextInt(builder, MersenneTwisterRandomBenchmark.class, 4e6);
+    setMinimumNextInt(builder, Pcg128RandomBenchmark.class, 2.9e6);
+    setMinimumNextInt(builder, RandomWrapperBenchmark.class, 3.5e6);
     setMinimumNextInt(builder, ReseedingThreadLocalRandomWrapperAesCounterRandom128Benchmark.class, 2e6);
     setMinimumNextLong(builder, ReseedingThreadLocalRandomWrapperAesCounterRandom128Benchmark.class, 1.5e6);
     setMinimumNextInt(builder, SplittableRandomAdapterBenchmark.class, 4e6);
@@ -65,7 +65,7 @@ abstract class AbstractRandomBenchmark<T extends Random> {
     setMinimumNextInt(builder, ThreadLocalRandomWrapperAesCounterRandom128Benchmark.class, 3e7);
     setMinimumNextLong(builder, ThreadLocalRandomWrapperAesCounterRandom128Benchmark.class, 1e7);
     setMinimumNextInt(builder, XorShiftRandomBenchmark.class, 4e6);
-    setMinimumNextLong(builder, XorShiftRandomBenchmark.class, 4e6);
+    setMinimumNextLong(builder, XorShiftRandomBenchmark.class, 3.6e6);
     listBuilder.add(builder.build());
     MINIMUM_OPS = listBuilder.build();
   }
