@@ -1,10 +1,8 @@
 package io.github.pr0methean.betterrandom.benchmark;
 
-import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import io.github.pr0methean.betterrandom.util.EntryPoint;
 import java.util.Collection;
-import java.util.List;
 import java.util.Random;
 import org.openjdk.jmh.annotations.Benchmark;
 import org.openjdk.jmh.annotations.Level;
@@ -30,11 +28,7 @@ abstract class AbstractRandomBenchmark<T extends Random> {
    * TODO: Find a way to specify this separately for each test
    */
   private static final double DEFAULT_MIN_OPS_PER_SEC_NEXT_INT = 1.5e7;
-  private static final double DEFAULT_MINIMUM_OPS_PER_SEC_LONG = 1.5e7;
-  private static final List<String> NO_MIN_SCORE = ImmutableList.of(
-      "VanillaJavaRandomBenchmark",
-      "ZRandomWrapperSecureRandomBenchmark",
-      "ZVanillaJavaSecureRandomBenchmark");
+  private static final double DEFAULT_MINIMUM_OPS_PER_SEC_LONG = 8e6;
   private static final ImmutableMap<String, Double> MINIMUM_OPS;
 
   static {
@@ -42,13 +36,17 @@ abstract class AbstractRandomBenchmark<T extends Random> {
         zeroMinimumsFor(VanillaJavaRandomBenchmark.class, ZRandomWrapperSecureRandomBenchmark.class,
             ZVanillaJavaSecureRandomBenchmark.class);
     setMinimumNextInt(builder, AesCounterRandomBenchmark.class, 9e6);
-    setMinimumNextLong(builder, AesCounterRandomBenchmark.class, 7e6);
-    setMinimumNextInt(builder, Pcg64RandomBenchmark.class, 4e7);
+    setMinimumNextLong(builder, AesCounterRandomBenchmark.class, 4e6);
+    setMinimumNextLong(builder, MersenneTwisterRandomBenchmark.class, 7e6);
+    setMinimumNextInt(builder, Pcg64RandomBenchmark.class, 3.6e7);
+    setMinimumNextInt(builder, Pcg128RandomBenchmark.class, 8e6);
+    setMinimumNextLong(builder, Pcg128RandomBenchmark.class, 8e6);
     setMinimumNextInt(builder, ReseedingThreadLocalRandomWrapperAesCounterRandom128Benchmark.class, 1.8e6);
-    setMinimumNextLong(builder, ReseedingThreadLocalRandomWrapperAesCounterRandom128Benchmark.class, 1.5e6);
-    setMinimumNextInt(builder, SplittableRandomAdapterBenchmark.class, 6e6);
-    setMinimumNextLong(builder, SplittableRandomAdapterBenchmark.class, 6e6);
-    setMinimumNextLong(builder, ThreadLocalRandomWrapperAesCounterRandom128Benchmark.class, 9e6);
+    setMinimumNextLong(builder, ReseedingThreadLocalRandomWrapperAesCounterRandom128Benchmark.class, 1.2e6);
+    setMinimumNextInt(builder, SplittableRandomAdapterBenchmark.class, 5e6);
+    setMinimumNextLong(builder, SplittableRandomAdapterBenchmark.class, 5e6);
+    setMinimumNextLong(builder, ThreadLocalRandomWrapperAesCounterRandom128Benchmark.class, 1e7);
+    setMinimumNextLong(builder, ThreadLocalRandomWrapperAesCounterRandom128Benchmark.class, 6e6);
     setMinimumNextLong(builder, XorShiftRandomBenchmark.class, 9e6);
     MINIMUM_OPS = builder.build();
   }

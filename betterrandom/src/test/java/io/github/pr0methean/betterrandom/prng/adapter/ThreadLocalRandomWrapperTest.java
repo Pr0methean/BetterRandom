@@ -16,7 +16,7 @@ import java.util.Map;
 import java.util.Random;
 import org.testng.annotations.Test;
 
-public class ThreadLocalRandomWrapperTest<T extends BaseRandom>
+public abstract class ThreadLocalRandomWrapperTest<T extends BaseRandom>
     extends BaseRandomTest<ThreadLocalRandomWrapper<T>> {
   protected final SerializableSupplier<T> supplier;
 
