@@ -8,6 +8,5 @@ mvn -B "-DskipTests" "-Darguments=-DskipTests" "-Dmaven.test.skip=true" "$MAYBE_
 cd ../benchmark
 mvn -B "-DskipTests" "$MAYBE_ANDROID_FLAG" package
 cd target
-"$JAVA_BIN" -jar benchmarks.jar -f 1 -t 1 -foe true
-"$JAVA_BIN" -jar benchmarks.jar -f 1 -t 2 -foe true
+"$JAVA_BIN" -jar benchmarks.jar
 
