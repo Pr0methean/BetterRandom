@@ -5,7 +5,7 @@ variables:
 - name: zuluLinux11
   value: '/usr/lib/jvm/zulu-11-azure-amd64'
 - name: zuluLinuxLatest
-  value: '/usr/lib/jvm/zulu-12-azure-amd64' # JDK 13 isn't preinstalled as of 2019-09-18
+  value: '/usr/lib/jvm/zulu-12-azure-amd64'
 - name: openjnine11linux
   value: 'https://api.adoptopenjdk.net/v3/binary/latest/11/ga/linux/x64/jdk/openj9/normal/adoptopenjdk'
 - name: openJNineLatestLinux
@@ -123,7 +123,7 @@ stages:
               JAVA_HOME_SOURCE: JAVA_HOME_11_X64
               artifactEnvName: OpenJdk11Windows
             OpenJdkLatest:
-              JAVA_HOME_SOURCE: JAVA_HOME_13_X64
+              JAVA_HOME_SOURCE: JAVA_HOME_12_X64
               artifactEnvName: OpenJdkLatestWindows
         pool:
           vmImage: 'windows-latest'
