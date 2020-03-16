@@ -46,22 +46,23 @@ abstract class AbstractRandomBenchmark<T extends Random> {
     setMinimumNextLong(builder, ReseedingThreadLocalRandomWrapperAesCounterRandom128Benchmark.class, 1.2e6);
     setMinimumNextInt(builder, SplittableRandomAdapterBenchmark.class, 5e6);
     setMinimumNextLong(builder, SplittableRandomAdapterBenchmark.class, 5e6);
-    setMinimumNextInt(builder, ThreadLocalRandomWrapperAesCounterRandom128Benchmark.class, 1e7);
-    setMinimumNextLong(builder, ThreadLocalRandomWrapperAesCounterRandom128Benchmark.class, 5e6);
+    setMinimumNextInt(builder, ThreadLocalRandomWrapperAesCounterRandom128Benchmark.class, 8.5e6);
+    setMinimumNextLong(builder, ThreadLocalRandomWrapperAesCounterRandom128Benchmark.class, 4.8e6);
     setMinimumNextLong(builder, XorShiftRandomBenchmark.class, 8e6);
     listBuilder.add(builder.build());
 
     builder = zeroMinimumsFor(VanillaJavaRandomBenchmark.class, ZRandomWrapperSecureRandomBenchmark.class,
         ZVanillaJavaSecureRandomBenchmark.class);
-    setMinimumNextInt(builder, Cmwc4096RandomBenchmark.class, 4e6);
-    setMinimumNextLong(builder, Cmwc4096RandomBenchmark.class, 3.4e6);
+    setMinimumNextInt(builder, Cmwc4096RandomBenchmark.class, 3.9e6);
+    setMinimumNextLong(builder, Cmwc4096RandomBenchmark.class, 2.9e6);
     setMinimumNextInt(builder, MersenneTwisterRandomBenchmark.class, 4e6);
     setMinimumNextInt(builder, Pcg128RandomBenchmark.class, 2.9e6);
+    setMinimumNextLong(builder, Pcg128RandomBenchmark.class, 2.9e6);
     setMinimumNextInt(builder, RandomWrapperBenchmark.class, 3.5e6);
     setMinimumNextInt(builder, ReseedingThreadLocalRandomWrapperAesCounterRandom128Benchmark.class, 2e6);
     setMinimumNextLong(builder, ReseedingThreadLocalRandomWrapperAesCounterRandom128Benchmark.class, 1.5e6);
-    setMinimumNextInt(builder, SplittableRandomAdapterBenchmark.class, 3.4e6);
-    setMinimumNextLong(builder, SplittableRandomAdapterBenchmark.class, 2.8e6);
+    setMinimumNextInt(builder, SplittableRandomAdapterBenchmark.class, 3.2e6);
+    setMinimumNextLong(builder, SplittableRandomAdapterBenchmark.class, 2.7e6);
     setMinimumNextInt(builder, ThreadLocalRandomWrapperAesCounterRandom128Benchmark.class, 3e7);
     setMinimumNextLong(builder, ThreadLocalRandomWrapperAesCounterRandom128Benchmark.class, 1e7);
     setMinimumNextInt(builder, XorShiftRandomBenchmark.class, 4e6);
