@@ -243,6 +243,7 @@ stages:
           displayName: Build & Benchmark
           inputs:
             filePath: etc/scripts/benchmark.ps1
+          failOnStderr: false
           env:
             JAVA_HOME_SOURCE: $(JAVA_HOME_SOURCE)
             RANDOM_DOT_ORG_KEY: $(RANDOM_DOT_ORG_KEY)
