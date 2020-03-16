@@ -243,8 +243,8 @@ stages:
           displayName: Build & Benchmark
           inputs:
             filePath: etc/scripts/benchmark.ps1
-            arguments: $(JAVA_HOME_SOURCE)
           env:
+            JAVA_HOME_SOURCE: $(JAVA_HOME_SOURCE)
             RANDOM_DOT_ORG_KEY: $(RANDOM_DOT_ORG_KEY)
         - template: etc/azureTemplate/publishBenchmark.yml
   - stage: Dieharder
