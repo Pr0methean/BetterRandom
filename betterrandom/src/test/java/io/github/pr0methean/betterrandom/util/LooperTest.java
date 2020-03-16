@@ -65,7 +65,7 @@ public class LooperTest {
     final SleepingLooper sleepingThread = new SleepingLooper();
     sleepingThread.start();
     sleepingThread.startLatch.countDown();
-    Uninterruptibles.sleepUninterruptibly(200, TimeUnit.MILLISECONDS);
+    Uninterruptibles.sleepUninterruptibly(500, TimeUnit.MILLISECONDS);
     assertEquals(sleepingThread.finishedIterations.get(), 1);
   }
 
