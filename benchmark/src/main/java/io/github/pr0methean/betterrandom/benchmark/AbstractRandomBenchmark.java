@@ -106,6 +106,9 @@ abstract class AbstractRandomBenchmark<T extends Random> {
     final ChainedOptionsBuilder options =
         new OptionsBuilder().syncIterations(true).shouldFailOnError(true)
             .forks(1).resultFormat(ResultFormatType.CSV).detectJvmArgs();
+    boolean failed = false;
+    StringBuilder failureMessage = new StringBuilder(
+        String.format("The following tests are too slow:%n"));
     for (int nThreads = 1; nThreads <= 2; nThreads++) {
       final Runner runner = new Runner(
           options.threads(nThreads).result(String.format("%d-thread_bench_results.csv", nThreads))
@@ -136,8 +139,12 @@ abstract class AbstractRandomBenchmark<T extends Random> {
         double minimum = MINIMUM_OPS.get(nThreads - 1).getOrDefault(name, defaultMinimum);
         double score = runResult.getAggregatedResult().getPrimaryResult().getScore();
         if (score < minimum) {
-          throw new AssertionError(String.format("Score %f for %s is too slow", score, name));
+          failed = true;
+          failureMessage.append(String.format("%s: %f < %f%n", name, score, minimum));
         }
+      }
+      if (failed) {
+        throw new AssertionError(failureMessage.toString());
       }
     }
   }
