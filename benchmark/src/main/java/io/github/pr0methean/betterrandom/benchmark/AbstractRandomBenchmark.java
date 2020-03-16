@@ -30,7 +30,7 @@ abstract class AbstractRandomBenchmark<T extends Random> {
    * TODO: Find a way to specify this separately for each test
    */
   private static final double DEFAULT_MIN_OPS_PER_SEC_NEXT_INT = 1.5e7;
-  private static final double DEFAULT_MINIMUM_OPS_PER_SEC_LONG = 1.5e7;
+  private static final double DEFAULT_MINIMUM_OPS_PER_SEC_LONG = 9e6;
   private static final List<String> NO_MIN_SCORE = ImmutableList.of(
       "VanillaJavaRandomBenchmark",
       "ZRandomWrapperSecureRandomBenchmark",
@@ -42,8 +42,10 @@ abstract class AbstractRandomBenchmark<T extends Random> {
         zeroMinimumsFor(VanillaJavaRandomBenchmark.class, ZRandomWrapperSecureRandomBenchmark.class,
             ZVanillaJavaSecureRandomBenchmark.class);
     setMinimumNextInt(builder, AesCounterRandomBenchmark.class, 9e6);
-    setMinimumNextLong(builder, AesCounterRandomBenchmark.class, 7e6);
+    setMinimumNextLong(builder, AesCounterRandomBenchmark.class, 5e6);
     setMinimumNextInt(builder, Pcg64RandomBenchmark.class, 4e7);
+    setMinimumNextInt(builder, Pcg128RandomBenchmark.class, 8e7);
+    setMinimumNextLong(builder, Pcg128RandomBenchmark.class, 8e7);
     setMinimumNextInt(builder, ReseedingThreadLocalRandomWrapperAesCounterRandom128Benchmark.class, 1.8e6);
     setMinimumNextLong(builder, ReseedingThreadLocalRandomWrapperAesCounterRandom128Benchmark.class, 1.5e6);
     setMinimumNextInt(builder, SplittableRandomAdapterBenchmark.class, 6e6);
