@@ -272,13 +272,11 @@ Android API levels below 24. These produce the Maven artifacts named
 Beginning with version 3.1.2, continuous integration takes place on Azure Pipelines and includes
 the following environments:
 
-* Ubuntu: OpenJDK 8,11,12; OpenJ9 8 and 12; Oracle HotSpot 8 and 11
-* OSX: OpenJDK 8,11; Oracle HotSpot 11
-* Windows: OpenJDK 8,11,12
+* Ubuntu: HotSpot 8,11,13; OpenJ9 8 and 12
+* OSX: HotSpot 8,11,13
+* Windows: HotSpot 8,11,12
 
-OpenJDK 8, 11 and 12 on Ubuntu and Windows are Azul Zulu builds. OpenJ9 is AdoptOpenJDK.
-For OpenJDK on OSX, the preinstalled builds on Microsoft's OSX system images are used;
-their provenance is unclear, but they are to be replaced with Azul Zulu in April 2019.
+HotSpot is Azul Zulu. OpenJ9 is AdoptOpenJDK.
 
 For versions up to 3.1.1, continuous integration took place in the following environments:
 
