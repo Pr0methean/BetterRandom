@@ -75,9 +75,8 @@ abstract class AbstractRandomBenchmark<T extends Random> {
       Class<? extends AbstractRandomBenchmark<?>>... benchmarkClasses) {
     ImmutableMap.Builder<String, Double> builder = ImmutableMap.builder();
     for (Class<? extends AbstractRandomBenchmark<?>> clazz : benchmarkClasses) {
-      builder.put(clazz.getName() + ".testNextInt", 0.0);
-      setMinimum(builder, clazz, ".testNextLong",
-          0.0);
+      setMinimumNextLong(builder, clazz, 0.0);
+      setMinimumNextInt(builder, clazz, 0.0);
     }
     return builder;
   }
