@@ -42,7 +42,7 @@ abstract class AbstractRandomBenchmark<T extends Random> {
         zeroMinimumsFor(VanillaJavaRandomBenchmark.class, ZRandomWrapperSecureRandomBenchmark.class,
             ZVanillaJavaSecureRandomBenchmark.class);
     setMinimumNextInt(builder, AesCounterRandomBenchmark.class, 9e6);
-    setMinimumNextLong(builder, AesCounterRandomBenchmark.class, 9e6);
+    setMinimumNextLong(builder, AesCounterRandomBenchmark.class, 7e6);
     setMinimumNextInt(builder, Pcg64RandomBenchmark.class, 4e7);
     setMinimumNextInt(builder, ReseedingThreadLocalRandomWrapperAesCounterRandom128Benchmark.class, 1.8e6);
     setMinimumNextLong(builder, ReseedingThreadLocalRandomWrapperAesCounterRandom128Benchmark.class, 1.5e6);
