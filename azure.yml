@@ -246,7 +246,7 @@ stages:
             arguments: $(JAVA_HOME_SOURCE)
           env:
             RANDOM_DOT_ORG_KEY: $(RANDOM_DOT_ORG_KEY)
-        - template: publishBenchmark.yml
+        - template: etc/azureTemplate/publishBenchmark.yml
   - stage: Dieharder
     dependsOn: UnitTests
     jobs:
