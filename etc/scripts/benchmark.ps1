@@ -11,5 +11,13 @@ cd ../benchmark
 mvn -B "-DskipTests" package
 cd target
 $ARGS = '-Djdk.logger.finder.error=QUIET', '-jar', 'benchmarks.jar', '-jvm', ${JAVA_BIN}
+
+# FIXME: PowerShell exits with an error at the following step:
+# java.exe : WARNING: An illegal reflective access operation has occurred
+# At D:\a\1\s\etc\scripts\benchmark.ps1:14 char:1
+# + & $JAVA_BIN $ARGS *>&1
+# + ~~~~~~~~~~~~~~~~~~~~~~
+#     + CategoryInfo          : NotSpecified: (WARNING: An ill...on has occurred:String) [], RemoteException
+#     + FullyQualifiedErrorId : NativeCommandError
 & $JAVA_BIN $ARGS *>&1
 
