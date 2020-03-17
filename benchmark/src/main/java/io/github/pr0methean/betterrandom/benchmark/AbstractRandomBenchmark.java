@@ -43,12 +43,12 @@ abstract class AbstractRandomBenchmark<T extends Random> {
     setMinimumNextInt(builder, Pcg64RandomBenchmark.class, 3.6e7);
     setMinimumNextInt(builder, Pcg128RandomBenchmark.class, 8e6);
     setMinimumNextLong(builder, Pcg128RandomBenchmark.class, 8e6);
-    setMinimumNextInt(builder, ReseedingThreadLocalRandomWrapperAesCounterRandom128Benchmark.class, 1.7e6);
+    setMinimumNextInt(builder, ReseedingThreadLocalRandomWrapperAesCounterRandom128Benchmark.class, 1.6e6);
     setMinimumNextLong(builder, ReseedingThreadLocalRandomWrapperAesCounterRandom128Benchmark.class, 1.2e6);
     setMinimumNextInt(builder, SplittableRandomAdapterBenchmark.class, 5e6);
     setMinimumNextLong(builder, SplittableRandomAdapterBenchmark.class, 5e6);
     setMinimumNextInt(builder, ThreadLocalRandomWrapperAesCounterRandom128Benchmark.class, 8.5e6);
-    setMinimumNextLong(builder, ThreadLocalRandomWrapperAesCounterRandom128Benchmark.class, 4.8e6);
+    setMinimumNextLong(builder, ThreadLocalRandomWrapperAesCounterRandom128Benchmark.class, 4.4e6);
     setMinimumNextLong(builder, XorShiftRandomBenchmark.class, 8e6);
     listBuilder.add(builder.build());
 
