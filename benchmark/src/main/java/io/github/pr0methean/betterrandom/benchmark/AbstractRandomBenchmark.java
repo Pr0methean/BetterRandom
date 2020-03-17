@@ -27,8 +27,8 @@ abstract class AbstractRandomBenchmark<T extends Random> {
 
   private static final double DEFAULT_MIN_OPS_PER_SEC_NEXT_INT_1_THREAD = 1.4e7;
   private static final double DEFAULT_MINIMUM_OPS_PER_SEC_LONG_1_THREAD = 8e6;
-  private static final double DEFAULT_MIN_OPS_PER_SEC_NEXT_INT_2_THREADS = 7e6;
-  private static final double DEFAULT_MINIMUM_OPS_PER_SEC_LONG_2_THREADS = 3e6;
+  private static final double DEFAULT_MIN_OPS_PER_SEC_NEXT_INT_2_THREADS = 2.9e6;
+  private static final double DEFAULT_MINIMUM_OPS_PER_SEC_LONG_2_THREADS = 2.9e6;
   private static final ImmutableList<ImmutableMap<String, Double>> MINIMUM_OPS;
 
   static {
@@ -59,16 +59,13 @@ abstract class AbstractRandomBenchmark<T extends Random> {
     setMinimumNextInt(builder, Cmwc4096RandomBenchmark.class, 3.9e6);
     setMinimumNextLong(builder, Cmwc4096RandomBenchmark.class, 2.9e6);
     setMinimumNextInt(builder, MersenneTwisterRandomBenchmark.class, 4e6);
-    setMinimumNextInt(builder, Pcg128RandomBenchmark.class, 2.9e6);
-    setMinimumNextLong(builder, Pcg128RandomBenchmark.class, 2.9e6);
-    setMinimumNextInt(builder, RandomWrapperBenchmark.class, 3.5e6);
+    setMinimumNextLong(builder, Pcg128RandomBenchmark.class, 2.8e6);
     setMinimumNextInt(builder, ReseedingThreadLocalRandomWrapperAesCounterRandom128Benchmark.class, 2e6);
     setMinimumNextLong(builder, ReseedingThreadLocalRandomWrapperAesCounterRandom128Benchmark.class, 1.5e6);
-    setMinimumNextInt(builder, SplittableRandomAdapterBenchmark.class, 3.2e6);
     setMinimumNextLong(builder, SplittableRandomAdapterBenchmark.class, 2.7e6);
     setMinimumNextInt(builder, ThreadLocalRandomWrapperAesCounterRandom128Benchmark.class, 2e7);
     setMinimumNextLong(builder, ThreadLocalRandomWrapperAesCounterRandom128Benchmark.class, 8e6);
-    setMinimumNextInt(builder, XorShiftRandomBenchmark.class, 4e6);
+    setMinimumNextInt(builder, XorShiftRandomBenchmark.class, 3.9e6);
     setMinimumNextLong(builder, XorShiftRandomBenchmark.class, 2.9e6);
     listBuilder.add(builder.build());
     MINIMUM_OPS = listBuilder.build();
