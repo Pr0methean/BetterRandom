@@ -122,9 +122,10 @@ stages:
             OpenJdk11:
               JAVA_HOME_SOURCE: JAVA_HOME_11_X64
               artifactEnvName: OpenJdk11Windows
-            OpenJdkLatest:
-              JAVA_HOME_SOURCE: JAVA_HOME_12_X64
-              artifactEnvName: OpenJdkLatestWindows
+# FIXME: Replace with a job that downloads the JDK
+#            OpenJdkLatest:
+#              JAVA_HOME_SOURCE: JAVA_HOME_12_X64
+#              artifactEnvName: OpenJdkLatestWindows
         pool:
           vmImage: 'windows-latest'
         steps:
@@ -236,9 +237,10 @@ stages:
           OpenJdk11:
             JAVA_HOME_SOURCE: JAVA_HOME_11_X64
             artifactEnvName: 'OpenJdk11Windows'
-          OpenJdkLatest:
-            JAVA_HOME_SOURCE: JAVA_HOME_12_X64
-            artifactEnvName: 'OpenJdkLatestWindows'
+# FIXME: Replace with a job that downloads the JDK
+#          OpenJdkLatest:
+#            JAVA_HOME_SOURCE: JAVA_HOME_12_X64
+#            artifactEnvName: 'OpenJdkLatestWindows'
       steps:
         - task: PowerShell@2
           displayName: Build & Benchmark
