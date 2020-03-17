@@ -66,8 +66,8 @@ abstract class AbstractRandomBenchmark<T extends Random> {
     setMinimumNextLong(builder, SplittableRandomAdapterBenchmark.class, 2.6e6);
     setMinimumNextInt(builder, ThreadLocalRandomWrapperAesCounterRandom128Benchmark.class, 6e6);
     setMinimumNextLong(builder, ThreadLocalRandomWrapperAesCounterRandom128Benchmark.class, 3e6);
-    setMinimumNextInt(builder, XorShiftRandomBenchmark.class, 3.9e6);
-    setMinimumNextLong(builder, XorShiftRandomBenchmark.class, 2.9e6);
+    setMinimumNextInt(builder, XorShiftRandomBenchmark.class, 3.8e6);
+    setMinimumNextLong(builder, XorShiftRandomBenchmark.class, 2.8e6);
     listBuilder.add(builder.build());
     MINIMUM_OPS = listBuilder.build();
   }
