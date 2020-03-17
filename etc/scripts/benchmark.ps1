@@ -12,5 +12,5 @@ cd ../benchmark
 mvn -B "-DskipTests" "$MAYBE_ANDROID_FLAG" package
 cd target
 $ARGS = '-jar', 'benchmarks.jar'
-& $JAVA_BIN $ARGS
+& $JAVA_BIN $ARGS *>&1
 
