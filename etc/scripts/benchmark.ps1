@@ -6,11 +6,10 @@ if (!$JAVA_HOME) {
 $JAVA_BIN = $JAVA_HOME + '/bin/java'
 $RANDOM_DOT_ORG_KEY = $env:RANDOM_DOT_ORG_KEY
 cd betterrandom
-mvn -B "-DskipTests" "-Darguments=-DskipTests" "-Dmaven.test.skip=true" "$MAYBE_ANDROID_FLAG" `
-    "clean" "pre-integration-test" install
+mvn -B "-DskipTests" "-Darguments=-DskipTests" "-Dmaven.test.skip=true" "clean" "pre-integration-test" install
 cd ../benchmark
-mvn -B "-DskipTests" "$MAYBE_ANDROID_FLAG" package
+mvn -B "-DskipTests" package
 cd target
-$ARGS = '-jar', 'benchmarks.jar'
+$ARGS = '-Djdk.logger.finder.error=QUIET', '-jar', 'benchmarks.jar', '-jvm', ${JAVA_BIN}
 & $JAVA_BIN $ARGS *>&1
 
