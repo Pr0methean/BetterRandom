@@ -133,10 +133,10 @@ stages:
             inputs:
               filePath: etc/scripts/unit-tests.ps1
               arguments: $(JAVA_HOME_SOURCE)
+              failOnStderr: false
             env:
               RANDOM_DOT_ORG_KEY: $(RANDOM_DOT_ORG_KEY)
               JAVA_HOME_SOURCE: $(JAVA_HOME_SOURCE)
-            failOnStderr: false
           - template: etc/azureTemplate/publishCoverage.yml
   - stage: Mutation
     dependsOn: UnitTests
@@ -244,7 +244,7 @@ stages:
           displayName: Build & Benchmark
           inputs:
             filePath: etc/scripts/benchmark.ps1
-          failOnStderr: false
+            failOnStderr: false
           env:
             JAVA_HOME_SOURCE: $(JAVA_HOME_SOURCE)
             RANDOM_DOT_ORG_KEY: $(RANDOM_DOT_ORG_KEY)
