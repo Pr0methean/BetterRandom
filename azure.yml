@@ -129,12 +129,9 @@ stages:
         pool:
           vmImage: 'windows-latest'
         steps:
-          - task: PowerShell@2
+          - powershell: etc/scripts/unit-tests.ps1
             displayName: Build & Test
-            inputs:
-              filePath: etc/scripts/unit-tests.ps1
-              arguments: $(JAVA_HOME_SOURCE)
-              failOnStderr: false
+            failOnStderr: false
             env:
               RANDOM_DOT_ORG_KEY: $(RANDOM_DOT_ORG_KEY)
               JAVA_HOME_SOURCE: $(JAVA_HOME_SOURCE)
