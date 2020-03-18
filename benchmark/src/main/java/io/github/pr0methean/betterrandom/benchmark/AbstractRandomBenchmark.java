@@ -4,7 +4,6 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import io.github.pr0methean.betterrandom.util.EntryPoint;
 import java.util.Collection;
-import java.util.List;
 import java.util.Random;
 import org.openjdk.jmh.annotations.Benchmark;
 import org.openjdk.jmh.annotations.Level;
@@ -62,8 +61,8 @@ abstract class AbstractRandomBenchmark<T extends Random> {
     setMinimumNextInt(builder, MersenneTwisterRandomBenchmark.class, 4e6);
     setMinimumNextLong(builder, MersenneTwisterRandomBenchmark.class, 2.5e6);
     setMinimumNextLong(builder, Pcg128RandomBenchmark.class, 2.8e6);
-    setMinimumNextInt(builder, ReseedingThreadLocalRandomWrapperAesCounterRandom128Benchmark.class, 2e6);
-    setMinimumNextLong(builder, ReseedingThreadLocalRandomWrapperAesCounterRandom128Benchmark.class, 1.5e6);
+    setMinimumNextInt(builder, ReseedingThreadLocalRandomWrapperAesCounterRandom128Benchmark.class, 1.9e6);
+    setMinimumNextLong(builder, ReseedingThreadLocalRandomWrapperAesCounterRandom128Benchmark.class, 1.4e6);
     setMinimumNextLong(builder, SplittableRandomAdapterBenchmark.class, 2.6e6);
     setMinimumNextInt(builder, ThreadLocalRandomWrapperAesCounterRandom128Benchmark.class, 6e6);
     setMinimumNextLong(builder, ThreadLocalRandomWrapperAesCounterRandom128Benchmark.class, 3e6);
