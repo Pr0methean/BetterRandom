@@ -1,0 +1,14 @@
+steps:
+- task: PublishBuildArtifacts@1
+  condition: always()
+  displayName: Publish Results (1 Thread)
+  inputs:
+    pathtoPublish: benchmark/target/1-thread_bench_results.csv
+    artifactName: Benchmark - $(artifactEnvName) - 1 Thread
+- task: PublishBuildArtifacts@1
+  condition: always()
+  displayName: Publish Results (2 Threads)
+  inputs:
+    pathtoPublish: benchmark/target/2-thread_bench_results.csv
+    artifactName: Benchmark - $(artifactEnvName) - 2 Threads
+

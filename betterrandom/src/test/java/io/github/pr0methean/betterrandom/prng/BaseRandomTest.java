@@ -28,10 +28,10 @@ import io.github.pr0methean.betterrandom.TestUtils;
 import io.github.pr0methean.betterrandom.prng.RandomTestUtils.EntropyCheckMode;
 import io.github.pr0methean.betterrandom.seed.DefaultSeedGenerator;
 import io.github.pr0methean.betterrandom.seed.FakeSeedGenerator;
+import io.github.pr0methean.betterrandom.seed.PseudorandomSeedGenerator;
 import io.github.pr0methean.betterrandom.seed.RandomSeeder;
 import io.github.pr0methean.betterrandom.seed.SeedException;
 import io.github.pr0methean.betterrandom.seed.SeedGenerator;
-import io.github.pr0methean.betterrandom.seed.SemiFakeSeedGenerator;
 import io.github.pr0methean.betterrandom.util.BinaryUtils;
 import java.security.GeneralSecurityException;
 import java.util.Arrays;
@@ -74,8 +74,7 @@ public abstract class BaseRandomTest<T extends BaseRandom> extends PowerMockTest
   protected static final int INSTANCES_TO_HASH = 25;
   protected static final int EXPECTED_UNIQUE_HASHES = (int) (0.8 * INSTANCES_TO_HASH);
   protected static final int TEST_BYTES_LENGTH = 100;
-  protected final SeedGenerator semiFakeSeedGenerator
-      = new SemiFakeSeedGenerator(ThreadLocalRandom.current());
+  protected final SeedGenerator pseudorandomSeedGenerator = new PseudorandomSeedGenerator();
 
   /**
    * The square root of 12, rounded from an extended-precision calculation that was done by Wolfram
@@ -94,9 +93,9 @@ public abstract class BaseRandomTest<T extends BaseRandom> extends PowerMockTest
   protected final NamedFunction<Random, Double> setSeed = new NamedFunction<>(random -> {
     if (random instanceof BaseRandom) {
       BaseRandom baseRandom = (BaseRandom) random;
-      baseRandom.setSeed(semiFakeSeedGenerator.generateSeed(baseRandom.getNewSeedLength()));
+      baseRandom.setSeed(pseudorandomSeedGenerator.generateSeed(baseRandom.getNewSeedLength()));
     } else {
-      random.setSeed(BinaryUtils.convertBytesToLong(semiFakeSeedGenerator.generateSeed(8)));
+      random.setSeed(BinaryUtils.convertBytesToLong(pseudorandomSeedGenerator.generateSeed(8)));
     }
     return 0.0;
   }, "BaseRandom::setSeed(byte[])");
@@ -139,7 +138,7 @@ public abstract class BaseRandomTest<T extends BaseRandom> extends PowerMockTest
 
   protected SeedGenerator getTestSeedGenerator() {
     ThreadLocalRandom.current(); // ensure initialized for calling thread
-    return semiFakeSeedGenerator;
+    return pseudorandomSeedGenerator;
   }
 
   protected EntropyCheckMode getEntropyCheckMode() {
@@ -155,9 +154,9 @@ public abstract class BaseRandomTest<T extends BaseRandom> extends PowerMockTest
     final DefaultSeedGenerator mockDefaultSeedGenerator =
         PowerMockito.mock(DefaultSeedGenerator.class);
     when(mockDefaultSeedGenerator.generateSeed(anyInt())).thenAnswer(
-        invocation -> semiFakeSeedGenerator.generateSeed((Integer) (invocation.getArgument(0))));
+        invocation -> pseudorandomSeedGenerator.generateSeed((Integer) (invocation.getArgument(0))));
     doAnswer(invocation -> {
-      semiFakeSeedGenerator.generateSeed(invocation.getArgument(0));
+      pseudorandomSeedGenerator.generateSeed(invocation.getArgument(0));
       return null;
     }).when(mockDefaultSeedGenerator).generateSeed(any(byte[].class));
     Whitebox.setInternalState(DefaultSeedGenerator.class, "DEFAULT_SEED_GENERATOR",
@@ -178,7 +177,7 @@ public abstract class BaseRandomTest<T extends BaseRandom> extends PowerMockTest
     params.put(int.class, seedLength);
     params.put(long.class, TEST_SEED);
     params.put(byte[].class, new byte[seedLength]);
-    params.put(SeedGenerator.class, semiFakeSeedGenerator);
+    params.put(SeedGenerator.class, pseudorandomSeedGenerator);
     return params;
   }
 
@@ -321,7 +320,7 @@ public abstract class BaseRandomTest<T extends BaseRandom> extends PowerMockTest
 
   public void testSerializable(BaseRandom rng) {
     RandomTestUtils.assertEquivalentWhenSerializedAndDeserialized(rng);
-    // Can't use a SemiFakeSeedGenerator, because Random.equals() breaks equality check
+    // Can't use a PseudorandomSeedGenerator, because Random.equals() breaks equality check
     final SeedGenerator seedGenerator =
         new FakeSeedGenerator(getClass().getSimpleName() + "::testSerializable #" + rng.nextInt());
     RandomSeeder randomSeeder = new RandomSeeder(seedGenerator);
@@ -443,7 +442,7 @@ public abstract class BaseRandomTest<T extends BaseRandom> extends PowerMockTest
    */
   @Test(timeOut = 60_000, retryAnalyzer = FlakyRetryAnalyzer.class)
   public void testRandomSeederIntegration() {
-    final SeedGenerator seedGenerator = new SemiFakeSeedGenerator(new Random(),
+    final SeedGenerator seedGenerator = new PseudorandomSeedGenerator(new Random(),
         UUID.randomUUID().toString());
     final BaseRandom rng = createRng();
     RandomTestUtils.checkReseeding(seedGenerator, rng, true);

@@ -12,6 +12,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `SeedGenerator` implementations now use fair locks, to prevent threads from being starved if the same seed
   generator is used on more than one thread (although it's still recommended to use one `RandomSeeder` instance per
   `SeedGenerator` and avoid calling `SeedGenerator` directly in hot loops, to avoid the overhead of a contended lock).
+- In `ThreadLocalRandomWrapper` and `ReseedingThreadLocalRandomWrapper`, `getEntropyBits` and `getNewSeedLength` no
+  longer initializes a delegate for the calling thread if there isn't one already. As well, if they are constructed with
+  a `Function<byte[], seed>`, this will be used when `setSeed` is called and there isn't already a delegate for the
+  calling thread. Both changes should improve worst-case performance of these methods.
 
 ## [5.3.0]
 

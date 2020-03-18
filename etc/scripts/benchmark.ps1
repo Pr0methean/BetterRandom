@@ -1,30 +1,23 @@
-$JAVA_HOME = [Environment]::GetEnvironmentVariable($1) # first arg names the variable that JAVA_HOME is copied from
+$JAVA_HOME = [Environment]::GetEnvironmentVariable($env:JAVA_HOME_SOURCE) # names the variable that JAVA_HOME is copied from
+if (!$JAVA_HOME) {
+  echo "JAVA_HOME not set from" $JAVA_HOME_SOURCE
+  exit 1
+}
 $JAVA_BIN = $JAVA_HOME + '/bin/java'
-if ($env:ANDROID = 1)
-{
-    $MAYBE_ANDROID_FLAG = "-Pandroid"
-}
-else
-{
-    $MAYBE_ANDROID_FLAG = ""
-}
-if ( $env:APPVEYOR )
-{
-    $RANDOM_DOT_ORG_KEY = $env:random_dot_org_key
-}
-$MAYBE_PROGUARD="pre-integration-test"
+$RANDOM_DOT_ORG_KEY = $env:RANDOM_DOT_ORG_KEY
 cd betterrandom
-mvn -B "-DskipTests" "-Darguments=-DskipTests" "-Dmaven.test.skip=true" "$MAYBE_ANDROID_FLAG" `
-    "clean" "$MAYBE_PROGUARD" install
+mvn -B "-DskipTests" "-Darguments=-DskipTests" "-Dmaven.test.skip=true" "clean" "pre-integration-test" install
 cd ../benchmark
-mvn -B "-DskipTests" "$MAYBE_ANDROID_FLAG" package
+mvn -B "-DskipTests" package
 cd target
-if ( $TRAVIS ) {
-  java -jar benchmarks.jar -f 1 -t 1 -foe true
-  java -jar benchmarks.jar -f 1 -t 2 -foe true
-} else {
-  java -jar benchmarks.jar -f 1 -t 1 -foe true -v EXTRA 2>&1 | `
-      Tee-Object benchmark_results_one_thread.txt
-  java -jar benchmarks.jar -f 1 -t 2 -foe true -v EXTRA 2>&1 | `
-      Tee-Object benchmark_results_two_threads.txt
-}
+$ARGS = '-Djdk.logger.finder.error=QUIET', '-jar', 'benchmarks.jar', '-jvm', ${JAVA_BIN}
+
+# FIXME: PowerShell exits with an error at the following step:
+# java.exe : WARNING: An illegal reflective access operation has occurred
+# At D:\a\1\s\etc\scripts\benchmark.ps1:14 char:1
+# + & $JAVA_BIN $ARGS *>&1
+# + ~~~~~~~~~~~~~~~~~~~~~~
+#     + CategoryInfo          : NotSpecified: (WARNING: An ill...on has occurred:String) [], RemoteException
+#     + FullyQualifiedErrorId : NativeCommandError
+& $JAVA_BIN $ARGS *>&1
+

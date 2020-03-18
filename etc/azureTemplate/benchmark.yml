@@ -7,13 +7,5 @@ steps:
   env:
     JAVA_HOME: $(JAVA_HOME)
     RANDOM_DOT_ORG_KEY: $(RANDOM_DOT_ORG_KEY)
-- task: PublishBuildArtifacts@1
-  displayName: Publish Results (1 Thread)
-  inputs:
-    pathtoPublish: benchmark/target/benchmark_results_one_thread.txt
-    artifactName: Benchmark - $(artifactEnvName) - 1 Thread
-- task: PublishBuildArtifacts@1
-  displayName: Publish Results (2 Threads)
-  inputs:
-    pathtoPublish: benchmark/target/benchmark_results_two_threads.txt
-    artifactName: Benchmark - $(artifactEnvName) - 2 Threads
+- template: publishBenchmark.yml
+

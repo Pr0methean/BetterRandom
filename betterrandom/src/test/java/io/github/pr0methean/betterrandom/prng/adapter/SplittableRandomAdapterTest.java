@@ -11,10 +11,10 @@ import io.github.pr0methean.betterrandom.prng.BaseRandom;
 import io.github.pr0methean.betterrandom.prng.RandomTestUtils;
 import io.github.pr0methean.betterrandom.prng.RandomTestUtils.EntropyCheckMode;
 import io.github.pr0methean.betterrandom.seed.FakeSeedGenerator;
+import io.github.pr0methean.betterrandom.seed.PseudorandomSeedGenerator;
 import io.github.pr0methean.betterrandom.seed.RandomSeeder;
 import io.github.pr0methean.betterrandom.seed.SeedException;
 import io.github.pr0methean.betterrandom.seed.SeedGenerator;
-import io.github.pr0methean.betterrandom.seed.SemiFakeSeedGenerator;
 import io.github.pr0methean.betterrandom.util.BinaryUtils;
 import java.util.concurrent.ThreadLocalRandom;
 import org.testng.annotations.AfterMethod;
@@ -91,7 +91,7 @@ public class SplittableRandomAdapterTest
 
   @Override @Test(retryAnalyzer = FlakyRetryAnalyzer.class)
   public void testReseeding() {
-    SeedGenerator generator = new SemiFakeSeedGenerator(ThreadLocalRandom.current(), "testReseeding");
+    SeedGenerator generator = new PseudorandomSeedGenerator(ThreadLocalRandom.current(), "testReseeding");
     RandomSeeder seeder = new RandomSeeder(generator);
     try {
       SplittableRandomAdapter random = new SplittableRandomAdapter(generator, seeder);

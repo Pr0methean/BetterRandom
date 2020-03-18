@@ -48,7 +48,7 @@ public class RandomSeederTest {
   @Test(timeOut = 25_000) public void testAddRemoveAndIsEmpty() {
     final SingleThreadSplittableRandomAdapter prng
         = new SingleThreadSplittableRandomAdapter(TEST_SEED);
-    final SeedGenerator seedGenerator = new SemiFakeSeedGenerator(
+    final SeedGenerator seedGenerator = new PseudorandomSeedGenerator(
         ThreadLocalRandom.current(), "testAddRemoveAndIsEmpty");
     final RandomSeeder randomSeeder = createRandomSeeder(seedGenerator);
     checkAddRemoveAndIsEmpty(prng, randomSeeder, randomSeeder::add);
@@ -104,16 +104,18 @@ public class RandomSeederTest {
       try {
         random.nextLong();
         random.nextLong();
-        Uninterruptibles.sleepUninterruptibly(500, TimeUnit.MILLISECONDS);
-        assertFalse(randomSeeder.isRunning());
-        assertEquals(seedGenerator.countCalls(), 1);
+        Uninterruptibles.sleepUninterruptibly(2000, TimeUnit.MILLISECONDS);
+        assertFalse(randomSeeder.isRunning(), "Thread should have died after exception");
+        assertEquals(seedGenerator.countCalls(), 1,
+            "Seed generator should have been called exactly once");
         seedGenerator.setThrowException(false);
         randomSeeder.remove(random);
         randomSeeder.add(random);
         random.nextBoolean();
         Uninterruptibles.sleepUninterruptibly(200, TimeUnit.MILLISECONDS);
-        assertTrue(randomSeeder.isRunning());
-        assertEquals(seedGenerator.countCalls(), 2);
+        assertTrue(randomSeeder.isRunning(), "Adding a PRNG should have launched new thread");
+        assertEquals(seedGenerator.countCalls(), 2,
+            "Seed generator should have been called exactly once after resurrection");
         random.nextBoolean();
       } finally {
         randomSeeder.remove(random);
