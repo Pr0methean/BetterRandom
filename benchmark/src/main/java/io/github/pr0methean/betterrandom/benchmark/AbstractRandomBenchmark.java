@@ -146,6 +146,8 @@ abstract class AbstractRandomBenchmark<T extends Random> {
         }
       }
       if (failed) {
+        // Windows swallows exception message after 1st line, so dump it
+        System.err.println(failureMessage);
         throw new AssertionError(failureMessage.toString());
       }
     }
