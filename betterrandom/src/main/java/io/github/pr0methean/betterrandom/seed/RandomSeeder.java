@@ -147,7 +147,7 @@ public class RandomSeeder extends Looper {
    * @return true if registered; false if not
    */
   public boolean contains(Object random) {
-    return byteArrayPrngs.contains(random);
+    return random instanceof ByteArrayReseedableRandom && byteArrayPrngs.contains(random);
   }
 
   /**
@@ -223,7 +223,7 @@ public class RandomSeeder extends Looper {
     waitForEntropyDrain = lock.newCondition();
   }
 
-  @SuppressWarnings({"InfiniteLoopStatement", "ObjectAllocationInLoop", "AwaitNotInLoop"}) @Override
+  @Override
   protected boolean iterate() {
     Collection<ByteArrayReseedableRandom> byteArrayPrngsThisIteration = new ArrayList<>(byteArrayPrngs);
     try {

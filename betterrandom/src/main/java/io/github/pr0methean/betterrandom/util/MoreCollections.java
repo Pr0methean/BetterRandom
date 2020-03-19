@@ -4,6 +4,9 @@ import com.google.common.collect.MapMaker;
 import java.util.Collections;
 import java.util.Set;
 
+/**
+ * Utility methods relating to collections.
+ */
 public enum MoreCollections {
   ;
 

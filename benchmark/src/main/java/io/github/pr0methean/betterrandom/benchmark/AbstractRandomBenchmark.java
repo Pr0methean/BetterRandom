@@ -89,6 +89,7 @@ abstract class AbstractRandomBenchmark<T extends Random> {
 
   protected T prng;
 
+  @SafeVarargs
   private static ImmutableMap.Builder<String, Double> zeroMinimumsFor(
       Class<? extends AbstractRandomBenchmark<?>>... benchmarkClasses) {
     ImmutableMap.Builder<String, Double> builder = ImmutableMap.builder();

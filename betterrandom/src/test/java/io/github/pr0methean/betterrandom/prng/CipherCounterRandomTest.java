@@ -62,7 +62,6 @@ public abstract class CipherCounterRandomTest<T extends CipherCounterRandom>
     checkSetSeedForCipher(this);
   }
 
-  @SuppressWarnings("ObjectAllocationInLoop")
   public static void checkSetSeedForCipher(
       BaseRandomTest<?> test) {
     // can't use a real SeedGenerator since we need longs, so use a Random
@@ -95,7 +94,6 @@ public abstract class CipherCounterRandomTest<T extends CipherCounterRandom>
   }
 
   @Test(timeOut = 15000) public void testMaxSeedLengthOk() {
-    Random rng = createRng();
     if (seedSizeBytes > 16) {
       throw new SkipException("Skipping a redundant test");
     }

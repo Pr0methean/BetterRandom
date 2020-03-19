@@ -5,7 +5,6 @@ import static org.testng.Assert.assertSame;
 import com.google.common.collect.ImmutableList;
 import io.github.pr0methean.betterrandom.prng.MersenneTwisterRandom;
 import io.github.pr0methean.betterrandom.seed.SeedException;
-import io.github.pr0methean.betterrandom.seed.SeedGenerator;
 import java.util.Collections;
 import java.util.Random;
 import org.testng.annotations.Test;
@@ -13,10 +12,6 @@ import org.testng.annotations.Test;
 @Test(testName = "RandomWrapper:MersenneTwisterRandom")
 public class RandomWrapperMersenneTwisterRandomTest
     extends RandomWrapperAbstractTest<RandomWrapper<MersenneTwisterRandom>, MersenneTwisterRandom> {
-
-  public RandomWrapperMersenneTwisterRandomTest() {
-    final SeedGenerator seedGenerator = getTestSeedGenerator();
-  }
 
   /**
    * Assertion-free with respect to the long/double methods because, contrary to its contract to be
@@ -57,11 +52,6 @@ public class RandomWrapperMersenneTwisterRandomTest
   // FIXME: This test takes too long!
   @Override @Test(timeOut = 120_000) public void testSerializable() throws SeedException {
     super.testSerializable();
-  }
-
-  @Override @Test public void testReseeding()
-      throws SeedException {
-    super.testReseeding();
   }
 
   @Test public void testGetWrapped() {

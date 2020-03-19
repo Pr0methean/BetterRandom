@@ -20,7 +20,7 @@ public abstract class ThreadLocalRandomWrapperTest<T extends BaseRandom>
     extends BaseRandomTest<ThreadLocalRandomWrapper<T>> {
   protected final SerializableSupplier<T> supplier;
 
-  public ThreadLocalRandomWrapperTest(SerializableSupplier<T> supplier) {
+  protected ThreadLocalRandomWrapperTest(SerializableSupplier<T> supplier) {
     this.supplier = supplier;
   }
 
@@ -117,7 +117,7 @@ public abstract class ThreadLocalRandomWrapperTest<T extends BaseRandom>
   }
 
   @Override protected ThreadLocalRandomWrapper<T> createRng() throws SeedException {
-    return new ThreadLocalRandomWrapper(supplier);
+    return new ThreadLocalRandomWrapper<>(supplier);
   }
 
   @Override protected ThreadLocalRandomWrapper<T> createRng(final byte[] seed) throws SeedException {

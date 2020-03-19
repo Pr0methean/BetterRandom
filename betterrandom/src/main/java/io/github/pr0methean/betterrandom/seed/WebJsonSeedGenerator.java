@@ -68,7 +68,7 @@ public abstract class WebJsonSeedGenerator implements SeedGenerator {
    * @param useRetryDelay whether to wait 10 seconds before trying again after an IOException
    *     (attempting to use it again before then will automatically fail)
    */
-  public WebJsonSeedGenerator(final boolean useRetryDelay) {
+  protected WebJsonSeedGenerator(final boolean useRetryDelay) {
     this.useRetryDelay = useRetryDelay;
   }
 
@@ -213,8 +213,7 @@ public abstract class WebJsonSeedGenerator implements SeedGenerator {
    */
   protected abstract void downloadBytes(byte[] seed, int offset, int length) throws IOException;
 
-  @Override @SuppressWarnings("AssignmentToStaticFieldFromInstanceMethod")
-  public void generateSeed(final byte[] seed) throws SeedException {
+  @Override public void generateSeed(final byte[] seed) throws SeedException {
     if (!isWorthTrying()) {
       throw new SeedException("Not retrying so soon after an IOException");
     }

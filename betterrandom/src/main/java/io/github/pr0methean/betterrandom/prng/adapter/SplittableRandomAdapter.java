@@ -30,7 +30,7 @@ public class SplittableRandomAdapter extends BaseSplittableRandomAdapter {
   /**
    * A thread-local delegate.
    */
-  @SuppressWarnings({"ThreadLocalNotStaticFinal", "TransientFieldNotInitialized"})
+  @SuppressWarnings({"ThreadLocalNotStaticFinal"})
   protected transient ThreadLocal<BaseRandom> threadLocal;
 
   @Override protected void initTransientFields() {

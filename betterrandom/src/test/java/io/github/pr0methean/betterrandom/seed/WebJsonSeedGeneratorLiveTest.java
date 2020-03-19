@@ -14,7 +14,7 @@ public abstract class WebJsonSeedGeneratorLiveTest<T extends WebJsonSeedGenerato
     extends SeedGeneratorTest<T> {
   protected final Proxy proxy = SeedTestUtils.createProxy();
 
-  public WebJsonSeedGeneratorLiveTest(T seedGenerator) {
+  protected WebJsonSeedGeneratorLiveTest(T seedGenerator) {
     super(seedGenerator);
   }
 

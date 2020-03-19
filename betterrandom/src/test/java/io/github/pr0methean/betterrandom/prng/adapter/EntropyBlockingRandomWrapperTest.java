@@ -193,7 +193,6 @@ public class EntropyBlockingRandomWrapperTest extends RandomWrapperRandomTest {
     final byte[] testBytes = new byte[TEST_BYTE_ARRAY_LENGTH];
     final BaseRandom prng =
         EntropyBlockingRandomWrapper.wrapJavaUtilRandom(0L, getTestSeedGenerator());
-    final long oldEntropy = prng.getEntropyBits();
     prng.nextBytes(testBytes);
     assertFalse(Arrays.equals(testBytes, new byte[TEST_BYTE_ARRAY_LENGTH]));
   }
@@ -264,7 +263,7 @@ public class EntropyBlockingRandomWrapperTest extends RandomWrapperRandomTest {
    */
   @Test public void testWrapJavaUtilRandom() {
     final Random rng1 = new Random(0x0123456789abcdefL);
-    final Random rng2 = (Random) EntropyBlockingRandomWrapper.wrapJavaUtilRandom(VERY_LOW_MINIMUM_ENTROPY,
+    final Random rng2 = EntropyBlockingRandomWrapper.wrapJavaUtilRandom(VERY_LOW_MINIMUM_ENTROPY,
         BinaryUtils.convertLongToBytes(0x0123456789abcdefL), null);
     int[] out1 = rng1.ints(200).sequential().toArray();
     int[] out2 = rng2.ints(200).sequential().toArray();

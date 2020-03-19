@@ -166,10 +166,6 @@ public class RandomSeederTest {
       return 16;
     }
 
-    @Override public boolean preferSeedWithLong() {
-      return false;
-    }
-
     @Override public long getEntropyBits() {
       return 0;
     }

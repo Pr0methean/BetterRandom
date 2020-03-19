@@ -62,7 +62,7 @@ public enum BinaryUtils {
    * @param hex The hexadecimal String to be converted into an array of bytes.
    * @return An array of bytes that.
    */
-  @SuppressWarnings("NumericCastThatLosesPrecision") public static byte[] convertHexStringToBytes(
+  public static byte[] convertHexStringToBytes(
       final String hex) {
     byte[] out = new byte[hex.length() / 2];
     convertHexStringToBytes(hex, out, 0);

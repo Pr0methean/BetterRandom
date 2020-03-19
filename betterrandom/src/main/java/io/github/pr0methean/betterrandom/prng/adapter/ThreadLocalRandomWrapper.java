@@ -200,7 +200,7 @@ public class ThreadLocalRandomWrapper<T extends BaseRandom> extends RandomWrappe
     }
   }
 
-  @SuppressWarnings("VariableNotUsedInsideIf") @Override
+  @Override
   protected void setSeedInternal(final byte[] seed) {
     if (seed == null) {
       throw new IllegalArgumentException("Seed must not be null");

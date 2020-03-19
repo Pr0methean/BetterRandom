@@ -25,7 +25,6 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Random;
-import javax.annotation.Nullable;
 
 /**
  * Utility to populate a fifo with input, so it can be fed into a randomness test suite.
@@ -48,7 +47,6 @@ public final class RandomFifoFiller
      */
     public static void main(String[] args) throws Exception
     {
-      @Nullable byte[] seed;
       Random random;
       switch (args.length) {
         case 0:

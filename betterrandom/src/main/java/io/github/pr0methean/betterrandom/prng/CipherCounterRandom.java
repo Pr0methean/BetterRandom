@@ -50,7 +50,7 @@ public abstract class CipherCounterRandom extends BaseRandom implements Seekable
    *
    * @param seed the initial seed
    */
-  public CipherCounterRandom(byte[] seed) {
+  protected CipherCounterRandom(byte[] seed) {
     super(seed);
     currentBlock = new byte[getBytesAtOnce()];
   }

@@ -118,7 +118,7 @@ public final class LegacyRandomSeeder extends RandomSeeder {
   }
 
   @Override public boolean contains(Object random) {
-    return super.contains(random) || otherPrngs.contains(random);
+    return super.contains(random) || (random instanceof Random && otherPrngs.contains(random));
   }
 
   @Override protected boolean iterate() {

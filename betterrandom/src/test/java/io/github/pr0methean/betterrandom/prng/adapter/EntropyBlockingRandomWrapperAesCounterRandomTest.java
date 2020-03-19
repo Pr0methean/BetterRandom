@@ -165,7 +165,6 @@ public class EntropyBlockingRandomWrapperAesCounterRandomTest
     final byte[] testBytes = new byte[TEST_BYTE_ARRAY_LENGTH];
     final BaseRandom prng =
         EntropyBlockingRandomWrapper.wrapJavaUtilRandom(0L, getTestSeedGenerator());
-    final long oldEntropy = prng.getEntropyBits();
     prng.nextBytes(testBytes);
     assertFalse(Arrays.equals(testBytes, new byte[TEST_BYTE_ARRAY_LENGTH]));
   }
