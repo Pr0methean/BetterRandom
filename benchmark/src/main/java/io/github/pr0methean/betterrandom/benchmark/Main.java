@@ -48,7 +48,8 @@ public class Main {
     setMinimumNextLong(builder, Cmwc4096RandomBenchmark.class, 2.9e6);
     setMinimumNextInt(builder, MersenneTwisterRandomBenchmark.class, 4e6);
     setMinimumNextLong(builder, MersenneTwisterRandomBenchmark.class, 2.5e6);
-    setMinimumNextInt(builder, Pcg128RandomBenchmark.class, 2.8e6);
+    setMinimumNextInt(builder, Pcg128RandomBenchmark.class, 2.2e6);
+    setMinimumNextLong(builder, Pcg128RandomBenchmark.class, 2.2e6);
     setMinimumNextInt(builder, ReseedingThreadLocalRandomWrapperAesCounterRandom128Benchmark.class, 1.9e6);
     setMinimumNextLong(builder, ReseedingThreadLocalRandomWrapperAesCounterRandom128Benchmark.class, 1.4e6);
     setMinimumNextLong(builder, SplittableRandomAdapterBenchmark.class, 2.4e6);
