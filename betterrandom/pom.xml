@@ -189,7 +189,7 @@
           <!-- Needed to override a transitive dep in Powermock that breaks Pitest -->
           <groupId>org.javassist</groupId>
           <artifactId>javassist</artifactId>
-          <version>3.26.0-GA</version>
+          <version>3.27.0-GA</version>
           <scope>test</scope>
         </dependency>
       </dependencies>
