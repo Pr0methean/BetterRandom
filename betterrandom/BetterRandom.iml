@@ -11,10 +11,6 @@
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
-    <orderEntry type="library" scope="TEST" name="Maven: org.mockito:mockito-core:3.2.4" level="project" />
-    <orderEntry type="library" scope="TEST" name="Maven: org.apache.logging.log4j:log4j-slf4j18-impl:2.13.0" level="project" />
-    <orderEntry type="library" scope="TEST" name="Maven: org.apache.logging.log4j:log4j-api:2.13.0" level="project" />
-    <orderEntry type="library" scope="TEST" name="Maven: org.apache.logging.log4j:log4j-core:2.13.0" level="project" />
     <orderEntry type="library" scope="RUNTIME" name="Maven: net.sf.proguard:proguard-base:6.2.2" level="project" />
     <orderEntry type="library" name="Maven: com.googlecode.json-simple:json-simple:1.1.1" level="project" />
     <orderEntry type="library" name="Maven: junit:junit:4.10" level="project" />
