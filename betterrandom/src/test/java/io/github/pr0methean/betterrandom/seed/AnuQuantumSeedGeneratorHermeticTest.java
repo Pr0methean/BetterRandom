@@ -98,9 +98,12 @@ public class AnuQuantumSeedGeneratorHermeticTest
     expectAndGetException(1024, false);
   }
 
-  @Test(invocationCount = 10_000) public void testRandomFuzz() {
-    String fuzzOutput = BinaryUtils.convertBytesToHexString(fuzzResponse(RESPONSE_32.length));
-    expectAndGetException(32, false, fuzzOutput);
+  @Test public void testRandomFuzz() {
+    // invocationCount spams the log, so use a loop
+    for (int i = 0; i < 10_000; i++) {
+      String fuzzOutput = BinaryUtils.convertBytesToHexString(fuzzResponse(RESPONSE_32.length));
+      expectAndGetException(32, false, fuzzOutput);
+    }
   }
 
   @Test public void testResponseNoData() {

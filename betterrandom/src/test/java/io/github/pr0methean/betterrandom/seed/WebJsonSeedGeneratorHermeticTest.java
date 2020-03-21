@@ -34,6 +34,7 @@ public abstract class WebJsonSeedGeneratorHermeticTest<T extends WebJsonSeedGene
   }
 
   protected void mockResponse(final byte[] response) {
+    // For some reason, fuzz tests run slower if we track whether seedGenerator is already a spy
     seedGenerator = PowerMockito.spy(getSeedGeneratorUnderTest());
     try {
       PowerMockito.doAnswer(invocationOnMock -> {

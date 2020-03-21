@@ -281,15 +281,21 @@ public class RandomDotOrgSeedGeneratorHermeticTest
     withApiKey(this::testLargeRequest);
   }
 
-  @Test(invocationCount = 10_000) public void testRandomFuzzJsonApi() {
-    String fuzzOut = BinaryUtils.convertBytesToHexString(fuzzResponse(RESPONSE_32_JSON.length));
-    withApiKey(() -> expectAndGetException(32, false, fuzzOut));
+  @Test public void testRandomFuzzJsonApi() {
+    // invocationCount spams the log, so use a loop
+    for (int i = 0; i < 10_000; i++) {
+      String fuzzOut = BinaryUtils.convertBytesToHexString(fuzzResponse(RESPONSE_32_JSON.length));
+      withApiKey(() -> expectAndGetException(32, false, fuzzOut));
+    }
   }
 
-  @Test(invocationCount = 10_000) public void testRandomFuzzOldApi() {
-    String fuzzOut = BinaryUtils.convertBytesToHexString(fuzzResponse(RESPONSE_32_JSON.length));
-    seedGenerator.setApiKey(null);
-    expectAndGetException(32, false, fuzzOut);
+  @Test public void testRandomFuzzOldApi() {
+    // invocationCount spams the log, so use a loop
+    for (int i = 0; i < 10_000; i++) {
+      String fuzzOut = BinaryUtils.convertBytesToHexString(fuzzResponse(RESPONSE_32_JSON.length));
+      seedGenerator.setApiKey(null);
+      expectAndGetException(32, false, fuzzOut);
+    }
   }
 
   @Test public void testSerializable() {
