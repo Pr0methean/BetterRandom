@@ -11,7 +11,7 @@ import org.openjdk.jmh.runner.options.ChainedOptionsBuilder;
 import org.openjdk.jmh.runner.options.OptionsBuilder;
 
 public class Main {
-  private static final double DEFAULT_MIN_OPS_PER_SEC_NEXT_INT_1_THREAD = 1.4e7;
+  private static final double DEFAULT_MIN_OPS_PER_SEC_NEXT_INT_1_THREAD = 1.39e7;
   private static final double DEFAULT_MINIMUM_OPS_PER_SEC_LONG_1_THREAD = 8e6;
   private static final double DEFAULT_MIN_OPS_PER_SEC_NEXT_INT_2_THREADS = 2.9e6;
   private static final double DEFAULT_MINIMUM_OPS_PER_SEC_LONG_2_THREADS = 2.8e6;
@@ -45,7 +45,7 @@ public class Main {
             ZVanillaJavaSecureRandomBenchmark.class);
     setMinimumNextLong(builder, AesCounterRandomBenchmark.class, 2.6e6);
     setMinimumNextInt(builder, Cmwc4096RandomBenchmark.class, 3.4e6);
-    setMinimumNextLong(builder, Cmwc4096RandomBenchmark.class, 2.9e6);
+    setMinimumNextLong(builder, Cmwc4096RandomBenchmark.class, 2.6e6);
     setMinimumNextInt(builder, MersenneTwisterRandomBenchmark.class, 3.8e6);
     setMinimumNextLong(builder, MersenneTwisterRandomBenchmark.class, 2.5e6);
     setMinimumNextInt(builder, Pcg128RandomBenchmark.class, 2.2e6);
