@@ -46,7 +46,7 @@ public class Main {
     setMinimumNextLong(builder, AesCounterRandomBenchmark.class, 2.6e6);
     setMinimumNextInt(builder, Cmwc4096RandomBenchmark.class, 3.4e6);
     setMinimumNextLong(builder, Cmwc4096RandomBenchmark.class, 2.9e6);
-    setMinimumNextInt(builder, MersenneTwisterRandomBenchmark.class, 4e6);
+    setMinimumNextInt(builder, MersenneTwisterRandomBenchmark.class, 3.8e6);
     setMinimumNextLong(builder, MersenneTwisterRandomBenchmark.class, 2.5e6);
     setMinimumNextInt(builder, Pcg128RandomBenchmark.class, 2.2e6);
     setMinimumNextLong(builder, Pcg128RandomBenchmark.class, 2.2e6);
@@ -55,7 +55,7 @@ public class Main {
     setMinimumNextLong(builder, SplittableRandomAdapterBenchmark.class, 2.4e6);
     setMinimumNextInt(builder, ThreadLocalRandomWrapperAesCounterRandom128Benchmark.class, 6e6);
     setMinimumNextLong(builder, ThreadLocalRandomWrapperAesCounterRandom128Benchmark.class, 3e6);
-    setMinimumNextInt(builder, XorShiftRandomBenchmark.class, 3.8e6);
+    setMinimumNextInt(builder, XorShiftRandomBenchmark.class, 3.4e6);
     setMinimumNextLong(builder, XorShiftRandomBenchmark.class, 2.8e6);
     listBuilder.add(builder.build());
     MINIMUM_OPS = listBuilder.build();
