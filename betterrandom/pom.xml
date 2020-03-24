@@ -266,7 +266,7 @@
     <guava.version>28.2-jre</guava.version>
     <proguard.version>6.2.2</proguard.version>
     <jacoco.version>0.8.5</jacoco.version>
-    <powermock.version>2.0.5</powermock.version>
+    <powermock.version>2.0.6</powermock.version>
     <mockito.version>3.3.3</mockito.version>
     <pitest.version>1.5.0</pitest.version>
     <test.argline>-XX:+UseParallelGC -Djava.security.egd=file:/dev/./urandom</test.argline>
