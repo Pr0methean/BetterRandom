@@ -27,7 +27,7 @@ public class Main {
     setMinimumNextLong(builder, AesCounterRandomBenchmark.class, 4e6);
     setMinimumNextLong(builder, Cmwc4096RandomBenchmark.class, 5.9e6);
     setMinimumNextLong(builder, MersenneTwisterRandomBenchmark.class, 7e6);
-    setMinimumNextInt(builder, Pcg64RandomBenchmark.class, 3.6e7);
+    setMinimumNextInt(builder, Pcg64RandomBenchmark.class, 3.5e7);
     setMinimumNextInt(builder, Pcg128RandomBenchmark.class, 7.8e6);
     setMinimumNextLong(builder, Pcg128RandomBenchmark.class, 7.8e6);
     setMinimumNextInt(builder, ReseedingThreadLocalRandomWrapperAesCounterRandom128Benchmark.class, 1.4e6);
@@ -46,7 +46,7 @@ public class Main {
     setMinimumNextLong(builder, AesCounterRandomBenchmark.class, 2.6e6);
     setMinimumNextInt(builder, Cmwc4096RandomBenchmark.class, 3.4e6);
     setMinimumNextLong(builder, Cmwc4096RandomBenchmark.class, 2.6e6);
-    setMinimumNextInt(builder, MersenneTwisterRandomBenchmark.class, 3.8e6);
+    setMinimumNextInt(builder, MersenneTwisterRandomBenchmark.class, 3.5e6);
     setMinimumNextLong(builder, MersenneTwisterRandomBenchmark.class, 2.5e6);
     setMinimumNextInt(builder, Pcg128RandomBenchmark.class, 2.2e6);
     setMinimumNextLong(builder, Pcg128RandomBenchmark.class, 2.2e6);
