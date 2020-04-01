@@ -26,7 +26,7 @@ public class Main {
     setMinimumNextInt(builder, AesCounterRandomBenchmark.class, 8e6);
     setMinimumNextLong(builder, AesCounterRandomBenchmark.class, 4e6);
     setMinimumNextLong(builder, Cmwc4096RandomBenchmark.class, 5.9e6);
-    setMinimumNextLong(builder, MersenneTwisterRandomBenchmark.class, 7e6);
+    setMinimumNextLong(builder, MersenneTwisterRandomBenchmark.class, 6.8e6);
     setMinimumNextInt(builder, Pcg64RandomBenchmark.class, 3.5e7);
     setMinimumNextInt(builder, Pcg128RandomBenchmark.class, 7.8e6);
     setMinimumNextLong(builder, Pcg128RandomBenchmark.class, 7.8e6);
