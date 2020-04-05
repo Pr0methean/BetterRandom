@@ -269,14 +269,15 @@ Android API levels below 24. These produce the Maven artifacts named
 
 ## Java 8 (master branch)
 
-Beginning with version 3.1.2, continuous integration takes place on Azure Pipelines and includes
+Beginning with version 3.1.2, continuous integration takes place on Azure Pipelines. It is designed to include
 the following environments:
 
-* Ubuntu: HotSpot 8,11,13; OpenJ9 8 and 12
-* OSX: HotSpot 8,11,13
-* Windows: HotSpot 8,11,12
+* Ubuntu: HotSpot 8,11,14; OpenJ9 11 and 14
+* OSX: HotSpot 8,11,14
+* Windows: HotSpot 8,11,14
 
-HotSpot is Azul Zulu. OpenJ9 is AdoptOpenJDK.
+HotSpot is Azul Zulu. OpenJ9 is AdoptOpenJDK. See https://github.com/Pr0methean/BetterRandom/issues/445 for
+the implementation status of this build matrix.
 
 For versions up to 3.1.1, continuous integration took place in the following environments:
 

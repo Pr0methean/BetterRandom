@@ -5,11 +5,11 @@ variables:
 - name: zuluLinux11
   value: '/usr/lib/jvm/zulu-11-azure-amd64'
 - name: zuluLinuxLatest
-  value: '/usr/lib/jvm/zulu-12-azure-amd64'
+  value: '/usr/lib/jvm/zulu-14-azure-amd64'
 - name: openjnine11linux
   value: 'https://api.adoptopenjdk.net/v3/binary/latest/11/ga/linux/x64/jdk/openj9/normal/adoptopenjdk'
 - name: openJNineLatestLinux
-  value: 'https://api.adoptopenjdk.net/v3/binary/latest/13/ga/linux/x64/jdk/openj9/normal/adoptopenjdk'
+  value: 'https://api.adoptopenjdk.net/v3/binary/latest/14/ga/linux/x64/jdk/openj9/normal/adoptopenjdk'
 trigger:
   batch: true
   branches:
