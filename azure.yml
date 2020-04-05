@@ -91,16 +91,16 @@ stages:
           JAVA_HOME: jdk
         strategy:
           matrix:
-            # Java 7 is /Library/Java/JavaVirtualMachines/jdk1.7.0_80.jdk/Contents/Home
-            OpenJdk08:
-              JAVA8: 'true'
-              javaVersion: 8
-              artifactEnvName: OpenJdk08Mac
+# FIXME: OpenJdk 8 is no longer included in the Mac image; replace with a job that downloads the JDK
+#            OpenJdk08:
+#              JAVA8: 'true'
+#              javaVersion: 8
+#              artifactEnvName: OpenJdk08Mac
             OpenJdk11:
               javaVersion: 11
               artifactEnvName: OpenJdk11Mac
             OpenJdkLatest:
-              javaVersion: 13
+              javaVersion: 14
               artifactEnvName: OpenJdkLatestMac
         pool:
           vmImage: 'macOs-latest'
@@ -202,16 +202,17 @@ stages:
         JAVA_HOME: jdk
       strategy:
         matrix:
-          OpenJdk08:
-            artifactEnvName: 'OpenJdk08Mac'
-            JAVA8: 'true'
-            javaVersion: 8
+# FIXME: OpenJdk 8 is no longer included in the Mac image; replace with a job that downloads the JDK
+#          OpenJdk08:
+#            artifactEnvName: 'OpenJdk08Mac'
+#            JAVA8: 'true'
+#            javaVersion: 8
           OpenJdk11:
             artifactEnvName: 'OpenJdk11Mac'
             javaVersion: 11
           OpenJdkLatest:
             artifactEnvName: 'OpenJdkLatestMac'
-            javaVersion: 12
+            javaVersion: 14
       pool:
         vmImage: 'macOs-latest'
       steps:
