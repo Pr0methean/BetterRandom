@@ -272,7 +272,7 @@ Android API levels below 24. These produce the Maven artifacts named
 Beginning with version 3.1.2, continuous integration takes place on Azure Pipelines. It is designed to include
 the following environments:
 
-* Ubuntu: HotSpot 8,11,14; OpenJ9 11 and 14
+* Ubuntu: HotSpot 8,11,12; OpenJ9 11 and 14
 * OSX: HotSpot 8,11,14
 * Windows: HotSpot 8,11,14
 
