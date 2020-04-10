@@ -24,7 +24,7 @@ public class Main {
             ZRandomWrapperSecureRandomBenchmark.class,
             ZVanillaJavaSecureRandomBenchmark.class);
     setMinimumNextInt(builder, AesCounterRandomBenchmark.class, 8e6);
-    setMinimumNextLong(builder, AesCounterRandomBenchmark.class, 3.9e6);
+    setMinimumNextLong(builder, AesCounterRandomBenchmark.class, 3.5e6);
     setMinimumNextLong(builder, Cmwc4096RandomBenchmark.class, 5.9e6);
     setMinimumNextLong(builder, MersenneTwisterRandomBenchmark.class, 6.8e6);
     setMinimumNextInt(builder, Pcg64RandomBenchmark.class, 3.5e7);
@@ -45,7 +45,7 @@ public class Main {
             ZVanillaJavaSecureRandomBenchmark.class);
     setMinimumNextLong(builder, AesCounterRandomBenchmark.class, 2.6e6);
     setMinimumNextInt(builder, Cmwc4096RandomBenchmark.class, 3.4e6);
-    setMinimumNextLong(builder, Cmwc4096RandomBenchmark.class, 2.6e6);
+    setMinimumNextLong(builder, Cmwc4096RandomBenchmark.class, 2.5e6);
     setMinimumNextInt(builder, MersenneTwisterRandomBenchmark.class, 3.5e6);
     setMinimumNextLong(builder, MersenneTwisterRandomBenchmark.class, 2.3e6);
     setMinimumNextInt(builder, Pcg128RandomBenchmark.class, 2.2e6);
