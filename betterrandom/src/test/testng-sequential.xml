@@ -4,15 +4,17 @@
         <classes>
             <class name="io.github.pr0methean.betterrandom.seed.RandomSeederTest"/>
             <class name="io.github.pr0methean.betterrandom.seed.LegacyRandomSeederTest"/>
-            <class name="io.github.pr0methean.betterrandom.seed.AnuQuantumSeedGeneratorLiveTest"/>
+            <class name="io.github.pr0methean.betterrandom.seed.AnuQuantumSeedClientLiveTest"/>
             <class name="io.github.pr0methean.betterrandom.seed.BufferedSeedGeneratorTest"/>
             <class name="io.github.pr0methean.betterrandom.seed.DefaultSeedGeneratorTest"/>
             <class name="io.github.pr0methean.betterrandom.seed.DevRandomSeedGeneratorTest"/>
-            <class name="io.github.pr0methean.betterrandom.seed.RandomDotOrgSeedGeneratorLiveTest"/>
+            <class name="io.github.pr0methean.betterrandom.seed.RandomDotOrgApi2ClientLiveTest"/>
+            <class name="io.github.pr0methean.betterrandom.seed.RandomDotOrgAnonymousClientLiveTest"/>
             <class name="io.github.pr0methean.betterrandom.seed.SecureRandomSeedGeneratorTest"/>
             <class name="io.github.pr0methean.betterrandom.seed.SeedGeneratorPreferenceListTest"/>
-            <class name="io.github.pr0methean.betterrandom.seed.AnuQuantumSeedGeneratorHermeticTest"/>
-            <class name="io.github.pr0methean.betterrandom.seed.RandomDotOrgSeedGeneratorHermeticTest"/>
+            <class name="io.github.pr0methean.betterrandom.seed.AnuQuantumSeedClientHermeticTest"/>
+            <class name="io.github.pr0methean.betterrandom.seed.RandomDotOrgAnonymousClientHermeticTest"/>
+            <class name="io.github.pr0methean.betterrandom.seed.RandomDotOrgApi2ClientHermeticTest"/>
         </classes>
     </test>
     <test name="Concurrent PRNGs Sequential" parallel="none">

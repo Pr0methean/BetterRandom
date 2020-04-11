@@ -25,8 +25,8 @@ package io.github.pr0methean.betterrandom.seed;
  * The default implementation maintains multiple strategies for seed generation and will delegate to
  * the best one available at any moment. It uses, in order of preference:</p><ol>
  * <li>{@link DevRandomSeedGenerator} with 128-byte buffer</li>
- * <li>{@link AnuQuantumSeedGenerator} with 1024-byte buffer</li>
- * <li>{@link RandomDotOrgSeedGenerator#DELAYED_RETRY} with 625-byte buffer</li>
+ * <li>{@link AnuQuantumSeedClient#WITH_DELAYED_RETRY} with 1024-byte buffer</li>
+ * <li>{@link RandomDotOrgAnonymousClient#WITH_DELAYED_RETRY} with 625-byte buffer</li>
  * <li>{@link SecureRandomSeedGenerator} with no buffer</li>
  * </ol><p>
  * The reasons to use DefaultSeedGenerator rather than its delegate directly are twofold:
@@ -49,8 +49,8 @@ public enum DefaultSeedGenerator implements SeedGenerator {
 
   private static volatile SeedGenerator delegate = new SeedGeneratorPreferenceList(true,
       new BufferedSeedGenerator(DevRandomSeedGenerator.DEV_RANDOM_SEED_GENERATOR, 128),
-      new BufferedSeedGenerator(AnuQuantumSeedGenerator.ANU_QUANTUM_SEED_GENERATOR, 1024),
-      new BufferedSeedGenerator(RandomDotOrgSeedGenerator.DELAYED_RETRY, 625),
+      new BufferedSeedGenerator(AnuQuantumSeedClient.WITH_DELAYED_RETRY, 1024),
+      new BufferedSeedGenerator(RandomDotOrgAnonymousClient.WITH_DELAYED_RETRY, 625),
       SecureRandomSeedGenerator.DEFAULT_INSTANCE);
 
   /**

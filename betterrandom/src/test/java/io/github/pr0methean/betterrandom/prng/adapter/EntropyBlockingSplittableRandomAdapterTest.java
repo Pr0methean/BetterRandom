@@ -9,6 +9,7 @@ import static org.testng.Assert.assertNotEquals;
 import com.google.common.testing.SerializableTester;
 import com.google.common.util.concurrent.Uninterruptibles;
 import io.github.pr0methean.betterrandom.FlakyRetryAnalyzer;
+import io.github.pr0methean.betterrandom.TestUtils;
 import io.github.pr0methean.betterrandom.prng.BaseRandom;
 import io.github.pr0methean.betterrandom.prng.RandomTestUtils;
 import io.github.pr0methean.betterrandom.seed.FakeSeedGenerator;
@@ -97,8 +98,7 @@ public class EntropyBlockingSplittableRandomAdapterTest
       final BaseSplittableRandomAdapter adapter =
           new EntropyBlockingSplittableRandomAdapter(
               generator, thread, EntropyBlockingTestUtils.DEFAULT_MAX_ENTROPY);
-      final BaseSplittableRandomAdapter clone = SerializableTester.reserialize(adapter);
-      assertEquals(adapter, clone);
+      TestUtils.assertEqualAfterSerialization(adapter);
     } finally {
       thread.shutDown();
     }

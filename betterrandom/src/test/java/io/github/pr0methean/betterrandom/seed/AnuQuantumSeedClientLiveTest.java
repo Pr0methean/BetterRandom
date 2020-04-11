@@ -1,12 +1,10 @@
 package io.github.pr0methean.betterrandom.seed;
 
-import static io.github.pr0methean.betterrandom.seed.AnuQuantumSeedGenerator.ANU_QUANTUM_SEED_GENERATOR;
-
 import org.testng.annotations.Test;
 
-public class AnuQuantumSeedGeneratorLiveTest extends WebJsonSeedGeneratorLiveTest<AnuQuantumSeedGenerator> {
-  protected AnuQuantumSeedGeneratorLiveTest() {
-    super(ANU_QUANTUM_SEED_GENERATOR);
+public class AnuQuantumSeedClientLiveTest extends WebSeedClientLiveTest<AnuQuantumSeedClient> {
+  protected AnuQuantumSeedClientLiveTest() {
+    super(AnuQuantumSeedClient.WITHOUT_DELAYED_RETRY);
   }
 
   @Test

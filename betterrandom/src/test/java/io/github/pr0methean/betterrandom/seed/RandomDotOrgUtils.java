@@ -1,22 +1,17 @@
 package io.github.pr0methean.betterrandom.seed;
 
 import java.util.UUID;
+import org.testng.SkipException;
 
 /**
- * Utility methods used in {@link RandomDotOrgSeedGeneratorHermeticTest} and
- * {@link RandomDotOrgSeedGeneratorLiveTest}.
+ * Utility methods used in {@link RandomDotOrgApi2ClientHermeticTest} and
+ * {@link RandomDotOrgApi2ClientLiveTest}.
  */
 public enum RandomDotOrgUtils {
   ;
 
   public static boolean haveApiKey() {
     return System.getenv("RANDOM_DOT_ORG_KEY") != null;
-  }
-
-  public static void setApiKey() {
-    final String apiKeyString = System.getenv("RANDOM_DOT_ORG_KEY");
-    RandomDotOrgSeedGenerator
-        .setApiKey((apiKeyString == null) ? null : UUID.fromString(apiKeyString));
   }
 
 }

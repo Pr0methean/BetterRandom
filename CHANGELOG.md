@@ -5,6 +5,16 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [5.5.0]
+
+### Changed
+
+- `RandomDotOrgSeedGenerator` is replaced with `RandomDotOrgAnonymousClient` (for the old API when used with no key) and
+  `RandomDotOrgApi2Client` (for the JSON API). Its API key is no longer mutable.
+- `WebJsonSeedGenerator` is now called `WebSeedClient`.
+- `AnuQuantumSeedGenerator` is now called `AnuQuantumSeedClient`.
+- All `WebSeedClient` instances have been refactored to slightly reduce operations performed under the lock.
+
 ## [5.4.1]
 
 ### Changed
@@ -649,7 +659,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - First release on Maven Central.
 
-[Unreleased]: https://github.com/Pr0methean/BetterRandom/compare/BetterRandom-5.4.1...master
+[Unreleased]: https://github.com/Pr0methean/BetterRandom/compare/BetterRandom-5.5.0...master
+[5.5.0]: https://github.com/Pr0methean/BetterRandom/compare/BetterRandom-5.4.1...BetterRandom-5.5.0
 [5.4.1]: https://github.com/Pr0methean/BetterRandom/compare/BetterRandom-5.4.0...BetterRandom-5.4.1
 [5.4.0]: https://github.com/Pr0methean/BetterRandom/compare/BetterRandom-5.3.0...BetterRandom-5.4.0
 [5.3.0]: https://github.com/Pr0methean/BetterRandom/compare/BetterRandom-5.2.0...BetterRandom-5.3.0

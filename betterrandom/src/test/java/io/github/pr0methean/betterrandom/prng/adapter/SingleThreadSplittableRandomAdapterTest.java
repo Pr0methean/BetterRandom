@@ -43,7 +43,7 @@ public class SingleThreadSplittableRandomAdapterTest extends BaseRandomTest<Base
     final BaseSplittableRandomAdapter adapter2 = SerializableTester.reserialize(adapter);
     final BaseSplittableRandomAdapter adapter3 = SerializableTester.reserialize(adapter);
     // final BaseSplittableRandomAdapter adapter4 = SerializableTester.reserialize(adapter2);
-    assertEquivalent(adapter2, adapter3, 20, "Deserializing twice doesn't yield same object");
+    assertEquivalent(adapter2, adapter3, 20, "Deserializing twice doesn't yield equivalent instance");
     // FIXME Failing:
     // assertEquivalent(adapter2, adapter4, 20, "Serialization round-trip is not idempotent");
   }

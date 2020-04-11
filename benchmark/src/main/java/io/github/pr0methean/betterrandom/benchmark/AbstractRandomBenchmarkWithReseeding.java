@@ -33,7 +33,6 @@ package io.github.pr0methean.betterrandom.benchmark;
 
 import io.github.pr0methean.betterrandom.ByteArrayReseedableRandom;
 import io.github.pr0methean.betterrandom.seed.LegacyRandomSeeder;
-import io.github.pr0methean.betterrandom.seed.RandomDotOrgSeedGenerator;
 import io.github.pr0methean.betterrandom.seed.RandomSeeder;
 import io.github.pr0methean.betterrandom.seed.SecureRandomSeedGenerator;
 import java.util.Random;
@@ -69,8 +68,9 @@ public abstract class AbstractRandomBenchmarkWithReseeding<T extends Random>
    */
   @SuppressWarnings("CallToSystemGetenv") @Setup public void setApiKey() {
     final String apiKeyString = System.getenv("RANDOM_DOT_ORG_KEY");
-    RandomDotOrgSeedGenerator
-        .setApiKey((apiKeyString == null) ? null : UUID.fromString(apiKeyString));
+    if ((apiKeyString != null)) {
+      UUID.fromString(apiKeyString);
+    }
   }
 
   /**

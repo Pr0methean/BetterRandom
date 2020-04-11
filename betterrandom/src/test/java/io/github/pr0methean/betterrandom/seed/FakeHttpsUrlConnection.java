@@ -13,7 +13,7 @@ import javax.net.ssl.HttpsURLConnection;
 import org.slf4j.LoggerFactory;
 
 /**
- * Used for testing {@link RandomDotOrgSeedGenerator}.
+ * Used for testing {@link RandomDotOrgApi2Client}.
  */
 public class FakeHttpsUrlConnection extends HttpsURLConnection {
 

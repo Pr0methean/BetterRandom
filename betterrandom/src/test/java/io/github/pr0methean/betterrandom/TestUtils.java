@@ -1,5 +1,10 @@
 package io.github.pr0methean.betterrandom;
 
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertSame;
+
+import com.google.common.testing.SerializableTester;
+import java.io.Serializable;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Modifier;
@@ -135,5 +140,17 @@ public enum TestUtils {
    */
   public static AssertionError fail(String message, Throwable cause) {
     throw new AssertionError(message, cause);
+  }
+
+  public static void assertEqualAfterSerialization(Serializable object) {
+    final Serializable copy = SerializableTester.reserialize(object);
+    assertEquals(copy, object,
+        "Instances unequal after serialization round-trip");
+  }
+
+  public static void assertSameAfterSerialization(Serializable object) {
+    final Serializable copy = SerializableTester.reserialize(object);
+    assertSame(copy, object,
+        "Serialization round-trip should return same instance");
   }
 }

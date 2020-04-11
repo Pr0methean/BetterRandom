@@ -6,6 +6,7 @@ import static org.mockito.ArgumentMatchers.anyInt;
 import static org.testng.Assert.assertEquals;
 
 import com.google.common.testing.SerializableTester;
+import io.github.pr0methean.betterrandom.TestUtils;
 import io.github.pr0methean.betterrandom.prng.BaseRandom;
 import io.github.pr0methean.betterrandom.prng.RandomTestUtils;
 import io.github.pr0methean.betterrandom.seed.SecureRandomSeedGenerator;
@@ -22,8 +23,7 @@ public class SplittableRandomAdapterNullTest extends SplittableRandomAdapterTest
   @Override public void testSerializable() throws SeedException {
     final BaseSplittableRandomAdapter adapter =
         new SplittableRandomAdapter(DEFAULT_INSTANCE, null);
-    final BaseSplittableRandomAdapter clone = SerializableTester.reserialize(adapter);
-    assertEquals(adapter, clone, "Unequal after serialization round-trip");
+    TestUtils.assertEqualAfterSerialization(adapter);
   }
 
   @Override public void testReseeding() {

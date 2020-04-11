@@ -5,6 +5,7 @@ import static io.github.pr0methean.betterrandom.seed.SecureRandomSeedGenerator.D
 import static org.testng.Assert.assertEquals;
 
 import com.google.common.testing.SerializableTester;
+import io.github.pr0methean.betterrandom.TestUtils;
 import io.github.pr0methean.betterrandom.prng.BaseRandom;
 import io.github.pr0methean.betterrandom.seed.SeedException;
 import io.github.pr0methean.betterrandom.seed.RandomSeeder;
@@ -35,8 +36,7 @@ public class EntropyBlockingSplittableRandomAdapterNullTest
     final BaseSplittableRandomAdapter adapter =
         new EntropyBlockingSplittableRandomAdapter(new RandomSeeder(DEFAULT_INSTANCE),
             EntropyBlockingTestUtils.DEFAULT_MAX_ENTROPY);
-    final BaseSplittableRandomAdapter clone = SerializableTester.reserialize(adapter);
-    assertEquals(adapter, clone, "Unequal after serialization round-trip");
+    TestUtils.assertEqualAfterSerialization(adapter);
   }
 
   @Override public void testSetSeedGeneratorNoOp() {

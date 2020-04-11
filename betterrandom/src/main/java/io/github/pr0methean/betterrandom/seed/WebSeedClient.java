@@ -12,6 +12,7 @@ import java.net.URL;
 import java.time.Clock;
 import java.time.Duration;
 import java.time.Instant;
+import java.util.Objects;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 import javax.annotation.Nullable;
@@ -25,7 +26,7 @@ import org.json.simple.parser.ParseException;
  * A {@link SeedGenerator} that is a client for a Web random-number service. Contains many methods
  * for parsing JSON responses.
  */
-public abstract class WebJsonSeedGenerator implements SeedGenerator {
+public abstract class WebSeedClient implements SeedGenerator {
   /**
    * Measures the retry delay. A ten-second delay might become either nothing or an hour if we used
    * local time during the start or end of Daylight Saving Time, but it's fine if we occasionally
@@ -49,7 +50,7 @@ public abstract class WebJsonSeedGenerator implements SeedGenerator {
   /**
    * The earliest time we'll try again if {@link #useRetryDelay}.
    */
-  protected Instant earliestNextAttempt = Instant.MIN;
+  protected volatile Instant earliestNextAttempt = Instant.MIN;
   /**
    * The proxy to use with this server, or null to use the JVM default.
    */
@@ -65,11 +66,17 @@ public abstract class WebJsonSeedGenerator implements SeedGenerator {
   protected final boolean useRetryDelay;
 
   /**
+   * The value for the HTTP User-Agent header.
+   */
+  protected final String userAgent;
+
+  /**
    * @param useRetryDelay whether to wait 10 seconds before trying again after an IOException
    *     (attempting to use it again before then will automatically fail)
    */
-  protected WebJsonSeedGenerator(final boolean useRetryDelay) {
+  protected WebSeedClient(final boolean useRetryDelay) {
     this.useRetryDelay = useRetryDelay;
+    userAgent = getClass().getName();
   }
 
   /**
@@ -146,12 +153,6 @@ public abstract class WebJsonSeedGenerator implements SeedGenerator {
   }
 
   /**
-   * Returns the value to use for the User-Agent HTTP request header.
-   * @return the user agent string
-   */
-  protected abstract String getUserAgent();
-
-  /**
    * Returns the maximum number of bytes that can be obtained with one request to the service.
    * When a seed larger than this is needed, it is obtained using multiple requests.
    *
@@ -199,33 +200,41 @@ public abstract class WebJsonSeedGenerator implements SeedGenerator {
       connection.setSSLSocketFactory(currentSocketFactory);
     }
     connection.setRequestProperty("Content-Type", "application/json");
-    connection.setRequestProperty("User-Agent", getUserAgent());
+    connection.setRequestProperty("User-Agent", userAgent);
     return connection;
   }
+
+  protected abstract URL getConnectionUrl(int numBytes);
 
   /**
    * Downloads random bytes into the given range of a byte array, using one request.
    *
+   * @param connection
    * @param seed the array to populate
    * @param offset the first index to populate
    * @param length the number of bytes to download
    * @throws IOException if unable to connect to the Web service
    */
-  protected abstract void downloadBytes(byte[] seed, int offset, int length) throws IOException;
+  protected abstract void downloadBytes(HttpURLConnection connection, byte[] seed, int offset,
+      int length) throws IOException;
 
   @Override public void generateSeed(final byte[] seed) throws SeedException {
     if (!isWorthTrying()) {
       throw new SeedException("Not retrying so soon after an IOException");
     }
     final int length = seed.length;
+    final int batchSize = Math.min(length, getMaxRequestSize());
+    final URL batchUrl = getConnectionUrl(batchSize);
+    final int batches = divideRoundingUp(length, batchSize);
+    final int lastBatchSize = modRange1ToM(length, batchSize);
+    final URL lastBatchUrl = getConnectionUrl(lastBatchSize);
     lock.lock();
     try {
-      int count = 0;
-      while (count < length) {
-        int batchSize = Math.min(length - count, getMaxRequestSize());
-        downloadBytes(seed, count, batchSize);
-        count += batchSize;
+      int batch;
+      for (batch = 0; batch < batches - 1; batch++) {
+        downloadBatch(seed, batch * batchSize, batchSize, batchUrl);
       }
+      downloadBatch(seed, batch * batchSize, lastBatchSize, lastBatchUrl);
     } catch (final IOException ex) {
       earliestNextAttempt = CLOCK.instant().plus(getRetryDelay());
       throw new SeedException("Failed downloading bytes", ex);
@@ -237,7 +246,43 @@ public abstract class WebJsonSeedGenerator implements SeedGenerator {
     }
   }
 
+  protected static int divideRoundingUp(int dividend, int divisor) {
+    return (dividend + divisor - 1) / divisor;
+  }
+
+  protected static int modRange1ToM(int dividend, int modulus) {
+    int result = dividend % modulus;
+    if (result == 0) {
+      result = modulus;
+    }
+    return result;
+  }
+
+  private void downloadBatch(byte[] seed, int offset, int length, URL batchUrl) throws IOException {
+    HttpURLConnection connection = openConnection(batchUrl);
+    try {
+      downloadBytes(connection, seed, offset, length);
+    } finally {
+      connection.disconnect();
+    }
+  }
+
   @Override public boolean isWorthTrying() {
-    return !useRetryDelay || !earliestNextAttempt.isAfter(RandomDotOrgSeedGenerator.CLOCK.instant());
+    return !useRetryDelay || !earliestNextAttempt.isAfter(RandomDotOrgApi2Client.CLOCK.instant());
+  }
+
+  @Override public boolean equals(Object o) {
+    if (this == o) {
+      return true;
+    }
+    if (o == null || getClass() != o.getClass()) {
+      return false;
+    }
+    WebSeedClient that = (WebSeedClient) o;
+    return useRetryDelay == that.useRetryDelay && userAgent.equals(that.userAgent);
+  }
+
+  @Override public int hashCode() {
+    return Objects.hash(useRetryDelay, userAgent);
   }
 }

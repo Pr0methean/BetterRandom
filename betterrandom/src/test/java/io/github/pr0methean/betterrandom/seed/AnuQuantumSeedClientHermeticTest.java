@@ -1,10 +1,9 @@
 package io.github.pr0methean.betterrandom.seed;
 
-import static io.github.pr0methean.betterrandom.seed.AnuQuantumSeedGenerator.ANU_QUANTUM_SEED_GENERATOR;
+import static io.github.pr0methean.betterrandom.TestUtils.assertSameAfterSerialization;
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotNull;
-import static org.testng.Assert.assertSame;
 import static org.testng.Assert.assertTrue;
 
 import com.google.common.testing.SerializableTester;
@@ -12,8 +11,8 @@ import io.github.pr0methean.betterrandom.util.BinaryUtils;
 import org.testng.annotations.Test;
 
 @SuppressWarnings("ThrowableNotThrown")
-public class AnuQuantumSeedGeneratorHermeticTest
-    extends WebJsonSeedGeneratorHermeticTest<AnuQuantumSeedGenerator> {
+public class AnuQuantumSeedClientHermeticTest
+    extends WebSeedClientHermeticTest<AnuQuantumSeedClient> {
 
   private static final byte[] RESPONSE_2048
       = ("{\"type\":\"string\",\"length\":2,\"size\":1024," +
@@ -69,8 +68,12 @@ public class AnuQuantumSeedGeneratorHermeticTest
       "\"size\":32,\"data\":[\"0808446c6d2723c335e3adcf1186c062c1e15c86fb6f396f78ab162b7e28ad33" +
       "\"],\"success\":true}").getBytes(UTF_8);
 
-  @Override protected AnuQuantumSeedGenerator getSeedGeneratorUnderTest() {
-    return ANU_QUANTUM_SEED_GENERATOR;
+  @Override protected byte[] get32ByteResponse() {
+    return RESPONSE_32;
+  }
+
+  @Override protected AnuQuantumSeedClient getSeedGenerator() {
+    return AnuQuantumSeedClient.WITHOUT_DELAYED_RETRY;
   }
 
   @Test public void testBasicUsage() {
@@ -126,6 +129,11 @@ public class AnuQuantumSeedGeneratorHermeticTest
     expectAndGetException(32);
   }
 
+  @Override public void testSerializable() {
+    assertSameAfterSerialization(AnuQuantumSeedClient.WITH_DELAYED_RETRY);
+    assertSameAfterSerialization(AnuQuantumSeedClient.WITHOUT_DELAYED_RETRY);
+  }
+
   @Test public void testSetProxy() {
     mockResponse(RESPONSE_32);
     seedGenerator.setProxy(proxy);
@@ -137,10 +145,5 @@ public class AnuQuantumSeedGeneratorHermeticTest
     } finally {
       seedGenerator.setProxy(null);
     }
-  }
-
-  @Test public void testSerializable() {
-    assertSame(SerializableTester.reserialize(ANU_QUANTUM_SEED_GENERATOR),
-        ANU_QUANTUM_SEED_GENERATOR);
   }
 }

@@ -7,6 +7,7 @@ import static org.testng.Assert.assertNotEquals;
 
 import com.google.common.testing.SerializableTester;
 import io.github.pr0methean.betterrandom.FlakyRetryAnalyzer;
+import io.github.pr0methean.betterrandom.TestUtils;
 import io.github.pr0methean.betterrandom.prng.BaseRandom;
 import io.github.pr0methean.betterrandom.prng.RandomTestUtils;
 import io.github.pr0methean.betterrandom.prng.RandomTestUtils.EntropyCheckMode;
@@ -70,8 +71,7 @@ public class SplittableRandomAdapterTest
       RandomSeeder thread = new RandomSeeder(DEFAULT_SEED_GENERATOR);
       final BaseSplittableRandomAdapter adapter =
           new SplittableRandomAdapter(DEFAULT_INSTANCE, thread);
-      final BaseSplittableRandomAdapter clone = SerializableTester.reserialize(adapter);
-      assertEquals(adapter, clone, "Unequal after serialization round-trip");
+      TestUtils.assertEqualAfterSerialization(adapter);
     } finally {
       thread.shutDown();
     }
