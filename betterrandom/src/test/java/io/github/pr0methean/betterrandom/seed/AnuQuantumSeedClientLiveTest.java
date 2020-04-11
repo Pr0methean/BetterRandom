@@ -3,7 +3,7 @@ package io.github.pr0methean.betterrandom.seed;
 import org.testng.annotations.Test;
 
 public class AnuQuantumSeedClientLiveTest extends WebSeedClientLiveTest<AnuQuantumSeedClient> {
-  protected AnuQuantumSeedClientLiveTest() {
+  public AnuQuantumSeedClientLiveTest() {
     super(AnuQuantumSeedClient.WITHOUT_DELAYED_RETRY);
   }
 
