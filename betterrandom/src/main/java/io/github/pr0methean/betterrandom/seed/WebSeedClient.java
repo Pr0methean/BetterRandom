@@ -9,7 +9,6 @@ import java.net.HttpURLConnection;
 import java.net.Proxy;
 import java.net.URL;
 import java.time.Clock;
-import java.time.Duration;
 import java.time.Instant;
 import java.util.Objects;
 import java.util.concurrent.locks.Lock;
@@ -39,7 +38,6 @@ public abstract class WebSeedClient implements SeedGenerator {
    */
   protected static final JSONParser JSON_PARSER = new JSONParser();
   private static final int RETRY_DELAY_MS = 10000;
-  private static final Duration RETRY_DELAY = Duration.ofMillis(RETRY_DELAY_MS);
   private static final long serialVersionUID = -33117511873489173L;
   /**
    * Held while downloading, so that two requests to the same server won't be pending at the same
@@ -135,18 +133,9 @@ public abstract class WebSeedClient implements SeedGenerator {
   }
 
   /**
-   * Only has an effect if {@link #useRetryDelay} is true. The delay after an {@link IOException}
-   * during which any further attempt to generate a seed will automatically fail without opening
-   * another connection.
-   *
-   * @return the retry delay
-   */
-  public Duration getRetryDelay() {
-    return RETRY_DELAY;
-  }
-
-  /**
-   * Same as {@link #getRetryDelay()} but expressed as a number of milliseconds.
+   * Only has an effect if {@link #useRetryDelay} is true. The delay in milliseconds after an {@link
+   * IOException} during which any further call to {@link #generateSeed(byte[])} will automatically
+   * fail without opening another connection.
    *
    * @return the retry delay in milliseconds
    */
@@ -216,7 +205,7 @@ public abstract class WebSeedClient implements SeedGenerator {
       }
       downloadBatch(seed, batch * batchSize, lastBatchSize, lastBatchUrl);
     } catch (final IOException ex) {
-      earliestNextAttempt = CLOCK.instant().plus(getRetryDelay());
+      earliestNextAttempt = CLOCK.instant().plusMillis(getRetryDelayMs());
       throw new SeedException("Failed downloading bytes", ex);
     } catch (final SecurityException ex) {
       // Might be thrown if resource access is restricted (such as in an applet sandbox).
