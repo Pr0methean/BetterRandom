@@ -121,11 +121,13 @@ public final class RandomDotOrgApi2Client extends WebSeedClient {
           .format("Too few bytes returned: expected %d bytes, got '%s'", length, base64seed));
     }
     System.arraycopy(decodedSeed, 0, seed, offset, length);
-    final Object advisoryDelayMs = result.get("advisoryDelay");
-    if (useRetryDelay && advisoryDelayMs instanceof Number) {
-      // Wait RETRY_DELAY or the advisory delay, whichever is shorter
-      final long delayMs = Math.min(getRetryDelayMs(), ((Number) advisoryDelayMs).longValue());
-      earliestNextAttempt = CLOCK.instant().plusMillis(delayMs);
+    if (useRetryDelay) {
+      final Object advisoryDelayMs = result.get("advisoryDelay");
+      if (advisoryDelayMs instanceof Number) {
+        // Wait RETRY_DELAY or the advisory delay, whichever is shorter
+        final long delayMs = Math.min(RETRY_DELAY_MS, ((Number) advisoryDelayMs).longValue());
+        earliestNextAttempt = CLOCK.instant().plusMillis(delayMs);
+      }
     }
   }
 

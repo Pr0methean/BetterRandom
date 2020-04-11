@@ -37,7 +37,7 @@ public abstract class WebSeedClient implements SeedGenerator {
    * Made available to parse JSON responses.
    */
   protected static final JSONParser JSON_PARSER = new JSONParser();
-  private static final int RETRY_DELAY_MS = 10000;
+  protected static final int RETRY_DELAY_MS = 10000;
   private static final long serialVersionUID = -33117511873489173L;
   /**
    * Held while downloading, so that two requests to the same server won't be pending at the same
@@ -133,17 +133,6 @@ public abstract class WebSeedClient implements SeedGenerator {
   }
 
   /**
-   * Only has an effect if {@link #useRetryDelay} is true. The delay in milliseconds after an {@link
-   * IOException} during which any further call to {@link #generateSeed(byte[])} will automatically
-   * fail without opening another connection.
-   *
-   * @return the retry delay in milliseconds
-   */
-  public int getRetryDelayMs() {
-    return RETRY_DELAY_MS;
-  }
-
-  /**
    * Returns the maximum number of bytes that can be obtained with one request to the service.
    * When a seed larger than this is needed, it is obtained using multiple requests.
    *
@@ -205,7 +194,9 @@ public abstract class WebSeedClient implements SeedGenerator {
       }
       downloadBatch(seed, batch * batchSize, lastBatchSize, lastBatchUrl);
     } catch (final IOException ex) {
-      earliestNextAttempt = CLOCK.instant().plusMillis(getRetryDelayMs());
+      if (useRetryDelay) {
+        earliestNextAttempt = CLOCK.instant().plusMillis(RETRY_DELAY_MS);
+      }
       throw new SeedException("Failed downloading bytes", ex);
     } catch (final SecurityException ex) {
       // Might be thrown if resource access is restricted (such as in an applet sandbox).
