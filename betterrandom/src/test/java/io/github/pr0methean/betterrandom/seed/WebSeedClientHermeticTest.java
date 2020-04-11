@@ -33,7 +33,6 @@ public abstract class WebSeedClientHermeticTest<T extends WebSeedClient>
     expectedHugeSeed[maxRequestSize] = expectedHugeSeed[0];
   }
   protected final Proxy proxy = createProxy();
-  protected T seedGenerator;
   @Nullable protected volatile String address = null;
 
   protected WebSeedClientHermeticTest() {
