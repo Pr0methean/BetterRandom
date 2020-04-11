@@ -5,25 +5,21 @@ import static io.github.pr0methean.betterrandom.seed.SeedTestUtils.createSocketF
 import java.io.IOException;
 import java.net.Proxy;
 import java.net.URL;
+import javax.annotation.Nullable;
+import javax.net.ssl.SSLSocketFactory;
 import org.testng.SkipException;
-import org.testng.annotations.AfterMethod;
 import org.testng.annotations.Test;
 
 public abstract class WebSeedClientLiveTest<T extends WebSeedClient>
     extends SeedGeneratorTest<T> {
   protected final Proxy proxy = SeedTestUtils.createProxy();
 
-  protected WebSeedClientLiveTest(T seedGenerator) {
-    super(seedGenerator);
+  protected WebSeedClientLiveTest() {
+    super(null);
   }
 
   @Test public void testSetProxyOff() {
-    seedGenerator.setProxy(Proxy.NO_PROXY);
-    try {
-      SeedTestUtils.testGenerator(seedGenerator, true);
-    } finally {
-      seedGenerator.setProxy(null);
-    }
+    SeedTestUtils.testGenerator(getSeedGenerator(Proxy.NO_PROXY, null), true);
   }
 
   @Test public void testGenerator() {
@@ -36,21 +32,12 @@ public abstract class WebSeedClientLiveTest<T extends WebSeedClient>
     } catch (IOException e) {
       throw new SkipException("This test requires an HTTP proxy on localhost:8888");
     }
-    seedGenerator.setProxy(proxy);
-    try {
-      testGenerator();
-    } finally {
-      seedGenerator.setProxy(null);
-    }
+    SeedTestUtils.testGenerator(getSeedGenerator(proxy, null), true);
   }
 
   @Override protected T getSeedGenerator() {
-    T seedGenerator = super.getSeedGenerator();
-    seedGenerator.setSslSocketFactory(createSocketFactory()); // run all tests with POODLE protection
-    return seedGenerator;
+    return getSeedGenerator(null, createSocketFactory());
   }
 
-  @AfterMethod public void tearDownSuite() {
-    seedGenerator.setSslSocketFactory(null);
-  }
+  protected abstract T getSeedGenerator(@Nullable Proxy proxy, @Nullable SSLSocketFactory socketFactory);
 }

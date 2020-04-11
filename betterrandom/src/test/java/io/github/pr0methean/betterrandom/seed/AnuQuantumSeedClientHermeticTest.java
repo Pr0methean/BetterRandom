@@ -1,12 +1,14 @@
 package io.github.pr0methean.betterrandom.seed;
 
-import static io.github.pr0methean.betterrandom.TestUtils.assertSameAfterSerialization;
+import static io.github.pr0methean.betterrandom.TestUtils.assertEqualAfterSerialization;
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotNull;
 import static org.testng.Assert.assertTrue;
 
 import io.github.pr0methean.betterrandom.util.BinaryUtils;
+import java.net.Proxy;
+import javax.net.ssl.SSLSocketFactory;
 import org.testng.annotations.Test;
 
 @SuppressWarnings("ThrowableNotThrown")
@@ -71,8 +73,9 @@ public class AnuQuantumSeedClientHermeticTest
     return RESPONSE_32;
   }
 
-  @Override protected AnuQuantumSeedClient getSeedGenerator() {
-    return AnuQuantumSeedClient.WITHOUT_DELAYED_RETRY;
+  @Override protected AnuQuantumSeedClient getSeedGenerator(Proxy proxy,
+      SSLSocketFactory socketFactory) {
+    return new AnuQuantumSeedClient(proxy, socketFactory, false);
   }
 
   @Test public void testBasicUsage() {
@@ -129,20 +132,15 @@ public class AnuQuantumSeedClientHermeticTest
   }
 
   @Override public void testSerializable() {
-    assertSameAfterSerialization(AnuQuantumSeedClient.WITH_DELAYED_RETRY);
-    assertSameAfterSerialization(AnuQuantumSeedClient.WITHOUT_DELAYED_RETRY);
+    assertEqualAfterSerialization(new AnuQuantumSeedClient(false));
+    assertEqualAfterSerialization(new AnuQuantumSeedClient(true));
   }
 
   @Test public void testSetProxy() {
+    seedGenerator = new AnuQuantumSeedClient(proxy, null, false);
     mockResponse(RESPONSE_32);
-    seedGenerator.setProxy(proxy);
-    try {
-      SeedTestUtils.testGenerator(seedGenerator, false, 32);
-      assertNotNull(address, "No connection made when using proxy");
-      assertEquals(seedGenerator.proxy.get(), proxy, "Proxy not used");
-      assertTrue(address.startsWith("https://qrng.anu.edu.au"), "Wrong domain when proxy used");
-    } finally {
-      seedGenerator.setProxy(null);
-    }
+    SeedTestUtils.testGenerator(seedGenerator, false, 32);
+    assertNotNull(address, "No connection made when using proxy");
+    assertTrue(address.startsWith("https://qrng.anu.edu.au"), "Wrong domain when proxy used");
   }
 }

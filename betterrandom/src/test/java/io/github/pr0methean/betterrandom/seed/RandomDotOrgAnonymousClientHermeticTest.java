@@ -12,7 +12,9 @@ import io.github.pr0methean.betterrandom.util.BinaryUtils;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.PrintStream;
+import java.net.Proxy;
 import java.util.UUID;
+import javax.net.ssl.SSLSocketFactory;
 import org.testng.annotations.Test;
 
 @SuppressWarnings("ThrowableNotThrown") public class RandomDotOrgAnonymousClientHermeticTest
@@ -74,26 +76,17 @@ import org.testng.annotations.Test;
     }
   }
 
-  @Override protected RandomDotOrgAnonymousClient getSeedGenerator() {
-    return RandomDotOrgAnonymousClient.WITHOUT_DELAYED_RETRY;
-  }
-
-  @Override public void testSerializable() {
-    assertSameAfterSerialization(RandomDotOrgAnonymousClient.WITH_DELAYED_RETRY);
-    assertSameAfterSerialization(RandomDotOrgAnonymousClient.WITHOUT_DELAYED_RETRY);
+  @Override protected RandomDotOrgAnonymousClient getSeedGenerator(Proxy proxy,
+      SSLSocketFactory socketFactory) {
+    return new RandomDotOrgAnonymousClient(proxy, socketFactory, false);
   }
 
   @Test public void testSetProxy() {
-    seedGenerator.setProxy(proxy);
-    mockResponse(RESPONSE_625);
-    try {
-      testGenerator(seedGenerator, false);
-      assertNotNull(address, "address should not be null");
-      assertEquals(proxy, seedGenerator.proxy.get());
-      assertTrue(address.startsWith("https://www.random.org/integers"), "Wrong domain when proxy used");
-    } finally {
-      seedGenerator.setProxy(null);
-    }
+    seedGenerator = getSeedGenerator(proxy, null);
+    mockResponse(RESPONSE_32);
+    testGenerator(seedGenerator, false);
+    assertNotNull(address, "address should not be null");
+    assertTrue(address.startsWith("https://www.random.org/integers"), "Wrong domain when proxy used");
   }
 
   @Test public void testOverLongResponse() {

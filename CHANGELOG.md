@@ -14,6 +14,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `WebJsonSeedGenerator` is now called `WebSeedClient`.
 - `AnuQuantumSeedGenerator` is now called `AnuQuantumSeedClient`.
 - All `WebSeedClient` instances have been refactored to slightly reduce operations performed under the lock.
+- The `Proxy` and `SSLSocketFactory` instances for a `WebSeedClient` are now immutable, and no attempt is made to
+  serialize them.
 
 ## [5.4.1]
 

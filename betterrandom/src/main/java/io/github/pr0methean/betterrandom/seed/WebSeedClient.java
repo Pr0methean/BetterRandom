@@ -2,7 +2,6 @@ package io.github.pr0methean.betterrandom.seed;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
 
-import io.github.pr0methean.betterrandom.util.TransientAtomicReference;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -54,12 +53,11 @@ public abstract class WebSeedClient implements SeedGenerator {
   /**
    * The proxy to use with this server, or null to use the JVM default.
    */
-  protected final TransientAtomicReference<Proxy> proxy = new TransientAtomicReference<>(null);
+  @Nullable protected final transient Proxy proxy;
   /**
    * The SSLSocketFactory to use with this server.
    */
-  protected final TransientAtomicReference<SSLSocketFactory> socketFactory =
-      new TransientAtomicReference<>(null);
+  @Nullable protected final transient SSLSocketFactory socketFactory;
   /**
    * If true, don't attempt to contact the server again for RETRY_DELAY after an IOException
    */
@@ -71,10 +69,14 @@ public abstract class WebSeedClient implements SeedGenerator {
   protected final String userAgent;
 
   /**
+   * @param proxy the proxy to use with this server, or null to use the JVM default
+   * @param socketFactory the socket factory, or null for the JVM default
    * @param useRetryDelay whether to wait 10 seconds before trying again after an IOException
-   *     (attempting to use it again before then will automatically fail)
    */
-  protected WebSeedClient(final boolean useRetryDelay) {
+  protected WebSeedClient(@Nullable final Proxy proxy,
+      @Nullable final SSLSocketFactory socketFactory, final boolean useRetryDelay) {
+    this.proxy = proxy;
+    this.socketFactory = socketFactory;
     this.useRetryDelay = useRetryDelay;
     userAgent = getClass().getName();
   }
@@ -161,27 +163,6 @@ public abstract class WebSeedClient implements SeedGenerator {
   protected abstract int getMaxRequestSize();
 
   /**
-   * Sets the proxy to use to connect to random.org. If null, the JVM default is used.
-   *
-   * @param proxy a proxy, or null for the JVM default
-   */
-  public void setProxy(@Nullable final Proxy proxy) {
-    this.proxy.set(proxy);
-  }
-
-  /**
-   * Sets the socket factory to use to connect to random.org. If null, the JVM default is used. This
-   * method provides flexibility in how the user protects against downgrade attacks such as POODLE
-   * and weak cipher suites, even if the random.org connection needs separate handling from
-   * connections to other services by the same application.
-   *
-   * @param socketFactory a socket factory, or null for the JVM default
-   */
-  public void setSslSocketFactory(@Nullable final SSLSocketFactory socketFactory) {
-    this.socketFactory.set(socketFactory);
-  }
-
-  /**
    * Opens an {@link HttpsURLConnection} that will make a GET request to the given URL using this
    * seed generator's current {@link Proxy}, {@link SeedGenerator} and User-Agent string, with the
    * header {@code Content-Type: application/json}.
@@ -191,13 +172,11 @@ public abstract class WebSeedClient implements SeedGenerator {
    * @throws IOException if thrown by {@link URL#openConnection()} or {@link URL#openConnection(Proxy)}
    */
   protected HttpsURLConnection openConnection(final URL url) throws IOException {
-    final Proxy currentProxy = proxy.get();
     final HttpsURLConnection connection =
-        (HttpsURLConnection) ((currentProxy == null) ? url.openConnection() :
-            url.openConnection(currentProxy));
-    final SSLSocketFactory currentSocketFactory = socketFactory.get();
-    if (currentSocketFactory != null) {
-      connection.setSSLSocketFactory(currentSocketFactory);
+        (HttpsURLConnection) ((proxy == null) ? url.openConnection() :
+            url.openConnection(proxy));
+    if (socketFactory != null) {
+      connection.setSSLSocketFactory(socketFactory);
     }
     connection.setRequestProperty("Content-Type", "application/json");
     connection.setRequestProperty("User-Agent", userAgent);

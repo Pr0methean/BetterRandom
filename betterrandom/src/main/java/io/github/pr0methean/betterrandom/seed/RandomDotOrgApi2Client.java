@@ -19,6 +19,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
+import java.net.Proxy;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.util.Base64;
@@ -27,6 +28,8 @@ import java.util.Objects;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.atomic.AtomicReference;
+import javax.annotation.Nullable;
+import javax.net.ssl.SSLSocketFactory;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
@@ -75,8 +78,13 @@ public final class RandomDotOrgApi2Client extends WebSeedClient {
 
   private final UUID apiKey;
 
-  RandomDotOrgApi2Client(final boolean useRetryDelay, UUID apiKey) {
-    super(useRetryDelay);
+  public RandomDotOrgApi2Client(final boolean useRetryDelay, UUID apiKey) {
+    this(null, null, useRetryDelay, apiKey);
+  }
+
+  public RandomDotOrgApi2Client(@Nullable final Proxy proxy,
+      @Nullable final SSLSocketFactory socketFactory, final boolean useRetryDelay, UUID apiKey) {
+    super(proxy, socketFactory, useRetryDelay);
     if (apiKey == null) {
       throw new IllegalArgumentException("apiKey must not be null");
     }

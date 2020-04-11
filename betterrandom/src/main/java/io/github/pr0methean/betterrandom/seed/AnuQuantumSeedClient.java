@@ -4,7 +4,10 @@ import io.github.pr0methean.betterrandom.util.BinaryUtils;
 import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
+import java.net.Proxy;
 import java.net.URL;
+import javax.annotation.Nullable;
+import javax.net.ssl.SSLSocketFactory;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
@@ -16,13 +19,6 @@ import org.json.simple.JSONObject;
  */
 public class AnuQuantumSeedClient extends WebSeedClient {
 
-  public static final AnuQuantumSeedClient WITH_DELAYED_RETRY = new AnuQuantumSeedClient(true);
-  public static final AnuQuantumSeedClient WITHOUT_DELAYED_RETRY = new AnuQuantumSeedClient(false);
-
-  private Object readResolve() {
-    return useRetryDelay ? WITH_DELAYED_RETRY : WITHOUT_DELAYED_RETRY;
-  }
-
   private static final int MAX_STRINGS_PER_REQUEST = 1024;
   private static final int MAX_BYTES_PER_STRING = 1024;
 
@@ -30,8 +26,13 @@ public class AnuQuantumSeedClient extends WebSeedClient {
       = "https://qrng.anu.edu.au/API/jsonI.php?length=%d&type=hex16&size=%d";
   private static final long serialVersionUID = -7067446291370465008L;
 
-  private AnuQuantumSeedClient(final boolean useRetryDelay) {
-    super(useRetryDelay);
+  public AnuQuantumSeedClient(final boolean useRetryDelay) {
+    this(null, null, useRetryDelay);
+  }
+
+  public AnuQuantumSeedClient(@Nullable final Proxy proxy,
+      @Nullable final SSLSocketFactory socketFactory, final boolean useRetryDelay) {
+    super(proxy, socketFactory, useRetryDelay);
   }
 
   @Override protected int getMaxRequestSize() {

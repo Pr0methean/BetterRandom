@@ -5,8 +5,11 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
+import java.net.Proxy;
 import java.net.URL;
 import java.text.MessageFormat;
+import javax.annotation.Nullable;
+import javax.net.ssl.SSLSocketFactory;
 
 /**
  * <p>Connects to <a href="https://www.random.org/clients/http/" target="_top">random.org's old
@@ -36,13 +39,7 @@ import java.text.MessageFormat;
  */
 public class RandomDotOrgAnonymousClient extends WebSeedClient {
 
-  public static final RandomDotOrgAnonymousClient WITH_DELAYED_RETRY = new RandomDotOrgAnonymousClient(true);
-  public static final RandomDotOrgAnonymousClient WITHOUT_DELAYED_RETRY = new RandomDotOrgAnonymousClient(false);
   private static final int MAX_REQUEST_SIZE = 10000;
-
-  private Object readResolve() {
-    return useRetryDelay ? WITH_DELAYED_RETRY : WITHOUT_DELAYED_RETRY;
-  }
 
   /**
    * The URL from which the random bytes are retrieved (old API).
@@ -51,12 +48,17 @@ public class RandomDotOrgAnonymousClient extends WebSeedClient {
       "https://www.random.org/integers/?num={0,number," +
           "0}&min=0&max=255&col=1&base=16&format=plain&rnd=new";
 
+  public RandomDotOrgAnonymousClient(boolean useRetryDelay) {
+    this(null, null, useRetryDelay);
+  }
+
   /**
    * @param useRetryDelay whether to wait 10 seconds before trying again after an IOException
    *     (attempting to use it again before then will automatically fail)
    */
-  private RandomDotOrgAnonymousClient(boolean useRetryDelay) {
-    super(useRetryDelay);
+  public RandomDotOrgAnonymousClient(@Nullable final Proxy proxy,
+      @Nullable final SSLSocketFactory socketFactory, boolean useRetryDelay) {
+    super(proxy, socketFactory, useRetryDelay);
   }
 
   @Override protected int getMaxRequestSize() {

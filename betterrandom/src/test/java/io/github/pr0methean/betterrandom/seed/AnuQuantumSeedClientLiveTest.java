@@ -1,11 +1,11 @@
 package io.github.pr0methean.betterrandom.seed;
 
+import java.net.Proxy;
+import javax.annotation.Nullable;
+import javax.net.ssl.SSLSocketFactory;
 import org.testng.annotations.Test;
 
 public class AnuQuantumSeedClientLiveTest extends WebSeedClientLiveTest<AnuQuantumSeedClient> {
-  public AnuQuantumSeedClientLiveTest() {
-    super(AnuQuantumSeedClient.WITHOUT_DELAYED_RETRY);
-  }
 
   @Test
   public void testGeneratorSmallSeed() {
@@ -20,5 +20,10 @@ public class AnuQuantumSeedClientLiveTest extends WebSeedClientLiveTest<AnuQuant
   @Test
   public void testGeneratorLargeOddSize() {
     SeedTestUtils.testGenerator(seedGenerator, true, 1337);
+  }
+
+  @Override protected AnuQuantumSeedClient getSeedGenerator(@Nullable Proxy proxy,
+      @Nullable SSLSocketFactory socketFactory) {
+    return new AnuQuantumSeedClient(proxy, socketFactory, false);
   }
 }

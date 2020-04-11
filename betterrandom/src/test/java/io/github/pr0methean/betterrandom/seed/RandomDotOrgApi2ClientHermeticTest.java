@@ -11,8 +11,10 @@ import io.github.pr0methean.betterrandom.util.BinaryUtils;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.PrintStream;
+import java.net.Proxy;
 import java.util.Base64;
 import java.util.UUID;
+import javax.net.ssl.SSLSocketFactory;
 import org.powermock.api.mockito.PowerMockito;
 import org.powermock.api.mockito.mockpolicies.Slf4jMockPolicy;
 import org.powermock.core.classloader.annotations.MockPolicy;
@@ -79,16 +81,11 @@ public class RandomDotOrgApi2ClientHermeticTest
   }
 
   @Test public void testSetProxy() {
+    seedGenerator = getSeedGenerator(proxy, null);
     mockResponse(RESPONSE_625);
-    seedGenerator.setProxy(proxy);
-    try {
-      testGenerator(seedGenerator, false);
-      assertNotNull(address);
-      assertTrue(address.startsWith("https://api.random.org/json-rpc/2/invoke"));
-      assertEquals(proxy, seedGenerator.proxy.get());
-    } finally {
-      seedGenerator.setProxy(null);
-    }
+    testGenerator(seedGenerator, false);
+    assertNotNull(address);
+    assertTrue(address.startsWith("https://api.random.org/json-rpc/2/invoke"));
   }
 
   @Test public void testOverLongResponse() {
@@ -166,7 +163,8 @@ public class RandomDotOrgApi2ClientHermeticTest
     Assert.assertNotNull(new RandomDotOrgApi2Client(false, UUID.randomUUID()).toString());
   }
 
-  @Override protected RandomDotOrgApi2Client getSeedGenerator() {
+  @Override protected RandomDotOrgApi2Client getSeedGenerator(Proxy proxy,
+      SSLSocketFactory socketFactory) {
     return new RandomDotOrgApi2Client(true, UUID.randomUUID());
   }
 }

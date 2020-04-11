@@ -15,7 +15,10 @@
 // ============================================================================
 package io.github.pr0methean.betterrandom.seed;
 
+import java.net.Proxy;
 import java.util.UUID;
+import javax.annotation.Nullable;
+import javax.net.ssl.SSLSocketFactory;
 import org.testng.SkipException;
 import org.testng.annotations.Test;
 
@@ -29,10 +32,11 @@ import org.testng.annotations.Test;
     extends WebSeedClientLiveTest<RandomDotOrgApi2Client> {
 
   public RandomDotOrgApi2ClientLiveTest() {
-    super(null);
+    super();
   }
 
-  @Override protected RandomDotOrgApi2Client getSeedGenerator() {
+  @Override protected RandomDotOrgApi2Client getSeedGenerator(@Nullable Proxy proxy,
+      @Nullable SSLSocketFactory socketFactory) {
     final String apiKeyString = System.getenv("RANDOM_DOT_ORG_KEY");
     if (apiKeyString == null) {
       throw new SkipException("This test can't run unless environment variable RANDOM_DOT_ORG_KEY is set");
