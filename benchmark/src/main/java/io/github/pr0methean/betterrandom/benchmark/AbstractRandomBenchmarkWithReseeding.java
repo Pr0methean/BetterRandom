@@ -63,17 +63,6 @@ public abstract class AbstractRandomBenchmarkWithReseeding<T extends Random>
   @Param({"false","true"}) public boolean reseeding;
 
   /**
-   * Sets the random.org API key from the environment variable RANDOM_DOT_ORG_KEY, which must be a
-   * UUID.
-   */
-  @SuppressWarnings("CallToSystemGetenv") @Setup public void setApiKey() {
-    final String apiKeyString = System.getenv("RANDOM_DOT_ORG_KEY");
-    if ((apiKeyString != null)) {
-      UUID.fromString(apiKeyString);
-    }
-  }
-
-  /**
    * Attaches the PRNG under test to the random seeder.
    */
   @Override

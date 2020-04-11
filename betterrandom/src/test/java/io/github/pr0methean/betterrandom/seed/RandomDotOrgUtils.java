@@ -1,8 +1,5 @@
 package io.github.pr0methean.betterrandom.seed;
 
-import java.util.UUID;
-import org.testng.SkipException;
-
 /**
  * Utility methods used in {@link RandomDotOrgApi2ClientHermeticTest} and
  * {@link RandomDotOrgApi2ClientLiveTest}.

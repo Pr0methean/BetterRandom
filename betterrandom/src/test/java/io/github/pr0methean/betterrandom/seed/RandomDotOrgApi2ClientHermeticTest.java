@@ -5,7 +5,6 @@ import static io.github.pr0methean.betterrandom.seed.SeedTestUtils.testGenerator
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotNull;
-import static org.testng.Assert.assertSame;
 import static org.testng.Assert.assertTrue;
 
 import io.github.pr0methean.betterrandom.util.BinaryUtils;
@@ -147,7 +146,7 @@ public class RandomDotOrgApi2ClientHermeticTest
     // invocationCount spams the log, so use a loop
     for (int i = 0; i < 10_000; i++) {
       String fuzzOut = BinaryUtils.convertBytesToHexString(fuzzResponse(RESPONSE_32.length));
-      ((Runnable) () -> expectAndGetException(32, false, fuzzOut)).run();
+      expectAndGetException(32, false, fuzzOut);
     }
   }
 

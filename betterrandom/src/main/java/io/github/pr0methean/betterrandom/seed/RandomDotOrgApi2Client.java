@@ -83,16 +83,6 @@ public final class RandomDotOrgApi2Client extends WebSeedClient {
     this.apiKey = apiKey;
   }
 
-  /**
-   * Performs a single request for random bytes.
-   *
-   * @param connection the connection to download from
-   * @param seed the array to save them to
-   * @param offset the first index to save them to in the array
-   * @param length the number of bytes to request from random.org
-   * @throws IOException If a connection error occurs.
-   * @throws SeedException If random.org sends a malformed response body.
-   */
   @Override protected void downloadBytes(HttpURLConnection connection, byte[] seed, int offset,
       final int length) throws IOException {
     connection.setDoOutput(true);

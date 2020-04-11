@@ -207,13 +207,14 @@ public abstract class WebSeedClient implements SeedGenerator {
   protected abstract URL getConnectionUrl(int numBytes);
 
   /**
-   * Downloads random bytes into the given range of a byte array, using one request.
+   * Performs a single request for random bytes.
    *
-   * @param connection
-   * @param seed the array to populate
-   * @param offset the first index to populate
+   * @param connection the connection to download from
+   * @param seed the array to save them to
+   * @param offset the first index to save them to in the array
    * @param length the number of bytes to download
-   * @throws IOException if unable to connect to the Web service
+   * @throws IOException if a connection error occurs
+   * @throws SeedException if a malformed response is received
    */
   protected abstract void downloadBytes(HttpURLConnection connection, byte[] seed, int offset,
       int length) throws IOException;

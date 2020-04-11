@@ -5,7 +5,6 @@ import static io.github.pr0methean.betterrandom.seed.SeedTestUtils.createSocketF
 import static io.github.pr0methean.betterrandom.seed.SeedTestUtils.testGenerator;
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.mockito.ArgumentMatchers.any;
-import static org.testng.Assert.assertSame;
 import static org.testng.Assert.assertTrue;
 import static org.testng.Assert.fail;
 
@@ -15,9 +14,7 @@ import java.net.URL;
 import java.util.Arrays;
 import java.util.concurrent.ThreadLocalRandom;
 import javax.annotation.Nullable;
-import org.json.simple.parser.ParseException;
 import org.powermock.api.mockito.PowerMockito;
-import org.powermock.modules.testng.PowerMockTestCase;
 import org.testng.Assert;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.Test;

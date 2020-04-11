@@ -94,9 +94,8 @@ import org.testng.annotations.Test;
 
   /**
    * Assertion-free because SecureRandom itself isn't reproducible after a serialization round trip.
-   * @throws SeedException
    */
-  @Override public void testSerializable() throws SeedException {
+  @Override public void testSerializable() {
     assertSame(SerializableTester.reserialize(createRng()).getWrapped().getClass(), SecureRandom.class,
         "Not the same type after serialization");
   }

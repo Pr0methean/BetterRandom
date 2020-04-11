@@ -14,7 +14,7 @@ public abstract class SeedGeneratorTest<T extends SeedGenerator> extends PowerMo
 
   @Nullable protected final T defaultSeedGenerator;
 
-  protected SeedGeneratorTest(final T seedGenerator) {
+  protected SeedGeneratorTest(@Nullable final T seedGenerator) {
     this.defaultSeedGenerator = seedGenerator;
   }
 
@@ -44,7 +44,7 @@ public abstract class SeedGeneratorTest<T extends SeedGenerator> extends PowerMo
    * Tests seed generation that should delegate to a {@link FakeSeedGenerator}.
    *
    * @param length the length of the seed to generate
-   * @param offset
+   * @param offset the expected value of byte 0
    */
   protected void generateAndCheckFakeSeed(int length, int offset) {
     byte[] seed = seedGenerator.generateSeed(length);
