@@ -45,7 +45,7 @@ public class Main {
             ZVanillaJavaSecureRandomBenchmark.class);
     setMinimumNextLong(builder, AesCounterRandomBenchmark.class, 2.6e6);
     setMinimumNextInt(builder, Cmwc4096RandomBenchmark.class, 3.4e6);
-    setMinimumNextLong(builder, Cmwc4096RandomBenchmark.class, 2.5e6);
+    setMinimumNextLong(builder, Cmwc4096RandomBenchmark.class, 2.2e6);
     setMinimumNextInt(builder, MersenneTwisterRandomBenchmark.class, 3.5e6);
     setMinimumNextLong(builder, MersenneTwisterRandomBenchmark.class, 2.3e6);
     setMinimumNextInt(builder, Pcg128RandomBenchmark.class, 2.2e6);
