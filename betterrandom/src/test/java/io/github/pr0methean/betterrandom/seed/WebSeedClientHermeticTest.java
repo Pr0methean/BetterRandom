@@ -40,6 +40,7 @@ public abstract class WebSeedClientHermeticTest<T extends WebSeedClient>
   }
 
   @AfterMethod public void tearDown() {
+    super.tearDown();
     address = null;
   }
 

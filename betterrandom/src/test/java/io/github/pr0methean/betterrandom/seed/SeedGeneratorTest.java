@@ -5,6 +5,7 @@ import static org.testng.Assert.assertEquals;
 import javax.annotation.Nullable;
 import org.powermock.modules.testng.PowerMockTestCase;
 import org.testng.Assert;
+import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
@@ -24,6 +25,10 @@ public abstract class SeedGeneratorTest<T extends SeedGenerator> extends PowerMo
 
   @BeforeMethod public void setUp() {
     seedGenerator = getSeedGenerator();
+  }
+
+  @AfterMethod public void tearDown() {
+    seedGenerator = null;
   }
 
   @Test public void testToString() {
