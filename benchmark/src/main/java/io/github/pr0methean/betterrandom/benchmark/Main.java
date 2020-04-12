@@ -32,10 +32,10 @@ public class Main {
     setMinimumNextLong(builder, Pcg128RandomBenchmark.class, 7.8e6);
     setMinimumNextInt(builder, ReseedingThreadLocalRandomWrapperAesCounterRandom128Benchmark.class, 1.4e6);
     setMinimumNextLong(builder, ReseedingThreadLocalRandomWrapperAesCounterRandom128Benchmark.class, 1e6);
-    setMinimumNextInt(builder, SplittableRandomAdapterBenchmark.class, 5e6);
+    setMinimumNextInt(builder, SplittableRandomAdapterBenchmark.class, 4.8e6);
     setMinimumNextLong(builder, SplittableRandomAdapterBenchmark.class, 4.4e6);
     setMinimumNextInt(builder, ThreadLocalRandomWrapperAesCounterRandom128Benchmark.class, 8.5e6);
-    setMinimumNextLong(builder, ThreadLocalRandomWrapperAesCounterRandom128Benchmark.class, 4.4e6);
+    setMinimumNextLong(builder, ThreadLocalRandomWrapperAesCounterRandom128Benchmark.class, 4e6);
     setMinimumNextLong(builder, XorShiftRandomBenchmark.class, 7.5e6);
     listBuilder.add(builder.build());
 
@@ -43,7 +43,7 @@ public class Main {
         .zeroMinimumsFor(VanillaJavaRandomBenchmark.class,
             ZRandomWrapperSecureRandomBenchmark.class,
             ZVanillaJavaSecureRandomBenchmark.class);
-    setMinimumNextLong(builder, AesCounterRandomBenchmark.class, 2.6e6);
+    setMinimumNextLong(builder, AesCounterRandomBenchmark.class, 2.3e6);
     setMinimumNextInt(builder, Cmwc4096RandomBenchmark.class, 3.4e6);
     setMinimumNextLong(builder, Cmwc4096RandomBenchmark.class, 2.2e6);
     setMinimumNextInt(builder, MersenneTwisterRandomBenchmark.class, 3.5e6);
