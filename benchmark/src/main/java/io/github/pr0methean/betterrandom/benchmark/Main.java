@@ -34,8 +34,8 @@ public class Main {
     setMinimumNextLong(builder, ReseedingThreadLocalRandomWrapperAesCounterRandom128Benchmark.class, 1e6);
     setMinimumNextInt(builder, SplittableRandomAdapterBenchmark.class, 4.8e6);
     setMinimumNextLong(builder, SplittableRandomAdapterBenchmark.class, 4.4e6);
-    setMinimumNextInt(builder, ThreadLocalRandomWrapperAesCounterRandom128Benchmark.class, 8.5e6);
-    setMinimumNextLong(builder, ThreadLocalRandomWrapperAesCounterRandom128Benchmark.class, 4e6);
+    setMinimumNextInt(builder, ThreadLocalRandomWrapperAesCounterRandom128Benchmark.class, 8e6);
+    setMinimumNextLong(builder, ThreadLocalRandomWrapperAesCounterRandom128Benchmark.class, 3.6e6);
     setMinimumNextLong(builder, XorShiftRandomBenchmark.class, 7.5e6);
     listBuilder.add(builder.build());
 
