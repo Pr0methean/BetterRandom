@@ -56,7 +56,7 @@ public class Main {
     setMinimumNextInt(builder, ThreadLocalRandomWrapperAesCounterRandom128Benchmark.class, 6e6);
     setMinimumNextLong(builder, ThreadLocalRandomWrapperAesCounterRandom128Benchmark.class, 3e6);
     setMinimumNextInt(builder, XorShiftRandomBenchmark.class, 3.4e6);
-    setMinimumNextLong(builder, XorShiftRandomBenchmark.class, 2.5e6);
+    setMinimumNextLong(builder, XorShiftRandomBenchmark.class, 2.4e6);
     listBuilder.add(builder.build());
     MINIMUM_OPS = listBuilder.build();
   }
