@@ -93,8 +93,7 @@ public class Main {
         new OptionsBuilder().syncIterations(true).shouldFailOnError(true)
             .forks(1).resultFormat(ResultFormatType.CSV).detectJvmArgs();
     boolean failed = false;
-    StringBuilder failureMessage = new StringBuilder(
-        String.format("The following tests are too slow:%n"));
+    StringBuilder failureMessage = new StringBuilder("The following tests are too slow: ");
     for (int nThreads = 1; nThreads <= 2; nThreads++) {
       final Runner runner = new Runner(
           options.threads(nThreads).result(String.format("%d-thread_bench_results.csv", nThreads))
@@ -126,7 +125,7 @@ public class Main {
         double score = runResult.getAggregatedResult().getPrimaryResult().getScore();
         if (score < minimum) {
           failed = true;
-          failureMessage.append(String.format("%s: %f < %f%n", name, score, minimum));
+          failureMessage.append(String.format("%s (%f < %f); ", name, score, minimum));
         }
       }
       if (failed) {
