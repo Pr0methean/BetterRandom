@@ -3,7 +3,6 @@
 [![Maven Central](https://maven-badges.herokuapp.com/maven-central/io.github.pr0methean.betterrandom/BetterRandom/badge.svg)](https://search.maven.org/#search%7Cgav%7C1%7Cg%3A%22io.github.pr0methean.betterrandom%22%20AND%20a%3A%22BetterRandom%22)
 [![Coverage](https://codecov.io/gh/Pr0methean/BetterRandom/branch/master/graph/badge.svg)](https://codecov.io/gh/Pr0methean/BetterRandom)
 [![Codacy Badge](https://api.codacy.com/project/badge/Grade/98a727e6ce3340598e9ae7757f3997fc)](https://www.codacy.com/app/Pr0methean/BetterRandom?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=Pr0methean/BetterRandom&amp;utm_campaign=Badge_Grade)
-[![codebeat badge](https://codebeat.co/badges/4339b354-590c-4871-b441-d694dc5a33ea)](https://codebeat.co/projects/github-com-pr0methean-betterrandom-master)
 [![BCH compliance](https://bettercodehub.com/edge/badge/Pr0methean/BetterRandom?branch=master)](https://bettercodehub.com/)
 [![Dependabot Status](https://api.dependabot.com/badges/status?host=github&repo=Pr0methean/BetterRandom)](https://dependabot.com)
 [![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2FPr0methean%2FBetterRandom.svg?type=shield)](https://app.fossa.io/projects/git%2Bgithub.com%2FPr0methean%2FBetterRandom?ref=badge_shield)
