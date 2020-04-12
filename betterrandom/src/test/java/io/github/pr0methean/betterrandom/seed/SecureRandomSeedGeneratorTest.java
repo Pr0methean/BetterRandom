@@ -27,10 +27,6 @@ import org.testng.annotations.Test;
  */
 public class SecureRandomSeedGeneratorTest extends SeedGeneratorTest<SecureRandomSeedGenerator> {
 
-  public SecureRandomSeedGeneratorTest() {
-    super(SecureRandomSeedGenerator.DEFAULT_INSTANCE);
-  }
-
   @Test(timeOut = 15000) public void testGenerator() throws SeedException {
     SeedTestUtils.testGenerator(seedGenerator, true);
   }
@@ -38,5 +34,9 @@ public class SecureRandomSeedGeneratorTest extends SeedGeneratorTest<SecureRando
   @Test public void testIsWorthTrying() {
     // Should always be true
     assertTrue(seedGenerator.isWorthTrying());
+  }
+
+  @Override protected SecureRandomSeedGenerator initializeSeedGenerator() {
+    return SecureRandomSeedGenerator.DEFAULT_INSTANCE;
   }
 }

@@ -31,10 +31,6 @@ import org.testng.annotations.Test;
 @Test(singleThreaded = true) public class RandomDotOrgApi2ClientLiveTest
     extends WebSeedClientLiveTest<RandomDotOrgApi2Client> {
 
-  public RandomDotOrgApi2ClientLiveTest() {
-    super();
-  }
-
   @Override protected RandomDotOrgApi2Client getSeedGenerator(@Nullable Proxy proxy,
       @Nullable SSLSocketFactory socketFactory) {
     final String apiKeyString = System.getenv("RANDOM_DOT_ORG_KEY");

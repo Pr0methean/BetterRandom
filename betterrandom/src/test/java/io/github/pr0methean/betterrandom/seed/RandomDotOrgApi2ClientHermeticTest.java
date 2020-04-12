@@ -73,7 +73,7 @@ public class RandomDotOrgApi2ClientHermeticTest
   }
 
   @BeforeMethod public void setUpMethod() {
-    seedGenerator = PowerMockito.spy(getSeedGenerator());
+    seedGenerator = PowerMockito.spy(initializeSeedGenerator());
   }
 
   @AfterMethod public void tearDownMethod() {

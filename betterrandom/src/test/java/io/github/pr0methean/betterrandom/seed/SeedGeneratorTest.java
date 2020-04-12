@@ -2,7 +2,6 @@ package io.github.pr0methean.betterrandom.seed;
 
 import static org.testng.Assert.assertEquals;
 
-import javax.annotation.Nullable;
 import org.powermock.modules.testng.PowerMockTestCase;
 import org.testng.Assert;
 import org.testng.annotations.AfterMethod;
@@ -13,18 +12,10 @@ public abstract class SeedGeneratorTest<T extends SeedGenerator> extends PowerMo
 
   protected T seedGenerator;
 
-  @Nullable protected final T defaultSeedGenerator;
-
-  protected SeedGeneratorTest(@Nullable final T seedGenerator) {
-    this.defaultSeedGenerator = seedGenerator;
-  }
-
-  protected T getSeedGenerator() {
-    return defaultSeedGenerator;
-  }
+  protected abstract T initializeSeedGenerator();
 
   @BeforeMethod public void setUp() {
-    seedGenerator = getSeedGenerator();
+    seedGenerator = initializeSeedGenerator();
   }
 
   @AfterMethod public void tearDown() {

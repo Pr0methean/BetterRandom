@@ -5,9 +5,6 @@ import javax.annotation.Nullable;
 import javax.net.ssl.SSLSocketFactory;
 
 public class RandomDotOrgAnonymousClientLiveTest extends WebSeedClientLiveTest<RandomDotOrgAnonymousClient> {
-  public RandomDotOrgAnonymousClientLiveTest() {
-    super();
-  }
 
   @Override protected RandomDotOrgAnonymousClient getSeedGenerator(@Nullable Proxy proxy,
       @Nullable SSLSocketFactory socketFactory) {

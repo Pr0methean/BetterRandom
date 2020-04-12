@@ -24,7 +24,7 @@ import org.testng.annotations.Test;
 public abstract class WebSeedClientHermeticTest<T extends WebSeedClient>
     extends SeedGeneratorTest<T> {
   protected final int maxRequestSize
-      = getSeedGenerator().getMaxRequestSize();
+      = initializeSeedGenerator().getMaxRequestSize();
   protected final byte[] expectedHugeSeed = new byte[maxRequestSize + 1];
 
   {
@@ -36,7 +36,7 @@ public abstract class WebSeedClientHermeticTest<T extends WebSeedClient>
   @Nullable protected volatile String address = null;
 
   protected WebSeedClientHermeticTest() {
-    super(null);
+    super();
   }
 
   @AfterMethod public void tearDown() {
@@ -50,7 +50,7 @@ public abstract class WebSeedClientHermeticTest<T extends WebSeedClient>
 
   protected void mockResponse(final byte[] response) {
     // For some reason, fuzz tests run slower if we track whether seedGenerator is already a spy
-    seedGenerator = PowerMockito.spy(getSeedGenerator());
+    seedGenerator = PowerMockito.spy(initializeSeedGenerator());
     try {
       PowerMockito.doAnswer(invocationOnMock -> {
         final URL url = invocationOnMock.getArgument(0);
@@ -104,7 +104,7 @@ public abstract class WebSeedClientHermeticTest<T extends WebSeedClient>
 
   protected abstract byte[] get32ByteResponse();
 
-  protected T getSeedGenerator() {
+  protected T initializeSeedGenerator() {
     return getSeedGenerator(null, null);
   }
 
@@ -133,7 +133,7 @@ public abstract class WebSeedClientHermeticTest<T extends WebSeedClient>
   }
 
   @Test public void testSerializable() {
-    TestUtils.assertEqualAfterSerialization(getSeedGenerator());
+    TestUtils.assertEqualAfterSerialization(initializeSeedGenerator());
   }
 
   @Test public void testToString() {

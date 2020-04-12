@@ -15,7 +15,7 @@ public abstract class WebSeedClientLiveTest<T extends WebSeedClient>
   protected final Proxy proxy = SeedTestUtils.createProxy();
 
   protected WebSeedClientLiveTest() {
-    super(null);
+    super();
   }
 
   @Test public void testSetProxyOff() {
@@ -35,7 +35,7 @@ public abstract class WebSeedClientLiveTest<T extends WebSeedClient>
     SeedTestUtils.testGenerator(getSeedGenerator(proxy, null), true);
   }
 
-  @Override protected T getSeedGenerator() {
+  @Override protected T initializeSeedGenerator() {
     return getSeedGenerator(null, createSocketFactory());
   }
 

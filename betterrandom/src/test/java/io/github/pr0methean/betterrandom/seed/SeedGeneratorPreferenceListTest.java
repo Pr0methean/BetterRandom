@@ -10,9 +10,6 @@ import java.util.Arrays;
 import org.testng.annotations.Test;
 
 public class SeedGeneratorPreferenceListTest extends SeedGeneratorTest<SeedGeneratorPreferenceList> {
-  public SeedGeneratorPreferenceListTest() {
-    super(null);
-  }
 
   @Override public void testToString() {
     seedGenerator = new SeedGeneratorPreferenceList(singletonList(new FakeSeedGenerator()), true);
@@ -47,7 +44,10 @@ public class SeedGeneratorPreferenceListTest extends SeedGeneratorTest<SeedGener
   }
 
   @Test public void testNotAlwaysWorthTrying() {
-    seedGenerator = new SeedGeneratorPreferenceList(singletonList(DEFAULT_INSTANCE), false);
     assertFalse(seedGenerator.isWorthTrying());
+  }
+
+  @Override protected SeedGeneratorPreferenceList initializeSeedGenerator() {
+    return new SeedGeneratorPreferenceList(singletonList(DEFAULT_INSTANCE), false);
   }
 }

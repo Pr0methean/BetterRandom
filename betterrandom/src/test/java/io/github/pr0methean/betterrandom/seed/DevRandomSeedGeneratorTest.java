@@ -30,10 +30,6 @@ import org.testng.annotations.Test;
 @SuppressWarnings("HardcodedFileSeparator") public class DevRandomSeedGeneratorTest
     extends SeedGeneratorTest<DevRandomSeedGenerator> {
 
-  public DevRandomSeedGeneratorTest() {
-    super(DevRandomSeedGenerator.DEV_RANDOM_SEED_GENERATOR);
-  }
-
   @Test(timeOut = 60_000) public void testGenerator() {
     if (new File("/dev/random").exists()) {
       SeedTestUtils.testGenerator(seedGenerator, true);
@@ -45,5 +41,9 @@ import org.testng.annotations.Test;
       } catch (SeedException expected) {
       }
     }
+  }
+
+  @Override protected DevRandomSeedGenerator initializeSeedGenerator() {
+    return DevRandomSeedGenerator.DEV_RANDOM_SEED_GENERATOR;
   }
 }

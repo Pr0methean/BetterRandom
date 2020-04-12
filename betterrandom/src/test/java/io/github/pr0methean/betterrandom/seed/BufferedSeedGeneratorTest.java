@@ -17,12 +17,8 @@ import org.testng.annotations.Test;
   private static final int THREAD_COUNT = 4;
   private static final int CONCURRENT_SEED_SIZE = 16;
 
-  @Override protected BufferedSeedGenerator getSeedGenerator() {
+  @Override protected BufferedSeedGenerator initializeSeedGenerator() {
     return new BufferedSeedGenerator(FAKE_SEED_GENERATOR, BUFFER_SIZE);
-  }
-
-  public BufferedSeedGeneratorTest() {
-    super(null);
   }
 
   @BeforeMethod public void setUp() {

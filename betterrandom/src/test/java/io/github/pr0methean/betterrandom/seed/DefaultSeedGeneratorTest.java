@@ -27,10 +27,6 @@ import org.testng.annotations.Test;
  */
 public class DefaultSeedGeneratorTest extends SeedGeneratorTest<DefaultSeedGenerator> {
 
-  public DefaultSeedGeneratorTest() {
-    super(DefaultSeedGenerator.DEFAULT_SEED_GENERATOR);
-  }
-
   @Test public void testBasicFunction() throws SeedException {
     SeedTestUtils.testGenerator(seedGenerator, true);
   }
@@ -58,6 +54,10 @@ public class DefaultSeedGeneratorTest extends SeedGeneratorTest<DefaultSeedGener
       // interfere with the running of other tests.
       System.setSecurityManager(securityManager);
     }
+  }
+
+  @Override protected DefaultSeedGenerator initializeSeedGenerator() {
+    return DefaultSeedGenerator.DEFAULT_SEED_GENERATOR;
   }
 
   /**

@@ -18,9 +18,6 @@ abstract class AbstractRandomBenchmark<T extends Random> {
 
   protected T prng;
 
-  AbstractRandomBenchmark() {
-  }
-
   @Setup(Level.Trial) public void setUp() throws Exception {
     prng = createPrng();
   }
