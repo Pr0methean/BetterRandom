@@ -112,10 +112,10 @@ public class RandomSeederTest {
         randomSeeder.remove(random);
         randomSeeder.add(random);
         random.nextBoolean();
-        Uninterruptibles.sleepUninterruptibly(200, TimeUnit.MILLISECONDS);
+        Uninterruptibles.sleepUninterruptibly(1000, TimeUnit.MILLISECONDS);
         assertTrue(randomSeeder.isRunning(), "Adding a PRNG should have launched new thread");
         assertEquals(seedGenerator.countCalls(), 2,
-            "Seed generator should have been called exactly once after resurrection");
+            "Seed generator should have been called exactly once more after resurrection");
         random.nextBoolean();
       } finally {
         randomSeeder.remove(random);
