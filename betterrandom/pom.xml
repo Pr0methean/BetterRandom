@@ -297,7 +297,7 @@
     <prefix />
     <github.global.server>github</github.global.server>
     <jsr305.version>3.0.2</jsr305.version>
-    <guava.version>28.2-jre</guava.version>
+    <guava.version>29.0-jre</guava.version>
     <proguard.version>6.2.2</proguard.version>
     <jacoco.version>0.8.5</jacoco.version>
     <powermock.version>2.0.7</powermock.version>
