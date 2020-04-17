@@ -1,0 +1,5 @@
+steps:
+- script: |
+    sudo apt install rng-tools
+    sudo rngd
+  displayName: Install rngd

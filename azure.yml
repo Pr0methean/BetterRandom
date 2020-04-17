@@ -146,7 +146,7 @@ stages:
       pool:
         vmImage: 'ubuntu-latest'
       steps:
-        - template: etc/azureTemplate/installHaveged.yml
+        - template: etc/azureTemplate/installRngd.yml
         - script: ./etc/scripts/mutation.sh
           displayName: Build & Run Mutation Tests
           env:
