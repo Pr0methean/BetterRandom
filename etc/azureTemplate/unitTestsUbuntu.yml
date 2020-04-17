@@ -1,7 +1,7 @@
 parameters:
   whichJavaHome: '' # don't change JAVA_HOME by default
 steps:
-- template: installHaveged.yml
+- template: installRngd.yml
 - script: '$(JAVA_HOME)/bin/java -version'
   displayName: Log Java Version
   env:
