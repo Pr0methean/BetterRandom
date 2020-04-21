@@ -36,14 +36,14 @@ public class Main {
     setMinimumNextLong(builder, SplittableRandomAdapterBenchmark.class, 4.4e6);
     setMinimumNextInt(builder, ThreadLocalRandomWrapperAesCounterRandom128Benchmark.class, 8e6);
     setMinimumNextLong(builder, ThreadLocalRandomWrapperAesCounterRandom128Benchmark.class, 3.6e6);
-    setMinimumNextLong(builder, XorShiftRandomBenchmark.class, 7.5e6);
+    setMinimumNextLong(builder, XorShiftRandomBenchmark.class, 7e6);
     listBuilder.add(builder.build());
 
     builder = Main
         .zeroMinimumsFor(VanillaJavaRandomBenchmark.class,
             ZRandomWrapperSecureRandomBenchmark.class,
             ZVanillaJavaSecureRandomBenchmark.class);
-    setMinimumNextLong(builder, AesCounterRandomBenchmark.class, 2.3e6);
+    setMinimumNextLong(builder, AesCounterRandomBenchmark.class, 2e6);
     setMinimumNextInt(builder, Cmwc4096RandomBenchmark.class, 3.4e6);
     setMinimumNextLong(builder, Cmwc4096RandomBenchmark.class, 2.2e6);
     setMinimumNextInt(builder, MersenneTwisterRandomBenchmark.class, 3.5e6);
