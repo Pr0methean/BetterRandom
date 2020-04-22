@@ -19,9 +19,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.concurrent.atomic.AtomicBoolean;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import javax.annotation.Nullable;
 
 /**
  * RNG seed strategy that gets data from {@code /dev/random} on systems that provide it (e.g.
@@ -39,12 +37,25 @@ public enum DevRandomSeedGenerator implements SeedGenerator {
    */
   DEV_RANDOM_SEED_GENERATOR;
 
-  private static final Logger LOG = LoggerFactory.getLogger(DevRandomSeedGenerator.class);
   @SuppressWarnings("HardcodedFileSeparator") private static final String DEV_RANDOM_STRING =
       "/dev/random";
   private static final File DEV_RANDOM = new File(DEV_RANDOM_STRING);
-  private static final AtomicBoolean DEV_RANDOM_DOES_NOT_EXIST = new AtomicBoolean(false);
-  private static volatile InputStream inputStream;
+  @Nullable private static final InputStream inputStream;
+  @Nullable private static final Throwable initException;
+
+  static {
+    InputStream maybeStream;
+    Throwable maybeInitException;
+    try {
+      maybeStream = new FileInputStream(DEV_RANDOM);
+      maybeInitException = null;
+    } catch (Throwable t) {
+      maybeStream = null;
+      maybeInitException = t;
+    }
+    inputStream = maybeStream;
+    initException = maybeInitException;
+  }
 
   /**
    * @throws SeedException if {@literal /dev/random} does not exist or is not accessible.
@@ -52,17 +63,9 @@ public enum DevRandomSeedGenerator implements SeedGenerator {
   @SuppressWarnings("AssignmentToStaticFieldFromInstanceMethod") @Override public void generateSeed(
       final byte[] randomSeed) throws SeedException {
     if (!isWorthTrying()) {
-      throw new SeedException(DEV_RANDOM_STRING + " did not exist when previously checked for");
+      throw new SeedException(DEV_RANDOM_STRING + " does not exist", initException);
     }
-
     try {
-      if (inputStream == null) {
-        synchronized (DevRandomSeedGenerator.class) {
-          if (inputStream == null) {
-            inputStream = new FileInputStream(DEV_RANDOM);
-          }
-        }
-      }
       final int length = randomSeed.length;
       int count = 0;
       while (count < length) {
@@ -73,10 +76,6 @@ public enum DevRandomSeedGenerator implements SeedGenerator {
         count += bytesRead;
       }
     } catch (final IOException ex) {
-      if (!DEV_RANDOM.exists()) {
-        LOG.error("{} does not exist", DEV_RANDOM_STRING);
-        DEV_RANDOM_DOES_NOT_EXIST.lazySet(true);
-      }
       throw new SeedException("Failed reading from " + DEV_RANDOM_STRING, ex);
     } catch (final SecurityException ex) {
       // Might be thrown if resource access is restricted (such as in
@@ -86,7 +85,7 @@ public enum DevRandomSeedGenerator implements SeedGenerator {
   }
 
   @Override public boolean isWorthTrying() {
-    return !(DEV_RANDOM_DOES_NOT_EXIST.get());
+    return inputStream != null;
   }
 
   /**
