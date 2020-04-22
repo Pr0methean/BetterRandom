@@ -89,9 +89,5 @@ public class WebSeedClientConfiguration implements Serializable {
       return new WebSeedClientConfiguration(proxy, socketFactory, retryDelayMs);
     }
 
-    public Builder setRetryDelayMs(long retryDelayMs) {
-      this.retryDelayMs = retryDelayMs;
-      return this;
-    }
   }
 }
