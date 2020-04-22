@@ -164,21 +164,29 @@
         </dependency>
       </dependencies>
       <build>
+        <pluginManagement>
+		      <plugins>
+				    <plugin>
+				      <groupId>com.github.wvengen</groupId>
+				      <artifactId>proguard-maven-plugin</artifactId>
+				      <version>2.2.0</version>
+				      <configuration>
+					      <proguardJar>${user.home}/.m2/repository/net/sf/proguard/proguard-base/${proguard.version}/proguard-base-${proguard.version}.jar
+					      </proguardJar>
+					      <proguardInclude>${basedir}/proguard.conf</proguardInclude>
+					      <libs>
+				          <lib>${java.home}/lib/jrt-fs.jar</lib>
+				          <lib>${java.home}/jmods/java.base.jmod</lib>
+					      </libs>
+				      </configuration>
+				    </plugin>
+				  </plugins>
+				</pluginManagement>
         <plugins>
           <plugin>
             <groupId>com.github.wvengen</groupId>
             <artifactId>proguard-maven-plugin</artifactId>
             <version>2.2.0</version>
-            <executions>
-              <execution>
-                <id>proguard</id>
-                <!-- Work around lack of a post-package phase (proguard requires existing jar -->
-                <phase>pre-integration-test</phase>
-                <goals>
-                  <goal>proguard</goal>
-                </goals>
-              </execution>
-            </executions>
           </plugin>
         </plugins>
       </build>
@@ -430,20 +438,6 @@
     </resources>
     <pluginManagement>
       <plugins>
-        <plugin>
-          <groupId>com.github.wvengen</groupId>
-          <artifactId>proguard-maven-plugin</artifactId>
-          <version>2.2.0</version>
-          <configuration>
-	          <proguardJar>${user.home}/.m2/repository/net/sf/proguard/proguard-base/${proguard.version}/proguard-base-${proguard.version}.jar
-	          </proguardJar>
-	          <proguardInclude>${basedir}/proguard.conf</proguardInclude>
-	          <libs>
-              <lib>${java.home}/lib/jrt-fs.jar</lib>
-              <lib>${java.home}/jmods/java.base.jmod</lib>
-	          </libs>
-          </configuration>
-        </plugin>
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-javadoc-plugin</artifactId>

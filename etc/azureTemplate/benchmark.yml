@@ -7,5 +7,6 @@ steps:
   env:
     JAVA_HOME: $(JAVA_HOME)
     RANDOM_DOT_ORG_KEY: $(RANDOM_DOT_ORG_KEY)
+    PROGUARD: $(PROGUARD)
 - template: publishBenchmark.yml
 

@@ -5,16 +5,15 @@ if (!$JAVA_HOME) {
 }
 $RANDOM_DOT_ORG_KEY = $env:RANDOM_DOT_ORG_KEY
 cd betterrandom
-mvn "$MAYBE_ANDROID_FLAG" "clean" "compile" "jacoco:instrument" "jacoco:prepare-agent" `
+mvn "clean" "compile" "jacoco:instrument" "jacoco:prepare-agent" `
     "test" "jacoco:restore-instrumented-classes" "jacoco:report" -e
 $STATUS = $?
 if ( $STATUS ) {
-    if ( $JAVA8 ) {
+    if ( $PROGUARD ) {
         echo "[unit-tests.ps1] Running Proguard."
-        mvn -DskipTests "-Dmaven.test.skip=true" "$MAYBE_ANDROID_FLAG" package pre-integration-test
+        mvn -DskipTests "-Dmaven.test.skip=true" proguard:proguard
         echo "[unit-tests.ps1] Testing against Proguarded jar."
-        # FIXME: This runs Proguard again after it finishes.
-        mvn '-Dmaven.main.skip=true' "$MAYBE_ANDROID_FLAG" "integration-test" "-e" "-B"
+        mvn '-Dmaven.main.skip=true' "integration-test" "-e" "-B"
         $STATUS = $?
     }
 }

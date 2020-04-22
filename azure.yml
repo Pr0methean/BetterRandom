@@ -55,10 +55,11 @@ stages:
         strategy:
           matrix:
             OpenJdk08:
-              JAVA8: 'true'
+              PROGUARD: 'true'
               JAVA_HOME: $(zuluLinux08)
               artifactEnvName: OpenJdk08Linux
             OpenJdk11:
+              PROGUARD: 'true'
               JAVA_HOME: $(zuluLinux11)
               artifactEnvName: OpenJdk11Linux
             OpenJdkLatest:
@@ -93,10 +94,11 @@ stages:
           matrix:
 # FIXME: OpenJdk 8 is no longer included in the Mac image; replace with a job that downloads the JDK
 #            OpenJdk08:
-#              JAVA8: 'true'
+#              PROGUARD: 'true'
 #              javaVersion: 8
 #              artifactEnvName: OpenJdk08Mac
             OpenJdk11:
+              PROGUARD: 'true'
               javaVersion: 11
               artifactEnvName: OpenJdk11Mac
             OpenJdkLatest:
@@ -116,10 +118,11 @@ stages:
         strategy:
           matrix:
             OpenJdk08:
-              JAVA8: 'true'
+              PROGUARD: 'true'
               JAVA_HOME_SOURCE: JAVA_HOME_8_X64
               artifactEnvName: OpenJdk08Windows
             OpenJdk11:
+              PROGUARD: 'true'
               JAVA_HOME_SOURCE: JAVA_HOME_11_X64
               artifactEnvName: OpenJdk11Windows
 # FIXME: Replace with a job that downloads the JDK
@@ -165,10 +168,11 @@ stages:
       strategy:
         matrix:
           OpenJdk08:
-            JAVA8: 'true'
+            PROGUARD: 'true'
             JAVA_HOME: $(zuluLinux08)
             artifactEnvName: 'OpenJDK08Linux'
           OpenJdk11:
+            PROGUARD: 'true'
             JAVA_HOME: $(zuluLinux11)
             artifactEnvName: 'OpenJdk11Linux'
           OpenJdkLatest:
@@ -185,6 +189,7 @@ stages:
       strategy:
         matrix:
           OpenJNine11:
+            PROGUARD: 'true'
             javaUrl: $(OpenJNine11Linux)
             artifactEnvName: 'OpenJNine11Linux'
           OpenJNineLatest:
@@ -198,6 +203,7 @@ stages:
     - job: BenchmarkMac
       timeoutInMinutes: 80
       variables:
+        PROGUARD: 'true'
         artifactEnvName: OpenJdkMac
         JAVA_HOME: jdk
       strategy:
@@ -205,9 +211,10 @@ stages:
 # FIXME: OpenJdk 8 is no longer included in the Mac image; replace with a job that downloads the JDK
 #          OpenJdk08:
 #            artifactEnvName: 'OpenJdk08Mac'
-#            JAVA8: 'true'
+#            PROGUARD: 'true'
 #            javaVersion: 8
           OpenJdk11:
+          	PROGUARD: 'true'
             artifactEnvName: 'OpenJdk11Mac'
             javaVersion: 11
           OpenJdkLatest:
@@ -229,7 +236,7 @@ stages:
       strategy:
         matrix:
           OpenJdk08:
-            JAVA8: 'true'
+          	PROGUARD: 'true'
             JAVA_HOME_SOURCE: JAVA_HOME_8_X64
             artifactEnvName: 'OpenJdk08Windows'
 # FIXME: Fails to launch; see etc/scripts/benchmark.ps1 for details
