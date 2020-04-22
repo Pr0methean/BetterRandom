@@ -16,6 +16,7 @@
 package io.github.pr0methean.betterrandom.seed;
 
 import java.net.Proxy;
+import java.time.Duration;
 import java.util.UUID;
 import javax.annotation.Nullable;
 import javax.net.ssl.SSLSocketFactory;
@@ -37,6 +38,11 @@ import org.testng.annotations.Test;
     if (apiKeyString == null) {
       throw new SkipException("This test can't run unless environment variable RANDOM_DOT_ORG_KEY is set");
     }
-    return new RandomDotOrgApi2Client(UUID.fromString(apiKeyString));
+    return new RandomDotOrgApi2Client(new WebSeedClientConfiguration.Builder()
+        .setProxy(proxy)
+        .setSocketFactory(socketFactory)
+        .setRetryDelay(Duration.ZERO)
+        .build(),
+        UUID.fromString(apiKeyString));
   }
 }

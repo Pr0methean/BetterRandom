@@ -45,7 +45,8 @@ public abstract class WebSeedClient implements SeedGenerator {
    */
   protected final Lock lock = new ReentrantLock(true);
   /**
-   * The earliest time we'll try again if there's been a previous IOE.
+   * The earliest time we'll try again if there's been a previous IOE, or when the server requests
+   * throttling.
    */
   protected volatile Instant earliestNextAttempt = Instant.MIN;
   private final WebSeedClientConfiguration configuration;
@@ -182,7 +183,7 @@ public abstract class WebSeedClient implements SeedGenerator {
 
   @Override public void generateSeed(final byte[] seed) throws SeedException {
     if (!isWorthTrying()) {
-      throw new SeedException("Not retrying so soon after an IOException");
+      throw new SeedException("Not using this again until " + earliestNextAttempt);
     }
     final int length = seed.length;
     final int batchSize = Math.min(length, getMaxRequestSize());
