@@ -214,7 +214,7 @@ stages:
 #            PROGUARD: 'true'
 #            javaVersion: 8
           OpenJdk11:
-          	PROGUARD: 'true'
+            PROGUARD: 'true'
             artifactEnvName: 'OpenJdk11Mac'
             javaVersion: 11
           OpenJdkLatest:
@@ -236,7 +236,7 @@ stages:
       strategy:
         matrix:
           OpenJdk08:
-          	PROGUARD: 'true'
+            PROGUARD: 'true'
             JAVA_HOME_SOURCE: JAVA_HOME_8_X64
             artifactEnvName: 'OpenJdk08Windows'
 # FIXME: Fails to launch; see etc/scripts/benchmark.ps1 for details
