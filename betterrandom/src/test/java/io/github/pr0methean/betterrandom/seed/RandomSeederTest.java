@@ -54,8 +54,8 @@ public class RandomSeederTest {
     checkAddRemoveAndIsEmpty(prng, randomSeeder, randomSeeder::add);
   }
 
-  protected <T extends Random> void checkAddRemoveAndIsEmpty(T prng, RandomSeeder randomSeeder,
-      Consumer<? super T> addPrng) {
+  protected static <T extends Random> void checkAddRemoveAndIsEmpty(T prng,
+      RandomSeeder randomSeeder, Consumer<? super T> addPrng) {
     final byte[] firstBytesWithOldSeed = new byte[TEST_OUTPUT_SIZE];
     final byte[] secondBytesWithOldSeed = new byte[TEST_OUTPUT_SIZE];
     final byte[] testSeedBytes = BinaryUtils.convertLongToBytes(TEST_SEED);
@@ -213,7 +213,7 @@ public class RandomSeederTest {
   /**
    * Making this a subroutine ensures that {@code prng} can be GCed on exit.
    */
-  private void addSomethingDeadTo(RandomSeeder randomSeeder) {
+  private static void addSomethingDeadTo(RandomSeeder randomSeeder) {
     SingleThreadSplittableRandomAdapter prng = new SingleThreadSplittableRandomAdapter(TEST_SEED);
     randomSeeder.add(prng);
     randomSeeder.stopIfEmpty();

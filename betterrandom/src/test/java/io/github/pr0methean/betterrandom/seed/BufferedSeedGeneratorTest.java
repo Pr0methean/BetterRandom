@@ -59,7 +59,7 @@ import org.testng.annotations.Test;
     for (int i = 0; i < THREAD_COUNT; i++) {
       threads[i].join();
     }
-    StringBuilder seedList = new StringBuilder();
+    StringBuilder seedList = new StringBuilder(THREAD_COUNT * (CONCURRENT_SEED_SIZE + 1) * 2);
     for (int i = 0; i < THREAD_COUNT; i++) {
       seedList.append(BinaryUtils.convertBytesToHexString(seeds[i])).append('\n');
     }

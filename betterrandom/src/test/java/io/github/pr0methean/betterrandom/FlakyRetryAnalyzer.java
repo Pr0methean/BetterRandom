@@ -8,7 +8,7 @@ import org.testng.ITestResult;
  */
 public class FlakyRetryAnalyzer implements IRetryAnalyzer {
   int counter = 0;
-  final int retryLimit = 4;
+  static final int retryLimit = 4;
 
   @Override public boolean retry(ITestResult result) {
     if (result.isSuccess()) {

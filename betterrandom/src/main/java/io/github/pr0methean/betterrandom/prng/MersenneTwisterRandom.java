@@ -156,7 +156,7 @@ public class MersenneTwisterRandom extends BaseRandom {
     mt[0] = UPPER_MASK; // Most significant bit is 1 - guarantees non-zero initial array.
   }
 
-  private int mix(final int current, final int previous, int seedFactor) {
+  private static int mix(final int current, final int previous, int seedFactor) {
     return current ^ ((previous ^ (previous >>> 30)) * seedFactor);
   }
 

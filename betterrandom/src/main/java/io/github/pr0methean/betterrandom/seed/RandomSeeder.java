@@ -326,7 +326,7 @@ public class RandomSeeder extends Looper {
    *
    * @param randoms the PRNGs to unregister with
    */
-  protected void unregisterWithAll(Set<?> randoms) {
+  protected static void unregisterWithAll(Set<?> randoms) {
     randoms.forEach(random -> {
       if (random instanceof BaseRandom) {
         try {

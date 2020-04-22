@@ -78,7 +78,7 @@ public class AnuQuantumSeedClient extends WebSeedClient {
     }
   }
 
-  private String getStringAndCheckLength(JSONArray array, int index, int expectedLength) {
+  private static String getStringAndCheckLength(JSONArray array, int index, int expectedLength) {
     String out = array.get(index).toString();
     int actualLength = out.length();
     if (actualLength != expectedLength) {

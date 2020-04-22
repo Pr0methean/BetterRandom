@@ -189,6 +189,6 @@ public class AesCounterRandom extends CipherCounterRandom {
   }
 
   @Override protected void doCipher(byte[] input, byte[] output) throws GeneralSecurityException {
-    cipher.doFinal(input, 0, getBytesAtOnce(), output);
+    cipher.doFinal(input, 0, BYTES_AT_ONCE, output);
   }
 }
