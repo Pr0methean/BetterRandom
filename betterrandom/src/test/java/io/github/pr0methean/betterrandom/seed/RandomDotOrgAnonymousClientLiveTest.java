@@ -8,6 +8,9 @@ public class RandomDotOrgAnonymousClientLiveTest extends WebSeedClientLiveTest<R
 
   @Override protected RandomDotOrgAnonymousClient getSeedGenerator(@Nullable Proxy proxy,
       @Nullable SSLSocketFactory socketFactory) {
-    return new RandomDotOrgAnonymousClient(proxy, socketFactory, false);
+    return new RandomDotOrgAnonymousClient(new WebSeedClientConfiguration.Builder()
+        .setProxy(proxy)
+        .setSocketFactory(socketFactory)
+        .build());
   }
 }

@@ -19,7 +19,6 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
-import java.net.Proxy;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.util.Base64;
@@ -28,8 +27,6 @@ import java.util.Objects;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.atomic.AtomicReference;
-import javax.annotation.Nullable;
-import javax.net.ssl.SSLSocketFactory;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
@@ -78,17 +75,16 @@ public final class RandomDotOrgApi2Client extends WebSeedClient {
 
   private final UUID apiKey;
 
-  public RandomDotOrgApi2Client(final boolean useRetryDelay, UUID apiKey) {
-    this(null, null, useRetryDelay, apiKey);
-  }
-
-  public RandomDotOrgApi2Client(@Nullable final Proxy proxy,
-      @Nullable final SSLSocketFactory socketFactory, final boolean useRetryDelay, UUID apiKey) {
-    super(proxy, socketFactory, useRetryDelay);
+  public RandomDotOrgApi2Client(WebSeedClientConfiguration configuration, UUID apiKey) {
+    super(configuration);
     if (apiKey == null) {
       throw new IllegalArgumentException("apiKey must not be null");
     }
     this.apiKey = apiKey;
+  }
+
+  public RandomDotOrgApi2Client(UUID apiKey) {
+    this(WebSeedClientConfiguration.DEFAULT, apiKey);
   }
 
   @Override protected void downloadBytes(HttpURLConnection connection, byte[] seed, int offset,
@@ -121,22 +117,14 @@ public final class RandomDotOrgApi2Client extends WebSeedClient {
           .format("Too few bytes returned: expected %d bytes, got '%s'", length, base64seed));
     }
     System.arraycopy(decodedSeed, 0, seed, offset, length);
-    if (useRetryDelay) {
+    if (getRetryDelayMs() > 0) {
       final Object advisoryDelayMs = result.get("advisoryDelay");
       if (advisoryDelayMs instanceof Number) {
         // Wait RETRY_DELAY or the advisory delay, whichever is shorter
-        final long delayMs = Math.min(RETRY_DELAY_MS, ((Number) advisoryDelayMs).longValue());
+        final long delayMs = Math.min(getRetryDelayMs(), ((Number) advisoryDelayMs).longValue());
         earliestNextAttempt = CLOCK.instant().plusMillis(delayMs);
       }
     }
-  }
-
-  /**
-   * Returns "https://www.random.org (with retry delay)" or "https://www.random.org (without retry
-   * delay)".
-   */
-  @Override public String toString() {
-    return BASE_URL + (useRetryDelay ? " (with retry delay)" : " (without retry delay)");
   }
 
   @Override public boolean equals(Object o) {

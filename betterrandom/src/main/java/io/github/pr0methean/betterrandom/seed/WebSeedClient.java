@@ -9,6 +9,7 @@ import java.net.HttpURLConnection;
 import java.net.Proxy;
 import java.net.URL;
 import java.time.Clock;
+import java.time.Duration;
 import java.time.Instant;
 import java.util.Objects;
 import java.util.concurrent.locks.Lock;
@@ -37,29 +38,17 @@ public abstract class WebSeedClient implements SeedGenerator {
    * Made available to parse JSON responses.
    */
   protected static final JSONParser JSON_PARSER = new JSONParser();
-  protected static final int RETRY_DELAY_MS = 10000;
-  private static final long serialVersionUID = -33117511873489173L;
+  private static final long serialVersionUID = 2216766353219231461L;
   /**
    * Held while downloading, so that two requests to the same server won't be pending at the same
    * time.
    */
   protected final Lock lock = new ReentrantLock(true);
   /**
-   * The earliest time we'll try again if {@link #useRetryDelay}.
+   * The earliest time we'll try again if there's been a previous IOE.
    */
   protected volatile Instant earliestNextAttempt = Instant.MIN;
-  /**
-   * The proxy to use with this server, or null to use the JVM default.
-   */
-  @Nullable protected final transient Proxy proxy;
-  /**
-   * The SSLSocketFactory to use with this server.
-   */
-  @Nullable protected final transient SSLSocketFactory socketFactory;
-  /**
-   * If true, don't attempt to contact the server again for RETRY_DELAY after an IOException
-   */
-  protected final boolean useRetryDelay;
+  private final WebSeedClientConfiguration configuration;
 
   /**
    * The value for the HTTP User-Agent header.
@@ -70,13 +59,28 @@ public abstract class WebSeedClient implements SeedGenerator {
    * @param proxy the proxy to use with this server, or null to use the JVM default
    * @param socketFactory the socket factory, or null for the JVM default
    * @param useRetryDelay whether to wait 10 seconds before trying again after an IOException
+   * @deprecated Use one of the other overloads, which allow specifying the delay before retry.
    */
+  @Deprecated
   protected WebSeedClient(@Nullable final Proxy proxy,
       @Nullable final SSLSocketFactory socketFactory, final boolean useRetryDelay) {
-    this.proxy = proxy;
-    this.socketFactory = socketFactory;
-    this.useRetryDelay = useRetryDelay;
+    this(new WebSeedClientConfiguration.Builder().setProxy(proxy).setSocketFactory(socketFactory)
+        .setRetryDelay(useRetryDelay
+            ? Duration.ofMillis(WebSeedClientConfiguration.DEFAULT_RETRY_DELAY_MS)
+            : Duration.ZERO)
+        .build());
+  }
+
+  /**
+   * @param webSeedClientConfiguration configuration
+   */
+  protected WebSeedClient(WebSeedClientConfiguration webSeedClientConfiguration) {
+    configuration = webSeedClientConfiguration;
     userAgent = getClass().getName();
+  }
+
+  protected WebSeedClient() {
+    this(WebSeedClientConfiguration.DEFAULT);
   }
 
   /**
@@ -151,10 +155,10 @@ public abstract class WebSeedClient implements SeedGenerator {
    */
   protected HttpsURLConnection openConnection(final URL url) throws IOException {
     final HttpsURLConnection connection =
-        (HttpsURLConnection) ((proxy == null) ? url.openConnection() :
-            url.openConnection(proxy));
-    if (socketFactory != null) {
-      connection.setSSLSocketFactory(socketFactory);
+        (HttpsURLConnection) ((getProxy() == null) ? url.openConnection() :
+            url.openConnection(getProxy()));
+    if (getSocketFactory() != null) {
+      connection.setSSLSocketFactory(getSocketFactory());
     }
     connection.setRequestProperty("Content-Type", "application/json");
     connection.setRequestProperty("User-Agent", userAgent);
@@ -194,8 +198,8 @@ public abstract class WebSeedClient implements SeedGenerator {
       }
       downloadBatch(seed, batch * batchSize, lastBatchSize, lastBatchUrl);
     } catch (final IOException ex) {
-      if (useRetryDelay) {
-        earliestNextAttempt = CLOCK.instant().plusMillis(RETRY_DELAY_MS);
+      if (getRetryDelayMs() > 0) {
+        earliestNextAttempt = CLOCK.instant().plusMillis(getRetryDelayMs());
       }
       throw new SeedException("Failed downloading bytes", ex);
     } catch (final SecurityException ex) {
@@ -228,7 +232,8 @@ public abstract class WebSeedClient implements SeedGenerator {
   }
 
   @Override public boolean isWorthTrying() {
-    return !useRetryDelay || !earliestNextAttempt.isAfter(RandomDotOrgApi2Client.CLOCK.instant());
+    return getRetryDelayMs() <= 0 ||
+        !earliestNextAttempt.isAfter(RandomDotOrgApi2Client.CLOCK.instant());
   }
 
   @Override public boolean equals(Object o) {
@@ -239,10 +244,33 @@ public abstract class WebSeedClient implements SeedGenerator {
       return false;
     }
     WebSeedClient that = (WebSeedClient) o;
-    return useRetryDelay == that.useRetryDelay && userAgent.equals(that.userAgent);
+    return getRetryDelayMs() == that.getRetryDelayMs() && Objects.equals(getProxy(),
+        that.getProxy()) &&
+        Objects.equals(getSocketFactory(), that.getSocketFactory()) && userAgent.equals(that.userAgent);
   }
 
   @Override public int hashCode() {
-    return Objects.hash(useRetryDelay, userAgent);
+    return Objects.hash(getProxy(), getSocketFactory(), getRetryDelayMs(), userAgent);
+  }
+
+  /**
+   * The proxy to use with this server, or null to use the JVM default.
+   */
+  @Nullable protected Proxy getProxy() {
+    return configuration.getProxy();
+  }
+
+  /**
+   * The SSLSocketFactory to use with this server.
+   */
+  @Nullable protected SSLSocketFactory getSocketFactory() {
+    return configuration.getSocketFactory();
+  }
+
+  /**
+   * Wait this many milliseconds before trying again after an IOException.
+   */
+  protected long getRetryDelayMs() {
+    return configuration.getRetryDelayMs();
   }
 }

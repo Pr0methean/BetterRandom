@@ -55,7 +55,7 @@ public abstract class WebSeedClientHermeticTest<T extends WebSeedClient>
       PowerMockito.doAnswer(invocationOnMock -> {
         final URL url = invocationOnMock.getArgument(0);
         address = url.toString();
-        return new FakeHttpsUrlConnection(url, seedGenerator.proxy, response);
+        return new FakeHttpsUrlConnection(url, seedGenerator.getProxy(), response);
       }).when(seedGenerator, "openConnection", any(URL.class));
     } catch (Exception e) {
       throw new RuntimeException(e);
@@ -108,7 +108,8 @@ public abstract class WebSeedClientHermeticTest<T extends WebSeedClient>
     return getSeedGenerator(null, null);
   }
 
-  protected abstract T getSeedGenerator(Proxy proxy, SSLSocketFactory socketFactory);
+  protected abstract T getSeedGenerator(@Nullable Proxy proxy,
+      @Nullable SSLSocketFactory socketFactory);
 
   protected void tryLargeRequest() {
     final int seedLength = seedGenerator.getMaxRequestSize() + 1;

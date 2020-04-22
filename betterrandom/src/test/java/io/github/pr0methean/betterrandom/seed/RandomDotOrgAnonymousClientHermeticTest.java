@@ -1,10 +1,8 @@
 package io.github.pr0methean.betterrandom.seed;
 
-import static io.github.pr0methean.betterrandom.TestUtils.assertSameAfterSerialization;
 import static io.github.pr0methean.betterrandom.TestUtils.fail;
 import static io.github.pr0methean.betterrandom.seed.SeedTestUtils.testGenerator;
 import static java.nio.charset.StandardCharsets.UTF_8;
-import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotNull;
 import static org.testng.Assert.assertTrue;
 
@@ -14,6 +12,7 @@ import java.io.IOException;
 import java.io.PrintStream;
 import java.net.Proxy;
 import java.util.UUID;
+import javax.annotation.Nullable;
 import javax.net.ssl.SSLSocketFactory;
 import org.testng.annotations.Test;
 
@@ -56,7 +55,7 @@ import org.testng.annotations.Test;
           "\nc5\nb4\n3a\nd4\ne0\nf8\n9c\n4a\ne6\n15\n97\n5d\n48\na0\n0d").getBytes(UTF_8);
 
   private static final int MAX_REQUEST_SIZE
-      = new RandomDotOrgApi2Client(false, UUID.randomUUID()).getMaxRequestSize();
+      = new RandomDotOrgApi2Client(UUID.randomUUID()).getMaxRequestSize();
   private final byte[] MAX_SIZE_RESPONSE_OLD_API;
 
   @Override protected byte[] get32ByteResponse() {
@@ -76,9 +75,12 @@ import org.testng.annotations.Test;
     }
   }
 
-  @Override protected RandomDotOrgAnonymousClient getSeedGenerator(Proxy proxy,
-      SSLSocketFactory socketFactory) {
-    return new RandomDotOrgAnonymousClient(proxy, socketFactory, false);
+  @Override protected RandomDotOrgAnonymousClient getSeedGenerator(@Nullable Proxy proxy,
+      @Nullable SSLSocketFactory socketFactory) {
+    return new RandomDotOrgAnonymousClient(new WebSeedClientConfiguration.Builder()
+        .setProxy(proxy)
+        .setSocketFactory(socketFactory)
+        .build());
   }
 
   @Test public void testSetProxy() {

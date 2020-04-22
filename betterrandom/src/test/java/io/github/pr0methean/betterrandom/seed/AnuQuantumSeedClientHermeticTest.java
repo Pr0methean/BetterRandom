@@ -2,12 +2,12 @@ package io.github.pr0methean.betterrandom.seed;
 
 import static io.github.pr0methean.betterrandom.TestUtils.assertEqualAfterSerialization;
 import static java.nio.charset.StandardCharsets.UTF_8;
-import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotNull;
 import static org.testng.Assert.assertTrue;
 
 import io.github.pr0methean.betterrandom.util.BinaryUtils;
 import java.net.Proxy;
+import java.time.Duration;
 import javax.net.ssl.SSLSocketFactory;
 import org.testng.annotations.Test;
 
@@ -75,7 +75,10 @@ public class AnuQuantumSeedClientHermeticTest
 
   @Override protected AnuQuantumSeedClient getSeedGenerator(Proxy proxy,
       SSLSocketFactory socketFactory) {
-    return new AnuQuantumSeedClient(proxy, socketFactory, false);
+    return new AnuQuantumSeedClient(new WebSeedClientConfiguration.Builder()
+        .setProxy(proxy)
+        .setSocketFactory(socketFactory)
+        .build());
   }
 
   @Test public void testBasicUsage() {
@@ -132,12 +135,13 @@ public class AnuQuantumSeedClientHermeticTest
   }
 
   @Override public void testSerializable() {
-    assertEqualAfterSerialization(new AnuQuantumSeedClient(false));
-    assertEqualAfterSerialization(new AnuQuantumSeedClient(true));
+    assertEqualAfterSerialization(new AnuQuantumSeedClient());
+    assertEqualAfterSerialization(new AnuQuantumSeedClient(
+        new WebSeedClientConfiguration.Builder().setRetryDelay(Duration.ZERO).build()));
   }
 
   @Test public void testSetProxy() {
-    seedGenerator = new AnuQuantumSeedClient(proxy, null, false);
+    seedGenerator = getSeedGenerator(proxy, null);
     mockResponse(RESPONSE_32);
     SeedTestUtils.testGenerator(seedGenerator, false, 32);
     assertNotNull(address, "No connection made when using proxy");

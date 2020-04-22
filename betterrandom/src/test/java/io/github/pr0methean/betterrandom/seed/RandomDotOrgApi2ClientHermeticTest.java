@@ -14,6 +14,7 @@ import java.io.PrintStream;
 import java.net.Proxy;
 import java.util.Base64;
 import java.util.UUID;
+import javax.annotation.Nullable;
 import javax.net.ssl.SSLSocketFactory;
 import org.powermock.api.mockito.PowerMockito;
 import org.powermock.api.mockito.mockpolicies.Slf4jMockPolicy;
@@ -153,18 +154,21 @@ public class RandomDotOrgApi2ClientHermeticTest
 
   @Test public void testNullApiKey() {
     try {
-      new RandomDotOrgApi2Client(true, null);
+      new RandomDotOrgApi2Client(null);
       fail("Instantiating with apiKey null should have thrown IllegalArgumentException");
     } catch (IllegalArgumentException expected) {}
   }
 
   @Override public void testToString() {
     super.testToString();
-    Assert.assertNotNull(new RandomDotOrgApi2Client(false, UUID.randomUUID()).toString());
+    Assert.assertNotNull(getSeedGenerator(null, null).toString());
   }
 
-  @Override protected RandomDotOrgApi2Client getSeedGenerator(Proxy proxy,
-      SSLSocketFactory socketFactory) {
-    return new RandomDotOrgApi2Client(true, UUID.randomUUID());
+  @Override protected RandomDotOrgApi2Client getSeedGenerator(@Nullable Proxy proxy,
+      @Nullable SSLSocketFactory socketFactory) {
+    return new RandomDotOrgApi2Client(new WebSeedClientConfiguration.Builder()
+        .setProxy(proxy)
+        .setSocketFactory(socketFactory)
+        .build(), UUID.randomUUID());
   }
 }

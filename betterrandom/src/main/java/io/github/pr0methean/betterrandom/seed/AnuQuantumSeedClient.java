@@ -4,10 +4,7 @@ import io.github.pr0methean.betterrandom.util.BinaryUtils;
 import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
-import java.net.Proxy;
 import java.net.URL;
-import javax.annotation.Nullable;
-import javax.net.ssl.SSLSocketFactory;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
@@ -26,13 +23,10 @@ public class AnuQuantumSeedClient extends WebSeedClient {
       = "https://qrng.anu.edu.au/API/jsonI.php?length=%d&type=hex16&size=%d";
   private static final long serialVersionUID = -7067446291370465008L;
 
-  public AnuQuantumSeedClient(final boolean useRetryDelay) {
-    this(null, null, useRetryDelay);
-  }
+  public AnuQuantumSeedClient() {}
 
-  public AnuQuantumSeedClient(@Nullable final Proxy proxy,
-      @Nullable final SSLSocketFactory socketFactory, final boolean useRetryDelay) {
-    super(proxy, socketFactory, useRetryDelay);
+  public AnuQuantumSeedClient(WebSeedClientConfiguration configuration) {
+    super(configuration);
   }
 
   @Override protected int getMaxRequestSize() {

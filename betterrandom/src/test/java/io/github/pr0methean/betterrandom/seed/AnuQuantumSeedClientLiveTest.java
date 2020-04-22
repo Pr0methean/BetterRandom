@@ -24,6 +24,9 @@ public class AnuQuantumSeedClientLiveTest extends WebSeedClientLiveTest<AnuQuant
 
   @Override protected AnuQuantumSeedClient getSeedGenerator(@Nullable Proxy proxy,
       @Nullable SSLSocketFactory socketFactory) {
-    return new AnuQuantumSeedClient(proxy, socketFactory, false);
+    return new AnuQuantumSeedClient(new WebSeedClientConfiguration.Builder()
+        .setProxy(proxy)
+        .setSocketFactory(socketFactory)
+        .build());
   }
 }

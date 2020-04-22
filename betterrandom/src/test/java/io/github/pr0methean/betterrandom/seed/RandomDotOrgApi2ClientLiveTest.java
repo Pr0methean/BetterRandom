@@ -37,6 +37,6 @@ import org.testng.annotations.Test;
     if (apiKeyString == null) {
       throw new SkipException("This test can't run unless environment variable RANDOM_DOT_ORG_KEY is set");
     }
-    return new RandomDotOrgApi2Client(false, UUID.fromString(apiKeyString));
+    return new RandomDotOrgApi2Client(UUID.fromString(apiKeyString));
   }
 }
