@@ -203,7 +203,6 @@ stages:
     - job: BenchmarkMac
       timeoutInMinutes: 80
       variables:
-        PROGUARD: 'true'
         artifactEnvName: OpenJdkMac
         JAVA_HOME: jdk
       strategy:

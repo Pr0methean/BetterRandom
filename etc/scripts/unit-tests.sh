@@ -22,5 +22,7 @@ if [ "${PROGUARD}" = "true" ]; then
   PATH="${NO_GIT_PATH}" mvn proguard:proguard -B && \
       echo "[unit-tests.sh] Testing against Proguarded jar." && \
       PATH="${NO_GIT_PATH}" mvn -Dmaven.main.skip=true integration-test -e -B
+else
+  echo "[unit-tests.sh] Proguard not enabled."
 fi
 cd ..
