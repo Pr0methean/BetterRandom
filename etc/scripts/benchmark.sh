@@ -12,11 +12,11 @@ mvn -B -DskipTests -Darguments=-DskipTests\
     clean package
 if [ $PROGUARD ]; then
   echo "[benchmark.sh] Running Proguard (PROGUARD=${PROGUARD})."
-  mvn -B -Darguments=-DskipTests -Dmaven.test.skip=true proguard:proguard
+  mvn -B -DskipTests -Darguments=-DskipTests -Dmaven.test.skip=true proguard:proguard
 else
   echo "[benchmark.sh] Proguard not enabled."
 fi
-mvn install
+mvn -DskipTests -Darguments=-DskipTests -Dmaven.test.skip=true -Dmaven.main.skip=true install
 cd ../benchmark
 mvn -B -DskipTests package
 cd target

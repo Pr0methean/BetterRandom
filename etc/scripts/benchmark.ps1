@@ -13,7 +13,7 @@ if ( $env:PROGUARD ) {
 } else {
   echo "[benchmark.ps1] Proguard not enabled."
 }
-mvn -B install
+mvn -B -DskipTests "-DskipTests" "-Darguments=-DskipTests" "-Dmaven.test.skip=true" "-Dmaven.main.skip=true" install
 cd ../benchmark
 mvn -B "-DskipTests" package
 cd target
