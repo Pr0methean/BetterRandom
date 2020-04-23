@@ -7,7 +7,7 @@ $JAVA_BIN = $JAVA_HOME + '/bin/java'
 $RANDOM_DOT_ORG_KEY = $env:RANDOM_DOT_ORG_KEY
 cd betterrandom
 mvn -B "-DskipTests" "-Darguments=-DskipTests" "-Dmaven.test.skip=true" "clean" "package"
-if ( $env:PROGUARD ) {
+if ( $env:PROGUARD -eq 'true' ) {
   echo "[benchmark.ps1] Running Proguard."
   mvn -B -DskipTests "-DskipTests" "-Darguments=-DskipTests" "-Dmaven.test.skip=true" proguard:proguard
 } else {

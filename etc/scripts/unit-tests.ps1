@@ -9,7 +9,7 @@ mvn "clean" "compile" "jacoco:instrument" "jacoco:prepare-agent" `
     "test" "jacoco:restore-instrumented-classes" "jacoco:report" -e
 $STATUS = $?
 if ( $STATUS ) {
-    if ( $env:PROGUARD ) {
+    if ( $env:PROGUARD -eq 'true' ) {
         echo "[unit-tests.ps1] Running Proguard."
         mvn -DskipTests "-Dmaven.test.skip=true" package proguard:proguard
         echo "[unit-tests.ps1] Testing against Proguarded jar."

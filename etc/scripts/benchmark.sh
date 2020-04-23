@@ -10,7 +10,7 @@ cd betterrandom
 mvn -B -DskipTests -Darguments=-DskipTests\
     -Dmaven.test.skip=true \
     clean package
-if [ $PROGUARD ]; then
+if [ "${PROGUARD}" = "true" ]; then
   echo "[benchmark.sh] Running Proguard (PROGUARD=${PROGUARD})."
   mvn -B -DskipTests -Darguments=-DskipTests -Dmaven.test.skip=true proguard:proguard
 else
