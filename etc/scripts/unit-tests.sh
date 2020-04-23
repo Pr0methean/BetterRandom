@@ -19,7 +19,7 @@ PATH="${NO_GIT_PATH}" mvn clean jacoco:instrument jacoco:prepare-agent \
     test jacoco:restore-instrumented-classes jacoco:report -e -B || exit 1
 if [ "${PROGUARD}" = "true" ]; then
   echo "[unit-tests.sh] Running Proguard."
-  PATH="${NO_GIT_PATH}" mvn proguard:proguard -B && \
+  PATH="${NO_GIT_PATH}" mvn package proguard:proguard -B && \
       echo "[unit-tests.sh] Testing against Proguarded jar." && \
       PATH="${NO_GIT_PATH}" mvn -Dmaven.main.skip=true integration-test -e -B
 else

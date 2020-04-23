@@ -76,6 +76,7 @@ stages:
         strategy:
           matrix:
             OpenJNine11:
+              PROGUARD: 'true'
               javaUrl: $(OpenJNine11Linux)
               artifactEnvName: OpenJNine08Linux
             OpenJNineLatest:

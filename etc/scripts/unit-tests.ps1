@@ -11,7 +11,7 @@ $STATUS = $?
 if ( $STATUS ) {
     if ( $env:PROGUARD ) {
         echo "[unit-tests.ps1] Running Proguard."
-        mvn -DskipTests "-Dmaven.test.skip=true" proguard:proguard
+        mvn -DskipTests "-Dmaven.test.skip=true" package proguard:proguard
         echo "[unit-tests.ps1] Testing against Proguarded jar."
         mvn '-Dmaven.main.skip=true' "integration-test" "-e" "-B"
         $STATUS = $?
