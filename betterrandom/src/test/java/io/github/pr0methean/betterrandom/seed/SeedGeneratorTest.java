@@ -2,12 +2,15 @@ package io.github.pr0methean.betterrandom.seed;
 
 import static org.testng.Assert.assertEquals;
 
+import org.powermock.api.mockito.mockpolicies.Slf4jMockPolicy;
+import org.powermock.core.classloader.annotations.MockPolicy;
 import org.powermock.modules.testng.PowerMockTestCase;
 import org.testng.Assert;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
+@MockPolicy(Slf4jMockPolicy.class)
 public abstract class SeedGeneratorTest<T extends SeedGenerator> extends PowerMockTestCase {
 
   protected T seedGenerator;
