@@ -62,7 +62,9 @@ import org.powermock.core.classloader.annotations.PowerMockIgnore;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.testng.PowerMockTestCase;
 import org.powermock.reflect.Whitebox;
+import org.slf4j.LoggerFactory;
 import org.testng.Reporter;
+import org.testng.annotations.BeforeSuite;
 import org.testng.annotations.Test;
 
 @MockPolicy(Slf4jMockPolicy.class) @PrepareForTest(DefaultSeedGenerator.class) @PowerMockIgnore(
@@ -191,6 +193,13 @@ public abstract class BaseRandomTest<T extends BaseRandom> extends PowerMockTest
    */
   protected Class<? extends BaseRandom> getClassUnderTest() {
     return createRng().getClass();
+  }
+
+  /**
+   * Work around an issue where SLF4J's lazy init is sometimes spuriously interrupted
+   */
+  @BeforeSuite public static void setUpSuite() {
+    LoggerFactory.getLogger(BaseRandomTest.class).info("Slf4j loaded");
   }
 
   /**

@@ -359,7 +359,7 @@ public class RandomSeeder extends Looper {
     lock.lock();
     try {
       if (isEmpty()) {
-        getLogger().info("Stopping empty LegacyRandomSeeder for {}", seedGenerator);
+        getLogger().info("Stopping empty RandomSeeder for {}", seedGenerator);
         interrupt();
       }
     } finally {
