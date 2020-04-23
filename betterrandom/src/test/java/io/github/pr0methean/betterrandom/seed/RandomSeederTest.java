@@ -24,20 +24,15 @@ import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 import java.util.function.Consumer;
-import org.slf4j.LoggerFactory;
-import org.testng.annotations.BeforeSuite;
+import org.powermock.api.mockito.mockpolicies.Slf4jMockPolicy;
+import org.powermock.core.classloader.annotations.MockPolicy;
+import org.powermock.modules.testng.PowerMockTestCase;
 import org.testng.annotations.Test;
 
-public class RandomSeederTest {
+@MockPolicy(Slf4jMockPolicy.class)
+public class RandomSeederTest extends PowerMockTestCase {
   protected static final long TEST_SEED = 0x0123456789ABCDEFL;
   protected static final int TEST_OUTPUT_SIZE = 8;
-
-  /**
-   * Work around an issue where SLF4J's lazy init is sometimes spuriously interrupted
-   */
-  @BeforeSuite public static void setUpSuite() {
-    LoggerFactory.getLogger(RandomSeederTest.class).info("Slf4j loaded");
-  }
 
   @Test public void testConstructors() {
     TestUtils.testConstructors(RandomSeeder.class, false, ImmutableMap
