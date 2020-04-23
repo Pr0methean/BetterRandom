@@ -9,7 +9,7 @@ cd betterrandom
 mvn -B "-DskipTests" "-Darguments=-DskipTests" "-Dmaven.test.skip=true" "clean" "package"
 if ( $env:PROGUARD ) {
   echo "[benchmark.ps1] Running Proguard."
-  mvn -DskipTests "-Dmaven.test.skip=true" proguard:proguard
+  mvn -B -DskipTests "-DskipTests" "-Darguments=-DskipTests" "-Dmaven.test.skip=true" proguard:proguard
 } else {
   echo "[benchmark.ps1] Proguard not enabled."
 }
