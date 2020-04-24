@@ -119,11 +119,12 @@ stages:
         strategy:
           matrix:
             OpenJdk08:
-              PROGUARD: 'true'
+# FIXME: Gives "mvn : FATAL StatusLogger Interrupted before Log4j Providers could be loaded."
+#              PROGUARD: 'true'
               JAVA_HOME_SOURCE: JAVA_HOME_8_X64
               artifactEnvName: OpenJdk08Windows
             OpenJdk11:
-              PROGUARD: 'true'
+#              PROGUARD: 'true'
               JAVA_HOME_SOURCE: JAVA_HOME_11_X64
               artifactEnvName: OpenJdk11Windows
 # FIXME: Replace with a job that downloads the JDK
