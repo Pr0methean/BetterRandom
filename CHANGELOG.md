@@ -7,6 +7,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [5.6.1]
+
+### Changed
+
+- `WebSeedClientConfiguration` no longer includes a retry delay by default; however, a retry delay is still used in the
+  instances of `WebSeedClient` used in the `DefaultSeedGenerator`'s default delegate.
+
 ## [5.6.0]
 
 ### Changed
@@ -672,7 +679,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - First release on Maven Central.
 
-[Unreleased]: https://github.com/Pr0methean/BetterRandom/compare/BetterRandom-5.6.0...master
+[Unreleased]: https://github.com/Pr0methean/BetterRandom/compare/BetterRandom-5.6.1...master
+[5.6.0]: https://github.com/Pr0methean/BetterRandom/compare/BetterRandom-5.6.0...BetterRandom-5.6.1
 [5.6.0]: https://github.com/Pr0methean/BetterRandom/compare/BetterRandom-5.5.0...BetterRandom-5.6.0
 [5.5.0]: https://github.com/Pr0methean/BetterRandom/compare/BetterRandom-5.4.1...BetterRandom-5.5.0
 [5.4.1]: https://github.com/Pr0methean/BetterRandom/compare/BetterRandom-5.4.0...BetterRandom-5.4.1

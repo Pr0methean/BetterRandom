@@ -15,7 +15,6 @@ import javax.net.ssl.SSLSocketFactory;
  */
 public class WebSeedClientConfiguration implements Serializable {
   private static final long serialVersionUID = -5162594092589771385L;
-  public static final long DEFAULT_RETRY_DELAY_MS = 10000;
   /**
    * Default configuration.
    */
@@ -69,7 +68,7 @@ public class WebSeedClientConfiguration implements Serializable {
   public static class Builder {
     @Nullable private Proxy proxy = null;
     @Nullable private SSLSocketFactory socketFactory = null;
-    private long retryDelayMs = DEFAULT_RETRY_DELAY_MS;
+    private long retryDelayMs = 0;
 
     /**
      * Sets the proxy to use to connect to the server.

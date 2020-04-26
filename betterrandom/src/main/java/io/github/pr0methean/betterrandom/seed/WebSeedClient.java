@@ -67,7 +67,7 @@ public abstract class WebSeedClient implements SeedGenerator {
       @Nullable final SSLSocketFactory socketFactory, final boolean useRetryDelay) {
     this(new WebSeedClientConfiguration.Builder().setProxy(proxy).setSocketFactory(socketFactory)
         .setRetryDelay(useRetryDelay
-            ? Duration.ofMillis(WebSeedClientConfiguration.DEFAULT_RETRY_DELAY_MS)
+            ? DefaultSeedGenerator.DEFAULT_RETRY_DELAY
             : Duration.ZERO)
         .build());
   }
