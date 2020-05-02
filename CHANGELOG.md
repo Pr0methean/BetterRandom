@@ -680,7 +680,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - First release on Maven Central.
 
 [Unreleased]: https://github.com/Pr0methean/BetterRandom/compare/BetterRandom-5.6.1...master
-[5.6.0]: https://github.com/Pr0methean/BetterRandom/compare/BetterRandom-5.6.0...BetterRandom-5.6.1
+[5.6.1]: https://github.com/Pr0methean/BetterRandom/compare/BetterRandom-5.6.0...BetterRandom-5.6.1
 [5.6.0]: https://github.com/Pr0methean/BetterRandom/compare/BetterRandom-5.5.0...BetterRandom-5.6.0
 [5.5.0]: https://github.com/Pr0methean/BetterRandom/compare/BetterRandom-5.4.1...BetterRandom-5.5.0
 [5.4.1]: https://github.com/Pr0methean/BetterRandom/compare/BetterRandom-5.4.0...BetterRandom-5.4.1
