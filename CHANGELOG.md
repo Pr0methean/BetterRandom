@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- `BaseRandom.setSeed(long)` is no longer marked deprecated, since it is only deprecated when `!preferSeedWithLong()`.
+
 ## [5.6.1]
 
 ### Changed

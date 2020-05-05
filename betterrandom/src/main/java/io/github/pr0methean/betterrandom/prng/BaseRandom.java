@@ -665,9 +665,9 @@ public abstract class BaseRandom extends Random
    * new seed using the {@link DefaultSeedGenerator}. The latter is a backward-compatibility measure
    * and can be very slow.
    *
-   * @deprecated Some implementations are very slow.
+   * @see ByteArrayReseedableRandom#preferSeedWithLong()
    */
-  @Deprecated @SuppressWarnings("NonSynchronizedMethodOverridesSynchronizedMethod") @Override
+  @Override
   public void setSeed(final long seed) {
     final byte[] seedBytes = BinaryUtils.convertLongToBytes(seed);
     if (superConstructorFinished) {
