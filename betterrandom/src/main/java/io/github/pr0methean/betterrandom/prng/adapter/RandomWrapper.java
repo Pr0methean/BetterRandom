@@ -257,12 +257,11 @@ public class RandomWrapper<T extends Random> extends BaseRandom {
         // Special handling, since SecureRandom isn't ByteArrayReseedableRandom but does have
         // setSeed(byte[])
         ((SecureRandom) wrapped).setSeed(seed);
-        unknownSeed = false;
-        return;
-      } else if (!(wrapped instanceof ByteArrayReseedableRandom)) {
+      } else if (wrapped instanceof ByteArrayReseedableRandom) {
+        ((ByteArrayReseedableRandom) wrapped).setSeed(seed);
+      } else {
         throw new IllegalArgumentException("Seed length must be 8 but got " + seed.length);
       }
-      ((ByteArrayReseedableRandom) wrapped).setSeed(seed);
       unknownSeed = false;
     } finally {
       if (locked) {
