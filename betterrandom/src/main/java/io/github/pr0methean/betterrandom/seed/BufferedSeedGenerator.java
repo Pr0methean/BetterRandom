@@ -2,6 +2,7 @@ package io.github.pr0methean.betterrandom.seed;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
+import java.util.Objects;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
@@ -82,5 +83,20 @@ public class BufferedSeedGenerator implements SeedGenerator {
 
   @Override public String toString() {
     return String.format("BufferedSeedGenerator(%s,%d)", delegate, size);
+  }
+
+  @Override public boolean equals(Object o) {
+    if (this == o) {
+      return true;
+    }
+    if (o == null || getClass() != o.getClass()) {
+      return false;
+    }
+    BufferedSeedGenerator that = (BufferedSeedGenerator) o;
+    return size == that.size && delegate.equals(that.delegate);
+  }
+
+  @Override public int hashCode() {
+    return Objects.hash(delegate, size);
   }
 }

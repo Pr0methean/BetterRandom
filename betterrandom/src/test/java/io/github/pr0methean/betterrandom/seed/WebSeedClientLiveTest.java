@@ -7,6 +7,7 @@ import java.net.Proxy;
 import java.net.URL;
 import javax.annotation.Nullable;
 import javax.net.ssl.SSLSocketFactory;
+import nl.jqno.equalsverifier.EqualsVerifier;
 import org.testng.SkipException;
 import org.testng.annotations.Test;
 
@@ -37,6 +38,14 @@ public abstract class WebSeedClientLiveTest<T extends WebSeedClient>
 
   @Override protected T initializeSeedGenerator() {
     return getSeedGenerator(null, createSocketFactory());
+  }
+
+  @Test(enabled = false)
+  @Override public void testWithEqualsVerifier() {
+    EqualsVerifier.forClass(seedGenerator.getClass())
+      .withPrefabValues(WebSeedClientConfiguration.class, WebSeedClientConfiguration.DEFAULT,
+          new WebSeedClientConfiguration.Builder().setProxy(Proxy.NO_PROXY).build())
+      .verify();
   }
 
   protected abstract T getSeedGenerator(@Nullable Proxy proxy, @Nullable SSLSocketFactory socketFactory);
