@@ -17,7 +17,6 @@ package io.github.pr0methean.betterrandom.seed;
 
 import java.io.Serializable;
 import java.security.SecureRandom;
-import java.util.Objects;
 
 /**
  * <p>{@link SeedGenerator} implementation that uses Java's bundled {@link SecureRandom} RNG to
@@ -114,6 +113,8 @@ public class SecureRandomSeedGenerator implements SeedGenerator, Serializable {
   }
 
   @Override public int hashCode() {
-    return Objects.hash(source);
+    // Using Integer.MAX_VALUE for default instance makes collisions less likely, since on some VMs
+    // System.identityHashCode() always returns a value in a narrower range close to zero.
+    return isDefaultInstance ? Integer.MAX_VALUE : source.hashCode();
   }
 }

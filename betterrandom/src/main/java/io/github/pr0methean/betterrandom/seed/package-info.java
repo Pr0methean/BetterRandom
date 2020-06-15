@@ -3,7 +3,7 @@
  * especially those that also implement
  * {@link io.github.pr0methean.betterrandom.ByteArrayReseedableRandom}.
  */
-@Nonnull
+@ParametersAreNonnullByDefault
 package io.github.pr0methean.betterrandom.seed;
 
-import javax.annotation.Nonnull;
+import javax.annotation.ParametersAreNonnullByDefault;

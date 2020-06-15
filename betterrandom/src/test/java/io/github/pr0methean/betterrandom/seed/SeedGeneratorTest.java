@@ -3,6 +3,7 @@ package io.github.pr0methean.betterrandom.seed;
 import static org.testng.Assert.assertEquals;
 
 import nl.jqno.equalsverifier.EqualsVerifier;
+import nl.jqno.equalsverifier.api.SingleTypeEqualsVerifierApi;
 import org.powermock.api.mockito.mockpolicies.Slf4jMockPolicy;
 import org.powermock.core.classloader.annotations.MockPolicy;
 import org.powermock.modules.testng.PowerMockTestCase;
@@ -32,7 +33,11 @@ public abstract class SeedGeneratorTest<T extends SeedGenerator> extends PowerMo
   }
 
   @Test public void testWithEqualsVerifier() {
-    EqualsVerifier.forClass(seedGenerator.getClass()).verify();
+    createEqualsVerifier().verify();
+  }
+
+  protected SingleTypeEqualsVerifierApi<? extends SeedGenerator> createEqualsVerifier() {
+    return EqualsVerifier.forClass(seedGenerator.getClass()).usingGetClass();
   }
 
   /**
