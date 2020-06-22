@@ -118,6 +118,11 @@ public abstract class WebSeedClientHermeticTest<T extends WebSeedClient>
     assertTrue(Arrays.equals(seed, expectedHugeSeed), "Seed output not as expected");
   }
 
+  @Test(enabled = false)
+  @Override public void testWithEqualsVerifier() {
+    // No-op: redundant to same method in WebSeedClientLiveTest.
+  }
+
   @Test public void testEmptyResponse() {
     mockResponse("");
     expectAndGetException(SeedTestUtils.SEED_SIZE, false);

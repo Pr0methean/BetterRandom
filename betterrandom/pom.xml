@@ -424,6 +424,12 @@
       <version>3.0.0-M1</version>
       <type>maven-plugin</type>
     </dependency>
+    <dependency>
+      <groupId>nl.jqno.equalsverifier</groupId>
+      <artifactId>equalsverifier</artifactId>
+      <version>3.4</version>
+      <scope>test</scope>
+    </dependency>
   </dependencies>
   <build>
     <resources>

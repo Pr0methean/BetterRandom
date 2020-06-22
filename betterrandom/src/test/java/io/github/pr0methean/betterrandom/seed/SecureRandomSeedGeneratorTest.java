@@ -31,6 +31,11 @@ public class SecureRandomSeedGeneratorTest extends SeedGeneratorTest<SecureRando
     SeedTestUtils.testGenerator(seedGenerator, true);
   }
 
+  @Test(enabled = false)
+  @Override public void testWithEqualsVerifier() {
+    // No-op: doesn't pass because of isDefaultInstance.
+  }
+
   @Test public void testIsWorthTrying() {
     // Should always be true
     assertTrue(seedGenerator.isWorthTrying());

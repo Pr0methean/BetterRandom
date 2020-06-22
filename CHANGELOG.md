@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- `SeedGeneratorPreferenceList` is now immutable and has a builder class.
 - `BaseRandom.setSeed(long)` is no longer marked deprecated, since it is only deprecated when `!preferSeedWithLong()`.
 
 ## [5.6.1]

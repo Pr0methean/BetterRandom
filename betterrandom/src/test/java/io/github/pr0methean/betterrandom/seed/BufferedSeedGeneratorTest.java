@@ -6,6 +6,7 @@ import static org.testng.Assert.fail;
 import com.google.common.util.concurrent.Uninterruptibles;
 import io.github.pr0methean.betterrandom.util.BinaryUtils;
 import java.util.concurrent.CountDownLatch;
+import nl.jqno.equalsverifier.api.SingleTypeEqualsVerifierApi;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
@@ -24,6 +25,10 @@ import org.testng.annotations.Test;
   @BeforeMethod public void setUp() {
     super.setUp();
     FAKE_SEED_GENERATOR.reset();
+  }
+
+  @Override protected SingleTypeEqualsVerifierApi<? extends SeedGenerator> createEqualsVerifier() {
+    return super.createEqualsVerifier().withIgnoredFields("lock");
   }
 
   @Test public void testLargeRequestDoneAsOne() {

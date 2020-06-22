@@ -7,4 +7,7 @@
  * {@link io.github.pr0methean.betterrandom.prng.BaseRandom#setSeed(byte[])} may affect only the
  * calling thread.
  */
+@ParametersAreNonnullByDefault
 package io.github.pr0methean.betterrandom.prng.adapter;
+
+import javax.annotation.ParametersAreNonnullByDefault;
