@@ -1,15 +1,17 @@
 variables:
 - group: Build Secrets
-- name: zuluLinux08
-  value: '/usr/lib/jvm/zulu-8-azure-amd64'
-- name: zuluLinux11
-  value: '/usr/lib/jvm/zulu-11-azure-amd64'
-- name: zuluLinuxLatest
-  value: '/usr/lib/jvm/zulu-12-azure-amd64'
-- name: openjnine11linux
-  value: 'https://api.adoptopenjdk.net/v3/binary/latest/11/ga/linux/x64/jdk/openj9/normal/adoptopenjdk'
-- name: openJNineLatestLinux
-  value: 'https://api.adoptopenjdk.net/v3/binary/latest/14/ga/linux/x64/jdk/openj9/normal/adoptopenjdk'
+- name: hotspot08
+  value: '/usr/lib/jvm/adoptopenjdk-8-hotspot-amd64'
+- name: hotspot11
+  value: '/usr/lib/jvm/adoptopenjdk-11-hotspot-amd64'
+- name: hotspotLatest
+  value: '/usr/lib/jvm/adoptopenjdk-14-hotspot-amd64'
+- name: openJNine08
+  value: '/usr/lib/jvm/adoptopenjdk-8-openj9-amd64'
+- name: openJNine11
+  value: '/usr/lib/jvm/adoptopenjdk-11-openj9-amd64'
+- name: openJNineLatest
+  value: '/usr/lib/jvm/adoptopenjdk-14-openj9-amd64'
 trigger:
   batch: true
   branches:
@@ -51,42 +53,50 @@ pr:
 stages:
   - stage: UnitTests
     jobs:
-      - job: UnitLinuxPreinstalledZulu
+      - job: UnitLinuxPreinstalled
         strategy:
           matrix:
             OpenJdk08:
               PROGUARD: 'true'
-              JAVA_HOME: $(zuluLinux08)
+              ubuntuPackage: adoptopenjdk-8-hotspot
               artifactEnvName: OpenJdk08Linux
             OpenJdk11:
               PROGUARD: 'true'
-              JAVA_HOME: $(zuluLinux11)
+              ubuntuPackage: adoptopenjdk-11-hotspot
               artifactEnvName: OpenJdk11Linux
-            OpenJdkLatest:
-              JAVA_HOME: $(zuluLinuxLatest)
-              artifactEnvName: OpenJdkLatestLinux
         pool:
           vmImage: 'ubuntu-latest'
         steps:
+        - script: sudo update-java-alternatives -s $(ubuntuPackage)-amd64
+          displayName: Switch JDK
         - template: etc/azureTemplate/unitTestsUbuntu.yml
         - template: etc/azureTemplate/publishCoverage.yml
       - job: UnitLinux
-        variables:
-          JAVA_HOME: jdk
         strategy:
           matrix:
+            HotspotLatest:
+              ubuntuPackage: adoptopenjdk-14-hotspot
+              artifactEnvName: HotspotLatestLinux
+            OpenJNine08:
+              PROGUARD: 'true'
+              ubuntuPackage: adoptopenjdk-8-openj9
+              artifactEnvName: OpenJNine08Linux
             OpenJNine11:
               PROGUARD: 'true'
-              javaUrl: $(OpenJNine11Linux)
-              artifactEnvName: OpenJNine08Linux
+              ubuntuPackage: adoptopenjdk-11-openj9
+              artifactEnvName: OpenJNine11Linux
             OpenJNineLatest:
-              javaUrl: $(OpenJNineLatestLinux)
+              ubuntuPackage: adoptopenjdk-14-openj9
               artifactEnvName: OpenJNineLatestLinux
         pool:
           vmImage: 'ubuntu-latest'
         steps:
-          - template: etc/azureTemplate/installJavaJti.yml
+          - template: etc/azureTemplate/installJavaUbuntu.yml
+            parameters:
+              ubuntuPackage: $(ubuntuPackage)
           - template: etc/azureTemplate/unitTestsUbuntu.yml
+            parameters:
+              ubuntuPackage: $(ubuntuPackage)
           - template: etc/azureTemplate/publishCoverage.yml
       - job: UnitMac
         variables:
@@ -101,10 +111,10 @@ stages:
             OpenJdk11:
               PROGUARD: 'true'
               javaVersion: 11
-              artifactEnvName: OpenJdk11Mac
+              artifactEnvName: Hotspot11Mac
             OpenJdkLatest:
               javaVersion: 14
-              artifactEnvName: OpenJdkLatestMac
+              artifactEnvName: HotspotLatestMac
         pool:
           vmImage: 'macOs-latest'
         steps:
@@ -122,11 +132,11 @@ stages:
 # FIXME: Gives "mvn : FATAL StatusLogger Interrupted before Log4j Providers could be loaded."
 #              PROGUARD: 'true'
               JAVA_HOME_SOURCE: JAVA_HOME_8_X64
-              artifactEnvName: OpenJdk08Windows
+              artifactEnvName: Hotspot08Windows
             OpenJdk11:
 #              PROGUARD: 'true'
               JAVA_HOME_SOURCE: JAVA_HOME_11_X64
-              artifactEnvName: OpenJdk11Windows
+              artifactEnvName: Hotspot11Windows
 # FIXME: Replace with a job that downloads the JDK
 #            OpenJdkLatest:
 #              JAVA_HOME_SOURCE: JAVA_HOME_12_X64
@@ -145,18 +155,19 @@ stages:
     dependsOn: UnitTests
     jobs:
     - job: Mutation
-      variables:
-        JAVA_HOME: $(zuluLinuxLatest)
       timeoutInMinutes: 120 # FIXME: Remove once reliably passing in 50
       pool:
         vmImage: 'ubuntu-latest'
       steps:
+        - template: etc/azureTemplate/installJavaUbuntu.yml
+          parameters:
+            ubuntuPackage: adoptopenjdk-14-hotspot
         - template: etc/azureTemplate/installHaveged.yml
         - script: ./etc/scripts/mutation.sh
           displayName: Build & Run Mutation Tests
           env:
             RANDOM_DOT_ORG_KEY: $(RANDOM_DOT_ORG_KEY)
-            JAVA_HOME: $(zuluLinux11)
+            JAVA_HOME: /usr/lib/jvm/adoptopenjdk-14-hotspot-amd64
         - task: PublishBuildArtifacts@1
           displayName: Publish Mutation Report
           inputs:
@@ -165,43 +176,51 @@ stages:
   - stage: Benchmarks
     dependsOn: UnitTests
     jobs:
-    - job: BenchmarkLinuxPreinstalledZulu
+    - job: BenchmarkLinuxPreinstalled
       timeoutInMinutes: 80
       strategy:
         matrix:
           OpenJdk08:
             PROGUARD: 'true'
-            JAVA_HOME: $(zuluLinux08)
-            artifactEnvName: 'OpenJDK08Linux'
+            ubuntuPackage: adoptopenjdk-8-hotspot
+            artifactEnvName: 'Hotspot08Linux'
           OpenJdk11:
             PROGUARD: 'true'
-            JAVA_HOME: $(zuluLinux11)
-            artifactEnvName: 'OpenJdk11Linux'
-          OpenJdkLatest:
-            JAVA_HOME: $(zuluLinuxLatest)
-            artifactEnvName: 'OpenJDKLatestLinux'
+            ubuntuPackage: adoptopenjdk-11-hotspot
+            artifactEnvName: 'Hotspot11Linux'
       pool:
         vmImage: 'ubuntu-latest'
       steps:
+        - script: sudo update-java-alternatives -s $(ubuntuPackage)-amd64
+          displayName: Switch JDK
         - template: etc/azureTemplate/benchmark.yml
     - job: BenchmarkLinux
       timeoutInMinutes: 80
-      variables:
-        JAVA_HOME: jdk
       strategy:
         matrix:
+          HotspotLatest:
+            ubuntuPackage: adoptopenjdk-14-hotspot            
+            artifactEnvName: 'HotspotLatestLinux'
+          OpenJNine08:
+            PROGUARD: 'true'
+            ubuntuPackage: adoptopenjdk-8-openj9
+            artifactEnvName: 'OpenJNine08Linux'
           OpenJNine11:
             PROGUARD: 'true'
-            javaUrl: $(OpenJNine11Linux)
+            ubuntuPackage: adoptopenjdk-11-openj9
             artifactEnvName: 'OpenJNine11Linux'
           OpenJNineLatest:
-            javaUrl: $(OpenJNineLatestLinux)
+            ubuntuPackage: adoptopenjdk-14-openj9            
             artifactEnvName: 'OpenJNineLatestLinux'
       pool:
         vmImage: 'ubuntu-latest'
       steps:
-        - template: etc/azureTemplate/installJavaJti.yml
+        - template: etc/azureTemplate/installJavaUbuntu.yml
+          parameters:
+            ubuntuPackage: $(ubuntuPackage)
         - template: etc/azureTemplate/benchmark.yml
+          parameters:
+            ubuntuPackage: $(ubuntuPackage)
     - job: BenchmarkMac
       timeoutInMinutes: 80
       variables:
@@ -216,10 +235,10 @@ stages:
 #            javaVersion: 8
           OpenJdk11:
             PROGUARD: 'true'
-            artifactEnvName: 'OpenJdk11Mac'
+            artifactEnvName: 'Hotspot11Mac'
             javaVersion: 11
           OpenJdkLatest:
-            artifactEnvName: 'OpenJdkLatestMac'
+            artifactEnvName: 'HotspotLatestMac'
             javaVersion: 14
       pool:
         vmImage: 'macOs-latest'
@@ -239,7 +258,7 @@ stages:
           OpenJdk08:
             PROGUARD: 'true'
             JAVA_HOME_SOURCE: JAVA_HOME_8_X64
-            artifactEnvName: 'OpenJdk08Windows'
+            artifactEnvName: 'Hotspot08Windows'
 # FIXME: Fails to launch; see etc/scripts/benchmark.ps1 for details
 #          OpenJdk11:
 #            JAVA_HOME_SOURCE: JAVA_HOME_11_X64
@@ -263,9 +282,6 @@ stages:
     jobs:
     - job: Dieharder
       timeoutInMinutes: 90
-      variables:
-        javaUrl: $(OpenJNineLatestLinux)
-        JAVA_HOME: jdk
       strategy:
         matrix:
           AesCounterRandom:
@@ -285,7 +301,9 @@ stages:
       pool:
         vmImage: 'ubuntu-latest'
       steps:
-        - template: etc/azureTemplate/installJavaJti.yml
+        - template: etc/azureTemplate/installJavaUbuntu.yml
+          parameters:
+            ubuntuPackage: adoptopenjdk-14-openj9
         - script: sudo apt install dieharder
           displayName: Install DieHarder
         - script: ./etc/scripts/dieharder.sh

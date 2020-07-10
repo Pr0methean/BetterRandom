@@ -62,7 +62,7 @@ import org.testng.annotations.Test;
       threads[i].start();
     }
     for (int i = 0; i < THREAD_COUNT; i++) {
-      threads[i].join();
+      Uninterruptibles.joinUninterruptibly(threads[i]);
     }
     StringBuilder seedList = new StringBuilder(THREAD_COUNT * (CONCURRENT_SEED_SIZE + 1) * 2);
     for (int i = 0; i < THREAD_COUNT; i++) {

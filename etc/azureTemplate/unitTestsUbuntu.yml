@@ -1,14 +1,12 @@
 parameters:
-  whichJavaHome: '' # don't change JAVA_HOME by default
+  ubuntuPackage: 'adoptopenjdk-11-hotspot'
 steps:
 - template: installHaveged.yml
-- script: '$(JAVA_HOME)/bin/java -version'
+- script: 'java -version'
   displayName: Log Java Version
-  env:
-    JAVA_HOME: $(JAVA_HOME)
-- script: ./etc/scripts/unit-tests.sh ${{ parameters.whichJavaHome }}
+- script: ./etc/scripts/unit-tests.sh
   displayName: Build & Test
   env:
     RANDOM_DOT_ORG_KEY: $(RANDOM_DOT_ORG_KEY)
-    JAVA_HOME: $(JAVA_HOME)
+    JAVA_HOME: /usr/lib/jvm/${{ parameters.ubuntuPackage }}-amd64
     PROGUARD: $(PROGUARD)
