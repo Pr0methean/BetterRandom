@@ -313,6 +313,7 @@ stages:
       pool:
         vmImage: 'ubuntu-latest'
       steps:
+        - script: sudo apt install dieharder
           displayName: Install DieHarder
         - script: ./etc/scripts/dieharder.sh
           displayName: Build BetterRandom & Run DieHarder Tests
