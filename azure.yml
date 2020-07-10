@@ -81,8 +81,8 @@ stages:
             OpenJNine08:
               PROGUARD: 'true'
               ubuntuPackage: adoptopenjdk-8-openj9
-              JAVA_HOME: $(OpenJNine11)
-              artifactEnvName: OpenJNine11Linux
+              JAVA_HOME: $(OpenJNine08)
+              artifactEnvName: OpenJNine08Linux
             OpenJNine11:
               PROGUARD: 'true'
               ubuntuPackage: adoptopenjdk-11-openj9
@@ -207,8 +207,8 @@ stages:
           OpenJNine08:
             PROGUARD: 'true'
             JAVA_HOME: $(OpenJNine08Linux)
-            ubuntuPackage: adoptopenjdk-11-openj9
-            artifactEnvName: 'OpenJNine11Linux'
+            ubuntuPackage: adoptopenjdk-08-openj9
+            artifactEnvName: 'OpenJNine08Linux'
           OpenJNine11:
             PROGUARD: 'true'
             JAVA_HOME: $(OpenJNine11Linux)
