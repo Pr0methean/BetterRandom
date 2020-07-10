@@ -227,9 +227,9 @@ stages:
           displayName: Install JDK
           env:
             ubuntuPackage: $(ubuntuPackage)
+        - script: update-java-alternatives -s $(ubuntuPackage)
+          displayName: Switch JDK
         - template: etc/azureTemplate/benchmark.yml
-          env:
-            JAVA_HOME: $(JAVA_HOME)
     - job: BenchmarkMac
       timeoutInMinutes: 80
       variables:
