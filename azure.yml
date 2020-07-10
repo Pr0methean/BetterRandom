@@ -95,6 +95,8 @@ stages:
         pool:
           vmImage: 'ubuntu-latest'
         steps:
+          - script: etc/scripts/addAdoptOpenJdkRepo.sh
+            displayName: Install AdoptOpenJDK Package Repository
           - script: sudo apt-get install -y $(ubuntuPackage)
             displayName: Install JDK
             env:
@@ -219,6 +221,8 @@ stages:
       pool:
         vmImage: 'ubuntu-latest'
       steps:
+        - script: etc/scripts/addAdoptOpenJdkRepo.sh
+          displayName: Install AdoptOpenJDK Package Repository
         - script: sudo apt-get install -y $(ubuntuPackage)
           displayName: Install JDK
           env:
