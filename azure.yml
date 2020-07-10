@@ -76,21 +76,21 @@ stages:
           matrix:
             HotspotLatest:
               JAVA_HOME: $(hotspotLatest)
-              ubuntuPackage: adoptopenjdk-14-hotspot-amd64
+              ubuntuPackage: adoptopenjdk-14-hotspot
               artifactEnvName: HotspotLatestLinux
             OpenJNine08:
               PROGUARD: 'true'
-              ubuntuPackage: adoptopenjdk-8-openj9-amd64
+              ubuntuPackage: adoptopenjdk-8-openj9
               JAVA_HOME: $(OpenJNine11)
               artifactEnvName: OpenJNine11Linux
             OpenJNine11:
               PROGUARD: 'true'
-              ubuntuPackage: adoptopenjdk-11-openj9-amd64
+              ubuntuPackage: adoptopenjdk-11-openj9
               JAVA_HOME: $(OpenJNine11)
               artifactEnvName: OpenJNine11Linux
             OpenJNineLatest:
               JAVA_HOME: $(OpenJNineLatest)
-              ubuntuPackage: adoptopenjdk-14-openj9-amd64
+              ubuntuPackage: adoptopenjdk-14-openj9
               artifactEnvName: OpenJNineLatestLinux
         pool:
           vmImage: 'ubuntu-latest'
@@ -202,21 +202,21 @@ stages:
         matrix:
           HotspotLatest:
             JAVA_HOME: $(HotspotLatestLinux)
-            ubuntuPackage: adoptopenjdk-14-hotspot-amd64            
+            ubuntuPackage: adoptopenjdk-14-hotspot            
             artifactEnvName: 'HotspotLatestLinux'
           OpenJNine08:
             PROGUARD: 'true'
             JAVA_HOME: $(OpenJNine08Linux)
-            ubuntuPackage: adoptopenjdk-11-openj9-amd64
+            ubuntuPackage: adoptopenjdk-11-openj9
             artifactEnvName: 'OpenJNine11Linux'
           OpenJNine11:
             PROGUARD: 'true'
             JAVA_HOME: $(OpenJNine11Linux)
-            ubuntuPackage: adoptopenjdk-11-openj9-amd64
+            ubuntuPackage: adoptopenjdk-11-openj9
             artifactEnvName: 'OpenJNine11Linux'
           OpenJNineLatest:
             JAVA_HOME: $(OpenJNineLatestLinux)
-            ubuntuPackage: adoptopenjdk-14-openj9-amd64            
+            ubuntuPackage: adoptopenjdk-14-openj9            
             artifactEnvName: 'OpenJNineLatestLinux'
       pool:
         vmImage: 'ubuntu-latest'
