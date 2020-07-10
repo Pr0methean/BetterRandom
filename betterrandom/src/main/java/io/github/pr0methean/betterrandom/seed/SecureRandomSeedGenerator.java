@@ -109,7 +109,7 @@ public class SecureRandomSeedGenerator implements SeedGenerator, Serializable {
       return false;
     }
     SecureRandomSeedGenerator that = (SecureRandomSeedGenerator) o;
-    return isDefaultInstance == that.isDefaultInstance && source.equals(that.source);
+    return !isDefaultInstance && !that.isDefaultInstance && source.equals(that.source);
   }
 
   @Override public int hashCode() {

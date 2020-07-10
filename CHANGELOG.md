@@ -7,8 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [5.6.2]
+
 ### Changed
 
+- `SecureRandomSeedGenerator.equals` has been refactored to often be faster.
+- Build scripts have been refactored.
 - `SeedGeneratorPreferenceList` is now immutable and has a builder class.
 - `BaseRandom.setSeed(long)` is no longer marked deprecated, since it is only deprecated when `!preferSeedWithLong()`.
 
@@ -684,7 +688,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - First release on Maven Central.
 
-[Unreleased]: https://github.com/Pr0methean/BetterRandom/compare/BetterRandom-5.6.1...master
+[Unreleased]: https://github.com/Pr0methean/BetterRandom/compare/BetterRandom-5.6.2...master
+[5.6.2]: https://github.com/Pr0methean/BetterRandom/compare/BetterRandom-5.6.1...BetterRandom-5.6.2
 [5.6.1]: https://github.com/Pr0methean/BetterRandom/compare/BetterRandom-5.6.0...BetterRandom-5.6.1
 [5.6.0]: https://github.com/Pr0methean/BetterRandom/compare/BetterRandom-5.5.0...BetterRandom-5.6.0
 [5.5.0]: https://github.com/Pr0methean/BetterRandom/compare/BetterRandom-5.4.1...BetterRandom-5.5.0
