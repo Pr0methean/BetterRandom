@@ -95,6 +95,8 @@ stages:
             parameters:
               ubuntuPackage: $(ubuntuPackage)
           - template: etc/azureTemplate/unitTestsUbuntu.yml
+            parameters:
+              ubuntuPackage: $(ubuntuPackage)
           - template: etc/azureTemplate/publishCoverage.yml
       - job: UnitMac
         variables:
@@ -159,13 +161,13 @@ stages:
       steps:
         - template: etc/azureTemplate/installJavaUbuntu.yml
           parameters:
-            ubuntuPackage: $(hotspotLatest)
+            ubuntuPackage: adoptopenjdk-14-hotspot
         - template: etc/azureTemplate/installHaveged.yml
         - script: ./etc/scripts/mutation.sh
           displayName: Build & Run Mutation Tests
           env:
             RANDOM_DOT_ORG_KEY: $(RANDOM_DOT_ORG_KEY)
-            JAVA_HOME: $(hotspot11)
+            JAVA_HOME: /usr/lib/jvm/adoptopenjdk-14-hotspot-amd64
         - task: PublishBuildArtifacts@1
           displayName: Publish Mutation Report
           inputs:
@@ -214,9 +216,9 @@ stages:
         - template: etc/azureTemplate/installJavaUbuntu.yml
           parameters:
             ubuntuPackage: $(ubuntuPackage)
-        - script: update-java-alternatives -s $(ubuntuPackage)
-          displayName: Switch JDK
         - template: etc/azureTemplate/benchmark.yml
+          parameters:
+            ubuntuPackage: $(ubuntuPackage)
     - job: BenchmarkMac
       timeoutInMinutes: 80
       variables:
