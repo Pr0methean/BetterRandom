@@ -1,8 +1,6 @@
 parameters:
   whichJavaHome: '' # don't change JAVA_HOME by default
 steps:
-- script: update-java-alternatives -l
-  displayName: update-java-alternatives -l
 - template: installHaveged.yml
 - script: '$(JAVA_HOME)/bin/java -version'
   displayName: Log Java Version

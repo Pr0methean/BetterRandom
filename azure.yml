@@ -1,11 +1,11 @@
 variables:
 - group: Build Secrets
-- name: zuluLinux08
-  value: '/usr/lib/jvm/zulu-8-azure-amd64'
-- name: zuluLinux11
-  value: '/usr/lib/jvm/zulu-11-azure-amd64'
-- name: zuluLinuxLatest
-  value: '/usr/lib/jvm/zulu-12-azure-amd64'
+- name: ubuntuLinux08
+  value: '/usr/lib/jvm/adoptopenjdk-8-hotspot-amd64'
+- name: ubuntuLinux11
+  value: '/usr/lib/jvm/adoptopenjdk-11-hotspot-amd64'
+- name: ubuntuLinuxLatest
+  value: '/usr/lib/jvm/adoptopenjdk-12-hotspot-amd64'
 - name: openjnine11linux
   value: 'https://api.adoptopenjdk.net/v3/binary/latest/11/ga/linux/x64/jdk/openj9/normal/adoptopenjdk'
 - name: openJNineLatestLinux
@@ -51,19 +51,19 @@ pr:
 stages:
   - stage: UnitTests
     jobs:
-      - job: UnitLinuxPreinstalledZulu
+      - job: UnitLinuxPreinstalled
         strategy:
           matrix:
             OpenJdk08:
               PROGUARD: 'true'
-              JAVA_HOME: $(zuluLinux08)
+              JAVA_HOME: $(ubuntuLinux08)
               artifactEnvName: OpenJdk08Linux
             OpenJdk11:
               PROGUARD: 'true'
-              JAVA_HOME: $(zuluLinux11)
+              JAVA_HOME: $(ubuntuLinux11)
               artifactEnvName: OpenJdk11Linux
             OpenJdkLatest:
-              JAVA_HOME: $(zuluLinuxLatest)
+              JAVA_HOME: $(ubuntuLinuxLatest)
               artifactEnvName: OpenJdkLatestLinux
         pool:
           vmImage: 'ubuntu-latest'
@@ -146,7 +146,7 @@ stages:
     jobs:
     - job: Mutation
       variables:
-        JAVA_HOME: $(zuluLinuxLatest)
+        JAVA_HOME: $(ubuntuLinuxLatest)
       timeoutInMinutes: 120 # FIXME: Remove once reliably passing in 50
       pool:
         vmImage: 'ubuntu-latest'
@@ -156,7 +156,7 @@ stages:
           displayName: Build & Run Mutation Tests
           env:
             RANDOM_DOT_ORG_KEY: $(RANDOM_DOT_ORG_KEY)
-            JAVA_HOME: $(zuluLinux11)
+            JAVA_HOME: $(ubuntuLinux11)
         - task: PublishBuildArtifacts@1
           displayName: Publish Mutation Report
           inputs:
@@ -171,14 +171,14 @@ stages:
         matrix:
           OpenJdk08:
             PROGUARD: 'true'
-            JAVA_HOME: $(zuluLinux08)
+            JAVA_HOME: $(ubuntuLinux08)
             artifactEnvName: 'OpenJDK08Linux'
           OpenJdk11:
             PROGUARD: 'true'
-            JAVA_HOME: $(zuluLinux11)
+            JAVA_HOME: $(ubuntuLinux11)
             artifactEnvName: 'OpenJdk11Linux'
           OpenJdkLatest:
-            JAVA_HOME: $(zuluLinuxLatest)
+            JAVA_HOME: $(ubuntuLinuxLatest)
             artifactEnvName: 'OpenJDKLatestLinux'
       pool:
         vmImage: 'ubuntu-latest'
