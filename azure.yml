@@ -70,8 +70,6 @@ stages:
         - template: etc/azureTemplate/unitTestsUbuntu.yml
         - template: etc/azureTemplate/publishCoverage.yml
       - job: UnitLinux
-        variables:
-          JAVA_HOME: jdk
         strategy:
           matrix:
             HotspotLatest:
