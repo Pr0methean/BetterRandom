@@ -1,0 +1,9 @@
+parameters:
+  ubuntuPackage: adoptopenjdk-11-hotspot
+steps:
+  - script: etc/scripts/addAdoptOpenJdkRepo.sh
+    displayName: Install AdoptOpenJDK Package Repository
+  - script: sudo apt-get install -y ${{ parameters.ubuntuPackage }}
+    displayName: Install JDK
+  - script: update-java-alternatives -s ${{ parameters.ubuntuPackage }}
+    displayName: Switch JDK

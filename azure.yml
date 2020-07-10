@@ -75,31 +75,24 @@ stages:
         strategy:
           matrix:
             HotspotLatest:
-              JAVA_HOME: $(hotspotLatest)
               ubuntuPackage: adoptopenjdk-14-hotspot
               artifactEnvName: HotspotLatestLinux
             OpenJNine08:
               PROGUARD: 'true'
               ubuntuPackage: adoptopenjdk-8-openj9
-              JAVA_HOME: $(OpenJNine08)
               artifactEnvName: OpenJNine08Linux
             OpenJNine11:
               PROGUARD: 'true'
               ubuntuPackage: adoptopenjdk-11-openj9
-              JAVA_HOME: $(OpenJNine11)
               artifactEnvName: OpenJNine11Linux
             OpenJNineLatest:
-              JAVA_HOME: $(OpenJNineLatest)
               ubuntuPackage: adoptopenjdk-14-openj9
               artifactEnvName: OpenJNineLatestLinux
         pool:
           vmImage: 'ubuntu-latest'
         steps:
-          - script: etc/scripts/addAdoptOpenJdkRepo.sh
-            displayName: Install AdoptOpenJDK Package Repository
-          - script: sudo apt-get install -y $(ubuntuPackage)
-            displayName: Install JDK
-            env:
+          - template: etc/azureTemplate/installJavaUbuntu.yml
+            parameters:
               ubuntuPackage: $(ubuntuPackage)
           - template: etc/azureTemplate/unitTestsUbuntu.yml
           - template: etc/azureTemplate/publishCoverage.yml
@@ -160,12 +153,13 @@ stages:
     dependsOn: UnitTests
     jobs:
     - job: Mutation
-      variables:
-        JAVA_HOME: $(hotspot11)
       timeoutInMinutes: 120 # FIXME: Remove once reliably passing in 50
       pool:
         vmImage: 'ubuntu-latest'
       steps:
+        - template: etc/azureTemplate/installJavaUbuntu.yml
+          parameters:
+            ubuntuPackage: $(hotspotLatest)
         - template: etc/azureTemplate/installHaveged.yml
         - script: ./etc/scripts/mutation.sh
           displayName: Build & Run Mutation Tests
@@ -201,31 +195,24 @@ stages:
       strategy:
         matrix:
           HotspotLatest:
-            JAVA_HOME: $(HotspotLatestLinux)
             ubuntuPackage: adoptopenjdk-14-hotspot            
             artifactEnvName: 'HotspotLatestLinux'
           OpenJNine08:
             PROGUARD: 'true'
-            JAVA_HOME: $(OpenJNine08Linux)
             ubuntuPackage: adoptopenjdk-8-openj9
             artifactEnvName: 'OpenJNine08Linux'
           OpenJNine11:
             PROGUARD: 'true'
-            JAVA_HOME: $(OpenJNine11Linux)
             ubuntuPackage: adoptopenjdk-11-openj9
             artifactEnvName: 'OpenJNine11Linux'
           OpenJNineLatest:
-            JAVA_HOME: $(OpenJNineLatestLinux)
             ubuntuPackage: adoptopenjdk-14-openj9            
             artifactEnvName: 'OpenJNineLatestLinux'
       pool:
         vmImage: 'ubuntu-latest'
       steps:
-        - script: etc/scripts/addAdoptOpenJdkRepo.sh
-          displayName: Install AdoptOpenJDK Package Repository
-        - script: sudo apt-get install -y $(ubuntuPackage)
-          displayName: Install JDK
-          env:
+        - template: etc/azureTemplate/installJavaUbuntu.yml
+          parameters:
             ubuntuPackage: $(ubuntuPackage)
         - script: update-java-alternatives -s $(ubuntuPackage)
           displayName: Switch JDK
@@ -291,9 +278,6 @@ stages:
     jobs:
     - job: Dieharder
       timeoutInMinutes: 90
-      variables:
-        javaUrl: $(OpenJNineLatestLinux)
-        JAVA_HOME: jdk
       strategy:
         matrix:
           AesCounterRandom:
@@ -313,13 +297,15 @@ stages:
       pool:
         vmImage: 'ubuntu-latest'
       steps:
+        - template: etc/azureTemplate/installJavaUbuntu.yml
+          parameters:
+            ubuntuPackage: $(openJNineLatest)
         - script: sudo apt install dieharder
           displayName: Install DieHarder
         - script: ./etc/scripts/dieharder.sh
           displayName: Build BetterRandom & Run DieHarder Tests
           env:
             CLASS: $(class)
-            JAVA_HOME: $(hotspot11)
           failOnStderr: false
         - task: PublishBuildArtifacts@1
           displayName: Publish Report
