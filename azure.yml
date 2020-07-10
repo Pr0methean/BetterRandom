@@ -58,15 +58,17 @@ stages:
           matrix:
             OpenJdk08:
               PROGUARD: 'true'
-              JAVA_HOME: $(hotspot08)
+              ubuntuPackage: adoptopenjdk-8-hotspot
               artifactEnvName: OpenJdk08Linux
             OpenJdk11:
               PROGUARD: 'true'
-              JAVA_HOME: $(hotspot11)
+              ubuntuPackage: adoptopenjdk-11-hotspot
               artifactEnvName: OpenJdk11Linux
         pool:
           vmImage: 'ubuntu-latest'
         steps:
+        - script: sudo update-java-alternatives -s $(ubuntuPackage)-amd64
+          displayName: Switch JDK
         - template: etc/azureTemplate/unitTestsUbuntu.yml
         - template: etc/azureTemplate/publishCoverage.yml
       - job: UnitLinux
@@ -180,15 +182,17 @@ stages:
         matrix:
           OpenJdk08:
             PROGUARD: 'true'
-            JAVA_HOME: $(hotspot08)
+            ubuntuPackage: adoptopenjdk-8-hotspot
             artifactEnvName: 'Hotspot08Linux'
           OpenJdk11:
             PROGUARD: 'true'
-            JAVA_HOME: $(hotspot11)
+            ubuntuPackage: adoptopenjdk-11-hotspot
             artifactEnvName: 'Hotspot11Linux'
       pool:
         vmImage: 'ubuntu-latest'
       steps:
+        - script: sudo update-java-alternatives -s $(ubuntuPackage)-amd64
+          displayName: Switch JDK
         - template: etc/azureTemplate/benchmark.yml
     - job: BenchmarkLinux
       timeoutInMinutes: 80
