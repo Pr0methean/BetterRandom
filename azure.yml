@@ -313,13 +313,12 @@ stages:
       pool:
         vmImage: 'ubuntu-latest'
       steps:
-        - template: etc/azureTemplate/installJavaJti.yml
-        - script: sudo apt install dieharder
           displayName: Install DieHarder
         - script: ./etc/scripts/dieharder.sh
           displayName: Build BetterRandom & Run DieHarder Tests
           env:
             CLASS: $(class)
+            JAVA_HOME: $(hotspot11)
           failOnStderr: false
         - task: PublishBuildArtifacts@1
           displayName: Publish Report
