@@ -228,6 +228,8 @@ stages:
           env:
             ubuntuPackage: $(ubuntuPackage)
         - template: etc/azureTemplate/benchmark.yml
+          env:
+            JAVA_HOME: $(JAVA_HOME)
     - job: BenchmarkMac
       timeoutInMinutes: 80
       variables:
