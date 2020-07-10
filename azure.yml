@@ -165,7 +165,7 @@ stages:
   - stage: Benchmarks
     dependsOn: UnitTests
     jobs:
-    - job: BenchmarkLinuxPreinstalledZulu
+    - job: BenchmarkLinuxPreinstalled
       timeoutInMinutes: 80
       strategy:
         matrix:
