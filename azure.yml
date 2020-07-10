@@ -161,7 +161,7 @@ stages:
     jobs:
     - job: Mutation
       variables:
-        JAVA_HOME: $(hotspotLatest)
+        JAVA_HOME: $(hotspot11)
       timeoutInMinutes: 120 # FIXME: Remove once reliably passing in 50
       pool:
         vmImage: 'ubuntu-latest'
