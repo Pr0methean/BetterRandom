@@ -303,7 +303,7 @@ stages:
       steps:
         - template: etc/azureTemplate/installJavaUbuntu.yml
           parameters:
-            ubuntuPackage: $(openJNineLatest)
+            ubuntuPackage: adoptopenjdk-14-openj9
         - script: sudo apt install dieharder
           displayName: Install DieHarder
         - script: ./etc/scripts/dieharder.sh
