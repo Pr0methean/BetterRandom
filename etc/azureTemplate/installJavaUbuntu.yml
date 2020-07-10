@@ -5,5 +5,8 @@ steps:
     displayName: Install AdoptOpenJDK Package Repository
   - script: sudo apt-get install -y ${{ parameters.ubuntuPackage }}
     displayName: Install JDK
-  - script: sudo update-java-alternatives -s ${{ parameters.ubuntuPackage }}-amd64
+  - script: |
+      sudo update-java-alternatives -s ${{ parameters.ubuntuPackage }}-amd64
+      export JAVA_HOME=/usr/lib/jvm/${{ parameters.ubuntuPackage }}-amd64
     displayName: Switch JDK
+
