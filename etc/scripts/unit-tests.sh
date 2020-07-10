@@ -1,4 +1,5 @@
 #!/bin/bash
+echo "JAVA_HOME is ${JAVA_HOME}"
 set -eo pipefail
 NO_GIT_PATH="${PATH}"
 if [ "${APPVEYOR}" != "" ]; then
