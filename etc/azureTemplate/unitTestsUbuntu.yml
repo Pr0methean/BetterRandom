@@ -2,10 +2,8 @@ parameters:
   whichJavaHome: '' # don't change JAVA_HOME by default
 steps:
 - template: installHaveged.yml
-- script: '$(JAVA_HOME)/bin/java -version'
+- script: 'java -version'
   displayName: Log Java Version
-  env:
-    JAVA_HOME: $(JAVA_HOME)
 - script: ./etc/scripts/unit-tests.sh ${{ parameters.whichJavaHome }}
   displayName: Build & Test
   env:
