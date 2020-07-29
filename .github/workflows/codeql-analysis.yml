@@ -38,7 +38,7 @@ jobs:
     - name: Build
       run: |
        cd betterrandom
-       mvn compile
+       mvn -B compile
 
     - name: Perform CodeQL Analysis
       uses: github/codeql-action/analyze@v1
