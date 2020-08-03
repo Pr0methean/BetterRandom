@@ -43,7 +43,7 @@ public enum Byte16ArrayArithmetic {
     boolean carry = false;
     for (int i = 15; i >= 0; i--) {
       final int oldCounterUnsigned = counter[i] < 0 ? counter[i] + 256 : counter[i];
-      counter[i] += delta[i] + (carry ? 1 : 0);
+      counter[i] = (byte)(counter[i] + delta[i] + (carry ? 1 : 0));
       final int newCounterUnsigned = counter[i] < 0 ? counter[i] + 256 : counter[i];
       carry = (oldCounterUnsigned > newCounterUnsigned) ||
           (carry && (oldCounterUnsigned == newCounterUnsigned));
