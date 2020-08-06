@@ -446,7 +446,7 @@ This class is similar to `SimpleRandomSeeder`, but can handle any instance of `j
 # Folders
 
 * `betterrandom/` contains BetterRandom's source code.
-* `benchmark/` defines the JMH benchmarks as a separate Maven project.
+* `benchmark/` defines a set of JMH benchmarks for BetterRandom as a separate Maven project.
 * `FifoFiller/` is a simple utility used for Dieharder randomness tests, and is also a separate
   Maven project.
 * `etc/` contains scripts, templates used in `azure.yml`, and miscellaneous files used for
