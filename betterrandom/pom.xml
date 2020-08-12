@@ -68,7 +68,7 @@
             <plugin>
               <groupId>com.github.wvengen</groupId>
               <artifactId>proguard-maven-plugin</artifactId>
-              <version>2.3.0</version>
+              <version>2.2.0</version>
               <configuration>
                 <libs>
                   <lib>${java.home}/lib/rt.jar</lib>
@@ -169,7 +169,7 @@
 				    <plugin>
 				      <groupId>com.github.wvengen</groupId>
 				      <artifactId>proguard-maven-plugin</artifactId>
-				      <version>2.3.0</version>
+				      <version>2.2.0</version>
 				      <configuration>
 					      <proguardJar>${user.home}/.m2/repository/net/sf/proguard/proguard-base/${proguard.version}/proguard-base-${proguard.version}.jar
 					      </proguardJar>
@@ -186,7 +186,7 @@
           <plugin>
             <groupId>com.github.wvengen</groupId>
             <artifactId>proguard-maven-plugin</artifactId>
-            <version>2.3.0</version>
+            <version>2.2.0</version>
           </plugin>
         </plugins>
       </build>
