@@ -7,6 +7,10 @@ updates:
     time: "08:00"
   open-pull-requests-limit: 10
   ignore:
+  - dependency-name: com.github.wvengen:proguard-maven-plugin
+    versions:
+    - "< 2.3.1"
+    - ">= 2.3.0"
   - dependency-name: org.javassist:javassist
     versions:
     - "< 3.23.1"
