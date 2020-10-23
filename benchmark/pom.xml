@@ -80,7 +80,7 @@ THE POSSIBILITY OF SUCH DAMAGE.
     <dependency>
       <groupId>com.google.guava</groupId>
       <artifactId>guava</artifactId>
-      <version>29.0-jre</version>
+      <version>30.0-android</version>
       <scope>compile</scope>
     </dependency>
   </dependencies>
@@ -129,8 +129,7 @@ THE POSSIBILITY OF SUCH DAMAGE.
             <configuration>
               <finalName>${uberjar.name}</finalName>
               <transformers>
-                <transformer
-                  implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
+                <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
                   <mainClass>io.github.pr0methean.betterrandom.benchmark.Main</mainClass>
                 </transformer>
               </transformers>
