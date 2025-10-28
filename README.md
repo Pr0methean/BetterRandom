@@ -1,6 +1,6 @@
 # More randomness. Less time. Still an instance of java.util.Random.
 
-**Notice: This library is considered obsolete on [Linux 5.17 and newer](https://www.phoronix.com/news/Linux-getrandom-8450p) because each CPU core now has its own entropy pool, and the overhead of a system call is now at least as cheap as a communication between threads.**
+**Notice: This library is considered obsolete on [Linux 5.17 and newer](https://www.phoronix.com/news/Linux-getrandom-8450p) because each CPU core now has its own entropy pool, and the overhead of a system call is now at least as cheap as a communication between threads. On these systems, I recommend using a ThreadLocal<SecureRandom>.**
 
 [![Build Status](https://dev.azure.com/polymorpheus/BetterRandom/_apis/build/status/BetterRandom-CI?branchName=master)](https://dev.azure.com/polymorpheus/BetterRandom/_build/latest?definitionId=2&branchName=java7)
 [![Maven Central](https://maven-badges.herokuapp.com/maven-central/io.github.pr0methean.betterrandom/BetterRandom/badge.svg)](https://search.maven.org/#search%7Cgav%7C1%7Cg%3A%22io.github.pr0methean.betterrandom%22%20AND%20a%3A%22BetterRandom%22)
